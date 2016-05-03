@@ -28,23 +28,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeDefOrRefAndCAVM : ViewModelBase {
 		readonly TypeDefOrRefAndCAOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public string FullName {
-			get { return typeSigCreator.TypeSigDnlibFullName; }
-		}
-
-		public TypeSigCreatorVM TypeSigCreator {
-			get { return typeSigCreator; }
-		}
-		TypeSigCreatorVM typeSigCreator;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public string FullName => TypeSigCreator.TypeSigDnlibFullName;
+		public TypeSigCreatorVM TypeSigCreator { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
@@ -61,9 +48,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
 				typeSigCreatorOptions.CanAddGenericMethodVar = true;
 
-			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += TypeSigCreator_PropertyChanged;
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 
 			Reinitialize();
 		}
@@ -74,13 +61,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
 
-		public TypeDefOrRefAndCAOptions CreateTypeDefOrRefAndCAOptions() {
-			return CopyTo(new TypeDefOrRefAndCAOptions());
-		}
+		public TypeDefOrRefAndCAOptions CreateTypeDefOrRefAndCAOptions() => CopyTo(new TypeDefOrRefAndCAOptions());
 
 		void InitializeFrom(TypeDefOrRefAndCAOptions options) {
 			TypeSigCreator.TypeSig = options.TypeDefOrRef.ToTypeSig();
@@ -94,8 +77,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return options;
 		}
 
-		public override bool HasError {
-			get { return typeSigCreator.HasError; }
-		}
+		public override bool HasError => TypeSigCreator.HasError;
 	}
 }

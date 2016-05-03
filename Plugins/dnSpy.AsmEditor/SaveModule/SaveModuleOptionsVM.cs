@@ -30,31 +30,14 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveModuleOptionsVM : SaveOptionsVM {
-		public override SaveOptionsType Type {
-			get { return SaveOptionsType.Module; }
-		}
-
-		public ModuleDef Module {
-			get { return module; }
-		}
-		readonly ModuleDef module;
-
-		public override object UndoDocument {
-			get { return dnSpyFile; }
-		}
+		public override SaveOptionsType Type => SaveOptionsType.Module;
+		public ModuleDef Module { get; }
+		public override object UndoDocument => dnSpyFile;
 		readonly IDnSpyFile dnSpyFile;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public bool CanSaveMixedModeModule {
-			get { return module is ModuleDefMD; }
-		}
-
-		public bool IsMixedModeModule {
-			get { return CanSaveMixedModeModule && !module.IsILOnly; }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public bool CanSaveMixedModeModule => Module is ModuleDefMD;
+		public bool IsMixedModeModule => CanSaveMixedModeModule && !Module.IsILOnly;
 
 		public bool UseMixedMode {
 			get { return useMixedMode; }
@@ -68,9 +51,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool useMixedMode;
 
-		public bool CanWritePdb {
-			get { return module.PdbState != null; }
-		}
+		public bool CanWritePdb => Module.PdbState != null;
 
 		public bool WritePdb {
 			get { return writePdb; }
@@ -140,14 +121,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		internal static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(dnlib.DotNet.ModuleKind));
 
-		public EnumListVM ModuleKind {
-			get { return moduleKindVM; }
-		}
-		readonly EnumListVM moduleKindVM;
+		public EnumListVM ModuleKind { get; }
 
 		public string Extension {
 			get {
-				switch ((dnlib.DotNet.ModuleKind)moduleKindVM.SelectedItem) {
+				switch ((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem) {
 				case dnlib.DotNet.ModuleKind.Console:
 				case dnlib.DotNet.ModuleKind.Windows:
 				default:
@@ -160,33 +138,22 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 
-		public PEHeadersOptionsVM PEHeadersOptions {
-			get { return peHeadersOptions; }
-		}
-		readonly PEHeadersOptionsVM peHeadersOptions;
-
-		public Cor20HeaderOptionsVM Cor20HeaderOptions {
-			get { return cor20HeaderOptions; }
-		}
-		readonly Cor20HeaderOptionsVM cor20HeaderOptions;
-
-		public MetaDataOptionsVM MetaDataOptions {
-			get { return metaDataOptions; }
-		}
-		readonly MetaDataOptionsVM metaDataOptions;
+		public PEHeadersOptionsVM PEHeadersOptions { get; }
+		public Cor20HeaderOptionsVM Cor20HeaderOptions { get; }
+		public MetaDataOptionsVM MetaDataOptions { get; }
 
 		public SaveModuleOptionsVM(IDnSpyFile dnSpyFile) {
 			this.dnSpyFile = dnSpyFile;
-			this.module = dnSpyFile.ModuleDef;
-			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));
-			this.cor20HeaderOptions = new Cor20HeaderOptionsVM();
-			this.metaDataOptions = new MetaDataOptionsVM();
+			this.Module = dnSpyFile.ModuleDef;
+			this.PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
+			this.Cor20HeaderOptions = new Cor20HeaderOptionsVM();
+			this.MetaDataOptions = new MetaDataOptionsVM();
 
-			this.peHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.metaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.PEHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.Cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.MetaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 
-			moduleKindVM = new EnumListVM(moduleKindList, (a, b) => {
+			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged("Extension");
 				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
 				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
@@ -202,7 +169,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		void Reinitialize() {
-			FileName = module.Location;
+			FileName = Module.Location;
 			if (UseMixedMode == IsMixedModeModule)
 				ReinitializeModuleWriterOptions();
 			else
@@ -211,15 +178,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void ReinitializeModuleWriterOptions() {
 			if (UseMixedMode)
-				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)module));
+				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)Module));
 			else
-				InitializeFrom(new ModuleWriterOptions(module));
+				InitializeFrom(new ModuleWriterOptions(Module));
 			WritePdb = CanWritePdb;
 		}
 
 		public ModuleWriterOptionsBase CreateWriterOptions() {
 			if (UseMixedMode) {
-				var options = new NativeModuleWriterOptions((ModuleDefMD)module);
+				var options = new NativeModuleWriterOptions((ModuleDefMD)Module);
 				CopyTo(options);
 				options.KeepExtraPEData = KeepExtraPEData;
 				options.KeepWin32Resources = KeepWin32Resources;
@@ -228,27 +195,25 @@ namespace dnSpy.AsmEditor.SaveModule {
 			else {
 				var options = new ModuleWriterOptions();
 				CopyTo(options);
-				if (module.ManagedEntryPoint != null || module.NativeEntryPoint == 0)
+				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
 				return options;
 			}
 		}
 
 		void CopyTo(ModuleWriterOptionsBase options) {
-			peHeadersOptions.CopyTo(options.PEHeadersOptions);
-			cor20HeaderOptions.CopyTo(options.Cor20HeaderOptions);
-			metaDataOptions.CopyTo(options.MetaDataOptions);
+			PEHeadersOptions.CopyTo(options.PEHeadersOptions);
+			Cor20HeaderOptions.CopyTo(options.Cor20HeaderOptions);
+			MetaDataOptions.CopyTo(options.MetaDataOptions);
 
 			options.WritePdb = WritePdb;
 			options.ShareMethodBodies = ShareMethodBodies;
 			options.AddCheckSum = AddCheckSum;
 			options.Win32Resources = Win32Resources;
-			options.ModuleKind = (dnlib.DotNet.ModuleKind)moduleKindVM.SelectedItem;
+			options.ModuleKind = (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem;
 		}
 
-		public SaveModuleOptionsVM Clone() {
-			return CopyTo(new SaveModuleOptionsVM(dnSpyFile));
-		}
+		public SaveModuleOptionsVM Clone() => CopyTo(new SaveModuleOptionsVM(dnSpyFile));
 
 		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {
 			other.FileName = FileName;
@@ -278,11 +243,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void InitializeFromInternal(ModuleWriterOptionsBase options) {
 			// Writing to it triggers a write to Subsystem so write it first
-			moduleKindVM.SelectedItem = options.ModuleKind;
+			ModuleKind.SelectedItem = options.ModuleKind;
 
-			peHeadersOptions.InitializeFrom(options.PEHeadersOptions);
-			cor20HeaderOptions.InitializeFrom(options.Cor20HeaderOptions);
-			metaDataOptions.InitializeFrom(options.MetaDataOptions);
+			PEHeadersOptions.InitializeFrom(options.PEHeadersOptions);
+			Cor20HeaderOptions.InitializeFrom(options.Cor20HeaderOptions);
+			MetaDataOptions.InitializeFrom(options.MetaDataOptions);
 
 			WritePdb = options.WritePdb;
 			ShareMethodBodies = options.ShareMethodBodies;
@@ -290,19 +255,17 @@ namespace dnSpy.AsmEditor.SaveModule {
 			Win32Resources = options.Win32Resources;
 
 			// Writing to Machine and ModuleKind triggers code that updates Characteristics
-			peHeadersOptions.Characteristics = options.PEHeadersOptions.Characteristics;
+			PEHeadersOptions.Characteristics = options.PEHeadersOptions.Characteristics;
 		}
 
-		protected override string GetExtension(string filename) {
-			return Extension;
-		}
+		protected override string GetExtension(string filename) => Extension;
 
 		public override bool HasError {
 			get {
 				return base.HasError ||
-						peHeadersOptions.HasError ||
-						cor20HeaderOptions.HasError ||
-						metaDataOptions.HasError;
+						PEHeadersOptions.HasError ||
+						Cor20HeaderOptions.HasError ||
+						MetaDataOptions.HasError;
 			}
 		}
 	}
@@ -314,52 +277,37 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem) {
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
-			this.machineVM = new EnumListVM(machineList, (a, b) => {
+			this.Machine = new EnumListVM(machineList, (a, b) => {
 				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
-			this.timeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
-			this.pointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
-			this.numberOfSymbols = new NullableUInt32VM(a => HasErrorUpdated());
-			this.majorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.minorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.imageBase = new NullableUInt64VM(a => HasErrorUpdated());
-			this.sectionAlignment = new NullableUInt32VM(a => HasErrorUpdated());
-			this.fileAlignment = new NullableUInt32VM(a => HasErrorUpdated());
-			this.majorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.minorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.majorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.minorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.majorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.minorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.win32VersionValue = new NullableUInt32VM(a => HasErrorUpdated());
-			this.sizeOfStackReserve = new NullableUInt64VM(a => HasErrorUpdated());
-			this.sizeOfStackCommit = new NullableUInt64VM(a => HasErrorUpdated());
-			this.sizeOfHeapReserve = new NullableUInt64VM(a => HasErrorUpdated());
-			this.sizeOfHeapCommit = new NullableUInt64VM(a => HasErrorUpdated());
-			this.loaderFlags = new NullableUInt32VM(a => HasErrorUpdated());
-			this.numberOfRvaAndSizes = new NullableUInt32VM(a => HasErrorUpdated());
+			this.TimeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
+			this.PointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
+			this.NumberOfSymbols = new NullableUInt32VM(a => HasErrorUpdated());
+			this.MajorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.MinorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.ImageBase = new NullableUInt64VM(a => HasErrorUpdated());
+			this.SectionAlignment = new NullableUInt32VM(a => HasErrorUpdated());
+			this.FileAlignment = new NullableUInt32VM(a => HasErrorUpdated());
+			this.MajorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MinorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MajorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MinorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MajorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MinorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.Win32VersionValue = new NullableUInt32VM(a => HasErrorUpdated());
+			this.SizeOfStackReserve = new NullableUInt64VM(a => HasErrorUpdated());
+			this.SizeOfStackCommit = new NullableUInt64VM(a => HasErrorUpdated());
+			this.SizeOfHeapReserve = new NullableUInt64VM(a => HasErrorUpdated());
+			this.SizeOfHeapCommit = new NullableUInt64VM(a => HasErrorUpdated());
+			this.LoaderFlags = new NullableUInt32VM(a => HasErrorUpdated());
+			this.NumberOfRvaAndSizes = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
-		public EnumListVM Machine {
-			get { return machineVM; }
-		}
 		internal static readonly EnumVM[] machineList = EnumVM.Create(typeof(dnlib.PE.Machine), dnlib.PE.Machine.I386, dnlib.PE.Machine.AMD64, dnlib.PE.Machine.IA64, dnlib.PE.Machine.ARMNT, dnlib.PE.Machine.ARM64);
-		readonly EnumListVM machineVM;
-
-		public NullableUInt32VM TimeDateStamp {
-			get { return timeDateStamp; }
-		}
-		NullableUInt32VM timeDateStamp;
-
-		public NullableUInt32VM PointerToSymbolTable {
-			get { return pointerToSymbolTable; }
-		}
-		NullableUInt32VM pointerToSymbolTable;
-
-		public NullableUInt32VM NumberOfSymbols {
-			get { return numberOfSymbols; }
-		}
-		NullableUInt32VM numberOfSymbols;
+		public EnumListVM Machine { get; }
+		public NullableUInt32VM TimeDateStamp { get; }
+		public NullableUInt32VM PointerToSymbolTable { get; }
+		public NullableUInt32VM NumberOfSymbols { get; }
 
 		public Characteristics? Characteristics {
 			get { return characteristics; }
@@ -468,9 +416,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value); }
 		}
 
-		bool? GetFlagValue(Characteristics flag) {
-			return Characteristics == null ? (bool?)null : (Characteristics.Value & flag) != 0;
-		}
+		bool? GetFlagValue(Characteristics flag) => Characteristics == null ? (bool?)null : (Characteristics.Value & flag) != 0;
 
 		void SetFlagValue(Characteristics flag, bool? value) {
 			if (Characteristics == null)
@@ -481,71 +427,21 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Characteristics &= ~flag;
 		}
 
-		public NullableByteVM MajorLinkerVersion {
-			get { return majorLinkerVersion; }
-		}
-		NullableByteVM majorLinkerVersion;
+		public NullableByteVM MajorLinkerVersion { get; }
+		public NullableByteVM MinorLinkerVersion { get; }
+		public NullableUInt64VM ImageBase { get; }
+		public NullableUInt32VM SectionAlignment { get; }
+		public NullableUInt32VM FileAlignment { get; }
+		public NullableUInt16VM MajorOperatingSystemVersion { get; }
+		public NullableUInt16VM MinorOperatingSystemVersion { get; }
+		public NullableUInt16VM MajorImageVersion { get; }
+		public NullableUInt16VM MinorImageVersion { get; }
+		public NullableUInt16VM MajorSubsystemVersion { get; }
+		public NullableUInt16VM MinorSubsystemVersion { get; }
+		public NullableUInt32VM Win32VersionValue { get; }
 
-		public NullableByteVM MinorLinkerVersion {
-			get { return minorLinkerVersion; }
-		}
-		NullableByteVM minorLinkerVersion;
-
-		public NullableUInt64VM ImageBase {
-			get { return imageBase; }
-		}
-		NullableUInt64VM imageBase;
-
-		public NullableUInt32VM SectionAlignment {
-			get { return sectionAlignment; }
-		}
-		NullableUInt32VM sectionAlignment;
-
-		public NullableUInt32VM FileAlignment {
-			get { return fileAlignment; }
-		}
-		NullableUInt32VM fileAlignment;
-
-		public NullableUInt16VM MajorOperatingSystemVersion {
-			get { return majorOperatingSystemVersion; }
-		}
-		NullableUInt16VM majorOperatingSystemVersion;
-
-		public NullableUInt16VM MinorOperatingSystemVersion {
-			get { return minorOperatingSystemVersion; }
-		}
-		NullableUInt16VM minorOperatingSystemVersion;
-
-		public NullableUInt16VM MajorImageVersion {
-			get { return majorImageVersion; }
-		}
-		NullableUInt16VM majorImageVersion;
-
-		public NullableUInt16VM MinorImageVersion {
-			get { return minorImageVersion; }
-		}
-		NullableUInt16VM minorImageVersion;
-
-		public NullableUInt16VM MajorSubsystemVersion {
-			get { return majorSubsystemVersion; }
-		}
-		NullableUInt16VM majorSubsystemVersion;
-
-		public NullableUInt16VM MinorSubsystemVersion {
-			get { return minorSubsystemVersion; }
-		}
-		NullableUInt16VM minorSubsystemVersion;
-
-		public NullableUInt32VM Win32VersionValue {
-			get { return win32VersionValue; }
-		}
-		NullableUInt32VM win32VersionValue;
-
-		public EnumListVM Subsystem {
-			get { return subsystemVM; }
-		}
 		static readonly EnumVM[] subsystemList = EnumVM.Create(typeof(dnlib.PE.Subsystem), dnlib.PE.Subsystem.WindowsGui, dnlib.PE.Subsystem.WindowsCui);
-		readonly EnumListVM subsystemVM = new EnumListVM(subsystemList);
+		public EnumListVM Subsystem { get; } = new EnumListVM(subsystemList);
 
 		public DllCharacteristics? DllCharacteristics {
 			get { return dllCharacteristics; }
@@ -654,9 +550,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set { SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value); }
 		}
 
-		bool? GetFlagValue(DllCharacteristics flag) {
-			return DllCharacteristics == null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
-		}
+		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics == null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
 
 		void SetFlagValue(DllCharacteristics flag, bool? value) {
 			if (DllCharacteristics == null)
@@ -667,38 +561,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 				DllCharacteristics &= ~flag;
 		}
 
-		public NullableUInt64VM SizeOfStackReserve {
-			get { return sizeOfStackReserve; }
-		}
-		NullableUInt64VM sizeOfStackReserve;
-
-		public NullableUInt64VM SizeOfStackCommit {
-			get { return sizeOfStackCommit; }
-		}
-		NullableUInt64VM sizeOfStackCommit;
-
-		public NullableUInt64VM SizeOfHeapReserve {
-			get { return sizeOfHeapReserve; }
-		}
-		NullableUInt64VM sizeOfHeapReserve;
-
-		public NullableUInt64VM SizeOfHeapCommit {
-			get { return sizeOfHeapCommit; }
-		}
-		NullableUInt64VM sizeOfHeapCommit;
-
-		public NullableUInt32VM LoaderFlags {
-			get { return loaderFlags; }
-		}
-		NullableUInt32VM loaderFlags;
-
-		public NullableUInt32VM NumberOfRvaAndSizes {
-			get { return numberOfRvaAndSizes; }
-		}
-		NullableUInt32VM numberOfRvaAndSizes;
+		public NullableUInt64VM SizeOfStackReserve { get; }
+		public NullableUInt64VM SizeOfStackCommit { get; }
+		public NullableUInt64VM SizeOfHeapReserve { get; }
+		public NullableUInt64VM SizeOfHeapCommit { get; }
+		public NullableUInt32VM LoaderFlags { get; }
+		public NullableUInt32VM NumberOfRvaAndSizes { get; }
 
 		public void CopyTo(PEHeadersOptions options) {
-			options.Machine = (dnlib.PE.Machine)machineVM.SelectedItem;
+			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem;
 			options.TimeDateStamp = TimeDateStamp.Value;
 			options.PointerToSymbolTable = PointerToSymbolTable.Value;
 			options.NumberOfSymbols = NumberOfSymbols.Value;
@@ -726,7 +597,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public void InitializeFrom(PEHeadersOptions options) {
-			machineVM.SelectedItem = options.Machine ?? defaultMachine;
+			Machine.SelectedItem = options.Machine ?? defaultMachine;
 			TimeDateStamp.Value = options.TimeDateStamp;
 			PointerToSymbolTable.Value = options.PointerToSymbolTable;
 			NumberOfSymbols.Value = options.NumberOfSymbols;
@@ -755,47 +626,40 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				return timeDateStamp.HasError ||
-					pointerToSymbolTable.HasError ||
-					numberOfSymbols.HasError ||
-					majorLinkerVersion.HasError ||
-					minorLinkerVersion.HasError ||
-					imageBase.HasError ||
-					sectionAlignment.HasError ||
-					fileAlignment.HasError ||
-					majorOperatingSystemVersion.HasError ||
-					minorOperatingSystemVersion.HasError ||
-					majorImageVersion.HasError ||
-					minorImageVersion.HasError ||
-					majorSubsystemVersion.HasError ||
-					minorSubsystemVersion.HasError ||
-					win32VersionValue.HasError ||
-					sizeOfStackReserve.HasError ||
-					sizeOfStackCommit.HasError ||
-					sizeOfHeapReserve.HasError ||
-					sizeOfHeapCommit.HasError ||
-					loaderFlags.HasError ||
-					numberOfRvaAndSizes.HasError;
+				return TimeDateStamp.HasError ||
+					PointerToSymbolTable.HasError ||
+					NumberOfSymbols.HasError ||
+					MajorLinkerVersion.HasError ||
+					MinorLinkerVersion.HasError ||
+					ImageBase.HasError ||
+					SectionAlignment.HasError ||
+					FileAlignment.HasError ||
+					MajorOperatingSystemVersion.HasError ||
+					MinorOperatingSystemVersion.HasError ||
+					MajorImageVersion.HasError ||
+					MinorImageVersion.HasError ||
+					MajorSubsystemVersion.HasError ||
+					MinorSubsystemVersion.HasError ||
+					Win32VersionValue.HasError ||
+					SizeOfStackReserve.HasError ||
+					SizeOfStackCommit.HasError ||
+					SizeOfHeapReserve.HasError ||
+					SizeOfHeapCommit.HasError ||
+					LoaderFlags.HasError ||
+					NumberOfRvaAndSizes.HasError;
 			}
 		}
 	}
 
 	sealed class Cor20HeaderOptionsVM : ViewModelBase {
 		public Cor20HeaderOptionsVM() {
-			this.majorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.minorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.entryPoint = new NullableUInt32VM(a => HasErrorUpdated());
+			this.MajorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MinorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.EntryPoint = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
-		public NullableUInt16VM MajorRuntimeVersion {
-			get { return majorRuntimeVersion; }
-		}
-		NullableUInt16VM majorRuntimeVersion;
-
-		public NullableUInt16VM MinorRuntimeVersion {
-			get { return minorRuntimeVersion; }
-		}
-		NullableUInt16VM minorRuntimeVersion;
+		public NullableUInt16VM MajorRuntimeVersion { get; }
+		public NullableUInt16VM MinorRuntimeVersion { get; }
 
 		public ComImageFlags? Flags {
 			get { return flags; }
@@ -844,9 +708,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set { SetFlagValue(ComImageFlags._32BitPreferred, value); }
 		}
 
-		bool? GetFlagValue(ComImageFlags flag) {
-			return Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
-		}
+		bool? GetFlagValue(ComImageFlags flag) => Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
 
 		void SetFlagValue(ComImageFlags flag, bool? value) {
 			if (Flags == null)
@@ -857,10 +719,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Flags &= ~flag;
 		}
 
-		public NullableUInt32VM EntryPoint {
-			get { return entryPoint; }
-		}
-		NullableUInt32VM entryPoint;
+		public NullableUInt32VM EntryPoint { get; }
 
 		public void CopyTo(Cor20HeaderOptions options) {
 			options.MajorRuntimeVersion = MajorRuntimeVersion.Value;
@@ -878,31 +737,24 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				return majorRuntimeVersion.HasError ||
-					minorRuntimeVersion.HasError ||
-					entryPoint.HasError;
+				return MajorRuntimeVersion.HasError ||
+					MinorRuntimeVersion.HasError ||
+					EntryPoint.HasError;
 			}
 		}
 	}
 
 	sealed class MetaDataOptionsVM : ViewModelBase {
 		public MetaDataOptionsVM() {
-			this.metaDataHeaderOptions = new MetaDataHeaderOptionsVM();
-			this.tablesHeapOptions = new TablesHeapOptionsVM();
+			this.MetaDataHeaderOptions = new MetaDataHeaderOptionsVM();
+			this.TablesHeapOptions = new TablesHeapOptionsVM();
 
-			this.metaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.tablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.MetaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.TablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 		}
 
-		public MetaDataHeaderOptionsVM MetaDataHeaderOptions {
-			get { return metaDataHeaderOptions; }
-		}
-		MetaDataHeaderOptionsVM metaDataHeaderOptions;
-
-		public TablesHeapOptionsVM TablesHeapOptions {
-			get { return tablesHeapOptions; }
-		}
-		TablesHeapOptionsVM tablesHeapOptions;
+		public MetaDataHeaderOptionsVM MetaDataHeaderOptions { get; }
+		public TablesHeapOptionsVM TablesHeapOptions { get; }
 
 		public MetaDataFlags Flags {
 			get { return flags; }
@@ -1046,9 +898,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set { SetFlagValue(MetaDataFlags.AlwaysCreateBlobHeap, value, "AlwaysCreateBlobHeap"); }
 		}
 
-		bool GetFlagValue(MetaDataFlags flag) {
-			return (Flags & flag) != 0;
-		}
+		bool GetFlagValue(MetaDataFlags flag) => (Flags & flag) != 0;
 
 		void SetFlagValue(MetaDataFlags flag, bool value, string prop1, string prop2 = null) {
 			bool origValue = (Flags & flag) != 0;
@@ -1104,41 +954,26 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				return metaDataHeaderOptions.HasError ||
-					tablesHeapOptions.HasError;
+				return MetaDataHeaderOptions.HasError ||
+					TablesHeapOptions.HasError;
 			}
 		}
 	}
 
 	sealed class MetaDataHeaderOptionsVM : ViewModelBase {
 		public MetaDataHeaderOptionsVM() {
-			this.signature = new NullableUInt32VM(a => HasErrorUpdated());
-			this.majorVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.minorVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
-			this.storageFlags = new NullableByteVM(a => HasErrorUpdated());
-			this.reserved2 = new NullableByteVM(a => HasErrorUpdated());
+			this.Signature = new NullableUInt32VM(a => HasErrorUpdated());
+			this.MajorVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.MinorVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.Reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
+			this.StorageFlags = new NullableByteVM(a => HasErrorUpdated());
+			this.Reserved2 = new NullableByteVM(a => HasErrorUpdated());
 		}
 
-		public NullableUInt32VM Signature {
-			get { return signature; }
-		}
-		NullableUInt32VM signature;
-
-		public NullableUInt16VM MajorVersion {
-			get { return majorVersion; }
-		}
-		NullableUInt16VM majorVersion;
-
-		public NullableUInt16VM MinorVersion {
-			get { return minorVersion; }
-		}
-		NullableUInt16VM minorVersion;
-
-		public NullableUInt32VM Reserved1 {
-			get { return reserved1; }
-		}
-		NullableUInt32VM reserved1;
+		public NullableUInt32VM Signature { get; }
+		public NullableUInt16VM MajorVersion { get; }
+		public NullableUInt16VM MinorVersion { get; }
+		public NullableUInt32VM Reserved1 { get; }
 
 		public string VersionString {
 			get { return versionString; }
@@ -1150,15 +985,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		string versionString;
 
-		public NullableByteVM StorageFlags {
-			get { return storageFlags; }
-		}
-		NullableByteVM storageFlags;
-
-		public NullableByteVM Reserved2 {
-			get { return reserved2; }
-		}
-		NullableByteVM reserved2;
+		public NullableByteVM StorageFlags { get; }
+		public NullableByteVM Reserved2 { get; }
 
 		public void CopyTo(MetaDataHeaderOptions options) {
 			options.Signature = Signature.Value;
@@ -1192,12 +1020,12 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (!string.IsNullOrEmpty(Verify("VersionString")))
 					return true;
 
-				return signature.HasError ||
-					majorVersion.HasError ||
-					minorVersion.HasError ||
-					reserved1.HasError ||
-					storageFlags.HasError ||
-					reserved2.HasError;
+				return Signature.HasError ||
+					MajorVersion.HasError ||
+					MinorVersion.HasError ||
+					Reserved1.HasError ||
+					StorageFlags.HasError ||
+					Reserved2.HasError;
 			}
 		}
 
@@ -1212,26 +1040,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	sealed class TablesHeapOptionsVM : ViewModelBase {
 		public TablesHeapOptionsVM() {
-			this.reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
-			this.majorVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.minorVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.extraData = new NullableUInt32VM(a => HasErrorUpdated());
+			this.Reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
+			this.MajorVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.MinorVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.ExtraData = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
-		public NullableUInt32VM Reserved1 {
-			get { return reserved1; }
-		}
-		NullableUInt32VM reserved1;
-
-		public NullableByteVM MajorVersion {
-			get { return majorVersion; }
-		}
-		NullableByteVM majorVersion;
-
-		public NullableByteVM MinorVersion {
-			get { return minorVersion; }
-		}
-		NullableByteVM minorVersion;
+		public NullableUInt32VM Reserved1 { get; }
+		public NullableByteVM MajorVersion { get; }
+		public NullableByteVM MinorVersion { get; }
 
 		public bool? UseENC {
 			get { return useENC; }
@@ -1242,10 +1059,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool? useENC;
 
-		public NullableUInt32VM ExtraData {
-			get { return extraData; }
-		}
-		NullableUInt32VM extraData;
+		public NullableUInt32VM ExtraData { get; }
 
 		public bool? HasDeletedRows {
 			get { return hasDeletedRows; }
@@ -1276,10 +1090,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				return reserved1.HasError ||
-					majorVersion.HasError ||
-					minorVersion.HasError ||
-					extraData.HasError;
+				return Reserved1.HasError ||
+					MajorVersion.HasError ||
+					MinorVersion.HasError ||
+					ExtraData.HasError;
 			}
 		}
 	}

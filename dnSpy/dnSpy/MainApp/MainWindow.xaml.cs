@@ -37,9 +37,7 @@ namespace dnSpy.MainApp {
 			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			UpdateSystemMenuImage();
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateSystemMenuImage();
 
 		void UpdateSystemMenuImage() {
 			var bgType = IsActive ? BackgroundType.TitleAreaActive : BackgroundType.TitleAreaInactive;

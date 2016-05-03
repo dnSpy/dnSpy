@@ -43,9 +43,7 @@ namespace dnSpy.Search {
 	sealed class SearchToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<ISearchManager> searchManager;
 
-		public SearchToolWindowContent SearchToolWindowContent {
-			get { return searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchManager)); }
-		}
+		public SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchManager));
 		SearchToolWindowContent searchToolWindowContent;
 
 		[ImportingConstructor]
@@ -68,33 +66,13 @@ namespace dnSpy.Search {
 		public static readonly Guid THE_GUID = new Guid("91802684-9D1F-4491-90FD-AFE1DE7C4D46");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Top;
 
-		public IInputElement FocusedElement {
-			get { return searchManager.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return searchManager.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Resources.SearchWindow_Title; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return searchManager.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => searchManager.Value.FocusedElement;
+		public FrameworkElement ScaleElement => searchManager.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Resources.SearchWindow_Title;
+		public object ToolTip => null;
+		public object UIObject => searchManager.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<ISearchManager> searchManager;
 
@@ -109,8 +87,6 @@ namespace dnSpy.Search {
 				searchManager.Value.OnShow();
 		}
 
-		public void Focus() {
-			searchManager.Value.Focus();
-		}
+		public void Focus() => searchManager.Value.Focus();
 	}
 }

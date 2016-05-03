@@ -49,15 +49,13 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		bool isEnabled;
 
-		public bool IsVisible {//TODO: Use this
+		public bool IsVisible {//TODO: Use it
 			get { return isVisible; }
 			set { isVisible = value; }
 		}
 		bool isVisible;
 
-		public ObservableCollection<ICallStackFrameVM> Collection {
-			get { return framesList; }
-		}
+		public ObservableCollection<ICallStackFrameVM> Collection => framesList;
 		readonly ObservableCollection<ICallStackFrameVM> framesList;
 
 		public object SelectedItem {
@@ -114,9 +112,7 @@ namespace dnSpy.Debugger.CallStack {
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
 
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
-			InitializeStackFrames();
-		}
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) => InitializeStackFrames();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {

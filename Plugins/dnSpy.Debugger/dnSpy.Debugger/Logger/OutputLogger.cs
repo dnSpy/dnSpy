@@ -137,9 +137,7 @@ namespace dnSpy.Debugger.Logger {
 			return name;
 		}
 
-		string GetProcessNameWithPID(DnProcess process) {
-			return string.Format("[0x{0:X}] {1}", process?.ProcessId, GetProcessName(process));
-		}
+		string GetProcessNameWithPID(DnProcess process) => string.Format("[0x{0:X}] {1}", process?.ProcessId, GetProcessName(process));
 
 		string GetModuleName(DnModule module) {
 			if (module == null)

@@ -33,9 +33,7 @@ namespace dnSpy.Shared.Hex {
 			UpdateColors(themeManager);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			UpdateColors((IThemeManager)sender);
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateColors((IThemeManager)sender);
 
 		void UpdateColors(IThemeManager themeManager) {
 			var theme = themeManager.Theme;
@@ -66,24 +64,10 @@ namespace dnSpy.Shared.Hex {
 			Application.Current.Resources[GetBackgroundResourceKey(colorType)] = GetBrush(color.Background);
 		}
 
-		static Brush GetBrush(Brush b) {
-			return b ?? Brushes.Transparent;
-		}
-
-		public static string GetBackgroundResourceKey(ColorType colorType) {
-			return string.Format("HB_{0}_Background", Enum.GetName(typeof(ColorType), colorType));
-		}
-
-		public static string GetForegroundResourceKey(ColorType colorType) {
-			return string.Format("HB_{0}_Foreground", Enum.GetName(typeof(ColorType), colorType));
-		}
-
-		public static string GetFontStyleResourceKey(ColorType colorType) {
-			return string.Format("HB_{0}_FontStyle", Enum.GetName(typeof(ColorType), colorType));
-		}
-
-		public static string GetFontWeightResourceKey(ColorType colorType) {
-			return string.Format("HB_{0}_FontWeight", Enum.GetName(typeof(ColorType), colorType));
-		}
+		static Brush GetBrush(Brush b) => b ?? Brushes.Transparent;
+		public static string GetBackgroundResourceKey(ColorType colorType) => string.Format("HB_{0}_Background", Enum.GetName(typeof(ColorType), colorType));
+		public static string GetForegroundResourceKey(ColorType colorType) => string.Format("HB_{0}_Foreground", Enum.GetName(typeof(ColorType), colorType));
+		public static string GetFontStyleResourceKey(ColorType colorType) => string.Format("HB_{0}_FontStyle", Enum.GetName(typeof(ColorType), colorType));
+		public static string GetFontWeightResourceKey(ColorType colorType) => string.Format("HB_{0}_FontWeight", Enum.GetName(typeof(ColorType), colorType));
 	}
 }

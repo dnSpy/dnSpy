@@ -21,20 +21,15 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Shared.Hex {
 	sealed class GoToOffsetVM : ViewModelBase {
-		public UInt64VM OffsetVM {
-			get { return offsetVM; }
-		}
-		UInt64VM offsetVM;
+		public UInt64VM OffsetVM { get; }
 
 		public GoToOffsetVM(ulong offset, ulong min, ulong max) {
-			this.offsetVM = new UInt64VM(offset, a => HasErrorUpdated(), false) {
+			this.OffsetVM = new UInt64VM(offset, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};
 		}
 
-		public override bool HasError {
-			get { return OffsetVM.HasError; }
-		}
+		public override bool HasError => OffsetVM.HasError;
 	}
 }

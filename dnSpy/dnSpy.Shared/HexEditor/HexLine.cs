@@ -26,13 +26,13 @@ using System.Windows.Media.TextFormatting;
 namespace dnSpy.Shared.HexEditor {
 	[DebuggerDisplay("{Text}")]
 	sealed class HexLine : IDisposable {
-		public readonly short[] OriginalBytes;
-		public readonly HexLinePart[] LineParts;
-		public readonly string Text;
-		public readonly ulong StartOffset;
-		public readonly ulong EndOffset;
-		public double Height;
-		public double Width;
+		public short[] OriginalBytes { get; }
+		public HexLinePart[] LineParts { get; }
+		public string Text { get; }
+		public ulong StartOffset { get; }
+		public ulong EndOffset { get; }
+		public double Height { get; private set; }
+		public double Width { get; private set; }
 
 		public TextLine[] TextLines {
 			get { return textLines; }

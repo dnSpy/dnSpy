@@ -37,9 +37,7 @@ namespace dnSpy.Settings.Dialog {
 		sealed class DynTab {
 			public double Order { get; set; }
 			public string Title { get; set; }
-			public List<Lazy<ISimpleAppOptionCreator, ISimpleAppOptionCreatorMetadata>> Creators {
-				get { return creators; }
-			}
+			public List<Lazy<ISimpleAppOptionCreator, ISimpleAppOptionCreatorMetadata>> Creators => creators;
 			readonly List<Lazy<ISimpleAppOptionCreator, ISimpleAppOptionCreatorMetadata>> creators = new List<Lazy<ISimpleAppOptionCreator, ISimpleAppOptionCreatorMetadata>>();
 		}
 
@@ -101,28 +99,14 @@ namespace dnSpy.Settings.Dialog {
 		sealed class DynAppSettingsTab : IAppSettingsTab {
 			readonly List<ISimpleAppOption> options;
 
-			public int Count {
-				get { return options.Count; }
-			}
-
-			public double Order {
-				get { return order; }
-			}
-			readonly double order;
-
-			public string Title {
-				get { return title; }
-			}
-			readonly string title;
-
-			public object UIObject {
-				get { return uiObject; }
-			}
-			readonly object uiObject;
+			public int Count => options.Count;
+			public double Order { get; }
+			public string Title { get; }
+			public object UIObject { get; }
 
 			public DynAppSettingsTab(DynTab dt) {
-				this.order = dt.Order;
-				this.title = dt.Title;
+				this.Order = dt.Order;
+				this.Title = dt.Title;
 				this.options = new List<ISimpleAppOption>();
 
 				var grid = new Grid();
@@ -170,7 +154,7 @@ namespace dnSpy.Settings.Dialog {
 					options.Add(option);
 				}
 
-				this.uiObject = new ScrollViewer {
+				this.UIObject = new ScrollViewer {
 					// Disable the horizontal scrollbar since textboxes will grow if the text
 					// doesn't fit and there's a horizontal scrollbar.
 					HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,

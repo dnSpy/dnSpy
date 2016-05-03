@@ -16,9 +16,7 @@ namespace Example1.Plugin {
 
 	[ExportToolBarButton(Icon = "Assembly", ToolTip = "Click Me", Group = TBConstants.GROUP_APP_TB_PLUGIN, Order = 0)]
 	sealed class TBCommand1 : ToolBarButtonBase {
-		public override void Execute(IToolBarItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
-		}
+		public override void Execute(IToolBarItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
 	}
 
 	[ExportToolBarObject(Group = TBConstants.GROUP_APP_TB_PLUGIN, Order = 10)]
@@ -35,8 +33,6 @@ namespace Example1.Plugin {
 			this.comboBox.SelectedIndex = 1;
 		}
 
-		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) {
-			return comboBox;
-		}
+		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
 	}
 }

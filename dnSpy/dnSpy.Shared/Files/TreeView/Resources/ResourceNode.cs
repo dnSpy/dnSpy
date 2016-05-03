@@ -36,43 +36,25 @@ using dnSpy.Shared.Properties;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
 	public abstract class ResourceNode : FileTreeNodeData, IResourceNode {
-		public Resource Resource {
-			get { return resource; }
-			set { resource = value; }
-		}
-		Resource resource;
+		public Resource Resource { get; set; }
+		public string Name => Resource.Name;
 
-		public string Name {
-			get { return resource.Name; }
-		}
-
-		protected sealed override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.WriteFilename(resource.Name);
-		}
-
-		protected sealed override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
+		protected sealed override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			output.WriteFilename(Resource.Name);
+		protected sealed override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) =>
 			base.WriteToolTip(output, language);
-		}
-
-		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return null;
-		}
+		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
 
 		protected sealed override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
 			var imgRef = GetIcon();
 			if (imgRef.Assembly != null)
 				return imgRef;
 			var asm = dnImgMgr.GetType().Assembly;
-			return ResourceUtils.TryGetImageReference(asm, resource.Name) ?? new ImageReference(asm, "Resource");
+			return ResourceUtils.TryGetImageReference(asm, Resource.Name) ?? new ImageReference(asm, "Resource");
 		}
 
-		protected virtual ImageReference GetIcon() {
-			return new ImageReference();
-		}
-
-		public sealed override NodePathName NodePathName {
-			get { return new NodePathName(Guid, NameUtils.CleanName(resource.Name)); }
-		}
+		protected virtual ImageReference GetIcon() => new ImageReference();
+		public sealed override NodePathName NodePathName => new NodePathName(Guid, NameUtils.CleanName(Resource.Name));
 
 		public ulong FileOffset {
 			get {
@@ -84,7 +66,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 		public ulong Length {
 			get {
-				var er = resource as EmbeddedResource;
+				var er = Resource as EmbeddedResource;
 				return er == null ? 0 : (ulong)er.Data.Length;
 			}
 		}
@@ -103,7 +85,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 		ModuleDefMD GetModuleOffset(out FileOffset fileOffset) {
 			fileOffset = 0;
 
-			var er = resource as EmbeddedResource;
+			var er = Resource as EmbeddedResource;
 			if (er == null)
 				return null;
 
@@ -115,21 +97,18 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			return module;
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
+		public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
 		readonly ITreeNodeGroup treeNodeGroup;
 
 		protected ResourceNode(ITreeNodeGroup treeNodeGroup, Resource resource) {
 			if (treeNodeGroup == null || resource == null)
 				throw new ArgumentNullException();
 			this.treeNodeGroup = treeNodeGroup;
-			this.resource = resource;
+			this.Resource = resource;
 		}
 
-		protected void Save() {
+		protected void Save() =>
 			SaveResources.Save(new IResourceDataProvider[] { this }, false, ResourceDataType.Deserialized);
-		}
 
 		public virtual void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
 			language.WriteCommentBegin(output, true);
@@ -137,26 +116,24 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			const string LTR = "\u200E";
 			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
 			string extra = null;
-			switch (resource.ResourceType) {
+			switch (Resource.ResourceType) {
 			case ResourceType.AssemblyLinked:
-				extra = ((AssemblyLinkedResource)resource).Assembly.FullName;
+				extra = ((AssemblyLinkedResource)Resource).Assembly.FullName;
 				break;
 			case ResourceType.Linked:
-				var file = ((LinkedResource)resource).File;
+				var file = ((LinkedResource)Resource).File;
 				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", NumberVMUtils.ByteArrayToString(file.HashValue));
 				break;
 			case ResourceType.Embedded:
-				extra = string.Format(dnSpy_Shared_Resources.NumberOfBytes, ((EmbeddedResource)resource).Data.Length);
+				extra = string.Format(dnSpy_Shared_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);
 				break;
 			}
-			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), resource.ResourceType, resource.Attributes), BoxedTextTokenKind.Comment);
+			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedTextTokenKind.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 
-		public virtual string ToString(CancellationToken token, bool canDecompile) {
-			return null;
-		}
+		public virtual string ToString(CancellationToken token, bool canDecompile) => null;
 
 		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
 			switch (type) {
@@ -169,18 +146,14 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			}
 		}
 
-		protected virtual IEnumerable<ResourceData> GetDeserializedData() {
-			return GetSerializedData();
-		}
+		protected virtual IEnumerable<ResourceData> GetDeserializedData() => GetSerializedData();
 
 		protected virtual IEnumerable<ResourceData> GetSerializedData() {
-			var er = resource as EmbeddedResource;
+			var er = Resource as EmbeddedResource;
 			if (er != null)
-				yield return new ResourceData(resource.Name, token => new MemoryStream(er.GetResourceData()));
+				yield return new ResourceData(Resource.Name, token => new MemoryStream(er.GetResourceData()));
 		}
 
-		public sealed override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public sealed override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 	}
 }

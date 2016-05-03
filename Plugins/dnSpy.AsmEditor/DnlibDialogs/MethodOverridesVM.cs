@@ -27,16 +27,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(dnSpy_AsmEditor_Resources.EditMethodOverride, dnSpy_AsmEditor_Resources.CreateMethodOverride, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override MethodOverrideVM Create(MethodOverride model) {
-			return new MethodOverrideVM(new MethodOverrideOptions(model), ownerModule);
-		}
-
-		protected override MethodOverrideVM Clone(MethodOverrideVM obj) {
-			return new MethodOverrideVM(obj.CreateMethodOverrideOptions(), ownerModule);
-		}
-
-		protected override MethodOverrideVM Create() {
-			return new MethodOverrideVM(new MethodOverrideOptions(), ownerModule);
-		}
+		protected override MethodOverrideVM Create(MethodOverride model) => new MethodOverrideVM(new MethodOverrideOptions(model), OwnerModule);
+		protected override MethodOverrideVM Clone(MethodOverrideVM obj) => new MethodOverrideVM(obj.CreateMethodOverrideOptions(), OwnerModule);
+		protected override MethodOverrideVM Create() => new MethodOverrideVM(new MethodOverrideOptions(), OwnerModule);
 	}
 }

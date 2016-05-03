@@ -36,14 +36,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public MethodUsesNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException(nameof(analyzedMethod));
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		struct DefRef<T> where T : IDnlibDef {
 			public readonly T Def;

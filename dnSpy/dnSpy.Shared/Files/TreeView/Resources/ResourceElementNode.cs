@@ -37,26 +37,16 @@ using dnSpy.Shared.Properties;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
 	public abstract class ResourceElementNode : FileTreeNodeData, IResourceElementNode {
-		public ResourceElement ResourceElement {
-			get { return resourceElement; }
-		}
+		public ResourceElement ResourceElement => resourceElement;
 		ResourceElement resourceElement;	// updated by the asm editor, see UpdateData()
 
-		public string Name {
-			get { return resourceElement.Name; }
-		}
+		public string Name => resourceElement.Name;
 
-		protected sealed override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected sealed override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.WriteFilename(resourceElement.Name);
-		}
-
-		protected sealed override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
+		protected sealed override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) =>
 			base.WriteToolTip(output, language);
-		}
-
-		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return null;
-		}
+		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
 
 		protected sealed override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
 			var imgRef = GetIcon();
@@ -66,13 +56,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			return ResourceUtils.TryGetImageReference(asm, resourceElement.Name) ?? new ImageReference(asm, "Resource");
 		}
 
-		protected virtual ImageReference GetIcon() {
-			return new ImageReference();
-		}
-
-		public sealed override NodePathName NodePathName {
-			get { return new NodePathName(Guid, NameUtils.CleanName(resourceElement.Name)); }
-		}
+		protected virtual ImageReference GetIcon() => new ImageReference();
+		public sealed override NodePathName NodePathName => new NodePathName(Guid, NameUtils.CleanName(resourceElement.Name));
 
 		public ulong FileOffset {
 			get {
@@ -82,9 +67,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			}
 		}
 
-		public ulong Length {
-			get { return (ulong)(resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset); }
-		}
+		public ulong Length => (ulong)(resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset);
 
 		public uint RVA {
 			get {
@@ -108,9 +91,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			return module;
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
+		public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
 		readonly ITreeNodeGroup treeNodeGroup;
 
 		protected ResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement) {
@@ -198,9 +179,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			}
 		}
 
-		public virtual string ToString(CancellationToken token, bool canDecompile) {
-			return null;
-		}
+		public virtual string ToString(CancellationToken token, bool canDecompile) => null;
 
 		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
 			switch (type) {
@@ -311,12 +290,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			return string.Empty;
 		}
 
-		public virtual void UpdateData(ResourceElement newResElem) {
-			resourceElement = newResElem;
-		}
-
-		public sealed override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public virtual void UpdateData(ResourceElement newResElem) => resourceElement = newResElem;
+		public sealed override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 	}
 }

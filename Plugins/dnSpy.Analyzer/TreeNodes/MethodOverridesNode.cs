@@ -34,14 +34,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public MethodOverridesNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException(nameof(analyzedMethod));
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.OverriddenByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedMethod, FindReferencesInType);
@@ -69,11 +68,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return newNode;
 		}
 
-		public static bool CanShow(MethodDef method) {
-			return method.IsVirtual &&
-				!method.IsFinal &&
-				!method.DeclaringType.IsSealed &&
-				!method.DeclaringType.IsInterface;  // interface methods are definitions not implementations - cannot be overridden
-		}
+		public static bool CanShow(MethodDef method) =>
+			method.IsVirtual &&
+			!method.IsFinal &&
+			!method.DeclaringType.IsSealed &&
+			!method.DeclaringType.IsInterface;  // interface methods are definitions not implementations - cannot be overridden
 	}
 }

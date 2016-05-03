@@ -31,14 +31,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public TypeExposedByNode(TypeDef analyzedType) {
 			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+				throw new ArgumentNullException(nameof(analyzedType));
 
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.ExposedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindReferencesInType);
@@ -105,7 +104,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (!method.HasOverrides)
 					return false;
 				var methDecl = method.Overrides[0].MethodDeclaration;
-				var typeDef = methDecl == null ? null : methDecl.DeclaringType.ResolveTypeDef();
+				var typeDef = methDecl?.DeclaringType?.ResolveTypeDef();
 				if (typeDef != null && !typeDef.IsInterface)
 					return false;
 			}
@@ -140,8 +139,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return !(isAdderPublic || isRemoverPublic);
 		}
 
-		public static bool CanShow(TypeDef type) {
-			return true;
-		}
+		public static bool CanShow(TypeDef type) => true;
 	}
 }

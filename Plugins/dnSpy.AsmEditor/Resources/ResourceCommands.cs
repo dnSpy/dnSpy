@@ -84,17 +84,9 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteResourceCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 80)]
@@ -107,17 +99,9 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteResourceCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 80)]
@@ -130,18 +114,9 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					DeleteResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(CodeContext context) {
-				return DeleteResourceCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(CodeContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
@@ -150,10 +125,7 @@ namespace dnSpy.AsmEditor.Resources {
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length > 0 &&
-				nodes.All(n => n is IResourceNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IResourceNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -224,9 +196,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.nodes = new DeletableNodes<IResourceNode>(rsrcNodes);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.DeleteResourceCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.DeleteResourceCommand;
 
 		public void Execute() {
 			nodes.Delete();
@@ -238,9 +208,7 @@ namespace dnSpy.AsmEditor.Resources {
 			nodes.Restore();
 		}
 
-		public IEnumerable<object> ModifiedObjects {
-			get { return nodes.Nodes; }
-		}
+		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -254,17 +222,9 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteResourceElementCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 90)]
@@ -277,17 +237,9 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteResourceElementCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 90)]
@@ -300,18 +252,9 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					DeleteResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(CodeContext context) {
-				return DeleteResourceElementCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(CodeContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
@@ -320,10 +263,7 @@ namespace dnSpy.AsmEditor.Resources {
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length > 0 &&
-				nodes.All(n => n is IResourceElementNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IResourceElementNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -381,9 +321,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.nodes = new DeletableNodes<IResourceElementNode>(rsrcNodes);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.DeleteResourceCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.DeleteResourceCommand;
 
 		public void Execute() {
 			Debug.Assert(savedResources.Count == 0);
@@ -404,9 +342,7 @@ namespace dnSpy.AsmEditor.Resources {
 			nodes.Restore();
 		}
 
-		public IEnumerable<object> ModifiedObjects {
-			get { return nodes.Nodes; }
-		}
+		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
 	abstract class SaveResourcesCommandBase : MenuItemBase {
@@ -455,17 +391,9 @@ namespace dnSpy.AsmEditor.Resources {
 			return Filter(selNodes.Where(a => a is IResourceDataProvider).Cast<IResourceDataProvider>().ToArray());
 		}
 
-		protected ResourceData[] GetResourceData(IResourceDataProvider[] nodes) {
-			return SaveResources.GetResourceData(nodes, resourceDataType);
-		}
-
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetResourceNodes(context) != null;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
-		}
+		protected ResourceData[] GetResourceData(IResourceDataProvider[] nodes) => SaveResources.GetResourceData(nodes, resourceDataType);
+		public override bool IsVisible(IMenuItemContext context) => GetResourceNodes(context) != null;
+		public override void Execute(IMenuItemContext context) => SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
 	}
 
 	static class SaveResourcesCommand {
@@ -475,13 +403,8 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(false, ResourceDataType.Deserialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return CodeGetResourceNodes(context);
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => CodeGetResourceNodes(context);
 		}
 
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 0)]
@@ -490,13 +413,8 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(false, ResourceDataType.Deserialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return FilesGetResourceNodes(context);
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => FilesGetResourceNodes(context);
 		}
 
 		static string GetHeaderInternal(ResourceData[] infos) {
@@ -513,17 +431,9 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(true, ResourceDataType.Deserialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return CodeGetResourceNodes(context);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => CodeGetResourceNodes(context);
+			public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
 		}
 
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 10)]
@@ -532,27 +442,13 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(true, ResourceDataType.Deserialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return FilesGetResourceNodes(context);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => FilesGetResourceNodes(context);
+			public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
 		}
 
-		static string GetHeaderInternal(ResourceData[] infos) {
-			return string.Format(dnSpy_AsmEditor_Resources.SaveResourcesSubDirectoriesCommand, infos.Length);
-		}
-
-		internal static bool IsVisibleInternal(ResourceData[] infos) {
-			return infos.Length > 1 &&
-				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
-		}
+		static string GetHeaderInternal(ResourceData[] infos) => string.Format(dnSpy_AsmEditor_Resources.SaveResourcesSubDirectoriesCommand, infos.Length);
+		internal static bool IsVisibleInternal(ResourceData[] infos) => infos.Length > 1 && infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
 	}
 
 	static class SaveRawResourcesCommand {
@@ -562,13 +458,8 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(false, ResourceDataType.Serialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return CodeGetResourceNodes(context);
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => CodeGetResourceNodes(context);
 		}
 
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 20)]
@@ -577,13 +468,8 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(false, ResourceDataType.Serialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return FilesGetResourceNodes(context);
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => FilesGetResourceNodes(context);
 		}
 
 		static string GetHeaderInternal(ResourceData[] infos) {
@@ -600,17 +486,9 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(true, ResourceDataType.Serialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return CodeGetResourceNodes(context);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => CodeGetResourceNodes(context);
+			public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
 		}
 
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 30)]
@@ -619,32 +497,17 @@ namespace dnSpy.AsmEditor.Resources {
 				: base(true, ResourceDataType.Serialized) {
 			}
 
-			public override string GetHeader(IMenuItemContext context) {
-				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
-			}
-
-			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) {
-				return FilesGetResourceNodes(context);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
-			}
+			public override string GetHeader(IMenuItemContext context) => GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => FilesGetResourceNodes(context);
+			public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
 		}
 
-		static string GetHeaderInternal(ResourceData[] infos) {
-			return string.Format(dnSpy_AsmEditor_Resources.RawSaveResourcesSubDirectoriesCommand, infos.Length);
-		}
-
-		static bool IsVisibleInternal(ResourceData[] infos) {
-			return SaveWithPathResourcesCommand.IsVisibleInternal(infos);
-		}
+		static string GetHeaderInternal(ResourceData[] infos) => string.Format(dnSpy_AsmEditor_Resources.RawSaveResourcesSubDirectoriesCommand, infos.Length);
+		static bool IsVisibleInternal(ResourceData[] infos) => SaveWithPathResourcesCommand.IsVisibleInternal(infos);
 	}
 
 	static class ResUtils {
-		public static bool CanExecuteResourceListCommand(IFileTreeNodeData[] nodes) {
-			return GetResourceListTreeNode(nodes) != null;
-		}
+		public static bool CanExecuteResourceListCommand(IFileTreeNodeData[] nodes) => GetResourceListTreeNode(nodes) != null;
 
 		public static IResourcesFolderNode GetResourceListTreeNode(IFileTreeNodeData[] nodes) {
 			if (nodes.Length != 1)
@@ -652,7 +515,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = nodes[0] as IResourcesFolderNode;
 			if (rsrcListNode != null)
 				return rsrcListNode;
-			rsrcListNode = nodes[0].TreeNode.Parent == null ? null : nodes[0].TreeNode.Parent.Data as IResourcesFolderNode;
+			rsrcListNode = nodes[0].TreeNode.Parent?.Data as IResourcesFolderNode;
 			if (rsrcListNode != null)
 				return rsrcListNode;
 
@@ -685,13 +548,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateFileResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateFileResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 100)]
@@ -708,13 +566,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateFileResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateFileResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 100)]
@@ -731,19 +584,11 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateFileResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateFileResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return ResUtils.CanExecuteResourceListCommand(nodes);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -796,9 +641,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.nodes = nodes;
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateFileResourceCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.CreateFileResourceCommand2;
 
 		public void Execute() {
 			foreach (var node in nodes) {
@@ -876,13 +719,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateMultiFileResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateMultiFileResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 110)]
@@ -899,13 +737,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateMultiFileResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateMultiFileResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 110)]
@@ -922,19 +755,11 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateMultiFileResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateMultiFileResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return ResUtils.CanExecuteResourceListCommand(nodes);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -975,9 +800,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcListNode, resTreeNode) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateMultiFileResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateMultiFileResourceCommand2;
 	}
 
 	sealed class CreateAssemblyLinkedResourceCommand : CreateResourceTreeNodeCommand {
@@ -994,13 +817,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 120)]
@@ -1017,13 +835,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 120)]
@@ -1040,19 +853,11 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return ResUtils.CanExecuteResourceListCommand(nodes);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1090,9 +895,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcListNode, resTreeNode) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateAssemblyLinkedResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateAssemblyLinkedResourceCommand2;
 	}
 
 	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand {
@@ -1109,13 +912,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 130)]
@@ -1132,13 +930,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 130)]
@@ -1155,19 +948,11 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return ResUtils.CanExecuteResourceListCommand(nodes);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1184,7 +969,7 @@ namespace dnSpy.AsmEditor.Resources {
 				ResourceType = ResourceType.Linked,
 				Name = "filelinked",
 				Attributes = ManifestResourceAttributes.Public,
-				File = new FileDefUser("somefile", dnlib.DotNet.FileAttributes.ContainsNoMetaData, new byte[0]),
+				File = new FileDefUser("somefile", dnlib.DotNet.FileAttributes.ContainsNoMetaData, Array.Empty<byte>()),
 			};
 			var data = new ResourceVM(options, module);
 			var win = new ResourceDlg();
@@ -1206,9 +991,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcListNode, resTreeNode) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateFileLinkedResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateFileLinkedResourceCommand2;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -1224,13 +1007,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return ResourceSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => ResourceSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 90)]
@@ -1245,13 +1023,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return ResourceSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => ResourceSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 90)]
@@ -1266,19 +1039,11 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return ResourceSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => ResourceSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is IResourceNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IResourceNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1322,9 +1087,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.nameChanged = origOptions.Name != newOptions.Name;
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.EditResourceCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.EditResourceCommand2;
 
 		public void Execute() {
 			if (nameChanged) {
@@ -1430,13 +1193,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateImageResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateImageResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 140)]
@@ -1453,13 +1211,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateImageResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateImageResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 140)]
@@ -1476,20 +1229,13 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateImageResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateImageResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1543,9 +1289,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcSetNode, nodes) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateBitMapIconResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateBitMapIconResourceCommand2;
 	}
 
 	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase {
@@ -1562,13 +1306,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateImageListResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateImageListResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 150)]
@@ -1585,13 +1324,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateImageListResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateImageListResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 150)]
@@ -1608,20 +1342,13 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateImageListResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateImageListResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1676,9 +1403,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcSetNode, new IResourceElementNode[] { node }) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateImageListStreamerResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateImageListStreamerResourceCommand2;
 	}
 
 	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase {
@@ -1695,13 +1420,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 170)]
@@ -1718,13 +1438,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 170)]
@@ -1741,20 +1456,13 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1810,9 +1518,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcSetNode, nodes) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateByteArrayResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateByteArrayResourceCommand2;
 	}
 
 	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase {
@@ -1829,13 +1535,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateStreamResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateStreamResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 180)]
@@ -1852,13 +1553,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateStreamResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateStreamResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 180)]
@@ -1875,20 +1571,13 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateStreamResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateStreamResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1900,9 +1589,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcSetNode, nodes) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateStreamResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateStreamResourceCommand2;
 	}
 
 	sealed class CreateResourceElementCommand : CreateResourceElementCommandBase {
@@ -1921,13 +1608,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 190)]
@@ -1946,13 +1628,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 190)]
@@ -1971,20 +1648,13 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					CreateResourceElementCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateResourceElementCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeViewSettings fileTreeViewSettings, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -2024,9 +1694,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcSetNode, new[] { node }) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.CreateResourceCommand2;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -2129,13 +1797,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return ResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => ResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 100)]
@@ -2152,13 +1815,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return ResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => ResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 100)]
@@ -2175,20 +1833,14 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return ResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => ResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is IBuiltInResourceElementNode ||
-				nodes[0] is IUnknownSerializedResourceElementNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is IBuiltInResourceElementNode ||
+			nodes[0] is IUnknownSerializedResourceElementNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeViewSettings fileTreeViewSettings, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -2230,9 +1882,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcElNode, options) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.EditResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.EditResourceCommand2;
 	}
 
 	sealed class ImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
@@ -2247,13 +1897,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 110)]
@@ -2268,13 +1913,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 110)]
@@ -2289,19 +1929,12 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is IImageResourceElementNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 && nodes[0] is IImageResourceElementNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -2338,9 +1971,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcElNode, options) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.EditResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.EditResourceCommand2;
 	}
 
 	sealed class SerializedImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
@@ -2355,13 +1986,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 120)]
@@ -2376,13 +2002,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 120)]
@@ -2397,19 +2018,11 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is ISerializedImageResourceElementNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is ISerializedImageResourceElementNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -2446,9 +2059,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcElNode, options) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.EditResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.EditResourceCommand2;
 	}
 
 	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
@@ -2463,13 +2074,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 130)]
@@ -2484,13 +2090,8 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 130)]
@@ -2505,19 +2106,12 @@ namespace dnSpy.AsmEditor.Resources {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is ISerializedImageListStreamerResourceElementNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 && nodes[0] is ISerializedImageListStreamerResourceElementNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -2561,8 +2155,6 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(rsrcElNode, options) {
 		}
 
-		public override string Description {
-			get { return dnSpy_AsmEditor_Resources.EditResourceCommand2; }
-		}
+		public override string Description => dnSpy_AsmEditor_Resources.EditResourceCommand2;
 	}
 }

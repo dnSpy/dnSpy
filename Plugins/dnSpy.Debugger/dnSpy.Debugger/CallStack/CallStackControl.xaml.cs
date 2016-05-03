@@ -24,23 +24,18 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed partial class CallStackControl : UserControl {
-		public ListView ListView {
-			get { return listView; }
-		}
+		public ListView ListView => listView;
 
 		public CallStackControl() {
 			InitializeComponent();
 		}
 
-		public void FocusPane() {
-			UIUtils.FocusSelector(listView);
-		}
+		public void FocusPane() => UIUtils.FocusSelector(listView);
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			if (CallStackListViewDoubleClick != null)
-				CallStackListViewDoubleClick(this, EventArgs.Empty);
+			CallStackListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler CallStackListViewDoubleClick;

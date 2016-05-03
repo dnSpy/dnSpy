@@ -15,8 +15,8 @@ using dnSpy.Shared.Menus;
 
 namespace Example1.Plugin {
 	sealed class TVContext {
-		public readonly bool SomeValue;
-		public readonly IFileTreeNodeData[] Nodes;
+		public bool SomeValue { get; }
+		public IFileTreeNodeData[] Nodes { get; }
 
 		public TVContext(bool someValue, IEnumerable<IFileTreeNodeData> nodes) {
 			this.SomeValue = someValue;
@@ -25,9 +25,7 @@ namespace Example1.Plugin {
 	}
 
 	abstract class TVCtxMenuCommand : MenuItemBase<TVContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected sealed override TVContext CreateContext(IMenuItemContext context) {
@@ -48,24 +46,14 @@ namespace Example1.Plugin {
 
 	[ExportMenuItem(Header = "Command #1", Group = Constants.GROUP_TREEVIEW, Order = 0)]
 	sealed class TVCommand1 : TVCtxMenuCommand {
-		public override void Execute(TVContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
-		}
-
-		public override bool IsEnabled(TVContext context) {
-			return context.Nodes.Length > 1;
-		}
+		public override void Execute(TVContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
+		public override bool IsEnabled(TVContext context) => context.Nodes.Length > 1;
 	}
 
 	[ExportMenuItem(Header = "Command #2", Group = Constants.GROUP_TREEVIEW, Order = 10)]
 	sealed class TVCommand2 : TVCtxMenuCommand {
-		public override void Execute(TVContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #2");
-		}
-
-		public override bool IsVisible(TVContext context) {
-			return context.Nodes.Length > 0;
-		}
+		public override void Execute(TVContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #2");
+		public override bool IsVisible(TVContext context) => context.Nodes.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "Command #3", Group = Constants.GROUP_TREEVIEW, Order = 20)]
@@ -89,14 +77,8 @@ namespace Example1.Plugin {
 
 	[ExportMenuItem(Header = "Command #4", Group = Constants.GROUP_TREEVIEW, Order = 30)]
 	sealed class TVCommand4 : TVCtxMenuCommand {
-		public override void Execute(TVContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #4");
-		}
-
-		public override bool IsEnabled(TVContext context) {
-			return context.Nodes.Length == 1 &&
-					context.Nodes[0] is IModuleFileNode;
-		}
+		public override void Execute(TVContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #4");
+		public override bool IsEnabled(TVContext context) => context.Nodes.Length == 1 && context.Nodes[0] is IModuleFileNode;
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TREEVIEW, Order = 40)]
@@ -124,9 +106,7 @@ namespace Example1.Plugin {
 			return string.Format("Copy token {0:X8}", node.Reference.MDToken.Raw);
 		}
 
-		public override bool IsVisible(TVContext context) {
-			return GetTokenNode(context) != null;
-		}
+		public override bool IsVisible(TVContext context) => GetTokenNode(context) != null;
 	}
 
 	[ExportMenuItem(Header = "Copy Second Instruction", Group = Constants.GROUP_TREEVIEW, Order = 50)]
@@ -153,8 +133,6 @@ namespace Example1.Plugin {
 			return body.Instructions[1];
 		}
 
-		public override bool IsEnabled(TVContext context) {
-			return GetSecondInstruction(context) != null;
-		}
+		public override bool IsEnabled(TVContext context) => GetSecondInstruction(context) != null;
 	}
 }

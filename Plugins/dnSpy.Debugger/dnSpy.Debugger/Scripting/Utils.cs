@@ -99,13 +99,10 @@ namespace dnSpy.Debugger.Scripting {
 			return cvalues;
 		}
 
-		public static DBG.SerializedDnModule ToSerializedDnModule(this ModuleName moduleName) {
-			return new DBG.SerializedDnModule(moduleName.AssemblyFullName, moduleName.Name, moduleName.IsDynamic, moduleName.IsInMemory, moduleName.ModuleNameOnly);
-		}
-
-		public static ModuleName ToModuleName(this DBG.SerializedDnModule serMod) {
-			return new ModuleName(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
-		}
+		public static DBG.SerializedDnModule ToSerializedDnModule(this ModuleName moduleName) =>
+			new DBG.SerializedDnModule(moduleName.AssemblyFullName, moduleName.Name, moduleName.IsDynamic, moduleName.IsInMemory, moduleName.ModuleNameOnly);
+		public static ModuleName ToModuleName(this DBG.SerializedDnModule serMod) =>
+			new ModuleName(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
 
 		public static DBG.DebugEventBreakpointKind ToDebugEventBreakpointKind(this DebugEventKind eventKind) {
 			switch (eventKind) {
@@ -215,9 +212,8 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public static DBG.CorValueResult ToCorValueResult(this ValueResult value) {
-			return value.IsValid ? new DBG.CorValueResult(value.Value) : new DBG.CorValueResult();
-		}
+		public static DBG.CorValueResult ToCorValueResult(this ValueResult value) =>
+			value.IsValid ? new DBG.CorValueResult(value.Value) : new DBG.CorValueResult();
 
 		public static bool IsSameFile(string filename, string nameToMatch) {
 			if (StringComparer.OrdinalIgnoreCase.Equals(filename, nameToMatch))
@@ -314,8 +310,6 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public static bool IsMethodSpec(this MethodBase mb) {
-			return mb != null && !mb.IsGenericMethodDefinition && mb.IsGenericMethod;
-		}
+		public static bool IsMethodSpec(this MethodBase mb) => mb != null && !mb.IsGenericMethodDefinition && mb.IsGenericMethod;
 	}
 }

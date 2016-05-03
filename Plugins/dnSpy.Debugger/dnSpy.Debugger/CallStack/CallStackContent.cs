@@ -43,25 +43,11 @@ namespace dnSpy.Debugger.CallStack {
 
 	[Export, Export(typeof(ICallStackContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class CallStackContent : ICallStackContent {
-		public object UIObject {
-			get { return callStackControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return callStackControl.ListView; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return callStackControl; }
-		}
-
-		public ListView ListView {
-			get { return callStackControl.ListView; }
-		}
-
-		public ICallStackVM CallStackVM {
-			get { return vmCallStack; }
-		}
+		public object UIObject => callStackControl;
+		public IInputElement FocusedElement => callStackControl.ListView;
+		public FrameworkElement ScaleElement => callStackControl;
+		public ListView ListView => callStackControl.ListView;
+		public ICallStackVM CallStackVM => vmCallStack;
 
 		readonly CallStackControl callStackControl;
 		readonly ICallStackVM vmCallStack;
@@ -89,28 +75,11 @@ namespace dnSpy.Debugger.CallStack {
 			SwitchToFrameCallStackCtxMenuCommand.Execute(stackFrameManager.Value, fileTabManager, moduleLoader.Value, callStackControl.ListView.SelectedItem as CallStackFrameVM, newTab);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			vmCallStack.RefreshThemeFields();
-		}
-
-		public void Focus() {
-			UIUtils.FocusSelector(callStackControl.ListView);
-		}
-
-		public void OnClose() {
-			vmCallStack.IsEnabled = false;
-		}
-
-		public void OnShow() {
-			vmCallStack.IsEnabled = true;
-		}
-
-		public void OnHidden() {
-			vmCallStack.IsVisible = false;
-		}
-
-		public void OnVisible() {
-			vmCallStack.IsVisible = true;
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmCallStack.RefreshThemeFields();
+		public void Focus() => UIUtils.FocusSelector(callStackControl.ListView);
+		public void OnClose() => vmCallStack.IsEnabled = false;
+		public void OnShow() => vmCallStack.IsEnabled = true;
+		public void OnHidden() => vmCallStack.IsVisible = false;
+		public void OnVisible() => vmCallStack.IsVisible = true;
 	}
 }

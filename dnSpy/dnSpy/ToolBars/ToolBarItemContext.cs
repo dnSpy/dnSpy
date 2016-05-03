@@ -22,13 +22,10 @@ using dnSpy.Contracts.ToolBars;
 
 namespace dnSpy.ToolBars {
 	sealed class ToolBarItemContext : IToolBarItemContext {
-		public Guid ToolBarGuid {
-			get { return toolBarGuid; }
-		}
-		readonly Guid toolBarGuid;
+		public Guid ToolBarGuid { get; }
 
 		public ToolBarItemContext(Guid toolBarGuid) {
-			this.toolBarGuid = toolBarGuid;
+			this.ToolBarGuid = toolBarGuid;
 		}
 	}
 }

@@ -97,9 +97,7 @@ namespace dnSpy.Languages.MSBuild {
 			return i < 0 ? ns : ns.Substring(0, i);
 		}
 
-		static bool IsValidNamespace(string ns) {
-			return !string.IsNullOrEmpty(ns) && ns != "XamlGeneratedNamespace";
-		}
+		static bool IsValidNamespace(string ns) => !string.IsNullOrEmpty(ns) && ns != "XamlGeneratedNamespace";
 
 		static string GetCommonNamespace(StringBuilder sb, string a, string b) {
 			sb.Clear();

@@ -26,19 +26,19 @@ namespace dndbg.DotNet {
 		/// true if the type has been loaded (the <c>LoadClass</c> event has been received), false
 		/// if the type can still get new members (fields, methods, properties, events, nested types)
 		/// </summary>
-		public readonly bool Loaded;
+		public bool Loaded { get; }
 
 		/// <summary>
 		/// true if the type was created and no new members can be added. false if it got updated,
 		/// eg. a member (field, type, event, property) could've gotten added or updated or a
 		/// nested type got added to <see cref="TypeDef.NestedTypes"/>.
 		/// </summary>
-		public readonly bool Created;
+		public bool Created { get; }
 
 		/// <summary>
 		/// The type
 		/// </summary>
-		public readonly TypeDef TypeDef;
+		public TypeDef TypeDef { get; }
 
 		public TypeUpdatedEventArgs(TypeDef type, bool created, bool loaded) {
 			this.Created = created;

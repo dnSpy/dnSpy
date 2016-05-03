@@ -40,14 +40,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class MarshalTypeVM : ViewModelBase {
 		static readonly EnumVM[] nativeTypeList = EnumVM.Create(typeof(dnlib.DotNet.NativeType));
-		public EnumListVM NativeType {
-			get { return nativeTypeVM; }
-		}
-		readonly EnumListVM nativeTypeVM;
-
-		public bool NativeType_IsEnabled {
-			get { return IsEnabled; }
-		}
+		public EnumListVM NativeType { get; }
+		public bool NativeType_IsEnabled => IsEnabled;
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -84,29 +78,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public bool IsRawMarshalType {
-			get { return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.RawBlob; }
-		}
-
-		public bool IsFixedSysStringMarshalType {
-			get { return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.FixedSysString; }
-		}
-
-		public bool IsSafeArrayMarshalType {
-			get { return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.SafeArray; }
-		}
-
-		public bool IsFixedArrayMarshalType {
-			get { return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.FixedArray; }
-		}
-
-		public bool IsArrayMarshalType {
-			get { return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.Array; }
-		}
-
-		public bool IsCustomMarshalType {
-			get { return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.CustomMarshaler; }
-		}
+		public bool IsRawMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.RawBlob;
+		public bool IsFixedSysStringMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.FixedSysString;
+		public bool IsSafeArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.SafeArray;
+		public bool IsFixedArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.FixedArray;
+		public bool IsArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.Array;
+		public bool IsCustomMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.CustomMarshaler;
 
 		public bool IsInterfaceMarshalType {
 			get {
@@ -116,23 +93,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public HexStringVM RawMarshalType_Data {
-			get { return rawMarshalType_data; }
-		}
-		readonly HexStringVM rawMarshalType_data;
-
-		public bool RawMarshalType_Data_IsEnabled {
-			get { return IsEnabled; }
-		}
-
-		public NullableCompressedUInt32 FixedSysStringMarshalType_Size {
-			get { return fixedSysStringMarshalType_size; }
-		}
-		readonly NullableCompressedUInt32 fixedSysStringMarshalType_size;
-
-		public bool FixedSysStringMarshalType_Size_IsEnabled {
-			get { return IsEnabled; }
-		}
+		public HexStringVM RawMarshalType_Data { get; }
+		public bool RawMarshalType_Data_IsEnabled => IsEnabled;
+		public NullableCompressedUInt32 FixedSysStringMarshalType_Size { get; }
+		public bool FixedSysStringMarshalType_Size_IsEnabled => IsEnabled;
 
 		static readonly EnumVM[] variantTypeList = new EnumVM[] {
 			new EnumVM(VariantType.NotInitialized, dnSpy_AsmEditor_Resources.MarshalType_EnumNotInitialized),
@@ -182,10 +146,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			new EnumVM(VariantType.VersionedStream, "VersionedStream"),
 			new EnumVM(VariantType.BStrBlob, "BStrBlob"),
 		};
-		public EnumListVM SafeArrayMarshalType_VariantType {
-			get { return safeArrayMarshalType_variantTypeVM; }
-		}
-		readonly EnumListVM safeArrayMarshalType_variantTypeVM;
+		public EnumListVM SafeArrayMarshalType_VariantType { get; }
 
 		public VariantType SafeArrayMarshalType_VT {
 			get {
@@ -206,9 +167,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		VariantType safeArrayMarshalType_vt;
 
-		public bool SafeArrayMarshalType_VT_IsEnabled {
-			get { return IsEnabled; }
-		}
+		public bool SafeArrayMarshalType_VT_IsEnabled => IsEnabled;
 
 		public bool SafeArrayMarshalType_VT_Flags_IsEnabled {
 			get {
@@ -237,9 +196,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { SetFlagValue(VariantType.Reserved, value); }
 		}
 
-		bool GetFlagValue(VariantType flag) {
-			return (SafeArrayMarshalType_VT & flag) != 0;
-		}
+		bool GetFlagValue(VariantType flag) => (SafeArrayMarshalType_VT & flag) != 0;
 
 		void SetFlagValue(VariantType flag, bool value) {
 			if (value)
@@ -248,71 +205,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				SafeArrayMarshalType_VT &= ~flag;
 		}
 
-		public TypeSigCreatorVM SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator {
-			get { return safeArrayMarshalType_userDefinedSubType_typeSigCreator; }
-		}
-		readonly TypeSigCreatorVM safeArrayMarshalType_userDefinedSubType_typeSigCreator;
-
-		public bool SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled {
-			get { return SafeArrayMarshalType_VT_Flags_IsEnabled; }
-		}
-
-		public NullableCompressedUInt32 FixedArrayMarshalType_Size {
-			get { return fixedArrayMarshalType_size; }
-		}
-		readonly NullableCompressedUInt32 fixedArrayMarshalType_size;
-
-		public bool FixedArrayMarshalType_Size_IsEnabled {
-			get { return IsEnabled; }
-		}
-
-		public EnumListVM FixedArrayMarshalType_NativeType {
-			get { return fixedArrayMarshalType_nativeTypeVM; }
-		}
-		readonly EnumListVM fixedArrayMarshalType_nativeTypeVM;
-
-		public bool FixedArrayMarshalType_NativeType_IsEnabled {
-			get { return FixedArrayMarshalType_Size_IsEnabled && !FixedArrayMarshalType_Size.IsNull; }
-		}
-
-		public EnumListVM ArrayMarshalType_NativeType {
-			get { return arrayMarshalType_nativeTypeVM; }
-		}
-		readonly EnumListVM arrayMarshalType_nativeTypeVM;
-
-		public bool ArrayMarshalType_NativeType_IsEnabled {
-			get { return IsEnabled; }
-		}
-
-		public NullableCompressedUInt32 ArrayMarshalType_ParamNum {
-			get { return arrayMarshalType_paramNum; }
-		}
-		readonly NullableCompressedUInt32 arrayMarshalType_paramNum;
-
-		public bool ArrayMarshalType_ParamNum_IsEnabled {
-			get {
-				return ArrayMarshalType_NativeType_IsEnabled &&
-					(NativeType)ArrayMarshalType_NativeType.SelectedItem != dnlib.DotNet.NativeType.NotInitialized;
-			}
-		}
-
-		public NullableCompressedUInt32 ArrayMarshalType_NumElems {
-			get { return arrayMarshalType_numElems; }
-		}
-		readonly NullableCompressedUInt32 arrayMarshalType_numElems;
-
-		public bool ArrayMarshalType_NumElems_IsEnabled {
-			get { return ArrayMarshalType_ParamNum_IsEnabled && !ArrayMarshalType_ParamNum.IsNull; }
-		}
-
-		public NullableCompressedUInt32 ArrayMarshalType_Flags {
-			get { return arrayMarshalType_flags; }
-		}
-		readonly NullableCompressedUInt32 arrayMarshalType_flags;
-
-		public bool ArrayMarshalType_Flags_IsEnabled {
-			get { return ArrayMarshalType_NumElems_IsEnabled && !ArrayMarshalType_NumElems.IsNull; }
-		}
+		public TypeSigCreatorVM SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator { get; }
+		public bool SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled => SafeArrayMarshalType_VT_Flags_IsEnabled;
+		public NullableCompressedUInt32 FixedArrayMarshalType_Size { get; }
+		public bool FixedArrayMarshalType_Size_IsEnabled => IsEnabled;
+		public EnumListVM FixedArrayMarshalType_NativeType { get; }
+		public bool FixedArrayMarshalType_NativeType_IsEnabled => FixedArrayMarshalType_Size_IsEnabled && !FixedArrayMarshalType_Size.IsNull;
+		public EnumListVM ArrayMarshalType_NativeType { get; }
+		public bool ArrayMarshalType_NativeType_IsEnabled => IsEnabled;
+		public NullableCompressedUInt32 ArrayMarshalType_ParamNum { get; }
+		public bool ArrayMarshalType_ParamNum_IsEnabled =>
+			ArrayMarshalType_NativeType_IsEnabled &&
+			(NativeType)ArrayMarshalType_NativeType.SelectedItem != dnlib.DotNet.NativeType.NotInitialized;
+		public NullableCompressedUInt32 ArrayMarshalType_NumElems { get; }
+		public bool ArrayMarshalType_NumElems_IsEnabled => ArrayMarshalType_ParamNum_IsEnabled && !ArrayMarshalType_ParamNum.IsNull;
+		public NullableCompressedUInt32 ArrayMarshalType_Flags { get; }
+		public bool ArrayMarshalType_Flags_IsEnabled => ArrayMarshalType_NumElems_IsEnabled && !ArrayMarshalType_NumElems.IsNull;
 
 		public string CustomMarshalType_GUID {
 			get { return customMarshalType_guid; }
@@ -326,9 +234,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string customMarshalType_guid;
 
-		public bool CustomMarshalType_GUID_IsEnabled {
-			get { return IsEnabled; }
-		}
+		public bool CustomMarshalType_GUID_IsEnabled => IsEnabled;
 
 		public string CustomMarshalType_NativeTypeName {
 			get { return customMarshalType_nativeTypeName; }
@@ -342,18 +248,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string customMarshalType_nativeTypeName;
 
-		public bool CustomMarshalType_NativeTypeName_IsEnabled {
-			get { return IsEnabled; }
-		}
-
-		public TypeSigCreatorVM CustomMarshalType_CustMarshaler_TypeSigCreator {
-			get { return customMarshalType_custMarshaler_typeSigCreator; }
-		}
-		readonly TypeSigCreatorVM customMarshalType_custMarshaler_typeSigCreator;
-
-		public bool CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled {
-			get { return IsEnabled; }
-		}
+		public bool CustomMarshalType_NativeTypeName_IsEnabled => IsEnabled;
+		public TypeSigCreatorVM CustomMarshalType_CustMarshaler_TypeSigCreator { get; }
+		public bool CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled => IsEnabled;
 
 		public string CustomMarshalType_Cookie {
 			get { return customMarshalType_cookie; }
@@ -367,44 +264,29 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string customMarshalType_cookie;
 
-		public bool CustomMarshalType_Cookie_IsEnabled {
-			get { return IsEnabled; }
-		}
-
-		public NullableCompressedUInt32 InterfaceMarshalType_IidParamIndex {
-			get { return interfaceMarshalType_iidParamIndex; }
-		}
-		readonly NullableCompressedUInt32 interfaceMarshalType_iidParamIndex;
-
-		public bool InterfaceMarshalType_IidParamIndex_IsEnabled {
-			get { return IsEnabled; }
-		}
-
-		public string TypeString {
-			get { return NativeType.SelectedItem.ToString(); }
-		}
-
-		void TypeStringUpdated() {
-			OnPropertyChanged("TypeString");
-		}
+		public bool CustomMarshalType_Cookie_IsEnabled => IsEnabled;
+		public NullableCompressedUInt32 InterfaceMarshalType_IidParamIndex { get; }
+		public bool InterfaceMarshalType_IidParamIndex_IsEnabled => IsEnabled;
+		public string TypeString => NativeType.SelectedItem.ToString();
+		void TypeStringUpdated() => OnPropertyChanged("TypeString");
 
 		public MarshalTypeVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
-			this.nativeTypeVM = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
+			this.NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(this.NativeType, false);
-			this.rawMarshalType_data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
-			this.fixedSysStringMarshalType_size = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
-			this.safeArrayMarshalType_variantTypeVM = new EnumListVM(variantTypeList, (a, b) => { OnSafeArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.safeArrayMarshalType_userDefinedSubType_typeSigCreator = CreateTypeSigCreatorVM(ownerModule, languageManager, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
-			this.fixedArrayMarshalType_size = new NullableCompressedUInt32(a => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.fixedArrayMarshalType_nativeTypeVM = new EnumListVM(nativeTypeList, (a, b) => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.RawMarshalType_Data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
+			this.FixedSysStringMarshalType_Size = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
+			this.SafeArrayMarshalType_VariantType = new EnumListVM(variantTypeList, (a, b) => { OnSafeArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, languageManager, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
+			this.FixedArrayMarshalType_Size = new NullableCompressedUInt32(a => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.FixedArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(FixedArrayMarshalType_NativeType, true);
-			this.arrayMarshalType_nativeTypeVM = new EnumListVM(nativeTypeList, (a, b) => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.ArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(ArrayMarshalType_NativeType, true);
-			this.arrayMarshalType_paramNum = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.arrayMarshalType_numElems = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.arrayMarshalType_flags = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.customMarshalType_custMarshaler_typeSigCreator = CreateTypeSigCreatorVM(ownerModule, languageManager, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
-			this.interfaceMarshalType_iidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
+			this.ArrayMarshalType_ParamNum = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.ArrayMarshalType_NumElems = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.ArrayMarshalType_Flags = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			this.CustomMarshalType_CustMarshaler_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, languageManager, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
+			this.InterfaceMarshalType_IidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 		}
 
 		void OnSafeArrayMarshalTypeIsEnabledChanged() {
@@ -438,13 +320,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ArrayMarshalType_Flags.Value = null;
 		}
 
-		public string SafeArrayMarshalType_UserDefinedSubType_TypeHeader {
-			get { return string.Format(dnSpy_AsmEditor_Resources.Type, SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSigDnlibFullName); }
-		}
-
-		public string CustomMarshalType_CustMarshaler_TypeHeader {
-			get { return string.Format(dnSpy_AsmEditor_Resources.Type, customMarshalType_custMarshaler_typeSigCreator.TypeSigDnlibFullName); }
-		}
+		public string SafeArrayMarshalType_UserDefinedSubType_TypeHeader =>
+			string.Format(dnSpy_AsmEditor_Resources.Type, SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSigDnlibFullName);
+		public string CustomMarshalType_CustMarshaler_TypeHeader =>
+			string.Format(dnSpy_AsmEditor_Resources.Type, CustomMarshalType_CustMarshaler_TypeSigCreator.TypeSigDnlibFullName);
 
 		void safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "TypeSigDnlibFullName")

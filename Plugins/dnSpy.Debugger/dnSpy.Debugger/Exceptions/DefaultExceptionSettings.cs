@@ -23,9 +23,9 @@ using System.Linq;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class EXCEPTION_INFO {	// See msdbg.h or https://msdn.microsoft.com/en-us/library/vstudio/bb161797%28v=vs.140%29.aspx
-		public readonly string Name;
-		public readonly uint Code;
-		public readonly ExceptionState State;
+		public string Name { get; }
+		public uint Code { get; }
+		public ExceptionState State { get; }
 
 		public EXCEPTION_INFO(string name, uint code, ExceptionState state) {
 			this.Name = name;
@@ -473,8 +473,6 @@ namespace dnSpy.Debugger.Exceptions {
 		DefaultExceptionSettings() {
 		}
 
-		public IEnumerable<ExceptionInfo> ExceptionInfos {
-			get { return DotNetExceptionInfos.Select(a => new ExceptionInfo(ExceptionType.DotNet, a)); }
-		}
+		public IEnumerable<ExceptionInfo> ExceptionInfos => DotNetExceptionInfos.Select(a => new ExceptionInfo(ExceptionType.DotNet, a));
 	}
 }

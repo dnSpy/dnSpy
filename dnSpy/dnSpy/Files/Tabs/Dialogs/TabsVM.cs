@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -25,29 +26,23 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabsVM : ViewModelBase {
+		public ICommand SaveCommand => new RelayCommand(a => Save(), a => CanSave);
+		public ICommand CloseTabCommand => new RelayCommand(a => CloseTab(), a => CanCloseTab);
+		public ObservableCollection<TabVM> Collection => tabsList;
+		public ITabsVMSettings Settings { get; }
+
 		readonly IFileTabManager fileTabManager;
-
-		public ICommand SaveCommand {
-			get { return new RelayCommand(a => Save(), a => CanSave); }
-		}
-
-		public ICommand CloseTabCommand {
-			get { return new RelayCommand(a => CloseTab(), a => CanCloseTab); }
-		}
-
-		public ObservableCollection<TabVM> Collection {
-			get { return tabsList; }
-		}
 		readonly ObservableCollection<TabVM> tabsList;
+		readonly ISaveManager saveManager;
 
 		public TabVM[] SelectedItems {
 			get { return selectedItems; }
 			set {
-				selectedItems = value ?? new TabVM[0];
+				selectedItems = value ?? Array.Empty<TabVM>();
 				InitializeSaveText();
 			}
 		}
-		TabVM[] selectedItems = new TabVM[0];
+		TabVM[] selectedItems = Array.Empty<TabVM>();
 
 		public object SelectedItem {
 			get { return selectedItem; }
@@ -72,17 +67,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		string saveText;
 
-		public ITabsVMSettings Settings {
-			get { return tabsVMSettings; }
-		}
-		readonly ITabsVMSettings tabsVMSettings;
-
-		readonly ISaveManager saveManager;
-
 		public TabsVM(IFileTabManager fileTabManager, ISaveManager saveManager, ITabsVMSettings tabsVMSettings) {
 			this.fileTabManager = fileTabManager;
 			this.saveManager = saveManager;
-			this.tabsVMSettings = tabsVMSettings;
+			this.Settings = tabsVMSettings;
 			this.tabsList = new ObservableCollection<TabVM>(fileTabManager.SortedTabs.Select(a => new TabVM(this, a)));
 			this.SelectedItem = tabsList.Count == 0 ? null : tabsList[0];
 			InitializeSaveText();
@@ -90,15 +78,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 		void InitializeSaveText() {
 			var vm = selectedItems.Length == 0 ? null : selectedItems[0];
-			SaveText = saveManager.GetMenuHeader(vm == null ? null : vm.Tab);
+			SaveText = saveManager.GetMenuHeader(vm?.Tab);
 		}
 
-		bool CanSave {
-			get {
-				return SelectedItems.Length == 1 &&
-					saveManager.CanSave(SelectedItems[0].Tab);
-			}
-		}
+		bool CanSave => SelectedItems.Length == 1 && saveManager.CanSave(SelectedItems[0].Tab);
 
 		void Save() {
 			if (!CanSave)
@@ -106,9 +89,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			saveManager.Save(SelectedItems[0].Tab);
 		}
 
-		bool CanCloseTab {
-			get { return SelectedItems.Length > 0; }
-		}
+		bool CanCloseTab => SelectedItems.Length > 0;
 
 		void CloseTab() {
 			var oldSelItem = SelectedItem;

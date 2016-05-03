@@ -31,9 +31,7 @@ namespace dnSpy.Shared.HexEditor {
 			this.sb = new StringBuilder();
 		}
 
-		public void WriteBr() {
-			sb.Append("<br />");
-		}
+		public void WriteBr() => sb.Append("<br />");
 
 		public void WriteSpan(string cssText, string spanText) {
 			sb.Append("<span");

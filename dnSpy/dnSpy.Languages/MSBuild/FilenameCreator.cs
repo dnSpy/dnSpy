@@ -25,9 +25,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class FilenameCreator {
-		public string DefaultNamespace {
-			get { return defaultNamespace; }
-		}
+		public string DefaultNamespace => defaultNamespace;
 		readonly string defaultNamespace;
 
 		readonly HashSet<string> usedNames;

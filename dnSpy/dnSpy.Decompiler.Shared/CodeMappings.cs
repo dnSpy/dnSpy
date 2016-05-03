@@ -27,43 +27,31 @@ namespace dnSpy.Decompiler.Shared {
 	/// </summary>
 	public sealed class SourceCodeMapping : IEquatable<SourceCodeMapping> {
 		public SourceCodeMapping(ILRange ilRange, TextPosition start, TextPosition end, MemberMapping mapping) {
-			this.ilRange = ilRange;
-			this.startPos = start;
-			this.endPos = end;
-			this.memberMapping = mapping;
+			this.ILRange = ilRange;
+			this.StartPosition = start;
+			this.EndPosition = end;
+			this.Mapping = mapping;
 		}
 
 		/// <summary>
 		/// Gets or sets the start location of the instruction.
 		/// </summary>
-		public TextPosition StartPosition {
-			get { return startPos; }
-		}
-		readonly TextPosition startPos;
+		public TextPosition StartPosition { get; }
 
 		/// <summary>
 		/// Gets or sets the end location of the instruction.
 		/// </summary>
-		public TextPosition EndPosition {
-			get { return endPos; }
-		}
-		readonly TextPosition endPos;
+		public TextPosition EndPosition { get; }
 
 		/// <summary>
 		/// Gets or sets IL Range offset for the source code line. E.g.: 13-19 &lt;-&gt; 135.
 		/// </summary>
-		public ILRange ILRange {
-			get { return ilRange; }
-		}
-		readonly ILRange ilRange;
+		public ILRange ILRange { get; }
 
 		/// <summary>
 		/// Gets or sets the member mapping this source code mapping belongs to.
 		/// </summary>
-		public MemberMapping Mapping {
-			get { return memberMapping; }
-		}
-		readonly MemberMapping memberMapping;
+		public MemberMapping Mapping { get; }
 
 		/// <summary>
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
@@ -86,13 +74,8 @@ namespace dnSpy.Decompiler.Shared {
 				EndPosition.Equals(other.EndPosition);
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as SourceCodeMapping);
-		}
-
-		public override int GetHashCode() {
-			return Mapping.GetHashCode() ^ ILRange.GetHashCode() ^ StartPosition.GetHashCode() ^ EndPosition.GetHashCode();
-		}
+		public override bool Equals(object obj) => Equals(obj as SourceCodeMapping);
+		public override int GetHashCode() => Mapping.GetHashCode() ^ ILRange.GetHashCode() ^ StartPosition.GetHashCode() ^ EndPosition.GetHashCode();
 
 		public override string ToString() {
 			return string.Format("{0} {1},{2} - {3},{4}",
@@ -108,43 +91,31 @@ namespace dnSpy.Decompiler.Shared {
 	/// </summary>
 	public sealed class MemberMapping {
 		public MemberMapping(MethodDef method, IEnumerable<IILVariable> localVariables = null) {
-			this.memberCodeMappings = new List<SourceCodeMapping>();
-			this.method = method;
-			this.codeSize = method.Body.GetCodeSize();
-			this.localVariables = localVariables;
+			this.MemberCodeMappings = new List<SourceCodeMapping>();
+			this.Method = method;
+			this.CodeSize = method.Body.GetCodeSize();
+			this.LocalVariables = localVariables;
 		}
 
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public MethodDef Method {
-			get { return method; }
-		}
-		readonly MethodDef method;
+		public MethodDef Method { get; }
 
 		/// <summary>
 		/// Gets or sets the code size for the member mapping.
 		/// </summary>
-		public int CodeSize {
-			get { return codeSize; }
-		}
-		readonly int codeSize;
+		public int CodeSize { get; }
 
 		/// <summary>
 		/// Gets or sets the source code mappings.
 		/// </summary>
-		public List<SourceCodeMapping> MemberCodeMappings {
-			get { return memberCodeMappings; }
-		}
-		readonly List<SourceCodeMapping> memberCodeMappings;
+		public List<SourceCodeMapping> MemberCodeMappings { get; }
 
 		/// <summary>
 		/// Gets the local variables or null if none
 		/// </summary>
-		public IEnumerable<IILVariable> LocalVariables {
-			get { return localVariables; }
-		}
-		readonly IEnumerable<IILVariable> localVariables;
+		public IEnumerable<IILVariable> LocalVariables { get; }
 
 		/// <summary>
 		/// Gets the inverted IL Ranges.<br/>

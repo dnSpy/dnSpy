@@ -25,24 +25,12 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class ResXProjectFile : ProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateResXFile; }
-		}
-
-		public override BuildAction BuildAction {
-			get { return BuildAction.EmbeddedResource; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
+		public override string Description => Languages_Resources.MSBuild_CreateResXFile;
+		public override BuildAction BuildAction => BuildAction.EmbeddedResource;
+		public override string Filename => filename;
 		readonly string filename;
 
-		public string TypeFullName {
-			get { return typeFullName; }
-		}
-		readonly string typeFullName;
-
+		public string TypeFullName { get; }
 		public bool IsSatelliteFile { get; set; }
 
 		readonly EmbeddedResource embeddedResource;
@@ -52,7 +40,7 @@ namespace dnSpy.Languages.MSBuild {
 		public ResXProjectFile(ModuleDef module, string filename, string typeFullName, EmbeddedResource er) {
 			this.module = module;
 			this.filename = filename;
-			this.typeFullName = typeFullName;
+			this.TypeFullName = typeFullName;
 			this.embeddedResource = er;
 
 			this.newToOldAsm = new Dictionary<IAssembly, IAssembly>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));

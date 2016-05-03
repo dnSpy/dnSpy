@@ -40,9 +40,7 @@ namespace dnSpy.Debugger.CallStack {
 	}
 
 	sealed class StackFrameLine : MarkedTextLine {
-		public override bool HasImage {
-			get { return GetImageName() != null; }
-		}
+		public override bool HasImage => GetImageName() != null;
 
 		public override double ZOrder {
 			get {
@@ -60,10 +58,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		readonly StackFrameLineType type;
-
-		internal ITextEditorUIContext TextView {
-			get { return uiContext; }
-		}
+		internal ITextEditorUIContext TextView => uiContext;
 		readonly ITextEditorUIContext uiContext;
 
 		public StackFrameLine(StackFrameLineType type, ITextEditorUIContext uiContext, SerializedDnToken methodKey, uint ilOffset)
@@ -109,8 +104,6 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override bool IsVisible(ITextEditorUIContext uiContext) {
-			return this.uiContext == uiContext;
-		}
+		public override bool IsVisible(ITextEditorUIContext uiContext) => this.uiContext == uiContext;
 	}
 }

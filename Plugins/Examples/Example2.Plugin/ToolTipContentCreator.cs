@@ -4,13 +4,10 @@ using dnSpy.Decompiler.Shared;
 namespace Example2.Plugin {
 	// This reference is added to the "decompiled" code by ModuleChildNode.Decompile()
 	sealed class StringInfoReference {
-		public string Message {
-			get { return msg; }
-		}
-		readonly string msg;
+		public string Message { get; }
 
 		public StringInfoReference(string msg) {
-			this.msg = msg;
+			this.Message = msg;
 		}
 	}
 

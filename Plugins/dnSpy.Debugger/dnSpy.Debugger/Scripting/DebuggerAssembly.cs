@@ -25,77 +25,44 @@ using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerAssembly : IDebuggerAssembly {
-		public IAppDomain AppDomain {
-			get { return debugger.Dispatcher.UI(() => new DebuggerAppDomain(debugger, asm.AppDomain)); }
-		}
+		public IAppDomain AppDomain => debugger.Dispatcher.UI(() => new DebuggerAppDomain(debugger, asm.AppDomain));
+		public string FullName => debugger.Dispatcher.UI(() => asm.FullName);
+		public bool HasUnloaded => debugger.Dispatcher.UI(() => asm.HasUnloaded);
+		public int UniqueId { get; }
+		public bool IsFullyTrusted => debugger.Dispatcher.UI(() => asm.CorAssembly.IsFullyTrusted);
 
-		public string FullName {
-			get { return debugger.Dispatcher.UI(() => asm.FullName); }
-		}
+		public IDebuggerModule ManifestModule => debugger.Dispatcher.UI(() => {
+			var manifestModule = asm.CorAssembly.ManifestModule;
+			if (manifestModule == null)
+				return null;
+			var mod = asm.Modules.FirstOrDefault(a => a.CorModule == manifestModule);
+			return mod == null ? null : new DebuggerModule(debugger, mod);
+		});
 
-		public bool HasUnloaded {
-			get { return debugger.Dispatcher.UI(() => asm.HasUnloaded); }
-		}
-
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-
-		public bool IsFullyTrusted {
-			get { return debugger.Dispatcher.UI(() => asm.CorAssembly.IsFullyTrusted); }
-		}
-
-		public IDebuggerModule ManifestModule {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var manifestModule = asm.CorAssembly.ManifestModule;
-					if (manifestModule == null)
-						return null;
-					var mod = asm.Modules.FirstOrDefault(a => a.CorModule == manifestModule);
-					return mod == null ? null : new DebuggerModule(debugger, mod);
-				});
-			}
-		}
-
-		public IEnumerable<IDebuggerModule> Modules {
-			get { return debugger.Dispatcher.UIIter(GetModulesUI); }
-		}
+		public IEnumerable<IDebuggerModule> Modules => debugger.Dispatcher.UIIter(GetModulesUI);
 
 		IEnumerable<IDebuggerModule> GetModulesUI() {
 			foreach (var m in asm.Modules)
 				yield return new DebuggerModule(debugger, m);
 		}
 
-		public string Name {
-			get { return name; }
-		}
+		public string Name { get; }
 
 		readonly Debugger debugger;
 		readonly DnAssembly asm;
 		readonly int hashCode;
-		readonly int uniqueId;
-		readonly string name;
 
 		public DebuggerAssembly(Debugger debugger, DnAssembly asm) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.asm = asm;
 			this.hashCode = asm.GetHashCode();
-			this.uniqueId = asm.UniqueId;
-			this.name = asm.Name;
+			this.UniqueId = asm.UniqueId;
+			this.Name = asm.Name;
 		}
 
-		public override bool Equals(object obj) {
-			var other = obj as DebuggerAssembly;
-			return other != null && other.asm == asm;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => asm.ToString());
-		}
+		public override bool Equals(object obj) => (obj as DebuggerAssembly)?.asm == asm;
+		public override int GetHashCode() => hashCode;
+		public override string ToString() => debugger.Dispatcher.UI(() => asm.ToString());
 	}
 }

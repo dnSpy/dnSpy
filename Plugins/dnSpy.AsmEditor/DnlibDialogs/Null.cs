@@ -27,8 +27,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		Null() {
 		}
 
-		public override string ToString() {
-			return string.Format("({0})null", typeof(T));
-		}
+		public override string ToString() => string.Format("({0})null", typeof(T));
 	}
 }

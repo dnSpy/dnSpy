@@ -26,8 +26,8 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
-		public readonly DnModule Module;
-		public readonly bool Added;
+		public DnModule Module { get; }
+		public bool Added { get; }
 
 		public ModuleDebuggerEventArgs(DnModule module, bool added) {
 			this.Module = module;
@@ -36,8 +36,8 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class NameChangedDebuggerEventArgs : DebuggerEventArgs {
-		public readonly DnAppDomain AppDomain;
-		public readonly DnThread Thread;
+		public DnAppDomain AppDomain { get; }
+		public DnThread Thread { get; }
 
 		public NameChangedDebuggerEventArgs(DnAppDomain appDomain, DnThread thread) {
 			this.AppDomain = appDomain;
@@ -46,8 +46,8 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CorModuleDefCreatedEventArgs : DebuggerEventArgs {
-		public DnModule Module { get; private set; }
-		public CorModuleDef CorModuleDef { get; private set; }
+		public DnModule Module { get; }
+		public CorModuleDef CorModuleDef { get; }
 
 		public CorModuleDefCreatedEventArgs(DnModule module, CorModuleDef corModuleDef) {
 			this.Module = module;

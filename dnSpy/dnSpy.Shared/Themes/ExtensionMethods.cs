@@ -22,8 +22,6 @@ using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.Themes {
 	public static class ExtensionMethods {
-		public static ColorType ToColorType(this TextTokenKind self) {
-			return (uint)self + ColorType.FirstNR;
-		}
+		public static ColorType ToColorType(this TextTokenKind self) => (uint)self + ColorType.FirstNR;
 	}
 }

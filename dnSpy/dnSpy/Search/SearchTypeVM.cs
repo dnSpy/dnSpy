@@ -24,40 +24,23 @@ using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {
 	sealed class SearchTypeVM : ViewModelBase {
-		public ImageSource Image {
-			get { return imageManager.GetImage(imageReference.Assembly, imageReference.Name, BackgroundType.ComboBox); }
-		}
+		public ImageSource Image => imageManager.GetImage(imageReference.Assembly, imageReference.Name, BackgroundType.ComboBox);
 		readonly ImageReference imageReference;
 
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public string ToolTip {
-			get { return toolTip; }
-		}
-		string toolTip;
-
-		public SearchType SearchType {
-			get { return searchType; }
-		}
-		readonly SearchType searchType;
-
-		public VisibleMembersFlags Flags {
-			get { return flags; }
-		}
-		readonly VisibleMembersFlags flags;
+		public string Name { get; }
+		public string ToolTip { get; }
+		public SearchType SearchType { get; }
+		public VisibleMembersFlags Flags { get; }
 
 		readonly IImageManager imageManager;
 
 		public SearchTypeVM(IImageManager imageManager, SearchType searchType, string name, string toolTip, string imageName, VisibleMembersFlags flags) {
 			this.imageManager = imageManager;
-			this.searchType = searchType;
-			this.name = name;
-			this.toolTip = toolTip;
+			this.SearchType = searchType;
+			this.Name = name;
+			this.ToolTip = toolTip;
 			this.imageReference = new ImageReference(GetType().Assembly, imageName);
-			this.flags = flags;
+			this.Flags = flags;
 		}
 
 		public void RefreshUI() {

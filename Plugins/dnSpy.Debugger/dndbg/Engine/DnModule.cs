@@ -29,11 +29,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the created module or null if none has been created
 		/// </summary>
-		public CorModuleDef CorModuleDef {
-			get { return corModuleDef; }
-			internal set { corModuleDef = value; }
-		}
-		CorModuleDef corModuleDef;
+		public CorModuleDef CorModuleDef { get; internal set; }
 
 		/// <summary>
 		/// Returns the created module or creates one if none has been created
@@ -41,164 +37,115 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorModuleDef GetOrCreateCorModuleDef() {
 			Debugger.DebugVerifyThread();
-			if (corModuleDef != null)
-				return corModuleDef;
+			if (CorModuleDef != null)
+				return CorModuleDef;
 
 			Assembly.InitializeAssemblyAndModules();
-			Debug.Assert(corModuleDef != null);
-			return corModuleDef;
+			Debug.Assert(CorModuleDef != null);
+			return CorModuleDef;
 		}
 
-		public CorModule CorModule {
-			get { return module; }
-		}
-		readonly CorModule module;
+		public CorModule CorModule { get; }
 
 		/// <summary>
 		/// Unique id per debugger
 		/// </summary>
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-		readonly int uniqueId;
+		public int UniqueId { get; }
 
 		/// <summary>
 		/// Unique id per process
 		/// </summary>
-		public int UniqueIdProcess {
-			get { return uniqueIdProcess; }
-		}
-		readonly int uniqueIdProcess;
+		public int UniqueIdProcess { get; }
 
 		/// <summary>
 		/// Unique id per AppDomain
 		/// </summary>
-		public int UniqueIdAppDomain {
-			get { return uniqueIdAppDomain; }
-		}
-		readonly int uniqueIdAppDomain;
+		public int UniqueIdAppDomain { get; }
 
 		/// <summary>
 		/// For on-disk modules this is a full path. For dynamic modules this is just the filename
 		/// if one was provided. Otherwise, and for other in-memory modules, this is just the simple
 		/// name stored in the module's metadata.
 		/// </summary>
-		public string Name {
-			get { return module.Name; }
-		}
+		public string Name => CorModule.Name;
 
 		/// <summary>
 		/// Gets the name from the MD, which is the same as <see cref="ModuleDef.Name"/>
 		/// </summary>
-		public string DnlibName {
-			get { return CorModule.DnlibName; }
-		}
+		public string DnlibName => CorModule.DnlibName;
 
 		/// <summary>
 		/// true if the module has been unloaded
 		/// </summary>
-		public bool HasUnloaded {
-			get { return hasUnloaded; }
-		}
-		bool hasUnloaded;
+		public bool HasUnloaded { get; private set; }
 
 		/// <summary>
 		/// Gets the base address of the module or 0
 		/// </summary>
-		public ulong Address {
-			get { return module.Address; }
-		}
+		public ulong Address => CorModule.Address;
 
 		/// <summary>
 		/// Gets the size of the module or 0
 		/// </summary>
-		public uint Size {
-			get { return module.Size; }
-		}
+		public uint Size => CorModule.Size;
 
 		/// <summary>
 		/// Gets the token or 0
 		/// </summary>
-		public uint Token {
-			get { return module.Token; }
-		}
+		public uint Token => CorModule.Token;
 
 		/// <summary>
 		/// true if it's a dynamic module that can add/remove types
 		/// </summary>
-		public bool IsDynamic {
-			get { return module.IsDynamic; }
-		}
+		public bool IsDynamic => CorModule.IsDynamic;
 
 		/// <summary>
 		/// true if this is an in-memory module
 		/// </summary>
-		public bool IsInMemory {
-			get { return module.IsInMemory; }
-		}
+		public bool IsInMemory => CorModule.IsInMemory;
 
 		/// <summary>
 		/// Gets the owner debugger
 		/// </summary>
-		public DnDebugger Debugger {
-			get { return Assembly.Debugger; }
-		}
+		public DnDebugger Debugger => Assembly.Debugger;
 
 		/// <summary>
 		/// Gets the owner process
 		/// </summary>
-		public DnProcess Process {
-			get { return Assembly.Process; }
-		}
+		public DnProcess Process => Assembly.Process;
 
 		/// <summary>
 		/// Gets the owner AppDomain
 		/// </summary>
-		public DnAppDomain AppDomain {
-			get { return Assembly.AppDomain; }
-		}
+		public DnAppDomain AppDomain => Assembly.AppDomain;
 
 		/// <summary>
 		/// Gets the owner assembly
 		/// </summary>
-		public DnAssembly Assembly {
-			get { return ownerAssembly; }
-		}
-		readonly DnAssembly ownerAssembly;
+		public DnAssembly Assembly { get; }
 
-		public SerializedDnModule SerializedDnModule {
-			get { return serializedDnModule; }
-		}
-		SerializedDnModule serializedDnModule;
+		public SerializedDnModule SerializedDnModule { get; }
 
 		/// <summary>
 		/// Gets the JIT compiler flags. This is a cached value and never gets updated
 		/// </summary>
-		public CorDebugJITCompilerFlags CachedJITCompilerFlags {
-			get { return jitFlags; }
-		}
-		CorDebugJITCompilerFlags jitFlags;
+		public CorDebugJITCompilerFlags CachedJITCompilerFlags { get; private set; }
 
 		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
-			this.ownerAssembly = ownerAssembly;
-			this.module = new CorModule(module);
-			this.uniqueId = uniqueId;
-			this.uniqueIdProcess = uniqueIdProcess;
-			this.uniqueIdAppDomain = uniqueIdAppDomain;
-			this.serializedDnModule = this.module.SerializedDnModule;
+			this.Assembly = ownerAssembly;
+			this.CorModule = new CorModule(module);
+			this.UniqueId = uniqueId;
+			this.UniqueIdProcess = uniqueIdProcess;
+			this.UniqueIdAppDomain = uniqueIdAppDomain;
+			this.SerializedDnModule = this.CorModule.SerializedDnModule;
 		}
 
 		internal void InitializeCachedValues() {
 			// Cache the value so it's possible to read it even when the process is running
-			jitFlags = module.JITCompilerFlags;
+			CachedJITCompilerFlags = CorModule.JITCompilerFlags;
 		}
 
-		internal void SetHasUnloaded() {
-			hasUnloaded = true;
-		}
-
-		public override string ToString() {
-			return string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", UniqueId, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
-		}
+		internal void SetHasUnloaded() => HasUnloaded = true;
+		public override string ToString() => string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", UniqueId, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
 	}
 }

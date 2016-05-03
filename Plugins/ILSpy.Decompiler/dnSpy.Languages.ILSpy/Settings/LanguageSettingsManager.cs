@@ -36,31 +36,21 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		static LanguageSettingsManager __instance_DONT_USE;
 
 		LanguageSettingsManager() {
-			this.languageDecompilerSettings = new LanguageDecompilerSettings();
-			this.ilLanguageDecompilerSettings = new ILLanguageDecompilerSettings();
+			this.LanguageDecompilerSettings = new LanguageDecompilerSettings();
+			this.ILLanguageDecompilerSettings = new ILLanguageDecompilerSettings();
 		}
 
 		[ImportingConstructor]
 		LanguageSettingsManager(DecompilerSettingsImpl decompilerSettings, ILSettingsImpl ilSettings) {
-			this.languageDecompilerSettings = new LanguageDecompilerSettings(decompilerSettings);
-			this.ilLanguageDecompilerSettings = new ILLanguageDecompilerSettings(ilSettings);
+			this.LanguageDecompilerSettings = new LanguageDecompilerSettings(decompilerSettings);
+			this.ILLanguageDecompilerSettings = new ILLanguageDecompilerSettings(ilSettings);
 		}
 
-		public LanguageDecompilerSettings LanguageDecompilerSettings {
-			get { return languageDecompilerSettings; }
-		}
-		readonly LanguageDecompilerSettings languageDecompilerSettings;
-
-		public ILLanguageDecompilerSettings ILLanguageDecompilerSettings {
-			get { return ilLanguageDecompilerSettings; }
-		}
-		readonly ILLanguageDecompilerSettings ilLanguageDecompilerSettings;
+		public LanguageDecompilerSettings LanguageDecompilerSettings { get; }
+		public ILLanguageDecompilerSettings ILLanguageDecompilerSettings { get; }
 
 #if DEBUG
-		public ILAstLanguageDecompilerSettings ILAstLanguageDecompilerSettings {
-			get { return ilAstLanguageDecompilerSettings; }
-		}
-		readonly ILAstLanguageDecompilerSettings ilAstLanguageDecompilerSettings = new ILAstLanguageDecompilerSettings();
+		public ILAstLanguageDecompilerSettings ILAstLanguageDecompilerSettings { get; } = new ILAstLanguageDecompilerSettings();
 #endif
 	}
 }

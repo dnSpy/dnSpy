@@ -44,9 +44,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			ExitDialog();
 		}
 
-		void activateButton_Click(object sender, System.Windows.RoutedEventArgs e) {
-			ExitDialog();
-		}
+		void activateButton_Click(object sender, System.Windows.RoutedEventArgs e) => ExitDialog();
 
 		void ExitDialog() {
 			var vm = DataContext as TabsVM;

@@ -33,9 +33,9 @@ using dnSpy.Shared.Menus;
 
 namespace dnSpy.Files.Tabs {
 	sealed class ResourceRef {
-		public ModuleDef Module { get; private set; }
-		public string Filename { get; private set; }
-		public string ResourceName { get; private set; }
+		public ModuleDef Module { get; }
+		public string Filename { get; }
+		public string ResourceName { get; }
 
 		ResourceRef(ModuleDef module, string resourcesFilename, string resourceName) {
 			this.Module = module;
@@ -51,9 +51,7 @@ namespace dnSpy.Files.Tabs {
 				o = pd.GetMethod;
 			}
 			var md = o as MethodDef;
-			if (md == null)
-				return null;
-			var type = md.DeclaringType;
+			var type = md?.DeclaringType;
 			if (type == null)
 				return null;
 			var resourceName = GetResourceName(md);
@@ -147,8 +145,7 @@ namespace dnSpy.Files.Tabs {
 			foreach (var fd in type.Fields) {
 				if (!fd.IsStatic)
 					continue;
-				var ftype = fd.FieldType;
-				var ftypeName = ftype == null ? string.Empty : ftype.FullName;
+				var ftypeName = fd.FieldType?.FullName ?? string.Empty;
 				if (ftypeName == "System.Globalization.CultureInfo")
 					hasCultureInfo = true;
 				else if (ftypeName == "System.Resources.ResourceManager")
@@ -168,9 +165,7 @@ namespace dnSpy.Files.Tabs {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				GoToResourceCommand.Execute(fileTabManager, TryCreate(context));
-			}
+			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(fileTabManager, TryCreate(context));
 
 			static ResourceRef TryCreate(CodeReference @ref) {
 				if (@ref == null)
@@ -184,9 +179,7 @@ namespace dnSpy.Files.Tabs {
 				return TryCreate(context.Find<CodeReference>());
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GoToResourceCommand.IsVisible(TryCreate(context));
-			}
+			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));
 		}
 
 		[ExportMenuItem(Header = "res:GoToResourceCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 20)]
@@ -198,9 +191,7 @@ namespace dnSpy.Files.Tabs {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				GoToResourceCommand.Execute(fileTabManager, TryCreate(context));
-			}
+			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(fileTabManager, TryCreate(context));
 
 			static ResourceRef TryCreate(ITreeNodeData[] nodes) {
 				if (nodes == null || nodes.Length != 1)
@@ -217,14 +208,10 @@ namespace dnSpy.Files.Tabs {
 				return TryCreate(context.Find<ITreeNodeData[]>());
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GoToResourceCommand.IsVisible(TryCreate(context));
-			}
+			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));
 		}
 
-		static bool IsVisible(ResourceRef resRef) {
-			return resRef != null;
-		}
+		static bool IsVisible(ResourceRef resRef) => resRef != null;
 
 		static void Execute(IFileTabManager fileTabManager, ResourceRef resRef) {
 			if (resRef == null)

@@ -67,44 +67,27 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool isEnabled;
 
-		public bool IsVisible {//TODO: Use this
+		public bool IsVisible {//TODO: Use it
 			get { return isVisible; }
 			set { isVisible = value; }
 		}
 		bool isVisible;
 
-		public SharpTreeNode Root {
-			get { return rootNode; }
-		}
-		readonly SharpTreeNode rootNode;
+		public SharpTreeNode Root { get; }
+		public ITheDebugger TheDebugger { get; }
 
-		public IPrinterContext PrinterContext {
-			get { return printerContext; }
-		}
+		public IPrinterContext PrinterContext => printerContext;
 		readonly PrinterContext printerContext;
 
-		public bool DebuggerBrowsableAttributesCanHidePropsFields {
-			get { return debuggerSettings.DebuggerBrowsableAttributesCanHidePropsFields; }
-		}
-
-		public bool CompilerGeneratedAttributesCanHideFields {
-			get { return debuggerSettings.CompilerGeneratedAttributesCanHideFields; }
-		}
-
-		public bool PropertyEvalAndFunctionCalls {
-			get { return debuggerSettings.PropertyEvalAndFunctionCalls; }
-		}
+		public bool DebuggerBrowsableAttributesCanHidePropsFields => debuggerSettings.DebuggerBrowsableAttributesCanHidePropsFields;
+		public bool CompilerGeneratedAttributesCanHideFields => debuggerSettings.CompilerGeneratedAttributesCanHideFields;
+		public bool PropertyEvalAndFunctionCalls => debuggerSettings.PropertyEvalAndFunctionCalls;
 
 		readonly IAskUser askUser;
 		readonly IMethodLocalProvider methodLocalProvider;
 		readonly Dispatcher dispatcher;
 		readonly IDebuggerSettings debuggerSettings;
 		readonly IStackFrameManager stackFrameManager;
-
-		public ITheDebugger TheDebugger {
-			get { return theDebugger; }
-		}
-		readonly ITheDebugger theDebugger;
 
 		[ImportingConstructor]
 		LocalsVM(IImageManager imageManager, IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameManager stackFrameManager, ITheDebugger theDebugger, IAskUser askUser) {
@@ -113,7 +96,7 @@ namespace dnSpy.Debugger.Locals {
 			this.methodLocalProvider = methodLocalProvider;
 			this.debuggerSettings = debuggerSettings;
 			this.stackFrameManager = stackFrameManager;
-			this.theDebugger = theDebugger;
+			this.TheDebugger = theDebugger;
 
 			this.printerContext = new PrinterContext(imageManager) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
@@ -124,7 +107,7 @@ namespace dnSpy.Debugger.Locals {
 			this.printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, this.printerContext.TypePrinterFlags);
 
 			methodLocalProvider.NewMethodInfoAvailable += MethodLocalProvider_NewMethodInfoAvailable;
-			this.rootNode = new SharpTreeNode();
+			this.Root = new SharpTreeNode();
 			stackFrameManager.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
 			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -152,13 +135,8 @@ namespace dnSpy.Debugger.Locals {
 			return flags;
 		}
 
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
-			InitializeLocals(LocalInitType.Full);
-		}
-
-		void MethodLocalProvider_NewMethodInfoAvailable(object sender, EventArgs e) {
-			InitializeLocalAndArgNames();
-		}
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) => InitializeLocals(LocalInitType.Full);
+		void MethodLocalProvider_NewMethodInfoAvailable(object sender, EventArgs e) => InitializeLocalAndArgNames();
 
 		void LocalsSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var localsSettings = (ILocalsSettings)sender;
@@ -196,7 +174,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			switch (theDebugger.ProcessState) {
+			switch (TheDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				frameInfo = null;
 				break;
@@ -234,17 +212,9 @@ namespace dnSpy.Debugger.Locals {
 				this.ValueContext = new ValueContext(localsOwner, frame, thread, process);
 			}
 
-			public bool Equals(FrameInfo other) {
-				return ValueContext.Function == other.ValueContext.Function;
-			}
-
-			public override bool Equals(object obj) {
-				return Equals(obj as FrameInfo);
-			}
-
-			public override int GetHashCode() {
-				return ValueContext.Function == null ? 0 : ValueContext.Function.GetHashCode();
-			}
+			public bool Equals(FrameInfo other) => ValueContext.Function == other.ValueContext.Function;
+			public override bool Equals(object obj) => Equals(obj as FrameInfo);
+			public override int GetHashCode() => ValueContext.Function == null ? 0 : ValueContext.Function.GetHashCode();
 		}
 
 		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -256,7 +226,7 @@ namespace dnSpy.Debugger.Locals {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeLocals() is called when the process has been running for a little while. Speeds up stepping.
-			if (theDebugger.ProcessState != DebuggerProcessState.Continuing && theDebugger.ProcessState != DebuggerProcessState.Running)
+			if (TheDebugger.ProcessState != DebuggerProcessState.Continuing && TheDebugger.ProcessState != DebuggerProcessState.Running)
 				InitializeLocals(e.Debugger.EvalCompleted ? LocalInitType.Simple : LocalInitType.Full);
 		}
 
@@ -265,9 +235,7 @@ namespace dnSpy.Debugger.Locals {
 			frameInfo = null;
 		}
 
-		void ClearAndDisposeChildren() {
-			ValueVM.ClearAndDisposeChildren(rootNode);
-		}
+		void ClearAndDisposeChildren() => ValueVM.ClearAndDisposeChildren(Root);
 
 		void RecreateLocals() {
 			ClearAllLocals();
@@ -275,7 +243,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void InitializeLocals(LocalInitType initType) {
-			if (!IsEnabled || theDebugger.ProcessState != DebuggerProcessState.Paused) {
+			if (!IsEnabled || TheDebugger.ProcessState != DebuggerProcessState.Paused) {
 				ClearAllLocals();
 				return;
 			}
@@ -290,8 +258,8 @@ namespace dnSpy.Debugger.Locals {
 			int frameNo = stackFrameManager.SelectedFrameNumber;
 			DnProcess process;
 			if (thread == null) {
-				process = theDebugger.Debugger.Processes.FirstOrDefault();
-				thread = process == null ? null : process.Threads.FirstOrDefault();
+				process = TheDebugger.Debugger.Processes.FirstOrDefault();
+				thread = process?.Threads?.FirstOrDefault();
 			}
 			else
 				process = thread.Process;
@@ -307,15 +275,15 @@ namespace dnSpy.Debugger.Locals {
 				corLocals = frame.ILLocals.ToArray();
 			}
 			else
-				corArgs = corLocals = new CorValue[0];
+				corArgs = corLocals = Array.Empty<CorValue>();
 			var args = new List<ICorValueHolder>(corArgs.Length);
 			var locals = new List<ICorValueHolder>(corLocals.Length);
 			for (int i = 0; i < corArgs.Length; i++)
-				args.Add(new LocArgCorValueHolder(theDebugger, true, this, corArgs[i], i));
+				args.Add(new LocArgCorValueHolder(TheDebugger, true, this, corArgs[i], i));
 			for (int i = 0; i < corLocals.Length; i++)
-				locals.Add(new LocArgCorValueHolder(theDebugger, false, this, corLocals[i], i));
+				locals.Add(new LocArgCorValueHolder(TheDebugger, false, this, corLocals[i], i));
 
-			var exValue = thread == null ? null : thread.CorThread.CurrentException;
+			var exValue = thread?.CorThread?.CurrentException;
 			var exValueHolder = exValue == null ? null : new DummyCorValueHolder(exValue);
 
 			int numGenArgs = frameInfo.ValueContext.GenericTypeArguments.Count + frameInfo.ValueContext.GenericMethodArguments.Count;
@@ -323,7 +291,7 @@ namespace dnSpy.Debugger.Locals {
 			if (!CanReuseChildren(exValueHolder, args.Count, locals.Count, numGenArgs))
 				ClearAndDisposeChildren();
 
-			if (rootNode.Children.Count == 0) {
+			if (Root.Children.Count == 0) {
 				hasInitializedArgNames = false;
 				hasInitializedLocalNames = false;
 				hasInitializedArgNamesFromMetadata = false;
@@ -337,36 +305,36 @@ namespace dnSpy.Debugger.Locals {
 			else
 				argTypes = localTypes = new List<TypeSig>();
 
-			if (rootNode.Children.Count == 0) {
+			if (Root.Children.Count == 0) {
 				if (exValueHolder != null)
-					rootNode.Children.Add(new CorValueVM(frameInfo.ValueContext, exValueHolder, null, new ExceptionValueType()));
+					Root.Children.Add(new CorValueVM(frameInfo.ValueContext, exValueHolder, null, new ExceptionValueType()));
 				for (int i = 0; i < args.Count; i++)
-					rootNode.Children.Add(new CorValueVM(frameInfo.ValueContext, args[i], Read(argTypes, i), new ArgumentValueType(i)));
+					Root.Children.Add(new CorValueVM(frameInfo.ValueContext, args[i], Read(argTypes, i), new ArgumentValueType(i)));
 				for (int i = 0; i < locals.Count; i++)
-					rootNode.Children.Add(new CorValueVM(frameInfo.ValueContext, locals[i], Read(localTypes, i), new LocalValueType(i)));
+					Root.Children.Add(new CorValueVM(frameInfo.ValueContext, locals[i], Read(localTypes, i), new LocalValueType(i)));
 				if (numGenArgs != 0)
-					rootNode.Children.Add(new TypeVariablesValueVM(frameInfo.ValueContext));
+					Root.Children.Add(new TypeVariablesValueVM(frameInfo.ValueContext));
 			}
 			else {
 				int index = 0;
 
 				if (exValueHolder != null) {
-					if (index < rootNode.Children.Count && NormalValueVM.IsType<ExceptionValueType>(rootNode.Children[index]))
-						((CorValueVM)rootNode.Children[index++]).Reinitialize(frameInfo.ValueContext, exValueHolder, null);
+					if (index < Root.Children.Count && NormalValueVM.IsType<ExceptionValueType>(Root.Children[index]))
+						((CorValueVM)Root.Children[index++]).Reinitialize(frameInfo.ValueContext, exValueHolder, null);
 					else
-						rootNode.Children.Insert(index++, new CorValueVM(frameInfo.ValueContext, exValueHolder, null, new ExceptionValueType()));
+						Root.Children.Insert(index++, new CorValueVM(frameInfo.ValueContext, exValueHolder, null, new ExceptionValueType()));
 				}
 				else {
-					if (index < rootNode.Children.Count && NormalValueVM.IsType<ExceptionValueType>(rootNode.Children[index]))
-						ValueVM.DisposeAndRemoveAt(rootNode, index);
+					if (index < Root.Children.Count && NormalValueVM.IsType<ExceptionValueType>(Root.Children[index]))
+						ValueVM.DisposeAndRemoveAt(Root, index);
 				}
 
 				for (int i = 0; i < args.Count; i++, index++)
-					((CorValueVM)rootNode.Children[index]).Reinitialize(frameInfo.ValueContext, args[i], Read(argTypes, i));
+					((CorValueVM)Root.Children[index]).Reinitialize(frameInfo.ValueContext, args[i], Read(argTypes, i));
 				for (int i = 0; i < locals.Count; i++, index++)
-					((CorValueVM)rootNode.Children[index]).Reinitialize(frameInfo.ValueContext, locals[i], Read(localTypes, i));
+					((CorValueVM)Root.Children[index]).Reinitialize(frameInfo.ValueContext, locals[i], Read(localTypes, i));
 				if (numGenArgs != 0)
-					((TypeVariablesValueVM)rootNode.Children[index++]).Reinitialize(frameInfo.ValueContext);
+					((TypeVariablesValueVM)Root.Children[index++]).Reinitialize(frameInfo.ValueContext);
 			}
 
 			InitializeLocalAndArgNames();
@@ -400,7 +368,7 @@ namespace dnSpy.Debugger.Locals {
 				return;
 
 			bool isStatic = (methodAttrs & MethodAttributes.Static) != 0;
-			foreach (var vm in rootNode.Children.OfType<NormalValueVM>()) {
+			foreach (var vm in Root.Children.OfType<NormalValueVM>()) {
 				var vt = vm.NormalValueType as ArgumentValueType;
 				if (vt == null)
 					continue;
@@ -441,7 +409,7 @@ namespace dnSpy.Debugger.Locals {
 			methodLocalProvider.GetMethodInfo(key.Value, out parameters, out locals, out decLocals);
 			if (!hasInitializedArgNames && parameters != null) {
 				hasInitializedArgNames = true;
-				foreach (var vm in rootNode.Children.OfType<NormalValueVM>()) {
+				foreach (var vm in Root.Children.OfType<NormalValueVM>()) {
 					var vt = vm.NormalValueType as ArgumentValueType;
 					if (vt == null)
 						continue;
@@ -453,13 +421,13 @@ namespace dnSpy.Debugger.Locals {
 			}
 			if (!hasInitializedLocalNames && (locals != null || decLocals != null)) {
 				hasInitializedLocalNames = true;
-				foreach (var vm in rootNode.Children.OfType<NormalValueVM>()) {
+				foreach (var vm in Root.Children.OfType<NormalValueVM>()) {
 					var vt = vm.NormalValueType as LocalValueType;
 					if (vt == null)
 						continue;
 					var l = locals == null || (uint)vt.Index >= (uint)locals.Length ? null : locals[vt.Index];
 					var dl = decLocals == null || (uint)vt.Index >= (uint)decLocals.Length ? null : decLocals[vt.Index];
-					string name = dl == null ? null : dl.Name;
+					string name = dl?.Name;
 					if (name == null && l != null && !string.IsNullOrEmpty(l.Name))
 						name = string.Format("[{0}]", l.Name);
 					if (string.IsNullOrEmpty(name))
@@ -471,7 +439,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		bool CanReuseChildren(ICorValueHolder ex, int numArgs, int numLocals, int numGenArgs) {
-			var children = rootNode.Children;
+			var children = Root.Children;
 
 			int index = 0;
 			if (index < children.Count && NormalValueVM.IsType<ExceptionValueType>(children[index]))
@@ -498,9 +466,7 @@ namespace dnSpy.Debugger.Locals {
 			return index == children.Count;
 		}
 
-		IEnumerable<ValueVM> GetValueVMs() {
-			return rootNode.Descendants().Cast<ValueVM>();
-		}
+		IEnumerable<ValueVM> GetValueVMs() => Root.Descendants().Cast<ValueVM>();
 
 		void RefreshTypeFields() {
 			foreach (var vm in GetValueVMs())
@@ -540,9 +506,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool callingReread = false;
 
-		bool ILocalsOwner.AskUser(string msg) {
-			return askUser.AskUser(msg, AskUserButton.YesNo) == MsgBoxButton.Yes;
-		}
+		bool ILocalsOwner.AskUser(string msg) => askUser.AskUser(msg, AskUserButton.YesNo) == MsgBoxButton.Yes;
 
 		DnEval ILocalsOwner.CreateEval(ValueContext context) {
 			Debug.Assert(context != null && context.Thread != null);
@@ -550,12 +514,12 @@ namespace dnSpy.Debugger.Locals {
 				return null;
 			if (!debuggerSettings.CanEvaluateToString)
 				return null;
-			if (!theDebugger.CanEvaluate)
+			if (!TheDebugger.CanEvaluate)
 				return null;
-			if (theDebugger.EvalDisabled)
+			if (TheDebugger.EvalDisabled)
 				return null;
 
-			return theDebugger.CreateEval(context.Thread.CorThread);
+			return TheDebugger.CreateEval(context.Thread.CorThread);
 		}
 
 		sealed class LocArgCorValueHolder : ICorValueHolder {
@@ -570,9 +534,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 			CorValue value;
 
-			public bool IsNeutered {
-				get { return false; }
-			}
+			public bool IsNeutered => false;
 
 			readonly bool isArg;
 			readonly LocalsVM locals;
@@ -605,9 +567,7 @@ namespace dnSpy.Debugger.Locals {
 				return newValue;
 			}
 
-			public void Dispose() {
-				InvalidateCorValue();
-			}
+			public void Dispose() => InvalidateCorValue();
 		}
 	}
 }

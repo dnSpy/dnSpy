@@ -57,17 +57,9 @@ namespace dnSpy.Files.Tabs.Settings {
 	}
 
 	sealed class DisplayAppSettingsTab : IAppSettingsTab {
-		public double Order {
-			get { return AppSettingsConstants.ORDER_SETTINGS_TAB_DISPLAY; }
-		}
-
-		public string Title {
-			get { return dnSpy_Resources.DisplayDlgTabTitle; }
-		}
-
-		public object UIObject {
-			get { return displayAppSettingsVM; }
-		}
+		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_DISPLAY;
+		public string Title => dnSpy_Resources.DisplayDlgTabTitle;
+		public object UIObject => displayAppSettingsVM;
 
 		readonly TextEditorSettings textEditorSettings;
 		readonly FileTreeViewSettings fileTreeViewSettings;
@@ -93,19 +85,12 @@ namespace dnSpy.Files.Tabs.Settings {
 	}
 
 	sealed class FontFamilyVM : ViewModelBase {
-		public FontFamily FontFamily {
-			get { return ff; }
-		}
-		readonly FontFamily ff;
-
-		public bool IsMonospaced {
-			get { return isMonospaced; }
-		}
-		readonly bool isMonospaced;
+		public FontFamily FontFamily { get; }
+		public bool IsMonospaced { get; }
 
 		public FontFamilyVM(FontFamily ff) {
-			this.ff = ff;
-			this.isMonospaced = FontUtils.IsMonospacedFont(ff);
+			this.FontFamily = ff;
+			this.IsMonospaced = FontUtils.IsMonospacedFont(ff);
 		}
 
 		public override bool Equals(object obj) {
@@ -114,9 +99,7 @@ namespace dnSpy.Files.Tabs.Settings {
 				FontFamily.Equals(other.FontFamily);
 		}
 
-		public override int GetHashCode() {
-			return FontFamily.GetHashCode();
-		}
+		public override int GetHashCode() => FontFamily.GetHashCode();
 	}
 
 	sealed class DisplayAppSettingsVM : ViewModelBase {
@@ -136,31 +119,18 @@ namespace dnSpy.Files.Tabs.Settings {
 			set {
 				if (fontFamilyVM != value) {
 					fontFamilyVM = value;
-					textEditorSettings.FontFamily = fontFamilyVM.FontFamily;
+					TextEditorSettings.FontFamily = fontFamilyVM.FontFamily;
 					OnPropertyChanged("FontFamilyVM");
 				}
 			}
 		}
 		FontFamilyVM fontFamilyVM;
 
-		public TextEditorSettings TextEditorSettings {
-			get { return textEditorSettings; }
-		}
-		readonly TextEditorSettings textEditorSettings;
+		public TextEditorSettings TextEditorSettings { get; }
+		public FileTreeViewSettings FileTreeViewSettings { get; }
+		public FileTabManagerSettings FileTabManagerSettings { get; }
 
-		public FileTreeViewSettings FileTreeViewSettings {
-			get { return fileTreeViewSettings; }
-		}
-		readonly FileTreeViewSettings fileTreeViewSettings;
-
-		public FileTabManagerSettings FileTabManagerSettings {
-			get { return fileTabManagerSettings; }
-		}
-		readonly FileTabManagerSettings fileTabManagerSettings;
-
-		public MemberKindVM[] MemberKindsArray {
-			get { return memberKindVMs2; }
-		}
+		public MemberKindVM[] MemberKindsArray => memberKindVMs2;
 		readonly MemberKindVM[] memberKindVMs;
 		readonly MemberKindVM[] memberKindVMs2;
 
@@ -208,9 +178,9 @@ namespace dnSpy.Files.Tabs.Settings {
 		}
 
 		public DisplayAppSettingsVM(TextEditorSettings textEditorSettings, FileTreeViewSettings fileTreeViewSettings, FileTabManagerSettings fileTabManagerSettings) {
-			this.textEditorSettings = textEditorSettings;
-			this.fileTreeViewSettings = fileTreeViewSettings;
-			this.fileTabManagerSettings = fileTabManagerSettings;
+			this.TextEditorSettings = textEditorSettings;
+			this.FileTreeViewSettings = fileTreeViewSettings;
+			this.FileTabManagerSettings = fileTabManagerSettings;
 			this.fontFamilies = null;
 			this.fontFamilyVM = new FontFamilyVM(textEditorSettings.FontFamily);
 			Task.Factory.StartNew(() =>
@@ -250,36 +220,29 @@ namespace dnSpy.Files.Tabs.Settings {
 
 		public void OnBeforeSave(IAppRefreshSettings appRefreshSettings) {
 			bool update =
-				fileTreeViewSettings.MemberKind0 != MemberKind0.Object ||
-				fileTreeViewSettings.MemberKind1 != MemberKind1.Object ||
-				fileTreeViewSettings.MemberKind2 != MemberKind2.Object ||
-				fileTreeViewSettings.MemberKind3 != MemberKind3.Object ||
-				fileTreeViewSettings.MemberKind4 != MemberKind4.Object;
+				FileTreeViewSettings.MemberKind0 != MemberKind0.Object ||
+				FileTreeViewSettings.MemberKind1 != MemberKind1.Object ||
+				FileTreeViewSettings.MemberKind2 != MemberKind2.Object ||
+				FileTreeViewSettings.MemberKind3 != MemberKind3.Object ||
+				FileTreeViewSettings.MemberKind4 != MemberKind4.Object;
 			if (update)
 				appRefreshSettings.Add(AppSettingsConstants.REFRESH_TREEVIEW_MEMBER_ORDER);
 
-			fileTreeViewSettings.MemberKind0 = MemberKind0.Object;
-			fileTreeViewSettings.MemberKind1 = MemberKind1.Object;
-			fileTreeViewSettings.MemberKind2 = MemberKind2.Object;
-			fileTreeViewSettings.MemberKind3 = MemberKind3.Object;
-			fileTreeViewSettings.MemberKind4 = MemberKind4.Object;
+			FileTreeViewSettings.MemberKind0 = MemberKind0.Object;
+			FileTreeViewSettings.MemberKind1 = MemberKind1.Object;
+			FileTreeViewSettings.MemberKind2 = MemberKind2.Object;
+			FileTreeViewSettings.MemberKind3 = MemberKind3.Object;
+			FileTreeViewSettings.MemberKind4 = MemberKind4.Object;
 		}
 	}
 
 	sealed class MemberKindVM : ViewModelBase {
-		public MemberKind Object {
-			get { return memberKind; }
-		}
-		readonly MemberKind memberKind;
-
-		public string Text {
-			get { return text; }
-		}
-		readonly string text;
+		public MemberKind Object { get; }
+		public string Text { get; }
 
 		public MemberKindVM(MemberKind memberKind, string text) {
-			this.memberKind = memberKind;
-			this.text = text;
+			this.Object = memberKind;
+			this.Text = text;
 		}
 	}
 

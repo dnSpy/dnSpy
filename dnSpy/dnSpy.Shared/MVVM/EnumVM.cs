@@ -26,13 +26,8 @@ namespace dnSpy.Shared.MVVM {
 		readonly object value;
 		readonly string name;
 
-		public object Value {
-			get { return value; }
-		}
-
-		public string Name {
-			get { return name; }
-		}
+		public object Value => value;
+		public string Name => name;
 
 		public EnumVM(object value) {
 			this.value = value;
@@ -44,9 +39,7 @@ namespace dnSpy.Shared.MVVM {
 			this.name = name;
 		}
 
-		public static EnumVM[] Create(Type enumType, params object[] values) {
-			return Create(true, enumType, values);
-		}
+		public static EnumVM[] Create(Type enumType, params object[] values) => Create(true, enumType, values);
 
 		public static EnumVM[] Create(bool sort, Type enumType, params object[] values) {
 			var list = new List<EnumVM>();
@@ -62,9 +55,7 @@ namespace dnSpy.Shared.MVVM {
 			return list.ToArray();
 		}
 
-		public override string ToString() {
-			return name;
-		}
+		public override string ToString() => name;
 	}
 
 	public sealed class EnumListVM : ListVM<EnumVM> {

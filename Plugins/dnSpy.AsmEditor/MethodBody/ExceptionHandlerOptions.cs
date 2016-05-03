@@ -55,8 +55,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return eh;
 		}
 
-		public ExceptionHandler Create(Dictionary<object, object> ops) {
-			return CopyTo(ops, new ExceptionHandler());
-		}
+		public ExceptionHandler Create(Dictionary<object, object> ops) => CopyTo(ops, new ExceptionHandler());
 	}
 }

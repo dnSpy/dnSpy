@@ -40,25 +40,13 @@ namespace dnSpy.Files.TreeView {
 			Debug.Assert(dnSpyFile.ModuleDef != null);
 		}
 
-		public new IDnSpyDotNetFile DnSpyFile {
-			get { return (IDnSpyDotNetFile)base.DnSpyFile; }
-		}
+		public new IDnSpyDotNetFile DnSpyFile => (IDnSpyDotNetFile)base.DnSpyFile;
+		public override Guid Guid => new Guid(FileTVConstants.MODULE_NODE_GUID);
+		IMDTokenProvider IMDTokenNode.Reference => DnSpyFile.ModuleDef;
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.MODULE_NODE_GUID); }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return DnSpyFile.ModuleDef; }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(DnSpyFile.ModuleDef);
-		}
-
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
+			dnImgMgr.GetImageReference(DnSpyFile.ModuleDef);
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var file in DnSpyFile.Children)
@@ -79,9 +67,8 @@ namespace dnSpy.Files.TreeView {
 				yield return new NamespaceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.NamespaceTreeNodeGroupModule), kv.Key, kv.Value);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile.ModuleDef, false);
-		}
 
 		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
 			output.WriteModule(DnSpyFile.ModuleDef.Name);
@@ -96,9 +83,7 @@ namespace dnSpy.Files.TreeView {
 			output.WriteFilename(DnSpyFile.Filename);
 		}
 
-		public INamespaceNode Create(string name) {
-			return Context.FileTreeView.Create(name);
-		}
+		public INamespaceNode Create(string name) => Context.FileTreeView.Create(name);
 
 		public INamespaceNode FindNode(string ns) {
 			if (ns == null)
@@ -113,8 +98,7 @@ namespace dnSpy.Files.TreeView {
 			return null;
 		}
 
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(DnSpyFile.ModuleDef).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(DnSpyFile.ModuleDef).FilterType;
 	}
 }

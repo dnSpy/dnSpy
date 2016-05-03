@@ -25,24 +25,10 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageFileHeaderVM : HexVM {
-		public override string Name {
-			get { return "IMAGE_FILE_HEADER"; }
-		}
-
-		public UInt16FlagsHexField MachineVM {
-			get { return machineVM; }
-		}
-		readonly UInt16FlagsHexField machineVM;
-
-		public UInt16HexField NumberOfSectionsVM {
-			get { return numberOfSectionsVM; }
-		}
-		readonly UInt16HexField numberOfSectionsVM;
-
-		public UInt32HexField TimeDateStampVM {
-			get { return timeDateStampVM; }
-		}
-		readonly UInt32HexField timeDateStampVM;
+		public override string Name => "IMAGE_FILE_HEADER";
+		public UInt16FlagsHexField MachineVM { get; }
+		public UInt16HexField NumberOfSectionsVM { get; }
+		public UInt32HexField TimeDateStampVM { get; }
 
 		public string TimeDateStampString {
 			get {
@@ -54,34 +40,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		DateTime EpochToDate(uint val) {
-			return Epoch.AddSeconds(val);
-		}
+		DateTime EpochToDate(uint val) => Epoch.AddSeconds(val);
 		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-		public UInt32HexField PointerToSymbolTableVM {
-			get { return pointerToSymbolTableVM; }
-		}
-		readonly UInt32HexField pointerToSymbolTableVM;
+		public UInt32HexField PointerToSymbolTableVM { get; }
+		public UInt32HexField NumberOfSymbolsVM { get; }
+		public UInt16HexField SizeOfOptionalHeaderVM { get; }
+		public UInt16FlagsHexField CharacteristicsVM { get; }
 
-		public UInt32HexField NumberOfSymbolsVM {
-			get { return numberOfSymbolsVM; }
-		}
-		readonly UInt32HexField numberOfSymbolsVM;
-
-		public UInt16HexField SizeOfOptionalHeaderVM {
-			get { return sizeOfOptionalHeaderVM; }
-		}
-		readonly UInt16HexField sizeOfOptionalHeaderVM;
-
-		public UInt16FlagsHexField CharacteristicsVM {
-			get { return characteristicsVM; }
-		}
-		readonly UInt16FlagsHexField characteristicsVM;
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
+		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
 		static readonly IntegerHexBitFieldEnumInfo[] MachineInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -119,40 +86,40 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public ImageFileHeaderVM(object owner, HexDocument doc, ulong startOffset)
 			: base(owner) {
-			this.machineVM = new UInt16FlagsHexField(doc, Name, "Machine", startOffset + 0);
-			this.machineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
-			this.numberOfSectionsVM = new UInt16HexField(doc, Name, "NumberOfSections", startOffset + 2);
-			this.timeDateStampVM = new UInt32HexField(doc, Name, "TimeDateStamp", startOffset + 4);
-			this.timeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged("TimeDateStampString");
-			this.pointerToSymbolTableVM = new UInt32HexField(doc, Name, "PointerToSymbolTable", startOffset + 8);
-			this.numberOfSymbolsVM = new UInt32HexField(doc, Name, "NumberOfSymbols", startOffset + 0x0C);
-			this.sizeOfOptionalHeaderVM = new UInt16HexField(doc, Name, "SizeOfOptionalHeader", startOffset + 0x10);
-			this.characteristicsVM = new UInt16FlagsHexField(doc, Name, "Characteristics", startOffset + 0x12);
-			this.characteristicsVM.Add(new BooleanHexBitField("Relocs Stripped", 0));
-			this.characteristicsVM.Add(new BooleanHexBitField("Executable Image", 1));
-			this.characteristicsVM.Add(new BooleanHexBitField("Line Nums Stripped", 2));
-			this.characteristicsVM.Add(new BooleanHexBitField("Local Syms Stripped", 3));
-			this.characteristicsVM.Add(new BooleanHexBitField("Aggressive WS Trim", 4));
-			this.characteristicsVM.Add(new BooleanHexBitField("Large Address Aware", 5));
-			this.characteristicsVM.Add(new BooleanHexBitField("Reserved 0040h", 6));
-			this.characteristicsVM.Add(new BooleanHexBitField("Bytes Reversed Lo", 7));
-			this.characteristicsVM.Add(new BooleanHexBitField("32-Bit Machine", 8));
-			this.characteristicsVM.Add(new BooleanHexBitField("Debug Stripped", 9));
-			this.characteristicsVM.Add(new BooleanHexBitField("Removable Run From Swap", 10));
-			this.characteristicsVM.Add(new BooleanHexBitField("Net Run From Swap", 11));
-			this.characteristicsVM.Add(new BooleanHexBitField("System", 12));
-			this.characteristicsVM.Add(new BooleanHexBitField("Dll", 13));
-			this.characteristicsVM.Add(new BooleanHexBitField("Up System Only", 14));
-			this.characteristicsVM.Add(new BooleanHexBitField("Bytes Reversed Hi", 15));
+			this.MachineVM = new UInt16FlagsHexField(doc, Name, "Machine", startOffset + 0);
+			this.MachineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
+			this.NumberOfSectionsVM = new UInt16HexField(doc, Name, "NumberOfSections", startOffset + 2);
+			this.TimeDateStampVM = new UInt32HexField(doc, Name, "TimeDateStamp", startOffset + 4);
+			this.TimeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged("TimeDateStampString");
+			this.PointerToSymbolTableVM = new UInt32HexField(doc, Name, "PointerToSymbolTable", startOffset + 8);
+			this.NumberOfSymbolsVM = new UInt32HexField(doc, Name, "NumberOfSymbols", startOffset + 0x0C);
+			this.SizeOfOptionalHeaderVM = new UInt16HexField(doc, Name, "SizeOfOptionalHeader", startOffset + 0x10);
+			this.CharacteristicsVM = new UInt16FlagsHexField(doc, Name, "Characteristics", startOffset + 0x12);
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Relocs Stripped", 0));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Executable Image", 1));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Line Nums Stripped", 2));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Local Syms Stripped", 3));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Aggressive WS Trim", 4));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Large Address Aware", 5));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Reserved 0040h", 6));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Bytes Reversed Lo", 7));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("32-Bit Machine", 8));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Debug Stripped", 9));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Removable Run From Swap", 10));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Net Run From Swap", 11));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("System", 12));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Dll", 13));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Up System Only", 14));
+			this.CharacteristicsVM.Add(new BooleanHexBitField("Bytes Reversed Hi", 15));
 
 			this.hexFields = new HexField[] {
-				machineVM,
-				numberOfSectionsVM,
-				timeDateStampVM,
-				pointerToSymbolTableVM,
-				numberOfSymbolsVM,
-				sizeOfOptionalHeaderVM,
-				characteristicsVM,
+				MachineVM,
+				NumberOfSectionsVM,
+				TimeDateStampVM,
+				PointerToSymbolTableVM,
+				NumberOfSymbolsVM,
+				SizeOfOptionalHeaderVM,
+				CharacteristicsVM,
 			};
 		}
 	}

@@ -38,9 +38,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand PickEnumTypeCommand {
-			get { return new RelayCommand(a => PickEnumType(), a => PickEnumTypeCanExecute()); }
-		}
+		public ICommand PickEnumTypeCommand => new RelayCommand(a => PickEnumType(), a => PickEnumTypeCanExecute());
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -76,12 +74,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public bool EnumIsSelected {
-			get {
-				return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Enum ||
-					  (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray;
-			}
-		}
+		public bool EnumIsSelected =>
+			(ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Enum ||
+			(ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray;
 
 		public bool IsField {
 			get { return (NamedArgType)NamedArgTypeEnumList.SelectedItem == NamedArgType.Field; }
@@ -105,24 +100,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		UTF8String name;
 
-		public EnumListVM ConstantTypeEnumList {
-			get { return constantTypeEnumListVM; }
-		}
-		readonly EnumListVM constantTypeEnumListVM;
-
-		public EnumListVM NamedArgTypeEnumList {
-			get { return namedArgTypeEnumListVM; }
-		}
-		readonly EnumListVM namedArgTypeEnumListVM;
+		public EnumListVM ConstantTypeEnumList { get; }
+		public EnumListVM NamedArgTypeEnumList { get; }
 		static readonly EnumVM[] namedArgTypeEnumList = new EnumVM[] {
 			new EnumVM(NamedArgType.Field, dnSpy_AsmEditor_Resources.CustomAttribute_NamedArg_Field),
 			new EnumVM(NamedArgType.Property, dnSpy_AsmEditor_Resources.CustomAttribute_NamedArg_Property),
 		};
 
-		public CAArgumentVM CAArgumentVM {
-			get { return caArgumentVM; }
-		}
-		CAArgumentVM caArgumentVM;
+		public CAArgumentVM CAArgumentVM { get; private set; }
 
 		static readonly ConstantType[] validTypes = new ConstantType[] {
 			ConstantType.Object,
@@ -166,8 +151,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CANamedArgumentVM(ModuleDef ownerModule, CANamedArgument namedArg, TypeSigCreatorOptions options) {
 			this.ownerModule = ownerModule;
 			this.originalNamedArg = namedArg.Clone();
-			this.constantTypeEnumListVM = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
-			this.namedArgTypeEnumListVM = new EnumListVM(namedArgTypeEnumList, (a, b) => OnNamedArgTypeChanged());
+			this.ConstantTypeEnumList = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
+			this.NamedArgTypeEnumList = new EnumListVM(namedArgTypeEnumList, (a, b) => OnNamedArgTypeChanged());
 			InitializeFrom(namedArg, options);
 			this.modified = false;
 		}
@@ -197,7 +182,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void InitializeFrom(CANamedArgument namedArg, TypeSigCreatorOptions options) {
 			if (CAArgumentVM != null)
 				CAArgumentVM.PropertyChanged -= caArgumentVM_PropertyChanged;
-			caArgumentVM = new CAArgumentVM(ownerModule, namedArg.Argument, options, null);
+			CAArgumentVM = new CAArgumentVM(ownerModule, namedArg.Argument, options, null);
 			OnPropertyChanged("CAArgumentVM");
 			CAArgumentVM.PropertyChanged += caArgumentVM_PropertyChanged;
 
@@ -333,16 +318,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				EnumType = type;
 		}
 
-		bool PickEnumTypeCanExecute() {
-			return IsEnabled;
-		}
-
-		public override bool HasError {
-			get { return IsEnabled && CAArgumentVM.HasError; }
-		}
-
-		public override string ToString() {
-			return string.Format("{0} = {1}", Name, CAArgumentVM.ToString());
-		}
+		bool PickEnumTypeCanExecute() => IsEnabled;
+		public override bool HasError => IsEnabled && CAArgumentVM.HasError;
+		public override string ToString() => string.Format("{0} = {1}", Name, CAArgumentVM.ToString());
 	}
 }

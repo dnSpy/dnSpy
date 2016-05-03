@@ -36,22 +36,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ICreateConstantType createConstantType;
 
-		public ICommand AddObjectCommand {
-			get { return new RelayCommand(a => AddObject()); }
-		}
-
-		public ICommand RemoveObjectCommand {
-			get { return new RelayCommand(a => RemoveObject(), a => RemoveObjectCanExecute()); }
-		}
-
-		public ICommand ClearObjectsCommand {
-			get { return new RelayCommand(a => ClearObjects(), a => ClearObjectsCanExecute()); }
-		}
+		public ICommand AddObjectCommand => new RelayCommand(a => AddObject());
+		public ICommand RemoveObjectCommand => new RelayCommand(a => RemoveObject(), a => RemoveObjectCanExecute());
+		public ICommand ClearObjectsCommand => new RelayCommand(a => ClearObjects(), a => ClearObjectsCanExecute());
 
 		readonly ModuleDef ownerModule;
 
 		public ObjectListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
-			: this(ownerModule, new object[0], onUpdated, options) {
+			: this(ownerModule, Array.Empty<object>(), onUpdated, options) {
 		}
 
 		public ObjectListDataFieldVM(ModuleDef ownerModule, IList<object> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
@@ -71,13 +63,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return CalculateStringValue();
 		}
 
-		string CalculateStringValue() {
-			return string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
-		}
+		string CalculateStringValue() => string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
 
-		void InitializeStringValue() {
-			this.StringValue = CalculateStringValue();
-		}
+		void InitializeStringValue() => this.StringValue = CalculateStringValue();
 
 		protected override string ConvertToValue(out IList<object> value) {
 			value = objects.ToArray();
@@ -125,9 +113,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			InitializeStringValue();
 		}
 
-		bool RemoveObjectCanExecute() {
-			return objects.Count > 0;
-		}
+		bool RemoveObjectCanExecute() => objects.Count > 0;
 
 		void ClearObjects() {
 			if (!ClearObjectsCanExecute())
@@ -137,8 +123,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			InitializeStringValue();
 		}
 
-		bool ClearObjectsCanExecute() {
-			return objects.Count > 0;
-		}
+		bool ClearObjectsCanExecute() => objects.Count > 0;
 	}
 }

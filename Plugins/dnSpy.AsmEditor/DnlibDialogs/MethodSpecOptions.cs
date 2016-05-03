@@ -43,8 +43,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return ms;
 		}
 
-		public MethodSpec Create(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new MethodSpecUser()));
-		}
+		public MethodSpec Create(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new MethodSpecUser()));
 	}
 }

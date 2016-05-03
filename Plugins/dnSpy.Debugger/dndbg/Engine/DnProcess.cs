@@ -30,111 +30,72 @@ namespace dndbg.Engine {
 		readonly DebuggerCollection<ICorDebugAppDomain, DnAppDomain> appDomains;
 		readonly DebuggerCollection<ICorDebugThread, DnThread> threads;
 
-		public CorProcess CorProcess {
-			get { return process; }
-		}
-		readonly CorProcess process;
+		public CorProcess CorProcess { get; }
 
 		/// <summary>
 		/// Unique id per debugger
 		/// </summary>
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-		readonly int uniqueId;
+		public int UniqueId { get; }
 
 		/// <summary>
 		/// Gets the process id (pid) of the process
 		/// </summary>
-		public int ProcessId {
-			get { return process.ProcessId; }
-		}
+		public int ProcessId => CorProcess.ProcessId;
 
 		/// <summary>
 		/// true if the process has exited
 		/// </summary>
-		public bool HasExited {
-			get { return hasExited; }
-		}
-		bool hasExited;
+		public bool HasExited { get; private set; }
 
 		/// <summary>
 		/// true if it has been initialized
 		/// </summary>
-		public bool HasInitialized {
-			get { return hasInitialized; }
-		}
-		bool hasInitialized = false;
+		public bool HasInitialized { get; private set; }
 
 		/// <summary>
 		/// Filename or empty string
 		/// </summary>
-		public string Filename {
-			get { return filename; }
-		}
+		public string Filename => filename;
 		string filename = string.Empty;
 
-		public string WorkingDirectory {
-			get { return cwd; }
-		}
+		public string WorkingDirectory => cwd;
 		string cwd = string.Empty;
 
-		public string CommandLine {
-			get { return cmdLine; }
-		}
+		public string CommandLine => cmdLine;
 		string cmdLine = string.Empty;
 
 		/// <summary>
 		/// Returns the value of ICorDebugProcess::GetHelperThreadID(). Don't cache this value since
 		/// it can change. 0 is returned if the thread doesn't exist.
 		/// </summary>
-		public uint HelperThreadId {
-			get { return process.HelperThreadId; }
-		}
+		public uint HelperThreadId => CorProcess.HelperThreadId;
 
 		/// <summary>
 		/// Gets the owner debugger
 		/// </summary>
-		public DnDebugger Debugger {
-			get { return ownerDebugger; }
-		}
-		readonly DnDebugger ownerDebugger;
+		public DnDebugger Debugger { get; }
 
 		internal DnProcess(DnDebugger ownerDebugger, ICorDebugProcess process, int uniqueId) {
-			this.ownerDebugger = ownerDebugger;
+			this.Debugger = ownerDebugger;
 			this.appDomains = new DebuggerCollection<ICorDebugAppDomain, DnAppDomain>(CreateAppDomain);
 			this.threads = new DebuggerCollection<ICorDebugThread, DnThread>(CreateThread);
-			this.process = new CorProcess(process);
-			this.uniqueId = uniqueId;
+			this.CorProcess = new CorProcess(process);
+			this.UniqueId = uniqueId;
 		}
 		int nextAppDomainId = -1, nextAssemblyId = -1, nextModuleId = -1, nextThreadId = -1;
 
-		internal int GetNextAssemblyId() {
-			return Interlocked.Increment(ref nextAssemblyId);
-		}
-
-		internal int GetNextModuleId() {
-			return Interlocked.Increment(ref nextModuleId);
-		}
-
-		DnAppDomain CreateAppDomain(ICorDebugAppDomain appDomain) {
-			return new DnAppDomain(this, appDomain, Debugger.GetNextAppDomainId(), Interlocked.Increment(ref nextAppDomainId));
-		}
-
-		DnThread CreateThread(ICorDebugThread thread) {
-			return new DnThread(this, thread, Debugger.GetNextThreadId(), Interlocked.Increment(ref nextThreadId));
-		}
-
-		public bool Terminate(int exitCode) {
-			return process.Terminate(exitCode);
-		}
+		internal int GetNextAssemblyId() => Interlocked.Increment(ref nextAssemblyId);
+		internal int GetNextModuleId() => Interlocked.Increment(ref nextModuleId);
+		DnAppDomain CreateAppDomain(ICorDebugAppDomain appDomain) =>
+			new DnAppDomain(this, appDomain, Debugger.GetNextAppDomainId(), Interlocked.Increment(ref nextAppDomainId));
+		DnThread CreateThread(ICorDebugThread thread) =>
+			new DnThread(this, thread, Debugger.GetNextThreadId(), Interlocked.Increment(ref nextThreadId));
+		public bool Terminate(int exitCode) => CorProcess.Terminate(exitCode);
 
 		/// <summary>
 		/// true if we attached to the process, false if we created the process
 		/// </summary>
-		public bool WasAttached {
-			get { return attached; }
-		}
+		public bool WasAttached => attached;
 		bool attached;
 
 		internal void Initialize(bool attached, string filename, string cwd, string cmdLine) {
@@ -142,23 +103,19 @@ namespace dndbg.Engine {
 			this.filename = filename ?? string.Empty;
 			this.cwd = cwd ?? string.Empty;
 			this.cmdLine = cmdLine ?? string.Empty;
-			this.hasInitialized = true;
+			this.HasInitialized = true;
 		}
 
-		internal void SetHasExited() {
-			hasExited = true;
-		}
+		internal void SetHasExited() => HasExited = true;
 
 		public bool CheckValid() {
 			if (HasExited)
 				return false;
 			int running;
-			return process.RawObject.IsRunning(out running) >= 0;
+			return CorProcess.RawObject.IsRunning(out running) >= 0;
 		}
 
-		internal DnAppDomain TryAdd(ICorDebugAppDomain comAppDomain) {
-			return appDomains.Add(comAppDomain);
-		}
+		internal DnAppDomain TryAdd(ICorDebugAppDomain comAppDomain) => appDomains.Add(comAppDomain);
 
 		/// <summary>
 		/// Gets all AppDomains, sorted on the order they were created
@@ -173,9 +130,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal DnAppDomain TryGetAppDomain(ICorDebugAppDomain comAppDomain) {
-			return appDomains.TryGet(comAppDomain);
-		}
+		internal DnAppDomain TryGetAppDomain(ICorDebugAppDomain comAppDomain) => appDomains.TryGet(comAppDomain);
 
 		/// <summary>
 		/// Gets an AppDomain or null if it has exited
@@ -200,9 +155,7 @@ namespace dndbg.Engine {
 			appDomains.Remove(comAppDomain);
 		}
 
-		internal DnThread TryAdd(ICorDebugThread comThread) {
-			return threads.Add(comThread);
-		}
+		internal DnThread TryAdd(ICorDebugThread comThread) => threads.Add(comThread);
 
 		/// <summary>
 		/// Gets all threads, sorted on the order they were created
@@ -217,9 +170,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal DnThread TryGetThread(ICorDebugThread comThread) {
-			return threads.TryGet(comThread);
-		}
+		internal DnThread TryGetThread(ICorDebugThread comThread) => threads.TryGet(comThread);
 
 		/// <summary>
 		/// Gets a thread or null if it has exited
@@ -314,8 +265,6 @@ namespace dndbg.Engine {
 			return null;
 		}
 
-		public override string ToString() {
-			return string.Format("{0} {1} {2}", UniqueId, ProcessId, Filename);
-		}
+		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, ProcessId, Filename);
 	}
 }

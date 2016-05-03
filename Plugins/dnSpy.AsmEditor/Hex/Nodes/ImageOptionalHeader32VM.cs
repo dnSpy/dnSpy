@@ -22,53 +22,24 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageOptionalHeader32VM : ImageOptionalHeaderVM {
-		public override string Name {
-			get { return "IMAGE_OPTIONAL_HEADER32"; }
-		}
-
-		public override bool Is32Bit {
-			get { return true; }
-		}
-
-		public UInt32HexField BaseOfDataVM {
-			get { return baseOfDataVM; }
-		}
-		readonly UInt32HexField baseOfDataVM;
-
-		public UInt32HexField ImageBaseVM {
-			get { return imageBaseVM; }
-		}
-		readonly UInt32HexField imageBaseVM;
-
-		public UInt32HexField SizeOfStackReserveVM {
-			get { return sizeOfStackReserveVM; }
-		}
-		readonly UInt32HexField sizeOfStackReserveVM;
-
-		public UInt32HexField SizeOfStackCommitVM {
-			get { return sizeOfStackCommitVM; }
-		}
-		readonly UInt32HexField sizeOfStackCommitVM;
-
-		public UInt32HexField SizeOfHeapReserveVM {
-			get { return sizeOfHeapReserveVM; }
-		}
-		readonly UInt32HexField sizeOfHeapReserveVM;
-
-		public UInt32HexField SizeOfHeapCommitVM {
-			get { return sizeOfHeapCommitVM; }
-		}
-		readonly UInt32HexField sizeOfHeapCommitVM;
+		public override string Name => "IMAGE_OPTIONAL_HEADER32";
+		public override bool Is32Bit => true;
+		public UInt32HexField BaseOfDataVM { get; }
+		public UInt32HexField ImageBaseVM { get; }
+		public UInt32HexField SizeOfStackReserveVM { get; }
+		public UInt32HexField SizeOfStackCommitVM { get; }
+		public UInt32HexField SizeOfHeapReserveVM { get; }
+		public UInt32HexField SizeOfHeapCommitVM { get; }
 
 		public ImageOptionalHeader32VM(object owner, HexDocument doc, ulong startOffset, ulong endOffset)
 			: base(owner, doc, startOffset, endOffset, 0x20, 0x58) {
-			this.baseOfDataVM = new UInt32HexField(doc, Name, "BaseOfData", startOffset + 0x18);
-			this.imageBaseVM = new UInt32HexField(doc, Name, "ImageBase", startOffset + 0x1C);
+			this.BaseOfDataVM = new UInt32HexField(doc, Name, "BaseOfData", startOffset + 0x18);
+			this.ImageBaseVM = new UInt32HexField(doc, Name, "ImageBase", startOffset + 0x1C);
 
-			this.sizeOfStackReserveVM = new UInt32HexField(doc, Name, "SizeOfStackReserve", startOffset + 0x48);
-			this.sizeOfStackCommitVM = new UInt32HexField(doc, Name, "SizeOfStackCommit", startOffset + 0x4C);
-			this.sizeOfHeapReserveVM = new UInt32HexField(doc, Name, "SizeOfHeapReserve", startOffset + 0x50);
-			this.sizeOfHeapCommitVM = new UInt32HexField(doc, Name, "SizeOfHeapCommit", startOffset + 0x54);
+			this.SizeOfStackReserveVM = new UInt32HexField(doc, Name, "SizeOfStackReserve", startOffset + 0x48);
+			this.SizeOfStackCommitVM = new UInt32HexField(doc, Name, "SizeOfStackCommit", startOffset + 0x4C);
+			this.SizeOfHeapReserveVM = new UInt32HexField(doc, Name, "SizeOfHeapReserve", startOffset + 0x50);
+			this.SizeOfHeapCommitVM = new UInt32HexField(doc, Name, "SizeOfHeapCommit", startOffset + 0x54);
 
 			var list = new List<HexField> {
 				MagicVM,

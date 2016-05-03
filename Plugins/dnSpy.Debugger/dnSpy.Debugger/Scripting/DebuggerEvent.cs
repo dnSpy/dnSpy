@@ -25,22 +25,10 @@ using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerEvent : IDebuggerEvent {
-		public string Name {
-			get { return name; }
-		}
-
-		public EventAttributes Attributes {
-			get { return attributes; }
-		}
-		readonly EventAttributes attributes;
-
-		public bool IsSpecialName {
-			get { return (attributes & EventAttributes.SpecialName) != 0; }
-		}
-
-		public bool IsRuntimeSpecialName {
-			get { return (attributes & EventAttributes.RTSpecialName) != 0; }
-		}
+		public string Name { get; }
+		public EventAttributes Attributes { get; }
+		public bool IsSpecialName => (Attributes & EventAttributes.SpecialName) != 0;
+		public bool IsRuntimeSpecialName => (Attributes & EventAttributes.RTSpecialName) != 0;
 
 		public IDebuggerType EventType {
 			get {
@@ -60,22 +48,14 @@ namespace dnSpy.Debugger.Scripting {
 		IDebuggerType evtType;
 		bool evtTypeInitd;
 
-		public IDebuggerModule Module {
-			get { return debugger.Dispatcher.UI(() => debugger.FindModuleUI(evt.Module)); }
-		}
+		public IDebuggerModule Module => debugger.Dispatcher.UI(() => debugger.FindModuleUI(evt.Module));
 
-		public IDebuggerClass Class {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var cls = evt.Class;
-					return cls == null ? null : new DebuggerClass(debugger, cls);
-				});
-			}
-		}
+		public IDebuggerClass Class => debugger.Dispatcher.UI(() => {
+			var cls = evt.Class;
+			return cls == null ? null : new DebuggerClass(debugger, cls);
+		});
 
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token { get; }
 
 		public IDebuggerMethod Adder {
 			get {
@@ -148,47 +128,27 @@ namespace dnSpy.Debugger.Scripting {
 
 		readonly Debugger debugger;
 		readonly int hashCode;
-		readonly uint token;
 		readonly CorEvent evt;
-		readonly string name;
 
 		public DebuggerEvent(Debugger debugger, CorEvent evt) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.evt = evt;
 			this.hashCode = evt.GetHashCode();
-			this.token = evt.Token;
-			this.name = evt.GetName() ?? string.Empty;
-			this.attributes = evt.GetAttributes();
+			this.Token = evt.Token;
+			this.Name = evt.GetName() ?? string.Empty;
+			this.Attributes = evt.GetAttributes();
 		}
 
-		public override bool Equals(object obj) {
-			var other = obj as DebuggerEvent;
-			return other != null && other.evt == evt;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
+		public override bool Equals(object obj) => (obj as DebuggerEvent)?.evt == evt;
+		public override int GetHashCode() => hashCode;
 		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowParameterTypes |
 			TypePrinterFlags.ShowReturnTypes | TypePrinterFlags.ShowNamespaces |
 			TypePrinterFlags.ShowTypeKeywords;
-
-		public void WriteTo(IOutputWriter output) {
-			Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
-		}
-
-		public void Write(IOutputWriter output, TypeFormatFlags flags) {
+		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
+		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
 			debugger.Dispatcher.UI(() => evt.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		}
-
-		public string ToString(TypeFormatFlags flags) {
-			return debugger.Dispatcher.UI(() => evt.ToString((TypePrinterFlags)flags));
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => evt.ToString(DEFAULT_FLAGS));
-		}
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => evt.ToString((TypePrinterFlags)flags));
+		public override string ToString() => debugger.Dispatcher.UI(() => evt.ToString(DEFAULT_FLAGS));
 	}
 }

@@ -43,41 +43,24 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DebugEventBreakpointConditionContext : BreakpointConditionContext {
-		public override DnBreakpoint Breakpoint {
-			get { return bp; }
-		}
-
-		public DnDebugEventBreakpoint DebugEventBreakpoint {
-			get { return bp; }
-		}
-		readonly DnDebugEventBreakpoint bp;
-
-		public DebugCallbackEventArgs EventArgs {
-			get { return e; }
-		}
-		readonly DebugCallbackEventArgs e;
+		public override DnBreakpoint Breakpoint => DebugEventBreakpoint;
+		public DnDebugEventBreakpoint DebugEventBreakpoint { get; }
+		public DebugCallbackEventArgs EventArgs { get; }
 
 		public DebugEventBreakpointConditionContext(DnDebugger debugger, DnDebugEventBreakpoint bp, DebugCallbackEventArgs e)
 			: base(debugger) {
-			this.bp = bp;
-			this.e = e;
+			this.DebugEventBreakpoint = bp;
+			this.EventArgs = e;
 		}
 	}
 
 	public sealed class DnDebugEventBreakpoint : DnBreakpoint {
-		internal Func<DebugEventBreakpointConditionContext, bool> Condition {
-			get { return cond; }
-		}
-		readonly Func<DebugEventBreakpointConditionContext, bool> cond;
-
-		public DebugEventBreakpointKind EventKind {
-			get { return eventKind; }
-		}
-		readonly DebugEventBreakpointKind eventKind;
+		internal Func<DebugEventBreakpointConditionContext, bool> Condition { get; }
+		public DebugEventBreakpointKind EventKind { get; }
 
 		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool> cond) {
-			this.eventKind = eventKind;
-			this.cond = cond ?? defaultCond;
+			this.EventKind = eventKind;
+			this.Condition = cond ?? defaultCond;
 		}
 		static readonly Func<DebugEventBreakpointConditionContext, bool> defaultCond = a => true;
 

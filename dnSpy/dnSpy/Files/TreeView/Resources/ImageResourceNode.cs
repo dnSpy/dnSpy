@@ -62,9 +62,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			return new ImageResourceElementNode(treeNodeGroup, resourceElement);
 		}
 
-		static bool CouldBeImage(string name, IBinaryReader reader) {
-			return CouldBeImage(name) || CouldBeImage(reader);
-		}
+		static bool CouldBeImage(string name, IBinaryReader reader) => CouldBeImage(name) || CouldBeImage(reader);
 
 		static readonly string[] fileExtensions = {
 			".png",
@@ -127,13 +125,8 @@ namespace dnSpy.Files.TreeView.Resources {
 		readonly ImageSource imageSource;
 		readonly byte[] imageData;
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.IMAGE_RESOURCE_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon() {
-			return new ImageReference(GetType().Assembly, "ImageFile");
-		}
+		public override Guid Guid => new Guid(FileTVConstants.IMAGE_RESOURCE_NODE_GUID);
+		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
 
 		public ImageResourceNode(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
@@ -169,13 +162,8 @@ namespace dnSpy.Files.TreeView.Resources {
 		ImageSource imageSource;
 		byte[] imageData;
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.IMAGE_RESOURCE_ELEMENT_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon() {
-			return new ImageReference(GetType().Assembly, "ImageFile");
-		}
+		public override Guid Guid => new Guid(FileTVConstants.IMAGE_RESOURCE_ELEMENT_NODE_GUID);
+		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
 
 		public ImageResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
 			: base(treeNodeGroup, resourceElement) {

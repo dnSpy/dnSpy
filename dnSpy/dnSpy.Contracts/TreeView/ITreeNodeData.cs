@@ -168,18 +168,14 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static IEnumerable<ITreeNodeData> Descendants(this ITreeNodeData self) {
-			return self.TreeNode.Descendants().Select(a => a.Data);
-		}
+		public static IEnumerable<ITreeNodeData> Descendants(this ITreeNodeData self) => self.TreeNode.Descendants().Select(a => a.Data);
 
 		/// <summary>
 		/// Gets all descendants including itself
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static IEnumerable<ITreeNodeData> DescendantsAndSelf(this ITreeNodeData self) {
-			return self.TreeNode.DescendantsAndSelf().Select(a => a.Data);
-		}
+		public static IEnumerable<ITreeNodeData> DescendantsAndSelf(this ITreeNodeData self) => self.TreeNode.DescendantsAndSelf().Select(a => a.Data);
 
 		/// <summary>
 		/// Gets the ancestor of a certain type

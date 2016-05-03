@@ -41,13 +41,8 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand PickAssemblyCommand {
-			get { return new RelayCommand(a => PickAssembly(), a => IsAssemblyLinked); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand PickAssemblyCommand => new RelayCommand(a => PickAssembly(), a => IsAssemblyLinked);
 
 		ResourceType Type {
 			get { return type; }
@@ -63,23 +58,12 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		ResourceType type;
 
-		public bool IsEmbedded {
-			get { return Type == ResourceType.Embedded; }
-		}
-
-		public bool IsAssemblyLinked {
-			get { return Type == ResourceType.AssemblyLinked; }
-		}
-
-		public bool IsLinked {
-			get { return Type == ResourceType.Linked; }
-		}
+		public bool IsEmbedded => Type == ResourceType.Embedded;
+		public bool IsAssemblyLinked => Type == ResourceType.AssemblyLinked;
+		public bool IsLinked => Type == ResourceType.Linked;
 
 		internal static readonly EnumVM[] resourceVisibilityList = EnumVM.Create(typeof(ResourceVisibility));
-		public EnumListVM ResourceVisibilityVM {
-			get { return resourceVisibilityVM; }
-		}
-		readonly EnumListVM resourceVisibilityVM = new EnumListVM(resourceVisibilityList);
+		public EnumListVM ResourceVisibilityVM { get; } = new EnumListVM(resourceVisibilityList);
 
 		public ManifestResourceAttributes Attributes {
 			get {
@@ -120,14 +104,8 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		AssemblyRef assembly;
 
-		public string AssemblyFullName {
-			get { return Assembly == null ? "null" : Assembly.FullName; }
-		}
-
-		public HexStringVM FileHashValue {
-			get { return fileHashValue; }
-		}
-		HexStringVM fileHashValue;
+		public string AssemblyFullName => Assembly == null ? "null" : Assembly.FullName;
+		public HexStringVM FileHashValue { get; }
 
 		public string FileName {
 			get { return fileName; }
@@ -157,7 +135,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.origOptions = options;
 			this.ownerModule = ownerModule;
 
-			this.fileHashValue = new HexStringVM(a => HasErrorUpdated());
+			this.FileHashValue = new HexStringVM(a => HasErrorUpdated());
 
 			Reinitialize();
 		}
@@ -170,13 +148,8 @@ namespace dnSpy.AsmEditor.Resources {
 				Assembly = newAsm.AssemblyDef.ToAssemblyRef();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ResourceOptions CreateResourceOptions() {
-			return CopyTo(new ResourceOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ResourceOptions CreateResourceOptions() => CopyTo(new ResourceOptions());
 
 		void InitializeFrom(ResourceOptions options) {
 			this.Type = options.ResourceType;
@@ -190,7 +163,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.FileContainsNoMetaData = options.File.ContainsNoMetaData;
 			}
 			else {
-				this.FileHashValue.Value = new byte[0];
+				this.FileHashValue.Value = Array.Empty<byte>();
 				this.FileName = string.Empty;
 				this.FileContainsNoMetaData = false;
 			}

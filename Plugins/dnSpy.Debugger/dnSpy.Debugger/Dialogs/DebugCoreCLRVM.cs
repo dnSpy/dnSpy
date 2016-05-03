@@ -36,25 +36,12 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		IPickDirectory pickDirectory;
 
-		public ICommand PickDbgShimFilenameCommand {
-			get { return new RelayCommand(a => PickNewDbgShimFilename()); }
-		}
+		public ICommand PickDbgShimFilenameCommand => new RelayCommand(a => PickNewDbgShimFilename());
+		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
+		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
+		public ICommand PickCurrentDirectoryCommand => new RelayCommand(a => PickNewCurrentDirectory());
 
-		public ICommand PickHostFilenameCommand {
-			get { return new RelayCommand(a => PickNewHostFilename()); }
-		}
-
-		public ICommand PickFilenameCommand {
-			get { return new RelayCommand(a => PickNewFilename()); }
-		}
-
-		public ICommand PickCurrentDirectoryCommand {
-			get { return new RelayCommand(a => PickNewCurrentDirectory()); }
-		}
-
-		public EnumListVM BreakProcessKindVM {
-			get { return breakProcessKindVM; }
-		}
+		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);
 
 		public BreakProcessKind BreakProcessKind {
@@ -191,9 +178,7 @@ namespace dnSpy.Debugger.Dialogs {
 			CurrentDirectory = newDir;
 		}
 
-		public DebugCoreCLRVM Clone() {
-			return CopyTo(new DebugCoreCLRVM());
-		}
+		public DebugCoreCLRVM Clone() => CopyTo(new DebugCoreCLRVM());
 
 		public DebugCoreCLRVM CopyTo(DebugCoreCLRVM other) {
 			other.DbgShimFilename = this.DbgShimFilename;

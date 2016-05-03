@@ -28,24 +28,13 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageOptionalHeader64Node : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.IMGOPTHEADER64_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override object VMObject {
-			get { return imageOptionalHeader64VM; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.IMGOPTHEADER64_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override object VMObject => imageOptionalHeader64VM;
+		protected override string IconName => "BinaryFile";
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return imageOptionalHeader64VM; }
-		}
-
-		protected override string IconName {
-			get { return "BinaryFile"; }
 		}
 
 		readonly ImageOptionalHeader64VM imageOptionalHeader64VM;
@@ -55,8 +44,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageOptionalHeader64VM = new ImageOptionalHeader64VM(this, doc, StartOffset, EndOffset);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) {
+		protected override void Write(ISyntaxHighlightOutput output) =>
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_OptHeader64, BoxedTextTokenKind.Keyword);
-		}
 	}
 }

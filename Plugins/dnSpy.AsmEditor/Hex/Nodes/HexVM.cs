@@ -25,15 +25,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class HexVM : ViewModelBase {
 		public abstract string Name { get; }
 		public abstract IEnumerable<HexField> HexFields { get; }
-
-		public object Owner {
-			get { return owner; }
-		}
-		readonly object owner;
+		public object Owner { get; }
 
 		protected HexVM(object owner) {
 			Debug.Assert(owner != null);
-			this.owner = owner;
+			this.Owner = owner;
 		}
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {

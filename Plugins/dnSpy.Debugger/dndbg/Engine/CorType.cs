@@ -30,17 +30,13 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the element type
 		/// </summary>
-		public CorElementType ElementType {
-			get { return elemType; }
-		}
+		public CorElementType ElementType => elemType;
 		readonly CorElementType elemType;
 
 		/// <summary>
 		/// Gets the rank of the array
 		/// </summary>
-		public uint Rank {
-			get { return rank; }
-		}
+		public uint Rank => rank;
 		readonly uint rank;
 
 		/// <summary>
@@ -83,9 +79,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if <see cref="Class"/> can be accessed
 		/// </summary>
-		public bool HasClass {
-			get { return ElementType == CorElementType.Class || ElementType == CorElementType.ValueType; }
-		}
+		public bool HasClass => ElementType == CorElementType.Class || ElementType == CorElementType.ValueType;
 
 		/// <summary>
 		/// Gets the class or null. Should only be called if <see cref="ElementType"/> is
@@ -119,19 +113,14 @@ namespace dndbg.Engine {
 				// Also check for Class since the CLR debugger doesn't care if it's correct
 				if (ElementType != CorElementType.ValueType && ElementType != CorElementType.Class)
 					return false;
-				var b = Base;
-				if (b == null)
-					return false;
-				return b.IsSystemEnum;
+				return Base?.IsSystemEnum == true;
 			}
 		}
 
 		/// <summary>
 		/// true if this class derives from <c>System.ValueType</c> or <c>System.Enum</c>
 		/// </summary>
-		public bool IsValueType {
-			get { return IsEnum || DerivesFromSystemValueType; }
-		}
+		public bool IsValueType => IsEnum || DerivesFromSystemValueType;
 
 		/// <summary>
 		/// true if it's one of the primitive value types
@@ -151,8 +140,7 @@ namespace dndbg.Engine {
 			get {
 				if (IsPrimitiveValueType)
 					return true;
-				var b = Base;
-				return b != null && b.IsSystemValueType;
+				return Base?.IsSystemValueType == true;
 			}
 		}
 
@@ -162,12 +150,10 @@ namespace dndbg.Engine {
 		public bool IsSystemEnum {
 			get {
 				if (TypeParameters.Any())
-					return false;   // System.Enum is not generic
-				var cls = Class;
-				if (cls == null || !cls.IsSystemEnum)
+					return false;	// System.Enum is not generic
+				if (Class?.IsSystemEnum != true)
 					return false;
-				var b = Base;
-				return b != null && b.IsSystemValueType;
+				return Base?.IsSystemValueType == true;
 			}
 		}
 
@@ -178,11 +164,9 @@ namespace dndbg.Engine {
 			get {
 				if (TypeParameters.Any())
 					return false;   // System.ValueType is not generic
-				var cls = Class;
-				if (cls == null || !cls.IsSystemValueType)
+				if (Class?.IsSystemValueType != true)
 					return false;
-				var b = Base;
-				return b != null && b.IsSystemObject;
+				return Base?.IsSystemObject == true;
 			}
 		}
 
@@ -193,8 +177,7 @@ namespace dndbg.Engine {
 			get {
 				if (TypeParameters.Any())
 					return false;   // System.Object is not generic
-				var cls = Class;
-				if (cls == null || !cls.IsSystemObject)
+				if (Class?.IsSystemObject != true)
 					return false;
 				return Base == null;
 			}
@@ -207,11 +190,9 @@ namespace dndbg.Engine {
 			get {
 				if (TypeParameters.Any())
 					return false;   // System.Decimal is not generic
-				var cls = Class;
-				if (cls == null || !cls.IsSystemDecimal)
+				if (Class?.IsSystemDecimal != true)
 					return false;
-				var b = Base;
-				return b != null && b.IsSystemValueType;
+				return Base?.IsSystemValueType == true;
 			}
 		}
 
@@ -237,9 +218,8 @@ namespace dndbg.Engine {
 
 		internal IMetaDataImport GetMetaDataImport(out uint token) {
 			var cls = Class;
-			var mod = cls == null ? null : cls.Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			token = cls == null ? 0 : cls.Token;
+			var mdi = cls?.Module?.GetMetaDataInterface<IMetaDataImport>();
+			token = cls?.Token ?? 0;
 			return mdi;
 		}
 
@@ -258,8 +238,7 @@ namespace dndbg.Engine {
 				if (names.Count != 1 || names[0].Name != "System.Nullable`1")
 					return false;
 
-				var b = Base;
-				return b != null && b.IsSystemValueType;
+				return Base?.IsSystemValueType == true;
 			}
 		}
 
@@ -304,8 +283,7 @@ namespace dndbg.Engine {
 						return CorElementType.Object;
 					break;
 				case "System.String":
-					var b = Base;
-					if (b != null && b.IsSystemObject)
+					if (Base?.IsSystemObject == true)
 						return CorElementType.String;
 					break;
 				}
@@ -362,9 +340,8 @@ namespace dndbg.Engine {
 
 		public TypeAttributes GetTypeAttributes() {
 			var cls = Class;
-			var mod = cls == null ? null : cls.Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetTypeDefAttributes(mdi, cls.Token) ?? 0;
+			var mdi = cls?.Module?.GetMetaDataInterface<IMetaDataImport>();
+			return MDAPI.GetTypeDefAttributes(mdi, cls?.Token ?? 0) ?? 0;
 		}
 
 		/// <summary>
@@ -372,10 +349,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Name (not including namespace)</param>
 		/// <returns></returns>
-		public bool IsSystem(string name) {
-			var cls = Class;
-			return cls != null && cls.IsSystem(name);
-		}
+		public bool IsSystem(string name) => Class?.IsSystem(name) == true;
 
 		/// <summary>
 		/// Reads a static field
@@ -397,7 +371,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorValue GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
 			ICorDebugValue value;
-			hr = obj.GetStaticFieldValue(token, frame == null ? null : frame.RawObject, out value);
+			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -407,9 +381,8 @@ namespace dndbg.Engine {
 		/// <param name="hasValueInfo">Updated with <c>hasValue</c> field</param>
 		/// <param name="valueInfo">Updated with 'value' field</param>
 		/// <returns></returns>
-		public bool GetSystemNullableFields(out TokenAndName hasValueInfo, out TokenAndName valueInfo) {
-			return Utils.GetSystemNullableFields(this, out hasValueInfo, out valueInfo);
-		}
+		public bool GetSystemNullableFields(out TokenAndName hasValueInfo, out TokenAndName valueInfo) =>
+			Utils.GetSystemNullableFields(this, out hasValueInfo, out valueInfo);
 
 		/// <summary>
 		/// Gets the <c>System.Nullable</c> fields if it's a nullable type
@@ -418,64 +391,50 @@ namespace dndbg.Engine {
 		/// <param name="valueInfo">Updated with 'value' field</param>
 		/// <param name="nullableElemType">Updated with nullable element type</param>
 		/// <returns></returns>
-		public bool GetSystemNullableFields(out TokenAndName hasValueInfo, out TokenAndName valueInfo, out CorType nullableElemType) {
-			return Utils.GetSystemNullableFields(this, out hasValueInfo, out valueInfo, out nullableElemType);
-		}
+		public bool GetSystemNullableFields(out TokenAndName hasValueInfo, out TokenAndName valueInfo, out CorType nullableElemType) =>
+			Utils.GetSystemNullableFields(this, out hasValueInfo, out valueInfo, out nullableElemType);
 
 		/// <summary>
 		/// Gets all fields
 		/// </summary>
 		/// <param name="checkBaseClasses">true to check base classes</param>
 		/// <returns></returns>
-		public IEnumerable<CorFieldInfo> GetFields(bool checkBaseClasses = true) {
-			return MetaDataUtils.GetFieldInfos(this, checkBaseClasses);
-		}
+		public IEnumerable<CorFieldInfo> GetFields(bool checkBaseClasses = true) => MetaDataUtils.GetFieldInfos(this, checkBaseClasses);
 
 		/// <summary>
 		/// Gets all properties
 		/// </summary>
 		/// <param name="checkBaseClasses">true to check base classes</param>
 		/// <returns></returns>
-		public IEnumerable<CorPropertyInfo> GetProperties(bool checkBaseClasses = true) {
-			return MetaDataUtils.GetProperties(this, checkBaseClasses);
-		}
+		public IEnumerable<CorPropertyInfo> GetProperties(bool checkBaseClasses = true) => MetaDataUtils.GetProperties(this, checkBaseClasses);
 
 		/// <summary>
 		/// Gets the ToString() method or null if there was an error
 		/// </summary>
 		/// <returns></returns>
-		public CorMethodInfo GetToStringMethod() {
-			return MetaDataUtils.GetToStringMethod(this);
-		}
+		public CorMethodInfo GetToStringMethod() => MetaDataUtils.GetToStringMethod(this);
 
 		/// <summary>
 		/// Gets the <see cref="System.Object"/>'s <c>ToString()</c> method or null if there was
 		/// an error.
 		/// </summary>
 		/// <returns></returns>
-		public CorMethodInfo GetSystemObjectToStringMethod() {
-			var t = SystemObject;
-			return t == null ? null : t.GetToStringMethod();
-		}
+		public CorMethodInfo GetSystemObjectToStringMethod() => SystemObject?.GetToStringMethod();
 
 		/// <summary>
 		/// Returns true if an attribute is present
 		/// </summary>
 		/// <param name="attributeName">Full name of attribute type</param>
 		/// <returns></returns>
-		public bool HasAttribute(string attributeName) {
-			var cls = Class;
-			return cls != null && cls.HasAttribute(attributeName);
-		}
+		public bool HasAttribute(string attributeName) => Class?.HasAttribute(attributeName) == true;
 
 		/// <summary>
 		/// Finds a method
 		/// </summary>
 		/// <param name="name">Method name</param>
 		/// <returns></returns>
-		public CorFunction FindFunction(string name, bool checkBaseClasses = true) {
-			return FindFunctions(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorFunction FindFunction(string name, bool checkBaseClasses = true) =>
+			FindFunctions(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds methods
@@ -493,7 +452,7 @@ namespace dndbg.Engine {
 					continue;
 
 				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var mdToken in MDAPI.GetMethodTokens(mdi, cls.Token)) {
 					if (MDAPI.GetMethodName(mdi, mdToken) == name) {
 						var func = mod.GetFunctionFromToken(mdToken);
@@ -520,7 +479,7 @@ namespace dndbg.Engine {
 					continue;
 
 				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var mdToken in MDAPI.GetMethodTokens(mdi, cls.Token)) {
 					var func = mod.GetFunctionFromToken(mdToken);
 					Debug.Assert(func != null);
@@ -535,9 +494,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Field name</param>
 		/// <returns></returns>
-		public CorField FindField(string name, bool checkBaseClasses = true) {
-			return FindFields(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorField FindField(string name, bool checkBaseClasses = true) =>
+			FindFields(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds fields
@@ -554,8 +512,7 @@ namespace dndbg.Engine {
 				if (cls == null)
 					continue;
 
-				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = cls.Module?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var fdToken in MDAPI.GetFieldTokens(mdi, cls.Token)) {
 					if (MDAPI.GetFieldName(mdi, fdToken) == name)
 						yield return new CorField(cls, fdToken);
@@ -577,8 +534,7 @@ namespace dndbg.Engine {
 				if (cls == null)
 					continue;
 
-				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = cls.Module?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var fdToken in MDAPI.GetFieldTokens(mdi, cls.Token))
 					yield return new CorField(cls, fdToken);
 			}
@@ -589,9 +545,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Property name</param>
 		/// <returns></returns>
-		public CorProperty FindProperty(string name, bool checkBaseClasses = true) {
-			return FindProperties(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorProperty FindProperty(string name, bool checkBaseClasses = true) =>
+			FindProperties(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds properties
@@ -608,8 +563,7 @@ namespace dndbg.Engine {
 				if (cls == null)
 					continue;
 
-				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = cls.Module?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, cls.Token)) {
 					if (MDAPI.GetPropertyName(mdi, pdToken) == name)
 						yield return new CorProperty(cls, pdToken);
@@ -631,8 +585,7 @@ namespace dndbg.Engine {
 				if (cls == null)
 					continue;
 
-				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = cls.Module?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, cls.Token))
 					yield return new CorProperty(cls, pdToken);
 			}
@@ -643,9 +596,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Event name</param>
 		/// <returns></returns>
-		public CorEvent FindEvent(string name, bool checkBaseClasses = true) {
-			return FindEvents(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorEvent FindEvent(string name, bool checkBaseClasses = true) =>
+			FindEvents(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds events
@@ -662,8 +614,7 @@ namespace dndbg.Engine {
 				if (cls == null)
 					continue;
 
-				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = cls.Module?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var edToken in MDAPI.GetEventTokens(mdi, cls.Token)) {
 					if (MDAPI.GetEventName(mdi, edToken) == name)
 						yield return new CorEvent(cls, edToken);
@@ -685,8 +636,7 @@ namespace dndbg.Engine {
 				if (cls == null)
 					continue;
 
-				var mod = cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = cls.Module?.GetMetaDataInterface<IMetaDataImport>();
 				foreach (var edToken in MDAPI.GetEventTokens(mdi, cls.Token))
 					yield return new CorEvent(cls, edToken);
 			}
@@ -700,47 +650,25 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorType a, CorType b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorType other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorType);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(CorType a, CorType b) => !(a == b);
+		public bool Equals(CorType other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorType);
+		public override int GetHashCode() => RawObject.GetHashCode();
 
 		public T Write<T>(T output, TypeSig type, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(type, TypeParameters.ToArray());
 			return output;
 		}
 
-		public string ToString(TypeSig type, TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), type, flags).ToString();
-		}
-
-		public string ToString(TypeSig type) {
-			return ToString(type, TypePrinterFlags.Default);
-		}
+		public string ToString(TypeSig type, TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), type, flags).ToString();
+		public string ToString(TypeSig type) => ToString(type, TypePrinterFlags.Default);
 
 		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

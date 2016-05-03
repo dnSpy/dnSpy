@@ -32,8 +32,7 @@ namespace dnSpy.Analyzer {
 	}
 
 	class AnalyzerSettings : ViewModelBase, IAnalyzerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
 			get { return syntaxHighlight; }
@@ -83,9 +82,7 @@ namespace dnSpy.Analyzer {
 		}
 		bool useNewRenderer = false;
 
-		public AnalyzerSettings Clone() {
-			return CopyTo(new AnalyzerSettings());
-		}
+		public AnalyzerSettings Clone() => CopyTo(new AnalyzerSettings());
 
 		public AnalyzerSettings CopyTo(AnalyzerSettings other) {
 			other.SyntaxHighlight = this.SyntaxHighlight;

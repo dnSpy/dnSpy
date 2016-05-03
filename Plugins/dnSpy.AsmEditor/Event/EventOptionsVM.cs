@@ -38,33 +38,13 @@ namespace dnSpy.AsmEditor.Event {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand PickAddMethodCommand {
-			get { return new RelayCommand(a => PickAddMethod()); }
-		}
-
-		public ICommand PickInvokeMethodCommand {
-			get { return new RelayCommand(a => PickInvokeMethod()); }
-		}
-
-		public ICommand PickRemoveMethodCommand {
-			get { return new RelayCommand(a => PickRemoveMethod()); }
-		}
-
-		public ICommand ClearAddMethodCommand {
-			get { return new RelayCommand(a => AddMethod = null, a => AddMethod != null); }
-		}
-
-		public ICommand ClearInvokeMethodCommand {
-			get { return new RelayCommand(a => InvokeMethod = null, a => InvokeMethod != null); }
-		}
-
-		public ICommand ClearRemoveMethodCommand {
-			get { return new RelayCommand(a => RemoveMethod = null, a => RemoveMethod != null); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand PickAddMethodCommand => new RelayCommand(a => PickAddMethod());
+		public ICommand PickInvokeMethodCommand => new RelayCommand(a => PickInvokeMethod());
+		public ICommand PickRemoveMethodCommand => new RelayCommand(a => PickRemoveMethod());
+		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => AddMethod != null);
+		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => InvokeMethod != null);
+		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => RemoveMethod != null);
 
 		public EventAttributes Attributes {
 			get { return attributes; }
@@ -89,9 +69,7 @@ namespace dnSpy.AsmEditor.Event {
 			set { SetFlagValue(EventAttributes.RTSpecialName, value); }
 		}
 
-		bool GetFlagValue(EventAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(EventAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(EventAttributes flag, bool value) {
 			if (value)
@@ -112,34 +90,16 @@ namespace dnSpy.AsmEditor.Event {
 		UTF8String name;
 
 		public TypeSig EventTypeSig {
-			get { return typeSigCreator.TypeSig; }
-			set { typeSigCreator.TypeSig = value; }
+			get { return TypeSigCreator.TypeSig; }
+			set { TypeSigCreator.TypeSig = value; }
 		}
 
-		public string EventTypeHeader {
-			get { return string.Format(dnSpy_AsmEditor_Resources.EventType, typeSigCreator.TypeSigDnlibFullName); }
-		}
-
-		public TypeSigCreatorVM TypeSigCreator {
-			get { return typeSigCreator; }
-		}
-		readonly TypeSigCreatorVM typeSigCreator;
-
-		public string AddMethodFullName {
-			get { return GetFullName(AddMethod); }
-		}
-
-		public string InvokeMethodFullName {
-			get { return GetFullName(InvokeMethod); }
-		}
-
-		public string RemoveMethodFullName {
-			get { return GetFullName(RemoveMethod); }
-		}
-
-		static string GetFullName(MethodDef md) {
-			return md == null ? "null" : md.FullName;
-		}
+		public string EventTypeHeader => string.Format(dnSpy_AsmEditor_Resources.EventType, TypeSigCreator.TypeSigDnlibFullName);
+		public TypeSigCreatorVM TypeSigCreator { get; }
+		public string AddMethodFullName => GetFullName(AddMethod);
+		public string InvokeMethodFullName => GetFullName(InvokeMethod);
+		public string RemoveMethodFullName => GetFullName(RemoveMethod);
+		static string GetFullName(MethodDef md) => md == null ? "null" : md.FullName;
 
 		public MethodDef AddMethod {
 			get { return addMethod; }
@@ -177,15 +137,8 @@ namespace dnSpy.AsmEditor.Event {
 		}
 		MethodDef removeMethod;
 
-		public MethodDefsVM OtherMethodsVM {
-			get { return otherMethodsVM; }
-		}
-		MethodDefsVM otherMethodsVM;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
+		public MethodDefsVM OtherMethodsVM { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		readonly ModuleDef ownerModule;
 
@@ -199,15 +152,15 @@ namespace dnSpy.AsmEditor.Event {
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
-			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
+			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.otherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.OtherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
 
 			this.origOptions = options;
 
-			this.typeSigCreator.CanAddFnPtr = false;
+			this.TypeSigCreator.CanAddFnPtr = false;
 			Reinitialize();
 		}
 
@@ -217,9 +170,7 @@ namespace dnSpy.AsmEditor.Event {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
 
 		MethodDef PickMethod(MethodDef origMethod) {
 			if (dnlibTypePicker == null)
@@ -245,9 +196,7 @@ namespace dnSpy.AsmEditor.Event {
 				RemoveMethod = method;
 		}
 
-		public EventDefOptions CreateEventDefOptions() {
-			return CopyTo(new EventDefOptions());
-		}
+		public EventDefOptions CreateEventDefOptions() => CopyTo(new EventDefOptions());
 
 		void InitializeFrom(EventDefOptions options) {
 			Attributes = options.Attributes;

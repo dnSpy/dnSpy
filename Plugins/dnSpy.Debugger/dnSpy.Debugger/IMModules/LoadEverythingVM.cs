@@ -34,15 +34,11 @@ namespace dnSpy.Debugger.IMModules {
 			this.token = token;
 		}
 
-		public void ThrowIfCancellationRequested() {
-			token.ThrowIfCancellationRequested();
-		}
+		public void ThrowIfCancellationRequested() => token.ThrowIfCancellationRequested();
 	}
 
 	sealed class LoadEverythingVM : ViewModelBase {
-		public ICommand CancelCommand {
-			get { return new RelayCommand(a => Cancel(), a => CanCancel); }
-		}
+		public ICommand CancelCommand => new RelayCommand(a => Cancel(), a => CanCancel);
 
 		readonly ModuleDef[] modules;
 		readonly CancellationTokenSource cancellationTokenSource;
@@ -57,9 +53,7 @@ namespace dnSpy.Debugger.IMModules {
 				CurrentItemName = CalculateCurrentItemName(this.modules[0]);
 		}
 
-		public bool CanCancel {
-			get { return !cancelling; }
-		}
+		public bool CanCancel => !cancelling;
 		bool cancelling;
 
 		public void Cancel() {
@@ -112,8 +106,7 @@ namespace dnSpy.Debugger.IMModules {
 				}
 			}
 			HasCompleted = true;
-			if (OnCompleted != null)
-				OnCompleted(this, EventArgs.Empty);
+			OnCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler OnCompleted;

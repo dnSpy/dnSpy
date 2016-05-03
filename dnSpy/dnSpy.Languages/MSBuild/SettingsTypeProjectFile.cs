@@ -28,21 +28,10 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class SettingsTypeProjectFile : TypeProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateSettingsTypeFile; }
-		}
-
-		public ILanguage Language {
-			get { return language; }
-		}
-
-		public DecompilationContext DecompilationContext {
-			get { return decompilationContext; }
-		}
-
-		public override BuildAction BuildAction {
-			get { return isEmpty ? BuildAction.DontIncludeInProjectFile : base.BuildAction; }
-		}
+		public override string Description => Languages_Resources.MSBuild_CreateSettingsTypeFile;
+		public ILanguage Language => language;
+		public DecompilationContext DecompilationContext => decompilationContext;
+		public override BuildAction BuildAction => isEmpty ? BuildAction.DontIncludeInProjectFile : base.BuildAction;
 		bool isEmpty;
 
 		public SettingsTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
@@ -56,7 +45,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
-			var opts = new DecompilePartialType(type, output, decompilationContext);
+			var opts = new DecompilePartialType(Type, output, decompilationContext);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);
 			language.Decompile(DecompilationType.PartialType, opts);
@@ -64,11 +53,11 @@ namespace dnSpy.Languages.MSBuild {
 
 		void InitializeIsEmpty() {
 			var allDefs = new HashSet<object>();
-			foreach (var m in type.Methods) allDefs.Add(m);
-			foreach (var f in type.Fields) allDefs.Add(f);
-			foreach (var p in type.Properties) allDefs.Add(p);
-			foreach (var e in type.Events) allDefs.Add(e);
-			foreach (var t in type.NestedTypes) allDefs.Add(t);
+			foreach (var m in Type.Methods) allDefs.Add(m);
+			foreach (var f in Type.Fields) allDefs.Add(f);
+			foreach (var p in Type.Properties) allDefs.Add(p);
+			foreach (var e in Type.Events) allDefs.Add(e);
+			foreach (var t in Type.NestedTypes) allDefs.Add(t);
 			foreach (var d in GetDefsToRemove()) {
 				allDefs.Remove(d);
 				if (d is PropertyDef) {
@@ -76,8 +65,8 @@ namespace dnSpy.Languages.MSBuild {
 						allDefs.Remove(def);
 				}
 			}
-			allDefs.Remove(type.FindStaticConstructor());
-			allDefs.Remove(type.FindDefaultConstructor());
+			allDefs.Remove(Type.FindStaticConstructor());
+			allDefs.Remove(Type.FindDefaultConstructor());
 			isEmpty = allDefs.Count == 0;
 		}
 
@@ -101,7 +90,7 @@ namespace dnSpy.Languages.MSBuild {
 				foreach (var d in DotNetUtils.GetDefs(defaultProp))
 					yield return d;
 			}
-			foreach (var p in type.Properties) {
+			foreach (var p in Type.Properties) {
 				if (p.CustomAttributes.IsDefined("System.Configuration.DefaultSettingValueAttribute")) {
 					foreach (var d in DotNetUtils.GetMethodsAndSelf(p))
 						yield return d;
@@ -110,7 +99,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		PropertyDef FindDefaultProperty() {
-			foreach (var p in type.Properties) {
+			foreach (var p in Type.Properties) {
 				if (p.Name != "Default")
 					continue;
 				var g = p.GetMethod;
@@ -118,7 +107,7 @@ namespace dnSpy.Languages.MSBuild {
 					continue;
 				if (g.MethodSig.GetParamCount() != 0)
 					continue;
-				if (g.ReturnType.RemovePinnedAndModifiers().TryGetTypeDef() != type)
+				if (g.ReturnType.RemovePinnedAndModifiers().TryGetTypeDef() != Type)
 					continue;
 				if (g.Body == null)
 					continue;
@@ -131,17 +120,9 @@ namespace dnSpy.Languages.MSBuild {
 	}
 
 	sealed class SettingsDesignerTypeProjectFile : ProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateSettingsDesignerTypeFile; }
-		}
-
-		public override BuildAction BuildAction {
-			get { return BuildAction.Compile; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
+		public override string Description => Languages_Resources.MSBuild_CreateSettingsDesignerTypeFile;
+		public override BuildAction BuildAction => BuildAction.Compile;
+		public override string Filename => filename;
 		readonly string filename;
 
 		readonly SettingsTypeProjectFile typeFile;

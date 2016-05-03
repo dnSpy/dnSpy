@@ -38,18 +38,9 @@ using dnSpy.Files.TreeView;
 namespace dnSpy.Files.Tabs {
 	[Export, Export(typeof(IFileTabManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileTabManager : IFileTabManager {
-		IFileTreeView IFileTabManager.FileTreeView {
-			get { return fileTreeView; }
-		}
-		public FileTreeView FileTreeView {
-			get { return fileTreeView; }
-		}
-		readonly FileTreeView fileTreeView;
-
-		public ITabGroupManager TabGroupManager {
-			get { return tabGroupManager; }
-		}
-		readonly ITabGroupManager tabGroupManager;
+		IFileTreeView IFileTabManager.FileTreeView => FileTreeView;
+		public FileTreeView FileTreeView { get; }
+		public ITabGroupManager TabGroupManager { get; }
 
 		IEnumerable<TabContentImpl> AllTabContentImpls {
 			get {
@@ -69,12 +60,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		TabContentImpl ActiveTabContentImpl {
-			get {
-				var g = TabGroupManager.ActiveTabGroup;
-				return g == null ? null : (TabContentImpl)g.ActiveTabContent;
-			}
-		}
+		TabContentImpl ActiveTabContentImpl => (TabContentImpl)TabGroupManager.ActiveTabGroup?.ActiveTabContent;
 
 		TabContentImpl SafeActiveTabContentImpl {
 			get {
@@ -116,9 +102,7 @@ namespace dnSpy.Files.Tabs {
 			return null;
 		}
 
-		IFileTab IFileTabManager.GetOrCreateActiveTab() {
-			return SafeActiveTabContentImpl;
-		}
+		IFileTab IFileTabManager.GetOrCreateActiveTab() => SafeActiveTabContentImpl;
 
 		public IEnumerable<IFileTab> SortedTabs {
 			get {
@@ -160,10 +144,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		public IFileTabManagerSettings Settings {
-			get { return fileTabManagerSettings; }
-		}
-		readonly IFileTabManagerSettings fileTabManagerSettings;
+		public IFileTabManagerSettings Settings { get; }
 
 		readonly IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator;
 		readonly ITabManager tabManager;
@@ -174,7 +155,7 @@ namespace dnSpy.Files.Tabs {
 
 		[ImportingConstructor]
 		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
-			this.fileTabManagerSettings = fileTabManagerSettings;
+			this.Settings = fileTabManagerSettings;
 			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
 			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
 			this.wpfFocusManager = wpfFocusManager;
@@ -186,16 +167,16 @@ namespace dnSpy.Files.Tabs {
 				tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
 				isTreeViewVisible = tvElem.IsVisible;
 			}
-			this.fileTreeView = fileTreeView;
-			this.fileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
-			this.fileTreeView.SelectionChanged += FileTreeView_SelectionChanged;
-			this.fileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
-			this.fileTreeView.NodeActivated += FileTreeView_NodeActivated;
-			this.fileTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
+			this.FileTreeView = fileTreeView;
+			this.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
+			this.FileTreeView.SelectionChanged += FileTreeView_SelectionChanged;
+			this.FileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
+			this.FileTreeView.NodeActivated += FileTreeView_NodeActivated;
+			this.FileTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
 			this.tabManager = tabManagerCreator.Create();
-			this.tabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
-			this.tabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
-			this.tabGroupManager.TabGroupSelectionChanged += TabGroupManager_TabGroupSelectionChanged;
+			this.TabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
+			this.TabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
+			this.TabGroupManager.TabGroupSelectionChanged += TabGroupManager_TabGroupSelectionChanged;
 		}
 
 		void TreeView_NodeRemoved(object sender, TVNodeRemovedEventArgs e) {
@@ -211,7 +192,7 @@ namespace dnSpy.Files.Tabs {
 		void OnNodeRemoved(IDnSpyFileNode node) {
 			var hash = GetSelfAndDnSpyFileNodeChildren(node);
 			foreach (TabContentImpl tab in VisibleFirstTabs)
-				tab.OnNodesRemoved(hash, () => this.CreateTabContent(new IFileTreeNodeData[0]));
+				tab.OnNodesRemoved(hash, () => this.CreateTabContent(Array.Empty<IFileTreeNodeData>()));
 			decompilationCache.Clear(new HashSet<IDnSpyFile>(hash.Select(a => a.DnSpyFile)));
 		}
 
@@ -229,14 +210,11 @@ namespace dnSpy.Files.Tabs {
 
 		public event EventHandler<NotifyFileCollectionChangedEventArgs> FileCollectionChanged;
 		bool disable_FileCollectionChanged = false;
-		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
-			CallFileCollectionChanged(e);
-		}
+		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) => CallFileCollectionChanged(e);
 		void CallFileCollectionChanged(NotifyFileCollectionChangedEventArgs e) {
 			if (disable_FileCollectionChanged)
 				return;
-			if (FileCollectionChanged != null)
-				FileCollectionChanged(this, e);
+			FileCollectionChanged?.Invoke(this, e);
 		}
 
 		void TabGroupManager_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) {
@@ -273,11 +251,11 @@ namespace dnSpy.Files.Tabs {
 
 			var asmRefNode = e.Node as IAssemblyReferenceNode;
 			if (asmRefNode != null) {
-				var asm = fileTreeView.FileManager.Resolve(asmRefNode.AssemblyRef, asmRefNode.GetModule());
+				var asm = FileTreeView.FileManager.Resolve(asmRefNode.AssemblyRef, asmRefNode.GetModule());
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					var asmNode = fileTreeView.FindNode(asm);
+					var asmNode = FileTreeView.FindNode(asm);
 					if (asmNode != null)
-						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { asmNode });
+						FileTreeView.TreeView.SelectItems(new ITreeNodeData[] { asmNode });
 				}));
 				return;
 			}
@@ -287,9 +265,9 @@ namespace dnSpy.Files.Tabs {
 				var td = derivedTypeNode.TypeDef;
 				Debug.Assert(td != null);
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					var typeNode = fileTreeView.FindNode(td);
+					var typeNode = FileTreeView.FindNode(td);
 					if (typeNode != null)
-						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
+						FileTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
 				}));
 				return;
 			}
@@ -300,9 +278,9 @@ namespace dnSpy.Files.Tabs {
 				Debug.Assert(tdr != null);
 				var td = tdr?.ScopeType.ResolveTypeDef();
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					var typeNode = fileTreeView.FindNode(td);
+					var typeNode = FileTreeView.FindNode(td);
 					if (typeNode != null)
-						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
+						FileTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
 				}));
 				return;
 			}
@@ -365,9 +343,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		public IFileTabContent TryCreateContent(IFileTreeNodeData[] nodes) {
-			return fileTabContentFactoryManager.CreateTabContent(nodes);
-		}
+		public IFileTabContent TryCreateContent(IFileTreeNodeData[] nodes) => fileTabContentFactoryManager.CreateTabContent(nodes);
 
 		IFileTabContent CreateTabContent(IFileTreeNodeData[] nodes) {
 			var content = TryCreateContent(nodes);
@@ -381,9 +357,7 @@ namespace dnSpy.Files.Tabs {
 			tab.Show(tabContent, serializedUI, onShown);
 		}
 
-		public IFileTab OpenEmptyTab() {
-			return OpenEmptyTab(SafeActiveTabGroup);
-		}
+		public IFileTab OpenEmptyTab() => OpenEmptyTab(SafeActiveTabGroup);
 
 		IFileTab OpenEmptyTab(ITabGroup g) {
 			var impl = CreateNewTab(g);
@@ -411,19 +385,19 @@ namespace dnSpy.Files.Tabs {
 
 		void OnNewTabContentShownDelay(IFileTab fileTab) {
 			var newNodes = fileTab.Content.Nodes.ToArray();
-			if (Equals(fileTreeView.TreeView.SelectedItems, newNodes))
+			if (Equals(FileTreeView.TreeView.SelectedItems, newNodes))
 				return;
 
 			// The treeview steals the focus so remember the current focused element. Don't restore
 			// the focus if it's a node in the treeview.
 			var focusedElem = Keyboard.FocusedElement;
-			if (((UIElement)fileTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
+			if (((UIElement)FileTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
 				focusedElem = null;
-			bool tabGroupHasFocus = tabGroupManager.TabGroups.Any(a => a.IsKeyboardFocusWithin);
+			bool tabGroupHasFocus = TabGroupManager.TabGroups.Any(a => a.IsKeyboardFocusWithin);
 
 			disableSelectionChangedEventCounter++;
 			try {
-				fileTreeView.TreeView.SelectItems(newNodes);
+				FileTreeView.TreeView.SelectItems(newNodes);
 			}
 			finally {
 				disableSelectionChangedEventCounter--;
@@ -488,9 +462,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		public bool Owns(ITabGroup tabGroup) {
-			return tabGroupManager.TabGroups.Contains(tabGroup);
-		}
+		public bool Owns(ITabGroup tabGroup) => TabGroupManager.TabGroups.Contains(tabGroup);
 
 		internal void OnTabsLoaded() {
 			Debug.Assert(!tabsLoaded);
@@ -525,17 +497,15 @@ namespace dnSpy.Files.Tabs {
 		public void CloseAll() {
 			foreach (var impl in AllTabContentImpls.ToArray())
 				Close(impl);
-			fileTreeView.TreeView.SelectItems(new ITreeNodeData[0]);
+			FileTreeView.TreeView.SelectItems(Array.Empty<ITreeNodeData>());
 		}
 
 		internal void OnRemoved(TabContentImpl impl) {
 			if (ActiveTabContentImpl == null)
-				fileTreeView.TreeView.SelectItems(new ITreeNodeData[0]);
+				FileTreeView.TreeView.SelectItems(Array.Empty<ITreeNodeData>());
 		}
 
-		public void Refresh<T>() where T : IFileTreeNodeData {
-			Refresh(a => a is T);
-		}
+		public void Refresh<T>() where T : IFileTreeNodeData => Refresh(a => a is T);
 
 		public void Refresh(Predicate<IFileTreeNodeData> pred) {
 			var nodes = new List<IFileTreeNodeData>(FileTreeView.TreeView.Root.Data.Descendants().OfType<IFileTreeNodeData>().Where(a => pred(a)));
@@ -562,7 +532,7 @@ namespace dnSpy.Files.Tabs {
 		HashSet<IDnSpyFile> GetModifiedFiles(IDnSpyFile file) {
 			var fileHash = new HashSet<IDnSpyFile>();
 			fileHash.Add(file);
-			var node = fileTreeView.FindNode(file);
+			var node = FileTreeView.FindNode(file);
 			if (node is IModuleFileNode) {
 				if (node.DnSpyFile.AssemblyDef != null && node.DnSpyFile.AssemblyDef.ManifestModule == node.DnSpyFile.ModuleDef) {
 					var asmNode = node.GetAssemblyNode();
@@ -593,8 +563,7 @@ namespace dnSpy.Files.Tabs {
 			if (tabs.Count > 0)
 				Refresh(tabs);
 
-			if (FileModified != null)
-				FileModified(this, new FileModifiedEventArgs(fileHash.ToArray()));
+			FileModified?.Invoke(this, new FileModifiedEventArgs(fileHash.ToArray()));
 		}
 		public event EventHandler<FileModifiedEventArgs> FileModified;
 
@@ -647,7 +616,7 @@ namespace dnSpy.Files.Tabs {
 				var removedFiles = originalFiles.ToArray();
 				// Files are added with a delay to the TV. Make sure our code executes after all
 				// of the pending events.
-				fileTabManager.fileTreeView.AddAction(() => {
+				fileTabManager.FileTreeView.AddAction(() => {
 					fileTabManager.disable_FileCollectionChanged = old_disable_FileCollectionChanged;
 					if (removedFiles.Length > 0)
 						fileTabManager.CallFileCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateRemove(removedFiles, null));
@@ -672,19 +641,13 @@ namespace dnSpy.Files.Tabs {
 					return f == null ? 0 : GetHashCode(f.Value);
 				}
 
-				static bool Equals(DnSpyFileInfo x, DnSpyFileInfo y) {
-					return StringComparer.Ordinal.Equals(x.Name, y.Name) &&
-							x.Type.Equals(y.Type);
-				}
+				static bool Equals(DnSpyFileInfo x, DnSpyFileInfo y) => StringComparer.Ordinal.Equals(x.Name, y.Name) &&
+		x.Type.Equals(y.Type);
 
-				static int GetHashCode(DnSpyFileInfo obj) {
-					return obj.Name.GetHashCode() ^ obj.Type.GetHashCode();
-				}
+				static int GetHashCode(DnSpyFileInfo obj) => obj.Name.GetHashCode() ^ obj.Type.GetHashCode();
 			}
 		}
 
-		internal IDisposable OnReloadAll() {
-			return new ReloadAllHelper(this);
-		}
+		internal IDisposable OnReloadAll() => new ReloadAllHelper(this);
 	}
 }

@@ -83,73 +83,55 @@ namespace dndbg.Engine {
 	}
 
 	public class DebuggerPauseState {
-		public DebuggerPauseReason Reason {
-			get { return reason; }
-		}
-		readonly DebuggerPauseReason reason;
+		public DebuggerPauseReason Reason { get; }
 
 		public DebuggerPauseState(DebuggerPauseReason reason) {
-			this.reason = reason;
+			this.Reason = reason;
 		}
 	}
 
 	public sealed class DebugEventBreakpointPauseState : DebuggerPauseState {
-		public DnDebugEventBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly DnDebugEventBreakpoint bp;
+		public DnDebugEventBreakpoint Breakpoint { get; }
 
 		public DebugEventBreakpointPauseState(DnDebugEventBreakpoint bp)
 			: base(DebuggerPauseReason.DebugEventBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
 	public sealed class AnyDebugEventBreakpointPauseState : DebuggerPauseState {
-		public DnAnyDebugEventBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly DnAnyDebugEventBreakpoint bp;
+		public DnAnyDebugEventBreakpoint Breakpoint { get; }
 
 		public AnyDebugEventBreakpointPauseState(DnAnyDebugEventBreakpoint bp)
 			: base(DebuggerPauseReason.AnyDebugEventBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
 	public sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
-		public DnILCodeBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly DnILCodeBreakpoint bp;
+		public DnILCodeBreakpoint Breakpoint { get; }
 
 		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp)
 			: base(DebuggerPauseReason.ILCodeBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
 	public sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {
-		public DnNativeCodeBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly DnNativeCodeBreakpoint bp;
+		public DnNativeCodeBreakpoint Breakpoint { get; }
 
 		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp)
 			: base(DebuggerPauseReason.NativeCodeBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
 	public sealed class StepPauseState : DebuggerPauseState {
-		public CorDebugStepReason StepReason {
-			get { return stepReason; }
-		}
-		readonly CorDebugStepReason stepReason;
+		public CorDebugStepReason StepReason { get; }
 
 		public StepPauseState(CorDebugStepReason stepReason)
 			: base(DebuggerPauseReason.Step) {
-			this.stepReason = stepReason;
+			this.StepReason = stepReason;
 		}
 	}
 }

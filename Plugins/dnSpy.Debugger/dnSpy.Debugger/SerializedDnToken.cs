@@ -23,14 +23,10 @@ using dnlib.DotNet;
 
 namespace dnSpy.Debugger {
 	struct SerializedDnToken : IEquatable<SerializedDnToken> {
-		public SerializedDnModule Module {
-			get { return module; }
-		}
+		public SerializedDnModule Module => module;
 		/*readonly*/ SerializedDnModule module;
 
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token => token;
 		readonly uint token;
 
 		public SerializedDnToken(SerializedDnModule module, MDToken mdToken)
@@ -42,10 +38,7 @@ namespace dnSpy.Debugger {
 			this.token = token;
 		}
 
-		public bool Equals(SerializedDnToken other) {
-			return token == other.token &&
-					module.Equals(other.module);
-		}
+		public bool Equals(SerializedDnToken other) => token == other.token && module.Equals(other.module);
 
 		public override bool Equals(object obj) {
 			var other = obj as SerializedDnToken?;
@@ -54,12 +47,7 @@ namespace dnSpy.Debugger {
 			return false;
 		}
 
-		public override int GetHashCode() {
-			return module.GetHashCode() ^ (int)token;
-		}
-
-		public override string ToString() {
-			return string.Format("{0:X8} {1}", token, module);
-		}
+		public override int GetHashCode() => module.GetHashCode() ^ (int)token;
+		public override string ToString() => string.Format("{0:X8} {1}", token, module);
 	}
 }

@@ -58,9 +58,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.appWindow = appWindow;
 		}
 
-		IEnumerable<object> Distinct(IEnumerable<object> objs) {
-			return undoCommandManager.Value.GetUniqueDocuments(objs);
-		}
+		IEnumerable<object> Distinct(IEnumerable<object> objs) => undoCommandManager.Value.GetUniqueDocuments(objs);
 
 		public bool AskUserToSaveIfModified(IEnumerable<object> docs) {
 			var modifiedDocs = Distinct(docs).Where(a => undoCommandManager.Value.IsModified(undoCommandManager.Value.GetUndoObject(a))).ToArray();

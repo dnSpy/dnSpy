@@ -39,9 +39,7 @@ namespace dnSpy.MainApp {
 	sealed class FileTreeViewWindowContentCreator : IMainToolWindowContentCreator {
 		readonly IFileTreeView fileTreeView;
 
-		FileTreeViewWindowContent FileTreeViewWindowContent {
-			get { return fileTreeViewWindowContent ?? (fileTreeViewWindowContent = new FileTreeViewWindowContent(fileTreeView.TreeView)); }
-		}
+		FileTreeViewWindowContent FileTreeViewWindowContent => fileTreeViewWindowContent ?? (fileTreeViewWindowContent = new FileTreeViewWindowContent(fileTreeView.TreeView));
 		FileTreeViewWindowContent fileTreeViewWindowContent;
 
 		[ImportingConstructor]
@@ -64,33 +62,13 @@ namespace dnSpy.MainApp {
 		public static readonly Guid THE_GUID = new Guid("5495EE9F-1EF2-45F3-A320-22A89BFDF731");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultVertical;
 
-		public IInputElement FocusedElement {
-			get { return null; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return treeView.UIObject as FrameworkElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Resources.AssemblyExplorerTitle; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return treeView.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => null;
+		public FrameworkElement ScaleElement => treeView.UIObject as FrameworkElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Resources.AssemblyExplorerTitle;
+		public object ToolTip => null;
+		public object UIObject => treeView.UIObject;
+		public bool CanFocus => true;
 
 		readonly ITreeView treeView;
 
@@ -102,12 +80,8 @@ namespace dnSpy.MainApp {
 				control.Padding = new Thickness(0, 2, 0, 0);
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
-		}
-
-		public void Focus() {
-			treeView.Focus();
-		}
+		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
+		public void Focus() => treeView.Focus();
 	}
 
 	[ExportAutoLoaded]

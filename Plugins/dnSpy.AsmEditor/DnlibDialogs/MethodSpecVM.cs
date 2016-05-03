@@ -35,13 +35,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand PickMethodCommand {
-			get { return new RelayCommand(a => PickMethod()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand PickMethodCommand => new RelayCommand(a => PickMethod());
 
 		public IMethodDefOrRef Method {
 			get { return method; }
@@ -64,29 +59,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public CreateTypeSigArrayVM CreateTypeSigArrayVM {
-			get { return createTypeSigArrayVM; }
-		}
-		CreateTypeSigArrayVM createTypeSigArrayVM;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
+		public CreateTypeSigArrayVM CreateTypeSigArrayVM { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public MethodSpecVM(MethodSpecOptions options, TypeSigCreatorOptions typeSigCreatorOptions) {
 			this.origOptions = options;
 			this.typeSigCreatorOptions = typeSigCreatorOptions;
-			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.LanguageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.LanguageManager);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 
-			this.createTypeSigArrayVM = new CreateTypeSigArrayVM(typeSigCreatorOptions, null);
+			this.CreateTypeSigArrayVM = new CreateTypeSigArrayVM(typeSigCreatorOptions, null);
 
 			Reinitialize();
 		}
@@ -99,13 +87,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Method = newMethod;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public MethodSpecOptions CreateMethodSpecOptions() {
-			return CopyTo(new MethodSpecOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public MethodSpecOptions CreateMethodSpecOptions() => CopyTo(new MethodSpecOptions());
 
 		void InitializeFrom(MethodSpecOptions options) {
 			this.Method = options.Method;
@@ -124,8 +107,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return options;
 		}
 
-		public override bool HasError {
-			get { return Method == null; }
-		}
+		public override bool HasError => Method == null;
 	}
 }

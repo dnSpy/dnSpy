@@ -24,27 +24,13 @@ using dnSpy.Shared.TreeView;
 namespace dnSpy.TreeView {
 	sealed class TreeNodeDataImpl : TreeNodeData {
 		public TreeNodeDataImpl(Guid guid) {
-			this.guid = guid;
+			this.Guid = guid;
 		}
 
-		public override object Text {
-			get { return null; }
-		}
-
-		public override object ToolTip {
-			get { return null; }
-		}
-
-		public override Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
-
-		public override ImageReference Icon {
-			get { return new ImageReference(); }
-		}
-
-		public override void OnRefreshUI() {
-		}
+		public override object Text => null;
+		public override object ToolTip => null;
+		public override Guid Guid { get; }
+		public override ImageReference Icon => new ImageReference();
+		public override void OnRefreshUI() { }
 	}
 }

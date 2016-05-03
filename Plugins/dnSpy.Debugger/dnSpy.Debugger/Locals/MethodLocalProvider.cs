@@ -44,10 +44,8 @@ namespace dnSpy.Debugger.Locals {
 			textEditorUIContextManager.Add(OnTextEditorUIContextEvent, TextEditorUIContextManagerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER);
 		}
 
-		void OnTextEditorUIContextEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
-			if (NewMethodInfoAvailable != null)
-				NewMethodInfoAvailable(this, EventArgs.Empty);
-		}
+		void OnTextEditorUIContextEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) =>
+			NewMethodInfoAvailable?.Invoke(this, EventArgs.Empty);
 
 		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals) {
 			parameters = null;

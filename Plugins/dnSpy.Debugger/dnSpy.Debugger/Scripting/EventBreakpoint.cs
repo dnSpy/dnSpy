@@ -27,9 +27,7 @@ namespace dnSpy.Debugger.Scripting {
 	sealed class NullEventBreakpoint : IEventBreakpoint {
 		public static readonly NullEventBreakpoint Instance = new NullEventBreakpoint();
 
-		public DebugEventKind EventKind {
-			get { return (DebugEventKind)(-1); }
-		}
+		public DebugEventKind EventKind => (DebugEventKind)(-1);
 
 		public bool IsEnabled {
 			get { return false; }
@@ -41,18 +39,12 @@ namespace dnSpy.Debugger.Scripting {
 			set { }
 		}
 
-		public BreakpointKind Kind {
-			get { return BreakpointKind.Event; }
-		}
-
-		public void Remove() {
-		}
+		public BreakpointKind Kind => BreakpointKind.Event;
+		public void Remove() { }
 	}
 
 	sealed class EventBreakpoint : IEventBreakpoint, IDnBreakpointHolder {
-		public BreakpointKind Kind {
-			get { return BreakpointKind.Event; }
-		}
+		public BreakpointKind Kind => BreakpointKind.Event;
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -72,36 +64,28 @@ namespace dnSpy.Debugger.Scripting {
 
 		public object Tag { get; set; }
 
-		public DebugEventKind EventKind {
-			get { return eventKind; }
-		}
-		readonly DebugEventKind eventKind;
+		public DebugEventKind EventKind { get; }
+		public DnBreakpoint DnBreakpoint => dbgBreakpoint;
 
-		public DnBreakpoint DnBreakpoint {
-			get { return dbgBreakpoint; }
-		}
 		DnDebugEventBreakpoint dbgBreakpoint;
-
 		readonly Debugger debugger;
 		readonly Func<IEventBreakpoint, IDebugEventContext, bool> cond;
 
 		public EventBreakpoint(Debugger debugger, DebugEventKind eventKind, Func<IEventBreakpoint, IDebugEventContext, bool> cond) {
 			this.debugger = debugger;
-			this.eventKind = eventKind;
+			this.EventKind = eventKind;
 			this.cond = cond;
 			this.isEnabled = true;
 		}
 
-		public void Remove() {
-			debugger.Remove(this);
-		}
+		public void Remove() => debugger.Remove(this);
 
 		public void Initialize(DnDebugger dbg) {
 			Debug.Assert(debugger.Dispatcher.CheckAccess());
 			Debug.Assert(dbgBreakpoint == null);
 			if (dbgBreakpoint != null)
 				throw new InvalidOperationException();
-			dbgBreakpoint = dbg.CreateBreakpoint(eventKind.ToDebugEventBreakpointKind(), HitHandler);
+			dbgBreakpoint = dbg.CreateBreakpoint(EventKind.ToDebugEventBreakpointKind(), HitHandler);
 			dbgBreakpoint.IsEnabled = isEnabled;
 			dbgBreakpoint.Tag = this;
 		}

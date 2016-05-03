@@ -24,12 +24,7 @@ namespace dnSpy.Shared.MVVM {
 		public static readonly DependencyProperty IsDraggableProperty = DependencyProperty.RegisterAttached(
 			"IsDraggable", typeof(bool), typeof(IsDraggableAP), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
 
-		public static void SetIsDraggable(FrameworkElement element, bool value) {
-			element.SetValue(IsDraggableProperty, value);
-		}
-
-		public static bool GetIsDraggable(FrameworkElement element) {
-			return element != null && (bool)element.GetValue(IsDraggableProperty);
-		}
+		public static void SetIsDraggable(FrameworkElement element, bool value) => element.SetValue(IsDraggableProperty, value);
+		public static bool GetIsDraggable(FrameworkElement element) => element != null && (bool)element.GetValue(IsDraggableProperty);
 	}
 }

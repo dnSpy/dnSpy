@@ -26,93 +26,72 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>
-		public CorModule Module {
-			get { return cls.Module; }
-		}
+		public CorModule Module => Class.Module;
 
 		/// <summary>
 		/// Gets the class
 		/// </summary>
-		public CorClass Class {
-			get { return cls; }
-		}
-		readonly CorClass cls;
+		public CorClass Class { get; }
 
 		/// <summary>
 		/// Gets the token
 		/// </summary>
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
+		public uint Token { get; }
 
 		public CorFunction AddMethod {
 			get {
 				var mod = Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
 				uint addToken, removeToken, fireToken;
-				MDAPI.GetEventAddRemoveFireTokens(mdi, token, out addToken, out removeToken, out fireToken);
-				return mod == null ? null : mod.GetFunctionFromToken(addToken);
+				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out addToken, out removeToken, out fireToken);
+				return mod?.GetFunctionFromToken(addToken);
 			}
 		}
 
 		public CorFunction RemoveMethod {
 			get {
 				var mod = Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
 				uint addToken, removeToken, fireToken;
-				MDAPI.GetEventAddRemoveFireTokens(mdi, token, out addToken, out removeToken, out fireToken);
-				return mod == null ? null : mod.GetFunctionFromToken(removeToken);
+				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out addToken, out removeToken, out fireToken);
+				return mod?.GetFunctionFromToken(removeToken);
 			}
 		}
 
 		public CorFunction FireMethod {
 			get {
 				var mod = Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
 				uint addToken, removeToken, fireToken;
-				MDAPI.GetEventAddRemoveFireTokens(mdi, token, out addToken, out removeToken, out fireToken);
-				return mod == null ? null : mod.GetFunctionFromToken(fireToken);
+				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out addToken, out removeToken, out fireToken);
+				return mod?.GetFunctionFromToken(fireToken);
 			}
 		}
 
 		public CorEvent(CorClass cls, uint token) {
-			this.cls = cls;
-			this.token = token;
+			this.Class = cls;
+			this.Token = token;
 		}
 
-		public EventAttributes GetAttributes() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetEventAttributes(mdi, Token);
-		}
+		public EventAttributes GetAttributes() => MDAPI.GetEventAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		public CorFunction[] GetOtherMethods() {
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			var tokens = MDAPI.GetEventOtherMethodTokens(mdi, token);
+			var tokens = MDAPI.GetEventOtherMethodTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token);
 			if (tokens.Length == 0)
-				return emptyCorFunctions;
-			var funcs = new CorFunction[0];
+				return Array.Empty<CorFunction>();
+			var funcs = new CorFunction[tokens.Length];
 			for (int i = 0; i < tokens.Length; i++)
 				funcs[i] = mod.GetFunctionFromToken(tokens[i]);
 			return funcs;
 		}
-		static readonly CorFunction[] emptyCorFunctions = new CorFunction[0];
 
-		public string GetName() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetEventName(mdi, Token);
-		}
+		public string GetName() => MDAPI.GetEventName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		public CorType GetEventType() {
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 			if (mdi == null)
 				return null;
 
-			uint eventType = MDAPI.GetEventTypeToken(mdi, token);
+			uint eventType = MDAPI.GetEventTypeToken(mdi, Token);
 			return mod.CreateTypeFromTypeDefOrRef(eventType);
 		}
 
@@ -124,9 +103,7 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorEvent a, CorEvent b) {
-			return !(a == b);
-		}
+		public static bool operator !=(CorEvent a, CorEvent b) => !(a == b);
 
 		public bool Equals(CorEvent other) {
 			return !ReferenceEquals(other, null) &&
@@ -134,25 +111,15 @@ namespace dndbg.Engine {
 				Class == other.Class;
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as CorEvent);
-		}
-
-		public override int GetHashCode() {
-			return (int)Token ^ cls.GetHashCode();
-		}
+		public override bool Equals(object obj) => Equals(obj as CorEvent);
+		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

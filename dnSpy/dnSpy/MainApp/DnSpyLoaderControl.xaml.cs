@@ -21,9 +21,7 @@ using System.Windows.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class DnSpyLoaderControl : UserControl {
-		public Image Image {
-			get { return loadingImage; }
-		}
+		public Image Image => loadingImage;
 
 		public DnSpyLoaderControl() {
 			InitializeComponent();

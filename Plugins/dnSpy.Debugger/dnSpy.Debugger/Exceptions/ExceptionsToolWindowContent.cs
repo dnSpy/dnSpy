@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionsToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 
-		public ExceptionsToolWindowContent ExceptionsToolWindowContent {
-			get { return exceptionsToolWindowContent ?? (exceptionsToolWindowContent = new ExceptionsToolWindowContent(exceptionsContent)); }
-		}
+		public ExceptionsToolWindowContent ExceptionsToolWindowContent => exceptionsToolWindowContent ?? (exceptionsToolWindowContent = new ExceptionsToolWindowContent(exceptionsContent));
 		ExceptionsToolWindowContent exceptionsToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Debugger.Exceptions {
 			get { yield return new ToolWindowContentInfo(ExceptionsToolWindowContent.THE_GUID, ExceptionsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == ExceptionsToolWindowContent.THE_GUID)
-				return ExceptionsToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == ExceptionsToolWindowContent.THE_GUID ? ExceptionsToolWindowContent : null;
 	}
 
 	sealed class ExceptionsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("82575354-AB18-408B-846B-AA585B7B2B4A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return exceptionsContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return exceptionsContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.Window_ExceptionSettings; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return exceptionsContent.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => exceptionsContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => exceptionsContent.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Debugger_Resources.Window_ExceptionSettings;
+		public object ToolTip => null;
+		public object UIObject => exceptionsContent.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 
@@ -90,11 +64,7 @@ namespace dnSpy.Debugger.Exceptions {
 			this.exceptionsContent = exceptionsContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
-		}
-
-		public void Focus() {
-			exceptionsContent.Value.Focus();
-		}
+		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
+		public void Focus() => exceptionsContent.Value.Focus();
 	}
 }

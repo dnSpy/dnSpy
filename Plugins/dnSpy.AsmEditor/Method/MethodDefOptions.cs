@@ -70,9 +70,7 @@ namespace dnSpy.AsmEditor.Method {
 			return method;
 		}
 
-		public MethodDef CreateMethodDef(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new MethodDefUser()));
-		}
+		public MethodDef CreateMethodDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new MethodDefUser()));
 
 		public static MethodDefOptions Create(UTF8String name, MethodSig methodSig) {
 			return new MethodDefOptions {

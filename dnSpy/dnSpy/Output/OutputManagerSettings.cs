@@ -32,8 +32,7 @@ namespace dnSpy.Output {
 	}
 
 	class OutputManagerSettings : ViewModelBase, IOutputManagerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool WordWrap {
 			get { return wordWrap; }

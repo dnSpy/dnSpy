@@ -22,25 +22,10 @@ using dnSpy.Contracts.ToolBars;
 namespace dnSpy.Shared.ToolBars {
 	public abstract class ToolBarButtonBase : IToolBarButton, IToolBarButton2 {
 		public abstract void Execute(IToolBarItemContext context);
-
-		public virtual bool IsEnabled(IToolBarItemContext context) {
-			return true;
-		}
-
-		public virtual bool IsVisible(IToolBarItemContext context) {
-			return true;
-		}
-
-		public virtual string GetHeader(IToolBarItemContext context) {
-			return null;
-		}
-
-		public virtual string GetIcon(IToolBarItemContext context) {
-			return null;
-		}
-
-		public virtual string GetToolTip(IToolBarItemContext context) {
-			return null;
-		}
+		public virtual bool IsEnabled(IToolBarItemContext context) => true;
+		public virtual bool IsVisible(IToolBarItemContext context) => true;
+		public virtual string GetHeader(IToolBarItemContext context) => null;
+		public virtual string GetIcon(IToolBarItemContext context) => null;
+		public virtual string GetToolTip(IToolBarItemContext context) => null;
 	}
 }

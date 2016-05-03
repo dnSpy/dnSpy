@@ -74,63 +74,47 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the token of the method or 0
 		/// </summary>
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token => token;
 		readonly uint token;
 
 		/// <summary>
 		/// Start address of the stack segment
 		/// </summary>
-		public ulong StackStart {
-			get { return rangeStart; }
-		}
+		public ulong StackStart => rangeStart;
 		readonly ulong rangeStart;
 
 		/// <summary>
 		/// End address of the stack segment
 		/// </summary>
-		public ulong StackEnd {
-			get { return rangeEnd; }
-		}
+		public ulong StackEnd => rangeEnd;
 		readonly ulong rangeEnd;
 
 		/// <summary>
 		/// true if this is an IL frame (<see cref="ICorDebugILFrame"/>)
 		/// </summary>
-		public bool IsILFrame {
-			get { return obj is ICorDebugILFrame; }
-		}
+		public bool IsILFrame => obj is ICorDebugILFrame;
 
 		/// <summary>
 		/// true if this is a Native frame (<see cref="ICorDebugNativeFrame"/>). This can be true
 		/// even if <see cref="IsILFrame"/> is true (it's a JIT-compiled frame).
 		/// </summary>
-		public bool IsNativeFrame {
-			get { return obj is ICorDebugNativeFrame; }
-		}
+		public bool IsNativeFrame => obj is ICorDebugNativeFrame;
 
 		/// <summary>
 		/// true if it's a JIT-compiled frame (<see cref="IsILFrame"/> and <see cref="IsNativeFrame"/>
 		/// are both true).
 		/// </summary>
-		public bool IsJITCompiledFrame {
-			get { return IsILFrame && IsNativeFrame; }
-		}
+		public bool IsJITCompiledFrame => IsILFrame && IsNativeFrame;
 
 		/// <summary>
 		/// true if this is an internal frame (<see cref="ICorDebugInternalFrame"/>)
 		/// </summary>
-		public bool IsInternalFrame {
-			get { return obj is ICorDebugInternalFrame; }
-		}
+		public bool IsInternalFrame => obj is ICorDebugInternalFrame;
 
 		/// <summary>
 		/// true if this is a runtime unwindable frame (<see cref="ICorDebugRuntimeUnwindableFrame"/>)
 		/// </summary>
-		public bool IsRuntimeUnwindableFrame {
-			get { return obj is ICorDebugRuntimeUnwindableFrame; }
-		}
+		public bool IsRuntimeUnwindableFrame => obj is ICorDebugRuntimeUnwindableFrame;
 
 		/// <summary>
 		/// Gets the IL frame IP. Only valid if <see cref="IsILFrame"/> is true
@@ -271,19 +255,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the module of the function or null
 		/// </summary>
-		public SerializedDnModule? SerializedDnModule {
-			get {
-				var func = Function;
-				if (func == null)
-					return null;
-
-				var module = func.Module;
-				if (module == null)
-					return null;
-
-				return module.SerializedDnModule;
-			}
-		}
+		public SerializedDnModule? SerializedDnModule => Function?.Module?.SerializedDnModule;
 
 		public CorFrame(ICorDebugFrame frame)
 			: base(frame) {
@@ -384,9 +356,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		public CorValue GetILLocal(int index) {
-			return GetILLocal((uint)index);
-		}
+		public CorValue GetILLocal(int index) => GetILLocal((uint)index);
 
 		/// <summary>
 		/// Gets an argument or null if it's not an <see cref="ICorDebugILFrame"/> or if there
@@ -409,9 +379,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="index">Index of argument</param>
 		/// <returns></returns>
-		public CorValue GetILArgument(int index) {
-			return GetILArgument((uint)index);
-		}
+		public CorValue GetILArgument(int index) => GetILArgument((uint)index);
 
 		/// <summary>
 		/// Gets all locals
@@ -458,9 +426,7 @@ namespace dndbg.Engine {
 		/// <param name="kind">Kind</param>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		public CorValue GetILLocal(ILCodeKind kind, int index) {
-			return GetILLocal(kind, (uint)index);
-		}
+		public CorValue GetILLocal(ILCodeKind kind, int index) => GetILLocal(kind, (uint)index);
 
 		/// <summary>
 		/// Gets the code or null if it's not an <see cref="ICorDebugILFrame4"/> or if there was an
@@ -553,8 +519,7 @@ namespace dndbg.Engine {
 			if (func == null)
 				return null;
 			var funcClass = func.Class;
-			var mod = funcClass == null ? null : funcClass.Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = funcClass?.Module?.GetMetaDataInterface<IMetaDataImport>();
 			if (mdi == null)
 				return null;
 
@@ -581,34 +546,17 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorFrame a, CorFrame b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorFrame other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorFrame);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(CorFrame a, CorFrame b) => !(a == b);
+		public bool Equals(CorFrame other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorFrame);
+		public override int GetHashCode() => RawObject.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
 			new TypePrinter(output, flags, getEval).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

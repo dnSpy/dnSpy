@@ -30,9 +30,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefVM : ViewModelBase {
 		readonly ParamDefOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public string FullName {
 			get {
@@ -96,9 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { SetFlagValue(ParamAttributes.HasFieldMarshal, value); }
 		}
 
-		bool GetFlagValue(ParamAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(ParamAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(ParamAttributes flag, bool value) {
 			if (value)
@@ -119,44 +115,23 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		UTF8String name;
 
-		public UInt16VM Sequence {
-			get { return sequence; }
-		}
-		UInt16VM sequence;
-
-		public Constant Constant {
-			get { return HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
-		}
-
-		public ConstantVM ConstantVM {
-			get { return constantVM; }
-		}
-		readonly ConstantVM constantVM;
-
-		public MarshalTypeVM MarshalTypeVM {
-			get { return marshalTypeVM; }
-		}
-		readonly MarshalTypeVM marshalTypeVM;
-
-		public string MarshalTypeString {
-			get { return string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing); }
-		}
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
+		public UInt16VM Sequence { get; }
+		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public ConstantVM ConstantVM { get; }
+		public MarshalTypeVM MarshalTypeVM { get; }
+		public string MarshalTypeString => string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing);
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		readonly ModuleDef ownerModule;
 
 		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
-			this.sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
+			this.Sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.marshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType != null ? ownerType : ownerMethod == null ? null : ownerMethod.DeclaringType, ownerMethod);
+			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;
@@ -178,13 +153,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ParamDefOptions CreateParamDefOptions() {
-			return CopyTo(new ParamDefOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ParamDefOptions CreateParamDefOptions() => CopyTo(new ParamDefOptions());
 
 		void InitializeFrom(ParamDefOptions options) {
 			Name = options.Name;

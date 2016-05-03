@@ -24,57 +24,28 @@ using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Languages {
 	sealed class DummyLanguage : Language {
-		public override string FileExtension {
-			get { return ".---"; }
-		}
-
-		public override Guid GenericGuid {
-			get { return new Guid("CAE0EC7B-4311-4C48-AF7C-36E5EA71249A"); }
-		}
-
+		public override string FileExtension => ".---";
+		public override Guid GenericGuid => new Guid("CAE0EC7B-4311-4C48-AF7C-36E5EA71249A");
 		public override Guid ContentTypeGuid => new Guid(ContentTypes.PLAIN_TEXT);
-
-		public override string GenericNameUI {
-			get { return "---"; }
-		}
-
-		public override double OrderUI {
-			get { return double.MaxValue; }
-		}
-
-		public override Guid UniqueGuid {
-			get { return new Guid("E4E6F1AA-FF88-48BC-B44C-49585E66DCF0"); }
-		}
-
-		public override string UniqueNameUI {
-			get { return "---"; }
-		}
-
-		public override IDecompilerSettings Settings {
-			get { return dummySettings; }
-		}
-		readonly DummySettings dummySettings;
+		public override string GenericNameUI => "---";
+		public override double OrderUI => double.MaxValue;
+		public override Guid UniqueGuid => new Guid("E4E6F1AA-FF88-48BC-B44C-49585E66DCF0");
+		public override string UniqueNameUI => "---";
+		public override IDecompilerSettings Settings { get; }
 
 		sealed class DummySettings : IDecompilerSettings {
-			public IDecompilerSettings Clone() {
-				return new DummySettings();
-			}
+			public IDecompilerSettings Clone() => new DummySettings();
 
 			public IEnumerable<IDecompilerOption> Options {
 				get { yield break; }
 			}
 
-			public override bool Equals(object obj) {
-				return obj is DummySettings;
-			}
-
-			public override int GetHashCode() {
-				return 0;
-			}
+			public override bool Equals(object obj) => obj is DummySettings;
+			public override int GetHashCode() => 0;
 		}
 
 		public DummyLanguage() {
-			this.dummySettings = new DummySettings();
+			this.Settings = new DummySettings();
 		}
 	}
 }

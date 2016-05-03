@@ -26,13 +26,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MethodOverrideOptions origOptions;
 		MethodOverride methodOverride;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public string FullName {
-			get { return methodOverride.MethodDeclaration.ToString(); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public string FullName => methodOverride.MethodDeclaration.ToString();
 
 		public IMethodDefOrRef MethodBody {
 			get { return methodOverride.MethodBody; }
@@ -54,30 +49,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		readonly ModuleDef ownerModule;
-
-		internal ModuleDef OwnerModule {
-			get { return ownerModule; }
-		}
+		internal ModuleDef OwnerModule { get; }
 
 		public MethodOverrideVM(MethodOverrideOptions options, ModuleDef ownerModule) {
-			this.ownerModule = ownerModule;
+			this.OwnerModule = ownerModule;
 			this.origOptions = options;
 
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public MethodOverrideOptions CreateMethodOverrideOptions() {
-			return CopyTo(new MethodOverrideOptions());
-		}
-
-		void InitializeFrom(MethodOverrideOptions options) {
-			methodOverride = options.Create();
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public MethodOverrideOptions CreateMethodOverrideOptions() => CopyTo(new MethodOverrideOptions());
+		void InitializeFrom(MethodOverrideOptions options) => methodOverride = options.Create();
 
 		MethodOverrideOptions CopyTo(MethodOverrideOptions options) {
 			options.MethodBody = methodOverride.MethodBody;

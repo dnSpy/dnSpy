@@ -41,24 +41,11 @@ namespace dnSpy.Files.Tabs {
 			this.decompilationCache = decompilationCache;
 		}
 
-		public bool CanLoad {
-			get { return true; }
-		}
-
-		public bool CanReload {
-			get { return true; }
-		}
-
-		public void BeforeLoad(bool isReload) {
-		}
-
-		public void AfterLoad(bool isReload) {
-			decompilationCache.ClearAll();
-		}
-
-		public bool CheckCanLoad(bool isReload) {
-			return true;
-		}
+		public bool CanLoad => true;
+		public bool CanReload => true;
+		public void BeforeLoad(bool isReload) { }
+		public void AfterLoad(bool isReload) => decompilationCache.ClearAll();
+		public bool CheckCanLoad(bool isReload) => true;
 	}
 
 	[Export(typeof(IDecompilationCache)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -82,9 +69,7 @@ namespace dnSpy.Files.Tabs {
 			/// <summary>
 			/// Age since last hit
 			/// </summary>
-			public TimeSpan Age {
-				get { return DateTime.UtcNow - LastHitUTC; }
-			}
+			public TimeSpan Age => DateTime.UtcNow - LastHitUTC;
 
 			public Item(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting, IContentType contentType) {
 				this.TextOutput = textOutput;
@@ -237,9 +222,7 @@ namespace dnSpy.Files.Tabs {
 			var textOutput = item.TextOutput;
 			if (textOutput == null && item.WeakTextOutput != null)
 				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
-			if (textOutput == null)
-				return true;
-			var refs = textOutput.References;
+			var refs = textOutput?.References;
 			if (refs == null)
 				return false;
 			return InModifiedModuleHelper.IsInModifiedModule(fileManager, modules, refs.Select(a => a.Reference));

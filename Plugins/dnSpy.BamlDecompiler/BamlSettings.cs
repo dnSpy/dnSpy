@@ -33,8 +33,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.BamlDecompiler {
 	class BamlSettings : ViewModelBase {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool DisassembleBaml {
 			get { return disassembleBaml; }
@@ -48,9 +47,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 		bool disassembleBaml;
 
-		public BamlSettings Clone() {
-			return CopyTo(new BamlSettings());
-		}
+		public BamlSettings Clone() => CopyTo(new BamlSettings());
 
 		public BamlSettings CopyTo(BamlSettings other) {
 			other.DisassembleBaml = this.DisassembleBaml;
@@ -100,17 +97,9 @@ namespace dnSpy.BamlDecompiler {
 	}
 
 	sealed class BamlAppSettingsTab : IAppSettingsTab {
-		public double Order {
-			get { return AppSettingsConstants.ORDER_BAML_TAB_DISPLAY; }
-		}
-
-		public string Title {
-			get { return dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab; }
-		}
-
-		public object UIObject {
-			get { return bamlSettings; }
-		}
+		public double Order => AppSettingsConstants.ORDER_BAML_TAB_DISPLAY;
+		public string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
+		public object UIObject => bamlSettings;
 
 		readonly BamlSettingsImpl _global_settings;
 		readonly BamlSettings bamlSettings;

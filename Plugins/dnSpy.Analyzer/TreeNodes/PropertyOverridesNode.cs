@@ -31,14 +31,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public PropertyOverridesNode(PropertyDef analyzedProperty) {
 			if (analyzedProperty == null)
-				throw new ArgumentNullException("analyzedProperty");
+				throw new ArgumentNullException(nameof(analyzedProperty));
 
 			this.analyzedProperty = analyzedProperty;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.OverriddenByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedProperty, FindReferencesInType);

@@ -49,13 +49,11 @@ namespace dnSpy.Debugger.Threads {
 				output.Write(string.Format("{0}", value), BoxedTextTokenKind.Number);
 		}
 
-		public void WriteCurrent(ThreadVM vm) {
-			output.Write(vm.IsCurrent ? ">" : " ", BoxedTextTokenKind.Text);
-		}
-
-		public void WriteId(ThreadVM vm) {
-			WriteInt32(vm.Id);
-		}
+		public void WriteCurrent(ThreadVM vm) => output.Write(vm.IsCurrent ? ">" : " ", BoxedTextTokenKind.Text);
+		public void WriteId(ThreadVM vm) => WriteInt32(vm.Id);
+		public void WriteSuspended(ThreadVM vm) => output.WriteYesNo(vm.IsSuspended);
+		public void WriteProcess(ThreadVM vm) => output.Write(vm.Thread.Process, useHex);
+		public void WriteAppDomain(ThreadVM vm) => output.Write(vm.AppDomain, dbg);
 
 		public void WriteManagedId(ThreadVM vm) {
 			var id = vm.ManagedId;
@@ -144,18 +142,6 @@ namespace dnSpy.Debugger.Threads {
 				}
 			}
 			output.Write(sb.ToString(), BoxedTextTokenKind.Number);
-		}
-
-		public void WriteSuspended(ThreadVM vm) {
-			output.WriteYesNo(vm.IsSuspended);
-		}
-
-		public void WriteProcess(ThreadVM vm) {
-			output.Write(vm.Thread.Process, useHex);
-		}
-
-		public void WriteAppDomain(ThreadVM vm) {
-			output.Write(vm.AppDomain, dbg);
 		}
 
 		static readonly Tuple<CorDebugUserState, string>[] UserStates = new Tuple<CorDebugUserState, string>[] {

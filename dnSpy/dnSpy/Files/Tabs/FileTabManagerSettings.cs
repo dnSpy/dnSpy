@@ -25,8 +25,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	class FileTabManagerSettings : ViewModelBase, IFileTabManagerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool RestoreTabs {
 			get { return restoreTabs; }
@@ -52,10 +51,7 @@ namespace dnSpy.Files.Tabs {
 		}
 		bool decompileFullType = true;
 
-		public FileTabManagerSettings Clone() {
-			return CopyTo(new FileTabManagerSettings());
-		}
-
+		public FileTabManagerSettings Clone() => CopyTo(new FileTabManagerSettings());
 		public FileTabManagerSettings CopyTo(FileTabManagerSettings other) {
 			other.RestoreTabs = this.RestoreTabs;
 			other.DecompileFullType = this.DecompileFullType;

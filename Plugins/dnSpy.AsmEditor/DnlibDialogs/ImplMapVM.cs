@@ -50,28 +50,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class ImplMapVM : ViewModelBase {
 		static readonly EnumVM[] charSetList = EnumVM.Create(typeof(DnlibDialogs.CharSet));
-		public EnumListVM CharSet {
-			get { return charSetVM; }
-		}
-		readonly EnumListVM charSetVM = new EnumListVM(charSetList);
+		public EnumListVM CharSet { get; } = new EnumListVM(charSetList);
 
 		static readonly EnumVM[] bestFitList = EnumVM.Create(typeof(DnlibDialogs.BestFit));
-		public EnumListVM BestFit {
-			get { return bestFitVM; }
-		}
-		readonly EnumListVM bestFitVM = new EnumListVM(bestFitList);
+		public EnumListVM BestFit { get; } = new EnumListVM(bestFitList);
 
 		static readonly EnumVM[] throwOnUnmappableCharList = EnumVM.Create(typeof(DnlibDialogs.ThrowOnUnmappableChar));
-		public EnumListVM ThrowOnUnmappableChar {
-			get { return throwOnUnmappableCharVM; }
-		}
-		readonly EnumListVM throwOnUnmappableCharVM = new EnumListVM(throwOnUnmappableCharList);
+		public EnumListVM ThrowOnUnmappableChar { get; } = new EnumListVM(throwOnUnmappableCharList);
 
 		static readonly EnumVM[] callConvList = EnumVM.Create(typeof(DnlibDialogs.CallConv));
-		public EnumListVM CallConv {
-			get { return callConvVM; }
-		}
-		readonly EnumListVM callConvVM = new EnumListVM(callConvList);
+		public EnumListVM CallConv { get; } = new EnumListVM(callConvList);
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -139,9 +127,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { SetFlagValue(PInvokeAttributes.SupportsLastError, value); }
 		}
 
-		bool GetFlagValue(PInvokeAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(PInvokeAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(PInvokeAttributes flag, bool value) {
 			if (value)
@@ -164,7 +150,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 				Name = value.Name;
 				Attributes = value.Attributes;
-				ModuleName = value.Module == null ? null : value.Module.Name;
+				ModuleName = value.Module?.Name;
 				CharSet.SelectedItem = (DnlibDialogs.CharSet)((int)(value.Attributes & PInvokeAttributes.CharSetMask) >> 1);
 				BestFit.SelectedItem = (DnlibDialogs.BestFit)((int)(value.Attributes & PInvokeAttributes.BestFitMask) >> 4);
 				ThrowOnUnmappableChar.SelectedItem = (DnlibDialogs.ThrowOnUnmappableChar)((int)(value.Attributes & PInvokeAttributes.ThrowOnUnmappableCharMask) >> 12);

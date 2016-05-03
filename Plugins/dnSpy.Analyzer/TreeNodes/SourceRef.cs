@@ -21,9 +21,9 @@ using dnlib.DotNet;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	struct SourceRef {
-		public readonly MethodDef Method;
-		public readonly uint ILOffset;
-		public readonly IMDTokenProvider Reference;
+		public MethodDef Method { get; }
+		public uint ILOffset { get; }
+		public IMDTokenProvider Reference { get; }
 		public SourceRef(MethodDef method, uint offset, IMDTokenProvider reference) {
 			this.Method = method;
 			this.ILOffset = offset;

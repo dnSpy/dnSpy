@@ -27,11 +27,11 @@ using dnSpy.Shared.MVVM.Dialogs;
 namespace dnSpy.Debugger.Modules {
 	sealed class PEFilesSaver : IProgressTask {
 		sealed class ModuleInfo {
-			public readonly IntPtr ProcessHandle;
-			public readonly ulong Address;
-			public readonly uint Size;
-			public readonly string Filename;
-			public bool MemoryLayout;
+			public IntPtr ProcessHandle { get; }
+			public ulong Address { get; }
+			public uint Size { get; }
+			public string Filename { get; }
+			public bool MemoryLayout { get; }
 
 			public ModuleInfo(IntPtr handle, ulong addr, uint size, string filename, bool memoryLayout) {
 				this.ProcessHandle = handle;
@@ -53,20 +53,11 @@ namespace dnSpy.Debugger.Modules {
 			}
 		}
 
-		bool IProgressTask.IsIndeterminate {
-			get { return false; }
-		}
-
-		double IProgressTask.ProgressMinimum {
-			get { return 0; }
-		}
-
-		double IProgressTask.ProgressMaximum {
-			get { return maxProgress; }
-		}
+		bool IProgressTask.IsIndeterminate => false;
+		double IProgressTask.ProgressMinimum => 0;
+		double IProgressTask.ProgressMaximum => maxProgress;
 		readonly uint maxProgress;
 		uint currentProgress;
-
 		IProgress progress;
 
 		unsafe void IProgressTask.Execute(IProgress progress) {

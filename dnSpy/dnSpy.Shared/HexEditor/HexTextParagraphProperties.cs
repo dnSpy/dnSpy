@@ -31,36 +31,13 @@ namespace dnSpy.Shared.HexEditor {
 		public TextMarkerProperties _TextMarkerProperties = null;
 		public TextWrapping _TextWrapping;
 
-		public override TextRunProperties DefaultTextRunProperties {
-			get { return _DefaultTextRunProperties; }
-		}
-
-		public override bool FirstLineInParagraph {
-			get { return _FirstLineInParagraph; }
-		}
-
-		public override FlowDirection FlowDirection {
-			get { return _FlowDirection; }
-		}
-
-		public override double Indent {
-			get { return _Indent; }
-		}
-
-		public override double LineHeight {
-			get { return _LineHeight; }
-		}
-
-		public override TextAlignment TextAlignment {
-			get { return _TextAlignment; }
-		}
-
-		public override TextMarkerProperties TextMarkerProperties {
-			get { return _TextMarkerProperties; }
-		}
-
-		public override TextWrapping TextWrapping {
-			get { return _TextWrapping; }
-		}
+		public override TextRunProperties DefaultTextRunProperties => _DefaultTextRunProperties;
+		public override bool FirstLineInParagraph => _FirstLineInParagraph;
+		public override FlowDirection FlowDirection => _FlowDirection;
+		public override double Indent => _Indent;
+		public override double LineHeight => _LineHeight;
+		public override TextAlignment TextAlignment => _TextAlignment;
+		public override TextMarkerProperties TextMarkerProperties => _TextMarkerProperties;
+		public override TextWrapping TextWrapping => _TextWrapping;
 	}
 }

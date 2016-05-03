@@ -31,53 +31,30 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class AssemblyReferenceNode : FileTreeNodeData, IAssemblyReferenceNode {
-		public AssemblyRef AssemblyRef {
-			get { return assemblyRef; }
-		}
-		readonly AssemblyRef assemblyRef;
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return AssemblyRef; }
-		}
-
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.ASSEMBLYREF_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReferenceAssemblyRef();
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, assemblyRef.FullName); }
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public AssemblyRef AssemblyRef { get; }
+		IMDTokenProvider IMDTokenNode.Reference => AssemblyRef;
+		public override Guid Guid => new Guid(FileTVConstants.ASSEMBLYREF_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReferenceAssemblyRef();
+		public override NodePathName NodePathName => new NodePathName(Guid, AssemblyRef.FullName);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly WeakReference asmRefOwnerModule;
 
 		public AssemblyReferenceNode(ITreeNodeGroup treeNodeGroup, ModuleDef asmRefOwnerModule, AssemblyRef assemblyRef) {
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.asmRefOwnerModule = new WeakReference(asmRefOwnerModule);
 			// Make sure we don't hold on to the original reference since it could prevent GC of the
 			// owner module.
-			this.assemblyRef = assemblyRef.ToAssemblyRef();
-			this.assemblyRef.Rid = assemblyRef.Rid;
+			this.AssemblyRef = assemblyRef.ToAssemblyRef();
+			this.AssemblyRef.Rid = assemblyRef.Rid;
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
-
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().Write(output, language, assemblyRef, Context.ShowToken);
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().Write(output, language, AssemblyRef, Context.ShowToken);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
-			var file = Context.FileTreeView.FileManager.Resolve(assemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDnSpyDotNetFile;
+			var file = Context.FileTreeView.FileManager.Resolve(AssemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDnSpyDotNetFile;
 			if (file == null)
 				yield break;
 			var mod = file.ModuleDef;
@@ -88,8 +65,6 @@ namespace dnSpy.Files.TreeView {
 				yield return new AssemblyReferenceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.AssemblyRefTreeNodeGroupAssemblyRef), mod, asmRef);
 		}
 
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(assemblyRef).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(AssemblyRef).FilterType;
 	}
 }

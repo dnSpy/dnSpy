@@ -31,9 +31,7 @@ namespace dnSpy.Analyzer {
 	sealed class AnalyzerToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IAnalyzerManager> analyzerManager;
 
-		public AnalyzerToolWindowContent FileTreeViewWindowContent {
-			get { return analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerManager)); }
-		}
+		public AnalyzerToolWindowContent FileTreeViewWindowContent => analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerManager));
 		AnalyzerToolWindowContent analyzerToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Analyzer {
 			get { yield return new ToolWindowContentInfo(AnalyzerToolWindowContent.THE_GUID, AnalyzerToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_ANALYZER, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == AnalyzerToolWindowContent.THE_GUID)
-				return FileTreeViewWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == AnalyzerToolWindowContent.THE_GUID ? FileTreeViewWindowContent : null;
 	}
 
 	sealed class AnalyzerToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("5827D693-A5DF-4D65-B1F8-ACF249508A96");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return null; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return analyzerManager.Value.TreeView.UIObject as FrameworkElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Analyzer_Resources.AnalyzerWindowTitle; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return analyzerManager.Value.TreeView.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => null;
+		public FrameworkElement ScaleElement => analyzerManager.Value.TreeView.UIObject as FrameworkElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Analyzer_Resources.AnalyzerWindowTitle;
+		public object ToolTip => null;
+		public object UIObject => analyzerManager.Value.TreeView.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<IAnalyzerManager> analyzerManager;
 
@@ -95,8 +69,6 @@ namespace dnSpy.Analyzer {
 				analyzerManager.Value.OnClose();
 		}
 
-		public void Focus() {
-			analyzerManager.Value.TreeView.Focus();
-		}
+		public void Focus() => analyzerManager.Value.TreeView.Focus();
 	}
 }

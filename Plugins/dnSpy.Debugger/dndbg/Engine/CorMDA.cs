@@ -30,9 +30,7 @@ namespace dndbg.Engine {
 		/// is considered to have slipped. This is an unusual circumstance brought about by the
 		/// thread's execution of an invalid operation upon exiting.
 		/// </summary>
-		public bool ThreadSlipped {
-			get { return (Flags & CorDebugMDAFlags.MDA_FLAG_SLIP) != 0; }
-		}
+		public bool ThreadSlipped => (Flags & CorDebugMDAFlags.MDA_FLAG_SLIP) != 0;
 
 		/// <summary>
 		/// Gets the flags
@@ -116,25 +114,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorMDA a, CorMDA b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorMDA other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorMDA);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("MDA: TID={0} {1}", OSThreadId, Name);
-		}
+		public static bool operator !=(CorMDA a, CorMDA b) => !(a == b);
+		public bool Equals(CorMDA other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorMDA);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("MDA: TID={0} {1}", OSThreadId, Name);
 	}
 }

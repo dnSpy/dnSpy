@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ILanguage language;
 
-		public ILanguageManager LanguageManager { get; private set; }
+		public ILanguageManager LanguageManager { get; }
 
 		public TypeSigCreatorOptions(ModuleDef ownerModule, ILanguageManager languageManager) {
 			this.OwnerModule = ownerModule;
@@ -65,9 +65,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.LanguageManager = languageManager;
 		}
 
-		public TypeSigCreatorOptions Clone() {
-			return (TypeSigCreatorOptions)MemberwiseClone();
-		}
+		public TypeSigCreatorOptions Clone() => (TypeSigCreatorOptions)MemberwiseClone();
 
 		public TypeSigCreatorOptions Clone(string title) {
 			var clone = Clone();
@@ -75,8 +73,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return clone;
 		}
 
-		object ICloneable.Clone() {
-			return Clone();
-		}
+		object ICloneable.Clone() => Clone();
 	}
 }

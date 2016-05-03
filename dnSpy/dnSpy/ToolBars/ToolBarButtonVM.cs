@@ -23,41 +23,19 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.ToolBars {
 	sealed class ToolBarButtonVM : ViewModelBase {
-		public ICommand Command {
-			get { return command; }
-		}
-		readonly ICommand command;
-
-		public IInputElement CommandTarget {
-			get { return commandTarget; }
-		}
-		readonly IInputElement commandTarget;
-
-		public string Header {
-			get { return header; }
-		}
-		readonly string header;
-
-		public bool HasHeader {
-			get { return !string.IsNullOrEmpty(Header); }
-		}
-
-		public string ToolTip {
-			get { return toolTip; }
-		}
-		readonly string toolTip;
-
-		public object Image {
-			get { return image; }
-		}
-		readonly object image;
+		public ICommand Command { get; }
+		public IInputElement CommandTarget { get; }
+		public string Header { get; }
+		public bool HasHeader => !string.IsNullOrEmpty(Header);
+		public string ToolTip { get; }
+		public object Image { get; }
 
 		public ToolBarButtonVM(ICommand command, IInputElement commandTarget, string header, string toolTip, object image) {
-			this.command = command;
-			this.commandTarget = commandTarget;
-			this.header = string.IsNullOrEmpty(header) ? null : header;
-			this.toolTip = string.IsNullOrEmpty(toolTip) ? null : toolTip;
-			this.image = image;
+			this.Command = command;
+			this.CommandTarget = commandTarget;
+			this.Header = string.IsNullOrEmpty(header) ? null : header;
+			this.ToolTip = string.IsNullOrEmpty(toolTip) ? null : toolTip;
+			this.Image = image;
 		}
 	}
 }

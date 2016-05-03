@@ -135,37 +135,14 @@ namespace dnSpy.Shared.MVVM {
 			return string.Format("0x{0:X}", value);
 		}
 
-		public static string ToString(long value) {
-			return ToString(value, long.MinValue, long.MaxValue, false);
-		}
-
-		public static string ToString(ulong value) {
-			return ToString(value, ulong.MinValue, ulong.MaxValue, false);
-		}
-
-		public static string ToString(float value) {
-			return value.ToString();
-		}
-
-		public static string ToString(double value) {
-			return value.ToString();
-		}
-
-		public static string ToString(decimal value) {
-			return value.ToString();
-		}
-
-		public static string ToString(DateTime value) {
-			return value.ToString();
-		}
-
-		public static string ToString(TimeSpan value) {
-			return value.ToString();
-		}
-
-		public static string ToString(bool value) {
-			return value.ToString();
-		}
+		public static string ToString(long value) => ToString(value, long.MinValue, long.MaxValue, false);
+		public static string ToString(ulong value) => ToString(value, ulong.MinValue, ulong.MaxValue, false);
+		public static string ToString(float value) => value.ToString();
+		public static string ToString(double value) => value.ToString();
+		public static string ToString(decimal value) => value.ToString();
+		public static string ToString(DateTime value) => value.ToString();
+		public static string ToString(TimeSpan value) => value.ToString();
+		public static string ToString(bool value) => value.ToString();
 
 		public static string ToString(char value) {
 			var sb = new StringBuilder(8);
@@ -500,21 +477,10 @@ namespace dnSpy.Shared.MVVM {
 			return val;
 		}
 
-		public static byte ParseByte(string s, byte min, byte max, out string error) {
-			return (byte)ParseUnsigned(s, min, max, out error);
-		}
-
-		public static ushort ParseUInt16(string s, ushort min, ushort max, out string error) {
-			return (ushort)ParseUnsigned(s, min, max, out error);
-		}
-
-		public static uint ParseUInt32(string s, uint min, uint max, out string error) {
-			return (uint)ParseUnsigned(s, min, max, out error);
-		}
-
-		public static ulong ParseUInt64(string s, ulong min, ulong max, out string error) {
-			return ParseUnsigned(s, min, max, out error);
-		}
+		public static byte ParseByte(string s, byte min, byte max, out string error) => (byte)ParseUnsigned(s, min, max, out error);
+		public static ushort ParseUInt16(string s, ushort min, ushort max, out string error) => (ushort)ParseUnsigned(s, min, max, out error);
+		public static uint ParseUInt32(string s, uint min, uint max, out string error) => (uint)ParseUnsigned(s, min, max, out error);
+		public static ulong ParseUInt64(string s, ulong min, ulong max, out string error) => ParseUnsigned(s, min, max, out error);
 
 		static string TryParseSigned(string s, long min, long max, object minObject, out long value) {
 			value = 0;
@@ -562,21 +528,10 @@ namespace dnSpy.Shared.MVVM {
 			return value;
 		}
 
-		public static sbyte ParseSByte(string s, sbyte min, sbyte max, out string error) {
-			return (sbyte)ParseSigned(s, min, max, min, out error);
-		}
-
-		public static short ParseInt16(string s, short min, short max, out string error) {
-			return (short)ParseSigned(s, min, max, min, out error);
-		}
-
-		public static int ParseInt32(string s, int min, int max, out string error) {
-			return (int)ParseSigned(s, min, max, min, out error);
-		}
-
-		public static long ParseInt64(string s, long min, long max, out string error) {
-			return (long)ParseSigned(s, min, max, min, out error);
-		}
+		public static sbyte ParseSByte(string s, sbyte min, sbyte max, out string error) => (sbyte)ParseSigned(s, min, max, min, out error);
+		public static short ParseInt16(string s, short min, short max, out string error) => (short)ParseSigned(s, min, max, min, out error);
+		public static int ParseInt32(string s, int min, int max, out string error) => (int)ParseSigned(s, min, max, min, out error);
+		public static long ParseInt64(string s, long min, long max, out string error) => (long)ParseSigned(s, min, max, min, out error);
 
 		static string ToString<T>(IList<T> list, Func<T, string> toString) {
 			if (list == null)
@@ -590,57 +545,19 @@ namespace dnSpy.Shared.MVVM {
 			return sb.ToString();
 		}
 
-		public static string ToString(IList<bool> values) {
-			return ToString(values, v => ToString(v));
-		}
-
-		public static string ToString(IList<char> values) {
-			return ToString(values, v => ToString(v));
-		}
-
-		public static string ToString(IList<byte> values, byte min, byte max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<ushort> values, ushort min, ushort max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<uint> values, uint min, uint max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<ulong> values, ulong min, ulong max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<sbyte> values, sbyte min, sbyte max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<short> values, short min, short max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<int> values, int min, int max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<long> values, long min, long max, bool? useDecimal) {
-			return ToString(values, v => ToString(v, min, max, useDecimal));
-		}
-
-		public static string ToString(IList<float> values) {
-			return ToString(values, v => ToString(v));
-		}
-
-		public static string ToString(IList<double> values) {
-			return ToString(values, v => ToString(v));
-		}
-
-		public static string ToString(IList<string> values, bool canHaveNull) {
-			return ToString(values, v => ToString(v, canHaveNull));
-		}
+		public static string ToString(IList<bool> values) => ToString(values, v => ToString(v));
+		public static string ToString(IList<char> values) => ToString(values, v => ToString(v));
+		public static string ToString(IList<byte> values, byte min, byte max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<ushort> values, ushort min, ushort max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<uint> values, uint min, uint max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<ulong> values, ulong min, ulong max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<sbyte> values, sbyte min, sbyte max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<short> values, short min, short max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<int> values, int min, int max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<long> values, long min, long max, bool? useDecimal) => ToString(values, v => ToString(v, min, max, useDecimal));
+		public static string ToString(IList<float> values) => ToString(values, v => ToString(v));
+		public static string ToString(IList<double> values) => ToString(values, v => ToString(v));
+		public static string ToString(IList<string> values, bool canHaveNull) => ToString(values, v => ToString(v, canHaveNull));
 
 		static T[] ParseList<T>(string s, out string error, Func<string, Tuple<T, string>> parseValue) {
 			var list = new List<T>();
@@ -701,64 +618,20 @@ namespace dnSpy.Shared.MVVM {
 			return list.ToArray();
 		}
 
-		public static bool[] ParseBooleanList(string s, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseBoolean(v, out err); return Tuple.Create(res, err); });
-		}
-
-		public static char[] ParseCharList(string s, out string error) {
-			return ParseList(s, out error, ParseCharPart, 0);
-		}
-
-		static char ParseCharPart(int data, string s, ref int index, out string error) {
-			return ParseChar(s, ref index, out error);
-		}
-
-		public static byte[] ParseByteList(string s, byte min, byte max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseByte(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseUInt16(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseUInt32(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseUInt64(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseSByte(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static short[] ParseInt16List(string s, short min, short max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseInt16(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static int[] ParseInt32List(string s, int min, int max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseInt32(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static long[] ParseInt64List(string s, long min, long max, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseInt64(v, min, max, out err); return Tuple.Create(res, err); });
-		}
-
-		public static float[] ParseSingleList(string s, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseSingle(v, out err); return Tuple.Create(res, err); });
-		}
-
-		public static double[] ParseDoubleList(string s, out string error) {
-			return ParseList(s, out error, v => { string err; var res = ParseDouble(v, out err); return Tuple.Create(res, err); });
-		}
-
-		public static string[] ParseStringList(string s, bool canHaveNull, out string error) {
-			return ParseList(s, out error, ParseStringPart, canHaveNull);
-		}
-
-		static string ParseStringPart(bool canHaveNull, string s, ref int index, out string error) {
-			return ParseString(s, canHaveNull, ref index, out error);
-		}
+		public static bool[] ParseBooleanList(string s, out string error) => ParseList(s, out error, v => { string err; var res = ParseBoolean(v, out err); return Tuple.Create(res, err); });
+		public static char[] ParseCharList(string s, out string error) => ParseList(s, out error, ParseCharPart, 0);
+		static char ParseCharPart(int data, string s, ref int index, out string error) => ParseChar(s, ref index, out error);
+		public static byte[] ParseByteList(string s, byte min, byte max, out string error) => ParseList(s, out error, v => { string err; var res = ParseByte(v, min, max, out err); return Tuple.Create(res, err); });
+		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error) => ParseList(s, out error, v => { string err; var res = ParseUInt16(v, min, max, out err); return Tuple.Create(res, err); });
+		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error) => ParseList(s, out error, v => { string err; var res = ParseUInt32(v, min, max, out err); return Tuple.Create(res, err); });
+		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error) => ParseList(s, out error, v => { string err; var res = ParseUInt64(v, min, max, out err); return Tuple.Create(res, err); });
+		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error) => ParseList(s, out error, v => { string err; var res = ParseSByte(v, min, max, out err); return Tuple.Create(res, err); });
+		public static short[] ParseInt16List(string s, short min, short max, out string error) => ParseList(s, out error, v => { string err; var res = ParseInt16(v, min, max, out err); return Tuple.Create(res, err); });
+		public static int[] ParseInt32List(string s, int min, int max, out string error) => ParseList(s, out error, v => { string err; var res = ParseInt32(v, min, max, out err); return Tuple.Create(res, err); });
+		public static long[] ParseInt64List(string s, long min, long max, out string error) => ParseList(s, out error, v => { string err; var res = ParseInt64(v, min, max, out err); return Tuple.Create(res, err); });
+		public static float[] ParseSingleList(string s, out string error) => ParseList(s, out error, v => { string err; var res = ParseSingle(v, out err); return Tuple.Create(res, err); });
+		public static double[] ParseDoubleList(string s, out string error) => ParseList(s, out error, v => { string err; var res = ParseDouble(v, out err); return Tuple.Create(res, err); });
+		public static string[] ParseStringList(string s, bool canHaveNull, out string error) => ParseList(s, out error, ParseStringPart, canHaveNull);
+		static string ParseStringPart(bool canHaveNull, string s, ref int index, out string error) => ParseString(s, canHaveNull, ref index, out error);
 	}
 }

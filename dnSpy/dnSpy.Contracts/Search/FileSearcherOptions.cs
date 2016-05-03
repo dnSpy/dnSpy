@@ -61,9 +61,7 @@ namespace dnSpy.Contracts.Search {
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public FileSearcherOptions Clone() {
-			return CopyTo(new FileSearcherOptions());
-		}
+		public FileSearcherOptions Clone() => CopyTo(new FileSearcherOptions());
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/> and returns it

@@ -139,9 +139,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class XmlnsPropertyRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.XmlnsProperty; }
-		}
+		public override BamlRecordType Type => BamlRecordType.XmlnsProperty;
 
 		public string Prefix { get; set; }
 		public string XmlNamespace { get; set; }
@@ -165,9 +163,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PresentationOptionsAttributeRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PresentationOptionsAttribute; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PresentationOptionsAttribute;
 
 		public string Value { get; set; }
 		public ushort NameId { get; set; }
@@ -184,9 +180,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PIMappingRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PIMapping; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PIMapping;
 
 		public string XmlNamespace { get; set; }
 		public string ClrNamespace { get; set; }
@@ -206,9 +200,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class AssemblyInfoRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.AssemblyInfo; }
-		}
+		public override BamlRecordType Type => BamlRecordType.AssemblyInfo;
 
 		public ushort AssemblyId { get; set; }
 		public string AssemblyFullName { get; set; }
@@ -225,9 +217,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.Property; }
-		}
+		public override BamlRecordType Type => BamlRecordType.Property;
 
 		public ushort AttributeId { get; set; }
 		public string Value { get; set; }
@@ -244,9 +234,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyWithConverterRecord : PropertyRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithConverter; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyWithConverter;
 
 		public ushort ConverterTypeId { get; set; }
 
@@ -262,9 +250,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyCustomRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyCustom; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyCustom;
 
 		public ushort AttributeId { get; set; }
 		public ushort SerializerTypeId { get; set; }
@@ -285,9 +271,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class DefAttributeRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.DefAttribute; }
-		}
+		public override BamlRecordType Type => BamlRecordType.DefAttribute;
 
 		public string Value { get; set; }
 		public ushort NameId { get; set; }
@@ -306,9 +290,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	internal class DefAttributeKeyStringRecord : SizedBamlRecord, IBamlDeferRecord {
 		internal uint pos = 0xffffffff;
 
-		public override BamlRecordType Type {
-			get { return BamlRecordType.DefAttributeKeyString; }
-		}
+		public override BamlRecordType Type => BamlRecordType.DefAttributeKeyString;
 
 		public ushort ValueId { get; set; }
 		public bool Shared { get; set; }
@@ -400,9 +382,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class TypeInfoRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.TypeInfo; }
-		}
+		public override BamlRecordType Type => BamlRecordType.TypeInfo;
 
 		public ushort TypeId { get; set; }
 		public ushort AssemblyId { get; set; }
@@ -422,9 +402,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class TypeSerializerInfoRecord : TypeInfoRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.TypeSerializerInfo; }
-		}
+		public override BamlRecordType Type => BamlRecordType.TypeSerializerInfo;
 
 		public ushort SerializerTypeId { get; set; }
 
@@ -440,9 +418,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class AttributeInfoRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.AttributeInfo; }
-		}
+		public override BamlRecordType Type => BamlRecordType.AttributeInfo;
 
 		public ushort AttributeId { get; set; }
 		public ushort OwnerTypeId { get; set; }
@@ -465,9 +441,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class StringInfoRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.StringInfo; }
-		}
+		public override BamlRecordType Type => BamlRecordType.StringInfo;
 
 		public ushort StringId { get; set; }
 		public string Value { get; set; }
@@ -484,9 +458,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class TextRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.Text; }
-		}
+		public override BamlRecordType Type => BamlRecordType.Text;
 
 		public string Value { get; set; }
 
@@ -500,9 +472,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class TextWithConverterRecord : TextRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.TextWithConverter; }
-		}
+		public override BamlRecordType Type => BamlRecordType.TextWithConverter;
 
 		public ushort ConverterTypeId { get; set; }
 
@@ -518,9 +488,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class TextWithIdRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.TextWithId; }
-		}
+		public override BamlRecordType Type => BamlRecordType.TextWithId;
 
 		public ushort ValueId { get; set; }
 
@@ -534,9 +502,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class LiteralContentRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.LiteralContent; }
-		}
+		public override BamlRecordType Type => BamlRecordType.LiteralContent;
 
 		public string Value { get; set; }
 		public uint Reserved0 { get; set; }
@@ -556,9 +522,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class RoutedEventRecord : SizedBamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.RoutedEvent; }
-		}
+		public override BamlRecordType Type => BamlRecordType.RoutedEvent;
 
 		public string Value { get; set; }
 		public ushort AttributeId { get; set; }
@@ -576,9 +540,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class DocumentStartRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.DocumentStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.DocumentStart;
 
 		public bool LoadAsync { get; set; }
 		public uint MaxAsyncRecords { get; set; }
@@ -598,9 +560,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class DocumentEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.DocumentEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.DocumentEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -610,9 +570,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ElementStartRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ElementStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ElementStart;
 
 		public ushort TypeId { get; set; }
 		public byte Flags { get; set; }
@@ -629,9 +587,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ElementEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ElementEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ElementEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -641,15 +597,11 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class KeyElementStartRecord : DefAttributeKeyTypeRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.KeyElementStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.KeyElementStart;
 	}
 
 	internal class KeyElementEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.KeyElementEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.KeyElementEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -659,9 +611,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ConnectionIdRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ConnectionId; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ConnectionId;
 
 		public uint ConnectionId { get; set; }
 
@@ -675,9 +625,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyWithExtensionRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithExtension; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyWithExtension;
 
 		public ushort AttributeId { get; set; }
 		public ushort Flags { get; set; }
@@ -697,9 +645,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyTypeReferenceRecord : PropertyComplexStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyTypeReference; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyTypeReference;
 
 		public ushort TypeId { get; set; }
 
@@ -715,9 +661,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyStringReferenceRecord : PropertyComplexStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyStringReference; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyStringReference;
 
 		public ushort StringId { get; set; }
 
@@ -733,9 +677,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyWithStaticResourceIdRecord : StaticResourceIdRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithStaticResourceId; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyWithStaticResourceId;
 
 		public ushort AttributeId { get; set; }
 
@@ -751,9 +693,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ContentPropertyRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ContentProperty; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ContentProperty;
 
 		public ushort AttributeId { get; set; }
 
@@ -769,9 +709,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	internal class DefAttributeKeyTypeRecord : ElementStartRecord, IBamlDeferRecord {
 		internal uint pos = 0xffffffff;
 
-		public override BamlRecordType Type {
-			get { return BamlRecordType.DefAttributeKeyType; }
-		}
+		public override BamlRecordType Type => BamlRecordType.DefAttributeKeyType;
 
 		public bool Shared { get; set; }
 		public bool SharedSet { get; set; }
@@ -861,15 +799,11 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyListStartRecord : PropertyComplexStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyListStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyListStart;
 	}
 
 	internal class PropertyListEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyListEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyListEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -879,15 +813,11 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyDictionaryStartRecord : PropertyComplexStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyDictionaryStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyDictionaryStart;
 	}
 
 	internal class PropertyDictionaryEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyDictionaryEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyDictionaryEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -897,15 +827,11 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyArrayStartRecord : PropertyComplexStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyArrayStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyArrayStart;
 	}
 
 	internal class PropertyArrayEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyArrayEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyArrayEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -915,9 +841,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyComplexStartRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyComplexStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyComplexStart;
 
 		public ushort AttributeId { get; set; }
 
@@ -931,9 +855,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class PropertyComplexEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.PropertyComplexEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.PropertyComplexEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -943,9 +865,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ConstructorParametersStartRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParametersStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ConstructorParametersStart;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -955,9 +875,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ConstructorParametersEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParametersEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ConstructorParametersEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -967,9 +885,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class ConstructorParameterTypeRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParameterType; }
-		}
+		public override BamlRecordType Type => BamlRecordType.ConstructorParameterType;
 
 		public ushort TypeId { get; set; }
 
@@ -986,9 +902,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		long pos;
 		internal uint size = 0xffffffff;
 
-		public override BamlRecordType Type {
-			get { return BamlRecordType.DeferableContentStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.DeferableContentStart;
 
 		public BamlRecord Record { get; set; }
 
@@ -1013,15 +927,11 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class StaticResourceStartRecord : ElementStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.StaticResourceStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.StaticResourceStart;
 	}
 
 	internal class StaticResourceEndRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.StaticResourceEnd; }
-		}
+		public override BamlRecordType Type => BamlRecordType.StaticResourceEnd;
 
 		public override void Read(BamlBinaryReader reader) {
 		}
@@ -1031,9 +941,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class StaticResourceIdRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.StaticResourceId; }
-		}
+		public override BamlRecordType Type => BamlRecordType.StaticResourceId;
 
 		public ushort StaticResourceId { get; set; }
 
@@ -1047,20 +955,14 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class OptimizedStaticResourceRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.OptimizedStaticResource; }
-		}
+		public override BamlRecordType Type => BamlRecordType.OptimizedStaticResource;
 
 		public byte Flags { get; set; }
 		public ushort ValueId { get; set; }
 
-		public bool IsType {
-			get { return (Flags & 1) != 0; }
-		}
+		public bool IsType => (Flags & 1) != 0;
 
-		public bool IsStatic {
-			get { return (Flags & 2) != 0; }
-		}
+		public bool IsStatic => (Flags & 2) != 0;
 
 		public override void Read(BamlBinaryReader reader) {
 			Flags = reader.ReadByte();
@@ -1074,9 +976,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class LineNumberAndPositionRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.LineNumberAndPosition; }
-		}
+		public override BamlRecordType Type => BamlRecordType.LineNumberAndPosition;
 
 		public uint LineNumber { get; set; }
 		public uint LinePosition { get; set; }
@@ -1093,9 +993,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class LinePositionRecord : BamlRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.LinePosition; }
-		}
+		public override BamlRecordType Type => BamlRecordType.LinePosition;
 
 		public uint LinePosition { get; set; }
 
@@ -1109,9 +1007,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class NamedElementStartRecord : ElementStartRecord {
-		public override BamlRecordType Type {
-			get { return BamlRecordType.NamedElementStart; }
-		}
+		public override BamlRecordType Type => BamlRecordType.NamedElementStart;
 
 		public string RuntimeName { get; set; }
 

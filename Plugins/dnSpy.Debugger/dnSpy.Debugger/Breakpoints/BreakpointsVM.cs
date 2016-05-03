@@ -37,9 +37,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	[Export, Export(typeof(IBreakpointsVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class BreakpointsVM : ViewModelBase, IBreakpointsVM, ILoadBeforeDebug {
-		public ObservableCollection<BreakpointVM> Collection {
-			get { return breakpointList; }
-		}
+		public ObservableCollection<BreakpointVM> Collection => breakpointList;
 		readonly ObservableCollection<BreakpointVM> breakpointList;
 
 		public object SelectedItem {
@@ -92,9 +90,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			RefreshLanguageFields();
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			RefreshThemeFields();
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshThemeFields();
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
@@ -210,9 +206,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				RemoveBreakpoint(e.Breakpoint);
 		}
 
-		void AddBreakpoint(Breakpoint bp) {
-			Collection.Add(new BreakpointVM(this, breakpointContext, bp));
-		}
+		void AddBreakpoint(Breakpoint bp) => Collection.Add(new BreakpointVM(this, breakpointContext, bp));
 
 		void RemoveBreakpoint(Breakpoint bp) {
 			for (int i = 0; i < Collection.Count; i++) {
@@ -231,9 +225,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				vm.RefreshThemeFields();
 		}
 
-		void RefreshLanguageFields() {
-			RefreshNameField();
-		}
+		void RefreshLanguageFields() => RefreshNameField();
 
 		void RefreshNameField() {
 			foreach (var vm in breakpointList)

@@ -24,9 +24,7 @@ namespace dnSpy.AsmEditor.Namespace {
 	sealed class NamespaceVM : ViewModelBase {
 		readonly string origName;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public string Name {
 			get { return name; }
@@ -45,8 +43,6 @@ namespace dnSpy.AsmEditor.Namespace {
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			this.Name = origName;
-		}
+		void Reinitialize() => this.Name = origName;
 	}
 }

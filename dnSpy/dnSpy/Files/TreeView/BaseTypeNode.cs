@@ -30,17 +30,10 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class BaseTypeNode : FileTreeNodeData, IBaseTypeNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.BASETYPE_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, TypeDefOrRef.FullName); }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return TypeDefOrRef; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.BASETYPE_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, TypeDefOrRef.FullName);
+		IMDTokenProvider IMDTokenNode.Reference => TypeDefOrRef;
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
 			var td = TryGetTypeDef();
@@ -49,13 +42,8 @@ namespace dnSpy.Files.TreeView {
 			return new ImageReference(GetType().Assembly, isBaseType ? "Class" : "Interface");
 		}
 
-		ITypeDefOrRef TryGetTypeDefOrRef() {
-			return (ITypeDefOrRef)weakRefTypeDefOrRef.Target;
-		}
-
-		public ITypeDefOrRef TypeDefOrRef {
-			get { return TryGetTypeDefOrRef() ?? new TypeRefUser(new ModuleDefUser("???"), "???"); }
-		}
+		ITypeDefOrRef TryGetTypeDefOrRef() => (ITypeDefOrRef)weakRefTypeDefOrRef.Target;
+		public ITypeDefOrRef TypeDefOrRef => TryGetTypeDefOrRef() ?? new TypeRefUser(new ModuleDefUser("???"), "???");
 
 		TypeDef TryGetTypeDef() {
 			var td = (TypeDef)weakRefResolvedTypeDef.Target;
@@ -67,26 +55,19 @@ namespace dnSpy.Files.TreeView {
 			return td;
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
-
 		readonly bool isBaseType;
 		WeakReference weakRefResolvedTypeDef;
 		readonly WeakReference weakRefTypeDefOrRef;
 
 		public BaseTypeNode(ITreeNodeGroup treeNodeGroup, ITypeDefOrRef typeDefOrRef, bool isBaseType) {
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.isBaseType = isBaseType;
 			// Keep weak refs to them so we won't prevent removed modules from being GC'd.
 			this.weakRefTypeDefOrRef = new WeakReference(typeDefOrRef);
 			this.weakRefResolvedTypeDef = new WeakReference(null);
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			var tdr = TryGetTypeDefOrRef();
@@ -107,8 +88,6 @@ namespace dnSpy.Files.TreeView {
 				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 	}
 }

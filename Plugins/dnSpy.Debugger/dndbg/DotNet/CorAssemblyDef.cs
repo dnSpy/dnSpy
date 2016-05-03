@@ -26,9 +26,7 @@ namespace dndbg.DotNet {
 		readonly CorModuleDef readerModule;
 		readonly uint origRid;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
 		public CorAssemblyDef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
@@ -37,17 +35,11 @@ namespace dndbg.DotNet {
 			Initialize_NoLock();
 		}
 
-		void Initialize_NoLock() {
-			InitAssemblyName_NoLock();
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void Initialize_NoLock() => InitAssemblyName_NoLock();
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
-		}
-
-		protected override void InitializeDeclSecurities() {
+		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
-		}
 
 		unsafe void InitAssemblyName_NoLock() {
 			var mdai = readerModule.MetaDataAssemblyImport;

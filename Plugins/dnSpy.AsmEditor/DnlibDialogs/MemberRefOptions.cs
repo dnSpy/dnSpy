@@ -46,8 +46,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return mr;
 		}
 
-		public MemberRef Create(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new MemberRefUser(ownerModule)));
-		}
+		public MemberRef Create(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new MemberRefUser(ownerModule)));
 	}
 }

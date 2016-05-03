@@ -21,8 +21,8 @@ using System;
 
 namespace dnSpy.Shared.HexEditor {
 	public sealed class HexDocumentModifiedEventArgs : EventArgs {
-		public readonly ulong StartOffset;
-		public readonly ulong EndOffset;
+		public ulong StartOffset { get; }
+		public ulong EndOffset { get; }
 
 		public HexDocumentModifiedEventArgs(ulong start, ulong end) {
 			this.StartOffset = start;

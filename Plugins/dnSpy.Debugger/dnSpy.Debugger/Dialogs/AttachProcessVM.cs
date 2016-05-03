@@ -28,9 +28,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class AttachProcessVM : ViewModelBase, IDisposable {
-		public ICommand RefreshCommand {
-			get { return new RelayCommand(a => Refresh(), a => CanRefresh); }
-		}
+		public ICommand RefreshCommand => new RelayCommand(a => Refresh(), a => CanRefresh);
 
 		public string Title {
 			get {
@@ -41,20 +39,10 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 		}
 
-		public bool HasDebuggingText {
-			get { return Environment.Is64BitOperatingSystem; }
-		}
+		public bool HasDebuggingText => Environment.Is64BitOperatingSystem;
+		public string DebuggingText => IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_UseDnSpy32 : dnSpy_Debugger_Resources.Attach_UseDnSpy64;
 
-		public string DebuggingText {
-			get {
-				return IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_UseDnSpy32 :
-						dnSpy_Debugger_Resources.Attach_UseDnSpy64;
-			}
-		}
-
-		public ObservableCollection<ProcessVM> Collection {
-			get { return processList; }
-		}
+		public ObservableCollection<ProcessVM> Collection => processList;
 		readonly ObservableCollection<ProcessVM> processList;
 
 		public object SelectedItem {
@@ -69,9 +57,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		object selectedItem;
 
-		public ProcessVM SelectedProcess {
-			get { return selectedItem as ProcessVM; }
-		}
+		public ProcessVM SelectedProcess => selectedItem as ProcessVM;
 
 		readonly Dispatcher dispatcher;
 		readonly ProcessContext processContext;
@@ -85,13 +71,8 @@ namespace dnSpy.Debugger.Dialogs {
 			Refresh();
 		}
 
-		public bool IsRefreshing {
-			get { return refreshThread != null; }
-		}
-
-		bool CanRefresh {
-			get { return !IsRefreshing; }
-		}
+		public bool IsRefreshing => refreshThread != null;
+		bool CanRefresh => !IsRefreshing;
 
 		void Refresh() {
 			if (IsRefreshing)
@@ -157,12 +138,7 @@ namespace dnSpy.Debugger.Dialogs {
 			});
 		}
 
-		public void Dispose() {
-			CancelRefresh();
-		}
-
-		public override bool HasError {
-			get { return SelectedProcess == null; }
-		}
+		public void Dispose() => CancelRefresh();
+		public override bool HasError => SelectedProcess == null;
 	}
 }

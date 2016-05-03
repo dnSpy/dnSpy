@@ -22,41 +22,25 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageHeaderVM : HexVM {
-		public override string Name {
-			get { return "STORAGEHEADER"; }
-		}
+		public override string Name => "STORAGEHEADER";
+		public ByteFlagsHexField FFlagsVM { get; }
+		public ByteHexField PadVM { get; }
+		public UInt16HexField IStreamsVM { get; }
 
-		public ByteFlagsHexField FFlagsVM {
-			get { return fFlagsVM; }
-		}
-		readonly ByteFlagsHexField fFlagsVM;
-
-		public ByteHexField PadVM {
-			get { return padVM; }
-		}
-		readonly ByteHexField padVM;
-
-		public UInt16HexField IStreamsVM {
-			get { return iStreamsVM; }
-		}
-		readonly UInt16HexField iStreamsVM;
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
+		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
 		public StorageHeaderVM(object owner, HexDocument doc, ulong startOffset)
 			: base(owner) {
-			this.fFlagsVM = new ByteFlagsHexField(doc, Name, "fFlags", startOffset + 0);
-			this.fFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
-			this.padVM = new ByteHexField(doc, Name, "pad", startOffset + 1);
-			this.iStreamsVM = new UInt16HexField(doc, Name, "iStreams", startOffset + 2);
+			this.FFlagsVM = new ByteFlagsHexField(doc, Name, "fFlags", startOffset + 0);
+			this.FFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
+			this.PadVM = new ByteHexField(doc, Name, "pad", startOffset + 1);
+			this.IStreamsVM = new UInt16HexField(doc, Name, "iStreams", startOffset + 2);
 
 			this.hexFields = new HexField[] {
-				fFlagsVM,
-				padVM,
-				iStreamsVM,
+				FFlagsVM,
+				PadVM,
+				IStreamsVM,
 			};
 		}
 	}

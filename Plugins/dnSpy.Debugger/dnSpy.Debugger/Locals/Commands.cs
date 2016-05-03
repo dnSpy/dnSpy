@@ -106,15 +106,11 @@ namespace dnSpy.Debugger.Locals {
 			this.cmd = cmd;
 		}
 
-		protected override LocalsCtxMenuContext CreateContext() {
-			return cmd.Create();
-		}
+		protected override LocalsCtxMenuContext CreateContext() => cmd.Create();
 	}
 
 	abstract class LocalsCtxMenuCommand : MenuItemBase<LocalsCtxMenuContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected readonly Lazy<ITheDebugger> theDebugger;
@@ -174,9 +170,7 @@ namespace dnSpy.Debugger.Locals {
 			return null;
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return GetValueVM(context) != null;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => GetValueVM(context) != null;
 	}
 
 	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 0)]
@@ -214,9 +208,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 10)]
@@ -226,13 +218,8 @@ namespace dnSpy.Debugger.Locals {
 			: base(theDebugger, localsContent) {
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-			localsContent.Value.ListView.SelectAll();
-		}
-
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override void Execute(LocalsCtxMenuContext context) => localsContent.Value.ListView.SelectAll();
+		public override bool IsEnabled(LocalsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[Export, ExportMenuItem(Header = "res:LocalsEditValueCommand", InputGestureText = "res:ShortCutKeyF2", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 0)]
@@ -247,10 +234,8 @@ namespace dnSpy.Debugger.Locals {
 				context.SelectedItems[0].IsEditingValue = true;
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return context.SelectedItems.Length == 1 &&
-				context.SelectedItems[0].CanEdit;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) =>
+			context.SelectedItems.Length == 1 && context.SelectedItems[0].CanEdit;
 	}
 
 	[Export, ExportMenuItem(Header = "res:LocalsCopyValueCommand", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 10)]
@@ -281,9 +266,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:LocalsAddWatchCommand", Icon = "Watch", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 20)]
@@ -329,11 +312,11 @@ namespace dnSpy.Debugger.Locals {
 			}
 			else if (value.IsArray) {
 				if (value.ArrayCount == 0)
-					data = new byte[0];
+					data = Array.Empty<byte>();
 				else {
 					var elemValue = value.GetElementAtPosition(0);
-					ulong elemSize = elemValue == null ? 0 : elemValue.Size;
-					ulong elemAddr = elemValue == null ? 0 : elemValue.Address;
+					ulong elemSize = elemValue?.Size ?? 0;
+					ulong elemAddr = elemValue?.Address ?? 0;
 					ulong addr = value.Address;
 					ulong totalSize = elemSize * value.ArrayCount;
 					if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue) {
@@ -366,15 +349,13 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return GetValue(context) != null;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => GetValue(context) != null;
 
 		internal static CorValue GetValue(LocalsCtxMenuContext context) {
 			if (context.SelectedItems.Length != 1)
 				return null;
 			var nv = context.SelectedItems[0] as NormalValueVM;
-			var value = nv == null ? null : nv.ReadOnlyCorValue;
+			var value = nv?.ReadOnlyCorValue;
 			if (value == null)
 				return null;
 			for (int i = 0; i < 2; i++) {
@@ -382,7 +363,7 @@ namespace dnSpy.Debugger.Locals {
 					break;
 				if (value.IsNull)
 					return null;
-				if (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr)
+				if (value.ElementType == CorElementType.Ptr || value.ElementType == CorElementType.FnPtr)
 					return null;
 				value = value.NeuterCheckDereferencedValue;
 				if (value == null)
@@ -411,9 +392,7 @@ namespace dnSpy.Debugger.Locals {
 			this.action = action;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			action(context);
-		}
+		public override void Execute(IMenuItemContext context) => action(context);
 	}
 
 	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 40)]
@@ -423,8 +402,7 @@ namespace dnSpy.Debugger.Locals {
 			: base(theDebugger, localsContent) {
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-		}
+		public override void Execute(LocalsCtxMenuContext context) { }
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
@@ -439,8 +417,7 @@ namespace dnSpy.Debugger.Locals {
 				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowManager, i), MemoryWindowsHelper.GetHeaderText(i), MemoryWindowsHelper.GetCtrlInputGestureText(i));
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-		}
+		public override void Execute(LocalsCtxMenuContext context) { }
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
@@ -474,9 +451,7 @@ namespace dnSpy.Debugger.Locals {
 				memoryWindowManager.Show(addrRange.Value.Address, addrRange.Value.Size);
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context) != null;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context) != null;
 	}
 
 	sealed class ShowInMemoryWindowLocalsCtxMenuCommand : LocalsCtxMenuCommand {
@@ -504,9 +479,7 @@ namespace dnSpy.Debugger.Locals {
 				memoryWindowManager.Show(addrRange.Value.Address, addrRange.Value.Size, windowIndex);
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return GetValue(context) != null;
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => GetValue(context) != null;
 
 		internal static AddrRange? GetValue(LocalsCtxMenuContext context) {
 			var value = SaveDataLocalsCtxMenuCommand.GetValue(context);
@@ -519,8 +492,8 @@ namespace dnSpy.Debugger.Locals {
 					return new AddrRange(value.Address, 0);
 
 				var elemValue = value.GetElementAtPosition(0);
-				ulong elemSize = elemValue == null ? 0 : elemValue.Size;
-				ulong elemAddr = elemValue == null ? 0 : elemValue.Address;
+				ulong elemSize = elemValue?.Size ?? 0;
+				ulong elemAddr = elemValue?.Address ?? 0;
 				ulong addr = value.Address;
 				ulong totalSize = elemSize * value.ArrayCount;
 				if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue)
@@ -544,13 +517,8 @@ namespace dnSpy.Debugger.Locals {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-			debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
-		}
-
-		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return debuggerSettings.UseHexadecimal;
-		}
+		public override void Execute(LocalsCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
+		public override bool IsChecked(LocalsCtxMenuContext context) => debuggerSettings.UseHexadecimal;
 	}
 
 	[ExportMenuItem(Header = "res:LocalsCollapseParentNodeCommand", Icon = "OneLevelUp", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 0)]
@@ -605,9 +573,7 @@ namespace dnSpy.Debugger.Locals {
 			return p.Children.Any(c => CanExpand((ValueVM)c));
 		}
 
-		static bool CanExpand(ValueVM vm) {
-			return vm != null && !vm.IsExpanded && (vm.LazyLoading || vm.Children.Count > 0);
-		}
+		static bool CanExpand(ValueVM vm) => vm != null && !vm.IsExpanded && (vm.LazyLoading || vm.Children.Count > 0);
 
 		static ValueVM GetLocalParent(LocalsCtxMenuContext context) {
 			if (context.SelectedItems.Length == 0)
@@ -661,13 +627,8 @@ namespace dnSpy.Debugger.Locals {
 			this.localsSettings = localsSettings;
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-			localsSettings.ShowNamespaces = !localsSettings.ShowNamespaces;
-		}
-
-		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return localsSettings.ShowNamespaces;
-		}
+		public override void Execute(LocalsCtxMenuContext context) => localsSettings.ShowNamespaces = !localsSettings.ShowNamespaces;
+		public override bool IsChecked(LocalsCtxMenuContext context) => localsSettings.ShowNamespaces;
 	}
 
 	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 10)]
@@ -680,13 +641,8 @@ namespace dnSpy.Debugger.Locals {
 			this.localsSettings = localsSettings;
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-			localsSettings.ShowTypeKeywords = !localsSettings.ShowTypeKeywords;
-		}
-
-		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return localsSettings.ShowTypeKeywords;
-		}
+		public override void Execute(LocalsCtxMenuContext context) => localsSettings.ShowTypeKeywords = !localsSettings.ShowTypeKeywords;
+		public override bool IsChecked(LocalsCtxMenuContext context) => localsSettings.ShowTypeKeywords;
 	}
 
 	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 20)]
@@ -699,12 +655,7 @@ namespace dnSpy.Debugger.Locals {
 			this.localsSettings = localsSettings;
 		}
 
-		public override void Execute(LocalsCtxMenuContext context) {
-			localsSettings.ShowTokens = !localsSettings.ShowTokens;
-		}
-
-		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return localsSettings.ShowTokens;
-		}
+		public override void Execute(LocalsCtxMenuContext context) => localsSettings.ShowTokens = !localsSettings.ShowTokens;
+		public override bool IsChecked(LocalsCtxMenuContext context) => localsSettings.ShowTokens;
 	}
 }

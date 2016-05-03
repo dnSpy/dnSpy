@@ -45,7 +45,7 @@ namespace dnSpy.Files {
 		}
 		readonly object asmSearchPathsLockObj = new object();
 		readonly List<string> asmSearchPaths = new List<string>();
-		string[] asmSearchPathsArray = new string[0];
+		string[] asmSearchPathsArray = Array.Empty<string>();
 
 		// PERF: Sometimes various pieces of code tries to resolve the same assembly and this
 		// assembly isn't found. This class caches these failed resolves so null is returned
@@ -82,21 +82,11 @@ namespace dnSpy.Files {
 			}
 		}
 
-		bool IAssemblyResolver.AddToCache(AssemblyDef asm) {
-			return false;
-		}
-
-		void IAssemblyResolver.Clear() {
-		}
-
-		bool IAssemblyResolver.Remove(AssemblyDef asm) {
-			return false;
-		}
-
-		AssemblyDef IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) {
-			var file = Resolve(assembly, sourceModule);
-			return file == null ? null : file.AssemblyDef;
-		}
+		bool IAssemblyResolver.AddToCache(AssemblyDef asm) => false;
+		void IAssemblyResolver.Clear() { }
+		bool IAssemblyResolver.Remove(AssemblyDef asm) => false;
+		AssemblyDef IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
+			Resolve(assembly, sourceModule)?.AssemblyDef;
 
 		public IDnSpyFile Resolve(IAssembly assembly, ModuleDef sourceModule = null) {
 			var tempAsm = assembly;

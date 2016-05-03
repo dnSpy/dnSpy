@@ -42,9 +42,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 				yield return GetUndoObject(file);
 		}
 
-		IEnumerable<IDnSpyFile> GetAllDnSpyFileInstances() {
-			return fileTabManager.FileTreeView.GetAllCreatedDnSpyFileNodes().Select(a => a.DnSpyFile);
-		}
+		IEnumerable<IDnSpyFile> GetAllDnSpyFileInstances() => fileTabManager.FileTreeView.GetAllCreatedDnSpyFileNodes().Select(a => a.DnSpyFile);
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			var node = obj as IFileTreeNodeData;
@@ -87,9 +85,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return false;
 		}
 
-		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) {
-			return TryGetDnSpyFile(obj);
-		}
+		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetDnSpyFile(obj);
 
 		IDnSpyFile GetDocumentFile(IDnSpyFile file) {
 			var dnFile = file as IDnSpyDotNetFile;
@@ -109,14 +105,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return file;
 		}
 
-		IDnSpyFile FindModule(ModuleDef module) {
-			var modNode = fileTabManager.FileTreeView.FindNode(module);
-			return modNode == null ? null : modNode.DnSpyFile;
-		}
-
-		IUndoObject GetUndoObject(IDnSpyFile file) {
-			return GetUndoObjectNoChecks(GetDocumentFile(file));
-		}
+		IDnSpyFile FindModule(ModuleDef module) => fileTabManager.FileTreeView.FindNode(module)?.DnSpyFile;
+		IUndoObject GetUndoObject(IDnSpyFile file) => GetUndoObjectNoChecks(GetDocumentFile(file));
 
 		IUndoObject GetUndoObjectNoChecks(IDnSpyFile file) {
 			var uo = file.Annotation<UndoObject>() ?? file.AddAnnotation(new UndoObject());
@@ -124,9 +114,6 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return uo;
 		}
 
-		public static IDnSpyFile TryGetDnSpyFile(IUndoObject iuo) {
-			var uo = iuo as UndoObject;
-			return uo == null ? null : uo.Value as IDnSpyFile;
-		}
+		public static IDnSpyFile TryGetDnSpyFile(IUndoObject iuo) => (iuo as UndoObject)?.Value as IDnSpyFile;
 	}
 }

@@ -33,26 +33,18 @@ namespace dnSpy.Contracts.App {
 		/// <summary>
 		/// Base directory of dnSpy binaries
 		/// </summary>
-		public static string BinDirectory {
-			get { return binDir; }
-		}
-		static readonly string binDir;
+		public static string BinDirectory { get; }
 
 		/// <summary>
 		/// Base directory of data directory. Usually %APPDATA%\dnSpy but could be identical to
 		/// <see cref="BinDirectory"/>.
 		/// </summary>
-		public static string DataDirectory {
-			get { return appDataDir; }
-		}
-		static readonly string appDataDir;
+		public static string DataDirectory { get; }
 
 		/// <summary>
 		/// dnSpy settings filename
 		/// </summary>
-		public static string SettingsFilename {
-			get { return settingsFilename; }
-		}
+		public static string SettingsFilename => settingsFilename;
 		static string settingsFilename;
 
 		/// <summary>
@@ -71,13 +63,13 @@ namespace dnSpy.Contracts.App {
 		static bool hasCalledSetSettingsFilename = false;
 
 		static AppDirectories() {
-			binDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-			settingsFilename = Path.Combine(binDir, DNSPY_SETTINGS_FILENAME);
+			BinDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			settingsFilename = Path.Combine(BinDirectory, DNSPY_SETTINGS_FILENAME);
 			if (File.Exists(settingsFilename))
-				appDataDir = binDir;
+				DataDirectory = BinDirectory;
 			else {
-				appDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy");
-				settingsFilename = Path.Combine(appDataDir, DNSPY_SETTINGS_FILENAME);
+				DataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy");
+				settingsFilename = Path.Combine(DataDirectory, DNSPY_SETTINGS_FILENAME);
 			}
 		}
 

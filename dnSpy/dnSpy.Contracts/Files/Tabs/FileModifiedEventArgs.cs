@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Gets the modified files
 		/// </summary>
-		public IDnSpyFile[] Files { get; private set; }
+		public IDnSpyFile[] Files { get; }
 
 		/// <summary>
 		/// Constructor

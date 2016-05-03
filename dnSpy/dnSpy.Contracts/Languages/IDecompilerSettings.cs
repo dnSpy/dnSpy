@@ -49,9 +49,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="self">This</param>
 		/// <param name="guid">Guid</param>
 		/// <returns></returns>
-		public static IDecompilerOption TryGetOption(this IDecompilerSettings self, Guid guid) {
-			return self.Options.FirstOrDefault(a => a.Guid == guid);
-		}
+		public static IDecompilerOption TryGetOption(this IDecompilerSettings self, Guid guid) => self.Options.FirstOrDefault(a => a.Guid == guid);
 
 		/// <summary>
 		/// Returns an option or null
@@ -59,9 +57,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="self">This</param>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public static IDecompilerOption TryGetOption(this IDecompilerSettings self, string name) {
-			return self.Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
-		}
+		public static IDecompilerOption TryGetOption(this IDecompilerSettings self, string name) => self.Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
 
 		/// <summary>
 		/// Returns a boolean or false if the option doesn't exist
@@ -69,11 +65,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="self">This</param>
 		/// <param name="guid">Guid</param>
 		/// <returns></returns>
-		public static bool GetBoolean(this IDecompilerSettings self, Guid guid) {
-			var o = self.TryGetOption(guid);
-			bool? b = o == null ? null : o.Value as bool?;
-			return b ?? false;
-		}
+		public static bool GetBoolean(this IDecompilerSettings self, Guid guid) => self.TryGetOption(guid)?.Value as bool? ?? false;
 
 		/// <summary>
 		/// Returns a boolean or false if the option doesn't exist
@@ -81,10 +73,6 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="self">This</param>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public static bool GetBoolean(this IDecompilerSettings self, string name) {
-			var o = self.TryGetOption(name);
-			bool? b = o == null ? null : o.Value as bool?;
-			return b ?? false;
-		}
+		public static bool GetBoolean(this IDecompilerSettings self, string name) => self.TryGetOption(name)?.Value as bool? ?? false;
 	}
 }

@@ -50,17 +50,9 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public bool IsDynamic {
-			get { return module.IsDynamic; }
-		}
-
-		public bool IsInMemory {
-			get { return module.IsInMemory; }
-		}
-
-		public bool? IsCorLib {
-			get { return this.module.Assembly.UniqueIdAppDomain == 0 && this.module.UniqueIdAppDomain == 0; }
-		}
+		public bool IsDynamic => module.IsDynamic;
+		public bool IsInMemory => module.IsInMemory;
+		public bool? IsCorLib => this.module.Assembly.UniqueIdAppDomain == 0 && this.module.UniqueIdAppDomain == 0;
 
 		public string Filename {
 			get {
@@ -70,9 +62,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public bool IsManifestModule {
-			get { return this.module.CorModule.IsManifestModule; }
-		}
+		public bool IsManifestModule => this.module.CorModule.IsManifestModule;
 
 		public IBinaryReader CreateBodyReader(uint bodyRva, uint mdToken) {
 			// bodyRva can be 0 if it's a dynamic module. this.module.Address will also be 0.
@@ -80,7 +70,7 @@ namespace dndbg.Engine {
 				return null;
 
 			var func = this.module.CorModule.GetFunctionFromToken(mdToken);
-			var ilCode = func == null ? null : func.ILCode;
+			var ilCode = func?.ILCode;
 			if (ilCode == null)
 				return null;
 			ulong addr = ilCode.Address;
@@ -190,7 +180,7 @@ namespace dndbg.Engine {
 			try {
 				ulong addr = module.Address;
 				if (addr == 0)
-					return sectionHeaders = new ImageSectionHeader[0];
+					return sectionHeaders = Array.Empty<ImageSectionHeader>();
 				var data = new byte[0x1000];
 				int sizeRead;
 				this.module.Process.CorProcess.ReadMemory(this.module.Address, data, 0, data.Length, out sizeRead);
@@ -200,7 +190,7 @@ namespace dndbg.Engine {
 			catch {
 				Debug.Fail("Couldn't read section headers");
 			}
-			return sectionHeaders = new ImageSectionHeader[0];
+			return sectionHeaders = Array.Empty<ImageSectionHeader>();
 		}
 
 		public IImageStream CreateResourceStream(uint offset) {

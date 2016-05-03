@@ -32,9 +32,7 @@ namespace dndbg.Engine {
 		static readonly ModuleDef noOwnerModule;
 		static readonly CorLibTypes corLibTypes;
 
-		internal static CorLibTypes CorLibTypes {
-			get { return corLibTypes; }
-		}
+		internal static CorLibTypes CorLibTypes => corLibTypes;
 
 		sealed class SignatureReaderHelper : ISignatureReaderHelper {
 			readonly IMetaDataImport mdi;
@@ -59,22 +57,12 @@ namespace dndbg.Engine {
 				return null;
 			}
 
-			public TypeSig ConvertRTInternalAddress(IntPtr address) {
-				return null;
-			}
+			public TypeSig ConvertRTInternalAddress(IntPtr address) => null;
 		}
 
-		public TypeSig ReadTypeSignature(IMetaDataImport mdi, byte[] data) {
-			return SignatureReader.ReadTypeSig(new SignatureReaderHelper(mdi), corLibTypes, data);
-		}
-
-		public CallingConventionSig ReadSignature(IMetaDataImport mdi, byte[] data) {
-			return SignatureReader.ReadSig(new SignatureReaderHelper(mdi), corLibTypes, data);
-		}
-
-		public static TypeDef CreateTypeDef(IMetaDataImport mdi, uint rid) {
-			return new TypeDefDndbg(mdi, rid);
-		}
+		public TypeSig ReadTypeSignature(IMetaDataImport mdi, byte[] data) => SignatureReader.ReadTypeSig(new SignatureReaderHelper(mdi), corLibTypes, data);
+		public CallingConventionSig ReadSignature(IMetaDataImport mdi, byte[] data) => SignatureReader.ReadSig(new SignatureReaderHelper(mdi), corLibTypes, data);
+		public static TypeDef CreateTypeDef(IMetaDataImport mdi, uint rid) => new TypeDefDndbg(mdi, rid);
 	}
 
 	interface IMetaDataImportProvider : IMDTokenProvider {
@@ -82,14 +70,11 @@ namespace dndbg.Engine {
 	}
 
 	sealed class TypeDefDndbg : TypeDefUser, IMetaDataImportProvider {
-		public IMetaDataImport MetaDataImport {
-			get { return mdi; }
-		}
-		readonly IMetaDataImport mdi;
+		public IMetaDataImport MetaDataImport { get; }
 
 		public TypeDefDndbg(IMetaDataImport mdi, uint rid)
 			: base(UTF8String.Empty) {
-			this.mdi = mdi;
+			this.MetaDataImport = mdi;
 			this.rid = rid;
 			InitializeName(MDAPI.GetTypeDefName(mdi, MDToken.Raw), out @namespace, out name);
 		}
@@ -109,36 +94,30 @@ namespace dndbg.Engine {
 	}
 
 	sealed class TypeRefDndbg : TypeRefUser, IMetaDataImportProvider {
-		public IMetaDataImport MetaDataImport {
-			get { return mdi; }
-		}
-		readonly IMetaDataImport mdi;
+		public IMetaDataImport MetaDataImport { get; }
 
 		public TypeRefDndbg(IMetaDataImport mdi, uint rid)
 			: base(null, UTF8String.Empty) {
-			this.mdi = mdi;
+			this.MetaDataImport = mdi;
 			this.rid = rid;
 			TypeDefDndbg.InitializeName(MDAPI.GetTypeRefName(mdi, MDToken.Raw), out @namespace, out name);
 		}
 	}
 
 	sealed class TypeSpecDndbg : TypeSpecUser, IMetaDataImportProvider {
-		public IMetaDataImport MetaDataImport {
-			get { return mdi; }
-		}
-		readonly IMetaDataImport mdi;
+		public IMetaDataImport MetaDataImport { get; }
 
 		readonly ISignatureReaderHelper helper;
 
 		public TypeSpecDndbg(IMetaDataImport mdi, uint rid, ISignatureReaderHelper helper)
 			: base() {
-			this.mdi = mdi;
+			this.MetaDataImport = mdi;
 			this.rid = rid;
 			this.helper = helper;
 		}
 
 		protected override TypeSig GetTypeSigAndExtraData_NoLock(out byte[] extraData) {
-			var sigData = MDAPI.GetTypeSpecSignatureBlob(mdi, MDToken.Raw);
+			var sigData = MDAPI.GetTypeSpecSignatureBlob(MetaDataImport, MDToken.Raw);
 			var sig = ReadTypeSignature(sigData, new GenericParamContext(), out extraData);
 			if (sig != null)
 				sig.Rid = rid;

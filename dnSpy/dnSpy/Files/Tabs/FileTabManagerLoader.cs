@@ -69,8 +69,7 @@ namespace dnSpy.Files.Tabs {
 			fileTabManager.OnTabsLoaded();
 		}
 
-		public void OnAppLoaded() {
-		}
+		public void OnAppLoaded() { }
 
 		public void Save(ISettingsManager settingsManager) {
 			var section = settingsManager.RecreateSection(SETTINGS_GUID);

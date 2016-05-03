@@ -53,9 +53,7 @@ namespace dnSpy.Debugger {
 	}
 
 	static class CodeMappingsExtensions {
-		public static CodeMappings GetCodeMappings(this ITextEditorUIContext self) {
-			return self.TryGetCodeMappings() ?? new CodeMappings();
-		}
+		public static CodeMappings GetCodeMappings(this ITextEditorUIContext self) => self.TryGetCodeMappings() ?? new CodeMappings();
 
 		public static CodeMappings TryGetCodeMappings(this ITextEditorUIContext self) {
 			if (self == null)
@@ -67,9 +65,7 @@ namespace dnSpy.Debugger {
 	sealed class CodeMappings {
 		readonly Dictionary<SerializedDnToken, MemberMapping> dict;
 
-		public int Count {
-			get { return dict.Count; }
-		}
+		public int Count => dict.Count;
 
 		public CodeMappings() {
 			this.dict = new Dictionary<SerializedDnToken, MemberMapping>(0);

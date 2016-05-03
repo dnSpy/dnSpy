@@ -64,8 +64,7 @@ namespace dnSpy.MainApp {
 				if (selectedItem != value) {
 					selectedItem = value;
 					languageManager.Language = ((LanguageInfo)value).Language;
-					if (PropertyChanged != null)
-						PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
 				}
 			}
 		}
@@ -73,12 +72,8 @@ namespace dnSpy.MainApp {
 
 		sealed class LanguageInfo {
 			public ILanguage Language;
-			public string Name {
-				get { return Language.UniqueNameUI; }
-			}
-			public override string ToString() {
-				return Name;
-			}
+			public string Name => Language.UniqueNameUI;
+			public override string ToString() => Name;
 		}
 
 		[ImportingConstructor]
@@ -97,17 +92,9 @@ namespace dnSpy.MainApp {
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 		}
 
-		void UpdateSelectedItem() {
-			SelectedItem = infos.First(a => a.Language == languageManager.Language);
-		}
-
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			UpdateSelectedItem();
-		}
-
-		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) {
-			return comboBox;
-		}
+		void UpdateSelectedItem() => SelectedItem = infos.First(a => a.Language == languageManager.Language);
+		void LanguageManager_LanguageChanged(object sender, EventArgs e) => UpdateSelectedItem();
+		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
 	}
 
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "FullScreen", Header = "res:FullScreenToolBarCommand", IsToggleButton = true, Group = ToolBarConstants.GROUP_APP_TB_MAIN_FULLSCREEN, Order = 0)]

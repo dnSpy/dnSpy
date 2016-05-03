@@ -54,9 +54,9 @@ namespace dndbg.Engine {
 
 				var mod = Module;
 				Debug.Assert(mod != null);
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 				uint tdOwner = 0x02000000 + MDAPI.GetMethodOwnerRid(mdi, Token);
-				return mod == null ? null : mod.GetClassFromToken(tdOwner);
+				return mod?.GetClassFromToken(tdOwner);
 			}
 		}
 
@@ -159,18 +159,13 @@ namespace dndbg.Engine {
 			//TODO: ICorDebugFunction3::GetActiveReJitRequestILCode
 		}
 
-		public void GetAttributes(out MethodImplAttributes implAttributes, out MethodAttributes attributes) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			MDAPI.GetMethodAttributes(mdi, Token, out attributes, out implAttributes);
-		}
+		public void GetAttributes(out MethodImplAttributes implAttributes, out MethodAttributes attributes) =>
+			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out attributes, out implAttributes);
 
 		public MethodAttributes GetAttributes() {
 			MethodImplAttributes implAttributes;
 			MethodAttributes attributes;
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			MDAPI.GetMethodAttributes(mdi, Token, out attributes, out implAttributes);
+			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out attributes, out implAttributes);
 			return attributes;
 		}
 
@@ -211,10 +206,8 @@ namespace dndbg.Engine {
 		/// Gets method generic parameters
 		/// </summary>
 		/// <returns></returns>
-		public List<TokenAndName> GetGenericParameters() {
-			var module = Module;
-			return MetaDataUtils.GetGenericParameterNames(module == null ? null : module.GetMetaDataInterface<IMetaDataImport>(), Token);
-		}
+		public List<TokenAndName> GetGenericParameters() =>
+			MetaDataUtils.GetGenericParameterNames(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		/// <summary>
 		/// Gets type and method generic parameters
@@ -223,38 +216,22 @@ namespace dndbg.Engine {
 		/// <param name="methodParams">Updated with method params</param>
 		public void GetGenericParameters(out List<TokenAndName> typeParams, out List<TokenAndName> methodParams) {
 			methodParams = GetGenericParameters();
-			var cls = Class;
-			typeParams = cls == null ? new List<TokenAndName>() : cls.GetGenericParameters();
+			typeParams = Class?.GetGenericParameters() ?? new List<TokenAndName>();
 		}
 
 		public CorOverride[] GetOverrides() {
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			var info = MDAPI.GetMethodOverrides(mdi, Token);
+			var info = MDAPI.GetMethodOverrides(mod?.GetMetaDataInterface<IMetaDataImport>(), Token);
 			if (info.Length == 0)
-				return emptyCorOverrides;
+				return Array.Empty<CorOverride>();
 			var res = new CorOverride[info.Length];
 			for (int i = 0; i < res.Length; i++)
 				res[i] = new CorOverride(mod, info[i]);
 			return res;
 		}
-		static readonly CorOverride[] emptyCorOverrides = new CorOverride[0];
 
-		public string GetName() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			if (mdi == null)
-				return null;
-			return MDAPI.GetMethodName(mdi, Token);
-		}
-
-		public MethodSig GetMethodSig() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			if (mdi == null)
-				return null;
-			return MetaDataUtils.GetMethodSignature(mdi, Token);
-		}
+		public string GetName() => MDAPI.GetMethodName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public MethodSig GetMethodSig() => MetaDataUtils.GetMethodSignature(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		public static bool operator ==(CorFunction a, CorFunction b) {
 			if (ReferenceEquals(a, b))
@@ -264,34 +241,17 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorFunction a, CorFunction b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorFunction other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorFunction);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(CorFunction a, CorFunction b) => !(a == b);
+		public bool Equals(CorFunction other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorFunction);
+		public override int GetHashCode() => RawObject.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

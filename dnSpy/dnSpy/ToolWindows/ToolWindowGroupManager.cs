@@ -49,13 +49,9 @@ namespace dnSpy.ToolWindows {
 		}
 		readonly WeakEventList<ToolWindowGroupCollectionChangedEventArgs> toolWindowGroupCollectionChanged;
 
-		public object UIObject {
-			get { return tabGroupManager.UIObject; }
-		}
+		public object UIObject => tabGroupManager.UIObject;
 
-		public IEnumerable<IToolWindowGroup> TabGroups {
-			get { return tabGroupManager.TabGroups.Select(a => GetToolWindowGroup(a)); }
-		}
+		public IEnumerable<IToolWindowGroup> TabGroups => tabGroupManager.TabGroups.Select(a => GetToolWindowGroup(a));
 
 		public IToolWindowGroup ActiveTabGroup {
 			get { return GetToolWindowGroup(tabGroupManager.ActiveTabGroup); }
@@ -79,9 +75,7 @@ namespace dnSpy.ToolWindows {
 			set { ((TabGroupManager)tabGroupManager).StackedContentState = value; }
 		}
 
-		ITabGroup GetTabGroup(IToolWindowGroup g) {
-			return this.tabGroupManager.TabGroups.FirstOrDefault(a => a.Tag == g);
-		}
+		ITabGroup GetTabGroup(IToolWindowGroup g) => this.tabGroupManager.TabGroups.FirstOrDefault(a => a.Tag == g);
 
 		public ToolWindowGroupManager(ITabGroupManager tabGroupManager) {
 			this.tabGroupManager = tabGroupManager;
@@ -94,13 +88,8 @@ namespace dnSpy.ToolWindows {
 			this.tabGroupManager.TabGroupCollectionChanged += TabGroupManager_TabGroupCollectionChanged;
 		}
 
-		internal IToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) {
-			return ToolWindowGroup.GetToolWindowGroup(tabGroup);
-		}
-
-		static IToolWindowContent GetToolWindowContent(ITabContent selected) {
-			return selected == null ? null : ((TabContentImpl)selected).Content;
-		}
+		internal IToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) => ToolWindowGroup.GetToolWindowGroup(tabGroup);
+		static IToolWindowContent GetToolWindowContent(ITabContent selected) => ((TabContentImpl)selected)?.Content;
 
 		void TabGroupManager_TabSelectionChanged(object sender, TabSelectedEventArgs e) {
 			if (e.Selected != null) {
@@ -110,17 +99,11 @@ namespace dnSpy.ToolWindows {
 			tabSelectionChanged.Raise(this, new ToolWindowSelectedEventArgs(GetToolWindowGroup(e.TabGroup), GetToolWindowContent(e.Selected), GetToolWindowContent(e.Unselected)));
 		}
 
-		void TabGroupManager_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) {
+		void TabGroupManager_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) =>
 			tabGroupSelectionChanged.Raise(this, new ToolWindowGroupSelectedEventArgs(GetToolWindowGroup(e.Selected), GetToolWindowGroup(e.Unselected)));
-		}
-
-		void TabGroupManager_TabGroupCollectionChanged(object sender, TabGroupCollectionChangedEventArgs e) {
+		void TabGroupManager_TabGroupCollectionChanged(object sender, TabGroupCollectionChangedEventArgs e) =>
 			toolWindowGroupCollectionChanged.Raise(this, new ToolWindowGroupCollectionChangedEventArgs(e.Added, GetToolWindowGroup(e.TabGroup)));
-		}
-
-		public IToolWindowGroup Create() {
-			return new ToolWindowGroup(this, tabGroupManager.Create());
-		}
+		public IToolWindowGroup Create() => new ToolWindowGroup(this, tabGroupManager.Create());
 
 		public void Close(IToolWindowGroup group) {
 			if (group == null)
@@ -131,116 +114,33 @@ namespace dnSpy.ToolWindows {
 			tabGroupManager.Close(impl.TabGroup);
 		}
 
-		public bool CloseAllTabsCanExecute {
-			get { return tabGroupManager.ActiveTabGroup != null && tabGroupManager.ActiveTabGroup.TabContents.Count() > 1 && tabGroupManager.CloseAllTabsCanExecute; }
-		}
-
-		public void CloseAllTabs() {
-			tabGroupManager.CloseAllTabs();
-		}
-
-		public bool NewHorizontalTabGroupCanExecute {
-			get { return tabGroupManager.NewHorizontalTabGroupCanExecute; }
-		}
-
-		public void NewHorizontalTabGroup() {
-			tabGroupManager.NewHorizontalTabGroup(a => new ToolWindowGroup(this, a));
-		}
-
-		public bool NewVerticalTabGroupCanExecute {
-			get { return tabGroupManager.NewVerticalTabGroupCanExecute; }
-		}
-
-		public void NewVerticalTabGroup() {
-			tabGroupManager.NewVerticalTabGroup(a => new ToolWindowGroup(this, a));
-		}
-
-		public bool MoveToNextTabGroupCanExecute {
-			get { return tabGroupManager.MoveToNextTabGroupCanExecute; }
-		}
-
-		public void MoveToNextTabGroup() {
-			tabGroupManager.MoveToNextTabGroup();
-		}
-
-		public bool MoveToPreviousTabGroupCanExecute {
-			get { return tabGroupManager.MoveToPreviousTabGroupCanExecute; }
-		}
-
-		public void MoveToPreviousTabGroup() {
-			tabGroupManager.MoveToPreviousTabGroup();
-		}
-
-		public bool MoveAllToNextTabGroupCanExecute {
-			get { return tabGroupManager.MoveAllToNextTabGroupCanExecute; }
-		}
-
-		public void MoveAllToNextTabGroup() {
-			tabGroupManager.MoveAllToNextTabGroup();
-		}
-
-		public bool MoveAllToPreviousTabGroupCanExecute {
-			get { return tabGroupManager.MoveAllToPreviousTabGroupCanExecute; }
-		}
-
-		public void MoveAllToPreviousTabGroup() {
-			tabGroupManager.MoveAllToPreviousTabGroup();
-		}
-
-		public bool CloseTabGroupCanExecute {
-			get { return tabGroupManager.CloseTabGroupCanExecute; }
-		}
-
-		public void CloseTabGroup() {
-			tabGroupManager.CloseTabGroup();
-		}
-
-		public bool CloseAllTabGroupsButThisCanExecute {
-			get { return tabGroupManager.CloseAllTabGroupsButThisCanExecute; }
-		}
-
-		public void CloseAllTabGroupsButThis() {
-			tabGroupManager.CloseAllTabGroupsButThis();
-		}
-
-		public bool MoveTabGroupAfterNextTabGroupCanExecute {
-			get { return tabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute; }
-		}
-
-		public void MoveTabGroupAfterNextTabGroup() {
-			tabGroupManager.MoveTabGroupAfterNextTabGroup();
-		}
-
-		public bool MoveTabGroupBeforePreviousTabGroupCanExecute {
-			get { return tabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute; }
-		}
-
-		public void MoveTabGroupBeforePreviousTabGroup() {
-			tabGroupManager.MoveTabGroupBeforePreviousTabGroup();
-		}
-
-		public bool MergeAllTabGroupsCanExecute {
-			get { return tabGroupManager.MergeAllTabGroupsCanExecute; }
-		}
-
-		public void MergeAllTabGroups() {
-			tabGroupManager.MergeAllTabGroups();
-		}
-
-		public bool UseVerticalTabGroupsCanExecute {
-			get { return tabGroupManager.UseVerticalTabGroupsCanExecute; }
-		}
-
-		public void UseVerticalTabGroups() {
-			tabGroupManager.UseVerticalTabGroups();
-		}
-
-		public bool UseHorizontalTabGroupsCanExecute {
-			get { return tabGroupManager.UseHorizontalTabGroupsCanExecute; }
-		}
-
-		public void UseHorizontalTabGroups() {
-			tabGroupManager.UseHorizontalTabGroups();
-		}
+		public bool CloseAllTabsCanExecute => tabGroupManager.ActiveTabGroup != null && tabGroupManager.ActiveTabGroup.TabContents.Count() > 1 && tabGroupManager.CloseAllTabsCanExecute;
+		public void CloseAllTabs() => tabGroupManager.CloseAllTabs();
+		public bool NewHorizontalTabGroupCanExecute => tabGroupManager.NewHorizontalTabGroupCanExecute;
+		public void NewHorizontalTabGroup() => tabGroupManager.NewHorizontalTabGroup(a => new ToolWindowGroup(this, a));
+		public bool NewVerticalTabGroupCanExecute => tabGroupManager.NewVerticalTabGroupCanExecute;
+		public void NewVerticalTabGroup() => tabGroupManager.NewVerticalTabGroup(a => new ToolWindowGroup(this, a));
+		public bool MoveToNextTabGroupCanExecute => tabGroupManager.MoveToNextTabGroupCanExecute;
+		public void MoveToNextTabGroup() => tabGroupManager.MoveToNextTabGroup();
+		public bool MoveToPreviousTabGroupCanExecute => tabGroupManager.MoveToPreviousTabGroupCanExecute;
+		public void MoveToPreviousTabGroup() => tabGroupManager.MoveToPreviousTabGroup();
+		public bool MoveAllToNextTabGroupCanExecute => tabGroupManager.MoveAllToNextTabGroupCanExecute;
+		public void MoveAllToNextTabGroup() => tabGroupManager.MoveAllToNextTabGroup();
+		public bool MoveAllToPreviousTabGroupCanExecute => tabGroupManager.MoveAllToPreviousTabGroupCanExecute;
+		public void MoveAllToPreviousTabGroup() => tabGroupManager.MoveAllToPreviousTabGroup();
+		public bool CloseTabGroupCanExecute => tabGroupManager.CloseTabGroupCanExecute;
+		public void CloseTabGroup() => tabGroupManager.CloseTabGroup();
+		public bool CloseAllTabGroupsButThisCanExecute => tabGroupManager.CloseAllTabGroupsButThisCanExecute;
+		public void CloseAllTabGroupsButThis() => tabGroupManager.CloseAllTabGroupsButThis();
+		public bool MoveTabGroupAfterNextTabGroupCanExecute => tabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
+		public void MoveTabGroupAfterNextTabGroup() => tabGroupManager.MoveTabGroupAfterNextTabGroup();
+		public bool MoveTabGroupBeforePreviousTabGroupCanExecute => tabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
+		public void MoveTabGroupBeforePreviousTabGroup() => tabGroupManager.MoveTabGroupBeforePreviousTabGroup();
+		public bool MergeAllTabGroupsCanExecute => tabGroupManager.MergeAllTabGroupsCanExecute;
+		public void MergeAllTabGroups() => tabGroupManager.MergeAllTabGroups();
+		public bool UseVerticalTabGroupsCanExecute => tabGroupManager.UseVerticalTabGroupsCanExecute;
+		public void UseVerticalTabGroups() => tabGroupManager.UseVerticalTabGroups();
+		public bool UseHorizontalTabGroupsCanExecute => tabGroupManager.UseHorizontalTabGroupsCanExecute;
+		public void UseHorizontalTabGroups() => tabGroupManager.UseHorizontalTabGroups();
 	}
 }

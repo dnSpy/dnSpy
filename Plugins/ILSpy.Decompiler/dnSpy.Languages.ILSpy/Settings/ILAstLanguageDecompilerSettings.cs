@@ -29,21 +29,14 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		ILAstLanguageDecompilerSettings(ILAstLanguageDecompilerSettings other) {
 		}
 
-		public IDecompilerSettings Clone() {
-			return new ILAstLanguageDecompilerSettings(this);
-		}
+		public IDecompilerSettings Clone() => new ILAstLanguageDecompilerSettings(this);
 
 		public IEnumerable<IDecompilerOption> Options {
 			get { yield break; }
 		}
 
-		public override bool Equals(object obj) {
-			return obj is ILAstLanguageDecompilerSettings;
-		}
-
-		public override int GetHashCode() {
-			return 0;
-		}
+		public override bool Equals(object obj) => obj is ILAstLanguageDecompilerSettings;
+		public override int GetHashCode() => 0;
 	}
 }
 #endif

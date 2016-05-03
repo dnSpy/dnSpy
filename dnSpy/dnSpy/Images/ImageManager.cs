@@ -74,9 +74,8 @@ namespace dnSpy.Images {
 			return c.Color;
 		}
 
-		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType) {
-			return GetImage(asm, icon, GetColor(bgType));
-		}
+		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType) =>
+			GetImage(asm, icon, GetColor(bgType));
 
 		public BitmapSource GetImage(Assembly asm, string icon, Color bgColor) {
 			var name = asm.GetName();

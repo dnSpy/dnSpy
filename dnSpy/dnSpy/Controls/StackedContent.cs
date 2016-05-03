@@ -42,34 +42,25 @@ namespace dnSpy.Controls {
 		public GridChildLength Horizontal;
 		public GridChildLength Vertical;
 
-		public StackedContentChildInfo Clone() {
-			return new StackedContentChildInfo {
-				Horizontal = Horizontal,
-				Vertical = Vertical,
-			};
-		}
+		public StackedContentChildInfo Clone() => new StackedContentChildInfo {
+			Horizontal = Horizontal,
+			Vertical = Vertical,
+		};
 
-		public static StackedContentChildInfo CreateVertical(GridLength length, double? min = null, double? max = null) {
-			return new StackedContentChildInfo {
-				Vertical = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
-			};
-		}
+		public static StackedContentChildInfo CreateVertical(GridLength length, double? min = null, double? max = null) => new StackedContentChildInfo {
+			Vertical = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
+		};
 
-		public static StackedContentChildInfo CreateHorizontal(GridLength length, double? min = null, double? max = null) {
-			return new StackedContentChildInfo {
-				Horizontal = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
-			};
-		}
+		public static StackedContentChildInfo CreateHorizontal(GridLength length, double? min = null, double? max = null) => new StackedContentChildInfo {
+			Horizontal = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
+		};
 	}
 
 	sealed class StackedContentChildImpl : IStackedContentChild {
-		public object UIObject {
-			get { return uiObject; }
-		}
-		readonly object uiObject;
+		public object UIObject { get; }
 
 		public StackedContentChildImpl(object uiObject) {
-			this.uiObject = uiObject;
+			UIObject = uiObject;
 		}
 
 		public static IStackedContentChild GetOrCreate(object uiObjectOwner, object uiObject) {
@@ -83,13 +74,8 @@ namespace dnSpy.Controls {
 	sealed class StackedContent<TChild> : IStackedContentChild where TChild : class, IStackedContentChild {
 		public const double DEFAULT_SPLITTER_LENGTH = 6;
 
-		public TChild this[int index] {
-			get { return children[index].Child; }
-		}
-
-		public int Count {
-			get { return children.Count; }
-		}
+		public TChild this[int index] => children[index].Child;
+		public int Count => children.Count;
 
 		public double SplitterLength {
 			get { return splitterLength; }
@@ -108,7 +94,7 @@ namespace dnSpy.Controls {
 
 			public ChildInfo(TChild child, StackedContentChildInfo lengthInfo) {
 				this.Child = child;
-				this.LengthInfo = lengthInfo != null ? lengthInfo.Clone() : new StackedContentChildInfo();
+				this.LengthInfo = lengthInfo?.Clone() ?? new StackedContentChildInfo();
 				if (this.LengthInfo.Horizontal.GridLength == null)
 					this.LengthInfo.Horizontal.GridLength = new GridLength(1, GridUnitType.Star);
 				if (this.LengthInfo.Vertical.GridLength == null)
@@ -116,9 +102,7 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		public TChild[] Children {
-			get { return children.Select(a => a.Child).ToArray(); }
-		}
+		public TChild[] Children => children.Select(a => a.Child).ToArray();
 		readonly List<ChildInfo> children;
 
 		public bool IsHorizontal {
@@ -132,9 +116,7 @@ namespace dnSpy.Controls {
 		}
 		bool isHorizontal;
 
-		public object UIObject {
-			get { return grid; }
-		}
+		public object UIObject => grid;
 		readonly Grid grid;
 
 		public StackedContentState State {
@@ -203,9 +185,7 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		void UpdateGrid() {
-			UpdateGrid(IsHorizontal);
-		}
+		void UpdateGrid() => UpdateGrid(IsHorizontal);
 
 		void UpdateGrid(bool horizontal) {
 			grid.Children.Clear();
@@ -336,9 +316,7 @@ namespace dnSpy.Controls {
 			return -1;
 		}
 
-		public bool Contains(TChild child) {
-			return IndexOf(child) >= 0;
-		}
+		public bool Contains(TChild child) => IndexOf(child) >= 0;
 
 		public void SwapChildren(int index1, int index2) {
 			var tmp1 = children[index1];

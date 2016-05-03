@@ -30,8 +30,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 	}
 
 	sealed class IconBarCommandContext : IIconBarCommandContext {
-		public int Line { get; private set; }
-		public ITextEditorUIContext UIContext { get; private set; }
+		public int Line { get; }
+		public ITextEditorUIContext UIContext { get; }
 
 		public IconBarCommandContext(ITextEditorUIContext uiContext, int line) {
 			this.UIContext = uiContext;

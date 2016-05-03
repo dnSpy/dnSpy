@@ -35,8 +35,7 @@ namespace dnSpy.Themes {
 			this.themeManager = themeManager;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-		}
+		public override void Execute(IMenuItemContext context) { }
 
 		sealed class MyMenuItem : MenuItemBase {
 			readonly Action<IMenuItemContext> action;
@@ -51,9 +50,7 @@ namespace dnSpy.Themes {
 				action(context);
 			}
 
-			public override bool IsChecked(IMenuItemContext context) {
-				return isChecked;
-			}
+			public override bool IsChecked(IMenuItemContext context) => isChecked;
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {

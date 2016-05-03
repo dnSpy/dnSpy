@@ -27,69 +27,22 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
-		public int Index {
-			get { return (int)mdToken.Rid - 1; }
-		}
-
-		public override string Name {
-			get { return string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid); }
-		}
-
-		public string OffsetString {
-			get { return string.Format("0x{0:X8}", StartOffset); }
-		}
-
-		public MDToken Token {
-			get { return mdToken; }
-		}
-
-		public ulong StartOffset {
-			get { return mdVM.StartOffset + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize; }
-		}
-
-		public ulong EndOffset {
-			get { return mdVM.StartOffset + mdToken.Rid * (ulong)mdVM.TableInfo.RowSize - 1; }
-		}
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
-
-		public HexField Column0 {
-			get { return GetField(0); }
-		}
-
-		public HexField Column1 {
-			get { return GetField(1); }
-		}
-
-		public HexField Column2 {
-			get { return GetField(2); }
-		}
-
-		public HexField Column3 {
-			get { return GetField(3); }
-		}
-
-		public HexField Column4 {
-			get { return GetField(4); }
-		}
-
-		public HexField Column5 {
-			get { return GetField(5); }
-		}
-
-		public HexField Column6 {
-			get { return GetField(6); }
-		}
-
-		public HexField Column7 {
-			get { return GetField(7); }
-		}
-
-		public HexField Column8 {
-			get { return GetField(8); }
-		}
+		public int Index => (int)mdToken.Rid - 1;
+		public override string Name => string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
+		public string OffsetString => string.Format("0x{0:X8}", StartOffset);
+		public MDToken Token => mdToken;
+		public ulong StartOffset => mdVM.StartOffset + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize;
+		public ulong EndOffset => mdVM.StartOffset + mdToken.Rid * (ulong)mdVM.TableInfo.RowSize - 1;
+		public override IEnumerable<HexField> HexFields => hexFields;
+		public HexField Column0 => GetField(0);
+		public HexField Column1 => GetField(1);
+		public HexField Column2 => GetField(2);
+		public HexField Column3 => GetField(3);
+		public HexField Column4 => GetField(4);
+		public HexField Column5 => GetField(5);
+		public HexField Column6 => GetField(6);
+		public HexField Column7 => GetField(7);
+		public HexField Column8 => GetField(8);
 
 		public HexField GetField(int index) {
 			if ((uint)index < (uint)hexFields.Length)
@@ -97,81 +50,25 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return null;
 		}
 
-		public bool Column0Present {
-			get { return IsFieldPresent(0); }
-		}
-
-		public bool Column1Present {
-			get { return IsFieldPresent(1); }
-		}
-
-		public bool Column2Present {
-			get { return IsFieldPresent(2); }
-		}
-
-		public bool Column3Present {
-			get { return IsFieldPresent(3); }
-		}
-
-		public bool Column4Present {
-			get { return IsFieldPresent(4); }
-		}
-
-		public bool Column5Present {
-			get { return IsFieldPresent(5); }
-		}
-
-		public bool Column6Present {
-			get { return IsFieldPresent(6); }
-		}
-
-		public bool Column7Present {
-			get { return IsFieldPresent(7); }
-		}
-
-		public bool Column8Present {
-			get { return IsFieldPresent(8); }
-		}
-
-		public bool IsFieldPresent(int index) {
-			return (uint)index < (uint)hexFields.Length;
-		}
-
-		public string Column0Description {
-			get { return GetFieldDescription(0); }
-		}
-
-		public string Column1Description {
-			get { return GetFieldDescription(1); }
-		}
-
-		public string Column2Description {
-			get { return GetFieldDescription(2); }
-		}
-
-		public string Column3Description {
-			get { return GetFieldDescription(3); }
-		}
-
-		public string Column4Description {
-			get { return GetFieldDescription(4); }
-		}
-
-		public string Column5Description {
-			get { return GetFieldDescription(5); }
-		}
-
-		public string Column6Description {
-			get { return GetFieldDescription(6); }
-		}
-
-		public string Column7Description {
-			get { return GetFieldDescription(7); }
-		}
-
-		public string Column8Description {
-			get { return GetFieldDescription(8); }
-		}
+		public bool Column0Present => IsFieldPresent(0);
+		public bool Column1Present => IsFieldPresent(1);
+		public bool Column2Present => IsFieldPresent(2);
+		public bool Column3Present => IsFieldPresent(3);
+		public bool Column4Present => IsFieldPresent(4);
+		public bool Column5Present => IsFieldPresent(5);
+		public bool Column6Present => IsFieldPresent(6);
+		public bool Column7Present => IsFieldPresent(7);
+		public bool Column8Present => IsFieldPresent(8);
+		public bool IsFieldPresent(int index) => (uint)index < (uint)hexFields.Length;
+		public string Column0Description => GetFieldDescription(0);
+		public string Column1Description => GetFieldDescription(1);
+		public string Column2Description => GetFieldDescription(2);
+		public string Column3Description => GetFieldDescription(3);
+		public string Column4Description => GetFieldDescription(4);
+		public string Column5Description => GetFieldDescription(5);
+		public string Column6Description => GetFieldDescription(6);
+		public string Column7Description => GetFieldDescription(7);
+		public string Column8Description => GetFieldDescription(8);
 
 		public string GetFieldDescription(int index) {
 			if ((uint)index >= (uint)hexFields.Length)
@@ -285,7 +182,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		string GetInfo(Table table, uint rid) {
 			var recVM = GetMetaDataTableRecordVM(table, rid);
-			return recVM == null ? string.Empty : recVM.Info;
+			return recVM?.Info ?? string.Empty;
 		}
 
 		string GetDescription(Table table, HexField field) {
@@ -395,25 +292,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		void InvalidateDescription(int index) {
-			OnPropertyChanged(string.Format("Column{0}Description", index));
-		}
-
-		public string RidString {
-			get { return mdToken.Rid.ToString(); }
-		}
-
-		public string TokenString {
-			get { return string.Format("0x{0:X8}", mdToken.Raw); }
-		}
-
-		public virtual string Info {
-			get { return string.Empty; }
-		}
-
-		protected virtual int[] InfoColumnIndexes {
-			get { return null; }
-		}
+		void InvalidateDescription(int index) => OnPropertyChanged(string.Format("Column{0}Description", index));
+		public string RidString => mdToken.Rid.ToString();
+		public string TokenString => string.Format("0x{0:X8}", mdToken.Raw);
+		public virtual string Info => string.Empty;
+		protected virtual int[] InfoColumnIndexes => null;
 
 		protected readonly MetaDataTableVM mdVM;
 		MDToken mdToken;
@@ -467,13 +350,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base(mdVM, mdToken) {
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column1); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column1);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
@@ -482,18 +360,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base(mdVM, mdToken) {
 		}
 
-		public override string Info {
-			get { return CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1)); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1));
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1, 2 };
-
-		public static string CreateTypeString(string ns, string name) {
-			return string.IsNullOrEmpty(ns) ? name : string.Format("{0}.{1}", ns, name);
-		}
+		public static string CreateTypeString(string ns, string name) => string.IsNullOrEmpty(ns) ? name : string.Format("{0}.{1}", ns, name);
 	}
 
 	sealed class TypeDefMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -563,13 +433,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return field;
 		}
 
-		public override string Info {
-			get { return TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1)); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1));
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1, 2 };
 	}
 
@@ -613,13 +478,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column1); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column1);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
@@ -696,13 +556,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column3); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column3);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
@@ -730,13 +585,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column2); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column2);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
@@ -751,13 +601,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base(mdVM, mdToken) {
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column1); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column1);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
@@ -858,13 +703,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column1); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column1);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
@@ -896,13 +736,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column1); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column1);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
@@ -937,13 +772,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base(mdVM, mdToken) {
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column0); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column0);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 0 };
 	}
 
@@ -999,13 +829,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column2); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column2);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
@@ -1088,13 +913,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return field;
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column7); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column7);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 7 };
 	}
 
@@ -1129,13 +949,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column6); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column6);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 6 };
 	}
 
@@ -1171,13 +986,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column1); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column1);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
@@ -1192,13 +1002,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column3), ReadStringsHeap(Column2)); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column3), ReadStringsHeap(Column2));
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 2, 3 };
 	}
 
@@ -1221,13 +1026,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column2); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column2);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
@@ -1248,13 +1048,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column3); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column3);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
@@ -1284,13 +1079,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return field;
 		}
 
-		public override string Info {
-			get { return ReadStringsHeap(Column3); }
-		}
-
-		protected override int[] InfoColumnIndexes {
-			get { return infoColIndexes; }
-		}
+		public override string Info => ReadStringsHeap(Column3);
+		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 

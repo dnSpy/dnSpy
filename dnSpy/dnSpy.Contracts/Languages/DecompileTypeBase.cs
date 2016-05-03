@@ -28,12 +28,12 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Output
 		/// </summary>
-		public ITextOutput Output { get; private set; }
+		public ITextOutput Output { get; }
 
 		/// <summary>
 		/// Options
 		/// </summary>
-		public DecompilationContext Context { get; private set; }
+		public DecompilationContext Context { get; }
 
 		/// <summary>
 		/// Constructor

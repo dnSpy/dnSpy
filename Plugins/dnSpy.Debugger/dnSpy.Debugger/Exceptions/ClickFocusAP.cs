@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Exceptions {
 			obj.SetValue(TargetProperty, value);
 		}
 
-		public static UIElement GetTarget(DependencyObject obj) {
-			return (UIElement)obj.GetValue(TargetProperty);
-		}
+		public static UIElement GetTarget(DependencyObject obj) => (UIElement)obj.GetValue(TargetProperty);
 
 		static void TargetPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var elem = d as UIElement;

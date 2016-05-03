@@ -31,37 +31,20 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class BaseTypeFolderNode : FileTreeNodeData, IBaseTypeFolderNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.BASETYPEFOLDER_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "BaseTypeClosed");
-		}
-
-		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "BaseTypeOpened");
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.BASETYPEFOLDER_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "BaseTypeClosed");
+		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "BaseTypeOpened");
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly TypeDef type;
 
 		public BaseTypeFolderNode(ITreeNodeGroup treeNodeGroup, TypeDef type) {
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.type = type;
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (type.BaseType != null)
@@ -70,13 +53,10 @@ namespace dnSpy.Files.TreeView {
 				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Resources.BaseTypeFolder, BoxedTextTokenKind.Text);
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(this).FilterType;
 
 		public void InvalidateChildren() {
 			TreeNode.Children.Clear();

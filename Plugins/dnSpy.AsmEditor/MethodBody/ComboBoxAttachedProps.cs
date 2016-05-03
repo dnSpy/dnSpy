@@ -28,8 +28,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			element.SetValue(SelectionBoxItemTemplateProperty, value);
 		}
 
-		public static DataTemplate GetSelectionBoxItemTemplate(UIElement element) {
-			return (DataTemplate)element.GetValue(SelectionBoxItemTemplateProperty);
-		}
+		public static DataTemplate GetSelectionBoxItemTemplate(UIElement element) => (DataTemplate)element.GetValue(SelectionBoxItemTemplateProperty);
 	}
 }

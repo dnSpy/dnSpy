@@ -35,16 +35,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected override TypeDefOrRefAndCAVM Create(TModel model) {
 			var gpc = model as GenericParamConstraint;
 			if (gpc != null)
-				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), ownerModule, languageManager, ownerType, ownerMethod);
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), ownerModule, languageManager, ownerType, ownerMethod);
+				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), OwnerModule, languageManager, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), OwnerModule, languageManager, ownerType, ownerMethod);
 		}
 
-		protected override TypeDefOrRefAndCAVM Clone(TypeDefOrRefAndCAVM obj) {
-			return new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override TypeDefOrRefAndCAVM Create() {
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
+		protected override TypeDefOrRefAndCAVM Clone(TypeDefOrRefAndCAVM obj) =>
+			new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override TypeDefOrRefAndCAVM Create() =>
+			new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
 	}
 }

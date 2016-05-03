@@ -28,17 +28,9 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly T[] nodes;
 		IFileTreeNodeData[] parents;
 
-		public int Count {
-			get { return nodes.Length; }
-		}
-
-		public T[] Nodes {
-			get { return nodes; }
-		}
-
-		public IFileTreeNodeData[] Parents {
-			get { return parents; }
-		}
+		public int Count => nodes.Length;
+		public T[] Nodes => nodes;
+		public IFileTreeNodeData[] Parents => parents;
 
 		public DeletableNodes(T node)
 			: this(new[] { node }) {

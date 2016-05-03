@@ -36,129 +36,68 @@ namespace dnSpy.Debugger.Scripting {
 			RuntimeUnwindableFrame	= 0x08,
 		}
 
-		public IStackChain Chain {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var chain = CorFrame.Chain;
-					return chain == null ? null : new StackChain(debugger, chain);
-				});
-			}
-		}
+		public IStackChain Chain => debugger.Dispatcher.UI(() => {
+			var chain = CorFrame.Chain;
+			return chain == null ? null : new StackChain(debugger, chain);
+		});
 
-		public bool IsNeutered {
-			get { return debugger.Dispatcher.UI(() => CorFrame.IsNeutered); }
-		}
-
-		public Contracts.Scripting.Debugger.ILFrameIP ILFrameIP {
-			get { return ilFrameIP; }
-		}
-
-		public InternalFrameType InternalFrameType {
-			get { return debugger.Dispatcher.UI(() => (InternalFrameType)CorFrame.InternalFrameType); }
-		}
-
-		public bool IsILFrame {
-			get { return (sfFlags & SFFlags.ILFrame) != 0; }
-		}
-
-		public bool IsInternalFrame {
-			get { return (sfFlags & SFFlags.InternalFrame) != 0; }
-		}
-
-		public bool IsJITCompiledFrame {
-			get { return (sfFlags & (SFFlags.ILFrame | SFFlags.NativeFrame)) == (SFFlags.ILFrame | SFFlags.NativeFrame); }
-		}
-
-		public bool IsNativeFrame {
-			get { return (sfFlags & SFFlags.NativeFrame) != 0; }
-		}
-
-		public bool IsRuntimeUnwindableFrame {
-			get { return (sfFlags & SFFlags.RuntimeUnwindableFrame) != 0; }
-		}
+		public bool IsNeutered => debugger.Dispatcher.UI(() => CorFrame.IsNeutered);
+		public Contracts.Scripting.Debugger.ILFrameIP ILFrameIP => ilFrameIP;
+		public InternalFrameType InternalFrameType => debugger.Dispatcher.UI(() => (InternalFrameType)CorFrame.InternalFrameType);
+		public bool IsILFrame => (sfFlags & SFFlags.ILFrame) != 0;
+		public bool IsInternalFrame => (sfFlags & SFFlags.InternalFrame) != 0;
+		public bool IsJITCompiledFrame => (sfFlags & (SFFlags.ILFrame | SFFlags.NativeFrame)) == (SFFlags.ILFrame | SFFlags.NativeFrame);
+		public bool IsNativeFrame => (sfFlags & SFFlags.NativeFrame) != 0;
+		public bool IsRuntimeUnwindableFrame => (sfFlags & SFFlags.RuntimeUnwindableFrame) != 0;
 
 		public uint NativeOffset {
 			get { return nativeFrameIP; }
 			set { SetNativeOffset(value); }
 		}
 
-		public ulong StackEnd {
-			get { return stackEnd; }
-		}
+		public ulong StackEnd => stackEnd;
+		public ulong StackStart => stackStart;
+		public uint Token => token;
 
-		public ulong StackStart {
-			get { return stackStart; }
-		}
-
-		public uint Token {
-			get { return token; }
-		}
-
-		public int Index {
-			get { return frameNo; }
-		}
+		public int Index => frameNo;
 		int frameNo;
 
-		public IDebuggerMethod Method {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var func = CorFrame.Function;
-					return func == null ? null : new DebuggerMethod(debugger, func);
-				});
-			}
-		}
+		public IDebuggerMethod Method => debugger.Dispatcher.UI(() => {
+			var func = CorFrame.Function;
+			return func == null ? null : new DebuggerMethod(debugger, func);
+		});
 
-		public IDebuggerCode ILCode {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var func = CorFrame.Function;
-					var code = func == null ? null : func.ILCode;
-					return code == null ? null : new DebuggerCode(debugger, code);
-				});
-			}
-		}
+		public IDebuggerCode ILCode => debugger.Dispatcher.UI(() => {
+			var func = CorFrame.Function;
+			var code = func == null ? null : func.ILCode;
+			return code == null ? null : new DebuggerCode(debugger, code);
+		});
 
-		public IDebuggerCode Code {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var code = CorFrame.Code;
-					return code == null ? null : new DebuggerCode(debugger, code);
-				});
-			}
-		}
+		public IDebuggerCode Code => debugger.Dispatcher.UI(() => {
+			var code = CorFrame.Code;
+			return code == null ? null : new DebuggerCode(debugger, code);
+		});
 
-		public IDebuggerValue[] Arguments {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var list = new List<IDebuggerValue>();
-					foreach (var v in CorFrame.ILArguments)
-						list.Add(new DebuggerValue(debugger, v));
-					return list.ToArray();
-				});
-			}
-		}
+		public IDebuggerValue[] Arguments => debugger.Dispatcher.UI(() => {
+			var list = new List<IDebuggerValue>();
+			foreach (var v in CorFrame.ILArguments)
+				list.Add(new DebuggerValue(debugger, v));
+			return list.ToArray();
+		});
 
-		public IDebuggerValue[] Locals {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var list = new List<IDebuggerValue>();
-					foreach (var v in CorFrame.ILLocals)
-						list.Add(new DebuggerValue(debugger, v));
-					return list.ToArray();
-				});
-			}
-		}
+		public IDebuggerValue[] Locals => debugger.Dispatcher.UI(() => {
+			var list = new List<IDebuggerValue>();
+			foreach (var v in CorFrame.ILLocals)
+				list.Add(new DebuggerValue(debugger, v));
+			return list.ToArray();
+		});
 
-		public IDebuggerType[] GenericArguments {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var list = new List<IDebuggerType>();
-					foreach (var t in CorFrame.TypeParameters)
-						list.Add(new DebuggerType(debugger, t));
-					return list.ToArray();
-				});
-			}
-		}
+		public IDebuggerType[] GenericArguments => debugger.Dispatcher.UI(() => {
+			var list = new List<IDebuggerType>();
+			foreach (var t in CorFrame.TypeParameters)
+				list.Add(new DebuggerType(debugger, t));
+			return list.ToArray();
+		});
 
 		public IDebuggerType[] GenericTypeArguments {
 			get {
@@ -220,63 +159,47 @@ namespace dnSpy.Debugger.Scripting {
 				this.sfFlags |= SFFlags.RuntimeUnwindableFrame;
 		}
 
-		public IDebuggerValue GetLocal(uint index) {
-			return debugger.Dispatcher.UI(() => {
-				var value = CorFrame.GetILLocal(index);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetLocal(uint index) => debugger.Dispatcher.UI(() => {
+			var value = CorFrame.GetILLocal(index);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public IDebuggerValue GetLocal(int index) {
-			return debugger.Dispatcher.UI(() => {
-				var value = CorFrame.GetILLocal(index);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetLocal(int index) => debugger.Dispatcher.UI(() => {
+			var value = CorFrame.GetILLocal(index);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public IDebuggerValue GetArgument(uint index) {
-			return debugger.Dispatcher.UI(() => {
-				var value = CorFrame.GetILArgument(index);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetArgument(uint index) => debugger.Dispatcher.UI(() => {
+			var value = CorFrame.GetILArgument(index);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public IDebuggerValue GetArgument(int index) {
-			return debugger.Dispatcher.UI(() => {
-				var value = CorFrame.GetILArgument(index);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetArgument(int index) => debugger.Dispatcher.UI(() => {
+			var value = CorFrame.GetILArgument(index);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public IDebuggerValue[] GetLocals(ILCodeKind kind) {
-			return debugger.Dispatcher.UI(() => {
-				var list = new List<IDebuggerValue>();
-				foreach (var v in CorFrame.GetILLocals((dndbg.COM.CorDebug.ILCodeKind)kind))
-					list.Add(new DebuggerValue(debugger, v));
-				return list.ToArray();
-			});
-		}
+		public IDebuggerValue[] GetLocals(ILCodeKind kind) => debugger.Dispatcher.UI(() => {
+			var list = new List<IDebuggerValue>();
+			foreach (var v in CorFrame.GetILLocals((dndbg.COM.CorDebug.ILCodeKind)kind))
+				list.Add(new DebuggerValue(debugger, v));
+			return list.ToArray();
+		});
 
-		public IDebuggerValue GetLocal(ILCodeKind kind, uint index) {
-			return debugger.Dispatcher.UI(() => {
-				var value = CorFrame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetLocal(ILCodeKind kind, uint index) => debugger.Dispatcher.UI(() => {
+			var value = CorFrame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public IDebuggerValue GetLocal(ILCodeKind kind, int index) {
-			return debugger.Dispatcher.UI(() => {
-				var value = CorFrame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetLocal(ILCodeKind kind, int index) => debugger.Dispatcher.UI(() => {
+			var value = CorFrame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public IDebuggerCode GetCode(ILCodeKind kind) {
-			return debugger.Dispatcher.UI(() => {
-				var code = CorFrame.GetCode((dndbg.COM.CorDebug.ILCodeKind)kind);
-				return code == null ? null : new DebuggerCode(debugger, code);
-			});
-		}
+		public IDebuggerCode GetCode(ILCodeKind kind) => debugger.Dispatcher.UI(() => {
+			var code = CorFrame.GetCode((dndbg.COM.CorDebug.ILCodeKind)kind);
+			return code == null ? null : new DebuggerCode(debugger, code);
+		});
 
 		public bool GetGenericArguments(out List<IDebuggerType> typeGenArgs, out List<IDebuggerType> methGenArgs) {
 			List<IDebuggerType> typeGenArgsTmp = null, methGenArgsTmp = null;
@@ -300,131 +223,38 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.StepInto(this);
 		}
 
-		public Task<bool> StepIntoAsync(int millisecondsTimeout) {
-			return debugger.StepIntoAsync(this, millisecondsTimeout);
-		}
-
-		public bool StepIntoWait(int millisecondsTimeout) {
-			return debugger.StepIntoWait(this, millisecondsTimeout);
-		}
-
-		public bool StepIntoWait(CancellationToken token, int millisecondsTimeout) {
-			return debugger.StepIntoWait(this, token, millisecondsTimeout);
-		}
-
-		public void StepOver() {
-			debugger.StepOver(this);
-		}
-
-		public Task<bool> StepOverAsync(int millisecondsTimeout) {
-			return debugger.StepOverAsync(this, millisecondsTimeout);
-		}
-
-		public bool StepOverWait(int millisecondsTimeout) {
-			return debugger.StepOverWait(this, millisecondsTimeout);
-		}
-
-		public bool StepOverWait(CancellationToken token, int millisecondsTimeout) {
-			return debugger.StepOverWait(this, token, millisecondsTimeout);
-		}
-
-		public void StepOut() {
-			debugger.StepOut(this);
-		}
-
-		public Task<bool> StepOutAsync(int millisecondsTimeout) {
-			return debugger.StepOutAsync(this, millisecondsTimeout);
-		}
-
-		public bool StepOutWait(int millisecondsTimeout) {
-			return debugger.StepOutWait(this, millisecondsTimeout);
-		}
-
-		public bool StepOutWait(CancellationToken token, int millisecondsTimeout) {
-			return debugger.StepOutWait(this, token, millisecondsTimeout);
-		}
-
-		public bool RunTo() {
-			return debugger.RunTo(this);
-		}
-
-		public Task<bool> RunToAsync(int millisecondsTimeout) {
-			return debugger.RunToAsync(this, millisecondsTimeout);
-		}
-
-		public bool RunToWait(int millisecondsTimeout) {
-			return debugger.RunToWait(this, millisecondsTimeout);
-		}
-
-		public bool RunToWait(CancellationToken token, int millisecondsTimeout) {
-			return debugger.RunToWait(this, token, millisecondsTimeout);
-		}
-
-		public bool SetOffset(int offset) {
-			return debugger.SetOffset(this, offset);
-		}
-
-		public bool SetOffset(uint offset) {
-			return debugger.SetOffset(this, offset);
-		}
-
-		public bool SetNativeOffset(int offset) {
-			return debugger.SetNativeOffset(this, offset);
-		}
-
-		public bool SetNativeOffset(uint offset) {
-			return debugger.SetNativeOffset(this, offset);
-		}
-
-		public IDebuggerValue ReadStaticField(IDebuggerField field) {
-			return field.Class.ReadStaticField(this, field);
-		}
-
-		public IDebuggerValue ReadStaticField(IDebuggerClass cls, uint token) {
-			return cls.ReadStaticField(this, token);
-		}
-
-		public IDebuggerValue ReadStaticField(IDebuggerType type, uint token) {
-			return type.ReadStaticField(this, token);
-		}
-
-		public IDebuggerValue ReadStaticField(IDebuggerClass cls, string name, bool checkBaseClasses) {
-			return cls.ReadStaticField(this, name, checkBaseClasses);
-		}
-
-		public IDebuggerValue ReadStaticField(IDebuggerType type, string name, bool checkBaseClasses) {
-			return type.ReadStaticField(this, name, checkBaseClasses);
-		}
-
-		public IDebuggerValue ReadStaticField(IDebuggerType type, IDebuggerField field) {
-			return type.ReadStaticField(this, field);
-		}
-
-		public override bool Equals(object obj) {
-			var other = obj as StackFrame;
-			return other != null && other.CorFrame == CorFrame;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
+		public Task<bool> StepIntoAsync(int millisecondsTimeout) => debugger.StepIntoAsync(this, millisecondsTimeout);
+		public bool StepIntoWait(int millisecondsTimeout) => debugger.StepIntoWait(this, millisecondsTimeout);
+		public bool StepIntoWait(CancellationToken token, int millisecondsTimeout) => debugger.StepIntoWait(this, token, millisecondsTimeout);
+		public void StepOver() => debugger.StepOver(this);
+		public Task<bool> StepOverAsync(int millisecondsTimeout) => debugger.StepOverAsync(this, millisecondsTimeout);
+		public bool StepOverWait(int millisecondsTimeout) => debugger.StepOverWait(this, millisecondsTimeout);
+		public bool StepOverWait(CancellationToken token, int millisecondsTimeout) => debugger.StepOverWait(this, token, millisecondsTimeout);
+		public void StepOut() => debugger.StepOut(this);
+		public Task<bool> StepOutAsync(int millisecondsTimeout) => debugger.StepOutAsync(this, millisecondsTimeout);
+		public bool StepOutWait(int millisecondsTimeout) => debugger.StepOutWait(this, millisecondsTimeout);
+		public bool StepOutWait(CancellationToken token, int millisecondsTimeout) => debugger.StepOutWait(this, token, millisecondsTimeout);
+		public bool RunTo() => debugger.RunTo(this);
+		public Task<bool> RunToAsync(int millisecondsTimeout) => debugger.RunToAsync(this, millisecondsTimeout);
+		public bool RunToWait(int millisecondsTimeout) => debugger.RunToWait(this, millisecondsTimeout);
+		public bool RunToWait(CancellationToken token, int millisecondsTimeout) => debugger.RunToWait(this, token, millisecondsTimeout);
+		public bool SetOffset(int offset) => debugger.SetOffset(this, offset);
+		public bool SetOffset(uint offset) => debugger.SetOffset(this, offset);
+		public bool SetNativeOffset(int offset) => debugger.SetNativeOffset(this, offset);
+		public bool SetNativeOffset(uint offset) => debugger.SetNativeOffset(this, offset);
+		public IDebuggerValue ReadStaticField(IDebuggerField field) => field.Class.ReadStaticField(this, field);
+		public IDebuggerValue ReadStaticField(IDebuggerClass cls, uint token) => cls.ReadStaticField(this, token);
+		public IDebuggerValue ReadStaticField(IDebuggerType type, uint token) => type.ReadStaticField(this, token);
+		public IDebuggerValue ReadStaticField(IDebuggerClass cls, string name, bool checkBaseClasses) => cls.ReadStaticField(this, name, checkBaseClasses);
+		public IDebuggerValue ReadStaticField(IDebuggerType type, string name, bool checkBaseClasses) => type.ReadStaticField(this, name, checkBaseClasses);
+		public IDebuggerValue ReadStaticField(IDebuggerType type, IDebuggerField field) => type.ReadStaticField(this, field);
+		public override bool Equals(object obj) => (obj as StackFrame)?.CorFrame == CorFrame;
+		public override int GetHashCode() => hashCode;
 		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.Default;
-
-		public void WriteTo(IOutputWriter output) {
-			Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
-		}
-
-		public void Write(IOutputWriter output, TypeFormatFlags flags) {
+		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
+		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
 			debugger.Dispatcher.UI(() => CorFrame.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		}
-
-		public string ToString(TypeFormatFlags flags) {
-			return debugger.Dispatcher.UI(() => CorFrame.ToString((TypePrinterFlags)flags));
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => CorFrame.ToString(DEFAULT_FLAGS));
-		}
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => CorFrame.ToString((TypePrinterFlags)flags));
+		public override string ToString() => debugger.Dispatcher.UI(() => CorFrame.ToString(DEFAULT_FLAGS));
 	}
 }

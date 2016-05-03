@@ -33,9 +33,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return ValueToString(value, addCast);
 		}
 
-		static string AddCast(string s, bool addCast, string cast) {
-			return addCast ? string.Format("({0}){1}", cast, s) : s;
-		}
+		static string AddCast(string s, bool addCast, string cast) => addCast ? string.Format("({0}){1}", cast, s) : s;
 
 		public static string ValueToString(object value, bool addCast) {
 			if (value == null)

@@ -55,9 +55,7 @@ namespace dnSpy.Files.Tabs {
 			throw new InvalidOperationException();
 		}
 
-		public T Get<T>() where T : class, IFileTabUIContext {
-			return (T)GetOrCreate(typeof(T), () => Create<T>());
-		}
+		public T Get<T>() where T : class, IFileTabUIContext => (T)GetOrCreate(typeof(T), () => Create<T>());
 
 		public T Get<T>(object key, Func<T> creator) where T : class, IFileTabUIContext {
 			if (key == null || creator == null)
@@ -75,18 +73,9 @@ namespace dnSpy.Files.Tabs {
 				this.obj = obj;
 			}
 
-			public bool Equals(Key other) {
-				return other != null &&
-						obj.Equals(other.obj);
-			}
-
-			public override bool Equals(object obj) {
-				return Equals(obj as Key);
-			}
-
-			public override int GetHashCode() {
-				return obj.GetHashCode();
-			}
+			public bool Equals(Key other) => other != null && obj.Equals(other.obj);
+			public override bool Equals(object obj) => Equals(obj as Key);
+			public override int GetHashCode() => obj.GetHashCode();
 		}
 
 		public void Dispose() {

@@ -47,17 +47,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.module = module;
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "ModuleFile");
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "ModuleFile");
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			Debug.Assert(TreeNode.Children.Count == 0 && weakDocListener == null);
@@ -154,38 +146,24 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				return null;
 			TreeNode.EnsureChildrenLoaded();
 			var stgStreamNode = (StorageStreamNode)TreeNode.DataChildren.FirstOrDefault(a => a is StorageStreamNode && ((StorageStreamNode)a).StorageStreamType == StorageStreamType.Tables);
-			return stgStreamNode == null ? null : stgStreamNode.FindTokenNode(token);
+			return stgStreamNode?.FindTokenNode(token);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, BoxedTextTokenKind.Text);
-		}
-
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.PE_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return PETreeNodeGroup.Instance; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.PE_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override ITreeNodeGroup TreeNodeGroup => PETreeNodeGroup.Instance;
 	}
 
 	sealed class PETreeNodeGroup : ITreeNodeGroup {
 		public static readonly PETreeNodeGroup Instance = new PETreeNodeGroup(FileTVConstants.ORDER_MODULE_PE);
 
 		public PETreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;

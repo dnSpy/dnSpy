@@ -20,14 +20,10 @@
 namespace dndbg.Engine {
 	public abstract class BreakpointConditionContext {
 		public abstract DnBreakpoint Breakpoint { get; }
-
-		public DnDebugger Debugger {
-			get { return debugger; }
-		}
-		readonly DnDebugger debugger;
+		public DnDebugger Debugger { get; }
 
 		protected BreakpointConditionContext(DnDebugger debugger) {
-			this.debugger = debugger;
+			this.Debugger = debugger;
 		}
 	}
 
@@ -48,10 +44,7 @@ namespace dndbg.Engine {
 		}
 		bool isEnabled = true;
 
-		protected virtual void OnIsEnabledChanged() {
-		}
-
-		internal virtual void OnRemoved() {
-		}
+		protected virtual void OnIsEnabledChanged() { }
+		internal virtual void OnRemoved() { }
 	}
 }

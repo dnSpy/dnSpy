@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	}
 
 	sealed class BreakpointContext : IBreakpointContext {
-		public IImageManager ImageManager { get; private set; }
+		public IImageManager ImageManager { get; }
 		public ILanguage Language { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
@@ -52,9 +52,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public bool ShowNamespaces { get; set; }
 		public bool ShowTypeKeywords { get; set; }
 
-		public IModuleLoader ModuleLoader {
-			get { return moduleLoader.Value; }
-		}
+		public IModuleLoader ModuleLoader => moduleLoader.Value;
 		readonly Lazy<IModuleLoader> moduleLoader;
 
 		public BreakpointContext(IImageManager imageManager, Lazy<IModuleLoader> moduleLoader) {

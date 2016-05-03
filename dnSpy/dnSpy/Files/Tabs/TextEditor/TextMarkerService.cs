@@ -37,9 +37,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly Dictionary<ITextMarkerObject, ITextMarker> objToMarker = new Dictionary<ITextMarkerObject, ITextMarker>();
 
-		public TextView TextView {
-			get { return textEditorControl.TextEditor.TextArea.TextView; }
-		}
+		public TextView TextView => textEditorControl.TextEditor.TextArea.TextView;
 
 		public TextMarkerService(TextEditorControl textView, ITextEditorUIContextImpl uiContext, ITextLineObjectManager textLineObjectManager) {
 			this.textEditorControl = textView;
@@ -51,9 +49,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			OnDocumentChanged();
 		}
 
-		void TextEditorUIContext_NewTextContent(object sender, EventArgs e) {
-			RecreateMarkers();
-		}
+		void TextEditorUIContext_NewTextContent(object sender, EventArgs e) => RecreateMarkers();
 
 		public void Dispose() {
 			uiContext.NewTextContent -= TextEditorUIContext_NewTextContent;
@@ -67,9 +63,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				RemoveMarker(obj);
 		}
 
-		void TextView_DocumentChanged(object sender, EventArgs e) {
-			OnDocumentChanged();
-		}
+		void TextView_DocumentChanged(object sender, EventArgs e) => OnDocumentChanged();
 
 		void OnDocumentChanged() {
 			ClearMarkers();
@@ -157,8 +151,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		/// </summary>
 		internal void Redraw(ISegment segment) {
 			TextView.Redraw(segment, DispatcherPriority.Normal);
-			if (RedrawRequested != null)
-				RedrawRequested(this, EventArgs.Empty);
+			RedrawRequested?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler RedrawRequested;
@@ -166,7 +159,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		IEnumerable<TextMarker> GetSortedTextMarkers(int lineStart, int lineLength) {
 			if (markers == null)
-				return new TextMarker[0];
+				return Array.Empty<TextMarker>();
 			var list = new List<TextMarker>(markers.FindOverlappingSegments(lineStart, lineLength));
 			list.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
 			return list;
@@ -191,9 +184,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					Math.Max(marker.StartOffset, lineStart),
 					Math.Min(marker.EndOffset, lineEnd),
 					element => {
-						if (foregroundBrush != null) {
+						if (foregroundBrush != null)
 							element.TextRunProperties.SetForegroundBrush(foregroundBrush);
-						}
 						Typeface tf = element.TextRunProperties.Typeface;
 						element.TextRunProperties.SetTypeface(new Typeface(
 							tf.FontFamily,
@@ -208,12 +200,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		#endregion
 
 		#region IBackgroundRenderer
-		public KnownLayer Layer {
-			get {
-				// draw behind selection
-				return KnownLayer.Selection;
-			}
-		}
+		public KnownLayer Layer => KnownLayer.Selection;
 
 		public void Draw(ICSharpCode.AvalonEdit.Rendering.TextView textView, DrawingContext drawingContext) {
 			if (textView == null)
@@ -306,23 +293,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public event EventHandler Deleted;
-
-		public bool IsDeleted {
-			get { return !this.IsConnectedToCollection; }
-		}
-
-		public void Delete() {
-			service.Remove(this);
-		}
-
-		internal void OnDeleted() {
-			if (Deleted != null)
-				Deleted(this, EventArgs.Empty);
-		}
-
-		public void Redraw() {
-			service.Redraw(this);
-		}
+		public bool IsDeleted => !this.IsConnectedToCollection;
+		public void Delete() => service.Remove(this);
+		internal void OnDeleted() => Deleted?.Invoke(this, EventArgs.Empty);
+		public void Redraw() => service.Redraw(this);
 
 		/// <summary>
 		/// Gets the highlighting color
@@ -336,21 +310,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		Func<HighlightingColor> highlightingColor;
 
-		public Color? BackgroundColor {
-			get { var hl = HighlightingColor(); return hl == null || hl.Background == null ? null : hl.Background.GetColor(null); }
-		}
-
-		public Color? ForegroundColor {
-			get { var hl = HighlightingColor(); return hl == null || hl.Foreground == null ? null : hl.Foreground.GetColor(null); }
-		}
-
-		public FontWeight? FontWeight {
-			get { var hl = HighlightingColor(); return hl == null ? null : hl.FontWeight; }
-		}
-
-		public FontStyle? FontStyle {
-			get { var hl = HighlightingColor(); return hl == null ? null : hl.FontStyle; }
-		}
+		public Color? BackgroundColor => HighlightingColor()?.Background?.GetColor(null);
+		public Color? ForegroundColor => HighlightingColor()?.Foreground?.GetColor(null);
+		public FontWeight? FontWeight => HighlightingColor()?.FontWeight;
+		public FontStyle? FontStyle => HighlightingColor()?.FontStyle;
 
 		TextMarkerTypes markerTypes;
 

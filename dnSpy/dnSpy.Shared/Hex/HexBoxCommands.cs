@@ -35,18 +35,11 @@ using WF = System.Windows.Forms;
 
 namespace dnSpy.Shared.Hex {
 	abstract class HexBoxCommand : MenuItemBase<DnHexBox> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override DnHexBox CreateContext(IMenuItemContext context) {
-			return context.CreatorObject.Object as DnHexBox;
-		}
-
-		public override bool IsEnabled(DnHexBox context) {
-			return IsVisible(context);
-		}
+		protected sealed override DnHexBox CreateContext(IMenuItemContext context) => context.CreatorObject.Object as DnHexBox;
+		public override bool IsEnabled(DnHexBox context) => IsVisible(context);
 	}
 
 	[ExportMenuItem(InputGestureText = "res:GoToOffsetKey", Group = MenuConstants.GROUP_CTX_HEXBOX_SHOW, Order = 0)]
@@ -58,17 +51,9 @@ namespace dnSpy.Shared.Hex {
 			this.appWindow = appWindow;
 		}
 
-		public override void Execute(DnHexBox dnHexBox) {
-			Execute2(dnHexBox, appWindow.MainWindow);
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return CanExecute(dnHexBox);
-		}
-
-		internal static bool CanExecute(DnHexBox dnHexBox) {
-			return dnHexBox != null && dnHexBox.Document != null;
-		}
+		public override void Execute(DnHexBox dnHexBox) => Execute2(dnHexBox, appWindow.MainWindow);
+		public override bool IsVisible(DnHexBox dnHexBox) => CanExecute(dnHexBox);
+		internal static bool CanExecute(DnHexBox dnHexBox) => dnHexBox != null && dnHexBox.Document != null;
 
 		internal static void Execute2(DnHexBox dnHexBox, Window ownerWindow) {
 			Debug.Assert(ownerWindow != null);
@@ -93,9 +78,7 @@ namespace dnSpy.Shared.Hex {
 			dnHexBox.CaretPosition = new HexBoxPosition(dnHexBox.VisibleToPhysicalOffset(data.OffsetVM.Value), dnHexBox.CaretPosition.Kind, 0);
 		}
 
-		public override string GetHeader(DnHexBox context) {
-			return context.IsMemory ? dnSpy_Shared_Resources.GoToAddressCommand : dnSpy_Shared_Resources.GoToOffsetCommand;
-		}
+		public override string GetHeader(DnHexBox context) => context.IsMemory ? dnSpy_Shared_Resources.GoToAddressCommand : dnSpy_Shared_Resources.GoToOffsetCommand;
 	}
 
 	[ExportMenuItem(Header = "res:HexEditorSelectCommand", InputGestureText = "res:HexEditorSelectKey", Group = MenuConstants.GROUP_CTX_HEXBOX_SHOW, Order = 10)]
@@ -107,17 +90,9 @@ namespace dnSpy.Shared.Hex {
 			this.appWindow = appWindow;
 		}
 
-		internal static void Execute2(DnHexBox dnHexBox, Window ownerWindow) {
-			ExecuteInternal(dnHexBox, ownerWindow);
-		}
-
-		internal static bool CanExecute(DnHexBox dnHexBox) {
-			return dnHexBox != null && dnHexBox.Document != null;
-		}
-
-		public override void Execute(DnHexBox dnHexBox) {
-			ExecuteInternal(dnHexBox, appWindow.MainWindow);
-		}
+		internal static void Execute2(DnHexBox dnHexBox, Window ownerWindow) => ExecuteInternal(dnHexBox, ownerWindow);
+		internal static bool CanExecute(DnHexBox dnHexBox) => dnHexBox != null && dnHexBox.Document != null;
+		public override void Execute(DnHexBox dnHexBox) => ExecuteInternal(dnHexBox, appWindow.MainWindow);
 
 		static void ExecuteInternal(DnHexBox dnHexBox, Window ownerWindow) {
 			Debug.Assert(ownerWindow != null);
@@ -140,27 +115,14 @@ namespace dnSpy.Shared.Hex {
 			dnHexBox.CaretPosition = new HexBoxPosition(dnHexBox.VisibleToPhysicalOffset(data.StartVM.Value), dnHexBox.CaretPosition.Kind, 0);
 		}
 
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return CanExecute(dnHexBox);
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
+		public override bool IsEnabled(DnHexBox dnHexBox) => CanExecute(dnHexBox);
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
 	}
 
 	sealed class HexDocumentDataSaver : IProgressTask {
-		public bool IsIndeterminate {
-			get { return false; }
-		}
-
-		public double ProgressMinimum {
-			get { return 0; }
-		}
-
-		public double ProgressMaximum {
-			get { return progressMaximum; }
-		}
+		public bool IsIndeterminate => false;
+		public double ProgressMinimum => 0;
+		public double ProgressMaximum => progressMaximum;
 
 		readonly HexDocument doc;
 		readonly long progressMaximum;
@@ -224,13 +186,8 @@ namespace dnSpy.Shared.Hex {
 			this.appWindow = appWindow;
 		}
 
-		public override void Execute(DnHexBox dnHexBox) {
-			Execute2(dnHexBox, appWindow.MainWindow);
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return CanExecute(dnHexBox);
-		}
+		public override void Execute(DnHexBox dnHexBox) => Execute2(dnHexBox, appWindow.MainWindow);
+		public override bool IsVisible(DnHexBox dnHexBox) => CanExecute(dnHexBox);
 
 		internal static void Execute2(DnHexBox dnHexBox, Window ownerWindow) {
 			Debug.Assert(ownerWindow != null);
@@ -263,9 +220,7 @@ namespace dnSpy.Shared.Hex {
 			App.MsgBox.Instance.Show(string.Format(dnSpy_Shared_Resources.AnErrorOccurred, data.ErrorMessage));
 		}
 
-		internal static bool CanExecute(DnHexBox dnHexBox) {
-			return dnHexBox.Document != null && dnHexBox.Selection != null;
-		}
+		internal static bool CanExecute(DnHexBox dnHexBox) => dnHexBox.Document != null && dnHexBox.Selection != null;
 	}
 
 	[ExportMenuItem(Header = "res:ShowOnlySelectedBytesCommand", InputGestureText = "res:ShowOnlySelectedBytesKey", Group = MenuConstants.GROUP_CTX_HEXBOX_SHOW, Order = 30)]
@@ -274,9 +229,7 @@ namespace dnSpy.Shared.Hex {
 			Execute2(dnHexBox);
 		}
 
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return CanExecute(dnHexBox);
-		}
+		public override bool IsVisible(DnHexBox dnHexBox) => CanExecute(dnHexBox);
 
 		internal static void Execute2(DnHexBox dnHexBox) {
 			var sel = dnHexBox.Selection;
@@ -296,13 +249,8 @@ namespace dnSpy.Shared.Hex {
 
 	[ExportMenuItem(Header = "res:ShowAllBytesCommand", InputGestureText = "res:ShowAllBytesKey", Group = MenuConstants.GROUP_CTX_HEXBOX_SHOW, Order = 40)]
 	sealed class ShowWholeDocumentHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			Execute2(dnHexBox);
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return CanExecute(dnHexBox);
-		}
+		public override void Execute(DnHexBox dnHexBox) => Execute2(dnHexBox);
+		public override bool IsVisible(DnHexBox dnHexBox) => CanExecute(dnHexBox);
 
 		internal static void Execute2(DnHexBox dnHexBox) {
 			dnHexBox.StartOffset = dnHexBox.DocumentStartOffset;
@@ -324,21 +272,10 @@ namespace dnSpy.Shared.Hex {
 
 	[ExportMenuItem(InputGestureText = "res:ClearSelectionKey", Group = MenuConstants.GROUP_CTX_HEXBOX_EDIT, Order = 0)]
 	sealed class ClearSelectionHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.ClearBytes();
-		}
-
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return dnHexBox.Document != null;
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
-
-		public override string GetHeader(DnHexBox context) {
-			return context.Selection != null ? dnSpy_Shared_Resources.ClearSelectedBytesCommand : dnSpy_Shared_Resources.ClearByteCommand;
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.ClearBytes();
+		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.Document != null;
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
+		public override string GetHeader(DnHexBox context) => context.Selection != null ? dnSpy_Shared_Resources.ClearSelectedBytesCommand : dnSpy_Shared_Resources.ClearByteCommand;
 	}
 
 	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = "Fill", Group = MenuConstants.GROUP_CTX_HEXBOX_EDIT, Order = 10)]
@@ -371,13 +308,8 @@ namespace dnSpy.Shared.Hex {
 			dnHexBox.Selection = null;
 		}
 
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return dnHexBox.Selection != null;
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
+		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.Selection != null;
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
 	}
 
 	[ExportMenuItem(Header = "res:UseHexPrefixCommand", Group = MenuConstants.GROUP_CTX_HEXBOX_OPTS, Order = 0)]
@@ -389,13 +321,8 @@ namespace dnSpy.Shared.Hex {
 			this.hexEditorSettings = hexEditorSettings;
 		}
 
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.UseHexPrefix = !(dnHexBox.UseHexPrefix ?? hexEditorSettings.UseHexPrefix);
-		}
-
-		public override bool IsChecked(DnHexBox context) {
-			return context.UseHexPrefix ?? hexEditorSettings.UseHexPrefix;
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.UseHexPrefix = !(dnHexBox.UseHexPrefix ?? hexEditorSettings.UseHexPrefix);
+		public override bool IsChecked(DnHexBox context) => context.UseHexPrefix ?? hexEditorSettings.UseHexPrefix;
 	}
 
 	[ExportMenuItem(Header = "res:HexEditorShowAsciiCommand", Group = MenuConstants.GROUP_CTX_HEXBOX_OPTS, Order = 10)]
@@ -407,13 +334,8 @@ namespace dnSpy.Shared.Hex {
 			this.hexEditorSettings = hexEditorSettings;
 		}
 
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.ShowAscii = !(dnHexBox.ShowAscii ?? hexEditorSettings.ShowAscii);
-		}
-
-		public override bool IsChecked(DnHexBox context) {
-			return context.ShowAscii ?? hexEditorSettings.ShowAscii;
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.ShowAscii = !(dnHexBox.ShowAscii ?? hexEditorSettings.ShowAscii);
+		public override bool IsChecked(DnHexBox context) => context.ShowAscii ?? hexEditorSettings.ShowAscii;
 	}
 
 	[ExportMenuItem(Header = "res:LowerCaseHexCommand", Group = MenuConstants.GROUP_CTX_HEXBOX_OPTS, Order = 20)]
@@ -425,13 +347,8 @@ namespace dnSpy.Shared.Hex {
 			this.hexEditorSettings = hexEditorSettings;
 		}
 
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.LowerCaseHex = !(dnHexBox.LowerCaseHex ?? hexEditorSettings.LowerCaseHex);
-		}
-
-		public override bool IsChecked(DnHexBox context) {
-			return context.LowerCaseHex ?? hexEditorSettings.LowerCaseHex;
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.LowerCaseHex = !(dnHexBox.LowerCaseHex ?? hexEditorSettings.LowerCaseHex);
+		public override bool IsChecked(DnHexBox context) => context.LowerCaseHex ?? hexEditorSettings.LowerCaseHex;
 	}
 
 	static class Constants {
@@ -450,25 +367,18 @@ namespace dnSpy.Shared.Hex {
 			this.isChecked = isChecked;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			action(context);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return isChecked;
-		}
+		public override void Execute(IMenuItemContext context) => action(context);
+		public override bool IsChecked(IMenuItemContext context) => isChecked;
 	}
 
 	[ExportMenuItem(Header = "res:BytesPerLineCommand", Guid = Constants.BYTES_PER_LINE_GUID, Group = MenuConstants.GROUP_CTX_HEXBOX_OPTS, Order = 30)]
 	sealed class BytesPerLineHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-		}
+		public override void Execute(DnHexBox dnHexBox) { }
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.BYTES_PER_LINE_GUID, Group = Constants.GROUP_BYTES_PER_LINE, Order = 0)]
 	sealed class BytesPerLineSubCtxMenuCommand : HexBoxCommand, IMenuItemCreator {
-		public override void Execute(DnHexBox context) {
-		}
+		public override void Execute(DnHexBox context) { }
 
 		static readonly Tuple<int?, string>[] subMenus = new Tuple<int?, string>[] {
 			Tuple.Create((int?)0, dnSpy_Shared_Resources.HexEditor_BytesPerLine_FitToWidth),
@@ -498,14 +408,12 @@ namespace dnSpy.Shared.Hex {
 
 	[ExportMenuItem(Header = "res:HexEditorCharacterEncodingCommand", Guid = Constants.ENCODING_GUID, Group = MenuConstants.GROUP_CTX_HEXBOX_OPTS, Order = 40)]
 	sealed class EncodingHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-		}
+		public override void Execute(DnHexBox dnHexBox) { }
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.ENCODING_GUID, Group = Constants.GROUP_ENCODING, Order = 0)]
 	sealed class EncodingSubCtxMenuCommand : HexBoxCommand, IMenuItemCreator {
-		public override void Execute(DnHexBox context) {
-		}
+		public override void Execute(DnHexBox context) { }
 
 		static readonly Tuple<AsciiEncoding?, string>[] subMenus = new Tuple<AsciiEncoding?, string>[] {
 			Tuple.Create((AsciiEncoding?)AsciiEncoding.ASCII, dnSpy_Shared_Resources.HexEditor_CharacterEncoding_ASCII),
@@ -556,114 +464,69 @@ namespace dnSpy.Shared.Hex {
 	}
 
 	abstract class CopyBaseHexBoxCtxMenuCommand : HexBoxCommand {
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
-
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return dnHexBox.Selection != null;
-		}
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
+		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.Selection != null;
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 0)]
 	sealed class CopyHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.Copy();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.Copy();
 	}
 
 	[ExportMenuItem(Header = "res:CopyUTF8StringCommand", InputGestureText = "res:CopyUTF8StringKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 10)]
 	sealed class CopyUtf8StringHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.CopyUTF8String();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyUTF8String();
 	}
 
 	[ExportMenuItem(Header = "res:CopyUnicodeStringCommand", InputGestureText = "res:CopyUnicodeStringKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 20)]
 	sealed class CopyUnicodeStringHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.CopyUnicodeString();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyUnicodeString();
 	}
 
 	[ExportMenuItem(Header = "res:CopyCSharpArrayCommand", InputGestureText = "res:CopyCSharpArrayKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 30)]
 	sealed class CopyCSharpArrayHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.CopyCSharpArray();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyCSharpArray();
 	}
 
 	[ExportMenuItem(Header = "res:CopyVBArrayCommand", InputGestureText = "res:CopyVBArrayKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 40)]
 	sealed class CopyVBArrayHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.CopyVBArray();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyVBArray();
 	}
 
 	[ExportMenuItem(Header = "res:CopyUIContentsCommand", InputGestureText = "res:CopyUIContentsKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 50)]
 	sealed class CopyUIContentsHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.CopyUIContents();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyUIContents();
 	}
 
 	[ExportMenuItem(Header = "res:CopyOffsetCommand", InputGestureText = "res:CopyOffsetKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 60)]
 	sealed class CopyOffsetHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.CopyOffset();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyOffset();
 	}
 
 	[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:PasteKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 70)]
 	sealed class PasteHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.Paste();
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
-
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return dnHexBox.CanPaste();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.Paste();
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
+		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.CanPaste();
 	}
 
 	[ExportMenuItem(Header = "res:PasteUTF8Command", InputGestureText = "res:PasteUTF8Key", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 80)]
 	sealed class PasteUtf8HexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.PasteUtf8();
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
-
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return dnHexBox.CanPasteUtf8();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.PasteUtf8();
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
+		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.CanPasteUtf8();
 	}
 
 	[ExportMenuItem(Header = "res:PasteUnicodeCommand", InputGestureText = "res:PasteUnicodeKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 90)]
 	sealed class PasteUnicodeHexBoxCtxMenuCommand : HexBoxCommand {
-		public override void Execute(DnHexBox dnHexBox) {
-			dnHexBox.PasteUnicode();
-		}
-
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
-
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return dnHexBox.CanPasteUnicode();
-		}
+		public override void Execute(DnHexBox dnHexBox) => dnHexBox.PasteUnicode();
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
+		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.CanPasteUnicode();
 	}
 
 	[ExportMenuItem(Header = "res:PasteDotNetMetaDataBlobCommand", InputGestureText = "res:PasteDotNetMetaDataBlobKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 100)]
 	sealed class PasteBlobDataHexBoxCtxMenuCommand : HexBoxCommand {
-		internal static bool CanExecute(DnHexBox dnHexBox) {
-			return dnHexBox != null && GetBlobData(ClipboardUtils.GetData()) != null;
-		}
+		internal static bool CanExecute(DnHexBox dnHexBox) => dnHexBox != null && GetBlobData(ClipboardUtils.GetData()) != null;
 
 		internal static void Execute2(DnHexBox dnHexBox) {
 			if (!CanExecute(dnHexBox))
@@ -674,9 +537,7 @@ namespace dnSpy.Shared.Hex {
 				dnHexBox.Paste(data);
 		}
 
-		public override void Execute(DnHexBox dnHexBox) {
-			Execute2(dnHexBox);
-		}
+		public override void Execute(DnHexBox dnHexBox) => Execute2(dnHexBox);
 
 		static byte[] GetBlobData(byte[] data) {
 			if (data == null)
@@ -691,12 +552,7 @@ namespace dnSpy.Shared.Hex {
 			return d;
 		}
 
-		public override bool IsVisible(DnHexBox dnHexBox) {
-			return true;
-		}
-
-		public override bool IsEnabled(DnHexBox dnHexBox) {
-			return CanExecute(dnHexBox);
-		}
+		public override bool IsVisible(DnHexBox dnHexBox) => true;
+		public override bool IsEnabled(DnHexBox dnHexBox) => CanExecute(dnHexBox);
 	}
 }

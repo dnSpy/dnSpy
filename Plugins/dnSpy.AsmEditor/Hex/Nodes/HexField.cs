@@ -32,53 +32,28 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected readonly HexDocument doc;
 		readonly string parentName;
 
-		public string NameUI {
-			get { return UIUtils.EscapeMenuItemHeader(name); }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public string OffsetString {
-			get { return string.Format("0x{0:X8}", startOffset); }
-		}
-
-		public ulong StartOffset {
-			get { return startOffset; }
-		}
-		readonly ulong startOffset;
-
-		public ulong EndOffset {
-			get { return endOffset; }
-		}
-		readonly ulong endOffset;
-
-		public bool IsVisible {
-			get { return isVisible; }
-			set { isVisible = value; }
-		}
-		bool isVisible = true;
-
-		public int Size {
-			get { return (int)(EndOffset - StartOffset + 1); }
-		}
-
+		public string NameUI => UIUtils.EscapeMenuItemHeader(Name);
+		public string Name { get; }
+		public string OffsetString => string.Format("0x{0:X8}", StartOffset);
+		public ulong StartOffset { get; }
+		public ulong EndOffset { get; }
+		public bool IsVisible { get; set; }
+		public int Size => (int)(EndOffset - StartOffset + 1);
 		public abstract string FormattedValue { get; }
 
 		protected HexField(HexDocument doc, string parentName, string name, ulong start, int size) {
 			this.doc = doc;
 			this.parentName = parentName;
-			this.name = name;
-			this.startOffset = start;
-			this.endOffset = start + (ulong)size - 1;
+			this.IsVisible = true;
+			this.Name = name;
+			this.StartOffset = start;
+			this.EndOffset = start + (ulong)size - 1;
 		}
 
 		public abstract DataFieldVM DataFieldVM { get; }
 
 		public void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			if (!HexUtils.IsModified(startOffset, endOffset, modifiedStart, modifiedEnd))
+			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))
 				return;
 
 			var newValue = ReadData();
@@ -105,18 +80,18 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (DataFieldVM.HasError)
 				return;
 			var newData = GetDataAsByteArray();
-			Debug.Assert(newData != null && (ulong)newData.Length == endOffset - startOffset + 1);
+			Debug.Assert(newData != null && (ulong)newData.Length == EndOffset - StartOffset + 1);
 
-			var origData = doc.ReadBytes(startOffset, newData.Length);
+			var origData = doc.ReadBytes(StartOffset, newData.Length);
 			if (Equals(newData, origData))
 				return;
 
 			var undoDoc = doc as IUndoHexDocument;
 			Debug.Assert(undoDoc != null);
 			if (undoDoc != null)
-				undoDoc.WriteUndo(startOffset, newData, string.Format(dnSpy_AsmEditor_Resources.HexField_UndoMessage_Write_Parent_Field, parentName, Name));
+				undoDoc.WriteUndo(StartOffset, newData, string.Format(dnSpy_AsmEditor_Resources.HexField_UndoMessage_Write_Parent_Field, parentName, Name));
 			else
-				doc.Write(startOffset, newData);
+				doc.Write(StartOffset, newData);
 			OnUpdateValue();
 		}
 		bool disable_UpdateValue = false;
@@ -137,164 +112,104 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected abstract byte[] GetDataAsByteArray();
 		protected abstract object ReadData();
-
-		protected virtual void OnUpdateValue() {
-		}
+		protected virtual void OnUpdateValue() { }
 	}
 
 	sealed class ByteHexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly ByteVM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X2}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X2}", ReadData());
 
 		public ByteHexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 1) {
 			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue(), useDecimal);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return new byte[1] { data.Value };
-		}
-
-		protected override object ReadData() {
-			return (byte)doc.ReadByte(StartOffset);
-		}
+		protected override byte[] GetDataAsByteArray() => new byte[1] { data.Value };
+		protected override object ReadData() => (byte)doc.ReadByte(StartOffset);
 	}
 
 	sealed class Int16HexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly Int16VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X4}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X4}", ReadData());
 
 		public Int16HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 2) {
 			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue(), useDecimal);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadInt16(StartOffset);
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadInt16(StartOffset);
 	}
 
 	sealed class UInt16HexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly UInt16VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X4}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X4}", ReadData());
 
 		public UInt16HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 2) {
 			this.data = new UInt16VM(doc.ReadUInt16(start), a => UpdateValue(), useDecimal);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadUInt16(StartOffset);
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadUInt16(StartOffset);
 	}
 
 	sealed class Int32HexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly Int32VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X8}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X8}", ReadData());
 
 		public Int32HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 4) {
 			this.data = new Int32VM(doc.ReadInt32(start), a => UpdateValue(), useDecimal);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadInt32(StartOffset);
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadInt32(StartOffset);
 	}
 
 	sealed class UInt32HexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly UInt32VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X8}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X8}", ReadData());
 
 		public UInt32HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 4) {
 			this.data = new UInt32VM(doc.ReadUInt32(start), a => UpdateValue(), useDecimal);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadUInt32(StartOffset);
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadUInt32(StartOffset);
 	}
 
 	sealed class UInt64HexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly UInt64VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X16}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X16}", ReadData());
 
 		public UInt64HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 8) {
 			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue(), useDecimal);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadUInt64(StartOffset);
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadUInt64(StartOffset);
 	}
 
 	sealed class StringHexField : HexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly StringVM data;
 
-		public override string FormattedValue {
-			get { return String; }
-		}
+		public override string FormattedValue => String;
 
 		public string String {
 			get {
@@ -352,269 +267,76 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return d;
 		}
 
-		protected override object ReadData() {
-			return encoding.GetString(doc.ReadBytes(StartOffset, (int)(EndOffset - StartOffset + 1)));
-		}
+		protected override object ReadData() => encoding.GetString(doc.ReadBytes(StartOffset, (int)(EndOffset - StartOffset + 1)));
 	}
 
 	abstract class FlagsHexField : HexField {
 		Dictionary<int, HexBitField> bitFields;
 
-		public HexBitField Bit0 {
-			get { return GetBitField(0); }
-		}
-
-		public HexBitField Bit1 {
-			get { return GetBitField(1); }
-		}
-
-		public HexBitField Bit2 {
-			get { return GetBitField(2); }
-		}
-
-		public HexBitField Bit3 {
-			get { return GetBitField(3); }
-		}
-
-		public HexBitField Bit4 {
-			get { return GetBitField(4); }
-		}
-
-		public HexBitField Bit5 {
-			get { return GetBitField(5); }
-		}
-
-		public HexBitField Bit6 {
-			get { return GetBitField(6); }
-		}
-
-		public HexBitField Bit7 {
-			get { return GetBitField(7); }
-		}
-
-		public HexBitField Bit8 {
-			get { return GetBitField(8); }
-		}
-
-		public HexBitField Bit9 {
-			get { return GetBitField(9); }
-		}
-
-		public HexBitField Bit10 {
-			get { return GetBitField(10); }
-		}
-
-		public HexBitField Bit11 {
-			get { return GetBitField(11); }
-		}
-
-		public HexBitField Bit12 {
-			get { return GetBitField(12); }
-		}
-
-		public HexBitField Bit13 {
-			get { return GetBitField(13); }
-		}
-
-		public HexBitField Bit14 {
-			get { return GetBitField(14); }
-		}
-
-		public HexBitField Bit15 {
-			get { return GetBitField(15); }
-		}
-
-		public HexBitField Bit16 {
-			get { return GetBitField(16); }
-		}
-
-		public HexBitField Bit17 {
-			get { return GetBitField(17); }
-		}
-
-		public HexBitField Bit18 {
-			get { return GetBitField(18); }
-		}
-
-		public HexBitField Bit19 {
-			get { return GetBitField(19); }
-		}
-
-		public HexBitField Bit20 {
-			get { return GetBitField(20); }
-		}
-
-		public HexBitField Bit21 {
-			get { return GetBitField(21); }
-		}
-
-		public HexBitField Bit22 {
-			get { return GetBitField(22); }
-		}
-
-		public HexBitField Bit23 {
-			get { return GetBitField(23); }
-		}
-
-		public HexBitField Bit24 {
-			get { return GetBitField(24); }
-		}
-
-		public HexBitField Bit25 {
-			get { return GetBitField(25); }
-		}
-
-		public HexBitField Bit26 {
-			get { return GetBitField(26); }
-		}
-
-		public HexBitField Bit27 {
-			get { return GetBitField(27); }
-		}
-
-		public HexBitField Bit28 {
-			get { return GetBitField(28); }
-		}
-
-		public HexBitField Bit29 {
-			get { return GetBitField(29); }
-		}
-
-		public HexBitField Bit30 {
-			get { return GetBitField(30); }
-		}
-
-		public HexBitField Bit31 {
-			get { return GetBitField(31); }
-		}
-
-		public HexBitField Bit32 {
-			get { return GetBitField(32); }
-		}
-
-		public HexBitField Bit33 {
-			get { return GetBitField(33); }
-		}
-
-		public HexBitField Bit34 {
-			get { return GetBitField(34); }
-		}
-
-		public HexBitField Bit35 {
-			get { return GetBitField(35); }
-		}
-
-		public HexBitField Bit36 {
-			get { return GetBitField(36); }
-		}
-
-		public HexBitField Bit37 {
-			get { return GetBitField(37); }
-		}
-
-		public HexBitField Bit38 {
-			get { return GetBitField(38); }
-		}
-
-		public HexBitField Bit39 {
-			get { return GetBitField(39); }
-		}
-
-		public HexBitField Bit40 {
-			get { return GetBitField(40); }
-		}
-
-		public HexBitField Bit41 {
-			get { return GetBitField(41); }
-		}
-
-		public HexBitField Bit42 {
-			get { return GetBitField(42); }
-		}
-
-		public HexBitField Bit43 {
-			get { return GetBitField(43); }
-		}
-
-		public HexBitField Bit44 {
-			get { return GetBitField(44); }
-		}
-
-		public HexBitField Bit45 {
-			get { return GetBitField(45); }
-		}
-
-		public HexBitField Bit46 {
-			get { return GetBitField(46); }
-		}
-
-		public HexBitField Bit47 {
-			get { return GetBitField(47); }
-		}
-
-		public HexBitField Bit48 {
-			get { return GetBitField(48); }
-		}
-
-		public HexBitField Bit49 {
-			get { return GetBitField(49); }
-		}
-
-		public HexBitField Bit50 {
-			get { return GetBitField(50); }
-		}
-
-		public HexBitField Bit51 {
-			get { return GetBitField(51); }
-		}
-
-		public HexBitField Bit52 {
-			get { return GetBitField(52); }
-		}
-
-		public HexBitField Bit53 {
-			get { return GetBitField(53); }
-		}
-
-		public HexBitField Bit54 {
-			get { return GetBitField(54); }
-		}
-
-		public HexBitField Bit55 {
-			get { return GetBitField(55); }
-		}
-
-		public HexBitField Bit56 {
-			get { return GetBitField(56); }
-		}
-
-		public HexBitField Bit57 {
-			get { return GetBitField(57); }
-		}
-
-		public HexBitField Bit58 {
-			get { return GetBitField(58); }
-		}
-
-		public HexBitField Bit59 {
-			get { return GetBitField(59); }
-		}
-
-		public HexBitField Bit60 {
-			get { return GetBitField(60); }
-		}
-
-		public HexBitField Bit61 {
-			get { return GetBitField(61); }
-		}
-
-		public HexBitField Bit62 {
-			get { return GetBitField(62); }
-		}
-
-		public HexBitField Bit63 {
-			get { return GetBitField(63); }
-		}
+		public HexBitField Bit0 => GetBitField(0);
+		public HexBitField Bit1 => GetBitField(1);
+		public HexBitField Bit2 => GetBitField(2);
+		public HexBitField Bit3 => GetBitField(3);
+		public HexBitField Bit4 => GetBitField(4);
+		public HexBitField Bit5 => GetBitField(5);
+		public HexBitField Bit6 => GetBitField(6);
+		public HexBitField Bit7 => GetBitField(7);
+		public HexBitField Bit8 => GetBitField(8);
+		public HexBitField Bit9 => GetBitField(9);
+		public HexBitField Bit10 => GetBitField(10);
+		public HexBitField Bit11 => GetBitField(11);
+		public HexBitField Bit12 => GetBitField(12);
+		public HexBitField Bit13 => GetBitField(13);
+		public HexBitField Bit14 => GetBitField(14);
+		public HexBitField Bit15 => GetBitField(15);
+		public HexBitField Bit16 => GetBitField(16);
+		public HexBitField Bit17 => GetBitField(17);
+		public HexBitField Bit18 => GetBitField(18);
+		public HexBitField Bit19 => GetBitField(19);
+		public HexBitField Bit20 => GetBitField(20);
+		public HexBitField Bit21 => GetBitField(21);
+		public HexBitField Bit22 => GetBitField(22);
+		public HexBitField Bit23 => GetBitField(23);
+		public HexBitField Bit24 => GetBitField(24);
+		public HexBitField Bit25 => GetBitField(25);
+		public HexBitField Bit26 => GetBitField(26);
+		public HexBitField Bit27 => GetBitField(27);
+		public HexBitField Bit28 => GetBitField(28);
+		public HexBitField Bit29 => GetBitField(29);
+		public HexBitField Bit30 => GetBitField(30);
+		public HexBitField Bit31 => GetBitField(31);
+		public HexBitField Bit32 => GetBitField(32);
+		public HexBitField Bit33 => GetBitField(33);
+		public HexBitField Bit34 => GetBitField(34);
+		public HexBitField Bit35 => GetBitField(35);
+		public HexBitField Bit36 => GetBitField(36);
+		public HexBitField Bit37 => GetBitField(37);
+		public HexBitField Bit38 => GetBitField(38);
+		public HexBitField Bit39 => GetBitField(39);
+		public HexBitField Bit40 => GetBitField(40);
+		public HexBitField Bit41 => GetBitField(41);
+		public HexBitField Bit42 => GetBitField(42);
+		public HexBitField Bit43 => GetBitField(43);
+		public HexBitField Bit44 => GetBitField(44);
+		public HexBitField Bit45 => GetBitField(45);
+		public HexBitField Bit46 => GetBitField(46);
+		public HexBitField Bit47 => GetBitField(47);
+		public HexBitField Bit48 => GetBitField(48);
+		public HexBitField Bit49 => GetBitField(49);
+		public HexBitField Bit50 => GetBitField(50);
+		public HexBitField Bit51 => GetBitField(51);
+		public HexBitField Bit52 => GetBitField(52);
+		public HexBitField Bit53 => GetBitField(53);
+		public HexBitField Bit54 => GetBitField(54);
+		public HexBitField Bit55 => GetBitField(55);
+		public HexBitField Bit56 => GetBitField(56);
+		public HexBitField Bit57 => GetBitField(57);
+		public HexBitField Bit58 => GetBitField(58);
+		public HexBitField Bit59 => GetBitField(59);
+		public HexBitField Bit60 => GetBitField(60);
+		public HexBitField Bit61 => GetBitField(61);
+		public HexBitField Bit62 => GetBitField(62);
+		public HexBitField Bit63 => GetBitField(63);
 
 		HexBitField GetBitField(int bit) {
 			HexBitField bitField;
@@ -653,13 +375,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			SetValue(bitField, val);
 		}
 
-		protected override void OnDocumentModified(object newValue) {
-			UpdateFields(newValue);
-		}
-
-		protected override void OnUpdateValue() {
-			UpdateFields(DataFieldVM.ObjectValue);
-		}
+		protected override void OnDocumentModified(object newValue) => UpdateFields(newValue);
+		protected override void OnUpdateValue() => UpdateFields(DataFieldVM.ObjectValue);
 
 		void UpdateFields(object newValue) {
 			ulong val = ToUInt64(newValue);
@@ -686,176 +403,98 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	sealed class ByteFlagsHexField : FlagsHexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly ByteVM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X2}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X2}", ReadData());
 
 		public ByteFlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 1) {
 			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue(), false);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return new byte[1] { data.Value };
-		}
-
-		protected override object ReadData() {
-			return (byte)doc.ReadByte(StartOffset);
-		}
-
-		protected override void WriteNewValue(ulong newValue) {
-			data.Value = (byte)newValue;
-		}
+		protected override byte[] GetDataAsByteArray() => new byte[1] { data.Value };
+		protected override object ReadData() => (byte)doc.ReadByte(StartOffset);
+		protected override void WriteNewValue(ulong newValue) => data.Value = (byte)newValue;
 	}
 
 	sealed class Int16FlagsHexField : FlagsHexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly Int16VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X4}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X4}", ReadData());
 
 		public Int16FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 2) {
 			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue(), false);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadInt16(StartOffset);
-		}
-
-		protected override void WriteNewValue(ulong newValue) {
-			data.Value = (short)newValue;
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadInt16(StartOffset);
+		protected override void WriteNewValue(ulong newValue) => data.Value = (short)newValue;
 	}
 
 	sealed class UInt16FlagsHexField : FlagsHexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly UInt16VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X4}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X4}", ReadData());
 
 		public UInt16FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 2) {
 			this.data = new UInt16VM(doc.ReadUInt16(start), a => UpdateValue(), false);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadUInt16(StartOffset);
-		}
-
-		protected override void WriteNewValue(ulong newValue) {
-			data.Value = (ushort)newValue;
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadUInt16(StartOffset);
+		protected override void WriteNewValue(ulong newValue) => data.Value = (ushort)newValue;
 	}
 
 	sealed class UInt32FlagsHexField : FlagsHexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly UInt32VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X8}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X8}", ReadData());
 
 		public UInt32FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 4) {
 			this.data = new UInt32VM(doc.ReadUInt32(start), a => UpdateValue(), false);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadUInt32(StartOffset);
-		}
-
-		protected override void WriteNewValue(ulong newValue) {
-			data.Value = (uint)newValue;
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadUInt32(StartOffset);
+		protected override void WriteNewValue(ulong newValue) => data.Value = (uint)newValue;
 	}
 
 	sealed class UInt64FlagsHexField : FlagsHexField {
-		public override DataFieldVM DataFieldVM {
-			get { return data; }
-		}
+		public override DataFieldVM DataFieldVM => data;
 		readonly UInt64VM data;
 
-		public override string FormattedValue {
-			get { return string.Format("{0:X16}", ReadData()); }
-		}
+		public override string FormattedValue => string.Format("{0:X16}", ReadData());
 
 		public UInt64FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 8) {
 			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue(), false);
 		}
 
-		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
-		}
-
-		protected override object ReadData() {
-			return doc.ReadUInt64(StartOffset);
-		}
-
-		protected override void WriteNewValue(ulong newValue) {
-			data.Value = newValue;
-		}
+		protected override byte[] GetDataAsByteArray() => BitConverter.GetBytes(data.Value);
+		protected override object ReadData() => doc.ReadUInt64(StartOffset);
+		protected override void WriteNewValue(ulong newValue) => data.Value = newValue;
 	}
 
 	abstract class HexBitField : ViewModelBase {
-		public string NameUI {
-			get { return UIUtils.EscapeMenuItemHeader(name); }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public int Bit {
-			get { return bit; }
-		}
-		readonly int bit;
-
-		public ulong Mask {
-			get { return count == 64 ? ulong.MaxValue : (1UL << count) - 1; }
-		}
-
-		public int Count {
-			get { return count; }
-		}
-		readonly int count;
-
+		public string NameUI => UIUtils.EscapeMenuItemHeader(Name);
+		public string Name { get; }
+		public int Bit { get; }
+		public ulong Mask => Count == 64 ? ulong.MaxValue : (1UL << Count) - 1;
+		public int Count { get; }
 		internal FlagsHexField Owner { get; set; }
 
 		public HexBitField(string name, int bit, int count) {
 			Debug.Assert(0 <= bit && bit <= 63 && 1 <= count && count <= 64 && bit + count <= 64);
-			this.name = name;
-			this.bit = bit;
-			this.count = count;
+			this.Name = name;
+			this.Bit = bit;
+			this.Count = count;
 		}
 
 		public abstract void SetValue(ulong value);
@@ -888,9 +527,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			SetBitValue(value != 0);
 		}
 
-		public override ulong GetValue() {
-			return boolean ? 1UL : 0;
-		}
+		public override ulong GetValue() => boolean ? 1UL : 0;
 	}
 
 	enum IntegerHexBitFieldEnum : ulong {
@@ -944,26 +581,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		public override ulong GetValue() {
-			return (ulong)(IntegerHexBitFieldEnum)ListVM.SelectedItem;
-		}
+		public override ulong GetValue() => (ulong)(IntegerHexBitFieldEnum)ListVM.SelectedItem;
 	}
 
 	sealed class DataDirVM : ViewModelBase {
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public UInt32HexField RVAVM {
-			get { return rvaVM; }
-		}
-		readonly UInt32HexField rvaVM;
-
-		public UInt32HexField SizeVM {
-			get { return sizeVM; }
-		}
-		readonly UInt32HexField sizeVM;
+		public string Name { get; }
+		public UInt32HexField RVAVM { get; }
+		public UInt32HexField SizeVM { get; }
 
 		public bool IsVisible {
 			get { return isVisible; }
@@ -977,9 +601,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		bool isVisible = true;
 
 		public DataDirVM(HexDocument doc, string parentName, string name, ulong start) {
-			this.name = name;
-			this.rvaVM = new UInt32HexField(doc, parentName, string.Format(dnSpy_AsmEditor_Resources.HexField_RelativeVirtualAddress, name), start);
-			this.sizeVM = new UInt32HexField(doc, parentName, string.Format(dnSpy_AsmEditor_Resources.HexField_Size, name), start + 4);
+			this.Name = name;
+			this.RVAVM = new UInt32HexField(doc, parentName, string.Format(dnSpy_AsmEditor_Resources.HexField_RelativeVirtualAddress, name), start);
+			this.SizeVM = new UInt32HexField(doc, parentName, string.Format(dnSpy_AsmEditor_Resources.HexField_Size, name), start + 4);
 		}
 	}
 }

@@ -24,15 +24,8 @@ namespace dnSpy.Languages.Settings {
 	public sealed class DecompilerOption<T> : IDecompilerOption {
 		public string Description { get; set; }
 		public string Name { get; set; }
-
-		public Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
-
-		public Type Type {
-			get { return typeof(T); }
-		}
+		public Guid Guid { get; }
+		public Type Type => typeof(T);
 
 		public object Value {
 			get { return getter(); }
@@ -44,7 +37,7 @@ namespace dnSpy.Languages.Settings {
 		public DecompilerOption(Guid guid, Func<T> getter, Action<T> setter) {
 			if (getter == null || setter == null)
 				throw new ArgumentNullException();
-			this.guid = guid;
+			this.Guid = guid;
 			this.getter = getter;
 			this.setter = setter;
 		}

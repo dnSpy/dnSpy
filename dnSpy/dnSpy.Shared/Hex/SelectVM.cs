@@ -21,29 +21,20 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Shared.Hex {
 	sealed class SelectVM : ViewModelBase {
-		public UInt64VM StartVM {
-			get { return startVM; }
-		}
-		UInt64VM startVM;
-
-		public UInt64VM EndVM {
-			get { return endVM; }
-		}
-		UInt64VM endVM;
+		public UInt64VM StartVM { get; }
+		public UInt64VM EndVM { get; }
 
 		public SelectVM(ulong start, ulong end, ulong min, ulong max) {
-			this.startVM = new UInt64VM(start, a => HasErrorUpdated(), false) {
+			this.StartVM = new UInt64VM(start, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};
-			this.endVM = new UInt64VM(end, a => HasErrorUpdated(), false) {
+			this.EndVM = new UInt64VM(end, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};
 		}
 
-		public override bool HasError {
-			get { return StartVM.HasError || EndVM.HasError; }
-		}
+		public override bool HasError => StartVM.HasError || EndVM.HasError;
 	}
 }

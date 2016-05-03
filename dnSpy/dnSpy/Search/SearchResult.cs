@@ -35,12 +35,8 @@ using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {
 	class SearchResult : ViewModelBase, ISearchResult, IMDTokenNode, IComparable<ISearchResult> {
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return Reference2; }
-		}
-		IMDTokenProvider Reference2 {
-			get { return Object as IMDTokenProvider; }
-		}
+		IMDTokenProvider IMDTokenNode.Reference => Reference2;
+		IMDTokenProvider Reference2 => Object as IMDTokenProvider;
 
 		public object Reference {
 			get {
@@ -55,7 +51,6 @@ namespace dnSpy.Search {
 		}
 
 		public SearchResultContext Context { get; set; }
-
 		public object Object { get; set; }
 		public object NameObject { get; set; }
 		public ImageReference ObjectImageReference { get; set; }
@@ -78,13 +73,8 @@ namespace dnSpy.Search {
 			return Context.ImageManager.GetImage(imgRef.Assembly, imgRef.Name, Context.BackgroundType);
 		}
 
-		public ImageSource Image {
-			get { return GetImage(ObjectImageReference); }
-		}
-
-		public ImageSource LocationImage {
-			get { return GetImage(LocationImageReference); }
-		}
+		public ImageSource Image => GetImage(ObjectImageReference);
+		public ImageSource LocationImage => GetImage(LocationImageReference);
 
 		public string ToolTip {
 			get {
@@ -104,13 +94,8 @@ namespace dnSpy.Search {
 			}
 		}
 
-		public object NameUI {
-			get { return CreateUI(NameObject, false); }
-		}
-
-		public object LocationUI {
-			get { return CreateUI(LocationObject, true); }
-		}
+		public object NameUI => CreateUI(NameObject, false);
+		public object LocationUI => CreateUI(LocationObject, true);
 
 		public override string ToString() {
 			var output = new NoSyntaxHighlightOutput();
@@ -235,21 +220,15 @@ namespace dnSpy.Search {
 			return mr == null ? 0 : mr.Order;
 		}
 
-		string GetCompareString() {
-			return compareString ?? (compareString = ToString());
-		}
+		string GetCompareString() => compareString ?? (compareString = ToString());
 		string compareString = null;
 	}
 
 	sealed class ErrorMessage {
-		public string Text {
-			get { return msg; }
-		}
+		public string Text => msg;
 		readonly string msg;
 
-		public object Color {
-			get { return color; }
-		}
+		public object Color => color;
 		readonly object color;
 
 		public ErrorMessage(string msg, object color) {
@@ -260,9 +239,7 @@ namespace dnSpy.Search {
 
 	sealed class MessageSearchResult : SearchResult {
 		readonly string msg;
-		public int Order {
-			get { return order; }
-		}
+		public int Order => order;
 		readonly int order;
 
 		public MessageSearchResult(string msg, object color, bool first) {
@@ -271,8 +248,6 @@ namespace dnSpy.Search {
 			this.order = first ? int.MinValue : int.MaxValue;
 		}
 
-		public override string ToString() {
-			return msg;
-		}
+		public override string ToString() => msg;
 	}
 }

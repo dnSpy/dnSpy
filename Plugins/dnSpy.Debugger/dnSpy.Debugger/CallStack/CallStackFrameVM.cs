@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.CallStack {
 	}
 
 	sealed class CallStackFrameContext : ICallStackFrameContext {
-		public IImageManager ImageManager { get; private set; }
+		public IImageManager ImageManager { get; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
 		public bool SyntaxHighlight { get; set; }
 
@@ -47,36 +47,18 @@ namespace dnSpy.Debugger.CallStack {
 	}
 
 	sealed class MessageCallStackFrameVM : ICallStackFrameVM {
-		public int Index {
-			get { return index; }
-		}
-		readonly int index;
-
-		public bool IsCurrentFrame {
-			get { return false; }
-		}
-
-		public string Name {
-			get { return cachedOutput.ToString(); }
-		}
-
-		public object ImageObject { get { return this; } }
-		public object NameObject { get { return this; } }
-
-		public CachedOutput CachedOutput {
-			get { return cachedOutput; }
-		}
-		readonly CachedOutput cachedOutput;
-
-		public ICallStackFrameContext Context {
-			get { return context; }
-		}
-		readonly ICallStackFrameContext context;
+		public int Index { get; }
+		public bool IsCurrentFrame => false;
+		public string Name => CachedOutput.ToString();
+		public object ImageObject => this;
+		public object NameObject => this;
+		public CachedOutput CachedOutput { get; }
+		public ICallStackFrameContext Context { get; }
 
 		public MessageCallStackFrameVM(ICallStackFrameContext context, int index, string name) {
-			this.context = context;
-			this.index = index;
-			this.cachedOutput = CachedOutput.Create(name, TypeColor.Error);
+			this.Context = context;
+			this.Index = index;
+			this.CachedOutput = CachedOutput.Create(name, TypeColor.Error);
 		}
 	}
 
@@ -127,12 +109,9 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		CachedOutput? cachedOutput;
 
-		public object ImageObject { get { return this; } }
-		public object NameObject { get { return this; } }
-
-		public string Name {
-			get { return ComputeName(); }
-		}
+		public object ImageObject => this;
+		public object NameObject => this;
+		public string Name => ComputeName();
 
 		public CorFrame Frame {
 			get {
@@ -162,13 +141,10 @@ namespace dnSpy.Debugger.CallStack {
 		CorFrame frame;
 		DnProcess process;
 
-		public ICallStackFrameContext Context {
-			get { return context; }
-		}
-		readonly ICallStackFrameContext context;
+		public ICallStackFrameContext Context { get; }
 
 		public CallStackFrameVM(ICallStackFrameContext context, int index, CorFrame frame, DnProcess process) {
-			this.context = context;
+			this.Context = context;
 			this.index = index;
 			this.frame = frame;
 			this.process = process;
@@ -191,8 +167,6 @@ namespace dnSpy.Debugger.CallStack {
 			OnPropertyChanged("NameObject");
 		}
 
-		void RefreshImage() {
-			OnPropertyChanged("ImageObject");
-		}
+		void RefreshImage() => OnPropertyChanged("ImageObject");
 	}
 }

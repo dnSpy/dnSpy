@@ -37,14 +37,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public VirtualMethodUsedByNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException(nameof(analyzedMethod));
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			InitializeAnalyzer();
@@ -72,8 +71,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			ITypeDefOrRef type = analyzedMethod.DeclaringType.BaseType;
 			while (type != null) {
 				possibleTypes.Add(type);
-				var resolvedType = type.ResolveTypeDef();
-				type = resolvedType == null ? null : resolvedType.BaseType;
+				type = type.ResolveTypeDef()?.BaseType;
 			}
 		}
 
@@ -125,8 +123,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) {
-			return !foundMethods.TryAdd(method, 0);
-		}
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
 	}
 }

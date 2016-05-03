@@ -37,9 +37,7 @@ namespace dnSpy.Files.Tabs {
 		readonly List<TabContentState> oldList;
 		readonly List<TabContentState> newList;
 
-		public IFileTabContent Current {
-			get { return current; }
-		}
+		public IFileTabContent Current => current;
 		IFileTabContent current;
 
 		public TabHistory() {
@@ -62,13 +60,8 @@ namespace dnSpy.Files.Tabs {
 			this.current = content;
 		}
 
-		public bool CanNavigateBackward {
-			get { return oldList.Count > 0; }
-		}
-
-		public bool CanNavigateForward {
-			get { return newList.Count > 0; }
-		}
+		public bool CanNavigateBackward => oldList.Count > 0;
+		public bool CanNavigateForward => newList.Count > 0;
 
 		public object NavigateBackward() {
 			Debug.Assert(CanNavigateBackward);
@@ -92,13 +85,8 @@ namespace dnSpy.Files.Tabs {
 			return old.SerializedData;
 		}
 
-		public void RemoveFromBackwardList(Func<IFileTabContent, bool> handler) {
-			Remove(oldList, handler);
-		}
-
-		public void RemoveFromForwardList(Func<IFileTabContent, bool> handler) {
-			Remove(newList, handler);
-		}
+		public void RemoveFromBackwardList(Func<IFileTabContent, bool> handler) => Remove(oldList, handler);
+		public void RemoveFromForwardList(Func<IFileTabContent, bool> handler) => Remove(newList, handler);
 
 		void Remove(List<TabContentState> list, Func<IFileTabContent, bool> handler) {
 			for (int i = list.Count - 1; i >= 0; i--) {

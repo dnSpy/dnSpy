@@ -27,21 +27,14 @@ using dnSpy.Contracts.Images;
 namespace dnSpy.Images {
 	[Export, Export(typeof(IDotNetImageManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class DotNetImageManager : IDotNetImageManager {
-		public ImageReference GetImageReference(IPEImage peImage) {
-			return GetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);
-		}
-
-		public ImageReference GetNamespaceImageReference() {
-			return new ImageReference(GetType().Assembly, "Namespace");
-		}
-
-		public ImageReference GetImageReference(ModuleDef mod) {
-			return new ImageReference(GetType().Assembly, "AssemblyModule");
-		}
-
-		public ImageReference GetImageReference(TypeDef type) {
-			return new ImageReference(GetType().Assembly, GetImageName(type));
-		}
+		public ImageReference GetImageReference(IPEImage peImage) =>
+			GetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);
+		public ImageReference GetNamespaceImageReference() =>
+			new ImageReference(GetType().Assembly, "Namespace");
+		public ImageReference GetImageReference(ModuleDef mod) =>
+			new ImageReference(GetType().Assembly, "AssemblyModule");
+		public ImageReference GetImageReference(TypeDef type) =>
+			new ImageReference(GetType().Assembly, GetImageName(type));
 
 		static string GetImageName(TypeDef type) {
 			if (type.IsValueType) {
@@ -173,9 +166,8 @@ namespace dnSpy.Images {
 			return null;
 		}
 
-		static bool IsDelegate(TypeDef type) {
-			return type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
-		}
+		static bool IsDelegate(TypeDef type) =>
+			type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
 		static bool IsException(TypeDef type) {
 			if (IsSystemException(type))
@@ -189,21 +181,16 @@ namespace dnSpy.Images {
 			return false;
 		}
 
-		static bool IsSystemException(ITypeDefOrRef type) {
-			return type != null &&
-				type.DeclaringType == null &&
-				type.Namespace == "System" &&
-				type.Name == "Exception" &&
-				type.DefinitionAssembly.IsCorLib();
-		}
+		static bool IsSystemException(ITypeDefOrRef type) => type != null &&
+	type.DeclaringType == null &&
+	type.Namespace == "System" &&
+	type.Name == "Exception" &&
+	type.DefinitionAssembly.IsCorLib();
 
-		static bool IsStaticClass(TypeDef type) {
-			return type.IsSealed && type.IsAbstract;
-		}
-
-		public ImageReference GetImageReference(FieldDef field) {
-			return new ImageReference(GetType().Assembly, GetImageName(field));
-		}
+		static bool IsStaticClass(TypeDef type) =>
+			type.IsSealed && type.IsAbstract;
+		public ImageReference GetImageReference(FieldDef field) =>
+			new ImageReference(GetType().Assembly, GetImageName(field));
 
 		static string GetImageName(FieldDef field) {
 			if (field.DeclaringType.IsEnum && !field.IsSpecialName) {
@@ -281,18 +268,14 @@ namespace dnSpy.Images {
 			}
 		}
 
-		static bool IsSystemDecimal(TypeSig ts) {
-			return ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
-		}
+		static bool IsSystemDecimal(TypeSig ts) =>
+			ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
 
-		static bool IsDecimalConstant(FieldDef field) {
-			return IsSystemDecimal(field.FieldType) &&
-				field.CustomAttributes.IsDefined("System.Runtime.CompilerServices.DecimalConstantAttribute");
-		}
+		static bool IsDecimalConstant(FieldDef field) => IsSystemDecimal(field.FieldType) &&
+	field.CustomAttributes.IsDefined("System.Runtime.CompilerServices.DecimalConstantAttribute");
 
-		public ImageReference GetImageReference(MethodDef method) {
-			return new ImageReference(GetType().Assembly, GetImageName(method));
-		}
+		public ImageReference GetImageReference(MethodDef method) =>
+			new ImageReference(GetType().Assembly, GetImageName(method));
 
 		static string GetImageName(MethodDef method) {
 			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
@@ -426,9 +409,8 @@ namespace dnSpy.Images {
 			}
 		}
 
-		public ImageReference GetImageReference(EventDef @event) {
-			return new ImageReference(GetType().Assembly, GetImageName(@event));
-		}
+		public ImageReference GetImageReference(EventDef @event) =>
+			new ImageReference(GetType().Assembly, GetImageName(@event));
 
 		static string GetImageName(EventDef @event) {
 			var method = @event.AddMethod ?? @event.RemoveMethod;
@@ -491,9 +473,8 @@ namespace dnSpy.Images {
 			}
 		}
 
-		public ImageReference GetImageReference(PropertyDef property) {
-			return new ImageReference(GetType().Assembly, GetImageName(property));
-		}
+		public ImageReference GetImageReference(PropertyDef property) =>
+			new ImageReference(GetType().Assembly, GetImageName(property));
 
 		static string GetImageName(PropertyDef property) {
 			var method = property.GetMethod ?? property.SetMethod;
@@ -556,42 +537,24 @@ namespace dnSpy.Images {
 			}
 		}
 
-		public ImageReference GetImageReferenceModuleRef() {
-			return new ImageReference(GetType().Assembly, "ModuleReference");
-		}
-
-		public ImageReference GetImageReference(AssemblyDef assembly) {
-			var mod = assembly.ManifestModule;
-			return GetImageReference(mod != null ? mod.Characteristics : Characteristics.Dll);
-		}
-
-		public ImageReference GetImageReferenceAssemblyRef() {
-			return new ImageReference(GetType().Assembly, "AssemblyReference");
-		}
-
-		public ImageReference GetImageReferenceGenericParameter() {
-			return new ImageReference(GetType().Assembly, "GenericParameter");
-		}
-
-		public ImageReference GetImageReferenceLocal() {
-			return new ImageReference(GetType().Assembly, "Local");
-		}
-
-		public ImageReference GetImageReferenceParameter() {
-			return new ImageReference(GetType().Assembly, "Parameter");
-		}
-
-		public ImageReference GetImageReferenceType() {
-			return new ImageReference(GetType().Assembly, "Class");
-		}
-
-		public ImageReference GetImageReferenceMethod() {
-			return new ImageReference(GetType().Assembly, "Method");
-		}
-
-		public ImageReference GetImageReferenceField() {
-			return new ImageReference(GetType().Assembly, "Field");
-		}
+		public ImageReference GetImageReferenceModuleRef() =>
+			new ImageReference(GetType().Assembly, "ModuleReference");
+		public ImageReference GetImageReference(AssemblyDef assembly) =>
+			GetImageReference(assembly.ManifestModule?.Characteristics ?? Characteristics.Dll);
+		public ImageReference GetImageReferenceAssemblyRef() =>
+			new ImageReference(GetType().Assembly, "AssemblyReference");
+		public ImageReference GetImageReferenceGenericParameter() =>
+			new ImageReference(GetType().Assembly, "GenericParameter");
+		public ImageReference GetImageReferenceLocal() =>
+			new ImageReference(GetType().Assembly, "Local");
+		public ImageReference GetImageReferenceParameter() =>
+			new ImageReference(GetType().Assembly, "Parameter");
+		public ImageReference GetImageReferenceType() =>
+			new ImageReference(GetType().Assembly, "Class");
+		public ImageReference GetImageReferenceMethod() =>
+			new ImageReference(GetType().Assembly, "Method");
+		public ImageReference GetImageReferenceField() =>
+			new ImageReference(GetType().Assembly, "Field");
 
 		ImageReference GetImageReference(Characteristics ch) {
 			bool isExe = (ch & Characteristics.Dll) == 0;

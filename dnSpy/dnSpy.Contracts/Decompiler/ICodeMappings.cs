@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -68,9 +69,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ICodeMappings GetCodeMappings(this ITextEditorUIContext self) {
-			return self.TryGetCodeMappings() ?? EmptyCodeMappings.Instance;
-		}
+		public static ICodeMappings GetCodeMappings(this ITextEditorUIContext self) => self.TryGetCodeMappings() ?? EmptyCodeMappings.Instance;
 
 		/// <summary>
 		/// Gets a <see cref="ICodeMappings"/> or null if none exists
@@ -85,19 +84,10 @@ namespace dnSpy.Contracts.Decompiler {
 
 		sealed class EmptyCodeMappings : ICodeMappings {
 			public static readonly EmptyCodeMappings Instance = new EmptyCodeMappings();
-			static readonly SourceCodeMapping[] empty = new SourceCodeMapping[0];
 
-			public int Count {
-				get { return 0; }
-			}
-
-			public IList<SourceCodeMapping> Find(int line, int column) {
-				return empty;
-			}
-
-			public SourceCodeMapping Find(MethodDef method, uint ilOffset) {
-				return null;
-			}
+			public int Count => 0;
+			public IList<SourceCodeMapping> Find(int line, int column) => Array.Empty<SourceCodeMapping>();
+			public SourceCodeMapping Find(MethodDef method, uint ilOffset) => null;
 		}
 	}
 }

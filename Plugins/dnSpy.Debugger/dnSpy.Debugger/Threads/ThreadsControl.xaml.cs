@@ -24,9 +24,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Threads {
 	sealed partial class ThreadsControl : UserControl {
-		public ListView ListView {
-			get { return listView; }
-		}
+		public ListView ListView => listView;
 
 		public ThreadsControl() {
 			InitializeComponent();
@@ -35,8 +33,7 @@ namespace dnSpy.Debugger.Threads {
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			if (ThreadsListViewDoubleClick != null)
-				ThreadsListViewDoubleClick(this, EventArgs.Empty);
+			ThreadsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler ThreadsListViewDoubleClick;

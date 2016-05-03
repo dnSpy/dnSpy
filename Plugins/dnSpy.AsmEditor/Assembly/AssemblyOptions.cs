@@ -62,16 +62,14 @@ namespace dnSpy.AsmEditor.Assembly {
 			return asm;
 		}
 
-		public AssemblyDef CreateAssemblyDef(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new AssemblyDefUser()));
-		}
+		public AssemblyDef CreateAssemblyDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new AssemblyDefUser()));
 
 		public static AssemblyOptions Create(string name) {
 			return new AssemblyOptions {
 				HashAlgorithm = AssemblyHashAlgorithm.SHA1,
 				Version = new Version(0, 0, 0, 0),
 				Attributes = AssemblyAttributes.None,
-				PublicKey = new PublicKey(new byte[0]),
+				PublicKey = new PublicKey(Array.Empty<byte>()),
 				Name = name,
 				Culture = string.Empty,
 				ClrVersion = Module.ClrVersion.DefaultVersion,

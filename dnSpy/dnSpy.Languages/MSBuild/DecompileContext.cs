@@ -21,8 +21,8 @@ using System.Threading;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class DecompileContext {
-		public CancellationToken CancellationToken { get; private set; }
-		public IMSBuildProjectWriterLogger Logger { get; private set; }
+		public CancellationToken CancellationToken { get; }
+		public IMSBuildProjectWriterLogger Logger { get; }
 
 		public DecompileContext(CancellationToken ct, IMSBuildProjectWriterLogger logger) {
 			this.CancellationToken = ct;

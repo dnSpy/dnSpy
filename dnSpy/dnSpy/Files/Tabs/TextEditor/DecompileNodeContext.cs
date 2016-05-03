@@ -27,21 +27,9 @@ using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed class DecompileNodeContext : IDecompileNodeContext {
-		public DecompilationContext DecompilationContext {
-			get { return decompilationContext; }
-		}
-		readonly DecompilationContext decompilationContext;
-
-		public ILanguage Language {
-			get { return language; }
-		}
-		readonly ILanguage language;
-
-		public ITextOutput Output {
-			get { return output; }
-		}
-		readonly ITextOutput output;
-
+		public DecompilationContext DecompilationContext { get; }
+		public ILanguage Language { get; }
+		public ITextOutput Output { get; }
 		public IHighlightingDefinition HighlightingDefinition { get; set; }
 		public string HighlightingExtension { get; set; }
 		public IContentType ContentType { get; set; }
@@ -58,9 +46,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				throw new ArgumentNullException();
 			if (dispatcher == null)
 				throw new ArgumentNullException();
-			this.decompilationContext = decompilationContext;
-			this.language = language;
-			this.output = output;
+			this.DecompilationContext = decompilationContext;
+			this.Language = language;
+			this.Output = output;
 			this.dispatcher = dispatcher;
 		}
 

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Debug options
 		/// </summary>
-		public DebugOptions Options { get; private set; }
+		public DebugOptions Options { get; }
 
 		/// <summary>
 		/// dbgshim.dll filename or null

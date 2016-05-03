@@ -31,9 +31,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class PropertyCustomHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyCustom; }
-		}
+		public BamlRecordType Type => BamlRecordType.PropertyCustom;
 
 		enum IntegerCollectionType : byte {
 			Unknown,

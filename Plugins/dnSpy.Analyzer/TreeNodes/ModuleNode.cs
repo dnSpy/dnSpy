@@ -28,24 +28,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class ModuleNode : EntityNode {
 		readonly ModuleDef module;
 
-		public override IMemberRef Member {
-			get { return null; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return module; }
-		}
+		public override IMemberRef Member => null;
+		public override IMDTokenProvider Reference => module;
 
 		public ModuleNode(ModuleDef module) {
 			this.module = module;
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(module);
-		}
-
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(module);
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(NameUtils.CleanIdentifier(module.Name), BoxedTextTokenKind.Module);
-		}
 	}
 }

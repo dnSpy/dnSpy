@@ -34,9 +34,7 @@ namespace dnSpy.BamlDecompiler {
 	internal class BamlDisassembler {
 		#region Record handler map
 
-		static Action<BamlContext, BamlRecord> Thunk<TRecord>(Action<BamlContext, TRecord> handler) where TRecord : BamlRecord {
-			return (ctx, record) => handler(ctx, (TRecord)record);
-		}
+		static Action<BamlContext, BamlRecord> Thunk<TRecord>(Action<BamlContext, TRecord> handler) where TRecord : BamlRecord => (ctx, record) => handler(ctx, (TRecord)record);
 
 		Dictionary<BamlRecordType, Action<BamlContext, BamlRecord>> handlerMap =
 			new Dictionary<BamlRecordType, Action<BamlContext, BamlRecord>>();
@@ -241,9 +239,7 @@ namespace dnSpy.BamlDecompiler {
 			}
 		}
 
-		static string GetRecordReference(BamlRecord record) {
-			return string.Format("Position: 0x{0:x}", record.Position);
-		}
+		static string GetRecordReference(BamlRecord record) => string.Format("Position: 0x{0:x}", record.Position);
 
 		Stack<BamlRecord> scopeStack = new Stack<BamlRecord>();
 

@@ -37,9 +37,7 @@ namespace dnSpy.Files.Tabs {
 			this.fileTabManager = fileTabManager;
 		}
 
-		public double Order {
-			get { return -1000; }
-		}
+		public double Order => -1000;
 
 		public void OnNewArgs(IAppCommandLineArgs args) {
 			if (!SelectMember(args)) {
@@ -67,7 +65,7 @@ namespace dnSpy.Files.Tabs {
 			uint token = NumberVMUtils.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out error);
 			if (string.IsNullOrEmpty(error)) {
 				var mod = GetLoadedFiles(args).FirstOrDefault();
-				var member = mod == null ? null : mod.ResolveToken(token);
+				var member = mod?.ResolveToken(token);
 				if (member == null)
 					return false;
 				fileTabManager.FollowReference(member);
@@ -102,7 +100,7 @@ namespace dnSpy.Files.Tabs {
 			foreach (var filename in args.Filenames) {
 				var key = new FilenameKey(filename);
 				var file = fileTabManager.FileTreeView.FileManager.GetFiles().FirstOrDefault(a => key.Equals(a.Key));
-				if (file == null || file.ModuleDef == null)
+				if (file?.ModuleDef == null)
 					continue;
 				if (file.AssemblyDef != null) {
 					foreach (var mod in file.AssemblyDef.Modules)

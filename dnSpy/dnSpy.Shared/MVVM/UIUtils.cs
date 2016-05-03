@@ -59,9 +59,7 @@ namespace dnSpy.Shared.MVVM {
 			return GetItem<T>(view, e.OriginalSource) != null;
 		}
 
-		public static string EscapeMenuItemHeader(string s) {
-			return NameUtils.CleanName(s).Replace("_", "__");
-		}
+		public static string EscapeMenuItemHeader(string s) => NameUtils.CleanName(s).Replace("_", "__");
 
 		public static bool HasSelectedChildrenFocus(ListBox listBox) {
 			if (listBox == null)

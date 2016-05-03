@@ -34,13 +34,8 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		IOpenFile openFile;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand FillDataCommand {
-			get { return new RelayCommand(a => FillData()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand FillDataCommand => new RelayCommand(a => FillData());
 
 		ResourceTypeCode resourceTypeCode;
 
@@ -67,9 +62,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		byte[] data;
 
-		public string DataString {
-			get { return string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length); }
-		}
+		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length);
 
 		public ImageResourceElementVM(ResourceElementOptions options) {
 			this.origOptions = options;
@@ -85,13 +78,8 @@ namespace dnSpy.AsmEditor.Resources {
 				Data = newBytes;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ResourceElementOptions CreateResourceElementOptions() {
-			return CopyTo(new ResourceElementOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ResourceElementOptions CreateResourceElementOptions() => CopyTo(new ResourceElementOptions());
 
 		void InitializeFrom(ResourceElementOptions options) {
 			if (options.ResourceData.Code != ResourceTypeCode.ByteArray && options.ResourceData.Code != ResourceTypeCode.Stream)

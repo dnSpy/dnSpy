@@ -55,32 +55,17 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[Export, Export(typeof(IExceptionsVM)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ExceptionsVM : ViewModelBase, IExceptionsVM {
-		public ObservableCollection<ExceptionVM> Collection {
-			get { return exceptionsList; }
-		}
+		public ObservableCollection<ExceptionVM> Collection => exceptionsList;
 		readonly ObservableCollection<ExceptionVM> exceptionsList;
 
-		public ICollectionView CollectionView {
-			get { return collectionView; }
-		}
-		readonly ICollectionView collectionView;
-
-		public object ShowOnlyEnabledExceptionsImageObject { get { return this; } }
-		public object AddExceptionImageObject { get { return this; } }
-		public object RemoveExceptionImageObject { get { return this; } }
-		public object RestoreDefaultsImageObject { get { return this; } }
-
-		public ICommand AddExceptionCommand {
-			get { return new RelayCommand(a => AddException(), a => CanAddException); }
-		}
-
-		public ICommand RemoveExceptionsCommand {
-			get { return new RelayCommand(a => RemoveExceptions(), a => CanRemoveExceptions); }
-		}
-
-		public ICommand RestoreDefaultsCommand {
-			get { return new RelayCommand(a => RestoreDefaults(), a => CanRestoreDefaults); }
-		}
+		public ICollectionView CollectionView { get; }
+		public object ShowOnlyEnabledExceptionsImageObject => this;
+		public object AddExceptionImageObject => this;
+		public object RemoveExceptionImageObject => this;
+		public object RestoreDefaultsImageObject => this;
+		public ICommand AddExceptionCommand => new RelayCommand(a => AddException(), a => CanAddException);
+		public ICommand RemoveExceptionsCommand => new RelayCommand(a => RemoveExceptions(), a => CanRemoveExceptions);
+		public ICommand RestoreDefaultsCommand => new RelayCommand(a => RestoreDefaults(), a => CanRestoreDefaults);
 
 		public bool ShowOnlyEnabledExceptions {
 			get { return showOnlyEnabledExceptions; }
@@ -138,15 +123,14 @@ namespace dnSpy.Debugger.Exceptions {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightExceptions,
 			};
 			this.exceptionsList = new ObservableCollection<ExceptionVM>();
-			this.collectionView = CollectionViewSource.GetDefaultView(exceptionsList);
+			this.CollectionView = CollectionViewSource.GetDefaultView(exceptionsList);
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			exceptionManager.Changed += ExceptionManager_Changed;
 			InitializeDefaultExceptions();
 		}
 
-		public void Initialize(ISelectedItemsProvider<ExceptionVM> selectedItemsProvider) {
+		public void Initialize(ISelectedItemsProvider<ExceptionVM> selectedItemsProvider) =>
 			this.selectedItemsProvider = selectedItemsProvider;
-		}
 
 		void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) {
 			switch (e.EventType) {
@@ -208,9 +192,7 @@ namespace dnSpy.Debugger.Exceptions {
 			OnPropertyChanged("RestoreDefaultsImageObject");
 		}
 
-		public bool CanAddException {
-			get { return true; }
-		}
+		public bool CanAddException => true;
 
 		public void AddException() {
 			var name = getNewExceptionName.GetName();
@@ -249,13 +231,8 @@ namespace dnSpy.Debugger.Exceptions {
 			Collection.Insert(i, vm);
 		}
 
-		ExceptionVM[] GetRemovableExceptions(ExceptionVM[] items) {
-			return items.Where(a => exceptionManager.CanRemove(a.ExceptionInfo)).ToArray();
-		}
-
-		public bool CanRemoveExceptions {
-			get { return GetRemovableExceptions(selectedItemsProvider.SelectedItems).Length != 0; }
-		}
+		ExceptionVM[] GetRemovableExceptions(ExceptionVM[] items) => items.Where(a => exceptionManager.CanRemove(a.ExceptionInfo)).ToArray();
+		public bool CanRemoveExceptions => GetRemovableExceptions(selectedItemsProvider.SelectedItems).Length != 0;
 
 		public void RemoveExceptions() {
 			var items = GetRemovableExceptions(selectedItemsProvider.SelectedItems);
@@ -274,9 +251,7 @@ namespace dnSpy.Debugger.Exceptions {
 				Collection.RemoveAt(ary[i]);
 		}
 
-		public bool CanRestoreDefaults {
-			get { return true; }
-		}
+		public bool CanRestoreDefaults => true;
 
 		public void RestoreDefaults() {
 			exceptionManager.RestoreDefaults();
@@ -284,9 +259,7 @@ namespace dnSpy.Debugger.Exceptions {
 			ShowOnlyEnabledExceptions = false;
 		}
 
-		public bool CanEnableAllFilteredExceptions {
-			get { return CollectionView.OfType<ExceptionVM>().Any(a => !a.BreakOnFirstChance); }
-		}
+		public bool CanEnableAllFilteredExceptions => CollectionView.OfType<ExceptionVM>().Any(a => !a.BreakOnFirstChance);
 
 		public void EnableAllFilteredExceptions() {
 			using (exceptionListSettings.TemporarilyDisableSave()) {
@@ -295,9 +268,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		public bool CanDisableAllFilteredExceptions {
-			get { return CollectionView.OfType<ExceptionVM>().Any(a => a.BreakOnFirstChance); }
-		}
+		public bool CanDisableAllFilteredExceptions => CollectionView.OfType<ExceptionVM>().Any(a => a.BreakOnFirstChance);
 
 		public void DisableAllFilteredExceptions() {
 			using (exceptionListSettings.TemporarilyDisableSave()) {
@@ -307,8 +278,6 @@ namespace dnSpy.Debugger.Exceptions {
 			// Don't Refilter() now since items could be hidden
 		}
 
-		public bool Exists(ExceptionType type, string name) {
-			return exceptionManager.Exists(new ExceptionInfoKey(type, name));
-		}
+		public bool Exists(ExceptionType type, string name) => exceptionManager.Exists(new ExceptionInfoKey(type, name));
 	}
 }

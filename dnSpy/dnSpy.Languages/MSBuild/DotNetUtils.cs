@@ -35,26 +35,11 @@ namespace dnSpy.Languages.MSBuild {
 			return false;
 		}
 
-		public static bool IsWinForm(TypeDef type) {
-			return IsType(type, "System.Windows.Forms.Form");
-		}
-
-		public static bool IsSystemWindowsApplication(TypeDef type) {
-			return IsType(type, "System.Windows.Application");
-		}
-
-		public static bool IsStartUpClass(TypeDef type) {
-			return type.Module.EntryPoint != null &&
-				type.Module.EntryPoint.DeclaringType == type;
-		}
-
-		public static bool IsUnsafe(ModuleDef module) {
-			return module.CustomAttributes.IsDefined("System.Security.UnverifiableCodeAttribute");
-		}
-
-		public static IEnumerable<FieldDef> GetFields(MethodDef method) {
-			return GetDefs(method).OfType<FieldDef>();
-		}
+		public static bool IsWinForm(TypeDef type) => IsType(type, "System.Windows.Forms.Form");
+		public static bool IsSystemWindowsApplication(TypeDef type) => IsType(type, "System.Windows.Application");
+		public static bool IsStartUpClass(TypeDef type) => type.Module.EntryPoint != null && type.Module.EntryPoint.DeclaringType == type;
+		public static bool IsUnsafe(ModuleDef module) => module.CustomAttributes.IsDefined("System.Security.UnverifiableCodeAttribute");
+		public static IEnumerable<FieldDef> GetFields(MethodDef method) => GetDefs(method).OfType<FieldDef>();
 
 		public static IEnumerable<IMemberDef> GetDefs(MethodDef method) {
 			var body = method.Body;

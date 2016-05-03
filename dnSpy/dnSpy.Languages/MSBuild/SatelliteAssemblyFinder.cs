@@ -34,9 +34,7 @@ namespace dnSpy.Languages.MSBuild {
 			this.openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
 		}
 
-		bool IsValidCulture(string name) {
-			return !string.IsNullOrEmpty(name) && cultures.Contains(name);
-		}
+		bool IsValidCulture(string name) => !string.IsNullOrEmpty(name) && cultures.Contains(name);
 
 		public IEnumerable<ModuleDef> GetSatelliteAssemblies(ModuleDef module) {
 			var asm = module.Assembly;
@@ -89,7 +87,7 @@ namespace dnSpy.Languages.MSBuild {
 			}
 			catch {
 			}
-			return new string[0];
+			return Array.Empty<string>();
 		}
 
 		AssemblyDef TryOpenAssembly(string filename) {

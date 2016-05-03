@@ -35,9 +35,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class GenericParamVM : ViewModelBase {
 		readonly GenericParamOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public string FullName {
 			get {
@@ -73,10 +71,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		GenericParamAttributes attributes;
 
-		public EnumListVM GPVarianceVM {
-			get { return gpVarianceVM; }
-		}
-		readonly EnumListVM gpVarianceVM;
+		public EnumListVM GPVarianceVM { get; }
 
 		public bool ReferenceTypeConstraint {
 			get { return GetFlagValue(GenericParamAttributes.ReferenceTypeConstraint); }
@@ -93,9 +88,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { SetFlagValue(GenericParamAttributes.DefaultConstructorConstraint, value); }
 		}
 
-		bool GetFlagValue(GenericParamAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(GenericParamAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(GenericParamAttributes flag, bool value) {
 			if (value)
@@ -116,35 +109,20 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		UTF8String name;
 
-		public UInt16VM Number {
-			get { return number; }
-		}
-		UInt16VM number;
-
-		public TypeDefOrRefAndCAsVM<GenericParamConstraint> TypeDefOrRefAndCAsVM {
-			get { return typeDefOrRefAndCAsVM; }
-		}
-		TypeDefOrRefAndCAsVM<GenericParamConstraint> typeDefOrRefAndCAsVM;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
-
-		public TypeSigCreatorVM TypeSigCreator {
-			get { return typeSigCreator; }
-		}
-		TypeSigCreatorVM typeSigCreator;
+		public UInt16VM Number { get; }
+		public TypeDefOrRefAndCAsVM<GenericParamConstraint> TypeDefOrRefAndCAsVM { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
+		public TypeSigCreatorVM TypeSigCreator { get; }
 
 		readonly ModuleDef ownerModule;
 
 		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
-			this.number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, languageManager, ownerType, ownerMethod);
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.gpVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
+			this.Number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
+			this.TypeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, languageManager, ownerType, ownerMethod);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.GPVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
@@ -157,18 +135,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
 				typeSigCreatorOptions.CanAddGenericMethodVar = true;
-			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public GenericParamOptions CreateGenericParamOptions() {
-			return CopyTo(new GenericParamOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public GenericParamOptions CreateGenericParamOptions() => CopyTo(new GenericParamOptions());
 
 		void InitializeFrom(GenericParamOptions options) {
 			Number.Value = options.Number;
@@ -192,8 +165,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return options;
 		}
 
-		public override bool HasError {
-			get { return Number.HasError; }
-		}
+		public override bool HasError => Number.HasError;
 	}
 }

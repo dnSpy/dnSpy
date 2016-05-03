@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.IMModules {
 		void CreateTypeNodes(List<TypeDef> types) {
 			ITypeNode parentNode = null;
 			foreach (var type in types) {
-				bool wasLoaded = loadedClassTokens == null ? false : loadedClassTokens.Contains(type.MDToken.Raw);
+				bool wasLoaded = loadedClassTokens?.Contains(type.MDToken.Raw) ?? false;
 
 				ITypeNode typeNode;
 				if (type.DeclaringType == null)

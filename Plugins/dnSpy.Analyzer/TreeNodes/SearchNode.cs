@@ -31,13 +31,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected SearchNode() {
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "Search");
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Search");
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			Debug.Assert(asyncFetchChildrenHelper == null);
@@ -47,10 +42,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		AsyncFetchChildrenHelper asyncFetchChildrenHelper;
 
 		protected abstract IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct);
-
-		internal IEnumerable<IAnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) {
-			return FetchChildren(token);
-		}
+		internal IEnumerable<IAnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) => FetchChildren(token);
 
 		public override void OnIsVisibleChanged() {
 			if (!TreeNode.IsVisible && asyncFetchChildrenHelper != null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
@@ -91,8 +83,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public void Cancel() {
-			if (asyncFetchChildrenHelper != null)
-				asyncFetchChildrenHelper.Cancel();
+			asyncFetchChildrenHelper?.Cancel();
 			asyncFetchChildrenHelper = null;
 		}
 	}

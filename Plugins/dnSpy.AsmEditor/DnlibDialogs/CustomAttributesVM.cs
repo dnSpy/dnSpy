@@ -27,16 +27,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(dnSpy_AsmEditor_Resources.EditCustomAttribute, dnSpy_AsmEditor_Resources.CreateCustomAttribute, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override CustomAttributeVM Create(CustomAttribute model) {
-			return new CustomAttributeVM(new CustomAttributeOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override CustomAttributeVM Clone(CustomAttributeVM obj) {
-			return new CustomAttributeVM(obj.CreateCustomAttributeOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override CustomAttributeVM Create() {
-			return new CustomAttributeVM(new CustomAttributeOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
+		protected override CustomAttributeVM Create(CustomAttribute model) => new CustomAttributeVM(new CustomAttributeOptions(model), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override CustomAttributeVM Clone(CustomAttributeVM obj) => new CustomAttributeVM(obj.CreateCustomAttributeOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override CustomAttributeVM Create() => new CustomAttributeVM(new CustomAttributeOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
 	}
 }

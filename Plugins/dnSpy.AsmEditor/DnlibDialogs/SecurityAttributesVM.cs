@@ -27,16 +27,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override SecurityAttributeVM Create(SecurityAttribute model) {
-			return new SecurityAttributeVM(model, ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) {
-			return new SecurityAttributeVM(obj.CreateSecurityAttribute(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override SecurityAttributeVM Create() {
-			return new SecurityAttributeVM(new SecurityAttribute(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
+		protected override SecurityAttributeVM Create(SecurityAttribute model) => new SecurityAttributeVM(model, OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) => new SecurityAttributeVM(obj.CreateSecurityAttribute(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Create() => new SecurityAttributeVM(new SecurityAttribute(), OwnerModule, languageManager, ownerType, ownerMethod);
 	}
 }

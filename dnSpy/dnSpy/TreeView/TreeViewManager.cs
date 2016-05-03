@@ -56,14 +56,12 @@ namespace dnSpy.TreeView {
 			}
 		}
 
-		public ITreeView Create(Guid guid, TreeViewOptions options) {
-			return new TreeViewImpl(this, themeManager, imageManager, guid, options);
-		}
+		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeManager, imageManager, guid, options);
 
 		public IEnumerable<ITreeNodeDataCreator> GetCreators(Guid guid) {
 			List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> list;
 			if (!guidToCreator.TryGetValue(guid, out list))
-				return new ITreeNodeDataCreator[0];
+				return Array.Empty<ITreeNodeDataCreator>();
 			return list.Select(a => a.Value);
 		}
 	}

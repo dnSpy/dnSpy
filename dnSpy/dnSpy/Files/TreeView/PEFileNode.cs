@@ -39,30 +39,18 @@ namespace dnSpy.Files.TreeView {
 			Debug.Assert(dnSpyFile.PEImage != null && dnSpyFile.ModuleDef == null);
 		}
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.PEFILE_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(DnSpyFile.PEImage);
-		}
-
-		public bool IsExe {
-			get { return (DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0; }
-		}
-
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		public override Guid Guid => new Guid(FileTVConstants.PEFILE_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(DnSpyFile.PEImage);
+		public bool IsExe => (DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var file in DnSpyFile.Children)
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile);
-		}
 
 		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
 			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine), BoxedTextTokenKind.EnumField);
@@ -71,8 +59,7 @@ namespace dnSpy.Files.TreeView {
 			output.WriteFilename(DnSpyFile.Filename);
 		}
 
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(DnSpyFile).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(DnSpyFile).FilterType;
 	}
 }

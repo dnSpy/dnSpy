@@ -63,9 +63,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 		int disableSaveCounter;
 
-		void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) {
-			Save();
-		}
+		void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) => Save();
 
 		void Load() {
 			exceptionManager.RestoreDefaults();
@@ -158,8 +156,6 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		public IDisposable TemporarilyDisableSave() {
-			return new TemporarilyDisableSaveHelper(this);
-		}
+		public IDisposable TemporarilyDisableSave() => new TemporarilyDisableSaveHelper(this);
 	}
 }

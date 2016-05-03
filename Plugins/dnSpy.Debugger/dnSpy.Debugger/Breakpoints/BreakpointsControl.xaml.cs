@@ -24,9 +24,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed partial class BreakpointsControl : UserControl {
-		public ListView ListView {
-			get { return listView; }
-		}
+		public ListView ListView => listView;
 
 		public BreakpointsControl() {
 			InitializeComponent();
@@ -35,8 +33,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			if (BreakpointsListViewDoubleClick != null)
-				BreakpointsListViewDoubleClick(this, EventArgs.Empty);
+			BreakpointsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler BreakpointsListViewDoubleClick;

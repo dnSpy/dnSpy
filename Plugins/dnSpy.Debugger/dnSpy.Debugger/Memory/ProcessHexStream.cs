@@ -22,21 +22,10 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger.Memory {
 	sealed class ProcessHexStream : ISimpleHexStream {
-		public ulong StartOffset {
-			get { return 0; }
-		}
-
-		public ulong EndOffset {
-			get { return IntPtr.Size == 4 ? uint.MaxValue : ulong.MaxValue; }
-		}
-
-		public ulong Size {
-			get { return IntPtr.Size == 4 ? uint.MaxValue + 1UL : ulong.MaxValue; }
-		}
-
-		public ulong PageSize {
-			get { return (ulong)Environment.SystemPageSize; }
-		}
+		public ulong StartOffset => 0;
+		public ulong EndOffset => IntPtr.Size == 4 ? uint.MaxValue : ulong.MaxValue;
+		public ulong Size => IntPtr.Size == 4 ? uint.MaxValue + 1UL : ulong.MaxValue;
+		public ulong PageSize => (ulong)Environment.SystemPageSize;
 
 		readonly IntPtr hProcess;
 

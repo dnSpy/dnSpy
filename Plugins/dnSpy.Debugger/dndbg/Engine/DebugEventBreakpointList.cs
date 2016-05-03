@@ -23,16 +23,8 @@ namespace dndbg.Engine {
 	sealed class DebugEventBreakpointList<TBP> where TBP : DnBreakpoint {
 		readonly List<TBP> bps = new List<TBP>();
 
-		public TBP[] Breakpoints {
-			get { return bps.ToArray(); }
-		}
-
-		public void Add(TBP bp) {
-			bps.Add(bp);
-		}
-
-		public void Remove(TBP bp) {
-			bps.Remove(bp);
-		}
+		public TBP[] Breakpoints => bps.ToArray();
+		public void Add(TBP bp) => bps.Add(bp);
+		public void Remove(TBP bp) => bps.Remove(bp);
 	}
 }

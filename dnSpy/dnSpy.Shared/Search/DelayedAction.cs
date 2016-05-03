@@ -39,9 +39,7 @@ namespace dnSpy.Shared.Search {
 			action();
 		}
 
-		public void Cancel() {
-			dispatcherTimer.Stop();
-		}
+		public void Cancel() => dispatcherTimer.Stop();
 
 		public void Start() {
 			dispatcherTimer.Stop();

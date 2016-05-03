@@ -28,43 +28,21 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class ModuleReferenceNode : FileTreeNodeData, IModuleReferenceNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.MODULEREF_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReferenceModuleRef();
-		}
-
-		public ModuleRef ModuleRef {
-			get { return moduleRef; }
-		}
-		readonly ModuleRef moduleRef;
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return ModuleRef; }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, moduleRef.FullName); }
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.MODULEREF_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReferenceModuleRef();
+		public ModuleRef ModuleRef { get; }
+		IMDTokenProvider IMDTokenNode.Reference => ModuleRef;
+		public override NodePathName NodePathName => new NodePathName(Guid, ModuleRef.FullName);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public ModuleReferenceNode(ITreeNodeGroup treeNodeGroup, ModuleRef moduleRef) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.moduleRef = moduleRef;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.ModuleRef = moduleRef;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().Write(output, language, moduleRef, Context.ShowToken);
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(ModuleRef).FilterType;
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().Write(output, language, ModuleRef, Context.ShowToken);
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(ModuleRef).FilterType;
 	}
 }

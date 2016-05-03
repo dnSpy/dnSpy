@@ -28,36 +28,27 @@ namespace dnSpy.Contracts.Files {
 		/// <summary>
 		/// Name, eg. filename if <see cref="Type"/> is <see cref="FileConstants.FILETYPE_FILE"/>
 		/// </summary>
-		public string Name {
-			get { return name ?? string.Empty; }
-		}
+		public string Name => name ?? string.Empty;
 		readonly string name;
 
 		/// <summary>
 		/// File type, eg. <see cref="FileConstants.FILETYPE_FILE"/>
 		/// </summary>
-		public Guid Type {
-			get { return type; }
-		}
-		readonly Guid type;
+		public Guid Type { get; }
 
 		/// <summary>
 		/// Creates a <see cref="DnSpyFileInfo"/> used by files on disk
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static DnSpyFileInfo CreateFile(string filename) {
-			return new DnSpyFileInfo(filename, FileConstants.FILETYPE_FILE);
-		}
+		public static DnSpyFileInfo CreateFile(string filename) => new DnSpyFileInfo(filename, FileConstants.FILETYPE_FILE);
 
 		/// <summary>
 		/// Creates a <see cref="DnSpyFileInfo"/> used by files in the GAC
 		/// </summary>
 		/// <param name="asmFullName">Full name of assembly</param>
 		/// <returns></returns>
-		public static DnSpyFileInfo CreateGacFile(string asmFullName) {
-			return new DnSpyFileInfo(asmFullName, FileConstants.FILETYPE_GAC);
-		}
+		public static DnSpyFileInfo CreateGacFile(string asmFullName) => new DnSpyFileInfo(asmFullName, FileConstants.FILETYPE_GAC);
 
 		/// <summary>
 		/// Creates a <see cref="DnSpyFileInfo"/> used by reference assemblies
@@ -78,15 +69,13 @@ namespace dnSpy.Contracts.Files {
 		/// <param name="type">Type, see <see cref="Type"/></param>
 		public DnSpyFileInfo(string name, Guid type) {
 			this.name = name ?? string.Empty;
-			this.type = type;
+			this.Type = type;
 		}
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() {
-			return string.Format("{0} {1}", Name, Type);
-		}
+		public override string ToString() => string.Format("{0} {1}", Name, Type);
 	}
 }

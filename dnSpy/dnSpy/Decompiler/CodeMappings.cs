@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -51,9 +52,7 @@ namespace dnSpy.Decompiler {
 	sealed class CodeMappings : ICodeMappings {
 		readonly List<MemberMapping> memberMappings;
 
-		public int Count {
-			get { return memberMappings.Count; }
-		}
+		public int Count => memberMappings.Count;
 
 		public CodeMappings() {
 			this.memberMappings = new List<MemberMapping>();
@@ -65,9 +64,9 @@ namespace dnSpy.Decompiler {
 
 		public IList<SourceCodeMapping> Find(int line, int column) {
 			if (line <= 0)
-				return empty;
+				return Array.Empty<SourceCodeMapping>();
 			if (memberMappings.Count == 0)
-				return empty;
+				return Array.Empty<SourceCodeMapping>();
 
 			var bp = FindByLineColumn(line, column);
 			if (bp == null && column != 0)
@@ -77,9 +76,8 @@ namespace dnSpy.Decompiler {
 
 			if (bp != null)
 				return bp;
-			return empty;
+			return Array.Empty<SourceCodeMapping>();
 		}
-		static readonly SourceCodeMapping[] empty = new SourceCodeMapping[0];
 
 		List<SourceCodeMapping> FindByLineColumn(int line, int column) {
 			List<SourceCodeMapping> list = null;

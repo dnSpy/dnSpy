@@ -40,38 +40,20 @@ namespace dnSpy.Files.TreeView {
 			Debug.Assert(dnSpyFile.AssemblyDef != null);
 		}
 
-		public new IDnSpyDotNetFile DnSpyFile {
-			get { return (IDnSpyDotNetFile)base.DnSpyFile; }
-		}
-
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.ASSEMBLY_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(DnSpyFile.AssemblyDef);
-		}
-
-		public bool IsExe {
-			get { return (DnSpyFile.ModuleDef.Characteristics & Characteristics.Dll) == 0; }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return DnSpyFile.AssemblyDef; }
-		}
-
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		public new IDnSpyDotNetFile DnSpyFile => (IDnSpyDotNetFile)base.DnSpyFile;
+		public override Guid Guid => new Guid(FileTVConstants.ASSEMBLY_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(DnSpyFile.AssemblyDef);
+		public bool IsExe => (DnSpyFile.ModuleDef.Characteristics & Characteristics.Dll) == 0;
+		IMDTokenProvider IMDTokenNode.Reference => DnSpyFile.AssemblyDef;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var file in DnSpyFile.Children)
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
-		}
 
 		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
 			output.Write(DnSpyFile.AssemblyDef);
@@ -86,8 +68,6 @@ namespace dnSpy.Files.TreeView {
 			output.WriteFilename(DnSpyFile.Filename);
 		}
 
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(DnSpyFile.AssemblyDef).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(DnSpyFile.AssemblyDef).FilterType;
 	}
 }

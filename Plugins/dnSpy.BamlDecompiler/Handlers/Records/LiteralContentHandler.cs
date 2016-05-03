@@ -25,9 +25,7 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class LiteralContentHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.LiteralContent; }
-		}
+		public BamlRecordType Type => BamlRecordType.LiteralContent;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (LiteralContentRecord)((BamlRecordNode)node).Record;

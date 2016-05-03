@@ -25,12 +25,12 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <summary>
 		/// Line
 		/// </summary>
-		public int Line;
+		public int Line { get; set; }
 
 		/// <summary>
 		/// Column
 		/// </summary>
-		public int Column;
+		public int Column { get; set; }
 
 		/// <summary>
 		/// Constructor

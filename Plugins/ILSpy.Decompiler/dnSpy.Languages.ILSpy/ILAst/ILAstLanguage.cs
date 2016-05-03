@@ -66,9 +66,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			this.languageSettingsManager = languageSettingsManager;
 		}
 
-		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider(languageSettingsManager).Languages;
-		}
+		public IEnumerable<ILanguage> Create() => new LanguageProvider(languageSettingsManager).Languages;
 	}
 
 #if DEBUG
@@ -81,38 +79,19 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
 
-		public override IDecompilerSettings Settings {
-			get { return langSettings; }
-		}
-		readonly IDecompilerSettings langSettings;
+		public override IDecompilerSettings Settings { get; }
 
 		ILAstLanguage(ILAstLanguageDecompilerSettings langSettings, double orderUI) {
-			this.langSettings = langSettings;
-			this.orderUI = orderUI;
+			this.Settings = langSettings;
+			this.OrderUI = orderUI;
 		}
 
-		public override double OrderUI {
-			get { return orderUI; }
-		}
-		readonly double orderUI;
-
+		public override double OrderUI { get; }
 		public override Guid ContentTypeGuid => new Guid(ContentTypes.ILAST_ILSPY);
-
-		public override string GenericNameUI {
-			get { return "ILAst"; }
-		}
-
-		public override string UniqueNameUI {
-			get { return uniqueNameUI; }
-		}
-
-		public override Guid GenericGuid {
-			get { return LanguageConstants.LANGUAGE_ILAST_ILSPY; }
-		}
-
-		public override Guid UniqueGuid {
-			get { return uniqueGuid; }
-		}
+		public override string GenericNameUI => "ILAst";
+		public override string UniqueNameUI => uniqueNameUI;
+		public override Guid GenericGuid => LanguageConstants.LANGUAGE_ILAST_ILSPY;
+		public override Guid UniqueGuid => uniqueGuid;
 
 		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentBegin(output, true);
@@ -338,15 +317,10 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			}
 		}
 
-		public override string FileExtension {
-			get {
-				return ".il";
-			}
-		}
+		public override string FileExtension => ".il";
 
-		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) {
+		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
-		}
 	}
 #endif
 }

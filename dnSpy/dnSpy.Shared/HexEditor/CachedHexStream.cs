@@ -41,17 +41,9 @@ namespace dnSpy.Shared.HexEditor {
 			}
 		}
 
-		public ulong StartOffset {
-			get { return simpleHexStream.StartOffset; }
-		}
-
-		public ulong EndOffset {
-			get { return simpleHexStream.EndOffset; }
-		}
-
-		public ulong Size {
-			get { return simpleHexStream.Size; }
-		}
+		public ulong StartOffset => simpleHexStream.StartOffset;
+		public ulong EndOffset => simpleHexStream.EndOffset;
+		public ulong Size => simpleHexStream.Size;
 
 		readonly ISimpleHexStream simpleHexStream;
 		readonly CachedPage[] cachedPages;
@@ -79,9 +71,7 @@ namespace dnSpy.Shared.HexEditor {
 				this.cachedPages[i] = new CachedPage(i, (int)pageSize);
 		}
 
-		static bool IsPowerOfTwo(ulong v) {
-			return v != 0 && (v & (v - 1)) == 0;
-		}
+		static bool IsPowerOfTwo(ulong v) => v != 0 && (v & (v - 1)) == 0;
 
 		public void ClearCache() {
 			foreach (var cp in cachedPages)

@@ -21,7 +21,7 @@ using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class AsmEditorContext {
-		public readonly IFileTreeNodeData[] Nodes;
+		public IFileTreeNodeData[] Nodes { get; }
 
 		public AsmEditorContext(IFileTreeNodeData[] nodes) {
 			this.Nodes = nodes;

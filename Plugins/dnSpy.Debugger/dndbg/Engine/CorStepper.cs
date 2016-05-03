@@ -88,25 +88,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorStepper a, CorStepper b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorStepper other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorStepper);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[Stepper] HC={0:X8} Active={1}", GetHashCode(), IsActive);
-		}
+		public static bool operator !=(CorStepper a, CorStepper b) => !(a == b);
+		public bool Equals(CorStepper other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorStepper);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[Stepper] HC={0:X8} Active={1}", GetHashCode(), IsActive);
 	}
 }

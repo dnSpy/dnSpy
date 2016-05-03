@@ -29,17 +29,17 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// A style or a resource key or null to use the default style
 		/// </summary>
-		public object TabControlStyle;
+		public object TabControlStyle { get; set; }
 
 		/// <summary>
 		/// A style or a resource key or null to use the default style
 		/// </summary>
-		public object TabItemStyle;
+		public object TabItemStyle { get; set; }
 
 		/// <summary>
 		/// Guid to use to initialize the context menu if <see cref="InitializeContextMenu"/> is null
 		/// </summary>
-		public Guid TabGroupGuid;
+		public Guid TabGroupGuid { get; set; }
 
 		/// <summary>
 		/// Called in the <see cref="ITabGroup"/> constructor to initialize the context menu. If

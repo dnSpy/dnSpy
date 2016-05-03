@@ -35,9 +35,6 @@ namespace dnSpy.AsmEditor.Resources {
 			Loaded += ImageResourceElementControl_Loaded;
 		}
 
-		void ImageResourceElementControl_Loaded(object sender, RoutedEventArgs e) {
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
-		}
+		void ImageResourceElementControl_Loaded(object sender, RoutedEventArgs e) => nameTextBox.Focus();
 	}
 }

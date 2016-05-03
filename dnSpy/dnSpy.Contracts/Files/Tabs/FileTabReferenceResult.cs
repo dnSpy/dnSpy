@@ -27,17 +27,17 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// New tab content, never null
 		/// </summary>
-		public IFileTabContent FileTabContent { get; private set; }
+		public IFileTabContent FileTabContent { get; }
 
 		/// <summary>
 		/// Serialized UI data for <see cref="FileTabContent"/> or null if none
 		/// </summary>
-		public object SerializedUI { get; private set; }
+		public object SerializedUI { get; }
 
 		/// <summary>
 		/// Called when the output has been shown, can be null
 		/// </summary>
-		public Action<ShowTabContentEventArgs> OnShownHandler { get; private set; }
+		public Action<ShowTabContentEventArgs> OnShownHandler { get; }
 
 		/// <summary>
 		/// Constructor

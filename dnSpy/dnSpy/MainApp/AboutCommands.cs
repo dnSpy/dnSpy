@@ -48,9 +48,8 @@ namespace dnSpy.MainApp {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public override void Execute(IMenuItemContext context) {
+		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"releases", messageBoxManager);
-		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_LatestBuild", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 10)]
@@ -62,9 +61,8 @@ namespace dnSpy.MainApp {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public override void Execute(IMenuItemContext context) {
+		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BUILD_URL, messageBoxManager);
-		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Issues", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 20)]
@@ -76,9 +74,8 @@ namespace dnSpy.MainApp {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public override void Execute(IMenuItemContext context) {
+		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues", messageBoxManager);
-		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Wiki", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
@@ -90,9 +87,8 @@ namespace dnSpy.MainApp {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public override void Execute(IMenuItemContext context) {
+		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"wiki", messageBoxManager);
-		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_SourceCode", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 40)]
@@ -104,8 +100,7 @@ namespace dnSpy.MainApp {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public override void Execute(IMenuItemContext context) {
+		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL, messageBoxManager);
-		}
 	}
 }

@@ -31,11 +31,11 @@ using dnlib.PE;
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ManagedProcessesFinder {
 		public sealed class Info {
-			public int ProcessId;
-			public Machine Machine;
-			public string Title;
-			public string FullPath;
-			public CLRTypeAttachInfo Type;
+			public int ProcessId { get; }
+			public Machine Machine { get; }
+			public string Title { get; }
+			public string FullPath { get; }
+			public CLRTypeAttachInfo Type { get; }
 
 			public Info(Process process, string clrVersion, CLRTypeAttachInfo type) {
 				ProcessId = process.Id;

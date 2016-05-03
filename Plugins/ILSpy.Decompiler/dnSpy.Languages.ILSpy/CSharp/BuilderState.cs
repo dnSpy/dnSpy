@@ -27,9 +27,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 	/// gets called.
 	/// </summary>
 	struct BuilderState : IDisposable {
-		public AstBuilder AstBuilder {
-			get { return State.AstBuilder; }
-		}
+		public AstBuilder AstBuilder => State.AstBuilder;
 
 		public readonly AstBuilderState State;
 		readonly DecompilationContext ctx;
@@ -42,8 +40,6 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			this.State.AstBuilder.Context.CalculateILRanges = ctx.CalculateILRanges;
 		}
 
-		public void Dispose() {
-			cache.Free(State);
-		}
+		public void Dispose() => cache.Free(State);
 	}
 }

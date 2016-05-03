@@ -37,11 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		sealed class MessageNodeTreeNodeGroup : ITreeNodeGroup {
-			public double Order {
-				get { return order; }
-				set { order = value; }
-			}
-			double order;
+			public double Order { get; }
 
 			public int Compare(ITreeNodeData x, ITreeNodeData y) {
 				if (x == y)
@@ -55,28 +51,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		sealed class MessageNode : TreeNodeData {
-			public override Guid Guid {
-				get { return Guid.Empty; }
-			}
-
-			public override ImageReference Icon {
-				get { return new ImageReference(GetType().Assembly, "Search"); }
-			}
-
-			public override object Text {
-				get { return dnSpy_Analyzer_Resources.Searching; }
-			}
-
-			public override object ToolTip {
-				get { return null; }
-			}
-
-			public override void OnRefreshUI() {
-			}
-
-			public override ITreeNodeGroup TreeNodeGroup {
-				get { return treeNodeGroup; }
-			}
+			public override Guid Guid => Guid.Empty;
+			public override ImageReference Icon => new ImageReference(GetType().Assembly, "Search");
+			public override object Text => dnSpy_Analyzer_Resources.Searching;
+			public override object ToolTip => null;
+			public override void OnRefreshUI() { }
+			public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
 			readonly ITreeNodeGroup treeNodeGroup = new MessageNodeTreeNodeGroup();
 		}
 
@@ -86,8 +66,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 				AddNode(child);
 		}
 
-		protected override void OnCompleted() {
-			completed();
-		}
+		protected override void OnCompleted() => completed();
 	}
 }

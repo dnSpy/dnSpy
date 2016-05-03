@@ -24,8 +24,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Languages.ILSpy.Settings {
 	class ILSettings : ViewModelBase {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool ShowILComments {
 			get { return showILComments; }
@@ -87,9 +86,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		}
 		bool sortMembers = true;
 
-		public ILSettings Clone() {
-			return CopyTo(new ILSettings());
-		}
+		public ILSettings Clone() => CopyTo(new ILSettings());
 
 		public ILSettings CopyTo(ILSettings other) {
 			other.ShowILComments = this.ShowILComments;

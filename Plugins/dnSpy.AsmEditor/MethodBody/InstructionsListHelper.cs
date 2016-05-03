@@ -43,37 +43,18 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {
 		CilBodyVM cilBodyVM;
 
-		protected override string AddNewBeforeSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command1; }
-		}
-
-		protected override string AddNewAfterSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command2; }
-		}
-
-		protected override string AppendNewMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command3; }
-		}
-
-		protected override string RemoveSingularMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command4; }
-		}
-
-		protected override string RemovePluralMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command5; }
-		}
-
-		protected override string RemoveAllMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command6; }
-		}
+		protected override string AddNewBeforeSelectionMessage => dnSpy_AsmEditor_Resources.Instr_Command1;
+		protected override string AddNewAfterSelectionMessage => dnSpy_AsmEditor_Resources.Instr_Command2;
+		protected override string AppendNewMessage => dnSpy_AsmEditor_Resources.Instr_Command3;
+		protected override string RemoveSingularMessage => dnSpy_AsmEditor_Resources.Instr_Command4;
+		protected override string RemovePluralMessage => dnSpy_AsmEditor_Resources.Instr_Command5;
+		protected override string RemoveAllMessage => dnSpy_AsmEditor_Resources.Instr_Command6;
 
 		public InstructionsListHelper(ListView listView, Window ownerWindow)
 			: base(listView) {
 		}
 
-		protected override InstructionVM[] GetSelectedItems() {
-			return listBox.SelectedItems.Cast<InstructionVM>().ToArray();
-		}
+		protected override InstructionVM[] GetSelectedItems() => listBox.SelectedItems.Cast<InstructionVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
@@ -180,21 +161,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		void CopyInstructionRVA(InstructionVM[] instrs) {
-			CopyOffsets(cilBodyVM.RVA.Value, instrs);
-		}
-
-		bool CopyInstructionRVACanExecute(InstructionVM[] instrs) {
-			return !cilBodyVM.RVA.HasError && instrs.Length > 0;
-		}
-
-		void CopyInstructionFileOffset(InstructionVM[] instrs) {
-			CopyOffsets(cilBodyVM.FileOffset.Value, instrs);
-		}
-
-		bool CopyInstructionFileOffsetCanExecute(InstructionVM[] instrs) {
-			return !cilBodyVM.FileOffset.HasError && instrs.Length > 0;
-		}
+		void CopyInstructionRVA(InstructionVM[] instrs) => CopyOffsets(cilBodyVM.RVA.Value, instrs);
+		bool CopyInstructionRVACanExecute(InstructionVM[] instrs) => !cilBodyVM.RVA.HasError && instrs.Length > 0;
+		void CopyInstructionFileOffset(InstructionVM[] instrs) => CopyOffsets(cilBodyVM.FileOffset.Value, instrs);
+		bool CopyInstructionFileOffsetCanExecute(InstructionVM[] instrs) => !cilBodyVM.FileOffset.HasError && instrs.Length > 0;
 
 		void CopyOperandMDTokens(InstructionVM[] instrs) {
 			var sb = new StringBuilder();
@@ -221,9 +191,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs) {
-			return instrs.Any(a => GetOperandMDToken(a.InstructionOperandVM) != null);
-		}
+		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetOperandMDToken(a.InstructionOperandVM) != null);
 
 		static uint? GetOperandMDToken(InstructionOperandVM op) {
 			switch (op.InstructionOperandType) {
@@ -570,9 +538,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			listBox.ScrollIntoView(instrs[instrs.Length - 1]);
 		}
 
-		protected override bool CanUseClipboardData(InstructionVM[] data, bool fromThisInstance) {
-			return true;
-		}
+		protected override bool CanUseClipboardData(InstructionVM[] data, bool fromThisInstance) => true;
 
 		protected override InstructionVM[] BeforeCopyingData(InstructionVM[] data, bool fromThisInstance) {
 			if (fromThisInstance)
@@ -609,7 +575,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					break;
 
 				case MethodBody.InstructionOperandType.SwitchTargets:
-					var oldInstrs = (origInstr.InstructionOperandVM.Other as InstructionVM[]) ?? new InstructionVM[0];
+					var oldInstrs = (origInstr.InstructionOperandVM.Other as InstructionVM[]) ?? Array.Empty<InstructionVM>();
 					var newInstrs = new InstructionVM[oldInstrs.Length];
 					for (int j = 0; j < oldInstrs.Length; j++) {
 						oldInstr = oldInstrs[j] ?? InstructionVM.Null;

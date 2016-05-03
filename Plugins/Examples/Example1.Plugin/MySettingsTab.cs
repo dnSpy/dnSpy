@@ -24,13 +24,9 @@ namespace Example1.Plugin {
 
 	sealed class MyAppSettingsTab : IAppSettingsTab {
 		// The order of the tab, let's place it after the debugger tab
-		public double Order {
-			get { return AppSettingsConstants.ORDER_DEBUGGER_TAB_DISPLAY + 0.1; }
-		}
+		public double Order => AppSettingsConstants.ORDER_DEBUGGER_TAB_DISPLAY + 0.1;
 
-		public string Title {
-			get { return "MySettings"; }
-		}
+		public string Title => "MySettings";
 
 		// This is the content shown in the tab. It should be a WPF object (eg. a UserControl) or a
 		// ViewModel with a DataTemplate defined in a resource dictionary.

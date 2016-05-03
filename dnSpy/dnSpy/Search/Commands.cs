@@ -51,13 +51,8 @@ namespace dnSpy.Search {
 			cmds.Add(SearchRoutedCommand, Search, CanSearch);
 		}
 
-		void CanSearch(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = true;
-		}
-
-		void Search(object sender, ExecutedRoutedEventArgs e) {
-			mainToolWindowManager.Show(SearchToolWindowContent.THE_GUID);
-		}
+		void CanSearch(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
+		void Search(object sender, ExecutedRoutedEventArgs e) => mainToolWindowManager.Show(SearchToolWindowContent.THE_GUID);
 	}
 
 	[ExportToolBarButton(Icon = "Find", ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
@@ -90,9 +85,7 @@ namespace dnSpy.Search {
 			searchManager.Value.FollowResult(res, newTab);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetReference(context) != null;
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
 
 		ISearchResult GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID))
@@ -126,17 +119,9 @@ namespace dnSpy.Search {
 			this.searchSettings = searchSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return searchSettings.SyntaxHighlight;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			searchSettings.SyntaxHighlight = !searchSettings.SyntaxHighlight;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.SyntaxHighlight;
+		public override void Execute(IMenuItemContext context) => searchSettings.SyntaxHighlight = !searchSettings.SyntaxHighlight;
 	}
 
 	[ExportMenuItem(Header = "res:SearchWindow_MatchWholeWords", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 10)]
@@ -148,17 +133,9 @@ namespace dnSpy.Search {
 			this.searchSettings = searchSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return searchSettings.MatchWholeWords;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			searchSettings.MatchWholeWords = !searchSettings.MatchWholeWords;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.MatchWholeWords;
+		public override void Execute(IMenuItemContext context) => searchSettings.MatchWholeWords = !searchSettings.MatchWholeWords;
 	}
 
 	[ExportMenuItem(Header = "res:SearchWindow_CaseSensitiveSearch", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 20)]
@@ -170,17 +147,9 @@ namespace dnSpy.Search {
 			this.searchSettings = searchSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return searchSettings.CaseSensitive;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			searchSettings.CaseSensitive = !searchSettings.CaseSensitive;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.CaseSensitive;
+		public override void Execute(IMenuItemContext context) => searchSettings.CaseSensitive = !searchSettings.CaseSensitive;
 	}
 
 	[ExportMenuItem(Header = "res:SearchWindow_MatchAny", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 30)]
@@ -192,17 +161,9 @@ namespace dnSpy.Search {
 			this.searchSettings = searchSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return searchSettings.MatchAnySearchTerm;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			searchSettings.MatchAnySearchTerm = !searchSettings.MatchAnySearchTerm;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.MatchAnySearchTerm;
+		public override void Execute(IMenuItemContext context) => searchSettings.MatchAnySearchTerm = !searchSettings.MatchAnySearchTerm;
 	}
 
 	[ExportMenuItem(Header = "res:SearchWindow_DecompileResources", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 40)]
@@ -214,17 +175,9 @@ namespace dnSpy.Search {
 			this.searchSettings = searchSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return searchSettings.SearchDecompiledData;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			searchSettings.SearchDecompiledData = !searchSettings.SearchDecompiledData;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchDecompiledData;
+		public override void Execute(IMenuItemContext context) => searchSettings.SearchDecompiledData = !searchSettings.SearchDecompiledData;
 	}
 
 	[ExportMenuItem(Header = "res:SearchWindow_SearchGacAssemblies", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 50)]
@@ -236,16 +189,8 @@ namespace dnSpy.Search {
 			this.searchSettings = searchSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return searchSettings.SearchGacAssemblies;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			searchSettings.SearchGacAssemblies = !searchSettings.SearchGacAssemblies;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchGacAssemblies;
+		public override void Execute(IMenuItemContext context) => searchSettings.SearchGacAssemblies = !searchSettings.SearchGacAssemblies;
 	}
 }

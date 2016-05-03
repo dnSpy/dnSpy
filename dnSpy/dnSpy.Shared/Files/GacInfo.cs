@@ -40,9 +40,9 @@ namespace dnSpy.Shared.Files {
 	}
 
 	public static class GacInfo {
-		public static string[] GacPaths { get; private set; }
-		public static string[] OtherGacPaths { get; private set; }
-		public static string[] WinmdPaths { get; private set; }
+		public static string[] GacPaths { get; }
+		public static string[] OtherGacPaths { get; }
+		public static string[] WinmdPaths { get; }
 
 		sealed class GacDirInfo {
 			public readonly int Version;
@@ -232,7 +232,7 @@ namespace dnSpy.Shared.Files {
 			if (majorVersion == 4)
 				return GetAssemblies(gacDirInfos[1]);
 			Debug.Fail("Invalid version");
-			return new GacFileInfo[0];
+			return Array.Empty<GacFileInfo>();
 		}
 
 		static IEnumerable<GacFileInfo> GetAssemblies(GacDirInfo gacInfo) {
@@ -294,7 +294,7 @@ namespace dnSpy.Shared.Files {
 			}
 			catch {
 			}
-			return new string[0];
+			return Array.Empty<string>();
 		}
 	}
 }

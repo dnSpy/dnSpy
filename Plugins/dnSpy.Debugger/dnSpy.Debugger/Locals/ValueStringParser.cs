@@ -34,9 +34,7 @@ namespace dnSpy.Debugger.Locals {
 		readonly string text;
 		readonly bool isTextNullString;
 
-		public bool IsNull {
-			get { return isTextNullString; }
-		}
+		public bool IsNull => isTextNullString;
 
 		public ValueStringParser(string text) {
 			this.text = text.Trim();

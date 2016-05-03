@@ -33,8 +33,6 @@ namespace dnSpy.Files {
 			this.mefCreators = mefCreators.ToArray();
 		}
 
-		public IFileManager Create() {
-			return new FileManager(fileManagerSettings, mefCreators.ToArray());
-		}
+		public IFileManager Create() => new FileManager(fileManagerSettings, mefCreators.ToArray());
 	}
 }

@@ -37,9 +37,7 @@ namespace dnSpy.AsmEditor.Commands {
 			readonly string dataFormat;
 
 			// The real (non-serializable) clipboard data
-			public object Data {
-				get { return data; }
-			}
+			public object Data => data;
 			readonly object data;
 
 			public MyDataObject(string dataFormat, object data) {
@@ -47,13 +45,8 @@ namespace dnSpy.AsmEditor.Commands {
 				this.dataFormat = dataFormat;
 			}
 
-			public object GetData(Type format) {
-				return GetData(format.FullName);
-			}
-
-			public object GetData(string format) {
-				return GetData(format, true);
-			}
+			public object GetData(Type format) => GetData(format.FullName);
+			public object GetData(string format) => GetData(format, true);
 
 			public object GetData(string format, bool autoConvert) {
 				if (format != dataFormat)
@@ -61,46 +54,18 @@ namespace dnSpy.AsmEditor.Commands {
 				return serializedData;
 			}
 
-			public bool GetDataPresent(Type format) {
-				return GetDataPresent(format.FullName);
-			}
-
-			public bool GetDataPresent(string format) {
-				return GetDataPresent(format, true);
-			}
-
-			public bool GetDataPresent(string format, bool autoConvert) {
-				return format == dataFormat;
-			}
-
-			public string[] GetFormats() {
-				return GetFormats(true);
-			}
-
-			public string[] GetFormats(bool autoConvert) {
-				return new string[] { dataFormat };
-			}
-
-			public void SetData(object data) {
-				SetData(data.GetType(), data);
-			}
-
-			public void SetData(Type format, object data) {
-				SetData(format.FullName, data, true);
-			}
-
-			public void SetData(string format, object data) {
-				SetData(format, data, true);
-			}
-
-			public void SetData(string format, object data, bool autoConvert) {
-				Debug.Fail("Shouldn't be here");
-			}
+			public bool GetDataPresent(Type format) => GetDataPresent(format.FullName);
+			public bool GetDataPresent(string format) => GetDataPresent(format, true);
+			public bool GetDataPresent(string format, bool autoConvert) => format == dataFormat;
+			public string[] GetFormats() => GetFormats(true);
+			public string[] GetFormats(bool autoConvert) => new string[] { dataFormat };
+			public void SetData(object data) => SetData(data.GetType(), data);
+			public void SetData(Type format, object data) => SetData(format.FullName, data, true);
+			public void SetData(string format, object data) => SetData(format, data, true);
+			public void SetData(string format, object data, bool autoConvert) => Debug.Fail("Shouldn't be here");
 		}
 
-		static string GetDataFormat(Type type) {
-			return type.FullName + suffix;
-		}
+		static string GetDataFormat(Type type) => type.FullName + suffix;
 
 		static bool IsInClipboard(Type type) {
 			try {
@@ -127,7 +92,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (!IsInClipboard(typeof(T)))
 				return null;
 			var mdo = weakRefMyDataObject.Target as MyDataObject;
-			return mdo == null ? null : mdo.Data as T;
+			return mdo?.Data as T;
 		}
 	}
 }

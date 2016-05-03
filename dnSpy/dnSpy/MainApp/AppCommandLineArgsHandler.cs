@@ -34,12 +34,10 @@ namespace dnSpy.MainApp {
 			this.mainToolWindowManager = mainToolWindowManager;
 		}
 
-		public double Order {
-			get { return 0; }
-		}
+		public double Order => 0;
 
 		sealed class ToolWindowInfo {
-			public Guid Guid { get; private set; }
+			public Guid Guid { get; }
 			public AppToolWindowLocation? Location { get; set; }
 
 			public ToolWindowInfo(Guid guid) {

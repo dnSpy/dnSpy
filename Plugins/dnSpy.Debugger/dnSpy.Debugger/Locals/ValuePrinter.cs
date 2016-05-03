@@ -42,17 +42,9 @@ namespace dnSpy.Debugger.Locals {
 				output.Write("+", BoxedTextTokenKind.Text);
 		}
 
-		public void WriteName(ValueVM vm) {
-			vm.WriteName(output);
-		}
-
-		public void WriteValue(ValueVM vm) {
-			Write(vm.CachedOutputValue);
-		}
-
-		public void WriteType(ValueVM vm) {
-			Write(vm.CachedOutputType);
-		}
+		public void WriteName(ValueVM vm) => vm.WriteName(output);
+		public void WriteValue(ValueVM vm) => Write(vm.CachedOutputValue);
+		public void WriteType(ValueVM vm) => Write(vm.CachedOutputType);
 
 		void Write(CachedOutput co) {
 			var conv = new OutputConverter(output);

@@ -95,9 +95,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		TypeSig typeSig;
 
-		public bool CanShowTypeFullName {
-			get { return ShowTypeFullName && IsValidTypeSig; }
-		}
+		public bool CanShowTypeFullName => ShowTypeFullName && IsValidTypeSig;
 
 		public bool ShowTypeFullName {
 			get { return showTypeFullName; }
@@ -111,33 +109,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool showTypeFullName = true;
 
-		public bool CanAddGeneric {
-			get { return IsEnabled && (options.CanAddGenericTypeVar || options.CanAddGenericMethodVar); }
-		}
-
-		public bool IsValidTypeSig {
-			get { return options.NullTypeSigAllowed || TypeSig != null; }
-		}
-
-		public bool CanAddLeafTypeSig {
-			get { return IsEnabled && TypeSig == null; }
-		}
-
-		public bool AddingLeafTypeSig {
-			get { return TypeSig == null; }
-		}
-
-		public bool CanAddNonLeafTypeSig {
-			get { return IsEnabled && !(TypeSig is PinnedSig) && TypeSig != null; }
-		}
-
-		public bool AddingNonLeafTypeSig {
-			get { return TypeSig != null; }
-		}
-
-		public string TypeSigDnlibFullName {
-			get { return TypeSig == null ? "null" : TypeSig.FullName; }
-		}
+		public bool CanAddGeneric => IsEnabled && (options.CanAddGenericTypeVar || options.CanAddGenericMethodVar);
+		public bool IsValidTypeSig => options.NullTypeSigAllowed || TypeSig != null;
+		public bool CanAddLeafTypeSig => IsEnabled && TypeSig == null;
+		public bool AddingLeafTypeSig => TypeSig == null;
+		public bool CanAddNonLeafTypeSig => IsEnabled && !(TypeSig is PinnedSig) && TypeSig != null;
+		public bool AddingNonLeafTypeSig => TypeSig != null;
+		public string TypeSigDnlibFullName => TypeSig == null ? "null" : TypeSig.FullName;
 
 		public string TypeSigLanguageFullName {
 			get {
@@ -149,69 +127,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand ClearTypeSigCommand {
-			get { return new RelayCommand(a => TypeSig = null, a => IsEnabled && TypeSig != null); }
-		}
-
-		public ICommand RemoveLastTypeSigCommand {
-			get { return new RelayCommand(a => RemoveLastTypeSig(), a => IsEnabled && TypeSig != null); }
-		}
-
-		public ICommand AddTypeDefOrRefCommand {
-			get { return new RelayCommand(a => AddTypeDefOrRef(), a => AddTypeDefOrRefCanExecute()); }
-		}
-
-		public ICommand AddGenericVarCommand {
-			get { return new RelayCommand(a => AddGenericVar(), a => AddGenericVarCanExecute()); }
-		}
-
-		public ICommand AddGenericMVarCommand {
-			get { return new RelayCommand(a => AddGenericMVar(), a => AddGenericMVarCanExecute()); }
-		}
-
-		public ICommand AddFnPtrSigCommand {
-			get { return new RelayCommand(a => AddFnPtrSig(), a => AddFnPtrSigCanExecute()); }
-		}
-
-		public ICommand AddGenericInstSigCommand {
-			get { return new RelayCommand(a => AddGenericInstSig(), a => AddGenericInstSigCanExecute()); }
-		}
-
-		public ICommand AddPtrSigCommand {
-			get { return new RelayCommand(a => AddPtrSig(), a => AddPtrSigCanExecute()); }
-		}
-
-		public ICommand AddByRefSigCommand {
-			get { return new RelayCommand(a => AddByRefSig(), a => AddByRefSigCanExecute()); }
-		}
-
-		public ICommand AddSZArraySigCommand {
-			get { return new RelayCommand(a => AddSZArraySig(), a => AddSZArraySigCanExecute()); }
-		}
-
-		public ICommand AddArraySigCommand {
-			get { return new RelayCommand(a => AddArraySig(), a => AddArraySigCanExecute()); }
-		}
-
-		public ICommand AddCModReqdSigCommand {
-			get { return new RelayCommand(a => AddCModReqdSig(), a => AddCModReqdSigCanExecute()); }
-		}
-
-		public ICommand AddCModOptSigCommand {
-			get { return new RelayCommand(a => AddCModOptSig(), a => AddCModOptSigCanExecute()); }
-		}
-
-		public ICommand AddPinnedSigCommand {
-			get { return new RelayCommand(a => AddPinnedSig(), a => AddPinnedSigCanExecute()); }
-		}
-
-		public IEnumerable<ILanguage> AllLanguages {
-			get { return options.LanguageManager.AllLanguages; }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand ClearTypeSigCommand => new RelayCommand(a => TypeSig = null, a => IsEnabled && TypeSig != null);
+		public ICommand RemoveLastTypeSigCommand => new RelayCommand(a => RemoveLastTypeSig(), a => IsEnabled && TypeSig != null);
+		public ICommand AddTypeDefOrRefCommand => new RelayCommand(a => AddTypeDefOrRef(), a => AddTypeDefOrRefCanExecute());
+		public ICommand AddGenericVarCommand => new RelayCommand(a => AddGenericVar(), a => AddGenericVarCanExecute());
+		public ICommand AddGenericMVarCommand => new RelayCommand(a => AddGenericMVar(), a => AddGenericMVarCanExecute());
+		public ICommand AddFnPtrSigCommand => new RelayCommand(a => AddFnPtrSig(), a => AddFnPtrSigCanExecute());
+		public ICommand AddGenericInstSigCommand => new RelayCommand(a => AddGenericInstSig(), a => AddGenericInstSigCanExecute());
+		public ICommand AddPtrSigCommand => new RelayCommand(a => AddPtrSig(), a => AddPtrSigCanExecute());
+		public ICommand AddByRefSigCommand => new RelayCommand(a => AddByRefSig(), a => AddByRefSigCanExecute());
+		public ICommand AddSZArraySigCommand => new RelayCommand(a => AddSZArraySig(), a => AddSZArraySigCanExecute());
+		public ICommand AddArraySigCommand => new RelayCommand(a => AddArraySig(), a => AddArraySigCanExecute());
+		public ICommand AddCModReqdSigCommand => new RelayCommand(a => AddCModReqdSig(), a => AddCModReqdSigCanExecute());
+		public ICommand AddCModOptSigCommand => new RelayCommand(a => AddCModOptSig(), a => AddCModOptSigCanExecute());
+		public ICommand AddPinnedSigCommand => new RelayCommand(a => AddPinnedSig(), a => AddPinnedSigCanExecute());
+		public IEnumerable<ILanguage> AllLanguages => options.LanguageManager.AllLanguages;
 
 		public ILanguage Language {
 			get { return options.Language; }
@@ -224,10 +155,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public UInt32VM GenericVariableNumber {
-			get { return genericVariableNumber; }
-		}
-		readonly UInt32VM genericVariableNumber;
+		public UInt32VM GenericVariableNumber { get; }
 
 		readonly TypeSigCreatorOptions options;
 		readonly TypeSig defaultTypeSig;
@@ -235,23 +163,21 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig defaultTypeSig = null) {
 			this.options = options.Clone();
 			this.defaultTypeSig = defaultTypeSig;
-			this.arrayRank = new UInt32VM(2, a => { });
-			this.arraySizes = new UInt32ListDataFieldVM(a => { }) {
+			this.ArrayRank = new UInt32VM(2, a => { });
+			this.ArraySizes = new UInt32ListDataFieldVM(a => { }) {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
 				Max = ModelUtils.COMPRESSED_UINT32_MAX,
 			};
-			this.arrayLowerBounds = new Int32ListDataFieldVM(a => { }) {
+			this.ArrayLowerBounds = new Int32ListDataFieldVM(a => { }) {
 				Min = ModelUtils.COMPRESSED_INT32_MIN,
 				Max = ModelUtils.COMPRESSED_INT32_MAX,
 			};
-			this.genericVariableNumber = new UInt32VM(0, a => { });
+			this.GenericVariableNumber = new UInt32VM(0, a => { });
 
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			this.TypeSig = defaultTypeSig;
-		}
+		void Reinitialize() => this.TypeSig = defaultTypeSig;
 
 		void ShowWarning(Guid? guid, string msg) {
 			if (showWarningMessage == null)
@@ -264,9 +190,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSig = TypeSig.Next;
 		}
 
-		TypeDefOrRefSig GetTypeSig() {
-			return GetTypeSig(dnSpy_AsmEditor_Resources.Pick_Type, VisibleMembersFlags.TypeDef);
-		}
+		TypeDefOrRefSig GetTypeSig() => GetTypeSig(dnSpy_AsmEditor_Resources.Pick_Type, VisibleMembersFlags.TypeDef);
 
 		TypeDefOrRefSig GetTypeSig(string title, VisibleMembersFlags flags) {
 			if (dnlibTypePicker == null)
@@ -294,29 +218,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		void AddTypeDefOrRef() {
-			TypeSig = GetTypeSig();
-		}
-
-		bool AddTypeDefOrRefCanExecute() {
-			return CanAddLeafTypeSig;
-		}
-
-		void AddGenericVar() {
-			TypeSig = new GenericVar(genericVariableNumber.Value, options.OwnerType);
-		}
-
-		bool AddGenericVarCanExecute() {
-			return !genericVariableNumber.HasError && options.CanAddGenericTypeVar && CanAddLeafTypeSig;
-		}
-
-		void AddGenericMVar() {
-			TypeSig = new GenericMVar(genericVariableNumber.Value, options.OwnerMethod);
-		}
-
-		bool AddGenericMVarCanExecute() {
-			return !genericVariableNumber.HasError && options.CanAddGenericMethodVar && CanAddLeafTypeSig;
-		}
+		void AddTypeDefOrRef() => TypeSig = GetTypeSig();
+		bool AddTypeDefOrRefCanExecute() => CanAddLeafTypeSig;
+		void AddGenericVar() => TypeSig = new GenericVar(GenericVariableNumber.Value, options.OwnerType);
+		bool AddGenericVarCanExecute() => !GenericVariableNumber.HasError && options.CanAddGenericTypeVar && CanAddLeafTypeSig;
+		void AddGenericMVar() => TypeSig = new GenericMVar(GenericVariableNumber.Value, options.OwnerMethod);
+		bool AddGenericMVarCanExecute() => !GenericVariableNumber.HasError && options.CanAddGenericMethodVar && CanAddLeafTypeSig;
 
 		void AddFnPtrSig() {
 			if (createMethodPropertySig == null)
@@ -335,9 +242,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			TypeSig = new FnPtrSig(sig);
 		}
 
-		bool AddFnPtrSigCanExecute() {
-			return CanAddFnPtr && CanAddLeafTypeSig;
-		}
+		bool AddFnPtrSigCanExecute() => CanAddFnPtr && CanAddLeafTypeSig;
 
 		public bool CanAddFnPtr {
 			get { return canAddFnPtr; }
@@ -376,59 +281,25 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			TypeSig = new GenericInstSig(type, genArgs);
 		}
 
-		bool AddGenericInstSigCanExecute() {
-			return CanAddLeafTypeSig;
-		}
+		bool AddGenericInstSigCanExecute() => CanAddLeafTypeSig;
+		void AddPtrSig() => TypeSig = new PtrSig(TypeSig);
+		bool AddPtrSigCanExecute() => CanAddNonLeafTypeSig;
+		void AddByRefSig() => TypeSig = new ByRefSig(TypeSig);
+		bool AddByRefSigCanExecute() => CanAddNonLeafTypeSig;
+		void AddSZArraySig() => TypeSig = new SZArraySig(TypeSig);
+		bool AddSZArraySigCanExecute() => CanAddNonLeafTypeSig;
 
-		void AddPtrSig() {
-			TypeSig = new PtrSig(TypeSig);
-		}
+		public UInt32VM ArrayRank { get; }
+		public UInt32ListDataFieldVM ArraySizes { get; }
+		public Int32ListDataFieldVM ArrayLowerBounds { get; }
 
-		bool AddPtrSigCanExecute() {
-			return CanAddNonLeafTypeSig;
-		}
+		void AddArraySig() => TypeSig = new ArraySig(TypeSig, ArrayRank.Value, ArraySizes.Value, ArrayLowerBounds.Value);
 
-		void AddByRefSig() {
-			TypeSig = new ByRefSig(TypeSig);
-		}
-
-		bool AddByRefSigCanExecute() {
-			return CanAddNonLeafTypeSig;
-		}
-
-		void AddSZArraySig() {
-			TypeSig = new SZArraySig(TypeSig);
-		}
-
-		bool AddSZArraySigCanExecute() {
-			return CanAddNonLeafTypeSig;
-		}
-
-		public UInt32VM ArrayRank {
-			get { return arrayRank; }
-		}
-		UInt32VM arrayRank;
-
-		public UInt32ListDataFieldVM ArraySizes {
-			get { return arraySizes; }
-		}
-		UInt32ListDataFieldVM arraySizes;
-
-		public Int32ListDataFieldVM ArrayLowerBounds {
-			get { return arrayLowerBounds; }
-		}
-		Int32ListDataFieldVM arrayLowerBounds;
-
-		void AddArraySig() {
-			TypeSig = new ArraySig(TypeSig, arrayRank.Value, arraySizes.Value, arrayLowerBounds.Value);
-		}
-
-		bool AddArraySigCanExecute() {
-			return CanAddNonLeafTypeSig &&
-				!arrayRank.HasError &&
-				!arraySizes.HasError &&
-				!arrayLowerBounds.HasError;
-		}
+		bool AddArraySigCanExecute() =>
+			CanAddNonLeafTypeSig &&
+			!ArrayRank.HasError &&
+			!ArraySizes.HasError &&
+			!ArrayLowerBounds.HasError;
 
 		void AddCModReqdSig() {
 			var type = GetTypeSig();
@@ -436,9 +307,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSig = new CModReqdSig(type.ToTypeDefOrRef(), TypeSig);
 		}
 
-		bool AddCModReqdSigCanExecute() {
-			return CanAddNonLeafTypeSig;
-		}
+		bool AddCModReqdSigCanExecute() => CanAddNonLeafTypeSig;
 
 		void AddCModOptSig() {
 			var type = GetTypeSig();
@@ -446,20 +315,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSig = new CModOptSig(type.ToTypeDefOrRef(), TypeSig);
 		}
 
-		bool AddCModOptSigCanExecute() {
-			return CanAddNonLeafTypeSig;
-		}
-
-		void AddPinnedSig() {
-			TypeSig = new PinnedSig(TypeSig);
-		}
-
-		bool AddPinnedSigCanExecute() {
-			return options.IsLocal && CanAddNonLeafTypeSig;
-		}
-
-		public override bool HasError {
-			get { return !IsValidTypeSig; }
-		}
+		bool AddCModOptSigCanExecute() => CanAddNonLeafTypeSig;
+		void AddPinnedSig() => TypeSig = new PinnedSig(TypeSig);
+		bool AddPinnedSigCanExecute() => options.IsLocal && CanAddNonLeafTypeSig;
+		public override bool HasError => !IsValidTypeSig;
 	}
 }

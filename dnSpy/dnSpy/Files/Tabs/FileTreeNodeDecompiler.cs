@@ -50,7 +50,7 @@ namespace dnSpy.Files.Tabs {
 
 			if (nodes.Length == 1) {
 				var ds = nodes[0] as IDecompileSelf;
-				if (ds != null && ds.Decompile(decompileNodeContext))
+				if (ds?.Decompile(decompileNodeContext) == true)
 					return;
 			}
 

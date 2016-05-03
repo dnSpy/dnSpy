@@ -30,17 +30,11 @@ namespace dnSpy.AsmEditor.Commands {
 		bool restoreIndex;
 		int origIndex = -1;
 
-		public IDnSpyFileNode DnSpyFileNode {
-			get { return fileNode; }
-		}
-
-		public static RootDnSpyFileNodeCreator CreateAssembly(IFileTreeView fileTreeView, IDnSpyDotNetFile asm) {
-			return new RootDnSpyFileNodeCreator(fileTreeView, fileTreeView.CreateAssembly(asm), false);
-		}
-
-		public static RootDnSpyFileNodeCreator CreateModule(IFileTreeView fileTreeView, IDnSpyDotNetFile asm) {
-			return new RootDnSpyFileNodeCreator(fileTreeView, fileTreeView.CreateModule(asm), false);
-		}
+		public IDnSpyFileNode DnSpyFileNode => fileNode;
+		public static RootDnSpyFileNodeCreator CreateAssembly(IFileTreeView fileTreeView, IDnSpyDotNetFile asm) =>
+			new RootDnSpyFileNodeCreator(fileTreeView, fileTreeView.CreateAssembly(asm), false);
+		public static RootDnSpyFileNodeCreator CreateModule(IFileTreeView fileTreeView, IDnSpyDotNetFile asm) =>
+			new RootDnSpyFileNodeCreator(fileTreeView, fileTreeView.CreateModule(asm), false);
 
 		public RootDnSpyFileNodeCreator(IFileTreeView fileTreeView, IDnSpyFileNode asmNode)
 			: this(fileTreeView, asmNode, true) {

@@ -28,33 +28,13 @@ namespace dndbg.Engine {
 			return output;
 		}
 
-		public static T Write<T>(this T output, TypeSig type, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) where T : ITypeOutput {
-			return Write(output, type, TypePrinterFlags.Default, typeGenArgs, methGenArgs);
-		}
-
-		public static string ToString(TypeSig type, TypePrinterFlags flags, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) {
-			return Write(new StringBuilderTypeOutput(), type, flags, typeGenArgs, methGenArgs).ToString();
-		}
-
-		public static string ToString(TypeSig type, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) {
-			return ToString(type, TypePrinterFlags.Default, typeGenArgs, methGenArgs);
-		}
-
-		public static T Write<T>(this T output, CorElementType etype, TypePrinterFlags flags) where T : ITypeOutput {
-			return Write(output, ToTypeSig(etype), flags);
-		}
-
-		public static T Write<T>(this T output, CorElementType etype) where T : ITypeOutput {
-			return Write(output, etype, TypePrinterFlags.Default);
-		}
-
-		public static string ToString(CorElementType etype, TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), etype, flags).ToString();
-		}
-
-		public static string ToString(CorElementType etype) {
-			return ToString(etype, TypePrinterFlags.Default);
-		}
+		public static T Write<T>(this T output, TypeSig type, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) where T : ITypeOutput => Write(output, type, TypePrinterFlags.Default, typeGenArgs, methGenArgs);
+		public static string ToString(TypeSig type, TypePrinterFlags flags, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) => Write(new StringBuilderTypeOutput(), type, flags, typeGenArgs, methGenArgs).ToString();
+		public static string ToString(TypeSig type, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) => ToString(type, TypePrinterFlags.Default, typeGenArgs, methGenArgs);
+		public static T Write<T>(this T output, CorElementType etype, TypePrinterFlags flags) where T : ITypeOutput => Write(output, ToTypeSig(etype), flags);
+		public static T Write<T>(this T output, CorElementType etype) where T : ITypeOutput => Write(output, etype, TypePrinterFlags.Default);
+		public static string ToString(CorElementType etype, TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), etype, flags).ToString();
+		public static string ToString(CorElementType etype) => ToString(etype, TypePrinterFlags.Default);
 
 		static TypeSig ToTypeSig(CorElementType etype) {
 			var corlib = DebugSignatureReader.CorLibTypes;
@@ -86,25 +66,15 @@ namespace dndbg.Engine {
 			return output;
 		}
 
-		public static string ConstantToString(TypeSig type, object c, TypePrinterFlags flags) {
-			return WriteConstant(new StringBuilderTypeOutput(), type, c, flags).ToString();
-		}
-
-		public static string ConstantToString(TypeSig type, object c) {
-			return ConstantToString(type, c, TypePrinterFlags.Default);
-		}
+		public static string ConstantToString(TypeSig type, object c, TypePrinterFlags flags) => WriteConstant(new StringBuilderTypeOutput(), type, c, flags).ToString();
+		public static string ConstantToString(TypeSig type, object c) => ConstantToString(type, c, TypePrinterFlags.Default);
 
 		public static T WriteConstant<T>(this T output, object c, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).WriteConstant(c);
 			return output;
 		}
 
-		public static string ConstantToString(object c, TypePrinterFlags flags) {
-			return WriteConstant(new StringBuilderTypeOutput(), c, flags).ToString();
-		}
-
-		public static string ConstantToString(object c) {
-			return ConstantToString(c, TypePrinterFlags.Default);
-		}
+		public static string ConstantToString(object c, TypePrinterFlags flags) => WriteConstant(new StringBuilderTypeOutput(), c, flags).ToString();
+		public static string ConstantToString(object c) => ConstantToString(c, TypePrinterFlags.Default);
 	}
 }

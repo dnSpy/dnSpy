@@ -90,27 +90,25 @@ namespace dnSpy.Files.Tabs {
 			tab.FollowReference(member, false);
 		}
 
-		static IDnlibDef AskForDef(string title, ITokenResolver resolver) {
-			return Shared.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
-				string error;
-				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
-				var memberRef = resolver.ResolveToken(token);
-				var member = ResolveDef(memberRef);
-				return member;
-			}, s => {
-				string error;
-				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
-				if (!string.IsNullOrEmpty(error))
-					return error;
-				var memberRef = resolver.ResolveToken(token);
-				var member = ResolveDef(memberRef);
-				if (memberRef == null)
-					return string.Format(dnSpy_Resources.GoToToken_InvalidToken, token);
-				else if (member == null)
-					return string.Format(dnSpy_Resources.GoToToken_CouldNotResolve, token);
-				return string.Empty;
-			});
-		}
+		static IDnlibDef AskForDef(string title, ITokenResolver resolver) => Shared.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
+			string error;
+			uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+			var memberRef = resolver.ResolveToken(token);
+			var member = ResolveDef(memberRef);
+			return member;
+		}, s => {
+			string error;
+			uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+			if (!string.IsNullOrEmpty(error))
+				return error;
+			var memberRef = resolver.ResolveToken(token);
+			var member = ResolveDef(memberRef);
+			if (memberRef == null)
+				return string.Format(dnSpy_Resources.GoToToken_InvalidToken, token);
+			else if (member == null)
+				return string.Format(dnSpy_Resources.GoToToken_CouldNotResolve, token);
+			return string.Empty;
+		});
 
 		[ExportMenuItem(Header = "res:GoToTokenCommand", InputGestureText = "res:GoToTokenKey", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 20)]
 		public sealed class CodeCommand : MenuItemBase {
@@ -129,9 +127,7 @@ namespace dnSpy.Files.Tabs {
 				return true;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(fileTabManager);
-			}
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(fileTabManager);
 		}
 
 		[ExportMenuItem(Header = "res:GoToTokenCommand", InputGestureText = "res:GoToTokenKey", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 20)]
@@ -155,9 +151,7 @@ namespace dnSpy.Files.Tabs {
 				return elem is IFileTreeNodeData;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(fileTabManager);
-			}
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(fileTabManager);
 		}
 	}
 }

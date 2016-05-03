@@ -45,26 +45,12 @@ namespace dnSpy.Debugger {
 		readonly DebuggerSettingsImpl _global_settings;
 		readonly IPickFilename pickFilename;
 
-		public DebuggerSettings Settings {
-			get { return debuggerSettings; }
-		}
-		readonly DebuggerSettings debuggerSettings;
+		public DebuggerSettings Settings { get; }
+		public double Order => AppSettingsConstants.ORDER_DEBUGGER_TAB_DISPLAY;
+		public string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
+		public object UIObject => this;
 
-		public double Order {
-			get { return AppSettingsConstants.ORDER_DEBUGGER_TAB_DISPLAY; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.DebuggerOptDlgTab; }
-		}
-
-		public object UIObject {
-			get { return this; }
-		}
-
-		public EnumListVM BreakProcessKindVM {
-			get { return breakProcessKindVM; }
-		}
+		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);
 
 		public BreakProcessKind BreakProcessKind {
@@ -72,13 +58,11 @@ namespace dnSpy.Debugger {
 			set { BreakProcessKindVM.SelectedItem = value; }
 		}
 
-		public ICommand PickCoreCLRDbgShimFilenameCommand {
-			get { return new RelayCommand(a => PickNewCoreCLRDbgShimFilename()); }
-		}
+		public ICommand PickCoreCLRDbgShimFilenameCommand => new RelayCommand(a => PickNewCoreCLRDbgShimFilename());
 
 		public DebuggerAppSettingsTab(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
 			this._global_settings = debuggerSettingsImpl;
-			this.debuggerSettings = debuggerSettingsImpl.Clone();
+			this.Settings = debuggerSettingsImpl.Clone();
 			this.BreakProcessKind = debuggerSettingsImpl.BreakProcessKind;
 			this.pickFilename = pickFilename;
 		}
@@ -95,7 +79,7 @@ namespace dnSpy.Debugger {
 		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
 			if (!saveSettings)
 				return;
-			debuggerSettings.CopyTo(_global_settings);
+			Settings.CopyTo(_global_settings);
 			_global_settings.BreakProcessKind = this.BreakProcessKind;
 		}
 	}

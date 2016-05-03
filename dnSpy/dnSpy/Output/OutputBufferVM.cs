@@ -87,9 +87,7 @@ namespace dnSpy.Output {
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
 		public void Write(object color, string s) => WriteInternal(color, s);
 		public void Write(OutputColor color, string s) => WriteInternal(color.Box(), s);
-
-		public void WriteLine(OutputColor color, string s) =>
-			WriteLine(color.Box(), s);
+		public void WriteLine(OutputColor color, string s) => WriteLine(color.Box(), s);
 
 		public void WriteLine(object color, string s) {
 			WriteInternal(color, s);

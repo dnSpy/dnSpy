@@ -36,9 +36,7 @@ using dnSpy.Shared.Files.TreeView.Resources;
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE)]
 	sealed class SerializedImageResourceElementNodeCreator : IResourceNodeCreator {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
-			return null;
-		}
+		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
 		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
@@ -54,19 +52,12 @@ namespace dnSpy.Files.TreeView.Resources {
 	}
 
 	sealed class SerializedImageResourceElementNode : ResourceElementNode, ISerializedImageResourceElementNode {
-		public ImageSource ImageSource {
-			get { return imageSource; }
-		}
+		public ImageSource ImageSource => imageSource;
 		ImageSource imageSource;
 		byte[] imageData;
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE); }
-		}
-
-		protected override ImageReference GetIcon() {
-			return new ImageReference(GetType().Assembly, "ImageFile");
-		}
+		public override Guid Guid => new Guid(FileTVConstants.SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE);
+		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
 
 		public SerializedImageResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
 			: base(treeNodeGroup, resourceElement) {
@@ -96,12 +87,10 @@ namespace dnSpy.Files.TreeView.Resources {
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
-		public ResourceElement GetAsRawImage() {
-			return new ResourceElement {
-				Name = ResourceElement.Name,
-				ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
-			};
-		}
+		public ResourceElement GetAsRawImage() => new ResourceElement {
+			Name = ResourceElement.Name,
+			ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
+		};
 
 		public override string CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);

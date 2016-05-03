@@ -26,9 +26,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class PropertyWithExtensionHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithExtension; }
-		}
+		public BamlRecordType Type => BamlRecordType.PropertyWithExtension;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (PropertyWithExtensionRecord)((BamlRecordNode)node).Record;

@@ -26,9 +26,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class KeyElementStartHandler : ElementHandler, IHandler, IDeferHandler {
-		BamlRecordType IHandler.Type {
-			get { return BamlRecordType.KeyElementStart; }
-		}
+		BamlRecordType IHandler.Type => BamlRecordType.KeyElementStart;
 
 		BamlElement IHandler.Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			XamlResourceKey.Create(node);

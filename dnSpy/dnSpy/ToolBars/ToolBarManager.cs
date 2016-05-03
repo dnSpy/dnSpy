@@ -43,13 +43,8 @@ namespace dnSpy.ToolBars {
 	sealed class ToolBarButtonMD : ToolBarItemMD {
 		readonly Lazy<IToolBarButton, IToolBarButtonMetadata> md;
 
-		public override IToolBarItem ToolBarItem {
-			get { return md.Value; }
-		}
-
-		public override IToolBarItemMetadata Metadata {
-			get { return md.Metadata; }
-		}
+		public override IToolBarItem ToolBarItem => md.Value;
+		public override IToolBarItemMetadata Metadata => md.Metadata;
 
 		public ToolBarButtonMD(Lazy<IToolBarButton, IToolBarButtonMetadata> md) {
 			this.md = md;
@@ -59,13 +54,8 @@ namespace dnSpy.ToolBars {
 	sealed class ToolBarObjectMD : ToolBarItemMD {
 		readonly Lazy<IToolBarObject, IToolBarObjectMetadata> md;
 
-		public override IToolBarItem ToolBarItem {
-			get { return md.Value; }
-		}
-
-		public override IToolBarItemMetadata Metadata {
-			get { return md.Metadata; }
-		}
+		public override IToolBarItem ToolBarItem => md.Value;
+		public override IToolBarItemMetadata Metadata => md.Metadata;
 
 		public ToolBarObjectMD(Lazy<IToolBarObject, IToolBarObjectMetadata> md) {
 			this.md = md;

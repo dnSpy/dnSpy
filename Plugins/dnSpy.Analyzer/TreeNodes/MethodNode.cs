@@ -35,18 +35,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false) {
 			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException(nameof(analyzedMethod));
 			this.analyzedMethod = analyzedMethod;
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() {
-			this.TreeNode.LazyLoading = true;
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(analyzedMethod);
-		}
+		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedMethod);
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
@@ -76,12 +71,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfaceMethodImplementedByNode(analyzedMethod);
 		}
 
-		public override IMemberRef Member {
-			get { return analyzedMethod; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return analyzedMethod; }
-		}
+		public override IMemberRef Member => analyzedMethod;
+		public override IMDTokenProvider Reference => analyzedMethod;
 	}
 }

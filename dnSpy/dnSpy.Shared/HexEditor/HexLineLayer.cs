@@ -25,9 +25,7 @@ namespace dnSpy.Shared.HexEditor {
 	sealed class HexLineLayer : UIElement, IHexLayer {
 		public static readonly double DEFAULT_ORDER = 2000;
 
-		public double Order {
-			get { return DEFAULT_ORDER; }
-		}
+		public double Order => DEFAULT_ORDER;
 
 		public Vector LineStart {
 			get { return lineStart; }
@@ -58,13 +56,8 @@ namespace dnSpy.Shared.HexEditor {
 		}
 		List<HexLine> hexLines = new List<HexLine>();
 
-		protected override int VisualChildrenCount {
-			get { return hexLines.Count; }
-		}
-
-		protected override Visual GetVisualChild(int index) {
-			return hexLines[index].GetOrCreateDrawingVisual();
-		}
+		protected override int VisualChildrenCount => hexLines.Count;
+		protected override Visual GetVisualChild(int index) => hexLines[index].GetOrCreateDrawingVisual();
 
 		protected override void ArrangeCore(Rect finalRect) {
 			double x = lineStart.X, y = lineStart.Y;

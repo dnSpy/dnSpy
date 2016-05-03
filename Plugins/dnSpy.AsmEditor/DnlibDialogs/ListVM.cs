@@ -52,34 +52,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public bool InlineEditing {
-			get { return inlineEditing; }
-		}
-
-		public bool NotInlineEditing {
-			get { return !InlineEditing; }
-		}
-
-		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditItem(), a => EditItemCanExecute()); }
-		}
-
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddItem(), a => AddItemCanExecute()); }
-		}
-
-		public MyObservableCollection<TVM> Collection {
-			get { return collection; }
-		}
-		readonly MyObservableCollection<TVM> collection = new MyObservableCollection<TVM>();
-
-		public ModuleDef OwnerModule {
-			get { return ownerModule; }
-		}
+		public bool InlineEditing => inlineEditing;
+		public bool NotInlineEditing => !InlineEditing;
+		public ICommand EditCommand => new RelayCommand(a => EditItem(), a => EditItemCanExecute());
+		public ICommand AddCommand => new RelayCommand(a => AddItem(), a => AddItemCanExecute());
+		public MyObservableCollection<TVM> Collection { get; } = new MyObservableCollection<TVM>();
+		public ModuleDef OwnerModule { get; }
 
 		readonly string editString;
 		readonly string createString;
-		protected readonly ModuleDef ownerModule;
 		protected readonly ILanguageManager languageManager;
 		protected readonly TypeDef ownerType;
 		protected readonly MethodDef ownerMethod;
@@ -88,7 +69,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected ListVM(string editString, string createString, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
 			this.editString = editString;
 			this.createString = createString;
-			this.ownerModule = ownerModule;
+			this.OwnerModule = ownerModule;
 			this.languageManager = languageManager;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
@@ -137,9 +118,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		bool EditItemCanExecute() {
-			return NotInlineEditing && Collection.SelectedIndex >= 0 && Collection.SelectedIndex < Collection.Count;
-		}
+		bool EditItemCanExecute() => NotInlineEditing && Collection.SelectedIndex >= 0 && Collection.SelectedIndex < Collection.Count;
 
 		protected virtual void AddItem() {
 			if (!AddItemCanExecute())
@@ -153,12 +132,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		protected virtual int GetAddIndex(TVM obj) {
-			return Collection.Count;
-		}
-
-		protected virtual bool AddItemCanExecute() {
-			return true;
-		}
+		protected virtual int GetAddIndex(TVM obj) => Collection.Count;
+		protected virtual bool AddItemCanExecute() => true;
 	}
 }

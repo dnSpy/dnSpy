@@ -35,45 +35,33 @@ namespace dndbg.Engine {
 
 		/// <summary>implicit operator</summary>
 		/// <param name="moduleFilename">Module filename</param>
-		public static implicit operator SerializedDnModule(string moduleFilename) {
-			return Create(moduleFilename);
-		}
+		public static implicit operator SerializedDnModule(string moduleFilename) => Create(moduleFilename);
 
 		/// <summary>
 		/// Gets the full name, identical to the dnlib assembly full name
 		/// </summary>
-		public string AssemblyFullName {
-			get { return asmFullName ?? string.Empty; }
-		}
+		public string AssemblyFullName => asmFullName ?? string.Empty;
 
 		/// <summary>
 		/// Name of module. This is the filename if <see cref="IsInMemory"/> is false, else it's <see cref="ModuleDef.Name"/>
 		/// </summary>
-		public string ModuleName {
-			get { return moduleName ?? string.Empty; }
-		}
+		public string ModuleName => moduleName ?? string.Empty;
 
 		/// <summary>
 		/// true if it's a dynamic module
 		/// </summary>
-		public bool IsDynamic {
-			get { return (flags & Flags.IsDynamic) != 0; }
-		}
+		public bool IsDynamic => (flags & Flags.IsDynamic) != 0;
 
 		/// <summary>
 		/// true if it's an in-memory module and the file doesn't exist on disk
 		/// </summary>
-		public bool IsInMemory {
-			get { return (flags & Flags.IsInMemory) != 0; }
-		}
+		public bool IsInMemory => (flags & Flags.IsInMemory) != 0;
 
 		/// <summary>
 		/// true if <see cref="AssemblyFullName"/> isn't used when comparing this instance against
 		/// other instances.
 		/// </summary>
-		public bool ModuleNameOnly {
-			get { return (flags & Flags.NameOnly) != 0; }
-		}
+		public bool ModuleNameOnly => (flags & Flags.NameOnly) != 0;
 
 		static readonly StringComparer AssemblyNameComparer = StringComparer.OrdinalIgnoreCase;
 		// The module name can contain filenames so case must be ignored
@@ -108,9 +96,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="moduleFilename">Module filename</param>
 		/// <returns></returns>
-		public static SerializedDnModule Create(string moduleFilename) {
-			return new SerializedDnModule(string.Empty, GetFullName(moduleFilename), false, false, true);
-		}
+		public static SerializedDnModule Create(string moduleFilename) =>
+			new SerializedDnModule(string.Empty, GetFullName(moduleFilename), false, false, true);
 
 		static string GetFullName(string filename) {
 			try {
@@ -126,20 +113,16 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static SerializedDnModule CreateFromFile(ModuleDef module) {
-			var asm = module.Assembly;
-			return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, module.Location, false, false, false);
-		}
+		public static SerializedDnModule CreateFromFile(ModuleDef module) =>
+			new SerializedDnModule(module.Assembly?.FullName ?? string.Empty, module.Location, false, false, false);
 
 		/// <summary>
 		/// Creates an in-memory <see cref="SerializedDnModule"/>
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static SerializedDnModule CreateInMemory(ModuleDef module) {
-			var asm = module.Assembly;
-			return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, module.Name, false, true, false);
-		}
+		public static SerializedDnModule CreateInMemory(ModuleDef module) =>
+			new SerializedDnModule(module.Assembly?.FullName ?? string.Empty, module.Name, false, true, false);
 
 		/// <summary>
 		/// Creates a <see cref="SerializedDnModule"/>
@@ -148,11 +131,8 @@ namespace dndbg.Engine {
 		/// <param name="isDynamic">true if it's a dynamic module</param>
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <returns></returns>
-		public static SerializedDnModule Create(ModuleDef module, bool isDynamic, bool isInMemory) {
-			var asm = module.Assembly;
-			var name = !isInMemory ? module.Location : module.Name.String;
-			return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, name, isDynamic, isInMemory, false);
-		}
+		public static SerializedDnModule Create(ModuleDef module, bool isDynamic, bool isInMemory) =>
+			new SerializedDnModule(module.Assembly?.FullName ?? string.Empty, !isInMemory ? module.Location : module.Name.String, isDynamic, isInMemory, false);
 
 		/// <summary>
 		/// Creates a <see cref="SerializedDnModule"/>
@@ -164,9 +144,8 @@ namespace dndbg.Engine {
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
-		public static SerializedDnModule Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) {
-			return new SerializedDnModule(asmFullName, moduleName, isDynamic, isInMemory, false);
-		}
+		public static SerializedDnModule Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
+			new SerializedDnModule(asmFullName, moduleName, isDynamic, isInMemory, false);
 
 		/// <summary>
 		/// operator==()
@@ -174,9 +153,7 @@ namespace dndbg.Engine {
 		/// <param name="a">a</param>
 		/// <param name="b">b</param>
 		/// <returns></returns>
-		public static bool operator ==(SerializedDnModule a, SerializedDnModule b) {
-			return a.Equals(b);
-		}
+		public static bool operator ==(SerializedDnModule a, SerializedDnModule b) => a.Equals(b);
 
 		/// <summary>
 		/// operator!=()
@@ -184,9 +161,7 @@ namespace dndbg.Engine {
 		/// <param name="a">a</param>
 		/// <param name="b">b</param>
 		/// <returns></returns>
-		public static bool operator !=(SerializedDnModule a, SerializedDnModule b) {
-			return !a.Equals(b);
-		}
+		public static bool operator !=(SerializedDnModule a, SerializedDnModule b) => !a.Equals(b);
 
 		/// <summary>
 		/// Equals()

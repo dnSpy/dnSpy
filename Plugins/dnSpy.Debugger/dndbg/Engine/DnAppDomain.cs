@@ -30,99 +30,68 @@ namespace dndbg.Engine {
 	public sealed class DnAppDomain {
 		readonly DebuggerCollection<ICorDebugAssembly, DnAssembly> assemblies;
 
-		public CorAppDomain CorAppDomain {
-			get { return appDomain; }
-		}
-		readonly CorAppDomain appDomain;
+		public CorAppDomain CorAppDomain { get; }
 
 		/// <summary>
 		/// Unique id per debugger
 		/// </summary>
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-		readonly int uniqueId;
+		public int UniqueId { get; }
 
 		/// <summary>
 		/// Unique id per process
 		/// </summary>
-		public int UniqueIdProcess {
-			get { return uniqueIdProcess; }
-		}
-		readonly int uniqueIdProcess;
+		public int UniqueIdProcess { get; }
 
 		/// <summary>
 		/// AppDomain Id
 		/// </summary>
-		public int Id {
-			get { return appDomain.Id; }
-		}
+		public int Id => CorAppDomain.Id;
 
 		/// <summary>
 		/// true if the AppDomain has exited
 		/// </summary>
-		public bool HasExited {
-			get { return hasExited; }
-		}
-		bool hasExited;
+		public bool HasExited { get; private set; }
 
 		/// <summary>
 		/// AppDomain name
 		/// </summary>
-		public string Name {
-			get { return appDomain.Name ?? string.Empty; }
-		}
+		public string Name => CorAppDomain.Name ?? string.Empty;
 
 		/// <summary>
 		/// Gets the owner debugger
 		/// </summary>
-		public DnDebugger Debugger {
-			get { return Process.Debugger; }
-		}
+		public DnDebugger Debugger => Process.Debugger;
 
 		/// <summary>
 		/// Gets the owner process
 		/// </summary>
-		public DnProcess Process {
-			get { return ownerProcess; }
-		}
-		readonly DnProcess ownerProcess;
+		public DnProcess Process { get; }
 
 		internal DnAppDomain(DnProcess ownerProcess, ICorDebugAppDomain appDomain, int uniqueId, int uniqueIdProcess) {
-			this.ownerProcess = ownerProcess;
+			this.Process = ownerProcess;
 			this.assemblies = new DebuggerCollection<ICorDebugAssembly, DnAssembly>(CreateAssembly);
-			this.appDomain = new CorAppDomain(appDomain);
-			this.uniqueId = uniqueId;
-			this.uniqueIdProcess = uniqueIdProcess;
+			this.CorAppDomain = new CorAppDomain(appDomain);
+			this.UniqueId = uniqueId;
+			this.UniqueIdProcess = uniqueIdProcess;
 			NameChanged();
 		}
 
-		DnAssembly CreateAssembly(ICorDebugAssembly comAssembly) {
-			return new DnAssembly(this, comAssembly, Debugger.GetNextAssemblyId(), Process.GetNextAssemblyId(), Interlocked.Increment(ref nextAssemblyId));
-		}
+		DnAssembly CreateAssembly(ICorDebugAssembly comAssembly) =>
+			new DnAssembly(this, comAssembly, Debugger.GetNextAssemblyId(), Process.GetNextAssemblyId(), Interlocked.Increment(ref nextAssemblyId));
 		int nextAssemblyId = -1, nextModuleId = -1;
 
-		internal int GetNextModuleId() {
-			return Interlocked.Increment(ref nextModuleId);
-		}
-
-		internal void NameChanged() {
-		}
-
-		internal void SetHasExited() {
-			hasExited = true;
-		}
+		internal int GetNextModuleId() => Interlocked.Increment(ref nextModuleId);
+		internal void NameChanged() { }
+		internal void SetHasExited() => HasExited = true;
 
 		public bool CheckValid() {
 			if (HasExited)
 				return false;
 			int running;
-			return appDomain.RawObject.IsRunning(out running) >= 0;
+			return CorAppDomain.RawObject.IsRunning(out running) >= 0;
 		}
 
-		internal DnAssembly TryAdd(ICorDebugAssembly comAssembly) {
-			return assemblies.Add(comAssembly);
-		}
+		internal DnAssembly TryAdd(ICorDebugAssembly comAssembly) => assemblies.Add(comAssembly);
 
 		/// <summary>
 		/// Gets all Assemblies, sorted on the order they were created
@@ -159,9 +128,7 @@ namespace dndbg.Engine {
 		/// Gets all threads, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnThread[] Threads {
-			get { return Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray(); }
-		}
+		public DnThread[] Threads => Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray();
 
 		/// <summary>
 		/// Gets all modules in this app domain
@@ -176,8 +143,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public override string ToString() {
-			return string.Format("{0} {1} {2}", UniqueId, Id, Name);
-		}
+		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, Id, Name);
 	}
 }

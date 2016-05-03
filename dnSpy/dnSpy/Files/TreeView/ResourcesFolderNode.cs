@@ -31,41 +31,24 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class ResourcesFolderNode : FileTreeNodeData, IResourcesFolderNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.RESOURCES_FOLDER_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "FolderClosed");
-		}
-
-		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "FolderOpened");
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.RESOURCES_FOLDER_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
+			new ImageReference(GetType().Assembly, "FolderClosed");
+		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) =>
+			new ImageReference(GetType().Assembly, "FolderOpened");
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override void Initialize() => TreeNode.LazyLoading = true;
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly ModuleDef module;
 
 		public ResourcesFolderNode(ITreeNodeGroup treeNodeGroup, ModuleDef module) {
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.module = module;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Resources.ResourcesFolder, BoxedTextTokenKind.Text);
-		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			var treeNodeGroup = Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);

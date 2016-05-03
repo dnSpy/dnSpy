@@ -64,9 +64,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			this.languageSettingsManager = languageSettingsManager;
 		}
 
-		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider(languageSettingsManager).Languages;
-		}
+		public IEnumerable<ILanguage> Create() => new LanguageProvider(languageSettingsManager).Languages;
 	}
 
 	/// <summary>
@@ -76,44 +74,22 @@ namespace dnSpy.Languages.ILSpy.VB {
 		readonly Predicate<IAstTransform> transformAbortCondition = null;
 		readonly bool showAllMembers = false;
 
-		public override IDecompilerSettings Settings {
-			get { return langSettings; }
-		}
+		public override IDecompilerSettings Settings => langSettings;
 		readonly LanguageDecompilerSettings langSettings;
 
-		public override double OrderUI {
-			get { return LanguageConstants.VB_ILSPY_ORDERUI; }
-		}
+		public override double OrderUI => LanguageConstants.VB_ILSPY_ORDERUI;
 
 		public VBLanguage(LanguageDecompilerSettings langSettings) {
 			this.langSettings = langSettings;
 		}
 
 		public override Guid ContentTypeGuid => new Guid(ContentTypes.VISUALBASIC_ILSPY);
-
-		public override string GenericNameUI {
-			get { return LanguageConstants.GENERIC_NAMEUI_VB; }
-		}
-
-		public override string UniqueNameUI {
-			get { return "Visual Basic"; }
-		}
-
-		public override Guid GenericGuid {
-			get { return LanguageConstants.LANGUAGE_VB; }
-		}
-
-		public override Guid UniqueGuid {
-			get { return LanguageConstants.LANGUAGE_VB_ILSPY; }
-		}
-
-		public override string FileExtension {
-			get { return ".vb"; }
-		}
-
-		public override string ProjectFileExtension {
-			get { return ".vbproj"; }
-		}
+		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_VB;
+		public override string UniqueNameUI => "Visual Basic";
+		public override Guid GenericGuid => LanguageConstants.LANGUAGE_VB;
+		public override Guid UniqueGuid => LanguageConstants.LANGUAGE_VB_ILSPY;
+		public override string FileExtension => ".vb";
+		public override string ProjectFileExtension => ".vbproj";
 
 		public override void WriteCommentBegin(ITextOutput output, bool addSpace) {
 			if (addSpace)
@@ -122,8 +98,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 				output.Write("'", BoxedTextTokenKind.Comment);
 		}
 
-		public override void WriteCommentEnd(ITextOutput output, bool addSpace) {
-		}
+		public override void WriteCommentEnd(ITextOutput output, bool addSpace) { }
 
 		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
 			WriteAssembly(asm, output, ctx);
@@ -214,9 +189,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			}
 		}
 
-		public override bool ShowMember(IMemberRef member) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
-		}
+		public override bool ShowMember(IMemberRef member) => showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
 
 		void RunTransformsAndGenerateCode(ref BuilderState state, ITextOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
@@ -254,7 +227,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		protected override void FormatTypeName(ITextOutput output, TypeDef type) {
 			if (type == null)
-				throw new ArgumentNullException("type");
+				throw new ArgumentNullException(nameof(type));
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
 		}

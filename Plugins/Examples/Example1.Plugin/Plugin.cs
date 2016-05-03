@@ -13,13 +13,9 @@ namespace Example1.Plugin {
 			}
 		}
 
-		public PluginInfo PluginInfo {
-			get {
-				return new PluginInfo {
-					ShortDescription = "Example1 plugin",
-				};
-			}
-		}
+		public PluginInfo PluginInfo => new PluginInfo {
+			ShortDescription = "Example1 plugin",
+		};
 
 		public void OnEvent(PluginEvent @event, object obj) {
 			// We don't care about any events

@@ -74,14 +74,8 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		protected abstract void InitializeDataObject(DataObject dataObj);
-
-		protected byte[] ReadByteArray() {
-			return hexBox.Document.ReadBytes(start, (int)(end - start + 1));
-		}
-
-		protected int ReadByte(ulong offset) {
-			return hexBox.Document.ReadByte(offset);
-		}
+		protected byte[] ReadByteArray() => hexBox.Document.ReadBytes(start, (int)(end - start + 1));
+		protected int ReadByte(ulong offset) => hexBox.Document.ReadByte(offset);
 	}
 
 	sealed class HexStringFormatter : DataFormatter {

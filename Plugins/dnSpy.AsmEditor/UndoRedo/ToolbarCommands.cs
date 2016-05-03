@@ -50,10 +50,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public override bool IsEnabled(IToolBarItemContext context) {
-			return undoCommandManager.Value.CanUndo ||
-				undoCommandManager.Value.CanRedo;
-		}
+		public override bool IsEnabled(IToolBarItemContext context) =>
+			undoCommandManager.Value.CanUndo || undoCommandManager.Value.CanRedo;
 
 		public override void Execute(IToolBarItemContext context) {
 			var res = messageBoxManager.ShowIgnorableMessage(new Guid("FC8FC68F-4285-4CDF-BEC0-FF6498EEC4AA"), dnSpy_AsmEditor_Resources.AskClearUndoHistory, MsgBoxButton.Yes | MsgBoxButton.No);

@@ -75,9 +75,9 @@ namespace dnSpy.MainApp {
 
 		static bool IsValid(AppToolWindowLocation value) {
 			return value == AppToolWindowLocation.Top ||
-				value == AppToolWindowLocation.Left ||
-				value == AppToolWindowLocation.Right ||
-				value == AppToolWindowLocation.Bottom;
+					value == AppToolWindowLocation.Left ||
+					value == AppToolWindowLocation.Right ||
+					value == AppToolWindowLocation.Bottom;
 		}
 
 		public void Write(ISettingsSection section) {
@@ -114,7 +114,7 @@ namespace dnSpy.MainApp {
 		public StackedContentState StackedContentState;
 		public int Index;
 		public bool IsHorizontal;
-		public List<ToolWindowGroupState> Groups { get; private set; }
+		public List<ToolWindowGroupState> Groups { get; }
 
 		public ToolWindowUIState() {
 			this.Groups = new List<ToolWindowGroupState>();
@@ -206,7 +206,7 @@ namespace dnSpy.MainApp {
 		const string CONTENT_SECT = "Content";
 
 		public int Index;
-		public List<ToolWindowContentState> Contents { get; private set; }
+		public List<ToolWindowContentState> Contents { get; }
 
 		public ToolWindowGroupState() {
 			this.Contents = new List<ToolWindowContentState>();
@@ -264,9 +264,7 @@ namespace dnSpy.MainApp {
 			return new ToolWindowContentState(guid.Value);
 		}
 
-		public static void Serialize(ISettingsSection section, ToolWindowContentState state) {
-			section.Attribute(GUID_ATTR, state.Guid);
-		}
+		public static void Serialize(ISettingsSection section, ToolWindowContentState state) => section.Attribute(GUID_ATTR, state.Guid);
 
 		public ToolWindowContentState Save(IToolWindowContent c) {
 			this.Guid = c.Guid;
@@ -282,9 +280,7 @@ namespace dnSpy.MainApp {
 		readonly Lazy<IMainToolWindowContentCreator>[] contentCreators;
 		readonly Dictionary<Guid, AppToolWindowLocation> savedLocations;
 
-		public object UIObject {
-			get { return horizontalContent.UIObject; }
-		}
+		public object UIObject => horizontalContent.UIObject;
 
 		[ImportingConstructor]
 		MainWindowControl(IToolWindowManagerCreator toolWindowManagerCreator, [ImportMany] Lazy<IMainToolWindowContentCreator>[] contentCreators) {
@@ -328,12 +324,10 @@ namespace dnSpy.MainApp {
 				mainWindowControl.TabGroupCollectionChanged(this);
 			}
 
-			public StackedContentChildInfo GetSizeInfo() {
-				return new StackedContentChildInfo {
-					Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
-					Vertical = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
-				};
-			}
+			public StackedContentChildInfo GetSizeInfo() => new StackedContentChildInfo {
+				Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
+				Vertical = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
+			};
 		}
 
 		public void Initialize(IStackedContentChild mainChild, MainWindowControlState state) {
@@ -414,9 +408,7 @@ namespace dnSpy.MainApp {
 			return null;
 		}
 
-		AppToolWindowLocation GetLocation(Guid guid, AppToolWindowLocation? location) {
-			return GetSavedLocation(guid) ?? location ?? GetDefaultLocation(guid);
-		}
+		AppToolWindowLocation GetLocation(Guid guid, AppToolWindowLocation? location) => GetSavedLocation(guid) ?? location ?? GetDefaultLocation(guid);
 
 		AppToolWindowLocation GetDefaultLocation(Guid guid) {
 			foreach (var creator in this.contentCreators) {
@@ -492,13 +484,8 @@ namespace dnSpy.MainApp {
 			ui.IsAdded = true;
 		}
 
-		public bool IsShown(IToolWindowContent content) {
-			return GetToolWindowGroup(content) != null;
-		}
-
-		public bool IsShown(Guid guid) {
-			return GetToolWindowGroup(guid) != null;
-		}
+		public bool IsShown(IToolWindowContent content) => GetToolWindowGroup(content) != null;
+		public bool IsShown(Guid guid) => GetToolWindowGroup(guid) != null;
 
 		void Hide(ToolWindowUI ui) {
 			Debug.Assert(!ui.ToolWindowGroupManager.TabGroups.Any());
@@ -522,9 +509,7 @@ namespace dnSpy.MainApp {
 			ui.Length = length.Value;
 		}
 
-		public IToolWindowContent Show(Guid guid, AppToolWindowLocation? location) {
-			return Show(guid, GetLocation(guid, location), true, true);
-		}
+		public IToolWindowContent Show(Guid guid, AppToolWindowLocation? location) => Show(guid, GetLocation(guid, location), true, true);
 
 		IToolWindowContent Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
 			var content = Create(guid);

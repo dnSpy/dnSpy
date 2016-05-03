@@ -25,8 +25,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files {
 	class FileManagerSettings : ViewModelBase, IFileManagerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool UseMemoryMappedIO {
 			get { return useMemoryMappedIO; }

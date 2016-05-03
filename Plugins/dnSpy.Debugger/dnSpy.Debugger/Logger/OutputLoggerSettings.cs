@@ -37,8 +37,7 @@ namespace dnSpy.Debugger.Logger {
 	}
 
 	class OutputLoggerSettings : ViewModelBase, IOutputLoggerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool ShowExceptionMessages {
 			get { return showExceptionMessages; }

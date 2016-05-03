@@ -37,9 +37,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.language = language;
 		}
 
-		ILanguage MethodLanguage {
-			get { return language; }
-		}
+		ILanguage MethodLanguage => language;
 
 		string GetHexFormatUInt16() {
 			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)

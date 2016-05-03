@@ -27,9 +27,9 @@ using dnSpy.BamlDecompiler.Properties;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlType {
-		public IAssembly Assembly { get; private set; }
-		public string TypeNamespace { get; private set; }
-		public string TypeName { get; private set; }
+		public IAssembly Assembly { get; }
+		public string TypeNamespace { get; }
+		public string TypeName { get; }
 
 		public XNamespace Namespace { get; private set; }
 		public ITypeDefOrRef ResolvedType { get; set; }
@@ -95,8 +95,6 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			return Namespace + XmlConvert.EncodeLocalName(TypeName);
 		}
 
-		public override string ToString() {
-			return TypeName;
-		}
+		public override string ToString() => TypeName;
 	}
 }

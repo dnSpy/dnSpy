@@ -28,26 +28,11 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		readonly ILSettings ilSettings;
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public double Order {
-			get { return LanguageConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_IL; }
-		}
-
-		public string Name {
-			get { return dnSpy_Languages_ILSpy_Resources.ILDecompilerSettingsTabName; }
-		}
-
-		public ILSettings Settings {
-			get { return ilSettings; }
-		}
-
-		public object UIObject {
-			get { return this; }
-		}
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public double Order => LanguageConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_IL;
+		public string Name => dnSpy_Languages_ILSpy_Resources.ILDecompilerSettingsTabName;
+		public ILSettings Settings => ilSettings;
+		public object UIObject => this;
 
 		public ILDecompilerSettingsTab(ILSettings ilSettings) {
 			this._global_ilSettings = ilSettings;

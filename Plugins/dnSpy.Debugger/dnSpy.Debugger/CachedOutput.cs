@@ -27,17 +27,13 @@ namespace dnSpy.Debugger {
 	struct CachedOutput : IEquatable<CachedOutput> {
 		public readonly List<Tuple<string, TypeColor>> data;
 
-		public static CachedOutput Create() {
-			return new CachedOutput(false);
-		}
+		public static CachedOutput Create() => new CachedOutput(false);
 
 		public CachedOutput(bool dummy) {
 			this.data = new List<Tuple<string, TypeColor>>();
 		}
 
-		public void Add(string s, TypeColor type) {
-			data.Add(Tuple.Create(s, type));
-		}
+		public void Add(string s, TypeColor type) => data.Add(Tuple.Create(s, type));
 
 		public bool Equals(CachedOutput other) {
 			if (data.Count != other.data.Count)
@@ -51,9 +47,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public override bool Equals(object obj) {
-			return obj is CachedOutput && Equals((CachedOutput)obj);
-		}
+		public override bool Equals(object obj) => obj is CachedOutput && Equals((CachedOutput)obj);
 
 		public override int GetHashCode() {
 			int hc = data.Count << 16;
@@ -72,9 +66,7 @@ namespace dnSpy.Debugger {
 		sealed class TypeOutput : ITypeOutput {
 			public CachedOutput cachedOutput = new CachedOutput(true);
 
-			public void Write(string s, TypeColor type) {
-				cachedOutput.Add(s, type);
-			}
+			public void Write(string s, TypeColor type) => cachedOutput.Add(s, type);
 		}
 
 		public static CachedOutput Create(string msg, TypeColor color) {
@@ -83,9 +75,8 @@ namespace dnSpy.Debugger {
 			return output;
 		}
 
-		public static CachedOutput CreateConstant(TypeSig type, object c, TypePrinterFlags flags) {
-			return TypePrinterUtils.WriteConstant(new TypeOutput(), type, c, flags).cachedOutput;
-		}
+		public static CachedOutput CreateConstant(TypeSig type, object c, TypePrinterFlags flags) =>
+			TypePrinterUtils.WriteConstant(new TypeOutput(), type, c, flags).cachedOutput;
 
 		public static CachedOutput Create(TypeSig fieldType, TypePrinterFlags flags) {
 			fieldType = fieldType.RemovePinnedAndModifiers() ?? fieldType;
@@ -110,15 +101,14 @@ namespace dnSpy.Debugger {
 			return output.cachedOutput;
 		}
 
-		public static CachedOutput CreateType(CorValue value, TypePrinterFlags flags) {
-			return CreateType(new TypeOutput(), value, flags).cachedOutput;
-		}
+		public static CachedOutput CreateType(CorValue value, TypePrinterFlags flags) =>
+			CreateType(new TypeOutput(), value, flags).cachedOutput;
 
 		static TypeOutput CreateType(TypeOutput output, CorValue value, TypePrinterFlags flags) {
 			if (value == null)
 				output.Write("???", TypeColor.Error);
 			else {
-				if (value.IsReference && value.Type == dndbg.COM.CorDebug.CorElementType.ByRef)
+				if (value.IsReference && value.ElementType == dndbg.COM.CorDebug.CorElementType.ByRef)
 					value = value.NeuterCheckDereferencedValue ?? value;
 
 				var type = value.ExactType;

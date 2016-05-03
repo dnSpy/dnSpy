@@ -23,17 +23,9 @@ namespace dnSpy.Shared.HexEditor {
 	public class ByteArrayHexStream : IHexStream {
 		readonly byte[] data;
 
-		public ulong Size {
-			get { return (ulong)data.LongLength; }
-		}
-
-		public ulong StartOffset {
-			get { return 0; }
-		}
-
-		public ulong EndOffset {
-			get { return data.LongLength == 0 ? 0 : (ulong)data.LongLength - 1; }
-		}
+		public ulong Size => (ulong)data.LongLength;
+		public ulong StartOffset => 0;
+		public ulong EndOffset => data.LongLength == 0 ? 0 : (ulong)data.LongLength - 1;
 
 		public ByteArrayHexStream(byte[] data) {
 			this.data = data;

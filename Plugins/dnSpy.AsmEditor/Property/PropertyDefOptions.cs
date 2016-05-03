@@ -61,9 +61,7 @@ namespace dnSpy.AsmEditor.Property {
 			return prop;
 		}
 
-		public PropertyDef CreatePropertyDef(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new PropertyDefUser()));
-		}
+		public PropertyDef CreatePropertyDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new PropertyDefUser()));
 
 		public static PropertyDefOptions Create(ModuleDef module, UTF8String name, bool isInstance) {
 			return new PropertyDefOptions {

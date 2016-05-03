@@ -33,14 +33,11 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class OpenFromGACVM : ViewModelBase, IGACFileReceiver, IDisposable {
-		public ObservableCollection<GACFileVM> Collection {
-			get { return gacFileList; }
-		}
-		readonly ObservableCollection<GACFileVM> gacFileList;
+		public ObservableCollection<GACFileVM> Collection => gacFileList;
+		public ICollectionView CollectionView => collectionView;
+		public bool SyntaxHighlight { get; }
 
-		public ICollectionView CollectionView {
-			get { return collectionView; }
-		}
+		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
 
 		public object SelectedItem {
@@ -54,11 +51,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		object selectedItem;
 
-		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
-		}
-		readonly bool syntaxHighlight;
-
 		public bool SearchingGAC {
 			get { return searchingGAC; }
 			set {
@@ -71,9 +63,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		bool searchingGAC;
 
-		public bool NotSearchingGAC {
-			get { return !SearchingGAC; }
-		}
+		public bool NotSearchingGAC => !SearchingGAC;
 
 		public string SearchText {
 			get { return searchText; }
@@ -103,7 +93,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		readonly HashSet<GACFileVM> uniqueFiles;
 
 		public OpenFromGACVM(bool syntaxHighlight) {
-			this.syntaxHighlight = syntaxHighlight;
+			this.SyntaxHighlight = syntaxHighlight;
 			this.gacFileList = new ObservableCollection<GACFileVM>();
 			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
 			this.collectionView.CustomSort = new GACFileVM_Comparer();
@@ -128,9 +118,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 
-		void RefreshCounters() {
-			OnPropertyChanged("FilesShownInfo");
-		}
+		void RefreshCounters() => OnPropertyChanged("FilesShownInfo");
 
 		public void AddFiles(IEnumerable<GacFileInfo> files) {
 			foreach (var file in files) {

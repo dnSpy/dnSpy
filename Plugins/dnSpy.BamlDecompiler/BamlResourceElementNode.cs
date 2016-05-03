@@ -43,17 +43,9 @@ namespace dnSpy.BamlDecompiler {
 		readonly byte[] bamlData;
 		readonly BamlSettings bamlSettings;
 
-		public bool DisassembleBaml {
-			get { return bamlSettings.DisassembleBaml; }
-		}
-
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.BAML_RESOURCE_ELEMENT_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon() {
-			return new ImageReference(GetType().Assembly, "XamlFile");
-		}
+		public bool DisassembleBaml => bamlSettings.DisassembleBaml;
+		public override Guid Guid => new Guid(FileTVConstants.BAML_RESOURCE_ELEMENT_NODE_GUID);
+		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "XamlFile");
 
 		public BamlResourceElementNode(ModuleDef module, ResourceElement resourceElement, byte[] bamlData, ITreeNodeGroup treeNodeGroup, BamlSettings bamlSettings)
 			: base(treeNodeGroup, resourceElement) {

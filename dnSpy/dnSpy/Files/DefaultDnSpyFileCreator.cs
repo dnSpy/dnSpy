@@ -26,9 +26,7 @@ using dnSpy.Shared.Files;
 namespace dnSpy.Files {
 	[Export(typeof(IDnSpyFileCreator))]
 	sealed class DefaultDnSpyFileCreator : IDnSpyFileCreator {
-		public double Order {
-			get { return FileConstants.ORDER_DEFAULT_FILE_CREATOR; }
-		}
+		public double Order => FileConstants.ORDER_DEFAULT_FILE_CREATOR;
 
 		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
 			var filename = GetFilename(fileInfo);
@@ -54,9 +52,7 @@ namespace dnSpy.Files {
 			return null;
 		}
 
-		static string GetGacFilename(string asmFullName) {
-			return GacInfo.FindInGac(new AssemblyNameInfo(asmFullName));
-		}
+		static string GetGacFilename(string asmFullName) => GacInfo.FindInGac(new AssemblyNameInfo(asmFullName));
 
 		static string GetRefFileFilename(string s) {
 			int index = s.LastIndexOf(FileConstants.REFERENCE_ASSEMBLY_SEPARATOR);

@@ -48,22 +48,15 @@ namespace dnSpy.Files.TreeView.Resources {
 			return new ResourceElementSetNode(treeNodeGroup, module, er);
 		}
 
-		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
-			return null;
-		}
+		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) => null;
 	}
 
 	sealed class ResourceElementSetNode : ResourceNode, IResourceElementSetNode {
 		readonly ResourceElementSet resourceElementSet;
 		readonly ModuleDef module;
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.RESOURCE_ELEMENT_SET_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon() {
-			return new ImageReference(GetType().Assembly, "ResourcesFile");
-		}
+		public override Guid Guid => new Guid(FileTVConstants.RESOURCE_ELEMENT_SET_NODE_GUID);
+		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ResourcesFile");
 
 		public ResourceElementSetNode(ITreeNodeGroup treeNodeGroup, ModuleDef module, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
@@ -71,9 +64,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.resourceElementSet = ResourceReader.Read(module, resource.Data);
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			var treeNodeGroup = Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceElementTreeNodeGroup);

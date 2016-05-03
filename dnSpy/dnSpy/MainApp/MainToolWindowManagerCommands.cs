@@ -40,14 +40,10 @@ namespace dnSpy.MainApp {
 	}
 
 	abstract class CtxMenuToolWindowGroupCommand : MenuItemBase<ToolWindowGroupContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override ToolWindowGroupContext CreateContext(IMenuItemContext context) {
-			return CreateContextInternal(context);
-		}
+		protected sealed override ToolWindowGroupContext CreateContext(IMenuItemContext context) => CreateContextInternal(context);
 
 		readonly IMainToolWindowManager mainToolWindowManager;
 
@@ -72,13 +68,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroup.CloseActiveTabCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroup.CloseActiveTab();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroup.CloseActiveTabCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroup.CloseActiveTab();
 	}
 
 	[ExportMenuItem(Header = "res:HideAllToolWindowsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
@@ -88,13 +79,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.CloseAllTabsCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.CloseAllTabs();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.CloseAllTabsCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.CloseAllTabs();
 	}
 
 	static class Constants {
@@ -111,9 +97,7 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override void Execute(ToolWindowGroupContext context) {
-			Debug.Fail("Shouldn't be here");
-		}
+		public override void Execute(ToolWindowGroupContext context) => Debug.Fail("Shouldn't be here");
 	}
 
 	[ExportMenuItem(Header = "res:MoveToolWindowGroupCommand", Guid = Constants.MOVE_GROUP_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 40)]
@@ -123,13 +107,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroup.TabContents.Count() > 1;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			Debug.Fail("Shouldn't be here");
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroup.TabContents.Count() > 1;
+		public override void Execute(ToolWindowGroupContext context) => Debug.Fail("Shouldn't be here");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveTopCommand", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_CONTENT, Order = 0)]
@@ -139,13 +118,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Top);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Top);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Top);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Top);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveLeftCommand", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_CONTENT, Order = 10)]
@@ -155,13 +129,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Left);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Left);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Left);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Left);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveRightCommand", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_CONTENT, Order = 20)]
@@ -171,13 +140,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Right);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Right);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Right);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Right);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveBottomCommand", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_CONTENT, Order = 30)]
@@ -187,13 +151,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Bottom);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Bottom);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Bottom);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Bottom);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveTopCommand", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_GROUP, Order = 0)]
@@ -203,13 +162,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Top);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Top);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Top);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Top);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveLeftCommand", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_GROUP, Order = 10)]
@@ -219,13 +173,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Left);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Left);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Left);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Left);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveRightCommand", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_GROUP, Order = 20)]
@@ -235,13 +184,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Right);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Right);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Right);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Right);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveBottomCommand", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_GROUP, Order = 30)]
@@ -251,13 +195,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsEnabled(ToolWindowGroupContext context) {
-			return context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Bottom);
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Bottom);
-		}
+		public override bool IsEnabled(ToolWindowGroupContext context) => context.MainToolWindowManager.CanMove(context.ToolWindowGroup, AppToolWindowLocation.Bottom);
+		public override void Execute(ToolWindowGroupContext context) => context.MainToolWindowManager.Move(context.ToolWindowGroup, AppToolWindowLocation.Bottom);
 	}
 
 	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 0)]
@@ -267,13 +206,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.NewHorizontalTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.NewHorizontalTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.NewHorizontalTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.NewHorizontalTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 10)]
@@ -283,13 +217,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.NewVerticalTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.NewVerticalTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.NewVerticalTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.NewVerticalTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 20)]
@@ -299,13 +228,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MoveToNextTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MoveToNextTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveToNextTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveToNextTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveAllTabsToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 30)]
@@ -315,13 +239,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MoveAllToNextTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MoveAllToNextTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveAllToNextTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveAllToNextTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 40)]
@@ -331,13 +250,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MoveToPreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MoveToPreviousTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveToPreviousTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveToPreviousTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveAllToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 50)]
@@ -347,13 +261,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MoveAllToPreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MoveAllToPreviousTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveAllToPreviousTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveAllToPreviousTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:CloseTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 0)]
@@ -363,13 +272,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.CloseTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.CloseTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.CloseTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.CloseTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:CloseAllTabGroupsButThisCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 10)]
@@ -379,13 +283,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.CloseAllTabGroupsButThisCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.CloseAllTabGroupsButThis();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.CloseAllTabGroupsButThisCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.CloseAllTabGroupsButThis();
 	}
 
 	[ExportMenuItem(Header = "res:MoveTabGroupAfterNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 20)]
@@ -395,13 +294,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MoveTabGroupAfterNextTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveTabGroupAfterNextTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveTabGroupBeforePreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 30)]
@@ -411,13 +305,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MoveTabGroupBeforePreviousTabGroup();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MoveTabGroupBeforePreviousTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MergeAllTabGroupsCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 40)]
@@ -427,13 +316,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.MergeAllTabGroupsCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.MergeAllTabGroups();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MergeAllTabGroupsCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.MergeAllTabGroups();
 	}
 
 	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 0)]
@@ -443,13 +327,8 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.UseVerticalTabGroupsCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.UseVerticalTabGroups();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.UseVerticalTabGroupsCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.UseVerticalTabGroups();
 	}
 
 	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 10)]
@@ -459,12 +338,7 @@ namespace dnSpy.MainApp {
 			: base(mainToolWindowManager) {
 		}
 
-		public override bool IsVisible(ToolWindowGroupContext context) {
-			return context.ToolWindowGroupManager.UseHorizontalTabGroupsCanExecute;
-		}
-
-		public override void Execute(ToolWindowGroupContext context) {
-			context.ToolWindowGroupManager.UseHorizontalTabGroups();
-		}
+		public override bool IsVisible(ToolWindowGroupContext context) => context.ToolWindowGroupManager.UseHorizontalTabGroupsCanExecute;
+		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupManager.UseHorizontalTabGroups();
 	}
 }

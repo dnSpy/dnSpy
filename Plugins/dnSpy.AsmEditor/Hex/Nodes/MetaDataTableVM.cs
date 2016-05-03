@@ -28,94 +28,35 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class MetaDataTableVM : HexVM {
-		public Func<Table, MetaDataTableVM> FindMetaDataTable {
-			get { return findMetaDataTable; }
-			set { findMetaDataTable = value; }
-		}
-		Func<Table, MetaDataTableVM> findMetaDataTable;
-
-		public Table Table {
-			get { return TableInfo.Table; }
-		}
-
-		public uint Rows {
-			get { return numRows; }
-		}
-		readonly uint numRows;
-
-		public TableInfo TableInfo {
-			get { return tableInfo; }
-		}
-		readonly TableInfo tableInfo;
-
-		public override string Name {
-			get { return string.Format("{0:X2} {1}", (byte)TableInfo.Table, TableInfo.Table); }
-		}
-
-		public string Column0Name {
-			get { return GetColumnName(0); }
-		}
-
-		public string Column1Name {
-			get { return GetColumnName(1); }
-		}
-
-		public string Column2Name {
-			get { return GetColumnName(2); }
-		}
-
-		public string Column3Name {
-			get { return GetColumnName(3); }
-		}
-
-		public string Column4Name {
-			get { return GetColumnName(4); }
-		}
-
-		public string Column5Name {
-			get { return GetColumnName(5); }
-		}
-
-		public string Column6Name {
-			get { return GetColumnName(6); }
-		}
-
-		public string Column7Name {
-			get { return GetColumnName(7); }
-		}
-
-		public string Column8Name {
-			get { return GetColumnName(8); }
-		}
-
-		public string Column9Name {
-			get { return GetColumnName(9); }
-		}
+		public Func<Table, MetaDataTableVM> FindMetaDataTable { get; set; }
+		public Table Table => TableInfo.Table;
+		public uint Rows { get; }
+		public TableInfo TableInfo { get; }
+		public override string Name => string.Format("{0:X2} {1}", (byte)TableInfo.Table, TableInfo.Table);
+		public string Column0Name => GetColumnName(0);
+		public string Column1Name => GetColumnName(1);
+		public string Column2Name => GetColumnName(2);
+		public string Column3Name => GetColumnName(3);
+		public string Column4Name => GetColumnName(4);
+		public string Column5Name => GetColumnName(5);
+		public string Column6Name => GetColumnName(6);
+		public string Column7Name => GetColumnName(7);
+		public string Column8Name => GetColumnName(8);
+		public string Column9Name => GetColumnName(9);
 
 		public string GetColumnName(int col) {
-			Debug.Assert(col < tableInfo.Columns.Count);
-			if (col >= tableInfo.Columns.Count)
+			Debug.Assert(col < TableInfo.Columns.Count);
+			if (col >= TableInfo.Columns.Count)
 				return string.Empty;
-			return tableInfo.Columns[col].Name;
+			return TableInfo.Columns[col].Name;
 		}
 
-		public string InfoName {
-			get { return dnSpy_AsmEditor_Resources.Info; }
-		}
+		public string InfoName => dnSpy_AsmEditor_Resources.Info;
+		public virtual bool HasInfo => false;
+		public override IEnumerable<HexField> HexFields => hexFields;
+		readonly HexField[] hexFields = Array.Empty<HexField>();
 
-		public virtual bool HasInfo {
-			get { return false; }
-		}
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
-		readonly HexField[] hexFields = new HexField[0];
-
-		public VirtualizedList<MetaDataTableRecordVM> Collection {
-			get { return virtList; }
-		}
-		readonly VirtualizedList<MetaDataTableRecordVM> virtList;
+		public VirtualizedList<MetaDataTableRecordVM> Collection { get; }
 
 		public object SelectedItem {
 			get { return selectedItem; }
@@ -128,37 +69,27 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 		object selectedItem;
 
-		public HexDocument Document {
-			get { return doc; }
-		}
-
-		public ulong StartOffset {
-			get { return startOffset; }
-		}
-
-		public ulong EndOffset {
-			get { return endOffset; }
-		}
+		public HexDocument Document => doc;
+		public ulong StartOffset { get; }
+		public ulong EndOffset { get; }
 
 		readonly HexDocument doc;
-		readonly ulong startOffset;
-		readonly ulong endOffset;
 		ulong stringsStartOffset;
 		ulong stringsEndOffset;
 
 		protected MetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner) {
 			this.doc = doc;
-			this.startOffset = startOffset;
-			this.endOffset = startOffset + (mdTable.Rows == 0 ? 0 : (ulong)mdTable.Rows * mdTable.RowSize - 1);
-			this.numRows = mdTable.Rows;
-			this.tableInfo = CreateTableInfo(mdTable.TableInfo);
-			this.virtList = new VirtualizedList<MetaDataTableRecordVM>((int)numRows, CreateItem);
+			this.StartOffset = startOffset;
+			this.EndOffset = startOffset + (mdTable.Rows == 0 ? 0 : (ulong)mdTable.Rows * mdTable.RowSize - 1);
+			this.Rows = mdTable.Rows;
+			this.TableInfo = CreateTableInfo(mdTable.TableInfo);
+			this.Collection = new VirtualizedList<MetaDataTableRecordVM>((int)Rows, CreateItem);
 		}
 
 		MetaDataTableRecordVM CreateItem(int index) {
-			Debug.Assert(index >= 0 && (uint)index < numRows);
-			switch (tableInfo.Table) {
+			Debug.Assert(index >= 0 && (uint)index < Rows);
+			switch (TableInfo.Table) {
 			case Table.Module:					return new ModuleMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
 			case Table.TypeRef:					return new TypeRefMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
 			case Table.TypeDef:					return new TypeDefMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
@@ -279,29 +210,24 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			if (!HexUtils.IsModified(startOffset, endOffset, modifiedStart, modifiedEnd))
+			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))
 				return;
 
-			ulong start = Math.Max(startOffset, modifiedStart);
-			ulong end = Math.Min(endOffset, modifiedEnd);
-			int i = (int)((start - startOffset) / (ulong)tableInfo.RowSize);
-			int endi = (int)((end - startOffset) / (ulong)tableInfo.RowSize);
-			Debug.Assert(0 <= i && i <= endi && endi < virtList.Count);
+			ulong start = Math.Max(StartOffset, modifiedStart);
+			ulong end = Math.Min(EndOffset, modifiedEnd);
+			int i = (int)((start - StartOffset) / (ulong)TableInfo.RowSize);
+			int endi = (int)((end - StartOffset) / (ulong)TableInfo.RowSize);
+			Debug.Assert(0 <= i && i <= endi && endi < Collection.Count);
 			while (i <= endi) {
-				var obj = virtList.TryGet(i);
+				var obj = Collection.TryGet(i);
 				if (obj != null)
 					obj.OnDocumentModified(modifiedStart, modifiedEnd);
 				i++;
 			}
 		}
 
-		public MetaDataTableRecordVM Get(int index) {
-			return virtList[index];
-		}
-
-		public MetaDataTableRecordVM TryGet(int index) {
-			return virtList.TryGet(index);
-		}
+		public MetaDataTableRecordVM Get(int index) => Collection[index];
+		public MetaDataTableRecordVM TryGet(int index) => Collection.TryGet(index);
 
 		internal void InitializeHeapOffsets(ulong stringsStartOffset, ulong stringsEndOffset) {
 			this.stringsStartOffset = stringsStartOffset;
@@ -373,9 +299,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable1InfoVM : MetaDataTable1VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable1InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
@@ -383,9 +307,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable2InfoVM : MetaDataTable2VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable2InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
@@ -393,9 +315,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable3InfoVM : MetaDataTable3VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable3InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
@@ -403,9 +323,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable4InfoVM : MetaDataTable4VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable4InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
@@ -413,9 +331,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable5InfoVM : MetaDataTable5VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable5InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
@@ -423,9 +339,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable6InfoVM : MetaDataTable6VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable6InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
@@ -433,9 +347,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class MetaDataTable9InfoVM : MetaDataTable9VM {
-		public override bool HasInfo {
-			get { return true; }
-		}
+		public override bool HasInfo => true;
 
 		public MetaDataTable9InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {

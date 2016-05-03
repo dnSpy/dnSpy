@@ -52,11 +52,8 @@ namespace dnSpy.Plugin {
 		}
 
 		static Version ReadVersion(XElement elem, string name) {
-			var verElem = elem.Element(name);
-			if (verElem == null)
-				return null;
-			var fn = verElem.FirstNode;
-			if (fn == null || fn.NodeType != XmlNodeType.Text)
+			var fn = elem.Element(name)?.FirstNode;
+			if (fn?.NodeType != XmlNodeType.Text)
 				return null;
 
 			var s = ((XText)fn).Value;

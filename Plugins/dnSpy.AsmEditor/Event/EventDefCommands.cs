@@ -56,17 +56,9 @@ namespace dnSpy.AsmEditor.Event {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteEventDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteEventDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 60)]
@@ -79,17 +71,9 @@ namespace dnSpy.AsmEditor.Event {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteEventDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteEventDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 60)]
@@ -102,18 +86,9 @@ namespace dnSpy.AsmEditor.Event {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					DeleteEventDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(CodeContext context) {
-				return DeleteEventDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteEventDefCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(CodeContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
@@ -122,10 +97,7 @@ namespace dnSpy.AsmEditor.Event {
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteEvents, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length > 0 &&
-				nodes.All(n => n is IEventNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IEventNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -217,9 +189,7 @@ namespace dnSpy.AsmEditor.Event {
 			this.nodes = new DeletableNodes<IEventNode>(eventNodes);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.DeleteEventCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.DeleteEventCommand;
 
 		public void Execute() {
 			nodes.Delete();
@@ -231,9 +201,7 @@ namespace dnSpy.AsmEditor.Event {
 			nodes.Restore();
 		}
 
-		public IEnumerable<object> ModifiedObjects {
-			get { return nodes.Nodes; }
-		}
+		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -249,13 +217,8 @@ namespace dnSpy.AsmEditor.Event {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateEventDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateEventDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 90)]
@@ -270,13 +233,8 @@ namespace dnSpy.AsmEditor.Event {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateEventDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateEventDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 90)]
@@ -297,15 +255,12 @@ namespace dnSpy.AsmEditor.Event {
 					context.Nodes[0] is ITypeNode;
 			}
 
-			public override void Execute(CodeContext context) {
-				CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override void Execute(CodeContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -346,9 +301,7 @@ namespace dnSpy.AsmEditor.Event {
 			this.eventNode = ownerNode.Create(options.CreateEventDef(ownerNode.TypeDef.Module));
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateEventCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.CreateEventCommand2;
 
 		public void Execute() {
 			ownerNode.TreeNode.EnsureChildrenLoaded();
@@ -382,13 +335,8 @@ namespace dnSpy.AsmEditor.Event {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return EventDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => EventDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 70)]
@@ -403,13 +351,8 @@ namespace dnSpy.AsmEditor.Event {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return EventDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => EventDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 70)]
@@ -424,19 +367,11 @@ namespace dnSpy.AsmEditor.Event {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return EventDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => EventDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is IEventNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IEventNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -480,9 +415,7 @@ namespace dnSpy.AsmEditor.Event {
 			this.nameChanged = origOptions.Name != newOptions.Name;
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.EditEventCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.EditEventCommand2;
 
 		public void Execute() {
 			if (nameChanged) {

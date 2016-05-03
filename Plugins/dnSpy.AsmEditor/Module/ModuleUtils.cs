@@ -23,9 +23,7 @@ using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Module {
 	static class ModuleUtils {
-		public static ModuleDef CreateNetModule(string name, Guid mvid, ClrVersion clrVersion) {
-			return CreateModule(name, mvid, clrVersion, ModuleKind.NetModule);
-		}
+		public static ModuleDef CreateNetModule(string name, Guid mvid, ClrVersion clrVersion) => CreateModule(name, mvid, clrVersion, ModuleKind.NetModule);
 
 		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef existingModule = null) {
 			var module = CreateModuleDef(name, mvid, clrVersion, existingModule);

@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Memory {
 		}
 		bool isEnabled;
 
-		public bool IsVisible {//TODO: Use this
+		public bool IsVisible {//TODO: Use it
 			get { return isVisible; }
 			set { isVisible = value; }
 		}
@@ -105,9 +105,7 @@ namespace dnSpy.Debugger.Memory {
 		}
 		Action refreshLines;
 
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
-			CanNotEditMemory = true;
-		}
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) => CanNotEditMemory = true;
 
 		void InitializeHexDocument() {
 			cachedHexStream = null;
@@ -152,8 +150,7 @@ namespace dnSpy.Debugger.Memory {
 				cachedHexStream.ClearCache();
 			if (IsEnabled) {
 				Debug.Assert(refreshLines != null);
-				if (refreshLines != null)
-					refreshLines();
+				refreshLines?.Invoke();
 			}
 		}
 	}

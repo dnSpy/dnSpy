@@ -88,10 +88,7 @@ namespace dndbg.Engine {
 		/// Assembly name, and is usually the full path to the manifest (first) module on disk
 		/// (the EXE or DLL file).
 		/// </summary>
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
+		public string Name { get; }
 
 		/// <summary>
 		/// Gets the full name, identical to the dnlib assembly full name
@@ -139,7 +136,7 @@ namespace dndbg.Engine {
 
 		public CorAssembly(ICorDebugAssembly assembly)
 			: base(assembly) {
-			this.name = GetName(assembly) ?? string.Empty;
+			this.Name = GetName(assembly) ?? string.Empty;
 		}
 
 		static string GetName(ICorDebugAssembly assembly) {
@@ -162,25 +159,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorAssembly a, CorAssembly b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorAssembly other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorAssembly);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[Assembly] {0}", Name);
-		}
+		public static bool operator !=(CorAssembly a, CorAssembly b) => !(a == b);
+		public bool Equals(CorAssembly other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorAssembly);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[Assembly] {0}", Name);
 	}
 }

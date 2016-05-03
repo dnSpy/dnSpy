@@ -26,61 +26,25 @@ namespace dnSpy.Settings {
 		readonly SectionAttributes sectionAttributes;
 		readonly SettingsSectionCreator settingsSectionCreator;
 
-		public string Name {
-			get { return name; }
-		}
-
-		public Tuple<string, string>[] Attributes {
-			get { return sectionAttributes.Attributes; }
-		}
-
-		readonly string name;
+		public string Name { get; }
+		public Tuple<string, string>[] Attributes => sectionAttributes.Attributes;
 
 		public SettingsSection(string name) {
-			this.name = name;
+			this.Name = name;
 			this.sectionAttributes = new SectionAttributes();
 			this.settingsSectionCreator = new SettingsSectionCreator();
 		}
 
-		public ISettingsSection[] Sections {
-			get { return settingsSectionCreator.Sections; }
-		}
-
-		public ISettingsSection CreateSection(string name) {
-			return settingsSectionCreator.CreateSection(name);
-		}
-
-		public ISettingsSection GetOrCreateSection(string name) {
-			return settingsSectionCreator.GetOrCreateSection(name);
-		}
-
-		public void RemoveSection(string name) {
-			settingsSectionCreator.RemoveSection(name);
-		}
-
-		public void RemoveSection(ISettingsSection section) {
-			settingsSectionCreator.RemoveSection(section);
-		}
-
-		public ISettingsSection[] SectionsWithName(string name) {
-			return Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
-		}
-
-		public ISettingsSection TryGetSection(string name) {
-			return Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
-		}
-
-		public T Attribute<T>(string name) {
-			return sectionAttributes.Attribute<T>(name);
-		}
-
-		public void Attribute<T>(string name, T value) {
-			sectionAttributes.Attribute(name, value);
-		}
-
-		public void RemoveAttribute(string name) {
-			sectionAttributes.RemoveAttribute(name);
-		}
+		public ISettingsSection[] Sections => settingsSectionCreator.Sections;
+		public ISettingsSection CreateSection(string name) => settingsSectionCreator.CreateSection(name);
+		public ISettingsSection GetOrCreateSection(string name) => settingsSectionCreator.GetOrCreateSection(name);
+		public void RemoveSection(string name) => settingsSectionCreator.RemoveSection(name);
+		public void RemoveSection(ISettingsSection section) => settingsSectionCreator.RemoveSection(section);
+		public ISettingsSection[] SectionsWithName(string name) => Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
+		public ISettingsSection TryGetSection(string name) => Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
+		public T Attribute<T>(string name) => sectionAttributes.Attribute<T>(name);
+		public void Attribute<T>(string name, T value) => sectionAttributes.Attribute(name, value);
+		public void RemoveAttribute(string name) => sectionAttributes.RemoveAttribute(name);
 
 		public void CopyFrom(ISettingsSection section) {
 			if (section == null)
@@ -91,8 +55,6 @@ namespace dnSpy.Settings {
 				CreateSection(child.Name).CopyFrom(child);
 		}
 
-		public override string ToString() {
-			return Name;
-		}
+		public override string ToString() => Name;
 	}
 }

@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Event type
 		/// </summary>
-		public TreeViewListenerEvent Event { get; private set; }
+		public TreeViewListenerEvent Event { get; }
 
 		/// <summary>
 		/// Argument, see <see cref="TreeViewListenerEvent"/>
 		/// </summary>
-		public object Argument { get; private set; }
+		public object Argument { get; }
 
 		/// <summary>
 		/// Constructor

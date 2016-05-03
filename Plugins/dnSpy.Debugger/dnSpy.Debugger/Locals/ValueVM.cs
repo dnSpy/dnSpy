@@ -40,9 +40,9 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	abstract class ValueVM : SharpTreeNode, IEditableValue, IDisposable {
-		public object NameObject { get { return this; } }
-		public object ValueObject { get { return this; } }
-		public object TypeObject { get { return this; } }
+		public object NameObject => this;
+		public object ValueObject => this;
+		public object TypeObject => this;
 
 		public bool IsEditingValue {
 			get { return isEditingValue; }
@@ -55,23 +55,11 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool isEditingValue;
 
-		public virtual bool CanEdit {
-			get { return false; }
-		}
-
+		public virtual bool CanEdit => false;
 		protected abstract string IconName { get; }
-
-		public IPrinterContext PrinterContext {
-			get { return context.LocalsOwner.PrinterContext; }
-		}
-
-		public sealed override object Icon {
-			get { return context.LocalsOwner.PrinterContext.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
-		}
-
-		public sealed override bool ShowIcon {
-			get { return true; }
-		}
+		public IPrinterContext PrinterContext => context.LocalsOwner.PrinterContext;
+		public sealed override object Icon => context.LocalsOwner.PrinterContext.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode);
+		public sealed override bool ShowIcon => true;
 
 		public CachedOutput CachedOutputValue {
 			get {
@@ -117,21 +105,12 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		protected virtual CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.Create();
-		}
-
-		protected virtual CachedOutput CreateCachedOutputType() {
-			return CachedOutput.Create();
-		}
-
+		protected virtual CachedOutput CreateCachedOutputValue() => CachedOutput.Create();
+		protected virtual CachedOutput CreateCachedOutputType() => CachedOutput.Create();
 		public abstract void WriteName(ISyntaxHighlightOutput output);
 
 		protected ValueContext context;
-
-		protected TypePrinterFlags TypePrinterFlags {
-			get { return context.LocalsOwner.PrinterContext.TypePrinterFlags; }
-		}
+		protected TypePrinterFlags TypePrinterFlags => context.LocalsOwner.PrinterContext.TypePrinterFlags;
 
 		internal void RefreshTypeFields() {
 			InvalidateValueObject();
@@ -151,13 +130,8 @@ namespace dnSpy.Debugger.Locals {
 			InvalidateTypeObject();
 		}
 
-		internal void RefreshSyntaxHighlightFields() {
-			RefreshThemeFields();
-		}
-
-		internal void RefreshToStringFields() {
-			InvalidateValueObject();
-		}
+		internal void RefreshSyntaxHighlightFields() => RefreshThemeFields();
+		internal void RefreshToStringFields() => InvalidateValueObject();
 
 		protected void InvalidateValueObject() {
 			cachedOutputValue = null;
@@ -177,13 +151,9 @@ namespace dnSpy.Debugger.Locals {
 			return CachedOutputValue.ToString();
 		}
 
-		public virtual string SetValueAsText(string newText) {
-			return dnSpy_Debugger_Resources.LocalsEditValue_Error_FieldCanNotBeEdited;
-		}
+		public virtual string SetValueAsText(string newText) => dnSpy_Debugger_Resources.LocalsEditValue_Error_FieldCanNotBeEdited;
 
-		protected void ClearAndDisposeChildren() {
-			ClearAndDisposeChildren(this);
-		}
+		protected void ClearAndDisposeChildren() => ClearAndDisposeChildren(this);
 
 		internal static void ClearAndDisposeChildren(SharpTreeNode node, bool includeSelf = false) {
 			var nodes = (includeSelf ? node.DescendantsAndSelf() : node.Descendants()).ToArray();
@@ -201,18 +171,13 @@ namespace dnSpy.Debugger.Locals {
 			ClearAndDisposeChildren(child, true);
 		}
 
-		public virtual void Dispose() {
-		}
+		public virtual void Dispose() { }
 	}
 
 	sealed class MessageValueVM : ValueVM {
-		protected override string IconName {
-			get { return "StatusError"; }
-		}
+		protected override string IconName => "StatusError";
 
-		public static MessageValueVM CreateError(ValueContext context, string msg) {
-			return new MessageValueVM(context, msg);
-		}
+		public static MessageValueVM CreateError(ValueContext context, string msg) => new MessageValueVM(context, msg);
 
 		readonly string msg;
 
@@ -221,19 +186,13 @@ namespace dnSpy.Debugger.Locals {
 			this.msg = msg;
 		}
 
-		public override void WriteName(ISyntaxHighlightOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) =>
 			output.Write(msg, BoxedTextTokenKind.Error);
-		}
 	}
 
 	sealed class LiteralFieldValueVM : ValueVM {
-		protected override string IconName {
-			get { return FieldValueType.GetIconName(info.OwnerType, info.Attributes); }
-		}
-
-		public object Constant {
-			get { return info.Constant; }
-		}
+		protected override string IconName => FieldValueType.GetIconName(info.OwnerType, info.Attributes);
+		public object Constant => info.Constant;
 
 		/*readonly*/ CorFieldInfo info;
 		readonly bool overridden;
@@ -244,21 +203,11 @@ namespace dnSpy.Debugger.Locals {
 			Reinitialize(context);
 		}
 
-		public void Reinitialize(ValueContext context) {
-			this.context = context;
-		}
-
-		protected override CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.CreateConstant(info.FieldType, info.Constant, TypePrinterFlags);
-		}
-
-		protected override CachedOutput CreateCachedOutputType() {
-			return CachedOutput.Create(info.FieldType, TypePrinterFlags);
-		}
-
-		public override void WriteName(ISyntaxHighlightOutput output) {
+		public void Reinitialize(ValueContext context) => this.context = context;
+		protected override CachedOutput CreateCachedOutputValue() => CachedOutput.CreateConstant(info.FieldType, info.Constant, TypePrinterFlags);
+		protected override CachedOutput CreateCachedOutputType() => CachedOutput.Create(info.FieldType, TypePrinterFlags);
+		public override void WriteName(ISyntaxHighlightOutput output) =>
 			FieldValueType.WriteName(output, info.Name, BoxedTextTokenKind.LiteralField, info.OwnerType, overridden);
-		}
 	}
 
 	/// <summary>
@@ -272,13 +221,8 @@ namespace dnSpy.Debugger.Locals {
 		protected const int ERROR_EvalDisabledTimedOut = -4;
 		protected const int ERROR_CantEvaluate = -5;
 
-		public override bool CanEdit {
-			get { return ReadOnlyCorValue != null && valueType.CanEdit; }
-		}
-
-		protected override string IconName {
-			get { return CorValueError ? "StatusError" : valueType.IconName; }
-		}
+		public override bool CanEdit => ReadOnlyCorValue != null && valueType.CanEdit;
+		protected override string IconName => CorValueError ? "StatusError" : valueType.IconName;
 
 		bool CorValueError {
 			get { return corValueError; }
@@ -292,10 +236,8 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool corValueError;
 
-		public static bool IsType<T>(SharpTreeNode node) where T : NormalValueType {
-			var vm = node as NormalValueVM;
-			return vm != null && vm.NormalValueType is T;
-		}
+		public static bool IsType<T>(SharpTreeNode node) where T : NormalValueType =>
+			(node as NormalValueVM)?.NormalValueType is T;
 
 		/// <summary>
 		/// Gets a read-only <see cref="CorValue"/> object. The caller must not write to the value
@@ -325,7 +267,7 @@ namespace dnSpy.Debugger.Locals {
 				return false;
 			var hasValueValue = value.GetFieldValue(et.Class, hasValueInfo.Token);
 			var valueValue = value.GetFieldValue(et.Class, valueInfo.Token);
-			if (hasValueValue == null || valueValue == null || hasValueValue.Type != CorElementType.Boolean || hasValueValue.Size != 1)
+			if (hasValueValue == null || valueValue == null || hasValueValue.ElementType != CorElementType.Boolean || hasValueValue.Size != 1)
 				return false;
 			var res = hasValueValue.Value;
 			if (!res.IsValid || !(res.Value is bool))
@@ -338,9 +280,7 @@ namespace dnSpy.Debugger.Locals {
 
 		protected abstract int GetReadOnlyCorValue(out CorValue value);
 
-		protected sealed override CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.CreateValue(ReadOnlyCorValue, TypePrinterFlags, () => context.LocalsOwner.CreateEval(context));
-		}
+		protected sealed override CachedOutput CreateCachedOutputValue() => CachedOutput.CreateValue(ReadOnlyCorValue, TypePrinterFlags, () => context.LocalsOwner.CreateEval(context));
 
 		protected sealed override CachedOutput CreateCachedOutputType() {
 			var value = ReadOnlyCorValue;
@@ -358,9 +298,7 @@ namespace dnSpy.Debugger.Locals {
 
 		// Called only if we should keep the field/property type, i.e., should be called by
 		// FieldValueVM and PropertyValueVM only.
-		protected void ReinitializeInternal(ValueContext newContext) {
-			ReinitializeInternal(newContext, type);
-		}
+		protected void ReinitializeInternal(ValueContext newContext) => ReinitializeInternal(newContext, type);
 
 		protected void ReinitializeInternal(ValueContext newContext, object newType) {
 			context = newContext;
@@ -383,8 +321,7 @@ namespace dnSpy.Debugger.Locals {
 			Debug.Assert(loadChildrenDel != null);
 			var del = loadChildrenDel;
 			loadChildrenDel = null;
-			if (del != null)
-				del();
+			del?.Invoke();
 		}
 
 		void InitializeChildren() {
@@ -528,9 +465,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		internal CorValue GetFieldInstanceObject() {
-			return GetObjectCorValue();
-		}
+		internal CorValue GetFieldInstanceObject() => GetObjectCorValue();
 
 		CorValue GetObjectCorValue() {
 			var v = ReadOnlyCorValue;
@@ -584,17 +519,15 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		IEnumerable<CorFieldInfo> GetFields(CorType et) {
-			return et.GetFields().Where(a => {
-				// VS2015 adds this to property backing store fields
-				if (context.LocalsOwner.DebuggerBrowsableAttributesCanHidePropsFields && a.DebuggerBrowsableState == DebuggerBrowsableState.Never)
-					return false;
-				// All VS compilers probably add this to all property backing store fields
-				if (context.LocalsOwner.CompilerGeneratedAttributesCanHideFields && a.CompilerGeneratedAttribute)
-					return false;
-				return true;
-            });
-		}
+		IEnumerable<CorFieldInfo> GetFields(CorType et) => et.GetFields().Where(a => {
+			// VS2015 adds this to property backing store fields
+			if (context.LocalsOwner.DebuggerBrowsableAttributesCanHidePropsFields && a.DebuggerBrowsableState == DebuggerBrowsableState.Never)
+				return false;
+			// All VS compilers probably add this to all property backing store fields
+			if (context.LocalsOwner.CompilerGeneratedAttributesCanHideFields && a.CompilerGeneratedAttribute)
+				return false;
+			return true;
+		});
 
 		IEnumerable<CorPropertyInfo> GetProperties(CorType et) {
 			if (!context.LocalsOwner.DebuggerBrowsableAttributesCanHidePropsFields)
@@ -764,10 +697,8 @@ namespace dnSpy.Debugger.Locals {
 		// type that is a sub class of this type or implements this interface (if this is an iface type)
 		object type;
 
-		public NormalValueType NormalValueType {
-			get { return valueType; }
-		}
-		/*readonly*/ NormalValueType valueType;
+		public NormalValueType NormalValueType => valueType;
+		NormalValueType valueType;
 
 		protected NormalValueVM() {
 		}
@@ -783,13 +714,8 @@ namespace dnSpy.Debugger.Locals {
 			this.type = type;
 		}
 
-		internal void RaisePropertyChangedInternal(string propName) {
-			RaisePropertyChanged(propName);
-		}
-
-		public override void WriteName(ISyntaxHighlightOutput output) {
-			valueType.WriteName(output);
-		}
+		internal void RaisePropertyChangedInternal(string propName) => RaisePropertyChanged(propName);
+		public override void WriteName(ISyntaxHighlightOutput output) => valueType.WriteName(output);
 
 		public override string SetValueAsText(string newText) {
 			if (!CanEdit)
@@ -801,11 +727,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected abstract string SetValueAsTextInternal(ValueStringParser parser);
-
-		public sealed override void Dispose() {
-			CleanUpCorValue();
-		}
-
+		public sealed override void Dispose() => CleanUpCorValue();
 		protected abstract void CleanUpCorValue();
 
 		protected string WriteNewValue(ValueStringParser parser, Func<CorValue> getValue) {
@@ -813,7 +735,7 @@ namespace dnSpy.Debugger.Locals {
 			if (value == null || value.IsNeutered)
 				return dnSpy_Debugger_Resources.Locals_Error_ErrorNeuteredCouldNotBeRecreated;
 
-			if (value.IsReference && value.Type == CorElementType.ByRef) {
+			if (value.IsReference && value.ElementType == CorElementType.ByRef) {
 				var v = value.NeuterCheckDereferencedValue;
 				if (v != null)
 					value = v;
@@ -826,7 +748,7 @@ namespace dnSpy.Debugger.Locals {
 				var hasValueValue = value.GetFieldValue(et.Class, hasValueInfo.Token);
 				var valueValue = value.GetFieldValue(et.Class, valueInfo.Token);
 				Debug.Assert(hasValueValue != null && valueValue != null);
-				if (hasValueValue != null && valueValue != null && hasValueValue.Type == CorElementType.Boolean && hasValueValue.Size == 1) {
+				if (hasValueValue != null && valueValue != null && hasValueValue.ElementType == CorElementType.Boolean && hasValueValue.Size == 1) {
 					if (valueValue.Size > 0x00100000)
 						return dnSpy_Debugger_Resources.LocalsEditValue_Error_ValueTypeIsTooBig;
 					byte[] newHasValueBuf, newValueBuf;
@@ -874,7 +796,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
-			if (value.IsReference && (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr)) {
+			if (value.IsReference && (value.ElementType == CorElementType.Ptr || value.ElementType == CorElementType.FnPtr)) {
 				byte[] bytes;
 				var error = parser.GetPrimitiveValue(value.ExactType, out bytes);
 				if (!string.IsNullOrEmpty(error))
@@ -890,7 +812,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
-			if (value.IsReference && value.Type == CorElementType.String) {
+			if (value.IsReference && value.ElementType == CorElementType.String) {
 				string s;
 				var error = parser.GetString(out s);
 				if (!string.IsNullOrEmpty(error))
@@ -907,7 +829,7 @@ namespace dnSpy.Debugger.Locals {
 				value = getValue();
 				if (value == null || value.IsNeutered)
 					return dnSpy_Debugger_Resources.Locals_Error_ErrorNeuteredCouldNotBeRecreated;
-				if (value.IsReference && value.Type == CorElementType.ByRef)
+				if (value.IsReference && value.ElementType == CorElementType.ByRef)
 					value = value.NeuterCheckDereferencedValue;
 				if (value == null || value.IsNeutered)
 					return dnSpy_Debugger_Resources.Locals_Error_ErrorNeuteredCouldNotBeRecreated;
@@ -916,9 +838,9 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			if (value.IsReference &&
-				(value.Type == CorElementType.Class || value.Type == CorElementType.Array ||
-				value.Type == CorElementType.SZArray || value.Type == CorElementType.String ||
-				value.Type == CorElementType.Object)) {
+				(value.ElementType == CorElementType.Class || value.ElementType == CorElementType.Array ||
+				value.ElementType == CorElementType.SZArray || value.ElementType == CorElementType.String ||
+				value.ElementType == CorElementType.Object)) {
 				if (!parser.IsNull)
 					return dnSpy_Debugger_Resources.LocalsEditValue_Error_CanOnlyBeSetToNull;
 				value.ReferenceAddress = 0;
@@ -954,9 +876,7 @@ namespace dnSpy.Debugger.Locals {
 			return null;
 		}
 
-		protected static ValueContext CreateValueContext(ValueContext context, CorType type) {
-			return new ValueContext(context.LocalsOwner, context.FrameCouldBeNeutered, context.Thread, type.TypeParameters.ToList());
-		}
+		protected static ValueContext CreateValueContext(ValueContext context, CorType type) => new ValueContext(context.LocalsOwner, context.FrameCouldBeNeutered, context.Thread, type.TypeParameters.ToList());
 	}
 
 	/// <summary>
@@ -971,15 +891,11 @@ namespace dnSpy.Debugger.Locals {
 			: base(context, type, valueType) {
 		}
 
-		protected override string SetValueAsTextInternal(ValueStringParser parser) {
-			return WriteNewValue(parser, () => ReadOnlyCorValue);
-		}
+		protected override string SetValueAsTextInternal(ValueStringParser parser) => WriteNewValue(parser, () => ReadOnlyCorValue);
 	}
 
 	sealed class CorValueVM : WritableCorValueVM {
-		public ICorValueHolder Holder {
-			get { return valueHolder; }
-		}
+		public ICorValueHolder Holder => valueHolder;
 		ICorValueHolder valueHolder;
 
 		public CorValueVM(ValueContext context, ICorValueHolder value, object type, NormalValueType valueType)
@@ -999,43 +915,26 @@ namespace dnSpy.Debugger.Locals {
 			return 0;
 		}
 
-		protected override void CleanUpCorValue() {
-			valueHolder.InvalidateCorValue();
-		}
+		protected override void CleanUpCorValue() => valueHolder.InvalidateCorValue();
 	}
 
 	sealed class FieldValueVM : WritableCorValueVM {
-		public FieldAttributes FieldAttributes {
-			get { return attrs; }
-		}
-		readonly FieldAttributes attrs;
-
-		public CorType OwnerType {
-			get { return ownerType; }
-		}
-		readonly CorType ownerType;
-
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
-
-		public bool Overridden {
-			get { return overridden; }
-		}
-		readonly bool overridden;
+		public FieldAttributes FieldAttributes { get; }
+		public CorType OwnerType { get; }
+		public uint Token { get; }
+		public bool Overridden { get; }
 
 		public FieldValueVM(ValueContext context, CorFieldInfo info, bool overridden) {
 			var valueType = new FieldValueType(info.Name, this);
-			this.attrs = info.Attributes;
-			this.ownerType = info.OwnerType;
-			this.token = info.Token;
-			this.overridden = overridden;
-			InitializeFromConstructor(CreateValueContext(context, ownerType), info.FieldType, valueType);
+			this.FieldAttributes = info.Attributes;
+			this.OwnerType = info.OwnerType;
+			this.Token = info.Token;
+			this.Overridden = overridden;
+			InitializeFromConstructor(CreateValueContext(context, OwnerType), info.FieldType, valueType);
 		}
 
 		public void Reinitialize(ValueContext newContext) {
-			this.context = CreateValueContext(newContext, ownerType);
+			this.context = CreateValueContext(newContext, OwnerType);
 			CleanUpCorValue();
 			ReinitializeInternal(this.context);
 		}
@@ -1081,52 +980,30 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class PropertyValueVM : NormalValueVM {
-		public override bool CanEdit {
-			get { return setToken != 0 && base.CanEdit; }
-		}
-
-		public CorType OwnerType {
-			get { return ownerType; }
-		}
-		readonly CorType ownerType;
-
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public TypeSig PropertyType {
-			get { return propType; }
-		}
-		readonly TypeSig propType;
-
-		public MethodAttributes GetMethodAttributes {
-			get { return getMethodAttributes; }
-		}
-		readonly MethodAttributes getMethodAttributes;
-
-		public bool Overridden {
-			get { return overridden; }
-		}
-		readonly bool overridden;
+		public override bool CanEdit => setToken != 0 && base.CanEdit;
+		public CorType OwnerType { get; }
+		public string Name { get; }
+		public TypeSig PropertyType { get; }
+		public MethodAttributes GetMethodAttributes { get; }
+		public bool Overridden { get; }
 
 		readonly uint getToken;
 		readonly uint setToken;
 
 		public PropertyValueVM(ValueContext context, CorPropertyInfo info, bool overridden) {
 			var valueType = new PropertyValueType(info.Name, this);
-			this.ownerType = info.OwnerType;
-			this.name = info.Name;
-			this.propType = info.GetSig.RetType;
-			this.getMethodAttributes = info.GetMethodAttributes;
-			this.overridden = overridden;
+			this.OwnerType = info.OwnerType;
+			this.Name = info.Name;
+			this.PropertyType = info.GetSig.RetType;
+			this.GetMethodAttributes = info.GetMethodAttributes;
+			this.Overridden = overridden;
 			this.getToken = info.GetToken;
 			this.setToken = info.SetToken;
-			InitializeFromConstructor(CreateValueContext(context, ownerType), info.GetSig.RetType, valueType);
+			InitializeFromConstructor(CreateValueContext(context, OwnerType), info.GetSig.RetType, valueType);
 		}
 
 		public void Reinitialize(ValueContext newContext) {
-			this.context = CreateValueContext(newContext, ownerType);
+			this.context = CreateValueContext(newContext, OwnerType);
 			CleanUpCorValue();
 			ReinitializeInternal(this.context);
 		}
@@ -1152,9 +1029,7 @@ namespace dnSpy.Debugger.Locals {
 			return GetOwnerCorValue();
 		}
 
-		CorType[] GetTypeArgs() {
-			return ownerType.TypeParameters.ToArray();
-		}
+		CorType[] GetTypeArgs() => OwnerType.TypeParameters.ToArray();
 
 		int InitializeValue() {
 			CleanUpCorValue();
@@ -1169,10 +1044,10 @@ namespace dnSpy.Debugger.Locals {
 			try {
 				int hr;
 				using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
-					var func = ownerType.Class.Module.GetFunctionFromToken(getToken);
+					var func = OwnerType.Class.Module.GetFunctionFromToken(getToken);
 					CorValue[] args;
 					if ((GetMethodAttributes & MethodAttributes.Static) != 0)
-						args = new CorValue[0];
+						args = Array.Empty<CorValue>();
 					else
 						args = new CorValue[1] { GetThisArg() };
 					var res = eval.Call(func, GetTypeArgs(), args, out hr);
@@ -1213,7 +1088,7 @@ namespace dnSpy.Debugger.Locals {
 			bool createNull = false;
 			if (v.IsReference && parser.IsNull)
 				createNull = true;
-			else if (v.IsReference && v.Type == CorElementType.String) {
+			else if (v.IsReference && v.ElementType == CorElementType.String) {
 				string s;
 				var error = parser.GetString(out s);
 				if (!string.IsNullOrEmpty(error))
@@ -1231,7 +1106,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			try {
-				if (IsValueType(propType)) {
+				if (IsValueType(PropertyType)) {
 					if (v.IsReference)
 						v = v.NeuterCheckDereferencedValue;
 					if (v != null && v.IsBox)
@@ -1245,7 +1120,7 @@ namespace dnSpy.Debugger.Locals {
 					if (createNull)
 						v = eval.CreateNull();
 
-					var func = ownerType.Class.Module.GetFunctionFromToken(setToken);
+					var func = OwnerType.Class.Module.GetFunctionFromToken(setToken);
 					CorValue[] args;
 					if ((GetMethodAttributes & MethodAttributes.Static) != 0)
 						args = new CorValue[1] { v };
@@ -1255,8 +1130,7 @@ namespace dnSpy.Debugger.Locals {
 					if (res == null)
 						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotCallPropSetter, hr);
 					if (res.Value.WasException) {
-						var ex = res.Value.ResultOrException;
-						var et = ex == null ? null : ex.ExactType;
+						var et = res.Value.ResultOrException?.ExactType;
 						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_ExceptionOccurredInDebuggedProcess, et);
 					}
 					return null;
@@ -1279,9 +1153,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	abstract class NormalValueType {
-		public virtual bool CanEdit {
-			get { return true; }
-		}
+		public virtual bool CanEdit => true;
 		public abstract string IconName { get; }
 		public abstract void WriteName(ISyntaxHighlightOutput output);
 		public NormalValueVM Owner {
@@ -1295,17 +1167,11 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class LocalValueType : NormalValueType {
-		public override string IconName {
-			get { return "Field"; }
-		}
-
-		public int Index {
-			get { return index; }
-		}
-		readonly int index;
+		public override string IconName => "Field";
+		public int Index { get; }
 
 		public LocalValueType(int index) {
-			this.index = index;
+			this.Index = index;
 		}
 
 		public void InitializeName(string name) {
@@ -1319,23 +1185,17 @@ namespace dnSpy.Debugger.Locals {
 		public override void WriteName(ISyntaxHighlightOutput output) {
 			var n = name;
 			if (string.IsNullOrEmpty(n))
-				n = string.Format("V_{0}", index);
+				n = string.Format("V_{0}", Index);
 			output.Write(IdentifierEscaper.Escape(n), BoxedTextTokenKind.Local);
 		}
 	}
 
 	sealed class ArgumentValueType : NormalValueType {
-		public override string IconName {
-			get { return "Field"; }
-		}
-
-		public int Index {
-			get { return index; }
-		}
-		readonly int index;
+		public override string IconName => "Field";
+		public int Index { get; }
 
 		public ArgumentValueType(int index) {
-			this.index = index;
+			this.Index = index;
 		}
 
 		public void InitializeName(string name, bool isThis) {
@@ -1354,31 +1214,22 @@ namespace dnSpy.Debugger.Locals {
 			else {
 				var n = name;
 				if (string.IsNullOrEmpty(n))
-					n = string.Format("A_{0}", index);
+					n = string.Format("A_{0}", Index);
 				output.Write(IdentifierEscaper.Escape(n), BoxedTextTokenKind.Parameter);
 			}
 		}
 	}
 
 	sealed class ExceptionValueType : NormalValueType {
-		public override string IconName {
-			get { return "Exception"; }
-		}
+		public override string IconName => "Exception";
+		public override bool CanEdit => false;
 
-		public override bool CanEdit {
-			// It's not possible to write a new exception
-			get { return false; }
-		}
-
-		public override void WriteName(ISyntaxHighlightOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) =>
 			output.Write("$exception", BoxedTextTokenKind.Local);
-		}
 	}
 
 	sealed class ArrayElementValueType : NormalValueType {
-		public override string IconName {
-			get { return "Field"; }
-		}
+		public override string IconName => "Field";
 
 		readonly uint index;
 		readonly ArrayState state;
@@ -1392,7 +1243,7 @@ namespace dnSpy.Debugger.Locals {
 			output.Write("[", BoxedTextTokenKind.Operator);
 
 			if (state.Dimensions.Length == 1 && state.Indices.Length == 1 && state.Indices[0] == 0) {
-				long i2 = (long)index + (int)state.Indices[0];
+				long i2 = index + (int)state.Indices[0];
 				// It's always in decimal
 				output.Write(i2.ToString(), BoxedTextTokenKind.Number);
 			}
@@ -1411,7 +1262,7 @@ namespace dnSpy.Debugger.Locals {
 						output.Write(",", BoxedTextTokenKind.Operator);
 						output.Write(" ", BoxedTextTokenKind.Text);
 					}
-					long i2 = (long)ary[i] + (int)state.Indices[i];
+					long i2 = ary[i] + (int)state.Indices[i];
 					// It's always in decimal
 					output.Write(i2.ToString(), BoxedTextTokenKind.Number);
 				}
@@ -1422,13 +1273,8 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class FieldValueType : NormalValueType {
-		public override string IconName {
-			get { return GetIconName(vm.OwnerType, vm.FieldAttributes); }
-		}
-
-		bool IsEnum {
-			get { return vm.OwnerType.IsEnum; }
-		}
+		public override string IconName => GetIconName(vm.OwnerType, vm.FieldAttributes);
+		bool IsEnum => vm.OwnerType.IsEnum;
 
 		readonly string name;
 		readonly FieldValueVM vm;
@@ -1515,9 +1361,8 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override void WriteName(ISyntaxHighlightOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) =>
 			WriteName(output, name, GetTypeColor(), vm.OwnerType, vm.Overridden);
-		}
 
 		internal static void WriteName(ISyntaxHighlightOutput output, string name, object typeColor, CorType ownerType, bool overridden) {
 			output.Write(IdentifierEscaper.Escape(name), typeColor);
@@ -1541,9 +1386,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class PropertyValueType : NormalValueType {
-		public override string IconName {
-			get { return GetIconName(vm.OwnerType, vm.GetMethodAttributes); }
-		}
+		public override string IconName => GetIconName(vm.OwnerType, vm.GetMethodAttributes);
 
 		readonly string name;
 		readonly PropertyValueVM vm;
@@ -1612,9 +1455,8 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override void WriteName(ISyntaxHighlightOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) =>
 			FieldValueType.WriteName(output, name, GetTypeColor(), vm.OwnerType, vm.Overridden);
-		}
 
 		object GetTypeColor() {
 			if ((vm.GetMethodAttributes & MethodAttributes.Static) != 0)
@@ -1624,15 +1466,15 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class ArrayState : IEquatable<ArrayState> {
-		public readonly CorElementType ArrayElementType;
-		public readonly CorElementType ElementType;
-		public readonly uint[] Dimensions;
-		public readonly uint[] Indices;
-		public readonly uint Count;
+		public CorElementType ArrayElementType { get; }
+		public CorElementType ElementType { get; }
+		public uint[] Dimensions { get; }
+		public uint[] Indices { get; }
+		public uint Count { get; }
 
 		public ArrayState(CorValue v) {
 			Debug.Assert(v.IsArray);
-			this.ArrayElementType = v.Type;
+			this.ArrayElementType = v.ElementType;
 			this.ElementType = v.ArrayElementType;
 			this.Dimensions = v.Dimensions;
 			this.Indices = v.BaseIndicies;
@@ -1671,13 +1513,9 @@ namespace dnSpy.Debugger.Locals {
 			return true;
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as ArrayState);
-		}
+		public override bool Equals(object obj) => Equals(obj as ArrayState);
 
-		public override int GetHashCode() {
-			return (int)ArrayElementType ^ (int)ElementType ^ Dimensions.Length ^ Indices.Length ^ (int)Count;
-		}
+		public override int GetHashCode() => (int)ArrayElementType ^ (int)ElementType ^ Dimensions.Length ^ Indices.Length ^ (int)Count;
 	}
 
 	sealed class ObjectState : IEquatable<ObjectState> {
@@ -1687,31 +1525,15 @@ namespace dnSpy.Debugger.Locals {
 			this.Type = type;
 		}
 
-		public bool Equals(ObjectState other) {
-			return other != null && Type == other.Type;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as ObjectState);
-		}
-
-		public override int GetHashCode() {
-			return Type.GetHashCode();
-		}
+		public bool Equals(ObjectState other) => other != null && Type == other.Type;
+		public override bool Equals(object obj) => Equals(obj as ObjectState);
+		public override int GetHashCode() => Type.GetHashCode();
 	}
 
 	sealed class GenericVariableValueVM : ValueVM {
-		protected override string IconName {
-			get { return "GenericParameter"; }
-		}
-
-		protected sealed override CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.Create(type, TypePrinterFlags);
-		}
-
-		protected sealed override CachedOutput CreateCachedOutputType() {
-			return CreateCachedOutputValue();
-		}
+		protected override string IconName => "GenericParameter";
+		protected sealed override CachedOutput CreateCachedOutputValue() => CachedOutput.Create(type, TypePrinterFlags);
+		protected sealed override CachedOutput CreateCachedOutputType() => CreateCachedOutputValue();
 
 		public void Reinitialize(ValueContext newContext, CorType type) {
 			this.context = newContext;
@@ -1721,13 +1543,8 @@ namespace dnSpy.Debugger.Locals {
 			UpdateCachedOutputType();
 		}
 
-		public bool IsTypeVar {
-			get { return isTypeVar; }
-		}
-
-		public bool IsMethodVar {
-			get { return !isTypeVar; }
-		}
+		public bool IsTypeVar => isTypeVar;
+		public bool IsMethodVar => !isTypeVar;
 
 		readonly string name;
 		CorType type;
@@ -1756,9 +1573,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class TypeVariablesValueVM : ValueVM {
-		protected override string IconName {
-			get { return "GenericParameter"; }
-		}
+		protected override string IconName => "GenericParameter";
 
 		static string Read(List<TokenAndName> list, int index) {
 			if ((uint)index >= (uint)list.Count)
@@ -1767,7 +1582,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public void Reinitialize(ValueContext newContext) {
-			var oldFunc = context == null ? null : context.Function;
+			var oldFunc = context?.Function;
 			context = newContext;
 
 			if (oldFunc != context.Function || !CanReuseChildren())
@@ -1816,8 +1631,7 @@ namespace dnSpy.Debugger.Locals {
 			Reinitialize(context);
 		}
 
-		public override void WriteName(ISyntaxHighlightOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) =>
 			output.Write(dnSpy_Debugger_Resources.Locals_TypeVariables, BoxedTextTokenKind.TypeGenericParameter);
-		}
 	}
 }

@@ -25,17 +25,14 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// IL offset of instruction referencing the constant
 		/// </summary>
-		public uint ILOffset {
-			get { return ilOffset; }
-		}
-		readonly uint ilOffset;
+		public uint ILOffset { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="ilOffset">IL offset of instruction</param>
 		public BodyResult(uint ilOffset) {
-			this.ilOffset = ilOffset;
+			this.ILOffset = ilOffset;
 		}
 	}
 }

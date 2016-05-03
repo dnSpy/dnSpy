@@ -22,42 +22,27 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the body function or null if it's not a <c>Method</c> token
 		/// </summary>
-		public CorFunction FunctionBody {
-			get { return module.GetFunctionFromToken(bodyToken); }
-		}
+		public CorFunction FunctionBody => Module.GetFunctionFromToken(BodyToken);
 
 		/// <summary>
 		/// Gets the declaration function or null if it's not a <c>Method</c> token
 		/// </summary>
-		public CorFunction FunctionDeclaration {
-			get { return module.GetFunctionFromToken(declToken); }
-		}
+		public CorFunction FunctionDeclaration => Module.GetFunctionFromToken(DeclToken);
 
-		public uint BodyToken {
-			get { return bodyToken; }
-		}
-		readonly uint bodyToken;
-
-		public uint DeclToken {
-			get { return declToken; }
-		}
-		readonly uint declToken;
-
-		public CorModule Module {
-			get { return module; }
-		}
-		readonly CorModule module;
+		public uint BodyToken { get; }
+		public uint DeclToken { get; }
+		public CorModule Module { get; }
 
 		public CorOverride(CorModule module, uint bodyToken, uint declToken) {
-			this.module = module;
-			this.bodyToken = bodyToken;
-			this.declToken = declToken;
+			this.Module = module;
+			this.BodyToken = bodyToken;
+			this.DeclToken = declToken;
 		}
 
 		internal CorOverride(CorModule module, MethodOverrideInfo info) {
-			this.module = module;
-			this.bodyToken = info.BodyToken;
-			this.declToken = info.DeclToken;
+			this.Module = module;
+			this.BodyToken = info.BodyToken;
+			this.DeclToken = info.DeclToken;
 		}
 	}
 }

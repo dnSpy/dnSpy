@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// The node
 		/// </summary>
-		public ITreeNodeData Node { get; private set; }
+		public ITreeNodeData Node { get; }
 
 		/// <summary>
 		/// true if <see cref="Node"/> was removed
 		/// </summary>
-		public bool Removed { get; private set; }
+		public bool Removed { get; }
 
 		/// <summary>
 		/// Constructor

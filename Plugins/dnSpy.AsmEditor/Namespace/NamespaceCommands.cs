@@ -52,17 +52,9 @@ namespace dnSpy.AsmEditor.Namespace {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteNamespaceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return GetCommandName(context.Nodes.Length);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
@@ -75,17 +67,9 @@ namespace dnSpy.AsmEditor.Namespace {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteNamespaceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return GetCommandName(context.Nodes.Length);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
 		static string GetCommandName(int count) {
@@ -183,9 +167,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			this.modelNodes = new DeleteModelNodes();
 		}
 
-		public string Description {
-			get { return GetCommandName(nodes.Count); }
-		}
+		public string Description => GetCommandName(nodes.Count);
 
 		public void Execute() {
 			nodes.Delete();
@@ -197,9 +179,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			nodes.Restore();
 		}
 
-		public IEnumerable<object> ModifiedObjects {
-			get { return nodes.Nodes; }
-		}
+		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
 	struct TypeRefInfo {
@@ -223,13 +203,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
@@ -242,13 +217,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
 		}
 
 		static bool CanExecute(IFileTreeNodeData[] nodes) {
@@ -289,9 +259,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			this.typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule(), nsNodes);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.MoveTypesToEmptyNamespaceCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.MoveTypesToEmptyNamespaceCommand;
 
 		readonly INamespaceNode nsTarget;
 		DeletableNodes<INamespaceNode> nodes;
@@ -303,9 +271,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			public DeletableNodes<ITypeNode> TypeNodes;
 		}
 
-		INamespaceNode GetTarget() {
-			return nodes.Nodes.Length == 0 ? null : (INamespaceNode)nodes.Nodes[0].TreeNode.Parent.DataChildren.First(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
-		}
+		INamespaceNode GetTarget() => nodes.Nodes.Length == 0 ? null : (INamespaceNode)nodes.Nodes[0].TreeNode.Parent.DataChildren.First(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
 
 		public void Execute() {
 			Debug.Assert(infos == null);
@@ -387,13 +353,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return RenameNamespaceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => RenameNamespaceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
@@ -408,13 +369,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return RenameNamespaceCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => RenameNamespaceCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		static bool CanExecute(IFileTreeNodeData[] nodes) {
@@ -490,9 +446,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			this.typeRefInfos = GetTypeRefInfos(module, new[] { nsNode });
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.RenameNamespaceCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.RenameNamespaceCommand;
 
 		public void Execute() {
 			UTF8String newNamespace = newName;

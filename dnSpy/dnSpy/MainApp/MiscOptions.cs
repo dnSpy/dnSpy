@@ -111,7 +111,7 @@ namespace dnSpy.MainApp {
 					foreach (var ext in openExtensions) {
 						string name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
-							name = key == null ? null : key.GetValue(string.Empty) as string;
+							name = key?.GetValue(string.Empty) as string;
 
 						if (string.IsNullOrEmpty(name)) {
 							if (!enabled)

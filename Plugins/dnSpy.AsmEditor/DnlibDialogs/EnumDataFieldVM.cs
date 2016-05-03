@@ -33,12 +33,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public object Value;
 		public bool IsArray;
 
-		public static EnumInfo CreateNullArray(ITypeDefOrRef type) {
-			return new EnumInfo() {
-				EnumType = type,
-				IsArray = true,
-			};
-		}
+		public static EnumInfo CreateNullArray(ITypeDefOrRef type) => new EnumInfo() {
+			EnumType = type,
+			IsArray = true,
+		};
 
 		public override string ToString() {
 			var td = EnumType.ResolveTypeDef();
@@ -77,9 +75,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand PickEnumTypeCommand {
-			get { return new RelayCommand(a => PickEnumType()); }
-		}
+		public ICommand PickEnumTypeCommand => new RelayCommand(a => PickEnumType());
 
 		public ITypeDefOrRef EnumType {
 			get { return enumInfo.EnumType; }
@@ -107,9 +103,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public EnumInfo NullValue {
-			get { return EnumInfo.CreateNullArray(enumInfo.EnumType); }
-		}
+		public EnumInfo NullValue => EnumInfo.CreateNullArray(enumInfo.EnumType);
 
 		readonly ModuleDef ownerModule;
 

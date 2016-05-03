@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.Commands {
 			this.command = command;
 		}
 
-		AsmEditorContext CreateContext() {
-			return command.CreateContext();
-		}
+		AsmEditorContext CreateContext() => command.CreateContext();
 
 		event EventHandler ICommand.CanExecuteChanged {
 			add { CommandManager.RequerySuggested += value; }

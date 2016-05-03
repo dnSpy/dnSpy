@@ -29,17 +29,17 @@ namespace dnSpy.Languages.MSBuild {
 		/// <summary>
 		/// Module
 		/// </summary>
-		public ModuleDef Module { get; private set; }
+		public ModuleDef Module { get; }
 
 		/// <summary>
 		/// Language to use
 		/// </summary>
-		public ILanguage Language { get; private set; }
+		public ILanguage Language { get; }
 
 		/// <summary>
 		/// Decompilation context
 		/// </summary>
-		public DecompilationContext DecompilationContext { get; private set; }
+		public DecompilationContext DecompilationContext { get; }
 
 		/// <summary>
 		/// true to not reference mscorlib

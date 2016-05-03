@@ -26,8 +26,8 @@ using dnlib.DotNet;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlProperty {
-		public XamlType DeclaringType { get; private set; }
-		public string PropertyName { get; private set; }
+		public XamlType DeclaringType { get; }
+		public string PropertyName { get; }
 
 		public IMemberDef ResolvedMember { get; set; }
 
@@ -89,8 +89,6 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			return name;
 		}
 
-		public override string ToString() {
-			return PropertyName;
-		}
+		public override string ToString() => PropertyName;
 	}
 }

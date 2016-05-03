@@ -40,9 +40,7 @@ namespace dnSpy.AsmEditor.Field {
 	sealed class FieldOptionsVM : ViewModelBase {
 		readonly FieldDefOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		static readonly EnumVM[] fieldAccessList = new EnumVM[] {
 			new EnumVM(Field.FieldAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
@@ -53,10 +51,7 @@ namespace dnSpy.AsmEditor.Field {
 			new EnumVM(Field.FieldAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
 			new EnumVM(Field.FieldAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
 		};
-		public EnumListVM FieldAccess {
-			get { return fieldAccessVM; }
-		}
-		readonly EnumListVM fieldAccessVM = new EnumListVM(fieldAccessList);
+		public EnumListVM FieldAccess { get; } = new EnumListVM(fieldAccessList);
 
 		public FieldAttributes Attributes {
 			get {
@@ -137,9 +132,7 @@ namespace dnSpy.AsmEditor.Field {
 			set { SetFlagValue(FieldAttributes.HasFieldRVA, value); }
 		}
 
-		bool GetFlagValue(FieldAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(FieldAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(FieldAttributes flag, bool value) {
 			if (value)
@@ -160,66 +153,29 @@ namespace dnSpy.AsmEditor.Field {
 		UTF8String name;
 
 		public TypeSig FieldTypeSig {
-			get { return typeSigCreator.TypeSig; }
-			set { typeSigCreator.TypeSig = value; }
+			get { return TypeSigCreator.TypeSig; }
+			set { TypeSigCreator.TypeSig = value; }
 		}
 
-		public string FieldTypeHeader {
-			get { return string.Format(dnSpy_AsmEditor_Resources.FieldType, typeSigCreator.TypeSigDnlibFullName); }
-		}
+		public string FieldTypeHeader => string.Format(dnSpy_AsmEditor_Resources.FieldType, TypeSigCreator.TypeSigDnlibFullName);
 
-		public TypeSigCreatorVM TypeSigCreator {
-			get { return typeSigCreator; }
-		}
-		readonly TypeSigCreatorVM typeSigCreator;
-
-		public Constant Constant {
-			get { return HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
-		}
-
-		public ConstantVM ConstantVM {
-			get { return constantVM; }
-		}
-		readonly ConstantVM constantVM;
-
-		public MarshalTypeVM MarshalTypeVM {
-			get { return marshalTypeVM; }
-		}
-		readonly MarshalTypeVM marshalTypeVM;
-
-		public NullableUInt32VM FieldOffset {
-			get { return fieldOffset; }
-		}
-		readonly NullableUInt32VM fieldOffset;
-
-		public HexStringVM InitialValue {
-			get { return initialValue; }
-		}
-		readonly HexStringVM initialValue;
-
-		public UInt32VM RVA {
-			get { return rva; }
-		}
-		readonly UInt32VM rva;
+		public TypeSigCreatorVM TypeSigCreator { get; }
+		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public ConstantVM ConstantVM { get; }
+		public MarshalTypeVM MarshalTypeVM { get; }
+		public NullableUInt32VM FieldOffset { get; }
+		public HexStringVM InitialValue { get; }
+		public UInt32VM RVA { get; }
 
 		public ImplMap ImplMap {
-			get { return implMapVM.ImplMap; }
-			set { implMapVM.ImplMap = value; }
+			get { return ImplMapVM.ImplMap; }
+			set { ImplMapVM.ImplMap = value; }
 		}
 
-		public ImplMapVM ImplMapVM {
-			get { return implMapVM; }
-		}
-		readonly ImplMapVM implMapVM;
-
-		public string MarshalTypeString {
-			get { return string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing); }
-		}
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
+		public ImplMapVM ImplMapVM { get; }
+		public string MarshalTypeString =>
+			string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing);
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		readonly ModuleDef ownerModule;
 
@@ -233,23 +189,23 @@ namespace dnSpy.AsmEditor.Field {
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.origOptions = options;
 
-			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
+			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.marshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType, null);
+			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
-			this.fieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
-			this.initialValue = new HexStringVM(a => HasErrorUpdated());
-			this.rva = new UInt32VM(a => HasErrorUpdated());
-			this.implMapVM = new ImplMapVM(ownerModule);
+			this.FieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
+			this.InitialValue = new HexStringVM(a => HasErrorUpdated());
+			this.RVA = new UInt32VM(a => HasErrorUpdated());
+			this.ImplMapVM = new ImplMapVM(ownerModule);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
-			this.typeSigCreator.CanAddFnPtr = false;
+			this.TypeSigCreator.CanAddFnPtr = false;
 			ConstantVM.IsEnabled = HasDefault;
 			MarshalTypeVM.IsEnabled = HasFieldMarshal;
 			ImplMapVM.IsEnabled = PinvokeImpl;
@@ -286,14 +242,12 @@ namespace dnSpy.AsmEditor.Field {
 			InitializeFrom(origOptions);
 		}
 
-		public FieldDefOptions CreateFieldDefOptions() {
-			return CopyTo(new FieldDefOptions());
-		}
+		public FieldDefOptions CreateFieldDefOptions() => CopyTo(new FieldDefOptions());
 
 		void InitializeFrom(FieldDefOptions options) {
 			Attributes = options.Attributes;
 			Name = options.Name;
-			FieldTypeSig = options.FieldSig == null ? null : options.FieldSig.Type;
+			FieldTypeSig = options.FieldSig?.Type;
 			FieldOffset.Value = options.FieldOffset;
 			MarshalTypeVM.Type = options.MarshalType;
 			RVA.Value = (uint)options.RVA;

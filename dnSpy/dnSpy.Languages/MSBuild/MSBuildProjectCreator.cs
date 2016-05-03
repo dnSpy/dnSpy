@@ -35,13 +35,8 @@ namespace dnSpy.Languages.MSBuild {
 		int errors;
 		int totalProgress;
 
-		public IEnumerable<string> ProjectFilenames {
-			get { return projects.Select(a => a.Filename); }
-		}
-
-		public string SolutionFilename {
-			get { return Path.Combine(options.Directory, options.SolutionFilename); }
-		}
+		public IEnumerable<string> ProjectFilenames => projects.Select(a => a.Filename);
+		public string SolutionFilename => Path.Combine(options.Directory, options.SolutionFilename);
 
 		sealed class MyLogger : IMSBuildProjectWriterLogger {
 			readonly MSBuildProjectCreator owner;

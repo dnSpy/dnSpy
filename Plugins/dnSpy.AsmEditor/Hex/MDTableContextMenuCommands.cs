@@ -70,11 +70,11 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	sealed class MDTableContext {
-		public readonly ListView ListView;
-		public readonly MetaDataTableVM MetaDataTableVM;
-		public readonly MetaDataTableNode Node;
-		public readonly MetaDataTableRecordVM[] Records;
-		public readonly bool IsContextMenu;
+		public ListView ListView { get; }
+		public MetaDataTableVM MetaDataTableVM { get; }
+		public MetaDataTableNode Node { get; }
+		public MetaDataTableRecordVM[] Records { get; }
+		public bool IsContextMenu { get; }
 
 		public MDTableContext(ListView listView, MetaDataTableVM mdVM, MetaDataTableNode mdNode, bool isContextMenu) {
 			this.ListView = listView;
@@ -148,29 +148,18 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	abstract class CtxMenuMDTableCommand : MenuItemBase<MDTableContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override MDTableContext CreateContext(IMenuItemContext context) {
-			return MenuMDTableCommand.ToMDTableContext(context.CreatorObject.Object, true);
-		}
+		protected sealed override MDTableContext CreateContext(IMenuItemContext context) => MenuMDTableCommand.ToMDTableContext(context.CreatorObject.Object, true);
 	}
 
 	abstract class MenuMDTableCommand : MenuItemBase<MDTableContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override MDTableContext CreateContext(IMenuItemContext context) {
-			return ToMDTableContext(context.CreatorObject.Object, false);
-		}
-
-		internal static MDTableContext ToMDTableContext(object obj, bool isContextMenu) {
-			return ToMDTableContext(obj as ListView, isContextMenu);
-		}
+		protected sealed override MDTableContext CreateContext(IMenuItemContext context) => ToMDTableContext(context.CreatorObject.Object, false);
+		internal static MDTableContext ToMDTableContext(object obj, bool isContextMenu) => ToMDTableContext(obj as ListView, isContextMenu);
 
 		internal static MDTableContext ToMDTableContext(ListView listView, bool isContextMenu) {
 			if (listView == null)
@@ -193,13 +182,8 @@ namespace dnSpy.AsmEditor.Hex {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(undoCommandManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SortMetadataTableCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, InputGestureText = "res:ShortCutKeyCtrlShiftT", Order = 0)]
@@ -211,18 +195,12 @@ namespace dnSpy.AsmEditor.Hex {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(undoCommandManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
-		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
+		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) =>
 			SortTable(undoCommandManager, context.MetaDataTableVM, 1, context.MetaDataTableVM.Rows, string.Format(dnSpy_AsmEditor_Resources.SortMetadataTableCommand2, context.MetaDataTableVM.Table));
-		}
 
 		internal static void SortTable(Lazy<IUndoCommandManager> undoCommandManager, MetaDataTableVM mdTblVM, uint rid, uint count, string descr) {
 			var doc = mdTblVM.Document;
@@ -234,9 +212,7 @@ namespace dnSpy.AsmEditor.Hex {
 			WriteHexUndoCommand.AddAndExecute(undoCommandManager.Value, doc, startOffset, data, descr);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) {
-			return TableSorter.CanSort(context.MetaDataTableVM.TableInfo);
-		}
+		static bool IsEnabledInternal(MDTableContext context) => TableSorter.CanSort(context.MetaDataTableVM.TableInfo);
 	}
 
 	static class SortSelectionMDTableCommand {
@@ -249,13 +225,8 @@ namespace dnSpy.AsmEditor.Hex {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(undoCommandManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SortSelectionCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 10)]
@@ -267,13 +238,8 @@ namespace dnSpy.AsmEditor.Hex {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(undoCommandManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
@@ -282,26 +248,21 @@ namespace dnSpy.AsmEditor.Hex {
 			SortMDTableCommand.SortTable(undoCommandManager, context.MetaDataTableVM, rid, count, string.Format(dnSpy_AsmEditor_Resources.SortTable_RowIdentifier, context.MetaDataTableVM.Table, rid, rid + count - 1));
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) {
-			return TableSorter.CanSort(context.MetaDataTableVM.TableInfo) &&
-					context.Records.Length > 1 &&
-					context.ContiguousRecords();
-		}
+		static bool IsEnabledInternal(MDTableContext context) =>
+			TableSorter.CanSort(context.MetaDataTableVM.TableInfo) &&
+			context.Records.Length > 1 &&
+			context.ContiguousRecords();
 	}
 
 	static class GoToRidMDTableCommand {
 		[ExportMenuItem(Header = "res:GoToRowIdentifierCommand", InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 20)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:GoToRowIdentifierCommand", InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 20)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(context);
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
@@ -339,13 +300,8 @@ namespace dnSpy.AsmEditor.Hex {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(fileTabManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(fileTabManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 30)]
@@ -357,13 +313,8 @@ namespace dnSpy.AsmEditor.Hex {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(fileTabManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(fileTabManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		static void ExecuteInternal(IFileTabManager fileTabManager, MDTableContext context) {
@@ -372,9 +323,7 @@ namespace dnSpy.AsmEditor.Hex {
 				fileTabManager.FollowReference(@ref);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) {
-			return GetAddressReference(context) != null;
-		}
+		static bool IsEnabledInternal(MDTableContext context) => GetAddressReference(context) != null;
 
 		static AddressReference GetAddressReference(MDTableContext context) {
 			if (context.Records.Length == 0)
@@ -391,24 +340,14 @@ namespace dnSpy.AsmEditor.Hex {
 	static class CopyAsTextMDTableCommand {
 		[ExportMenuItem(Header = "res:CopyAsTextCommand2", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 0)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CopyAsTextCommand2", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 0)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
@@ -426,32 +365,20 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) {
-			return context.Records.Length > 0;
-		}
+		static bool IsEnabledInternal(MDTableContext context) => context.Records.Length > 0;
 	}
 
 	static class CopyMDTableCommand {
 		[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 10)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 10)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
@@ -477,9 +404,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) {
-			return context.Records.Length > 0;
-		}
+		static bool IsEnabledInternal(MDTableContext context) => context.Records.Length > 0;
 	}
 
 	static class PasteMDTableCommand {
@@ -492,17 +417,9 @@ namespace dnSpy.AsmEditor.Hex {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(undoCommandManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
-
-			public override string GetHeader(MDTableContext context) {
-				return GetHeaderInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
+			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
@@ -514,17 +431,9 @@ namespace dnSpy.AsmEditor.Hex {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override void Execute(MDTableContext context) {
-				ExecuteInternal(undoCommandManager, context);
-			}
-
-			public override bool IsEnabled(MDTableContext context) {
-				return IsEnabledInternal(context);
-			}
-
-			public override string GetHeader(MDTableContext context) {
-				return GetHeaderInternal(context);
-			}
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
+			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
 		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
@@ -539,9 +448,7 @@ namespace dnSpy.AsmEditor.Hex {
 						recs, context.MetaDataTableVM.Table, context.Records[0].StartOffset, context.Records[0].Token.Rid));
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) {
-			return GetPasteData(context) != null;
-		}
+		static bool IsEnabledInternal(MDTableContext context) => GetPasteData(context) != null;
 
 		static byte[] GetPasteData(MDTableContext context) {
 			if (context.Records.Length == 0)

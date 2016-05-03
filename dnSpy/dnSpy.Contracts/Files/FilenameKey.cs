@@ -52,34 +52,25 @@ namespace dnSpy.Contracts.Files {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(FilenameKey other) {
-			return other != null &&
-					StringComparer.OrdinalIgnoreCase.Equals(filename, other.filename);
-		}
+		public bool Equals(FilenameKey other) => other != null && StringComparer.OrdinalIgnoreCase.Equals(filename, other.filename);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) {
-			return Equals(obj as FilenameKey);
-		}
+		public override bool Equals(object obj) => Equals(obj as FilenameKey);
 
 		/// <summary>
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() {
-			return StringComparer.OrdinalIgnoreCase.GetHashCode(filename);
-		}
+		public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(filename);
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() {
-			return filename;
-		}
+		public override string ToString() => filename;
 	}
 }

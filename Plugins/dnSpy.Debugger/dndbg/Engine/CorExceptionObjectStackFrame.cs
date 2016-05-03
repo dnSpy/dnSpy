@@ -21,10 +21,10 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public struct CorExceptionObjectStackFrame {
-		public CorModule Module;
-		public ulong IP;
-		public uint Token;
-		public bool IsLastForeignExceptionFrame;
+		public CorModule Module { get; }
+		public ulong IP { get; }
+		public uint Token { get; }
+		public bool IsLastForeignExceptionFrame { get; }
 
 		public CorExceptionObjectStackFrame(CorDebugExceptionObjectStackFrame other) {
 			this.Module = other.pModule == null ? null : new CorModule(other.pModule);

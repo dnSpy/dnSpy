@@ -25,90 +25,27 @@ using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerField : IDebuggerField {
-		public string Name {
-			get { return name; }
-		}
-
-		public FieldAttributes Attributes {
-			get { return attributes; }
-		}
-		readonly FieldAttributes attributes;
-
-		public FieldAttributes Access {
-			get { return attributes & FieldAttributes.FieldAccessMask; }
-		}
-
-		public bool IsCompilerControlled {
-			get { return IsPrivateScope; }
-		}
-
-		public bool IsPrivateScope {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.PrivateScope; }
-		}
-
-		public bool IsPrivate {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Private; }
-		}
-
-		public bool IsFamilyAndAssembly {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamANDAssem; }
-		}
-
-		public bool IsAssembly {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Assembly; }
-		}
-
-		public bool IsFamily {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Family; }
-		}
-
-		public bool IsFamilyOrAssembly {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamORAssem; }
-		}
-
-		public bool IsPublic {
-			get { return (attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public; }
-		}
-
-		public bool IsStatic {
-			get { return (attributes & FieldAttributes.Static) != 0; }
-		}
-
-		public bool IsInitOnly {
-			get { return (attributes & FieldAttributes.InitOnly) != 0; }
-		}
-
-		public bool IsLiteral {
-			get { return (attributes & FieldAttributes.Literal) != 0; }
-		}
-
-		public bool IsNotSerialized {
-			get { return (attributes & FieldAttributes.NotSerialized) != 0; }
-		}
-
-		public bool IsSpecialName {
-			get { return (attributes & FieldAttributes.SpecialName) != 0; }
-		}
-
-		public bool IsPinvokeImpl {
-			get { return (attributes & FieldAttributes.PinvokeImpl) != 0; }
-		}
-
-		public bool IsRuntimeSpecialName {
-			get { return (attributes & FieldAttributes.RTSpecialName) != 0; }
-		}
-
-		public bool HasFieldMarshal {
-			get { return (attributes & FieldAttributes.HasFieldMarshal) != 0; }
-		}
-
-		public bool HasDefault {
-			get { return (attributes & FieldAttributes.HasDefault) != 0; }
-		}
-
-		public bool HasFieldRVA {
-			get { return (attributes & FieldAttributes.HasFieldRVA) != 0; }
-		}
+		public string Name { get; }
+		public FieldAttributes Attributes { get; }
+		public FieldAttributes Access => Attributes & FieldAttributes.FieldAccessMask;
+		public bool IsCompilerControlled => IsPrivateScope;
+		public bool IsPrivateScope => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.PrivateScope;
+		public bool IsPrivate => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Private;
+		public bool IsFamilyAndAssembly => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamANDAssem;
+		public bool IsAssembly => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Assembly;
+		public bool IsFamily => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Family;
+		public bool IsFamilyOrAssembly => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamORAssem;
+		public bool IsPublic => (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public;
+		public bool IsStatic => (Attributes & FieldAttributes.Static) != 0;
+		public bool IsInitOnly => (Attributes & FieldAttributes.InitOnly) != 0;
+		public bool IsLiteral => (Attributes & FieldAttributes.Literal) != 0;
+		public bool IsNotSerialized => (Attributes & FieldAttributes.NotSerialized) != 0;
+		public bool IsSpecialName => (Attributes & FieldAttributes.SpecialName) != 0;
+		public bool IsPinvokeImpl => (Attributes & FieldAttributes.PinvokeImpl) != 0;
+		public bool IsRuntimeSpecialName => (Attributes & FieldAttributes.RTSpecialName) != 0;
+		public bool HasFieldMarshal => (Attributes & FieldAttributes.HasFieldMarshal) != 0;
+		public bool HasDefault => (Attributes & FieldAttributes.HasDefault) != 0;
+		public bool HasFieldRVA => (Attributes & FieldAttributes.HasFieldRVA) != 0;
 
 		public FieldSig FieldSig {
 			get {
@@ -126,22 +63,14 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		FieldSig fieldSig;
 
-		public IDebuggerModule Module {
-			get { return debugger.Dispatcher.UI(() => debugger.FindModuleUI(field.Module)); }
-		}
+		public IDebuggerModule Module => debugger.Dispatcher.UI(() => debugger.FindModuleUI(field.Module));
 
-		public IDebuggerClass Class {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var cls = field.Class;
-					return cls == null ? null : new DebuggerClass(debugger, cls);
-				});
-			}
-		}
+		public IDebuggerClass Class => debugger.Dispatcher.UI(() => {
+			var cls = field.Class;
+			return cls == null ? null : new DebuggerClass(debugger, cls);
+		});
 
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token => token;
 
 		public object Constant {
 			get {
@@ -164,7 +93,6 @@ namespace dnSpy.Debugger.Scripting {
 		readonly int hashCode;
 		readonly uint token;
 		readonly CorField field;
-		readonly string name;
 
 		public DebuggerField(Debugger debugger, CorField field) {
 			debugger.Dispatcher.VerifyAccess();
@@ -172,8 +100,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.field = field;
 			this.hashCode = field.GetHashCode();
 			this.token = field.Token;
-			this.name = field.GetName() ?? string.Empty;
-			this.attributes = field.GetAttributes();
+			this.Name = field.GetName() ?? string.Empty;
+			this.Attributes = field.GetAttributes();
 		}
 
 		public IDebuggerValue ReadStatic(IStackFrame frame, IDebuggerType type) {
@@ -185,31 +113,13 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public override bool Equals(object obj) {
-			var other = obj as DebuggerField;
-			return other != null && other.field == field;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
+		public override bool Equals(object obj) => (obj as DebuggerField)?.field == field;
+		public override int GetHashCode() => hashCode;
 		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowNamespaces | TypePrinterFlags.ShowTypeKeywords;
-
-		public void WriteTo(IOutputWriter output) {
-			Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
-		}
-
-		public void Write(IOutputWriter output, TypeFormatFlags flags) {
+		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
+		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
 			debugger.Dispatcher.UI(() => field.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		}
-
-		public string ToString(TypeFormatFlags flags) {
-			return debugger.Dispatcher.UI(() => field.ToString((TypePrinterFlags)flags));
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => field.ToString(DEFAULT_FLAGS));
-		}
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => field.ToString((TypePrinterFlags)flags));
+		public override string ToString() => debugger.Dispatcher.UI(() => field.ToString(DEFAULT_FLAGS));
 	}
 }

@@ -144,9 +144,7 @@ namespace dnSpy.Files.Tabs {
 			});
 		}
 
-		static bool IsSupportedReference(object @ref) {
-			return @ref is CodeReference || @ref is IMemberDef;
-		}
+		static bool IsSupportedReference(object @ref) => @ref is CodeReference || @ref is IMemberDef;
 
 		void GoToReference(IFileTabContent content, object @ref) {
 			Debug.Assert(IsSupportedReference(@ref));

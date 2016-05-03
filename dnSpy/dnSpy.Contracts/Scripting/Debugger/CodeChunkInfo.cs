@@ -46,8 +46,6 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() {
-			return string.Format("{0:X8}-{1:X8} (0x{2:X})", StartAddr, Length == 0 ? StartAddr : StartAddr + Length - 1, Length);
-		}
+		public override string ToString() => string.Format("{0:X8}-{1:X8} (0x{2:X})", StartAddr, Length == 0 ? StartAddr : StartAddr + Length - 1, Length);
 	}
 }

@@ -48,9 +48,7 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 			this.finished = false;
 		}
 
-		public StringLineIterator GetEnumerator() {
-			return this;
-		}
+		public StringLineIterator GetEnumerator() => this;
 
 		IEnumerator<SubStringInfo> IEnumerable<SubStringInfo>.GetEnumerator() {
 			Debug.Fail("'this' was boxed");
@@ -62,16 +60,13 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 			return GetEnumerator();
 		}
 
-		public SubStringInfo Current {
-			get { return info; }
-		}
+		public SubStringInfo Current => info;
 
 		object IEnumerator.Current {
 			get { Debug.Fail("'this' was boxed"); return info; }
 		}
 
-		public void Dispose() {
-		}
+		public void Dispose() { }
 
 		public bool MoveNext() {
 			int newLineIndex = this.s.IndexOfAny(newLineChars, this.index, end - this.index);

@@ -50,9 +50,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			codeList = list.Select(a => a.Code).ToArray();
 		}
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public int Index {
 			get { return index; }
@@ -76,20 +74,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		uint offset;
 
-		public ListVM<Code> CodeVM {
-			get { return codeVM; }
-		}
-		readonly ListVM<Code> codeVM;
+		public ListVM<Code> CodeVM { get; }
 
 		public Code Code {
 			get { return (Code)CodeVM.SelectedItem; }
 			set { CodeVM.SelectedItem = value; }
 		}
 
-		public InstructionOperandVM InstructionOperandVM {
-			get { return instructionOperandVM; }
-		}
-		InstructionOperandVM instructionOperandVM;
+		public InstructionOperandVM InstructionOperandVM { get; }
 
 		public SequencePoint SequencePoint {
 			get { return sequencePoint; }
@@ -106,9 +98,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public InstructionVM() {
-			this.instructionOperandVM = new InstructionOperandVM();
+			this.InstructionOperandVM = new InstructionOperandVM();
 			this.InstructionOperandVM.PropertyChanged += (a, b) => HasErrorUpdated();
-			this.codeVM = new ListVM<Code>(codeList, (a, b) => OnCodeUpdated());
+			this.CodeVM = new ListVM<Code>(codeList, (a, b) => OnCodeUpdated());
 		}
 
 		void OnCodeUpdated() {
@@ -131,8 +123,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.Single:
 			case InstructionOperandType.Double:
 			case InstructionOperandType.String:
-				if (!instructionOperandVM.Text.HasError)
-					return new Instruction(opCode, instructionOperandVM.Text.ObjectValue);
+				if (!InstructionOperandVM.Text.HasError)
+					return new Instruction(opCode, InstructionOperandVM.Text.ObjectValue);
 				return new Instruction(opCode);
 
 			case InstructionOperandType.Field:
@@ -146,7 +138,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				var list = InstructionOperandVM.Other as IList<InstructionVM>;
 				if (list != null)
 					return new Instruction(opCode, new Instruction[list.Count]);
-				return new Instruction(opCode, new Instruction[0]);
+				return new Instruction(opCode, Array.Empty<Instruction>());
 
 			case InstructionOperandType.BranchTarget:
 				return new Instruction(opCode, new Instruction());
@@ -162,9 +154,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public void CalculateStackUsage(out int pushes, out int pops) {
+		public void CalculateStackUsage(out int pushes, out int pops) =>
 			GetTempInstruction().CalculateStackUsage(out pushes, out pops);
-		}
 
 		public int GetSize() {
 			var opCode = Code.ToOpCode();
@@ -208,13 +199,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public InstructionOptions CreateInstructionOptions() {
-			return CopyTo(new InstructionOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public InstructionOptions CreateInstructionOptions() => CopyTo(new InstructionOptions());
 
 		public void InitializeFrom(InstructionOptions options) {
 			this.Code = options.Code;
@@ -229,9 +215,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return options;
 		}
 
-		public override bool HasError {
-			get { return InstructionOperandVM.HasError; }
-		}
+		public override bool HasError => InstructionOperandVM.HasError;
 
 		public IIndexedItem Clone() {
 			var instr = new InstructionVM();

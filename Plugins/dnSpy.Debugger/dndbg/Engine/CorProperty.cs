@@ -26,81 +26,58 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>
-		public CorModule Module {
-			get { return cls.Module; }
-		}
+		public CorModule Module => Class.Module;
 
 		/// <summary>
 		/// Gets the class
 		/// </summary>
-		public CorClass Class {
-			get { return cls; }
-		}
-		readonly CorClass cls;
+		public CorClass Class { get; }
 
 		/// <summary>
 		/// Gets the token
 		/// </summary>
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
+		public uint Token { get; }
 
 		public CorFunction GetMethod {
 			get {
 				var mod = Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
 				uint mdGetter, mdSetter;
-				MDAPI.GetPropertyGetterSetter(mdi, token, out mdGetter, out mdSetter);
-				return mod == null ? null : mod.GetFunctionFromToken(mdGetter);
+				MDAPI.GetPropertyGetterSetter(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out mdGetter, out mdSetter);
+				return mod?.GetFunctionFromToken(mdGetter);
 			}
 		}
 
 		public CorFunction SetMethod {
 			get {
 				var mod = Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
 				uint mdGetter, mdSetter;
-				MDAPI.GetPropertyGetterSetter(mdi, token, out mdGetter, out mdSetter);
-				return mod == null ? null : mod.GetFunctionFromToken(mdSetter);
+				MDAPI.GetPropertyGetterSetter(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out mdGetter, out mdSetter);
+				return mod?.GetFunctionFromToken(mdSetter);
 			}
 		}
 
 		public CorProperty(CorClass cls, uint token) {
-			this.cls = cls;
-			this.token = token;
+			this.Class = cls;
+			this.Token = token;
 		}
 
 		public CorFunction[] GetOtherMethods() {
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			var tokens = MDAPI.GetPropertyOtherMethodTokens(mdi, token);
+			var tokens = MDAPI.GetPropertyOtherMethodTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token);
 			if (tokens.Length == 0)
-				return emptyCorFunctions;
-			var funcs = new CorFunction[0];
+				return Array.Empty<CorFunction>();
+			var funcs = new CorFunction[tokens.Length];
 			for (int i = 0; i < tokens.Length; i++)
 				funcs[i] = mod.GetFunctionFromToken(tokens[i]);
 			return funcs;
 		}
-		static readonly CorFunction[] emptyCorFunctions = new CorFunction[0];
 
-		public PropertyAttributes GetAttributes() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetPropertyAttributes(mdi, Token);
-		}
-
-		public string GetName() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetPropertyName(mdi, Token);
-		}
-
-		public PropertySig GetPropertySig() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MetaDataUtils.ReadPropertySig(mdi, Token);
-		}
+		public PropertyAttributes GetAttributes() =>
+			MDAPI.GetPropertyAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public string GetName() =>
+			MDAPI.GetPropertyName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public PropertySig GetPropertySig() =>
+			MetaDataUtils.ReadPropertySig(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		public static bool operator ==(CorProperty a, CorProperty b) {
 			if (ReferenceEquals(a, b))
@@ -110,9 +87,7 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorProperty a, CorProperty b) {
-			return !(a == b);
-		}
+		public static bool operator !=(CorProperty a, CorProperty b) => !(a == b);
 
 		public bool Equals(CorProperty other) {
 			return !ReferenceEquals(other, null) &&
@@ -120,25 +95,15 @@ namespace dndbg.Engine {
 				Class == other.Class;
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as CorProperty);
-		}
-
-		public override int GetHashCode() {
-			return (int)Token ^ cls.GetHashCode();
-		}
+		public override bool Equals(object obj) => Equals(obj as CorProperty);
+		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

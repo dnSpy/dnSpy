@@ -22,10 +22,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchInstructionVM : ViewModelBase, IIndexedItem {
-		public InstructionVM InstructionVM {
-			get { return instr; }
-		}
-		readonly InstructionVM instr;
+		public InstructionVM InstructionVM { get; }
 
 		public int Index {
 			get { return index; }
@@ -39,11 +36,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		int index;
 
 		public SwitchInstructionVM(InstructionVM instr) {
-			this.instr = instr;
+			this.InstructionVM = instr;
 		}
 
-		public IIndexedItem Clone() {
-			return new SwitchInstructionVM(instr);
-		}
+		public IIndexedItem Clone() => new SwitchInstructionVM(InstructionVM);
 	}
 }

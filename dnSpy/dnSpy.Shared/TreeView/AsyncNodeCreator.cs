@@ -93,8 +93,7 @@ namespace dnSpy.Shared.TreeView {
 			OnCompleted();
 		}
 
-		protected virtual void OnCompleted() {
-		}
+		protected virtual void OnCompleted() { }
 
 		void ExecActions() {
 			List<Action> actions;
@@ -108,39 +107,29 @@ namespace dnSpy.Shared.TreeView {
 		}
 
 		protected void Start() {
-			Debug.Assert(!isRunning);
-			isRunning = true;
-			completedSuccessfully = false;
+			Debug.Assert(!IsRunning);
+			IsRunning = true;
+			CompletedSuccessfully = false;
 			thread.Start();
 		}
 
-		public bool CompletedSuccessfully {
-			get { return completedSuccessfully; }
-		}
-		bool completedSuccessfully;
-
-		public bool IsRunning {
-			get { return isRunning; }
-		}
-		bool isRunning;
+		public bool CompletedSuccessfully { get; private set; }
+		public bool IsRunning { get; private set; }
 
 		void ThreadMethodImpl() {
-			Debug.Assert(isRunning);
-			Debug.Assert(!completedSuccessfully);
+			Debug.Assert(IsRunning);
+			Debug.Assert(!CompletedSuccessfully);
 			try {
 				ThreadMethod();
-				completedSuccessfully = true;
+				CompletedSuccessfully = true;
 			}
 			catch (OperationCanceledException) {
 			}
 			ExecInUIThread(RemoveMessageNode_UI);
-			isRunning = false;
+			IsRunning = false;
 		}
 
 		protected abstract void ThreadMethod();
-
-		public void Cancel() {
-			cancellationTokenSource.Cancel();
-		}
+		public void Cancel() => cancellationTokenSource.Cancel();
 	}
 }

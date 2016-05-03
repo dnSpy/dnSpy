@@ -36,15 +36,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public FieldAccessNode(FieldDef analyzedField, bool showWrites) {
 			if (analyzedField == null)
-				throw new ArgumentNullException("analyzedField");
+				throw new ArgumentNullException(nameof(analyzedField));
 
 			this.analyzedField = analyzedField;
 			this.showWrites = showWrites;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);

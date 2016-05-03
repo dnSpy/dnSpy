@@ -21,26 +21,20 @@ using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Menus {
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_FILE_GUID, Order = MenuConstants.ORDER_APP_MENU_FILE, Header = "res:Menu_File")]
-	sealed class FileMenu : IMenu {
-	}
+	sealed class FileMenu : IMenu { }
 
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_EDIT_GUID, Order = MenuConstants.ORDER_APP_MENU_EDIT, Header = "res:Menu_Edit")]
-	sealed class EditMenu : IMenu {
-	}
+	sealed class EditMenu : IMenu { }
 
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_VIEW_GUID, Order = MenuConstants.ORDER_APP_MENU_VIEW, Header = "res:Menu_View")]
-	sealed class ViewMenu : IMenu {
-	}
+	sealed class ViewMenu : IMenu { }
 
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_THEMES_GUID, Order = MenuConstants.ORDER_APP_MENU_THEMES, Header = "res:Menu_Themes")]
-	sealed class ThemesMenu : IMenu {
-	}
+	sealed class ThemesMenu : IMenu { }
 
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_WINDOW_GUID, Order = MenuConstants.ORDER_APP_MENU_WINDOW, Header = "res:Menu_Windows")]
-	sealed class WindowMenu : IMenu {
-	}
+	sealed class WindowMenu : IMenu { }
 
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_HELP_GUID, Order = MenuConstants.ORDER_APP_MENU_HELP, Header = "res:Menu_Help")]
-	sealed class HelpMenu : IMenu {
-	}
+	sealed class HelpMenu : IMenu { }
 }

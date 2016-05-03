@@ -31,14 +31,8 @@ namespace dnSpy.Files {
 		readonly List<IDnSpyFile> loadedFiles;
 		FileToLoad[] filesToLoad;
 
-		public bool IsIndeterminate {
-			get { return false; }
-		}
-
-		public double ProgressMinimum {
-			get { return 0; }
-		}
-
+		public bool IsIndeterminate => false;
+		public double ProgressMinimum => 0;
 		public double ProgressMaximum { get; set; }
 
 		public FileLoader(IFileManager fileManager, Window ownerWindow) {

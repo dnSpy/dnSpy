@@ -51,8 +51,7 @@ namespace dnSpy.Debugger {
 	}
 
 	class DebuggerSettings : ViewModelBase, IDebuggerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool UseHexadecimal {
 			get { return useHexadecimal; }
@@ -225,9 +224,7 @@ namespace dnSpy.Debugger {
 		}
 		bool useStringConversionFunction = true;
 
-		public bool CanEvaluateToString {
-			get { return PropertyEvalAndFunctionCalls && UseStringConversionFunction; }
-		}
+		public bool CanEvaluateToString => PropertyEvalAndFunctionCalls && UseStringConversionFunction;
 
 		public bool DebuggerBrowsableAttributesCanHidePropsFields {
 			get { return debuggerBrowsableAttributesCanHidePropsFields; }
@@ -339,9 +336,7 @@ namespace dnSpy.Debugger {
 		}
 		string coreCLRDbgShimFilename64 = string.Empty;
 
-		public DebuggerSettings Clone() {
-			return CopyTo(new DebuggerSettings());
-		}
+		public DebuggerSettings Clone() => CopyTo(new DebuggerSettings());
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
 			other.UseHexadecimal = this.UseHexadecimal;

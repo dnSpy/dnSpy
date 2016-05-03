@@ -82,11 +82,7 @@ namespace dnSpy.Shared.Hex {
 			InstallBindings();
 		}
 
-		public bool IsMemory {
-			get { return isMemory; }
-			set { isMemory = value; }
-		}
-		bool isMemory;
+		public bool IsMemory { get; set; }
 
 		void InstallBindings() {
 			Add(new RoutedCommand("GoToOffset", typeof(GoToOffsetHexBoxCtxMenuCommand)),
@@ -120,19 +116,8 @@ namespace dnSpy.Shared.Hex {
 			this.InputBindings.Add(new KeyBinding(command, key, modifiers));
 		}
 
-		public ulong DocumentStartOffset {
-			get {
-				var doc = Document;
-				return doc == null ? 0 : doc.StartOffset;
-			}
-		}
-
-		public ulong DocumentEndOffset {
-			get {
-				var doc = Document;
-				return doc == null ? 0 : doc.EndOffset;
-			}
-		}
+		public ulong DocumentStartOffset => Document?.StartOffset ?? 0;
+		public ulong DocumentEndOffset => Document?.EndOffset ?? 0;
 
 		public new int? BytesGroupCount {
 			get { return useDefault_BytesGroupCount ? (int?)null : base.BytesGroupCount; }

@@ -34,9 +34,7 @@ using dnSpy.Shared.Files.TreeView.Resources;
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE)]
 	sealed class SerializedImageListStreamerResourceElementNodeCreator : IResourceNodeCreator {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
-			return null;
-		}
+		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
 		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
@@ -55,17 +53,9 @@ namespace dnSpy.Files.TreeView.Resources {
 		ImageListOptions imageListOptions;
 		byte[] imageData;
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE_GUID); }
-		}
-
-		public ImageListOptions ImageListOptions {
-			get { return new ImageListOptions(imageListOptions) { Name = Name }; }
-		}
-
-		protected override ImageReference GetIcon() {
-			return new ImageReference(GetType().Assembly, "ImageFile");
-		}
+		public override Guid Guid => new Guid(FileTVConstants.SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE_GUID);
+		public ImageListOptions ImageListOptions => new ImageListOptions(imageListOptions) { Name = Name };
+		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
 
 		public SerializedImageListStreamerResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
 			: base(treeNodeGroup, resourceElement) {

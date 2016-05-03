@@ -144,8 +144,6 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <returns></returns>
-		public static ITextEditorUIContext TryGetTextEditorUIContext(this IFileTab tab) {
-			return tab == null ? null : tab.UIContext as ITextEditorUIContext;
-		}
+		public static ITextEditorUIContext TryGetTextEditorUIContext(this IFileTab tab) => tab?.UIContext as ITextEditorUIContext;
 	}
 }

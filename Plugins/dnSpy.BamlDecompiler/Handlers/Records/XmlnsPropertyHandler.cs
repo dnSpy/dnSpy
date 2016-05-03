@@ -30,9 +30,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class XmlnsPropertyHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.XmlnsProperty; }
-		}
+		public BamlRecordType Type => BamlRecordType.XmlnsProperty;
 
 		IEnumerable<string> ResolveCLRNamespaces(AssemblyDef assembly, string ns) {
 			foreach (var attr in assembly.CustomAttributes.FindAll("System.Windows.Markup.XmlnsDefinitionAttribute")) {

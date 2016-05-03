@@ -37,9 +37,7 @@ namespace dnSpy.Debugger.Modules {
 
 	[Export, Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ModulesVM : ViewModelBase, IModulesVM, ILoadBeforeDebug {
-		public ObservableCollection<ModuleVM> Collection {
-			get { return modulesList; }
-		}
+		public ObservableCollection<ModuleVM> Collection => modulesList;
 		readonly ObservableCollection<ModuleVM> modulesList;
 
 		public object SelectedItem {
@@ -53,13 +51,13 @@ namespace dnSpy.Debugger.Modules {
 		}
 		object selectedItem;
 
-		public bool IsEnabled {//TODO: Use
+		public bool IsEnabled {//TODO: Use it
 			get { return isEnabled; }
 			set { isEnabled = value; }
 		}
 		bool isEnabled;
 
-		public bool IsVisible {//TODO: Use
+		public bool IsVisible {//TODO: Use it
 			get { return isVisible; }
 			set { isVisible = value; }
 		}

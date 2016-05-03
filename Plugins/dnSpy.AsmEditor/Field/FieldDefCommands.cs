@@ -57,17 +57,9 @@ namespace dnSpy.AsmEditor.Field {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteFieldDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteFieldDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteFieldDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 40)]
@@ -80,17 +72,9 @@ namespace dnSpy.AsmEditor.Field {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeleteFieldDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeleteFieldDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeleteFieldDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 40)]
@@ -103,18 +87,9 @@ namespace dnSpy.AsmEditor.Field {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					DeleteFieldDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(CodeContext context) {
-				return DeleteFieldDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteFieldDefCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(CodeContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
@@ -123,10 +98,7 @@ namespace dnSpy.AsmEditor.Field {
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteFieldsCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length > 0 &&
-				nodes.All(n => n is IFieldNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IFieldNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -194,9 +166,7 @@ namespace dnSpy.AsmEditor.Field {
 			this.nodes = new DeletableNodes<IFieldNode>(fieldNodes);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.DeleteFieldCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.DeleteFieldCommand;
 
 		public void Execute() {
 			nodes.Delete();
@@ -208,9 +178,7 @@ namespace dnSpy.AsmEditor.Field {
 			nodes.Restore();
 		}
 
-		public IEnumerable<object> ModifiedObjects {
-			get { return nodes.Nodes; }
-		}
+		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -226,13 +194,8 @@ namespace dnSpy.AsmEditor.Field {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateFieldDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateFieldDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 70)]
@@ -247,13 +210,8 @@ namespace dnSpy.AsmEditor.Field {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateFieldDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateFieldDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 70)]
@@ -274,15 +232,12 @@ namespace dnSpy.AsmEditor.Field {
 					context.Nodes[0] is ITypeNode;
 			}
 
-			public override void Execute(CodeContext context) {
-				CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override void Execute(CodeContext context) => CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -343,9 +298,7 @@ namespace dnSpy.AsmEditor.Field {
 			this.fieldNode = ownerNode.Create(options.CreateFieldDef(ownerNode.TypeDef.Module));
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateFieldCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.CreateFieldCommand2;
 
 		public void Execute() {
 			ownerNode.TreeNode.EnsureChildrenLoaded();
@@ -389,13 +342,8 @@ namespace dnSpy.AsmEditor.Field {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return FieldDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => FieldDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 50)]
@@ -410,13 +358,8 @@ namespace dnSpy.AsmEditor.Field {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return FieldDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => FieldDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 50)]
@@ -431,19 +374,11 @@ namespace dnSpy.AsmEditor.Field {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return FieldDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => FieldDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is IFieldNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IFieldNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -490,9 +425,7 @@ namespace dnSpy.AsmEditor.Field {
 				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(fieldNode.GetModule()).Where(a => RefFinder.FieldEqualityComparerInstance.Equals(a, fieldNode.FieldDef)).Select(a => new MemberRefInfo(a)).ToArray();
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.EditFieldCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.EditFieldCommand2;
 
 		public void Execute() {
 			if (nameChanged) {

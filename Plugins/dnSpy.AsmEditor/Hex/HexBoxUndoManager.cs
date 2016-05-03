@@ -39,13 +39,8 @@ namespace dnSpy.AsmEditor.Hex {
 			undoCommandManager.OnEvent += UndoCommandManager_OnEvent;
 		}
 
-		public void Initialize(HexBox hexBox) {
-			hexBox.OnWrite += HexBox_OnWrite;
-		}
-
-		public void Uninitialize(HexBox hexBox) {
-			hexBox.OnWrite -= HexBox_OnWrite;
-		}
+		public void Initialize(HexBox hexBox) => hexBox.OnWrite += HexBox_OnWrite;
+		public void Uninitialize(HexBox hexBox) => hexBox.OnWrite -= HexBox_OnWrite;
 
 		sealed class UndoInfo {
 			public byte[] OriginalData;
@@ -90,17 +85,9 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 		readonly WeakReference prevTextInputCmd = new WeakReference(null);
 
-		void UndoCommandManager_OnEvent(object sender, UndoCommandManagerEventArgs e) {
-			ClearTextInputCommand();
-		}
-
-		void ClearTextInputCommand() {
-			prevTextInputCmd.Target = null;
-		}
-
-		void SetTextInputCommand(HexBoxUndoCommand cmd) {
-			prevTextInputCmd.Target = cmd;
-		}
+		void UndoCommandManager_OnEvent(object sender, UndoCommandManagerEventArgs e) => ClearTextInputCommand();
+		void ClearTextInputCommand() => prevTextInputCmd.Target = null;
+		void SetTextInputCommand(HexBoxUndoCommand cmd) => prevTextInputCmd.Target = cmd;
 
 		static string GetDescription(HexBoxWriteEventArgs e) {
 			switch (e.Type) {

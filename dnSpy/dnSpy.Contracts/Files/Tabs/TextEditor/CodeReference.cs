@@ -25,17 +25,17 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// The reference or null
 		/// </summary>
-		public object Reference;
+		public object Reference { get; }
 
 		/// <summary>
 		/// true if it's a local, parameter, or label
 		/// </summary>
-		public bool IsLocal;
+		public bool IsLocal { get; }
 
 		/// <summary>
 		/// true if it's the target of a click, eg. the definition of a type, method, etc
 		/// </summary>
-		public bool IsLocalTarget;
+		public bool IsLocalTarget { get; }
 
 		/// <summary>
 		/// Constructor

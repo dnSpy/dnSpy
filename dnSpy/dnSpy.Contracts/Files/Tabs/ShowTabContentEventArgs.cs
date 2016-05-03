@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// true if the content was shown successfully (eg. no exceptions when decompiling code)
 		/// </summary>
-		public bool Success { get; private set; }
+		public bool Success { get; }
 
 		/// <summary>
 		/// Set to true if the caret has been moved by a previous handler
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Gets the tab
 		/// </summary>
-		public IFileTab Tab { get; private set; }
+		public IFileTab Tab { get; }
 
 		/// <summary>
 		/// Constructor

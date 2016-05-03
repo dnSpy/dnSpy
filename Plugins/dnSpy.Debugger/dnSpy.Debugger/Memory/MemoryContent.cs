@@ -40,21 +40,10 @@ namespace dnSpy.Debugger.Memory {
 	}
 
 	sealed class MemoryContent : IMemoryContent {
-		public object UIObject {
-			get { return memoryControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return memoryControl.DnHexBox; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return memoryControl; }
-		}
-
-		public DnHexBox DnHexBox {
-			get { return memoryControl.DnHexBox; }
-		}
+		public object UIObject => memoryControl;
+		public IInputElement FocusedElement => memoryControl.DnHexBox;
+		public FrameworkElement ScaleElement => memoryControl;
+		public DnHexBox DnHexBox => memoryControl.DnHexBox;
 
 		readonly MemoryControl memoryControl;
 		readonly IMemoryVM vmMemory;
@@ -86,24 +75,10 @@ namespace dnSpy.Debugger.Memory {
 				UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
 		}
 
-		void UpdateHexBoxRenderer(bool useNewRenderer) {
-			this.memoryControl.DnHexBox.UseNewFormatter = useNewRenderer;
-		}
-
-		public void OnClose() {
-			vmMemory.IsEnabled = false;
-		}
-
-		public void OnShow() {
-			vmMemory.IsEnabled = true;
-		}
-
-		public void OnHidden() {
-			vmMemory.IsVisible = false;
-		}
-
-		public void OnVisible() {
-			vmMemory.IsVisible = true;
-		}
+		void UpdateHexBoxRenderer(bool useNewRenderer) => this.memoryControl.DnHexBox.UseNewFormatter = useNewRenderer;
+		public void OnClose() => vmMemory.IsEnabled = false;
+		public void OnShow() => vmMemory.IsEnabled = true;
+		public void OnHidden() => vmMemory.IsVisible = false;
+		public void OnVisible() => vmMemory.IsVisible = true;
 	}
 }

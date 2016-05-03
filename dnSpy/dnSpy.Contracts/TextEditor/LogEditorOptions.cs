@@ -55,9 +55,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
-		public LogEditorOptions Clone() {
-			return CopyTo(new LogEditorOptions());
-		}
+		public LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
 
 		LogEditorOptions CopyTo(LogEditorOptions other) {
 			other.TextEditorCommandGuid = TextEditorCommandGuid;

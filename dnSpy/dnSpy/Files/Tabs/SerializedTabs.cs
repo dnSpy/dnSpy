@@ -40,37 +40,18 @@ namespace dnSpy.Files.Tabs {
 		const string TABGROUP_SECTION = "TabGroup";
 		const string STACKEDCONTENTSTATE_SECTION = "StackedContent";
 
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public int Index {
-			get { return index; }
-		}
-		readonly int index;
-
-		public bool IsHorizontal {
-			get { return isHorizontal; }
-		}
-		readonly bool isHorizontal;
-
-		public List<SerializedTabGroup> TabGroups {
-			get { return tabGroups; }
-		}
-		readonly List<SerializedTabGroup> tabGroups;
-
-		public StackedContentState StackedContentState {
-			get { return stackedContentState; }
-		}
-		readonly StackedContentState stackedContentState;
+		public string Name { get; }
+		public int Index { get; }
+		public bool IsHorizontal { get; }
+		public List<SerializedTabGroup> TabGroups { get; }
+		public StackedContentState StackedContentState { get; }
 
 		SerializedTabGroupWindow(string name, int index, bool isHorizontal, StackedContentState stackedContentState) {
-			this.name = name;
-			this.index = index;
-			this.isHorizontal = isHorizontal;
-			this.tabGroups = new List<SerializedTabGroup>();
-			this.stackedContentState = stackedContentState;
+			this.Name = name;
+			this.Index = index;
+			this.IsHorizontal = isHorizontal;
+			this.TabGroups = new List<SerializedTabGroup>();
+			this.StackedContentState = stackedContentState;
 		}
 
 		public static SerializedTabGroupWindow Load(ISettingsSection section) {
@@ -133,19 +114,12 @@ namespace dnSpy.Files.Tabs {
 		const string INDEX_ATTR = "index";
 		const string TAB_SECTION = "Tab";
 
-		public int Index {
-			get { return index; }
-		}
-		readonly int index;
-
-		public List<SerializedTab> Tabs {
-			get { return tabs; }
-		}
-		readonly List<SerializedTab> tabs;
+		public int Index { get; }
+		public List<SerializedTab> Tabs { get; }
 
 		SerializedTabGroup(int index) {
-			this.index = index;
-			this.tabs = new List<SerializedTab>();
+			this.Index = index;
+			this.Tabs = new List<SerializedTab>();
 		}
 
 		public static SerializedTabGroup Load(ISettingsSection section) {
@@ -201,37 +175,18 @@ namespace dnSpy.Files.Tabs {
 		const string CONTENT_GUID_ATTR = "_g_";
 		const string AUTOLOADED_SECTION = "File";
 
-		public ISettingsSection Content {
-			get { return content; }
-		}
-		readonly ISettingsSection content;
-
-		public ISettingsSection TabUI {
-			get { return tabContentUI; }
-		}
-		ISettingsSection tabContentUI;
-
-		public ISettingsSection UI {
-			get { return ui; }
-		}
-		readonly ISettingsSection ui;
-
-		public List<SerializedPath> Paths {
-			get { return paths; }
-		}
-		readonly List<SerializedPath> paths;
-
-		public List<DnSpyFileInfo> AutoLoadedFiles {
-			get { return autoLoadedFiles; }
-		}
-		readonly List<DnSpyFileInfo> autoLoadedFiles;
+		public ISettingsSection Content { get; }
+		public ISettingsSection TabUI { get; }
+		public ISettingsSection UI { get; }
+		public List<SerializedPath> Paths { get; }
+		public List<DnSpyFileInfo> AutoLoadedFiles { get; }
 
 		SerializedTab(ISettingsSection content, ISettingsSection tabContentUI, ISettingsSection ui, List<SerializedPath> paths, List<DnSpyFileInfo> autoLoadedFiles) {
-			this.content = content;
-			this.tabContentUI = tabContentUI;
-			this.ui = ui;
-			this.paths = paths;
-			this.autoLoadedFiles = autoLoadedFiles;
+			this.Content = content;
+			this.TabUI = tabContentUI;
+			this.UI = ui;
+			this.Paths = paths;
+			this.AutoLoadedFiles = autoLoadedFiles;
 		}
 
 		public static SerializedTab TryLoad(ISettingsSection section) {
@@ -326,14 +281,14 @@ namespace dnSpy.Files.Tabs {
 			yield return null;
 			if (tabContent == null)
 				yield break;
-			fileTabManager.Add(g, tabContent, null, a => {
+			fileTabManager.Add(g, tabContent, null, (Action<ShowTabContentEventArgs>)(a => {
 				if (a.Success) {
 					var uiContext = tabContent.FileTab.UIContext;
-					tabContent.FileTab.DeserializeUI(TabUI);
+					tabContent.FileTab.DeserializeUI((ISettingsSection)this.TabUI);
 					var obj = uiContext.CreateSerialized(UI);
 					uiContext.Deserialize(obj);
 				}
-			});
+			}));
 			yield return null;
 		}
 
@@ -341,7 +296,7 @@ namespace dnSpy.Files.Tabs {
 			var list = new List<IFileTreeNodeData>();
 			var root = fileTreeView.TreeView.Root;
 			var findCtx = new FindNodeContext();
-			foreach (var path in paths) {
+			foreach (var path in Paths) {
 				foreach (var o in path.FindNode(findCtx, root))
 					yield return o;
 				if (findCtx.Node == null)
@@ -359,13 +314,10 @@ namespace dnSpy.Files.Tabs {
 	sealed class SerializedPath {
 		const string NAME_SECTION = "Name";
 
-		public List<NodePathName> Names {
-			get { return names; }
-		}
-		readonly List<NodePathName> names;
+		public List<NodePathName> Names { get; }
 
 		SerializedPath() {
-			this.names = new List<NodePathName>();
+			this.Names = new List<NodePathName>();
 		}
 
 		public static SerializedPath Load(ISettingsSection pathSection) {

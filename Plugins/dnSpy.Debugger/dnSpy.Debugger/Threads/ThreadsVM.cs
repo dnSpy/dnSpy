@@ -56,15 +56,13 @@ namespace dnSpy.Debugger.Threads {
 		}
 		bool isEnabled;
 
-		public bool IsVisible {//TODO: Use this
+		public bool IsVisible {//TODO: Use it
 			get { return isVisible; }
 			set { isVisible = value; }
 		}
 		bool isVisible;
 
-		public ObservableCollection<ThreadVM> Collection {
-			get { return threadsList; }
-		}
+		public ObservableCollection<ThreadVM> Collection => threadsList;
 		readonly ObservableCollection<ThreadVM> threadsList;
 
 		public object SelectedItem {
@@ -112,9 +110,7 @@ namespace dnSpy.Debugger.Threads {
 				RefreshEvalFields();
 		}
 
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
-			InitializeThreads();
-		}
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) => InitializeThreads();
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
@@ -134,13 +130,8 @@ namespace dnSpy.Debugger.Threads {
 			}
 		}
 
-		void InstallDebuggerHooks(DnDebugger dbg) {
-			dbg.OnNameChanged += DnDebugger_OnNameChanged;
-		}
-
-		void UninstallDebuggerHooks(DnDebugger dbg) {
-			dbg.OnNameChanged -= DnDebugger_OnNameChanged;
-		}
+		void InstallDebuggerHooks(DnDebugger dbg) => dbg.OnNameChanged += DnDebugger_OnNameChanged;
+		void UninstallDebuggerHooks(DnDebugger dbg) => dbg.OnNameChanged -= DnDebugger_OnNameChanged;
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
 			if (e.Thread != null) {

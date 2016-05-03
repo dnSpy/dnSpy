@@ -27,57 +27,30 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>
-		public CorModule Module {
-			get { return cls.Module; }
-		}
+		public CorModule Module => Class.Module;
 
 		/// <summary>
 		/// Gets the class
 		/// </summary>
-		public CorClass Class {
-			get { return cls; }
-		}
-		readonly CorClass cls;
+		public CorClass Class { get; }
 
 		/// <summary>
 		/// Gets the token
 		/// </summary>
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
+		public uint Token { get; }
 
 		public CorField(CorClass cls, uint token) {
-			this.cls = cls;
-			this.token = token;
+			this.Class = cls;
+			this.Token = token;
 		}
 
-		public FieldAttributes GetAttributes() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetFieldAttributes(mdi, Token);
-		}
-
-		public string GetName() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.GetFieldName(mdi, Token);
-		}
-
-		public FieldSig GetFieldSig() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MetaDataUtils.ReadFieldSig(mdi, Token);
-		}
-
-		public CorValue ReadStatic(CorFrame frame) {
-			return cls.GetStaticFieldValue(token, frame);
-		}
+		public FieldAttributes GetAttributes() => MDAPI.GetFieldAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public string GetName() => MDAPI.GetFieldName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public FieldSig GetFieldSig() => MetaDataUtils.ReadFieldSig(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public CorValue ReadStatic(CorFrame frame) => Class.GetStaticFieldValue(Token, frame);
 
 		public object GetConstant(out CorElementType etype) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			var c = MDAPI.GetFieldConstant(mdi, token, out etype);
+			var c = MDAPI.GetFieldConstant(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out etype);
 			if (etype == CorElementType.End)
 				return null;
 			return c;
@@ -96,9 +69,7 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorField a, CorField b) {
-			return !(a == b);
-		}
+		public static bool operator !=(CorField a, CorField b) => !(a == b);
 
 		public bool Equals(CorField other) {
 			return !ReferenceEquals(other, null) &&
@@ -106,25 +77,15 @@ namespace dndbg.Engine {
 				Class == other.Class;
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as CorField);
-		}
-
-		public override int GetHashCode() {
-			return (int)Token ^ cls.GetHashCode();
-		}
+		public override bool Equals(object obj) => Equals(obj as CorField);
+		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

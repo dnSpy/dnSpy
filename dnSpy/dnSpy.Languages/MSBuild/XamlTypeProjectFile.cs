@@ -29,17 +29,17 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
-			var opts = new DecompilePartialType(type, output, decompilationContext);
+			var opts = new DecompilePartialType(Type, output, decompilationContext);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);
-			opts.InterfacesToRemove.Add(new TypeRefUser(type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef()));
-			opts.InterfacesToRemove.Add(new TypeRefUser(type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("System.Xaml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").ToAssemblyRef()));
+			opts.InterfacesToRemove.Add(new TypeRefUser(Type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef()));
+			opts.InterfacesToRemove.Add(new TypeRefUser(Type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("System.Xaml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").ToAssemblyRef()));
 			language.Decompile(DecompilationType.PartialType, opts);
 		}
 
 		IEnumerable<IMemberDef> GetDefsToRemove() {
-			var ep = type.Module.EntryPoint;
-			if (ep != null && ep.DeclaringType == type)
+			var ep = Type.Module.EntryPoint;
+			if (ep != null && ep.DeclaringType == Type)
 				yield return ep;
 
 			var d = FindInitializeComponent();
@@ -64,7 +64,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		MethodDef FindInitializeComponent() {
-			foreach (var md in type.FindMethods("InitializeComponent")) {
+			foreach (var md in Type.FindMethods("InitializeComponent")) {
 				if (md.IsStatic || md.Parameters.Count != 1)
 					continue;
 				if (md.ReturnType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void)
@@ -76,7 +76,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		MethodDef FindConnectMethod() {
-			foreach (var md in type.Methods) {
+			foreach (var md in Type.Methods) {
 				if (IsConnect(md))
 					return md;
 			}
@@ -111,7 +111,7 @@ namespace dnSpy.Languages.MSBuild {
 		// Finds 'internal Delegate _CreateDelegate(Type delegateType, string handler)' which is
 		// called by XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate()
 		MethodDef FindCreateDelegateMethod() {
-			foreach (var m in type.Methods) {
+			foreach (var m in Type.Methods) {
 				if (m.Name != "_CreateDelegate")
 					continue;
 				if (m.IsStatic || !m.IsAssembly)

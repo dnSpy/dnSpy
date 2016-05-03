@@ -30,9 +30,7 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly INamespaceNode nsNode;
 		readonly bool nsNodeCreated;
 
-		public INamespaceNode NamespaceNode {
-			get { return nsNode; }
-		}
+		public INamespaceNode NamespaceNode => nsNode;
 
 		public IEnumerable<IFileTreeNodeData> OriginalNodes {
 			get {

@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Type to decompile
 		/// </summary>
-		public TypeDef Type { get; private set; }
+		public TypeDef Type { get; }
 
 		/// <summary>
 		/// true to add the 'partial' keyword. It's true by default.
@@ -40,10 +40,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// All definitions that must be hidden or shown must be added here
 		/// </summary>
-		public HashSet<IMemberDef> Definitions {
-			get { return definitions; }
-		}
-		readonly HashSet<IMemberDef> definitions;
+		public HashSet<IMemberDef> Definitions { get; }
 
 		/// <summary>
 		/// true if members in <see cref="Definitions"/> should be shown, false if they should be removed
@@ -59,10 +56,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Interfaces to remove from the type
 		/// </summary>
-		public List<ITypeDefOrRef> InterfacesToRemove {
-			get { return interfacesToRemove; }
-		}
-		readonly List<ITypeDefOrRef> interfacesToRemove;
+		public List<ITypeDefOrRef> InterfacesToRemove { get; }
 
 		/// <summary>
 		/// Constructor
@@ -77,8 +71,8 @@ namespace dnSpy.Contracts.Languages {
 			this.Type = type;
 			this.AddPartialKeyword = true;
 			this.UseUsingDeclarations = true;
-			this.definitions = new HashSet<IMemberDef>();
-			this.interfacesToRemove = new List<ITypeDefOrRef>();
+			this.Definitions = new HashSet<IMemberDef>();
+			this.InterfacesToRemove = new List<ITypeDefOrRef>();
 		}
 	}
 }

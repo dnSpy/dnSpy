@@ -71,9 +71,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			this.languageSettingsManager = languageSettingsManager;
 		}
 
-		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider(languageSettingsManager).Languages;
-		}
+		public IEnumerable<ILanguage> Create() => new LanguageProvider(languageSettingsManager).Languages;
 	}
 
 	/// <summary>
@@ -85,14 +83,12 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
 
-		public override IDecompilerSettings Settings {
-			get { return langSettings; }
-		}
+		public override IDecompilerSettings Settings => langSettings;
 		readonly LanguageDecompilerSettings langSettings;
 
 		public CSharpLanguage(LanguageDecompilerSettings langSettings, double orderUI) {
 			this.langSettings = langSettings;
-			this.orderUI = orderUI;
+			this.OrderUI = orderUI;
 		}
 
 #if DEBUG
@@ -120,35 +116,13 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 #endif
 
 		public override Guid ContentTypeGuid => new Guid(ContentTypes.CSHARP_ILSPY);
-
-		public override string GenericNameUI {
-			get { return LanguageConstants.GENERIC_NAMEUI_CSHARP; }
-		}
-
-		public override string UniqueNameUI {
-			get { return uniqueNameUI; }
-		}
-
-		public override double OrderUI {
-			get { return orderUI; }
-		}
-		readonly double orderUI;
-
-		public override Guid GenericGuid {
-			get { return LanguageConstants.LANGUAGE_CSHARP; }
-		}
-
-		public override Guid UniqueGuid {
-			get { return uniqueGuid; }
-		}
-
-		public override string FileExtension {
-			get { return ".cs"; }
-		}
-
-		public override string ProjectFileExtension {
-			get { return ".csproj"; }
-		}
+		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_CSHARP;
+		public override string UniqueNameUI => uniqueNameUI;
+		public override double OrderUI { get; }
+		public override Guid GenericGuid => LanguageConstants.LANGUAGE_CSHARP;
+		public override Guid UniqueGuid => uniqueGuid;
+		public override string FileExtension => ".cs";
+		public override string ProjectFileExtension => ".csproj";
 
 		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, method);
@@ -404,7 +378,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 
 		protected override void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer) {
 			if (property == null)
-				throw new ArgumentNullException("property");
+				throw new ArgumentNullException(nameof(property));
 
 			if (!isIndexer.HasValue) {
 				isIndexer = property.IsIndexer();
@@ -456,14 +430,12 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 
 		protected override void FormatTypeName(ITextOutput output, TypeDef type) {
 			if (type == null)
-				throw new ArgumentNullException("type");
+				throw new ArgumentNullException(nameof(type));
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
-		public override bool ShowMember(IMemberRef member) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
-		}
+		public override bool ShowMember(IMemberRef member) => showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
 
 		public override bool CanDecompile(DecompilationType decompilationType) {
 			switch (decompilationType) {

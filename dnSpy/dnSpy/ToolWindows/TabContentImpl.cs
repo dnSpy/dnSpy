@@ -30,31 +30,24 @@ using dnSpy.Tabs;
 
 namespace dnSpy.ToolWindows {
 	sealed class TabContentImpl : ITabContent, IFocusable, INotifyPropertyChanged {
-		public ICommand CloseCommand {
-			get { return new RelayCommand(a => Close(), a => CanClose); }
-		}
-
-		public ICommand ShowWindowPositionCommand {
-			get { return new RelayCommand(a => ShowWindowPositionMenu(a), a => CanShowWindowPositionMenu); }
-		}
+		public ICommand CloseCommand => new RelayCommand(a => Close(), a => CanClose);
+		public ICommand ShowWindowPositionCommand => new RelayCommand(a => ShowWindowPositionMenu(a), a => CanShowWindowPositionMenu);
 
 		bool IFocusable.CanFocus {
 			get {
-				var focusable = content as IFocusable;
+				var focusable = Content as IFocusable;
 				return focusable != null && focusable.CanFocus;
 			}
 		}
 
 		void IFocusable.Focus() {
-			var focusable = content as IFocusable;
+			var focusable = Content as IFocusable;
 			Debug.Assert(focusable != null);
 			if (focusable != null)
 				focusable.Focus();
 		}
 
-		public IInputElement FocusedElement {
-			get { return content.FocusedElement ?? content.UIObject as IInputElement; }
-		}
+		public IInputElement FocusedElement => Content.FocusedElement ?? Content.UIObject as IInputElement;
 
 		public bool IsActive {
 			get { return isActive; }
@@ -67,13 +60,9 @@ namespace dnSpy.ToolWindows {
 		}
 		bool isActive;
 
-		public string Title {
-			get { return content.Title; }
-		}
+		public string Title => Content.Title;
 
-		public object ToolTip {
-			get { return content.ToolTip; }
-		}
+		public object ToolTip => Content.ToolTip;
 
 		public object UIObject {
 			get {
@@ -96,7 +85,7 @@ namespace dnSpy.ToolWindows {
 		}
 		ContentPresenter contentPresenter;
 
-		void UpdateScaleElement() => elementScaler.InstallScale(content.ScaleElement);
+		void UpdateScaleElement() => elementScaler.InstallScale(Content.ScaleElement);
 
 		void ContentPresenter_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var cp = (ContentPresenter)sender;
@@ -119,7 +108,7 @@ namespace dnSpy.ToolWindows {
 			get {
 				if (!contentUIObject_initd) {
 					contentUIObject_initd = true;
-					contentUIObject = content.UIObject;
+					contentUIObject = Content.UIObject;
 				}
 				return contentUIObject;
 			}
@@ -135,11 +124,7 @@ namespace dnSpy.ToolWindows {
 		bool contentUIObject_initd;
 
 		public event PropertyChangedEventHandler PropertyChanged;
-
-		public IToolWindowContent Content {
-			get { return content; }
-		}
-		readonly IToolWindowContent content;
+		public IToolWindowContent Content { get; }
 
 		public ToolWindowGroup Owner {
 			get {
@@ -155,13 +140,11 @@ namespace dnSpy.ToolWindows {
 		public TabContentImpl(ToolWindowGroup owner, IToolWindowContent content) {
 			this.elementScaler = new TabElementScaler();
 			this.owner = owner;
-			this.content = content;
+			this.Content = content;
 			AddEvents();
 		}
 
-		public void PrepareMove() {
-			moving = true;
-		}
+		public void PrepareMove() => moving = true;
 		bool moving = false;
 
 		public void OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
@@ -196,7 +179,7 @@ namespace dnSpy.ToolWindows {
 					moving = false;
 				}
 				else
-					content.OnVisibilityChanged(ev.Value);
+					Content.OnVisibilityChanged(ev.Value);
 			}
 
 			switch (visEvent) {
@@ -237,19 +220,16 @@ namespace dnSpy.ToolWindows {
 			}
 		}
 
-		void OnPropertyChanged(string name) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
-		}
+		void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
 		void AddEvents() {
-			var npc = content as INotifyPropertyChanged;
+			var npc = Content as INotifyPropertyChanged;
 			if (npc != null)
 				npc.PropertyChanged += ToolWindowContent_PropertyChanged;
 		}
 
 		void RemoveEvents() {
-			var npc = content as INotifyPropertyChanged;
+			var npc = Content as INotifyPropertyChanged;
 			if (npc != null)
 				npc.PropertyChanged -= ToolWindowContent_PropertyChanged;
 		}
@@ -260,14 +240,12 @@ namespace dnSpy.ToolWindows {
 			else if (e.PropertyName == "ToolTip")
 				OnPropertyChanged("ToolTip");
 			else if (e.PropertyName == "UIObject" && contentUIObject_initd)
-				ContentUIObject = content.UIObject;
+				ContentUIObject = Content.UIObject;
 			else if (e.PropertyName == "ScaleElement" && contentUIObject_initd)
 				UpdateScaleElement();
 		}
 
-		bool CanClose {
-			get { return true; }
-		}
+		bool CanClose => true;
 
 		void Close() {
 			if (!CanClose)
@@ -276,9 +254,7 @@ namespace dnSpy.ToolWindows {
 				Owner.Close(this);
 		}
 
-		bool CanShowWindowPositionMenu {
-			get { return true; }
-		}
+		bool CanShowWindowPositionMenu => true;
 
 		void ShowWindowPositionMenu(object uiObj) {
 			var fe = uiObj as FrameworkElement;

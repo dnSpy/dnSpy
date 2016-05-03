@@ -26,13 +26,10 @@ using dndbg.Engine;
 
 namespace dnSpy.Debugger {
 	sealed class DebuggedProcessRunningEventArgs : EventArgs {
-		public Process Process {
-			get { return process; }
-		}
-		readonly Process process;
+		public Process Process { get; }
 
 		public DebuggedProcessRunningEventArgs(Process process) {
-			this.process = process;
+			this.Process = process;
 		}
 	}
 
@@ -81,8 +78,7 @@ namespace dnSpy.Debugger {
 						return;
 					dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
 						if (id == isRunningId) {
-							if (ProcessRunning != null)
-								ProcessRunning(this, new DebuggedProcessRunningEventArgs(process));
+							ProcessRunning?.Invoke(this, new DebuggedProcessRunningEventArgs(process));
 						}
 					}));
 				}

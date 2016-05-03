@@ -53,9 +53,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		IEditOperand editOperand;
 
-		public ICommand EditOtherCommand {
-			get { return new RelayCommand(a => EditOther(a), a => EditOtherCanExecute(a)); }
-		}
+		public ICommand EditOtherCommand => new RelayCommand(a => EditOther(a), a => EditOtherCanExecute(a));
 
 		public InstructionOperandType InstructionOperandType {
 			get { return operandType; }
@@ -104,9 +102,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public void SwitchOperandChanged() {
-			OnPropertyChanged("Other");
-		}
+		public void SwitchOperandChanged() => OnPropertyChanged("Other");
 
 		public void BranchOperandChanged(IEnumerable<InstructionVM> instrs) {
 			if (OperandListVM.Items.Count > 0 && !(OperandListVM.SelectedItem is InstructionVM))
@@ -132,9 +128,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				OperandListVM.SelectedIndex = 0;
 		}
 
-		public void UpdateOperandType(Code code) {
-			InstructionOperandType = GetOperandType(code);
-		}
+		public void UpdateOperandType(Code code) => InstructionOperandType = GetOperandType(code);
 
 		public void WriteValue(Code code, object value) {
 			UpdateOperandType(code);
@@ -237,44 +231,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public bool StringIsSelected {
-			get { return InstructionOperandType == MethodBody.InstructionOperandType.String; }
-		}
+		public bool StringIsSelected => InstructionOperandType == MethodBody.InstructionOperandType.String;
 
-		public SByteVM SByte {
-			get { return @sbyte; }
-		}
-		SByteVM @sbyte;
-
-		public ByteVM Byte {
-			get { return @byte; }
-		}
-		ByteVM @byte;
-
-		public Int32VM Int32 {
-			get { return int32; }
-		}
-		Int32VM int32;
-
-		public Int64VM Int64 {
-			get { return int64; }
-		}
-		Int64VM int64;
-
-		public SingleVM Single {
-			get { return single; }
-		}
-		SingleVM single;
-
-		public DoubleVM Double {
-			get { return @double; }
-		}
-		DoubleVM @double;
-
-		public StringVM String {
-			get { return @string; }
-		}
-		StringVM @string;
+		public SByteVM SByte { get; }
+		public ByteVM Byte { get; }
+		public Int32VM Int32 { get; }
+		public Int64VM Int64 { get; }
+		public SingleVM Single { get; }
+		public DoubleVM Double { get; }
+		public StringVM String { get; }
 
 		public object Other {
 			get { return other; }
@@ -289,24 +254,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 		object other;
 
 		public object OperandListItem {
-			get { return operandListVM.SelectedItem; }
-			set { operandListVM.SelectedItem = value; }
+			get { return OperandListVM.SelectedItem; }
+			set { OperandListVM.SelectedItem = value; }
 		}
 
-		public ListVM<object> OperandListVM {
-			get { return operandListVM; }
-		}
-		readonly ListVM<object> operandListVM;
+		public ListVM<object> OperandListVM { get; }
 
 		public InstructionOperandVM() {
-			this.@sbyte = new SByteVM(a => FieldUpdated());
-			this.@byte = new ByteVM(a => FieldUpdated());
-			this.int32 = new Int32VM(a => FieldUpdated());
-			this.int64 = new Int64VM(a => FieldUpdated());
-			this.single = new SingleVM(a => FieldUpdated());
-			this.@double = new DoubleVM(a => FieldUpdated());
-			this.@string = new StringVM(a => FieldUpdated());
-			this.operandListVM = new ListVM<object>((a, b) => FieldUpdated());
+			this.SByte = new SByteVM(a => FieldUpdated());
+			this.Byte = new ByteVM(a => FieldUpdated());
+			this.Int32 = new Int32VM(a => FieldUpdated());
+			this.Int64 = new Int64VM(a => FieldUpdated());
+			this.Single = new SingleVM(a => FieldUpdated());
+			this.Double = new DoubleVM(a => FieldUpdated());
+			this.String = new StringVM(a => FieldUpdated());
+			this.OperandListVM = new ListVM<object>((a, b) => FieldUpdated());
 			this.OperandListVM.DataErrorInfoDelegate = VerifyOperand;
 		}
 
@@ -376,9 +338,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return string.Empty;
 		}
 
-		bool HasListError(ListVM<object> list) {
-			return !string.IsNullOrEmpty(VerifyOperand(list));
-		}
+		bool HasListError(ListVM<object> list) => !string.IsNullOrEmpty(VerifyOperand(list));
 
 		void FieldUpdated() {
 			OnPropertyChanged("Modified");
@@ -416,7 +376,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case MethodBody.InstructionOperandType.Type:	Other = Import(ownerModule, other.Other); break;
 			case MethodBody.InstructionOperandType.MethodSig: Other = Import(ownerModule, other.Other); break;
 			case MethodBody.InstructionOperandType.BranchTarget: OperandListItem = InstructionVM.Null; break;
-			case MethodBody.InstructionOperandType.SwitchTargets: Other = new InstructionVM[0]; break;
+			case MethodBody.InstructionOperandType.SwitchTargets: Other = Array.Empty<InstructionVM>(); break;
 			case MethodBody.InstructionOperandType.Local:	OperandListItem = LocalVM.Null; break;
 			case MethodBody.InstructionOperandType.Parameter: OperandListItem = BodyUtils.NullParameter; break;
 			default: throw new InvalidOperationException();

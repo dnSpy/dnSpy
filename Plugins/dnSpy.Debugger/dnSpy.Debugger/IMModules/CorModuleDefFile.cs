@@ -42,40 +42,21 @@ namespace dnSpy.Debugger.IMModules {
 				return o != null && dnModule == o.dnModule;
 			}
 
-			public override int GetHashCode() {
-				return dnModule.GetHashCode();
-			}
+			public override int GetHashCode() => dnModule.GetHashCode();
 		}
 
-		public override IDnSpyFilenameKey Key {
-			get { return CreateKey(dnModule); }
-		}
+		public override IDnSpyFilenameKey Key => CreateKey(DnModule);
+		public SerializedDnModule? SerializedDnModule => dndbg.Engine.SerializedDnModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory);
+		public override DnSpyFileInfo? SerializedFile => null;
+		public DnModule DnModule { get; }
+		public static IDnSpyFilenameKey CreateKey(DnModule module) => new MyKey(module);
 
-		public SerializedDnModule? SerializedDnModule {
-			get { return dndbg.Engine.SerializedDnModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
-		}
-
-		public override DnSpyFileInfo? SerializedFile {
-			get { return null; }
-		}
-
-		public DnModule DnModule {
-			get { return dnModule; }
-		}
-		readonly DnModule dnModule;
-
-		public static IDnSpyFilenameKey CreateKey(DnModule module) {
-			return new MyKey(module);
-		}
-
-		public LastValidRids LastValidRids {
-			get { return lastValidRids; }
-		}
+		public LastValidRids LastValidRids => lastValidRids;
 		LastValidRids lastValidRids;
 
 		public CorModuleDefFile(DnModule dnModule, bool loadSyms)
 			: base(dnModule.GetOrCreateCorModuleDef(), loadSyms) {
-			this.dnModule = dnModule;
+			this.DnModule = dnModule;
 			this.lastValidRids = new LastValidRids();
 		}
 
@@ -102,35 +83,35 @@ namespace dnSpy.Debugger.IMModules {
 			// Linear search but shouldn't be a problem except the first time if we load a big file
 
 			for (; ; lastValidRids.TypeDefRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.TypeDef, lastValidRids.TypeDefRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.TypeDef, lastValidRids.TypeDefRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.FieldRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.Field, lastValidRids.FieldRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.Field, lastValidRids.FieldRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.MethodRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.Method, lastValidRids.MethodRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.Method, lastValidRids.MethodRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.ParamRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.Param, lastValidRids.ParamRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.Param, lastValidRids.ParamRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.EventRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.Event, lastValidRids.EventRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.Event, lastValidRids.EventRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.PropertyRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.Property, lastValidRids.PropertyRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.Property, lastValidRids.PropertyRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.GenericParamRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.GenericParam, lastValidRids.GenericParamRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.GenericParam, lastValidRids.GenericParamRid + 1).Raw))
 					break;
 			}
 			for (; ; lastValidRids.GenericParamConstraintRid++) {
-				if (!dnModule.CorModuleDef.IsValidToken(new MDToken(Table.GenericParamConstraint, lastValidRids.GenericParamConstraintRid + 1).Raw))
+				if (!DnModule.CorModuleDef.IsValidToken(new MDToken(Table.GenericParamConstraint, lastValidRids.GenericParamConstraintRid + 1).Raw))
 					break;
 			}
 

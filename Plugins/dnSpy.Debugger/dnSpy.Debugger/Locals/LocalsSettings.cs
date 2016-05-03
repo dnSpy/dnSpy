@@ -31,8 +31,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	class LocalsSettings : ViewModelBase, ILocalsSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool ShowNamespaces {
 			get { return showNamespaces; }

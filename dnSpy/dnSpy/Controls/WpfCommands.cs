@@ -30,9 +30,7 @@ namespace dnSpy.Controls {
 		readonly List<InputBinding> inputBindings;
 		readonly HashSet<CMKKey> addedKeyModifiers;
 
-		public Guid Guid {
-			get { return guid; }
-		}
+		public Guid Guid => guid;
 		readonly Guid guid;
 
 		struct CMKKey : IEquatable<CMKKey> {
@@ -46,11 +44,8 @@ namespace dnSpy.Controls {
 				this.key = key;
 			}
 
-			public bool Equals(CMKKey other) {
-				return command == other.command &&
-						modifiers == other.modifiers &&
-						key == other.key;
-			}
+			public bool Equals(CMKKey other) =>
+				command == other.command && modifiers == other.modifiers && key == other.key;
 
 			public override bool Equals(object obj) {
 				if (obj is CMKKey)
@@ -58,9 +53,8 @@ namespace dnSpy.Controls {
 				return false;
 			}
 
-			public override int GetHashCode() {
-				return (command == null ? 0 : command.GetHashCode()) ^ modifiers.GetHashCode() ^ key.GetHashCode();
-			}
+			public override int GetHashCode() =>
+				(command?.GetHashCode() ?? 0) ^ modifiers.GetHashCode() ^ key.GetHashCode();
 		}
 
 		public WpfCommands(Guid guid) {
@@ -121,9 +115,8 @@ namespace dnSpy.Controls {
 			Add(kb);
 		}
 
-		public void Add(RoutedCommand command, ICommand realCommand, ModifierKeys modifiers = ModifierKeys.None, Key key = Key.None) {
+		public void Add(RoutedCommand command, ICommand realCommand, ModifierKeys modifiers = ModifierKeys.None, Key key = Key.None) =>
 			Add(command, (s, e) => realCommand.Execute(e.Parameter), (s, e) => e.CanExecute = realCommand.CanExecute(e.Parameter), modifiers, key);
-		}
 
 		public void Add(RoutedCommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers1 = ModifierKeys.None, Key key1 = Key.None, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
 			Add(new CommandBinding(command, exec, canExec));

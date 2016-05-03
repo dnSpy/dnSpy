@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dndbg.Engine {
@@ -33,7 +34,7 @@ namespace dndbg.Engine {
 		public TBP[] GetBreakpoints(SerializedDnModule module) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
-				return new TBP[0];
+				return Array.Empty<TBP>();
 			return list.ToArray();
 		}
 

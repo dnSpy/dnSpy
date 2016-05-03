@@ -139,13 +139,9 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			return creator.Create();
 		}
 
-		object Create(IToolTipContentCreatorContext context, Parameter p) {
-			return Create(context, p, null);
-		}
-
-		object Create(IToolTipContentCreatorContext context, IILVariable local) {
-			return Create(context, local.OriginalVariable, local.Name);
-		}
+		object Create(IToolTipContentCreatorContext context, Parameter p) => Create(context, p, null);
+		object Create(IToolTipContentCreatorContext context, IILVariable local) =>
+			Create(context, local.OriginalVariable, local.Name);
 
 		object Create(IToolTipContentCreatorContext context, IVariable v, string name) {
 			var creator = context.Create();

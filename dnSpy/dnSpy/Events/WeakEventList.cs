@@ -47,17 +47,9 @@ namespace dnSpy.Events {
 		}
 
 		sealed class HardRefInfo : Info {
-			public override bool IsAlive {
-				get { return true; }
-			}
-
-			public override void Execute(object source, TEventArgs e) {
-				handler(source, e);
-			}
-
-			public override bool Equals(EventHandler<TEventArgs> h) {
-				return handler == h;
-			}
+			public override bool IsAlive => true;
+			public override void Execute(object source, TEventArgs e) => handler(source, e);
+			public override bool Equals(EventHandler<TEventArgs> h) => handler == h;
 
 			readonly EventHandler<TEventArgs> handler;
 
@@ -67,9 +59,7 @@ namespace dnSpy.Events {
 		}
 
 		sealed class InstanceInfo : Info {
-			public override bool IsAlive {
-				get { return target.Target != null; }
-			}
+			public override bool IsAlive => target.Target != null;
 
 			public override void Execute(object source, TEventArgs e) {
 				var self = target.Target;
@@ -77,10 +67,8 @@ namespace dnSpy.Events {
 					methodInfo.Invoke(self, new object[] { source, e });
 			}
 
-			public override bool Equals(EventHandler<TEventArgs> h) {
-				return h.Target == target.Target &&
-					h.Method == methodInfo;
-			}
+			public override bool Equals(EventHandler<TEventArgs> h) =>
+				h.Target == target.Target && h.Method == methodInfo;
 
 			readonly WeakReference target;
 			readonly MethodInfo methodInfo;

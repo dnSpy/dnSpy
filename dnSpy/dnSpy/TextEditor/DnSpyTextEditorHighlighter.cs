@@ -73,7 +73,7 @@ namespace dnSpy.TextEditor {
 			if (lineStartOffs >= lineEndOffs)
 				return hl;
 
-			var span = Contracts.TextEditor.Span.FromBounds(lineStartOffs, lineEndOffs);
+			var span = Span.FromBounds(lineStartOffs, lineEndOffs);
 			var theme = textEditor.ThemeManager.Theme;
 			var allInfos = new List<ColorInfo>();
 			var snapshot = textEditor.TextBuffer.CurrentSnapshot;
@@ -117,7 +117,7 @@ namespace dnSpy.TextEditor {
 					end = Math.Min(end, i < allInfos.Count ? allInfos[i].Span.Start : lineEndOffs);
 					var fgColor = stack.FirstOrDefault(a => a.Foreground?.Foreground != null);
 					var bgColor = stack.FirstOrDefault(a => a.Background?.Background != null);
-					var newInfo = new ColorInfo(Contracts.TextEditor.Span.FromBounds(currOffs, end), fgColor.Foreground, bgColor.Background, 0);
+					var newInfo = new ColorInfo(Span.FromBounds(currOffs, end), fgColor.Foreground, bgColor.Background, 0);
 					Debug.Assert(list.Count == 0 || list[list.Count - 1].Span.End <= newInfo.Span.Start);
 					list.Add(newInfo);
 					for (int j = stack.Count - 1; j >= 0; j--) {
@@ -125,7 +125,7 @@ namespace dnSpy.TextEditor {
 						if (newInfo.Span.End >= info.Span.End)
 							stack.RemoveAt(j);
 						else
-							stack[j] = new ColorInfo(Contracts.TextEditor.Span.FromBounds(newInfo.Span.End, info.Span.End), info.Foreground, info.Background, info.Priority);
+							stack[j] = new ColorInfo(Span.FromBounds(newInfo.Span.End, info.Span.End), info.Foreground, info.Background, info.Priority);
 					}
 					currOffs = newInfo.Span.End;
 				}
@@ -156,7 +156,7 @@ namespace dnSpy.TextEditor {
 			remove { }
 		}
 
-		public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) => new HighlightingColor[0];
+		public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) => Array.Empty<HighlightingColor>();
 		public void UpdateHighlightingState(int lineNumber) { }
 		public void BeginHighlighting() { }
 		public void EndHighlighting() { }

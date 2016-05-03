@@ -40,25 +40,11 @@ namespace dnSpy.Debugger.Locals {
 
 	[Export, Export(typeof(ILocalsContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class LocalsContent : ILocalsContent {
-		public object UIObject {
-			get { return localsControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return localsControl.ListView; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return localsControl; }
-		}
-
-		public ListView ListView {
-			get { return localsControl.ListView; }
-		}
-
-		public ILocalsVM LocalsVM {
-			get { return vmLocals; }
-		}
+		public object UIObject => localsControl;
+		public IInputElement FocusedElement => localsControl.ListView;
+		public FrameworkElement ScaleElement => localsControl;
+		public ListView ListView => localsControl.ListView;
+		public ILocalsVM LocalsVM => vmLocals;
 
 		readonly LocalsControl localsControl;
 		readonly ILocalsVM vmLocals;
@@ -74,28 +60,11 @@ namespace dnSpy.Debugger.Locals {
 			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			vmLocals.RefreshThemeFields();
-		}
-
-		public void Focus() {
-			UIUtils.FocusSelector(localsControl.ListView);
-		}
-
-		public void OnClose() {
-			vmLocals.IsEnabled = false;
-		}
-
-		public void OnShow() {
-			vmLocals.IsEnabled = true;
-		}
-
-		public void OnHidden() {
-			vmLocals.IsVisible = false;
-		}
-
-		public void OnVisible() {
-			vmLocals.IsVisible = true;
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();
+		public void Focus() => UIUtils.FocusSelector(localsControl.ListView);
+		public void OnClose() => vmLocals.IsEnabled = false;
+		public void OnShow() => vmLocals.IsEnabled = true;
+		public void OnHidden() => vmLocals.IsVisible = false;
+		public void OnVisible() => vmLocals.IsVisible = true;
 	}
 }

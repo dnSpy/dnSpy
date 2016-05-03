@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Gets the property
 		/// </summary>
-		public string Property { get; private set; }
+		public string Property { get; }
 
 		/// <summary>
 		/// Constructor

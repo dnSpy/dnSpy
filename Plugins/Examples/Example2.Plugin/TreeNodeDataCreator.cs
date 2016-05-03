@@ -35,43 +35,27 @@ namespace Example2.Plugin {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("6CF91674-16CE-44EA-B9E8-80B68C327D30");
 
-		public override Guid Guid {
-			get { return THE_GUID; }
-		}
+		public override Guid Guid => THE_GUID;
+		public override NodePathName NodePathName => new NodePathName(Guid);
 
-		public override NodePathName NodePathName {
-			// If there could be more instances of this class with the same parent, add a second
-			// argument to the NodePathName constructor, eg. an index or some other unique string.
-			// Eg. IMethodNode uses the name of the method.
-			get { return new NodePathName(Guid); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			// The image must be in an Images folder (in the resources) and have a .png extension
-			return new ImageReference(GetType().Assembly, "EntryPoint");
-		}
+		// The image must be in an Images folder (in the resources) and have a .png extension
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "EntryPoint");
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			output.Write("Assembly Child", BoxedTextTokenKind.Text);
 		}
 
 		// If you don't want the node to be appended to the children, override this
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return TreeNodeGroupImpl.Instance; }
-		}
+		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
 
 			public TreeNodeGroupImpl(double order) {
-				this.order = order;
+				this.Order = order;
 			}
 
-			public double Order {
-				get { return order; }
-				set { order = value; }
-			}
-			double order;
+			public double Order { get; }
 
 			public int Compare(ITreeNodeData x, ITreeNodeData y) {
 				if (x == y)
@@ -91,16 +75,8 @@ namespace Example2.Plugin {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("C8892F6C-6A49-4537-AAA0-D0DEF1E87277");
 
-		public override Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public override NodePathName NodePathName {
-			// If there could be more instances of this class with the same parent, add a second
-			// argument to the NodePathName constructor, eg. an index or some other unique string.
-			// Eg. IMethodNode uses the name of the method.
-			get { return new NodePathName(Guid); }
-		}
+		public override Guid Guid => THE_GUID;
+		public override NodePathName NodePathName => new NodePathName(Guid);
 
 		// Initialize() is called after the constructor has been called, and after the TreeNode prop
 		// has been initialized
@@ -119,10 +95,8 @@ namespace Example2.Plugin {
 			yield return new SomeMessageNode("SAY");
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			// The image must be in an Images folder (in the resources) and have a .png extension
-			return new ImageReference(GetType().Assembly, "Strings");
-		}
+		// The image must be in an Images folder (in the resources) and have a .png extension
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			output.Write("Module Child", BoxedTextTokenKind.Text);
@@ -162,23 +136,17 @@ namespace Example2.Plugin {
 		}
 
 		// If you don't want the node to be appended to the children, override this
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return TreeNodeGroupImpl.Instance; }
-		}
+		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			// Make sure the order is unique. 0 is already used by the PE node, so use 1
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
 
 			public TreeNodeGroupImpl(double order) {
-				this.order = order;
+				this.Order = order;
 			}
 
-			public double Order {
-				get { return order; }
-				set { order = value; }
-			}
-			double order;
+			public double Order { get; }
 
 			public int Compare(ITreeNodeData x, ITreeNodeData y) {
 				if (x == y)
@@ -197,47 +165,30 @@ namespace Example2.Plugin {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("1751CD40-68CE-4F8A-84AF-99371B6FD843");
 
-		public string Message {
-			get { return msg; }
-		}
-		readonly string msg;
+		public string Message { get; }
 
 		public SomeMessageNode(string msg) {
-			this.msg = msg;
+			this.Message = msg;
 		}
 
-		public override Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(THE_GUID, msg); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "Strings");
-		}
+		public override Guid Guid => THE_GUID;
+		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(msg, BoxedTextTokenKind.Comment);
+			output.Write(Message, BoxedTextTokenKind.Comment);
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return TreeNodeGroupImpl.Instance; }
-		}
+		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(0);
 
 			public TreeNodeGroupImpl(double order) {
-				this.order = order;
+				this.Order = order;
 			}
 
-			public double Order {
-				get { return order; }
-				set { order = value; }
-			}
-			double order;
+			public double Order { get; }
 
 			public int Compare(ITreeNodeData x, ITreeNodeData y) {
 				if (x == y)
@@ -246,7 +197,7 @@ namespace Example2.Plugin {
 				var b = y as SomeMessageNode;
 				if (a == null) return -1;
 				if (b == null) return 1;
-				return StringComparer.OrdinalIgnoreCase.Compare(a.msg, b.msg);
+				return StringComparer.OrdinalIgnoreCase.Compare(a.Message, b.Message);
 			}
 		}
 	}

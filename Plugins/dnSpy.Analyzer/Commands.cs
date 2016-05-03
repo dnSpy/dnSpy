@@ -49,9 +49,7 @@ namespace dnSpy.Analyzer {
 			analyzerManager.Value.FollowNode(@ref, newTab, useCodeRef);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetReference(context) != null;
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
 
 		ITreeNodeData GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
@@ -124,21 +122,10 @@ namespace dnSpy.Analyzer {
 			this.analyzerManager = analyzerManager;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
-		}
-
-		public override bool IsEnabled(IMenuItemContext context) {
-			return CanExecuteInternal(analyzerManager);
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			ExecuteInternal(analyzerManager);
-		}
-
-		public static bool CanExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) {
-			return analyzerManager.Value.TreeView.SelectedItems.Length > 0;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+		public override bool IsEnabled(IMenuItemContext context) => CanExecuteInternal(analyzerManager);
+		public override void Execute(IMenuItemContext context) => ExecuteInternal(analyzerManager);
+		public static bool CanExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) => analyzerManager.Value.TreeView.SelectedItems.Length > 0;
 
 		public static void ExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) {
 			var items = analyzerManager.Value.TreeView.SelectedItems;
@@ -197,17 +184,9 @@ namespace dnSpy.Analyzer {
 			this.analyzerSettings = analyzerSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return analyzerSettings.ShowToken;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			analyzerSettings.ShowToken = !analyzerSettings.ShowToken;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.ShowToken;
+		public override void Execute(IMenuItemContext context) => analyzerSettings.ShowToken = !analyzerSettings.ShowToken;
 	}
 
 	[ExportMenuItem(Header = "res:SyntaxHighlightCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_OPTIONS, Order = 10)]
@@ -219,16 +198,8 @@ namespace dnSpy.Analyzer {
 			this.analyzerSettings = analyzerSettings;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return analyzerSettings.SyntaxHighlight;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			analyzerSettings.SyntaxHighlight = !analyzerSettings.SyntaxHighlight;
-		}
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.SyntaxHighlight;
+		public override void Execute(IMenuItemContext context) => analyzerSettings.SyntaxHighlight = !analyzerSettings.SyntaxHighlight;
 	}
 }

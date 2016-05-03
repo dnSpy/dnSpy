@@ -35,21 +35,16 @@ namespace dnSpy.Files.TreeView {
 			Debug.Assert(dnSpyFile.PEImage == null && dnSpyFile.ModuleDef == null);
 		}
 
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.UNKNOWN_FILE_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "AssemblyWarning");
-		}
+		public override Guid Guid => new Guid(FileTVConstants.UNKNOWN_FILE_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
+			new ImageReference(GetType().Assembly, "AssemblyWarning");
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var file in DnSpyFile.Children)
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile);
-		}
 	}
 }

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>
 		/// Activated node
 		/// </summary>
-		public IFileTreeNodeData Node { get; private set; }
+		public IFileTreeNodeData Node { get; }
 
 		/// <summary>
 		/// Set it to true if the event was handled

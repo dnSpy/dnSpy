@@ -25,16 +25,10 @@ namespace dnSpy.Contracts.Menus {
 	/// </summary>
 	public struct GuidObject {
 		/// <summary>Object</summary>
-		public object Object {
-			get { return obj; }
-		}
-		readonly object obj;
+		public object Object { get; }
 
 		/// <summary>Guid of object</summary>
-		public Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
+		public Guid Guid { get; }
 
 		/// <summary>
 		/// Constructor
@@ -42,8 +36,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="guid">Guid of object (eg. <see cref="MenuConstants.GUIDOBJ_HEXBOX_GUID"/>)</param>
 		/// <param name="obj">Object</param>
 		public GuidObject(string guid, object obj) {
-			this.obj = obj;
-			this.guid = new Guid(guid);
+			this.Object = obj;
+			this.Guid = new Guid(guid);
 		}
 
 		/// <summary>
@@ -52,8 +46,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="guid">Guid of object (eg. <see cref="MenuConstants.GUIDOBJ_HEXBOX_GUID"/>)</param>
 		/// <param name="obj">Object</param>
 		public GuidObject(Guid guid, object obj) {
-			this.obj = obj;
-			this.guid = guid;
+			this.Object = obj;
+			this.Guid = guid;
 		}
 	}
 }

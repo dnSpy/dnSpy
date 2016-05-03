@@ -28,13 +28,8 @@ namespace dndbg.DotNet {
 		readonly uint origRid;
 		readonly CorMethodDef ownerMethod;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
-
-		public CorMethodDef OwnerMethod {
-			get { return ownerMethod; }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
+		public CorMethodDef OwnerMethod => ownerMethod;
 
 		public CorParamDef(CorModuleDef readerModule, uint rid, CorMethodDef ownerMethod) {
 			this.readerModule = readerModule;
@@ -90,13 +85,9 @@ namespace dndbg.DotNet {
 			Attributes = attrs;
 		}
 
-		void InitCustomAttributes_NoLock() {
-			customAttributes = null;
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void InitCustomAttributes_NoLock() => customAttributes = null;
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext(ownerMethod.OwnerType, ownerMethod));
-		}
 
 		protected override Constant GetConstant_NoLock() {
 			var mdi = readerModule.MetaDataImport;
@@ -109,8 +100,7 @@ namespace dndbg.DotNet {
 			return readerModule.UpdateRowId(new ConstantUser(c, (ElementType)etype));
 		}
 
-		protected override MarshalType GetMarshalType_NoLock() {
-			return readerModule.ReadMarshalType(this, new GenericParamContext(ownerMethod.OwnerType, ownerMethod));
-		}
+		protected override MarshalType GetMarshalType_NoLock() =>
+			readerModule.ReadMarshalType(this, new GenericParamContext(ownerMethod.OwnerType, ownerMethod));
 	}
 }

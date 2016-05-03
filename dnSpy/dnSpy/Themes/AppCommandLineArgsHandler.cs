@@ -32,9 +32,7 @@ namespace dnSpy.Themes {
 			this.themeManager = themeManager;
 		}
 
-		public double Order {
-			get { return 0; }
-		}
+		public double Order => 0;
 
 		public void OnNewArgs(IAppCommandLineArgs args) {
 			if (string.IsNullOrEmpty(args.Theme))

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Files.Tabs {
 	sealed class FileTabContentFactoryContext : IFileTabContentFactoryContext {
-		public IFileTreeNodeData[] Nodes { get; private set; }
+		public IFileTreeNodeData[] Nodes { get; }
 
 		public FileTabContentFactoryContext(IFileTreeNodeData[] nodes) {
 			if (nodes == null)

@@ -37,14 +37,10 @@ namespace dndbg.DotNet {
 		readonly CorModuleDef readerModule;
 		readonly uint origRid;
 
-		public bool CompletelyLoaded {
-			get { return completelyLoaded; }
-		}
+		public bool CompletelyLoaded => completelyLoaded;
 		bool completelyLoaded;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
 		public CorTypeDef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
@@ -150,9 +146,7 @@ namespace dndbg.DotNet {
 
 			fieldRidToFieldOffset = CalculateFieldOffsets();
 
-			var fds = fields;
-			if (fds != null)
-				fds.Clear();
+			fields?.Clear();
 
 			var itemTokens = MDAPI.GetFieldTokens(mdi, token);
 			var newItems = new MemberInfo<CorFieldDef>[itemTokens.Length];
@@ -175,9 +169,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			var mds = methods;
-			if (mds != null)
-				mds.Clear();
+			methods?.Clear();
 
 			var itemTokens = MDAPI.GetMethodTokens(mdi, token);
 			var newItems = new MemberInfo<CorMethodDef>[itemTokens.Length];
@@ -200,9 +192,7 @@ namespace dndbg.DotNet {
 			var mdi2 = readerModule.MetaDataImport2;
 			uint token = OriginalToken.Raw;
 
-			var gps = genericParameters;
-			if (gps != null)
-				gps.Clear();
+			genericParameters?.Clear();
 
 			var itemTokens = MDAPI.GetGenericParamTokens(mdi2, token);
 			var newItems = new MemberInfo<CorGenericParam>[itemTokens.Length];
@@ -225,9 +215,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			var gps = properties;
-			if (gps != null)
-				gps.Clear();
+			properties?.Clear();
 
 			var itemTokens = MDAPI.GetPropertyTokens(mdi, token);
 			var newItems = new MemberInfo<CorPropertyDef>[itemTokens.Length];
@@ -250,9 +238,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			var gps = events;
-			if (gps != null)
-				gps.Clear();
+			events?.Clear();
 
 			var itemTokens = MDAPI.GetEventTokens(mdi, token);
 			var newItems = new MemberInfo<CorEventDef>[itemTokens.Length];
@@ -268,29 +254,18 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			var gps = interfaces;
-			if (gps != null)
-				gps.Clear();
+			interfaces?.Clear();
 
 			var itemTokens = MDAPI.GetInterfaceImplTokens(mdi, token);
 			interfaces = new LazyList<InterfaceImpl>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens[index], new GenericParamContext(this)));
 		}
 
-		void InitCustomAttributes_NoLock() {
-			customAttributes = null;
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void InitCustomAttributes_NoLock() => customAttributes = null;
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext(this));
-		}
-
-		void InitDeclSecurities_NoLock() {
-			declSecurities = null;
-		}
-
-		protected override void InitializeDeclSecurities() {
+		void InitDeclSecurities_NoLock() => declSecurities = null;
+		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
-		}
 
 		unsafe protected override ITypeDefOrRef GetBaseType_NoLock() {
 			var mdi = readerModule.MetaDataImport;
@@ -300,9 +275,7 @@ namespace dndbg.DotNet {
 			return readerModule.ResolveTypeDefOrRefInternal(tkExtends, GenericParamContext.Create(this));
 		}
 
-		protected override TypeDef GetDeclaringType2_NoLock() {
-			return readerModule.GetEnclosingTypeDef(this);
-		}
+		protected override TypeDef GetDeclaringType2_NoLock() => readerModule.GetEnclosingTypeDef(this);
 
 		TypeDef DeclaringType2_NoLock {
 			get {
@@ -314,9 +287,7 @@ namespace dndbg.DotNet {
 			}
 		}
 
-		protected override ModuleDef GetModule2_NoLock() {
-			return DeclaringType2_NoLock != null ? null : readerModule;
-		}
+		protected override ModuleDef GetModule2_NoLock() => DeclaringType2_NoLock != null ? null : readerModule;
 
 		internal void PrepareAutoInsert() {
 			DeclaringType = null;

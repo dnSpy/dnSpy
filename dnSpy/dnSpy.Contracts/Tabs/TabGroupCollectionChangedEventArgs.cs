@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// true if <see cref="TabGroup"/> was added, false if it was removed
 		/// </summary>
-		public bool Added { get; private set; }
+		public bool Added { get; }
 
 		/// <summary>
 		/// The tab group
 		/// </summary>
-		public ITabGroup TabGroup { get; private set; }
+		public ITabGroup TabGroup { get; }
 
 		/// <summary>
 		/// Constructor

@@ -37,33 +37,24 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if this is a managed chain
 		/// </summary>
-		public bool IsManaged {
-			get { return isManaged; }
-		}
-		readonly bool isManaged;
+		public bool IsManaged { get; }
 
 		/// <summary>
 		/// Gets the reason
 		/// </summary>
-		public CorDebugChainReason Reason {
-			get { return reason; }
-		}
+		public CorDebugChainReason Reason => reason;
 		readonly CorDebugChainReason reason;
 
 		/// <summary>
 		/// Start address of the stack segment
 		/// </summary>
-		public ulong StackStart {
-			get { return rangeStart; }
-		}
+		public ulong StackStart => rangeStart;
 		readonly ulong rangeStart;
 
 		/// <summary>
 		/// End address of the stack segment
 		/// </summary>
-		public ulong StackEnd {
-			get { return rangeEnd; }
-		}
+		public ulong StackEnd => rangeEnd;
 		readonly ulong rangeEnd;
 
 		/// <summary>
@@ -145,7 +136,7 @@ namespace dndbg.Engine {
 			: base(chain) {
 			int isManaged;
 			int hr = chain.IsManaged(out isManaged);
-			this.isManaged = hr >= 0 && isManaged != 0;
+			this.IsManaged = hr >= 0 && isManaged != 0;
 
 			hr = chain.GetReason(out this.reason);
 			if (hr < 0)
@@ -167,25 +158,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorChain a, CorChain b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorChain other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorChain);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[Chain] Managed={0} {1:X8}-{2:X8} {3}", IsManaged ? 1 : 0, StackStart, StackEnd, Reason);
-		}
+		public static bool operator !=(CorChain a, CorChain b) => !(a == b);
+		public bool Equals(CorChain other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorChain);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[Chain] Managed={0} {1:X8}-{2:X8} {3}", IsManaged ? 1 : 0, StackStart, StackEnd, Reason);
 	}
 }

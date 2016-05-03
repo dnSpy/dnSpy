@@ -22,8 +22,8 @@ using dnlib.DotNet;
 
 namespace dnSpy.Decompiler.Shared {
 	public class TokenReference : IEquatable<TokenReference> {
-		public readonly ModuleDef ModuleDef;
-		public readonly uint Token;
+		public ModuleDef ModuleDef { get; }
+		public uint Token { get; }
 
 		public TokenReference(IMemberRef mr)
 			: this(mr.Module, mr.MDToken.Raw) {
@@ -34,18 +34,8 @@ namespace dnSpy.Decompiler.Shared {
 			this.Token = token;
 		}
 
-		public bool Equals(TokenReference other) {
-			return other != null &&
-				Token == other.Token &&
-				ModuleDef == other.ModuleDef;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as TokenReference);
-		}
-
-		public override int GetHashCode() {
-			return (ModuleDef == null ? 0 : ModuleDef.GetHashCode()) ^ (int)Token;
-		}
+		public bool Equals(TokenReference other) => other != null && Token == other.Token && ModuleDef == other.ModuleDef;
+		public override bool Equals(object obj) => Equals(obj as TokenReference);
+		public override int GetHashCode() => (ModuleDef == null ? 0 : ModuleDef.GetHashCode()) ^ (int)Token;
 	}
 }

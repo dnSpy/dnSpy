@@ -22,16 +22,13 @@ using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {
 	abstract class DebugEventContext : IDebugEventContext {
-		public DebugEventKind Kind {
-			get { return eventKind; }
-		}
-		readonly DebugEventKind eventKind;
+		public DebugEventKind Kind { get; }
 
 		protected readonly Debugger debugger;
 
 		protected DebugEventContext(Debugger debugger, DebugEventKind eventKind) {
 			this.debugger = debugger;
-			this.eventKind = eventKind;
+			this.Kind = eventKind;
 		}
 	}
 
@@ -49,13 +46,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerThread Thread {
-			get { return debugger.FindThreadUI(args.CorThread); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
 	}
 
 	sealed class ModuleEventContext : DebugEventContext, IModuleEventContext {
@@ -66,13 +58,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerModule Module {
-			get { return debugger.FindModuleUI(args.CorModule); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerModule Module => debugger.FindModuleUI(args.CorModule);
 	}
 
 	sealed class ClassEventContext : DebugEventContext, IClassEventContext {
@@ -83,9 +70,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 
 		public IDebuggerClass Class {
 			get {
@@ -104,9 +89,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 	}
 
 	sealed class AssemblyEventContext : DebugEventContext, IAssemblyEventContext {
@@ -117,13 +100,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerAssembly Assembly {
-			get { return debugger.FindAssemblyUI(args.CorAssembly); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerAssembly Assembly => debugger.FindAssemblyUI(args.CorAssembly);
 	}
 
 	sealed class LogMessageEventContext : DebugEventContext, ILogMessageEventContext {
@@ -134,13 +112,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerThread Thread {
-			get { return debugger.FindThreadUI(args.CorThread); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
 
 		public LoggingLevel Level {
 			get {
@@ -172,13 +145,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerThread Thread {
-			get { return debugger.FindThreadUI(args.CorThread); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
 
 		public LoggingLevel Level {
 			get {
@@ -223,13 +191,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerThread Thread {
-			get { return debugger.FindThreadUI(args.CorThread); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
 	}
 
 	sealed class UpdateModuleSymbolsEventContext : DebugEventContext, IUpdateModuleSymbolsEventContext {
@@ -240,13 +203,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerModule Module {
-			get { return debugger.FindModuleUI(args.CorModule); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerModule Module => debugger.FindModuleUI(args.CorModule);
 	}
 
 	sealed class MDANotificationEventContext : DebugEventContext, IMDANotificationEventContext {
@@ -259,9 +217,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.mda = e.CorMDA;
 		}
 
-		public IDebuggerThread Thread {
-			get { return debugger.FindThreadUI(args.CorThread); }
-		}
+		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
 
 		public bool ThreadSlipped {
 			get {
@@ -314,12 +270,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.args = e;
 		}
 
-		public IAppDomain AppDomain {
-			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
-		}
-
-		public IDebuggerThread Thread {
-			get { return debugger.FindThreadUI(args.CorThread); }
-		}
+		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
+		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
 	}
 }

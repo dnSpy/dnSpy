@@ -45,9 +45,7 @@ namespace dnSpy.Files.Tabs {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetEntryPoint(fileTabManager, context) != null;
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(fileTabManager, context) != null;
 
 			static MethodDef GetEntryPoint(IFileTabManager fileTabManager, IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
@@ -72,9 +70,7 @@ namespace dnSpy.Files.Tabs {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetEntryPoint(context) != null;
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(context) != null;
 
 			static MethodDef GetEntryPoint(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
@@ -103,9 +99,7 @@ namespace dnSpy.Files.Tabs {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetModuleCctor(fileTabManager, context) != null;
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(fileTabManager, context) != null;
 
 			static MethodDef GetModuleCctor(IFileTabManager fileTabManager, IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
@@ -133,9 +127,7 @@ namespace dnSpy.Files.Tabs {
 				this.fileTabManager = fileTabManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetModuleCctor(context) != null;
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(context) != null;
 
 			static MethodDef GetModuleCctor(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))

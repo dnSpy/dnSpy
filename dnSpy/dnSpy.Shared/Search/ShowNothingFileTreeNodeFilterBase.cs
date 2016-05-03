@@ -25,108 +25,31 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 
 namespace dnSpy.Shared.Search {
 	public abstract class ShowNothingFileTreeNodeFilterBase : IFileTreeNodeFilter {
-		public virtual FileTreeNodeFilterResult GetResult(TypeDef type) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(MethodDef method) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(EventDef evt) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(PropertyDef prop) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(FieldDef field) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(AssemblyRef asmRef) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypeNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IReferencesFolderNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IResourceNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IResourceElementNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IResourcesFolderNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypesFolderNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeFolderNode node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(ModuleRef modRef) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(ModuleDef mod) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(AssemblyDef asm) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, Local local) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(string ns, IDnSpyFile owner) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultBody(MethodDef method) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultLocals(MethodDef method) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IFileTreeNodeData node) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IDnSpyFile file) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultParamDefs(MethodDef method) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) {
-			return new FileTreeNodeFilterResult(FilterType.Hide, false);
-		}
+		public virtual FileTreeNodeFilterResult GetResult(TypeDef type) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(MethodDef method) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(EventDef evt) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(PropertyDef prop) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(FieldDef field) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(AssemblyRef asmRef) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypeNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IReferencesFolderNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IResourceNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IResourceElementNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IResourcesFolderNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypesFolderNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeFolderNode node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(ModuleRef modRef) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(ModuleDef mod) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(AssemblyDef asm) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, Local local) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(string ns, IDnSpyFile owner) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResultBody(MethodDef method) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResultLocals(MethodDef method) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IFileTreeNodeData node) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResult(IDnSpyFile file) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResultParamDefs(MethodDef method) => new FileTreeNodeFilterResult(FilterType.Hide, false);
+		public virtual FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => new FileTreeNodeFilterResult(FilterType.Hide, false);
 	}
 }

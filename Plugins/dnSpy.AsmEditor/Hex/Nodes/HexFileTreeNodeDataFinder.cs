@@ -24,9 +24,7 @@ using dnSpy.Decompiler.Shared;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportFileTreeNodeDataFinder]
 	sealed class HexFileTreeNodeDataFinder : IFileTreeNodeDataFinder {
-		public IFileTreeNodeData FindNode(IFileTreeView fileTreeView, object @ref) {
-			return FindNode(fileTreeView, @ref as TokenReference);
-		}
+		public IFileTreeNodeData FindNode(IFileTreeView fileTreeView, object @ref) => FindNode(fileTreeView, @ref as TokenReference);
 
 		internal static MetaDataTableRecordNode FindNode(IFileTreeView fileTreeView, TokenReference tokRef) {
 			if (tokRef == null)
@@ -37,7 +35,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				return null;
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var peNode = (PENode)modNode.TreeNode.DataChildren.FirstOrDefault(a => a is PENode);
-			return peNode == null ? null : peNode.FindTokenNode(tokRef.Token);
+			return peNode?.FindTokenNode(tokRef.Token);
 		}
 	}
 }

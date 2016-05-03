@@ -56,12 +56,7 @@ namespace dnSpy.Files.Tabs {
 			cmds.Add(NavigationCommands.BrowseForward, new RelayCommand(a => BrowseForward(), a => CanBrowseForward));
 		}
 
-		bool CanBrowseBack {
-			get {
-				var tab = fileTabManager.ActiveTab;
-				return tab != null && tab.CanNavigateBackward;
-			}
-		}
+		bool CanBrowseBack => fileTabManager.ActiveTab?.CanNavigateBackward == true;
 
 		void BrowseBack() {
 			if (!CanBrowseBack)
@@ -69,12 +64,7 @@ namespace dnSpy.Files.Tabs {
 			fileTabManager.ActiveTab.NavigateBackward();
 		}
 
-		bool CanBrowseForward {
-			get {
-				var tab = fileTabManager.ActiveTab;
-				return tab != null && tab.CanNavigateForward;
-			}
-		}
+		bool CanBrowseForward => fileTabManager.ActiveTab?.CanNavigateForward == true;
 
 		void BrowseForward() {
 			if (!CanBrowseForward)

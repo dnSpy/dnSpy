@@ -27,16 +27,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(dnSpy_AsmEditor_Resources.EditSecurityDeclaration, dnSpy_AsmEditor_Resources.CreateSecurityDeclaration, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override DeclSecurityVM Create(DeclSecurity model) {
-			return new DeclSecurityVM(new DeclSecurityOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override DeclSecurityVM Clone(DeclSecurityVM obj) {
-			return new DeclSecurityVM(obj.CreateDeclSecurityOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override DeclSecurityVM Create() {
-			return new DeclSecurityVM(new DeclSecurityOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
+		protected override DeclSecurityVM Create(DeclSecurity model) => new DeclSecurityVM(new DeclSecurityOptions(model), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override DeclSecurityVM Clone(DeclSecurityVM obj) => new DeclSecurityVM(obj.CreateDeclSecurityOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override DeclSecurityVM Create() => new DeclSecurityVM(new DeclSecurityOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
 	}
 }

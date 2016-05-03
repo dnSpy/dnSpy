@@ -44,9 +44,7 @@ namespace dnSpy.Shared.Decompiler {
 				IsLocalTarget == codeRef.IsLocalTarget;
 		}
 
-		public CodeReference ToCodeReference() {
-			return new CodeReference(Reference, IsLocal, IsLocalTarget);
-		}
+		public CodeReference ToCodeReference() => new CodeReference(Reference, IsLocal, IsLocalTarget);
 	}
 
 	/// <summary>
@@ -79,9 +77,7 @@ namespace dnSpy.Shared.Decompiler {
 		}
 		bool canBeCached = true;
 
-		public CachedTextTokenColors CachedColors {
-			get { return cachedTextTokenColors; }
-		}
+		public CachedTextTokenColors CachedColors => cachedTextTokenColors;
 		readonly CachedTextTokenColors cachedTextTokenColors = new CachedTextTokenColors();
 
 		int lastLineStart = 0;
@@ -111,13 +107,10 @@ namespace dnSpy.Shared.Decompiler {
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>
-		public TextSegmentCollection<ReferenceSegment> References {
-			get { return references; }
-		}
+		public TextSegmentCollection<ReferenceSegment> References => references;
 
-		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) {
+		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) =>
 			ElementGenerators.Add(elementGenerator);
-		}
 
 		/// <summary>
 		/// Controls the maximum length of the text.
@@ -126,19 +119,9 @@ namespace dnSpy.Shared.Decompiler {
 		/// </summary>
 		public int LengthLimit = int.MaxValue;
 
-		public int TextLength {
-			get { return b.Length; }
-		}
-
-		public override string ToString() {
-			return b.ToString();
-		}
-
-		public TextPosition Location {
-			get {
-				return new TextPosition(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
-			}
-		}
+		public int TextLength => b.Length;
+		public override string ToString() => b.ToString();
+		public TextPosition Location => new TextPosition(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 
 		#region Text Document
 		TextDocument textDocument;
@@ -170,13 +153,8 @@ namespace dnSpy.Shared.Decompiler {
 		}
 		#endregion
 
-		public void Indent() {
-			indent++;
-		}
-
-		public void Unindent() {
-			indent--;
-		}
+		public void Indent() => indent++;
+		public void Unindent() => indent--;
 
 		void WriteIndent() {
 			Debug.Assert(textDocument == null);
@@ -242,9 +220,7 @@ namespace dnSpy.Shared.Decompiler {
 			}
 		}
 
-		public void AddDebugSymbols(MemberMapping methodDebugSymbols) {
-			DebuggerMemberMappings.Add(methodDebugSymbols);
-		}
+		public void AddDebugSymbols(MemberMapping methodDebugSymbols) => DebuggerMemberMappings.Add(methodDebugSymbols);
 
 		void Append(object data, string s) {
 			cachedTextTokenColors.Append(data, s);
@@ -269,8 +245,6 @@ namespace dnSpy.Shared.Decompiler {
 			Debug.Assert(b.Length == cachedTextTokenColors.Length);
 		}
 
-		public void DontCacheOutput() {
-			CanBeCached = false;
-		}
+		public void DontCacheOutput() => CanBeCached = false;
 	}
 }

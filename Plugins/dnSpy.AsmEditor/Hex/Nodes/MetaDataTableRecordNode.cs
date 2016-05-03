@@ -30,37 +30,18 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableRecordNode : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.MDTBLREC_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, index.ToString()); }
-		}
-
-		public override object VMObject {
-			get { return Record; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.MDTBLREC_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, index.ToString());
+		public override object VMObject => Record;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return Record; }
 		}
 
-		protected override string IconName {
-			get { return "MetaData"; }
-		}
-
-		MetaDataTableNode MDParent {
-			get { return (MetaDataTableNode)TreeNode.Parent.Data; }
-		}
-
-		MetaDataTableRecordVM Record {
-			get { return MDParent.MetaDataTableVM.Get(index); }
-		}
-
-		public override bool SingleClickExpandsChildren {
-			get { return false; }
-		}
+		protected override string IconName => "MetaData";
+		MetaDataTableNode MDParent => (MetaDataTableNode)TreeNode.Parent.Data;
+		MetaDataTableRecordVM Record => MDParent.MetaDataTableVM.Get(index);
+		public override bool SingleClickExpandsChildren => false;
 
 		readonly int index;
 		readonly Tuple<int[], Action<ISyntaxHighlightOutput>> infoTuple;
@@ -165,9 +146,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			throw new InvalidOperationException();
 		}
 
-		void WriteModuleInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.Module);
-		}
+		void WriteModuleInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(1), BoxedTextTokenKind.Module);
 
 		void WriteNamespaceName(ISyntaxHighlightOutput output, int nsIndex, int nameIndex) {
 			var ns = ReadStringsHeap(nsIndex);
@@ -189,68 +168,21 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		void WriteTypeRefInfo(ISyntaxHighlightOutput output) {
-			WriteNamespaceName(output, 2, 1);
-		}
-
-		void WriteTypeDefInfo(ISyntaxHighlightOutput output) {
-			WriteNamespaceName(output, 2, 1);
-		}
-
-		void WriteFieldInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceField);
-		}
-
-		void WriteMethodInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(3), BoxedTextTokenKind.InstanceMethod);
-		}
-
-		void WriteParamInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(2), BoxedTextTokenKind.Parameter);
-		}
-
-		void WriteMemberRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceMethod);
-		}
-
-		void WriteEventInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceEvent);
-		}
-
-		void WritePropertyInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceProperty);
-		}
-
-		void WriteModuleRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(0), BoxedTextTokenKind.Module);
-		}
-
-		void WriteImplMapInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(2), BoxedTextTokenKind.InstanceMethod);
-		}
-
-		void WriteAssemblyInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(7), BoxedTextTokenKind.Assembly);
-		}
-
-		void WriteAssemblyRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(6), BoxedTextTokenKind.Assembly);
-		}
-
-		void WriteFileInfo(ISyntaxHighlightOutput output) {
-			output.WriteFilename(ReadStringsHeap(1));
-		}
-
-		void WriteExportedTypeInfo(ISyntaxHighlightOutput output) {
-			WriteNamespaceName(output, 3, 2);
-		}
-
-		void WriteManifestResourceInfo(ISyntaxHighlightOutput output) {
-			output.WriteFilename(ReadStringsHeap(2));
-		}
-
-		void WriteGenericParamInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(3), BoxedTextTokenKind.TypeGenericParameter);
-		}
+		void WriteTypeRefInfo(ISyntaxHighlightOutput output) => WriteNamespaceName(output, 2, 1);
+		void WriteTypeDefInfo(ISyntaxHighlightOutput output) => WriteNamespaceName(output, 2, 1);
+		void WriteFieldInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceField);
+		void WriteMethodInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(3), BoxedTextTokenKind.InstanceMethod);
+		void WriteParamInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(2), BoxedTextTokenKind.Parameter);
+		void WriteMemberRefInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceMethod);
+		void WriteEventInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceEvent);
+		void WritePropertyInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceProperty);
+		void WriteModuleRefInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(0), BoxedTextTokenKind.Module);
+		void WriteImplMapInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(2), BoxedTextTokenKind.InstanceMethod);
+		void WriteAssemblyInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(7), BoxedTextTokenKind.Assembly);
+		void WriteAssemblyRefInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(6), BoxedTextTokenKind.Assembly);
+		void WriteFileInfo(ISyntaxHighlightOutput output) => output.WriteFilename(ReadStringsHeap(1));
+		void WriteExportedTypeInfo(ISyntaxHighlightOutput output) => WriteNamespaceName(output, 3, 2);
+		void WriteManifestResourceInfo(ISyntaxHighlightOutput output) => output.WriteFilename(ReadStringsHeap(2));
+		void WriteGenericParamInfo(ISyntaxHighlightOutput output) => output.Write(ReadStringsHeap(3), BoxedTextTokenKind.TypeGenericParameter);
 	}
 }

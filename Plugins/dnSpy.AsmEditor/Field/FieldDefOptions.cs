@@ -65,9 +65,7 @@ namespace dnSpy.AsmEditor.Field {
 			return field;
 		}
 
-		public FieldDef CreateFieldDef(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new FieldDefUser()));
-		}
+		public FieldDef CreateFieldDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new FieldDefUser()));
 
 		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig) {
 			return new FieldDefOptions {

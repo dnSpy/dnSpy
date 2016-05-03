@@ -31,13 +31,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		readonly Lazy<IHexDocumentManager> hexDocumentManager;
 		readonly IMessageBoxManager messageBoxManager;
 
-		public bool CanLoad {
-			get { return true; }
-		}
-
-		public bool CanReload {
-			get { return true; }
-		}
+		public bool CanLoad => true;
+		public bool CanReload => true;
 
 		[ImportingConstructor]
 		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IMessageBoxManager messageBoxManager) {
@@ -51,8 +46,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			hexDocumentManager.Value.Clear();
 		}
 
-		public void AfterLoad(bool isReload) {
-		}
+		public void AfterLoad(bool isReload) { }
 
 		public bool CheckCanLoad(bool isReload) {
 			int count = undoCommandManager.Value.NumberOfModifiedDocuments;

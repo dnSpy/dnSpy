@@ -36,9 +36,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Loaded += MemberRefControl_Loaded;
 		}
 
-		void MemberRefControl_Loaded(object sender, RoutedEventArgs e) {
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
-		}
+		void MemberRefControl_Loaded(object sender, RoutedEventArgs e) => nameTextBox.Focus();
 	}
 }

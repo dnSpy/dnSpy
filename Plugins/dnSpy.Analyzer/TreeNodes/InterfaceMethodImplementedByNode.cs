@@ -32,14 +32,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public InterfaceMethodImplementedByNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException(nameof(analyzedMethod));
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.ImplementedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedMethod, FindReferencesInType);
@@ -50,7 +49,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (!type.HasInterfaces)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
-			ITypeDefOrRef implementedInterfaceRef = iff == null ? null : iff.Interface;
+			ITypeDefOrRef implementedInterfaceRef = iff?.Interface;
 			if (implementedInterfaceRef == null)
 				yield break;
 
@@ -68,8 +67,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static bool CanShow(MethodDef method) {
-			return method.DeclaringType.IsInterface;
-		}
+		public static bool CanShow(MethodDef method) => method.DeclaringType.IsInterface;
 	}
 }

@@ -33,7 +33,6 @@ using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.AvalonEdit;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Themes;
 using ICSharpCode.AvalonEdit;
@@ -56,16 +55,14 @@ namespace dnSpy.TextEditor {
 			InitializeResources();
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			InitializeResources();
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => InitializeResources();
 
 		void InitializeResources() {
 			var theme = themeManager.Theme;
 
 			var specialBox = theme.GetTextColor(ColorType.SpecialCharacterBox);
-			SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background;
-			SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground;
+			SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background;
+			SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground;
 
 			foreach (var f in typeof(TextTokenKind).GetFields()) {
 				if (!f.IsLiteral)
@@ -159,18 +156,17 @@ namespace dnSpy.TextEditor {
 
 		public IInputElement FocusedElement => this.TextArea;
 		public DnSpyTextBuffer TextBuffer { get; }
-		internal IThemeManager ThemeManager => themeManager;
+		internal IThemeManager ThemeManager { get; }
 
-		readonly IThemeManager themeManager;
 		readonly ITextEditorSettings textEditorSettings;
 		readonly SearchPanel searchPanel;
 
 		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
-			this.themeManager = themeManager;
+			this.ThemeManager = themeManager;
 			this.textEditorSettings = textEditorSettings;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
 			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
-			this.themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			this.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.AllowToggleOverstrikeMode = true;
 			Options.RequireControlModifierForHyperlinkClick = false;
 			this.TextBuffer = new DnSpyTextBuffer(this, textBufferColorizerCreator, contentTypeRegistryService.UnknownContentType);
@@ -213,7 +209,7 @@ namespace dnSpy.TextEditor {
 
 		public void Dispose() {
 			this.textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
-			this.themeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+			this.ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 			TextBuffer.Dispose();
 		}
 
@@ -237,13 +233,8 @@ namespace dnSpy.TextEditor {
 				OnShowLineNumbersChanged();
 		}
 
-		void OnHighlightCurrentLineChanged() {
-			Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
-		}
-
-		public void OnShowLineNumbersChanged() {
-			ShowLineMargin(textEditorSettings.ShowLineNumbers);
-		}
+		void OnHighlightCurrentLineChanged() => Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
+		public void OnShowLineNumbersChanged() => ShowLineMargin(textEditorSettings.ShowLineNumbers);
 
 		public void ShowLineMargin(bool enable) {
 			foreach (var margin in TextArea.LeftMargins) {
@@ -274,9 +265,8 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public TextViewPosition? GetPositionFromMousePosition() {
-			return TextArea.TextView.GetPosition(Mouse.GetPosition(TextArea.TextView) + TextArea.TextView.ScrollOffset);
-		}
+		public TextViewPosition? GetPositionFromMousePosition() =>
+			TextArea.TextView.GetPosition(Mouse.GetPosition(TextArea.TextView) + TextArea.TextView.ScrollOffset);
 
 		public void SetCaretPosition(int line, int column, double desiredXPos = double.NaN) {
 			TextArea.Caret.Location = new TextLocation(line, column);
@@ -384,31 +374,30 @@ namespace dnSpy.TextEditor {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			var theme = themeManager.Theme;
+			var theme = ThemeManager.Theme;
 			var marker = theme.GetColor(ColorType.SearchResultMarker);
-			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background;
+			searchPanel.MarkerBrush = marker.Background ?? Brushes.LightGreen;
 			UpdateColors(true);
 		}
 
 		void UpdateColors(bool redraw = true) {
-			var theme = themeManager.Theme;
+			var theme = ThemeManager.Theme;
 			var textColor = theme.GetColor(ColorType.Text);
-			Background = textColor.Background == null ? null : textColor.Background;
-			Foreground = textColor.Foreground == null ? null : textColor.Foreground;
+			Background = textColor.Background;
+			Foreground = textColor.Foreground;
 			FontWeight = textColor.FontWeight ?? FontWeights.Regular;
 			FontStyle = textColor.FontStyle ?? FontStyles.Normal;
 
-			var ln = theme.GetColor(ColorType.LineNumber);
-			LineNumbersForeground = ln.Foreground == null ? null : ln.Foreground;
+			LineNumbersForeground = theme.GetColor(ColorType.LineNumber).Foreground;
 
 			var linkColor = theme.GetTextColor(ColorType.Link);
 			TextArea.TextView.LinkTextForegroundBrush = (linkColor.Foreground ?? textColor.Foreground);
-			TextArea.TextView.LinkTextBackgroundBrush = linkColor.Background == null ? Brushes.Transparent : linkColor.Background;
+			TextArea.TextView.LinkTextBackgroundBrush = linkColor.Background ?? Brushes.Transparent;
 
 			var sel = theme.GetColor(ColorType.Selection);
 			TextArea.SelectionBorder = null;
-			TextArea.SelectionBrush = sel.Background == null ? null : sel.Background;
-			TextArea.SelectionForeground = sel.Foreground == null ? null : sel.Foreground;
+			TextArea.SelectionBrush = sel.Background;
+			TextArea.SelectionForeground = sel.Foreground;
 
 			UpdateCurrentLineColors(false);
 
@@ -417,11 +406,11 @@ namespace dnSpy.TextEditor {
 		}
 
 		void UpdateCurrentLineColors(bool redraw) {
-			var theme = themeManager.Theme;
+			var theme = ThemeManager.Theme;
 			bool hasFocus = this.IsKeyboardFocusWithin;
 			var currentLine = theme.GetColor(hasFocus ? ColorType.CurrentLine : ColorType.CurrentLineNoFocus);
-			TextArea.TextView.CurrentLineBackground = currentLine.Background == null ? null : currentLine.Background;
-			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground == null ? null : currentLine.Foreground, 2);
+			TextArea.TextView.CurrentLineBackground = currentLine.Background;
+			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground, 2);
 			if (redraw)
 				TextArea.TextView.Redraw();
 		}

@@ -51,17 +51,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			cmds.Add(SaveAllCommand, (s, e) => SaveAll_Execute(), (s, e) => e.CanExecute = SaveAll_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.S);
 		}
 
-		object[] GetDirtyDocs() {
-			return undoCommandManager.Value.GetModifiedDocuments().ToArray();
-		}
-
-		bool SaveAll_CanExecute {
-			get { return GetDirtyDocs().Length > 0; }
-		}
-
-		void SaveAll_Execute() {
-			documentSaver.Value.Save(GetDirtyDocs());
-		}
+		object[] GetDirtyDocs() => undoCommandManager.Value.GetModifiedDocuments().ToArray();
+		bool SaveAll_CanExecute => GetDirtyDocs().Length > 0;
+		void SaveAll_Execute() => documentSaver.Value.Save(GetDirtyDocs());
 	}
 
 	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "res:SaveAllToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
@@ -134,21 +126,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return new HashSet<object>(undoCommandManager.Value.GetUniqueDocuments(hash));
 		}
 
-		public override bool IsVisible(AsmEditorContext context) {
-			return true;
-		}
-
-		public override bool IsEnabled(AsmEditorContext context) {
-			return GetDocuments(context.Nodes).Count > 0;
-		}
+		public override bool IsVisible(AsmEditorContext context) => true;
+		public override bool IsEnabled(AsmEditorContext context) => GetDocuments(context.Nodes).Count > 0;
 
 		public override void Execute(AsmEditorContext context) {
 			var asmNodes = GetDocuments(context.Nodes);
 			documentSaver.Value.Save(asmNodes);
 		}
 
-		public override string GetHeader(AsmEditorContext context) {
-			return GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
-		}
+		public override string GetHeader(AsmEditorContext context) => GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
 	}
 }

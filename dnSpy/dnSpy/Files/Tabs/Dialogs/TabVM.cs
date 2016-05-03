@@ -25,20 +25,14 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabVM : ViewModelBase {
-		public IFileTab Tab {
-			get { return tab; }
-		}
-		readonly IFileTab tab;
+		public IFileTab Tab { get; }
+		public object NameObject => this;
+		public object ModuleObject => this;
+		public object PathObject => this;
+		public string Name => Tab.Content.Title;
+		public TabsVM Owner { get; }
 
 		readonly IDnSpyFile file;
-
-		public object NameObject { get { return this; } }
-		public object ModuleObject { get { return this; } }
-		public object PathObject { get { return this; } }
-
-		public string Name {
-			get { return tab.Content.Title; }
-		}
 
 		public string Module {
 			get {
@@ -56,16 +50,11 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 
-		public TabsVM Owner {
-			get { return owner; }
-		}
-		readonly TabsVM owner;
-
 		public TabVM(TabsVM owner, IFileTab tab) {
-			this.owner = owner;
-			this.tab = tab;
+			this.Owner = owner;
+			this.Tab = tab;
 			var node = tab.Content.Nodes.FirstOrDefault().GetTopNode();
-			this.file = node == null ? null : node.DnSpyFile;
+			this.file = node?.DnSpyFile;
 		}
 	}
 }

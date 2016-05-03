@@ -29,9 +29,7 @@ namespace dnSpy.Settings {
 	sealed class SettingsManager : ISettingsManager {
 		readonly Dictionary<string, ISettingsSection> sections;
 
-		public ISettingsSection[] Sections {
-			get { return sections.Values.ToArray(); }
-		}
+		public ISettingsSection[] Sections => sections.Values.ToArray();
 
 		SettingsManager() {
 			this.sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);

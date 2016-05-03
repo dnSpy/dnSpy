@@ -44,25 +44,11 @@ namespace dnSpy.Debugger.Threads {
 
 	[Export, Export(typeof(IThreadsContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ThreadsContent : IThreadsContent {
-		public object UIObject {
-			get { return threadsControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return threadsControl.ListView; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return threadsControl; }
-		}
-
-		public ListView ListView {
-			get { return threadsControl.ListView; }
-		}
-
-		public IThreadsVM ThreadsVM {
-			get { return vmThreads; }
-		}
+		public object UIObject => threadsControl;
+		public IInputElement FocusedElement => threadsControl.ListView;
+		public FrameworkElement ScaleElement => threadsControl;
+		public ListView ListView => threadsControl.ListView;
+		public IThreadsVM ThreadsVM => vmThreads;
 
 		readonly ThreadsControl threadsControl;
 		readonly IThreadsVM vmThreads;
@@ -90,28 +76,11 @@ namespace dnSpy.Debugger.Threads {
 			SwitchToThreadThreadsCtxMenuCommand.GoTo(fileTabManager, moduleLoader.Value, stackFrameManager.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			vmThreads.RefreshThemeFields();
-		}
-
-		public void Focus() {
-			UIUtils.FocusSelector(threadsControl.ListView);
-		}
-
-		public void OnClose() {
-			vmThreads.IsEnabled = false;
-		}
-
-		public void OnShow() {
-			vmThreads.IsEnabled = true;
-		}
-
-		public void OnHidden() {
-			vmThreads.IsVisible = false;
-		}
-
-		public void OnVisible() {
-			vmThreads.IsVisible = true;
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
+		public void Focus() => UIUtils.FocusSelector(threadsControl.ListView);
+		public void OnClose() => vmThreads.IsEnabled = false;
+		public void OnShow() => vmThreads.IsEnabled = true;
+		public void OnHidden() => vmThreads.IsVisible = false;
+		public void OnVisible() => vmThreads.IsVisible = true;
 	}
 }

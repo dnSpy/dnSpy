@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// true if attached, false if detached
 		/// </summary>
-		public bool Attached { get; private set; }
+		public bool Attached { get; }
 
 		/// <summary>
 		/// The attached/detached tab content instance
 		/// </summary>
-		public ITabContent TabContent { get; private set; }
+		public ITabContent TabContent { get; }
 
 		/// <summary>
 		/// Constructor

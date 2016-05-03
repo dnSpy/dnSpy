@@ -31,37 +31,21 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class DerivedTypesFolderNode : FileTreeNodeData, IDerivedTypesFolderNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DERIVEDTYPESFOLDER_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "DerivedTypesClosed");
-		}
-
-		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "DerivedTypesOpened");
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.DERIVEDTYPESFOLDER_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "DerivedTypesClosed");
+		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "DerivedTypesOpened");
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly TypeDef type;
 
 		public DerivedTypesFolderNode(ITreeNodeGroup treeNodeGroup, TypeDef type) {
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.type = type;
 		}
 
-		public override void Initialize() {
+		public override void Initialize() =>
 			TreeNode.LazyLoading = createChildren = DerivedTypesFinder.QuickCheck(type);
-		}
 		bool createChildren;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
@@ -73,12 +57,9 @@ namespace dnSpy.Files.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Resources.DerivedTypes, BoxedTextTokenKind.Text);
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(this).FilterType;
 	}
 }

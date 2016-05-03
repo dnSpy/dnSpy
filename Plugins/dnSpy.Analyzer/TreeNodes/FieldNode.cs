@@ -32,17 +32,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public FieldNode(FieldDef analyzedField) {
 			if (analyzedField == null)
-				throw new ArgumentNullException("analyzedField");
+				throw new ArgumentNullException(nameof(analyzedField));
 			this.analyzedField = analyzedField;
 		}
 
-		public override void Initialize() {
-			this.TreeNode.LazyLoading = true;
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(analyzedField);
-		}
+		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedField);
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			language.WriteType(output, analyzedField.DeclaringType, true);
@@ -56,12 +51,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new FieldAccessNode(analyzedField, true);
 		}
 
-		public override IMemberRef Member {
-			get { return analyzedField; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return analyzedField; }
-		}
+		public override IMemberRef Member => analyzedField;
+		public override IMDTokenProvider Reference => analyzedField;
 	}
 }

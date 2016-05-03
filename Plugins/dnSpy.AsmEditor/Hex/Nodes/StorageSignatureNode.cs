@@ -28,24 +28,13 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageSignatureNode : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.STRGSIG_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override object VMObject {
-			get { return storageSignatureVM; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.STRGSIG_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override object VMObject => storageSignatureVM;
+		protected override string IconName => "BinaryFile";
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return storageSignatureVM; }
-		}
-
-		protected override string IconName {
-			get { return "BinaryFile"; }
 		}
 
 		readonly StorageSignatureVM storageSignatureVM;
@@ -55,8 +44,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.storageSignatureVM = new StorageSignatureVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 0x10));
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) {
+		protected override void Write(ISyntaxHighlightOutput output) =>
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageSignature, BoxedTextTokenKind.InstanceField);
-		}
 	}
 }

@@ -33,13 +33,9 @@ namespace dnSpy.Analyzer {
 			get { yield break; }
 		}
 
-		public PluginInfo PluginInfo {
-			get {
-				return new PluginInfo {
-					ShortDescription = dnSpy_Analyzer_Resources.Plugin_ShortDescription,
-				};
-			}
-		}
+		public PluginInfo PluginInfo => new PluginInfo {
+			ShortDescription = dnSpy_Analyzer_Resources.Plugin_ShortDescription,
+		};
 
 		public void OnEvent(PluginEvent @event, object obj) {
 		}

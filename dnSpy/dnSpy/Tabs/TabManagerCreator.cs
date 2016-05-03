@@ -37,8 +37,6 @@ namespace dnSpy.Tabs {
 			this.wpfFocusManager = wpfFocusManager;
 		}
 
-		public ITabManager Create() {
-			return new TabManager(themeManager, menuManager, wpfFocusManager);
-		}
+		public ITabManager Create() => new TabManager(themeManager, menuManager, wpfFocusManager);
 	}
 }

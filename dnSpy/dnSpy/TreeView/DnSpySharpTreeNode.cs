@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -31,42 +32,20 @@ using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class DnSpySharpTreeNode : SharpTreeNode {
-		public TreeNodeImpl TreeNodeImpl {
-			get { return treeNodeImpl; }
-		}
+		public TreeNodeImpl TreeNodeImpl => treeNodeImpl;
 		readonly TreeNodeImpl treeNodeImpl;
 
 		public DnSpySharpTreeNode(TreeNodeImpl treeNodeImpl) {
 			this.treeNodeImpl = treeNodeImpl;
 		}
 
-		public override object ExpandedIcon {
-			get { return GetIcon(treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon); }
-		}
-
-		public override object Icon {
-			get { return GetIcon(treeNodeImpl.Data.Icon); }
-		}
-
-		public override bool SingleClickExpandsChildren {
-			get { return treeNodeImpl.Data.SingleClickExpandsChildren; }
-		}
-
-		public override object Text {
-			get { return treeNodeImpl.Data.Text; }
-		}
-
-		public override object ToolTip {
-			get { return treeNodeImpl.Data.ToolTip; }
-		}
-
-		protected override void LoadChildren() {
-			treeNodeImpl.TreeView.AddChildren(treeNodeImpl);
-		}
-
-		public override bool ShowExpander {
-			get { return treeNodeImpl.Data.ShowExpander(base.ShowExpander); }
-		}
+		public override object ExpandedIcon => GetIcon(treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon);
+		public override object Icon => GetIcon(treeNodeImpl.Data.Icon);
+		public override bool SingleClickExpandsChildren => treeNodeImpl.Data.SingleClickExpandsChildren;
+		public override object Text => treeNodeImpl.Data.Text;
+		public override object ToolTip => treeNodeImpl.Data.ToolTip;
+		protected override void LoadChildren() => treeNodeImpl.TreeView.AddChildren(treeNodeImpl);
+		public override bool ShowExpander => treeNodeImpl.Data.ShowExpander(base.ShowExpander);
 
 		object GetIcon(ImageReference imgRef) {
 			bool b = imgRef.Assembly != null && imgRef.Name != null;
@@ -85,9 +64,7 @@ namespace dnSpy.TreeView {
 		}
 		static IThemeManager themeManager;
 
-		public override Brush Foreground {
-			get { return themeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground; }
-		}
+		public override Brush Foreground => themeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground;
 
 		public void RefreshUI() {
 			RaisePropertyChanged("Icon");
@@ -97,25 +74,17 @@ namespace dnSpy.TreeView {
 			RaisePropertyChanged("Foreground");
 		}
 
-		public override sealed bool IsCheckable {
-			get { return false; }
-		}
+		public override sealed bool IsCheckable => false;
+		public override sealed bool IsEditable => false;
 
-		public override sealed bool IsEditable {
-			get { return false; }
-		}
-
-		public override void ActivateItem(RoutedEventArgs e) {
-			e.Handled = treeNodeImpl.Data.Activate();
-		}
+		public override void ActivateItem(RoutedEventArgs e) => e.Handled = treeNodeImpl.Data.Activate();
 
 		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e) {
 			base.OnChildrenChanged(e);
-			var added = e.NewItems == null || e.NewItems.Count == 0 ? emptyNodes : e.NewItems.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
-			var removed = e.OldItems == null || e.OldItems.Count == 0 ? emptyNodes : e.OldItems.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+			var added = e.NewItems == null || e.NewItems.Count == 0 ? Array.Empty<ITreeNodeData>() : e.NewItems.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+			var removed = e.OldItems == null || e.OldItems.Count == 0 ? Array.Empty<ITreeNodeData>() : e.OldItems.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
 			treeNodeImpl.Data.OnChildrenChanged(added, removed);
 		}
-		static readonly ITreeNodeData[] emptyNodes = new ITreeNodeData[0];
 
 		protected override void OnIsVisibleChanged() {
 			base.OnIsVisibleChanged();
@@ -134,24 +103,15 @@ namespace dnSpy.TreeView {
 			treeNodeImpl.Data.OnIsExpandedChanged(false);
 		}
 
-		public override bool CanDrag(SharpTreeNode[] nodes) {
-			return treeNodeImpl.Data.CanDrag(nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
-		}
-
-		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes) {
+		public override bool CanDrag(SharpTreeNode[] nodes) =>
+			treeNodeImpl.Data.CanDrag(nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
+		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes) =>
 			treeNodeImpl.Data.StartDrag(dragSource, nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
-		}
-
-		public override IDataObject Copy(SharpTreeNode[] nodes) {
-			return treeNodeImpl.Data.Copy(nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
-		}
-
-		public override bool CanDrop(DragEventArgs e, int index) {
-			return treeNodeImpl.Data.CanDrop(e, index);
-		}
-
-		public override void Drop(DragEventArgs e, int index) {
+		public override IDataObject Copy(SharpTreeNode[] nodes) =>
+			treeNodeImpl.Data.Copy(nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
+		public override bool CanDrop(DragEventArgs e, int index) =>
+			treeNodeImpl.Data.CanDrop(e, index);
+		public override void Drop(DragEventArgs e, int index) =>
 			treeNodeImpl.Data.Drop(e, index);
-		}
 	}
 }

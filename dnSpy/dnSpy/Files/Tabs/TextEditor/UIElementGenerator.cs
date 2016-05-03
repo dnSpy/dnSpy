@@ -60,10 +60,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return null;
 		}
 
-		int IComparer<Pair>.Compare(Pair x, Pair y) {
-			// Compare (offset,Lazy<UIElement>) pairs by the offset.
-			// Used in BinarySearch()
-			return x.Key.CompareTo(y.Key);
-		}
+		// Compare (offset,Lazy<UIElement>) pairs by the offset.
+		// Used in BinarySearch()
+		int IComparer<Pair>.Compare(Pair x, Pair y) => x.Key.CompareTo(y.Key);
 	}
 }

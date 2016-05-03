@@ -25,9 +25,7 @@ using dndbg.COM.MetaHost;
 
 namespace dndbg.Engine {
 	public static class DebuggeeVersionDetector {
-		public static string GetVersion(string filename) {
-			return TryGetVersion(filename) ?? RuntimeEnvironment.GetSystemVersion();
-		}
+		public static string GetVersion(string filename) => TryGetVersion(filename) ?? RuntimeEnvironment.GetSystemVersion();
 
 		public static string TryGetVersion(string filename) {
 			try {

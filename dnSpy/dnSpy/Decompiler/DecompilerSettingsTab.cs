@@ -50,25 +50,12 @@ namespace dnSpy.Decompiler {
 	}
 
 	sealed class DecompilerAppSettingsTab : ViewModelBase, IAppSettingsTab {
-		public double Order {
-			get { return AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER; }
-		}
-
-		public string Title {
-			get { return dnSpy_Resources.DecompilerDlgTabTitle; }
-		}
-
-		public object UIObject {
-			get { return this; }
-		}
-
-		public bool HasMoreThanOneSetting {
-			get { return settings.Length > 1; }
-		}
-
-		public IDecompilerSettingsTab[] LanguageSettings {
-			get { return settings; }
-		}
+		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER;
+		public string Title => dnSpy_Resources.DecompilerDlgTabTitle;
+		public object UIObject => this;
+		public bool HasMoreThanOneSetting => settings.Length > 1;
+		public IDecompilerSettingsTab[] LanguageSettings => settings;
+		public object CurrentUIObject => selectedLanguageSetting?.UIObject;
 
 		public IDecompilerSettingsTab SelectedLanguageSetting {
 			get { return selectedLanguageSetting; }
@@ -81,10 +68,6 @@ namespace dnSpy.Decompiler {
 			}
 		}
 		IDecompilerSettingsTab selectedLanguageSetting;
-
-		public object CurrentUIObject {
-			get { return selectedLanguageSetting == null ? null : selectedLanguageSetting.UIObject; }
-		}
 
 		readonly IDecompilerSettingsTab[] settings;
 		readonly DecompilerAppSettingsTabSettings decompilerAppSettingsTabSettings;

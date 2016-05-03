@@ -55,21 +55,10 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	[Export, Export(typeof(IBreakpointsContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class BreakpointsContent : IBreakpointsContent {
-		public object UIObject {
-			get { return BreakpointsControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return BreakpointsControl.ListView; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return BreakpointsControl; }
-		}
-
-		public ListView ListView {
-			get { return BreakpointsControl.ListView; }
-		}
+		public object UIObject => BreakpointsControl;
+		public IInputElement FocusedElement => BreakpointsControl.ListView;
+		public FrameworkElement ScaleElement => BreakpointsControl;
+		public ListView ListView => BreakpointsControl.ListView;
 
 		BreakpointsControl BreakpointsControl {
 			get {
@@ -85,9 +74,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IFileTabManager fileTabManager;
 
-		public IBreakpointsVM BreakpointsVM {
-			get { return vmBreakpoints.Value; }
-		}
+		public IBreakpointsVM BreakpointsVM => vmBreakpoints.Value;
 		readonly Lazy<IBreakpointsVM> vmBreakpoints;
 
 		[ImportingConstructor]
@@ -106,14 +93,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			GoToSourceBreakpointCtxMenuCommand.GoTo(fileTabManager, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
 		}
 
-		public void Focus() {
-			UIUtils.FocusSelector(BreakpointsControl.ListView);
-		}
-
-		public void OnClose() {
-		}
-
-		public void OnShow() {
-		}
+		public void Focus() => UIUtils.FocusSelector(BreakpointsControl.ListView);
+		public void OnClose() { }
+		public void OnShow() { }
 	}
 }

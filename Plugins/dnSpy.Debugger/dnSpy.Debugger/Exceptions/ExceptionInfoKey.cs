@@ -21,37 +21,17 @@ using System;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionInfoKey : IEquatable<ExceptionInfoKey> {
-		public ExceptionType ExceptionType {
-			get { return exceptionType; }
-		}
-		readonly ExceptionType exceptionType;
-
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
+		public ExceptionType ExceptionType { get; }
+		public string Name { get; }
 
 		public ExceptionInfoKey(ExceptionType exceptionType, string name) {
-			this.exceptionType = exceptionType;
-			this.name = name;
+			this.ExceptionType = exceptionType;
+			this.Name = name;
 		}
 
-		public bool Equals(ExceptionInfoKey other) {
-			return other != null &&
-					exceptionType == other.exceptionType &&
-					Name == other.Name;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as ExceptionInfoKey);
-		}
-
-		public override int GetHashCode() {
-			return (int)exceptionType ^ Name.GetHashCode();
-		}
-
-		public override string ToString() {
-			return Name;
-		}
+		public bool Equals(ExceptionInfoKey other) => other != null && ExceptionType == other.ExceptionType && Name == other.Name;
+		public override bool Equals(object obj) => Equals(obj as ExceptionInfoKey);
+		public override int GetHashCode() => (int)ExceptionType ^ Name.GetHashCode();
+		public override string ToString() => Name;
 	}
 }

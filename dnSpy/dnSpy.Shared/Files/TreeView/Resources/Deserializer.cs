@@ -27,9 +27,9 @@ using dnlib.DotNet;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
 	sealed class DeserializedDataInfo {
-		public Type ObjectType { get; private set; }
-		public string Name { get; private set; }
-		public object Value { get; private set; }
+		public Type ObjectType { get; }
+		public string Name { get; }
+		public object Value { get; }
 
 		public DeserializedDataInfo(Type objectType, string name, object value) {
 			this.ObjectType = objectType;

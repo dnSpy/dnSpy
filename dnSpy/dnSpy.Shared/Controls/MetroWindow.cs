@@ -192,8 +192,7 @@ namespace dnSpy.Shared.Controls {
 						ScaleWindow(WpfPixelScaleFactor);
 					}
 
-					if (WindowDPIChanged != null)
-						WindowDPIChanged(this, EventArgs.Empty);
+					WindowDPIChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -226,10 +225,7 @@ namespace dnSpy.Shared.Controls {
 			SetScaleTransform(this, vc, scale);
 		}
 
-		public static ICommand ShowSystemMenuCommand {
-			get { return new RelayCommand(a => ShowSystemMenu(a), a => true); }
-		}
-
+		public static ICommand ShowSystemMenuCommand => new RelayCommand(a => ShowSystemMenu(a), a => true);
 		public event EventHandler IsFullScreenChanged;
 
 		public static readonly DependencyProperty IsFullScreenProperty =
@@ -249,8 +245,7 @@ namespace dnSpy.Shared.Controls {
 			else
 				window.InitializeWindowCaptionAndResizeBorder(wc);
 
-			if (window.IsFullScreenChanged != null)
-				window.IsFullScreenChanged(window, EventArgs.Empty);
+			window.IsFullScreenChanged?.Invoke(window, EventArgs.Empty);
 		}
 
 		public static readonly DependencyProperty SystemMenuImageProperty =
@@ -298,9 +293,7 @@ namespace dnSpy.Shared.Controls {
 				UpdatePadding(metroWindow);
 			}
 
-			void MetroWindow_StateChanged(object sender, EventArgs e) {
-				UpdatePadding((MetroWindow)sender);
-			}
+			void MetroWindow_StateChanged(object sender, EventArgs e) => UpdatePadding((MetroWindow)sender);
 
 			void UpdatePadding(MetroWindow window) {
 				Debug.Assert(window != null);
@@ -338,13 +331,8 @@ namespace dnSpy.Shared.Controls {
 			}
 		}
 
-		public static void SetMaximizedElement(UIElement element, bool value) {
-			element.SetValue(MaximizedElementProperty, value);
-		}
-
-		public static bool GetMaximizedElement(UIElement element) {
-			return (bool)element.GetValue(MaximizedElementProperty);
-		}
+		public static void SetMaximizedElement(UIElement element, bool value) => element.SetValue(MaximizedElementProperty, value);
+		public static bool GetMaximizedElement(UIElement element) => (bool)element.GetValue(MaximizedElementProperty);
 
 		public static readonly DependencyProperty UseResizeBorderProperty =
 			DependencyProperty.Register("UseResizeBorder", typeof(bool), typeof(MetroWindow),
@@ -364,13 +352,8 @@ namespace dnSpy.Shared.Controls {
 			win.InitializeWindowCaptionAndResizeBorder(wc);
 		}
 
-		public static void SetUseResizeBorder(UIElement element, bool value) {
-			element.SetValue(UseResizeBorderProperty, value);
-		}
-
-		public static bool GetUseResizeBorder(UIElement element) {
-			return (bool)element.GetValue(UseResizeBorderProperty);
-		}
+		public static void SetUseResizeBorder(UIElement element, bool value) => element.SetValue(UseResizeBorderProperty, value);
+		public static bool GetUseResizeBorder(UIElement element) => (bool)element.GetValue(UseResizeBorderProperty);
 
 		public static readonly DependencyProperty IsDebuggingProperty =
 			DependencyProperty.Register("IsDebugging", typeof(bool), typeof(MetroWindow),
@@ -547,9 +530,7 @@ namespace dnSpy.Shared.Controls {
 			return wc;
 		}
 
-		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc) {
-			InitializeWindowCaptionAndResizeBorder(wc, UseResizeBorder);
-		}
+		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc) => InitializeWindowCaptionAndResizeBorder(wc, UseResizeBorder);
 
 		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc, bool useResizeBorder) {
 			var scale = SafeWpfPixelScaleFactor;
@@ -586,9 +567,7 @@ namespace dnSpy.Shared.Controls {
 			WindowUtils.ShowSystemMenu(win, p);
 		}
 
-		public void SetScaleTransform(DependencyObject vc, double scale) {
-			SetScaleTransform(vc, vc, scale);
-		}
+		public void SetScaleTransform(DependencyObject vc, double scale) => SetScaleTransform(vc, vc, scale);
 
 		void SetScaleTransform(DependencyObject textObj, DependencyObject vc, double scale) {
 			Debug.Assert(textObj != this || !wpfSupportsPerMonitorDpi);
@@ -674,16 +653,8 @@ namespace dnSpy.Shared.Controls {
 			}
 		}
 
-		public static void Minimize(Window window) {
-			window.WindowState = WindowState.Minimized;
-		}
-
-		public static void Maximize(Window window) {
-			window.WindowState = WindowState.Maximized;
-		}
-
-		public static void Restore(Window window) {
-			window.ClearValue(Window.WindowStateProperty);
-		}
+		public static void Minimize(Window window) => window.WindowState = WindowState.Minimized;
+		public static void Maximize(Window window) => window.WindowState = WindowState.Maximized;
+		public static void Restore(Window window) => window.ClearValue(Window.WindowStateProperty);
 	}
 }

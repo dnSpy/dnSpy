@@ -29,19 +29,14 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DesktopCLRTypeAttachInfo : CLRTypeAttachInfo {
-		public override CLRType CLRType {
-			get { return CLRType.Desktop; }
-		}
-
-		public override string Version {
-			get { return DebuggeeVersion; }
-		}
+		public override CLRType CLRType => CLRType.Desktop;
+		public override string Version => DebuggeeVersion;
 
 		/// <summary>
 		/// null if we should auto detect the version, else it should be a version of an already
 		/// installed CLR, eg. "v2.0.50727" etc.
 		/// </summary>
-		public string DebuggeeVersion { get; private set; }
+		public string DebuggeeVersion { get; }
 
 		public DesktopCLRTypeAttachInfo(string debuggeeVersion) {
 			this.DebuggeeVersion = debuggeeVersion;
@@ -49,18 +44,12 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {
-		public override CLRType CLRType {
-			get { return CLRType.CoreCLR; }
-		}
+		public override CLRType CLRType => CLRType.CoreCLR;
 
-		public override string Version {
-			get { return version; }
-		}
+		public override string Version => version;
 		readonly string version;
 
-		public string DbgShimFilename {
-			get { return dbgShimFilename; }
-		}
+		public string DbgShimFilename => dbgShimFilename;
 		readonly string dbgShimFilename;
 
 		public CoreCLRTypeAttachInfo(string version, string dbgShimFilename) {
@@ -73,7 +62,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Info needed to attach to the CLR
 		/// </summary>
-		public CLRTypeAttachInfo CLRTypeAttachInfo { get; private set; }
+		public CLRTypeAttachInfo CLRTypeAttachInfo { get; }
 
 		/// <summary>
 		/// Process ID of the process that will be debugged

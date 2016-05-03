@@ -30,8 +30,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 	}
 
 	class ExportToProjectSettings : ViewModelBase, IExportToProjectSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public ProjectVersion ProjectVersion {
 			get { return projectVersion; }

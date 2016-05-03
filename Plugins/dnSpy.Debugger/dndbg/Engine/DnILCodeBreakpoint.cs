@@ -21,35 +21,24 @@ using System;
 
 namespace dndbg.Engine {
 	public sealed class ILCodeBreakpointConditionContext : BreakpointConditionContext {
-		public override DnBreakpoint Breakpoint {
-			get { return bp; }
-		}
-
-		public DnILCodeBreakpoint ILCodeBreakpoint {
-			get { return bp; }
-		}
-		readonly DnILCodeBreakpoint bp;
+		public override DnBreakpoint Breakpoint => ILCodeBreakpoint;
+		public DnILCodeBreakpoint ILCodeBreakpoint { get; }
 
 		public ILCodeBreakpointConditionContext(DnDebugger debugger, DnILCodeBreakpoint bp)
 			: base(debugger) {
-			this.bp = bp;
+			this.ILCodeBreakpoint = bp;
 		}
 	}
 
 	public sealed class DnILCodeBreakpoint : DnCodeBreakpoint {
-		internal Func<ILCodeBreakpointConditionContext, bool> Condition {
-			get { return cond; }
-		}
-		readonly Func<ILCodeBreakpointConditionContext, bool> cond;
+		internal Func<ILCodeBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnILCodeBreakpoint(SerializedDnModule module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)
 			: base(module, token, offset) {
-			this.cond = cond ?? defaultCond;
+			this.Condition = cond ?? defaultCond;
 		}
 		static readonly Func<ILCodeBreakpointConditionContext, bool> defaultCond = a => true;
 
-		internal override CorCode GetCode(CorFunction func) {
-			return func.ILCode;
-		}
+		internal override CorCode GetCode(CorFunction func) => func.ILCode;
 	}
 }

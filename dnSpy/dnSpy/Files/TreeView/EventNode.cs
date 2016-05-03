@@ -29,55 +29,33 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class EventNode : FileTreeNodeData, IEventNode {
-		public EventDef EventDef {
-			get { return @event; }
-		}
-		readonly EventDef @event;
-
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.EVENT_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, @event.FullName); }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return @event; }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(@event);
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public EventDef EventDef { get; }
+		public override Guid Guid => new Guid(FileTVConstants.EVENT_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, EventDef.FullName);
+		IMDTokenProvider IMDTokenNode.Reference => EventDef;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(EventDef);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public EventNode(ITreeNodeGroup treeNodeGroup, EventDef @event) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.@event = @event;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.EventDef = @event;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().Write(output, language, @event, Context.ShowToken);
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().Write(output, language, EventDef, Context.ShowToken);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
-			if (@event.AddMethod != null)
-				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), @event.AddMethod);
-			if (@event.RemoveMethod != null)
-				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), @event.RemoveMethod);
-			if (@event.InvokeMethod != null)
-				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), @event.InvokeMethod);
-			foreach (var m in @event.OtherMethods)
+			if (EventDef.AddMethod != null)
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.AddMethod);
+			if (EventDef.RemoveMethod != null)
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.RemoveMethod);
+			if (EventDef.InvokeMethod != null)
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.InvokeMethod);
+			foreach (var m in EventDef.OtherMethods)
 				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), m);
 		}
 
-		public IMethodNode Create(MethodDef method) {
-			return Context.FileTreeView.CreateEvent(method);
-		}
+		public IMethodNode Create(MethodDef method) => Context.FileTreeView.CreateEvent(method);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			var res = filter.GetResult(this.EventDef);

@@ -30,9 +30,7 @@ namespace dnSpy.Files.TreeView {
 	sealed class RootNode : FileTreeNodeData {
 		static readonly Guid guid = new Guid("5112F4B3-3674-43CB-A252-EE9D57A619B8");
 
-		public override Guid Guid {
-			get { return guid; }
-		}
+		public override Guid Guid => guid;
 
 		public override NodePathName NodePathName {
 			get { Debug.Fail("Shouldn't be called"); return new NodePathName(Guid); }
@@ -43,12 +41,10 @@ namespace dnSpy.Files.TreeView {
 			return FilterType.Default;
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference();
-		}
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
+			new ImageReference();
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) { }
 
 		public override bool CanDrop(DragEventArgs e, int index) {
 			if (!Context.CanDragAndDrop) {
@@ -73,16 +69,14 @@ namespace dnSpy.Files.TreeView {
 			var nodeIndexes = e.Data.GetData(FileTVConstants.DATAFORMAT_COPIED_ROOT_NODES) as int[];
 			if (nodeIndexes != null) {
 				Debug.Assert(DropNodes != null);
-				if (DropNodes != null)
-					DropNodes(index, nodeIndexes);
+				DropNodes?.Invoke(index, nodeIndexes);
 				return;
 			}
 
 			var filenames = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (filenames != null) {
 				Debug.Assert(DropFiles != null);
-				if (DropFiles != null)
-					DropFiles(index, filenames);
+				DropFiles?.Invoke(index, filenames);
 				return;
 			}
 

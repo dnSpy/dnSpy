@@ -25,37 +25,18 @@ using dnSpy.AsmEditor.Properties;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchOperandsListHelper : ListBoxHelperBase<SwitchInstructionVM> {
-		protected override string AddNewBeforeSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command1; }
-		}
-
-		protected override string AddNewAfterSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command2; }
-		}
-
-		protected override string AppendNewMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command3; }
-		}
-
-		protected override string RemoveSingularMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command4; }
-		}
-
-		protected override string RemovePluralMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command5; }
-		}
-
-		protected override string RemoveAllMessage {
-			get { return dnSpy_AsmEditor_Resources.Instr_Command6; }
-		}
+		protected override string AddNewBeforeSelectionMessage => dnSpy_AsmEditor_Resources.Instr_Command1;
+		protected override string AddNewAfterSelectionMessage => dnSpy_AsmEditor_Resources.Instr_Command2;
+		protected override string AppendNewMessage => dnSpy_AsmEditor_Resources.Instr_Command3;
+		protected override string RemoveSingularMessage => dnSpy_AsmEditor_Resources.Instr_Command4;
+		protected override string RemovePluralMessage => dnSpy_AsmEditor_Resources.Instr_Command5;
+		protected override string RemoveAllMessage => dnSpy_AsmEditor_Resources.Instr_Command6;
 
 		public SwitchOperandsListHelper(ListBox listBox)
 			: base(listBox) {
 		}
 
-		protected override SwitchInstructionVM[] GetSelectedItems() {
-			return listBox.SelectedItems.Cast<SwitchInstructionVM>().ToArray();
-		}
+		protected override SwitchInstructionVM[] GetSelectedItems() => listBox.SelectedItems.Cast<SwitchInstructionVM>().ToArray();
 
 		protected override void CopyItemsAsText(SwitchInstructionVM[] instrs) {
 			Array.Sort(instrs, (a, b) => a.Index.CompareTo(b.Index));

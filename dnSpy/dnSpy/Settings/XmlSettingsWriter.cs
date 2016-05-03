@@ -41,10 +41,8 @@ namespace dnSpy.Settings {
 			doc.Save(filename);
 		}
 
-		static ISettingsSection[] Sort(ISettingsSection[] sections) {
-			// This preserves the order of elements with the same name, which some code depend on.
-			return sections.OrderBy(a => a.Name.ToUpperInvariant()).ToArray();
-		}
+		// This preserves the order of elements with the same name, which some code depend on.
+		static ISettingsSection[] Sort(ISettingsSection[] sections) => sections.OrderBy(a => a.Name.ToUpperInvariant()).ToArray();
 
 		void Write(XElement root) {
 			foreach (var section in Sort(mgr.Sections))

@@ -29,8 +29,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	}
 
 	class CodeToolTipSettings : ViewModelBase, ICodeToolTipSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
 			get { return syntaxHighlight; }

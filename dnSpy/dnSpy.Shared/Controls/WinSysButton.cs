@@ -70,13 +70,9 @@ namespace dnSpy.Shared.Controls {
 				window.StateChanged += window_StateChanged;
 		}
 
-		void window_StateChanged(object sender, EventArgs e) {
-			OnWinSysTypeChanged(WinSysType);
-		}
-
-		static void OnWinSysTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+		void window_StateChanged(object sender, EventArgs e) => OnWinSysTypeChanged(WinSysType);
+		static void OnWinSysTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 			((WinSysButton)d).OnWinSysTypeChanged((WinSysType)e.NewValue);
-		}
 
 		void OnWinSysTypeChanged(WinSysType newValue) {
 			if (window == null)

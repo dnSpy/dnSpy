@@ -22,35 +22,16 @@ using dnSpy.Contracts.Menus;
 namespace dnSpy.Shared.Menus {
 	public abstract class MenuItemBase : IMenuItem, IMenuItem2 {
 		public abstract void Execute(IMenuItemContext context);
-
-		public virtual bool IsEnabled(IMenuItemContext context) {
-			return true;
-		}
-
-		public virtual bool IsVisible(IMenuItemContext context) {
-			return true;
-		}
-
-		public virtual string GetHeader(IMenuItemContext context) {
-			return null;
-		}
-
-		public virtual string GetIcon(IMenuItemContext context) {
-			return null;
-		}
-
-		public virtual string GetInputGestureText(IMenuItemContext context) {
-			return null;
-		}
-
-		public virtual bool IsChecked(IMenuItemContext context) {
-			return false;
-		}
+		public virtual bool IsEnabled(IMenuItemContext context) => true;
+		public virtual bool IsVisible(IMenuItemContext context) => true;
+		public virtual string GetHeader(IMenuItemContext context) => null;
+		public virtual string GetIcon(IMenuItemContext context) => null;
+		public virtual string GetInputGestureText(IMenuItemContext context) => null;
+		public virtual bool IsChecked(IMenuItemContext context) => false;
 	}
 
 	public abstract class MenuItemBase<TContext> : IMenuItem, IMenuItem2 where TContext : class {
 		protected abstract TContext CreateContext(IMenuItemContext context);
-
 		protected abstract object CachedContextKey { get; }
 
 		protected TContext GetCachedContext(IMenuItemContext context) {
@@ -98,29 +79,11 @@ namespace dnSpy.Shared.Menus {
 		}
 
 		public abstract void Execute(TContext context);
-
-		public virtual bool IsEnabled(TContext context) {
-			return true;
-		}
-
-		public virtual bool IsVisible(TContext context) {
-			return true;
-		}
-
-		public virtual string GetHeader(TContext context) {
-			return null;
-		}
-
-		public virtual string GetIcon(TContext context) {
-			return null;
-		}
-
-		public virtual string GetInputGestureText(TContext context) {
-			return null;
-		}
-
-		public virtual bool IsChecked(TContext context) {
-			return false;
-		}
+		public virtual bool IsEnabled(TContext context) => true;
+		public virtual bool IsVisible(TContext context) => true;
+		public virtual string GetHeader(TContext context) => null;
+		public virtual string GetIcon(TContext context) => null;
+		public virtual string GetInputGestureText(TContext context) => null;
+		public virtual bool IsChecked(TContext context) => false;
 	}
 }

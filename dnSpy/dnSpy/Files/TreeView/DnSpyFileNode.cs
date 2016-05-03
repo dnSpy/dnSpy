@@ -24,23 +24,15 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	abstract class DnSpyFileNode : FileTreeNodeData, IDnSpyFileNode {
-		public IDnSpyFile DnSpyFile {
-			get { return dnSpyFile; }
-		}
-		readonly IDnSpyFile dnSpyFile;
+		public IDnSpyFile DnSpyFile { get; }
 
 		protected DnSpyFileNode(IDnSpyFile dnSpyFile) {
 			if (dnSpyFile == null)
 				throw new ArgumentNullException();
-			this.dnSpyFile = dnSpyFile;
+			this.DnSpyFile = dnSpyFile;
 		}
 
-		public sealed override NodePathName NodePathName {
-			get { return new NodePathName(Guid, (DnSpyFile.Filename ?? string.Empty).ToUpperInvariant()); }
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(DnSpyFile).FilterType;
-		}
+		public sealed override NodePathName NodePathName => new NodePathName(Guid, (DnSpyFile.Filename ?? string.Empty).ToUpperInvariant());
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(DnSpyFile).FilterType;
 	}
 }

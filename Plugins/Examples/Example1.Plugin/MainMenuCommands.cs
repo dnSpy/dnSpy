@@ -19,43 +19,31 @@ namespace Example1.Plugin {
 
 	[ExportMenuItem(OwnerGuid = MainMenuConstants.APP_MENU_PLUGIN, Header = "Command #1", Group = MainMenuConstants.GROUP_PLUGIN_MENU1, Order = 0)]
 	sealed class PluginCommand1 : MenuItemBase {
-		public override void Execute(IMenuItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
-		}
+		public override void Execute(IMenuItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
 	}
 
 	[ExportMenuItem(OwnerGuid = MainMenuConstants.APP_MENU_PLUGIN, Header = "Command #2", Group = MainMenuConstants.GROUP_PLUGIN_MENU1, Order = 10)]
 	sealed class PluginCommand2 : MenuItemBase {
-		public override void Execute(IMenuItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #2");
-		}
+		public override void Execute(IMenuItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #2");
 	}
 
 	[ExportMenuItem(OwnerGuid = MainMenuConstants.APP_MENU_PLUGIN, Header = "Command #3", Group = MainMenuConstants.GROUP_PLUGIN_MENU2, Order = 0)]
 	sealed class PluginCommand3 : MenuItemBase {
-		public override void Execute(IMenuItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #3");
-		}
+		public override void Execute(IMenuItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #3");
 	}
 
 	[ExportMenuItem(OwnerGuid = MainMenuConstants.APP_MENU_PLUGIN, Header = "Command #4", Group = MainMenuConstants.GROUP_PLUGIN_MENU2, Order = 10)]
 	sealed class PluginCommand4 : MenuItemBase {
-		public override void Execute(IMenuItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #4");
-		}
+		public override void Execute(IMenuItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #4");
 	}
 
 	[ExportMenuItem(OwnerGuid = MainMenuConstants.APP_MENU_PLUGIN, Header = "Command #5", Group = MainMenuConstants.GROUP_PLUGIN_MENU2, Order = 20)]
 	sealed class PluginCommand5 : MenuItemBase {
-		public override void Execute(IMenuItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("Command #5");
-		}
+		public override void Execute(IMenuItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #5");
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "Command #1", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 1000)]
 	sealed class ViewCommand1 : MenuItemBase {
-		public override void Execute(IMenuItemContext context) {
-			dnSpy.Shared.App.MsgBox.Instance.Show("View Command #1");
-		}
+		public override void Execute(IMenuItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("View Command #1");
 	}
 }

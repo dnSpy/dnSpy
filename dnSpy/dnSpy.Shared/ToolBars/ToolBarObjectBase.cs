@@ -23,9 +23,6 @@ using dnSpy.Contracts.ToolBars;
 namespace dnSpy.Shared.ToolBars {
 	public abstract class ToolBarObjectBase : IToolBarObject {
 		public abstract object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
-
-		public bool IsVisible(IToolBarItemContext context) {
-			return true;
-		}
+		public bool IsVisible(IToolBarItemContext context) => true;
 	}
 }

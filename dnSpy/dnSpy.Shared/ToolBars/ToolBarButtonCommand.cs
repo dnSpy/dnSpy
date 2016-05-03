@@ -23,21 +23,13 @@ using dnSpy.Contracts.ToolBars;
 
 namespace dnSpy.Shared.ToolBars {
 	public abstract class ToolBarButtonCommand : ToolBarButtonBase, ICommandHolder {
-		public ICommand Command {
-			get { return realCommand; }
-		}
-		readonly ICommand realCommand;
+		public ICommand Command { get; }
 
 		protected ToolBarButtonCommand(ICommand realCommand) {
-			this.realCommand = realCommand;
+			this.Command = realCommand;
 		}
 
-		public override void Execute(IToolBarItemContext context) {
-			realCommand.Execute(context);
-		}
-
-		public override bool IsEnabled(IToolBarItemContext context) {
-			return realCommand.CanExecute(context);
-		}
+		public override void Execute(IToolBarItemContext context) => Command.Execute(context);
+		public override bool IsEnabled(IToolBarItemContext context) => Command.CanExecute(context);
 	}
 }

@@ -147,9 +147,7 @@ namespace dnSpy.Files.Tabs {
 			this.fileManager = fileManager;
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) {
-			return fileListLoader.CanLoad;
-		}
+		public override bool IsEnabled(IMenuItemContext context) => fileListLoader.CanLoad;
 
 		public override void Execute(IMenuItemContext context) {
 			if (!fileListLoader.CanLoad)
@@ -194,13 +192,8 @@ namespace dnSpy.Files.Tabs {
 			this.fileListLoader = fileListLoader;
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) {
-			return fileListLoader.CanReload;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			fileListLoader.Reload();
-		}
+		public override bool IsEnabled(IMenuItemContext context) => fileListLoader.CanReload;
+		public override void Execute(IMenuItemContext context) => fileListLoader.Reload();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:CloseAllCommand", Icon = "CloseAll", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
@@ -212,13 +205,8 @@ namespace dnSpy.Files.Tabs {
 			this.fileListLoader = fileListLoader;
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) {
-			return fileListLoader.CanCloseAll;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			fileListLoader.CloseAll();
-		}
+		public override bool IsEnabled(IMenuItemContext context) => fileListLoader.CanCloseAll;
+		public override void Execute(IMenuItemContext context) => fileListLoader.CloseAll();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 50)]
@@ -230,13 +218,8 @@ namespace dnSpy.Files.Tabs {
 			this.fileTreeView = fileTreeView;
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) {
-			return fileTreeView.CanSortTopNodes;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			fileTreeView.SortTopNodes();
-		}
+		public override bool IsEnabled(IMenuItemContext context) => fileTreeView.CanSortTopNodes;
+		public override void Execute(IMenuItemContext context) => fileTreeView.SortTopNodes();
 	}
 
 	[ExportAutoLoaded]
@@ -247,7 +230,7 @@ namespace dnSpy.Files.Tabs {
 		ShowCodeEditorCommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
 			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCodeEditorRoutedCommand,
-				(s, e) => { var tab = fileTabManager.ActiveTab; if (tab != null) tab.TrySetFocus(); },
+				(s, e) => fileTabManager.ActiveTab?.TrySetFocus(),
 				(s, e) => e.CanExecute = fileTabManager.ActiveTab != null,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.D0,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0,
@@ -265,20 +248,16 @@ namespace dnSpy.Files.Tabs {
 
 	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 30)]
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetFilename(context) != null;
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetFilename(context) != null;
 
 		static string GetFilename(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
 				return null;
 			var nodes = context.Find<ITreeNodeData[]>();
-			if (nodes == null || nodes.Length != 1)
+			if (nodes?.Length != 1)
 				return null;
 			var fileNode = nodes[0] as IDnSpyFileNode;
-			if (fileNode == null)
-				return null;
-			var filename = fileNode.DnSpyFile.Filename;
+			var filename = fileNode?.DnSpyFile?.Filename;
 			if (!File.Exists(filename))
 				return null;
 			return filename;

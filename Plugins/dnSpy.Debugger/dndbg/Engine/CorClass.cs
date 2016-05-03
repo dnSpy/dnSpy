@@ -30,9 +30,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the token
 		/// </summary>
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token => token;
 		readonly uint token;
 
 		/// <summary>
@@ -49,30 +47,22 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if this is <c>System.Enum</c>
 		/// </summary>
-		public bool IsSystemEnum {
-			get { return IsSystem("Enum"); }
-		}
+		public bool IsSystemEnum => IsSystem("Enum");
 
 		/// <summary>
 		/// true if this is <c>System.ValueType</c>
 		/// </summary>
-		public bool IsSystemValueType {
-			get { return IsSystem("ValueType"); }
-		}
+		public bool IsSystemValueType => IsSystem("ValueType");
 
 		/// <summary>
 		/// true if this is <c>System.Object</c>
 		/// </summary>
-		public bool IsSystemObject {
-			get { return IsSystem("Object"); }
-		}
+		public bool IsSystemObject => IsSystem("Object");
 
 		/// <summary>
 		/// true if this is <c>System.Decimal</c>
 		/// </summary>
-		public bool IsSystemDecimal {
-			get { return IsSystem("Decimal"); }
-		}
+		public bool IsSystemDecimal => IsSystem("Decimal");
 
 		public CorClass(ICorDebugClass cls)
 			: base(cls) {
@@ -82,8 +72,7 @@ namespace dndbg.Engine {
 		}
 
 		public TypeAttributes GetTypeAttributes() {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module?.GetMetaDataInterface<IMetaDataImport>();
 			return MDAPI.GetTypeDefAttributes(mdi, token) ?? 0;
 		}
 
@@ -99,7 +88,7 @@ namespace dndbg.Engine {
 			if (c2 == null)
 				return null;
 			ICorDebugType value;
-			int hr = c2.GetParameterizedType(etype, typeArgs == null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), out value);
+			int hr = c2.GetParameterizedType(etype, typeArgs?.Length ?? 0, typeArgs.ToCorDebugArray(), out value);
 			return hr < 0 || value == null ? null : new CorType(value);
 		}
 
@@ -143,7 +132,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorValue GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
 			ICorDebugValue value;
-			hr = obj.GetStaticFieldValue(token, frame == null ? null : frame.RawObject, out value);
+			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -164,30 +153,24 @@ namespace dndbg.Engine {
 		/// Gets type generic parameters
 		/// </summary>
 		/// <returns></returns>
-		public List<TokenAndName> GetGenericParameters() {
-			var module = Module;
-			return MetaDataUtils.GetGenericParameterNames(module == null ? null : module.GetMetaDataInterface<IMetaDataImport>(), Token);
-		}
+		public List<TokenAndName> GetGenericParameters() =>
+			MetaDataUtils.GetGenericParameterNames(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
 		/// <summary>
 		/// Returns true if an attribute is present
 		/// </summary>
 		/// <param name="attributeName">Full name of attribute type</param>
 		/// <returns></returns>
-		public bool HasAttribute(string attributeName) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MDAPI.HasAttribute(mdi, Token, attributeName);
-		}
+		public bool HasAttribute(string attributeName) =>
+			MDAPI.HasAttribute(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, attributeName);
 
 		/// <summary>
 		/// Finds a method
 		/// </summary>
 		/// <param name="name">Method name</param>
 		/// <returns></returns>
-		public CorFunction FindFunction(string name, bool checkBaseClasses = true) {
-			return FindFunctions(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorFunction FindFunction(string name, bool checkBaseClasses = true) =>
+			FindFunctions(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds methods
@@ -196,7 +179,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public IEnumerable<CorFunction> FindFunctions(string name, bool checkBaseClasses = true) {
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
 				if (MDAPI.GetMethodName(mdi, mdToken) == name) {
 					var func = mod.GetFunctionFromToken(mdToken);
@@ -222,7 +205,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public IEnumerable<CorFunction> FindFunctions(bool checkBaseClasses = true) {
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
 				var func = mod.GetFunctionFromToken(mdToken);
 				Debug.Assert(func != null);
@@ -245,9 +228,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Field name</param>
 		/// <returns></returns>
-		public CorField FindField(string name, bool checkBaseClasses = true) {
-			return FindFields(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorField FindField(string name, bool checkBaseClasses = true) =>
+			FindFields(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds fields
@@ -255,8 +237,7 @@ namespace dndbg.Engine {
 		/// <param name="name">Field name</param>
 		/// <returns></returns>
 		public IEnumerable<CorField> FindFields(string name, bool checkBaseClasses = true) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var fdToken in MDAPI.GetFieldTokens(mdi, token)) {
 				if (MDAPI.GetFieldName(mdi, fdToken) == name)
 					yield return new CorField(this, fdToken);
@@ -277,8 +258,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<CorField> FindFields(bool checkBaseClasses = true) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var fdToken in MDAPI.GetFieldTokens(mdi, token))
 				yield return new CorField(this, fdToken);
 			if (checkBaseClasses) {
@@ -297,9 +277,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Property name</param>
 		/// <returns></returns>
-		public CorProperty FindProperty(string name, bool checkBaseClasses = true) {
-			return FindProperties(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorProperty FindProperty(string name, bool checkBaseClasses = true) =>
+			FindProperties(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds properties
@@ -307,8 +286,7 @@ namespace dndbg.Engine {
 		/// <param name="name">Property name</param>
 		/// <returns></returns>
 		public IEnumerable<CorProperty> FindProperties(string name, bool checkBaseClasses = true) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, token)) {
 				if (MDAPI.GetPropertyName(mdi, pdToken) == name)
 					yield return new CorProperty(this, pdToken);
@@ -329,8 +307,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<CorProperty> FindProperties(bool checkBaseClasses = true) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, token))
 				yield return new CorProperty(this, pdToken);
 			if (checkBaseClasses) {
@@ -349,9 +326,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Event name</param>
 		/// <returns></returns>
-		public CorEvent FindEvent(string name, bool checkBaseClasses = true) {
-			return FindEvents(name, checkBaseClasses).FirstOrDefault();
-		}
+		public CorEvent FindEvent(string name, bool checkBaseClasses = true) =>
+			FindEvents(name, checkBaseClasses).FirstOrDefault();
 
 		/// <summary>
 		/// Finds event
@@ -359,8 +335,7 @@ namespace dndbg.Engine {
 		/// <param name="name">Event name</param>
 		/// <returns></returns>
 		public IEnumerable<CorEvent> FindEvents(string name, bool checkBaseClasses = true) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var edToken in MDAPI.GetEventTokens(mdi, token)) {
 				if (MDAPI.GetEventName(mdi, edToken) == name)
 					yield return new CorEvent(this, edToken);
@@ -381,8 +356,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<CorEvent> FindEvents(bool checkBaseClasses = true) {
-			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = Module?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var edToken in MDAPI.GetEventTokens(mdi, token))
 				yield return new CorEvent(this, edToken);
 			if (checkBaseClasses) {
@@ -403,7 +377,7 @@ namespace dndbg.Engine {
 		public CorFunction[] FindConstructors() {
 			var ctors = new List<CorFunction>();
 			var mod = Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
 				MethodAttributes attrs;
 				MethodImplAttributes implAttrs;
@@ -423,8 +397,7 @@ namespace dndbg.Engine {
 		}
 
 		public void GetName(out string ns, out string name) {
-			var mod = Module;
-			var fn = MDAPI.GetTypeDefName(mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>(), Token);
+			var fn = MDAPI.GetTypeDefName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 			if (fn == null) {
 				ns = null;
 				name = null;
@@ -450,34 +423,17 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorClass a, CorClass b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorClass other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorClass);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(CorClass a, CorClass b) => !(a == b);
+		public bool Equals(CorClass other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorClass);
+		public override int GetHashCode() => RawObject.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

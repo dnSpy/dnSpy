@@ -32,8 +32,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.MethodDeclaration = mo.MethodDeclaration;
 		}
 
-		public MethodOverride Create() {
-			return new MethodOverride(MethodBody, MethodDeclaration);
-		}
+		public MethodOverride Create() => new MethodOverride(MethodBody, MethodDeclaration);
 	}
 }

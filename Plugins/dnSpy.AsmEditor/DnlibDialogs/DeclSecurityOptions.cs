@@ -50,8 +50,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return ds;
 		}
 
-		public DeclSecurity Create(ModuleDef module) {
-			return module.UpdateRowId(CopyTo(module, new DeclSecurityUser()));
-		}
+		public DeclSecurity Create(ModuleDef module) => module.UpdateRowId(CopyTo(module, new DeclSecurityUser()));
 	}
 }

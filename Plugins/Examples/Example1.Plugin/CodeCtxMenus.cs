@@ -48,19 +48,11 @@ namespace Example1.Plugin {
 			this.mySettings = mySettings;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) {
-			return mySettings.BoolOption1;
-		}
+		public override bool IsChecked(IMenuItemContext context) => mySettings.BoolOption1;
+		public override void Execute(IMenuItemContext context) => mySettings.BoolOption1 = !mySettings.BoolOption1;
 
-		public override void Execute(IMenuItemContext context) {
-			// Toggle value
-			mySettings.BoolOption1 = !mySettings.BoolOption1;
-		}
-
-		public override bool IsVisible(IMenuItemContext context) {
-			// Only show this in the text editor
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-		}
+		// Only show this in the text editor
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 	}
 
 	[ExportMenuItem(Header = "Option 2", Group = Constants.GROUP_TEXTEDITOR, Order = 10)]
@@ -72,19 +64,11 @@ namespace Example1.Plugin {
 			this.mySettings = mySettings;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) {
-			return mySettings.BoolOption2;
-		}
+		public override bool IsChecked(IMenuItemContext context) => mySettings.BoolOption2;
+		public override void Execute(IMenuItemContext context) => mySettings.BoolOption2 = !mySettings.BoolOption2;
 
-		public override void Execute(IMenuItemContext context) {
-			// Toggle value
-			mySettings.BoolOption2 = !mySettings.BoolOption2;
-		}
-
-		public override bool IsVisible(IMenuItemContext context) {
-			// Only show this in the text editor
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-		}
+		// Only show this in the text editor
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TEXTEDITOR, Order = 20)]
@@ -119,14 +103,9 @@ namespace Example1.Plugin {
 			return codeRef.Reference as IMDTokenProvider;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			// Only show this in the text editor
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-		}
-
-		public override bool IsEnabled(IMenuItemContext context) {
-			return GetTokenObj(context) != null;
-		}
+		// Only show this in the text editor
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		public override bool IsEnabled(IMenuItemContext context) => GetTokenObj(context) != null;
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TEXTEDITOR, Order = 30)]
@@ -156,13 +135,8 @@ namespace Example1.Plugin {
 			return context.Find<ITextEditorUIContext>();
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			// Only show this in the text editor
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-		}
-
-		public override bool IsEnabled(IMenuItemContext context) {
-			return GetUIContext(context) != null;
-		}
+		// Only show this in the text editor
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		public override bool IsEnabled(IMenuItemContext context) => GetUIContext(context) != null;
 	}
 }

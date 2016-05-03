@@ -35,10 +35,7 @@ namespace dnSpy.Files {
 		readonly List<IDnSpyFile> tempCache;
 		readonly IDnSpyFileCreator[] dnSpyFileCreators;
 
-		public IAssemblyResolver AssemblyResolver {
-			get { return asmResolver; }
-		}
-		readonly IAssemblyResolver asmResolver;
+		public IAssemblyResolver AssemblyResolver { get; }
 
 		sealed class DisableAssemblyLoadHelper : IDisposable {
 			readonly FileManager fileManager;
@@ -55,30 +52,21 @@ namespace dnSpy.Files {
 			}
 		}
 
-		bool AssemblyLoadEnabled {
-			get { return counter_DisableAssemblyLoad == 0; }
-		}
+		bool AssemblyLoadEnabled => counter_DisableAssemblyLoad == 0;
 		int counter_DisableAssemblyLoad;
 
-		public IDisposable DisableAssemblyLoad() {
-			return new DisableAssemblyLoadHelper(this);
-		}
-
+		public IDisposable DisableAssemblyLoad() => new DisableAssemblyLoadHelper(this);
 		public event EventHandler<NotifyFileCollectionChangedEventArgs> CollectionChanged;
-
-		public IFileManagerSettings Settings {
-			get { return fileManagerSettings; }
-		}
-		readonly IFileManagerSettings fileManagerSettings;
+		public IFileManagerSettings Settings { get; }
 
 		[ImportingConstructor]
 		public FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
 			this.tempCache = new List<IDnSpyFile>();
-			this.asmResolver = new AssemblyResolver(this);
+			this.AssemblyResolver = new AssemblyResolver(this);
 			this.dnSpyFileCreators = mefCreators.OrderBy(a => a.Order).ToArray();
-			this.fileManagerSettings = fileManagerSettings;
+			this.Settings = fileManagerSettings;
 		}
 
 		void CallCollectionChanged(NotifyFileCollectionChangedEventArgs eventArgs, bool delayLoad = true) {
@@ -88,11 +76,8 @@ namespace dnSpy.Files {
 				CallCollectionChanged2(eventArgs);
 		}
 
-		void CallCollectionChanged2(NotifyFileCollectionChangedEventArgs eventArgs) {
-			var c = CollectionChanged;
-			if (c != null)
-				c(this, eventArgs);
-		}
+		void CallCollectionChanged2(NotifyFileCollectionChangedEventArgs eventArgs) =>
+			CollectionChanged?.Invoke(this, eventArgs);
 
 		public IDnSpyFile[] GetFiles() {
 			lock (lockObj)
@@ -130,7 +115,7 @@ namespace dnSpy.Files {
 			var file = FindAssembly(asm);
 			if (file != null)
 				return file;
-			var asmDef = this.asmResolver.Resolve(asm, sourceModule);
+			var asmDef = this.AssemblyResolver.Resolve(asm, sourceModule);
 			if (asmDef != null)
 				return FindAssembly(asm);
 			return null;
@@ -228,9 +213,8 @@ namespace dnSpy.Files {
 			return file;
 		}
 
-		public IDnSpyFile TryGetOrCreate(DnSpyFileInfo info, bool isAutoLoaded) {
-			return TryGetOrCreateInternal(info, isAutoLoaded, false);
-		}
+		public IDnSpyFile TryGetOrCreate(DnSpyFileInfo info, bool isAutoLoaded) =>
+			TryGetOrCreateInternal(info, isAutoLoaded, false);
 
 		internal IDnSpyFile TryGetOrCreateInternal(DnSpyFileInfo info, bool isAutoLoaded, bool isResolve) {
 			var key = TryCreateKey(info);
@@ -254,11 +238,7 @@ namespace dnSpy.Files {
 			return result;
 		}
 
-		static void Dispose(IDnSpyFile file) {
-			var id = file as IDisposable;
-			if (id != null)
-				id.Dispose();
-		}
+		static void Dispose(IDnSpyFile file) => (file as IDisposable)?.Dispose();
 
 		IDnSpyFilenameKey TryCreateKey(DnSpyFileInfo info) {
 			foreach (var creator in dnSpyFileCreators) {
@@ -290,13 +270,9 @@ namespace dnSpy.Files {
 			return null;
 		}
 
-		public IDnSpyFile TryCreateOnly(DnSpyFileInfo info) {
-			return TryCreateDnSpyFile(info);
-		}
-
-		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver) {
-			return DnSpyFile.CreateDnSpyFileFromFile(fileInfo, filename, useMemoryMappedIO, loadPDBFiles, asmResolver, false);
-		}
+		public IDnSpyFile TryCreateOnly(DnSpyFileInfo info) => TryCreateDnSpyFile(info);
+		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver) =>
+			DnSpyFile.CreateDnSpyFileFromFile(fileInfo, filename, useMemoryMappedIO, loadPDBFiles, asmResolver, false);
 
 		public void Remove(IDnSpyFilenameKey key) {
 			Debug.Assert(key != null);

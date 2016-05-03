@@ -30,9 +30,7 @@ namespace dnSpy.Analyzer {
 		/// <param name="root">The root element of the tree.</param>
 		/// <param name="recursion">The function that gets the children of an element.</param>
 		/// <returns>Iterator that enumerates the tree structure in pre-order.</returns>
-		public static IEnumerable<T> PreOrder<T>(T root, Func<T, IEnumerable<T>> recursion) {
-			return PreOrder(new T[] { root }, recursion);
-		}
+		public static IEnumerable<T> PreOrder<T>(T root, Func<T, IEnumerable<T>> recursion) => PreOrder(new T[] { root }, recursion);
 
 		/// <summary>
 		/// Converts a tree data structure into a flat list by traversing it in pre-order.
@@ -69,9 +67,7 @@ namespace dnSpy.Analyzer {
 		/// <param name="root">The root element of the tree.</param>
 		/// <param name="recursion">The function that gets the children of an element.</param>
 		/// <returns>Iterator that enumerates the tree structure in post-order.</returns>
-		public static IEnumerable<T> PostOrder<T>(T root, Func<T, IEnumerable<T>> recursion) {
-			return PostOrder(new T[] { root }, recursion);
-		}
+		public static IEnumerable<T> PostOrder<T>(T root, Func<T, IEnumerable<T>> recursion) => PostOrder(new T[] { root }, recursion);
 
 		/// <summary>
 		/// Converts a tree data structure into a flat list by traversing it in post-order.

@@ -28,51 +28,28 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class MethodBodyVM : ViewModelBase {
 		readonly MethodBodyOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public bool IsNativeBody {
-			get { return (MethodBodyType)MethodBodyTypeVM.SelectedItem == MethodBodyType.Native; }
-		}
-
-		public bool IsCilBody {
-			get { return (MethodBodyType)MethodBodyTypeVM.SelectedItem == MethodBodyType.Cil; }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public bool IsNativeBody => (MethodBodyType)MethodBodyTypeVM.SelectedItem == MethodBodyType.Native;
+		public bool IsCilBody => (MethodBodyType)MethodBodyTypeVM.SelectedItem == MethodBodyType.Cil;
 
 		internal static readonly EnumVM[] methodBodyTypeList = new EnumVM[] {
 			new EnumVM(MethodBodyType.None, dnSpy_AsmEditor_Resources.MethodBodyType_None),
 			new EnumVM(MethodBodyType.Cil, dnSpy_AsmEditor_Resources.MethodBodyType_IL),
 			new EnumVM(MethodBodyType.Native, dnSpy_AsmEditor_Resources.MethodBodyType_Native),
 		};
-		public EnumListVM MethodBodyTypeVM {
-			get { return methodBodyTypeVM; }
-		}
-		readonly EnumListVM methodBodyTypeVM;
-
-		public EnumListVM CodeTypeVM {
-			get { return codeTypeVM; }
-		}
-		readonly EnumListVM codeTypeVM = new EnumListVM(Method.MethodOptionsVM.codeTypeList);
-
-		public NativeMethodBodyVM NativeMethodBodyVM {
-			get { return nativeMethodBodyVM; }
-		}
-		readonly NativeMethodBodyVM nativeMethodBodyVM;
-
-		public CilBodyVM CilBodyVM {
-			get { return cilBodyVM; }
-		}
-		readonly CilBodyVM cilBodyVM;
+		public EnumListVM MethodBodyTypeVM { get; }
+		public EnumListVM CodeTypeVM { get; } = new EnumListVM(Method.MethodOptionsVM.codeTypeList);
+		public NativeMethodBodyVM NativeMethodBodyVM { get; }
+		public CilBodyVM CilBodyVM { get; }
 
 		public MethodBodyVM(MethodBodyOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 
-			this.nativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
+			this.NativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
 			NativeMethodBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.cilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, languageManager, ownerType, ownerMethod, false);
+			this.CilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, languageManager, ownerType, ownerMethod, false);
 			CilBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.methodBodyTypeVM = new EnumListVM(methodBodyTypeList, (a, b) => OnMethodBodyTypeChanged());
+			this.MethodBodyTypeVM = new EnumListVM(methodBodyTypeList, (a, b) => OnMethodBodyTypeChanged());
 
 			Reinitialize();
 		}
@@ -100,13 +77,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public MethodBodyOptions CreateMethodBodyOptions() {
-			return CopyTo(new MethodBodyOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public MethodBodyOptions CreateMethodBodyOptions() => CopyTo(new MethodBodyOptions());
 
 		void InitializeFrom(MethodBodyOptions options) {
 			NativeMethodBodyVM.InitializeFrom(options.NativeMethodBodyOptions);

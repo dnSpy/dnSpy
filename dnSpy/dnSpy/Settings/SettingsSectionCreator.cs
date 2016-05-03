@@ -31,9 +31,7 @@ namespace dnSpy.Settings {
 			this.sections = new List<ISettingsSection>();
 		}
 
-		public ISettingsSection[] Sections {
-			get { return sections.ToArray(); }
-		}
+		public ISettingsSection[] Sections => sections.ToArray();
 
 		public ISettingsSection CreateSection(string name) {
 			Debug.Assert(name != null);

@@ -60,8 +60,8 @@ namespace dnSpy.Debugger.Threads {
 	}
 
 	sealed class ThreadsCtxMenuContext {
-		public readonly IThreadsVM VM;
-		public readonly ThreadVM[] SelectedItems;
+		public IThreadsVM VM { get; }
+		public ThreadVM[] SelectedItems { get; }
 
 		public ThreadsCtxMenuContext(IThreadsVM vm, ThreadVM[] selItems) {
 			this.VM = vm;
@@ -77,15 +77,11 @@ namespace dnSpy.Debugger.Threads {
 			this.cmd = cmd;
 		}
 
-		protected override ThreadsCtxMenuContext CreateContext() {
-			return cmd.Create();
-		}
+		protected override ThreadsCtxMenuContext CreateContext() => cmd.Create();
 	}
 
 	abstract class ThreadsCtxMenuCommand : MenuItemBase<ThreadsCtxMenuContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected readonly Lazy<ITheDebugger> theDebugger;
@@ -163,9 +159,7 @@ namespace dnSpy.Debugger.Threads {
 			}
 		}
 
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
@@ -175,13 +169,8 @@ namespace dnSpy.Debugger.Threads {
 			: base(theDebugger, threadsContent) {
 		}
 
-		public override void Execute(ThreadsCtxMenuContext context) {
-			threadsContent.Value.ListView.SelectAll();
-		}
-
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override void Execute(ThreadsCtxMenuContext context) => threadsContent.Value.ListView.SelectAll();
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
@@ -194,13 +183,8 @@ namespace dnSpy.Debugger.Threads {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public override void Execute(ThreadsCtxMenuContext context) {
-			debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
-		}
-
-		public override bool IsChecked(ThreadsCtxMenuContext context) {
-			return debuggerSettings.UseHexadecimal;
-		}
+		public override void Execute(ThreadsCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
+		public override bool IsChecked(ThreadsCtxMenuContext context) => debuggerSettings.UseHexadecimal;
 	}
 
 	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
@@ -221,13 +205,8 @@ namespace dnSpy.Debugger.Threads {
 			GoTo(stackFrameManager, fileTabManager, moduleLoader, context, false);
 		}
 
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return CanGoToThread(context);
-		}
-
-		internal static bool CanGoToThread(ThreadsCtxMenuContext context) {
-			return context.SelectedItems.Length == 1;
-		}
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => CanGoToThread(context);
+		internal static bool CanGoToThread(ThreadsCtxMenuContext context) => context.SelectedItems.Length == 1;
 
 		internal static void GoTo(Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, ThreadsCtxMenuContext context, bool newTab) {
 			if (context.SelectedItems.Length == 0)
@@ -257,13 +236,8 @@ namespace dnSpy.Debugger.Threads {
 			this.moduleLoader = moduleLoader;
 		}
 
-		public override void Execute(ThreadsCtxMenuContext context) {
-			SwitchToThreadThreadsCtxMenuCommand.GoTo(stackFrameManager, fileTabManager, moduleLoader, context, true);
-		}
-
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return SwitchToThreadThreadsCtxMenuCommand.CanGoToThread(context);
-		}
+		public override void Execute(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.GoTo(stackFrameManager, fileTabManager, moduleLoader, context, true);
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.CanGoToThread(context);
 	}
 
 	[ExportMenuItem(Header = "res:RenameThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
@@ -294,9 +268,7 @@ namespace dnSpy.Debugger.Threads {
 				t.IsSuspended = true;
 		}
 
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return context.SelectedItems.Any(t => !t.IsSuspended);
-		}
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Any(t => !t.IsSuspended);
 	}
 
 	[ExportMenuItem(Header = "res:ThawThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
@@ -311,8 +283,6 @@ namespace dnSpy.Debugger.Threads {
 				t.IsSuspended = false;
 		}
 
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return context.SelectedItems.Any(t => t.IsSuspended);
-		}
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Any(t => t.IsSuspended);
 	}
 }

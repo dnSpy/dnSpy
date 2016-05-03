@@ -60,16 +60,13 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		IEnumerable<Tuple<IFileTab, ILanguage>> LanguageTabs {
 			get {
 				foreach (var tab in fileTabManager.VisibleFirstTabs) {
-					var langContent = tab.Content as ILanguageTabContent;
-					var lang = langContent == null ? null : langContent.Language;
+					var lang = (tab.Content as ILanguageTabContent)?.Language;
 					if (lang != null)
 						yield return Tuple.Create(tab, lang);
 				}
 			}
 		}
 
-		void RefreshCode<T>() {
-			fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
-		}
+		void RefreshCode<T>() => fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
 	}
 }

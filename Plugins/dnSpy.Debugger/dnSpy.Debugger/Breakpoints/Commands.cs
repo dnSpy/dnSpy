@@ -56,8 +56,8 @@ namespace dnSpy.Debugger.Breakpoints {
 	}
 
 	sealed class BreakpointCtxMenuContext {
-		public readonly IBreakpointsVM VM;
-		public readonly BreakpointVM[] SelectedItems;
+		public IBreakpointsVM VM { get; }
+		public BreakpointVM[] SelectedItems { get; }
 
 		public BreakpointCtxMenuContext(IBreakpointsVM vm, BreakpointVM[] selItems) {
 			this.VM = vm;
@@ -73,15 +73,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.cmd = cmd;
 		}
 
-		protected override BreakpointCtxMenuContext CreateContext() {
-			return cmd.Create();
-		}
+		protected override BreakpointCtxMenuContext CreateContext() => cmd.Create();
 	}
 
 	abstract class BreakpointCtxMenuCommand : MenuItemBase<BreakpointCtxMenuContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected readonly Lazy<IBreakpointsContent> breakpointsContent;
@@ -146,9 +142,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 10)]
@@ -158,13 +152,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			: base(breakpointsContent) {
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointsContent.Value.ListView.SelectAll();
-		}
-
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointsContent.Value.ListView.SelectAll();
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[Export, ExportMenuItem(Header = "res:DeleteCommand", Icon = "Delete", InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 20)]
@@ -174,13 +163,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			: base(breakpointsContent) {
 		}
 
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
-
-		public override void Execute(BreakpointCtxMenuContext context) {
-			context.VM.Remove(context.SelectedItems);
-		}
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length > 0;
+		public override void Execute(BreakpointCtxMenuContext context) => context.VM.Remove(context.SelectedItems);
 	}
 
 	[ExportMenuItem(Header = "res:DeleteAllBreakpointsCommand2", Icon = "DeleteAllBreakpoints", InputGestureText = "res:ShortCutKeyCtrlShiftF9", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 30)]
@@ -193,13 +177,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.appWindow = appWindow;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			DebugRoutedCommands.DeleteAllBreakpoints.Execute(null, appWindow.MainWindow);
-		}
-
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return DebugRoutedCommands.DeleteAllBreakpoints.CanExecute(null, appWindow.MainWindow);
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => DebugRoutedCommands.DeleteAllBreakpoints.Execute(null, appWindow.MainWindow);
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => DebugRoutedCommands.DeleteAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
 	[ExportMenuItem(Header = "res:EnableAllBreakpointsCommand", Icon = "EnableAllBreakpoints", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 40)]
@@ -212,13 +191,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.appWindow = appWindow;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			DebugRoutedCommands.EnableAllBreakpoints.Execute(null, appWindow.MainWindow);
-		}
-
-		public override bool IsVisible(BreakpointCtxMenuContext context) {
-			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => DebugRoutedCommands.EnableAllBreakpoints.Execute(null, appWindow.MainWindow);
+		public override bool IsVisible(BreakpointCtxMenuContext context) => DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
 	[ExportMenuItem(Header = "res:DisableAllBreakpointsCommand", Icon = "DisableAllBreakpoints", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 50)]
@@ -231,13 +205,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.appWindow = appWindow;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			DebugRoutedCommands.DisableAllBreakpoints.Execute(null, appWindow.MainWindow);
-		}
-
-		public override bool IsVisible(BreakpointCtxMenuContext context) {
-			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => DebugRoutedCommands.DisableAllBreakpoints.Execute(null, appWindow.MainWindow);
+		public override bool IsVisible(BreakpointCtxMenuContext context) => DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
 	[Export, ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 0)]
@@ -266,9 +235,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			DebugUtils.GoToIL(fileTabManager, moduleLoader.Value, ilbp.SerializedDnToken.Module, ilbp.SerializedDnToken.Token, ilbp.ILOffset, newTab);
 		}
 
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
-		}
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
 	}
 
 	[Export, ExportMenuItem(Header = "res:GoToCodeNewTabCommand", Icon = "GoToSourceCode", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 10)]
@@ -288,9 +255,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				GoToSourceBreakpointCtxMenuCommand.GoTo(fileTabManager, moduleLoader, context.SelectedItems[0], true);
 		}
 
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
-		}
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
 	}
 
 	[ExportMenuItem(Header = "res:GoToDisassemblyCommand", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 20)]
@@ -332,13 +297,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowTokens = !breakpointSettings.ShowTokens;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowTokens;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowTokens = !breakpointSettings.ShowTokens;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowTokens;
 	}
 
 	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 10)]
@@ -351,13 +311,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowModuleNames = !breakpointSettings.ShowModuleNames;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowModuleNames;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowModuleNames = !breakpointSettings.ShowModuleNames;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowModuleNames;
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterTypesCommand2", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 20)]
@@ -370,13 +325,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowParameterTypes = !breakpointSettings.ShowParameterTypes;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowParameterTypes;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterTypes = !breakpointSettings.ShowParameterTypes;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterTypes;
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 30)]
@@ -389,13 +339,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowParameterNames = !breakpointSettings.ShowParameterNames;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowParameterNames;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterNames = !breakpointSettings.ShowParameterNames;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterNames;
 	}
 
 	[ExportMenuItem(Header = "res:ShowOwnerTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 40)]
@@ -408,13 +353,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowOwnerTypes = !breakpointSettings.ShowOwnerTypes;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowOwnerTypes;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowOwnerTypes = !breakpointSettings.ShowOwnerTypes;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowOwnerTypes;
 	}
 
 	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 50)]
@@ -427,13 +367,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowNamespaces = !breakpointSettings.ShowNamespaces;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowNamespaces;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowNamespaces = !breakpointSettings.ShowNamespaces;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowNamespaces;
 	}
 
 	[ExportMenuItem(Header = "res:ShowReturnTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 60)]
@@ -446,13 +381,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowReturnTypes = !breakpointSettings.ShowReturnTypes;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowReturnTypes;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowReturnTypes = !breakpointSettings.ShowReturnTypes;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowReturnTypes;
 	}
 
 	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 70)]
@@ -465,12 +395,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointSettings = breakpointSettings;
 		}
 
-		public override void Execute(BreakpointCtxMenuContext context) {
-			breakpointSettings.ShowTypeKeywords = !breakpointSettings.ShowTypeKeywords;
-		}
-
-		public override bool IsChecked(BreakpointCtxMenuContext context) {
-			return breakpointSettings.ShowTypeKeywords;
-		}
+		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowTypeKeywords = !breakpointSettings.ShowTypeKeywords;
+		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowTypeKeywords;
 	}
 }

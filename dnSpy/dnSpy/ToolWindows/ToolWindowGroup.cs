@@ -26,44 +26,28 @@ using dnSpy.Contracts.ToolWindows;
 
 namespace dnSpy.ToolWindows {
 	sealed class ToolWindowGroup : IToolWindowGroup {
-		public ITabGroup TabGroup {
-			get { return tabGroup; }
-		}
-		readonly ITabGroup tabGroup;
-
-		public IToolWindowGroupManager ToolWindowGroupManager {
-			get { return toolWindowGroupManager; }
-		}
-		readonly IToolWindowGroupManager toolWindowGroupManager;
-
-		IEnumerable<TabContentImpl> TabContentImpls {
-			get { return tabGroup.TabContents.Cast<TabContentImpl>(); }
-		}
-
-		public IEnumerable<IToolWindowContent> TabContents {
-			get { return TabContentImpls.Select(a => a.Content); }
-		}
+		public ITabGroup TabGroup { get; }
+		public IToolWindowGroupManager ToolWindowGroupManager { get; }
+		IEnumerable<TabContentImpl> TabContentImpls => TabGroup.TabContents.Cast<TabContentImpl>();
+		public IEnumerable<IToolWindowContent> TabContents => TabContentImpls.Select(a => a.Content);
 
 		public IToolWindowContent ActiveTabContent {
-			get {
-				var impl = (TabContentImpl)tabGroup.ActiveTabContent;
-				return impl == null ? null : impl.Content;
-			}
+			get { return ((TabContentImpl)TabGroup.ActiveTabContent)?.Content; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException();
 				var impl = GetTabContentImpl(value);
 				if (impl == null)
 					throw new ArgumentException();
-				tabGroup.ActiveTabContent = impl;
+				TabGroup.ActiveTabContent = impl;
 			}
 		}
 
 		public ToolWindowGroup(IToolWindowGroupManager toolWindowGroupManager, ITabGroup tabGroup) {
-			this.toolWindowGroupManager = toolWindowGroupManager;
-			this.tabGroup = tabGroup;
-			this.tabGroup.Tag = this;
-			this.tabGroup.TabContentAttached += TabGroup_TabContentAttached;
+			this.ToolWindowGroupManager = toolWindowGroupManager;
+			this.TabGroup = tabGroup;
+			this.TabGroup.Tag = this;
+			this.TabGroup.TabContentAttached += TabGroup_TabContentAttached;
 		}
 
 		void TabGroup_TabContentAttached(object sender, TabContentAttachedEventArgs e) {
@@ -77,17 +61,9 @@ namespace dnSpy.ToolWindows {
 				impl.Owner = null;
 		}
 
-		public static ToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) {
-			return tabGroup == null ? null : (ToolWindowGroup)tabGroup.Tag;
-		}
-
-		TabContentImpl GetTabContentImpl(IToolWindowContent content) {
-			return TabContentImpls.FirstOrDefault(a => a.Content == content);
-		}
-
-		public void Add(IToolWindowContent content) {
-			tabGroup.Add(new TabContentImpl(this, content));
-		}
+		public static ToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) => (ToolWindowGroup)tabGroup?.Tag;
+		TabContentImpl GetTabContentImpl(IToolWindowContent content) => TabContentImpls.FirstOrDefault(a => a.Content == content);
+		public void Add(IToolWindowContent content) => TabGroup.Add(new TabContentImpl(this, content));
 
 		public void Close(IToolWindowContent content) {
 			if (content == null)
@@ -96,12 +72,10 @@ namespace dnSpy.ToolWindows {
 			Debug.Assert(impl != null);
 			if (impl == null)
 				return;
-			tabGroup.Close(impl);
+			TabGroup.Close(impl);
 		}
 
-		public void Close(TabContentImpl impl) {
-			tabGroup.Close(impl);
-		}
+		public void Close(TabContentImpl impl) => TabGroup.Close(impl);
 
 		public void MoveTo(IToolWindowGroup destGroup, IToolWindowContent content) {
 			if (destGroup == null || content == null)
@@ -121,12 +95,10 @@ namespace dnSpy.ToolWindows {
 
 			impl = new TabContentImpl(destGroupImpl, content);
 			impl.PrepareMove();
-			destGroupImpl.tabGroup.Add(impl);
+			destGroupImpl.TabGroup.Add(impl);
 		}
 
-		public void SetFocus(TabContentImpl impl) {
-			tabGroup.SetFocus(impl);
-		}
+		public void SetFocus(TabContentImpl impl) => TabGroup.SetFocus(impl);
 
 		public void SetFocus(IToolWindowContent content) {
 			if (content == null)
@@ -135,15 +107,10 @@ namespace dnSpy.ToolWindows {
 			Debug.Assert(impl != null);
 			if (impl == null)
 				return;
-			tabGroup.SetFocus(impl);
+			TabGroup.SetFocus(impl);
 		}
 
-		public bool CloseActiveTabCanExecute {
-			get { return tabGroup.CloseActiveTabCanExecute; }
-		}
-
-		public void CloseActiveTab() {
-			tabGroup.CloseActiveTab();
-		}
+		public bool CloseActiveTabCanExecute => TabGroup.CloseActiveTabCanExecute;
+		public void CloseActiveTab() => TabGroup.CloseActiveTab();
 	}
 }

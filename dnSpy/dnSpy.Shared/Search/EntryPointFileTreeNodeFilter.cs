@@ -55,20 +55,9 @@ namespace dnSpy.Shared.Search {
 			return new FileTreeNodeFilterResult(FilterType.Visible, false);
 		}
 
-		public override FileTreeNodeFilterResult GetResult(EventDef evt) {
-			return new FileTreeNodeFilterResult(FilterType.Visible, false);
-		}
-
-		public override FileTreeNodeFilterResult GetResult(MethodDef method) {
-			return new FileTreeNodeFilterResult(FilterType.Visible, true);
-		}
-
-		public override FileTreeNodeFilterResult GetResult(PropertyDef prop) {
-			return new FileTreeNodeFilterResult(FilterType.Visible, false);
-		}
-
-		public override FileTreeNodeFilterResult GetResult(TypeDef type) {
-			return new FileTreeNodeFilterResult(FilterType.Visible, false);
-		}
+		public override FileTreeNodeFilterResult GetResult(EventDef evt) => new FileTreeNodeFilterResult(FilterType.Visible, false);
+		public override FileTreeNodeFilterResult GetResult(MethodDef method) => new FileTreeNodeFilterResult(FilterType.Visible, true);
+		public override FileTreeNodeFilterResult GetResult(PropertyDef prop) => new FileTreeNodeFilterResult(FilterType.Visible, false);
+		public override FileTreeNodeFilterResult GetResult(TypeDef type) => new FileTreeNodeFilterResult(FilterType.Visible, false);
 	}
 }

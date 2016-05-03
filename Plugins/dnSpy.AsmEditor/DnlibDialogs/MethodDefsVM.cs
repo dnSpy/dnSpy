@@ -26,16 +26,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(null, null, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override MethodDefVM Create(MethodDef model) {
-			return new MethodDefVM(model);
-		}
-
-		protected override MethodDefVM Clone(MethodDefVM obj) {
-			return new MethodDefVM(obj.Method);
-		}
-
-		protected override MethodDefVM Create() {
-			return new MethodDefVM(null);
-		}
+		protected override MethodDefVM Create(MethodDef model) => new MethodDefVM(model);
+		protected override MethodDefVM Clone(MethodDefVM obj) => new MethodDefVM(obj.Method);
+		protected override MethodDefVM Create() => new MethodDefVM(null);
 	}
 }

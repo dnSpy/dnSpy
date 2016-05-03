@@ -27,9 +27,7 @@ namespace dnSpy.Languages {
 		/// <summary>
 		/// true if <see cref="Framework"/> is .NET Framework
 		/// </summary>
-		public bool IsDotNetFramework {
-			get { return Framework == ".NETFramework"; }
-		}
+		public bool IsDotNetFramework => Framework == ".NETFramework";
 
 		/// <summary>
 		/// Framework, eg. ".NETFramework". This is stored in a <c>TargetFrameworkIdentifier</c> tag
@@ -253,9 +251,7 @@ namespace dnSpy.Languages {
 			V35,
 		}
 
-		static Dnr2035Version Max(Dnr2035Version a, Dnr2035Version b) {
-			return a > b ? a : b;
-		}
+		static Dnr2035Version Max(Dnr2035Version a, Dnr2035Version b) => a > b ? a : b;
 
 		static string ToString(Dnr2035Version v) {
 			switch (v) {
@@ -407,8 +403,6 @@ namespace dnSpy.Languages {
 			}
 		}
 
-		public override string ToString() {
-			return GetDisplayName();
-		}
+		public override string ToString() => GetDisplayName();
 	}
 }

@@ -24,15 +24,11 @@ namespace Example2.Plugin {
 		public static readonly Guid THE_GUID = new Guid("9058B02C-1FE0-4EC4-93D3-A378D4B6FCE1");
 
 		// We support serialization, so return a non-null value
-		public override DnSpyFileInfo? SerializedFile {
-			get { return new DnSpyFileInfo(Filename, THE_GUID); }
-		}
+		public override DnSpyFileInfo? SerializedFile => new DnSpyFileInfo(Filename, THE_GUID);
 
 		// Since we open files from disk, we return a FilenameKey.
 		// If this gets changed, also update MyDnSpyFileCreator.CreateKey()
-		public override IDnSpyFilenameKey Key {
-			get { return new FilenameKey(Filename); }
-		}
+		public override IDnSpyFilenameKey Key => new FilenameKey(Filename);
 
 		// Used by MyDnSpyFileNode.Decompile() to show the file in the text editor
 		public string Text {
@@ -64,9 +60,7 @@ namespace Example2.Plugin {
 	// or our MyDnSpyFile.THE_GUID, then create a MyDnSpyFile instance.
 	[Export(typeof(IDnSpyFileCreator))]
 	sealed class MyDnSpyFileCreator : IDnSpyFileCreator {
-		public double Order {
-			get { return 0; }
-		}
+		public double Order => 0;
 
 		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
 			if (fileInfo.Type == MyDnSpyFile.THE_GUID)
@@ -116,26 +110,18 @@ namespace Example2.Plugin {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("4174A21D-D746-4658-9A44-DB8235EE5186");
 
-		public IDnSpyFile DnSpyFile {
-			get { return file; }
-		}
+		public IDnSpyFile DnSpyFile => file;
 		readonly MyDnSpyFile file;
 
-		public override Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, file.Filename.ToUpperInvariant()); }
-		}
+		public override Guid Guid => THE_GUID;
+		public override NodePathName NodePathName => new NodePathName(Guid, file.Filename.ToUpperInvariant());
 
 		public MyDnSpyFileNode(MyDnSpyFile file) {
 			this.file = file;
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "TextFile");
-		}
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
+			new ImageReference(GetType().Assembly, "TextFile");
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			output.WriteFilename(Path.GetFileName(file.Filename));

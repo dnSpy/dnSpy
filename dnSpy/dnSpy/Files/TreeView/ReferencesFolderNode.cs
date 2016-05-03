@@ -32,38 +32,22 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class ReferencesFolderNode : FileTreeNodeData, IReferencesFolderNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.REFERENCES_FOLDER_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "ReferenceFolder");
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.REFERENCES_FOLDER_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "ReferenceFolder");
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override void Initialize() => TreeNode.LazyLoading = true;
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly IModuleFileNode moduleNode;
 
 		public ReferencesFolderNode(ITreeNodeGroup treeNodeGroup, IModuleFileNode moduleNode) {
 			Debug.Assert(moduleNode.DnSpyFile.ModuleDef != null);
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.moduleNode = moduleNode;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Resources.ReferencesFolder, BoxedTextTokenKind.Text);
-		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var asmRef in moduleNode.DnSpyFile.ModuleDef.GetAssemblyRefs())
@@ -72,16 +56,10 @@ namespace dnSpy.Files.TreeView {
 				yield return new ModuleReferenceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ModuleRefTreeNodeGroupReferences), modRef);
 		}
 
-		public IAssemblyReferenceNode Create(AssemblyRef asmRef) {
-			return Context.FileTreeView.Create(asmRef, moduleNode.DnSpyFile.ModuleDef);
-		}
-
-		public IModuleReferenceNode Create(ModuleRef modRef) {
-			return Context.FileTreeView.Create(modRef);
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public IAssemblyReferenceNode Create(AssemblyRef asmRef) =>
+			Context.FileTreeView.Create(asmRef, moduleNode.DnSpyFile.ModuleDef);
+		public IModuleReferenceNode Create(ModuleRef modRef) => Context.FileTreeView.Create(modRef);
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(this).FilterType;
 	}
 }

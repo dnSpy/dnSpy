@@ -36,13 +36,8 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		IPickDirectory pickDirectory;
 
-		public ICommand PickFilenameCommand {
-			get { return new RelayCommand(a => PickNewFilename()); }
-		}
-
-		public ICommand PickCurrentDirectoryCommand {
-			get { return new RelayCommand(a => PickNewCurrentDirectory()); }
-		}
+		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
+		public ICommand PickCurrentDirectoryCommand => new RelayCommand(a => PickNewCurrentDirectory());
 
 		public static readonly EnumVM[] breakProcessKindList = new EnumVM[(int)BreakProcessKind.Last] {
 			new EnumVM(BreakProcessKind.None, dnSpy_Debugger_Resources.DbgBreak_Dont),
@@ -56,9 +51,7 @@ namespace dnSpy.Debugger.Dialogs {
 			new EnumVM(BreakProcessKind.ModuleCctorOrEntryPoint, dnSpy_Debugger_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
 			new EnumVM(BreakProcessKind.EntryPoint, dnSpy_Debugger_Resources.DbgBreak_EntryPoint),
 		};
-		public EnumListVM BreakProcessKindVM {
-			get { return breakProcessKindVM; }
-		}
+		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
 
 		public BreakProcessKind BreakProcessKind {
@@ -137,9 +130,7 @@ namespace dnSpy.Debugger.Dialogs {
 			CurrentDirectory = newDir;
 		}
 
-		public DebugProcessVM Clone() {
-			return CopyTo(new DebugProcessVM());
-		}
+		public DebugProcessVM Clone() => CopyTo(new DebugProcessVM());
 
 		public DebugProcessVM CopyTo(DebugProcessVM other) {
 			other.Filename = this.Filename;

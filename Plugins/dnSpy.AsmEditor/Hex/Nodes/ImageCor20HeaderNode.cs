@@ -28,26 +28,14 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageCor20HeaderNode : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.IMGCOR20HEADER_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override object VMObject {
-			get { return imageCor20HeaderVM; }
-		}
+		protected override string IconName => "BinaryFile";
+		public override Guid Guid => new Guid(FileTVConstants.IMGCOR20HEADER_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override object VMObject => imageCor20HeaderVM;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return imageCor20HeaderVM; }
 		}
-
-		protected override string IconName {
-			get { return "BinaryFile"; }
-		}
-
 		readonly ImageCor20HeaderVM imageCor20HeaderVM;
 
 		public static ImageCor20HeaderNode Create(HexDocument doc, IPEImage peImage) {
@@ -62,8 +50,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageCor20HeaderVM = new ImageCor20HeaderVM(this, doc, StartOffset);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) {
+		protected override void Write(ISyntaxHighlightOutput output) =>
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_Cor20_Header, BoxedTextTokenKind.InstanceField);
-		}
 	}
 }

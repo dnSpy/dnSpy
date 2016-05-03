@@ -82,9 +82,7 @@ namespace dndbg.Engine {
 					}
 					else if (ctx.EventArgs.Kind == DebugCallbackKind.LoadClass) {
 						var lc = (LoadClassDebugCallbackEventArgs)ctx.EventArgs;
-						var cls = lc.CorClass;
-						var mod = cls == null ? null : cls.Module;
-						return IsOurModule(mod);
+						return IsOurModule(lc.CorClass?.Module);
 					}
 
 					return false;
@@ -94,10 +92,7 @@ namespace dndbg.Engine {
 			case BreakProcessKind.ExeLoadModule:
 				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadModule, ctx => {
 					var e = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-					var mod = e.CorModule;
-					if (mod == null)
-						return false;
-					return IsOurModule(mod);
+					return IsOurModule(e.CorModule);
 				});
 				break;
 
@@ -136,13 +131,8 @@ namespace dndbg.Engine {
 			});
 		}
 
-		bool IsOurModule(CorModule module) {
-			return IsModule(module, filename);
-		}
-
-		static bool IsModule(CorModule module, string filename) {
-			return module != null && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
-		}
+		bool IsOurModule(CorModule module) => IsModule(module, filename);
+		static bool IsModule(CorModule module, string filename) => module != null && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
 		void SetILBreakpoint(SerializedDnModule serMod, uint token) {
 			Debug.Assert(token != 0 && breakpoint == null);

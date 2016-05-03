@@ -49,13 +49,8 @@ namespace dnSpy.MainApp {
 			this.window = (MetroWindow)appWindow.MainWindow;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) {
-			return window.IsFullScreen;
-		}
-
-		public void FullScreen() {
-			window.IsFullScreen = !window.IsFullScreen;
-		}
+		public override bool IsChecked(IMenuItemContext context) => window.IsFullScreen;
+		public void FullScreen() => window.IsFullScreen = !window.IsFullScreen;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExitAppCommand", Icon = "Close", InputGestureText = "res:ExitAppKey", Group = MenuConstants.GROUP_APP_MENU_FILE_EXIT, Order = 1000000)]
@@ -74,8 +69,6 @@ namespace dnSpy.MainApp {
 			this.fileTreeView = fileTreeView;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			fileTreeView.TreeView.CollapseUnusedNodes();
-		}
+		public override void Execute(IMenuItemContext context) => fileTreeView.TreeView.CollapseUnusedNodes();
 	}
 }

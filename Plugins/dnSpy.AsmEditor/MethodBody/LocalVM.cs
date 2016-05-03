@@ -37,13 +37,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		ITypeSigCreator typeSigCreator;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand EditTypeCommand {
-			get { return new RelayCommand(a => EditType()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand EditTypeCommand => new RelayCommand(a => EditType());
 
 		public int Index {
 			get { return index; }
@@ -139,13 +134,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Type = newType;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public LocalOptions CreateLocalOptions() {
-			return CopyTo(new LocalOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public LocalOptions CreateLocalOptions() => CopyTo(new LocalOptions());
 
 		public void InitializeFrom(LocalOptions options) {
 			this.Type = options.Type;
@@ -160,9 +150,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return options;
 		}
 
-		public IIndexedItem Clone() {
-			return new LocalVM(typeSigCreatorOptions, CreateLocalOptions());
-		}
+		public IIndexedItem Clone() => new LocalVM(typeSigCreatorOptions, CreateLocalOptions());
 
 		public LocalVM Import(TypeSigCreatorOptions typeSigCreatorOptions, ModuleDef ownerModule) {
 			var opts = CreateLocalOptions();

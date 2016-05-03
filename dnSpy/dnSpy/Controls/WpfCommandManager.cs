@@ -44,9 +44,7 @@ namespace dnSpy.Controls {
 			GetCommands(guid).Remove(elem);
 		}
 
-		IWpfCommands IWpfCommandManager.GetCommands(Guid guid) {
-			return GetCommands(guid);
-		}
+		IWpfCommands IWpfCommandManager.GetCommands(Guid guid) => GetCommands(guid);
 
 		WpfCommands GetCommands(Guid guid) {
 			WpfCommands c;

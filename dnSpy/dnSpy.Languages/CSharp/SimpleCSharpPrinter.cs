@@ -71,53 +71,18 @@ namespace dnSpy.Languages.CSharp {
 			{ "op_UnaryPlus", "operator +".Split(' ') },
 		};
 
-		bool ShowModuleNames {
-			get { return (flags & SimplePrinterFlags.ShowModuleNames) != 0; }
-		}
-
-		bool ShowParameterTypes {
-			get { return (flags & SimplePrinterFlags.ShowParameterTypes) != 0; }
-		}
-
-		bool ShowParameterNames {
-			get { return (flags & SimplePrinterFlags.ShowParameterNames) != 0; }
-		}
-
-		bool ShowOwnerTypes {
-			get { return (flags & SimplePrinterFlags.ShowOwnerTypes) != 0; }
-		}
-
-		bool ShowReturnTypes {
-			get { return (flags & SimplePrinterFlags.ShowReturnTypes) != 0; }
-		}
-
-		bool ShowNamespaces {
-			get { return (flags & SimplePrinterFlags.ShowNamespaces) != 0; }
-		}
-
-		bool ShowTypeKeywords {
-			get { return (flags & SimplePrinterFlags.ShowTypeKeywords) != 0; }
-		}
-
-		bool UseDecimal {
-			get { return (flags & SimplePrinterFlags.UseDecimal) != 0; }
-		}
-
-		bool ShowTokens {
-			get { return (flags & SimplePrinterFlags.ShowTokens) != 0; }
-		}
-
-		bool ShowArrayValueSizes {
-			get { return (flags & SimplePrinterFlags.ShowArrayValueSizes) != 0; }
-		}
-
-		bool ShowFieldLiteralValues {
-			get { return (flags & SimplePrinterFlags.ShowFieldLiteralValues) != 0; }
-		}
-
-		bool ShowParameterLiteralValues {
-			get { return (flags & SimplePrinterFlags.ShowParameterLiteralValues) != 0; }
-		}
+		bool ShowModuleNames => (flags & SimplePrinterFlags.ShowModuleNames) != 0;
+		bool ShowParameterTypes => (flags & SimplePrinterFlags.ShowParameterTypes) != 0;
+		bool ShowParameterNames => (flags & SimplePrinterFlags.ShowParameterNames) != 0;
+		bool ShowOwnerTypes => (flags & SimplePrinterFlags.ShowOwnerTypes) != 0;
+		bool ShowReturnTypes => (flags & SimplePrinterFlags.ShowReturnTypes) != 0;
+		bool ShowNamespaces => (flags & SimplePrinterFlags.ShowNamespaces) != 0;
+		bool ShowTypeKeywords => (flags & SimplePrinterFlags.ShowTypeKeywords) != 0;
+		bool UseDecimal => (flags & SimplePrinterFlags.UseDecimal) != 0;
+		bool ShowTokens => (flags & SimplePrinterFlags.ShowTokens) != 0;
+		bool ShowArrayValueSizes => (flags & SimplePrinterFlags.ShowArrayValueSizes) != 0;
+		bool ShowFieldLiteralValues => (flags & SimplePrinterFlags.ShowFieldLiteralValues) != 0;
+		bool ShowParameterLiteralValues => (flags & SimplePrinterFlags.ShowParameterLiteralValues) != 0;
 
 		public SimpleCSharpPrinter(ISyntaxHighlightOutput output, SimplePrinterFlags flags) {
 			this.output = output;
@@ -199,26 +164,18 @@ namespace dnSpy.Languages.CSharp {
 			lineLength += s.Length;
 		}
 
-		void WriteSpace() {
-			OutputWrite(" ", BoxedTextTokenKind.Text);
-		}
+		void WriteSpace() => OutputWrite(" ", BoxedTextTokenKind.Text);
 
 		void WriteCommaSpace() {
 			OutputWrite(",", BoxedTextTokenKind.Operator);
 			WriteSpace();
 		}
 
-		void WritePeriod() {
-			OutputWrite(".", BoxedTextTokenKind.Operator);
-		}
+		void WritePeriod() => OutputWrite(".", BoxedTextTokenKind.Operator);
 
-		void WriteError() {
-			OutputWrite("???", BoxedTextTokenKind.Error);
-		}
+		void WriteError() => OutputWrite("???", BoxedTextTokenKind.Error);
 
-		void WriteNumber(object value) {
-			OutputWrite(ConvertNumberToString(value), BoxedTextTokenKind.Number);
-		}
+		void WriteNumber(object value) => OutputWrite(ConvertNumberToString(value), BoxedTextTokenKind.Number);
 
 		void WriteSystemTypeKeyword(string name, string keyword) {
 			if (ShowTypeKeywords)
@@ -491,13 +448,8 @@ namespace dnSpy.Languages.CSharp {
 				WriteIdentifier(name, TextTokenKindUtils.GetTextTokenKind(method));
 		}
 
-		void WriteToolTip(IField field) {
-			Write(field, true);
-		}
-
-		void Write(IField field) {
-			Write(field, false);
-		}
+		void WriteToolTip(IField field) => Write(field, true);
+		void Write(IField field) => Write(field, false);
 
 		void Write(IField field, bool isToolTip) {
 			if (field == null) {
@@ -597,9 +549,7 @@ namespace dnSpy.Languages.CSharp {
 			}
 		}
 
-		void WriteToolTip(PropertyDef prop) {
-			Write(prop);
-		}
+		void WriteToolTip(PropertyDef prop) => Write(prop);
 
 		void Write(PropertyDef prop) {
 			if (prop == null) {
@@ -666,9 +616,7 @@ namespace dnSpy.Languages.CSharp {
 			return null;
 		}
 
-		void WriteToolTip(EventDef evt) {
-			Write(evt);
-		}
+		void WriteToolTip(EventDef evt) => Write(evt);
 
 		void Write(EventDef evt) {
 			if (evt == null) {
@@ -835,7 +783,6 @@ namespace dnSpy.Languages.CSharp {
 			Write(type, typeGenArgs, methGenArgs);
 		}
 
-		static readonly TypeSig[] emptyTypeSigArray = new TypeSig[0];
 		void Write(TypeSig type, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs) {
 			if (type == null) {
 				WriteError();
@@ -847,9 +794,9 @@ namespace dnSpy.Languages.CSharp {
 			recursionCounter++;
 			try {
 				if (typeGenArgs == null)
-					typeGenArgs = emptyTypeSigArray;
+					typeGenArgs = Array.Empty<TypeSig>();
 				if (methGenArgs == null)
-					methGenArgs = emptyTypeSigArray;
+					methGenArgs = Array.Empty<TypeSig>();
 
 				List<ArraySigBase> list = null;
 				while (type != null && (type.ElementType == ElementType.SZArray || type.ElementType == ElementType.Array)) {

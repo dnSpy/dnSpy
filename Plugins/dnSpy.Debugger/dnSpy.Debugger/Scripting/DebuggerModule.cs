@@ -31,17 +31,9 @@ using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerModule : IDebuggerModule {
-		public ModuleName ModuleName {
-			get { return moduleName; }
-		}
-
-		public IAppDomain AppDomain {
-			get { return debugger.Dispatcher.UI(() => new DebuggerAppDomain(debugger, mod.AppDomain)); }
-		}
-
-		public IDebuggerAssembly Assembly {
-			get { return debugger.Dispatcher.UI(() => new DebuggerAssembly(debugger, mod.Assembly)); }
-		}
+		public ModuleName ModuleName => moduleName;
+		public IAppDomain AppDomain => debugger.Dispatcher.UI(() => new DebuggerAppDomain(debugger, mod.AppDomain));
+		public IDebuggerAssembly Assembly => debugger.Dispatcher.UI(() => new DebuggerAssembly(debugger, mod.Assembly));
 
 		public string DnlibName {
 			get {
@@ -56,41 +48,15 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		string dnlibName;
 
-		public bool HasUnloaded {
-			get { return debugger.Dispatcher.UI(() => mod.HasUnloaded); }
-		}
-
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-
-		public bool IsDynamic {
-			get { return moduleName.IsDynamic; }
-		}
-
-		public bool IsInMemory {
-			get { return moduleName.IsInMemory; }
-		}
-
-		public bool IsManifestModule {
-			get { return debugger.Dispatcher.UI(() => mod.CorModule.IsManifestModule); }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-
-		public string UniquerName {
-			get { return debugger.Dispatcher.UI(() => mod.CorModule.UniquerName); }
-		}
-
-		public ulong Address {
-			get { return address; }
-		}
-
-		public uint Size {
-			get { return size; }
-		}
+		public bool HasUnloaded => debugger.Dispatcher.UI(() => mod.HasUnloaded);
+		public int UniqueId => uniqueId;
+		public bool IsDynamic => moduleName.IsDynamic;
+		public bool IsInMemory => moduleName.IsInMemory;
+		public bool IsManifestModule => debugger.Dispatcher.UI(() => mod.CorModule.IsManifestModule);
+		public string Name => name;
+		public string UniquerName => debugger.Dispatcher.UI(() => mod.CorModule.UniquerName);
+		public ulong Address => address;
+		public uint Size => size;
 
 		readonly Debugger debugger;
 		readonly DnModule mod;
@@ -114,69 +80,50 @@ namespace dnSpy.Debugger.Scripting {
 			this.moduleName = new ModuleName(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
 		}
 
-		public IDebuggerAssembly ResolveAssembly(uint asmRefToken) {
-			return debugger.Dispatcher.UI(() => {
-				var corAsm = mod.CorModule.ResolveAssembly(asmRefToken);
-				if (corAsm == null)
-					return null;
-				var asm = mod.AppDomain.Assemblies.FirstOrDefault(a => a.CorAssembly == corAsm);
-				return asm == null ? null : new DebuggerAssembly(debugger, asm);
-			});
-		}
+		public IDebuggerAssembly ResolveAssembly(uint asmRefToken) => debugger.Dispatcher.UI(() => {
+			var corAsm = mod.CorModule.ResolveAssembly(asmRefToken);
+			if (corAsm == null)
+				return null;
+			var asm = mod.AppDomain.Assemblies.FirstOrDefault(a => a.CorAssembly == corAsm);
+			return asm == null ? null : new DebuggerAssembly(debugger, asm);
+		});
 
-		public IDebuggerMethod GetMethod(uint token) {
-			return debugger.Dispatcher.UI(() => {
-				var func = mod.CorModule.GetFunctionFromToken(token);
-				return func == null ? null : new DebuggerMethod(debugger, func);
-			});
-		}
+		public IDebuggerMethod GetMethod(uint token) => debugger.Dispatcher.UI(() => {
+			var func = mod.CorModule.GetFunctionFromToken(token);
+			return func == null ? null : new DebuggerMethod(debugger, func);
+		});
 
-		public IDebuggerField GetField(uint token) {
-			return debugger.Dispatcher.UI(() => {
-				var field = mod.CorModule.GetFieldFromToken(token);
-				return field == null ? null : new DebuggerField(debugger, field);
-			});
-		}
+		public IDebuggerField GetField(uint token) => debugger.Dispatcher.UI(() => {
+			var field = mod.CorModule.GetFieldFromToken(token);
+			return field == null ? null : new DebuggerField(debugger, field);
+		});
 
-		public IDebuggerProperty GetProperty(uint token) {
-			return debugger.Dispatcher.UI(() => {
-				var prop = mod.CorModule.GetPropertyFromToken(token);
-				return prop == null ? null : new DebuggerProperty(debugger, prop);
-			});
-		}
+		public IDebuggerProperty GetProperty(uint token) => debugger.Dispatcher.UI(() => {
+			var prop = mod.CorModule.GetPropertyFromToken(token);
+			return prop == null ? null : new DebuggerProperty(debugger, prop);
+		});
 
-		public IDebuggerEvent GetEvent(uint token) {
-			return debugger.Dispatcher.UI(() => {
-				var evt = mod.CorModule.GetEventFromToken(token);
-				return evt == null ? null : new DebuggerEvent(debugger, evt);
-			});
-		}
+		public IDebuggerEvent GetEvent(uint token) => debugger.Dispatcher.UI(() => {
+			var evt = mod.CorModule.GetEventFromToken(token);
+			return evt == null ? null : new DebuggerEvent(debugger, evt);
+		});
 
-		public IDebuggerClass GetClass(uint token) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = mod.CorModule.GetClassFromToken(token);
-				return cls == null ? null : new DebuggerClass(debugger, cls);
-			});
-		}
+		public IDebuggerClass GetClass(uint token) => debugger.Dispatcher.UI(() => {
+			var cls = mod.CorModule.GetClassFromToken(token);
+			return cls == null ? null : new DebuggerClass(debugger, cls);
+		});
 
-		public IDebuggerType GetType(uint token) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = mod.CorModule.GetClassFromToken(token);
-				return cls == null ? null : new DebuggerClass(debugger, cls).ToType(emptyDebuggerTypes);
-			});
-		}
-		static readonly IDebuggerType[] emptyDebuggerTypes = new IDebuggerType[0];
+		public IDebuggerType GetType(uint token) => debugger.Dispatcher.UI(() => {
+			var cls = mod.CorModule.GetClassFromToken(token);
+			return cls == null ? null : new DebuggerClass(debugger, cls).ToType(Array.Empty<IDebuggerType>());
+		});
 
-		public IDebuggerValue GetGlobalVariableValue(uint fdToken) {
-			return debugger.Dispatcher.UI(() => {
-				var value = mod.CorModule.GetGlobalVariableValue(fdToken);
-				return value == null ? null : new DebuggerValue(debugger, value);
-			});
-		}
+		public IDebuggerValue GetGlobalVariableValue(uint fdToken) => debugger.Dispatcher.UI(() => {
+			var value = mod.CorModule.GetGlobalVariableValue(fdToken);
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public void SetJMCStatus(bool isJustMyCode) {
-			debugger.Dispatcher.UI(() => mod.CorModule.SetJMCStatus(isJustMyCode));
-		}
+		public void SetJMCStatus(bool isJustMyCode) => debugger.Dispatcher.UI(() => mod.CorModule.SetJMCStatus(isJustMyCode));
 
 		sealed class PEState {
 			public static readonly PEState Null = new PEState();
@@ -184,7 +131,7 @@ namespace dnSpy.Debugger.Scripting {
 			public readonly ImageSectionHeader[] Sections;
 
 			PEState() {
-				this.Sections = new ImageSectionHeader[0];
+				this.Sections = Array.Empty<ImageSectionHeader>();
 			}
 
 			public PEState(ImageSectionHeader[] sections) {
@@ -214,13 +161,8 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public bool IsFileLayout {
-			get { return !IsDynamic && IsInMemory; }
-		}
-
-		public bool IsMemoryLayout {
-			get { return !IsDynamic && !IsInMemory; }
-		}
+		public bool IsFileLayout => !IsDynamic && IsInMemory;
+		public bool IsMemoryLayout => !IsDynamic && !IsInMemory;
 
 		public ulong RVAToAddress(uint rva) {
 			if (IsFileLayout)
@@ -276,269 +218,72 @@ namespace dnSpy.Debugger.Scripting {
 			return offset;
 		}
 
-		public void Read(uint rva, byte[] array, long index, uint count) {
-			debugger.Read(RVAToAddress(rva), array, index, count);
-		}
-
-		public void Read(uint rva, byte[] array, long index, int count) {
-			debugger.Read(RVAToAddress(rva), array, index, count);
-		}
-
-		public byte[] Read(uint rva, uint count) {
-			return debugger.Read(RVAToAddress(rva), count);
-		}
-
-		public byte[] Read(uint rva, int count) {
-			return debugger.Read(RVAToAddress(rva), count);
-		}
-
-		public uint Write(uint rva, byte[] array, long index, uint count) {
-			return debugger.Write(RVAToAddress(rva), array, index, count);
-		}
-
-		public int Write(uint rva, byte[] array, long index, int count) {
-			return debugger.Write(RVAToAddress(rva), array, index, count);
-		}
-
-		public void Write(uint rva, byte[] array) {
-			debugger.Write(RVAToAddress(rva), array);
-		}
-
-		public bool ReadBoolean(uint rva) {
-			return debugger.ReadBoolean(RVAToAddress(rva));
-		}
-
-		public char ReadChar(uint rva) {
-			return debugger.ReadChar(RVAToAddress(rva));
-		}
-
-		public sbyte ReadSByte(uint rva) {
-			return debugger.ReadSByte(RVAToAddress(rva));
-		}
-
-		public byte ReadByte(uint rva) {
-			return debugger.ReadByte(RVAToAddress(rva));
-		}
-
-		public short ReadInt16(uint rva) {
-			return debugger.ReadInt16(RVAToAddress(rva));
-		}
-
-		public ushort ReadUInt16(uint rva) {
-			return debugger.ReadUInt16(RVAToAddress(rva));
-		}
-
-		public int ReadInt32(uint rva) {
-			return debugger.ReadInt32(RVAToAddress(rva));
-		}
-
-		public uint ReadUInt32(uint rva) {
-			return debugger.ReadUInt32(RVAToAddress(rva));
-		}
-
-		public long ReadInt64(uint rva) {
-			return debugger.ReadInt64(RVAToAddress(rva));
-		}
-
-		public ulong ReadUInt64(uint rva) {
-			return debugger.ReadUInt64(RVAToAddress(rva));
-		}
-
-		public float ReadSingle(uint rva) {
-			return debugger.ReadSingle(RVAToAddress(rva));
-		}
-
-		public double ReadDouble(uint rva) {
-			return debugger.ReadDouble(RVAToAddress(rva));
-		}
-
-		public decimal ReadDecimal(uint rva) {
-			return debugger.ReadDecimal(RVAToAddress(rva));
-		}
-
-		public void Write(uint rva, bool value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, char value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, sbyte value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, byte value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, short value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, ushort value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, int value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, uint value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, long value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, ulong value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, float value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, double value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void Write(uint rva, decimal value) {
-			debugger.Write(RVAToAddress(rva), value);
-		}
-
-		public void ReadOffset(uint offset, byte[] array, long index, uint count) {
-			debugger.Read(OffsetToAddress(offset), array, index, count);
-		}
-
-		public void ReadOffset(uint offset, byte[] array, long index, int count) {
-			debugger.Read(OffsetToAddress(offset), array, index, count);
-		}
-
-		public byte[] ReadOffset(uint offset, uint count) {
-			return debugger.Read(OffsetToAddress(offset), count);
-		}
-
-		public byte[] ReadOffset(uint offset, int count) {
-			return debugger.Read(OffsetToAddress(offset), count);
-		}
-
-		public uint WriteOffset(uint offset, byte[] array, long index, uint count) {
-			return debugger.Write(OffsetToAddress(offset), array, index, count);
-		}
-
-		public int WriteOffset(uint offset, byte[] array, long index, int count) {
-			return debugger.Write(OffsetToAddress(offset), array, index, count);
-		}
-
-		public void WriteOffset(uint offset, byte[] array) {
-			debugger.Write(OffsetToAddress(offset), array);
-		}
-
-		public bool ReadBooleanOffset(uint offset) {
-			return debugger.ReadBoolean(OffsetToAddress(offset));
-		}
-
-		public char ReadCharOffset(uint offset) {
-			return debugger.ReadChar(OffsetToAddress(offset));
-		}
-
-		public sbyte ReadSByteOffset(uint offset) {
-			return debugger.ReadSByte(OffsetToAddress(offset));
-		}
-
-		public byte ReadByteOffset(uint offset) {
-			return debugger.ReadByte(OffsetToAddress(offset));
-		}
-
-		public short ReadInt16Offset(uint offset) {
-			return debugger.ReadInt16(OffsetToAddress(offset));
-		}
-
-		public ushort ReadUInt16Offset(uint offset) {
-			return debugger.ReadUInt16(OffsetToAddress(offset));
-		}
-
-		public int ReadInt32Offset(uint offset) {
-			return debugger.ReadInt32(OffsetToAddress(offset));
-		}
-
-		public uint ReadUInt32Offset(uint offset) {
-			return debugger.ReadUInt32(OffsetToAddress(offset));
-		}
-
-		public long ReadInt64Offset(uint offset) {
-			return debugger.ReadInt64(OffsetToAddress(offset));
-		}
-
-		public ulong ReadUInt64Offset(uint offset) {
-			return debugger.ReadUInt64(OffsetToAddress(offset));
-		}
-
-		public float ReadSingleOffset(uint offset) {
-			return debugger.ReadSingle(OffsetToAddress(offset));
-		}
-
-		public double ReadDoubleOffset(uint offset) {
-			return debugger.ReadDouble(OffsetToAddress(offset));
-		}
-
-		public decimal ReadDecimalOffset(uint offset) {
-			return debugger.ReadDecimal(OffsetToAddress(offset));
-		}
-
-		public void WriteOffset(uint offset, bool value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, char value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, sbyte value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, byte value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, short value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, ushort value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, int value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, uint value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, long value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, ulong value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, float value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, double value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
-
-		public void WriteOffset(uint offset, decimal value) {
-			debugger.Write(OffsetToAddress(offset), value);
-		}
+		public void Read(uint rva, byte[] array, long index, uint count) => debugger.Read(RVAToAddress(rva), array, index, count);
+		public void Read(uint rva, byte[] array, long index, int count) => debugger.Read(RVAToAddress(rva), array, index, count);
+		public byte[] Read(uint rva, uint count) => debugger.Read(RVAToAddress(rva), count);
+		public byte[] Read(uint rva, int count) => debugger.Read(RVAToAddress(rva), count);
+		public uint Write(uint rva, byte[] array, long index, uint count) => debugger.Write(RVAToAddress(rva), array, index, count);
+		public int Write(uint rva, byte[] array, long index, int count) => debugger.Write(RVAToAddress(rva), array, index, count);
+		public void Write(uint rva, byte[] array) => debugger.Write(RVAToAddress(rva), array);
+		public bool ReadBoolean(uint rva) => debugger.ReadBoolean(RVAToAddress(rva));
+		public char ReadChar(uint rva) => debugger.ReadChar(RVAToAddress(rva));
+		public sbyte ReadSByte(uint rva) => debugger.ReadSByte(RVAToAddress(rva));
+		public byte ReadByte(uint rva) => debugger.ReadByte(RVAToAddress(rva));
+		public short ReadInt16(uint rva) => debugger.ReadInt16(RVAToAddress(rva));
+		public ushort ReadUInt16(uint rva) => debugger.ReadUInt16(RVAToAddress(rva));
+		public int ReadInt32(uint rva) => debugger.ReadInt32(RVAToAddress(rva));
+		public uint ReadUInt32(uint rva) => debugger.ReadUInt32(RVAToAddress(rva));
+		public long ReadInt64(uint rva) => debugger.ReadInt64(RVAToAddress(rva));
+		public ulong ReadUInt64(uint rva) => debugger.ReadUInt64(RVAToAddress(rva));
+		public float ReadSingle(uint rva) => debugger.ReadSingle(RVAToAddress(rva));
+		public double ReadDouble(uint rva) => debugger.ReadDouble(RVAToAddress(rva));
+		public decimal ReadDecimal(uint rva) => debugger.ReadDecimal(RVAToAddress(rva));
+		public void Write(uint rva, bool value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, char value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, sbyte value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, byte value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, short value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, ushort value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, int value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, uint value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, long value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, ulong value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, float value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, double value) => debugger.Write(RVAToAddress(rva), value);
+		public void Write(uint rva, decimal value) => debugger.Write(RVAToAddress(rva), value);
+		public void ReadOffset(uint offset, byte[] array, long index, uint count) => debugger.Read(OffsetToAddress(offset), array, index, count);
+		public void ReadOffset(uint offset, byte[] array, long index, int count) => debugger.Read(OffsetToAddress(offset), array, index, count);
+		public byte[] ReadOffset(uint offset, uint count) => debugger.Read(OffsetToAddress(offset), count);
+		public byte[] ReadOffset(uint offset, int count) => debugger.Read(OffsetToAddress(offset), count);
+		public uint WriteOffset(uint offset, byte[] array, long index, uint count) => debugger.Write(OffsetToAddress(offset), array, index, count);
+		public int WriteOffset(uint offset, byte[] array, long index, int count) => debugger.Write(OffsetToAddress(offset), array, index, count);
+		public void WriteOffset(uint offset, byte[] array) => debugger.Write(OffsetToAddress(offset), array);
+		public bool ReadBooleanOffset(uint offset) => debugger.ReadBoolean(OffsetToAddress(offset));
+		public char ReadCharOffset(uint offset) => debugger.ReadChar(OffsetToAddress(offset));
+		public sbyte ReadSByteOffset(uint offset) => debugger.ReadSByte(OffsetToAddress(offset));
+		public byte ReadByteOffset(uint offset) => debugger.ReadByte(OffsetToAddress(offset));
+		public short ReadInt16Offset(uint offset) => debugger.ReadInt16(OffsetToAddress(offset));
+		public ushort ReadUInt16Offset(uint offset) => debugger.ReadUInt16(OffsetToAddress(offset));
+		public int ReadInt32Offset(uint offset) => debugger.ReadInt32(OffsetToAddress(offset));
+		public uint ReadUInt32Offset(uint offset) => debugger.ReadUInt32(OffsetToAddress(offset));
+		public long ReadInt64Offset(uint offset) => debugger.ReadInt64(OffsetToAddress(offset));
+		public ulong ReadUInt64Offset(uint offset) => debugger.ReadUInt64(OffsetToAddress(offset));
+		public float ReadSingleOffset(uint offset) => debugger.ReadSingle(OffsetToAddress(offset));
+		public double ReadDoubleOffset(uint offset) => debugger.ReadDouble(OffsetToAddress(offset));
+		public decimal ReadDecimalOffset(uint offset) => debugger.ReadDecimal(OffsetToAddress(offset));
+		public void WriteOffset(uint offset, bool value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, char value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, sbyte value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, byte value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, short value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, ushort value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, int value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, uint value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, long value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, ulong value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, float value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, double value) => debugger.Write(OffsetToAddress(offset), value);
+		public void WriteOffset(uint offset, decimal value) => debugger.Write(OffsetToAddress(offset), value);
 
 		public byte[] Save() {
 			if (Address == 0 || Size == 0)
@@ -567,106 +312,37 @@ namespace dnSpy.Debugger.Scripting {
 				Save(stream);
 		}
 
-		public IDebuggerClass GetClass(string className) {
-			return debugger.Dispatcher.UI(() => {
-				// Dynamic modules can get extra types, so use the slower linear search.
-				var cls = IsDynamic ?
-						mod.CorModule.FindClass(className) :
-						mod.CorModule.FindClassCache(className);
-				return cls == null ? null : new DebuggerClass(debugger, cls);
-			});
-		}
+		public IDebuggerClass GetClass(string className) => debugger.Dispatcher.UI(() => {
+			// Dynamic modules can get extra types, so use the slower linear search.
+			var cls = IsDynamic ?
+					mod.CorModule.FindClass(className) :
+					mod.CorModule.FindClassCache(className);
+			return cls == null ? null : new DebuggerClass(debugger, cls);
+		});
 
-		public IDebuggerMethod GetMethod(string className, string methodName) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = GetClass(className);
-				return cls == null ? null : cls.GetMethod(methodName);
-			});
-		}
+		public IDebuggerMethod GetMethod(string className, string methodName) => debugger.Dispatcher.UI(() => GetClass(className)?.GetMethod(methodName));
+		public IDebuggerField GetField(string className, string fieldName) => debugger.Dispatcher.UI(() => GetClass(className)?.GetField(fieldName));
+		public IDebuggerProperty GetProperty(string className, string propertyName) => debugger.Dispatcher.UI(() => GetClass(className)?.GetProperty(propertyName));
+		public IDebuggerEvent GetEvent(string className, string eventName) => debugger.Dispatcher.UI(() => GetClass(className)?.GetEvent(eventName));
+		public IDebuggerType GetType(string className) => GetType(className, null);
 
-		public IDebuggerField GetField(string className, string fieldName) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = GetClass(className);
-				return cls == null ? null : cls.GetField(fieldName);
-			});
-		}
+		public IDebuggerType GetType(string className, params IDebuggerType[] genericArguments) => debugger.Dispatcher.UI(() => {
+			var cls = (DebuggerClass)GetClass(className);
+			if (cls == null)
+				return null;
+			// We can use Class all the time, even for value types
+			var type = cls.CorClass.GetParameterizedType(dndbg.COM.CorDebug.CorElementType.Class, genericArguments.ToCorTypes());
+			Debug.Assert(type != null);
+			return type == null ? null : new DebuggerType(debugger, type, cls.Token);
+		});
 
-		public IDebuggerProperty GetProperty(string className, string propertyName) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = GetClass(className);
-				return cls == null ? null : cls.GetProperty(propertyName);
-			});
-		}
-
-		public IDebuggerEvent GetEvent(string className, string eventName) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = GetClass(className);
-				return cls == null ? null : cls.GetEvent(eventName);
-			});
-		}
-
-		public IDebuggerType GetType(string className) {
-			return GetType(className, null);
-		}
-
-		public IDebuggerType GetType(string className, params IDebuggerType[] genericArguments) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = (DebuggerClass)GetClass(className);
-				if (cls == null)
-					return null;
-				// We can use Class all the time, even for value types
-				var type = cls.CorClass.GetParameterizedType(dndbg.COM.CorDebug.CorElementType.Class, genericArguments.ToCorTypes());
-				Debug.Assert(type != null);
-				return type == null ? null : new DebuggerType(debugger, type, cls.Token);
-			});
-		}
-
-		public IDebuggerType GetType(Type type) {
-			return debugger.Dispatcher.UI(() => {
-				var ad = debugger.FindAppDomainUI(mod.AppDomain.CorAppDomain);
-				return ad == null ? null : ad.GetType(type);
-			});
-		}
-
-		public IDebuggerField GetField(FieldInfo field) {
-			return debugger.Dispatcher.UI(() => {
-				var type = GetType(field.DeclaringType);
-				return type == null ? null : type.GetField(field);
-			});
-		}
-
-		public IDebuggerMethod GetMethod(MethodBase method) {
-			return debugger.Dispatcher.UI(() => {
-				var type = GetType(method.DeclaringType);
-				return type == null ? null : type.GetMethod(method);
-			});
-		}
-
-		public IDebuggerProperty GetProperty(PropertyInfo prop) {
-			return debugger.Dispatcher.UI(() => {
-				var type = GetType(prop.DeclaringType);
-				return type == null ? null : type.GetProperty(prop);
-			});
-		}
-
-		public IDebuggerEvent GetEvent(EventInfo evt) {
-			return debugger.Dispatcher.UI(() => {
-				var type = GetType(evt.DeclaringType);
-				return type == null ? null : type.GetEvent(evt);
-			});
-		}
-
-		public override bool Equals(object obj) {
-			var other = obj as DebuggerModule;
-			return other != null && other.mod == mod;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => mod.ToString());
-		}
+		public IDebuggerType GetType(Type type) => debugger.Dispatcher.UI(() => debugger.FindAppDomainUI(mod.AppDomain.CorAppDomain)?.GetType(type));
+		public IDebuggerField GetField(FieldInfo field) => debugger.Dispatcher.UI(() => GetType(field.DeclaringType)?.GetField(field));
+		public IDebuggerMethod GetMethod(MethodBase method) => debugger.Dispatcher.UI(() => GetType(method.DeclaringType)?.GetMethod(method));
+		public IDebuggerProperty GetProperty(PropertyInfo prop) => debugger.Dispatcher.UI(() => GetType(prop.DeclaringType)?.GetProperty(prop));
+		public IDebuggerEvent GetEvent(EventInfo evt) => debugger.Dispatcher.UI(() => GetType(evt.DeclaringType)?.GetEvent(evt));
+		public override bool Equals(object obj) => (obj as DebuggerModule)?.mod == mod;
+		public override int GetHashCode() => hashCode;
+		public override string ToString() => debugger.Dispatcher.UI(() => mod.ToString());
 	}
 }

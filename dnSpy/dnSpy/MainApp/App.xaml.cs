@@ -63,7 +63,7 @@ namespace dnSpy.MainApp {
 		}
 
 		static void ShowException(Exception ex) {
-			string msg = ex == null ? "Unknown exception" : ex.ToString();
+			string msg = ex?.ToString() ?? "Unknown exception";
 			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
@@ -184,7 +184,7 @@ namespace dnSpy.MainApp {
 				return Directory.GetFiles(dir, searchPattern);
 			}
 			catch {
-				return new string[0];
+				return Array.Empty<string>();
 			}
 		}
 
@@ -193,7 +193,7 @@ namespace dnSpy.MainApp {
 				return Directory.GetDirectories(dir);
 			}
 			catch {
-				return new string[0];
+				return Array.Empty<string>();
 			}
 		}
 
@@ -249,9 +249,7 @@ namespace dnSpy.MainApp {
 		static readonly IntPtr COPYDATASTRUCT_result = new IntPtr(0x615F9D6E);
 		const string COPYDATASTRUCT_HEADER = "dnSpy";	// One line only
 
-		void SwitchToOtherInstance() {
-			EnumWindows(EnumWindowsHandler, IntPtr.Zero);
-		}
+		void SwitchToOtherInstance() => EnumWindows(EnumWindowsHandler, IntPtr.Zero);
 
 		unsafe bool EnumWindowsHandler(IntPtr hWnd, IntPtr lParam) {
 			var sb = new StringBuilder(256);

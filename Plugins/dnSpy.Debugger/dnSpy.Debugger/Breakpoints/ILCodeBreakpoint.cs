@@ -32,9 +32,8 @@ namespace dnSpy.Debugger.Breakpoints {
 				this.ilbp = ilbp;
 			}
 
-			protected override void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker) {
+			protected override void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker) =>
 				marker.HighlightingColor = () => ilbp.IsEnabled ? DebuggerColors.CodeBreakpointHighlightingColor : DebuggerColors.CodeBreakpointDisabledHighlightingColor;
-			}
 
 			public override bool IsVisible(ITextEditorUIContext uiContext) {
 				TextPosition location, endLocation;
@@ -48,13 +47,8 @@ namespace dnSpy.Debugger.Breakpoints {
 				return true;
 			}
 
-			public override bool HasImage {
-				get { return true; }
-			}
-
-			public override double ZOrder {
-				get { return TextEditorConstants.ZORDER_BREAKPOINT; }
-			}
+			public override bool HasImage => true;
+			public override double ZOrder => TextEditorConstants.ZORDER_BREAKPOINT;
 
 			public override ImageReference? ImageReference {
 				get {
@@ -64,9 +58,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				}
 			}
 
-			internal new void Redraw() {
-				base.Redraw();
-			}
+			internal new void Redraw() => base.Redraw();
 		}
 
 		event EventHandler<TextLineObjectEventArgs> ITextLineObject.ObjPropertyChanged {
@@ -74,30 +66,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			remove { myMarkedTextLine.ObjPropertyChanged -= value; }
 		}
 
-		public override BreakpointKind Kind {
-			get { return BreakpointKind.ILCode; }
-		}
-
-		public SerializedDnToken SerializedDnToken {
-			get { return myMarkedTextLine.SerializedDnToken; }
-		}
-
-		public uint ILOffset {
-			get { return myMarkedTextLine.ILOffset; }
-		}
-
-		public double ZOrder {
-			get { return myMarkedTextLine.ZOrder; }
-		}
-
-		public bool HasImage {
-			get { return myMarkedTextLine.HasImage; }
-		}
-
-		public ImageReference? ImageReference {
-			get { return myMarkedTextLine.ImageReference; }
-		}
-
+		public override BreakpointKind Kind => BreakpointKind.ILCode;
+		public SerializedDnToken SerializedDnToken => myMarkedTextLine.SerializedDnToken;
+		public uint ILOffset => myMarkedTextLine.ILOffset;
+		public double ZOrder => myMarkedTextLine.ZOrder;
+		public bool HasImage => myMarkedTextLine.HasImage;
+		public ImageReference? ImageReference => myMarkedTextLine.ImageReference;
 		readonly MyMarkedTextLine myMarkedTextLine;
 
 		public ILCodeBreakpoint(SerializedDnToken methodKey, uint ilOffset, bool isEnabled = true)
@@ -105,21 +79,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.myMarkedTextLine = new MyMarkedTextLine(this, methodKey, ilOffset);
 		}
 
-		public int GetLineNumber(ITextEditorUIContext uiContext) {
-			return myMarkedTextLine.GetLineNumber(uiContext);
-		}
-
-		public bool GetLocation(ITextEditorUIContext uiContext, out TextPosition location, out TextPosition endLocation) {
-			return myMarkedTextLine.GetLocation(uiContext, out location, out endLocation);
-		}
-
-		ITextMarker ITextMarkerObject.CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService) {
-			return myMarkedTextLine.CreateMarker(uiContext, markerService);
-		}
-
-		bool ITextLineObject.IsVisible(ITextEditorUIContext uiContext) {
-			return myMarkedTextLine.IsVisible(uiContext);
-		}
+		public int GetLineNumber(ITextEditorUIContext uiContext) => myMarkedTextLine.GetLineNumber(uiContext);
+		public bool GetLocation(ITextEditorUIContext uiContext, out TextPosition location, out TextPosition endLocation) =>
+			myMarkedTextLine.GetLocation(uiContext, out location, out endLocation);
+		ITextMarker ITextMarkerObject.CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService) =>
+			myMarkedTextLine.CreateMarker(uiContext, markerService);
+		bool ITextLineObject.IsVisible(ITextEditorUIContext uiContext) => myMarkedTextLine.IsVisible(uiContext);
 
 		protected override void OnIsEnabledChanged() {
 			OnPropertyChanged("Image");

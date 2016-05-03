@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class PrinterContext : IPrinterContext {
-		public IImageManager ImageManager { get; private set; }
+		public IImageManager ImageManager { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
@@ -70,14 +70,10 @@ namespace dnSpy.Debugger.Locals {
 		public readonly DnProcess Process;
 		public readonly ILocalsOwner LocalsOwner;
 
-		public IList<CorType> GenericTypeArguments {
-			get { return genericTypeArguments; }
-		}
+		public IList<CorType> GenericTypeArguments => genericTypeArguments;
 		readonly List<CorType> genericTypeArguments;
 
-		public IList<CorType> GenericMethodArguments {
-			get { return genericMethodArguments; }
-		}
+		public IList<CorType> GenericMethodArguments => genericMethodArguments;
 		readonly List<CorType> genericMethodArguments;
 
 		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, DnProcess process) {
@@ -107,7 +103,7 @@ namespace dnSpy.Debugger.Locals {
 			this.FrameCouldBeNeutered = frame;
 			this.genericTypeArguments = genericTypeArguments;
 			this.genericMethodArguments = new List<CorType>();
-			this.Function = frame == null ? null : frame.Function;
+			this.Function = frame?.Function;
 		}
 	}
 }

@@ -24,17 +24,9 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveHexOptionsVM : SaveOptionsVM {
-		public override SaveOptionsType Type {
-			get { return SaveOptionsType.Hex; }
-		}
-
-		public override object UndoDocument {
-			get { return doc; }
-		}
-
-		public HexDocument Document {
-			get { return doc; }
-		}
+		public override SaveOptionsType Type => SaveOptionsType.Hex;
+		public override object UndoDocument => doc;
+		public HexDocument Document => doc;
 		readonly AsmEdHexDocument doc;
 
 		public SaveHexOptionsVM(AsmEdHexDocument doc) {
@@ -42,9 +34,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.FileName = doc.Name ?? string.Empty;
 		}
 
-		public SaveHexOptionsVM Clone() {
-			return CopyTo(new SaveHexOptionsVM(doc));
-		}
+		public SaveHexOptionsVM Clone() => CopyTo(new SaveHexOptionsVM(doc));
 
 		public SaveHexOptionsVM CopyTo(SaveHexOptionsVM other) {
 			other.FileName = this.FileName;

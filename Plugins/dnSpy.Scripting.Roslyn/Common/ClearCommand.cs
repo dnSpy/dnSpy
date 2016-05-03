@@ -30,7 +30,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpClearDescription;
-
 		public void Execute(ScriptControlVM vm, string[] args) => vm.ReplEditor.Clear();
 	}
 }

@@ -28,10 +28,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CAArgumentVM : ViewModelBase {
-		public ConstantTypeVM ConstantTypeVM {
-			get { return constantTypeVM; }
-		}
-		ConstantTypeVM constantTypeVM;
+		public ConstantTypeVM ConstantTypeVM { get; }
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -98,7 +95,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType) {
 			this.module = options.OwnerModule;
 			this.originalArg = arg.Clone();
-			this.constantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
+			this.ConstantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
 			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 			InitializeFrom(arg, storageType);
 			this.modified = false;
@@ -135,7 +132,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			case ElementType.U8:
 			case ElementType.R4:
 			case ElementType.R8:
-				if (ModelUtils.GetElementType(value == null ? null : value.GetType()) == et)
+				if (ModelUtils.GetElementType(value?.GetType()) == et)
 					return value;
 				break;
 
@@ -256,7 +253,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			case ElementType.R4:		return ConvertEnum<float>(elemType, oldList);
 			case ElementType.R8:		return ConvertEnum<double>(elemType, oldList);
 			}
-			return new int[0];
+			return Array.Empty<int>();
 		}
 
 		object ConvertEnum<T>(TypeSig elemType, IList<CAArgument> oldList) {
@@ -286,7 +283,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			for (int i = 0; i < list.Length; i++) {
 				var arg = oldList[i];
 				if (!tIsSystemObject && !sigComparer.Equals(elemType, arg.Type))
-					return new T[0];
+					return Array.Empty<T>();
 				var res = ConvertFromModel(arg.Type, arg.Value);
 				if (res is T)
 					list[i] = (T)res;
@@ -295,7 +292,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					list[i] = (T)n;
 				}
 				else
-					return new T[0];
+					return Array.Empty<T>();
 			}
 
 			return list;
@@ -404,8 +401,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return DlgUtils.ValueToString(ConstantTypeVM.Value, StorageType);
 		}
 
-		public override bool HasError {
-			get { return IsEnabled && ConstantTypeVM.HasError; }
-		}
+		public override bool HasError => IsEnabled && ConstantTypeVM.HasError;
 	}
 }

@@ -37,13 +37,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand PickAttributeTypeCommand {
-			get { return new RelayCommand(a => PickAttributeType()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand PickAttributeTypeCommand => new RelayCommand(a => PickAttributeType());
 
 		public string FullName {
 			get {
@@ -75,10 +70,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ITypeDefOrRef attributeType;
 
-		public CANamedArgumentsVM CANamedArgumentsVM {
-			get { return caNamedArgumentsVM; }
-		}
-		CANamedArgumentsVM caNamedArgumentsVM;
+		public CANamedArgumentsVM CANamedArgumentsVM { get; }
 
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
@@ -86,7 +78,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origSa = sa;
 			this.ownerModule = ownerModule;
-			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => {
+			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => {
 				// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
 				return a.Collection.Count < ModelUtils.COMPRESSED_UINT32_MAX;
 			});
@@ -125,9 +117,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				AttributeType = newAttrType;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origSa);
-		}
+		void Reinitialize() => InitializeFrom(origSa);
 
 		void InitializeFrom(SecurityAttribute sa) {
 			AttributeType = sa.AttributeType;
@@ -140,11 +130,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return sa;
 		}
 
-		public override bool HasError {
-			get {
-				return AttributeType == null ||
-						CANamedArgumentsVM.Collection.Any(a => a.HasError);
-			}
-		}
+		public override bool HasError => AttributeType == null || CANamedArgumentsVM.Collection.Any(a => a.HasError);
 	}
 }

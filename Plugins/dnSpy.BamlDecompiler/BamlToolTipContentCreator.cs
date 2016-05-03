@@ -37,17 +37,11 @@ namespace dnSpy.BamlDecompiler {
 
 	// Don't use a string since it should only show tooltips if it's from the baml disassembler
 	sealed class BamlToolTipReference {
-		public static object Create(string s) {
-			return string.IsNullOrEmpty(s) ? null : new BamlToolTipReference(s);
-		}
-
-		public string String {
-			get { return s; }
-		}
-		readonly string s;
+		public static object Create(string s) => string.IsNullOrEmpty(s) ? null : new BamlToolTipReference(s);
+		public string String { get; }
 
 		BamlToolTipReference(string s) {
-			this.s = s;
+			this.String = s;
 		}
 	}
 }

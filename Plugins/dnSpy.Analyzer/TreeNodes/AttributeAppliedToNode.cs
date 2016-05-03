@@ -38,9 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool inherited = true;
 		ConcurrentDictionary<MethodDef, int> foundMethods;
 
-		public static bool CanShow(TypeDef type) {
-			return type.IsClass && IsCustomAttribute(type);
-		}
+		public static bool CanShow(TypeDef type) => type.IsClass && IsCustomAttribute(type);
 
 		static bool IsCustomAttribute(TypeDef type) {
 			while (type != null) {
@@ -56,7 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public AttributeAppliedToNode(TypeDef analyzedType) {
 			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+				throw new ArgumentNullException(nameof(analyzedType));
 
 			this.analyzedType = analyzedType;
 			attributeName = this.analyzedType.FullName;
@@ -94,9 +92,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.AppliedToTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
@@ -272,9 +269,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) {
-			return !foundMethods.TryAdd(method, 0);
-		}
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
 
 		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
@@ -359,8 +354,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 	}
 	static class ExtensionMethods {
-		public static bool HasCustomAttribute(this IMemberRef member, string attributeTypeName) {
-			return false;
-		}
+		public static bool HasCustomAttribute(this IMemberRef member, string attributeTypeName) => false;
 	}
 }

@@ -24,9 +24,7 @@ using dnSpy.Shared.MVVM;
 namespace dnSpy.MainApp {
 	sealed class AskVM : ViewModelBase {
 
-		public string LabelMessage {
-			get { return labelMessage; }
-		}
+		public string LabelMessage => labelMessage;
 		readonly string labelMessage;
 
 		public string Text {
@@ -41,9 +39,7 @@ namespace dnSpy.MainApp {
 		}
 		string text = string.Empty;
 
-		public object Value {
-			get { return converter(Text); }
-		}
+		public object Value => converter(Text);
 
 		readonly Func<string, object> converter;
 		readonly Func<string, string> verifier;
@@ -72,8 +68,6 @@ namespace dnSpy.MainApp {
 			return string.Empty;
 		}
 
-		public override bool HasError {
-			get { return !string.IsNullOrEmpty(Verify("Text")); }
-		}
+		public override bool HasError => !string.IsNullOrEmpty(Verify("Text"));
 	}
 }

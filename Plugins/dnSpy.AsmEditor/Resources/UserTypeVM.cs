@@ -35,9 +35,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand PickTypeCommand {
-			get { return new RelayCommand(a => PickType()); }
-		}
+		public ICommand PickTypeCommand => new RelayCommand(a => PickType());
 
 		public string TypeFullName {
 			get { return typeFullName; }
@@ -79,9 +77,7 @@ namespace dnSpy.AsmEditor.Resources {
 				TypeFullName = newType.AssemblyQualifiedName;
 		}
 
-		public void SetData(byte[] data) {
-			StringValue = GetString(data);
-		}
+		public void SetData(byte[] data) => StringValue = GetString(data);
 
 		public byte[] GetSerializedData() {
 			object obj;
@@ -132,9 +128,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		ITypeDefOrRef GetTypeRef() {
-			return TypeNameParser.ParseReflection(ownerModule, typeFullName, null);
-		}
+		ITypeDefOrRef GetTypeRef() => TypeNameParser.ParseReflection(ownerModule, typeFullName, null);
 
 		protected override string Verify(string columnName) {
 			if (columnName == "TypeFullName") {
@@ -153,11 +147,8 @@ namespace dnSpy.AsmEditor.Resources {
 			return string.Empty;
 		}
 
-		public override bool HasError {
-			get {
-				return !string.IsNullOrEmpty(Verify("TypeFullName")) ||
-					!string.IsNullOrEmpty(Verify("StringValue"));
-			}
-		}
+		public override bool HasError =>
+			!string.IsNullOrEmpty(Verify("TypeFullName")) ||
+			!string.IsNullOrEmpty(Verify("StringValue"));
 	}
 }

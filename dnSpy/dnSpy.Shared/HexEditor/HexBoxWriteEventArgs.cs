@@ -22,16 +22,13 @@ using System.Collections.Generic;
 
 namespace dnSpy.Shared.HexEditor {
 	public sealed class HexBoxWriteEventArgs : EventArgs {
-		public readonly HexWriteType Type;
-		public readonly ulong StartOffset;
-		public readonly ulong EndOffset;
-		public readonly int Size;
-		public readonly bool IsBeforeWrite;
-		public readonly Dictionary<object, object> Context;
-
-		public bool IsAfterWrite {
-			get { return !IsBeforeWrite; }
-		}
+		public HexWriteType Type { get; }
+		public ulong StartOffset { get; }
+		public ulong EndOffset { get; }
+		public int Size { get; }
+		public bool IsBeforeWrite { get; }
+		public Dictionary<object, object> Context { get; }
+		public bool IsAfterWrite => !IsBeforeWrite;
 
 		public HexBoxWriteEventArgs(HexWriteType type, ulong offs, int size, bool isBeforeWrite, Dictionary<object, object> context = null) {
 			this.Type = type;

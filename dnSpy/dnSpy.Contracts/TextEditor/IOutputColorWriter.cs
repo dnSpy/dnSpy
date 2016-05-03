@@ -48,9 +48,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <param name="writer">Writer</param>
 		/// <param name="text">Text</param>
-		public static void Write(this IOutputColorWriter writer, string text) {
-			writer.Write(BoxedOutputColor.Text, text);
-		}
+		public static void Write(this IOutputColorWriter writer, string text) => writer.Write(BoxedOutputColor.Text, text);
 
 		/// <summary>
 		/// Writes text and a newline using default text color (<see cref="BoxedOutputColor.Text"/>)

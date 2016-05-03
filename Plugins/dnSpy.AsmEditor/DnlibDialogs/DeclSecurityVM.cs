@@ -26,8 +26,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	enum SecAc
-	{
+	enum SecAc {
 		ActionNil			= SecurityAction.ActionNil,
 		Request				= SecurityAction.Request,
 		Demand				= SecurityAction.Demand,
@@ -46,20 +45,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		NonCasInheritance	= SecurityAction.NonCasInheritance,
 	}
 
-	enum DeclSecVer
-	{
+	enum DeclSecVer {
 		V1,
 		V2,
 	}
 
 	sealed class DeclSecurityVM : ViewModelBase {
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public string FullName {
-			get { return SecurityActionEnumList.SelectedItem.ToString(); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public string FullName => SecurityActionEnumList.SelectedItem.ToString();
 
 		public string V1XMLString {
 			get { return v1XMLString; }
@@ -72,35 +65,17 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string v1XMLString = string.Empty;
 
-		public bool IsV1 {
-			get { return (DeclSecVer)DeclSecVerEnumList.SelectedItem == DeclSecVer.V1; }
-		}
+		public bool IsV1 => (DeclSecVer)DeclSecVerEnumList.SelectedItem == DeclSecVer.V1;
+		public bool IsV2 => (DeclSecVer)DeclSecVerEnumList.SelectedItem == DeclSecVer.V2;
 
-		public bool IsV2 {
-			get { return (DeclSecVer)DeclSecVerEnumList.SelectedItem == DeclSecVer.V2; }
-		}
-
-		public EnumListVM DeclSecVerEnumList {
-			get { return declSecVerEnumListVM; }
-		}
-		readonly EnumListVM declSecVerEnumListVM;
+		public EnumListVM DeclSecVerEnumList { get; }
 		static readonly EnumVM[] declSecVerList = EnumVM.Create(typeof(DeclSecVer));
 
-		public EnumListVM SecurityActionEnumList {
-			get { return securityActionEnumListVM; }
-		}
-		readonly EnumListVM securityActionEnumListVM;
+		public EnumListVM SecurityActionEnumList { get; }
 		static readonly EnumVM[] secActList = EnumVM.Create(typeof(SecAc));
 
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
-
-		public SecurityAttributesVM SecurityAttributesVM {
-			get { return securityAttributesVM; }
-		}
-		SecurityAttributesVM securityAttributesVM;
+		public CustomAttributesVM CustomAttributesVM { get; }
+		public SecurityAttributesVM SecurityAttributesVM { get; }
 
 		readonly DeclSecurityOptions origOptions;
 		readonly ModuleDef ownerModule;
@@ -114,22 +89,17 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			CustomAttributesVM.PropertyChanged += CustomAttributesVM_PropertyChanged;
-			this.declSecVerEnumListVM = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
-			this.securityActionEnumListVM = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
-			this.securityAttributesVM = new SecurityAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.DeclSecVerEnumList = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
+			this.SecurityActionEnumList = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
+			this.SecurityAttributesVM = new SecurityAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
 			this.SecurityAttributesVM.Collection.CollectionChanged += SecurityAttributesVM_CollectionChanged;
 			Reinitialize();
 		}
 
-		void SecurityAttributesVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			HasErrorUpdated();
-		}
-
-		void CustomAttributesVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			HasErrorUpdated();
-		}
+		void SecurityAttributesVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => HasErrorUpdated();
+		void CustomAttributesVM_PropertyChanged(object sender, PropertyChangedEventArgs e) => HasErrorUpdated();
 
 		void OnDeclSecVerChanged() {
 			OnPropertyChanged("IsV1");
@@ -143,13 +113,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public DeclSecurityOptions CreateDeclSecurityOptions() {
-			return CopyTo(new DeclSecurityOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public DeclSecurityOptions CreateDeclSecurityOptions() => CopyTo(new DeclSecurityOptions());
 
 		void InitializeFrom(DeclSecurityOptions options) {
 			SecurityActionEnumList.SelectedItem = (SecAc)options.Action;
@@ -170,11 +135,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return options;
 		}
 
-		public override bool HasError {
-			get {
-				return CustomAttributesVM.HasError ||
-					SecurityAttributesVM.Collection.Any(a => a.HasError);
-			}
-		}
+		public override bool HasError => CustomAttributesVM.HasError || SecurityAttributesVM.Collection.Any(a => a.HasError);
 	}
 }

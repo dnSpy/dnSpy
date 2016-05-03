@@ -26,29 +26,18 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	class TypeProjectFile : ProjectFile {
-		public override string Description {
-			get { return string.Format(Languages_Resources.MSBuild_DecompileType, type.FullName); }
-		}
-
-		public override BuildAction BuildAction {
-			get { return BuildAction.Compile; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
+		public override string Description => string.Format(Languages_Resources.MSBuild_DecompileType, Type.FullName);
+		public override BuildAction BuildAction => BuildAction.Compile;
+		public override string Filename => filename;
 		readonly string filename;
 
 		protected readonly DecompilationContext decompilationContext;
 		protected readonly ILanguage language;
 
-		public TypeDef Type {
-			get { return type; }
-		}
-		protected readonly TypeDef type;
+		public TypeDef Type { get; }
 
 		public TypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language) {
-			this.type = type;
+			this.Type = type;
 			this.filename = filename;
 			this.decompilationContext = decompilationContext;
 			this.language = language;
@@ -61,8 +50,7 @@ namespace dnSpy.Languages.MSBuild {
 			}
 		}
 
-		protected virtual void Decompile(DecompileContext ctx, ITextOutput output) {
-			language.Decompile(type, output, decompilationContext);
-		}
+		protected virtual void Decompile(DecompileContext ctx, ITextOutput output) =>
+			language.Decompile(Type, output, decompilationContext);
 	}
 }

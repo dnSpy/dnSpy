@@ -38,8 +38,7 @@ namespace dnSpy.Debugger.CallStack {
 	}
 
 	class CallStackSettings : ViewModelBase, ICallStackSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool ShowModuleNames {
 			get { return showModuleNames; }

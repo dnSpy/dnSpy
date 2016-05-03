@@ -84,7 +84,7 @@ namespace dnSpy.Files.Tabs {
 			decompilationCache.Clear(new HashSet<IDnSpyFile>(ownerNodes.Select(a => {
 				var mod = a.GetModuleNode();
 				Debug.Assert(mod != null);
-				return mod == null ? null : mod.DnSpyFile;
+				return mod?.DnSpyFile;
 			}).Where(a => a != null)));
 
 			var tabs = new List<IFileTab>();

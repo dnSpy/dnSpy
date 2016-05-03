@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageListVM : ViewModelBase {
 		readonly ImageListOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public string Name {
 			get { return name; }
@@ -51,56 +49,32 @@ namespace dnSpy.AsmEditor.Resources {
 			new EnumVM(ColorDepth.Depth24Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_24Bit),
 			new EnumVM(ColorDepth.Depth32Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_32Bit),
 		};
-		public EnumListVM ColorDepthVM {
-			get { return colorDepthVM; }
-		}
-		readonly EnumListVM colorDepthVM = new EnumListVM(colorDepthList);
-
-		public Int32VM WidthVM {
-			get { return widthVM; }
-		}
-		readonly Int32VM widthVM;
-
-		public Int32VM HeightVM {
-			get { return heightVM; }
-		}
-		readonly Int32VM heightVM;
-
-		public DefaultConverterVM<Color> TransparentColorVM {
-			get { return transparentColorVM; }
-		}
-		readonly DefaultConverterVM<Color> transparentColorVM;
-
-		public ImageListStreamerVM ImageListStreamerVM {
-			get { return imageListStreamerVM; }
-		}
-		readonly ImageListStreamerVM imageListStreamerVM;
+		public EnumListVM ColorDepthVM { get; } = new EnumListVM(colorDepthList);
+		public Int32VM WidthVM { get; }
+		public Int32VM HeightVM { get; }
+		public DefaultConverterVM<Color> TransparentColorVM { get; }
+		public ImageListStreamerVM ImageListStreamerVM { get; }
 
 		public ImageListVM(ImageListOptions options) {
 			this.origOptions = options;
 
-			this.imageListStreamerVM = new ImageListStreamerVM();
+			this.ImageListStreamerVM = new ImageListStreamerVM();
 			ImageListStreamerVM.Collection.CollectionChanged += (s, e) => HasErrorUpdated();
-			this.widthVM = new Int32VM(a => HasErrorUpdated(), true) {
+			this.WidthVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 1,
 				Max = 256,
 			};
-			this.heightVM = new Int32VM(a => HasErrorUpdated(), true) {
+			this.HeightVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 1,
 				Max = 256,
 			};
-			this.transparentColorVM = new DefaultConverterVM<Color>(a => HasErrorUpdated());
+			this.TransparentColorVM = new DefaultConverterVM<Color>(a => HasErrorUpdated());
 
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ImageListOptions CreateImageListOptions() {
-			return CopyTo(new ImageListOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ImageListOptions CreateImageListOptions() => CopyTo(new ImageListOptions());
 
 		void InitializeFrom(ImageListOptions options) {
 			Name = options.Name;

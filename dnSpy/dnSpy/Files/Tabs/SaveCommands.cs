@@ -71,9 +71,8 @@ namespace dnSpy.Files.Tabs {
 			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) {
-			return GetModules().Length > 0 && languageManager.AllLanguages.Any(a => a.ProjectFileExtension != null);
-		}
+		public override bool IsEnabled(IMenuItemContext context) =>
+			GetModules().Length > 0 && languageManager.AllLanguages.Any(a => a.ProjectFileExtension != null);
 
 		public override void Execute(IMenuItemContext context) {
 			var modules = GetModules();
@@ -316,9 +315,7 @@ namespace dnSpy.Files.Tabs {
 			this.fileTabManager = fileTabManager;
 		}
 
-		public override string GetHeader(IMenuItemContext context) {
-			return saveManager.GetMenuHeader(fileTabManager.ActiveTab);
-		}
+		public override string GetHeader(IMenuItemContext context) => saveManager.GetMenuHeader(fileTabManager.ActiveTab);
 	}
 
 	[ExportMenuItem(InputGestureText = "res:SaveKey", Icon = "Save", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
@@ -333,13 +330,8 @@ namespace dnSpy.Files.Tabs {
 			this.fileTabManager = fileTabManager;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetTabGroup(context) != null;
-		}
-
-		public override string GetHeader(IMenuItemContext context) {
-			return saveManager.GetMenuHeader(GetFileTab(context));
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetTabGroup(context) != null;
+		public override string GetHeader(IMenuItemContext context) => saveManager.GetMenuHeader(GetFileTab(context));
 
 		ITabGroup GetTabGroup(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID))

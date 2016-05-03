@@ -34,14 +34,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public MethodUsedByNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException(nameof(analyzedMethod));
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
@@ -82,8 +81,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) {
-			return !foundMethods.TryAdd(method, 0);
-		}
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
 	}
 }

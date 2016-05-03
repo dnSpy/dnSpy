@@ -26,20 +26,14 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class GACFileVM : ViewModelBase {
-		public object NameObject { get { return this; } }
-		public object VersionObject { get { return this; } }
-
-		public string Name {
-			get { return gacFileInfo.Assembly.Name; }
-		}
-
-		public Version Version {
-			get { return gacFileInfo.Assembly.Version; }
-		}
-
-		public bool IsExe {
-			get { return gacFileInfo.Path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase); }
-		}
+		public object NameObject => this;
+		public object VersionObject => this;
+		public string Name => gacFileInfo.Assembly.Name;
+		public Version Version => gacFileInfo.Assembly.Version;
+		public bool IsExe => gacFileInfo.Path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+		public string Path => gacFileInfo.Path;
+		public IAssembly Assembly => gacFileInfo.Assembly;
+		public OpenFromGACVM Owner { get; }
 
 		public string CreatedBy {
 			get {
@@ -59,10 +53,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		string fileVersion;
 
-		public string Path {
-			get { return gacFileInfo.Path; }
-		}
-
 		public bool IsDuplicate {
 			get { return isDuplicate; }
 			set {
@@ -74,19 +64,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		bool isDuplicate;
 
-		public IAssembly Assembly {
-			get { return gacFileInfo.Assembly; }
-		}
-
-		public OpenFromGACVM Owner {
-			get { return owner; }
-		}
-		readonly OpenFromGACVM owner;
-
 		readonly GacFileInfo gacFileInfo;
 
 		public GACFileVM(OpenFromGACVM owner, GacFileInfo gacFileInfo) {
-			this.owner = owner;
+			this.Owner = owner;
 			this.gacFileInfo = gacFileInfo;
 		}
 

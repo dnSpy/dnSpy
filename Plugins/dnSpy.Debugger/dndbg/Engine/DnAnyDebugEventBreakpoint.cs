@@ -21,35 +21,22 @@ using System;
 
 namespace dndbg.Engine {
 	public sealed class AnyDebugEventBreakpointConditionContext : BreakpointConditionContext {
-		public override DnBreakpoint Breakpoint {
-			get { return bp; }
-		}
-
-		public DnAnyDebugEventBreakpoint AnyDebugEventBreakpoint {
-			get { return bp; }
-		}
-		readonly DnAnyDebugEventBreakpoint bp;
-
-		public DebugCallbackEventArgs EventArgs {
-			get { return e; }
-		}
-		readonly DebugCallbackEventArgs e;
+		public override DnBreakpoint Breakpoint => AnyDebugEventBreakpoint;
+		public DnAnyDebugEventBreakpoint AnyDebugEventBreakpoint { get; }
+		public DebugCallbackEventArgs EventArgs { get; }
 
 		public AnyDebugEventBreakpointConditionContext(DnDebugger debugger, DnAnyDebugEventBreakpoint bp, DebugCallbackEventArgs e)
 			: base(debugger) {
-			this.bp = bp;
-			this.e = e;
+			this.AnyDebugEventBreakpoint = bp;
+			this.EventArgs = e;
 		}
 	}
 
 	public sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
-		internal Func<AnyDebugEventBreakpointConditionContext, bool> Condition {
-			get { return cond; }
-		}
-		readonly Func<AnyDebugEventBreakpointConditionContext, bool> cond;
+		internal Func<AnyDebugEventBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) {
-			this.cond = cond ?? defaultCond;
+			this.Condition = cond ?? defaultCond;
 		}
 		static readonly Func<AnyDebugEventBreakpointConditionContext, bool> defaultCond = a => true;
 	}

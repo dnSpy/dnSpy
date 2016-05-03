@@ -24,42 +24,26 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class NativeMethodBodyVM : ViewModelBase {
 		readonly NativeMethodBodyOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public UInt32VM RVA {
-			get { return rva; }
-		}
-		UInt32VM rva;
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public UInt32VM RVA { get; }
 
 		public NativeMethodBodyVM(NativeMethodBodyOptions options, bool initialize) {
 			this.origOptions = options;
-			this.rva = new UInt32VM(a => HasErrorUpdated());
+			this.RVA = new UInt32VM(a => HasErrorUpdated());
 
 			if (initialize)
 				Reinitialize();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public NativeMethodBodyOptions CreateNativeMethodBodyOptions() {
-			return CopyTo(new NativeMethodBodyOptions());
-		}
-
-		public void InitializeFrom(NativeMethodBodyOptions options) {
-			this.RVA.Value = (uint)options.RVA;
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public NativeMethodBodyOptions CreateNativeMethodBodyOptions() => CopyTo(new NativeMethodBodyOptions());
+		public void InitializeFrom(NativeMethodBodyOptions options) => this.RVA.Value = (uint)options.RVA;
 
 		public NativeMethodBodyOptions CopyTo(NativeMethodBodyOptions options) {
 			options.RVA = (dnlib.PE.RVA)(uint)this.RVA.Value;
 			return options;
 		}
 
-		public override bool HasError {
-			get { return RVA.HasError; }
-		}
+		public override bool HasError => RVA.HasError;
 	}
 }

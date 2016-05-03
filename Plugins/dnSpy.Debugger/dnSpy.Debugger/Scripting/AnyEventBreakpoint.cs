@@ -37,18 +37,12 @@ namespace dnSpy.Debugger.Scripting {
 			set { }
 		}
 
-		public BreakpointKind Kind {
-			get { return BreakpointKind.AnyEvent; }
-		}
-
-		public void Remove() {
-		}
+		public BreakpointKind Kind => BreakpointKind.AnyEvent;
+		public void Remove() { }
 	}
 
 	sealed class AnyEventBreakpoint : IAnyEventBreakpoint, IDnBreakpointHolder {
-		public BreakpointKind Kind {
-			get { return BreakpointKind.AnyEvent; }
-		}
+		public BreakpointKind Kind => BreakpointKind.AnyEvent;
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -68,9 +62,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public object Tag { get; set; }
 
-		public DnBreakpoint DnBreakpoint {
-			get { return dbgBreakpoint; }
-		}
+		public DnBreakpoint DnBreakpoint => dbgBreakpoint;
 		DnAnyDebugEventBreakpoint dbgBreakpoint;
 
 		readonly Debugger debugger;
@@ -82,9 +74,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.isEnabled = true;
 		}
 
-		public void Remove() {
-			debugger.Remove(this);
-		}
+		public void Remove() => debugger.Remove(this);
 
 		public void Initialize(DnDebugger dbg) {
 			Debug.Assert(debugger.Dispatcher.CheckAccess());

@@ -24,9 +24,8 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger {
 	static class ProcessMemoryUtils {
-		public static void ReadMemory(DnProcess process, ulong address, byte[] data, long index, int count) {
+		public static void ReadMemory(DnProcess process, ulong address, byte[] data, long index, int count) =>
 			ReadMemory(process.CorProcess.Handle, address, data, index, count);
-		}
 
 		public static void ReadMemory(IntPtr hProcess, ulong address, byte[] data, long index, int count) {
 			var reader = new CachedHexStream(new ProcessHexStream(hProcess));

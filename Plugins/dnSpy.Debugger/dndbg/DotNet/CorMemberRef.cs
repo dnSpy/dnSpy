@@ -26,9 +26,7 @@ namespace dndbg.DotNet {
 		readonly uint origRid;
 		/*readonly*/ GenericParamContext gpContext;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
 		public CorMemberRef(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
@@ -45,9 +43,8 @@ namespace dndbg.DotNet {
 			InitSignature_NoLock();
 		}
 
-		protected override void InitializeCustomAttributes() {
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, gpContext);
-		}
 
 		void InitName_NoLock() {
 			var mdi = readerModule.MetaDataImport;

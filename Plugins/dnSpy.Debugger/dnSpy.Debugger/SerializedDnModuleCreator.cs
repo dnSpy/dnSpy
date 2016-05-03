@@ -36,9 +36,7 @@ namespace dnSpy.Debugger {
 			this.fileTreeView = fileTreeView;
 		}
 
-		public SerializedDnModule Create(ModuleDef module) {
-			return Create(fileTreeView, module);
-		}
+		public SerializedDnModule Create(ModuleDef module) => Create(fileTreeView, module);
 
 		internal static SerializedDnModule Create(IFileTreeView fileTreeView, ModuleDef module) {
 			if (module == null)

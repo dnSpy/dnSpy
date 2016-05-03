@@ -27,9 +27,7 @@ namespace dnSpy.Settings {
 	sealed class SectionAttributes {
 		readonly Dictionary<string, string> attributes;
 
-		public Tuple<string, string>[] Attributes {
-			get { return attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray(); }
-		}
+		public Tuple<string, string>[] Attributes => attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
 
 		public SectionAttributes() {
 			this.attributes = new Dictionary<string, string>(StringComparer.Ordinal);

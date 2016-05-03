@@ -36,8 +36,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	}
 
 	class BreakpointSettings : ViewModelBase, IBreakpointSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool ShowTokens {
 			get { return showTokens; }

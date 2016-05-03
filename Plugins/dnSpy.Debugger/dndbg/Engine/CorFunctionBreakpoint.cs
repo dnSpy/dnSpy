@@ -50,9 +50,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the offset of the breakpoint
 		/// </summary>
-		public uint Offset {
-			get { return offset; }
-		}
+		public uint Offset => offset;
 		readonly uint offset;
 
 		public CorFunctionBreakpoint(ICorDebugFunctionBreakpoint functionBreakpoint)
@@ -70,25 +68,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorFunctionBreakpoint a, CorFunctionBreakpoint b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorFunctionBreakpoint other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorFunctionBreakpoint);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[FunctionBreakpoint] Enabled={0}, Offset={1:X4} Method={2}", IsActive ? 1 : 0, Offset, Function);
-		}
+		public static bool operator !=(CorFunctionBreakpoint a, CorFunctionBreakpoint b) => !(a == b);
+		public bool Equals(CorFunctionBreakpoint other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorFunctionBreakpoint);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[FunctionBreakpoint] Enabled={0}, Offset={1:X4} Method={2}", IsActive ? 1 : 0, Offset, Function);
 	}
 }

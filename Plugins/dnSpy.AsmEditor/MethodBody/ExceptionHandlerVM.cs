@@ -38,13 +38,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		ITypeSigCreator typeSigCreator;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand EditCatchTypeCommand {
-			get { return new RelayCommand(a => EditCatchType()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand EditCatchTypeCommand => new RelayCommand(a => EditCatchType());
 
 		public int Index {
 			get { return index; }
@@ -57,30 +52,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		int index;
 
-		public ListVM<InstructionVM> TryStartVM {
-			get { return tryStartVM; }
-		}
-		readonly ListVM<InstructionVM> tryStartVM;
-
-		public ListVM<InstructionVM> TryEndVM {
-			get { return tryEndVM; }
-		}
-		readonly ListVM<InstructionVM> tryEndVM;
-
-		public ListVM<InstructionVM> FilterStartVM {
-			get { return filterStartVM; }
-		}
-		readonly ListVM<InstructionVM> filterStartVM;
-
-		public ListVM<InstructionVM> HandlerStartVM {
-			get { return handlerStartVM; }
-		}
-		readonly ListVM<InstructionVM> handlerStartVM;
-
-		public ListVM<InstructionVM> HandlerEndVM {
-			get { return handlerEndVM; }
-		}
-		readonly ListVM<InstructionVM> handlerEndVM;
+		public ListVM<InstructionVM> TryStartVM { get; }
+		public ListVM<InstructionVM> TryEndVM { get; }
+		public ListVM<InstructionVM> FilterStartVM { get; }
+		public ListVM<InstructionVM> HandlerStartVM { get; }
+		public ListVM<InstructionVM> HandlerEndVM { get; }
 
 		public ITypeDefOrRef CatchType {
 			get { return catchType; }
@@ -99,10 +75,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			new EnumVM(ExceptionHandlerType.Finally, "Finally"),
 			new EnumVM(ExceptionHandlerType.Fault, "Fault"),
 		};
-		public EnumListVM HandlerTypeVM {
-			get { return handlerTypeVM; }
-		}
-		readonly EnumListVM handlerTypeVM;
+		public EnumListVM HandlerTypeVM { get; }
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
@@ -111,19 +84,17 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = true;
 			this.origOptions = options;
-			this.handlerTypeVM = new EnumListVM(exceptionHandlerTypeList);
-			this.tryStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.tryEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.filterStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.handlerStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.handlerEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			this.HandlerTypeVM = new EnumListVM(exceptionHandlerTypeList);
+			this.TryStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			this.TryEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			this.FilterStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			this.HandlerStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			this.HandlerEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
 
 			Reinitialize();
 		}
 
-		void OnSelectionChanged() {
-			HasErrorUpdated();
-		}
+		void OnSelectionChanged() => HasErrorUpdated();
 
 		string VerifyInstruction(ListVM<InstructionVM> list) {
 			var item = list.SelectedItem;
@@ -137,9 +108,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return string.Empty;
 		}
 
-		bool HasListError(ListVM<InstructionVM> list) {
-			return !string.IsNullOrEmpty(VerifyInstruction(list));
-		}
+		bool HasListError(ListVM<InstructionVM> list) => !string.IsNullOrEmpty(VerifyInstruction(list));
 
 		public void InstructionChanged(IEnumerable<InstructionVM> instrs) {
 			TryStartVM.InvalidateSelected(instrs, true, InstructionVM.Null);
@@ -161,13 +130,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			CatchType = newType.ToTypeDefOrRef();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ExceptionHandlerOptions CreateExceptionHandlerOptions() {
-			return CopyTo(new ExceptionHandlerOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ExceptionHandlerOptions CreateExceptionHandlerOptions() => CopyTo(new ExceptionHandlerOptions());
 
 		public void InitializeFrom(ExceptionHandlerOptions options) {
 			this.TryStartVM.SelectedItem = options.TryStart ?? InstructionVM.Null;
@@ -207,8 +171,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public IIndexedItem Clone() {
-			return new ExceptionHandlerVM(typeSigCreatorOptions, CreateExceptionHandlerOptions());
-		}
+		public IIndexedItem Clone() => new ExceptionHandlerVM(typeSigCreatorOptions, CreateExceptionHandlerOptions());
 	}
 }

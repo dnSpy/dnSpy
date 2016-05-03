@@ -26,8 +26,8 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler {
 	internal class XmlnsScope : List<NamespaceMap> {
-		public BamlElement Element { get; private set; }
-		public XmlnsScope PreviousScope { get; private set; }
+		public BamlElement Element { get; }
+		public XmlnsScope PreviousScope { get; }
 
 		public XmlnsScope(XmlnsScope prev, BamlElement elem) {
 			PreviousScope = prev;

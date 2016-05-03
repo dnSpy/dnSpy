@@ -50,9 +50,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// <summary>
 		/// Gets the images
 		/// </summary>
-		public List<ImageSource> ImageSources {
-			get { return imageSources; }
-		}
+		public List<ImageSource> ImageSources => imageSources;
 		readonly List<ImageSource> imageSources = new List<ImageSource>();
 
 		/// <summary>

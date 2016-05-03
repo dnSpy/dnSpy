@@ -193,17 +193,9 @@ namespace dnSpy.Decompiler.Shared {
 			return null;
 		}
 
-		public static TypeDef Resolve(this IType type) {
-			return type == null ? null : type.ScopeType.ResolveTypeDef();
-		}
-
-		public static bool CanSortFields(this TypeDef type) {
-			return type.IsAutoLayout;
-		}
-
-		public static bool CanSortMethods(this TypeDef type) {
-			return !(type.IsInterface && type.IsImport);
-		}
+		public static TypeDef Resolve(this IType type) => type == null ? null : type.ScopeType.ResolveTypeDef();
+		public static bool CanSortFields(this TypeDef type) => type.IsAutoLayout;
+		public static bool CanSortMethods(this TypeDef type) => !(type.IsInterface && type.IsImport);
 
 		public static IEnumerable<IMemberDef> GetNonSortedMethodsPropsEvents(this TypeDef type) {
 			var hash = new HashSet<MethodDef>();

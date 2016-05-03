@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Added/removed object
 		/// </summary>
-		public ITextLineObject TextLineObject { get; private set; }
+		public ITextLineObject TextLineObject { get; }
 
 		/// <summary>
 		/// true if added, false if removed
 		/// </summary>
-		public bool Added { get; private set; }
+		public bool Added { get; }
 
 		/// <summary>
 		/// Constructor

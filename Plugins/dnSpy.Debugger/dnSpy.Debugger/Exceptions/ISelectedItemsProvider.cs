@@ -32,8 +32,6 @@ namespace dnSpy.Debugger.Exceptions {
 			this.listBox = listBox;
 		}
 
-		public T[] SelectedItems {
-			get { return listBox.SelectedItems.OfType<T>().ToArray(); }
-		}
+		public T[] SelectedItems => listBox.SelectedItems.OfType<T>().ToArray();
 	}
 }

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dndbg.Engine;
 using dnlib.DotNet;
@@ -26,9 +27,7 @@ namespace dndbg.DotNet {
 		readonly CorModuleDef readerModule;
 		readonly uint origRid;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
 		public CorDeclSecurity(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
@@ -43,14 +42,13 @@ namespace dndbg.DotNet {
 			this.action = MDAPI.GetPermissionSetAction(mdi, token);
 		}
 
-		protected override void InitializeCustomAttributes() {
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
-		}
 
 		protected override void InitializeSecurityAttributes() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
-			var data = MDAPI.GetPermissionSetBlob(mdi, token) ?? new byte[0];
+			var data = MDAPI.GetPermissionSetBlob(mdi, token) ?? Array.Empty<byte>();
 			var gpContext = new GenericParamContext();
 			var tmp = DeclSecurityReader.Read(readerModule, data, gpContext);
 			Interlocked.CompareExchange(ref securityAttributes, tmp, null);
@@ -61,7 +59,7 @@ namespace dndbg.DotNet {
 				return blob;
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
-			Interlocked.CompareExchange(ref blob, MDAPI.GetPermissionSetBlob(mdi, token) ?? new byte[0], null);
+			Interlocked.CompareExchange(ref blob, MDAPI.GetPermissionSetBlob(mdi, token) ?? Array.Empty<byte>(), null);
 			return blob;
 		}
 		byte[] blob;

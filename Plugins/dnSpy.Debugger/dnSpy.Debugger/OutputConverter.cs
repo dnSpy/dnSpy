@@ -30,9 +30,7 @@ namespace dnSpy.Debugger {
 			this.output = output;
 		}
 
-		public void Write(string s, TypeColor type) {
-			output.Write(s, Convert(type));
-		}
+		public void Write(string s, TypeColor type) => output.Write(s, Convert(type));
 
 		public static object Convert(TypeColor color) {
 			switch (color) {

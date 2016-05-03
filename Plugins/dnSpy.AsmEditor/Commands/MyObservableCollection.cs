@@ -24,9 +24,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class MyObservableCollection<T> : ObservableCollection<T> {
-		void OnPropertyChanged(string propName) {
-			OnPropertyChanged(new PropertyChangedEventArgs(propName));
-		}
+		void OnPropertyChanged(string propName) => OnPropertyChanged(new PropertyChangedEventArgs(propName));
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -50,17 +48,9 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 		int selectedIndex;
 
-		public ICommand RemoveSelectedCommand {
-			get { return new RelayCommand(a => RemoveSelected(), a => RemoveSelectedCanExecute()); }
-		}
-
-		public ICommand MoveSelectedUpCommand {
-			get { return new RelayCommand(a => MoveSelectedUp(), a => MoveSelectedUpCanExecute()); }
-		}
-
-		public ICommand MoveSelectedDownCommand {
-			get { return new RelayCommand(a => MoveSelectedDown(), a => MoveSelectedDownCanExecute()); }
-		}
+		public ICommand RemoveSelectedCommand => new RelayCommand(a => RemoveSelected(), a => RemoveSelectedCanExecute());
+		public ICommand MoveSelectedUpCommand => new RelayCommand(a => MoveSelectedUp(), a => MoveSelectedUpCanExecute());
+		public ICommand MoveSelectedDownCommand => new RelayCommand(a => MoveSelectedDown(), a => MoveSelectedDownCanExecute());
 
 		void RemoveSelected() {
 			if (!RemoveSelectedCanExecute())
@@ -75,9 +65,7 @@ namespace dnSpy.AsmEditor.Commands {
 				SelectedIndex = -1;
 		}
 
-		bool RemoveSelectedCanExecute() {
-			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count;
-		}
+		bool RemoveSelectedCanExecute() => IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count;
 
 		void MoveSelectedUp() {
 			if (!MoveSelectedUpCanExecute())
@@ -89,9 +77,7 @@ namespace dnSpy.AsmEditor.Commands {
 			SelectedIndex = index - 1;
 		}
 
-		bool MoveSelectedUpCanExecute() {
-			return IsEnabled && SelectedIndex > 0 && SelectedIndex < this.Count;
-		}
+		bool MoveSelectedUpCanExecute() => IsEnabled && SelectedIndex > 0 && SelectedIndex < this.Count;
 
 		void MoveSelectedDown() {
 			if (!MoveSelectedDownCanExecute())
@@ -103,8 +89,6 @@ namespace dnSpy.AsmEditor.Commands {
 			SelectedIndex = index + 1;
 		}
 
-		bool MoveSelectedDownCanExecute() {
-			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count - 1;
-		}
+		bool MoveSelectedDownCanExecute() => IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count - 1;
 	}
 }

@@ -23,34 +23,19 @@ using System.Linq;
 
 namespace dnSpy.Decompiler.Shared {
 	public struct ILRange : IEquatable<ILRange> {
-		readonly uint from, to;
-		public uint From {
-			get { return from; }
-		}
-		public uint To {    // Exlusive
-			get { return to; }
-		}
+		public uint From { get; }
+		public uint To { get; }
 
-		public static bool operator ==(ILRange a, ILRange b) {
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(ILRange a, ILRange b) {
-			return !a.Equals(b);
-		}
-
-		public bool IsDefault {
-			get { return from == 0 && to == 0; }
-		}
+		public static bool operator ==(ILRange a, ILRange b) => a.Equals(b);
+		public static bool operator !=(ILRange a, ILRange b) => !a.Equals(b);
+		public bool IsDefault => From == 0 && To == 0;
 
 		public ILRange(uint from, uint to) {
-			this.from = from;
-			this.to = to;
+			this.From = from;
+			this.To = to;
 		}
 
-		public bool Equals(ILRange other) {
-			return from == other.from && to == other.to;
-		}
+		public bool Equals(ILRange other) => From == other.From && To == other.To;
 
 		public override bool Equals(object obj) {
 			if (!(obj is ILRange))
@@ -58,17 +43,9 @@ namespace dnSpy.Decompiler.Shared {
 			return Equals((ILRange)obj);
 		}
 
-		public override int GetHashCode() {
-			return (int)(((from << 16) | from >> 32) | to);
-		}
-
-		public override string ToString() {
-			return string.Format("{0}-{1}", from.ToString("X"), to.ToString("X"));
-		}
-
-		public static List<ILRange> OrderAndJoin(IEnumerable<ILRange> input) {
-			return OrderAndJoinList(input.ToList());
-		}
+		public override int GetHashCode() => (int)(((From << 16) | From >> 32) | To);
+		public override string ToString() => string.Format("{0}-{1}", From.ToString("X"), To.ToString("X"));
+		public static List<ILRange> OrderAndJoin(IEnumerable<ILRange> input) => OrderAndJoinList(input.ToList());
 
 		public static List<ILRange> OrderAndJoinList(List<ILRange> ranges) {// Don't rename to OrderAndJoin() since some pass in a list that shouldn't be modified
 			if (ranges.Count <= 1)
@@ -80,24 +57,24 @@ namespace dnSpy.Decompiler.Shared {
 			result.Add(curr);
 			for (int i = 1; i < ranges.Count; i++) {
 				var next = ranges[i];
-				if (curr.to == next.from)
-					result[result.Count - 1] = curr = new ILRange(curr.from, next.to);
-				else if (next.from > curr.to) {
+				if (curr.To == next.From)
+					result[result.Count - 1] = curr = new ILRange(curr.From, next.To);
+				else if (next.From > curr.To) {
 					result.Add(next);
 					curr = next;
 				}
-				else if (next.to > curr.to)
-					result[result.Count - 1] = curr = new ILRange(curr.from, next.to);
+				else if (next.To > curr.To)
+					result[result.Count - 1] = curr = new ILRange(curr.From, next.To);
 			}
 
 			return result;
 		}
 
 		static int Sort(ILRange a, ILRange b) {
-			int c = unchecked((int)a.from - (int)b.from);
+			int c = unchecked((int)a.From - (int)b.From);
 			if (c != 0)
 				return c;
-			return unchecked((int)b.to - (int)a.to);
+			return unchecked((int)b.To - (int)a.To);
 		}
 
 		public static List<ILRange> Invert(IEnumerable<ILRange> input, int codeSize) {

@@ -50,9 +50,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Reinitialize();
 		}
 
-		void Reinitialize() {
-			Method = origMethod;
-		}
+		void Reinitialize() => Method = origMethod;
 
 		protected override string Verify(string columnName) {
 			if (columnName == "Method") {
@@ -64,8 +62,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError {
-			get { return Method != null; }
-		}
+		public override bool HasError => Method != null;
 	}
 }

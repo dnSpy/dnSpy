@@ -41,7 +41,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 		public static ResourceData[] GetResourceData(IResourceDataProvider[] nodes, ResourceDataType resourceDataType) {
 			if (nodes == null)
-				return new ResourceData[0];
+				return Array.Empty<ResourceData>();
 			return nodes.SelectMany(a => a.GetResourceData(resourceDataType)).ToArray();
 		}
 
@@ -133,17 +133,9 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 	}
 
 	sealed class ResourceSaver : IProgressTask {
-		public bool IsIndeterminate {
-			get { return false; }
-		}
-
-		public double ProgressMinimum {
-			get { return 0; }
-		}
-
-		public double ProgressMaximum {
-			get { return fileInfos.Length; }
-		}
+		public bool IsIndeterminate => false;
+		public double ProgressMinimum => 0;
+		public double ProgressMaximum => fileInfos.Length;
 
 		readonly Tuple<ResourceData, string>[] fileInfos;
 

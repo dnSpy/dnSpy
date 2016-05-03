@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Owner of new <see cref="ITreeNodeData"/>
 		/// </summary>
-		public ITreeNode Owner { get; private set; }
+		public ITreeNode Owner { get; }
 
 		/// <summary>
 		/// Constructor

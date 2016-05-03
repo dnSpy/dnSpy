@@ -23,10 +23,7 @@ using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	sealed class ToolTipContentCreatorContext : IToolTipContentCreatorContext {
-		public ILanguage Language {
-			get { return language; }
-		}
-		readonly ILanguage language;
+		public ILanguage Language { get; }
 
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
@@ -35,12 +32,11 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		public ToolTipContentCreatorContext(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguage language, ICodeToolTipSettings codeToolTipSettings) {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
-			this.language = language;
+			this.Language = language;
 			this.codeToolTipSettings = codeToolTipSettings;
 		}
 
-		public ICodeToolTipCreator Create() {
-			return new CodeToolTipCreator(imageManager, dotNetImageManager, codeToolTipSettings.SyntaxHighlight);
-		}
+		public ICodeToolTipCreator Create() =>
+			new CodeToolTipCreator(imageManager, dotNetImageManager, codeToolTipSettings.SyntaxHighlight);
 	}
 }

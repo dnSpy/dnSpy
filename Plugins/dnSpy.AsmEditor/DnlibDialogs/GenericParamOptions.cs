@@ -53,8 +53,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return gp;
 		}
 
-		public GenericParam Create(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new GenericParamUser()));
-		}
+		public GenericParam Create(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new GenericParamUser()));
 	}
 }

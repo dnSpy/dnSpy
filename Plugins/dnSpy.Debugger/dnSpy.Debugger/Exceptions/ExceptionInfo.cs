@@ -21,66 +21,37 @@ using System;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionInfo : IEquatable<ExceptionInfo> {
-		public ExceptionType ExceptionType {
-			get { return exceptionInfoKey.ExceptionType; }
-		}
-
-		public string Name {
-			get { return exceptionInfoKey.Name; }
-		}
-
-		public ExceptionInfoKey Key {
-			get { return exceptionInfoKey; }
-		}
-
-		public bool BreakOnFirstChance {
-			get { return breakOnFirstChance; }
-			set { breakOnFirstChance = value; }
-		}
-		bool breakOnFirstChance;
-
-		public bool IsOtherExceptions {
-			get { return isOtherExceptions; }
-		}
-		readonly bool isOtherExceptions;
+		public ExceptionType ExceptionType => exceptionInfoKey.ExceptionType;
+		public string Name => exceptionInfoKey.Name;
+		public ExceptionInfoKey Key => exceptionInfoKey;
+		public bool BreakOnFirstChance { get; set; }
+		public bool IsOtherExceptions { get; }
 
 		readonly ExceptionInfoKey exceptionInfoKey;
 
 		public ExceptionInfo(ExceptionInfoKey key, bool breakOnFirstChance) {
 			this.exceptionInfoKey = key;
-			this.breakOnFirstChance = breakOnFirstChance;
-			this.isOtherExceptions = false;
+			this.BreakOnFirstChance = breakOnFirstChance;
+			this.IsOtherExceptions = false;
 		}
 
 		public ExceptionInfo(ExceptionType exceptionType, string name) {
 			this.exceptionInfoKey = new ExceptionInfoKey(exceptionType, name);
-			this.breakOnFirstChance = false;
-			this.isOtherExceptions = true;
+			this.BreakOnFirstChance = false;
+			this.IsOtherExceptions = true;
 		}
 
 		public ExceptionInfo(ExceptionType exceptionType, EXCEPTION_INFO info) {
 			this.exceptionInfoKey = new ExceptionInfoKey(exceptionType, info.Name);
-			this.breakOnFirstChance = (info.State & ExceptionState.EXCEPTION_STOP_FIRST_CHANCE) != 0;
-			this.isOtherExceptions = false;
+			this.BreakOnFirstChance = (info.State & ExceptionState.EXCEPTION_STOP_FIRST_CHANCE) != 0;
+			this.IsOtherExceptions = false;
 		}
 
-		public bool Equals(ExceptionInfo other) {
-			return other != null &&
-				IsOtherExceptions == other.IsOtherExceptions &&
-				BreakOnFirstChance == other.BreakOnFirstChance &&
-				exceptionInfoKey.Equals(other.exceptionInfoKey);
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as ExceptionInfo);
-		}
-
-		public override int GetHashCode() {
-			return (BreakOnFirstChance ? int.MinValue : 0) ^ (IsOtherExceptions ? 0x40000000 : 0) ^ exceptionInfoKey.GetHashCode();
-		}
-
-		public override string ToString() {
-			return Name;
-		}
+		public bool Equals(ExceptionInfo other) =>
+			other != null && IsOtherExceptions == other.IsOtherExceptions &&
+			BreakOnFirstChance == other.BreakOnFirstChance && exceptionInfoKey.Equals(other.exceptionInfoKey);
+		public override bool Equals(object obj) => Equals(obj as ExceptionInfo);
+		public override int GetHashCode() => (BreakOnFirstChance ? int.MinValue : 0) ^ (IsOtherExceptions ? 0x40000000 : 0) ^ exceptionInfoKey.GetHashCode();
+		public override string ToString() => Name;
 	}
 }

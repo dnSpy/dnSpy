@@ -35,31 +35,19 @@ namespace dnSpy.Debugger.Dialogs {
 			this.useHex = useHex;
 		}
 
-		void WriteFilename(ProcessVM vm, string filename) {
-			output.WriteFilename(filename);
-		}
-
-		public void WriteFilename(ProcessVM vm) {
-			WriteFilename(vm, DebugOutputUtils.GetFilename(vm.FullPath));
-		}
-
-		public void WriteFullPath(ProcessVM vm) {
-			WriteFilename(vm, vm.FullPath);
-		}
+		void WriteFilename(ProcessVM vm, string filename) => output.WriteFilename(filename);
+		public void WriteFilename(ProcessVM vm) => WriteFilename(vm, DebugOutputUtils.GetFilename(vm.FullPath));
+		public void WriteFullPath(ProcessVM vm) => WriteFilename(vm, vm.FullPath);
+		public void WriteCLRVersion(ProcessVM vm) => output.Write(vm.CLRVersion, BoxedTextTokenKind.Number);
+		public void WriteType(ProcessVM vm) => output.Write(TypeToString(vm.CLRTypeInfo.CLRType), BoxedTextTokenKind.EnumField);
+		public void WriteMachine(ProcessVM vm) => output.Write(ToString(vm.Machine), BoxedTextTokenKind.InstanceMethod);
+		public void WriteTitle(ProcessVM vm) => output.Write(vm.Title, BoxedTextTokenKind.String);
 
 		public void WritePID(ProcessVM vm) {
 			if (useHex)
 				output.Write(string.Format("0x{0:X8}", vm.PID), BoxedTextTokenKind.Number);
 			else
 				output.Write(string.Format("{0}", vm.PID), BoxedTextTokenKind.Number);
-		}
-
-		public void WriteCLRVersion(ProcessVM vm) {
-			output.Write(vm.CLRVersion, BoxedTextTokenKind.Number);
-		}
-
-		public void WriteType(ProcessVM vm) {
-			output.Write(TypeToString(vm.CLRTypeInfo.CLRType), BoxedTextTokenKind.EnumField);
 		}
 
 		static string TypeToString(CLRType type) {
@@ -72,20 +60,12 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 		}
 
-		public void WriteMachine(ProcessVM vm) {
-			output.Write(ToString(vm.Machine), BoxedTextTokenKind.InstanceMethod);
-		}
-
 		static string ToString(Machine machine) {
 			switch (machine) {
 			case Machine.I386:		return "x86";
 			case Machine.AMD64:		return "x64";
 			default:				return machine.ToString();
 			}
-		}
-
-		public void WriteTitle(ProcessVM vm) {
-			output.Write(vm.Title, BoxedTextTokenKind.String);
 		}
 	}
 }

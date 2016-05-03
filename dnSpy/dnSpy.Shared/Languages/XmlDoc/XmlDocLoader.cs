@@ -40,13 +40,11 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 				return null;
 		}
 
-		public static XmlDocumentationProvider MscorlibDocumentation {
-			get { return mscorlibDocumentation.Value; }
-		}
+		public static XmlDocumentationProvider MscorlibDocumentation => mscorlibDocumentation.Value;
 
 		public static XmlDocumentationProvider LoadDocumentation(ModuleDef module) {
 			if (module == null)
-				throw new ArgumentNullException("module");
+				throw new ArgumentNullException(nameof(module));
 			lock (cache) {
 				XmlDocumentationProvider xmlDoc;
 				if (!cache.TryGetValue(module, out xmlDoc)) {

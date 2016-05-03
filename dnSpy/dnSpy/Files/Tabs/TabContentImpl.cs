@@ -36,14 +36,10 @@ namespace dnSpy.Files.Tabs {
 	sealed class TabContentImpl : ViewModelBase, ITabContent, IFileTab, IFocusable {
 		readonly TabHistory tabHistory;
 
-		public IFileTabManager FileTabManager {
-			get { return fileTabManager; }
-		}
+		public IFileTabManager FileTabManager => fileTabManager;
 		readonly FileTabManager fileTabManager;
 
-		public bool IsActiveTab {
-			get { return FileTabManager.ActiveTab == this; }
-		}
+		public bool IsActiveTab => FileTabManager.ActiveTab == this;
 
 		public IFileTabContent Content {
 			get { return tabHistory.Current; }
@@ -106,20 +102,9 @@ namespace dnSpy.Files.Tabs {
 		}
 		object uiObject;
 
-		IInputElement ITabContent.FocusedElement {
-			get {
-				if (UIContext != null)
-					return UIContext.FocusedElement;
-				return null;
-			}
-		}
+		IInputElement ITabContent.FocusedElement => UIContext?.FocusedElement;
 
-		bool IFocusable.CanFocus {
-			get {
-				var focusable = UIContext as IFocusable;
-				return focusable != null && focusable.CanFocus;
-			}
-		}
+		bool IFocusable.CanFocus => (UIContext as IFocusable)?.CanFocus == true;
 
 		void IFocusable.Focus() {
 			var focusable = UIContext as IFocusable;
@@ -190,10 +175,8 @@ namespace dnSpy.Files.Tabs {
 					// Call the original caller (onShown()) first and result last since both could
 					// move the caret. The result should only move the caret if the original caller
 					// hasn't moved the caret.
-					if (onShown != null)
-						onShown(e);
-					if (result.OnShownHandler != null)
-						result.OnShownHandler(e);
+					onShown?.Invoke(e);
+					result.OnShownHandler?.Invoke(e);
 				});
 			}
 		}
@@ -231,13 +214,12 @@ namespace dnSpy.Files.Tabs {
 
 		void HideCurrentContent() {
 			CancelAsyncWorker();
-			if (Content != null)
-				Content.OnHide();
+			Content?.OnHide();
 		}
 
 		sealed class ShowContext : IShowContext {
-			public IFileTabUIContext UIContext { get; private set; }
-			public bool IsRefresh { get; private set; }
+			public IFileTabUIContext UIContext { get; }
+			public bool IsRefresh { get; }
 			public object UserData { get; set; }
 			public Action<ShowTabContentEventArgs> OnShown { get; set; }
 			public ShowContext(IFileTabUIContext uiCtx, bool isRefresh) {
@@ -302,9 +284,7 @@ namespace dnSpy.Files.Tabs {
 		}
 		AsyncWorkerContext asyncWorkerContext;
 
-		public bool IsAsyncExecInProgress {
-			get { return asyncWorkerContext != null; }
-		}
+		public bool IsAsyncExecInProgress => asyncWorkerContext != null;
 
 		public void AsyncExec(Action<CancellationTokenSource> preExec, Action asyncAction, Action<IAsyncShowResult> postExec) {
 			CancelAsyncWorker();
@@ -333,10 +313,8 @@ namespace dnSpy.Files.Tabs {
 				Deserialize(serializedUI);
 			if (onShownHandler != null || showCtx.OnShown != null) {
 				var e = new ShowTabContentEventArgs(success, this);
-				if (onShownHandler != null)
-					onShownHandler(e);
-				if (showCtx.OnShown != null)
-					showCtx.OnShown(e);
+				onShownHandler?.Invoke(e);
+				showCtx.OnShown?.Invoke(e);
 			}
 		}
 
@@ -375,13 +353,8 @@ namespace dnSpy.Files.Tabs {
 			ToolTip = Content.ToolTip;
 		}
 
-		public bool CanNavigateBackward {
-			get { return tabHistory.CanNavigateBackward; }
-		}
-
-		public bool CanNavigateForward {
-			get { return tabHistory.CanNavigateForward; }
-		}
+		public bool CanNavigateBackward => tabHistory.CanNavigateBackward;
+		public bool CanNavigateForward => tabHistory.CanNavigateForward;
 
 		public void NavigateBackward() {
 			if (!CanNavigateBackward)
@@ -410,17 +383,9 @@ namespace dnSpy.Files.Tabs {
 				FileTabManager.SetFocus(this);
 		}
 
-		public void Close() {
-			FileTabManager.Close(this);
-		}
-
-		public void OnSelected() {
-			Content.OnSelected();
-		}
-
-		public void OnUnselected() {
-			Content.OnUnselected();
-		}
+		public void Close() => FileTabManager.Close(this);
+		public void OnSelected() => Content.OnSelected();
+		public void OnUnselected() => Content.OnUnselected();
 
 		internal void OnTabsLoaded() {
 			// Make sure that the tab initializes eg. Language to the language it's using.
@@ -434,9 +399,8 @@ namespace dnSpy.Files.Tabs {
 			elementScaler.ScaleValue = scale ?? 1.0;
 		}
 
-		public void SerializeUI(ISettingsSection tabContentUI) {
+		public void SerializeUI(ISettingsSection tabContentUI) =>
 			tabContentUI.Attribute(SCALE_ATTR, elementScaler.ScaleValue);
-		}
 
 		public void OnNodesRemoved(HashSet<IDnSpyFileNode> removedFiles, Func<IFileTabContent> createEmptyContent) {
 			tabHistory.RemoveFromBackwardList(a => CheckRemove(a, removedFiles));
@@ -447,8 +411,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		bool CheckRemove(IFileTabContent content, HashSet<IDnSpyFileNode> removedFiles) {
-			return content.Nodes.Any(a => removedFiles.Contains(a.GetDnSpyFileNode()));
-		}
+		bool CheckRemove(IFileTabContent content, HashSet<IDnSpyFileNode> removedFiles) =>
+			content.Nodes.Any(a => removedFiles.Contains(a.GetDnSpyFileNode()));
 	}
 }

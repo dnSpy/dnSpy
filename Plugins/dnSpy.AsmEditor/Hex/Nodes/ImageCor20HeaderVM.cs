@@ -23,117 +23,65 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageCor20HeaderVM : HexVM {
-		public override string Name {
-			get { return "IMAGE_COR20_HEADER"; }
-		}
+		public override string Name => "IMAGE_COR20_HEADER";
+		public UInt32HexField CbVM { get; }
+		public UInt16HexField MajorRuntimeVersionVM { get; }
+		public UInt16HexField MinorRuntimeVersionVM { get; }
+		public DataDirVM MetaDataVM { get; }
+		public UInt32FlagsHexField FlagsVM { get; }
+		public UInt32HexField EntryPointTokenRVAVM { get; }
+		public DataDirVM ResourcesVM { get; }
+		public DataDirVM StrongNameSignatureVM { get; }
+		public DataDirVM CodeManagerTableVM { get; }
+		public DataDirVM VTableFixupsVM { get; }
+		public DataDirVM ExportAddressTableJumpsVM { get; }
+		public DataDirVM ManagedNativeHeaderVM { get; }
 
-		public UInt32HexField CbVM {
-			get { return cbVM; }
-		}
-		readonly UInt32HexField cbVM;
-
-		public UInt16HexField MajorRuntimeVersionVM {
-			get { return majorRuntimeVersionVM; }
-		}
-		readonly UInt16HexField majorRuntimeVersionVM;
-
-		public UInt16HexField MinorRuntimeVersionVM {
-			get { return minorRuntimeVersionVM; }
-		}
-		readonly UInt16HexField minorRuntimeVersionVM;
-
-		public DataDirVM MetaDataVM {
-			get { return metaDataVM; }
-		}
-		readonly DataDirVM metaDataVM;
-
-		public UInt32FlagsHexField FlagsVM {
-			get { return flagsVM; }
-		}
-		readonly UInt32FlagsHexField flagsVM;
-
-		public UInt32HexField EntryPointTokenRVAVM {
-			get { return entryPointTokenRVAVM; }
-		}
-		readonly UInt32HexField entryPointTokenRVAVM;
-
-		public DataDirVM ResourcesVM {
-			get { return resourcesVM; }
-		}
-		readonly DataDirVM resourcesVM;
-
-		public DataDirVM StrongNameSignatureVM {
-			get { return strongNameSignatureVM; }
-		}
-		readonly DataDirVM strongNameSignatureVM;
-
-		public DataDirVM CodeManagerTableVM {
-			get { return codeManagerTableVM; }
-		}
-		readonly DataDirVM codeManagerTableVM;
-
-		public DataDirVM VTableFixupsVM {
-			get { return vtableFixupsVM; }
-		}
-		readonly DataDirVM vtableFixupsVM;
-
-		public DataDirVM ExportAddressTableJumpsVM {
-			get { return exportAddressTableJumpsVM; }
-		}
-		readonly DataDirVM exportAddressTableJumpsVM;
-
-		public DataDirVM ManagedNativeHeaderVM {
-			get { return managedNativeHeaderVM; }
-		}
-		readonly DataDirVM managedNativeHeaderVM;
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
+		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
 		public ImageCor20HeaderVM(object owner, HexDocument doc, ulong startOffset)
 			: base(owner) {
-			this.cbVM = new UInt32HexField(doc, Name, "cb", startOffset + 0);
-			this.majorRuntimeVersionVM = new UInt16HexField(doc, Name, "MajorRuntimeVersion", startOffset + 4, true);
-			this.minorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6, true);
-			this.metaDataVM = new DataDirVM(doc, Name, "MetaData", startOffset + 8);
-			this.flagsVM = new UInt32FlagsHexField(doc, Name, "Flags", startOffset + 0x10);
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_IL_Only, 0));
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitReqd, 1));
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_ILLibrary, 2));
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_StrongNameSigned, 3));
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_NativeEntryPoint, 4));
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_TrackDebugData, 16));
-			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitPref, 17));
-			this.entryPointTokenRVAVM = new UInt32HexField(doc, Name, "EntryPoint Token/RVA", startOffset + 0x14);
-			this.resourcesVM = new DataDirVM(doc, Name, "Resources", startOffset + 0x18);
-			this.strongNameSignatureVM = new DataDirVM(doc, Name, "StrongNameSignature", startOffset + 0x20);
-			this.codeManagerTableVM = new DataDirVM(doc, Name, "CodeManagerTable", startOffset + 0x28);
-			this.vtableFixupsVM = new DataDirVM(doc, Name, "VTableFixups", startOffset + 0x30);
-			this.exportAddressTableJumpsVM = new DataDirVM(doc, Name, "ExportAddressTableJumps", startOffset + 0x38);
-			this.managedNativeHeaderVM = new DataDirVM(doc, Name, "ManagedNativeHeader", startOffset + 0x40);
+			this.CbVM = new UInt32HexField(doc, Name, "cb", startOffset + 0);
+			this.MajorRuntimeVersionVM = new UInt16HexField(doc, Name, "MajorRuntimeVersion", startOffset + 4, true);
+			this.MinorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6, true);
+			this.MetaDataVM = new DataDirVM(doc, Name, "MetaData", startOffset + 8);
+			this.FlagsVM = new UInt32FlagsHexField(doc, Name, "Flags", startOffset + 0x10);
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_IL_Only, 0));
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitReqd, 1));
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_ILLibrary, 2));
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_StrongNameSigned, 3));
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_NativeEntryPoint, 4));
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_TrackDebugData, 16));
+			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitPref, 17));
+			this.EntryPointTokenRVAVM = new UInt32HexField(doc, Name, "EntryPoint Token/RVA", startOffset + 0x14);
+			this.ResourcesVM = new DataDirVM(doc, Name, "Resources", startOffset + 0x18);
+			this.StrongNameSignatureVM = new DataDirVM(doc, Name, "StrongNameSignature", startOffset + 0x20);
+			this.CodeManagerTableVM = new DataDirVM(doc, Name, "CodeManagerTable", startOffset + 0x28);
+			this.VTableFixupsVM = new DataDirVM(doc, Name, "VTableFixups", startOffset + 0x30);
+			this.ExportAddressTableJumpsVM = new DataDirVM(doc, Name, "ExportAddressTableJumps", startOffset + 0x38);
+			this.ManagedNativeHeaderVM = new DataDirVM(doc, Name, "ManagedNativeHeader", startOffset + 0x40);
 
 			this.hexFields = new HexField[] {
-				cbVM,
-				majorRuntimeVersionVM,
-				minorRuntimeVersionVM,
-				metaDataVM.RVAVM,
-				metaDataVM.SizeVM,
-				flagsVM,
-				entryPointTokenRVAVM,
-				resourcesVM.RVAVM,
-				resourcesVM.SizeVM,
-				strongNameSignatureVM.RVAVM,
-				strongNameSignatureVM.SizeVM,
-				codeManagerTableVM.RVAVM,
-				codeManagerTableVM.SizeVM,
-				vtableFixupsVM.RVAVM,
-				vtableFixupsVM.SizeVM,
-				exportAddressTableJumpsVM.RVAVM,
-				exportAddressTableJumpsVM.SizeVM,
-				managedNativeHeaderVM.RVAVM,
-				managedNativeHeaderVM.SizeVM,
+				CbVM,
+				MajorRuntimeVersionVM,
+				MinorRuntimeVersionVM,
+				MetaDataVM.RVAVM,
+				MetaDataVM.SizeVM,
+				FlagsVM,
+				EntryPointTokenRVAVM,
+				ResourcesVM.RVAVM,
+				ResourcesVM.SizeVM,
+				StrongNameSignatureVM.RVAVM,
+				StrongNameSignatureVM.SizeVM,
+				CodeManagerTableVM.RVAVM,
+				CodeManagerTableVM.SizeVM,
+				VTableFixupsVM.RVAVM,
+				VTableFixupsVM.SizeVM,
+				ExportAddressTableJumpsVM.RVAVM,
+				ExportAddressTableJumpsVM.SizeVM,
+				ManagedNativeHeaderVM.RVAVM,
+				ManagedNativeHeaderVM.SizeVM,
 			};
 		}
 	}

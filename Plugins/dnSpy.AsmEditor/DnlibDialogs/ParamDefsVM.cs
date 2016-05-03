@@ -27,17 +27,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(dnSpy_AsmEditor_Resources.EditParameter, dnSpy_AsmEditor_Resources.CreateParameter, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override ParamDefVM Create(ParamDef model) {
-			return new ParamDefVM(new ParamDefOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override ParamDefVM Clone(ParamDefVM obj) {
-			return new ParamDefVM(obj.CreateParamDefOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override ParamDefVM Create() {
-			return new ParamDefVM(new ParamDefOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
+		protected override ParamDefVM Create(ParamDef model) => new ParamDefVM(new ParamDefOptions(model), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override ParamDefVM Clone(ParamDefVM obj) => new ParamDefVM(obj.CreateParamDefOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override ParamDefVM Create() => new ParamDefVM(new ParamDefOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
 
 		protected override int GetAddIndex(ParamDefVM obj) {
 			ushort sequence = obj.Sequence.Value;

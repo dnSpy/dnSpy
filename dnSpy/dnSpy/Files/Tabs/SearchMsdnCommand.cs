@@ -33,17 +33,9 @@ namespace dnSpy.Files.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetMemberRef(context) != null;
-			}
-
-			static IMemberRef GetMemberRef(IMenuItemContext context) {
-				return GetMemberRef(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				SearchMsdn(GetMemberRef(context));
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
+			static IMemberRef GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 
 			internal static IMemberRef GetMemberRef(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
@@ -55,32 +47,16 @@ namespace dnSpy.Files.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
 		sealed class SearchCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetMemberRef(context) != null;
-			}
-
-			static IMemberRef GetMemberRef(IMenuItemContext context) {
-				return CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				SearchMsdn(GetMemberRef(context));
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
+			static IMemberRef GetMemberRef(IMenuItemContext context) => CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
+			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 		}
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 10)]
 		sealed class FilesCommand : MenuItemBase {
-			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) {
-				return GetNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetNodes(context).Any();
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetNodes(context));
-			}
+			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) => GetNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
+			public override bool IsVisible(IMenuItemContext context) => GetNodes(context).Any();
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetNodes(context));
 
 			internal static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
@@ -108,17 +84,9 @@ namespace dnSpy.Files.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 		sealed class AnalyzerCommand : MenuItemBase {
-			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) {
-				return FilesCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetNodes(context).Any();
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetNodes(context));
-			}
+			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) => FilesCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+			public override bool IsVisible(IMenuItemContext context) => GetNodes(context).Any();
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetNodes(context));
 		}
 
 		static IMemberDef ResolveDef(IMemberRef mr) {
@@ -231,26 +199,20 @@ namespace dnSpy.Files.Tabs {
 			return type.IsPublic;
 		}
 
-		static bool IsAccessible(MethodDef method) {
-			return method != null && (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
-		}
+		static bool IsAccessible(MethodDef method) =>
+			method != null && (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
 
-		static bool IsAccessible(FieldDef field) {
-			return field != null && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
-		}
+		static bool IsAccessible(FieldDef field) =>
+			field != null && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
 
-		static bool IsAccessible(PropertyDef prop) {
-			return prop.GetMethods.Any(m => IsAccessible(m)) ||
-				prop.SetMethods.Any(m => IsAccessible(m)) ||
-				prop.OtherMethods.Any(m => IsAccessible(m));
-		}
+		static bool IsAccessible(PropertyDef prop) => prop.GetMethods.Any(m => IsAccessible(m)) ||
+	prop.SetMethods.Any(m => IsAccessible(m)) ||
+	prop.OtherMethods.Any(m => IsAccessible(m));
 
-		static bool IsAccessible(EventDef evt) {
-			return IsAccessible(evt.AddMethod) ||
-				IsAccessible(evt.InvokeMethod) ||
-				IsAccessible(evt.RemoveMethod) ||
-				evt.OtherMethods.Any(m => IsAccessible(m));
-		}
+		static bool IsAccessible(EventDef evt) => IsAccessible(evt.AddMethod) ||
+	IsAccessible(evt.InvokeMethod) ||
+	IsAccessible(evt.RemoveMethod) ||
+	evt.OtherMethods.Any(m => IsAccessible(m));
 
 		static string GetAddress(IMemberRef memberRef) {
 			var member = Resolve(memberRef);

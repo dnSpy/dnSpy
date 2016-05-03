@@ -57,9 +57,7 @@ namespace dnSpy.Files.Tabs {
 			appWindow.MainWindowClosed += AppWindow_MainWindowClosed;
 		}
 
-		void AppWindow_MainWindowClosed(object sender, EventArgs e) {
-			SaveCurrentFilesToList();
-		}
+		void AppWindow_MainWindowClosed(object sender, EventArgs e) => SaveCurrentFilesToList();
 
 		struct Disable_SaveCurrentFilesToList : IDisposable {
 			readonly FileListLoader fileListLoader;
@@ -77,9 +75,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		Disable_SaveCurrentFilesToList DisableSaveToList() {
-			return new Disable_SaveCurrentFilesToList(this);
-		}
+		Disable_SaveCurrentFilesToList DisableSaveToList() => new Disable_SaveCurrentFilesToList(this);
 
 		public void SaveCurrentFilesToList() {
 			if (disable_SaveCurrentFilesToList)
@@ -126,9 +122,7 @@ namespace dnSpy.Files.Tabs {
 				listener.Value.AfterLoad(isReload);
 		}
 
-		public bool CanLoad {
-			get { return !disableLoadAndReload && listeners.All(a => a.Value.CanLoad); }
-		}
+		public bool CanLoad => !disableLoadAndReload && listeners.All(a => a.Value.CanLoad);
 
 		public bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader) {
 			const bool isReload = false;
@@ -156,9 +150,7 @@ namespace dnSpy.Files.Tabs {
 			return true;
 		}
 
-		public bool CanReload {
-			get { return !disableLoadAndReload && listeners.All(a => a.Value.CanReload); }
-		}
+		public bool CanReload => !disableLoadAndReload && listeners.All(a => a.Value.CanReload);
 
 		public bool Reload(IDnSpyFileLoader dnSpyFileLoader) {
 			const bool isReload = true;
@@ -203,9 +195,7 @@ namespace dnSpy.Files.Tabs {
 		}
 		bool disableLoadAndReload;
 
-		public bool CanCloseAll {
-			get { return fileTabManager.FileTreeView.TreeView.Root.Children.Count > 0; }
-		}
+		public bool CanCloseAll => fileTabManager.FileTreeView.TreeView.Root.Children.Count > 0;
 
 		public void CloseAll() {
 			const bool isReload = false;

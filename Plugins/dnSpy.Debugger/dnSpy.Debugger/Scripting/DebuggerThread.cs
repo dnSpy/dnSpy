@@ -27,18 +27,12 @@ using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerThread : IDebuggerThread {
-		public IAppDomain AppDomain {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var ad = thread.AppDomainOrNull;
-					return ad == null ? null : new DebuggerAppDomain(debugger, ad);
-				});
-			}
-		}
+		public IAppDomain AppDomain => debugger.Dispatcher.UI(() => {
+			var ad = thread.AppDomainOrNull;
+			return ad == null ? null : new DebuggerAppDomain(debugger, ad);
+		});
 
-		public IEnumerable<IStackFrame> Frames {
-			get { return debugger.Dispatcher.UIIter(GetFramesUI); }
-		}
+		public IEnumerable<IStackFrame> Frames => debugger.Dispatcher.UIIter(GetFramesUI);
 
 		IEnumerable<IStackFrame> GetFramesUI() {
 			int frameNo = 0;
@@ -46,48 +40,26 @@ namespace dnSpy.Debugger.Scripting {
 				yield return new StackFrame(debugger, f, frameNo++);
 		}
 
-		public IStackFrame ActiveFrame {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var frame = thread.AllFrames.FirstOrDefault();
-					return frame == null ? null : new StackFrame(debugger, frame, 0);
-				});
+		public IStackFrame ActiveFrame => debugger.Dispatcher.UI(() => {
+			var frame = thread.AllFrames.FirstOrDefault();
+			return frame == null ? null : new StackFrame(debugger, frame, 0);
+		});
+
+		public IStackFrame ActiveILFrame => debugger.Dispatcher.UI(() => {
+			int frameNo = 0;
+			foreach (var f in thread.AllFrames) {
+				if (f.IsILFrame)
+					return new StackFrame(debugger, f, frameNo);
+				frameNo++;
 			}
-		}
+			return null;
+		});
 
-		public IStackFrame ActiveILFrame {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					int frameNo = 0;
-					foreach (var f in thread.AllFrames) {
-						if (f.IsILFrame)
-							return new StackFrame(debugger, f, frameNo);
-						frameNo++;
-					}
-					return null;
-				});
-			}
-		}
-
-		public bool HasExited {
-			get { return debugger.Dispatcher.UI(() => thread.HasExited); }
-		}
-
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-
-		public int ThreadId {
-			get { return debugger.Dispatcher.UI(() => thread.ThreadId); }
-		}
-
-		public int VolatileThreadId {
-			get { return debugger.Dispatcher.UI(() => thread.VolatileThreadId); }
-		}
-
-		public IntPtr Handle {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.Handle); }
-		}
+		public bool HasExited => debugger.Dispatcher.UI(() => thread.HasExited);
+		public int UniqueId => uniqueId;
+		public int ThreadId => debugger.Dispatcher.UI(() => thread.ThreadId);
+		public int VolatileThreadId => debugger.Dispatcher.UI(() => thread.VolatileThreadId);
+		public IntPtr Handle => debugger.Dispatcher.UI(() => thread.CorThread.Handle);
 
 		public bool IsRunning {
 			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsRunning); }
@@ -99,80 +71,34 @@ namespace dnSpy.Debugger.Scripting {
 			set { debugger.Dispatcher.UI(() => thread.CorThread.State = !value ? CorDebugThreadState.THREAD_RUN : CorDebugThreadState.THREAD_SUSPEND); }
 		}
 
-		public ThreadState State {
-			get { return debugger.Dispatcher.UI(() => (ThreadState)thread.CorThread.State); }
-		}
+		public ThreadState State => debugger.Dispatcher.UI(() => (ThreadState)thread.CorThread.State);
+		public bool StopRequested => debugger.Dispatcher.UI(() => thread.CorThread.StopRequested);
+		public bool SuspendRequested => debugger.Dispatcher.UI(() => thread.CorThread.SuspendRequested);
+		public bool IsBackground => debugger.Dispatcher.UI(() => thread.CorThread.IsBackground);
+		public bool IsUnstarted => debugger.Dispatcher.UI(() => thread.CorThread.IsUnstarted);
+		public bool IsStopped => debugger.Dispatcher.UI(() => thread.CorThread.IsStopped);
+		public bool IsWaitSleepJoin => debugger.Dispatcher.UI(() => thread.CorThread.IsWaitSleepJoin);
+		public bool IsUserStateSuspended => debugger.Dispatcher.UI(() => thread.CorThread.IsUserStateSuspended);
+		public bool IsUnsafePoint => debugger.Dispatcher.UI(() => thread.CorThread.IsUnsafePoint);
+		public bool IsThreadPool => debugger.Dispatcher.UI(() => thread.CorThread.IsThreadPool);
+		public ThreadUserState UserState => debugger.Dispatcher.UI(() => (ThreadUserState)thread.CorThread.UserState);
 
-		public bool StopRequested {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.StopRequested); }
-		}
+		public IDebuggerValue Object => debugger.Dispatcher.UI(() => {
+			var value = thread.CorThread.Object;
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public bool SuspendRequested {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.SuspendRequested); }
-		}
+		public IDebuggerValue CurrentException => debugger.Dispatcher.UI(() => {
+			var value = thread.CorThread.CurrentException;
+			return value == null ? null : new DebuggerValue(debugger, value);
+		});
 
-		public bool IsBackground {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsBackground); }
-		}
+		public IStackChain ActiveChain => debugger.Dispatcher.UI(() => {
+			var chain = thread.CorThread.ActiveChain;
+			return chain == null ? null : new StackChain(debugger, chain);
+		});
 
-		public bool IsUnstarted {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsUnstarted); }
-		}
-
-		public bool IsStopped {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsStopped); }
-		}
-
-		public bool IsWaitSleepJoin {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsWaitSleepJoin); }
-		}
-
-		public bool IsUserStateSuspended {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsUserStateSuspended); }
-		}
-
-		public bool IsUnsafePoint {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsUnsafePoint); }
-		}
-
-		public bool IsThreadPool {
-			get { return debugger.Dispatcher.UI(() => thread.CorThread.IsThreadPool); }
-		}
-
-		public ThreadUserState UserState {
-			get { return debugger.Dispatcher.UI(() => (ThreadUserState)thread.CorThread.UserState); }
-		}
-
-		public IDebuggerValue Object {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var value = thread.CorThread.Object;
-					return value == null ? null : new DebuggerValue(debugger, value);
-				});
-			}
-		}
-
-		public IDebuggerValue CurrentException {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var value = thread.CorThread.CurrentException;
-					return value == null ? null : new DebuggerValue(debugger, value);
-				});
-			}
-		}
-
-		public IStackChain ActiveChain {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var chain = thread.CorThread.ActiveChain;
-					return chain == null ? null : new StackChain(debugger, chain);
-				});
-			}
-		}
-
-		public IEnumerable<IStackChain> Chains {
-			get { return debugger.Dispatcher.UIIter(GetChainsUI); }
-		}
+		public IEnumerable<IStackChain> Chains => debugger.Dispatcher.UIIter(GetChainsUI);
 
 		IEnumerable<IStackChain> GetChainsUI() {
 			foreach (var c in thread.CorThread.Chains)
@@ -183,9 +109,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly int hashCode;
 		readonly int uniqueId;
 
-		public DBG.DnThread DnThread {
-			get { return thread; }
-		}
+		public DBG.DnThread DnThread => thread;
 		readonly DBG.DnThread thread;
 
 		public DebuggerThread(Debugger debugger, DBG.DnThread thread) {
@@ -196,9 +120,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.hashCode = thread.GetHashCode();
 		}
 
-		public bool InterceptCurrentException(IStackFrame frame) {
-			return debugger.Dispatcher.UI(() => thread.CorThread.InterceptCurrentException(((StackFrame)frame).CorFrame));
-		}
+		public bool InterceptCurrentException(IStackFrame frame) => debugger.Dispatcher.UI(() => thread.CorThread.InterceptCurrentException(((StackFrame)frame).CorFrame));
 
 		IAppDomain GetAppDomainUIThrow() {
 			debugger.Dispatcher.VerifyAccess();
@@ -222,168 +144,114 @@ namespace dnSpy.Debugger.Scripting {
 			return method;
 		}
 
-		public IDebuggerValue CreateBox(object value) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.CreateBox(value);
-			});
-		}
+		public IDebuggerValue CreateBox(object value) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.CreateBox(value);
+		});
 
-		public IDebuggerValue CreateBox(IDebuggerType type) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.CreateBox(type);
-			});
-		}
+		public IDebuggerValue CreateBox(IDebuggerType type) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.CreateBox(type);
+		});
 
-		public IDebuggerValue CreateBox(Type type) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.CreateBox(type);
-			});
-		}
+		public IDebuggerValue CreateBox(Type type) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.CreateBox(type);
+		});
 
-		public IDebuggerValue Create(object value) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Create(value);
-			});
-		}
+		public IDebuggerValue Create(object value) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Create(value);
+		});
 
-		public IDebuggerValue Create(IDebuggerType type) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Create(type);
-			});
-		}
+		public IDebuggerValue Create(IDebuggerType type) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Create(type);
+		});
 
-		public IDebuggerValue Create(Type type) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Create(type);
-			});
-		}
+		public IDebuggerValue Create(Type type) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Create(type);
+		});
 
-		public IDebuggerValue CreateArray(IDebuggerType elementType, int length) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.CreateArray(elementType, length);
-			});
-		}
+		public IDebuggerValue CreateArray(IDebuggerType elementType, int length) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.CreateArray(elementType, length);
+		});
 
-		public IDebuggerValue CreateArray(Type elementType, int length) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.CreateArray(elementType, length);
-			});
-		}
+		public IDebuggerValue CreateArray(Type elementType, int length) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.CreateArray(elementType, length);
+		});
 
-		public IDebuggerValue Create(IDebuggerMethod ctor, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Create(ctor, args);
-			});
-		}
+		public IDebuggerValue Create(IDebuggerMethod ctor, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Create(ctor, args);
+		});
 
-		public IDebuggerValue Create(object[] genericArgs, IDebuggerMethod ctor, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Create(genericArgs, ctor, args);
-			});
-		}
+		public IDebuggerValue Create(object[] genericArgs, IDebuggerMethod ctor, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Create(genericArgs, ctor, args);
+		});
 
-		public IDebuggerValue Call(IDebuggerMethod method, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(method, args);
-			});
-		}
+		public IDebuggerValue Call(IDebuggerMethod method, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Call(method, args);
+		});
 
-		public IDebuggerValue Call(string modName, string className, string methodName, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(FindMethodUIThrow(modName, className, methodName), args);
-			});
-		}
+		public IDebuggerValue Call(string modName, string className, string methodName, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Call(FindMethodUIThrow(modName, className, methodName), args);
+		});
 
-		public IDebuggerValue Call(string modName, uint token, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(FindMethodUIThrow(modName, token), args);
-			});
-		}
+		public IDebuggerValue Call(string modName, uint token, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Call(FindMethodUIThrow(modName, token), args);
+		});
 
-		public IDebuggerValue Call(object[] genericArgs, IDebuggerMethod method, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, method, args);
-			});
-		}
+		public IDebuggerValue Call(object[] genericArgs, IDebuggerMethod method, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Call(genericArgs, method, args);
+		});
 
-		public IDebuggerValue Call(object[] genericArgs, string modName, string className, string methodName, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, FindMethodUIThrow(modName, className, methodName), args);
-			});
-		}
+		public IDebuggerValue Call(object[] genericArgs, string modName, string className, string methodName, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Call(genericArgs, FindMethodUIThrow(modName, className, methodName), args);
+		});
 
-		public IDebuggerValue Call(object[] genericArgs, string modName, uint token, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, FindMethodUIThrow(modName, token), args);
-			});
-		}
+		public IDebuggerValue Call(object[] genericArgs, string modName, uint token, params object[] args) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.Call(genericArgs, FindMethodUIThrow(modName, token), args);
+		});
 
-		public IDebuggerValue AssemblyLoad(byte[] rawAssembly) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.AssemblyLoad(rawAssembly);
-			});
-		}
+		public IDebuggerValue AssemblyLoad(byte[] rawAssembly) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.AssemblyLoad(rawAssembly);
+		});
 
-		public IDebuggerValue AssemblyLoad(string assemblyString) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.AssemblyLoad(assemblyString);
-			});
-		}
+		public IDebuggerValue AssemblyLoad(string assemblyString) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.AssemblyLoad(assemblyString);
+		});
 
-		public IDebuggerValue AssemblyLoadFrom(string assemblyFile) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.AssemblyLoadFrom(assemblyFile);
-			});
-		}
+		public IDebuggerValue AssemblyLoadFrom(string assemblyFile) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.AssemblyLoadFrom(assemblyFile);
+		});
 
-		public IDebuggerValue AssemblyLoadFile(string filename) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.AssemblyLoadFile(filename);
-			});
-		}
+		public IDebuggerValue AssemblyLoadFile(string filename) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.AssemblyLoadFile(filename);
+		});
 
-		public string ToString(IDebuggerValue value) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.ToString(value);
-			});
-		}
+		public string ToString(IDebuggerValue value) => debugger.Dispatcher.UI(() => {
+			using (var eval = debugger.CreateEvalUI(this))
+				return eval.ToString(value);
+		});
 
-		public IEval CreateEval() {
-			return debugger.Dispatcher.UI(() => debugger.CreateEvalUI(this));
-		}
-
-		public override bool Equals(object obj) {
-			var other = obj as DebuggerThread;
-			return other != null && other.thread == thread;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => thread.ToString());
-		}
+		public IEval CreateEval() => debugger.Dispatcher.UI(() => debugger.CreateEvalUI(this));
+		public override bool Equals(object obj) => (obj as DebuggerThread)?.thread == thread;
+		public override int GetHashCode() => hashCode;
+		public override string ToString() => debugger.Dispatcher.UI(() => thread.ToString());
 	}
 }

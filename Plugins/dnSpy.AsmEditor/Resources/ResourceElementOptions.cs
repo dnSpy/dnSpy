@@ -38,8 +38,6 @@ namespace dnSpy.AsmEditor.Resources {
 			return other;
 		}
 
-		public ResourceElement Create() {
-			return CopyTo(new ResourceElement());
-		}
+		public ResourceElement Create() => CopyTo(new ResourceElement());
 	}
 }

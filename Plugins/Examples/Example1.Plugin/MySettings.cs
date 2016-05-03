@@ -47,9 +47,7 @@ namespace Example1.Plugin {
 		}
 		string stringOption3 = string.Empty;
 
-		public MySettings Clone() {
-			return CopyTo(new MySettings());
-		}
+		public MySettings Clone() => CopyTo(new MySettings());
 
 		public MySettings CopyTo(MySettings other) {
 			other.BoolOption1 = this.BoolOption1;

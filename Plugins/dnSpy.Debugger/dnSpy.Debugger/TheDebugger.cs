@@ -70,9 +70,7 @@ namespace dnSpy.Debugger {
 		readonly DebuggedProcessRunningNotifier debuggedProcessRunningNotifier;
 		readonly Lazy<ILoadBeforeDebug>[] loadBeforeDebugInsts;
 
-		public DnDebugger Debugger {
-			get { return debugger; }
-		}
+		public DnDebugger Debugger => debugger;
 		DnDebugger debugger;
 
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged_First;
@@ -80,13 +78,8 @@ namespace dnSpy.Debugger {
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged_Last;
 		public event EventHandler ProcessRunning;
 
-		public DebuggerProcessState ProcessState {
-			get { return Debugger == null ? DebuggerProcessState.Terminated : Debugger.ProcessState; }
-		}
-
-		public bool IsDebugging {
-			get { return ProcessState != DebuggerProcessState.Terminated; }
-		}
+		public DebuggerProcessState ProcessState => Debugger == null ? DebuggerProcessState.Terminated : Debugger.ProcessState;
+		public bool IsDebugging => ProcessState != DebuggerProcessState.Terminated;
 
 		[ImportingConstructor]
 		TheDebugger(IDebuggerSettings debuggerSettings, [ImportMany] IEnumerable<Lazy<ILoadBeforeDebug>> loadBeforeDebugInsts) {
@@ -97,10 +90,8 @@ namespace dnSpy.Debugger {
 			debuggedProcessRunningNotifier.ProcessRunning += DebuggedProcessRunningNotifier_ProcessRunning;
 		}
 
-		void DebuggedProcessRunningNotifier_ProcessRunning(object sender, DebuggedProcessRunningEventArgs e) {
-			if (ProcessRunning != null)
-				ProcessRunning(this, e);
-		}
+		void DebuggedProcessRunningNotifier_ProcessRunning(object sender, DebuggedProcessRunningEventArgs e) =>
+			ProcessRunning?.Invoke(this, e);
 
 		public void Initialize(DnDebugger newDebugger) {
 			foreach (var l in loadBeforeDebugInsts) {
@@ -113,27 +104,19 @@ namespace dnSpy.Debugger {
 			CallOnProcessStateChanged();
 		}
 
-		public void CallOnProcessStateChanged() {
-			CallOnProcessStateChanged(null);
-		}
-
-		void CallOnProcessStateChanged(DnDebugger dbg) {
-			CallOnProcessStateChanged(dbg ?? debugger, DebuggerEventArgs.Empty);
-		}
+		public void CallOnProcessStateChanged() => CallOnProcessStateChanged(null);
+		void CallOnProcessStateChanged(DnDebugger dbg) => CallOnProcessStateChanged(dbg ?? debugger, DebuggerEventArgs.Empty);
 
 		void CallOnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			// InMemoryModuleManager should be notified here. It needs to execute first so it can
 			// call LoadEverything() and load all dynamic modules so ResolveToken() of new methods
 			// and types work.
-			if (OnProcessStateChanged_First != null)
-				OnProcessStateChanged_First(sender, e);
+			OnProcessStateChanged_First?.Invoke(sender, e);
 
-			if (OnProcessStateChanged != null)
-				OnProcessStateChanged(sender, e ?? DebuggerEventArgs.Empty);
+			OnProcessStateChanged?.Invoke(sender, e ?? DebuggerEventArgs.Empty);
 
 			// The script code uses this event to make sure it always executes last
-			if (OnProcessStateChanged_Last != null)
-				OnProcessStateChanged_Last(sender, e);
+			OnProcessStateChanged_Last?.Invoke(sender, e);
 		}
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -143,13 +126,13 @@ namespace dnSpy.Debugger {
 			switch (debugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				unhandledException = false;
-				evalDisabled = false;
+				EvalDisabled = false;
 				break;
 
 			case DebuggerProcessState.Paused:
 				if (debugger.IsEvaluating || debugger.EvalCompleted)
 					break;
-				evalDisabled = false;
+				EvalDisabled = false;
 				break;
 			}
 
@@ -157,7 +140,7 @@ namespace dnSpy.Debugger {
 
 			if (debugger.ProcessState == DebuggerProcessState.Terminated) {
 				RemoveDebugger();
-				evalDisabled = false;
+				EvalDisabled = false;
 				unhandledException = false;
 			}
 		}
@@ -205,16 +188,14 @@ namespace dnSpy.Debugger {
 			return eval;
 		}
 
-		public void SetUnhandledException(bool value) {
-			unhandledException = value;
-		}
+		public void SetUnhandledException(bool value) => unhandledException = value;
 		bool unhandledException;
 
 		void DnEval_EvalEvent(object sender, EvalEventArgs e, DnEval eval) {
 			if (eval == null || sender != eval)
 				return;
 			if (eval.EvalTimedOut)
-				evalDisabled = true;
+				EvalDisabled = true;
 			if (callingEvalComplete)
 				return;
 			callingEvalComplete = true;
@@ -228,17 +209,8 @@ namespace dnSpy.Debugger {
 		}
 		volatile bool callingEvalComplete;
 
-		public bool CanEvaluate {
-			get { return Debugger != null && !Debugger.IsEvaluating && !unhandledException; }
-		}
-
-		public bool EvalCompleted {
-			get { return Debugger != null && Debugger.EvalCompleted; }
-		}
-
-		public bool EvalDisabled {
-			get { return evalDisabled; }
-		}
-		bool evalDisabled;
+		public bool CanEvaluate => Debugger != null && !Debugger.IsEvaluating && !unhandledException;
+		public bool EvalCompleted => Debugger != null && Debugger.EvalCompleted;
+		public bool EvalDisabled { get; private set; }
 	}
 }

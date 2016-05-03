@@ -24,12 +24,8 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class AttributeInfoHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.AttributeInfo; }
-		}
+		public BamlRecordType Type => BamlRecordType.AttributeInfo;
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
-		}
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) => null;
 	}
 }

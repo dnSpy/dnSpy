@@ -53,13 +53,8 @@ namespace Example2.Plugin {
 			get { yield return node; }
 		}
 
-		public string Title {
-			get { return node.ToString(); }
-		}
-
-		public object ToolTip {
-			get { return node.ToString(); }
-		}
+		public string Title => node.ToString();
+		public object ToolTip => node.ToString();
 
 		readonly AssemblyChildNode node;
 
@@ -68,9 +63,7 @@ namespace Example2.Plugin {
 		}
 
 		// Called when the user opens a new tab
-		public IFileTabContent Clone() {
-			return new AssemblyChildNodeTabContent(node);
-		}
+		public IFileTabContent Clone() => new AssemblyChildNodeTabContent(node);
 
 		// Gets called to create the UI context. It can be shared by any IFileTabContent in this tab.
 		// Eg. there's only one text editor per tab, shared by all IFileTabContents that need a text
@@ -94,14 +87,9 @@ namespace Example2.Plugin {
 			uiCtx.Initialize("some input"); // pretend we need to initialize something
 		}
 
-		public void OnHide() {
-		}
-
-		public void OnSelected() {
-		}
-
-		public void OnUnselected() {
-		}
+		public void OnHide() { }
+		public void OnSelected() { }
+		public void OnUnselected() { }
 	}
 
 	sealed class AssemblyChildNodeUIContext : IFileTabUIContext {
@@ -111,26 +99,17 @@ namespace Example2.Plugin {
 		// The element inside UIObject that gets the focus when the tool window should be focused.
 		// If it's not as easy as calling FocusedElement.Focus() to focus it, you must implement
 		// dnSpy.Contracts.Controls.IFocusable.
-		public IInputElement FocusedElement {
-			get { return content; }
-		}
+		public IInputElement FocusedElement => content;
 
 		// The element in UIObject that gets the scale transform. null can be returned to disable scaling.
-		public FrameworkElement ScaleElement {
-			get { return content; }
-		}
+		public FrameworkElement ScaleElement => content;
 
 		// The UI object shown in the tab. Should be a WPF control (eg. UserControl) or a .NET object
 		// with a DataTemplate.
-		public object UIObject {
-			get { return content; }
-		}
+		public object UIObject => content;
 
-		public void OnHide() {
-		}
-
-		public void OnShow() {
-		}
+		public void OnHide() { }
+		public void OnShow() { }
 
 		readonly ContentPresenter content;
 		readonly AssemblyChildNodeVM vm;
@@ -176,10 +155,8 @@ namespace Example2.Plugin {
 		}
 
 		// Serializes the UI state
-		public object Serialize() {
-			// This is where you'd normally serialize the UI state, eg. position etc, but we'll just save random data
-			return new MySerializedData("Some string", true);
-		}
+		// This is where you'd normally serialize the UI state, eg. position etc, but we'll just save random data
+		public object Serialize() => new MySerializedData("Some string", true);
 
 		// Deserializes the UI state created by Serialize()
 		public void Deserialize(object obj) {

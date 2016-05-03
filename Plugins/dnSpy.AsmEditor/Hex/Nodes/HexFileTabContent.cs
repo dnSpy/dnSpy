@@ -66,13 +66,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return hexNode; }
 		}
 
-		public string Title {
-			get { return hexNode.ToString(); }
-		}
-
-		public object ToolTip {
-			get { return hexNode.ToString(); }
-		}
+		public string Title => hexNode.ToString();
+		public object ToolTip => hexNode.ToString();
 
 		readonly HexNode hexNode;
 
@@ -80,49 +75,20 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.hexNode = hexNode;
 		}
 
-		public IFileTabContent Clone() {
-			return new HexFileTabContent(hexNode);
-		}
-
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
-			return locator.Get(hexNode, () => new HexFileTabUIContext(hexNode.VMObject, hexNode.IsVirtualizingCollectionVM));
-		}
-
-		public void OnHide() {
-		}
-
-		public void OnSelected() {
-		}
-
-		public void OnShow(IShowContext ctx) {
-		}
-
-		public void OnUnselected() {
-		}
+		public IFileTabContent Clone() => new HexFileTabContent(hexNode);
+		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) =>
+			locator.Get(hexNode, () => new HexFileTabUIContext(hexNode.VMObject, hexNode.IsVirtualizingCollectionVM));
+		public void OnHide() { }
+		public void OnSelected() { }
+		public void OnShow(IShowContext ctx) { }
+		public void OnUnselected() { }
 	}
 
 	sealed class HexFileTabUIContext : IFileTabUIContext {
 		public IFileTab FileTab { get; set; }
-
-		public IInputElement FocusedElement {
-			get {
-				if (uiObj is ScrollViewer)
-					return (IInputElement)((ScrollViewer)uiObj).Content;
-				return uiObj;
-			}
-		}
-
-		public FrameworkElement ScaleElement {
-			get {
-				if (uiObj is ScrollViewer)
-					return (FrameworkElement)((ScrollViewer)uiObj).Content;
-				return uiObj;
-			}
-		}
-
-		public object UIObject {
-			get { return uiObj; }
-		}
+		public IInputElement FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
+		public FrameworkElement ScaleElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
+		public object UIObject => uiObj;
 
 		readonly FrameworkElement uiObj;
 
@@ -147,24 +113,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		public object CreateSerialized(ISettingsSection section) {
-			return null;
-		}
-
-		public void Deserialize(object obj) {
-		}
-
-		public void OnHide() {
-		}
-
-		public void OnShow() {
-		}
-
-		public void SaveSerialized(ISettingsSection section, object obj) {
-		}
-
-		public object Serialize() {
-			return null;
-		}
+		public object CreateSerialized(ISettingsSection section) => null;
+		public void Deserialize(object obj) { }
+		public void OnHide() { }
+		public void OnShow() { }
+		public void SaveSerialized(ISettingsSection section, object obj) { }
+		public object Serialize() => null;
 	}
 }

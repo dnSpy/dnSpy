@@ -26,9 +26,9 @@ using System.Xml.Linq;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlExtension {
-		public XamlType ExtensionType { get; private set; }
+		public XamlType ExtensionType { get; }
 		public object[] Initializer { get; set; }
-		public IDictionary<string, object> NamedArguments { get; private set; }
+		public IDictionary<string, object> NamedArguments { get; }
 
 		public XamlExtension(XamlType type) {
 			ExtensionType = type;

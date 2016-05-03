@@ -70,8 +70,7 @@ namespace dnSpy.MainApp {
 		internal void LoadAllCodeFinished() {
 			Debug.Assert(windowLoader != null);
 			windowLoader = null;
-			if (OnAppLoaded != null)
-				OnAppLoaded(this, EventArgs.Empty);
+			OnAppLoaded?.Invoke(this, EventArgs.Empty);
 		}
 
 		public void Save() {
@@ -130,9 +129,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		void StartLoadAllCodeDelay() {
-			window.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(LoadAllCode));
-		}
+		void StartLoadAllCodeDelay() => window.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(LoadAllCode));
 
 		void LoadAllCode() {
 			var sw = Stopwatch.StartNew();

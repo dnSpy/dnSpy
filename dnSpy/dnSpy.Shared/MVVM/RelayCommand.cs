@@ -30,17 +30,13 @@ namespace dnSpy.Shared.MVVM {
 			this.canExec = canExec;
 		}
 
-		public bool CanExecute(object parameter) {
-			return canExec == null ? true : canExec(parameter);
-		}
+		public bool CanExecute(object parameter) => canExec == null ? true : canExec(parameter);
 
 		public event EventHandler CanExecuteChanged {
 			add { CommandManager.RequerySuggested += value; }
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		public void Execute(object parameter) {
-			exec(parameter);
-		}
+		public void Execute(object parameter) => exec(parameter);
 	}
 }

@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointsToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IBreakpointsContent> breakpointsContent;
 
-		public BreakpointsToolWindowContent BreakpointsToolWindowContent {
-			get { return breakpointsToolWindowContent ?? (breakpointsToolWindowContent = new BreakpointsToolWindowContent(breakpointsContent)); }
-		}
+		public BreakpointsToolWindowContent BreakpointsToolWindowContent => breakpointsToolWindowContent ?? (breakpointsToolWindowContent = new BreakpointsToolWindowContent(breakpointsContent));
 		BreakpointsToolWindowContent breakpointsToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { yield return new ToolWindowContentInfo(BreakpointsToolWindowContent.THE_GUID, BreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == BreakpointsToolWindowContent.THE_GUID)
-				return BreakpointsToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == BreakpointsToolWindowContent.THE_GUID ? BreakpointsToolWindowContent : null;
 	}
 
 	sealed class BreakpointsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("E5745D58-4DCB-4D92-B786-4E1635C86EED");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return breakpointsContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return breakpointsContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.Window_Breakpoints; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return breakpointsContent.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => breakpointsContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => breakpointsContent.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Debugger_Resources.Window_Breakpoints;
+		public object ToolTip => null;
+		public object UIObject => breakpointsContent.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<IBreakpointsContent> breakpointsContent;
 
@@ -104,8 +78,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		public void Focus() {
-			breakpointsContent.Value.Focus();
-		}
+		public void Focus() => breakpointsContent.Value.Focus();
 	}
 }

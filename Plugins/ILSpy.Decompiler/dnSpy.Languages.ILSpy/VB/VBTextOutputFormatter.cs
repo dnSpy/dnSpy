@@ -32,7 +32,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		public VBTextOutputFormatter(ITextOutput output) {
 			if (output == null)
-				throw new ArgumentNullException("output");
+				throw new ArgumentNullException(nameof(output));
 			this.output = output;
 		}
 
@@ -203,21 +203,10 @@ namespace dnSpy.Languages.ILSpy.VB {
 				output.Write(token, data);
 		}
 
-		public void Space() {
-			output.WriteSpace();
-		}
-
-		public void Indent() {
-			output.Indent();
-		}
-
-		public void Unindent() {
-			output.Unindent();
-		}
-
-		public void NewLine() {
-			output.WriteLine();
-		}
+		public void Space() => output.WriteSpace();
+		public void Indent() => output.Indent();
+		public void Unindent() => output.Unindent();
+		public void NewLine() => output.WriteLine();
 
 		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
@@ -229,16 +218,14 @@ namespace dnSpy.Languages.ILSpy.VB {
 				output.WriteLine("'" + content, BoxedTextTokenKind.Comment);
 		}
 
-		static bool IsDefinition(AstNode node) {
-			return
-				node is FieldDeclaration ||
-				node is ConstructorDeclaration ||
-				node is EventDeclaration ||
-				node is DelegateDeclaration ||
-				node is OperatorDeclaration ||
-				node is MemberDeclaration ||
-				node is TypeDeclaration;
-		}
+		static bool IsDefinition(AstNode node) =>
+			node is FieldDeclaration ||
+			node is ConstructorDeclaration ||
+			node is EventDeclaration ||
+			node is DelegateDeclaration ||
+			node is OperatorDeclaration ||
+			node is MemberDeclaration ||
+			node is TypeDeclaration;
 
 		class DebugState {
 			public List<AstNode> Nodes = new List<AstNode>();
@@ -246,9 +233,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			public TextPosition StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public void DebugStart(AstNode node) {
-			debugStack.Push(new DebugState { StartLocation = output.Location });
-		}
+		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.Location });
 
 		public void DebugHidden(object hiddenILRanges) {
 			var list = hiddenILRanges as IList<ILRange>;
@@ -263,7 +248,6 @@ namespace dnSpy.Languages.ILSpy.VB {
 				debugStack.Peek().Nodes.Add(node);
 		}
 
-		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
 		public void DebugEnd(AstNode node) {
 			var state = debugStack.Pop();
 			if (currentMemberMapping != null) {

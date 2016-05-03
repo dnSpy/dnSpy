@@ -37,9 +37,7 @@ namespace dnSpy.Debugger {
 
 	[Export, Export(typeof(IModuleLoader)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ModuleLoader : IModuleLoader {
-		bool UseMemoryModules {
-			get { return debuggerSettings.UseMemoryModules; }
-		}
+		bool UseMemoryModules => debuggerSettings.UseMemoryModules;
 
 		readonly Lazy<ITheDebugger> theDebugger;
 		readonly IDebuggerSettings debuggerSettings;
@@ -101,9 +99,7 @@ namespace dnSpy.Debugger {
 			return LoadModule(serMod, canLoadDynFile);
 		}
 
-		IEnumerable<IDnSpyFile> AllDnSpyFiles {
-			get { return inMemoryModuleManager.Value.AllDnSpyFiles; }
-		}
+		IEnumerable<IDnSpyFile> AllDnSpyFiles => inMemoryModuleManager.Value.AllDnSpyFiles;
 
 		IEnumerable<IDnSpyFile> AllActiveDnSpyFiles {
 			get {

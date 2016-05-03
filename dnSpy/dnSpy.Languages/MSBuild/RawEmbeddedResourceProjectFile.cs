@@ -23,17 +23,9 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class RawEmbeddedResourceProjectFile : ProjectFile {
-		public override string Description {
-			get { return string.Format(Languages_Resources.MSBuild_CreateEmbeddedResource, embeddedResource.Name); }
-		}
-
-		public override BuildAction BuildAction {
-			get { return BuildAction.EmbeddedResource; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
+		public override string Description => string.Format(Languages_Resources.MSBuild_CreateEmbeddedResource, embeddedResource.Name);
+		public override BuildAction BuildAction => BuildAction.EmbeddedResource;
+		public override string Filename => filename;
 		readonly string filename;
 
 		readonly EmbeddedResource embeddedResource;

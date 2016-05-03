@@ -30,16 +30,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public event EventHandler<TextLineObjectListModifiedEventArgs> OnListModified;
 
-		public ITextLineObject[] Objects {
-			get { return objects.ToArray(); }
-		}
+		public ITextLineObject[] Objects => objects.ToArray();
+		public T[] GetObjectsOfType<T>() where T : ITextLineObject => objects.OfType<T>().ToArray();
 
-		public T[] GetObjectsOfType<T>() where T : ITextLineObject {
-			return objects.OfType<T>().ToArray();
-		}
-
-		TextLineObjectManager() {
-		}
+		TextLineObjectManager() { }
 
 		public ITextLineObject Add(ITextLineObject obj) {
 			if (obj == null)
@@ -48,10 +42,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return obj;
 
 			objects.Add(obj);
-
-			if (OnListModified != null)
-				OnListModified(this, new TextLineObjectListModifiedEventArgs(obj, true));
-
+			OnListModified?.Invoke(this, new TextLineObjectListModifiedEventArgs(obj, true));
 			return obj;
 		}
 
@@ -61,8 +52,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (!objects.Remove(obj))
 				return;
 
-			if (OnListModified != null)
-				OnListModified(this, new TextLineObjectListModifiedEventArgs(obj, false));
+			OnListModified?.Invoke(this, new TextLineObjectListModifiedEventArgs(obj, false));
 		}
 	}
 }

@@ -52,9 +52,7 @@ namespace dnSpy.Shared.MVVM {
 			this.errorMsg = null;
 		}
 
-		public void Invalidate() {
-			errorMsgValid = false;
-		}
+		public void Invalidate() => errorMsgValid = false;
 
 		void CheckError() {
 			if (errorMsgValid)
@@ -103,15 +101,12 @@ namespace dnSpy.Shared.MVVM {
 			HasErrorUpdated();
 		}
 
-		protected virtual void OnStringValueChanged() {
-		}
+		protected virtual void OnStringValueChanged() { }
 
 		/// <summary>
 		/// true if the value is null (<see cref="StringValue"/> is empty)
 		/// </summary>
-		public bool IsNull {
-			get { return string.IsNullOrWhiteSpace(StringValue); }
-		}
+		public bool IsNull => string.IsNullOrWhiteSpace(StringValue);
 
 		protected DataFieldVM(Action<DataFieldVM> onUpdated) {
 			if (onUpdated == null)
@@ -121,7 +116,6 @@ namespace dnSpy.Shared.MVVM {
 		}
 
 		protected abstract string Validate();
-
 		public abstract string ConvertToObjectValue(out object value);
 
 		protected override string Verify(string columnName) {
@@ -131,9 +125,7 @@ namespace dnSpy.Shared.MVVM {
 			return string.Empty;
 		}
 
-		public override bool HasError {
-			get { return cachedError.HasError; }
-		}
+		public override bool HasError => cachedError.HasError;
 	}
 
 	public abstract class DataFieldVM<T> : DataFieldVM {
@@ -157,14 +149,8 @@ namespace dnSpy.Shared.MVVM {
 			: base(onUpdated) {
 		}
 
-		protected void SetValueFromConstructor(T value) {
-			WriteStringValueFromConstructor(OnNewValue(value));
-		}
-
-		protected void SetValue(T value) {
-			StringValue = OnNewValue(value);
-		}
-
+		protected void SetValueFromConstructor(T value) => WriteStringValueFromConstructor(OnNewValue(value));
+		protected void SetValue(T value) => StringValue = OnNewValue(value);
 		protected abstract string OnNewValue(T value);
 		protected abstract string ConvertToValue(out T value);
 
@@ -242,9 +228,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(Guid? value) {
-			return value == null ? string.Empty : value.Value.ToString();
-		}
+		protected override string OnNewValue(Guid? value) => value == null ? string.Empty : value.Value.ToString();
 
 		protected override string ConvertToValue(out Guid? value) {
 			string error = null;
@@ -283,9 +267,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<byte> value) {
-			return NumberVMUtils.ByteArrayToString(value, UpperCaseHex);
-		}
+		protected override string OnNewValue(IList<byte> value) => NumberVMUtils.ByteArrayToString(value, UpperCaseHex);
 
 		protected override string ConvertToValue(out IList<byte> value) {
 			string error;
@@ -304,9 +286,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(bool? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
-		}
+		protected override string OnNewValue(bool? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
 
 		protected override string ConvertToValue(out bool? value) {
 			string error = null;
@@ -328,9 +308,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(sbyte? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(sbyte? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out sbyte? value) {
 			string error = null;
@@ -352,9 +330,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(byte? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(byte? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out byte? value) {
 			string error = null;
@@ -376,9 +352,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(short? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(short? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out short? value) {
 			string error = null;
@@ -400,9 +374,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ushort? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(ushort? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ushort? value) {
 			string error = null;
@@ -424,9 +396,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(int? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(int? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out int? value) {
 			string error = null;
@@ -448,9 +418,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(uint? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(uint? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out uint? value) {
 			string error = null;
@@ -472,9 +440,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(long? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(long? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out long? value) {
 			string error = null;
@@ -496,9 +462,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ulong? value) {
-			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(ulong? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ulong? value) {
 			string error = null;
@@ -520,9 +484,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(bool value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(bool value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out bool value) {
 			string error;
@@ -541,9 +503,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(char value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(char value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out char value) {
 			string error;
@@ -562,9 +522,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(byte value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(byte value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out byte value) {
 			string error;
@@ -583,9 +541,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ushort value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(ushort value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ushort value) {
 			string error;
@@ -604,9 +560,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(uint value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(uint value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out uint value) {
 			string error;
@@ -625,9 +579,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ulong value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(ulong value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ulong value) {
 			string error;
@@ -646,9 +598,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(sbyte value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(sbyte value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out sbyte value) {
 			string error;
@@ -667,9 +617,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(short value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(short value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out short value) {
 			string error;
@@ -688,9 +636,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(int value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(int value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out int value) {
 			string error;
@@ -709,9 +655,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(long value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(long value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out long value) {
 			string error;
@@ -730,9 +674,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(float value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(float value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out float value) {
 			string error;
@@ -751,9 +693,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(double value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(double value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out double value) {
 			string error;
@@ -775,9 +715,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(string value) {
-			return NumberVMUtils.ToString(value, allowNullString);
-		}
+		protected override string OnNewValue(string value) => NumberVMUtils.ToString(value, allowNullString);
 
 		protected override string ConvertToValue(out string value) {
 			string error;
@@ -796,9 +734,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(decimal value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(decimal value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out decimal value) {
 			string error;
@@ -817,9 +753,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(DateTime value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(DateTime value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out DateTime value) {
 			string error;
@@ -838,9 +772,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(TimeSpan value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(TimeSpan value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out TimeSpan value) {
 			string error;
@@ -859,9 +791,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(Guid value) {
-			return value.ToString();
-		}
+		protected override string OnNewValue(Guid value) => value.ToString();
 
 		protected override string ConvertToValue(out Guid value) {
 			string error;
@@ -872,7 +802,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class BooleanListDataFieldVM : DataFieldVM<IList<bool>> {
 		public BooleanListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new bool[0], onUpdated) {
+			: this(Array.Empty<bool>(), onUpdated) {
 		}
 
 		public BooleanListDataFieldVM(IList<bool> value, Action<DataFieldVM> onUpdated)
@@ -880,9 +810,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<bool> value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(IList<bool> value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out IList<bool> value) {
 			string error;
@@ -893,7 +821,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class CharListDataFieldVM : DataFieldVM<IList<char>> {
 		public CharListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new char[0], onUpdated) {
+			: this(Array.Empty<char>(), onUpdated) {
 		}
 
 		public CharListDataFieldVM(IList<char> value, Action<DataFieldVM> onUpdated)
@@ -901,9 +829,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<char> value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(IList<char> value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out IList<char> value) {
 			string error;
@@ -914,7 +840,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class ByteListDataFieldVM : NumberDataFieldVM<IList<byte>, byte> {
 		public ByteListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new byte[0], onUpdated, useDecimal) {
+			: this(Array.Empty<byte>(), onUpdated, useDecimal) {
 		}
 
 		public ByteListDataFieldVM(IList<byte> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -922,9 +848,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<byte> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<byte> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<byte> value) {
 			string error;
@@ -935,7 +859,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class UInt16ListDataFieldVM : NumberDataFieldVM<IList<ushort>, ushort> {
 		public UInt16ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new ushort[0], onUpdated, useDecimal) {
+			: this(Array.Empty<ushort>(), onUpdated, useDecimal) {
 		}
 
 		public UInt16ListDataFieldVM(IList<ushort> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -943,9 +867,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<ushort> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<ushort> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<ushort> value) {
 			string error;
@@ -956,7 +878,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class UInt32ListDataFieldVM : NumberDataFieldVM<IList<uint>, uint> {
 		public UInt32ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new uint[0], onUpdated, useDecimal) {
+			: this(Array.Empty<uint>(), onUpdated, useDecimal) {
 		}
 
 		public UInt32ListDataFieldVM(IList<uint> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -964,9 +886,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<uint> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<uint> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<uint> value) {
 			string error;
@@ -977,7 +897,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class UInt64ListDataFieldVM : NumberDataFieldVM<IList<ulong>, ulong> {
 		public UInt64ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new ulong[0], onUpdated, useDecimal) {
+			: this(Array.Empty<ulong>(), onUpdated, useDecimal) {
 		}
 
 		public UInt64ListDataFieldVM(IList<ulong> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -985,9 +905,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<ulong> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<ulong> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<ulong> value) {
 			string error;
@@ -998,7 +916,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class SByteListDataFieldVM : NumberDataFieldVM<IList<sbyte>, sbyte> {
 		public SByteListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new sbyte[0], onUpdated, useDecimal) {
+			: this(Array.Empty<sbyte>(), onUpdated, useDecimal) {
 		}
 
 		public SByteListDataFieldVM(IList<sbyte> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -1006,9 +924,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<sbyte> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<sbyte> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<sbyte> value) {
 			string error;
@@ -1019,7 +935,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class Int16ListDataFieldVM : NumberDataFieldVM<IList<short>, short> {
 		public Int16ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new short[0], onUpdated, useDecimal) {
+			: this(Array.Empty<short>(), onUpdated, useDecimal) {
 		}
 
 		public Int16ListDataFieldVM(IList<short> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -1027,9 +943,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<short> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<short> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<short> value) {
 			string error;
@@ -1040,7 +954,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class Int32ListDataFieldVM : NumberDataFieldVM<IList<int>, int> {
 		public Int32ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new int[0], onUpdated, useDecimal) {
+			: this(Array.Empty<int>(), onUpdated, useDecimal) {
 		}
 
 		public Int32ListDataFieldVM(IList<int> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -1048,9 +962,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<int> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<int> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<int> value) {
 			string error;
@@ -1061,7 +973,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class Int64ListDataFieldVM : NumberDataFieldVM<IList<long>, long> {
 		public Int64ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: this(new long[0], onUpdated, useDecimal) {
+			: this(Array.Empty<long>(), onUpdated, useDecimal) {
 		}
 
 		public Int64ListDataFieldVM(IList<long> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
@@ -1069,9 +981,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<long> value) {
-			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
-		}
+		protected override string OnNewValue(IList<long> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<long> value) {
 			string error;
@@ -1082,7 +992,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class SingleListDataFieldVM : DataFieldVM<IList<float>> {
 		public SingleListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new float[0], onUpdated) {
+			: this(Array.Empty<float>(), onUpdated) {
 		}
 
 		public SingleListDataFieldVM(IList<float> value, Action<DataFieldVM> onUpdated)
@@ -1090,9 +1000,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<float> value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(IList<float> value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out IList<float> value) {
 			string error;
@@ -1103,7 +1011,7 @@ namespace dnSpy.Shared.MVVM {
 
 	public sealed class DoubleListDataFieldVM : DataFieldVM<IList<double>> {
 		public DoubleListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new double[0], onUpdated) {
+			: this(Array.Empty<double>(), onUpdated) {
 		}
 
 		public DoubleListDataFieldVM(IList<double> value, Action<DataFieldVM> onUpdated)
@@ -1111,9 +1019,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<double> value) {
-			return NumberVMUtils.ToString(value);
-		}
+		protected override string OnNewValue(IList<double> value) => NumberVMUtils.ToString(value);
 
 		protected override string ConvertToValue(out IList<double> value) {
 			string error;
@@ -1126,7 +1032,7 @@ namespace dnSpy.Shared.MVVM {
 		readonly bool allowNullString;
 
 		public StringListDataFieldVM(Action<DataFieldVM> onUpdated, bool allowNullString = true)
-			: this(new string[0], onUpdated, allowNullString) {
+			: this(Array.Empty<string>(), onUpdated, allowNullString) {
 		}
 
 		public StringListDataFieldVM(IList<string> value, Action<DataFieldVM> onUpdated, bool allowNullString = true)
@@ -1135,9 +1041,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<string> value) {
-			return NumberVMUtils.ToString(value, allowNullString);
-		}
+		protected override string OnNewValue(IList<string> value) => NumberVMUtils.ToString(value, allowNullString);
 
 		protected override string ConvertToValue(out IList<string> value) {
 			string error;
@@ -1165,9 +1069,7 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(T value) {
-			return (string)converter.ConvertTo(null, CultureInfo.InvariantCulture, value, typeof(string));
-		}
+		protected override string OnNewValue(T value) => (string)converter.ConvertTo(null, CultureInfo.InvariantCulture, value, typeof(string));
 
 		protected override string ConvertToValue(out T value) {
 			string error;

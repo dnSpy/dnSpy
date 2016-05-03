@@ -24,26 +24,11 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	sealed class MsgBoxVM : ViewModelBase {
-		public ICommand OKCommand {
-			get { return new RelayCommand(a => listener(MsgBoxButton.OK)); }
-		}
-
-		public ICommand YesCommand {
-			get { return new RelayCommand(a => listener(MsgBoxButton.Yes)); }
-		}
-
-		public ICommand NoCommand {
-			get { return new RelayCommand(a => listener(MsgBoxButton.No)); }
-		}
-
-		public ICommand CancelCommand {
-			get { return new RelayCommand(a => listener(MsgBoxButton.Cancel)); }
-		}
-
-		public string Message {
-			get { return message; }
-		}
-		readonly string message;
+		public ICommand OKCommand => new RelayCommand(a => listener(MsgBoxButton.OK));
+		public ICommand YesCommand => new RelayCommand(a => listener(MsgBoxButton.Yes));
+		public ICommand NoCommand => new RelayCommand(a => listener(MsgBoxButton.No));
+		public ICommand CancelCommand => new RelayCommand(a => listener(MsgBoxButton.Cancel));
+		public string Message { get; }
 
 		public bool DontShowAgain {
 			get { return dontShowAgain; }
@@ -114,7 +99,7 @@ namespace dnSpy.MainApp {
 		readonly Action<MsgBoxButton> listener;
 
 		public MsgBoxVM(string message, Action<MsgBoxButton> listener) {
-			this.message = message;
+			this.Message = message;
 			this.listener = listener;
 		}
 	}

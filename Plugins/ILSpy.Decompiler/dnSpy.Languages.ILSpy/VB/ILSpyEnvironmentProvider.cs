@@ -28,11 +28,7 @@ using ICSharpCode.NRefactory.VB.Visitors;
 
 namespace dnSpy.Languages.ILSpy.VB {
 	sealed class ILSpyEnvironmentProvider : IEnvironmentProvider {
-		public string RootNamespace {
-			get {
-				return "";
-			}
-		}
+		public string RootNamespace => "";
 
 		readonly StringBuilder sb;
 
@@ -47,21 +43,19 @@ namespace dnSpy.Languages.ILSpy.VB {
 			return mr == null ? string.Empty : mr.FullName;
 		}
 
-		public ICSharpCode.NRefactory.TypeSystem.IType ResolveType(ICSharpCode.NRefactory.VB.Ast.AstType type, ICSharpCode.NRefactory.VB.Ast.TypeDeclaration entity = null) {
-			/*
-			var annotation = type.Annotation<TypeReference>();
-			if (annotation == null )
-				return null;
-			
-			IEntity current = null;
-			if (entity != null) {
-				var typeInfo = entity.Annotation<TypeReference>();
-				current = loader.ReadTypeReference(typeInfo).Resolve(context).GetDefinition();
-			}
-			
-			return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
-			return SpecialType.UnknownType;
-		}
+		/*
+var annotation = type.Annotation<TypeReference>();
+if (annotation == null )
+	return null;
+
+IEntity current = null;
+if (entity != null) {
+	var typeInfo = entity.Annotation<TypeReference>();
+	current = loader.ReadTypeReference(typeInfo).Resolve(context).GetDefinition();
+}
+
+return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
+		public ICSharpCode.NRefactory.TypeSystem.IType ResolveType(ICSharpCode.NRefactory.VB.Ast.AstType type, ICSharpCode.NRefactory.VB.Ast.TypeDeclaration entity = null) => SpecialType.UnknownType;
 
 		public TypeKind GetTypeKindForAstType(ICSharpCode.NRefactory.CSharp.AstType type) {
 			var annotation = type.Annotation<ITypeDefOrRef>();
@@ -136,9 +130,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			}
 		}
 
-		public bool HasEvent(ICSharpCode.NRefactory.VB.Ast.Expression expression) {
-			return expression.Annotation<EventDef>() != null;
-		}
+		public bool HasEvent(ICSharpCode.NRefactory.VB.Ast.Expression expression) => expression.Annotation<EventDef>() != null;
 
 		public bool IsMethodGroup(ICSharpCode.NRefactory.CSharp.Expression expression) {
 			var annotation = expression.Annotation<MethodDef>();

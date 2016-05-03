@@ -29,16 +29,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.output = output;
 		}
 
-		public void WriteName(TabVM vm) {
-			output.Write(vm.Name, BoxedTextTokenKind.Text);
-		}
-
-		public void WriteModule(TabVM vm) {
-			output.WriteModule(vm.Module);
-		}
-
-		public void WritePath(TabVM vm) {
-			output.WriteFilename(vm.Path);
-		}
+		public void WriteName(TabVM vm) => output.Write(vm.Name, BoxedTextTokenKind.Text);
+		public void WriteModule(TabVM vm) => output.WriteModule(vm.Module);
+		public void WritePath(TabVM vm) => output.WriteFilename(vm.Path);
 	}
 }

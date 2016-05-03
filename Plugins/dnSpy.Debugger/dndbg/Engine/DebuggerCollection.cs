@@ -26,9 +26,7 @@ namespace dndbg.Engine {
 		readonly Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
 		readonly Func<TKey, TValue> createValue;
 
-		public int Count {
-			get { return dict.Count; }
-		}
+		public int Count => dict.Count;
 
 		public DebuggerCollection(Func<TKey, TValue> createValue) {
 			this.createValue = createValue;
@@ -82,8 +80,6 @@ namespace dndbg.Engine {
 		/// Gets all items
 		/// </summary>
 		/// <returns></returns>
-		public TValue[] GetAll() {
-			return dict.Values.ToArray();
-		}
+		public TValue[] GetAll() => dict.Values.ToArray();
 	}
 }

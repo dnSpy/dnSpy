@@ -66,9 +66,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textEditorSettings = textEditorSettings;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) {
-			return textEditorSettings.WordWrap;
-		}
+		public override bool IsChecked(IMenuItemContext context) => textEditorSettings.WordWrap;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:HighlightLine", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]
@@ -80,13 +78,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textEditorSettings = textEditorSettings;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) {
-			return textEditorSettings.HighlightCurrentLine;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			textEditorSettings.HighlightCurrentLine = !textEditorSettings.HighlightCurrentLine;
-		}
+		public override bool IsChecked(IMenuItemContext context) => textEditorSettings.HighlightCurrentLine;
+		public override void Execute(IMenuItemContext context) => textEditorSettings.HighlightCurrentLine = !textEditorSettings.HighlightCurrentLine;
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 0)]
@@ -99,7 +92,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<ITextEditorUIContext>();
-			return uiContext != null && uiContext.HasSelectedText;
+			return uiContext?.HasSelectedText == true;
 		}
 	}
 
@@ -111,9 +104,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				ApplicationCommands.Find.Execute(null, elem);
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) {
-			return GetInputElement() != null;
-		}
+		public override bool IsEnabled(IMenuItemContext context) => GetInputElement() != null;
 
 		IInputElement GetInputElement() {
 			var elem = Keyboard.FocusedElement;
@@ -127,9 +118,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			: base(ApplicationCommands.Find) {
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-		}
+		public override bool IsVisible(IMenuItemContext context) =>
+			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 	}
 
 	[ExportAutoLoaded]
@@ -146,17 +136,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			cmds.Add(GoToRoutedCommand, Execute, CanExecute, ModifierKeys.Control, Key.G);
 		}
 
-		void Execute(object s, ExecutedRoutedEventArgs e) {
-			GoTo();
-		}
-
-		void CanExecute(object s, CanExecuteRoutedEventArgs e) {
+		void Execute(object s, ExecutedRoutedEventArgs e) => GoTo();
+		void CanExecute(object s, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = fileTabManager.ActiveTab != null && fileTabManager.ActiveTab.UIContext is ITextEditorUIContext;
-		}
 
 		void GoTo() {
 			var tab = fileTabManager.ActiveTab;
-			var uiContext = tab == null ? null : tab.UIContext as ITextEditorUIContext;
+			var uiContext = tab?.UIContext as ITextEditorUIContext;
 			if (uiContext == null)
 				return;
 

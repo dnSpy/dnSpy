@@ -87,10 +87,7 @@ namespace dnSpy.Analyzer {
 	sealed class AnalyzerManager : IAnalyzerManager, ITreeViewListener {
 		static readonly Guid ANALYZER_TREEVIEW_GUID = new Guid("8981898A-1384-4B67-9577-3CB096195146");
 
-		public ITreeView TreeView {
-			get { return treeView; }
-		}
-		readonly ITreeView treeView;
+		public ITreeView TreeView { get; }
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ITreeView treeView;
@@ -126,7 +123,7 @@ namespace dnSpy.Analyzer {
 				CanDragAndDrop = false,
 				TreeViewListener = this,
 			};
-			this.treeView = treeViewManager.Create(ANALYZER_TREEVIEW_GUID, options);
+			this.TreeView = treeViewManager.Create(ANALYZER_TREEVIEW_GUID, options);
 
 			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
 			fileTabManager.FileModified += FileTabManager_FileModified;
@@ -134,8 +131,8 @@ namespace dnSpy.Analyzer {
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
-			menuManager.InitializeContextMenu((FrameworkElement)this.treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsCreator(this.treeView));
-			wpfCommandManager.Add(CommandConstants.GUID_ANALYZER_TREEVIEW, (UIElement)this.treeView.UIObject);
+			menuManager.InitializeContextMenu((FrameworkElement)this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsCreator(this.TreeView));
+			wpfCommandManager.Add(CommandConstants.GUID_ANALYZER_TREEVIEW, (UIElement)this.TreeView.UIObject);
 			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
 			var command = new RelayCommand(a => ActivateNode());
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);
@@ -143,12 +140,12 @@ namespace dnSpy.Analyzer {
 		}
 
 		void FileTabManager_FileModified(object sender, FileModifiedEventArgs e) {
-			AnalyzerTreeNodeData.HandleModelUpdated(treeView.Root, e.Files);
+			AnalyzerTreeNodeData.HandleModelUpdated(TreeView.Root, e.Files);
 			RefreshNodes();
 		}
 
 		void ActivateNode() {
-			var nodes = treeView.TopLevelSelection;
+			var nodes = TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as ITreeNodeData;
 			if (node != null)
 				node.Activate();
@@ -161,11 +158,11 @@ namespace dnSpy.Analyzer {
 				break;
 
 			case NotifyFileCollectionType.Add:
-				AnalyzerTreeNodeData.HandleAssemblyListChanged(treeView.Root, new IDnSpyFile[0], e.Files);
+				AnalyzerTreeNodeData.HandleAssemblyListChanged(TreeView.Root, Array.Empty<IDnSpyFile>(), e.Files);
 				break;
 
 			case NotifyFileCollectionType.Remove:
-				AnalyzerTreeNodeData.HandleAssemblyListChanged(treeView.Root, e.Files, new IDnSpyFile[0]);
+				AnalyzerTreeNodeData.HandleAssemblyListChanged(TreeView.Root, e.Files, Array.Empty<IDnSpyFile>());
 				break;
 
 			default:
@@ -198,13 +195,8 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			RefreshNodes();
-		}
-
-		void RefreshNodes() {
-			this.treeView.RefreshAllNodes();
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshNodes();
+		void RefreshNodes() => this.TreeView.RefreshAllNodes();
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
@@ -217,34 +209,29 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void Cancel() {
-			AnalyzerTreeNodeData.CancelSelfAndChildren(treeView.Root.Data);
-		}
-
-		public void OnClose() {
-			ClearAll();
-		}
+		void Cancel() => AnalyzerTreeNodeData.CancelSelfAndChildren(TreeView.Root.Data);
+		public void OnClose() => ClearAll();
 
 		void ClearAll() {
 			Cancel();
-			this.treeView.Root.Children.Clear();
+			this.TreeView.Root.Children.Clear();
 		}
 
 		public void Add(IAnalyzerTreeNodeData node) {
 			if (node is EntityNode) {
 				var an = node as EntityNode;
-				var found = this.treeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
+				var found = this.TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					found.TreeNode.IsExpanded = true;
-					this.treeView.SelectItems(new ITreeNodeData[] { found });
-					this.treeView.Focus();
+					this.TreeView.SelectItems(new ITreeNodeData[] { found });
+					this.TreeView.Focus();
 					return;
 				}
 			}
-			this.treeView.Root.Children.Add(this.treeView.Create(node));
+			this.TreeView.Root.Children.Add(this.TreeView.Create(node));
 			node.TreeNode.IsExpanded = true;
-			this.treeView.SelectItems(new ITreeNodeData[] { node });
-			this.treeView.Focus();
+			this.TreeView.SelectItems(new ITreeNodeData[] { node });
+			this.TreeView.Focus();
 		}
 
 		public void OnActivated(IAnalyzerTreeNodeData node) {
@@ -256,10 +243,10 @@ namespace dnSpy.Analyzer {
 
 		public void FollowNode(ITreeNodeData node, bool newTab, bool? useCodeRef) {
 			var tokNode = node as IMDTokenNode;
-			var @ref = tokNode == null ? null : tokNode.Reference;
+			var @ref = tokNode?.Reference;
 
 			var entityNode = node as EntityNode;
-			var srcRef = entityNode == null ? null : entityNode.SourceRef;
+			var srcRef = entityNode?.SourceRef;
 
 			bool code = useCodeRef ?? srcRef != null;
 			if (code) {
@@ -279,10 +266,10 @@ namespace dnSpy.Analyzer {
 
 		public bool CanFollowNode(ITreeNodeData node, bool useCodeRef) {
 			var tokNode = node as IMDTokenNode;
-			var @ref = tokNode == null ? null : tokNode.Reference;
+			var @ref = tokNode?.Reference;
 
 			var entityNode = node as EntityNode;
-			var srcRef = entityNode == null ? null : entityNode.SourceRef;
+			var srcRef = entityNode?.SourceRef;
 
 			if (useCodeRef)
 				return srcRef != null;

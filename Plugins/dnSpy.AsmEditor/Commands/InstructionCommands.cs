@@ -53,13 +53,10 @@ namespace dnSpy.AsmEditor.Commands {
 			cmds.Add(CopyILBytesCommand, CopyILBytesExecuted, CopyILBytesCanExecute, ModifierKeys.Control, Key.B);
 		}
 
-		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = CopyILBytesCodeCommand.CanExecute(fileTabManager.ActiveTab.TryGetTextEditorUIContext());
-		}
-
-		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e) {
+		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e) =>
 			CopyILBytesCodeCommand.Execute(fileTabManager.ActiveTab.TryGetTextEditorUIContext(), methodAnnotations);
-		}
 	}
 
 	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
@@ -82,10 +79,8 @@ namespace dnSpy.AsmEditor.Commands {
 				Execute(context.Find<ITextEditorUIContext>(), methodAnnotations);
 		}
 
-		public static bool CanExecute(ITextEditorUIContext uiContext) {
-			return uiContext != null &&
-				FindInstructions(uiContext).Any();
-		}
+		public static bool CanExecute(ITextEditorUIContext uiContext) =>
+			uiContext != null && FindInstructions(uiContext).Any();
 
 		public static void Execute(ITextEditorUIContext uiContext, Lazy<IMethodAnnotations> methodAnnotations) {
 			if (!CanExecute(uiContext))

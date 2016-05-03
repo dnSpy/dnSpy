@@ -35,9 +35,6 @@ namespace dnSpy.AsmEditor.Resources {
 			Loaded += ResourceControl_Loaded;
 		}
 
-		void ResourceControl_Loaded(object sender, RoutedEventArgs e) {
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
-		}
+		void ResourceControl_Loaded(object sender, RoutedEventArgs e) => nameTextBox.Focus();
 	}
 }

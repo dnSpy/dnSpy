@@ -25,8 +25,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	class AppSettings : ViewModelBase, IAppSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool UseNewRenderer_TextEditor {
 			get { return useNewRenderer_TextEditor; }

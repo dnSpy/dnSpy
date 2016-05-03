@@ -22,9 +22,7 @@ using dnlib.DotNet.Emit;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	static class Helpers {
-		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef) {
-			return IsReferencedBy(type, typeRef, 0);
-		}
+		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef) => IsReferencedBy(type, typeRef, 0);
 
 		static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef, int depth) {
 			if (depth >= 30)
@@ -89,9 +87,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static MethodDef GetTypeConstructor(TypeDef type) {
-			return type.FindConstructors().FirstOrDefault();
-		}
+		static MethodDef GetTypeConstructor(TypeDef type) => type.FindConstructors().FirstOrDefault();
 
 		static MethodDef FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
 			string name = analyzedMethod.Name;
@@ -139,8 +135,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static bool IsCompilerGenerated(this IHasCustomAttribute hca) {
-			return hca != null && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
-		}
+		static bool IsCompilerGenerated(this IHasCustomAttribute hca) =>
+			hca != null && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 	}
 }

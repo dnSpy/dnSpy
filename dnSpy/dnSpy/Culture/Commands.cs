@@ -42,13 +42,8 @@ namespace dnSpy.Culture {
 			this.cultureManager = cultureManager;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return cultureManager.HasExtraLanguages;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			Debug.Fail("Shouldn't execute");
-		}
+		public override bool IsVisible(IMenuItemContext context) => cultureManager.HasExtraLanguages;
+		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.LANGUAGE_GUID, Group = Constants.GROUP_LANGUAGE, Order = 0)]
@@ -68,9 +63,7 @@ namespace dnSpy.Culture {
 			}
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			Debug.Fail("Shouldn't execute");
-		}
+		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
 	}
 
 	sealed class SwitchLanguageCommand : MenuItemBase {
@@ -82,9 +75,7 @@ namespace dnSpy.Culture {
 			this.langInfo = langInfo;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) {
-			return cultureManager.Language.Equals(langInfo);
-		}
+		public override bool IsChecked(IMenuItemContext context) => cultureManager.Language.Equals(langInfo);
 
 		public override void Execute(IMenuItemContext context) {
 			if (!cultureManager.Language.Equals(langInfo)) {

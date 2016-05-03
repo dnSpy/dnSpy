@@ -28,15 +28,10 @@ namespace dnSpy.Debugger {
 			get { yield return "Themes/wpf.styles.templates.xaml"; }
 		}
 
-		public PluginInfo PluginInfo {
-			get {
-				return new PluginInfo {
-					ShortDescription = dnSpy_Debugger_Resources.Plugin_ShortDescription,
-				};
-			}
-		}
+		public PluginInfo PluginInfo => new PluginInfo {
+			ShortDescription = dnSpy_Debugger_Resources.Plugin_ShortDescription,
+		};
 
-		public void OnEvent(PluginEvent @event, object obj) {
-		}
+		public void OnEvent(PluginEvent @event, object obj) { }
 	}
 }

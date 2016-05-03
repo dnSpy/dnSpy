@@ -32,22 +32,13 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class OpenFileListVM : ViewModelBase, IDisposable {
-		public ICommand RemoveCommand {
-			get { return new RelayCommand(a => Remove(), a => CanRemove); }
-		}
+		public ICommand RemoveCommand => new RelayCommand(a => Remove(), a => CanRemove);
+		public ICommand CreateListCommand => new RelayCommand(a => CreateList(), a => CanCreateList);
+		public ObservableCollection<FileListVM> Collection => fileListColl;
+		public ICollectionView CollectionView => collectionView;
+		public bool SyntaxHighlight { get; }
 
-		public ICommand CreateListCommand {
-			get { return new RelayCommand(a => CreateList(), a => CanCreateList); }
-		}
-
-		public ObservableCollection<FileListVM> Collection {
-			get { return fileListColl; }
-		}
 		readonly ObservableCollection<FileListVM> fileListColl;
-
-		public ICollectionView CollectionView {
-			get { return collectionView; }
-		}
 		readonly ListCollectionView collectionView;
 
 		public object SelectedItem {
@@ -63,7 +54,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 		public FileListVM[] SelectedItems {
 			get { return selectedItems; }
-			set { selectedItems = value ?? new FileListVM[0]; }
+			set { selectedItems = value ?? Array.Empty<FileListVM>(); }
 		}
 		FileListVM[] selectedItems;
 
@@ -79,9 +70,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		bool searchingForDefaultLists;
 
-		public bool NotSearchingForDefaultLists {
-			get { return !SearchingForDefaultLists; }
-		}
+		public bool NotSearchingForDefaultLists => !SearchingForDefaultLists;
 
 		public string SearchText {
 			get { return searchText; }
@@ -107,11 +96,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		bool showSavedLists;
 
-		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
-		}
-		readonly bool syntaxHighlight;
-
 		readonly FileListManager fileListManager;
 		readonly HashSet<FileListVM> removedFileLists;
 		readonly List<FileListVM> addedFileLists;
@@ -119,13 +103,13 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		readonly CancellationTokenSource cancellationTokenSource;
 
 		public OpenFileListVM(bool syntaxHighlight, FileListManager fileListManager, Func<string, string> askUser) {
-			this.syntaxHighlight = syntaxHighlight;
+			this.SyntaxHighlight = syntaxHighlight;
 			this.fileListManager = fileListManager;
 			this.askUser = askUser;
 			this.fileListColl = new ObservableCollection<FileListVM>();
 			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(fileListColl);
 			this.collectionView.CustomSort = new FileListVM_Comparer();
-			this.selectedItems = new FileListVM[0];
+			this.selectedItems = Array.Empty<FileListVM>();
 			this.removedFileLists = new HashSet<FileListVM>();
 			this.addedFileLists = new List<FileListVM>();
 			this.cancellationTokenSource = new CancellationTokenSource();
@@ -177,9 +161,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		static readonly char[] sep = new char[] { ' ' };
 
-		public bool CanRemove {
-			get { return SelectedItems.Length > 0; }
-		}
+		public bool CanRemove => SelectedItems.Length > 0;
 
 		public void Remove() {
 			if (!CanRemove)
@@ -191,9 +173,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 
-		bool CanCreateList {
-			get { return true; }
-		}
+		bool CanCreateList => true;
 
 		void CreateList() {
 			if (!CanCreateList)
@@ -224,9 +204,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 
-		public void Dispose() {
-			cancellationTokenSource.Cancel();
-		}
+		public void Dispose() => cancellationTokenSource.Cancel();
 	}
 
 	sealed class FileListVM_Comparer : System.Collections.IComparer {

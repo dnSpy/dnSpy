@@ -53,9 +53,7 @@ namespace dnSpy.MainApp {
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.ABOUT_DNSPY);
 		}
 
-		public IFileTabContent Create(IFileTabContentFactoryContext context) {
-			return null;
-		}
+		public IFileTabContent Create(IFileTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("1C931C0F-D968-4664-B22D-87287A226EEC");
 
@@ -101,13 +99,8 @@ namespace dnSpy.MainApp {
 			get { yield break; }
 		}
 
-		public string Title {
-			get { return dnSpy_Resources.About_TabTitle; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
+		public string Title => dnSpy_Resources.About_TabTitle;
+		public object ToolTip => null;
 
 		readonly IAppWindow appWindow;
 		readonly IPluginManager pluginManager;
@@ -119,22 +112,11 @@ namespace dnSpy.MainApp {
 			this.aboutContentType = aboutContentType;
 		}
 
-		public IFileTabContent Clone() {
-			return new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
-		}
-
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
-			return locator.Get<ITextEditorUIContext>();
-		}
-
-		public void OnHide() {
-		}
-
-		public void OnSelected() {
-		}
-
-		public void OnUnselected() {
-		}
+		public IFileTabContent Clone() => new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
+		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) => locator.Get<ITextEditorUIContext>();
+		public void OnHide() { }
+		public void OnSelected() { }
+		public void OnUnselected() { }
 
 		public void OnShow(IShowContext ctx) {
 			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
@@ -276,8 +258,6 @@ namespace dnSpy.MainApp {
 			return infos;
 		}
 
-		static PluginInfo CreateDnSpyInfo() {
-			return new PluginInfo();
-		}
+		static PluginInfo CreateDnSpyInfo() => new PluginInfo();
 	}
 }

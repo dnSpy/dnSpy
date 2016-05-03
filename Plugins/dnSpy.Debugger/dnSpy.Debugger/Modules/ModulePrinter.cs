@@ -43,29 +43,14 @@ namespace dnSpy.Debugger.Modules {
 			output.WriteFilename(filename);
 		}
 
-		public void WriteName(ModuleVM vm) {
-			WriteFilename(vm, DebugOutputUtils.GetFilename(vm.Module.Name));
-		}
-
-		public void WritePath(ModuleVM vm) {
-			WriteFilename(vm, vm.Module.Name);
-		}
-
-		public void WriteOptimized(ModuleVM vm) {
-			output.WriteYesNo(vm.IsOptimized);
-		}
-
-		public void WriteDynamic(ModuleVM vm) {
-			output.WriteYesNo(vm.Module.IsDynamic);
-		}
-
-		public void WriteInMemory(ModuleVM vm) {
-			output.WriteYesNo(vm.Module.IsInMemory);
-		}
-
-		public void WriteOrder(ModuleVM vm) {
-			output.Write(string.Format("{0}", vm.Module.UniqueId), BoxedTextTokenKind.Number);
-		}
+		public void WriteName(ModuleVM vm) => WriteFilename(vm, DebugOutputUtils.GetFilename(vm.Module.Name));
+		public void WritePath(ModuleVM vm) => WriteFilename(vm, vm.Module.Name);
+		public void WriteOptimized(ModuleVM vm) => output.WriteYesNo(vm.IsOptimized);
+		public void WriteDynamic(ModuleVM vm) => output.WriteYesNo(vm.Module.IsDynamic);
+		public void WriteInMemory(ModuleVM vm) => output.WriteYesNo(vm.Module.IsInMemory);
+		public void WriteOrder(ModuleVM vm) => output.Write(string.Format("{0}", vm.Module.UniqueId), BoxedTextTokenKind.Number);
+		public void WriteProcess(ModuleVM vm) => output.Write(vm.Module.Process, useHex);
+		public void WriteAppDomain(ModuleVM vm) => output.Write(vm.Module.AppDomain.CorAppDomain, dbg);
 
 		public void WriteVersion(ModuleVM vm) {
 			if (vm.Version != null)
@@ -99,14 +84,6 @@ namespace dnSpy.Debugger.Modules {
 				output.Write(string.Format("{0:X8}", addr), BoxedTextTokenKind.Number);
 			else
 				output.Write(string.Format("{0:X16}", addr), BoxedTextTokenKind.Number);
-		}
-
-		public void WriteProcess(ModuleVM vm) {
-			output.Write(vm.Module.Process, useHex);
-		}
-
-		public void WriteAppDomain(ModuleVM vm) {
-			output.Write(vm.Module.AppDomain.CorAppDomain, dbg);
 		}
 	}
 }

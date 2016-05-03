@@ -38,25 +38,11 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[Export, Export(typeof(IExceptionsContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ExceptionsContent : IExceptionsContent {
-		public object UIObject {
-			get { return ExceptionsControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return ExceptionsControl.ListBox; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return ExceptionsControl; }
-		}
-
-		public ListBox ListBox {
-			get { return ExceptionsControl.ListBox; }
-		}
-
-		public IExceptionsVM ExceptionsVM {
-			get { return vmExceptions.Value; }
-		}
+		public object UIObject => ExceptionsControl;
+		public IInputElement FocusedElement => ExceptionsControl.ListBox;
+		public FrameworkElement ScaleElement => ExceptionsControl;
+		public ListBox ListBox => ExceptionsControl.ListBox;
+		public IExceptionsVM ExceptionsVM => vmExceptions.Value;
 
 		ExceptionsControl ExceptionsControl {
 			get {
@@ -81,13 +67,8 @@ namespace dnSpy.Debugger.Exceptions {
 			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			vmExceptions.Value.RefreshThemeFields();
-		}
-
-		public void Focus() {
-			UIUtils.FocusSelector(ExceptionsControl.ListBox);
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmExceptions.Value.RefreshThemeFields();
+		public void Focus() => UIUtils.FocusSelector(ExceptionsControl.ListBox);
 
 		public void FocusSearchTextBox() {
 			ExceptionsControl.SearchTextBox.Focus();

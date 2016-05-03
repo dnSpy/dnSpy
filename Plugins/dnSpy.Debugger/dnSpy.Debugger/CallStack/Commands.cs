@@ -62,8 +62,8 @@ namespace dnSpy.Debugger.CallStack {
 	}
 
 	sealed class CallStackCtxMenuContext {
-		public readonly ICallStackVM VM;
-		public readonly ICallStackFrameVM[] SelectedItems;
+		public ICallStackVM VM { get; }
+		public ICallStackFrameVM[] SelectedItems { get; }
 
 		public CallStackCtxMenuContext(ICallStackVM vm, ICallStackFrameVM[] selItems) {
 			this.VM = vm;
@@ -79,15 +79,11 @@ namespace dnSpy.Debugger.CallStack {
 			this.cmd = cmd;
 		}
 
-		protected override CallStackCtxMenuContext CreateContext() {
-			return cmd.Create();
-		}
+		protected override CallStackCtxMenuContext CreateContext() => cmd.Create();
 	}
 
 	abstract class CallStackCtxMenuCommand : MenuItemBase<CallStackCtxMenuContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected readonly Lazy<ITheDebugger> theDebugger;
@@ -140,9 +136,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 10)]
@@ -156,9 +150,7 @@ namespace dnSpy.Debugger.CallStack {
 			callStackContent.Value.ListView.SelectAll();
 		}
 
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[Export, ExportMenuItem(Header = "res:SwitchToFrameCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 0)]
@@ -181,9 +173,8 @@ namespace dnSpy.Debugger.CallStack {
 			return context.SelectedItems[0] as CallStackFrameVM;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) =>
 			Execute(stackFrameManager.Value, fileTabManager, moduleLoader.Value, GetFrame(context), false);
-		}
 
 		internal static void Execute(IStackFrameManager stackFrameManager, IFileTabManager fileTabManager, IModuleLoader moduleLoader, CallStackFrameVM vm, bool newTab) {
 			if (vm != null) {
@@ -192,9 +183,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			return GetFrame(context) != null;
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) => GetFrame(context) != null;
 	}
 
 	[Export, ExportMenuItem(Header = "res:SwitchToFrameNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 10)]
@@ -211,13 +200,9 @@ namespace dnSpy.Debugger.CallStack {
 			this.moduleLoader = moduleLoader;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) =>
 			SwitchToFrameCallStackCtxMenuCommand.Execute(stackFrameManager.Value, fileTabManager, moduleLoader.Value, SwitchToFrameCallStackCtxMenuCommand.GetFrame(context), true);
-		}
-
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			return SwitchToFrameCallStackCtxMenuCommand.GetFrame(context) != null;
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) => SwitchToFrameCallStackCtxMenuCommand.GetFrame(context) != null;
 	}
 
 	[ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
@@ -238,10 +223,8 @@ namespace dnSpy.Debugger.CallStack {
 				FrameUtils.GoToIL(fileTabManager, moduleLoader.Value, vm.Frame, false);
 		}
 
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
-			return vm != null && FrameUtils.CanGoToIL(vm.Frame);
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) =>
+			FrameUtils.CanGoToIL(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
 	}
 
 	[ExportMenuItem(Header = "res:GoToDisassemblyCommand2", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 30)]
@@ -257,10 +240,8 @@ namespace dnSpy.Debugger.CallStack {
 				FrameUtils.GoToDisasm(vm.Frame);
 		}
 
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
-			return vm != null && FrameUtils.CanGoToDisasm(vm.Frame);
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) =>
+			FrameUtils.CanGoToDisasm(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
 	}
 
 	[Export, ExportMenuItem(Header = "res:RunToCursorCommand", Icon = "Cursor", InputGestureText = "res:ShortCutKeyCtrlF10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
@@ -279,10 +260,8 @@ namespace dnSpy.Debugger.CallStack {
 				debugManager.Value.RunTo(vm.Frame);
 		}
 
-		public override bool IsEnabled(CallStackCtxMenuContext context) {
-			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
-			return vm != null && debugManager.Value.CanRunTo(vm.Frame);
-		}
+		public override bool IsEnabled(CallStackCtxMenuContext context) =>
+			debugManager.Value.CanRunTo(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
 	}
 
 	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_HEXOPTS, Order = 0)]
@@ -295,13 +274,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return debuggerSettings.UseHexadecimal;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
+		public override bool IsChecked(CallStackCtxMenuContext context) => debuggerSettings.UseHexadecimal;
 	}
 
 	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 0)]
@@ -314,13 +288,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowModuleNames = !callStackSettings.ShowModuleNames;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowModuleNames;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowModuleNames = !callStackSettings.ShowModuleNames;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowModuleNames;
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 10)]
@@ -333,13 +302,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowParameterTypes = !callStackSettings.ShowParameterTypes;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowParameterTypes;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowParameterTypes = !callStackSettings.ShowParameterTypes;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowParameterTypes;
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 20)]
@@ -352,13 +316,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowParameterNames = !callStackSettings.ShowParameterNames;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowParameterNames;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowParameterNames = !callStackSettings.ShowParameterNames;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowParameterNames;
 	}
 
 	[ExportMenuItem(Header = "res:ShowParameterValuesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 30)]
@@ -371,13 +330,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowParameterValues = !callStackSettings.ShowParameterValues;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowParameterValues;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowParameterValues = !callStackSettings.ShowParameterValues;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowParameterValues;
 	}
 
 	[ExportMenuItem(Header = "res:ShowInstructionPointerCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 40)]
@@ -390,13 +344,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowIP = !callStackSettings.ShowIP;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowIP;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowIP = !callStackSettings.ShowIP;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowIP;
 	}
 
 	[ExportMenuItem(Header = "res:ShowOwnerTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 50)]
@@ -409,13 +358,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowOwnerTypes = !callStackSettings.ShowOwnerTypes;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowOwnerTypes;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowOwnerTypes = !callStackSettings.ShowOwnerTypes;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowOwnerTypes;
 	}
 
 	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 60)]
@@ -428,13 +372,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowNamespaces = !callStackSettings.ShowNamespaces;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowNamespaces;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowNamespaces = !callStackSettings.ShowNamespaces;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowNamespaces;
 	}
 
 	[ExportMenuItem(Header = "res:ShowReturnTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 70)]
@@ -447,13 +386,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowReturnTypes = !callStackSettings.ShowReturnTypes;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowReturnTypes;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowReturnTypes = !callStackSettings.ShowReturnTypes;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowReturnTypes;
 	}
 
 	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 80)]
@@ -466,13 +400,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowTypeKeywords = !callStackSettings.ShowTypeKeywords;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowTypeKeywords;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowTypeKeywords = !callStackSettings.ShowTypeKeywords;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowTypeKeywords;
 	}
 
 	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 90)]
@@ -485,12 +414,7 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackSettings.ShowTokens = !callStackSettings.ShowTokens;
-		}
-
-		public override bool IsChecked(CallStackCtxMenuContext context) {
-			return callStackSettings.ShowTokens;
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowTokens = !callStackSettings.ShowTokens;
+		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowTokens;
 	}
 }

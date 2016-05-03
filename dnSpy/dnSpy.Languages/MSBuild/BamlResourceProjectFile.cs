@@ -31,40 +31,23 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class BamlResourceProjectFile : ProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_DecompileBaml; }
-		}
-
+		public override string Description => Languages_Resources.MSBuild_DecompileBaml;
 		public bool IsAppDef { get; set; }
-
-		public override BuildAction BuildAction {
-			get { return IsAppDef ? BuildAction.ApplicationDefinition : BuildAction.Page; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
-		readonly string filename;
-
-		public string TypeFullName {
-			get { return typeFullName; }
-		}
-		readonly string typeFullName;
-
+		public override BuildAction BuildAction => IsAppDef ? BuildAction.ApplicationDefinition : BuildAction.Page;
+		public override string Filename { get; }
+		public string TypeFullName { get; }
 		public bool IsSatelliteFile { get; set; }
 
 		readonly byte[] bamlData;
 		readonly Func<byte[], Stream, IList<string>> decompileBaml;
 
-		public IEnumerable<IAssembly> AssemblyReferences {
-			get { return asmRefs; }
-		}
+		public IEnumerable<IAssembly> AssemblyReferences => asmRefs;
 		readonly HashSet<IAssembly> asmRefs;
 
 		public BamlResourceProjectFile(string filename, byte[] bamlData, string typeFullName, Func<byte[], Stream, IList<string>> decompileBaml) {
-			this.filename = filename;
+			this.Filename = filename;
 			this.bamlData = bamlData;
-			this.typeFullName = typeFullName;
+			this.TypeFullName = typeFullName;
 			this.SubType = "Designer";
 			this.Generator = "MSBuild:Compile";
 			this.decompileBaml = decompileBaml;
@@ -85,29 +68,19 @@ namespace dnSpy.Languages.MSBuild {
 
 	// App.xaml isn't always created, so we must recreate it from the info found in the class.
 	sealed class AppBamlResourceProjectFile : ProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateAppXaml; }
-		}
-
-		public override BuildAction BuildAction {
-			get { return buildAction; }
-		}
-		readonly BuildAction buildAction;
-
-		public override string Filename {
-			get { return filename; }
-		}
-		readonly string filename;
+		public override string Description => Languages_Resources.MSBuild_CreateAppXaml;
+		public override BuildAction BuildAction { get; }
+		public override string Filename { get; }
 
 		readonly TypeDef type;
 		readonly ILanguage language;
 
 		public AppBamlResourceProjectFile(string filename, TypeDef type, ILanguage language) {
-			this.filename = filename;
+			this.Filename = filename;
 			this.type = type;
 			this.SubType = "Designer";
 			this.Generator = "MSBuild:Compile";
-			this.buildAction = DotNetUtils.IsStartUpClass(type) ? BuildAction.ApplicationDefinition : BuildAction.Page;
+			this.BuildAction = DotNetUtils.IsStartUpClass(type) ? BuildAction.ApplicationDefinition : BuildAction.Page;
 			this.language = language;
 		}
 
@@ -116,10 +89,8 @@ namespace dnSpy.Languages.MSBuild {
 			return m == null ? null : m.Body;
 		}
 
-		string GetStartupUri(CilBody body) {
-			var s = body == null ? null : body.Instructions.Where(a => a.Operand is string && ((string)a.Operand).EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)).Select(a => (string)a.Operand).FirstOrDefault();
-			return s;
-		}
+		string GetStartupUri(CilBody body) =>
+			body == null ? null : body.Instructions.Where(a => a.Operand is string && ((string)a.Operand).EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)).Select(a => (string)a.Operand).FirstOrDefault();
 
 		public override void Create(DecompileContext ctx) {
 			var settings = new XmlWriterSettings {

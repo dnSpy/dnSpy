@@ -33,24 +33,15 @@ using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class TreeViewImpl : ITreeView, IStackedContentChild {
-		public ITreeNode Root {
-			get { return root; }
-		}
+		public ITreeNode Root => root;
 		readonly TreeNodeImpl root;
 
-		public Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
+		public Guid Guid { get; }
 
-		public object UIObject {
-			get { return sharpTreeView; }
-		}
+		public object UIObject => sharpTreeView;
 		readonly SharpTreeView sharpTreeView;
 
-		object IStackedContentChild.UIObject {
-			get { return sharpTreeView; }
-		}
+		object IStackedContentChild.UIObject => sharpTreeView;
 
 		public ITreeNodeData SelectedItem {
 			get {
@@ -59,13 +50,8 @@ namespace dnSpy.TreeView {
 			}
 		}
 
-		public ITreeNodeData[] SelectedItems {
-			get { return Convert(sharpTreeView.SelectedItems); }
-		}
-
-		public ITreeNodeData[] TopLevelSelection {
-			get { return Convert(sharpTreeView.GetTopLevelSelection()); }
-		}
+		public ITreeNodeData[] SelectedItems => Convert(sharpTreeView.SelectedItems);
+		public ITreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
 
 		readonly ITreeViewManager treeViewManager;
 		readonly IImageManager imageManager;
@@ -75,7 +61,7 @@ namespace dnSpy.TreeView {
 		public event EventHandler<TVNodeRemovedEventArgs> NodeRemoved;
 
 		public TreeViewImpl(ITreeViewManager treeViewManager, IThemeManager themeManager, IImageManager imageManager, Guid guid, TreeViewOptions options) {
-			this.guid = guid;
+			this.Guid = guid;
 			this.treeViewManager = treeViewManager;
 			this.imageManager = imageManager;
 			this.treeViewListener = options.TreeViewListener;
@@ -109,10 +95,8 @@ namespace dnSpy.TreeView {
 			this.sharpTreeView.Root = this.root.Node;
 		}
 
-		void SharpTreeView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-			if (SelectionChanged != null)
-				SelectionChanged(this, Convert(e));
-		}
+		void SharpTreeView_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+			SelectionChanged?.Invoke(this, Convert(e));
 
 		static TVSelectionChangedEventArgs Convert(SelectionChangedEventArgs e) {
 			ITreeNodeData[] added = null, removed = null;
@@ -123,17 +107,11 @@ namespace dnSpy.TreeView {
 			return new TVSelectionChangedEventArgs(added, removed);
 		}
 
-		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) {
-			return list.Cast<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
-		}
-
-		internal object GetIcon(ImageReference imgRef) {
-			return imageManager.GetImage(imgRef.Assembly, imgRef.Name, BackgroundType.TreeNode);
-		}
-
-		ITreeNode ITreeView.Create(ITreeNodeData data) {
-			return Create(data);
-		}
+		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) =>
+			list.Cast<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+		internal object GetIcon(ImageReference imgRef) =>
+			imageManager.GetImage(imgRef.Assembly, imgRef.Name, BackgroundType.TreeNode);
+		ITreeNode ITreeView.Create(ITreeNodeData data) => Create(data);
 
 		TreeNodeImpl Create(ITreeNodeData data) {
 			Debug.Assert(data.TreeNode == null);
@@ -272,13 +250,10 @@ namespace dnSpy.TreeView {
 				return null;
 			var impl = node.TreeNode as TreeNodeImpl;
 			Debug.Assert(impl != null);
-			return impl == null ? null : impl.Node;
+			return impl?.Node;
 		}
 
-		public void OnRemoved(ITreeNodeData node) {
-			if (NodeRemoved != null)
-				NodeRemoved(this, new TVNodeRemovedEventArgs(node, true));
-		}
+		public void OnRemoved(ITreeNodeData node) => NodeRemoved?.Invoke(this, new TVNodeRemovedEventArgs(node, true));
 
 		public void CollapseUnusedNodes() {
 			var usedNodes = new HashSet<ITreeNodeData>(TopLevelSelection);

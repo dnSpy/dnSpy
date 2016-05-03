@@ -31,9 +31,7 @@ namespace dnSpy.MainApp {
 	sealed class AppStatusBar : IAppStatusBar, IStackedContentChild {
 		int openCounter;
 
-		public object UIObject {
-			get { return statusBar; }
-		}
+		public object UIObject => statusBar;
 		readonly StatusBar statusBar;
 		readonly TextBlock textBlock;
 

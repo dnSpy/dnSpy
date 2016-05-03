@@ -28,40 +28,20 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class FieldNode : FileTreeNodeData, IFieldNode {
-		public FieldDef FieldDef {
-			get { return field; }
-		}
-		readonly FieldDef field;
-
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.FIELD_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, field.FullName); }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return field; }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(field);
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public FieldDef FieldDef { get; }
+		public override Guid Guid => new Guid(FileTVConstants.FIELD_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, FieldDef.FullName);
+		IMDTokenProvider IMDTokenNode.Reference => FieldDef;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(FieldDef);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public FieldNode(ITreeNodeGroup treeNodeGroup, FieldDef field) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.field = field;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.FieldDef = field;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().Write(output, language, field, Context.ShowToken);
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().Write(output, language, FieldDef, Context.ShowToken);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			var res = filter.GetResult(FieldDef);

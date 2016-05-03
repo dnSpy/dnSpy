@@ -24,13 +24,8 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
 	sealed partial class SearchControl : UserControl {
-		public TextBox SearchTextBox {
-			get { return searchTextBox; }
-		}
-
-		public ListBox ListBox {
-			get { return searchListBox; }
-		}
+		public TextBox SearchTextBox => searchTextBox;
+		public ListBox ListBox => searchListBox;
 
 		public SearchControl() {
 			InitializeComponent();
@@ -40,8 +35,7 @@ namespace dnSpy.Search {
 			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(searchListBox, e))
 				return;
 			e.Handled = true;
-			if (SearchListBoxDoubleClick != null)
-				SearchListBoxDoubleClick(this, EventArgs.Empty);
+			SearchListBoxDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler SearchListBoxDoubleClick;

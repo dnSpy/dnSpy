@@ -30,18 +30,13 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	sealed class CodeToolTipWriter : ICodeToolTipWriter, IXmlDocOutput {
 		readonly UISyntaxHighlighter uiSyntaxHighlighter;
 
-		public bool IsEmpty {
-			get { return uiSyntaxHighlighter.IsEmpty; }
-		}
+		public bool IsEmpty => uiSyntaxHighlighter.IsEmpty;
 
 		public CodeToolTipWriter(bool syntaxHighlight) {
 			this.uiSyntaxHighlighter = UISyntaxHighlighter.Create(syntaxHighlight);
 		}
 
-		public UIElement Create() {
-			return uiSyntaxHighlighter.CreateResult(false, false);
-		}
-
+		public UIElement Create() => uiSyntaxHighlighter.CreateResult(false, false);
 		public void Write(string s, object data) => uiSyntaxHighlighter.Output.Write(s, data);
 
 		bool needsNewLine = false;
@@ -57,9 +52,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			needsNewLine = false;
 		}
 
-		void IXmlDocOutput.WriteSpace() {
-			((IXmlDocOutput)this).Write(" ", BoxedTextTokenKind.Text);
-		}
+		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedTextTokenKind.Text);
 
 		void InitializeNeedsNewLine() {
 			var text = uiSyntaxHighlighter.Text;

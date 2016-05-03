@@ -49,9 +49,7 @@ namespace dnSpy.Files.Tabs {
 			cmds.Add(new RoutedCommand("SelectPrevTab", typeof(InstallTabCommands)), (s, e) => SelectPrevTab(), (s, e) => e.CanExecute = CanSelectPrevTab, ModifierKeys.Control | ModifierKeys.Shift, Key.Tab);
 		}
 
-		internal static bool CanOpenNewTabInternal(IFileTabManager fileTabManager) {
-			return fileTabManager.ActiveTab != null;
-		}
+		internal static bool CanOpenNewTabInternal(IFileTabManager fileTabManager) => fileTabManager.ActiveTab != null;
 
 		internal static void OpenNewTabInternal(IFileTabManager fileTabManager, bool clone = true) {
 			var activeTab = fileTabManager.ActiveTab;
@@ -64,36 +62,22 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		bool CanOpenNewTab {
-			get { return CanOpenNewTabInternal(fileTabManager); }
-		}
+		bool CanOpenNewTab => CanOpenNewTabInternal(fileTabManager);
+		void OpenNewTab() => OpenNewTabInternal(fileTabManager);
 
-		void OpenNewTab() {
-			OpenNewTabInternal(fileTabManager);
-		}
-
-		bool CanCloseActiveTab {
-			get { return fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.CloseActiveTabCanExecute; }
-		}
-
+		bool CanCloseActiveTab => fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.CloseActiveTabCanExecute;
 		void CloseActiveTab() {
 			if (fileTabManager.TabGroupManager.ActiveTabGroup != null)
 				fileTabManager.TabGroupManager.ActiveTabGroup.CloseActiveTab();
 		}
 
-		bool CanSelectNextTab {
-			get { return fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.SelectNextTabCanExecute; }
-		}
-
+		bool CanSelectNextTab => fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.SelectNextTabCanExecute;
 		void SelectNextTab() {
 			if (fileTabManager.TabGroupManager.ActiveTabGroup != null)
 				fileTabManager.TabGroupManager.ActiveTabGroup.SelectNextTab();
 		}
 
-		bool CanSelectPrevTab {
-			get { return fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.SelectPreviousTabCanExecute; }
-		}
-
+		bool CanSelectPrevTab => fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.SelectPreviousTabCanExecute;
 		void SelectPrevTab() {
 			if (fileTabManager.TabGroupManager.ActiveTabGroup != null)
 				fileTabManager.TabGroupManager.ActiveTabGroup.SelectPreviousTab();
@@ -111,14 +95,10 @@ namespace dnSpy.Files.Tabs {
 	}
 
 	abstract class CtxMenuTabGroupCommand : MenuItemBase<TabGroupContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override TabGroupContext CreateContext(IMenuItemContext context) {
-			return CreateContextInternal(context);
-		}
+		protected sealed override TabGroupContext CreateContext(IMenuItemContext context) => CreateContextInternal(context);
 
 		protected readonly IFileTabManager fileTabManager;
 
@@ -143,13 +123,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroup.CloseActiveTabCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroup.CloseActiveTab();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroup.CloseActiveTabCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroup.CloseActiveTab();
 	}
 
 	[ExportMenuItem(Header = "res:CloseAllTabsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 20)]
@@ -159,13 +134,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.CloseAllTabsCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.CloseAllTabs();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.CloseAllTabsCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.CloseAllTabs();
 	}
 
 	[ExportMenuItem(Header = "res:CloseAllTabsButThisCommand", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 30)]
@@ -175,17 +145,9 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroup.ActiveTabContent != null;
-		}
-
-		public override bool IsEnabled(TabGroupContext context) {
-			return context.TabGroup.CloseAllButActiveTabCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroup.CloseAllButActiveTab();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroup.ActiveTabContent != null;
+		public override bool IsEnabled(TabGroupContext context) => context.TabGroup.CloseAllButActiveTabCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroup.CloseAllButActiveTab();
 	}
 
 	[ExportMenuItem(Header = "res:NewTabCommand", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 40)]
@@ -195,13 +157,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return InstallTabCommands.CanOpenNewTabInternal(fileTabManager);
-		}
-
-		public override void Execute(TabGroupContext context) {
-			InstallTabCommands.OpenNewTabInternal(fileTabManager);
-		}
+		public override bool IsVisible(TabGroupContext context) => InstallTabCommands.CanOpenNewTabInternal(fileTabManager);
+		public override void Execute(TabGroupContext context) => InstallTabCommands.OpenNewTabInternal(fileTabManager);
 	}
 
 	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 0)]
@@ -211,13 +168,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.NewHorizontalTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.NewHorizontalTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.NewHorizontalTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.NewHorizontalTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 10)]
@@ -227,13 +179,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.NewVerticalTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.NewVerticalTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.NewVerticalTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.NewVerticalTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 20)]
@@ -243,13 +190,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MoveToNextTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MoveToNextTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MoveToNextTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MoveToNextTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveAllTabsToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 30)]
@@ -259,13 +201,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MoveAllToNextTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MoveAllToNextTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MoveAllToNextTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MoveAllToNextTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 40)]
@@ -275,13 +212,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MoveToPreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MoveToPreviousTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MoveToPreviousTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MoveToPreviousTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveAllToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 50)]
@@ -291,13 +223,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MoveAllToPreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MoveAllToPreviousTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MoveAllToPreviousTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MoveAllToPreviousTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:CloseTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 0)]
@@ -307,13 +234,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.CloseTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.CloseTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.CloseTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.CloseTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:CloseAllTabGroupsButThisCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 10)]
@@ -323,13 +245,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.CloseAllTabGroupsButThisCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.CloseAllTabGroupsButThis();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.CloseAllTabGroupsButThisCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.CloseAllTabGroupsButThis();
 	}
 
 	[ExportMenuItem(Header = "res:MoveTabGroupAfterNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 20)]
@@ -339,13 +256,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MoveTabGroupAfterNextTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MoveTabGroupAfterNextTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MoveTabGroupBeforePreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 30)]
@@ -355,13 +267,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MoveTabGroupBeforePreviousTabGroup();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MoveTabGroupBeforePreviousTabGroup();
 	}
 
 	[ExportMenuItem(Header = "res:MergeAllTabGroupsCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 40)]
@@ -371,13 +278,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.MergeAllTabGroupsCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.MergeAllTabGroups();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.MergeAllTabGroupsCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.MergeAllTabGroups();
 	}
 
 	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 0)]
@@ -387,13 +289,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.UseVerticalTabGroupsCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.UseVerticalTabGroups();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.UseVerticalTabGroupsCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.UseVerticalTabGroups();
 	}
 
 	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 10)]
@@ -403,13 +300,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) {
-			return context.TabGroupManager.UseHorizontalTabGroupsCanExecute;
-		}
-
-		public override void Execute(TabGroupContext context) {
-			context.TabGroupManager.UseHorizontalTabGroups();
-		}
+		public override bool IsVisible(TabGroupContext context) => context.TabGroupManager.UseHorizontalTabGroupsCanExecute;
+		public override void Execute(TabGroupContext context) => context.TabGroupManager.UseHorizontalTabGroups();
 	}
 
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey", Group = MenuConstants.GROUP_CTX_FILES_TABS, Order = 0)]
@@ -421,16 +313,12 @@ namespace dnSpy.Files.Tabs {
 			this.fileTabManager = fileTabManager;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
-				InstallTabCommands.CanOpenNewTabInternal(fileTabManager) &&
-				(context.Find<ITreeNodeData[]>() ?? emptyArray).Length > 0;
-		}
-		static readonly ITreeNodeData[] emptyArray = new ITreeNodeData[0];
+		public override bool IsVisible(IMenuItemContext context) =>
+			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
+			InstallTabCommands.CanOpenNewTabInternal(fileTabManager) &&
+			(context.Find<ITreeNodeData[]>() ?? Array.Empty<ITreeNodeData>()).Length > 0;
 
-		public override void Execute(IMenuItemContext context) {
-			InstallTabCommands.OpenNewTabInternal(fileTabManager);
-		}
+		public override void Execute(IMenuItemContext context) => InstallTabCommands.OpenNewTabInternal(fileTabManager);
 	}
 
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_CODE_TABS, Order = 0)]
@@ -457,9 +345,8 @@ namespace dnSpy.Files.Tabs {
 			return context.Find<CodeReference>();
 		}
 
-		public override string GetInputGestureText(IMenuItemContext context) {
-			return context.OpenedFromKeyboard ? dnSpy_Resources.OpenInNewTabKey2 : dnSpy_Resources.OpenInNewTabKey3;
-		}
+		public override string GetInputGestureText(IMenuItemContext context) =>
+			context.OpenedFromKeyboard ? dnSpy_Resources.OpenInNewTabKey2 : dnSpy_Resources.OpenInNewTabKey3;
 	}
 
 	sealed class MenuTabGroupContext {
@@ -473,9 +360,7 @@ namespace dnSpy.Files.Tabs {
 	}
 
 	abstract class MenuTabGroupCommand : MenuItemBase<MenuTabGroupContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected sealed override MenuTabGroupContext CreateContext(IMenuItemContext context) {
@@ -499,13 +384,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsEnabled(MenuTabGroupContext context) {
-			return InstallTabCommands.CanOpenNewTabInternal(fileTabManager);
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			InstallTabCommands.OpenNewTabInternal(fileTabManager);
-		}
+		public override bool IsEnabled(MenuTabGroupContext context) => InstallTabCommands.CanOpenNewTabInternal(fileTabManager);
+		public override void Execute(MenuTabGroupContext context) => InstallTabCommands.OpenNewTabInternal(fileTabManager);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseTabCommand", InputGestureText = "res:CloseTabKey", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 10)]
@@ -515,14 +395,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroup != null && context.TabGroup.CloseActiveTabCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			if (context.TabGroup != null)
-				context.TabGroup.CloseActiveTab();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroup != null && context.TabGroup.CloseActiveTabCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroup?.CloseActiveTab();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 0)]
@@ -532,13 +406,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.NewHorizontalTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.NewHorizontalTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.NewHorizontalTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.NewHorizontalTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 10)]
@@ -548,13 +417,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.NewVerticalTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.NewVerticalTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.NewVerticalTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.NewVerticalTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveToNextTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 20)]
@@ -564,13 +428,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MoveToNextTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MoveToNextTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MoveToNextTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MoveToNextTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveAllTabsToNextTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 30)]
@@ -580,13 +439,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MoveAllToNextTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MoveAllToNextTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MoveAllToNextTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MoveAllToNextTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveToPreviousTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 40)]
@@ -596,13 +450,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MoveToPreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MoveToPreviousTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MoveToPreviousTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MoveToPreviousTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveAllToPreviousTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 50)]
@@ -612,13 +461,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MoveAllToPreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MoveAllToPreviousTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MoveAllToPreviousTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MoveAllToPreviousTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseAllTabsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 60)]
@@ -628,17 +472,9 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return true;
-		}
-
-		public override bool IsEnabled(MenuTabGroupContext context) {
-			return context.TabGroupManager.CloseAllTabsCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.CloseAllTabs();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => true;
+		public override bool IsEnabled(MenuTabGroupContext context) => context.TabGroupManager.CloseAllTabsCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.CloseAllTabs();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 0)]
@@ -648,13 +484,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.CloseTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.CloseTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.CloseTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.CloseTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseAllTabGroupsButThisCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 10)]
@@ -664,13 +495,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.CloseAllTabGroupsButThisCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.CloseAllTabGroupsButThis();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.CloseAllTabGroupsButThisCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.CloseAllTabGroupsButThis();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveTabGroupAfterNextTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 20)]
@@ -680,13 +506,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MoveTabGroupAfterNextTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MoveTabGroupAfterNextTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveTabGroupBeforePreviousTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 30)]
@@ -696,13 +517,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MoveTabGroupBeforePreviousTabGroup();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MoveTabGroupBeforePreviousTabGroup();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MergeAllTabGroupsCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 40)]
@@ -712,13 +528,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.MergeAllTabGroupsCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.MergeAllTabGroups();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.MergeAllTabGroupsCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.MergeAllTabGroups();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 0)]
@@ -728,13 +539,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.UseVerticalTabGroupsCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.UseVerticalTabGroups();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.UseVerticalTabGroupsCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.UseVerticalTabGroups();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 10)]
@@ -744,13 +550,8 @@ namespace dnSpy.Files.Tabs {
 			: base(fileTabManager) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) {
-			return context.TabGroupManager.UseHorizontalTabGroupsCanExecute;
-		}
-
-		public override void Execute(MenuTabGroupContext context) {
-			context.TabGroupManager.UseHorizontalTabGroups();
-		}
+		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroupManager.UseHorizontalTabGroupsCanExecute;
+		public override void Execute(MenuTabGroupContext context) => context.TabGroupManager.UseHorizontalTabGroups();
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_WINDOW_ALLWINDOWS, Order = 0)]
@@ -767,8 +568,7 @@ namespace dnSpy.Files.Tabs {
 			this.appWindow = appWindow;
 		}
 
-		public override void Execute(MenuTabGroupContext context) {
-		}
+		public override void Execute(MenuTabGroupContext context) { }
 
 		sealed class MyMenuItem : MenuItemBase {
 			readonly Action<IMenuItemContext> action;
@@ -779,13 +579,8 @@ namespace dnSpy.Files.Tabs {
 				this.isChecked = isChecked;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				action(context);
-			}
-
-			public override bool IsChecked(IMenuItemContext context) {
-				return isChecked;
-			}
+			public override void Execute(IMenuItemContext context) => action(context);
+			public override bool IsChecked(IMenuItemContext context) => isChecked;
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {

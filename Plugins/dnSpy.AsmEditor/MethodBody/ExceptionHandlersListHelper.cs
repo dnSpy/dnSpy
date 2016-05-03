@@ -37,38 +37,19 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM> {
 		readonly TypeSigCreator typeSigCreator;
 
-		protected override string AddNewBeforeSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.EH_Command1; }
-		}
-
-		protected override string AddNewAfterSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.EH_Command2; }
-		}
-
-		protected override string AppendNewMessage {
-			get { return dnSpy_AsmEditor_Resources.EH_Command3; }
-		}
-
-		protected override string RemoveSingularMessage {
-			get { return dnSpy_AsmEditor_Resources.EH_Command4; }
-		}
-
-		protected override string RemovePluralMessage {
-			get { return dnSpy_AsmEditor_Resources.EH_Command5; }
-		}
-
-		protected override string RemoveAllMessage {
-			get { return dnSpy_AsmEditor_Resources.EH_Command6; }
-		}
+		protected override string AddNewBeforeSelectionMessage => dnSpy_AsmEditor_Resources.EH_Command1;
+		protected override string AddNewAfterSelectionMessage => dnSpy_AsmEditor_Resources.EH_Command2;
+		protected override string AppendNewMessage => dnSpy_AsmEditor_Resources.EH_Command3;
+		protected override string RemoveSingularMessage => dnSpy_AsmEditor_Resources.EH_Command4;
+		protected override string RemovePluralMessage => dnSpy_AsmEditor_Resources.EH_Command5;
+		protected override string RemoveAllMessage => dnSpy_AsmEditor_Resources.EH_Command6;
 
 		public ExceptionHandlersListHelper(ListView listView, Window ownerWindow)
 			: base(listView) {
 			this.typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
-		protected override ExceptionHandlerVM[] GetSelectedItems() {
-			return listBox.SelectedItems.Cast<ExceptionHandlerVM>().ToArray();
-		}
+		protected override ExceptionHandlerVM[] GetSelectedItems() => listBox.SelectedItems.Cast<ExceptionHandlerVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.coll = ((MethodBodyVM)dataContext).CilBodyVM.ExceptionHandlersListVM;
@@ -111,13 +92,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs) {
-			return ehs.Any(a => GetCatchTypeToken(a.CatchType) != null);
-		}
-
-		static uint? GetCatchTypeToken(ITypeDefOrRef type) {
-			return type == null ? (uint?)null : type.MDToken.Raw;
-		}
+		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs) => ehs.Any(a => GetCatchTypeToken(a.CatchType) != null);
+		static uint? GetCatchTypeToken(ITypeDefOrRef type) => type == null ? (uint?)null : type.MDToken.Raw;
 
 		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.NewItems != null)

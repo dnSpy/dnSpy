@@ -28,21 +28,14 @@ namespace dnSpy.Shared.HexEditor {
 
 		readonly HexBox hexBox;
 
-		public double Order {
-			get { return DEFAULT_ORDER; }
-		}
+		public double Order => DEFAULT_ORDER;
 
 		public SelectionLayer(HexBox hexBox) {
 			this.hexBox = hexBox;
 		}
 
-		void Redraw() {
-			InvalidateVisual();
-		}
-
-		public void SelectionChanged() {
-			Redraw();
-		}
+		void Redraw() => InvalidateVisual();
+		public void SelectionChanged() => Redraw();
 
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
 			base.OnPropertyChanged(e);

@@ -28,27 +28,16 @@ namespace dnSpy.Debugger {
 
 		protected MarkedTextLine(SerializedDnToken methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
 			this.methodKey = methodKey;
-			this.ilOffset = ilOffset;
+			this.ILOffset = ilOffset;
 			this.senderObj = senderObj ?? this;
 		}
 
-		public SerializedDnToken SerializedDnToken {
-			get { return methodKey; }
-		}
+		public SerializedDnToken SerializedDnToken => methodKey;
 		SerializedDnToken methodKey;
 
-		public uint ILOffset {
-			get { return ilOffset; }
-		}
-
-		readonly uint ilOffset;
-
+		public uint ILOffset { get; }
 		public event EventHandler<TextLineObjectEventArgs> ObjPropertyChanged;
-
-		protected void OnObjPropertyChanged(string propName) {
-			if (ObjPropertyChanged != null)
-				ObjPropertyChanged(senderObj, new TextLineObjectEventArgs(propName));
-		}
+		protected void OnObjPropertyChanged(string propName) => ObjPropertyChanged?.Invoke(senderObj, new TextLineObjectEventArgs(propName));
 
 		public int GetLineNumber(ITextEditorUIContext uiContext) {
 			TextPosition location, endLocation;
@@ -66,7 +55,7 @@ namespace dnSpy.Debugger {
 			}
 
 			bool isMatch;
-			var map = mapping.GetInstructionByOffset(ilOffset, out isMatch);
+			var map = mapping.GetInstructionByOffset(ILOffset, out isMatch);
 			if (map == null) {
 				location = endLocation = new TextPosition();
 				return false;
@@ -106,9 +95,6 @@ namespace dnSpy.Debugger {
 		public abstract bool HasImage { get; }
 		public abstract double ZOrder { get; }
 		public abstract ImageReference? ImageReference { get; }
-
-		protected void Redraw() {
-			OnObjPropertyChanged(TextLineObjectEventArgs.RedrawProperty);
-		}
+		protected void Redraw() => OnObjPropertyChanged(TextLineObjectEventArgs.RedrawProperty);
 	}
 }

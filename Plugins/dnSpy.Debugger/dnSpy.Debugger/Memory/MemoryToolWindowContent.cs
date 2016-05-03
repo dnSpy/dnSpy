@@ -34,25 +34,13 @@ using dnSpy.Shared.Hex;
 namespace dnSpy.Debugger.Memory {
 	[Export, Export(typeof(IMainToolWindowContentCreator))]
 	sealed class MemoryToolWindowContentCreator : IMainToolWindowContentCreator {
-		public TWContent[] Contents {
-			get { return contents; }
-		}
+		public TWContent[] Contents => contents;
 		readonly TWContent[] contents;
 
 		public sealed class TWContent {
-			public int Index {
-				get { return windowIndex; }
-			}
-			readonly int windowIndex;
-
-			public Guid Guid {
-				get { return guid; }
-			}
-			readonly Guid guid;
-
-			public AppToolWindowLocation DefaultLocation {
-				get { return AppToolWindowLocation.DefaultHorizontal; }
-			}
+			public int Index { get; }
+			public Guid Guid { get; }
+			public AppToolWindowLocation DefaultLocation => AppToolWindowLocation.DefaultHorizontal;
 
 			public MemoryToolWindowContent Content {
 				get {
@@ -66,9 +54,9 @@ namespace dnSpy.Debugger.Memory {
 			readonly Func<MemoryToolWindowContent> createContent;
 
 			public TWContent(int windowIndex, Func<MemoryToolWindowContent> createContent) {
-				this.windowIndex = windowIndex;
+				this.Index = windowIndex;
 				this.createContent = createContent;
-				this.guid = new Guid(string.Format("30AD8A10-5C72-47FF-A30D-9E2F{0:X8}", 0xBE2852B4 + (uint)windowIndex));
+				this.Guid = new Guid($"30AD8A10-5C72-47FF-A30D-9E2F{0xBE2852B4 + (uint)windowIndex:X8}");
 			}
 		}
 
@@ -114,48 +102,25 @@ namespace dnSpy.Debugger.Memory {
 			return null;
 		}
 
-		IMemoryContent CreateMemoryContent(TWContent info) {
-			var vm = new MemoryVM(theDebugger.Value);
-			return new MemoryContent(wpfCommandManager, themeManager, menuManager, hexEditorSettings, vm, appSettings);
-		}
+		IMemoryContent CreateMemoryContent(TWContent info) =>
+			new MemoryContent(wpfCommandManager, themeManager, menuManager, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
 	}
 
 	sealed class MemoryToolWindowContent : IToolWindowContent {
-		public IInputElement FocusedElement {
-			get { return memoryContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return memoryContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
-
-		public string Title {
-			get { return string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1); }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return memoryContent.Value.UIObject; }
-		}
-
-		public DnHexBox DnHexBox {
-			get { return memoryContent.Value.DnHexBox; }
-		}
+		public IInputElement FocusedElement => memoryContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => memoryContent.Value.ScaleElement;
+		public Guid Guid { get; }
+		public string Title => string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1);
+		public object ToolTip => null;
+		public object UIObject => memoryContent.Value.UIObject;
+		public DnHexBox DnHexBox => memoryContent.Value.DnHexBox;
 
 		readonly Lazy<IMemoryContent> memoryContent;
 		readonly int windowIndex;
 
 		public MemoryToolWindowContent(Lazy<IMemoryContent> memoryContent, Guid guid, int windowIndex) {
 			this.memoryContent = memoryContent;
-			this.guid = guid;
+			this.Guid = guid;
 			this.windowIndex = windowIndex;
 		}
 

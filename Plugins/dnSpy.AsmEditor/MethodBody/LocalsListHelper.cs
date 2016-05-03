@@ -34,38 +34,19 @@ namespace dnSpy.AsmEditor.MethodBody {
 		CilBodyVM cilBodyVM;
 		readonly TypeSigCreator typeSigCreator;
 
-		protected override string AddNewBeforeSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.Local_Command1; }
-		}
-
-		protected override string AddNewAfterSelectionMessage {
-			get { return dnSpy_AsmEditor_Resources.Local_Command2; }
-		}
-
-		protected override string AppendNewMessage {
-			get { return dnSpy_AsmEditor_Resources.Local_Command3; }
-		}
-
-		protected override string RemoveSingularMessage {
-			get { return dnSpy_AsmEditor_Resources.Local_Command4; }
-		}
-
-		protected override string RemovePluralMessage {
-			get { return dnSpy_AsmEditor_Resources.Local_Command5; }
-		}
-
-		protected override string RemoveAllMessage {
-			get { return dnSpy_AsmEditor_Resources.Local_Command6; }
-		}
+		protected override string AddNewBeforeSelectionMessage => dnSpy_AsmEditor_Resources.Local_Command1;
+		protected override string AddNewAfterSelectionMessage => dnSpy_AsmEditor_Resources.Local_Command2;
+		protected override string AppendNewMessage => dnSpy_AsmEditor_Resources.Local_Command3;
+		protected override string RemoveSingularMessage => dnSpy_AsmEditor_Resources.Local_Command4;
+		protected override string RemovePluralMessage => dnSpy_AsmEditor_Resources.Local_Command5;
+		protected override string RemoveAllMessage => dnSpy_AsmEditor_Resources.Local_Command6;
 
 		public LocalsListHelper(ListView listView, Window ownerWindow)
 			: base(listView) {
 			this.typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
-		protected override LocalVM[] GetSelectedItems() {
-			return listBox.SelectedItems.Cast<LocalVM>().ToArray();
-		}
+		protected override LocalVM[] GetSelectedItems() => listBox.SelectedItems.Cast<LocalVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
@@ -115,9 +96,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			catch (ExternalException) { }
 		}
 
-		protected override bool CanUseClipboardData(LocalVM[] data, bool fromThisInstance) {
-			return true;
-		}
+		protected override bool CanUseClipboardData(LocalVM[] data, bool fromThisInstance) => true;
 
 		protected override LocalVM[] BeforeCopyingData(LocalVM[] data, bool fromThisInstance) {
 			if (fromThisInstance)

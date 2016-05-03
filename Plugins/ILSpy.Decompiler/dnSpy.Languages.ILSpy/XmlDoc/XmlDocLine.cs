@@ -46,9 +46,7 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 			this.emptyLines = 0;
 		}
 
-		public XmlDocLine GetEnumerator() {
-			return this;
-		}
+		public XmlDocLine GetEnumerator() => this;
 
 		IEnumerator<SubString?> IEnumerable<SubString?>.GetEnumerator() {
 			Debug.Fail("'this' was boxed");
@@ -60,16 +58,13 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 			return GetEnumerator();
 		}
 
-		public SubString? Current {
-			get { return current; }
-		}
+		public SubString? Current => current;
 
 		object IEnumerator.Current {
 			get { Debug.Fail("'this' was boxed"); return current; }
 		}
 
-		public void Dispose() {
-		}
+		public void Dispose() { }
 
 		public bool MoveNext() {
 			if (this.indent == null) {

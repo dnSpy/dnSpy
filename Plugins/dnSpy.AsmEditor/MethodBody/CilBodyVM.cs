@@ -41,33 +41,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		ISelectItems<InstructionVM> selectItems;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand SimplifyAllInstructionsCommand {
-			get { return new RelayCommand(a => SimplifyAllInstructions(), a => SimplifyAllInstructionsCanExecute()); }
-		}
-
-		public ICommand OptimizeAllInstructionsCommand {
-			get { return new RelayCommand(a => OptimizeAllInstructions(), a => OptimizeAllInstructionsCanExecute()); }
-		}
-
-		public ICommand ReplaceInstructionWithNopCommand {
-			get { return new RelayCommand(a => ReplaceInstructionWithNop((InstructionVM[])a), a => ReplaceInstructionWithNopCanExecute((InstructionVM[])a)); }
-		}
-
-		public ICommand InvertBranchCommand {
-			get { return new RelayCommand(a => InvertBranch((InstructionVM[])a), a => InvertBranchCanExecute((InstructionVM[])a)); }
-		}
-
-		public ICommand ConvertBranchToUnconditionalBranchCommand {
-			get { return new RelayCommand(a => ConvertBranchToUnconditionalBranch((InstructionVM[])a), a => ConvertBranchToUnconditionalBranchCanExecute((InstructionVM[])a)); }
-		}
-
-		public ICommand RemoveInstructionAndAddPopsCommand {
-			get { return new RelayCommand(a => RemoveInstructionAndAddPops((InstructionVM[])a), a => RemoveInstructionAndAddPopsCanExecute((InstructionVM[])a)); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand SimplifyAllInstructionsCommand => new RelayCommand(a => SimplifyAllInstructions(), a => SimplifyAllInstructionsCanExecute());
+		public ICommand OptimizeAllInstructionsCommand => new RelayCommand(a => OptimizeAllInstructions(), a => OptimizeAllInstructionsCanExecute());
+		public ICommand ReplaceInstructionWithNopCommand => new RelayCommand(a => ReplaceInstructionWithNop((InstructionVM[])a), a => ReplaceInstructionWithNopCanExecute((InstructionVM[])a));
+		public ICommand InvertBranchCommand => new RelayCommand(a => InvertBranch((InstructionVM[])a), a => InvertBranchCanExecute((InstructionVM[])a));
+		public ICommand ConvertBranchToUnconditionalBranchCommand => new RelayCommand(a => ConvertBranchToUnconditionalBranch((InstructionVM[])a), a => ConvertBranchToUnconditionalBranchCanExecute((InstructionVM[])a));
+		public ICommand RemoveInstructionAndAddPopsCommand => new RelayCommand(a => RemoveInstructionAndAddPops((InstructionVM[])a), a => RemoveInstructionAndAddPopsCanExecute((InstructionVM[])a));
 
 		public bool KeepOldMaxStack {
 			get { return keepOldMaxStack; }
@@ -91,40 +71,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		bool initLocals;
 
-		public UInt16VM MaxStack {
-			get { return maxStack; }
-		}
-		readonly UInt16VM maxStack;
-
-		public UInt32VM LocalVarSigTok {
-			get { return localVarSigTok; }
-		}
-		readonly UInt32VM localVarSigTok;
-
-		public ByteVM HeaderSize {
-			get { return headerSize; }
-		}
-		ByteVM headerSize;
-
-		public UInt32VM HeaderRVA {
-			get { return headerRVA; }
-		}
-		readonly UInt32VM headerRVA;
-
-		public UInt64VM HeaderFileOffset {
-			get { return headerFileOffset; }
-		}
-		readonly UInt64VM headerFileOffset;
-
-		public UInt32VM RVA {
-			get { return rva; }
-		}
-		readonly UInt32VM rva;
-
-		public UInt64VM FileOffset {
-			get { return fileOffset; }
-		}
-		readonly UInt64VM fileOffset;
+		public UInt16VM MaxStack { get; }
+		public UInt32VM LocalVarSigTok { get; }
+		public ByteVM HeaderSize { get; }
+		public UInt32VM HeaderRVA { get; }
+		public UInt64VM HeaderFileOffset { get; }
+		public UInt32VM RVA { get; }
+		public UInt64VM FileOffset { get; }
 
 		sealed class LocalsIndexObservableCollection : IndexObservableCollection<LocalVM> {
 			readonly CilBodyVM owner;
@@ -152,61 +105,42 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public IndexObservableCollection<LocalVM> LocalsListVM {
-			get { return localsListVM; }
-		}
-		readonly LocalsIndexObservableCollection localsListVM;
+		public IndexObservableCollection<LocalVM> LocalsListVM { get; }
+		public IndexObservableCollection<InstructionVM> InstructionsListVM { get; }
+		public IndexObservableCollection<ExceptionHandlerVM> ExceptionHandlersListVM { get; }
+		internal ModuleDef OwnerModule { get; }
+		internal TypeSigCreatorOptions TypeSigCreatorOptions { get; }
 
-		public IndexObservableCollection<InstructionVM> InstructionsListVM {
-			get { return instructionsListVM; }
-		}
-		readonly IndexObservableCollection<InstructionVM> instructionsListVM;
-
-		public IndexObservableCollection<ExceptionHandlerVM> ExceptionHandlersListVM {
-			get { return exceptionHandlersListVM; }
-		}
-		IndexObservableCollection<ExceptionHandlerVM> exceptionHandlersListVM;
-
-		internal ModuleDef OwnerModule {
-			get { return ownerModule; }
-		}
-
-		internal TypeSigCreatorOptions TypeSigCreatorOptions {
-			get { return typeSigCreatorOptions; }
-		}
-
-		readonly ModuleDef ownerModule;
 		readonly MethodDef ownerMethod;
-		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
-			this.ownerModule = ownerModule;
+			this.OwnerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
 
-			typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				CanAddGenericTypeVar = ownerType.HasGenericParameters,
 				CanAddGenericMethodVar = ownerMethod.MethodSig.GetGenParamCount() > 0,
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
 
-			this.localsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(typeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
-			this.instructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
-			this.exceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(typeSigCreatorOptions, new ExceptionHandlerOptions()));
+			this.LocalsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
+			this.InstructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
+			this.ExceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(TypeSigCreatorOptions, new ExceptionHandlerOptions()));
 			this.LocalsListVM.UpdateIndexesDelegate = LocalsUpdateIndexes;
 			this.InstructionsListVM.UpdateIndexesDelegate = InstructionsUpdateIndexes;
 			this.ExceptionHandlersListVM.UpdateIndexesDelegate = ExceptionHandlersUpdateIndexes;
 			this.InstructionsListVM.CollectionChanged += InstructionsListVM_CollectionChanged;
 			this.LocalsListVM.CollectionChanged += LocalsListVM_CollectionChanged;
 			this.ExceptionHandlersListVM.CollectionChanged += ExceptionHandlersListVM_CollectionChanged;
-			this.maxStack = new UInt16VM(a => CallHasErrorUpdated());
-			this.localVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
-			this.headerSize = new ByteVM(a => CallHasErrorUpdated());
-			this.headerRVA = new UInt32VM(a => CallHasErrorUpdated());
-			this.headerFileOffset = new UInt64VM(a => CallHasErrorUpdated());
-			this.rva = new UInt32VM(a => CallHasErrorUpdated());
-			this.fileOffset = new UInt64VM(a => CallHasErrorUpdated());
+			this.MaxStack = new UInt16VM(a => CallHasErrorUpdated());
+			this.LocalVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
+			this.HeaderSize = new ByteVM(a => CallHasErrorUpdated());
+			this.HeaderRVA = new UInt32VM(a => CallHasErrorUpdated());
+			this.HeaderFileOffset = new UInt64VM(a => CallHasErrorUpdated());
+			this.RVA = new UInt32VM(a => CallHasErrorUpdated());
+			this.FileOffset = new UInt64VM(a => CallHasErrorUpdated());
 
 			if (initialize)
 				Reinitialize();
@@ -284,9 +218,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		InstructionVM CreateInstructionVM(Code code = Code.Nop) {
-			return new InstructionVM() { Code = code };
-		}
+		InstructionVM CreateInstructionVM(Code code = Code.Nop) => new InstructionVM() { Code = code };
 
 		void UpdateExceptionHandlerInstructionReferences() {
 			foreach (var eh in ExceptionHandlersListVM)
@@ -296,7 +228,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void UpdateBranchOperands() {
 			if (disable_UpdateBranchOperands)
 				return;
-			foreach (var instr in instructionsListVM) {
+			foreach (var instr in InstructionsListVM) {
 				if (instr.InstructionOperandVM.InstructionOperandType == InstructionOperandType.BranchTarget)
 					instr.InstructionOperandVM.BranchOperandChanged(InstructionsListVM);
 				else if (instr.InstructionOperandVM.InstructionOperandType == InstructionOperandType.SwitchTargets)
@@ -308,7 +240,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void UpdateLocalOperands() {
 			if (disable_UpdateLocalOperands)
 				return;
-			foreach (var instr in instructionsListVM) {
+			foreach (var instr in InstructionsListVM) {
 				if (instr.InstructionOperandVM.InstructionOperandType == InstructionOperandType.Local)
 					instr.InstructionOperandVM.LocalOperandChanged(LocalsListVM);
 			}
@@ -316,7 +248,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		bool disable_UpdateLocalOperands = false;
 
 		void UpdateParameterOperands() {
-			foreach (var instr in instructionsListVM) {
+			foreach (var instr in InstructionsListVM) {
 				if (instr.InstructionOperandVM.InstructionOperandType == InstructionOperandType.Parameter)
 					instr.InstructionOperandVM.ParameterOperandChanged(ownerMethod.Parameters);
 			}
@@ -343,9 +275,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			InstructionsUpdateIndexes(0);
 		}
 
-		bool SimplifyAllInstructionsCanExecute() {
-			return InstructionsListVM.Count > 0;
-		}
+		bool SimplifyAllInstructionsCanExecute() => InstructionsListVM.Count > 0;
 
 		void OptimizeAllInstructions() {
 			var old1 = InstructionsListVM.DisableAutoUpdateProps;
@@ -366,9 +296,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			InstructionsUpdateIndexes(0);
 		}
 
-		bool OptimizeAllInstructionsCanExecute() {
-			return InstructionsListVM.Count > 0;
-		}
+		bool OptimizeAllInstructionsCanExecute() => InstructionsListVM.Count > 0;
 
 		void ReplaceInstructionWithNop(InstructionVM[] instrs) {
 			var old1 = InstructionsListVM.DisableAutoUpdateProps;
@@ -390,9 +318,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			InstructionsUpdateIndexes(0);
 		}
 
-		bool ReplaceInstructionWithNopCanExecute(InstructionVM[] instrs) {
-			return instrs.Any(a => a.Code != Code.Nop);
-		}
+		bool ReplaceInstructionWithNopCanExecute(InstructionVM[] instrs) => instrs.Any(a => a.Code != Code.Nop);
 
 		void InvertBranch(InstructionVM[] instrs) {
 			foreach (var instr in instrs) {
@@ -402,9 +328,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool InvertBranchCanExecute(InstructionVM[] instrs) {
-			return instrs.Any(a => InvertBcc(a.Code) != null);
-		}
+		bool InvertBranchCanExecute(InstructionVM[] instrs) => instrs.Any(a => InvertBcc(a.Code) != null);
 
 		static Code? InvertBcc(Code code) {
 			switch (code) {
@@ -486,9 +410,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool ConvertBranchToUnconditionalBranchCanExecute(InstructionVM[] instrs) {
-			return instrs.Any(a => GetBccPopCount(a.Code) > 0);
-		}
+		bool ConvertBranchToUnconditionalBranchCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetBccPopCount(a.Code) > 0);
 
 		void RemoveInstructionAndAddPops(InstructionVM[] instrs) {
 			foreach (var instr in instrs) {
@@ -498,8 +420,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				var popCount = info.Value.PopCount;
 				var origCode = instr.Code;
-				if (origCode == Code.Callvirt && instr.Index >= 1 && instructionsListVM[instr.Index - 1].Code == Code.Constrained)
-					instructionsListVM[instr.Index - 1].Code = Code.Nop;
+				if (origCode == Code.Callvirt && instr.Index >= 1 && InstructionsListVM[instr.Index - 1].Code == Code.Constrained)
+					InstructionsListVM[instr.Index - 1].Code = Code.Nop;
 
 				int index = instr.Index + 1;
 				if (popCount == 0)
@@ -515,9 +437,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) {
-			return instrs.Any(a => GetInstructionPops(a) != null);
-		}
+		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetInstructionPops(a) != null);
 
 		struct InstructionPushPopInfo {
 			public readonly int PopCount;
@@ -614,7 +534,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case ElementType.TypedByRef:
 			case ElementType.Var:
 			case ElementType.MVar:
-				var local = new LocalVM(typeSigCreatorOptions, new LocalOptions(new Local(pushType)));
+				var local = new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(pushType)));
 				this.LocalsListVM.Add(local);
 
 				var newInstr = CreateInstructionVM(Code.Ldloca);
@@ -786,13 +706,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 				CallHasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public CilBodyOptions CreateCilBodyOptions() {
-			return CopyTo(new CilBodyOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public CilBodyOptions CreateCilBodyOptions() => CopyTo(new CilBodyOptions());
 
 		public void InitializeFrom(CilBodyOptions options) {
 			try {
@@ -803,7 +718,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				var ops = new Dictionary<object, object>();
 				foreach (var local in options.Locals)
-					ops.Add(local, new LocalVM(typeSigCreatorOptions, new LocalOptions(local)));
+					ops.Add(local, new LocalVM(TypeSigCreatorOptions, new LocalOptions(local)));
 				foreach (var instr in options.Instructions)
 					ops.Add(instr, new InstructionVM());
 				foreach (var instr in options.Instructions)
@@ -823,7 +738,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				InstructionsListVM.Clear();
 				InstructionsListVM.AddRange(options.Instructions.Select(a => (InstructionVM)ops[a]));
 				ExceptionHandlersListVM.Clear();
-				ExceptionHandlersListVM.AddRange(options.ExceptionHandlers.Select(a => new ExceptionHandlerVM(typeSigCreatorOptions, new ExceptionHandlerOptions(ops, a))));
+				ExceptionHandlersListVM.AddRange(options.ExceptionHandlers.Select(a => new ExceptionHandlerVM(TypeSigCreatorOptions, new ExceptionHandlerOptions(ops, a))));
 			}
 			finally {
 				HasError_disabled = false;

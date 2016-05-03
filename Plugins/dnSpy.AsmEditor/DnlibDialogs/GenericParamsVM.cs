@@ -27,17 +27,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(dnSpy_AsmEditor_Resources.EditGenericParameter, dnSpy_AsmEditor_Resources.CreateGenericParameter, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
-		protected override GenericParamVM Create(GenericParam model) {
-			return new GenericParamVM(new GenericParamOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override GenericParamVM Clone(GenericParamVM obj) {
-			return new GenericParamVM(obj.CreateGenericParamOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
-
-		protected override GenericParamVM Create() {
-			return new GenericParamVM(new GenericParamOptions(), ownerModule, languageManager, ownerType, ownerMethod);
-		}
+		protected override GenericParamVM Create(GenericParam model) => new GenericParamVM(new GenericParamOptions(model), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override GenericParamVM Clone(GenericParamVM obj) => new GenericParamVM(obj.CreateGenericParamOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override GenericParamVM Create() => new GenericParamVM(new GenericParamOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
 
 		protected override int GetAddIndex(GenericParamVM obj) {
 			ushort number = obj.Number.Value;

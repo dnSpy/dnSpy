@@ -21,9 +21,9 @@ using System.Windows.Media.TextFormatting;
 
 namespace dnSpy.Shared.HexEditor {
 	sealed class HexLinePart {
-		public int Offset;
-		public int Length;
-		public TextRunProperties TextRunProperties;
+		public int Offset { get; }
+		public int Length { get; set; }
+		public TextRunProperties TextRunProperties { get; }
 
 		public HexLinePart(int offset, int length, TextRunProperties textRunProperties) {
 			this.Offset = offset;

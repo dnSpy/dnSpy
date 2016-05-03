@@ -42,23 +42,13 @@ namespace dnSpy.AsmEditor.Module {
 			new EnumVM(Module.ClrVersion.CLR40, "4.0 - 4.6"),
 		};
 
-		public EnumListVM ClrVersion {
-			get { return clrVersionVM; }
-		}
-		readonly EnumListVM clrVersionVM = new EnumListVM(clrVersionList);
-
-		public GuidVM Mvid {
-			get { return mvid; }
-		}
-		GuidVM mvid;
-
-		public ICommand GenerateNewMvidCommand {
-			get { return new RelayCommand(a => Mvid.Value = Guid.NewGuid()); }
-		}
+		public EnumListVM ClrVersion { get; } = new EnumListVM(clrVersionList);
+		public GuidVM Mvid { get; }
+		public ICommand GenerateNewMvidCommand => new RelayCommand(a => Mvid.Value = Guid.NewGuid());
 
 		public NetModuleOptionsVM(ModuleDef module = null) {
 			Name = "MyNetModule.netmodule";
-			mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
+			Mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 			ClrVersion.SelectedItem = GetClrVersion(module);
 		}
 
@@ -82,8 +72,6 @@ namespace dnSpy.AsmEditor.Module {
 			return options;
 		}
 
-		public override bool HasError {
-			get { return mvid.HasError; }
-		}
+		public override bool HasError => Mvid.HasError;
 	}
 }

@@ -38,13 +38,8 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlSettings = bamlSettings;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			bamlSettings.DisassembleBaml = !bamlSettings.DisassembleBaml;
-		}
-
-		public override bool IsChecked(IMenuItemContext context) {
-			return bamlSettings.DisassembleBaml;
-		}
+		public override void Execute(IMenuItemContext context) => bamlSettings.DisassembleBaml = !bamlSettings.DisassembleBaml;
+		public override bool IsChecked(IMenuItemContext context) => bamlSettings.DisassembleBaml;
 
 		public override bool IsVisible(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))

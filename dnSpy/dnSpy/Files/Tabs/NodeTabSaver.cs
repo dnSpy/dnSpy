@@ -45,9 +45,7 @@ namespace dnSpy.Files.Tabs {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public ITabSaver Create(IFileTab tab) {
-			return NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, messageBoxManager);
-		}
+		public ITabSaver Create(IFileTab tab) => NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, messageBoxManager);
 	}
 
 	sealed class NodeTabSaver : ITabSaver {
@@ -83,22 +81,13 @@ namespace dnSpy.Files.Tabs {
 			this.nodes = nodes;
 		}
 
-		public bool CanSave {
-			get { return !tab.IsAsyncExecInProgress; }
-		}
-
-		public string MenuHeader {
-			get { return dnSpy_Resources.Button_SaveCode; }
-		}
+		public bool CanSave => !tab.IsAsyncExecInProgress;
+		public string MenuHeader => dnSpy_Resources.Button_SaveCode;
 
 		sealed class DecompileContext : IDisposable {
 			public DecompileNodeContext DecompileNodeContext;
 			public TextWriter Writer;
-
-			public void Dispose() {
-				if (Writer != null)
-					Writer.Dispose();
-			}
+			public void Dispose() => Writer?.Dispose();
 		}
 
 		DecompileContext CreateDecompileContext(string filename) {

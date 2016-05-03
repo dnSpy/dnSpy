@@ -21,8 +21,8 @@ using System.ComponentModel;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class VMPropertyChangedEventArgs<T> : PropertyChangedEventArgs {
-		public readonly T OldValue;
-		public readonly T NewValue;
+		public T OldValue { get; }
+		public T NewValue { get; }
 
 		public VMPropertyChangedEventArgs(string propName, T oldValue, T newValue)
 			: base(propName) {

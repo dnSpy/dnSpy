@@ -92,28 +92,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetPermissionSetTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumPermissionSets(ref iter, token, 0, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumPermissionSets(ref iter, token, 0, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -230,28 +230,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetMethodTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumMethods(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumMethods(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -309,22 +309,22 @@ namespace dndbg.Engine {
 
 		public unsafe static MethodOverrideInfo[] GetMethodOverrides(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new MethodOverrideInfo[0];
+				return Array.Empty<MethodOverrideInfo>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumMethodImpls(ref iter, token, IntPtr.Zero, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new MethodOverrideInfo[0];
+					return Array.Empty<MethodOverrideInfo>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new MethodOverrideInfo[0];
+					return Array.Empty<MethodOverrideInfo>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new MethodOverrideInfo[0];
+					return Array.Empty<MethodOverrideInfo>();
 
 				uint[] bodyTokens = new uint[ulCount];
 				uint[] declTokens = new uint[ulCount];
@@ -333,7 +333,7 @@ namespace dndbg.Engine {
 						hr = mdi.EnumMethodImpls(ref iter, token, new IntPtr(b), new IntPtr(d), (uint)bodyTokens.Length, out cTokens);
 				}
 				if (hr < 0)
-					return new MethodOverrideInfo[0];
+					return Array.Empty<MethodOverrideInfo>();
 				var infos = new MethodOverrideInfo[ulCount];
 				for (int i = 0; i < infos.Length; i++)
 					infos[i] = new MethodOverrideInfo(bodyTokens[i], declTokens[i]);
@@ -347,28 +347,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetMethodSemanticsTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumMethodSemantics(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumMethodSemantics(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -397,28 +397,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetInterfaceImplTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumInterfaceImpls(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumInterfaceImpls(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -438,28 +438,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetParamTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumParams(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumParams(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -555,23 +555,23 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetTypeDefTokens(IMetaDataImport mdi) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint count;
 				int hr = mdi.EnumTypeDefs(ref iter, IntPtr.Zero, 0, out count);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				// The global type isn't included
 				uint[] tokens = new uint[ulCount + 1];
@@ -580,7 +580,7 @@ namespace dndbg.Engine {
 						hr = mdi.EnumTypeDefs(ref iter, new IntPtr(p), ulCount, out count);
 				}
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				tokens[0] = 0x02000001;
 				return tokens;
 			}
@@ -692,29 +692,29 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetGenericParamTokens(IMetaDataImport2 mdi2, uint token) {
 			if (mdi2 == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cGenericParams;
 				int hr = mdi2.EnumGenericParams(ref iter, token, IntPtr.Zero, 0, out cGenericParams);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi2.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi2.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] gpTokens = new uint[ulCount];
 				fixed (uint* p = &gpTokens[0])
 					hr = mdi2.EnumGenericParams(ref iter, token, new IntPtr(p), (uint)gpTokens.Length, out cGenericParams);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return gpTokens;
 			}
 			finally {
@@ -746,29 +746,29 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetGenericParamConstraintTokens(IMetaDataImport2 mdi2, uint token) {
 			if (mdi2 == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cGenericParamConstraints;
 				int hr = mdi2.EnumGenericParamConstraints(ref iter, token, IntPtr.Zero, 0, out cGenericParamConstraints);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi2.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi2.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] gpcTokens = new uint[ulCount];
 				fixed (uint* p = &gpcTokens[0])
 					hr = mdi2.EnumGenericParamConstraints(ref iter, token, new IntPtr(p), (uint)gpcTokens.Length, out cGenericParamConstraints);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return gpcTokens;
 			}
 			finally {
@@ -854,28 +854,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetFieldTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumFields(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumFields(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -1010,7 +1010,7 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetEventOtherMethodTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			uint count;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
 			uint[] tokens = null;
@@ -1020,34 +1020,34 @@ namespace dndbg.Engine {
 					hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(p), (uint)tokens.Length, new IntPtr(&count));
 			}
 			if (hr < 0)
-				return new uint[0];
-			return tokens ?? new uint[0];
+				return Array.Empty<uint>();
+			return tokens ?? Array.Empty<uint>();
 		}
 
 		public unsafe static uint[] GetEventTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumEvents(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumEvents(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -1071,28 +1071,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetPropertyTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumProperties(ref iter, token, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumProperties(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -1134,7 +1134,7 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetPropertyOtherMethodTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			uint count;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
 			uint[] tokens = null;
@@ -1144,8 +1144,8 @@ namespace dndbg.Engine {
 					hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(p), (uint)tokens.Length, new IntPtr(&count));
 			}
 			if (hr < 0)
-				return new uint[0];
-			return tokens ?? new uint[0];
+				return Array.Empty<uint>();
+			return tokens ?? Array.Empty<uint>();
 		}
 
 		public unsafe static PropertyAttributes GetPropertyAttributes(IMetaDataImport mdi, uint token) {
@@ -1483,28 +1483,28 @@ namespace dndbg.Engine {
 
 		public unsafe static uint[] GetCustomAttributeTokens(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdi.EnumCustomAttributes(ref iter, token, 0, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumCustomAttributes(ref iter, token, 0, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -1571,28 +1571,28 @@ namespace dndbg.Engine {
 		public unsafe static uint[] GetExportedTypeRids(IMetaDataAssemblyImport mdai) {
 			var mdi = mdai as IMetaDataImport;
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdai.EnumExportedTypes(ref iter, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdai.EnumExportedTypes(ref iter, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {
@@ -1639,28 +1639,28 @@ namespace dndbg.Engine {
 		public unsafe static uint[] GetManifestResourceRids(IMetaDataAssemblyImport mdai) {
 			var mdi = mdai as IMetaDataImport;
 			if (mdi == null)
-				return new uint[0];
+				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
 				int hr = mdai.EnumManifestResources(ref iter, IntPtr.Zero, 0, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint ulCount = 0;
 				hr = mdi.CountEnum(iter, ref ulCount);
 				if (hr < 0 || ulCount == 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				hr = mdi.ResetEnum(iter, 0);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0])
 					hr = mdai.EnumManifestResources(ref iter, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				if (hr < 0)
-					return new uint[0];
+					return Array.Empty<uint>();
 				return tokens;
 			}
 			finally {

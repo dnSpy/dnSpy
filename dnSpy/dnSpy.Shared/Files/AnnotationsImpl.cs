@@ -29,13 +29,8 @@ namespace dnSpy.Shared.Files {
 			return annotation;
 		}
 
-		public T Annotation<T>() where T : class {
-			return (T)list.FirstOrDefault(a => a is T);
-		}
-
-		public IEnumerable<T> Annotations<T>() where T : class {
-			return list.OfType<T>();
-		}
+		public T Annotation<T>() where T : class => (T)list.FirstOrDefault(a => a is T);
+		public IEnumerable<T> Annotations<T>() where T : class => list.OfType<T>();
 
 		public void RemoveAnnotations<T>() where T : class {
 			for (int i = list.Count - 1; i >= 0; i--) {

@@ -48,9 +48,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 
 			MemoryModuleDefFile GetFile(IMenuItemContext context) {
-				var node = GetTreeNode(context);
-				var modNode = node.GetModuleNode();
-				var mfile = modNode == null ? null : modNode.DnSpyFile as MemoryModuleDefFile;
+				var mfile = GetTreeNode(context).GetModuleNode()?.DnSpyFile as MemoryModuleDefFile;
 				if (mfile == null)
 					return null;
 				if (mfile.Process.HasExited || mfile.Process.Debugger.ProcessState == DebuggerProcessState.Terminated)
@@ -59,17 +57,13 @@ namespace dnSpy.Debugger.IMModules {
 			}
 
 			protected abstract IFileTreeNodeData GetTreeNode(IMenuItemContext context);
-
-			protected void ExecuteInternal(Context context) {
+			protected void ExecuteInternal(Context context) =>
 				inMemoryModuleManager.Value.UpdateModuleMemory(context.MemoryModuleDefFile);
-			}
 		}
 
 		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_FILES_DEBUGRT, Order = 0)]
 		sealed class FilesCommand : CommandBase {
-			protected sealed override object CachedContextKey {
-				get { return ContextKey; }
-			}
+			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
 
 			[ImportingConstructor]
@@ -77,9 +71,7 @@ namespace dnSpy.Debugger.IMModules {
 				: base(inMemoryModuleManager) {
 			}
 
-			public override void Execute(Context context) {
-				ExecuteInternal(context);
-			}
+			public override void Execute(Context context) => ExecuteInternal(context);
 
 			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
@@ -93,9 +85,7 @@ namespace dnSpy.Debugger.IMModules {
 
 		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_CODE_DEBUGRT, Order = 0)]
 		sealed class CodeCommand : CommandBase {
-			protected sealed override object CachedContextKey {
-				get { return ContextKey; }
-			}
+			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
 
 			readonly IFileTreeView fileTreeView;
@@ -106,9 +96,7 @@ namespace dnSpy.Debugger.IMModules {
 				this.fileTreeView = fileTreeView;
 			}
 
-			public override void Execute(Context context) {
-				ExecuteInternal(context);
-			}
+			public override void Execute(Context context) => ExecuteInternal(context);
 
 			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))

@@ -24,12 +24,8 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class LinePositionHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.LinePosition; }
-		}
+		public BamlRecordType Type => BamlRecordType.LinePosition;
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
-		}
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) => null;
 	}
 }

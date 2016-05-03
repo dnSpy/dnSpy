@@ -25,9 +25,7 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class DeferableContentStartHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.DeferableContentStart; }
-		}
+		public BamlRecordType Type => BamlRecordType.DeferableContentStart;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (DeferableContentStartRecord)((BamlRecordNode)node).Record;

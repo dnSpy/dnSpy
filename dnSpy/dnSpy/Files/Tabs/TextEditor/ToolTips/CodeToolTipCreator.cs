@@ -29,9 +29,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	sealed class CodeToolTipCreator : ICodeToolTipCreator {
 		public ImageReference? Image { get; set; }
 
-		public ICodeToolTipWriter Output {
-			get { return writers[writers.Count - 1]; }
-		}
+		public ICodeToolTipWriter Output => writers[writers.Count - 1];
 		readonly List<CodeToolTipWriter> writers;
 
 		readonly IImageManager imageManager;
@@ -78,9 +76,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			return writers[writers.Count - 1];
 		}
 
-		public void SetImage(object @ref) {
-			Image = TryGetImageReference(@ref);
-		}
+		public void SetImage(object @ref) => Image = TryGetImageReference(@ref);
 
 		ImageReference? TryGetImageReference(object @ref) {
 			var td = @ref as TypeDef;

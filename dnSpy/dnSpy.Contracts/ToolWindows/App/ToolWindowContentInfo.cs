@@ -27,22 +27,22 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// <summary>
 		/// Guid of <see cref="IToolWindowContent"/>
 		/// </summary>
-		public Guid Guid;
+		public Guid Guid { get; set; }
 
 		/// <summary>
 		/// Location
 		/// </summary>
-		public AppToolWindowLocation Location;
+		public AppToolWindowLocation Location { get; set; }
 
 		/// <summary>
 		/// Order, used if <see cref="IsDefault"/> is true
 		/// </summary>
-		public double Order;
+		public double Order { get; set; }
 
 		/// <summary>
 		/// true if it's shown the first time dnSpy loads
 		/// </summary>
-		public bool IsDefault;
+		public bool IsDefault { get; set; }
 
 		/// <summary>
 		/// Constructor

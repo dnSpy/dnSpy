@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public static ElementType GetElementType(Type type) {
-			var tc = type == null ? TypeCode.Empty : System.Type.GetTypeCode(type);
+			var tc = type == null ? TypeCode.Empty : Type.GetTypeCode(type);
 			switch (tc) {
 			case TypeCode.Boolean:	return ElementType.Boolean;
 			case TypeCode.Char:		return ElementType.Char;

@@ -30,24 +30,17 @@ namespace dnSpy.Files.Tabs {
 		const string FILELIST_NAME_ATTR = "name";
 		const string FILE_SECTION = "File";
 
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
-
-		public List<DnSpyFileInfo> Files {
-			get { return files; }
-		}
-		readonly List<DnSpyFileInfo> files;
+		public string Name { get; }
+		public List<DnSpyFileInfo> Files { get; }
 
 		public FileList(string name) {
-			this.files = new List<DnSpyFileInfo>();
-			this.name = name;
+			this.Files = new List<DnSpyFileInfo>();
+			this.Name = name;
 		}
 
 		public FileList(DefaultFileList defaultList) {
-			this.files = new List<DnSpyFileInfo>(defaultList.Files);
-			this.name = defaultList.Name;
+			this.Files = new List<DnSpyFileInfo>(defaultList.Files);
+			this.Name = defaultList.Name;
 		}
 
 		public static FileList Create(ISettingsSection section) {
@@ -62,28 +55,23 @@ namespace dnSpy.Files.Tabs {
 
 		public void Save(ISettingsSection section) {
 			section.Attribute(FILELIST_NAME_ATTR, Name);
-			foreach (var info in files)
+			foreach (var info in Files)
 				DnSpyFileInfoSerializer.Save(section.CreateSection(FILE_SECTION), info);
 		}
 
 		public void Update(IEnumerable<IDnSpyFile> files) {
-			this.files.Clear();
+			this.Files.Clear();
 			foreach (var f in files) {
 				if (f.IsAutoLoaded)
 					continue;
 				var info = f.SerializedFile;
 				if (info != null)
-					this.files.Add(info.Value);
+					this.Files.Add(info.Value);
 			}
 		}
 
-		void AddGacFile(string asmFullName) {
-			Files.Add(DnSpyFileInfo.CreateGacFile(asmFullName));
-		}
-
-		void AddFile(Assembly asm) {
-			Files.Add(DnSpyFileInfo.CreateFile(asm.Location));
-		}
+		void AddGacFile(string asmFullName) => Files.Add(DnSpyFileInfo.CreateGacFile(asmFullName));
+		void AddFile(Assembly asm) => Files.Add(DnSpyFileInfo.CreateFile(asm.Location));
 
 		public void AddDefaultFiles() {
 			AddFile(typeof(int).Assembly);

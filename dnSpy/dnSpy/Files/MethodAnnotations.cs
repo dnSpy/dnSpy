@@ -54,9 +54,7 @@ namespace dnSpy.Files {
 				return Equals((Key)obj);
 			}
 
-			public override int GetHashCode() {
-				return hc;
-			}
+			public override int GetHashCode() => hc;
 
 			public override string ToString() {
 				var m = method.Target;

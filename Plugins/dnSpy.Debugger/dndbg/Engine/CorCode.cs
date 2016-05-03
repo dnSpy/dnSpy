@@ -25,26 +25,19 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if it's IL code
 		/// </summary>
-		public bool IsIL {
-			get { return isIL; }
-		}
-		readonly bool isIL;
+		public bool IsIL { get; }
 
 		/// <summary>
 		/// Gets the size of the code
 		/// </summary>
-		public uint Size {
-			get { return size; }
-		}
+		public uint Size => size;
 		readonly uint size;
 
 		/// <summary>
 		/// Gets the address of code (eg. IL instructions). If it's IL, it doesn't include the
 		/// method header.
 		/// </summary>
-		public ulong Address {
-			get { return address; }
-		}
+		public ulong Address => address;
 		readonly ulong address;
 
 		/// <summary>
@@ -87,7 +80,7 @@ namespace dndbg.Engine {
 			: base(code) {
 			int i;
 			int hr = code.IsIL(out i);
-			this.isIL = hr >= 0 && i != 0;
+			this.IsIL = hr >= 0 && i != 0;
 
 			hr = code.GetSize(out this.size);
 			if (hr < 0)
@@ -120,17 +113,17 @@ namespace dndbg.Engine {
 		public unsafe CodeChunkInfo[] GetCodeChunks() {
 			var c2 = obj as ICorDebugCode2;
 			if (c2 == null)
-				return new CodeChunkInfo[0];
+				return Array.Empty<CodeChunkInfo>();
 			uint cnumChunks;
 			int hr = c2.GetCodeChunks(0, out cnumChunks, IntPtr.Zero);
 			if (hr < 0)
-				return new CodeChunkInfo[0];
+				return Array.Empty<CodeChunkInfo>();
 			var infos = new CodeChunkInfo[cnumChunks];
 			if (cnumChunks != 0) {
 				fixed (void* p = &infos[0])
 					hr = c2.GetCodeChunks(cnumChunks, out cnumChunks, new IntPtr(p));
 				if (hr < 0)
-					return new CodeChunkInfo[0];
+					return Array.Empty<CodeChunkInfo>();
 			}
 			return infos;
 		}
@@ -143,34 +136,17 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorCode a, CorCode b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorCode other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorCode);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(CorCode a, CorCode b) => !(a == b);
+		public bool Equals(CorCode other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorCode);
+		public override int GetHashCode() => RawObject.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
 			new TypePrinter(output, flags, getEval).Write(this);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

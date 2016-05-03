@@ -31,91 +31,43 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class Project {
-		public ProjectModuleOptions Options {
-			get { return options; }
-		}
-		readonly ProjectModuleOptions options;
-
-		public string DefaultNamespace {
-			get { return defaultNamespace; }
-		}
-		readonly string defaultNamespace;
-
-		public string AssemblyName {
-			get { return assemblyName; }
-		}
-		readonly string assemblyName;
-
-		public ModuleDef Module {
-			get { return options.Module; }
-		}
-
-		public IList<ProjectFile> Files {
-			get { return files; }
-		}
-		readonly List<ProjectFile> files;
-
-		public Guid Guid {
-			get { return options.ProjectGuid; }
-		}
-
-		public Guid LanguageGuid {
-			get { return languageGuid; }
-		}
-		readonly Guid languageGuid;
-
-		public string Filename {
-			get { return filename; }
-		}
-		readonly string filename;
-
-		public string Directory {
-			get { return projDir; }
-		}
-		readonly string projDir;
-
+		public ProjectModuleOptions Options { get; }
+		public string DefaultNamespace { get; }
+		public string AssemblyName { get; }
+		public ModuleDef Module => Options.Module;
+		public List<ProjectFile> Files { get; }
+		public Guid Guid => Options.ProjectGuid;
+		public Guid LanguageGuid { get; }
+		public string Filename { get; }
+		public string Directory { get; }
 		public string Platform { get; set; }
-
-		public HashSet<Guid> ProjectTypeGuids {
-			get { return projectTypeGuids; }
-		}
-		readonly HashSet<Guid> projectTypeGuids;
-
-		public ApplicationManifest ApplicationManifest {
-			get { return applicationManifest; }
-		}
-		ApplicationManifest applicationManifest;
-
-		public ApplicationIcon ApplicationIcon {
-			get { return applicationIcon; }
-		}
-		ApplicationIcon applicationIcon;
-
-		public HashSet<string> ExtraAssemblyReferences {
-			get { return extraAssemblyReferences; }
-		}
-		readonly HashSet<string> extraAssemblyReferences;
-
+		public HashSet<Guid> ProjectTypeGuids { get; }
+		public HashSet<string> ExtraAssemblyReferences { get; }
 		public string StartupObject { get; private set; }
 		public bool AllowUnsafeBlocks { get; private set; }
-		public string PropertiesFolder { get; private set; }
+		public string PropertiesFolder { get; }
+		public ApplicationIcon ApplicationIcon => applicationIcon;
+		public ApplicationManifest ApplicationManifest => applicationManifest;
+
+		ApplicationIcon applicationIcon;
+		ApplicationManifest applicationManifest;
 
 		readonly SatelliteAssemblyFinder satelliteAssemblyFinder;
 
 		public Project(ProjectModuleOptions options, string projDir, SatelliteAssemblyFinder satelliteAssemblyFinder) {
 			if (options == null)
 				throw new ArgumentNullException();
-			this.options = options;
-			this.projDir = projDir;
+			this.Options = options;
+			this.Directory = projDir;
 			this.satelliteAssemblyFinder = satelliteAssemblyFinder;
-			this.files = new List<ProjectFile>();
-			this.defaultNamespace = new DefaultNamespaceFinder(options.Module).Find();
-			this.filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Language.ProjectFileExtension);
-			this.assemblyName = options.Module.Assembly == null ? string.Empty : options.Module.Assembly.Name.String;
-			this.projectTypeGuids = new HashSet<Guid>();
+			this.Files = new List<ProjectFile>();
+			this.DefaultNamespace = new DefaultNamespaceFinder(options.Module).Find();
+			this.Filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Language.ProjectFileExtension);
+			this.AssemblyName = options.Module.Assembly == null ? string.Empty : options.Module.Assembly.Name.String;
+			this.ProjectTypeGuids = new HashSet<Guid>();
 			this.PropertiesFolder = CalculatePropertiesFolder();
-			this.extraAssemblyReferences = new HashSet<string>();
-			this.languageGuid = CalculateLanguageGuid(options.Language);
+			this.ExtraAssemblyReferences = new HashSet<string>();
+			this.LanguageGuid = CalculateLanguageGuid(options.Language);
 		}
 
 		static Guid CalculateLanguageGuid(ILanguage language) {
@@ -127,37 +79,37 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		string CalculatePropertiesFolder() {
-			if (options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
 				return "My Project";
 			return "Properties";
 		}
 
 		public void CreateProjectFiles(DecompileContext ctx) {
-			var filenameCreator = new FilenameCreator(projDir, defaultNamespace);
-			var resourceNameCreator = new ResourceNameCreator(options.Module, filenameCreator);
+			var filenameCreator = new FilenameCreator(Directory, DefaultNamespace);
+			var resourceNameCreator = new ResourceNameCreator(Options.Module, filenameCreator);
 
-			AllowUnsafeBlocks = DotNetUtils.IsUnsafe(options.Module);
+			AllowUnsafeBlocks = DotNetUtils.IsUnsafe(Options.Module);
 			InitializeSplashScreen();
-			if (options.Language.CanDecompile(DecompilationType.AssemblyInfo)) {
-				var filename = filenameCreator.CreateFromRelativePath(Path.Combine(PropertiesFolder, "AssemblyInfo"), options.Language.FileExtension);
-				files.Add(new AssemblyInfoProjectFile(options.Module, filename, options.DecompilationContext, options.Language));
+			if (Options.Language.CanDecompile(DecompilationType.AssemblyInfo)) {
+				var filename = filenameCreator.CreateFromRelativePath(Path.Combine(PropertiesFolder, "AssemblyInfo"), Options.Language.FileExtension);
+				Files.Add(new AssemblyInfoProjectFile(Options.Module, filename, Options.DecompilationContext, Options.Language));
 			}
 
-			var ep = options.Module.EntryPoint;
+			var ep = Options.Module.EntryPoint;
 			if (ep != null && ep.DeclaringType != null)
 				StartupObject = ep.DeclaringType.ReflectionFullName;
 
-			applicationManifest = ApplicationManifest.TryCreate(options.Module.Win32Resources, filenameCreator);
-			if (applicationManifest != null)
-				files.Add(new ApplicationManifestProjectFile(applicationManifest.Filename));
+			applicationManifest = ApplicationManifest.TryCreate(Options.Module.Win32Resources, filenameCreator);
+			if (ApplicationManifest != null)
+				Files.Add(new ApplicationManifestProjectFile(ApplicationManifest.Filename));
 
-			foreach (var rsrc in options.Module.Resources) {
+			foreach (var rsrc in Options.Module.Resources) {
 				ctx.CancellationToken.ThrowIfCancellationRequested();
 				switch (rsrc.ResourceType) {
 				case ResourceType.Embedded:
-					foreach (var file in CreateEmbeddedResourceFiles(options.Module, resourceNameCreator, (EmbeddedResource)rsrc)) {
-						files.Add(file);
-						files.AddRange(CreateSatelliteFiles(rsrc.Name, filenameCreator, file));
+					foreach (var file in CreateEmbeddedResourceFiles(Options.Module, resourceNameCreator, (EmbeddedResource)rsrc)) {
+						Files.Add(file);
+						Files.AddRange(CreateSatelliteFiles(rsrc.Name, filenameCreator, file));
 					}
 					break;
 
@@ -175,21 +127,21 @@ namespace dnSpy.Languages.MSBuild {
 			}
 			InitializeXaml();
 			InitializeResX();
-			foreach (var type in options.Module.Types) {
+			foreach (var type in Options.Module.Types) {
 				ctx.CancellationToken.ThrowIfCancellationRequested();
 				if (!DecompileType(type))
 					continue;
-				files.Add(CreateTypeProjectFile(type, filenameCreator));
+				Files.Add(CreateTypeProjectFile(type, filenameCreator));
 			}
 			CreateEmptyAppXamlFile();
 
-			var existingAppConfig = options.Module.Location + ".config";
+			var existingAppConfig = Options.Module.Location + ".config";
 			if (File.Exists(existingAppConfig))
-				files.Add(new AppConfigProjectFile(filenameCreator.CreateName("App.config"), existingAppConfig));
+				Files.Add(new AppConfigProjectFile(filenameCreator.CreateName("App.config"), existingAppConfig));
 
-			applicationIcon = ApplicationIcon.TryCreate(options.Module.Win32Resources, Path.GetFileName(Directory), filenameCreator);
+			applicationIcon = ApplicationIcon.TryCreate(Options.Module.Win32Resources, Path.GetFileName(Directory), filenameCreator);
 
-			var dirs = new HashSet<string>(files.Select(a => GetDirectoryName(a.Filename)).Where(a => a != null), StringComparer.OrdinalIgnoreCase);
+			var dirs = new HashSet<string>(Files.Select(a => GetDirectoryName(a.Filename)).Where(a => a != null), StringComparer.OrdinalIgnoreCase);
 			int errors = 0;
 			foreach (var dir in dirs) {
 				ctx.CancellationToken.ThrowIfCancellationRequested();
@@ -215,7 +167,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		void InitializeSplashScreen() {
-			var ep = options.Module.EntryPoint;
+			var ep = Options.Module.EntryPoint;
 			if (ep == null || ep.Body == null)
 				return;
 			var instrs = ep.Body.Instructions;
@@ -244,10 +196,10 @@ namespace dnSpy.Languages.MSBuild {
 				var filename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
 				TypeProjectFile newFile;
 				var isAppType = DotNetUtils.IsSystemWindowsApplication(type);
-				if (!options.Language.CanDecompile(DecompilationType.PartialType))
-					newFile = new TypeProjectFile(type, filename, options.DecompilationContext, options.Language);
+				if (!Options.Language.CanDecompile(DecompilationType.PartialType))
+					newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language);
 				else
-					newFile = new XamlTypeProjectFile(type, filename, options.DecompilationContext, options.Language);
+					newFile = new XamlTypeProjectFile(type, filename, Options.DecompilationContext, Options.Language);
 				newFile.DependentUpon = bamlFile;
 				if (isAppType && DotNetUtils.IsStartUpClass(type)) {
 					bamlFile.IsAppDef = true;
@@ -263,17 +215,17 @@ namespace dnSpy.Languages.MSBuild {
 			if (resxFile != null) {
 				if (DotNetUtils.IsWinForm(type)) {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename));
-					var newFile = new WinFormsProjectFile(type, filename, options.DecompilationContext, options.Language);
+					var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Language);
 					resxFile.DependentUpon = newFile;
 					var dname = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
 					var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname);
 					winFormsDesignerFile.DependentUpon = newFile;
-					files.Add(winFormsDesignerFile);
+					Files.Add(winFormsDesignerFile);
 					return newFile;
 				}
 				else {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
-					var newFile = new TypeProjectFile(type, filename, options.DecompilationContext, options.Language);
+					var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language);
 					newFile.DependentUpon = resxFile;
 					newFile.AutoGen = true;
 					newFile.DesignTime = true;
@@ -288,35 +240,35 @@ namespace dnSpy.Languages.MSBuild {
 				var designerFilename = filenameCreator.Create(DESIGNER + GetTypeExtension(type), type.FullName);
 				var settingsFilename = filenameCreator.Create(".settings", type.FullName);
 				ProjectFile designerTypeFile;
-				if (options.Language.CanDecompile(DecompilationType.PartialType)) {
+				if (Options.Language.CanDecompile(DecompilationType.PartialType)) {
 					var typeFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, options.DecompilationContext, options.Language);
+					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, Options.DecompilationContext, Options.Language);
 					designerTypeFile = new SettingsDesignerTypeProjectFile(settingsTypeFile, designerFilename);
-					files.Add(settingsTypeFile);
+					Files.Add(settingsTypeFile);
 				}
 				else
-					designerTypeFile = new TypeProjectFile(type, designerFilename, options.DecompilationContext, options.Language);
+					designerTypeFile = new TypeProjectFile(type, designerFilename, Options.DecompilationContext, Options.Language);
 				var settingsFile = new SettingsProjectFile(type, settingsFilename);
 				designerTypeFile.DependentUpon = settingsFile;
 				designerTypeFile.AutoGen = true;
 				designerTypeFile.DesignTimeSharedInput = true;
 				settingsFile.Generator = type.IsPublic ? "PublicSettingsSingleFileGenerator" : "SettingsSingleFileGenerator";
 				settingsFile.LastGenOutput = designerTypeFile;
-				files.Add(settingsFile);
+				Files.Add(settingsFile);
 				return designerTypeFile;
 			}
 
 			var newFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-			return new TypeProjectFile(type, newFilename, options.DecompilationContext, options.Language);
+			return new TypeProjectFile(type, newFilename, Options.DecompilationContext, Options.Language);
 		}
 
 		void CreateEmptyAppXamlFile() {
 			if (!hasXamlClasses || appTypeProjFile != null)
 				return;
-			if ((options.Module.Characteristics & Characteristics.Dll) != 0)
+			if ((Options.Module.Characteristics & Characteristics.Dll) != 0)
 				return;
 
-			var file = files.OfType<TypeProjectFile>().Where(a => DotNetUtils.IsSystemWindowsApplication(a.Type)).FirstOrDefault();
+			var file = Files.OfType<TypeProjectFile>().Where(a => DotNetUtils.IsSystemWindowsApplication(a.Type)).FirstOrDefault();
 			Debug.Assert(file != null);
 			if (file == null)
 				return;
@@ -324,48 +276,48 @@ namespace dnSpy.Languages.MSBuild {
 			if (file.DependentUpon != null)
 				return;
 
-			files.Remove(file);
+			Files.Remove(file);
 
 			var filename = file.Filename;
 			var name = Path.GetFileNameWithoutExtension(file.Filename);
 			filename = Path.Combine(Path.GetDirectoryName(filename), name + ".xaml");
 
-			var newFile = new XamlTypeProjectFile(file.Type, filename + options.Language.FileExtension, options.DecompilationContext, options.Language);
-			files.Add(newFile);
-			var bamlFile = new AppBamlResourceProjectFile(filename, file.Type, options.Language);
+			var newFile = new XamlTypeProjectFile(file.Type, filename + Options.Language.FileExtension, Options.DecompilationContext, Options.Language);
+			Files.Add(newFile);
+			var bamlFile = new AppBamlResourceProjectFile(filename, file.Type, Options.Language);
 			newFile.DependentUpon = bamlFile;
-			files.Add(bamlFile);
+			Files.Add(bamlFile);
 		}
 		TypeProjectFile appTypeProjFile;
 
 		void InitializeXaml() {
 			typeFullNameToBamlFile = new Dictionary<string, BamlResourceProjectFile>(StringComparer.OrdinalIgnoreCase);
-			foreach (var xamlFile in files.OfType<BamlResourceProjectFile>()) {
+			foreach (var xamlFile in Files.OfType<BamlResourceProjectFile>()) {
 				hasXamlClasses = true;
 				if (!string.IsNullOrEmpty(xamlFile.TypeFullName) && !xamlFile.IsSatelliteFile)
 					typeFullNameToBamlFile[xamlFile.TypeFullName] = xamlFile;
 			}
 			if (hasXamlClasses) {
-				extraAssemblyReferences.Add("WindowsBase");
-				extraAssemblyReferences.Add("PresentationCore");
-				extraAssemblyReferences.Add("PresentationFramework");
-				if (!options.Module.IsClr1x && !options.Module.IsClr20)
-					extraAssemblyReferences.Add("System.Xaml");
+				ExtraAssemblyReferences.Add("WindowsBase");
+				ExtraAssemblyReferences.Add("PresentationCore");
+				ExtraAssemblyReferences.Add("PresentationFramework");
+				if (!Options.Module.IsClr1x && !Options.Module.IsClr20)
+					ExtraAssemblyReferences.Add("System.Xaml");
 			}
 
 			if (hasXamlClasses || ReferencesWPFClasses()) {
-				projectTypeGuids.Add(new Guid("60DC8134-EBA5-43B8-BCC9-BB4BC16C2548"));
-				if (options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
-					projectTypeGuids.Add(new Guid("F184B08F-C81C-45F6-A57F-5ABD9991F28F"));
-				else if (options.Language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP)
-					projectTypeGuids.Add(new Guid("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"));
+				ProjectTypeGuids.Add(new Guid("60DC8134-EBA5-43B8-BCC9-BB4BC16C2548"));
+				if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+					ProjectTypeGuids.Add(new Guid("F184B08F-C81C-45F6-A57F-5ABD9991F28F"));
+				else if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP)
+					ProjectTypeGuids.Add(new Guid("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"));
 			}
 		}
 		Dictionary<string, BamlResourceProjectFile> typeFullNameToBamlFile;
 		bool hasXamlClasses;
 
 		bool ReferencesWPFClasses() {
-			foreach (var asmRef in options.Module.GetAssemblyRefs()) {
+			foreach (var asmRef in Options.Module.GetAssemblyRefs()) {
 				switch (asmRef.Name) {
 				case "WindowsBase":
 				case "PresentationCore":
@@ -384,7 +336,7 @@ namespace dnSpy.Languages.MSBuild {
 
 		void InitializeResX() {
 			typeFullNameToResXFile = new Dictionary<string, ResXProjectFile>(StringComparer.Ordinal);
-			foreach (var resxFile in files.OfType<ResXProjectFile>()) {
+			foreach (var resxFile in Files.OfType<ResXProjectFile>()) {
 				if (!string.IsNullOrEmpty(resxFile.TypeFullName) && !resxFile.IsSatelliteFile)
 					typeFullNameToResXFile[resxFile.TypeFullName] = resxFile;
 			}
@@ -400,12 +352,12 @@ namespace dnSpy.Languages.MSBuild {
 		string GetTypeExtension(TypeDef type) {
 			BamlResourceProjectFile bamlFile;
 			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out bamlFile))
-				return ".xaml" + options.Language.FileExtension;
-			return options.Language.FileExtension;
+				return ".xaml" + Options.Language.FileExtension;
+			return Options.Language.FileExtension;
 		}
 
 		IEnumerable<ProjectFile> CreateEmbeddedResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) {
-			if (!options.UnpackResources) {
+			if (!Options.UnpackResources) {
 				yield return CreateRawEmbeddedResourceProjectFile(module, resourceNameCreator, er);
 				yield break;
 			}
@@ -434,7 +386,7 @@ namespace dnSpy.Languages.MSBuild {
 			}
 			if (IsXamlResource(module, er.Name, set))
 				return CreateXamlResourceFiles(module, resourceNameCreator, set).ToList();
-			if (options.CreateResX) {
+			if (Options.CreateResX) {
 				string typeFullName;
 				string filename = resourceNameCreator.GetResxFilename(er.Name, out typeFullName);
 				return new List<ProjectFile>() { CreateResXFile(module, er, set, filename, typeFullName, false) };
@@ -463,7 +415,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		IEnumerable<ProjectFile> CreateXamlResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, ResourceElementSet set) {
-			bool decompileBaml = options.DecompileXaml && options.DecompileBaml != null;
+			bool decompileBaml = Options.DecompileXaml && Options.DecompileBaml != null;
 			foreach (var e in set.ResourceElements) {
 				Debug.Assert(e.ResourceData.Code == ResourceTypeCode.ByteArray || e.ResourceData.Code == ResourceTypeCode.Stream);
 				var data = (byte[])((BuiltInResourceData)e.ResourceData).Data;
@@ -471,7 +423,7 @@ namespace dnSpy.Languages.MSBuild {
 				if (decompileBaml && e.Name.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 					string typeFullName;
 					var filename = resourceNameCreator.GetBamlResourceName(e.Name, out typeFullName);
-					yield return new BamlResourceProjectFile(filename, data, typeFullName, (bamlData, stream) => options.DecompileBaml(module, bamlData, options.DecompilationContext.CancellationToken, stream));
+					yield return new BamlResourceProjectFile(filename, data, typeFullName, (bamlData, stream) => Options.DecompileBaml(module, bamlData, Options.DecompilationContext.CancellationToken, stream));
 				}
 				else if (StringComparer.InvariantCultureIgnoreCase.Equals(splashScreenImageName, e.Name)) {
 					var filename = resourceNameCreator.GetXamlResourceFilename(e.Name);
@@ -485,8 +437,8 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		ResXProjectFile CreateResXFile(ModuleDef module, EmbeddedResource er, ResourceElementSet set, string filename, string typeFullName, bool isSatellite) {
-			Debug.Assert(options.CreateResX);
-			if (!options.CreateResX)
+			Debug.Assert(Options.CreateResX);
+			if (!Options.CreateResX)
 				throw new InvalidOperationException();
 
 			return new ResXProjectFile(module, filename, typeFullName, er) {
@@ -494,12 +446,10 @@ namespace dnSpy.Languages.MSBuild {
 			};
 		}
 
-		RawEmbeddedResourceProjectFile CreateRawEmbeddedResourceProjectFile(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) {
-			return new RawEmbeddedResourceProjectFile(resourceNameCreator.GetResourceFilename(er.Name), er);
-		}
+		RawEmbeddedResourceProjectFile CreateRawEmbeddedResourceProjectFile(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) => new RawEmbeddedResourceProjectFile(resourceNameCreator.GetResourceFilename(er.Name), er);
 
 		bool DecompileType(TypeDef type) {
-			if (!options.Language.ShowMember(type))
+			if (!Options.Language.ShowMember(type))
 				return false;
 
 			if (type.IsGlobalModuleType && type.Methods.Count == 0 && type.Fields.Count == 0 &&
@@ -514,7 +464,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		IEnumerable<ProjectFile> CreateSatelliteFiles(string rsrcName, FilenameCreator filenameCreator, ProjectFile nonSatFile) {
-			foreach (var satMod in satelliteAssemblyFinder.GetSatelliteAssemblies(options.Module)) {
+			foreach (var satMod in satelliteAssemblyFinder.GetSatelliteAssemblies(Options.Module)) {
 				var satFile = TryCreateSatelliteFile(satMod, rsrcName, filenameCreator, nonSatFile);
 				if (satFile != null)
 					yield return satFile;
@@ -522,7 +472,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		ProjectFile TryCreateSatelliteFile(ModuleDef module, string rsrcName, FilenameCreator filenameCreator, ProjectFile nonSatFile) {
-			if (!options.CreateResX)
+			if (!Options.CreateResX)
 				return null;
 			var asm = module.Assembly;
 			Debug.Assert(asm != null && !UTF8String.IsNullOrEmpty(asm.Culture));
@@ -536,7 +486,7 @@ namespace dnSpy.Languages.MSBuild {
 			if (set == null)
 				return null;
 
-			var dir = Path.GetDirectoryName(nonSatFile.Filename).Substring(projDir.Length + 1);
+			var dir = Path.GetDirectoryName(nonSatFile.Filename).Substring(Directory.Length + 1);
 			name = Path.GetFileNameWithoutExtension(nonSatFile.Filename);
 			ext = Path.GetExtension(nonSatFile.Filename);
 			var filename = filenameCreator.CreateFromRelativePath(Path.Combine(dir, name) + "." + asm.Culture, ext);
@@ -559,20 +509,20 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		public IEnumerable<IJob> GetJobs() {
-			if (applicationIcon != null)
-				yield return applicationIcon;
-			if (applicationManifest != null)
-				yield return applicationManifest;
-			foreach (var f in files)
+			if (ApplicationIcon != null)
+				yield return ApplicationIcon;
+			if (ApplicationManifest != null)
+				yield return ApplicationManifest;
+			foreach (var f in Files)
 				yield return f;
 		}
 
 		public void OnWrite() {
-			string asmName = options.Module.Assembly != null && options.Module.IsManifestModule ? options.Module.Assembly.Name : null;
-			foreach (var bamlFile in files.OfType<BamlResourceProjectFile>()) {
+			string asmName = Options.Module.Assembly != null && Options.Module.IsManifestModule ? Options.Module.Assembly.Name : null;
+			foreach (var bamlFile in Files.OfType<BamlResourceProjectFile>()) {
 				foreach (var asmRef in bamlFile.AssemblyReferences) {
 					if (asmName != null && !StringComparer.Ordinal.Equals(asmName, asmRef.Name))
-						extraAssemblyReferences.Add(asmRef.Name);
+						ExtraAssemblyReferences.Add(asmRef.Name);
 				}
 			}
 		}

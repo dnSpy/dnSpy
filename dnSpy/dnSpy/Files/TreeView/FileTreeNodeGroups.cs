@@ -120,14 +120,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class AssemblyRefTreeNodeGroup : ITreeNodeGroup2 {
 		public AssemblyRefTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -141,14 +137,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class ModuleRefTreeNodeGroup : ITreeNodeGroup2 {
 		public ModuleRefTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -162,14 +154,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class ReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public ReferencesFolderTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -183,14 +171,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class ResourcesFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public ResourcesFolderTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -204,14 +188,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class BaseTypeFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public BaseTypeFolderTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -225,14 +205,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class DerivedTypesFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public DerivedTypesFolderTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -246,14 +222,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class MessageTreeNodeGroup : ITreeNodeGroup2 {
 		public MessageTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -267,14 +239,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class DerivedTypeTreeNodeGroup : ITreeNodeGroup2 {
 		public DerivedTypeTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -290,14 +258,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class NamespaceTreeNodeGroup : ITreeNodeGroup2 {
 		public NamespaceTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -311,14 +275,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class BaseTypeTreeNodeGroup : ITreeNodeGroup2 {
 		public BaseTypeTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -334,14 +294,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class TypeTreeNodeGroup : ITreeNodeGroup2 {
 		public TypeTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -357,14 +313,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class MethodTreeNodeGroup : ITreeNodeGroup2 {
 		public MethodTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -378,14 +330,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class FieldTreeNodeGroup : ITreeNodeGroup2 {
 		public FieldTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -399,14 +347,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class EventTreeNodeGroup : ITreeNodeGroup2 {
 		public EventTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -420,14 +364,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class PropertyTreeNodeGroup : ITreeNodeGroup2 {
 		public PropertyTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -441,14 +381,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class ResourceTreeNodeGroup : ITreeNodeGroup2 {
 		public ResourceTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
@@ -464,14 +400,10 @@ namespace dnSpy.Files.TreeView {
 
 	sealed class ResourceElementTreeNodeGroup : ITreeNodeGroup2 {
 		public ResourceElementTreeNodeGroup(double order) {
-			this.order = order;
+			this.Order = order;
 		}
 
-		public double Order {
-			get { return order; }
-			set { order = value; }
-		}
-		double order;
+		public double Order { get; set; }
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;

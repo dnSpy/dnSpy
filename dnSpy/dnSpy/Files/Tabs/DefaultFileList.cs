@@ -29,30 +29,23 @@ using dnSpy.Contracts.Files;
 
 namespace dnSpy.Files.Tabs {
 	sealed class DefaultFileList {
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
+		public string Name { get; }
 
-		public DnSpyFileInfo[] Files {
-			get { return files.ToArray(); }
-		}
+		public DnSpyFileInfo[] Files => files.ToArray();
 		readonly List<DnSpyFileInfo> files;
 
 		public DefaultFileList(string name) {
-			this.name = name;
+			this.Name = name;
 			this.files = new List<DnSpyFileInfo>();
 		}
 
 		public DefaultFileList(string name, IEnumerable<DnSpyFileInfo> asmNames) {
-			this.name = name;
+			this.Name = name;
 			this.files = new List<DnSpyFileInfo>(asmNames);
 			this.files.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
 		}
 
-		public void Add(DnSpyFileInfo file) {
-			files.Add(file);
-		}
+		public void Add(DnSpyFileInfo file) => files.Add(file);
 	}
 
 	sealed class ReferenceFileFinder {
@@ -64,11 +57,10 @@ namespace dnSpy.Files.Tabs {
 			this.allFiles = new List<RefFileList>();
 		}
 
-		public IEnumerable<DefaultFileList> AllFiles {
-			get {
-				return allFiles.Where(a => a.Files.Count > 0).Select(a => new DefaultFileList(a.Name, a.Files.Select(b => b.ToDnSpyFileInfo()))).Where(a => a.Files.Length > 0);
-			}
-		}
+		public IEnumerable<DefaultFileList> AllFiles =>
+			allFiles.Where(a => a.Files.Count > 0).
+					Select(a => new DefaultFileList(a.Name, a.Files.Select(b => b.ToDnSpyFileInfo()))).
+					Where(a => a.Files.Length > 0);
 
 		public void Find() {
 			cancellationToken.ThrowIfCancellationRequested();
@@ -87,10 +79,8 @@ namespace dnSpy.Files.Tabs {
 			Find(pfd);
 		}
 
-		static bool IsDNF20Path(string s) {
-			return s.EndsWith(@"\Microsoft.NET\Framework\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase) ||
-					s.EndsWith(@"\Microsoft.NET\Framework64\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase);
-		}
+		static bool IsDNF20Path(string s) => s.EndsWith(@"\Microsoft.NET\Framework\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase) ||
+		s.EndsWith(@"\Microsoft.NET\Framework64\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase);
 
 		void Find(string path) {
 			if (!Directory.Exists(path))
@@ -165,20 +155,20 @@ namespace dnSpy.Files.Tabs {
 			}
 			catch {
 			}
-			return new string[0];
+			return Array.Empty<string>();
 		}
 
 		sealed class RefFileList {
-			public readonly string Filename;
-			public readonly string Redist;
+			public string Filename { get; }
+			public string Redist { get; }
 			public string Name { get; set; }
-			public readonly string RuntimeVersion;
-			public readonly string ToolsVersion;
-			public readonly string ShortName;
-			public readonly string IncludeFramework;
-			public readonly string TargetFrameworkDirectory;
+			public string RuntimeVersion { get; }
+			public string ToolsVersion { get; }
+			public string ShortName { get; }
+			public string IncludeFramework { get; }
+			public string TargetFrameworkDirectory { get; }
 			public string TargetFilename { get; set; }
-			public readonly List<RefFile> Files = new List<RefFile>();
+			public List<RefFile> Files { get; } = new List<RefFile>();
 
 			public RefFileList(string filename) {
 				Filename = filename;
@@ -266,9 +256,7 @@ namespace dnSpy.Files.Tabs {
 				return desc + ".FileList.xml";
 			}
 
-			public override string ToString() {
-				return string.Format("{0} - {1} - {2}", Filename, Redist, Name);
-			}
+			public override string ToString() => $"{Filename} - {Redist} - {Name}";
 
 			public void AddFilesFrom(RefFileList olderList) {
 				if (olderList == null)
@@ -279,15 +267,15 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		sealed class RefFile {
-			public string AssemblyName { get; set; }
-			public Version Version { get; set; }
-			public string PublicKeyToken { get; set; }
-			public string Culture { get; set; }
-			public string ProcessorArchitecture { get; set; }
-			public bool InGac { get; set; }
-			public bool IsRedistRoot { get; set; }
-			public string FileVersion { get; set; }
-			public string Filename { get; set; }
+			public string AssemblyName { get; }
+			public Version Version { get; }
+			public string PublicKeyToken { get; }
+			public string Culture { get; }
+			public string ProcessorArchitecture { get; }
+			public bool InGac { get; }
+			public bool IsRedistRoot { get; }
+			public string FileVersion { get; }
+			public string Filename { get; }
 
 			public RefFile(XElement sect, string refFilePath) {
 				foreach (var attr in sect.Attributes()) {
@@ -338,17 +326,11 @@ namespace dnSpy.Files.Tabs {
 				return DnSpyFileInfo.CreateReferenceAssembly(AssemblyFullName, Filename);
 			}
 
-			public string AssemblyFullName {
-				get { return string.Format("{0}, Version={1}, Culture={2}, PublicKeyToken={3}", AssemblyName, Version, string.IsNullOrEmpty(Culture) ? "null" : Culture, string.IsNullOrEmpty(PublicKeyToken) ? "null" : PublicKeyToken); }
-			}
+			public string AssemblyFullName =>
+				string.Format("{0}, Version={1}, Culture={2}, PublicKeyToken={3}", AssemblyName, Version, string.IsNullOrEmpty(Culture) ? "null" : Culture, string.IsNullOrEmpty(PublicKeyToken) ? "null" : PublicKeyToken);
 
-			public override string ToString() {
-				return AssemblyFullName;
-			}
-
-			public void Write(XElement elem) {
-				elem.SetAttributeValue("name", AssemblyFullName);
-			}
+			public override string ToString() => AssemblyFullName;
+			public void Write(XElement elem) => elem.SetAttributeValue("name", AssemblyFullName);
 		}
 	}
 
@@ -359,9 +341,7 @@ namespace dnSpy.Files.Tabs {
 			this.cancellationToken = cancellationToken;
 		}
 
-		static IEnumerable<string> FilesDirs {
-			get { return AppDirectories.GetDirectories("FileLists"); }
-		}
+		static IEnumerable<string> FilesDirs => AppDirectories.GetDirectories("FileLists");
 
 		public DefaultFileList[] Find() {
 			var lists = new List<DefaultFileList>();
@@ -446,7 +426,7 @@ namespace dnSpy.Files.Tabs {
 			}
 			catch {
 			}
-			return new string[0];
+			return Array.Empty<string>();
 		}
 	}
 }

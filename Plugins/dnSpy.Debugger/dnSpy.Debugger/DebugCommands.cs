@@ -78,9 +78,7 @@ namespace dnSpy.Debugger {
 			this.theDebugger = theDebugger;
 		}
 
-		public override bool IsVisible(IToolBarItemContext context) {
-			return initd && theDebugger.Value.IsDebugging;
-		}
+		public override bool IsVisible(IToolBarItemContext context) => initd && theDebugger.Value.IsDebugging;
 	}
 
 	[ExportToolBarButton(Icon = "StartDebugging", ToolTip = "res:ToolBarDebugAssemblyToolTip", Header = "res:ToolBarStartDebuggingButton", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG, Order = 0)]
@@ -90,9 +88,7 @@ namespace dnSpy.Debugger {
 			: base(DebugRoutedCommands.DebugAssembly, theDebugger) {
 		}
 
-		public override bool IsVisible(IToolBarItemContext context) {
-			return !initd || !theDebugger.Value.IsDebugging;
-		}
+		public override bool IsVisible(IToolBarItemContext context) => !initd || !theDebugger.Value.IsDebugging;
 	}
 
 	[ExportToolBarButton(Icon = "ContinueDebugging", ToolTip = "res:ToolBarContinueDebuggingToolTip", Header = "res:ToolBarContinueDebuggingButton", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 0)]
@@ -166,21 +162,10 @@ namespace dnSpy.Debugger {
 			this.realCmd = realCmd;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			realCmd.Execute(context);
-		}
-
-		public override bool IsVisible(IMenuItemContext context) {
-			return IsValidElement(context.CreatorObject) && realCmd.CanExecute(context);
-		}
-
-		public override bool IsEnabled(IMenuItemContext context) {
-			return true;
-		}
-
-		protected virtual bool IsValidElement(GuidObject element) {
-			return element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-		}
+		public override void Execute(IMenuItemContext context) => realCmd.Execute(context);
+		public override bool IsVisible(IMenuItemContext context) => IsValidElement(context.CreatorObject) && realCmd.CanExecute(context);
+		public override bool IsEnabled(IMenuItemContext context) => true;
+		protected virtual bool IsValidElement(GuidObject element) => element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 	}
 
 	[ExportMenuItem(Header = "res:DebugAssemblyCommand", Icon = "StartDebugging", InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 0)]
@@ -200,10 +185,9 @@ namespace dnSpy.Debugger {
 			return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtils.EscapeMenuItemHeader(asm.GetShortName()));
 		}
 
-		protected override bool IsValidElement(GuidObject element) {
-			return element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID) ||
-				element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
-		}
+		protected override bool IsValidElement(GuidObject element) =>
+			element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID) ||
+			element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 	}
 
 	[ExportMenuItem(Icon = "BreakpointMenu", InputGestureText = "res:ShortCutKeyF9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 10)]
@@ -250,13 +234,8 @@ namespace dnSpy.Debugger {
 			return GetHeaderInternal(enabled, count);
 		}
 
-		public override string GetIcon(IMenuItemContext context) {
-			return GetIconInternal();
-		}
-
-		internal static bool IsMenuItemEnabledInternal(int count) {
-			return count > 0;
-		}
+		public override string GetIcon(IMenuItemContext context) => GetIconInternal();
+		internal static bool IsMenuItemEnabledInternal(int count) => count > 0;
 
 		internal static string GetHeaderInternal(bool enabled, int count) {
 			if (enabled)
@@ -264,9 +243,7 @@ namespace dnSpy.Debugger {
 			return count <= 1 ? dnSpy_Debugger_Resources.EnableBreakpointCommand2 : dnSpy_Debugger_Resources.EnableBreakpointsCommand2;
 		}
 
-		internal static string GetIconInternal() {
-			return "DisableEnableBreakpoint";
-		}
+		internal static string GetIconInternal() => "DisableEnableBreakpoint";
 	}
 
 	[ExportMenuItem(Icon = "CurrentLineToolBar", Header = "res:ShowNextStatementCommand", InputGestureText = "res:ShortCutAltAsterisk", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 30)]
@@ -293,9 +270,7 @@ namespace dnSpy.Debugger {
 			this.mustBeDebugging = mustBeDebugging;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return mustBeDebugging == null || theDebugger.Value.IsDebugging == mustBeDebugging;
-		}
+		public override bool IsVisible(IMenuItemContext context) => mustBeDebugging == null || theDebugger.Value.IsDebugging == mustBeDebugging;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DebugAssemblyCommand2", Icon = "StartDebugging", InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
@@ -420,9 +395,7 @@ namespace dnSpy.Debugger {
 			this.appWindow = appWindow;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
-		}
+		public override bool IsVisible(IMenuItemContext context) => DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DisableAllBreakpointsCommand", Icon = "DisableAllBreakpoints", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 30)]
@@ -435,9 +408,7 @@ namespace dnSpy.Debugger {
 			this.appWindow = appWindow;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
-		}
+		public override bool IsVisible(IMenuItemContext context) => DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:BreakpointsCommand", Icon = "BreakpointsWindow", InputGestureText = "res:ShortCutKeyCtrlAltB", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 40)]
@@ -502,12 +473,8 @@ namespace dnSpy.Debugger {
 			this.theDebugger = theDebugger;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-		}
-
-		public override bool IsVisible(IMenuItemContext context) {
-			return theDebugger.Value.IsDebugging;
-		}
+		public override void Execute(IMenuItemContext context) { }
+		public override bool IsVisible(IMenuItemContext context) => theDebugger.Value.IsDebugging;
 	}
 
 	sealed class CommandToMenuItem : MenuItemBase {
@@ -517,13 +484,8 @@ namespace dnSpy.Debugger {
 			this.cmd = cmd;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			cmd.Execute(context);
-		}
-
-		public override bool IsVisible(IMenuItemContext context) {
-			return cmd.CanExecute(context);
-		}
+		public override void Execute(IMenuItemContext context) => cmd.Execute(context);
+		public override bool IsVisible(IMenuItemContext context) => cmd.CanExecute(context);
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
@@ -548,8 +510,7 @@ namespace dnSpy.Debugger {
 
 		static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
-		public override void Execute(IMenuItemContext context) {
-		}
+		public override void Execute(IMenuItemContext context) { }
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			for (int i = 0; i < subCmds.Length; i++) {
@@ -571,19 +532,12 @@ namespace dnSpy.Debugger {
 			this.breakpointManager = breakpointManager;
 		}
 
-		public bool IsEnabled(IIconBarCommandContext context) {
-			return true;
-		}
-
-		public void Execute(IIconBarCommandContext context) {
-			breakpointManager.Value.Toggle(context.UIContext, context.Line);
-		}
+		public bool IsEnabled(IIconBarCommandContext context) => true;
+		public void Execute(IIconBarCommandContext context) => breakpointManager.Value.Toggle(context.UIContext, context.Line);
 	}
 
 	abstract class IconBarCommand : MenuItemBase<ILCodeBreakpoint> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected sealed override ILCodeBreakpoint CreateContext(IMenuItemContext context) {
@@ -602,9 +556,7 @@ namespace dnSpy.Debugger {
 			this.breakpointManager = breakpointManager;
 		}
 
-		public override void Execute(ILCodeBreakpoint context) {
-			breakpointManager.Value.Remove(context);
-		}
+		public override void Execute(ILCodeBreakpoint context) => breakpointManager.Value.Remove(context);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.TEXTEDITOR_ICONBAR_GUID, InputGestureText = "res:ShortCutKeyCtrlF9", Group = MenuConstants.GROUP_TEXTEDITOR_ICONBAR_DEBUG_BPS, Order = 10)]
@@ -616,20 +568,9 @@ namespace dnSpy.Debugger {
 			this.imageManager = imageManager;
 		}
 
-		public override void Execute(ILCodeBreakpoint context) {
-			context.IsEnabled = !context.IsEnabled;
-		}
-
-		public override bool IsEnabled(ILCodeBreakpoint context) {
-			return EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
-		}
-
-		public override string GetHeader(ILCodeBreakpoint context) {
-			return EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(context.IsEnabled, 1);
-		}
-
-		public override string GetIcon(ILCodeBreakpoint context) {
-			return EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal();
-		}
+		public override void Execute(ILCodeBreakpoint context) => context.IsEnabled = !context.IsEnabled;
+		public override bool IsEnabled(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
+		public override string GetHeader(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(context.IsEnabled, 1);
+		public override string GetIcon(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal();
 	}
 }

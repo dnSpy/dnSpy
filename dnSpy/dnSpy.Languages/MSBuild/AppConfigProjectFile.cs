@@ -22,28 +22,17 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class AppConfigProjectFile : ProjectFile {
-		public override string Description {
-			get { return string.Format(Languages_Resources.MSBuild_CopyAppConfig, existingName); }
-		}
-
-		public override BuildAction BuildAction {
-			get { return BuildAction.None; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
-		readonly string filename;
+		public override string Description => string.Format(Languages_Resources.MSBuild_CopyAppConfig, existingName);
+		public override BuildAction BuildAction => BuildAction.None;
+		public override string Filename { get; }
 
 		readonly string existingName;
 
 		public AppConfigProjectFile(string filename, string existingName) {
-			this.filename = filename;
+			this.Filename = filename;
 			this.existingName = existingName;
 		}
 
-		public override void Create(DecompileContext ctx) {
-			File.Copy(existingName, Filename, true);
-		}
+		public override void Create(DecompileContext ctx) => File.Copy(existingName, Filename, true);
 	}
 }

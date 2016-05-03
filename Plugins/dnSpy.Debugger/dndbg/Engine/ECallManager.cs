@@ -31,10 +31,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if we found the CLR module (mscorwks/clr.dll)
 		/// </summary>
-		public bool FoundClrModule {
-			get { return foundClrModule; }
-		}
-		readonly bool foundClrModule;
+		public bool FoundClrModule { get; }
 
 		readonly Dictionary<string, ECFunc[]> classToFuncsDict = new Dictionary<string, ECFunc[]>(StringComparer.Ordinal);
 		ulong clrDllBaseAddress;
@@ -44,7 +41,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="filename"></param>
 		public ECallManager(string filename) {
-			foundClrModule = true;
+			FoundClrModule = true;
 			Initialize(filename);
 		}
 
@@ -52,16 +49,16 @@ namespace dndbg.Engine {
 			var modNames = GetClrModuleNames(debuggeeVersion);
 
 			var process = Process.GetProcessById(pid);
-			foundClrModule = false;
+			FoundClrModule = false;
 			foreach (ProcessModule mod in process.Modules) {
 				if (IsClrModule(mod, modNames)) {
-					foundClrModule = true;
+					FoundClrModule = true;
 					Initialize(mod.FileName);
 					clrDllBaseAddress = (ulong)mod.BaseAddress.ToInt64();
 					break;
 				}
 			}
-			Debug.Assert(foundClrModule, "Couldn't find mscorwks/clr.dll");
+			Debug.Assert(FoundClrModule, "Couldn't find mscorwks/clr.dll");
 		}
 
 		static bool IsClrModule(ProcessModule mod, string[] clrNames) {
@@ -83,9 +80,8 @@ namespace dndbg.Engine {
 			"coreclr.dll",
 		};
 
-		static bool IsCLR2OrEarlier(string debuggeeVersion) {
-			return debuggeeVersion != null && (debuggeeVersion.StartsWith("v1.") || debuggeeVersion.StartsWith("v2."));
-		}
+		static bool IsCLR2OrEarlier(string debuggeeVersion) =>
+			debuggeeVersion != null && (debuggeeVersion.StartsWith("v1.") || debuggeeVersion.StartsWith("v2."));
 
 		void Initialize(string filename) {
 			try {
@@ -130,9 +126,7 @@ namespace dndbg.Engine {
 		public readonly string Namespace;
 		public readonly string Name;
 		public readonly ECFunc[] Functions;
-		public string FullName {
-			get { return string.IsNullOrEmpty(Namespace) ? Name : Namespace + "." + Name; }
-		}
+		public string FullName => string.IsNullOrEmpty(Namespace) ? Name : Namespace + "." + Name;
 
 		public ECClass(string ns, string name, ECFunc[] funcs) {
 			this.Namespace = ns;
@@ -165,25 +159,11 @@ namespace dndbg.Engine {
 		public readonly string Name;
 		public readonly uint MethodSigRVA;
 
-		public bool HasSignature {
-			get { return MethodSigRVA != 0; }
-		}
-
-		public bool IsUnreferenced {
-			get { return (Flags & (uint)FCFuncFlag.Unreferenced) != 0; }
-		}
-
-		public bool IsQCall {
-			get { return (Flags & (uint)FCFuncFlag.QCall) != 0; }
-		}
-
-		public CorInfoIntrinsics IntrinsicID {
-			get { return (CorInfoIntrinsics)(Flags >> 16); }
-		}
-
-		public DynamicID DynamicID {
-			get { return (DynamicID)(Flags >> 24); }
-		}
+		public bool HasSignature => MethodSigRVA != 0;
+		public bool IsUnreferenced => (Flags & (uint)FCFuncFlag.Unreferenced) != 0;
+		public bool IsQCall => (Flags & (uint)FCFuncFlag.QCall) != 0;
+		public CorInfoIntrinsics IntrinsicID => (CorInfoIntrinsics)(Flags >> 16);
+		public DynamicID DynamicID => (DynamicID)(Flags >> 24);
 
 		public ECFunc(uint recRva, uint flags, uint methRva, string name, uint sigRva) {
 			this.RecordRVA = recRva;
@@ -203,9 +183,7 @@ namespace dndbg.Engine {
 		readonly List<ECClass> list;
 		TableFormat? tableFormat;
 
-		public List<ECClass> List {
-			get { return list; }
-		}
+		public List<ECClass> List => list;
 
 		enum TableFormat {
 			// .NET 2.0 to ???
@@ -390,9 +368,7 @@ namespace dndbg.Engine {
 			return (uint)textSect.VirtualAddress <= rva && rva < (uint)textSect.VirtualAddress + Math.Max(textSect.VirtualSize, textSect.SizeOfRawData);
 		}
 
-		string ReadAsciizIdPtr(long pos) {
-			return ReadAsciizId(ReadRva(pos));
-		}
+		string ReadAsciizIdPtr(long pos) => ReadAsciizId(ReadRva(pos));
 
 		string ReadAsciizId(uint? rva) {
 			if (rva == null || rva.Value == 0)
@@ -414,9 +390,6 @@ namespace dndbg.Engine {
 			return s;
 		}
 
-		public void Dispose() {
-			if (peImage != null)
-				peImage.Dispose();
-		}
+		public void Dispose() => peImage?.Dispose();
 	}
 }

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// New search results
 		/// </summary>
-		public ISearchResult[] Results { get; private set; }
+		public ISearchResult[] Results { get; }
 
 		/// <summary>
 		/// Constructor

@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Added nodes
 		/// </summary>
-		public ITreeNodeData[] Added { get; private set; }
+		public ITreeNodeData[] Added { get; }
 
 		/// <summary>
 		/// Removed nodes
 		/// </summary>
-		public ITreeNodeData[] Removed { get; private set; }
+		public ITreeNodeData[] Removed { get; }
 
 		/// <summary>
 		/// Constructor
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="added">Added nodes or null</param>
 		/// <param name="removed">Removed nodes or null</param>
 		public TVSelectionChangedEventArgs(ITreeNodeData[] added, ITreeNodeData[] removed) {
-			this.Added = added ?? new ITreeNodeData[0];
-			this.Removed = removed ?? new ITreeNodeData[0];
+			this.Added = added ?? Array.Empty<ITreeNodeData>();
+			this.Removed = removed ?? Array.Empty<ITreeNodeData>();
 		}
 	}
 }

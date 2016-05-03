@@ -24,9 +24,7 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class SharpTreeNodeChildrenList : IList<ITreeNode> {
-		public DnSpySharpTreeNode Node {
-			get { return node; }
-		}
+		public DnSpySharpTreeNode Node => node;
 		readonly DnSpySharpTreeNode node;
 
 		public SharpTreeNodeChildrenList(TreeNodeImpl owner) {
@@ -38,21 +36,11 @@ namespace dnSpy.TreeView {
 			set { node.Children[index] = GetAndVerifyTreeNodeImpl(value).Node; }
 		}
 
-		public int Count {
-			get { return node.Children.Count; }
-		}
+		public int Count => node.Children.Count;
+		public bool IsReadOnly => false;
 
-		public bool IsReadOnly {
-			get { return false; }
-		}
-
-		public void Add(ITreeNode item) {
-			node.Children.Add(GetAndVerifyTreeNodeImpl(item).Node);
-		}
-
-		public void Clear() {
-			node.Children.Clear();
-		}
+		public void Add(ITreeNode item) => node.Children.Add(GetAndVerifyTreeNodeImpl(item).Node);
+		public void Clear() => node.Children.Clear();
 
 		public bool Contains(ITreeNode item) {
 			if (item == null)
@@ -91,9 +79,7 @@ namespace dnSpy.TreeView {
 			return impl;
 		}
 
-		public void Insert(int index, ITreeNode item) {
-			node.Children.Insert(index, GetAndVerifyTreeNodeImpl(item).Node);
-		}
+		public void Insert(int index, ITreeNode item) => node.Children.Insert(index, GetAndVerifyTreeNodeImpl(item).Node);
 
 		public bool Remove(ITreeNode item) {
 			if (item == null)
@@ -111,8 +97,6 @@ namespace dnSpy.TreeView {
 			node.TreeNodeImpl.TreeView.OnRemoved(removedNode.TreeNodeImpl.Data);
 		}
 
-		IEnumerator IEnumerable.GetEnumerator() {
-			return GetEnumerator();
-		}
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

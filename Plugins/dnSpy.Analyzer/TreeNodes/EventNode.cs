@@ -35,26 +35,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public EventNode(EventDef analyzedEvent, bool hidesParent = false) {
 			if (analyzedEvent == null)
-				throw new ArgumentNullException("analyzedEvent");
+				throw new ArgumentNullException(nameof(analyzedEvent));
 			this.analyzedEvent = analyzedEvent;
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() {
-			this.TreeNode.LazyLoading = true;
-		}
-
-		public override IMemberRef Member {
-			get { return analyzedEvent; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return analyzedEvent; }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(analyzedEvent);
-		}
+		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override IMemberRef Member => analyzedEvent;
+		public override IMDTokenProvider Reference => analyzedEvent;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {

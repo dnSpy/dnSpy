@@ -32,7 +32,7 @@ namespace dnSpy.Decompiler.Shared {
 
 		public PlainTextOutput(TextWriter writer) {
 			if (writer == null)
-				throw new ArgumentNullException("writer");
+				throw new ArgumentNullException(nameof(writer));
 			this.writer = writer;
 			this.outputBuffer = new char[256];
 		}
@@ -41,23 +41,10 @@ namespace dnSpy.Decompiler.Shared {
 			this.writer = new StringWriter();
 		}
 
-		public TextPosition Location {
-			get {
-				return new TextPosition(line, column + (needsIndent ? indent : 0));
-			}
-		}
-
-		public override string ToString() {
-			return writer.ToString();
-		}
-
-		public void Indent() {
-			indent++;
-		}
-
-		public void Unindent() {
-			indent--;
-		}
+		public TextPosition Location => new TextPosition(line, column + (needsIndent ? indent : 0));
+		public override string ToString() => writer.ToString();
+		public void Indent() => indent++;
+		public void Unindent() => indent--;
 
 		void WriteIndent() {
 			if (needsIndent) {
@@ -118,14 +105,10 @@ namespace dnSpy.Decompiler.Shared {
 			column = 1;
 		}
 
-		public void WriteDefinition(string text, object definition, object data, bool isLocal) {
+		public void WriteDefinition(string text, object definition, object data, bool isLocal) =>
 			Write(text, BoxedTextTokenKind.Text);
-		}
-
-		public void WriteReference(string text, object reference, object data, bool isLocal) {
+		public void WriteReference(string text, object reference, object data, bool isLocal) =>
 			Write(text, BoxedTextTokenKind.Text);
-		}
-
 		public void Write(string text, TextTokenKind tokenKind) =>
 			Write(text, tokenKind.Box());
 		public void Write(string text, int index, int count, TextTokenKind tokenKind) =>
@@ -136,8 +119,6 @@ namespace dnSpy.Decompiler.Shared {
 			WriteDefinition(text, definition, tokenKind.Box(), isLocal);
 		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false) =>
 			WriteReference(text, reference, tokenKind.Box(), isLocal);
-
-		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) {
-		}
+		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) { }
 	}
 }

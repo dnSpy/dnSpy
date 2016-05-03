@@ -67,26 +67,23 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ConstantTypeVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
 			set {
-				@enum.DnlibTypePicker = value;
-				enumArray.DnlibTypePicker = value;
+				Enum.DnlibTypePicker = value;
+				EnumArray.DnlibTypePicker = value;
 			}
 		}
 
 		public ITypeSigCreator TypeSigCreator {
 			set {
-				type.TypeSigCreator = value;
-				typeArray.TypeSigCreator = value;
+				Type.TypeSigCreator = value;
+				TypeArray.TypeSigCreator = value;
 			}
 		}
 
 		public ICreateConstantType CreateConstantType {
-			set { objectArray.CreateConstantType = value; }
+			set { ObjectArray.CreateConstantType = value; }
 		}
 
-		public EnumListVM ConstantTypeEnumList {
-			get { return constantTypeEnumListVM; }
-		}
-		readonly EnumListVM constantTypeEnumListVM;
+		public EnumListVM ConstantTypeEnumList { get; }
 
 		static readonly Dictionary<ConstantType, EnumVM> typeToEnumVM = new Dictionary<ConstantType, EnumVM>() {
 			{ ConstantType.Null,		new EnumVM(ConstantType.Null,			"null") },
@@ -124,9 +121,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			{ ConstantType.TypeArray,	new EnumVM(ConstantType.TypeArray,		"Type[]") },
 		};
 
-		public static EnumVM[] CreateEnumArray(IEnumerable<ConstantType> constants) {
-			return constants.Select(a => typeToEnumVM[a]).ToArray();
-		}
+		public static EnumVM[] CreateEnumArray(IEnumerable<ConstantType> constants) => constants.Select(a => typeToEnumVM[a]).ToArray();
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -142,13 +137,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public ConstantType ValueType {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem; }
-		}
-
-		public object ValueNoSpecialNull {
-			get { return ConvertValueNoSpecialNull(Value); }
-		}
+		public ConstantType ValueType => (ConstantType)ConstantTypeEnumList.SelectedItem;
+		public object ValueNoSpecialNull => ConvertValueNoSpecialNull(Value);
 
 		public static object ConvertValueNoSpecialNull(object value) {
 			if (value == null)
@@ -199,7 +189,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 			set {
-				var valueType = value == null ? null : value.GetType();
+				var valueType = value?.GetType();
 				if (value is bool) {
 					SetSelectedItem(ConstantType.Boolean);
 					Boolean.Value = (bool)value;
@@ -427,352 +417,86 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ConstantTypeEnumList.SelectedIndex = 0;
 		}
 
-		public bool NullIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Null; }
-		}
-
-		public bool BooleanIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Boolean; }
-		}
-
-		public bool CharIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Char; }
-		}
-
-		public bool SByteIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByte; }
-		}
-
-		public bool Int16IsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16; }
-		}
-
-		public bool Int32IsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32; }
-		}
-
-		public bool Int64IsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64; }
-		}
-
-		public bool ByteIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Byte; }
-		}
-
-		public bool UInt16IsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16; }
-		}
-
-		public bool UInt32IsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32; }
-		}
-
-		public bool UInt64IsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64; }
-		}
-
-		public bool SingleIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Single; }
-		}
-
-		public bool DoubleIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Double; }
-		}
-
-		public bool StringIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.String; }
-		}
-
-		public bool EnumIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Enum; }
-		}
-
-		public bool TypeIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Type; }
-		}
-
-		public bool ObjectArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray; }
-		}
-
-		public bool BooleanArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray; }
-		}
-
-		public bool CharArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.CharArray; }
-		}
-
-		public bool SByteArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByteArray; }
-		}
-
-		public bool Int16ArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16Array; }
-		}
-
-		public bool Int32ArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32Array; }
-		}
-
-		public bool Int64ArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64Array; }
-		}
-
-		public bool ByteArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ByteArray; }
-		}
-
-		public bool UInt16ArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16Array; }
-		}
-
-		public bool UInt32ArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32Array; }
-		}
-
-		public bool UInt64ArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64Array; }
-		}
-
-		public bool SingleArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SingleArray; }
-		}
-
-		public bool DoubleArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.DoubleArray; }
-		}
-
-		public bool StringArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.StringArray; }
-		}
-
-		public bool EnumArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray; }
-		}
-
-		public bool TypeArrayIsSelected {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray; }
-		}
-
-		public bool ObjectArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray && !ObjectArrayIsNull; }
-		}
-
-		public bool BooleanArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray && !BooleanArrayIsNull; }
-		}
-
-		public bool CharArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.CharArray && !CharArrayIsNull; }
-		}
-
-		public bool SByteArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByteArray && !SByteArrayIsNull; }
-		}
-
-		public bool Int16ArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16Array && !Int16ArrayIsNull; }
-		}
-
-		public bool Int32ArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32Array && !Int32ArrayIsNull; }
-		}
-
-		public bool Int64ArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64Array && !Int64ArrayIsNull; }
-		}
-
-		public bool ByteArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ByteArray && !ByteArrayIsNull; }
-		}
-
-		public bool UInt16ArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16Array && !UInt16ArrayIsNull; }
-		}
-
-		public bool UInt32ArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32Array && !UInt32ArrayIsNull; }
-		}
-
-		public bool UInt64ArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64Array && !UInt64ArrayIsNull; }
-		}
-
-		public bool SingleArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SingleArray && !SingleArrayIsNull; }
-		}
-
-		public bool DoubleArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.DoubleArray && !DoubleArrayIsNull; }
-		}
-
-		public bool StringArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.StringArray && !StringArrayIsNull; }
-		}
-
-		public bool EnumArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray && !EnumArrayIsNull; }
-		}
-
-		public bool TypeArrayIsSelectedAndNotNull {
-			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray && !TypeArrayIsNull; }
-		}
-
-		public BooleanVM Boolean {
-			get { return boolean; }
-		}
-		BooleanVM boolean;
-
-		public CharVM Char {
-			get { return @char; }
-		}
-		CharVM @char;
-
-		public SByteVM SByte {
-			get { return @sbyte; }
-		}
-		SByteVM @sbyte;
-
-		public Int16VM Int16 {
-			get { return int16; }
-		}
-		Int16VM int16;
-
-		public Int32VM Int32 {
-			get { return int32; }
-		}
-		Int32VM int32;
-
-		public Int64VM Int64 {
-			get { return int64; }
-		}
-		Int64VM int64;
-
-		public ByteVM Byte {
-			get { return @byte; }
-		}
-		ByteVM @byte;
-
-		public UInt16VM UInt16 {
-			get { return uint16; }
-		}
-		UInt16VM uint16;
-
-		public UInt32VM UInt32 {
-			get { return uint32; }
-		}
-		UInt32VM uint32;
-
-		public UInt64VM UInt64 {
-			get { return uint64; }
-		}
-		UInt64VM uint64;
-
-		public SingleVM Single {
-			get { return single; }
-		}
-		SingleVM single;
-
-		public DoubleVM Double {
-			get { return @double; }
-		}
-		DoubleVM @double;
-
-		public StringVM String {
-			get { return @string; }
-		}
-		StringVM @string;
-
-		public EnumDataFieldVM Enum {
-			get { return @enum; }
-		}
-		EnumDataFieldVM @enum;
-
-		public TypeSigVM Type {
-			get { return type; }
-		}
-		TypeSigVM type;
-
-		public ObjectListDataFieldVM ObjectArray {
-			get { return objectArray; }
-		}
-		ObjectListDataFieldVM objectArray;
-
-		public BooleanListDataFieldVM BooleanArray {
-			get { return booleanArray; }
-		}
-		BooleanListDataFieldVM booleanArray;
-
-		public CharListDataFieldVM CharArray {
-			get { return charArray; }
-		}
-		CharListDataFieldVM charArray;
-
-		public SByteListDataFieldVM SByteArray {
-			get { return sbyteArray; }
-		}
-		SByteListDataFieldVM sbyteArray;
-
-		public Int16ListDataFieldVM Int16Array {
-			get { return int16Array; }
-		}
-		Int16ListDataFieldVM int16Array;
-
-		public Int32ListDataFieldVM Int32Array {
-			get { return int32Array; }
-		}
-		Int32ListDataFieldVM int32Array;
-
-		public Int64ListDataFieldVM Int64Array {
-			get { return int64Array; }
-		}
-		Int64ListDataFieldVM int64Array;
-
-		public ByteListDataFieldVM ByteArray {
-			get { return byteArray; }
-		}
-		ByteListDataFieldVM byteArray;
-
-		public UInt16ListDataFieldVM UInt16Array {
-			get { return uint16Array; }
-		}
-		UInt16ListDataFieldVM uint16Array;
-
-		public UInt32ListDataFieldVM UInt32Array {
-			get { return uint32Array; }
-		}
-		UInt32ListDataFieldVM uint32Array;
-
-		public UInt64ListDataFieldVM UInt64Array {
-			get { return uint64Array; }
-		}
-		UInt64ListDataFieldVM uint64Array;
-
-		public SingleListDataFieldVM SingleArray {
-			get { return singleArray; }
-		}
-		SingleListDataFieldVM singleArray;
-
-		public DoubleListDataFieldVM DoubleArray {
-			get { return doubleArray; }
-		}
-		DoubleListDataFieldVM doubleArray;
-
-		public StringListDataFieldVM StringArray {
-			get { return stringArray; }
-		}
-		StringListDataFieldVM stringArray;
-
-		public EnumListDataFieldVM EnumArray {
-			get { return enumArray; }
-		}
-		EnumListDataFieldVM enumArray;
-
-		public TypeSigListDataFieldVM TypeArray {
-			get { return typeArray; }
-		}
-		TypeSigListDataFieldVM typeArray;
+		public bool NullIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Null;
+		public bool BooleanIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Boolean;
+		public bool CharIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Char;
+		public bool SByteIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByte;
+		public bool Int16IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16;
+		public bool Int32IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32;
+		public bool Int64IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64;
+		public bool ByteIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Byte;
+		public bool UInt16IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16;
+		public bool UInt32IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32;
+		public bool UInt64IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64;
+		public bool SingleIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Single;
+		public bool DoubleIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Double;
+		public bool StringIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.String;
+		public bool EnumIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Enum;
+		public bool TypeIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Type;
+		public bool ObjectArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray;
+		public bool BooleanArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray;
+		public bool CharArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.CharArray;
+		public bool SByteArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByteArray;
+		public bool Int16ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16Array;
+		public bool Int32ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32Array;
+		public bool Int64ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64Array;
+		public bool ByteArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ByteArray;
+		public bool UInt16ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16Array;
+		public bool UInt32ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32Array;
+		public bool UInt64ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64Array;
+		public bool SingleArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SingleArray;
+		public bool DoubleArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.DoubleArray;
+		public bool StringArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.StringArray;
+		public bool EnumArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray;
+		public bool TypeArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray;
+		public bool ObjectArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray && !ObjectArrayIsNull;
+		public bool BooleanArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray && !BooleanArrayIsNull;
+		public bool CharArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.CharArray && !CharArrayIsNull;
+		public bool SByteArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByteArray && !SByteArrayIsNull;
+		public bool Int16ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16Array && !Int16ArrayIsNull;
+		public bool Int32ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32Array && !Int32ArrayIsNull;
+		public bool Int64ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64Array && !Int64ArrayIsNull;
+		public bool ByteArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ByteArray && !ByteArrayIsNull;
+		public bool UInt16ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16Array && !UInt16ArrayIsNull;
+		public bool UInt32ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32Array && !UInt32ArrayIsNull;
+		public bool UInt64ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64Array && !UInt64ArrayIsNull;
+		public bool SingleArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SingleArray && !SingleArrayIsNull;
+		public bool DoubleArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.DoubleArray && !DoubleArrayIsNull;
+		public bool StringArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.StringArray && !StringArrayIsNull;
+		public bool EnumArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray && !EnumArrayIsNull;
+		public bool TypeArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray && !TypeArrayIsNull;
+
+		public BooleanVM Boolean { get; }
+		public CharVM Char { get; }
+		public SByteVM SByte { get; }
+		public Int16VM Int16 { get; }
+		public Int32VM Int32 { get; }
+		public Int64VM Int64 { get; }
+		public ByteVM Byte { get; }
+		public UInt16VM UInt16 { get; }
+		public UInt32VM UInt32 { get; }
+		public UInt64VM UInt64 { get; }
+		public SingleVM Single { get; }
+		public DoubleVM Double { get; }
+		public StringVM String { get; }
+		public EnumDataFieldVM Enum { get; }
+		public TypeSigVM Type { get; }
+		public ObjectListDataFieldVM ObjectArray { get; }
+		public BooleanListDataFieldVM BooleanArray { get; }
+		public CharListDataFieldVM CharArray { get; }
+		public SByteListDataFieldVM SByteArray { get; }
+		public Int16ListDataFieldVM Int16Array { get; }
+		public Int32ListDataFieldVM Int32Array { get; }
+		public Int64ListDataFieldVM Int64Array { get; }
+		public ByteListDataFieldVM ByteArray { get; }
+		public UInt16ListDataFieldVM UInt16Array { get; }
+		public UInt32ListDataFieldVM UInt32Array { get; }
+		public UInt64ListDataFieldVM UInt64Array { get; }
+		public SingleListDataFieldVM SingleArray { get; }
+		public DoubleListDataFieldVM DoubleArray { get; }
+		public StringListDataFieldVM StringArray { get; }
+		public EnumListDataFieldVM EnumArray { get; }
+		public TypeSigListDataFieldVM TypeArray { get; }
 
 		public bool ObjectArrayIsNull {
 			get { return objectArrayIsNull; }
@@ -982,10 +706,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool typeArrayIsNull;
 
-		public bool ArraysCanBeNull {
-			get { return arraysCanBeNull; }
-		}
-		readonly bool arraysCanBeNull;
+		public bool ArraysCanBeNull { get; }
 
 		public ConstantTypeVM(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options = null) {
 			if (options == null) {
@@ -996,40 +717,40 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					throw new ArgumentNullException();
 				}
 			}
-			this.arraysCanBeNull = arraysCanBeNull;
+			this.ArraysCanBeNull = arraysCanBeNull;
 			var list = validConstants.Select(a => typeToEnumVM[a]);
-			this.constantTypeEnumListVM = new EnumListVM(list, (a, b) => OnConstantChanged());
-			this.boolean = new BooleanVM(a => FieldUpdated());
-			this.@char = new CharVM(a => FieldUpdated());
-			this.@sbyte = new SByteVM(a => FieldUpdated());
-			this.@byte = new ByteVM(a => FieldUpdated());
-			this.int16 = new Int16VM(a => FieldUpdated());
-			this.uint16 = new UInt16VM(a => FieldUpdated());
-			this.int32 = new Int32VM(a => FieldUpdated());
-			this.uint32 = new UInt32VM(a => FieldUpdated());
-			this.int64 = new Int64VM(a => FieldUpdated());
-			this.uint64 = new UInt64VM(a => FieldUpdated());
-			this.single = new SingleVM(a => FieldUpdated());
-			this.@double = new DoubleVM(a => FieldUpdated());
-			this.@string = new StringVM(a => FieldUpdated(), allowNullString);
-			this.@enum = new EnumDataFieldVM(ownerModule, a => FieldUpdated());
-			this.type = new TypeSigVM(a => FieldUpdated(), options);
-			this.objectArray = new ObjectListDataFieldVM(ownerModule, a => FieldUpdated(), options);
-			this.booleanArray = new BooleanListDataFieldVM(a => FieldUpdated());
-			this.charArray = new CharListDataFieldVM(a => FieldUpdated());
-			this.sbyteArray = new SByteListDataFieldVM(a => FieldUpdated());
-			this.byteArray = new ByteListDataFieldVM(a => FieldUpdated());
-			this.int16Array = new Int16ListDataFieldVM(a => FieldUpdated());
-			this.uint16Array = new UInt16ListDataFieldVM(a => FieldUpdated());
-			this.int32Array = new Int32ListDataFieldVM(a => FieldUpdated());
-			this.uint32Array = new UInt32ListDataFieldVM(a => FieldUpdated());
-			this.int64Array = new Int64ListDataFieldVM(a => FieldUpdated());
-			this.uint64Array = new UInt64ListDataFieldVM(a => FieldUpdated());
-			this.singleArray = new SingleListDataFieldVM(a => FieldUpdated());
-			this.doubleArray = new DoubleListDataFieldVM(a => FieldUpdated());
-			this.stringArray = new StringListDataFieldVM(a => FieldUpdated());
-			this.enumArray = new EnumListDataFieldVM(ownerModule, a => FieldUpdated());
-			this.typeArray = new TypeSigListDataFieldVM(a => FieldUpdated(), options);
+			this.ConstantTypeEnumList = new EnumListVM(list, (a, b) => OnConstantChanged());
+			this.Boolean = new BooleanVM(a => FieldUpdated());
+			this.Char = new CharVM(a => FieldUpdated());
+			this.SByte = new SByteVM(a => FieldUpdated());
+			this.Byte = new ByteVM(a => FieldUpdated());
+			this.Int16 = new Int16VM(a => FieldUpdated());
+			this.UInt16 = new UInt16VM(a => FieldUpdated());
+			this.Int32 = new Int32VM(a => FieldUpdated());
+			this.UInt32 = new UInt32VM(a => FieldUpdated());
+			this.Int64 = new Int64VM(a => FieldUpdated());
+			this.UInt64 = new UInt64VM(a => FieldUpdated());
+			this.Single = new SingleVM(a => FieldUpdated());
+			this.Double = new DoubleVM(a => FieldUpdated());
+			this.String = new StringVM(a => FieldUpdated(), allowNullString);
+			this.Enum = new EnumDataFieldVM(ownerModule, a => FieldUpdated());
+			this.Type = new TypeSigVM(a => FieldUpdated(), options);
+			this.ObjectArray = new ObjectListDataFieldVM(ownerModule, a => FieldUpdated(), options);
+			this.BooleanArray = new BooleanListDataFieldVM(a => FieldUpdated());
+			this.CharArray = new CharListDataFieldVM(a => FieldUpdated());
+			this.SByteArray = new SByteListDataFieldVM(a => FieldUpdated());
+			this.ByteArray = new ByteListDataFieldVM(a => FieldUpdated());
+			this.Int16Array = new Int16ListDataFieldVM(a => FieldUpdated());
+			this.UInt16Array = new UInt16ListDataFieldVM(a => FieldUpdated());
+			this.Int32Array = new Int32ListDataFieldVM(a => FieldUpdated());
+			this.UInt32Array = new UInt32ListDataFieldVM(a => FieldUpdated());
+			this.Int64Array = new Int64ListDataFieldVM(a => FieldUpdated());
+			this.UInt64Array = new UInt64ListDataFieldVM(a => FieldUpdated());
+			this.SingleArray = new SingleListDataFieldVM(a => FieldUpdated());
+			this.DoubleArray = new DoubleListDataFieldVM(a => FieldUpdated());
+			this.StringArray = new StringListDataFieldVM(a => FieldUpdated());
+			this.EnumArray = new EnumListDataFieldVM(ownerModule, a => FieldUpdated());
+			this.TypeArray = new TypeSigListDataFieldVM(a => FieldUpdated(), options);
 			this.Value = value;
 		}
 
@@ -1098,37 +819,37 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 				switch ((ConstantType)ConstantTypeEnumList.SelectedItem) {
 				case ConstantType.Null:			break;
-				case ConstantType.Boolean:		if (boolean.HasError) return true; break;
-				case ConstantType.Char:			if (@char.HasError) return true; break;
-				case ConstantType.SByte:		if (@sbyte.HasError) return true; break;
-				case ConstantType.Int16:		if (int16.HasError) return true; break;
-				case ConstantType.Int32:		if (int32.HasError) return true; break;
-				case ConstantType.Int64:		if (int64.HasError) return true; break;
-				case ConstantType.Byte:			if (@byte.HasError) return true; break;
-				case ConstantType.UInt16:		if (uint16.HasError) return true; break;
-				case ConstantType.UInt32:		if (uint32.HasError) return true; break;
-				case ConstantType.UInt64:		if (uint64.HasError) return true; break;
-				case ConstantType.Single:		if (single.HasError) return true; break;
-				case ConstantType.Double:		if (@double.HasError) return true; break;
-				case ConstantType.String:		if (@string.HasError) return true; break;
-				case ConstantType.Enum:			if (@enum.HasError) return true; break;
-				case ConstantType.Type:			if (type.HasError) return true; break;
-				case ConstantType.ObjectArray:	if (!ObjectArrayIsNull && objectArray.HasError) return true; break;
-				case ConstantType.BooleanArray:	if (!BooleanArrayIsNull && booleanArray.HasError) return true; break;
-				case ConstantType.CharArray:	if (!CharArrayIsNull && charArray.HasError) return true; break;
-				case ConstantType.SByteArray:	if (!SByteArrayIsNull && sbyteArray.HasError) return true; break;
-				case ConstantType.Int16Array:	if (!Int16ArrayIsNull && int16Array.HasError) return true; break;
-				case ConstantType.Int32Array:	if (!Int32ArrayIsNull && int32Array.HasError) return true; break;
-				case ConstantType.Int64Array:	if (!Int64ArrayIsNull && int64Array.HasError) return true; break;
-				case ConstantType.ByteArray:	if (!ByteArrayIsNull && byteArray.HasError) return true; break;
-				case ConstantType.UInt16Array:	if (!UInt16ArrayIsNull && uint16Array.HasError) return true; break;
-				case ConstantType.UInt32Array:	if (!UInt32ArrayIsNull && uint32Array.HasError) return true; break;
-				case ConstantType.UInt64Array:	if (!UInt64ArrayIsNull && uint64Array.HasError) return true; break;
-				case ConstantType.SingleArray:	if (!SingleArrayIsNull && singleArray.HasError) return true; break;
-				case ConstantType.DoubleArray:	if (!DoubleArrayIsNull && doubleArray.HasError) return true; break;
-				case ConstantType.StringArray:	if (!StringArrayIsNull && stringArray.HasError) return true; break;
-				case ConstantType.EnumArray:	if (!EnumArrayIsNull && enumArray.HasError) return true; break;
-				case ConstantType.TypeArray:	if (!TypeArrayIsNull && typeArray.HasError) return true; break;
+				case ConstantType.Boolean:		if (Boolean.HasError) return true; break;
+				case ConstantType.Char:			if (Char.HasError) return true; break;
+				case ConstantType.SByte:		if (SByte.HasError) return true; break;
+				case ConstantType.Int16:		if (Int16.HasError) return true; break;
+				case ConstantType.Int32:		if (Int32.HasError) return true; break;
+				case ConstantType.Int64:		if (Int64.HasError) return true; break;
+				case ConstantType.Byte:			if (Byte.HasError) return true; break;
+				case ConstantType.UInt16:		if (UInt16.HasError) return true; break;
+				case ConstantType.UInt32:		if (UInt32.HasError) return true; break;
+				case ConstantType.UInt64:		if (UInt64.HasError) return true; break;
+				case ConstantType.Single:		if (Single.HasError) return true; break;
+				case ConstantType.Double:		if (Double.HasError) return true; break;
+				case ConstantType.String:		if (String.HasError) return true; break;
+				case ConstantType.Enum:			if (Enum.HasError) return true; break;
+				case ConstantType.Type:			if (Type.HasError) return true; break;
+				case ConstantType.ObjectArray:	if (!ObjectArrayIsNull && ObjectArray.HasError) return true; break;
+				case ConstantType.BooleanArray:	if (!BooleanArrayIsNull && BooleanArray.HasError) return true; break;
+				case ConstantType.CharArray:	if (!CharArrayIsNull && CharArray.HasError) return true; break;
+				case ConstantType.SByteArray:	if (!SByteArrayIsNull && SByteArray.HasError) return true; break;
+				case ConstantType.Int16Array:	if (!Int16ArrayIsNull && Int16Array.HasError) return true; break;
+				case ConstantType.Int32Array:	if (!Int32ArrayIsNull && Int32Array.HasError) return true; break;
+				case ConstantType.Int64Array:	if (!Int64ArrayIsNull && Int64Array.HasError) return true; break;
+				case ConstantType.ByteArray:	if (!ByteArrayIsNull && ByteArray.HasError) return true; break;
+				case ConstantType.UInt16Array:	if (!UInt16ArrayIsNull && UInt16Array.HasError) return true; break;
+				case ConstantType.UInt32Array:	if (!UInt32ArrayIsNull && UInt32Array.HasError) return true; break;
+				case ConstantType.UInt64Array:	if (!UInt64ArrayIsNull && UInt64Array.HasError) return true; break;
+				case ConstantType.SingleArray:	if (!SingleArrayIsNull && SingleArray.HasError) return true; break;
+				case ConstantType.DoubleArray:	if (!DoubleArrayIsNull && DoubleArray.HasError) return true; break;
+				case ConstantType.StringArray:	if (!StringArrayIsNull && StringArray.HasError) return true; break;
+				case ConstantType.EnumArray:	if (!EnumArrayIsNull && EnumArray.HasError) return true; break;
+				case ConstantType.TypeArray:	if (!TypeArrayIsNull && TypeArray.HasError) return true; break;
 				default: throw new InvalidOperationException();
 				}
 

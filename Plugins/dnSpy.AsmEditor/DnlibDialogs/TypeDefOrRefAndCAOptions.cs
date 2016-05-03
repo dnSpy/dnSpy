@@ -23,7 +23,7 @@ using dnlib.DotNet;
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeDefOrRefAndCAOptions {
 		public ITypeDefOrRef TypeDefOrRef;
-		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
+		public List<CustomAttribute> CustomAttributes { get; } = new List<CustomAttribute>();
 
 		public TypeDefOrRefAndCAOptions() {
 		}
@@ -52,12 +52,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return iface;
 		}
 
-		public GenericParamConstraint CreateGenericParamConstraint(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new GenericParamConstraintUser()));
-		}
-
-		public InterfaceImpl CreateInterfaceImpl(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new InterfaceImplUser()));
-		}
+		public GenericParamConstraint CreateGenericParamConstraint(ModuleDef ownerModule) =>
+			ownerModule.UpdateRowId(CopyTo(new GenericParamConstraintUser()));
+		public InterfaceImpl CreateInterfaceImpl(ModuleDef ownerModule) =>
+			ownerModule.UpdateRowId(CopyTo(new InterfaceImplUser()));
 	}
 }

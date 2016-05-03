@@ -30,25 +30,12 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class DerivedTypeNode : FileTreeNodeData, IDerivedTypeNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DERIVEDTYPE_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, TypeDef.FullName); }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return TypeDef; }
-		}
-
-		public TypeDef TypeDef {
-			get {return TryGetTypeDef() ?? new TypeDefUser("???"); }
-		}
-
-		TypeDef TryGetTypeDef() {
-			return (TypeDef)weakRefTypeDef.Target;
-		}
+		public override Guid Guid => new Guid(FileTVConstants.DERIVEDTYPE_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, TypeDef.FullName);
+		IMDTokenProvider IMDTokenNode.Reference => TypeDef;
+		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public TypeDef TypeDef => TryGetTypeDef() ?? new TypeDefUser("???");
+		TypeDef TryGetTypeDef() => (TypeDef)weakRefTypeDef.Target;
 		readonly WeakReference weakRefTypeDef;
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
@@ -58,19 +45,13 @@ namespace dnSpy.Files.TreeView {
 			return new ImageReference(GetType().Assembly, "Class");
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
-
 		public DerivedTypeNode(ITreeNodeGroup treeNodeGroup, TypeDef type) {
-			this.treeNodeGroup = treeNodeGroup;
+			this.TreeNodeGroup = treeNodeGroup;
 			this.weakRefTypeDef = new WeakReference(type);
 		}
 
-		public override void Initialize() {
+		public override void Initialize() =>
 			TreeNode.LazyLoading = createChildren = DerivedTypesFinder.QuickCheck(TryGetTypeDef());
-		}
 		bool createChildren;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

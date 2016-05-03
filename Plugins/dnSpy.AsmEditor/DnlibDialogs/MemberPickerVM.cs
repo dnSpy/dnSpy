@@ -46,9 +46,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IOpenAssembly openAssembly;
 
-		public ICommand OpenCommand {
-			get { return new RelayCommand(a => OpenNewAssembly(), a => CanOpenAssembly); }
-		}
+		public ICommand OpenCommand => new RelayCommand(a => OpenNewAssembly(), a => CanOpenAssembly);
 
 		public bool CanOpenAssembly {
 			get { return true; }
@@ -148,15 +146,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool tooManyResults;
 
-		public ICollectionView SearchResultsCollectionView {
-			get { return searchResultsCollectionView; }
-		}
+		public ICollectionView SearchResultsCollectionView => searchResultsCollectionView;
 		readonly ListCollectionView searchResultsCollectionView;
 
-		public ObservableCollection<ISearchResult> SearchResults {
-			get { return searchResults; }
-		}
-		readonly ObservableCollection<ISearchResult> searchResults;
+		public ObservableCollection<ISearchResult> SearchResults { get; }
 
 		public ISearchResult SelectedSearchResult {
 			get { return selectedSearchResult; }
@@ -185,9 +178,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		string searchText = string.Empty;
 		readonly DelayedAction delayedSearch;
 
-		public bool HasSearchText {
-			get { return !string.IsNullOrEmpty(searchText); }
-		}
+		public bool HasSearchText => !string.IsNullOrEmpty(searchText);
 
 		public ISearchResult SearchResult {
 			get { return searchResult; }
@@ -205,9 +196,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ISearchResult searchResult;
 
-		public IEnumerable<ILanguage> AllLanguages {
-			get { return languageManager.AllLanguages; }
-		}
+		public IEnumerable<ILanguage> AllLanguages => languageManager.AllLanguages;
 
 		public ILanguage Language {
 			get { return language; }
@@ -226,26 +215,21 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly IFileSearcherCreator fileSearcherCreator;
 
 		public bool SyntaxHighlight { get; set; }
-
-		public string Title {
-			get { return title; }
-		}
-		readonly string title;
-
-		bool CaseSensitive { get; set; }
-		bool MatchWholeWords { get; set; }
-		bool MatchAnySearchTerm { get; set; }
+		public string Title { get; }
+		bool CaseSensitive { get; }
+		bool MatchWholeWords { get; }
+		bool MatchAnySearchTerm { get; }
 
 		public MemberPickerVM(IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
-			this.title = title;
+			this.Title = title;
 			this.fileSearcherCreator = fileSearcherCreator;
 			this.languageManager = languageManager;
 			this.fileTreeView = fileTreeView;
 			this.language = languageManager.Language;
 			this.filter = filter;
 			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
-			this.searchResults = new ObservableCollection<ISearchResult>();
-			this.searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(searchResults);
+			this.SearchResults = new ObservableCollection<ISearchResult>();
+			this.searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
 			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
 
 			foreach (var file in assemblies)
@@ -286,9 +270,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			fileTreeView.FileManager.GetOrAdd(file);
 		}
 
-		void DelayStartSearch() {
-			Restart();
-		}
+		void DelayStartSearch() => Restart();
 
 		void StartSearch() {
 			CancelSearch();
@@ -316,7 +298,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (sender == null || sender != fileSearcher || searchCompleted)
 				return;
 			searchCompleted = true;
-			searchResults.Remove(fileSearcher.SearchingResult);
+			SearchResults.Remove(fileSearcher.SearchingResult);
 			TooManyResults = fileSearcher.TooManyResults;
 		}
 
@@ -327,7 +309,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (searchCompleted)
 				return;
 			foreach (var vm in e.Results)
-				searchResults.Add(vm);
+				SearchResults.Add(vm);
 		}
 
 		public void Restart() {
@@ -368,9 +350,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return string.Empty;
 		}
 
-		string GetErrorMessage() {
-			return dnSpy_AsmEditor_Resources.PickMember_SelectCorrectNode;
-		}
+		string GetErrorMessage() => dnSpy_AsmEditor_Resources.PickMember_SelectCorrectNode;
 
 		public override bool HasError {
 			get {

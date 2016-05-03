@@ -40,13 +40,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand PickConstructorCommand {
-			get { return new RelayCommand(a => PickConstructor()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand PickConstructorCommand => new RelayCommand(a => PickConstructor());
 
 		public string TypeFullName {
 			get {
@@ -111,10 +106,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { IsRawData = !value; }
 		}
 
-		public HexStringVM RawData {
-			get { return rawData; }
-		}
-		HexStringVM rawData;
+		public HexStringVM RawData { get; }
 
 		public ICustomAttributeType Constructor {
 			get { return constructor; }
@@ -132,15 +124,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ICustomAttributeType constructor;
 
-		public MyObservableCollection<CAArgumentVM> ConstructorArguments {
-			get { return constructorArguments; }
-		}
-		readonly MyObservableCollection<CAArgumentVM> constructorArguments = new MyObservableCollection<CAArgumentVM>();
-
-		public CANamedArgumentsVM CANamedArgumentsVM {
-			get { return caNamedArgumentsVM; }
-		}
-		CANamedArgumentsVM caNamedArgumentsVM;
+		public MyObservableCollection<CAArgumentVM> ConstructorArguments { get; } = new MyObservableCollection<CAArgumentVM>();
+		public CANamedArgumentsVM CANamedArgumentsVM { get; }
 
 		readonly ModuleDef ownerModule;
 		readonly ILanguageManager languageManager;
@@ -154,8 +139,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 
-			this.rawData = new HexStringVM(a => HasErrorUpdated());
-			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
+			this.RawData = new HexStringVM(a => HasErrorUpdated());
+			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
 			ConstructorArguments.CollectionChanged += Args_CollectionChanged;
 			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 
@@ -194,9 +179,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		static CAArgument CreateCAArgument(TypeSig type) {
-			return new CAArgument(type, ModelUtils.GetDefaultValue(type, true));
-		}
+		static CAArgument CreateCAArgument(TypeSig type) => new CAArgument(type, ModelUtils.GetDefaultValue(type, true));
 
 		void PickConstructor() {
 			if (dnlibTypePicker == null)
@@ -206,13 +189,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Constructor = newCtor;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public CustomAttributeOptions CreateCustomAttributeOptions() {
-			return CopyTo(new CustomAttributeOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public CustomAttributeOptions CreateCustomAttributeOptions() => CopyTo(new CustomAttributeOptions());
 
 		void InitializeFrom(CustomAttributeOptions options) {
 			IsRawData = options.RawData != null;
@@ -249,7 +227,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public override bool HasError {
 			get {
 				return Constructor == null ||
-					(IsRawData && rawData.HasError) ||
+					(IsRawData && RawData.HasError) ||
 					(!IsRawData &&
 						(ConstructorArguments.Any(a => a.HasError) ||
 						CANamedArgumentsVM.Collection.Any(a => a.HasError)));

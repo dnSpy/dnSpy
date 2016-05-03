@@ -155,16 +155,12 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if the thread is running
 		/// </summary>
-		public bool IsRunning {
-			get { return State == CorDebugThreadState.THREAD_RUN; }
-		}
+		public bool IsRunning => State == CorDebugThreadState.THREAD_RUN;
 
 		/// <summary>
 		/// true if the thread is suspended
 		/// </summary>
-		public bool IsSuspended {
-			get { return State == CorDebugThreadState.THREAD_SUSPEND; }
-		}
+		public bool IsSuspended => State == CorDebugThreadState.THREAD_SUSPEND;
 
 		/// <summary>
 		/// Gets/sets the thread state
@@ -194,67 +190,49 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if a termination of the thread has been requested.
 		/// </summary>
-		public bool StopRequested {
-			get { return (UserState & CorDebugUserState.USER_STOP_REQUESTED) != 0; }
-		}
+		public bool StopRequested => (UserState & CorDebugUserState.USER_STOP_REQUESTED) != 0;
 
 		/// <summary>
 		/// true if a suspension of the thread has been requested.
 		/// </summary>
-		public bool SuspendRequested {
-			get { return (UserState & CorDebugUserState.USER_SUSPEND_REQUESTED) != 0; }
-		}
+		public bool SuspendRequested => (UserState & CorDebugUserState.USER_SUSPEND_REQUESTED) != 0;
 
 		/// <summary>
 		/// true if the thread is running in the background.
 		/// </summary>
-		public bool IsBackground {
-			get { return (UserState & CorDebugUserState.USER_BACKGROUND) != 0; }
-		}
+		public bool IsBackground => (UserState & CorDebugUserState.USER_BACKGROUND) != 0;
 
 		/// <summary>
 		/// true if the thread has not started executing.
 		/// </summary>
-		public bool IsUnstarted {
-			get { return (UserState & CorDebugUserState.USER_UNSTARTED) != 0; }
-		}
+		public bool IsUnstarted => (UserState & CorDebugUserState.USER_UNSTARTED) != 0;
 
 		/// <summary>
 		/// true if the thread has been terminated.
 		/// </summary>
-		public bool IsStopped {
-			get { return (UserState & CorDebugUserState.USER_STOPPED) != 0; }
-		}
+		public bool IsStopped => (UserState & CorDebugUserState.USER_STOPPED) != 0;
 
 		/// <summary>
 		/// true if the thread is waiting for another thread to complete a task.
 		/// </summary>
-		public bool IsWaitSleepJoin {
-			get { return (UserState & CorDebugUserState.USER_WAIT_SLEEP_JOIN) != 0; }
-		}
+		public bool IsWaitSleepJoin => (UserState & CorDebugUserState.USER_WAIT_SLEEP_JOIN) != 0;
 
 		/// <summary>
 		/// true if the thread has been suspended. Use <see cref="IsSuspended"/> instead of this property.
 		/// </summary>
-		public bool IsUserStateSuspended {
-			get { return (UserState & CorDebugUserState.USER_SUSPENDED) != 0; }
-		}
+		public bool IsUserStateSuspended => (UserState & CorDebugUserState.USER_SUSPENDED) != 0;
 
 		/// <summary>
 		/// true if the thread is at an unsafe point. That is, the thread is at a point in execution where it may block garbage collection.
 		/// 
 		/// Debug events may be dispatched from unsafe points, but suspending a thread at an unsafe point will very likely cause a deadlock until the thread is resumed. The safe and unsafe points are determined by the just-in-time (JIT) and garbage collection implementation.
 		/// </summary>
-		public bool IsUnsafePoint {
-			get { return (UserState & CorDebugUserState.USER_UNSAFE_POINT) != 0; }
-		}
+		public bool IsUnsafePoint => (UserState & CorDebugUserState.USER_UNSAFE_POINT) != 0;
 
 		/// <summary>
 		/// true if the thread is from the thread pool.
 		/// </summary>
-		public bool IsThreadPool {
-			get { return (UserState & CorDebugUserState.USER_THREADPOOL) != 0; }
-		}
+		public bool IsThreadPool => (UserState & CorDebugUserState.USER_THREADPOOL) != 0;
 
 		/// <summary>
 		/// Gets the user state of this thread
@@ -310,25 +288,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorThread a, CorThread b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorThread other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorThread);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[Thread] TID={0}, VTID={1} State={2} UserState={3}", ThreadId, VolatileThreadId, State, UserState);
-		}
+		public static bool operator !=(CorThread a, CorThread b) => !(a == b);
+		public bool Equals(CorThread other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorThread);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[Thread] TID={0}, VTID={1} State={2} UserState={3}", ThreadId, VolatileThreadId, State, UserState);
 	}
 }

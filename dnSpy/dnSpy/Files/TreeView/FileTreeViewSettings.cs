@@ -26,8 +26,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.TreeView {
 	class FileTreeViewSettings : ViewModelBase, IFileTreeViewSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
 			get { return syntaxHighlightFileTreeView; }
@@ -150,9 +149,7 @@ namespace dnSpy.Files.TreeView {
 			OnModified();
 		}
 
-		public FileTreeViewSettings Clone() {
-			return CopyTo(new FileTreeViewSettings());
-		}
+		public FileTreeViewSettings Clone() => CopyTo(new FileTreeViewSettings());
 
 		public FileTreeViewSettings CopyTo(FileTreeViewSettings other) {
 			other.SyntaxHighlight = this.SyntaxHighlight;

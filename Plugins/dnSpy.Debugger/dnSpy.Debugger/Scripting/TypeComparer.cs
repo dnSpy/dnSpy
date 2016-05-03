@@ -29,9 +29,7 @@ namespace dnSpy.Debugger.Scripting {
 	/// Simple type comparer
 	/// </summary>
 	struct TypeComparer {
-		public new bool Equals(object a, object b) {
-			return TypeToString(a) == TypeToString(b);
-		}
+		public new bool Equals(object a, object b) => TypeToString(a) == TypeToString(b);
 
 		public bool ArgListsEquals(IList<TypeSig> a, object[] b) {
 			if (a.Count != b.Length)
@@ -128,10 +126,6 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		static readonly ModuleDef dummyModule = new ModuleDefUser("dummy");
 
-		static string DnLibTypeToString(IType dt) {
-			if (dt == null)
-				return null;
-			return dt.FullName;
-		}
+		static string DnLibTypeToString(IType dt) => dt?.FullName;
 	}
 }

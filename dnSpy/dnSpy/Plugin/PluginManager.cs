@@ -37,14 +37,12 @@ namespace dnSpy.Plugin {
 		readonly Lazy<IAutoLoaded, IAutoLoadedMetadata>[] mefAutoLoaded;
 		readonly Lazy<IPlugin, IPluginMetadata>[] mefPlugins;
 
-		public IEnumerable<IPlugin> Plugins {
-			get { return mefPlugins.Select(a => a.Value); }
-		}
+		public IEnumerable<IPlugin> Plugins => mefPlugins.Select(a => a.Value);
 
 		public IEnumerable<LoadedPlugin> LoadedPlugins {
 			get {
 				Debug.Assert(loadedPlugins != null, "Called too early");
-				return (loadedPlugins ?? new LoadedPlugin[0]).AsEnumerable();
+				return (loadedPlugins ?? Array.Empty<LoadedPlugin>());
 			}
 			internal set {
 				Debug.Assert(loadedPlugins == null);
@@ -92,8 +90,6 @@ namespace dnSpy.Plugin {
 			LoadAutoLoaded(AutoLoadedLoadType.AppLoaded);
 		}
 
-		public void OnAppExit() {
-			NotifyPlugins(PluginEvent.AppExit, null);
-		}
+		public void OnAppExit() => NotifyPlugins(PluginEvent.AppExit, null);
 	}
 }

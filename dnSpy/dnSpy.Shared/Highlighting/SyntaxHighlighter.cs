@@ -40,13 +40,8 @@ namespace dnSpy.Shared.Highlighting {
 		readonly CachedTextTokenColors cachedTextTokenColors;
 		readonly StringBuilder sb;
 
-		public bool IsEmpty {
-			get { return sb.Length == 0; }
-		}
-
-		public string Text {
-			get { return sb.ToString(); }
-		}
+		public bool IsEmpty => sb.Length == 0;
+		public string Text => sb.ToString();
 
 		public SyntaxHighlighter() {
 			this.cachedTextTokenColors = new CachedTextTokenColors();
@@ -139,9 +134,7 @@ namespace dnSpy.Shared.Highlighting {
 			return textBlock;
 		}
 
-		public override string ToString() {
-			return Text;
-		}
+		public override string ToString() => Text;
 
 		[ExportAutoLoaded]
 		sealed class ThemeManagerLoader : IAutoLoaded {
@@ -163,37 +156,14 @@ namespace dnSpy.Shared.Highlighting {
 				internal Typeface typeface;
 				internal double fontSize;
 
-				public override Brush BackgroundBrush {
-					get { return background; }
-				}
-
-				public override CultureInfo CultureInfo {
-					get { return CultureInfo.CurrentUICulture; }
-				}
-
-				public override double FontHintingEmSize {
-					get { return fontSize; }
-				}
-
-				public override double FontRenderingEmSize {
-					get { return fontSize; }
-				}
-
-				public override Brush ForegroundBrush {
-					get { return foreground; }
-				}
-
-				public override TextDecorationCollection TextDecorations {
-					get { return null; }
-				}
-
-				public override TextEffectCollection TextEffects {
-					get { return null; }
-				}
-
-				public override Typeface Typeface {
-					get { return typeface; }
-				}
+				public override Brush BackgroundBrush => background;
+				public override CultureInfo CultureInfo => CultureInfo.CurrentUICulture;
+				public override double FontHintingEmSize => fontSize;
+				public override double FontRenderingEmSize => fontSize;
+				public override Brush ForegroundBrush => foreground;
+				public override TextDecorationCollection TextDecorations => null;
+				public override TextEffectCollection TextEffects => null;
+				public override Typeface Typeface => typeface;
 			}
 
 			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) {
@@ -205,11 +175,8 @@ namespace dnSpy.Shared.Highlighting {
 				throw new NotSupportedException();
 			}
 
-			public void UpdateParent(FastTextBlock ftb) {
-				parent = ftb;
-			}
-
-			public TextSource Source { get { return this; } }
+			public void UpdateParent(FastTextBlock ftb) => parent = ftb;
+			public TextSource Source => this;
 
 			Dictionary<int, TextRun> runs = new Dictionary<int, TextRun>();
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {

@@ -65,8 +65,8 @@ namespace dnSpy.Debugger.Exceptions {
 	}
 
 	sealed class ExceptionsCtxMenuContext {
-		public readonly IExceptionsVM VM;
-		public readonly ExceptionVM[] SelectedItems;
+		public IExceptionsVM VM { get; }
+		public ExceptionVM[] SelectedItems { get; }
 
 		public ExceptionsCtxMenuContext(IExceptionsVM vm, ExceptionVM[] selItems) {
 			this.VM = vm;
@@ -82,15 +82,11 @@ namespace dnSpy.Debugger.Exceptions {
 			this.cmd = cmd;
 		}
 
-		protected override ExceptionsCtxMenuContext CreateContext() {
-			return cmd.Create();
-		}
+		protected override ExceptionsCtxMenuContext CreateContext() => cmd.Create();
 	}
 
 	abstract class ExceptionsCtxMenuCommand : MenuItemBase<ExceptionsCtxMenuContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected readonly Lazy<IExceptionsContent> exceptionsContent;
@@ -144,9 +140,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
@@ -156,13 +150,8 @@ namespace dnSpy.Debugger.Exceptions {
 			: base(exceptionsContent) {
 		}
 
-		public override void Execute(ExceptionsCtxMenuContext context) {
-			exceptionsContent.Value.ListBox.SelectAll();
-		}
-
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.SelectedItems.Length > 0;
-		}
+		public override void Execute(ExceptionsCtxMenuContext context) => exceptionsContent.Value.ListBox.SelectAll();
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
 	[Export, ExportMenuItem(Header = "res:AddExceptionCommand", Icon = "Add", InputGestureText = "res:ShortCutKeyInsert", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
@@ -172,13 +161,8 @@ namespace dnSpy.Debugger.Exceptions {
 			: base(exceptionsContent) {
 		}
 
-		public override void Execute(ExceptionsCtxMenuContext context) {
-			context.VM.AddException();
-		}
-
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.VM.CanAddException;
-		}
+		public override void Execute(ExceptionsCtxMenuContext context) => context.VM.AddException();
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanAddException;
 	}
 
 	[Export, ExportMenuItem(Header = "res:RemoveExceptionCommand", Icon = "RemoveCommand", InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
@@ -188,13 +172,8 @@ namespace dnSpy.Debugger.Exceptions {
 			: base(exceptionsContent) {
 		}
 
-		public override void Execute(ExceptionsCtxMenuContext context) {
-			context.VM.RemoveExceptions();
-		}
-
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.VM.CanRemoveExceptions;
-		}
+		public override void Execute(ExceptionsCtxMenuContext context) => context.VM.RemoveExceptions();
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanRemoveExceptions;
 	}
 
 	[ExportMenuItem(Header = "res:RestoreDefaultExceptionSettingsCommand", Icon = "UndoCheckBoxList", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
@@ -204,13 +183,8 @@ namespace dnSpy.Debugger.Exceptions {
 			: base(exceptionsContent) {
 		}
 
-		public override void Execute(ExceptionsCtxMenuContext context) {
-			context.VM.RestoreDefaults();
-		}
-
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.VM.CanRestoreDefaults;
-		}
+		public override void Execute(ExceptionsCtxMenuContext context) => context.VM.RestoreDefaults();
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanRestoreDefaults;
 	}
 
 	[Export]
@@ -238,13 +212,8 @@ namespace dnSpy.Debugger.Exceptions {
 			: base(exceptionsContent) {
 		}
 
-		public override void Execute(ExceptionsCtxMenuContext context) {
-			context.VM.EnableAllFilteredExceptions();
-		}
-
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.VM.CanEnableAllFilteredExceptions;
-		}
+		public override void Execute(ExceptionsCtxMenuContext context) => context.VM.EnableAllFilteredExceptions();
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanEnableAllFilteredExceptions;
 	}
 
 	[ExportMenuItem(Header = "res:DisableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
@@ -254,13 +223,8 @@ namespace dnSpy.Debugger.Exceptions {
 			: base(exceptionsContent) {
 		}
 
-		public override void Execute(ExceptionsCtxMenuContext context) {
-			context.VM.DisableAllFilteredExceptions();
-		}
-
-		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return context.VM.CanDisableAllFilteredExceptions;
-		}
+		public override void Execute(ExceptionsCtxMenuContext context) => context.VM.DisableAllFilteredExceptions();
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanDisableAllFilteredExceptions;
 	}
 
 	static class BreakWhenThrownExceptionCommand {
@@ -271,9 +235,7 @@ namespace dnSpy.Debugger.Exceptions {
 				this.exceptionsContent = exceptionsContent;
 			}
 
-			protected sealed override string CreateContext(IMenuItemContext context) {
-				return GetExceptionTypeName(context);
-			}
+			protected sealed override string CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
 
 			public override void Execute(string context) {
 				if (context == null)
@@ -303,18 +265,15 @@ namespace dnSpy.Debugger.Exceptions {
 				return false;
 			}
 
-			static bool IsSystemException(ITypeDefOrRef type) {
-				return type != null &&
-					type.DeclaringType == null &&
-					type.Namespace == "System" &&
-					type.Name == "Exception" &&
-					type.DefinitionAssembly.IsCorLib();
-			}
+			static bool IsSystemException(ITypeDefOrRef type) =>
+				type != null &&
+				type.DeclaringType == null &&
+				type.Namespace == "System" &&
+				type.Name == "Exception" &&
+				type.DefinitionAssembly.IsCorLib();
 
-			static string GetExceptionString(TypeDef td) {
-				//TODO: HACK: do a proper replacement since a namespace/name could contain slashes
-				return td.FullName.Replace('/', '.');
-			}
+			//TODO: HACK: do a proper replacement since a namespace/name could contain slashes
+			static string GetExceptionString(TypeDef td) => td.FullName.Replace('/', '.');
 
 			protected abstract TypeDef GetTypeDef(IMenuItemContext context);
 
@@ -344,9 +303,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_FILES_DEBUG, Order = 0)]
 		sealed class FilesCommand : CommandBase {
-			protected sealed override object CachedContextKey {
-				get { return ContextKey; }
-			}
+			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
 
 			[ImportingConstructor]
@@ -354,16 +311,12 @@ namespace dnSpy.Debugger.Exceptions {
 				: base(exceptionsContent) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) {
-				return GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
-			}
+			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 		}
 
 		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 1000)]
 		sealed class CodeCommand : CommandBase {
-			protected sealed override object CachedContextKey {
-				get { return ContextKey; }
-			}
+			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
 
 			[ImportingConstructor]
@@ -371,9 +324,7 @@ namespace dnSpy.Debugger.Exceptions {
 				: base(exceptionsContent) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) {
-				return GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-			}
+			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 		}
 	}
 }

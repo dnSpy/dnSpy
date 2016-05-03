@@ -71,27 +71,21 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static IAssemblyFileNode GetAssemblyNode(this ITreeNodeData self) {
-			return self.GetAncestorOrSelf<IAssemblyFileNode>();
-		}
+		public static IAssemblyFileNode GetAssemblyNode(this ITreeNodeData self) => self.GetAncestorOrSelf<IAssemblyFileNode>();
 
 		/// <summary>
 		/// Gets the <see cref="IModuleFileNode"/> owner or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static IModuleFileNode GetModuleNode(this ITreeNodeData self) {
-			return self.GetAncestorOrSelf<IModuleFileNode>();
-		}
+		public static IModuleFileNode GetModuleNode(this ITreeNodeData self) => self.GetAncestorOrSelf<IModuleFileNode>();
 
 		/// <summary>
 		/// Gets the first <see cref="IDnSpyFileNode"/> owner or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static IDnSpyFileNode GetDnSpyFileNode(this ITreeNodeData self) {
-			return self.GetAncestorOrSelf<IDnSpyFileNode>();
-		}
+		public static IDnSpyFileNode GetDnSpyFileNode(this ITreeNodeData self) => self.GetAncestorOrSelf<IDnSpyFileNode>();
 
 		/// <summary>
 		/// Gets the <see cref="IDnSpyFileNode"/> top node or null if none was found

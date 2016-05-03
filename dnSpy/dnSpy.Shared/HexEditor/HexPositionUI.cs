@@ -23,37 +23,20 @@ using System.Diagnostics;
 namespace dnSpy.Shared.HexEditor {
 	[DebuggerDisplay("X={X}, Y={Y}")]
 	struct HexPositionUI : IEquatable<HexPositionUI>, IComparable<HexPositionUI> {
-		public ulong X;
-		public ulong Y;
+		public ulong X { get; }
+		public ulong Y { get; }
 
 		public HexPositionUI(ulong x, ulong y) {
 			this.X = x;
 			this.Y = y;
 		}
 
-		public static bool operator <(HexPositionUI a, HexPositionUI b) {
-			return a.CompareTo(b) < 0;
-		}
-
-		public static bool operator <=(HexPositionUI a, HexPositionUI b) {
-			return a.CompareTo(b) <= 0;
-		}
-
-		public static bool operator >(HexPositionUI a, HexPositionUI b) {
-			return a.CompareTo(b) > 0;
-		}
-
-		public static bool operator >=(HexPositionUI a, HexPositionUI b) {
-			return a.CompareTo(b) >= 0;
-		}
-
-		public static bool operator ==(HexPositionUI a, HexPositionUI b) {
-			return a.CompareTo(b) == 0;
-		}
-
-		public static bool operator !=(HexPositionUI a, HexPositionUI b) {
-			return a.CompareTo(b) != 0;
-		}
+		public static bool operator <(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) < 0;
+		public static bool operator <=(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) <= 0;
+		public static bool operator >(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) > 0;
+		public static bool operator >=(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) >= 0;
+		public static bool operator ==(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) == 0;
+		public static bool operator !=(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) != 0;
 
 		public int CompareTo(HexPositionUI other) {
 			if (Y != other.Y)
@@ -61,17 +44,8 @@ namespace dnSpy.Shared.HexEditor {
 			return X.CompareTo(other.X);
 		}
 
-		public bool Equals(HexPositionUI other) {
-			return CompareTo(other) == 0;
-		}
-
-		public override bool Equals(object obj) {
-			return obj is HexPositionUI && Equals((HexPositionUI)obj);
-		}
-
-		public override int GetHashCode() {
-			return (int)X ^ (int)(X >> 32) ^
-				(int)Y ^ (int)(Y >> 32);
-		}
+		public bool Equals(HexPositionUI other) => CompareTo(other) == 0;
+		public override bool Equals(object obj) => obj is HexPositionUI && Equals((HexPositionUI)obj);
+		public override int GetHashCode() => (int)X ^ (int)(X >> 32) ^ (int)Y ^ (int)(Y >> 32);
 	}
 }

@@ -42,9 +42,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexBoxFileTabContentCreator = hexBoxFileTabContentCreator;
 		}
 
-		public IFileTabContent Create(IFileTabContentFactoryContext context) {
-			return null;
-		}
+		public IFileTabContent Create(IFileTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("3125CEDA-98DE-447E-9363-8583A45BDE8C");
 
@@ -115,13 +113,8 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		public object ToolTip {
-			get { return Filename; }
-		}
-
-		public string Filename {
-			get { return hexDocument.Name; }
-		}
+		public object ToolTip => Filename;
+		public string Filename => hexDocument.Name;
 
 		readonly HexDocument hexDocument;
 		readonly IMenuManager menuManager;
@@ -139,45 +132,22 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexBoxUndoManager = hexBoxUndoManager;
 		}
 
-		public IFileTabContent Clone() {
-			return new HexBoxFileTabContent(hexDocument, menuManager, hexEditorSettings, appSettings, hexBoxUndoManager);
-		}
-
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
-			return locator.Get(hexDocument, () => new HexBoxFileTabUIContext(hexDocument, menuManager, hexEditorSettings, appSettings, hexBoxUndoManager.Value));
-		}
-
-		public void OnHide() {
-		}
-
-		public void OnSelected() {
-		}
-
-		public void OnShow(IShowContext ctx) {
-		}
-
-		public void OnUnselected() {
-		}
+		public IFileTabContent Clone() =>
+			new HexBoxFileTabContent(hexDocument, menuManager, hexEditorSettings, appSettings, hexBoxUndoManager);
+		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) =>
+			locator.Get(hexDocument, () => new HexBoxFileTabUIContext(hexDocument, menuManager, hexEditorSettings, appSettings, hexBoxUndoManager.Value));
+		public void OnHide() { }
+		public void OnSelected() { }
+		public void OnShow(IShowContext ctx) { }
+		public void OnUnselected() { }
 	}
 
 	sealed class HexBoxFileTabUIContext : IFileTabUIContext, IDisposable {
 		public IFileTab FileTab { get; set; }
-
-		public IInputElement FocusedElement {
-			get { return dnHexBox; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return dnHexBox; }
-		}
-
-		public object UIObject {
-			get { return scrollViewer; }
-		}
-
-		public DnHexBox DnHexBox {
-			get { return dnHexBox; }
-		}
+		public IInputElement FocusedElement => dnHexBox;
+		public FrameworkElement ScaleElement => dnHexBox;
+		public object UIObject => scrollViewer;
+		public DnHexBox DnHexBox => dnHexBox;
 
 		readonly HexDocument hexDocument;
 		readonly DnHexBox dnHexBox;
@@ -210,13 +180,8 @@ namespace dnSpy.AsmEditor.Hex {
 				UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
 		}
 
-		void UpdateHexBoxRenderer(bool useNewRenderer) {
-			this.DnHexBox.UseNewFormatter = useNewRenderer;
-		}
-
-		public object CreateSerialized(ISettingsSection section) {
-			return HexBoxUIStateSerializer.Read(section, new HexBoxUIState());
-		}
+		void UpdateHexBoxRenderer(bool useNewRenderer) => this.DnHexBox.UseNewFormatter = useNewRenderer;
+		public object CreateSerialized(ISettingsSection section) => HexBoxUIStateSerializer.Read(section, new HexBoxUIState());
 
 		public void SaveSerialized(ISettingsSection section, object obj) {
 			var s = obj as HexBoxUIState;
@@ -279,11 +244,8 @@ namespace dnSpy.AsmEditor.Hex {
 			return s;
 		}
 
-		public void OnHide() {
-		}
-
-		public void OnShow() {
-		}
+		public void OnHide() { }
+		public void OnShow() { }
 
 		public void Dispose() {
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;

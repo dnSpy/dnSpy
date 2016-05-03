@@ -38,12 +38,12 @@ namespace dnSpy.Themes {
 		public ColorInfo[] Children {
 			get { return children; }
 			set {
-				children = value ?? new ColorInfo[0];
+				children = value ?? Array.Empty<ColorInfo>();
 				foreach (var child in children)
 					child.Parent = this;
 			}
 		}
-		ColorInfo[] children = new ColorInfo[0];
+		ColorInfo[] children = Array.Empty<ColorInfo>();
 
 		public abstract IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor);
 

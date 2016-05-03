@@ -30,9 +30,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			: base(stream) {
 		}
 
-		public void WriteEncodedInt(int val) {
-			Write7BitEncodedInt(val);
-		}
+		public void WriteEncodedInt(int val) => Write7BitEncodedInt(val);
 	}
 
 	internal class BamlWriter {

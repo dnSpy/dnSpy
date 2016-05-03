@@ -21,68 +21,36 @@ using System;
 
 namespace dnSpy.Decompiler.Shared {
 	public struct TextPosition : IEquatable<TextPosition>, IComparable<TextPosition> {
-		public int Line {
-			get { return line; }
-		}
-		readonly int line;
-
-		public int Column {
-			get { return column; }
-		}
-		readonly int column;
+		public int Line { get; }
+		public int Column { get; }
 
 		public TextPosition(int line, int column) {
-			this.line = line;
-			this.column = column;
+			this.Line = line;
+			this.Column = column;
 		}
 
-		public static bool operator <(TextPosition a, TextPosition b) {
-			return a.CompareTo(b) < 0;
-		}
-
-		public static bool operator <=(TextPosition a, TextPosition b) {
-			return a.CompareTo(b) <= 0;
-		}
-
-		public static bool operator >(TextPosition a, TextPosition b) {
-			return a.CompareTo(b) > 0;
-		}
-
-		public static bool operator >=(TextPosition a, TextPosition b) {
-			return a.CompareTo(b) >= 0;
-		}
-
-		public static bool operator ==(TextPosition a, TextPosition b) {
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(TextPosition a, TextPosition b) {
-			return !a.Equals(b);
-		}
+		public static bool operator <(TextPosition a, TextPosition b) => a.CompareTo(b) < 0;
+		public static bool operator <=(TextPosition a, TextPosition b) => a.CompareTo(b) <= 0;
+		public static bool operator >(TextPosition a, TextPosition b) => a.CompareTo(b) > 0;
+		public static bool operator >=(TextPosition a, TextPosition b) => a.CompareTo(b) >= 0;
+		public static bool operator ==(TextPosition a, TextPosition b) => a.Equals(b);
+		public static bool operator !=(TextPosition a, TextPosition b) => !a.Equals(b);
 
 		public int CompareTo(TextPosition other) {
-			int c = line.CompareTo(other.line);
+			int c = Line.CompareTo(other.Line);
 			if (c != 0)
 				return c;
-			return column.CompareTo(other.column);
+			return Column.CompareTo(other.Column);
 		}
 
-		public bool Equals(TextPosition other) {
-			return line == other.line &&
-					column == other.column;
-		}
+		public bool Equals(TextPosition other) => Line == other.Line && Column == other.Column;
 
 		public override bool Equals(object obj) {
 			var other = obj as TextPosition?;
 			return other != null && Equals(other.Value);
 		}
 
-		public override int GetHashCode() {
-			return (line << 10) ^ column;
-		}
-
-		public override string ToString() {
-			return string.Format("({0},{1})", line, column);
-		}
+		public override int GetHashCode() => (Line << 10) ^ Column;
+		public override string ToString() => string.Format("({0},{1})", Line, Column);
 	}
 }

@@ -33,13 +33,9 @@ namespace dnSpy.Languages.ILSpy {
 			get { yield return "Themes/wpf.styles.templates.xaml"; }
 		}
 
-		public PluginInfo PluginInfo {
-			get {
-				return new PluginInfo {
-					ShortDescription = dnSpy_Languages_ILSpy_Resources.Plugin_ShortDescription,
-				};
-			}
-		}
+		public PluginInfo PluginInfo => new PluginInfo {
+			ShortDescription = dnSpy_Languages_ILSpy_Resources.Plugin_ShortDescription,
+		};
 
 		public void OnEvent(PluginEvent @event, object obj) {
 		}

@@ -472,8 +472,6 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <returns></returns>
-		public static TextTokenKind ToTextTokenKind(this OutputColor color) {
-			return (TextTokenKind)color;
-		}
+		public static TextTokenKind ToTextTokenKind(this OutputColor color) => (TextTokenKind)color;
 	}
 }

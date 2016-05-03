@@ -29,13 +29,8 @@ using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Shared.Files.TreeView {
 	public struct NodePrinter {
-		static bool IsExe(ModuleDef mod) {
-			return mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
-		}
-
-		static bool IsExe(IPEImage peImage) {
-			return peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
-		}
+		static bool IsExe(ModuleDef mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(IPEImage peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		static string GetFilename(IDnSpyFile dnSpyFile) {
 			string filename = null;
@@ -49,9 +44,7 @@ namespace dnSpy.Shared.Files.TreeView {
 			return filename;
 		}
 
-		public void WriteNamespace(ISyntaxHighlightOutput output, ILanguage language, string name) {
-			output.WriteNamespace(name);
-		}
+		public void WriteNamespace(ISyntaxHighlightOutput output, ILanguage language, string name) => output.WriteNamespace(name);
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, IDnSpyFile file) {
 			var filename = GetFilename(file);

@@ -21,40 +21,29 @@ using System;
 
 namespace dndbg.Engine {
 	public sealed class NativeCodeBreakpointConditionContext : BreakpointConditionContext {
-		public override DnBreakpoint Breakpoint {
-			get { return bp; }
-		}
-
-		public DnNativeCodeBreakpoint NativeCodeBreakpoint {
-			get { return bp; }
-		}
-		readonly DnNativeCodeBreakpoint bp;
+		public override DnBreakpoint Breakpoint => NativeCodeBreakpoint;
+		public DnNativeCodeBreakpoint NativeCodeBreakpoint { get; }
 
 		public NativeCodeBreakpointConditionContext(DnDebugger debugger, DnNativeCodeBreakpoint bp)
 			: base(debugger) {
-			this.bp = bp;
+			this.NativeCodeBreakpoint = bp;
 		}
 	}
 
 	public sealed class DnNativeCodeBreakpoint : DnCodeBreakpoint {
-		internal Func<NativeCodeBreakpointConditionContext, bool> Condition {
-			get { return cond; }
-		}
-		readonly Func<NativeCodeBreakpointConditionContext, bool> cond;
+		internal Func<NativeCodeBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnNativeCodeBreakpoint(SerializedDnModule module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
 			: base(module, token, offset) {
-			this.cond = cond ?? defaultCond;
+			this.Condition = cond ?? defaultCond;
 		}
 		static readonly Func<NativeCodeBreakpointConditionContext, bool> defaultCond = a => true;
 
 		internal DnNativeCodeBreakpoint(CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
 			: base(code, offset) {
-			this.cond = cond ?? defaultCond;
+			this.Condition = cond ?? defaultCond;
 		}
 
-		internal override CorCode GetCode(CorFunction func) {
-			return func.NativeCode;
-		}
+		internal override CorCode GetCode(CorFunction func) => func.NativeCode;
 	}
 }

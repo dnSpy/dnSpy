@@ -68,9 +68,9 @@ namespace dnSpy.Search {
 
 		public FileSearcher(FileSearcherOptions options, IFileTreeView fileTreeView, DotNetImageManager dotNetImageManager, SearchResultContext searchResultContext) {
 			if (options.Filter == null)
-				throw new ArgumentException("options.Filter is null", "options");
+				throw new ArgumentException("options.Filter is null", nameof(options));
 			if (options.SearchComparer == null)
-				throw new ArgumentException("options.SearchComparer is null", "options");
+				throw new ArgumentException("options.SearchComparer is null", nameof(options));
 			this.options = options.Clone();
 			this.cancellationTokenSource = new CancellationTokenSource();
 			this.filterSearcherOptions = new FilterSearcherOptions {
@@ -89,17 +89,9 @@ namespace dnSpy.Search {
 		public event EventHandler OnSearchCompleted;
 		public event EventHandler<SearchResultEventArgs> OnNewSearchResults;
 
-		public void Cancel() {
-			this.cancellationTokenSource.Cancel();
-		}
-
-		public void Start(IEnumerable<IDnSpyFileNode> files) {
-			StartInternal(files.ToArray());
-		}
-
-		public void Start(IEnumerable<SearchTypeInfo> typeInfos) {
-			StartInternal(typeInfos.ToArray());
-		}
+		public void Cancel() => this.cancellationTokenSource.Cancel();
+		public void Start(IEnumerable<IDnSpyFileNode> files) => StartInternal(files.ToArray());
+		public void Start(IEnumerable<SearchTypeInfo> typeInfos) => StartInternal(typeInfos.ToArray());
 
 		void StartInternal(object o) {
 			Debug.Assert(!hasStarted);
@@ -159,8 +151,7 @@ namespace dnSpy.Search {
 
 		void SearchCompleted() {
 			Debug.Assert(OnSearchCompleted != null);
-			if (OnSearchCompleted != null)
-				OnSearchCompleted(this, EventArgs.Empty);
+			OnSearchCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
 		void AddSearchResult(SearchResult result) {
@@ -200,8 +191,7 @@ namespace dnSpy.Search {
 				return;
 
 			Debug.Assert(OnNewSearchResults != null);
-			if (OnNewSearchResults != null)
-				OnNewSearchResults(this, new SearchResultEventArgs(results));
+			OnNewSearchResults?.Invoke(this, new SearchResultEventArgs(results));
 		}
 	}
 }

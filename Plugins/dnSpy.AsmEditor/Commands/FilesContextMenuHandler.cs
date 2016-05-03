@@ -27,9 +27,7 @@ using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	abstract class FilesContextMenuHandler : MenuItemBase<AsmEditorContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
 		protected sealed override AsmEditorContext CreateContext(IMenuItemContext context) {
@@ -37,7 +35,7 @@ namespace dnSpy.AsmEditor.Commands {
 				return null;
 			var ary = context.Find<ITreeNodeData[]>();
 			Debug.Assert(ary != null);
-			return new AsmEditorContext(ary == null ? new IFileTreeNodeData[0] : ary.OfType<IFileTreeNodeData>().ToArray());
+			return new AsmEditorContext(ary == null ? Array.Empty<IFileTreeNodeData>() : ary.OfType<IFileTreeNodeData>().ToArray());
 		}
 	}
 }

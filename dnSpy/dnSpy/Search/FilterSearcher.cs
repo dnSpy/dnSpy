@@ -43,9 +43,7 @@ namespace dnSpy.Search {
 			this.options = options;
 		}
 
-		bool IsMatch(string text, object obj) {
-			return options.SearchComparer.IsMatch(text, obj);
-		}
+		bool IsMatch(string text, object obj) => options.SearchComparer.IsMatch(text, obj);
 
 		public void SearchAssemblies(IEnumerable<IDnSpyFileNode> fileNodes) {
 			foreach (var fileNode in fileNodes) {
@@ -186,7 +184,7 @@ namespace dnSpy.Search {
 					Object = mod,
 					NameObject = mod,
 					ObjectImageReference = options.DotNetImageManager.GetImageReference(mod),
-					LocationObject = mod.Assembly != null ? mod.Assembly : null,
+					LocationObject = mod.Assembly,
 					LocationImageReference = mod.Assembly != null ? options.DotNetImageManager.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
 					DnSpyFile = module,
 				});
@@ -468,7 +466,7 @@ namespace dnSpy.Search {
 			CheckCustomAttributes(ownerModule, method, type);
 
 			ImplMap im;
-			if (res.IsMatch && (IsMatch(method.Name, method) || ((im = method.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module == null ? null : im.Module.Name, null))))) {
+			if (res.IsMatch && (IsMatch(method.Name, method) || ((im = method.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module?.Name, null))))) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = method,
@@ -587,7 +585,7 @@ namespace dnSpy.Search {
 			CheckCustomAttributes(ownerModule, field, type);
 
 			ImplMap im;
-			if (res.IsMatch && (IsMatch(field.Name, field) || ((im = field.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module == null ? null : im.Module.Name, null))))) {
+			if (res.IsMatch && (IsMatch(field.Name, field) || ((im = field.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module?.Name, null))))) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = field,

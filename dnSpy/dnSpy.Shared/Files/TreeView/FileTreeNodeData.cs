@@ -32,26 +32,13 @@ using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Shared.Files.TreeView {
 	public abstract class FileTreeNodeData : TreeNodeData, IFileTreeNodeData {
-		public override bool SingleClickExpandsChildren {
-			get { return Context.SingleClickExpandsChildren; }
-		}
-
+		public override bool SingleClickExpandsChildren => Context.SingleClickExpandsChildren;
 		public IFileTreeNodeDataContext Context { get; set; }
-
 		public abstract NodePathName NodePathName { get; }
-
 		protected abstract ImageReference GetIcon(IDotNetImageManager dnImgMgr);
-		protected virtual ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return null;
-		}
-
-		public sealed override ImageReference Icon {
-			get { return GetIcon(this.Context.FileTreeView.DotNetImageManager); }
-		}
-
-		public sealed override ImageReference? ExpandedIcon {
-			get { return GetExpandedIcon(this.Context.FileTreeView.DotNetImageManager); }
-		}
+		protected virtual ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
+		public sealed override ImageReference Icon => GetIcon(this.Context.FileTreeView.DotNetImageManager);
+		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.FileTreeView.DotNetImageManager);
 
 		public sealed override object Text {
 			get {
@@ -71,10 +58,7 @@ namespace dnSpy.Shared.Files.TreeView {
 		WeakReference cachedText;
 
 		protected abstract void Write(ISyntaxHighlightOutput output, ILanguage language);
-
-		protected virtual void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
-			Write(output, language);
-		}
+		protected virtual void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) => Write(output, language);
 
 		public sealed override object ToolTip {
 			get {
@@ -84,9 +68,7 @@ namespace dnSpy.Shared.Files.TreeView {
 			}
 		}
 
-		public sealed override string ToString() {
-			return ToString(Context.Language);
-		}
+		public sealed override string ToString() => ToString(Context.Language);
 
 		public string ToString(ILanguage language) {
 			var output = new NoSyntaxHighlightOutput();
@@ -94,17 +76,9 @@ namespace dnSpy.Shared.Files.TreeView {
 			return output.ToString();
 		}
 
-		public sealed override void OnRefreshUI() {
-			cachedText = null;
-		}
-
-		public override bool Activate() {
-			return Context.FileTreeView.RaiseNodeActivated(this);
-		}
-
-		public virtual FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		public sealed override void OnRefreshUI() => cachedText = null;
+		public override bool Activate() => Context.FileTreeView.RaiseNodeActivated(this);
+		public virtual FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 
 		public sealed override void OnEnsureChildrenLoaded() {
 			if (refilter) {
@@ -191,9 +165,10 @@ namespace dnSpy.Shared.Files.TreeView {
 				Filter(node as IFileTreeNodeData);
 		}
 
-		public sealed override bool CanDrag(ITreeNodeData[] nodes) {
-			return Context.CanDragAndDrop && nodes.Length != 0 && nodes.All(a => a is IFileTreeNodeData && ((IFileTreeNodeData)a).TreeNode.Parent == Context.FileTreeView.TreeView.Root);
-		}
+		public sealed override bool CanDrag(ITreeNodeData[] nodes) =>
+			Context.CanDragAndDrop && nodes.Length != 0 &&
+			nodes.All(a => a is IFileTreeNodeData &&
+			((IFileTreeNodeData)a).TreeNode.Parent == Context.FileTreeView.TreeView.Root);
 
 		public sealed override void StartDrag(DependencyObject dragSource, ITreeNodeData[] nodes) {
 			bool b = CanDrag(nodes);

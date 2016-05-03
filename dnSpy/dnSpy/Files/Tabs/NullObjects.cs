@@ -40,37 +40,20 @@ namespace dnSpy.Files.Tabs {
 		}
 		IFileTab fileTab;
 
-		public IFileTabContent Clone() {
-			return new NullFileTabContent();
-		}
-
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
-			return locator.Get(typeof(NullFileTabUIContext), () => new NullFileTabUIContext());
-		}
-
-		public string Title {
-			get { return dnSpy_Resources.EmptyTabTitle; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
+		public IFileTabContent Clone() => new NullFileTabContent();
+		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) =>
+			locator.Get(typeof(NullFileTabUIContext), () => new NullFileTabUIContext());
+		public string Title => dnSpy_Resources.EmptyTabTitle;
+		public object ToolTip => null;
 
 		public IEnumerable<IFileTreeNodeData> Nodes {
 			get { yield break; }
 		}
 
-		public void OnHide() {
-		}
-
-		public void OnShow(IShowContext ctx) {
-		}
-
-		public void OnSelected() {
-		}
-
-		public void OnUnselected() {
-		}
+		public void OnHide() { }
+		public void OnShow(IShowContext ctx) { }
+		public void OnSelected() { }
+		public void OnUnselected() { }
 	}
 
 	sealed class NullFileTabUIContext : IFileTabUIContext {
@@ -87,36 +70,14 @@ namespace dnSpy.Files.Tabs {
 		}
 		IFileTab fileTab;
 
-		public IInputElement FocusedElement {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return string.Empty; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return null; }
-		}
-
-		public void OnShow() {
-		}
-
-		public void OnHide() {
-		}
-
-		public void Deserialize(object obj) {
-		}
-
-		public object Serialize() {
-			return null;
-		}
-
-		public object CreateSerialized(ISettingsSection section) {
-			return null;
-		}
-
-		public void SaveSerialized(ISettingsSection section, object obj) {
-		}
+		public IInputElement FocusedElement => null;
+		public object UIObject => string.Empty;
+		public FrameworkElement ScaleElement => null;
+		public void OnShow() { }
+		public void OnHide() { }
+		public void Deserialize(object obj) { }
+		public object Serialize() => null;
+		public object CreateSerialized(ISettingsSection section) => null;
+		public void SaveSerialized(ISettingsSection section, object obj) { }
 	}
 }

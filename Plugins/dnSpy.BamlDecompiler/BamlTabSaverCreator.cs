@@ -40,19 +40,12 @@ namespace dnSpy.BamlDecompiler {
 			this.messageBoxManager = messageBoxManager;
 		}
 
-		public ITabSaver Create(IFileTab tab) {
-			return BamlTabSaver.TryCreate(tab, messageBoxManager);
-		}
+		public ITabSaver Create(IFileTab tab) => BamlTabSaver.TryCreate(tab, messageBoxManager);
 	}
 
 	sealed class BamlTabSaver : ITabSaver {
-		public bool CanSave {
-			get { return true; }
-		}
-
-		public string MenuHeader {
-			get { return bamlNode.DisassembleBaml ? dnSpy_BamlDecompiler_Resources.SaveBAML : dnSpy_BamlDecompiler_Resources.SaveXAML; }
-		}
+		public bool CanSave => true;
+		public string MenuHeader => bamlNode.DisassembleBaml ? dnSpy_BamlDecompiler_Resources.SaveBAML : dnSpy_BamlDecompiler_Resources.SaveXAML;
 
 		public static BamlTabSaver TryCreate(IFileTab tab, IMessageBoxManager messageBoxManager) {
 			var uiContext = tab.UIContext as ITextEditorUIContext;

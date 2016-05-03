@@ -77,28 +77,13 @@ namespace dnSpy.AsmEditor.Types {
 	sealed class TypeOptionsVM : ViewModelBase {
 		readonly TypeDefOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public bool IsNonNestedType {
-			get { return !IsNestedType; }
-		}
-
-		public bool IsNestedType {
-			get { return isNestedType; }
-		}
-		readonly bool isNestedType;
-
-		public string VisibilityAccessbilityText {
-			get { return IsNestedType ? dnSpy_AsmEditor_Resources.Type_Flags_Accessibility : dnSpy_AsmEditor_Resources.Type_Flags_Visibility; }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public bool IsNonNestedType => !IsNestedType;
+		public bool IsNestedType { get; }
+		public string VisibilityAccessbilityText => IsNestedType ? dnSpy_AsmEditor_Resources.Type_Flags_Accessibility : dnSpy_AsmEditor_Resources.Type_Flags_Visibility;
 
 		static readonly EnumVM[] typeKindList = EnumVM.Create(typeof(TypeKind));
-		public EnumListVM TypeKind {
-			get { return typeKindVM; }
-		}
-		readonly EnumListVM typeKindVM;
+		public EnumListVM TypeKind { get; }
 
 		static readonly EnumVM[] typeVisibilityList = new EnumVM[] {
 			new EnumVM(Types.TypeVisibility.NotPublic, "NotPublic"),
@@ -110,26 +95,17 @@ namespace dnSpy.AsmEditor.Types {
 			new EnumVM(Types.TypeVisibility.NestedFamANDAssem, "Family and Assembly"),
 			new EnumVM(Types.TypeVisibility.NestedFamORAssem, "Family or Assembly"),
 		};
-		public EnumListVM TypeVisibility {
-			get { return typeVisibilityVM; }
-		}
-		readonly EnumListVM typeVisibilityVM = new EnumListVM(typeVisibilityList);
+		public EnumListVM TypeVisibility { get; } = new EnumListVM(typeVisibilityList);
 
 		static readonly EnumVM[] typeLayoutList = new EnumVM[] {
 			new EnumVM(Types.TypeLayout.AutoLayout, "Auto"),
 			new EnumVM(Types.TypeLayout.SequentialLayout, "Sequential"),
 			new EnumVM(Types.TypeLayout.ExplicitLayout, "Explicit"),
 		};
-		public EnumListVM TypeLayout {
-			get { return typeLayoutVM; }
-		}
-		readonly EnumListVM typeLayoutVM;
+		public EnumListVM TypeLayout { get; }
 
 		static readonly EnumVM[] typeSemanticsList = EnumVM.Create(typeof(TypeSemantics));
-		public EnumListVM TypeSemantics {
-			get { return typeSemanticsVM; }
-		}
-		readonly EnumListVM typeSemanticsVM;
+		public EnumListVM TypeSemantics { get; }
 
 		static readonly EnumVM[] typeStringFormatList = new EnumVM[] {
 			new EnumVM(Types.TypeStringFormat.AnsiClass, "Ansi"),
@@ -137,16 +113,10 @@ namespace dnSpy.AsmEditor.Types {
 			new EnumVM(Types.TypeStringFormat.AutoClass, "Auto"),
 			new EnumVM(Types.TypeStringFormat.CustomFormatClass, "CustomFormat"),
 		};
-		public EnumListVM TypeStringFormat {
-			get { return typeStringFormatVM; }
-		}
-		readonly EnumListVM typeStringFormatVM = new EnumListVM(typeStringFormatList);
+		public EnumListVM TypeStringFormat { get; } = new EnumListVM(typeStringFormatList);
 
 		static readonly EnumVM[] typeCustomFormatList = EnumVM.Create(typeof(TypeCustomFormat));
-		public EnumListVM TypeCustomFormat {
-			get { return typeCustomFormatVM; }
-		}
-		readonly EnumListVM typeCustomFormatVM = new EnumListVM(typeCustomFormatList);
+		public EnumListVM TypeCustomFormat { get; } = new EnumListVM(typeCustomFormatList);
 
 		public TypeAttributes Attributes {
 			get {
@@ -232,9 +202,7 @@ namespace dnSpy.AsmEditor.Types {
 			set { SetFlagValue(TypeAttributes.HasSecurity, value); }
 		}
 
-		bool GetFlagValue(TypeAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(TypeAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(TypeAttributes flag, bool value) {
 			if (value)
@@ -265,49 +233,20 @@ namespace dnSpy.AsmEditor.Types {
 		}
 		UTF8String name;
 
-		public NullableUInt16VM PackingSize {
-			get { return packingSize; }
-		}
-		NullableUInt16VM packingSize;
-
-		public NullableUInt32VM ClassSize {
-			get { return classSize; }
-		}
-		NullableUInt32VM classSize;
+		public NullableUInt16VM PackingSize { get; }
+		public NullableUInt32VM ClassSize { get; }
 
 		public TypeSig BaseTypeSig {
-			get { return typeSigCreator.TypeSig; }
-			set { typeSigCreator.TypeSig = value; }
+			get { return TypeSigCreator.TypeSig; }
+			set { TypeSigCreator.TypeSig = value; }
 		}
 
-		public string BaseTypeHeader {
-			get { return string.Format(dnSpy_AsmEditor_Resources.BaseTypeX, typeSigCreator.TypeSigDnlibFullName); }
-		}
-
-		public TypeSigCreatorVM TypeSigCreator {
-			get { return typeSigCreator; }
-		}
-		readonly TypeSigCreatorVM typeSigCreator;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
-
-		public DeclSecuritiesVM DeclSecuritiesVM {
-			get { return declSecuritiesVM; }
-		}
-		DeclSecuritiesVM declSecuritiesVM;
-
-		public GenericParamsVM GenericParamsVM {
-			get { return genericParamsVM; }
-		}
-		GenericParamsVM genericParamsVM;
-
-		public TypeDefOrRefAndCAsVM<InterfaceImpl> InterfaceImplsVM {
-			get { return typeDefOrRefAndCAsVM; }
-		}
-		TypeDefOrRefAndCAsVM<InterfaceImpl> typeDefOrRefAndCAsVM;
+		public string BaseTypeHeader => string.Format(dnSpy_AsmEditor_Resources.BaseTypeX, TypeSigCreator.TypeSigDnlibFullName);
+		public TypeSigCreatorVM TypeSigCreator { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
+		public DeclSecuritiesVM DeclSecuritiesVM { get; }
+		public GenericParamsVM GenericParamsVM { get; }
+		public TypeDefOrRefAndCAsVM<InterfaceImpl> InterfaceImplsVM { get; }
 
 		readonly ModuleDef ownerModule;
 
@@ -321,21 +260,21 @@ namespace dnSpy.AsmEditor.Types {
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
-			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
+			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, null);
-			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, null);
-			this.genericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, null);
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, languageManager, ownerType, null);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, null);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, null);
+			this.GenericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, null);
+			this.InterfaceImplsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, languageManager, ownerType, null);
 
 			this.origOptions = options;
-			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
-			this.typeKindVM = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
-			this.typeLayoutVM = new EnumListVM(typeLayoutList, (a, b) => InitializeTypeKind());
-			this.typeSemanticsVM = new EnumListVM(typeSemanticsList, (a, b) => InitializeTypeKind());
-			this.packingSize = new NullableUInt16VM(a => HasErrorUpdated());
-			this.classSize = new NullableUInt32VM(a => HasErrorUpdated());
+			this.IsNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
+			this.TypeKind = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
+			this.TypeLayout = new EnumListVM(typeLayoutList, (a, b) => InitializeTypeKind());
+			this.TypeSemantics = new EnumListVM(typeSemanticsList, (a, b) => InitializeTypeKind());
+			this.PackingSize = new NullableUInt16VM(a => HasErrorUpdated());
+			this.ClassSize = new NullableUInt32VM(a => HasErrorUpdated());
 
 			Types.TypeVisibility start, end;
 			if (!IsNestedType) {
@@ -352,7 +291,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 
 			InitializeTypeKind();
-			this.typeSigCreator.CanAddFnPtr = false;
+			this.TypeSigCreator.CanAddFnPtr = false;
 			Reinitialize();
 		}
 
@@ -363,15 +302,13 @@ namespace dnSpy.AsmEditor.Types {
 			HasErrorUpdated();
 		}
 
-		bool IsSystemValueType(IType type) {
-			return new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "ValueType")) &&
-				type.DefinitionAssembly.IsCorLib();
-		}
+		bool IsSystemValueType(IType type) =>
+			new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "ValueType")) &&
+			type.DefinitionAssembly.IsCorLib();
 
-		bool IsSystemEnum(IType type) {
-			return new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "Enum")) &&
-				type.DefinitionAssembly.IsCorLib();
-		}
+		bool IsSystemEnum(IType type) =>
+			new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "Enum")) &&
+			type.DefinitionAssembly.IsCorLib();
 
 		void InitializeTypeKind() {
 			if (OnTypeKindChanged_called)
@@ -512,13 +449,8 @@ namespace dnSpy.AsmEditor.Types {
 				!IsSystemValueType(type);
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public TypeDefOptions CreateTypeDefOptions() {
-			return CopyTo(new TypeDefOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public TypeDefOptions CreateTypeDefOptions() => CopyTo(new TypeDefOptions());
 
 		void InitializeFrom(TypeDefOptions options) {
 			Attributes = options.Attributes;
@@ -560,11 +492,6 @@ namespace dnSpy.AsmEditor.Types {
 			return options;
 		}
 
-		public override bool HasError {
-			get {
-				return PackingSize.HasError ||
-					ClassSize.HasError;
-			}
-		}
+		public override bool HasError => PackingSize.HasError || ClassSize.HasError;
 	}
 }

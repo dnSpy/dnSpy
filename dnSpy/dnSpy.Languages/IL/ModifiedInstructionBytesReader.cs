@@ -59,7 +59,6 @@ namespace dnSpy.Languages.IL {
 			InitializeNextInstruction();
 		}
 
-		public void Dispose() {
-		}
+		public void Dispose() { }
 	}
 }

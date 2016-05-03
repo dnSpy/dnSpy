@@ -38,37 +38,23 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		int startFrameNumber = -1;
 
-		public IStackFrame ActiveFrame {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					int frameNo = GetStartFrameNumber();
-					var frame = chain.ActiveFrame;
-					return frame == null ? null : new StackFrame(debugger, frame, frameNo);
-				});
-			}
-		}
+		public IStackFrame ActiveFrame => debugger.Dispatcher.UI(() => {
+			int frameNo = GetStartFrameNumber();
+			var frame = chain.ActiveFrame;
+			return frame == null ? null : new StackFrame(debugger, frame, frameNo);
+		});
 
-		public IStackChain Callee {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var c = chain.Callee;
-					return c == null ? null : new StackChain(debugger, c);
-				});
-			}
-		}
+		public IStackChain Callee => debugger.Dispatcher.UI(() => {
+			var c = chain.Callee;
+			return c == null ? null : new StackChain(debugger, c);
+		});
 
-		public IStackChain Caller {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var c = chain.Caller;
-					return c == null ? null : new StackChain(debugger, c);
-				});
-			}
-		}
+		public IStackChain Caller => debugger.Dispatcher.UI(() => {
+			var c = chain.Caller;
+			return c == null ? null : new StackChain(debugger, c);
+		});
 
-		public IEnumerable<IStackFrame> Frames {
-			get { return debugger.Dispatcher.UIIter(GetFramesUI); }
-		}
+		public IEnumerable<IStackFrame> Frames => debugger.Dispatcher.UIIter(GetFramesUI);
 
 		IEnumerable<IStackFrame> GetFramesUI() {
 			int frameNo = GetStartFrameNumber();
@@ -76,43 +62,22 @@ namespace dnSpy.Debugger.Scripting {
 				yield return new StackFrame(debugger, f, frameNo++);
 		}
 
-		public bool IsManaged {
-			get { return isManaged; }
-		}
+		public bool IsManaged => isManaged;
 
-		public IStackChain Next {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var c = chain.Next;
-					return c == null ? null : new StackChain(debugger, c);
-				});
-			}
-		}
+		public IStackChain Next => debugger.Dispatcher.UI(() => {
+			var c = chain.Next;
+			return c == null ? null : new StackChain(debugger, c);
+		});
 
-		public IStackChain Previous {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var c = chain.Previous;
-					return c == null ? null : new StackChain(debugger, c);
-				});
-			}
-		}
+		public IStackChain Previous => debugger.Dispatcher.UI(() => {
+			var c = chain.Previous;
+			return c == null ? null : new StackChain(debugger, c);
+		});
 
-		public ChainReason Reason {
-			get { return reason; }
-		}
-
-		public ulong StackEnd {
-			get { return stackEnd; }
-		}
-
-		public ulong StackStart {
-			get { return stackStart; }
-		}
-
-		public IDebuggerThread Thread {
-			get { return debugger.Dispatcher.UI(() => debugger.FindThreadUI(chain.Thread)); }
-		}
+		public ChainReason Reason => reason;
+		public ulong StackEnd => stackEnd;
+		public ulong StackStart => stackStart;
+		public IDebuggerThread Thread => debugger.Dispatcher.UI(() => debugger.FindThreadUI(chain.Thread));
 
 		readonly Debugger debugger;
 		readonly CorChain chain;
@@ -133,17 +98,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.stackEnd = chain.StackEnd;
 		}
 
-		public override bool Equals(object obj) {
-			var other = obj as StackChain;
-			return other != null && other.chain == chain;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => chain.ToString());
-		}
+		public override bool Equals(object obj) => (obj as StackChain)?.chain == chain;
+		public override int GetHashCode() => hashCode;
+		public override string ToString() => debugger.Dispatcher.UI(() => chain.ToString());
 	}
 }

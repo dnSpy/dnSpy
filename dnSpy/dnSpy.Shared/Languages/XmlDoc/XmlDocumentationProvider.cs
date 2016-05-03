@@ -47,7 +47,7 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 			public XmlDocumentationCache(int size = 50)
 			{
 				if (size <= 0)
-					throw new ArgumentOutOfRangeException("size", size, "Value must be positive");
+					throw new ArgumentOutOfRangeException(nameof(size), size, "Value must be positive");
 				this.entries = new KeyValuePair<string, string>[size];
 			}
 			
@@ -90,11 +90,8 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 				this.HashCode = hashCode;
 				this.PositionInFile = positionInFile;
 			}
-			
-			public int CompareTo(IndexEntry other)
-			{
-				return this.HashCode.CompareTo(other.HashCode);
-			}
+
+			public int CompareTo(IndexEntry other) => this.HashCode.CompareTo(other.HashCode);
 		}
 		
 		[NonSerialized]
@@ -133,7 +130,7 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 		public XmlDocumentationProvider(string fileName)
 		{
 			if (fileName == null)
-				throw new ArgumentNullException("fileName");
+				throw new ArgumentNullException(nameof(fileName));
 			
 			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
 				using (XmlTextReader xmlReader = new XmlTextReader(fs)) {

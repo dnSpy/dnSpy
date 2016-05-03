@@ -31,21 +31,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public TypeNode(TypeDef analyzedType) {
 			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+				throw new ArgumentNullException(nameof(analyzedType));
 			this.analyzedType = analyzedType;
 		}
 
-		public override void Initialize() {
-			this.TreeNode.LazyLoading = true;
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(analyzedType);
-		}
-
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedType);
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			new NodePrinter().Write(output, language, analyzedType, Context.ShowToken);
-		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (AttributeAppliedToNode.CanShow(analyzedType))
@@ -64,12 +57,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new TypeExtensionMethodsNode(analyzedType);
 		}
 
-		public override IMemberRef Member {
-			get { return analyzedType; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return analyzedType; }
-		}
+		public override IMemberRef Member => analyzedType;
+		public override IMDTokenProvider Reference => analyzedType;
 	}
 }

@@ -67,9 +67,7 @@ namespace dndbg.Engine {
 		/// Aborts the computation this ICorDebugEval object is currently performing
 		/// </summary>
 		/// <returns></returns>
-		public int Abort() {
-			return obj.Abort();
-		}
+		public int Abort() => obj.Abort();
 
 		/// <summary>
 		/// Aborts the computation that this ICorDebugEval2 is currently performing
@@ -89,7 +87,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorValue CreateValue(CorElementType et, CorClass cls = null) {
 			ICorDebugValue value;
-			int hr = obj.CreateValue(et, cls == null ? null : cls.RawObject, out value);
+			int hr = obj.CreateValue(et, cls?.RawObject, out value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -168,7 +166,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public int NewArray(CorElementType et, CorClass cls, uint[] dims, int[] lowBounds = null) {
 			Debug.Assert(dims != null && (lowBounds == null || lowBounds.Length == dims.Length));
-			return obj.NewArray(et, cls == null ? null : cls.RawObject, dims.Length, dims, lowBounds);
+			return obj.NewArray(et, cls?.RawObject, dims.Length, dims, lowBounds);
 		}
 
 		/// <summary>
@@ -231,25 +229,15 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorEval a, CorEval b) {
-			return !(a == b);
-		}
+		public static bool operator !=(CorEval a, CorEval b) => !(a == b);
 
 		public bool Equals(CorEval other) {
 			return !ReferenceEquals(other, null) &&
 				RawObject == other.RawObject;
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as CorEval);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("IsActive={0} {1}", IsActive ? 1 : 0, Thread);
-		}
+		public override bool Equals(object obj) => Equals(obj as CorEval);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("IsActive={0} {1}", IsActive ? 1 : 0, Thread);
 	}
 }

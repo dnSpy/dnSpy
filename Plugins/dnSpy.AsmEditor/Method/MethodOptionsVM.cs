@@ -57,21 +57,13 @@ namespace dnSpy.AsmEditor.Method {
 	sealed class MethodOptionsVM : ViewModelBase {
 		readonly MethodDefOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		internal static readonly EnumVM[] codeTypeList = EnumVM.Create(typeof(Method.CodeType));
-		public EnumListVM CodeType {
-			get { return codeTypeVM; }
-		}
-		readonly EnumListVM codeTypeVM = new EnumListVM(codeTypeList);
+		public EnumListVM CodeType { get; } = new EnumListVM(codeTypeList);
 
 		static readonly EnumVM[] managedTypeList = EnumVM.Create(typeof(Method.ManagedType));
-		public EnumListVM ManagedType {
-			get { return managedTypeVM; }
-		}
-		readonly EnumListVM managedTypeVM = new EnumListVM(managedTypeList);
+		public EnumListVM ManagedType { get; } = new EnumListVM(managedTypeList);
 
 		static readonly EnumVM[] methodAccessList = new EnumVM[] {
 			new EnumVM(Method.MethodAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
@@ -82,16 +74,10 @@ namespace dnSpy.AsmEditor.Method {
 			new EnumVM(Method.MethodAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
 			new EnumVM(Method.MethodAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
 		};
-		public EnumListVM MethodAccess {
-			get { return methodAccessVM; }
-		}
-		readonly EnumListVM methodAccessVM = new EnumListVM(methodAccessList);
+		public EnumListVM MethodAccess { get; } = new EnumListVM(methodAccessList);
 
 		static readonly EnumVM[] vtableLayoutList = EnumVM.Create(typeof(Method.VtableLayout));
-		public EnumListVM VtableLayout {
-			get { return vtableLayoutVM; }
-		}
-		readonly EnumListVM vtableLayoutVM = new EnumListVM(vtableLayoutList);
+		public EnumListVM VtableLayout { get; } = new EnumListVM(vtableLayoutList);
 
 		public MethodImplAttributes ImplAttributes {
 			get {
@@ -153,9 +139,7 @@ namespace dnSpy.AsmEditor.Method {
 			set { SetFlagValue(MethodImplAttributes.NoOptimization, value); }
 		}
 
-		bool GetFlagValue(MethodImplAttributes flag) {
-			return (ImplAttributes & flag) != 0;
-		}
+		bool GetFlagValue(MethodImplAttributes flag) => (ImplAttributes & flag) != 0;
 
 		void SetFlagValue(MethodImplAttributes flag, bool value) {
 			if (value)
@@ -258,9 +242,7 @@ namespace dnSpy.AsmEditor.Method {
 			set { SetFlagValue(MethodAttributes.RequireSecObject, value); }
 		}
 
-		bool GetFlagValue(MethodAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(MethodAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(MethodAttributes flag, bool value) {
 			if (value)
@@ -281,53 +263,25 @@ namespace dnSpy.AsmEditor.Method {
 		UTF8String name;
 
 		public ImplMap ImplMap {
-			get { return implMapVM.ImplMap; }
-			set { implMapVM.ImplMap = value; }
+			get { return ImplMapVM.ImplMap; }
+			set { ImplMapVM.ImplMap = value; }
 		}
 
-		public ImplMapVM ImplMapVM {
-			get { return implMapVM; }
-		}
-		readonly ImplMapVM implMapVM;
+		public ImplMapVM ImplMapVM { get; }
 
 		public MethodSig MethodSig {
 			get { return MethodSigCreator.MethodSig; }
 			set { MethodSigCreator.MethodSig = value; }
 		}
 
-		public string MethodSigHeader {
-			get { return string.Format("MethodSig: {0}", MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig.ToString()); }
-		}
+		public string MethodSigHeader => string.Format("MethodSig: {0}", MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig.ToString());
 
-		public MethodSigCreatorVM MethodSigCreator {
-			get { return methodSigCreator; }
-		}
-		readonly MethodSigCreatorVM methodSigCreator;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
-
-		public DeclSecuritiesVM DeclSecuritiesVM {
-			get { return declSecuritiesVM; }
-		}
-		DeclSecuritiesVM declSecuritiesVM;
-
-		public ParamDefsVM ParamDefsVM {
-			get { return paramDefsVM; }
-		}
-		ParamDefsVM paramDefsVM;
-
-		public GenericParamsVM GenericParamsVM {
-			get { return genericParamsVM; }
-		}
-		GenericParamsVM genericParamsVM;
-
-		public MethodOverridesVM MethodOverridesVM {
-			get { return methodOverridesVM; }
-		}
-		MethodOverridesVM methodOverridesVM;
+		public MethodSigCreatorVM MethodSigCreator { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
+		public DeclSecuritiesVM DeclSecuritiesVM { get; }
+		public ParamDefsVM ParamDefsVM { get; }
+		public GenericParamsVM GenericParamsVM { get; }
+		public MethodOverridesVM MethodOverridesVM { get; }
 
 		readonly ModuleDef ownerModule;
 
@@ -345,21 +299,21 @@ namespace dnSpy.AsmEditor.Method {
 
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
 			methodSigCreatorOptions.IsPropertySig = false;
-			this.methodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
-			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
-			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
+			this.MethodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
+			this.MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
+			this.MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
+			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
+			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.paramDefsVM = new ParamDefsVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.genericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.methodOverridesVM = new MethodOverridesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.ParamDefsVM = new ParamDefsVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.GenericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.MethodOverridesVM = new MethodOverridesVM(ownerModule, languageManager, ownerType, ownerMethod);
 
 			this.origOptions = options;
 
-			this.implMapVM = new ImplMapVM(ownerModule);
+			this.ImplMapVM = new ImplMapVM(ownerModule);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
 			ImplMapVM.IsEnabled = PinvokeImpl;
@@ -381,13 +335,8 @@ namespace dnSpy.AsmEditor.Method {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public MethodDefOptions CreateMethodDefOptions() {
-			return CopyTo(new MethodDefOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public MethodDefOptions CreateMethodDefOptions() => CopyTo(new MethodDefOptions());
 
 		void InitializeFrom(MethodDefOptions options) {
 			ImplAttributes = options.ImplAttributes;

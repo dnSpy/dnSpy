@@ -29,12 +29,12 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Owner file
 		/// </summary>
-		public IDnSpyFile DnSpyFile { get; private set; }
+		public IDnSpyFile DnSpyFile { get; }
 
 		/// <summary>
 		/// Type to search
 		/// </summary>
-		public TypeDef Type { get; private set; }
+		public TypeDef Type { get; }
 
 		/// <summary>
 		/// Constructor

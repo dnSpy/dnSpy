@@ -23,61 +23,34 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageSignatureVM : HexVM {
-		public override string Name {
-			get { return "STORAGESIGNATURE"; }
-		}
+		public override string Name => "STORAGESIGNATURE";
 
-		public UInt32HexField LSignatureVM {
-			get { return lSignatureVM; }
-		}
-		readonly UInt32HexField lSignatureVM;
+		public UInt32HexField LSignatureVM { get; }
+		public UInt16HexField IMajorVerVM { get; }
+		public UInt16HexField IMinorVerVM { get; }
+		public UInt32HexField IExtraDataVM { get; }
+		public UInt32HexField IVersionStringVM { get; }
+		public StringHexField VersionStringVM { get; }
 
-		public UInt16HexField IMajorVerVM {
-			get { return iMajorVerVM; }
-		}
-		readonly UInt16HexField iMajorVerVM;
-
-		public UInt16HexField IMinorVerVM {
-			get { return iMinorVerVM; }
-		}
-		readonly UInt16HexField iMinorVerVM;
-
-		public UInt32HexField IExtraDataVM {
-			get { return iExtraDataVM; }
-		}
-		readonly UInt32HexField iExtraDataVM;
-
-		public UInt32HexField IVersionStringVM {
-			get { return iVersionStringVM; }
-		}
-		readonly UInt32HexField iVersionStringVM;
-
-		public StringHexField VersionStringVM {
-			get { return versionStringVM; }
-		}
-		readonly StringHexField versionStringVM;
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
+		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
 		public StorageSignatureVM(object owner, HexDocument doc, ulong startOffset, int stringLen)
 			: base(owner) {
-			this.lSignatureVM = new UInt32HexField(doc, Name, "lSignature", startOffset + 0);
-			this.iMajorVerVM = new UInt16HexField(doc, Name, "iMajorVer", startOffset + 4, true);
-			this.iMinorVerVM = new UInt16HexField(doc, Name, "iMinorVer", startOffset + 6, true);
-			this.iExtraDataVM = new UInt32HexField(doc, Name, "iExtraData", startOffset + 8);
-			this.iVersionStringVM = new UInt32HexField(doc, Name, "iVersionString", startOffset + 0x0C);
-			this.versionStringVM = new StringHexField(doc, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);
+			this.LSignatureVM = new UInt32HexField(doc, Name, "lSignature", startOffset + 0);
+			this.IMajorVerVM = new UInt16HexField(doc, Name, "iMajorVer", startOffset + 4, true);
+			this.IMinorVerVM = new UInt16HexField(doc, Name, "iMinorVer", startOffset + 6, true);
+			this.IExtraDataVM = new UInt32HexField(doc, Name, "iExtraData", startOffset + 8);
+			this.IVersionStringVM = new UInt32HexField(doc, Name, "iVersionString", startOffset + 0x0C);
+			this.VersionStringVM = new StringHexField(doc, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);
 
 			this.hexFields = new HexField[] {
-				lSignatureVM,
-				iMajorVerVM,
-				iMinorVerVM,
-				iExtraDataVM,
-				iVersionStringVM,
-				versionStringVM,
+				LSignatureVM,
+				IMajorVerVM,
+				IMinorVerVM,
+				IExtraDataVM,
+				IVersionStringVM,
+				VersionStringVM,
 			};
 		}
 	}

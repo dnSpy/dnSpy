@@ -85,9 +85,7 @@ namespace dnSpy.Culture {
 			}
 		}
 
-		CultureInfo UICulture {
-			get { return TryCreateCultureInfo(cultureSettings.UIName); }
-		}
+		CultureInfo UICulture => TryCreateCultureInfo(cultureSettings.UIName);
 
 		readonly CultureSettingsImpl cultureSettings;
 
@@ -97,9 +95,7 @@ namespace dnSpy.Culture {
 			InitializeCulture(UICulture ?? Thread.CurrentThread.CurrentUICulture);
 		}
 
-		public void Initialize(IAppCommandLineArgs args) {
-			InitializeCulture(TryCreateCultureInfo(args.Culture));
-		}
+		public void Initialize(IAppCommandLineArgs args) => InitializeCulture(TryCreateCultureInfo(args.Culture));
 
 		void InitializeCulture(CultureInfo info) {
 			if (info == null)
@@ -145,7 +141,7 @@ namespace dnSpy.Culture {
 			}
 			catch {
 			}
-			return new string[0];
+			return Array.Empty<string>();
 		}
 
 		static string[] GetFiles(string dir, string searchPattern) {
@@ -154,7 +150,7 @@ namespace dnSpy.Culture {
 			}
 			catch {
 			}
-			return new string[0];
+			return Array.Empty<string>();
 		}
 	}
 }

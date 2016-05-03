@@ -51,13 +51,8 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 		IOpenPublicKeyFile openPublicKeyFile;
 
-		public ICommand OpenPublicKeyFileCommand {
-			get { return new RelayCommand(a => OnOpenPublicKeyFile()); }
-		}
-
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand OpenPublicKeyFileCommand => new RelayCommand(a => OnOpenPublicKeyFile());
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public bool CanShowClrVersion {
 			get { return canShowClrVersion; }
@@ -70,36 +65,17 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 		bool canShowClrVersion;
 
-		public EnumListVM ClrVersion {
-			get { return clrVersionVM; }
-		}
+		public EnumListVM ClrVersion => clrVersionVM;
 		readonly EnumListVM clrVersionVM = new EnumListVM(Module.NetModuleOptionsVM.clrVersionList);
 
 		static readonly EnumVM[] hashAlgorithmList = EnumVM.Create(typeof(AssemblyHashAlgorithm));
-		public EnumListVM HashAlgorithm {
-			get { return hashAlgorithmVM; }
-		}
+		public EnumListVM HashAlgorithm => hashAlgorithmVM;
 		readonly EnumListVM hashAlgorithmVM;
 
-		public UInt16VM VersionMajor {
-			get { return versionMajor; }
-		}
-		UInt16VM versionMajor;
-
-		public UInt16VM VersionMinor {
-			get { return versionMinor; }
-		}
-		UInt16VM versionMinor;
-
-		public UInt16VM VersionBuild {
-			get { return versionBuild; }
-		}
-		UInt16VM versionBuild;
-
-		public UInt16VM VersionRevision {
-			get { return versionRevision; }
-		}
-		UInt16VM versionRevision;
+		public UInt16VM VersionMajor { get; }
+		public UInt16VM VersionMinor { get; }
+		public UInt16VM VersionBuild { get; }
+		public UInt16VM VersionRevision { get; }
 
 		public AssemblyAttributes Flags {
 			get {
@@ -149,9 +125,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			set { SetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer, value); }
 		}
 
-		bool GetFlagValue(AssemblyAttributes flag) {
-			return (Flags & flag) != 0;
-		}
+		bool GetFlagValue(AssemblyAttributes flag) => (Flags & flag) != 0;
 
 		void SetFlagValue(AssemblyAttributes flag, bool value) {
 			if (value)
@@ -161,21 +135,14 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		internal static readonly EnumVM[] processArchList = EnumVM.Create(typeof(AsmProcArch));
-		public EnumListVM ProcessArchitecture {
-			get { return processArchitectureVM; }
-		}
+		public EnumListVM ProcessArchitecture => processArchitectureVM;
 		readonly EnumListVM processArchitectureVM = new EnumListVM(processArchList);
 
 		internal static readonly EnumVM[] contentTypeList = EnumVM.Create(typeof(AsmContType));
-		public EnumListVM ContentType {
-			get { return contentTypeVM; }
-		}
+		public EnumListVM ContentType => contentTypeVM;
 		readonly EnumListVM contentTypeVM;
 
-		public HexStringVM PublicKey {
-			get { return publicKey; }
-		}
-		HexStringVM publicKey;
+		public HexStringVM PublicKey { get; }
 
 		public string Name {
 			get { return name; }
@@ -211,22 +178,15 @@ namespace dnSpy.AsmEditor.Assembly {
 				int revision = VersionRevision.HasError ? 0 : VersionRevision.Value;
 				asm.Version = new Version(major, minor, build, revision);
 				asm.Attributes = Flags;
-				asm.PublicKeyOrToken = new PublicKey(publicKey.HasError ? new byte[0] : publicKey.Value.ToArray());
+				asm.PublicKeyOrToken = new PublicKey(PublicKey.HasError ? Array.Empty<byte>() : PublicKey.Value.ToArray());
 				asm.Name = Name;
 				asm.Culture = Culture;
 				return asm.ToString();
 			}
 		}
 
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
-
-		public DeclSecuritiesVM DeclSecuritiesVM {
-			get { return declSecuritiesVM; }
-		}
-		DeclSecuritiesVM declSecuritiesVM;
+		public CustomAttributesVM CustomAttributesVM { get; }
+		public DeclSecuritiesVM DeclSecuritiesVM { get; }
 
 		readonly ModuleDef ownerModule;
 
@@ -235,27 +195,19 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
 			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
-			this.versionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.versionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, null, null);
+			this.VersionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.VersionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, null, null);
 			Reinitialize();
 		}
 
-		void UpdatePublicKeyFlag() {
-			FlagsPublicKey = !publicKey.IsNull;
-		}
-
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public AssemblyOptions CreateAssemblyOptions() {
-			return CopyTo(new AssemblyOptions());
-		}
+		void UpdatePublicKeyFlag() => FlagsPublicKey = !PublicKey.IsNull;
+		void Reinitialize() => InitializeFrom(origOptions);
+		public AssemblyOptions CreateAssemblyOptions() => CopyTo(new AssemblyOptions());
 
 		void InitializeFrom(AssemblyOptions options) {
 			PublicKey.Value = options.PublicKey.Data;
@@ -295,16 +247,16 @@ namespace dnSpy.AsmEditor.Assembly {
 			var newPublicKey = openPublicKeyFile.Open();
 			if (newPublicKey == null)
 				return;
-			publicKey.Value = newPublicKey.Data;
+			PublicKey.Value = newPublicKey.Data;
 		}
 
 		public override bool HasError {
 			get {
-				return versionMajor.HasError ||
-					versionMinor.HasError ||
-					versionBuild.HasError ||
-					versionRevision.HasError ||
-					publicKey.HasError;
+				return VersionMajor.HasError ||
+					VersionMinor.HasError ||
+					VersionBuild.HasError ||
+					VersionRevision.HasError ||
+					PublicKey.HasError;
 			}
 		}
 	}

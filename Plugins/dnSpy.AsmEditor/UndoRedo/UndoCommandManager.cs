@@ -85,11 +85,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		public event EventHandler<UndoCommandManagerEventArgs> OnEvent;
 
-		void NotifyEvent(UndoCommandManagerEventType type, IUndoObject obj = null) {
-			var evt = OnEvent;
-			if (evt != null)
-				evt(this, new UndoCommandManagerEventArgs(type, obj));
-		}
+		void NotifyEvent(UndoCommandManagerEventType type, IUndoObject obj = null) =>
+			OnEvent?.Invoke(this, new UndoCommandManagerEventArgs(type, obj));
 
 		[ImportingConstructor]
 		UndoCommandManager([ImportMany] Lazy<IUndoableDocumentsProvider>[] undoableDocumentsProviders) {
@@ -117,26 +114,13 @@ namespace dnSpy.AsmEditor.UndoRedo {
 				mgr.BeginAddInternal();
 			}
 
-			public void Dispose() {
-				mgr.EndAddInternal();
-			}
+			public void Dispose() => mgr.EndAddInternal();
 		}
 
-		public bool CanUndo {
-			get { return undoCommands.Count != 0; }
-		}
-
-		public bool CanRedo {
-			get { return redoCommands.Count != 0; }
-		}
-
-		public int NumberOfModifiedDocuments {
-			get { return GetModifiedDocuments().Count(); }
-		}
-
-		bool IsAdding {
-			get { return currentCommands != null; }
-		}
+		public bool CanUndo => undoCommands.Count != 0;
+		public bool CanRedo => redoCommands.Count != 0;
+		public int NumberOfModifiedDocuments => GetModifiedDocuments().Count();
+		bool IsAdding => currentCommands != null;
 
 		public void Add(IUndoCommand command) {
 			if (currentCommands == null) {
@@ -203,13 +187,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return false;
 		}
 
-		public void ClearRedo() {
-			Clear(false, true, redoCommands.Count != 0);
-		}
-
-		public void Clear() {
-			Clear(true, true, undoCommands.Count != 0 || redoCommands.Count != 0);
-		}
+		public void ClearRedo() => Clear(false, true, redoCommands.Count != 0);
+		public void Clear() => Clear(true, true, undoCommands.Count != 0 || redoCommands.Count != 0);
 
 		void Clear(bool clearUndo, bool clearRedo, bool forceCallGc) {
 			Debug.Assert(currentCommands == null);
@@ -347,13 +326,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return hash;
 		}
 
-		public bool IsModified(IUndoObject obj) {
-			return obj.IsDirty && IsModifiedCounter(obj, currentCommandCounter);
-		}
-
-		bool IsModifiedCounter(IUndoObject obj, int counter) {
-			return obj.SavedCommand != 0 && obj.SavedCommand != counter;
-		}
+		public bool IsModified(IUndoObject obj) => obj.IsDirty && IsModifiedCounter(obj, currentCommandCounter);
+		bool IsModifiedCounter(IUndoObject obj, int counter) => obj.SavedCommand != 0 && obj.SavedCommand != counter;
 
 		public void MarkAsModified(IUndoObject obj) {
 			if (obj.SavedCommand == 0)
@@ -386,13 +360,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return currentCommandCounter;
 		}
 
-		void UpdateAssemblySavedStateRedo(UndoState executedGroup) {
+		void UpdateAssemblySavedStateRedo(UndoState executedGroup) =>
 			UpdateAssemblySavedState(executedGroup.CommandCounter, executedGroup);
-		}
-
-		void UpdateAssemblySavedStateUndo(UndoState executedGroup) {
+		void UpdateAssemblySavedStateUndo(UndoState executedGroup) =>
 			UpdateAssemblySavedState(executedGroup.PrevCommandCounter, executedGroup);
-		}
 
 		void UpdateAssemblySavedState(int newCurrentCommandCounter, UndoState executedGroup) {
 			currentCommandCounter = newCurrentCommandCounter;
@@ -418,7 +389,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					return uo;
 			}
 
-			Debug.Fail(string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
+			Debug.Fail(string.Format("Unknown modified object: {0}: {1}", obj?.GetType(), obj));
 			return null;
 		}
 
@@ -434,17 +405,12 @@ namespace dnSpy.AsmEditor.UndoRedo {
 						break;
 				}
 
-				Debug.Assert(found, string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
+				Debug.Assert(found, string.Format("Unknown modified object: {0}: {1}", obj?.GetType(), obj));
 			}
 		}
 
-		public IEnumerable<IUndoObject> UndoObjects {
-			get { return undoCommands.SelectMany(a => a.ModifiedObjects); }
-		}
-
-		public IEnumerable<IUndoObject> RedoObjects {
-			get { return redoCommands.SelectMany(a => a.ModifiedObjects); }
-		}
+		public IEnumerable<IUndoObject> UndoObjects => undoCommands.SelectMany(a => a.ModifiedObjects);
+		public IEnumerable<IUndoObject> RedoObjects => redoCommands.SelectMany(a => a.ModifiedObjects);
 
 		public IEnumerable<IUndoObject> GetAllObjects() {
 			var list = new List<UndoState>(undoCommands);

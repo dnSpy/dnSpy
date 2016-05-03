@@ -30,38 +30,20 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class NamespaceNode : FileTreeNodeData, INamespaceNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.NAMESPACE_NODE_GUID); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetNamespaceImageReference();
-		}
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-		string name;
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, Name); }
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.NAMESPACE_NODE_GUID);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
+			dnImgMgr.GetNamespaceImageReference();
+		public string Name { get; set; }
+		public override NodePathName NodePathName => new NodePathName(Guid, Name);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public NamespaceNode(ITreeNodeGroup treeNodeGroup, string name, List<TypeDef> types) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.name = name;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.Name = name;
 			this.typesToCreate = types;
 		}
 
-		public override void Initialize() {
-			TreeNode.LazyLoading = true;
-		}
+		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var type in typesToCreate)
@@ -70,13 +52,9 @@ namespace dnSpy.Files.TreeView {
 		}
 		List<TypeDef> typesToCreate;
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().WriteNamespace(output, language, name);
-		}
-
-		public ITypeNode Create(TypeDef type) {
-			return Context.FileTreeView.Create(type);
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().WriteNamespace(output, language, Name);
+		public ITypeNode Create(TypeDef type) => Context.FileTreeView.Create(type);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			var p = TreeNode.Parent;

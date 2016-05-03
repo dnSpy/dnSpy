@@ -34,8 +34,7 @@ namespace dnSpy.Search {
 	}
 
 	class SearchSettings : ViewModelBase, ISearchSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
 			get { return syntaxHighlight; }
@@ -109,9 +108,7 @@ namespace dnSpy.Search {
 		}
 		bool searchGacAssemblies = true;
 
-		public SearchSettings Clone() {
-			return CopyTo(new SearchSettings());
-		}
+		public SearchSettings Clone() => CopyTo(new SearchSettings());
 
 		public SearchSettings CopyTo(SearchSettings other) {
 			other.SyntaxHighlight = this.SyntaxHighlight;

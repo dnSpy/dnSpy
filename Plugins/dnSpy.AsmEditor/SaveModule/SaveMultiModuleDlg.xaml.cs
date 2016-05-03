@@ -27,13 +27,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			InitializeComponent();
 		}
 
-		void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = e.Parameter is SaveOptionsVM;
-		}
-
-		void Options_Executed(object sender, ExecutedRoutedEventArgs e) {
+		void Options_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			ShowOptions((SaveOptionsVM)e.Parameter);
-		}
 
 		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))

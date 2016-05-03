@@ -21,10 +21,10 @@ using System;
 
 namespace dnSpy.Decompiler.Shared {
 	public sealed class AddressReference : IEquatable<AddressReference> {
-		public readonly string Filename;
-		public readonly bool IsRVA;
-		public readonly ulong Address;
-		public readonly ulong Length;
+		public string Filename { get; }
+		public bool IsRVA { get; }
+		public ulong Address { get; }
+		public ulong Length { get; }
 
 		public AddressReference(string filename, bool isRva, ulong addr, ulong len) {
 			this.Filename = filename;
@@ -41,9 +41,7 @@ namespace dnSpy.Decompiler.Shared {
 				StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as AddressReference);
-		}
+		public override bool Equals(object obj) => Equals(obj as AddressReference);
 
 		public override int GetHashCode() {
 			return StringComparer.OrdinalIgnoreCase.GetHashCode(Filename) ^

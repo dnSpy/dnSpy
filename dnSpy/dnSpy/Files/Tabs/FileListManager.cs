@@ -49,9 +49,7 @@ namespace dnSpy.Files.Tabs {
 		}
 		int selectedIndex;
 
-		public FileList[] FileLists {
-			get { return fileLists.ToArray(); }
-		}
+		public FileList[] FileLists => fileLists.ToArray();
 		readonly List<FileList> fileLists;
 
 		FileListManager() {
@@ -74,9 +72,7 @@ namespace dnSpy.Files.Tabs {
 			return -1;
 		}
 
-		void SelectList(string name) {
-			selectedIndex = IndexOf(name);
-		}
+		void SelectList(string name) => selectedIndex = IndexOf(name);
 
 		public void Load(ISettingsSection section) {
 			var listName = section.Attribute<string>(CURRENT_LIST_ATTR);

@@ -22,9 +22,7 @@ using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class PrintOptionsImpl : IPrintOptions {
-		public PrintOptions RoslynPrintOptions {
-			get { return printOptions; }
-		}
+		public PrintOptions RoslynPrintOptions => printOptions;
 		readonly PrintOptions printOptions;
 
 		public string Ellipsis {

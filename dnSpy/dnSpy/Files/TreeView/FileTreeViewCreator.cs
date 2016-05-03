@@ -64,8 +64,7 @@ namespace dnSpy.Files.TreeView {
 			this.mefFinders = mefFinders.ToArray();
 		}
 
-		public IFileTreeView Create(IFileTreeNodeFilter filter) {
-			return new FileTreeView(false, filter, themeManager, treeViewManager, languageManager, fileManagerCreator.Create(), fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeCreators.ToArray(), mefFinders.ToArray());
-		}
+		public IFileTreeView Create(IFileTreeNodeFilter filter) =>
+			new FileTreeView(false, filter, themeManager, treeViewManager, languageManager, fileManagerCreator.Create(), fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeCreators.ToArray(), mefFinders.ToArray());
 	}
 }

@@ -42,20 +42,14 @@ namespace dndbg.DotNet {
 			this.address = address;
 		}
 
-		public long Length {
-			get { return long.MaxValue; }
-		}
+		public long Length => long.MaxValue;
 
 		public long Position {
 			get { return (long)(address - baseAddress); }
 			set { address = baseAddress + (ulong)value; }
 		}
 
-		public void Dispose() {
-			var id = reader as IDisposable;
-			if (id != null)
-				id.Dispose();
-		}
+		public void Dispose() => (reader as IDisposable)?.Dispose();
 
 		public int Read(byte[] buffer, int offset, int length) {
 			int sizeRead = reader.ReadBytes(address, buffer, offset, length);

@@ -65,13 +65,9 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if the debugged process should be paused
 		/// </summary>
-		public bool Pause {
-			get { return debuggerPauseStates.Count != 0; }
-		}
+		public bool Pause => debuggerPauseStates.Count != 0;
 
-		public DebuggerPauseState[] PauseStates {
-			get { return debuggerPauseStates.ToArray(); }
-		}
+		public DebuggerPauseState[] PauseStates => debuggerPauseStates.ToArray();
 		readonly List<DebuggerPauseState> debuggerPauseStates = new List<DebuggerPauseState>();
 
 		/// <summary>
@@ -82,18 +78,13 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Debug controller
 		/// </summary>
-		public ICorDebugController CorDebugController {
-			get { return ctrl; }
-		}
-		readonly ICorDebugController ctrl;
+		public ICorDebugController CorDebugController { get; }
 
 		protected DebugCallbackEventArgs(ICorDebugController ctrl) {
-			this.ctrl = ctrl;
+			this.CorDebugController = ctrl;
 		}
 
-		public void AddPauseReason(DebuggerPauseReason reason) {
-			AddPauseState(new DebuggerPauseState(reason));
-		}
+		public void AddPauseReason(DebuggerPauseReason reason) => AddPauseState(new DebuggerPauseState(reason));
 
 		public void AddPauseState(DebuggerPauseState state) {
 			if (state == null)
@@ -111,21 +102,12 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class BreakpointDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.Breakpoint; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugBreakpoint Breakpoint { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.Breakpoint;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugBreakpoint Breakpoint { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public CorFunctionBreakpoint CorFunctionBreakpoint {
 			get {
@@ -143,26 +125,14 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class StepCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.StepComplete; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugStepper Stepper { get; private set; }
-		public CorDebugStepReason Reason { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorStepper CorStepper {
-			get { return Stepper == null ? null : new CorStepper(Stepper); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.StepComplete;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugStepper Stepper { get; }
+		public CorDebugStepReason Reason { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorStepper CorStepper => Stepper == null ? null : new CorStepper(Stepper);
 
 		public StepCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugStepper pStepper, CorDebugStepReason reason)
 			: base(pAppDomain) {
@@ -174,20 +144,11 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class BreakDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.Break; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.Break;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public BreakDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
 			: base(pAppDomain) {
@@ -197,21 +158,12 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ExceptionDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.Exception; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public bool Unhandled { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.Exception;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public bool Unhandled { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public ExceptionDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int unhandled)
 			: base(pAppDomain) {
@@ -222,29 +174,14 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class EvalDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public bool CompletedSuccessfully {
-			get { return Kind == DebugCallbackKind.EvalComplete; }
-		}
-
-		public bool WasException {
-			get { return Kind == DebugCallbackKind.EvalException; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugEval Eval { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorEval CorEval {
-			get { return Eval == null ? null : new CorEval(Eval); }
-		}
+		public bool CompletedSuccessfully => Kind == DebugCallbackKind.EvalComplete;
+		public bool WasException => Kind == DebugCallbackKind.EvalException;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugEval Eval { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorEval CorEval => Eval == null ? null : new CorEval(Eval);
 
 		protected EvalDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
 			: base(pAppDomain) {
@@ -255,9 +192,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class EvalCompleteDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.EvalComplete; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.EvalComplete;
 
 		public EvalCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
 			: base(pAppDomain, pThread, pEval) {
@@ -265,9 +200,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class EvalExceptionDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.EvalException; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.EvalException;
 
 		public EvalExceptionDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
 			: base(pAppDomain, pThread, pEval) {
@@ -275,11 +208,8 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class ProcessDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugProcess Process { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
+		public ICorDebugProcess Process { get; }
+		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
 		protected ProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
@@ -288,9 +218,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CreateProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.CreateProcess; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.CreateProcess;
 
 		public CreateProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
@@ -298,9 +226,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ExitProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.ExitProcess; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.ExitProcess;
 
 		public ExitProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
@@ -308,16 +234,10 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class ThreadDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		protected ThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
 			: base(pAppDomain) {
@@ -327,9 +247,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CreateThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.CreateThread; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.CreateThread;
 
 		public CreateThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
 			: base(pAppDomain, thread) {
@@ -337,9 +255,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ExitThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.ExitThread; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.ExitThread;
 
 		public ExitThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
 			: base(pAppDomain, thread) {
@@ -347,16 +263,10 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class ModuleDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugModule Module { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorModule CorModule {
-			get { return Module == null ? null : new CorModule(Module); }
-		}
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugModule Module { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorModule CorModule => Module == null ? null : new CorModule(Module);
 
 		protected ModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
 			: base(pAppDomain) {
@@ -366,9 +276,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class LoadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.LoadModule; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.LoadModule;
 
 		public LoadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
 			: base(pAppDomain, pModule) {
@@ -376,9 +284,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class UnloadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.UnloadModule; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.UnloadModule;
 
 		public UnloadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
 			: base(pAppDomain, pModule) {
@@ -386,16 +292,10 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class ClassDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugClass Class { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorClass CorClass {
-			get { return Class == null ? null : new CorClass(Class); }
-		}
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugClass Class { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorClass CorClass => Class == null ? null : new CorClass(Class);
 
 		protected ClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
 			: base(pAppDomain) {
@@ -405,9 +305,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class LoadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.LoadClass; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.LoadClass;
 
 		public LoadClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
 			: base(pAppDomain, c) {
@@ -415,9 +313,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class UnloadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.UnloadClass; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.UnloadClass;
 
 		public UnloadClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
 			: base(pAppDomain, c) {
@@ -425,17 +321,12 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DebuggerErrorDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.DebuggerError; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.DebuggerError;
+		public ICorDebugProcess Process { get; }
+		public int HError { get; }
+		public uint ErrorCode { get; }
 
-		public ICorDebugProcess Process { get; private set; }
-		public int HError { get; private set; }
-		public uint ErrorCode { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
+		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
 		public DebuggerErrorDebugCallbackEventArgs(ICorDebugProcess pProcess, int errorHR, uint errorCode)
 			: base(pProcess) {
@@ -446,23 +337,14 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class LogMessageDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.LogMessage; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public LoggingLevelEnum Level { get; private set; }
-		public string LowSwitchName { get; private set; }
-		public string Message { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.LogMessage;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public LoggingLevelEnum Level { get; }
+		public string LowSwitchName { get; }
+		public string Message { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public LogMessageDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, LoggingLevelEnum lLevel, string pLogSwitchName, string pMessage)
 			: base(pAppDomain) {
@@ -475,24 +357,15 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class LogSwitchDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.LogSwitch; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public LoggingLevelEnum Level { get; private set; }
-		public LogSwitchCallReason Reason { get; private set; }
-		public string LowSwitchName { get; private set; }
-		public string ParentName { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.LogSwitch;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public LoggingLevelEnum Level { get; }
+		public LogSwitchCallReason Reason { get; }
+		public string LowSwitchName { get; }
+		public string ParentName { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public LogSwitchDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, LoggingLevelEnum lLevel, LogSwitchCallReason ulReason, string pLogSwitchName, string pParentName)
 			: base(pAppDomain) {
@@ -506,16 +379,10 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class AppDomainDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugProcess Process { get; private set; }
-		public ICorDebugAppDomain AppDomain { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
+		public ICorDebugProcess Process { get; }
+		public ICorDebugAppDomain AppDomain { get; }
+		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
 
 		protected AppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
 			: base(pProcess) {
@@ -525,9 +392,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CreateAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.CreateAppDomain; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.CreateAppDomain;
 
 		public CreateAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
 			: base(pProcess, pAppDomain) {
@@ -535,9 +400,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ExitAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.ExitAppDomain; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.ExitAppDomain;
 
 		public ExitAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
 			: base(pProcess, pAppDomain) {
@@ -545,16 +408,10 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class AssemblyDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugAssembly Assembly { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorAssembly CorAssembly {
-			get { return Assembly == null ? null : new CorAssembly(Assembly); }
-		}
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugAssembly Assembly { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorAssembly CorAssembly => Assembly == null ? null : new CorAssembly(Assembly);
 
 		protected AssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
 			: base(pAppDomain) {
@@ -564,9 +421,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class LoadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.LoadAssembly; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.LoadAssembly;
 
 		public LoadAssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
 			: base(pAppDomain, pAssembly) {
@@ -574,9 +429,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class UnloadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.UnloadAssembly; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.UnloadAssembly;
 
 		public UnloadAssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
 			: base(pAppDomain, pAssembly) {
@@ -584,15 +437,9 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ControlCTrapDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.ControlCTrap; }
-		}
-
-		public ICorDebugProcess Process { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.ControlCTrap;
+		public ICorDebugProcess Process { get; }
+		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
 		public ControlCTrapDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
@@ -601,20 +448,11 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class NameChangeDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.NameChange; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.NameChange;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public NameChangeDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread)
 			: base(GetAppDomain(pAppDomain, pThread)) {
@@ -631,21 +469,12 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class UpdateModuleSymbolsDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.UpdateModuleSymbols; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugModule Module { get; private set; }
-		public IStream SymbolStream { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorModule CorModule {
-			get { return Module == null ? null : new CorModule(Module); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.UpdateModuleSymbols;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugModule Module { get; }
+		public IStream SymbolStream { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorModule CorModule => Module == null ? null : new CorModule(Module);
 
 		public UpdateModuleSymbolsDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule, IStream pSymbolStream)
 			: base(pAppDomain) {
@@ -656,26 +485,14 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class EditAndContinueRemapDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.EditAndContinueRemap; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugFunction Function { get; private set; }
-		public bool Accurate { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorFunction CorFunction {
-			get { return Function == null ? null : new CorFunction(Function); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.EditAndContinueRemap;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugFunction Function { get; }
+		public bool Accurate { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorFunction CorFunction => Function == null ? null : new CorFunction(Function);
 
 		public EditAndContinueRemapDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pFunction, int fAccurate)
 			: base(pAppDomain) {
@@ -687,22 +504,13 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class BreakpointSetErrorDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.BreakpointSetError; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugBreakpoint Breakpoint { get; private set; }
-		public uint Error { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.BreakpointSetError;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugBreakpoint Breakpoint { get; }
+		public uint Error { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public CorFunctionBreakpoint CorFunctionBreakpoint {
 			get {
@@ -721,31 +529,16 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class FunctionRemapOpportunityDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.FunctionRemapOpportunity; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugFunction OldFunction { get; private set; }
-		public ICorDebugFunction NewFunction { get; private set; }
-		public uint OldILOffset { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorFunction OldCorFunction {
-			get { return OldFunction == null ? null : new CorFunction(OldFunction); }
-		}
-
-		public CorFunction NewCorFunction {
-			get { return NewFunction == null ? null : new CorFunction(NewFunction); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.FunctionRemapOpportunity;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugFunction OldFunction { get; }
+		public ICorDebugFunction NewFunction { get; }
+		public uint OldILOffset { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorFunction OldCorFunction => OldFunction == null ? null : new CorFunction(OldFunction);
+		public CorFunction NewCorFunction => NewFunction == null ? null : new CorFunction(NewFunction);
 
 		public FunctionRemapOpportunityDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pOldFunction, ICorDebugFunction pNewFunction, uint oldILOffset)
 			: base(pAppDomain) {
@@ -758,12 +551,9 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class ConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public ICorDebugProcess Process { get; private set; }
-		public uint Id { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
+		public ICorDebugProcess Process { get; }
+		public uint Id { get; }
+		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
 		protected ConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
 			: base(pProcess) {
@@ -773,11 +563,8 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CreateConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.CreateConnection; }
-		}
-
-		public string Name { get; private set; }
+		public override DebugCallbackKind Kind => DebugCallbackKind.CreateConnection;
+		public string Name { get; }
 
 		public CreateConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId, string pConnName)
 			: base(pProcess, dwConnectionId) {
@@ -786,9 +573,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ChangeConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.ChangeConnection; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.ChangeConnection;
 
 		public ChangeConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
 			: base(pProcess, dwConnectionId) {
@@ -796,9 +581,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DestroyConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.DestroyConnection; }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.DestroyConnection;
 
 		public DestroyConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
 			: base(pProcess, dwConnectionId) {
@@ -806,28 +589,16 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class Exception2DebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.Exception2; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugFrame Frame { get; private set; }
-		public uint Offset { get; private set; }
-		public CorDebugExceptionCallbackType EventType { get; private set; }
-		public CorDebugExceptionFlags Flags { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorFrame CorFrame {
-			get { return Frame == null ? null : new CorFrame(Frame); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.Exception2;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugFrame Frame { get; }
+		public uint Offset { get; }
+		public CorDebugExceptionCallbackType EventType { get; }
+		public CorDebugExceptionFlags Flags { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorFrame CorFrame => Frame == null ? null : new CorFrame(Frame);
 
 		public Exception2DebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFrame pFrame, uint nOffset, CorDebugExceptionCallbackType dwEventType, CorDebugExceptionFlags dwFlags)
 			: base(pAppDomain) {
@@ -841,22 +612,13 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class ExceptionUnwindDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.ExceptionUnwind; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public CorDebugExceptionUnwindCallbackType EventType { get; private set; }
-		public CorDebugExceptionFlags Flags { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.ExceptionUnwind;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public CorDebugExceptionUnwindCallbackType EventType { get; }
+		public CorDebugExceptionFlags Flags { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public ExceptionUnwindDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, CorDebugExceptionUnwindCallbackType dwEventType, CorDebugExceptionFlags dwFlags)
 			: base(pAppDomain) {
@@ -868,25 +630,13 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class FunctionRemapCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.FunctionRemapComplete; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugFunction Function { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorFunction CorFunction {
-			get { return Function == null ? null : new CorFunction(Function); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.FunctionRemapComplete;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugFunction Function { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorFunction CorFunction => Function == null ? null : new CorFunction(Function);
 
 		public FunctionRemapCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pFunction)
 			: base(pAppDomain) {
@@ -897,13 +647,10 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class MDANotificationDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.MDANotification; }
-		}
-
-		public ICorDebugController Controller { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugMDA MDA { get; private set; }
+		public override DebugCallbackKind Kind => DebugCallbackKind.MDANotification;
+		public ICorDebugController Controller { get; }
+		public ICorDebugThread Thread { get; }
+		public ICorDebugMDA MDA { get; }
 
 		public CorProcess CorProcess {
 			get {
@@ -919,13 +666,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		public CorMDA CorMDA {
-			get { return MDA == null ? null : new CorMDA(MDA); }
-		}
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
+		public CorMDA CorMDA => MDA == null ? null : new CorMDA(MDA);
 
 		public MDANotificationDebugCallbackEventArgs(ICorDebugController pController, ICorDebugThread pThread, ICorDebugMDA pMDA)
 			: base(pController) {
@@ -936,20 +678,11 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class CustomNotificationDebugCallbackEventArgs : DebugCallbackEventArgs {
-		public override DebugCallbackKind Kind {
-			get { return DebugCallbackKind.CustomNotification; }
-		}
-
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
+		public override DebugCallbackKind Kind => DebugCallbackKind.CustomNotification;
+		public ICorDebugAppDomain AppDomain { get; }
+		public ICorDebugThread Thread { get; }
+		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
+		public CorThread CorThread => Thread == null ? null : new CorThread(Thread);
 
 		public CustomNotificationDebugCallbackEventArgs(ICorDebugThread pThread, ICorDebugAppDomain pAppDomain)
 			: base(pAppDomain) {

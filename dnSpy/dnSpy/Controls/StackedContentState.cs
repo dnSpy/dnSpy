@@ -23,7 +23,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Controls {
 	sealed class StackedContentState {
-		public List<GridLength> RowsCols { get; private set; }
+		public List<GridLength> RowsCols { get; }
 		public bool IsHorizontal { get; set; }
 
 		public StackedContentState() {

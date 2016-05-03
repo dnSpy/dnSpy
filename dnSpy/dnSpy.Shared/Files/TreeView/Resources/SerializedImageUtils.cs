@@ -53,13 +53,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			return false;
 		}
 
-		static bool CouldBeBitmap(ModuleDef module, string name) {
-			return CheckType(module, name, SystemDrawingBitmap);
-		}
-
-		static bool CouldBeIcon(ModuleDef module, string name) {
-			return CheckType(module, name, SystemDrawingIcon);
-		}
+		static bool CouldBeBitmap(ModuleDef module, string name) => CheckType(module, name, SystemDrawingBitmap);
+		static bool CouldBeIcon(ModuleDef module, string name) => CheckType(module, name, SystemDrawingIcon);
 
 		public static bool CheckType(ModuleDef module, string name, TypeRef expectedType) {
 			if (module == null)

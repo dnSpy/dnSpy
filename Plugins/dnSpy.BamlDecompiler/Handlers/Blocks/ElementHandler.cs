@@ -26,9 +26,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class ElementHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.ElementStart; }
-		}
+		public BamlRecordType Type => BamlRecordType.ElementStart;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (ElementStartRecord)((BamlBlockNode)node).Header;

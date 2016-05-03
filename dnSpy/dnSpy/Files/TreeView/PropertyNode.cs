@@ -29,53 +29,31 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class PropertyNode : FileTreeNodeData, IPropertyNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.PROPERTY_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, property.FullName); }
-		}
-
-		public PropertyDef PropertyDef {
-			get { return property; }
-		}
-		readonly PropertyDef property;
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return property; }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(property);
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.PROPERTY_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, PropertyDef.FullName);
+		public PropertyDef PropertyDef { get; }
+		IMDTokenProvider IMDTokenNode.Reference => PropertyDef;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(PropertyDef);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public PropertyNode(ITreeNodeGroup treeNodeGroup, PropertyDef property) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.property = property;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.PropertyDef = property;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().Write(output, language, property, Context.ShowToken, null);
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().Write(output, language, PropertyDef, Context.ShowToken, null);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
-			foreach (var m in property.GetMethods)
+			foreach (var m in PropertyDef.GetMethods)
 				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), m);
-			foreach (var m in property.SetMethods)
+			foreach (var m in PropertyDef.SetMethods)
 				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), m);
-			foreach (var m in property.OtherMethods)
+			foreach (var m in PropertyDef.OtherMethods)
 				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), m);
 		}
 
-		public IMethodNode Create(MethodDef method) {
-			return Context.FileTreeView.CreateProperty(method);
-		}
+		public IMethodNode Create(MethodDef method) => Context.FileTreeView.CreateProperty(method);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			var res = filter.GetResult(PropertyDef);

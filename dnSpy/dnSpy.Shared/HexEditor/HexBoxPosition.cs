@@ -26,30 +26,25 @@ namespace dnSpy.Shared.HexEditor {
 		/// <summary>
 		/// Offset in stream
 		/// </summary>
-		public ulong Offset;
+		public ulong Offset { get; }
 
 		/// <summary>
 		/// Kind of position
 		/// </summary>
-		public HexBoxPositionKind Kind;
+		public HexBoxPositionKind Kind { get; }
 
 		/// <summary>
 		/// Character position within <see cref="Kind"/>
 		/// </summary>
-		public byte KindPosition;
+		public byte KindPosition { get; }
 
 		public const byte INDEX_HEXBYTE_FIRST = 0;
 		public const byte INDEX_HEXBYTE_HI = 0;
 		public const byte INDEX_HEXBYTE_LO = 1;
 		public const byte INDEX_HEXBYTE_LAST = 1;
 
-		public static HexBoxPosition CreateAscii(ulong offset) {
-			return new HexBoxPosition(offset, HexBoxPositionKind.Ascii, 0);
-		}
-
-		public static HexBoxPosition CreateByte(ulong offset, int kindPos) {
-			return new HexBoxPosition(offset, HexBoxPositionKind.HexByte, kindPos);
-		}
+		public static HexBoxPosition CreateAscii(ulong offset) => new HexBoxPosition(offset, HexBoxPositionKind.Ascii, 0);
+		public static HexBoxPosition CreateByte(ulong offset, int kindPos) => new HexBoxPosition(offset, HexBoxPositionKind.HexByte, kindPos);
 
 		public HexBoxPosition(ulong offset, HexBoxPositionKind kind, int kindPos) {
 			this.Offset = offset;
@@ -57,17 +52,9 @@ namespace dnSpy.Shared.HexEditor {
 			this.KindPosition = (byte)kindPos;
 		}
 
-		public HexBoxPosition Create(ulong offset) {
-			return new HexBoxPosition(offset, Kind, KindPosition);
-		}
-
-		public static bool operator ==(HexBoxPosition a, HexBoxPosition b) {
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(HexBoxPosition a, HexBoxPosition b) {
-			return !a.Equals(b);
-		}
+		public HexBoxPosition Create(ulong offset) => new HexBoxPosition(offset, Kind, KindPosition);
+		public static bool operator ==(HexBoxPosition a, HexBoxPosition b) => a.Equals(b);
+		public static bool operator !=(HexBoxPosition a, HexBoxPosition b) => !a.Equals(b);
 
 		public bool Equals(HexBoxPosition other) {
 			return Offset == other.Offset &&
@@ -75,9 +62,7 @@ namespace dnSpy.Shared.HexEditor {
 				KindPosition == other.KindPosition;
 		}
 
-		public override bool Equals(object obj) {
-			return obj is HexBoxPosition && Equals((HexBoxPosition)obj);
-		}
+		public override bool Equals(object obj) => obj is HexBoxPosition && Equals((HexBoxPosition)obj);
 
 		public override int GetHashCode() {
 			return (int)(Offset >> 32) ^ (int)Offset ^

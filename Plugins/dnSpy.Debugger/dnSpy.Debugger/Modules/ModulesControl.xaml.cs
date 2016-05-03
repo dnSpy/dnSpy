@@ -24,9 +24,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Modules {
 	sealed partial class ModulesControl : UserControl {
-		public ListView ListView {
-			get { return listView; }
-		}
+		public ListView ListView => listView;
 
 		public ModulesControl() {
 			InitializeComponent();
@@ -35,8 +33,7 @@ namespace dnSpy.Debugger.Modules {
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			if (ModulesListViewDoubleClick != null)
-				ModulesListViewDoubleClick(this, EventArgs.Empty);
+			ModulesListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler ModulesListViewDoubleClick;

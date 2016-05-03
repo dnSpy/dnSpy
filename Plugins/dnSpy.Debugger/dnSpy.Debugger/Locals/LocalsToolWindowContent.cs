@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Locals {
 	sealed class LocalsToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<ILocalsContent> localsContent;
 
-		public LocalsToolWindowContent LocalsToolWindowContent {
-			get { return localsToolWindowContent ?? (localsToolWindowContent = new LocalsToolWindowContent(localsContent)); }
-		}
+		public LocalsToolWindowContent LocalsToolWindowContent => localsToolWindowContent ?? (localsToolWindowContent = new LocalsToolWindowContent(localsContent));
 		LocalsToolWindowContent localsToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Debugger.Locals {
 			get { yield return new ToolWindowContentInfo(LocalsToolWindowContent.THE_GUID, LocalsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == LocalsToolWindowContent.THE_GUID)
-				return LocalsToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == LocalsToolWindowContent.THE_GUID ? LocalsToolWindowContent : null;
 	}
 
 	sealed class LocalsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("D799829F-CAE3-4F8F-AD81-1732ABC50636");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return localsContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return localsContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.Window_Locals; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return localsContent.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => localsContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => localsContent.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Debugger_Resources.Window_Locals;
+		public object ToolTip => null;
+		public object UIObject => localsContent.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<ILocalsContent> localsContent;
 
@@ -107,8 +81,6 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public void Focus() {
-			localsContent.Value.Focus();
-		}
+		public void Focus() => localsContent.Value.Focus();
 	}
 }

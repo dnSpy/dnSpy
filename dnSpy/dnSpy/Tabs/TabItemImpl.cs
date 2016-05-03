@@ -26,9 +26,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Tabs {
 	sealed class TabItemImpl : TabItem {
-		internal ITabContent TabContent {
-			get { return tabContent; }
-		}
+		internal ITabContent TabContent => tabContent;
 		readonly ITabContent tabContent;
 
 		public bool IsActive {
@@ -58,25 +56,15 @@ namespace dnSpy.Tabs {
 			}
 			bool isSelected;
 
-			public bool IsActive {
-				get { return impl.IsActive; }
-			}
+			public bool IsActive => impl.IsActive;
 
 			internal void IsActiveChanged() {
 				OnPropertyChanged("IsActive");
 			}
 
-			public object ToolTip {
-				get { return impl.tabContent.ToolTip; }
-			}
-
-			public string Header {
-				get { return impl.tabContent.Title; }
-			}
-
-			public ICommand CloseCommand {
-				get { return new RelayCommand(a => impl.Close(), a => impl.CanClose); }
-			}
+			public object ToolTip => impl.tabContent.ToolTip;
+			public string Header => impl.tabContent.Title;
+			public ICommand CloseCommand => new RelayCommand(a => impl.Close(), a => impl.CanClose);
 
 			public TheHeader(TabItemImpl impl) {
 				this.impl = impl;
@@ -122,13 +110,11 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		void GotKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) {
+		void GotKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) =>
 			tabContent.OnVisibilityChanged(TabContentVisibilityEvent.GotKeyboardFocus);
-		}
 
-		void LostKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) {
+		void LostKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) =>
 			tabContent.OnVisibilityChanged(TabContentVisibilityEvent.LostKeyboardFocus);
-		}
 
 		protected override void OnSelected(RoutedEventArgs e) {
 			base.OnSelected(e);
@@ -142,13 +128,8 @@ namespace dnSpy.Tabs {
 			tabContent.OnVisibilityChanged(TabContentVisibilityEvent.Hidden);
 		}
 
-		bool CanClose {
-			get { return true; }
-		}
-
-		void Close() {
-			tabGroup.Close(this);
-		}
+		bool CanClose => true;
+		void Close() => tabGroup.Close(this);
 
 		internal void Dispose() {
 			Content = null;

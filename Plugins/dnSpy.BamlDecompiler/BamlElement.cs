@@ -39,29 +39,18 @@ namespace dnSpy.BamlDecompiler {
 		public readonly XElement Element;
 		public readonly string String;
 
-		public static implicit operator XamlNode(XElement value) {
-			return new XamlNode(value);
-		}
-
-		public static implicit operator XamlNode(string value) {
-			return new XamlNode(value);
-		}
-
-		public static implicit operator XElement(XamlNode node) {
-			return node.Element;
-		}
-
-		public static implicit operator string(XamlNode node) {
-			return node.String;
-		}
+		public static implicit operator XamlNode(XElement value) => new XamlNode(value);
+		public static implicit operator XamlNode(string value) => new XamlNode(value);
+		public static implicit operator XElement(XamlNode node) => node.Element;
+		public static implicit operator string(XamlNode node) => node.String;
 	}
 
 	internal class BamlElement {
-		public BamlNode Node { get; private set; }
+		public BamlNode Node { get; }
 		public XamlNode Xaml { get; set; }
 
 		public BamlElement Parent { get; set; }
-		public IList<BamlElement> Children { get; private set; }
+		public IList<BamlElement> Children { get; }
 
 		public BamlElement(BamlNode node) {
 			Node = node;

@@ -62,9 +62,7 @@ namespace dnSpy.ToolWindows {
 				this.tabGroupGuid = tabGroupGuid;
 			}
 
-			public IContextMenuCreator InitializeContextMenu(IMenuManager menuManager, ITabGroup tabGroup, FrameworkElement elem) {
-				return menuManager.InitializeContextMenu(elem, tabGroupGuid, new GuidObjectsCreator(this, tabGroup));
-			}
+			public IContextMenuCreator InitializeContextMenu(IMenuManager menuManager, ITabGroup tabGroup, FrameworkElement elem) => menuManager.InitializeContextMenu(elem, tabGroupGuid, new GuidObjectsCreator(this, tabGroup));
 
 			sealed class GuidObjectsCreator : IGuidObjectsCreator {
 				readonly InitializeContextMenuHelper owner;

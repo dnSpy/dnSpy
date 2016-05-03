@@ -58,24 +58,14 @@ namespace dnSpy.AsmEditor.Hex {
 			this.descr = descr;
 		}
 
-		public string Description {
-			get { return descr ?? string.Format(dnSpy_AsmEditor_Resources.Hex_Undo_Message_Write_Bytes, newData.Length, offset); }
-		}
+		public string Description => descr ?? string.Format(dnSpy_AsmEditor_Resources.Hex_Undo_Message_Write_Bytes, newData.Length, offset);
 
 		public IEnumerable<object> ModifiedObjects {
 			get { yield return doc; }
 		}
 
-		public void Execute() {
-			WriteData(newData);
-		}
-
-		public void Undo() {
-			WriteData(origData);
-		}
-
-		void WriteData(byte[] data) {
-			doc.Write(offset, data, 0, data.Length);
-		}
+		public void Execute() => WriteData(newData);
+		public void Undo() => WriteData(origData);
+		void WriteData(byte[] data) => doc.Write(offset, data, 0, data.Length);
 	}
 }

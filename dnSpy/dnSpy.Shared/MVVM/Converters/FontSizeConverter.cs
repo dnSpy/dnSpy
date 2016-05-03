@@ -24,9 +24,7 @@ using dnSpy.Shared.Controls;
 
 namespace dnSpy.Shared.MVVM.Converters {
 	public sealed class FontSizeConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			return Math.Round((double)value * 3 / 4);
-		}
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => Math.Round((double)value * 3 / 4);
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
 			var s = (string)value;

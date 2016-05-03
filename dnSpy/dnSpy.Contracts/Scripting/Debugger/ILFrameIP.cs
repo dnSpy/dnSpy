@@ -25,60 +25,42 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the offset
 		/// </summary>
-		public uint Offset {
-			get { return offset; }
-		}
-		readonly uint offset;
+		public uint Offset { get; }
 
 		/// <summary>
 		/// Gets the mapping result
 		/// </summary>
-		public MappingResult Mapping {
-			get { return mapping; }
-		}
-		readonly MappingResult mapping;
+		public MappingResult Mapping { get; }
 
 		/// <summary>
 		/// The native code is in the prolog, so the value of the IP is 0.
 		/// </summary>
-		public bool IsProlog {
-			get { return (Mapping & MappingResult.Prolog) != 0; }
-		}
+		public bool IsProlog => (Mapping & MappingResult.Prolog) != 0;
 
 		/// <summary>
 		/// The native code is in an epilog, so the value of the IP is the address of the last instruction of the method.
 		/// </summary>
-		public bool IsEpilog {
-			get { return (Mapping & MappingResult.Epilog) != 0; }
-		}
+		public bool IsEpilog => (Mapping & MappingResult.Epilog) != 0;
 
 		/// <summary>
 		/// No mapping information is available for the method, so the value of the IP is 0.
 		/// </summary>
-		public bool HasNoInfo {
-			get { return (Mapping & MappingResult.NoInfo) != 0; }
-		}
+		public bool HasNoInfo => (Mapping & MappingResult.NoInfo) != 0;
 
 		/// <summary>
 		/// Although there is mapping information for the method, the current address cannot be mapped to Microsoft intermediate language (MSIL) code. The value of the IP is 0.
 		/// </summary>
-		public bool IsUnmappedAddress {
-			get { return (Mapping & MappingResult.UnmappedAddress) != 0; }
-		}
+		public bool IsUnmappedAddress => (Mapping & MappingResult.UnmappedAddress) != 0;
 
 		/// <summary>
 		/// Either the method maps exactly to MSIL code or the frame has been interpreted, so the value of the IP is accurate.
 		/// </summary>
-		public bool IsExact {
-			get { return (Mapping & MappingResult.Exact) != 0; }
-		}
+		public bool IsExact => (Mapping & MappingResult.Exact) != 0;
 
 		/// <summary>
 		/// The method was successfully mapped, but the value of the IP may be approximate.
 		/// </summary>
-		public bool IsApproximate {
-			get { return (Mapping & MappingResult.Approximate) != 0; }
-		}
+		public bool IsApproximate => (Mapping & MappingResult.Approximate) != 0;
 
 		/// <summary>
 		/// Constructor
@@ -86,8 +68,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">Offset</param>
 		/// <param name="mapping">Mapping flags</param>
 		public ILFrameIP(uint offset, MappingResult mapping) {
-			this.offset = offset;
-			this.mapping = mapping;
+			this.Offset = offset;
+			this.Mapping = mapping;
 		}
 
 		/// <summary>

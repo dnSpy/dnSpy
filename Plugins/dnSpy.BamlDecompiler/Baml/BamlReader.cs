@@ -32,9 +32,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			: base(stream) {
 		}
 
-		public int ReadEncodedInt() {
-			return Read7BitEncodedInt();
-		}
+		public int ReadEncodedInt() => Read7BitEncodedInt();
 	}
 
 	internal class BamlReader {

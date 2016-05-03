@@ -27,9 +27,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class PropertyWithStaticResourceIdHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithStaticResourceId; }
-		}
+		public BamlRecordType Type => BamlRecordType.PropertyWithStaticResourceId;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (PropertyWithStaticResourceIdRecord)((BamlRecordNode)node).Record;

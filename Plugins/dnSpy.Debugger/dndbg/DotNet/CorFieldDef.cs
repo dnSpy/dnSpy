@@ -31,13 +31,8 @@ namespace dndbg.DotNet {
 		readonly CorTypeDef ownerType;
 		FieldAttributes origAttrs;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
-
-		public CorTypeDef OwnerType {
-			get { return ownerType; }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
+		public CorTypeDef OwnerType => ownerType;
 
 		public CorFieldDef(CorModuleDef readerModule, uint rid, CorTypeDef ownerType) {
 			this.readerModule = readerModule;
@@ -96,9 +91,7 @@ namespace dndbg.DotNet {
 			return readerModule.UpdateRowId(new ConstantUser(c, (ElementType)etype));
 		}
 
-		protected override MarshalType GetMarshalType_NoLock() {
-			return readerModule.ReadMarshalType(this, GenericParamContext.Create(ownerType));
-		}
+		protected override MarshalType GetMarshalType_NoLock() => readerModule.ReadMarshalType(this, GenericParamContext.Create(ownerType));
 
 		protected override RVA GetRVA_NoLock() {
 			RVA rva2;
@@ -129,13 +122,9 @@ namespace dndbg.DotNet {
 			this.Signature = readerModule.ReadSignature(data, GenericParamContext.Create(ownerType));
 		}
 
-		void InitCustomAttributes_NoLock() {
-			customAttributes = null;
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void InitCustomAttributes_NoLock() => customAttributes = null;
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, GenericParamContext.Create(ownerType));
-		}
 
 		bool GetFieldRVA_NoLock(out RVA rva) {
 			rva = 0;

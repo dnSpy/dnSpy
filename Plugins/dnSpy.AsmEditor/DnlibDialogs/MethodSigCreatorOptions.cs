@@ -56,8 +56,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return clone;
 		}
 
-		object ICloneable.Clone() {
-			return Clone();
-		}
+		object ICloneable.Clone() => Clone();
 	}
 }

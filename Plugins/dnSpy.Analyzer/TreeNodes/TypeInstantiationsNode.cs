@@ -33,16 +33,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public TypeInstantiationsNode(TypeDef analyzedType) {
 			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+				throw new ArgumentNullException(nameof(analyzedType));
 
 			this.analyzedType = analyzedType;
-
 			this.isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.InstantiatedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindReferencesInType);
@@ -76,8 +74,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static bool CanShow(TypeDef type) {
-			return (type.IsClass && !(type.IsAbstract && type.IsSealed) && !type.IsEnum);
-		}
+		public static bool CanShow(TypeDef type) => (type.IsClass && !(type.IsAbstract && type.IsSealed) && !type.IsEnum);
 	}
 }

@@ -27,9 +27,7 @@ using dnSpy.Controls;
 namespace dnSpy.MainApp {
 	[Export, PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class AppToolBar : IStackedContentChild {
-		public object UIObject {
-			get { return toolBar; }
-		}
+		public object UIObject => toolBar;
 		readonly ToolBar toolBar;
 
 		readonly IToolBarManager toolBarManager;
@@ -40,8 +38,7 @@ namespace dnSpy.MainApp {
 			this.toolBar = new ToolBar { FocusVisualStyle = null };
 		}
 
-		internal void Initialize(Window window) {
+		internal void Initialize(Window window) =>
 			toolBarManager.InitializeToolBar(toolBar, new Guid(ToolBarConstants.APP_TB_GUID), window);
-		}
 	}
 }

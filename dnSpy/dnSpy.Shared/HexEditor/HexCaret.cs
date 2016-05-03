@@ -50,13 +50,9 @@ namespace dnSpy.Shared.HexEditor {
 		}
 		static int caretBlinkTime;
 
-		public double Order {
-			get { return DEFAULT_ORDER; }
-		}
+		public double Order => DEFAULT_ORDER;
 
-		public HexBoxPosition Position {
-			get { return position; }
-		}
+		public HexBoxPosition Position => position;
 		HexBoxPosition position;
 		double horizOffset;
 		DispatcherTimer timer;
@@ -115,9 +111,7 @@ namespace dnSpy.Shared.HexEditor {
 		}
 		bool blinkIsVisible = false;
 
-		void Redraw() {
-			InvalidateVisual();
-		}
+		void Redraw() => InvalidateVisual();
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
@@ -134,13 +128,8 @@ namespace dnSpy.Shared.HexEditor {
 			}
 		}
 
-		public Rect? HexRect {
-			get { return hexByteInfo.Rect; }
-		}
-
-		public Rect? AsciiRect {
-			get { return asciiInfo.Rect; }
-		}
+		public Rect? HexRect => hexByteInfo.Rect;
+		public Rect? AsciiRect => asciiInfo.Rect;
 
 		sealed class CaretInfo {
 			public Geometry Geometry;

@@ -26,50 +26,20 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Commands {
 	class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem {
-		public ICommand AddItemBeforeCommand {
-			get { return new RelayCommand(a => AddItemBefore((T[])a), a => AddItemBeforeCanExecute((T[])a)); }
-		}
-
-		public ICommand AddItemAfterCommand {
-			get { return new RelayCommand(a => AddItemAfter((T[])a), a => AddItemAfterCanExecute((T[])a)); }
-		}
-
-		public ICommand AppendItemCommand {
-			get { return new RelayCommand(a => AppendItem((T[])a), a => AppendItemCanExecute((T[])a)); }
-		}
-
-		public ICommand ItemMoveUpCommand {
-			get { return new RelayCommand(a => ItemMoveUp((T[])a), a => ItemMoveUpCanExecute((T[])a)); }
-		}
-
-		public ICommand ItemMoveDownCommand {
-			get { return new RelayCommand(a => ItemMoveDown((T[])a), a => ItemMoveDownCanExecute((T[])a)); }
-		}
-
-		public ICommand RemoveItemCommand {
-			get { return new RelayCommand(a => RemoveItem((T[])a), a => RemoveItemCanExecute((T[])a)); }
-		}
-
-		public ICommand RemoveAllItemsCommand {
-			get { return new RelayCommand(a => RemoveAllItems((T[])a), a => RemoveAllItemsCanExecute((T[])a)); }
-		}
-
+		public ICommand AddItemBeforeCommand => new RelayCommand(a => AddItemBefore((T[])a), a => AddItemBeforeCanExecute((T[])a));
+		public ICommand AddItemAfterCommand => new RelayCommand(a => AddItemAfter((T[])a), a => AddItemAfterCanExecute((T[])a));
+		public ICommand AppendItemCommand => new RelayCommand(a => AppendItem((T[])a), a => AppendItemCanExecute((T[])a));
+		public ICommand ItemMoveUpCommand => new RelayCommand(a => ItemMoveUp((T[])a), a => ItemMoveUpCanExecute((T[])a));
+		public ICommand ItemMoveDownCommand => new RelayCommand(a => ItemMoveDown((T[])a), a => ItemMoveDownCanExecute((T[])a));
+		public ICommand RemoveItemCommand => new RelayCommand(a => RemoveItem((T[])a), a => RemoveItemCanExecute((T[])a));
+		public ICommand RemoveAllItemsCommand => new RelayCommand(a => RemoveAllItems((T[])a), a => RemoveAllItemsCanExecute((T[])a));
 		public bool DisableAutoUpdateProps { get; set; }
-
 		public Action<int> UpdateIndexesDelegate { get; set; }
+		public bool CanCreateNewItems => createNewItem != null;
+		public bool CanRemoveItems => true;
+		public bool CanMoveItems => true;
+
 		readonly Func<T> createNewItem;
-
-		public bool CanCreateNewItems {
-			get { return createNewItem != null; }
-		}
-
-		public bool CanRemoveItems {
-			get { return true; }
-		}
-
-		public bool CanMoveItems {
-			get { return true; }
-		}
 
 		public IndexObservableCollection()
 			: this(null) {
@@ -144,33 +114,13 @@ namespace dnSpy.AsmEditor.Commands {
 			AddNewItem(index + indexDisp);
 		}
 
-		void AddNewItem(int index) {
-			Insert(index, createNewItem());
-		}
-
-		void AddItemBefore(T[] items) {
-			AddNewItem(items, 0);
-		}
-
-		bool AddItemBeforeCanExecute(T[] items) {
-			return CanCreateNewItems && items.Length == 1;
-		}
-
-		void AddItemAfter(T[] items) {
-			AddNewItem(items, 1);
-		}
-
-		bool AddItemAfterCanExecute(T[] items) {
-			return CanCreateNewItems && items.Length == 1;
-		}
-
-		void AppendItem(T[] items) {
-			AddNewItem(Count);
-		}
-
-		bool AppendItemCanExecute(T[] items) {
-			return CanCreateNewItems;
-		}
+		void AddNewItem(int index) => Insert(index, createNewItem());
+		void AddItemBefore(T[] items) => AddNewItem(items, 0);
+		bool AddItemBeforeCanExecute(T[] items) => CanCreateNewItems && items.Length == 1;
+		void AddItemAfter(T[] items) => AddNewItem(items, 1);
+		bool AddItemAfterCanExecute(T[] items) => CanCreateNewItems && items.Length == 1;
+		void AppendItem(T[] items) => AddNewItem(Count);
+		bool AppendItemCanExecute(T[] items) => CanCreateNewItems;
 
 		void ItemMoveUp(T[] items) {
 			if (items.Length == 0)
@@ -198,9 +148,7 @@ namespace dnSpy.AsmEditor.Commands {
 			UpdateIndexes(0);
 		}
 
-		bool ItemMoveUpCanExecute(T[] items) {
-			return CanMoveItems && items.Length > 0;
-		}
+		bool ItemMoveUpCanExecute(T[] items) => CanMoveItems && items.Length > 0;
 
 		void ItemMoveDown(T[] items) {
 			if (items.Length == 0)
@@ -230,9 +178,7 @@ namespace dnSpy.AsmEditor.Commands {
 			UpdateIndexes(0);
 		}
 
-		bool ItemMoveDownCanExecute(T[] items) {
-			return CanMoveItems && items.Length > 0;
-		}
+		bool ItemMoveDownCanExecute(T[] items) => CanMoveItems && items.Length > 0;
 
 		void RemoveItem(T[] items) {
 			Array.Sort(items, (a, b) => b.Index.CompareTo(a.Index));
@@ -255,16 +201,8 @@ namespace dnSpy.AsmEditor.Commands {
 			UpdateIndexes(0);
 		}
 
-		bool RemoveItemCanExecute(T[] items) {
-			return CanRemoveItems && items.Length > 0;
-		}
-
-		void RemoveAllItems(T[] items) {
-			Clear();
-		}
-
-		bool RemoveAllItemsCanExecute(T[] items) {
-			return CanRemoveItems && Count > 0;
-		}
+		bool RemoveItemCanExecute(T[] items) => CanRemoveItems && items.Length > 0;
+		void RemoveAllItems(T[] items) => Clear();
+		bool RemoveAllItemsCanExecute(T[] items) => CanRemoveItems && Count > 0;
 	}
 }

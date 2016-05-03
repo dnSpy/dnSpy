@@ -22,32 +22,12 @@ using ICSharpCode.AvalonEdit.Search;
 
 namespace dnSpy.Shared.AvalonEdit {
 	public sealed class AvalonEditSearchPanelLocalization : Localization {
-		public override string MatchCaseText {
-			get { return dnSpy_Shared_Resources.SearchPanel_MatchCaseText; }
-		}
-
-		public override string MatchWholeWordsText {
-			get { return dnSpy_Shared_Resources.SearchPanel_MatchWholeWordsText; }
-		}
-
-		public override string UseRegexText {
-			get { return dnSpy_Shared_Resources.SearchPanel_UseRegexText; }
-		}
-
-		public override string FindNextText {
-			get { return dnSpy_Shared_Resources.SearchPanel_FindNextText; }
-		}
-
-		public override string FindPreviousText {
-			get { return dnSpy_Shared_Resources.SearchPanel_FindPreviousText; }
-		}
-
-		public override string ErrorText {
-			get { return dnSpy_Shared_Resources.SearchPanel_ErrorText; }
-		}
-
-		public override string NoMatchesFoundText {
-			get { return dnSpy_Shared_Resources.SearchPanel_NoMatchesFoundText; }
-		}
+		public override string MatchCaseText => dnSpy_Shared_Resources.SearchPanel_MatchCaseText;
+		public override string MatchWholeWordsText => dnSpy_Shared_Resources.SearchPanel_MatchWholeWordsText;
+		public override string UseRegexText => dnSpy_Shared_Resources.SearchPanel_UseRegexText;
+		public override string FindNextText => dnSpy_Shared_Resources.SearchPanel_FindNextText;
+		public override string FindPreviousText => dnSpy_Shared_Resources.SearchPanel_FindPreviousText;
+		public override string ErrorText => dnSpy_Shared_Resources.SearchPanel_ErrorText;
+		public override string NoMatchesFoundText => dnSpy_Shared_Resources.SearchPanel_NoMatchesFoundText;
 	}
 }

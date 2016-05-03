@@ -25,57 +25,41 @@ namespace dndbg.Engine {
 	/// A debugged .NET thread
 	/// </summary>
 	public sealed class DnThread {
-		public CorThread CorThread {
-			get { return thread; }
-		}
-		readonly CorThread thread;
+		public CorThread CorThread { get; }
 
 		/// <summary>
 		/// Unique id per debugger
 		/// </summary>
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-		readonly int uniqueId;
+		public int UniqueId { get; }
 
 		/// <summary>
 		/// Unique id per process
 		/// </summary>
-		public int UniqueIdProcess {
-			get { return uniqueIdProcess; }
-		}
-		readonly int uniqueIdProcess;
+		public int UniqueIdProcess { get; }
 
 		/// <summary>
 		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS
 		/// thread ID in V2 or later, see <see cref="VolatileThreadId"/>
 		/// </summary>
-		public int ThreadId {
-			get { return thread.ThreadId; }
-		}
+		public int ThreadId => CorThread.ThreadId;
 
 		/// <summary>
 		/// Gets the OS thread ID (calls ICorDebugThread2::GetVolatileOSThreadID()) or -1. This value
 		/// can change during execution of the thread.
 		/// </summary>
-		public int VolatileThreadId {
-			get { return thread.VolatileThreadId; }
-		}
+		public int VolatileThreadId => CorThread.VolatileThreadId;
 
 		/// <summary>
 		/// true if the thread has exited
 		/// </summary>
-		public bool HasExited {
-			get { return hasExited; }
-		}
-		bool hasExited;
+		public bool HasExited { get; private set; }
 
 		/// <summary>
 		/// Gets the AppDomain or null if none
 		/// </summary>
 		public DnAppDomain AppDomainOrNull {
 			get {
-				var comAppDomain = thread.AppDomain;
+				var comAppDomain = CorThread.AppDomain;
 				return comAppDomain == null ? null : Process.TryGetValidAppDomain(comAppDomain.RawObject);
 			}
 		}
@@ -83,42 +67,31 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the owner debugger
 		/// </summary>
-		public DnDebugger Debugger {
-			get { return Process.Debugger; }
-		}
+		public DnDebugger Debugger => Process.Debugger;
 
 		/// <summary>
 		/// Gets the owner process
 		/// </summary>
-		public DnProcess Process {
-			get { return ownerProcess; }
-		}
-		readonly DnProcess ownerProcess;
+		public DnProcess Process { get; }
 
 		/// <summary>
 		/// Gets all chains
 		/// </summary>
-		public IEnumerable<CorChain> Chains {
-			get { return thread.Chains; }
-		}
+		public IEnumerable<CorChain> Chains => CorThread.Chains;
 
 		/// <summary>
 		/// Gets all frames in all chains
 		/// </summary>
-		public IEnumerable<CorFrame> AllFrames {
-			get { return thread.AllFrames; }
-		}
+		public IEnumerable<CorFrame> AllFrames => CorThread.AllFrames;
 
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int uniqueId, int uniqueIdProcess) {
-			this.ownerProcess = ownerProcess;
-			this.thread = new CorThread(thread);
-			this.uniqueId = uniqueId;
-			this.uniqueIdProcess = uniqueIdProcess;
+			this.Process = ownerProcess;
+			this.CorThread = new CorThread(thread);
+			this.UniqueId = uniqueId;
+			this.UniqueIdProcess = uniqueIdProcess;
 		}
 
-		internal void SetHasExited() {
-			hasExited = true;
-		}
+		internal void SetHasExited() => HasExited = true;
 
 		public bool CheckValid() {
 			if (HasExited)
@@ -131,8 +104,6 @@ namespace dndbg.Engine {
 			//TODO:
 		}
 
-		public override string ToString() {
-			return string.Format("{0} {1} {2}", UniqueId, ThreadId, VolatileThreadId);
-		}
+		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, ThreadId, VolatileThreadId);
 	}
 }

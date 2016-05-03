@@ -39,9 +39,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override ReplEditorCtxMenuContext CreateContext(IMenuItemContext context) {
-			return CreateContextInternal(context);
-		}
+		protected sealed override ReplEditorCtxMenuContext CreateContext(IMenuItemContext context) => CreateContextInternal(context);
 
 		internal static ReplEditorCtxMenuContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID))

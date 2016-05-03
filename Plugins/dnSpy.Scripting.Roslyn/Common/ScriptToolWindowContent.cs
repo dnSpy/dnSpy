@@ -25,9 +25,7 @@ using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptToolWindowContentCreator : IMainToolWindowContentCreator {
-		public ScriptToolWindowContent ScriptToolWindowContent {
-			get { return scriptToolWindowContent ?? (scriptToolWindowContent = CreateContent()); }
-		}
+		public ScriptToolWindowContent ScriptToolWindowContent => scriptToolWindowContent ?? (scriptToolWindowContent = CreateContent());
 		ScriptToolWindowContent scriptToolWindowContent;
 
 		readonly Guid contentGuid;
@@ -37,44 +35,21 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public abstract IEnumerable<ToolWindowContentInfo> ContentInfos { get; }
-
 		protected abstract ScriptToolWindowContent CreateContent();
-
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == contentGuid)
-				return ScriptToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == contentGuid ? ScriptToolWindowContent : null;
 	}
 
 	abstract class ScriptToolWindowContent : IToolWindowContent {
 		protected abstract IScriptContent ScriptContent { get; }
-
-		public IInputElement FocusedElement {
-			get { return ScriptContent.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return ScriptContent.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return contentGuid; }
-		}
-		readonly Guid contentGuid;
-
+		public IInputElement FocusedElement => ScriptContent.FocusedElement;
+		public FrameworkElement ScaleElement => ScriptContent.ScaleElement;
+		public Guid Guid { get; }
 		public abstract string Title { get; }
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return ScriptContent.UIObject; }
-		}
+		public object ToolTip => null;
+		public object UIObject => ScriptContent.UIObject;
 
 		public ScriptToolWindowContent(Guid contentGuid) {
-			this.contentGuid = contentGuid;
+			this.Guid = contentGuid;
 		}
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {

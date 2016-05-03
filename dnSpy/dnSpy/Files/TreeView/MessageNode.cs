@@ -28,44 +28,24 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class MessageNode : FileTreeNodeData, IMessageNode {
-		public override Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return imgRef;
-		}
-
-		public string Message {
-			get { return msg; }
-		}
-		readonly string msg;
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid { get; }
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => imgRef;
+		public string Message { get; }
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly ImageReference imgRef;
 
 		public MessageNode(ITreeNodeGroup treeNodeGroup, Guid guid, ImageReference imgRef, string msg) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.guid = guid;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.Guid = guid;
 			this.imgRef = imgRef;
-			this.msg = msg;
+			this.Message = msg;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(msg, BoxedTextTokenKind.Text);
-		}
-
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
-			return filter.GetResult(this).FilterType;
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			output.Write(Message, BoxedTextTokenKind.Text);
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
+			filter.GetResult(this).FilterType;
 	}
 }

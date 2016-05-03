@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace dnSpy.Shared.Resources {
 					continue;
 
 				try {
-					mgr = m.Invoke(null, new object[0]) as ResourceManager;
+					mgr = m.Invoke(null, Array.Empty<object>()) as ResourceManager;
 				}
 				catch {
 					mgr = null;

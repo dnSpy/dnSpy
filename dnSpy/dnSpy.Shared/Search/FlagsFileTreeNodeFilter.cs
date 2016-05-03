@@ -279,13 +279,9 @@ namespace dnSpy.Shared.Search {
 			return new FileTreeNodeFilterResult(FilterType.Hide, false);
 		}
 
-		static bool IsDelegate(TypeDef type) {
-			return type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
-		}
+		static bool IsDelegate(TypeDef type) => type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
-		static bool HasInstanceConstructors(TypeDef type) {
-			return type.Methods.Any(m => m.IsInstanceConstructor);
-		}
+		static bool HasInstanceConstructors(TypeDef type) => type.Methods.Any(m => m.IsInstanceConstructor);
 
 		static bool HasMethodBodies(TypeDef type) {
 			foreach (var method in type.Methods) {
@@ -295,9 +291,7 @@ namespace dnSpy.Shared.Search {
 			return false;
 		}
 
-		static bool HasParamDefs(TypeDef type) {
-			return type.Methods.Any(m => m.HasParamDefs);
-		}
+		static bool HasParamDefs(TypeDef type) => type.Methods.Any(m => m.HasParamDefs);
 
 		static bool HasLocals(TypeDef type) {
 			foreach (var method in type.Methods) {

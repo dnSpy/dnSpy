@@ -45,9 +45,8 @@ namespace dnSpy.Shared.Settings.Dialog {
 			this.Value = currentValue;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
+		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) =>
 			onClosed(saveSettings, appRefreshSettings, Value);
-		}
 	}
 
 	public sealed class SimpleAppOptionButton : ISimpleAppOptionButton {
@@ -67,9 +66,8 @@ namespace dnSpy.Shared.Settings.Dialog {
 			this.onClosed = onClosed ?? new Action<bool, IAppRefreshSettings>((a, b) => { });
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
+		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) =>
 			onClosed(saveSettings, appRefreshSettings);
-		}
 	}
 
 	public sealed class SimpleAppOptionTextBox : ISimpleAppOptionTextBox {
@@ -94,16 +92,13 @@ namespace dnSpy.Shared.Settings.Dialog {
 			this.Value = currentValue;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
+		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) =>
 			onClosed(saveSettings, appRefreshSettings, Value);
-		}
 	}
 
 	public sealed class SimpleAppOptionUserContent<TUIContent> : ISimpleAppOptionUserContent {
 		public double Order { get; set; }
-		public object UIContent {
-			get { return uiContent; }
-		}
+		public object UIContent => uiContent;
 		readonly TUIContent uiContent;
 
 		readonly Action<bool, IAppRefreshSettings, TUIContent> onClosed;
@@ -122,8 +117,7 @@ namespace dnSpy.Shared.Settings.Dialog {
 			this.uiContent = uiContent;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
+		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) =>
 			onClosed(saveSettings, appRefreshSettings, uiContent);
-		}
 	}
 }

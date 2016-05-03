@@ -24,13 +24,9 @@ using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	static class Utils {
-		public static bool IsDebuggee32Bit {
-			get { return IntPtr.Size == 4; }// Debugger and debuggee must both be 32-bit or both 64-bit
-		}
+		public static bool IsDebuggee32Bit => IntPtr.Size == 4;
 
-		public static int DebuggeeIntPtrSize {
-			get { return IntPtr.Size; }
-		}
+		public static int DebuggeeIntPtrSize => IntPtr.Size;
 
 		public static bool GetSystemNullableFields(this CorType type, out TokenAndName hasValueInfo, out TokenAndName valueInfo) {
 			hasValueInfo = new TokenAndName();
@@ -38,9 +34,8 @@ namespace dndbg.Engine {
 			if (type == null || !type.IsSystemNullable)
 				return false;
 			var cls = type.Class;
-			var mod = cls == null ? null : cls.Module;
-			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			var fields = MetaDataUtils.GetFields(mdi, cls == null ? 0 : cls.Token);
+			var mdi = cls?.Module?.GetMetaDataInterface<IMetaDataImport>();
+			var fields = MetaDataUtils.GetFields(mdi, cls?.Token ?? 0);
 			if (fields.Count != 2)
 				return false;
 			if (fields[0].Name != "hasValue")

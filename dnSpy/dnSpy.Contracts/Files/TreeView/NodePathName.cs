@@ -29,18 +29,12 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>
 		/// Gets the guid
 		/// </summary>
-		public Guid Guid {
-			get { return guid; }
-		}
-		readonly Guid guid;
+		public Guid Guid { get; }
 
 		/// <summary>
 		/// Gets the name
 		/// </summary>
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
+		public string Name { get; }
 
 		/// <summary>
 		/// Constructor
@@ -48,9 +42,9 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="guid">Guid of node (<see cref="ITreeNodeData.Guid"/>)</param>
 		/// <param name="name">Extra data if needed or null</param>
 		public NodePathName(Guid guid, string name = null) {
-			Debug.Assert(guid != Guid.Empty);
-			this.guid = guid;
-			this.name = name ?? string.Empty;
+			Debug.Assert(guid != System.Guid.Empty);
+			this.Guid = guid;
+			this.Name = name ?? string.Empty;
 		}
 
 		/// <summary>
@@ -58,10 +52,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(NodePathName other) {
-			return guid.Equals(other.guid) &&
-					StringComparer.Ordinal.Equals(name, other.name);
-		}
+		public bool Equals(NodePathName other) => Guid.Equals(other.Guid) && StringComparer.Ordinal.Equals(Name, other.Name);
 
 		/// <summary>
 		/// Equals()
@@ -78,18 +69,16 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() {
-			return guid.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(name);
-		}
+		public override int GetHashCode() => Guid.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(Name);
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (string.IsNullOrEmpty(name))
-				return guid.ToString();
-			return string.Format("{0} - {1}", guid, name);
+			if (string.IsNullOrEmpty(Name))
+				return Guid.ToString();
+			return string.Format("{0} - {1}", Guid, Name);
 		}
 	}
 }

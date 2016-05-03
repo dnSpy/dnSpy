@@ -24,22 +24,14 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class TypeInfoHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.TypeInfo; }
-		}
+		public BamlRecordType Type => BamlRecordType.TypeInfo;
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
-		}
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) => null;
 	}
 
 	internal class TypeSerializerInfoHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.TypeSerializerInfo; }
-		}
+		public BamlRecordType Type => BamlRecordType.TypeSerializerInfo;
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
-		}
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) => null;
 	}
 }

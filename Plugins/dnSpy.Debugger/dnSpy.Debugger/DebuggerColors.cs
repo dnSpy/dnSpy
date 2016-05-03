@@ -38,9 +38,7 @@ namespace dnSpy.Debugger {
 			OnThemeUpdated(themeManager);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			OnThemeUpdated((IThemeManager)sender);
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => OnThemeUpdated((IThemeManager)sender);
 
 		void OnThemeUpdated(IThemeManager themeManager) {
 			var theme = themeManager.Theme;

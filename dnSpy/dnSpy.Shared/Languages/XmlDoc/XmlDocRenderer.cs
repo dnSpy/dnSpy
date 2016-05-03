@@ -35,25 +35,11 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 	public class XmlDocRenderer : IXmlDocOutput {
 		readonly StringBuilder ret = new StringBuilder();
 
-		void IXmlDocOutput.WriteNewLine() {
-			ret.AppendLine();
-		}
-
-		void IXmlDocOutput.WriteSpace() {
-			ret.Append(' ');
-		}
-
-		void IXmlDocOutput.Write(string s, object data) {
-			ret.Append(s);
-		}
-
-		public void AppendText(string text) {
-			ret.Append(text);
-		}
-
-		public void AddXmlDocumentation(string xmlDocumentation) {
-			WriteXmlDoc(this, xmlDocumentation);
-		}
+		void IXmlDocOutput.WriteNewLine() => ret.AppendLine();
+		void IXmlDocOutput.WriteSpace() => ret.Append(' ');
+		void IXmlDocOutput.Write(string s, object data) => ret.Append(s);
+		public void AppendText(string text) => ret.Append(text);
+		public void AddXmlDocumentation(string xmlDocumentation) => WriteXmlDoc(this, xmlDocumentation);
 
 		public static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation) {
 			if (xmlDocumentation == null)
@@ -68,9 +54,7 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 			return true;
 		}
 
-		public static Regex WhitespaceRegex {
-			get { return whitespace; }
-		}
+		public static Regex WhitespaceRegex => whitespace;
 		static readonly Regex whitespace = new Regex(@"\s+");
 
 		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml) {
@@ -176,8 +160,6 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 			return cref.Trim();
 		}
 
-		public override string ToString() {
-			return ret.ToString();
-		}
+		public override string ToString() => ret.ToString();
 	}
 }

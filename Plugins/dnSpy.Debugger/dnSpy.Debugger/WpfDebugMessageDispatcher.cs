@@ -35,9 +35,7 @@ namespace dnSpy.Debugger {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
-		Dispatcher Dispatcher {
-			get { return !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null; }
-		}
+		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 
 		public void ExecuteAsync(Action action) {
 			var disp = Dispatcher;

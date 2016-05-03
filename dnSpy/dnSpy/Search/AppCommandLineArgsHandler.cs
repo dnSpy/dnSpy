@@ -35,9 +35,7 @@ namespace dnSpy.Search {
 			this.searchManager = searchManager;
 		}
 
-		public double Order {
-			get { return 1000; }
-		}
+		public double Order => 1000;
 
 		public void OnNewArgs(IAppCommandLineArgs args) {
 			bool show = false;

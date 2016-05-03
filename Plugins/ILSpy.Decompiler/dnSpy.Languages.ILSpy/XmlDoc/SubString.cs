@@ -31,12 +31,7 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 			this.Length = length;
 		}
 
-		public override string ToString() {
-			return this.String.Substring(this.Index, this.Length);
-		}
-
-		public void WriteTo(StringBuilder sb) {
-			sb.Append(this.String, this.Index, this.Length);
-		}
+		public override string ToString() => this.String.Substring(this.Index, this.Length);
+		public void WriteTo(StringBuilder sb) => sb.Append(this.String, this.Index, this.Length);
 	}
 }

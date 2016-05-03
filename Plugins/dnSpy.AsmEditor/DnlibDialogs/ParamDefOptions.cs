@@ -52,8 +52,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return pd;
 		}
 
-		public ParamDef Create(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new ParamDefUser()));
-		}
+		public ParamDef Create(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new ParamDefUser()));
 	}
 }

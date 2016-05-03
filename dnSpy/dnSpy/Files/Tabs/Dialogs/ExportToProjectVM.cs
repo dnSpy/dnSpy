@@ -41,17 +41,9 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			Complete,
 		}
 
-		public ICommand PickDestDirCommand {
-			get { return new RelayCommand(a => PickDestDir(), a => CanPickDestDir); }
-		}
-
-		public ICommand ExportProjectsCommand {
-			get { return new RelayCommand(a => ExportProjects(), a => CanExportProjects); }
-		}
-
-		public ICommand GenerateNewProjectGuidCommand {
-			get { return new RelayCommand(a => ProjectGuid.Value = Guid.NewGuid()); }
-		}
+		public ICommand PickDestDirCommand => new RelayCommand(a => PickDestDir(), a => CanPickDestDir);
+		public ICommand ExportProjectsCommand => new RelayCommand(a => ExportProjects(), a => CanExportProjects);
+		public ICommand GenerateNewProjectGuidCommand => new RelayCommand(a => ProjectGuid.Value = Guid.NewGuid());
 
 		public string Directory {
 			get { return directory; }
@@ -94,14 +86,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set { projectVersionVM.SelectedItem = value; }
 		}
 
-		public EnumListVM ProjectVersionVM {
-			get { return projectVersionVM; }
-		}
+		public EnumListVM ProjectVersionVM => projectVersionVM;
 		readonly EnumListVM projectVersionVM = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
 
-		public IEnumerable<ILanguage> AllLanguages {
-			get { return languageManager.AllLanguages.Where(a => a.ProjectFileExtension != null); }
-		}
+		public IEnumerable<ILanguage> AllLanguages => languageManager.AllLanguages.Where(a => a.ProjectFileExtension != null);
 		readonly ILanguageManager languageManager;
 
 		public ILanguage Language {
@@ -115,9 +103,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		ILanguage language;
 
-		public NullableGuidVM ProjectGuid {
-			get { return projectGuidVM; }
-		}
+		public NullableGuidVM ProjectGuid => projectGuidVM;
 		readonly NullableGuidVM projectGuidVM;
 
 		public bool DontReferenceStdLib {
@@ -177,14 +163,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		bool openProject;
 
-		public bool CanDecompileBaml {
-			get { return UnpackResources && canDecompileBaml; }
-		}
+		public bool CanDecompileBaml => UnpackResources && canDecompileBaml;
 		readonly bool canDecompileBaml;
 
-		public bool CanCreateResX {
-			get { return UnpackResources && TheState == State.Editing; }
-		}
+		public bool CanCreateResX => UnpackResources && TheState == State.Editing;
 
 		public string FilesToExportMessage {
 			get { return filesToExportMessage; }
@@ -256,17 +238,9 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		State state = State.Editing;
 
-		public bool IsComplete {
-			get { return TheState == State.Complete; }
-		}
-
-		public bool IsNotComplete {
-			get { return !IsComplete; }
-		}
-
-		public bool IsExporting {
-			get { return TheState == State.Exporting; }
-		}
+		public bool IsComplete => TheState == State.Complete;
+		public bool IsNotComplete => !IsComplete;
+		public bool IsExporting => TheState == State.Exporting;
 
 		readonly IPickDirectory pickDirectory;
 		readonly IExportTask exportTask;
@@ -286,9 +260,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.projectGuidVM = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}
 
-		bool CanPickDestDir {
-			get { return true; }
-		}
+		bool CanPickDestDir => true;
 
 		void PickDestDir() {
 			var newDir = pickDirectory.GetDirectory(Directory);
@@ -296,13 +268,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 				Directory = newDir;
 		}
 
-		bool CanExportProjects {
-			get { return TheState == State.Editing && !HasError; }
-		}
-
-		public bool CanEditSettings {
-			get { return TheState == State.Editing; }
-		}
+		bool CanExportProjects => TheState == State.Editing && !HasError;
+		public bool CanEditSettings => TheState == State.Editing;
 
 		void ExportProjects() {
 			Debug.Assert(TheState == State.Editing);
@@ -310,9 +277,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			exportTask.Execute(this);
 		}
 
-		public void Cancel() {
-			exportTask.Cancel(this);
-		}
+		public void Cancel() => exportTask.Cancel(this);
 
 		public void OnExportComplete() {
 			Debug.Assert(TheState == State.Exporting);
@@ -354,9 +319,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		bool exportErrors;
 
-		public bool NoExportErrors {
-			get { return !exportErrors; }
-		}
+		public bool NoExportErrors => !exportErrors;
 
 		protected override string Verify(string columnName) {
 			if (columnName == "Directory") {
@@ -374,12 +337,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError {
-			get {
-				return !string.IsNullOrEmpty(Verify("Directory")) ||
-					!string.IsNullOrEmpty(Verify("SolutionFilename")) ||
-					projectGuidVM.HasError;
-			}
-		}
+		public override bool HasError => !string.IsNullOrEmpty(Verify("Directory")) ||
+	!string.IsNullOrEmpty(Verify("SolutionFilename")) ||
+	projectGuidVM.HasError;
 	}
 }

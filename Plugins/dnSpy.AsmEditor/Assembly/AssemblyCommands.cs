@@ -51,10 +51,9 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[ExportMenuItem(Header = "res:DisableMMapIOCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 50)]
 	sealed class DisableMemoryMappedIOCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
-				(context.Find<ITreeNodeData[]>() ?? new ITreeNodeData[0]).Any(a => GetDnSpyFile(a) != null);
-		}
+		public override bool IsVisible(IMenuItemContext context) =>
+			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
+			(context.Find<ITreeNodeData[]>() ?? Array.Empty<ITreeNodeData>()).Any(a => GetDnSpyFile(a) != null);
 
 		static IDnSpyFile GetDnSpyFile(ITreeNodeData node) {
 			var fileNode = node as IDnSpyFileNode;
@@ -62,10 +61,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				return null;
 
 			var peImage = fileNode.DnSpyFile.PEImage;
-			if (peImage == null) {
-				var mod = fileNode.DnSpyFile.ModuleDef as ModuleDefMD;
-				peImage = mod == null ? null : mod.MetaData.PEImage;
-			}
+			if (peImage == null)
+				peImage = (fileNode.DnSpyFile.ModuleDef as ModuleDefMD)?.MetaData?.PEImage;
 
 			return peImage != null && peImage.IsMemoryMappedIO ? fileNode.DnSpyFile : null;
 		}
@@ -74,7 +71,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
 				return;
 			var asms = new List<IDnSpyFile>();
-			foreach (var node in (context.Find<ITreeNodeData[]>() ?? new ITreeNodeData[0])) {
+			foreach (var node in (context.Find<ITreeNodeData[]>() ?? Array.Empty<ITreeNodeData>())) {
 				var file = GetDnSpyFile(node);
 				if (file != null)
 					asms.Add(file);
@@ -102,17 +99,9 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return RemoveAssemblyCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				RemoveAssemblyCommand.Execute(undoCommandManager, documentSaver, appWindow, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return RemoveAssemblyCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => RemoveAssemblyCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => RemoveAssemblyCommand.Execute(undoCommandManager, documentSaver, appWindow, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveAssemblyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
@@ -129,17 +118,9 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return RemoveAssemblyCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				RemoveAssemblyCommand.Execute(undoCommandManager, documentSaver, appWindow, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return RemoveAssemblyCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => RemoveAssemblyCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => RemoveAssemblyCommand.Execute(undoCommandManager, documentSaver, appWindow, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(ITreeNodeData[] nodes) {
@@ -148,10 +129,9 @@ namespace dnSpy.AsmEditor.Assembly {
 			return string.Format(dnSpy_AsmEditor_Resources.RemoveAssembliesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length > 0 &&
-				nodes.All(n => n is IDnSpyFileNode && n.TreeNode.Parent == n.Context.FileTreeView.TreeView.Root);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length > 0 &&
+			nodes.All(n => n is IDnSpyFileNode && n.TreeNode.Parent == n.Context.FileTreeView.TreeView.Root);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -238,9 +218,7 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.savedStates[i] = new RootDnSpyFileNodeCreator(fileTreeView, asmNodes[i]);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.RemoveAssemblyCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.RemoveAssemblyCommand;
 
 		public void Execute() {
 			for (int i = 0; i < savedStates.Length; i++)
@@ -259,9 +237,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 		}
 
-		public bool CallGarbageCollectorAfterDispose {
-			get { return true; }
-		}
+		public bool CallGarbageCollectorAfterDispose => true;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -277,13 +253,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return AssemblySettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				AssemblySettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => AssemblySettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => AssemblySettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditAssemblyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 0)]
@@ -298,20 +269,14 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return AssemblySettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				AssemblySettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => AssemblySettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => AssemblySettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes != null &&
-				nodes.Length == 1 &&
-				nodes[0] is IAssemblyFileNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes != null &&
+			nodes.Length == 1 &&
+			nodes[0] is IAssemblyFileNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -356,9 +321,7 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.DnSpyFile.ModuleDef).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.DnSpyFile.AssemblyDef)).Select(a => new AssemblyRefInfo(a)).ToArray();
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.EditAssemblyCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.EditAssemblyCommand2;
 
 		public void Execute() {
 			newOptions.CopyTo(asmNode.DnSpyFile.AssemblyDef);
@@ -404,13 +367,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateAssemblyCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateAssemblyCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateAssemblyCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 0)]
@@ -425,19 +383,13 @@ namespace dnSpy.AsmEditor.Assembly {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreateAssemblyCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreateAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreateAssemblyCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes != null &&
-				(nodes.Length == 0 || nodes[0] is IDnSpyFileNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes != null &&
+			(nodes.Length == 0 || nodes[0] is IDnSpyFileNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -470,18 +422,14 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.fileNodeCreator = RootDnSpyFileNodeCreator.CreateAssembly(fileTreeView, file);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.CreateAssemblyCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.CreateAssemblyCommand2;
 
 		public void Execute() {
 			fileNodeCreator.Add();
 			undoCommandManager.MarkAsModified(undoCommandManager.GetUndoObject(fileNodeCreator.DnSpyFileNode.DnSpyFile));
 		}
 
-		public void Undo() {
-			fileNodeCreator.Remove();
-		}
+		public void Undo() => fileNodeCreator.Remove();
 
 		public IEnumerable<object> ModifiedObjects {
 			get { yield return fileNodeCreator.DnSpyFileNode; }

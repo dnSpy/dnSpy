@@ -33,8 +33,6 @@ namespace dnSpy.Files.Tabs {
 			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
 		}
 
-		public IFileTabUIContextLocator Create() {
-			return new FileTabUIContextLocator(creators);
-		}
+		public IFileTabUIContextLocator Create() => new FileTabUIContextLocator(creators);
 	}
 }

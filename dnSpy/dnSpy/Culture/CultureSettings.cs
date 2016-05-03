@@ -29,8 +29,7 @@ namespace dnSpy.Culture {
 	}
 
 	class CultureSettings : ViewModelBase, ICultureSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public string UIName {
 			get { return uiName; }

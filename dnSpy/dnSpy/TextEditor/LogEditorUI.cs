@@ -149,9 +149,7 @@ namespace dnSpy.TextEditor {
 		public string GetText() => textEditor.TextArea.TextView.Document.Text;
 		public void Write(string text, object color) => OutputPrint(text, color);
 		public void Write(string text, OutputColor color) => OutputPrint(text, color.Box());
-
-		public void WriteLine(string text, OutputColor color) =>
-			WriteLine(text, color.Box());
+		public void WriteLine(string text, OutputColor color) => WriteLine(text, color.Box());
 
 		public void WriteLine(string text, object color) {
 			OutputPrint(text, color);

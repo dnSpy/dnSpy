@@ -37,7 +37,6 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly ulong offset;
 		byte[] origData;
 		byte[] newData;
-		readonly string descr;
 		bool canExecute;
 
 		public HexBoxUndoCommand(HexBox hexBox, HexBoxPosition origCaretPos, ulong offset, byte[] origData, string descr) {
@@ -48,13 +47,11 @@ namespace dnSpy.AsmEditor.Hex {
 			this.offset = offset;
 			this.origData = origData;
 			this.newData = doc.ReadBytes(offset, origData.Length);
-			this.descr = descr;
+			this.Description = descr;
 			this.canExecute = false;
 		}
 
-		public string Description {
-			get { return descr; }
-		}
+		public string Description { get; }
 
 		public IEnumerable<object> ModifiedObjects {
 			get { yield return doc; }
@@ -71,9 +68,7 @@ namespace dnSpy.AsmEditor.Hex {
 			canExecute = true;
 		}
 
-		public void Undo() {
-			WriteData(origData, origCaretPos);
-		}
+		public void Undo() => WriteData(origData, origCaretPos);
 
 		void WriteData(byte[] data, HexBoxPosition caretPos) {
 			doc.Write(offset, data, 0, data.Length);

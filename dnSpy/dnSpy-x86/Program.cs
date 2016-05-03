@@ -22,8 +22,6 @@ using System;
 namespace dnSpy_x86 {
 	static class Program {
 		[STAThread]
-		static void Main() {
-			dnSpy.MainApp.StartUpClass.Main();
-		}
+		static void Main() => dnSpy.MainApp.StartUpClass.Main();
 	}
 }

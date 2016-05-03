@@ -24,28 +24,13 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class TreeNodeImpl : ITreeNode {
-		public TreeViewImpl TreeView {
-			get { return treeViewImpl; }
-		}
-		readonly TreeViewImpl treeViewImpl;
+		public TreeViewImpl TreeView { get; }
+		public DnSpySharpTreeNode Node => nodeList.Node;
+		public ITreeNodeData Data { get; }
+		public IEnumerable<ITreeNodeData> DataChildren => Children.Select(a => a.Data);
 
-		public DnSpySharpTreeNode Node {
-			get { return nodeList.Node; }
-		}
-
-		public IList<ITreeNode> Children {
-			get { return nodeList; }
-		}
+		public IList<ITreeNode> Children => nodeList;
 		readonly SharpTreeNodeChildrenList nodeList;
-
-		public IEnumerable<ITreeNodeData> DataChildren {
-			get { return Children.Select(a => a.Data); }
-		}
-
-		public ITreeNodeData Data {
-			get { return data; }
-		}
-		readonly ITreeNodeData data;
 
 		public ITreeNode Parent {
 			get {
@@ -69,33 +54,20 @@ namespace dnSpy.TreeView {
 			set { Node.IsHidden = value; }
 		}
 
-		public bool IsVisible {
-			get { return Node.IsVisible; }
-		}
-
-		ITreeView ITreeNode.TreeView {
-			get { return treeViewImpl; }
-		}
+		public bool IsVisible => Node.IsVisible;
+		ITreeView ITreeNode.TreeView => TreeView;
 
 		public TreeNodeImpl(TreeViewImpl treeViewImpl, ITreeNodeData data) {
 			Debug.Assert(data.TreeNode == null);
-			this.treeViewImpl = treeViewImpl;
+			this.TreeView = treeViewImpl;
 			this.nodeList = new SharpTreeNodeChildrenList(this);
-			this.data = data;
-			this.data.TreeNode = this;
+			this.Data = data;
+			this.Data.TreeNode = this;
 		}
 
-		public void AddChild(ITreeNode node) {
-			treeViewImpl.AddSorted(this, node);
-		}
-
-		public IEnumerable<ITreeNode> Descendants() {
-			return Node.Descendants().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
-		}
-
-		public IEnumerable<ITreeNode> DescendantsAndSelf() {
-			return Node.DescendantsAndSelf().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
-		}
+		public void AddChild(ITreeNode node) => TreeView.AddSorted(this, node);
+		public IEnumerable<ITreeNode> Descendants() => Node.Descendants().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
+		public IEnumerable<ITreeNode> DescendantsAndSelf() => Node.DescendantsAndSelf().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
 
 		public void RefreshUI() {
 			Data.OnRefreshUI();

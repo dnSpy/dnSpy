@@ -36,18 +36,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		sealed class ListenerInfo {
 			public readonly TextEditorUIContextListener Listener;
 
-			public double Order {
-				get { return order; }
-			}
-			readonly double order;
+			public double Order { get; }
 
-			public void Execute(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
+			public void Execute(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) =>
 				Listener(@event, uiContext, data);
-			}
 
 			public ListenerInfo(TextEditorUIContextListener listener, double order) {
 				this.Listener = listener;
-				this.order = order;
+				this.Order = order;
 			}
 		}
 
@@ -57,9 +53,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.listeners = new List<ListenerInfo>();
 		}
 
-		static void Sort(List<ListenerInfo> listeners) {
+		static void Sort(List<ListenerInfo> listeners) =>
 			listeners.Sort((a, b) => a.Order.CompareTo(b.Order));
-		}
 
 		public void Add(TextEditorUIContextListener listener, double order = double.MaxValue) {
 			if (listener == null)

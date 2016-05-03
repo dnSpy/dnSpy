@@ -62,9 +62,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 			this.languageSettingsManager = languageSettingsManager;
 		}
 
-		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider(languageSettingsManager).Languages;
-		}
+		public IEnumerable<ILanguage> Create() => new LanguageProvider(languageSettingsManager).Languages;
 	}
 
 	/// <summary>
@@ -77,9 +75,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 	sealed class ILLanguage : Language {
 		readonly bool detectControlStructure;
 
-		public override IDecompilerSettings Settings {
-			get { return langSettings; }
-		}
+		public override IDecompilerSettings Settings => langSettings;
 		readonly ILLanguageDecompilerSettings langSettings;
 
 		public ILLanguage(ILLanguageDecompilerSettings langSettings)
@@ -91,35 +87,16 @@ namespace dnSpy.Languages.ILSpy.IL {
 			this.detectControlStructure = detectControlStructure;
 		}
 
-		public override double OrderUI {
-			get { return LanguageConstants.IL_ILSPY_ORDERUI; }
-		}
-
+		public override double OrderUI => LanguageConstants.IL_ILSPY_ORDERUI;
 		public override Guid ContentTypeGuid => new Guid(ContentTypes.IL_ILSPY);
+		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_IL;
+		public override string UniqueNameUI => "IL";
+		public override Guid GenericGuid => LanguageConstants.LANGUAGE_IL;
+		public override Guid UniqueGuid => LanguageConstants.LANGUAGE_IL_ILSPY;
+		public override string FileExtension => ".il";
 
-		public override string GenericNameUI {
-			get { return LanguageConstants.GENERIC_NAMEUI_IL; }
-		}
-
-		public override string UniqueNameUI {
-			get { return "IL"; }
-		}
-
-		public override Guid GenericGuid {
-			get { return LanguageConstants.LANGUAGE_IL; }
-		}
-
-		public override Guid UniqueGuid {
-			get { return LanguageConstants.LANGUAGE_IL_ILSPY; }
-		}
-
-		public override string FileExtension {
-			get { return ".il"; }
-		}
-
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, IMemberDef member) {
-			return CreateReflectionDisassembler(output, ctx, member.Module);
-		}
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, IMemberDef member) =>
+			CreateReflectionDisassembler(output, ctx, member.Module);
 
 		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, ModuleDef ownerModule) {
 			var disOpts = new DisassemblerOptions(ctx.CancellationToken, ownerModule);
@@ -223,9 +200,8 @@ namespace dnSpy.Languages.ILSpy.IL {
 			rd.WriteModuleHeader(mod);
 		}
 
-		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) {
+		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
-		}
 
 		public override void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
 			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(SyntaxHighlightOutputToTextOutput.Create(output), member))
@@ -237,21 +213,11 @@ namespace dnSpy.Languages.ILSpy.IL {
 
 	[Export(typeof(ISimpleILPrinter))]
 	sealed class ILLanguageUtils : ISimpleILPrinter {
-		double ISimpleILPrinter.Order {
-			get { return -100; }
-		}
+		double ISimpleILPrinter.Order => -100;
 
-		bool ISimpleILPrinter.Write(ITextOutput output, IMemberRef member) {
-			return Write(output, member);
-		}
-
-		void ISimpleILPrinter.Write(ITextOutput output, MethodSig sig) {
-			output.Write(sig);
-		}
-
-		void ISimpleILPrinter.Write(ITextOutput output, TypeSig type) {
-			type.WriteTo(output);
-		}
+		bool ISimpleILPrinter.Write(ITextOutput output, IMemberRef member) => Write(output, member);
+		void ISimpleILPrinter.Write(ITextOutput output, MethodSig sig) => output.Write(sig);
+		void ISimpleILPrinter.Write(ITextOutput output, TypeSig type) => type.WriteTo(output);
 
 		public static bool Write(ITextOutput output, IMemberRef member) {
 			var method = member as IMethod;

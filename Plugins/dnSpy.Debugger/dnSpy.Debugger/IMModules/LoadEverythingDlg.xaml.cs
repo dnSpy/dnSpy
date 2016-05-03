@@ -59,9 +59,7 @@ namespace dnSpy.Debugger.IMModules {
 				e.Cancel = true;
 		}
 
-		void LoadEverythingVM_OnCompleted(object sender, EventArgs e) {
-			OnCompleted();
-		}
+		void LoadEverythingVM_OnCompleted(object sender, EventArgs e) => OnCompleted();
 
 		void OnCompleted() {
 			var data = DataContext as LoadEverythingVM;

@@ -27,20 +27,10 @@ namespace dnSpy.Shared.HexEditor {
 		readonly IHexStream stream;
 
 		public event EventHandler<HexDocumentModifiedEventArgs> OnDocumentModified;
-
 		public string Name { get; set; }
-
-		public ulong StartOffset {
-			get { return stream.StartOffset; }
-		}
-
-		public ulong EndOffset {
-			get { return stream.EndOffset; }
-		}
-
-		public ulong Size {
-			get { return stream.Size; }
-		}
+		public ulong StartOffset => stream.StartOffset;
+		public ulong EndOffset => stream.EndOffset;
+		public ulong Size => stream.Size;
 
 		public HexDocument(string filename)
 			: this(new ByteArrayHexStream(File.ReadAllBytes(filename)), filename) {
@@ -52,49 +42,24 @@ namespace dnSpy.Shared.HexEditor {
 
 		public HexDocument(IHexStream stream, string name) {
 			if (stream == null)
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException(nameof(stream));
 			this.stream = stream;
 			this.Name = name;
 		}
 
-		public int ReadByte(ulong offs) {
-			return stream.ReadByte(offs);
-		}
-
-		public short ReadInt16(ulong offset) {
-			return stream.ReadInt16(offset);
-		}
-
-		public ushort ReadUInt16(ulong offset) {
-			return stream.ReadUInt16(offset);
-		}
-
-		public int ReadInt32(ulong offset) {
-			return stream.ReadInt32(offset);
-		}
-
-		public uint ReadUInt32(ulong offset) {
-			return stream.ReadUInt32(offset);
-		}
-
-		public long ReadInt64(ulong offset) {
-			return stream.ReadInt64(offset);
-		}
-
-		public ulong ReadUInt64(ulong offset) {
-			return stream.ReadUInt64(offset);
-		}
-
-		public void Read(ulong offset, byte[] array, long index, int count) {
-			stream.Read(offset, array, index, count);
-		}
+		public int ReadByte(ulong offs) => stream.ReadByte(offs);
+		public short ReadInt16(ulong offset) => stream.ReadInt16(offset);
+		public ushort ReadUInt16(ulong offset) => stream.ReadUInt16(offset);
+		public int ReadInt32(ulong offset) => stream.ReadInt32(offset);
+		public uint ReadUInt32(ulong offset) => stream.ReadUInt32(offset);
+		public long ReadInt64(ulong offset) => stream.ReadInt64(offset);
+		public ulong ReadUInt64(ulong offset) => stream.ReadUInt64(offset);
+		public void Read(ulong offset, byte[] array, long index, int count) => stream.Read(offset, array, index, count);
 
 		public void Write(ulong offset, byte b) {
 			stream.Write(offset, b);
 
-			var h = OnDocumentModified;
-			if (h != null)
-				h(this, new HexDocumentModifiedEventArgs(offset, offset));
+			OnDocumentModified?.Invoke(this, new HexDocumentModifiedEventArgs(offset, offset));
 		}
 
 		public void Write(ulong offset, byte[] array, long index, int count) {
@@ -102,15 +67,9 @@ namespace dnSpy.Shared.HexEditor {
 				return;
 			stream.Write(offset, array, index, count);
 
-			var h = OnDocumentModified;
-			if (h != null)
-				h(this, new HexDocumentModifiedEventArgs(offset, NumberUtils.AddUInt64(offset, (ulong)count - 1)));
+			OnDocumentModified?.Invoke(this, new HexDocumentModifiedEventArgs(offset, NumberUtils.AddUInt64(offset, (ulong)count - 1)));
 		}
 
-		public void Dispose() {
-			var id = stream as IDisposable;
-			if (id != null)
-				id.Dispose();
-		}
+		public void Dispose() => (stream as IDisposable)?.Dispose();
 	}
 }

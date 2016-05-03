@@ -36,13 +36,9 @@ namespace dnSpy.BamlDecompiler {
 			get { yield return "BamlSettings.xaml"; }
 		}
 
-		public PluginInfo PluginInfo {
-			get {
-				return new PluginInfo {
-					ShortDescription = dnSpy_BamlDecompiler_Resources.Plugin_ShortDescription,
-				};
-			}
-		}
+		public PluginInfo PluginInfo => new PluginInfo {
+			ShortDescription = dnSpy_BamlDecompiler_Resources.Plugin_ShortDescription,
+		};
 
 		public void OnEvent(PluginEvent @event, object obj) {
 		}

@@ -37,13 +37,8 @@ namespace dnSpy.Menus {
 	sealed class MenuItemMD {
 		readonly Lazy<IMenuItem, IMenuItemMetadata> lazy;
 
-		public IMenuItem MenuItem {
-			get { return lazy.Value; }
-		}
-
-		public IMenuItemMetadata Metadata {
-			get { return lazy.Metadata; }
-		}
+		public IMenuItem MenuItem => lazy.Value;
+		public IMenuItemMetadata Metadata => lazy.Metadata;
 
 		public MenuItemMD(Lazy<IMenuItem, IMenuItemMetadata> lazy) {
 			this.lazy = lazy;
@@ -63,13 +58,8 @@ namespace dnSpy.Menus {
 	sealed class MenuMD {
 		readonly Lazy<IMenu, IMenuMetadata> lazy;
 
-		public IMenu Menu {
-			get { return lazy.Value; }
-		}
-
-		public IMenuMetadata Metadata {
-			get { return lazy.Metadata; }
-		}
+		public IMenu Menu => lazy.Value;
+		public IMenuMetadata Metadata => lazy.Metadata;
 
 		public MenuMD(Lazy<IMenu, IMenuMetadata> lazy) {
 			this.lazy = lazy;
@@ -78,9 +68,7 @@ namespace dnSpy.Menus {
 
 	[Export(typeof(IWpfFocusChecker))]
 	sealed class MenuWpfFocusChecker : IWpfFocusChecker {
-		public bool CanFocus {
-			get { return !menuManager.IsMenuOpened; }
-		}
+		public bool CanFocus => !menuManager.IsMenuOpened;
 
 		readonly MenuManager menuManager;
 
@@ -123,9 +111,7 @@ namespace dnSpy.Menus {
 			return new ContextMenuCreator(this, elem, guid, creator, initCtxMenu, ctxMenuGuid);
 		}
 
-		public IContextMenuCreator InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, string ctxMenuGuid) {
-			return InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu, ctxMenuGuid == null ? (Guid?)null : new Guid(ctxMenuGuid));
-		}
+		public IContextMenuCreator InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, string ctxMenuGuid) => InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu, ctxMenuGuid == null ? (Guid?)null : new Guid(ctxMenuGuid));
 
 		void InitializeMenuItemObjects() {
 			if (guidToGroups != null)

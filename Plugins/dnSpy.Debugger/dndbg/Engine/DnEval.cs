@@ -26,7 +26,7 @@ using dndbg.COM.CorDebug;
 namespace dndbg.Engine {
 	[Serializable]
 	public class EvalException : Exception {
-		public readonly int HR;
+		public int HR { get; }
 
 		public EvalException()
 			: this(-1, null, null) {
@@ -48,8 +48,8 @@ namespace dndbg.Engine {
 	}
 
 	public struct EvalResult {
-		public readonly bool WasException;
-		public readonly CorValue ResultOrException;
+		public bool WasException { get; }
+		public CorValue ResultOrException { get; }
 
 		public EvalResult(bool wasException, CorValue resultOrException) {
 			this.WasException = wasException;
@@ -72,34 +72,21 @@ namespace dndbg.Engine {
 		const int ABORT_TIMEOUT_MS = 3000;
 		const int RUDE_ABORT_TIMEOUT_MS = 1000;
 
-		public bool EvalTimedOut {
-			get { return evalTimedOut; }
-		}
-		bool evalTimedOut;
-
-		public bool SuspendOtherThreads {
-			get { return suspendOtherThreads; }
-			set { suspendOtherThreads = value; }
-		}
-		bool suspendOtherThreads;
-
+		public bool EvalTimedOut { get; private set; }
+		public bool SuspendOtherThreads { get; }
 		public event EventHandler<EvalEventArgs> EvalEvent;
 
 		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher) {
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
-			this.suspendOtherThreads = true;
+			this.SuspendOtherThreads = true;
 			this.useTotalTimeout = true;
 		}
 
-		public void SetNoTotalTimeout() {
-			useTotalTimeout = false;
-		}
+		public void SetNoTotalTimeout() => useTotalTimeout = false;
 		bool useTotalTimeout;
 
-		public void SetThread(DnThread thread) {
-			SetThread(thread.CorThread);
-		}
+		public void SetThread(DnThread thread) => SetThread(thread.CorThread);
 
 		public void SetThread(CorThread thread) {
 			if (thread == null)
@@ -113,15 +100,13 @@ namespace dndbg.Engine {
 			this.eval = new CorEval(ce);
 		}
 
-		public CorValue CreateNull() {
-			return eval.CreateValue(CorElementType.Class);
-		}
+		public CorValue CreateNull() => eval.CreateValue(CorElementType.Class);
 
 		public CorValue Box(CorValue value) {
 			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !value.ExactType.IsValueType)
 				return value;
 			var et = value.ExactType;
-			var cls = et == null ? null : et.Class;
+			var cls = et?.Class;
 			if (cls == null)
 				return null;
 			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, value.ExactType.TypeParameters.ToArray()));
@@ -129,7 +114,7 @@ namespace dndbg.Engine {
 				return null;
 			var newObj = res.Value.ResultOrException;
 			var r = newObj.NeuterCheckDereferencedValue;
-			var vb = r == null ? null : r.BoxedValue;
+			var vb = r?.BoxedValue;
 			if (vb == null)
 				return null;
 			int hr = vb.WriteGenericValue(value.ReadGenericValue());
@@ -146,9 +131,7 @@ namespace dndbg.Engine {
 			return res.Value.ResultOrException;
 		}
 
-		public CorValueResult CallResult(CorFunction func, CorValue[] args) {
-			return CallResult(func, null, args);
-		}
+		public CorValueResult CallResult(CorFunction func, CorValue[] args) => CallResult(func, null, args);
 
 		public CorValueResult CallResult(CorFunction func, CorType[] typeArgs, CorValue[] args) {
 			var res = Call(func, typeArgs, args);
@@ -164,9 +147,7 @@ namespace dndbg.Engine {
 			return res.Value.ResultOrException.Value;
 		}
 
-		public EvalResult CallConstructor(CorFunction ctor, CorValue[] args) {
-			return CallConstructor(ctor, null, args);
-		}
+		public EvalResult CallConstructor(CorFunction ctor, CorValue[] args) => CallConstructor(ctor, null, args);
 
 		public EvalResult CallConstructor(CorFunction ctor, CorType[] typeArgs, CorValue[] args) {
 			int hr;
@@ -176,9 +157,7 @@ namespace dndbg.Engine {
 			throw new EvalException(hr, string.Format("Could not call .ctor {0:X8}, HR=0x{1:X8}", ctor.Token, hr));
 		}
 
-		public EvalResult Call(CorFunction func, CorValue[] args) {
-			return Call(func, null, args);
-		}
+		public EvalResult Call(CorFunction func, CorValue[] args) => Call(func, null, args);
 
 		public EvalResult Call(CorFunction func, CorType[] typeArgs, CorValue[] args) {
 			int hr;
@@ -188,13 +167,8 @@ namespace dndbg.Engine {
 			throw new EvalException(hr, string.Format("Could not call method {0:X8}, HR=0x{1:X8}", func.Token, hr));
 		}
 
-		public CorValue CreateValue(CorElementType et, CorClass cls = null) {
-			return eval.CreateValue(et, cls);
-		}
-
-		public CorValue CreateValue(CorType type) {
-			return eval.CreateValueForType(type);
-		}
+		public CorValue CreateValue(CorElementType et, CorClass cls = null) => eval.CreateValue(et, cls);
+		public CorValue CreateValue(CorType type) => eval.CreateValueForType(type);
 
 		public EvalResult? CreateDontCallConstructor(CorType type, out int hr) {
 			if (!type.HasClass) {
@@ -204,17 +178,9 @@ namespace dndbg.Engine {
 			return WaitForResult(hr = eval.NewParameterizedObjectNoConstructor(type.Class, type.TypeParameters.ToArray()));
 		}
 
-		public EvalResult? CallConstructor(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
-			return WaitForResult(hr = eval.NewParameterizedObject(func, typeArgs, args));
-		}
-
-		public EvalResult? Call(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
-			return WaitForResult(hr = eval.CallParameterizedFunction(func, typeArgs, args));
-		}
-
-		public EvalResult? CreateString(string s, out int hr) {
-			return WaitForResult(hr = eval.NewString(s));
-		}
+		public EvalResult? CallConstructor(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) => WaitForResult(hr = eval.NewParameterizedObject(func, typeArgs, args));
+		public EvalResult? Call(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) => WaitForResult(hr = eval.CallParameterizedFunction(func, typeArgs, args));
+		public EvalResult? CreateString(string s, out int hr) => WaitForResult(hr = eval.NewString(s));
 
 		EvalResult? WaitForResult(int hr) {
 			if (hr < 0)
@@ -319,7 +285,7 @@ namespace dndbg.Engine {
 					}
 					hr = debugger.TryBreakProcesses();
 					Debug.WriteLineIf(hr != 0, string.Format("Eval timed out and TryBreakProcesses() failed: hr=0x{0:X8}", hr));
-					evalTimedOut = true;
+					EvalTimedOut = true;
 					throw new TimeoutException();
 				}
 			}
@@ -347,14 +313,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public void SignalEvalComplete() {
-			var e = EvalEvent;
-			if (e != null)
-				e(this, new EvalEventArgs());
-		}
-
-		public void Dispose() {
-			SignalEvalComplete();
-		}
+		public void SignalEvalComplete() => EvalEvent?.Invoke(this, new EvalEventArgs());
+		public void Dispose() => SignalEvalComplete();
 	}
 }

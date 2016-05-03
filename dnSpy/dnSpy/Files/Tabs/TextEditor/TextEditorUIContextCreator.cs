@@ -94,8 +94,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			ILanguage GetLanguage() {
 				if (UIContext == null)
 					return null;
-				var content = UIContext.FileTab.Content as ILanguageTabContent;
-				return content == null ? null : content.Language;
+				return (UIContext.FileTab.Content as ILanguageTabContent)?.Language;
 			}
 		}
 	}

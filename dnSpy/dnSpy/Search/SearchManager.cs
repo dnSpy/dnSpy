@@ -104,17 +104,11 @@ namespace dnSpy.Search {
 			set { vmSearch.SearchText = value; }
 		}
 
-		public IInputElement FocusedElement {
-			get { return searchControl.SearchTextBox; }
-		}
+		public IInputElement FocusedElement => searchControl.SearchTextBox;
 
-		public FrameworkElement ScaleElement {
-			get { return searchControl; }
-		}
+		public FrameworkElement ScaleElement => searchControl;
 
-		public object UIObject {
-			get { return searchControl; }
-		}
+		public object UIObject => searchControl;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {

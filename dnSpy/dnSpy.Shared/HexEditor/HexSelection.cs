@@ -21,49 +21,20 @@ using System;
 
 namespace dnSpy.Shared.HexEditor {
 	public struct HexSelection : IEquatable<HexSelection> {
-		public ulong From {
-			get { return from; }
-		}
-		readonly ulong from;
-
-		public ulong To {
-			get { return to; }
-		}
-		readonly ulong to;
-
-		public ulong StartOffset {
-			get { return Math.Min(From, To); }
-		}
-
-		public ulong EndOffset {
-			get { return Math.Max(From, To); }
-		}
+		public ulong From { get; }
+		public ulong To { get; }
+		public ulong StartOffset => Math.Min(From, To);
+		public ulong EndOffset => Math.Max(From, To);
 
 		public HexSelection(ulong from, ulong to) {
-			this.from = from;
-			this.to = to;
+			this.From = from;
+			this.To = to;
 		}
 
-		public static bool operator ==(HexSelection a, HexSelection b) {
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(HexSelection a, HexSelection b) {
-			return !a.Equals(b);
-		}
-
-		public bool Equals(HexSelection other) {
-			return From == other.From &&
-				To == other.To;
-		}
-
-		public override bool Equals(object obj) {
-			return obj is HexSelection && Equals((HexSelection)obj);
-		}
-
-		public override int GetHashCode() {
-			return (int)From ^ (int)(From >> 32) ^
-				(int)To ^ (int)(To >> 32);
-		}
+		public static bool operator ==(HexSelection a, HexSelection b) => a.Equals(b);
+		public static bool operator !=(HexSelection a, HexSelection b) => !a.Equals(b);
+		public bool Equals(HexSelection other) => From == other.From && To == other.To;
+		public override bool Equals(object obj) => obj is HexSelection && Equals((HexSelection)obj);
+		public override int GetHashCode() => (int)From ^ (int)(From >> 32) ^ (int)To ^ (int)(To >> 32);
 	}
 }

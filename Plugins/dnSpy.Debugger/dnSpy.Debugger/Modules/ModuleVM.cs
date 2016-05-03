@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.Modules {
 	}
 
 	sealed class ModuleContext : IModuleContext {
-		public IImageManager ImageManager { get; private set; }
-		public ITheDebugger TheDebugger { get; private set; }
+		public IImageManager ImageManager { get; }
+		public ITheDebugger TheDebugger { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
@@ -70,36 +70,25 @@ namespace dnSpy.Debugger.Modules {
 		}
 		Version version;
 
-		public bool IsOptimized {
-			get { return module.CachedJITCompilerFlags == CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT; }
-		}
-
-		public object ImageObject { get { return this; } }
-		public object NameObject { get { return this; } }
-		public object PathObject { get { return this; } }
-		public object OptimizedObject { get { return this; } }
-		public object DynamicObject { get { return this; } }
-		public object InMemoryObject { get { return this; } }
-		public object OrderObject { get { return this; } }
-		public object VersionObject { get { return this; } }
-		public object TimestampObject { get { return this; } }
-		public object AddressObject { get { return this; } }
-		public object ProcessObject { get { return this; } }
-		public object AppDomainObject { get { return this; } }
-
-		public DnModule Module {
-			get { return module; }
-		}
-		readonly DnModule module;
-
-		public IModuleContext Context {
-			get { return context; }
-		}
-		readonly IModuleContext context;
+		public bool IsOptimized => Module.CachedJITCompilerFlags == CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT;
+		public object ImageObject => this;
+		public object NameObject => this;
+		public object PathObject => this;
+		public object OptimizedObject => this;
+		public object DynamicObject => this;
+		public object InMemoryObject => this;
+		public object OrderObject => this;
+		public object VersionObject => this;
+		public object TimestampObject => this;
+		public object AddressObject => this;
+		public object ProcessObject => this;
+		public object AppDomainObject => this;
+		public DnModule Module { get; }
+		public IModuleContext Context { get; }
 
 		public ModuleVM(DnModule module, IModuleContext context) {
-			this.module = module;
-			this.context = context;
+			this.Module = module;
+			this.Context = context;
 		}
 
 		internal void RefreshThemeFields() {
@@ -117,12 +106,10 @@ namespace dnSpy.Debugger.Modules {
 			OnPropertyChanged("AppDomainObject");
 		}
 
-		internal void RefreshHexFields() {
-			OnPropertyChanged("ProcessObject");
-		}
+		internal void RefreshHexFields() => OnPropertyChanged("ProcessObject");
 
 		internal void RefreshAppDomainNames(DnAppDomain appDomain) {
-			if (module.AppDomain == appDomain)
+			if (Module.AppDomain == appDomain)
 				OnPropertyChanged("AppDomainObject");
 		}
 
@@ -135,8 +122,8 @@ namespace dnSpy.Debugger.Modules {
 			timestamp = null;
 			version = null;
 
-			if (!module.IsDynamic && module.IsInMemory) {
-				var bytes = module.Process.CorProcess.ReadMemory(module.Address, (int)module.Size);
+			if (!Module.IsDynamic && Module.IsInMemory) {
+				var bytes = Module.Process.CorProcess.ReadMemory(Module.Address, (int)Module.Size);
 				if (bytes != null) {
 					try {
 						using (var peImage = new PEImage(bytes))
@@ -146,13 +133,13 @@ namespace dnSpy.Debugger.Modules {
 					}
 				}
 			}
-			else if (module.IsDynamic || module.IsInMemory) {
-				if (module.CorModule.IsManifestModule)
-					version = new AssemblyNameInfo(module.Assembly.FullName).Version;
+			else if (Module.IsDynamic || Module.IsInMemory) {
+				if (Module.CorModule.IsManifestModule)
+					version = new AssemblyNameInfo(Module.Assembly.FullName).Version;
 			}
 			else {
 				try {
-					using (var peImage = new PEImage(module.Name))
+					using (var peImage = new PEImage(Module.Name))
 						InitializeExeFieldsFrom(peImage);
 				}
 				catch {
@@ -165,10 +152,8 @@ namespace dnSpy.Debugger.Modules {
 			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 			timestamp = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 
-			using (var mod = ModuleDefMD.Load(peImage)) {
-				var asm = mod.Assembly;
-				version = asm == null ? null : asm.Version;
-			}
+			using (var mod = ModuleDefMD.Load(peImage))
+				version = mod.Assembly?.Version;
 		}
 	}
 }

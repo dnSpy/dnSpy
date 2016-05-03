@@ -23,39 +23,17 @@ using System.ComponentModel;
 namespace dnSpy.Shared.MVVM {
 	public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
 		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected bool HasPropertyChangedHandlers {
-			get { return PropertyChanged != null; }
-		}
-
-		protected void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, e);
-		}
+		protected bool HasPropertyChangedHandlers => PropertyChanged != null;
+		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		protected void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
 		public string Error {
 			get { throw new NotImplementedException(); }
 		}
 
-		public string this[string columnName] {
-			get { return Verify(columnName); }
-		}
-
-		public virtual bool HasError {
-			get { return false; }
-		}
-
-		protected virtual string Verify(string columnName) {
-			return string.Empty;
-		}
-
-		protected void HasErrorUpdated() {
-			OnPropertyChanged("HasError");
-		}
+		public string this[string columnName] => Verify(columnName);
+		public virtual bool HasError => false;
+		protected virtual string Verify(string columnName) => string.Empty;
+		protected void HasErrorUpdated() => OnPropertyChanged("HasError");
 	}
 }

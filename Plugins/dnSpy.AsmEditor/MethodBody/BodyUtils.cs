@@ -49,9 +49,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 
 			sealed class DummyPrinter : ISimpleILPrinter {
-				public double Order {
-					get { return 0; }
-				}
+				public double Order => 0;
 
 				public bool Write(ITextOutput output, IMemberRef member) {
 					if (member == null || member is GenericParam)

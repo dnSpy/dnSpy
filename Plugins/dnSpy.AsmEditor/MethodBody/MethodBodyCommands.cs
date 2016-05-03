@@ -72,13 +72,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return MethodBodySettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
+			public override bool IsVisible(AsmEditorContext context) => MethodBodySettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) =>
 				MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
-			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 40)]
@@ -95,13 +91,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return MethodBodySettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
+			public override bool IsVisible(AsmEditorContext context) => MethodBodySettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) =>
 				MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
-			}
 		}
 
 		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
@@ -118,20 +110,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					MethodBodySettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
+			public override bool IsEnabled(CodeContext context) =>
+				context.IsLocalTarget && MethodBodySettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) =>
 				MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
-			}
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is IMethodNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IMethodNode;
 
 		internal static void Execute(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes, uint[] offsets = null) {
 			if (!CanExecute(nodes))
@@ -172,9 +157,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.origMethodBody = methodNode.MethodDef.MethodBody;
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.EditMethodBodyCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.EditMethodBodyCommand2;
 
 		public void Execute() {
 			isBodyModified = methodAnnotations.IsBodyModified(methodNode.MethodDef);
@@ -205,9 +188,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.appWindow = appWindow;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return IsVisible(GetMappings(context));
-		}
+		public override bool IsVisible(IMenuItemContext context) => IsVisible(GetMappings(context));
 
 		static bool IsVisible(IList<SourceCodeMapping> list) {
 			return list != null &&
@@ -217,9 +198,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				list[0].Mapping.Method.Body.Instructions.Count > 0;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			Execute(GetMappings(context));
-		}
+		public override void Execute(IMenuItemContext context) => Execute(GetMappings(context));
 
 		void Execute(IList<SourceCodeMapping> list) {
 			if (list == null)
@@ -301,12 +280,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return GetMappings(uiContext, pos.Line, pos.Column);
 		}
 
-		void ICommand.Execute(object parameter) {
-			Execute(GetMappings());
-		}
-
-		bool ICommand.CanExecute(object parameter) {
-			return IsVisible(GetMappings());
-		}
+		void ICommand.Execute(object parameter) => Execute(GetMappings());
+		bool ICommand.CanExecute(object parameter) => IsVisible(GetMappings());
 	}
 }

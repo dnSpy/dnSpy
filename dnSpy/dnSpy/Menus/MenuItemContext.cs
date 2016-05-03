@@ -20,22 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemContext : IMenuItemContext {
-		public bool OpenedFromKeyboard { get; private set; }
-
-		public Guid MenuGuid { get; private set; }
-
-		public GuidObject CreatorObject {
-			get { return guidObjects[0]; }
-		}
-
-		public IEnumerable<GuidObject> GuidObjects {
-			get { return guidObjects.AsEnumerable(); }
-		}
+		public bool OpenedFromKeyboard { get; }
+		public Guid MenuGuid { get; }
+		public GuidObject CreatorObject => guidObjects[0];
+		public IEnumerable<GuidObject> GuidObjects => guidObjects;
 		readonly List<GuidObject> guidObjects;
 
 		public MenuItemContext(Guid menuGuid, bool openedFromKeyboard, GuidObject creatorObject, IEnumerable<GuidObject> guidObjects) {

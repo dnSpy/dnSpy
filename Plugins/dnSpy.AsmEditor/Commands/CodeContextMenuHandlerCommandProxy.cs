@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.Commands {
 				return null;
 
 			var node = fileTabManager.FileTreeView.FindNode(refSeg.Reference);
-			var nodes = node == null ? new IFileTreeNodeData[0] : new IFileTreeNodeData[] { node };
+			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
 			return new CodeContext(nodes, refSeg.IsLocalTarget);
 		}
 

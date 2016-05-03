@@ -44,25 +44,11 @@ namespace dnSpy.Debugger.Modules {
 
 	[Export, Export(typeof(IModulesContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ModulesContent : IModulesContent {
-		public object UIObject {
-			get { return modulesControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return modulesControl.ListView; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return modulesControl; }
-		}
-
-		public ListView ListView {
-			get { return modulesControl.ListView; }
-		}
-
-		public IModulesVM ModulesVM {
-			get { return vmModules; }
-		}
+		public object UIObject => modulesControl;
+		public IInputElement FocusedElement => modulesControl.ListView;
+		public FrameworkElement ScaleElement => modulesControl;
+		public ListView ListView => modulesControl.ListView;
+		public IModulesVM ModulesVM => vmModules;
 
 		readonly ModulesControl modulesControl;
 		readonly IModulesVM vmModules;
@@ -90,28 +76,11 @@ namespace dnSpy.Debugger.Modules {
 			GoToModuleModulesCtxMenuCommand.ExecuteInternal(fileTabManager, inMemoryModuleManager, moduleLoader, modulesControl.ListView.SelectedItem as ModuleVM, newTab);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			vmModules.RefreshThemeFields();
-		}
-
-		public void Focus() {
-			UIUtils.FocusSelector(modulesControl.ListView);
-		}
-
-		public void OnClose() {
-			vmModules.IsEnabled = false;
-		}
-
-		public void OnShow() {
-			vmModules.IsEnabled = true;
-		}
-
-		public void OnHidden() {
-			vmModules.IsVisible = false;
-		}
-
-		public void OnVisible() {
-			vmModules.IsVisible = true;
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmModules.RefreshThemeFields();
+		public void Focus() => UIUtils.FocusSelector(modulesControl.ListView);
+		public void OnClose() => vmModules.IsEnabled = false;
+		public void OnShow() => vmModules.IsEnabled = true;
+		public void OnHidden() => vmModules.IsVisible = false;
+		public void OnVisible() => vmModules.IsVisible = true;
 	}
 }

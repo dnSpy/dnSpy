@@ -33,9 +33,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexDocumentManager = hexDocumentManager;
 		}
 
-		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() {
-			return hexDocumentManager.Value.GetDocuments().Select(a => GetUndoObject(a));
-		}
+		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexDocumentManager.Value.GetDocuments().Select(a => GetUndoObject(a));
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			var doc = obj as AsmEdHexDocument;
@@ -44,21 +42,9 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) {
-			return TryGetAsmEdHexDocument(obj) != null;
-		}
-
-		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) {
-			return TryGetAsmEdHexDocument(obj);
-		}
-
-		static IUndoObject GetUndoObject(AsmEdHexDocument file) {
-			return file.UndoObject;
-		}
-
-		internal static AsmEdHexDocument TryGetAsmEdHexDocument(IUndoObject iuo) {
-			var uo = iuo as UndoObject;
-			return uo == null ? null : uo.Value as AsmEdHexDocument;
-		}
+		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => TryGetAsmEdHexDocument(obj) != null;
+		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetAsmEdHexDocument(obj);
+		static IUndoObject GetUndoObject(AsmEdHexDocument file) => file.UndoObject;
+		internal static AsmEdHexDocument TryGetAsmEdHexDocument(IUndoObject iuo) => (iuo as UndoObject)?.Value as AsmEdHexDocument;
 	}
 }

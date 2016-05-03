@@ -40,25 +40,17 @@ namespace dnSpy.Files.Tabs {
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 50)]
 		sealed class CodeCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetReference(context) != null;
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetReference(context));
-			}
-
-			static uint? GetReference(IMenuItemContext context) {
-				return GetReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
+			static uint? GetReference(IMenuItemContext context) => GetReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 
 			internal static uint? GetReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var @ref = context.Find<CodeReference>();
-				if (@ref != null && @ref.Reference is IMDTokenProvider)
+				if (@ref?.Reference is IMDTokenProvider)
 					return ((IMDTokenProvider)@ref.Reference).MDToken.Raw;
-				if (@ref != null && @ref.Reference is TokenReference)
+				if (@ref?.Reference is TokenReference)
 					return ((TokenReference)@ref.Reference).Token;
 				return null;
 			}
@@ -66,57 +58,33 @@ namespace dnSpy.Files.Tabs {
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_SEARCH_TOKENS, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetReference(context) != null;
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetReference(context));
-			}
-
-			static uint? GetReference(IMenuItemContext context) {
-				return CodeCommand.GetReference(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
+			static uint? GetReference(IMenuItemContext context) => CodeCommand.GetReference(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
 		}
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 40)]
 		sealed class FilesCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetReference(context) != null;
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetReference(context));
-			}
-
-			static uint? GetReference(IMenuItemContext context) {
-				return GetReference(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
+			static uint? GetReference(IMenuItemContext context) => GetReference(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 
 			internal static uint? GetReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var nodes = context.Find<ITreeNodeData[]>();
-				if (nodes == null || nodes.Length == 0)
+				if (nodes?.Length == 0)
 					return null;
 				var node = nodes[0] as IMDTokenNode;
-				return node == null ? (uint?)null : node.Reference == null ? (uint?)null : node.Reference.MDToken.Raw;
+				return node?.Reference?.MDToken.Raw;
 			}
 		}
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetReference(context) != null;
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetReference(context));
-			}
-
-			static uint? GetReference(IMenuItemContext context) {
-				return FilesCommand.GetReference(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
+			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
+			static uint? GetReference(IMenuItemContext context) => FilesCommand.GetReference(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		}
 	}
 }

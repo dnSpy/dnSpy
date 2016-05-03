@@ -56,17 +56,9 @@ namespace dnSpy.AsmEditor.Property {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeletePropertyDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeletePropertyDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeletePropertyDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeletePropertyDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeletePropertyDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeletePropertyDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeletePropertyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 50)]
@@ -79,17 +71,9 @@ namespace dnSpy.AsmEditor.Property {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return DeletePropertyDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				DeletePropertyDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(AsmEditorContext context) {
-				return DeletePropertyDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => DeletePropertyDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeletePropertyDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(AsmEditorContext context) => DeletePropertyDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeletePropertyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 50)]
@@ -102,18 +86,9 @@ namespace dnSpy.AsmEditor.Property {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					DeletePropertyDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				DeletePropertyDefCommand.Execute(undoCommandManager, context.Nodes);
-			}
-
-			public override string GetHeader(CodeContext context) {
-				return DeletePropertyDefCommand.GetHeader(context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeletePropertyDefCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => DeletePropertyDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override string GetHeader(CodeContext context) => DeletePropertyDefCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
@@ -122,10 +97,7 @@ namespace dnSpy.AsmEditor.Property {
 			return string.Format(dnSpy_AsmEditor_Resources.DeletePropertiesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length > 0 &&
-				nodes.All(n => n is IPropertyNode);
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IPropertyNode);
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -212,9 +184,7 @@ namespace dnSpy.AsmEditor.Property {
 			this.nodes = new DeletableNodes<IPropertyNode>(propNodes);
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.DeletePropertyCommand; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.DeletePropertyCommand;
 
 		public void Execute() {
 			nodes.Delete();
@@ -226,9 +196,7 @@ namespace dnSpy.AsmEditor.Property {
 			nodes.Restore();
 		}
 
-		public IEnumerable<object> ModifiedObjects {
-			get { return nodes.Nodes; }
-		}
+		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -244,13 +212,8 @@ namespace dnSpy.AsmEditor.Property {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreatePropertyDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreatePropertyDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreatePropertyCommand", Icon = "NewProperty", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 80)]
@@ -265,13 +228,8 @@ namespace dnSpy.AsmEditor.Property {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return CreatePropertyDefCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => CreatePropertyDefCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreatePropertyCommand", Icon = "NewProperty", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 80)]
@@ -286,21 +244,17 @@ namespace dnSpy.AsmEditor.Property {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
-					context.Nodes.Length == 1 &&
-					context.Nodes[0] is ITypeNode;
-			}
+			public override bool IsEnabled(CodeContext context) =>
+				context.IsLocalTarget &&
+				context.Nodes.Length == 1 &&
+				context.Nodes[0] is ITypeNode;
 
-			public override void Execute(CodeContext context) {
-				CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override void Execute(CodeContext context) => CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+			nodes.Length == 1 &&
+			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -343,9 +297,7 @@ namespace dnSpy.AsmEditor.Property {
 			this.propNode = ownerNode.Create(options.CreatePropertyDef(ownerNode.TypeDef.Module));
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.CreatePropertyCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.CreatePropertyCommand2;
 
 		public void Execute() {
 			ownerNode.TreeNode.EnsureChildrenLoaded();
@@ -379,13 +331,8 @@ namespace dnSpy.AsmEditor.Property {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return PropertyDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => PropertyDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditPropertyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 60)]
@@ -400,13 +347,8 @@ namespace dnSpy.AsmEditor.Property {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) {
-				return PropertyDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(AsmEditorContext context) {
-				PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsVisible(AsmEditorContext context) => PropertyDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditPropertyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 60)]
@@ -421,19 +363,11 @@ namespace dnSpy.AsmEditor.Property {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return PropertyDefSettingsCommand.CanExecute(context.Nodes);
-			}
-
-			public override void Execute(CodeContext context) {
-				PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
-			}
+			public override bool IsEnabled(CodeContext context) => PropertyDefSettingsCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
-			return nodes.Length == 1 &&
-				nodes[0] is IPropertyNode;
-		}
+		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IPropertyNode;
 
 		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -477,9 +411,7 @@ namespace dnSpy.AsmEditor.Property {
 			this.nameChanged = origOptions.Name != newOptions.Name;
 		}
 
-		public string Description {
-			get { return dnSpy_AsmEditor_Resources.EditPropertyCommand2; }
-		}
+		public string Description => dnSpy_AsmEditor_Resources.EditPropertyCommand2;
 
 		public void Execute() {
 			if (nameChanged) {

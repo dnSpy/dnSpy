@@ -36,19 +36,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public PropertyNode(PropertyDef analyzedProperty, bool hidesParent = false) {
 			if (analyzedProperty == null)
-				throw new ArgumentNullException("analyzedProperty");
+				throw new ArgumentNullException(nameof(analyzedProperty));
 			this.isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() {
-			this.TreeNode.LazyLoading = true;
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(analyzedProperty);
-		}
+		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedProperty);
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
@@ -92,12 +87,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				|| PropertyOverridesNode.CanShow(property);
 		}
 
-		public override IMemberRef Member {
-			get { return analyzedProperty; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return analyzedProperty; }
-		}
+		public override IMemberRef Member => analyzedProperty;
+		public override IMDTokenProvider Reference => analyzedProperty;
 	}
 }

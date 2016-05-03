@@ -139,9 +139,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		static IBamlDecompiler TryLoadBamlDecompiler() {
-			return TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.Plugin", "dnSpy.BamlDecompiler.BamlDecompiler");
-		}
+		static IBamlDecompiler TryLoadBamlDecompiler() => TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.Plugin", "dnSpy.BamlDecompiler.BamlDecompiler");
 
 		static Assembly TryLoad(string asmName) {
 			try {
@@ -154,7 +152,7 @@ namespace dnSpy_Console {
 
 		static T TryCreateType<T>(string asmName, string typeFullName) {
 			var asm = TryLoad(asmName);
-			var type = asm == null ? null : asm.GetType(typeFullName);
+			var type = asm?.GetType(typeFullName);
 			return type == null ? default(T) : (T)Activator.CreateInstance(type);
 		}
 
@@ -213,9 +211,7 @@ namespace dnSpy_Console {
 			return o;
 		}
 
-		static string FixInvalidSwitchChars(string s) {
-			return s.Replace(' ', '-');
-		}
+		static string FixInvalidSwitchChars(string s) => s.Replace(' ', '-');
 
 		List<List<ILanguage>> GetLanguageOptions() {
 			var list = new List<List<ILanguage>>();
@@ -240,9 +236,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		string GetProgramBaseName() {
-			return GetBaseName(Environment.GetCommandLineArgs()[0]);
-		}
+		string GetProgramBaseName() => GetBaseName(Environment.GetCommandLineArgs()[0]);
 
 		string GetBaseName(string name) {
 			int index = name.LastIndexOf(Path.DirectorySeparatorChar);
@@ -470,9 +464,7 @@ namespace dnSpy_Console {
 			return v;
 		}
 
-		static string ParseString(string s) {
-			return s;
-		}
+		static string ParseString(string s) => s;
 
 		Dictionary<string, Tuple<IDecompilerOption, Action<string>>> CreateLanguageOptionsDictionary(ILanguage language) {
 			var dict = new Dictionary<string, Tuple<IDecompilerOption, Action<string>>>();
@@ -782,9 +774,7 @@ namespace dnSpy_Console {
 			});
 		}
 
-		ILanguage[] AllLanguages {
-			get { return allLanguages; }
-		}
+		ILanguage[] AllLanguages => allLanguages;
 		readonly ILanguage[] allLanguages;
 
 		public void Error(string message) {

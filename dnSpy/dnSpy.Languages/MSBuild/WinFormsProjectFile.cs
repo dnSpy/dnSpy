@@ -28,17 +28,9 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class WinFormsProjectFile : TypeProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateWinFormsFile; }
-		}
-
-		public ILanguage Language {
-			get { return language; }
-		}
-
-		public DecompilationContext DecompilationContext {
-			get { return decompilationContext; }
-		}
+		public override string Description => Languages_Resources.MSBuild_CreateWinFormsFile;
+		public ILanguage Language => language;
+		public DecompilationContext DecompilationContext => decompilationContext;
 
 		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
 			: base(type, filename, decompilationContext, language) {
@@ -49,7 +41,7 @@ namespace dnSpy.Languages.MSBuild {
 			if (!language.CanDecompile(DecompilationType.PartialType))
 				base.Decompile(ctx, output);
 			else {
-				var opts = new DecompilePartialType(type, output, decompilationContext);
+				var opts = new DecompilePartialType(Type, output, decompilationContext);
 				foreach (var d in GetDefsToRemove())
 					opts.Definitions.Add(d);
 				language.Decompile(DecompilationType.PartialType, opts);
@@ -85,7 +77,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		MethodDef GetInitializeComponent() {
-			foreach (var m in type.Methods) {
+			foreach (var m in Type.Methods) {
 				if (m.Access != MethodAttributes.Private)
 					continue;
 				if (m.IsStatic || m.Parameters.Count != 1)
@@ -102,7 +94,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		MethodDef GetDispose() {
-			foreach (var m in type.Methods) {
+			foreach (var m in Type.Methods) {
 				if (m.Access != MethodAttributes.Family)
 					continue;
 				if (m.IsStatic || m.Parameters.Count != 2 || m.Parameters[1].Type.RemovePinnedAndModifiers().GetElementType() != ElementType.Boolean)
@@ -120,17 +112,9 @@ namespace dnSpy.Languages.MSBuild {
 	}
 
 	sealed class WinFormsDesignerProjectFile : ProjectFile {
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateWinFormsDesignerFile; }
-		}
-
-		public override BuildAction BuildAction {
-			get { return BuildAction.Compile; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
+		public override string Description => Languages_Resources.MSBuild_CreateWinFormsDesignerFile;
+		public override BuildAction BuildAction => BuildAction.Compile;
+		public override string Filename => filename;
 		readonly string filename;
 
 		readonly WinFormsProjectFile winFormsFile;

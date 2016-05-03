@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
@@ -28,18 +27,12 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Tabs {
 	sealed class TabManager : ITabManager {
-		public IEnumerable<ITabGroupManager> TabGroupManagers {
-			get { return tabGroupManagers.AsEnumerable(); }
-		}
+		public IEnumerable<ITabGroupManager> TabGroupManagers => tabGroupManagers;
 		readonly List<TabGroupManager> tabGroupManagers;
 
-		public ITabGroupManager ActiveTabGroupManager {
-			get { return selectedIndex < 0 ? null : tabGroupManagers[selectedIndex]; }
-		}
+		public ITabGroupManager ActiveTabGroupManager => selectedIndex < 0 ? null : tabGroupManagers[selectedIndex];
 
-		public int SelectedIndex {
-			get { return selectedIndex; }
-		}
+		public int SelectedIndex => selectedIndex;
 		int selectedIndex;
 
 		readonly IMenuManager menuManager;

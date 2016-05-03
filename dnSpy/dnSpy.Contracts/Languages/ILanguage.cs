@@ -249,8 +249,6 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static IHighlightingDefinition GetHighlightingDefinition(this ILanguage self) {
-			return HighlightingManager.Instance.GetDefinitionByExtension(self.FileExtension);
-		}
+		public static IHighlightingDefinition GetHighlightingDefinition(this ILanguage self) => HighlightingManager.Instance.GetDefinitionByExtension(self.FileExtension);
 	}
 }

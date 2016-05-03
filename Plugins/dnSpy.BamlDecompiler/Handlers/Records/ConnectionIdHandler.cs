@@ -24,9 +24,7 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class ConnectionIdHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.ConnectionId; }
-		}
+		public BamlRecordType Type => BamlRecordType.ConnectionId;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (ConnectionIdRecord)((BamlRecordNode)node).Record;

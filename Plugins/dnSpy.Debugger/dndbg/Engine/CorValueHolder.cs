@@ -45,9 +45,7 @@ namespace dndbg.Engine {
 	/// <see cref="CorValue"/> is automatically fetched whenever that happens.
 	/// </summary>
 	public sealed class CorValueHolder : ICorValueHolder {
-		public bool IsNeutered {
-			get { return value == null || value.IsNeutered; }
-		}
+		public bool IsNeutered => value == null || value.IsNeutered;
 
 		public CorValue CorValue {
 			get {
@@ -76,14 +74,11 @@ namespace dndbg.Engine {
 		}
 
 		public void InvalidateCorValue() {
-			if (value != null)
-				value.DisposeHandle();
+			value?.DisposeHandle();
 			value = null;
 		}
 
-		public void Dispose() {
-			InvalidateCorValue();
-		}
+		public void Dispose() => InvalidateCorValue();
 	}
 
 	/// <summary>
@@ -91,23 +86,14 @@ namespace dndbg.Engine {
 	/// called. The value is not owned by this class and won't get disposed by this class.
 	/// </summary>
 	public sealed class DummyCorValueHolder : ICorValueHolder {
-		public CorValue CorValue {
-			get { return value; }
-		}
-		readonly CorValue value;
-
-		public bool IsNeutered {
-			get { return false; }
-		}
+		public CorValue CorValue { get; }
+		public bool IsNeutered => false;
 
 		public DummyCorValueHolder(CorValue value) {
-			this.value = value;
+			this.CorValue = value;
 		}
 
-		public void InvalidateCorValue() {
-		}
-
-		public void Dispose() {
-		}
+		public void InvalidateCorValue() { }
+		public void Dispose() { }
 	}
 }

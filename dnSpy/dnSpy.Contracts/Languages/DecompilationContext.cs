@@ -56,9 +56,7 @@ namespace dnSpy.Contracts.Languages {
 		}
 
 		/// <summary />
-		public IDisposable DisableAssemblyLoad() {
-			return GetDisableAssemblyLoad == null ? null : GetDisableAssemblyLoad();
-		}
+		public IDisposable DisableAssemblyLoad() => GetDisableAssemblyLoad?.Invoke();
 
 		/// <summary>
 		/// Gets or creates a cached object

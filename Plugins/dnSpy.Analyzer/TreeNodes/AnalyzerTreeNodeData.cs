@@ -30,34 +30,19 @@ using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData, IAnalyzerTreeNodeData {
-		public override Guid Guid {
-			get { return Guid.Empty; }
-		}
-
-		public sealed override bool SingleClickExpandsChildren {
-			get { return Context.SingleClickExpandsChildren; }
-		}
-
+		public override Guid Guid => Guid.Empty;
+		public sealed override bool SingleClickExpandsChildren => Context.SingleClickExpandsChildren;
 		public IAnalyzerTreeNodeDataContext Context { get; set; }
-
 		protected abstract ImageReference GetIcon(IDotNetImageManager dnImgMgr);
-		protected virtual ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return null;
-		}
-
-		public sealed override ImageReference Icon {
-			get { return GetIcon(this.Context.DotNetImageManager); }
-		}
-
-		public sealed override ImageReference? ExpandedIcon {
-			get { return GetExpandedIcon(this.Context.DotNetImageManager); }
-		}
+		protected virtual ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
+		public sealed override ImageReference Icon => GetIcon(this.Context.DotNetImageManager);
+		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DotNetImageManager);
 
 		public sealed override object Text {
 			get {
 				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
 
-				var cached = cachedText != null ? cachedText.Target : null;
+				var cached = cachedText?.Target;
 				if (cached != null)
 					return cached;
 
@@ -71,14 +56,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		WeakReference cachedText;
 
 		protected abstract void Write(ISyntaxHighlightOutput output, ILanguage language);
-
-		public sealed override object ToolTip {
-			get { return null; }
-		}
-
-		public sealed override string ToString() {
-			return ToString(Context.Language);
-		}
+		public sealed override object ToolTip => null;
+		public sealed override string ToString() => ToString(Context.Language);
 
 		public string ToString(ILanguage language) {
 			var output = new NoSyntaxHighlightOutput();
@@ -86,10 +65,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return output.ToString();
 		}
 
-		public sealed override void OnRefreshUI() {
-			cachedText = null;
-		}
-
+		public sealed override void OnRefreshUI() => cachedText = null;
 		public abstract bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies);
 		public abstract bool HandleModelUpdated(IDnSpyFile[] files);
 
@@ -140,9 +116,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			TheTreeNodeGroup() {
 			}
 
-			public double Order {
-				get { return 100; }
-			}
+			public double Order => 100;
 
 			public int Compare(ITreeNodeData x, ITreeNodeData y) {
 				if (x == y)
@@ -155,8 +129,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return TheTreeNodeGroup.Instance; }
-		}
+		public override ITreeNodeGroup TreeNodeGroup => TheTreeNodeGroup.Instance;
 	}
 }

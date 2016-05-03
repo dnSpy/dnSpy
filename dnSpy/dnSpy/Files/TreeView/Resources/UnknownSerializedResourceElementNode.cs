@@ -28,9 +28,7 @@ using dnSpy.Shared.Files.TreeView.Resources;
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_UNKNOWNSERIALIZEDRSRCELEM)]
 	sealed class UnknownSerializedResourceElementNodeCreator : IResourceNodeCreator {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
-			return null;
-		}
+		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
 		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			if (resourceElement.ResourceData is BinaryResourceData)
@@ -40,9 +38,7 @@ namespace dnSpy.Files.TreeView.Resources {
 	}
 
 	sealed class UnknownSerializedResourceElementNode : SerializedResourceElementNode, IUnknownSerializedResourceElementNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.UNKNOWN_SERIALIZED_RESOURCE_ELEMENT_NODE_GUID); }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.UNKNOWN_SERIALIZED_RESOURCE_ELEMENT_NODE_GUID);
 
 		public UnknownSerializedResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
 			: base(treeNodeGroup, resourceElement) {

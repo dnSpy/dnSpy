@@ -79,13 +79,8 @@ namespace dndbg.Engine {
 	public sealed class StringBuilderTypeOutput : ITypeOutput {
 		readonly StringBuilder sb = new StringBuilder();
 
-		public void Write(string s, TypeColor type) {
-			sb.Append(s);
-		}
-
-		public override string ToString() {
-			return sb.ToString();
-		}
+		public void Write(string s, TypeColor type) => sb.Append(s);
+		public override string ToString() => sb.ToString();
 	}
 
 	[Flags]
@@ -129,61 +124,20 @@ namespace dndbg.Engine {
 		readonly TypePrinterFlags flags;
 		Dictionary<CorModule, IMetaDataImport> dictMetaDataImport;
 
-		bool ShowModuleNames {
-			get { return (flags & TypePrinterFlags.ShowModuleNames) != 0; }
-		}
-
-		bool ShowParameterTypes {
-			get { return (flags & TypePrinterFlags.ShowParameterTypes) != 0; }
-		}
-
-		bool ShowParameterNames {
-			get { return (flags & TypePrinterFlags.ShowParameterNames) != 0; }
-		}
-
-		bool ShowParameterValues {
-			get { return (flags & TypePrinterFlags.ShowParameterValues) != 0; }
-		}
-
-		bool ShowOwnerTypes {
-			get { return (flags & TypePrinterFlags.ShowOwnerTypes) != 0; }
-		}
-
-		bool ShowReturnTypes {
-			get { return (flags & TypePrinterFlags.ShowReturnTypes) != 0; }
-		}
-
-		bool ShowNamespaces {
-			get { return (flags & TypePrinterFlags.ShowNamespaces) != 0; }
-		}
-
-		bool ShowTypeKeywords {
-			get { return (flags & TypePrinterFlags.ShowTypeKeywords) != 0; }
-		}
-
-		bool UseDecimal {
-			get { return (flags & TypePrinterFlags.UseDecimal) != 0; }
-		}
-
-		bool ShowTokens {
-			get { return (flags & TypePrinterFlags.ShowTokens) != 0; }
-		}
-
-		bool ShowIP {
-			get { return (flags & TypePrinterFlags.ShowIP) != 0; }
-		}
-
-		bool ShowArrayValueSizes {
-			get { return (flags & TypePrinterFlags.ShowArrayValueSizes) != 0; }
-		}
-
-		bool ShowFieldLiteralValues {
-			get { return (flags & TypePrinterFlags.ShowFieldLiteralValues) != 0; }
-		}
-
-		bool ShowParameterLiteralValues {
-			get { return (flags & TypePrinterFlags.ShowParameterLiteralValues) != 0; }
-		}
+		bool ShowModuleNames => (flags & TypePrinterFlags.ShowModuleNames) != 0;
+		bool ShowParameterTypes => (flags & TypePrinterFlags.ShowParameterTypes) != 0;
+		bool ShowParameterNames => (flags & TypePrinterFlags.ShowParameterNames) != 0;
+		bool ShowParameterValues => (flags & TypePrinterFlags.ShowParameterValues) != 0;
+		bool ShowOwnerTypes => (flags & TypePrinterFlags.ShowOwnerTypes) != 0;
+		bool ShowReturnTypes => (flags & TypePrinterFlags.ShowReturnTypes) != 0;
+		bool ShowNamespaces => (flags & TypePrinterFlags.ShowNamespaces) != 0;
+		bool ShowTypeKeywords => (flags & TypePrinterFlags.ShowTypeKeywords) != 0;
+		bool UseDecimal => (flags & TypePrinterFlags.UseDecimal) != 0;
+		bool ShowTokens => (flags & TypePrinterFlags.ShowTokens) != 0;
+		bool ShowIP => (flags & TypePrinterFlags.ShowIP) != 0;
+		bool ShowArrayValueSizes => (flags & TypePrinterFlags.ShowArrayValueSizes) != 0;
+		bool ShowFieldLiteralValues => (flags & TypePrinterFlags.ShowFieldLiteralValues) != 0;
+		bool ShowParameterLiteralValues => (flags & TypePrinterFlags.ShowParameterLiteralValues) != 0;
 
 		public TypePrinter(ITypeOutput output, TypePrinterFlags flags, Func<DnEval> getEval = null) {
 			this.output = output;
@@ -267,9 +221,7 @@ namespace dndbg.Engine {
 			lineLength += s.Length;
 		}
 
-		void WriteSpace() {
-			OutputWrite(" ", TypeColor.Space);
-		}
+		void WriteSpace() => OutputWrite(" ", TypeColor.Space);
 
 		void WriteCommaSpace() {
 			OutputWrite(",", TypeColor.Operator);
@@ -526,9 +478,7 @@ namespace dndbg.Engine {
 			OutputWrite("]", TypeColor.Operator);
 		}
 
-		public void Write(CorType type) {
-			Write(type, null);
-		}
+		public void Write(CorType type) => Write(type, null);
 
 		void Write(CorType type, CorValue value) {
 			try {
@@ -539,7 +489,7 @@ namespace dndbg.Engine {
 					return;
 				}
 
-				if (value != null && value.IsReference && (value.Type == CorElementType.SZArray || value.Type == CorElementType.Array))
+				if (value != null && value.IsReference && (value.ElementType == CorElementType.SZArray || value.ElementType == CorElementType.Array))
 					value = value.NeuterCheckDereferencedValue ?? value;
 
 				// It's shown reverse in C# so need to collect all array types here
@@ -548,12 +498,12 @@ namespace dndbg.Engine {
 					if (list == null)
 						list = new List<Tuple<CorType, CorValue>>();
 					list.Add(Tuple.Create(type, value));
-					value = value == null ? null : value.NeuterCheckDereferencedValue;
+					value = value?.NeuterCheckDereferencedValue;
 					type = type.FirstTypeParameter;
 				}
 				if (list != null) {
 					var t = list[list.Count - 1];
-					Write(t.Item1.FirstTypeParameter, t.Item2 == null ? null : t.Item2.NeuterCheckDereferencedValue);
+					Write(t.Item1.FirstTypeParameter, t.Item2?.NeuterCheckDereferencedValue);
 					foreach (var tuple in list) {
 						var aryType = tuple.Item1;
 						var aryValue = tuple.Item2;
@@ -565,8 +515,8 @@ namespace dndbg.Engine {
 							else {
 								if (rank == 1)
 									OutputWrite("*", TypeColor.Operator);
-								var indexes = aryValue == null ? null : aryValue.BaseIndicies;
-								var dims = aryValue == null ? null : aryValue.Dimensions;
+								var indexes = aryValue?.BaseIndicies;
+								var dims = aryValue?.Dimensions;
 								if (ShowArrayValueSizes && indexes != null && dims != null && (uint)indexes.Length == rank && (uint)dims.Length == rank) {
 									for (uint i = 0; i < rank; i++) {
 										if (i > 0) {
@@ -623,12 +573,12 @@ namespace dndbg.Engine {
 				case CorElementType.U:			WriteSystemType("UIntPtr", TypeColor.ValueType); break;
 
 				case CorElementType.Ptr:
-					Write(type.FirstTypeParameter, value == null ? null : value.NeuterCheckDereferencedValue);
+					Write(type.FirstTypeParameter, value?.NeuterCheckDereferencedValue);
 					OutputWrite("*", TypeColor.Operator);
 					break;
 
 				case CorElementType.ByRef:
-					Write(type.FirstTypeParameter, value == null ? null : value.NeuterCheckDereferencedValue);
+					Write(type.FirstTypeParameter, value?.NeuterCheckDereferencedValue);
 					OutputWrite("&", TypeColor.Operator);
 					break;
 
@@ -679,7 +629,6 @@ namespace dndbg.Engine {
 			return list[index];
 		}
 
-		static readonly CorType[] emptyCorTypeArray = new CorType[0];
 		public void Write(TypeSig type, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null, IList<TokenAndName> typeTokenAndNames = null, IList<TokenAndName> methTokenAndNames = null) {
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
@@ -690,9 +639,9 @@ namespace dndbg.Engine {
 				}
 
 				if (typeGenArgs == null)
-					typeGenArgs = emptyCorTypeArray;
+					typeGenArgs = Array.Empty<CorType>();
 				if (methGenArgs == null)
-					methGenArgs = emptyCorTypeArray;
+					methGenArgs = Array.Empty<CorType>();
 				if (typeTokenAndNames == null)
 					typeTokenAndNames = emptyTokenAndNameList;
 				if (methTokenAndNames == null)
@@ -1004,7 +953,7 @@ namespace dndbg.Engine {
 					Write(prop.Class.GetParameterizedType(CorElementType.Class));
 					OutputWrite(".", TypeColor.Operator);
 				}
-				var overrides = accMeth == null ? new CorOverride[0] : accMeth.GetOverrides();
+				var overrides = accMeth == null ? Array.Empty<CorOverride>() : accMeth.GetOverrides();
 				var ovrMeth = overrides.Length == 0 ? null : overrides[0].FunctionDeclaration;
 				if (IsIndexer(prop, accMeth, ovrMeth)) {
 					if (ovrMeth != null) {
@@ -1046,7 +995,7 @@ namespace dndbg.Engine {
 
 		void WriteFuncType(CorFunction func) {
 			var cls = func.Class;
-			var type = cls == null ? null : cls.GetParameterizedType(CorElementType.Class);
+			var type = cls?.GetParameterizedType(CorElementType.Class);
 			if (type != null)
 				Write(type);
 			else
@@ -1110,9 +1059,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		TypeColor GetTypeColor(CorEvent e) {
-			return GetTypeColor(e.AddMethod ?? e.RemoveMethod ?? e.FireMethod, TypeColor.StaticEvent, TypeColor.InstanceEvent);
-		}
+		TypeColor GetTypeColor(CorEvent e) =>
+			GetTypeColor(e.AddMethod ?? e.RemoveMethod ?? e.FireMethod, TypeColor.StaticEvent, TypeColor.InstanceEvent);
 
 		TypeColor GetTypeColor(CorFunction func, TypeColor staticValue, TypeColor instanceValue) {
 			if (func == null)
@@ -1123,9 +1071,7 @@ namespace dndbg.Engine {
 			return instanceValue;
 		}
 
-		public void Write(CorFunction func) {
-			Write(func, null);
-		}
+		public void Write(CorFunction func) => Write(func, null);
 
 		void Write(CorFunction func, CorFrame frame) {
 			if (func == null) {
@@ -1170,8 +1116,8 @@ namespace dndbg.Engine {
 			else {
 				info.MethodGenericArguments = emptyCorTypeList;
 				info.TypeGenericArguments = emptyCorTypeList;
-				var mdi = GetMetaDataImport(cls == null ? null : cls.Module);
-				var clsToken = cls == null ? 0 : cls.Token;
+				var mdi = GetMetaDataImport(cls?.Module);
+				var clsToken = cls?.Token ?? 0;
 				info.TypeTokenAndNames = MetaDataUtils.GetGenericParameterNames(mdi, clsToken);
 				info.MethodTokenAndNames = MetaDataUtils.GetGenericParameterNames(mdi, methodToken);
 			}
@@ -1256,7 +1202,7 @@ namespace dndbg.Engine {
 						if (nativeCode == null) {
 							var func = frame.Function;
 							//TODO: This can be a random JITed method if it's a generic method
-							nativeCode = func == null ? null : func.NativeCode;
+							nativeCode = func?.NativeCode;
 						}
 
 						uint ip = frame.NativeFrameIP;
@@ -1299,7 +1245,7 @@ namespace dndbg.Engine {
 				return false;
 
 			WriteClassOrValueType(cls);
-			WriteGenericParameters(cls == null ? null : cls.Module, cls == null ? 0 : cls.Token, typeGenArgs, typeTokenAndNames, false);
+			WriteGenericParameters(cls?.Module, cls?.Token ?? 0, typeGenArgs, typeTokenAndNames, false);
 			OutputWrite(".", TypeColor.Operator);
 			return true;
 		}
@@ -1354,9 +1300,8 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		void Write(TokenAndName info, int index, uint ownerToken) {
+		void Write(TokenAndName info, int index, uint ownerToken) =>
 			Write(info, index, (ownerToken >> 24) == 2);
-		}
 
 		void Write(TokenAndName info, int index, bool isType) {
 			Debug.Assert(info.Name != null);
@@ -1529,9 +1474,8 @@ namespace dndbg.Engine {
 			WriteTokenComment(token);
 		}
 
-		void WriteDefaultFuncName(uint token) {
+		void WriteDefaultFuncName(uint token) =>
 			WriteMethodName(string.Format("meth_{0:X8}", token), token, TypeColor.InstanceMethod);
-		}
 
 		void WriteMethodName(string name, uint token, TypeColor typeColor) {
 			WriteIdentifier(name, typeColor);
@@ -1628,13 +1572,11 @@ namespace dndbg.Engine {
 			OutputWrite("*/", TypeColor.Comment);
 		}
 
-		void WriteToken(uint token) {
+		void WriteToken(uint token) =>
 			OutputWrite(ConvertTokenToString(token), TypeColor.Token);
-		}
 
-		void WriteNumber(object value) {
+		void WriteNumber(object value) =>
 			OutputWrite(ConvertNumberToString(value), TypeColor.Number);
-		}
 
 		public void Write(CorValue value) {
 			if (value == null) {
@@ -1647,7 +1589,7 @@ namespace dndbg.Engine {
 
 		public void Write(CorValue value, CorValueResult result) {
 			if (result.IsValid) {
-				var et = value == null ? null : value.ExactType;
+				var et = value?.ExactType;
 				if (et != null && et.IsEnum)
 					WriteEnum(et, result.Value);
 				else
@@ -1686,11 +1628,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static CorFunction GetFunction(CorType type, uint token) {
-			var cls = type.Class;
-			var mod = cls == null ? null : cls.Module;
-			return mod == null ? null : mod.GetFunctionFromToken(token);
-		}
+		static CorFunction GetFunction(CorType type, uint token) =>
+			type.Class?.Module?.GetFunctionFromToken(token);
 
 		CorMethodInfo FindToStringMethodIfOverridden(CorValue value) {
 			var et = value.ExactType;
@@ -1716,7 +1655,7 @@ namespace dndbg.Engine {
 
 				using (eval) {
 					var v = value;
-					if (v != null && v.IsReference && v.Type == CorElementType.ByRef)
+					if (v != null && v.IsReference && v.ElementType == CorElementType.ByRef)
 						v = v.NeuterCheckDereferencedValue;
 					if (v != null && v.IsGeneric && !v.IsHeap && v.ExactType.IsValueType)
 						v = eval.Box(v);
@@ -1758,15 +1697,12 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static string CleanUpEvaluatedToStringString(string s) {
-			// VS calls wsprintf("{%s}") and if the string has a zero in it, anything
-			// after that isn't shown, including the final '}'. We'll show the full string.
-			return s;
-		}
+		// VS calls wsprintf("{%s}") and if the string has a zero in it, anything
+		// after that isn't shown, including the final '}'. We'll show the full string.
+		static string CleanUpEvaluatedToStringString(string s) => s;
 
-		void WriteToStringFailed(string msg) {
+		void WriteToStringFailed(string msg) =>
 			OutputWrite(string.Format("{{ToString() failed: {0}}}", msg), TypeColor.Error);
-		}
 
 		void WriteTypeOfValue(CorValue value) {
 			if (value == null) {
@@ -1775,7 +1711,7 @@ namespace dndbg.Engine {
 			}
 
 			OutputWrite("{", TypeColor.TypeStringBrace);
-			if (value.IsReference && value.Type == CorElementType.ByRef)
+			if (value.IsReference && value.ElementType == CorElementType.ByRef)
 				value = value.NeuterCheckDereferencedValue ?? value;
 			var type = value.ExactType;
 			if (type != null)
@@ -1799,7 +1735,7 @@ namespace dndbg.Engine {
 			if (type == null)
 				return false;
 			var cts = type.RemovePinnedAndModifiers() as ClassOrValueTypeSig;
-			var mdip = cts == null ? null : cts.TypeDefOrRef as IMetaDataImportProvider;
+			var mdip = cts?.TypeDefOrRef as IMetaDataImportProvider;
 			if (mdip == null || mdip.MDToken.Table == Table.TypeSpec)
 				return false;
 
@@ -1886,9 +1822,8 @@ namespace dndbg.Engine {
 			OutputWrite(" ", TypeColor.Space);
 		}
 
-		void WriteEnumField(IMetaDataImport mdi, uint token, string name) {
+		void WriteEnumField(IMetaDataImport mdi, uint token, string name) =>
 			WriteIdentifier(name, TypeColor.EnumField);
-		}
 
 		void WriteSimpleValue(object value) {
 			if (value == null) {
@@ -1932,13 +1867,11 @@ namespace dndbg.Engine {
 			OutputWrite(value.ToString(), TypeColor.Unknown);
 		}
 
-		void WriteBooleanValue(bool b) {
+		void WriteBooleanValue(bool b) =>
 			OutputWrite(b ? "true" : "false", TypeColor.Keyword);
-		}
 
-		void WriteCharValue(char c) {
+		void WriteCharValue(char c) =>
 			OutputWrite(ToCSharpChar(c), TypeColor.Char);
-		}
 
 		static string ToCSharpChar(char value) {
 			var sb = new StringBuilder(8);
@@ -2006,10 +1939,8 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		static string ConvertTokenToString(uint token) {
-			// Tokens are always in hex
-			return string.Format("0x{0:X8}", token);
-		}
+		// Tokens are always in hex
+		static string ConvertTokenToString(uint token) => string.Format("0x{0:X8}", token);
 
 		void WriteRelativeOffset(int offset) {
 			long offset2 = offset;
@@ -2042,9 +1973,7 @@ namespace dndbg.Engine {
 				OutputWrite(string.Format("0x{0:X8}", offset), TypeColor.Number);
 		}
 
-		static object ConvertAddressToDebuggeeIntPtr(ulong addr) {
-			return Utils.IsDebuggee32Bit ? (object)(uint)addr : addr;
-		}
+		static object ConvertAddressToDebuggeeIntPtr(ulong addr) => Utils.IsDebuggee32Bit ? (object)(uint)addr : addr;
 
 		void WriteNativeAddress(ulong address) {
 			if (Utils.IsDebuggee32Bit)

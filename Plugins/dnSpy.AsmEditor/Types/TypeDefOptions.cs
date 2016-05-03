@@ -75,9 +75,7 @@ namespace dnSpy.AsmEditor.Types {
 			return type;
 		}
 
-		public TypeDef CreateTypeDef(ModuleDef ownerModule) {
-			return ownerModule.UpdateRowId(CopyTo(new TypeDefUser(UTF8String.Empty), ownerModule));
-		}
+		public TypeDef CreateTypeDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new TypeDefUser(UTF8String.Empty), ownerModule));
 
 		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType) {
 			return new TypeDefOptions {

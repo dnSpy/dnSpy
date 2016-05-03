@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Get the value
 		/// </summary>
-		public object Value { get; private set; }
+		public object Value { get; }
 
 		/// <summary>
 		/// Constructor

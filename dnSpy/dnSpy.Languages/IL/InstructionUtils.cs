@@ -39,9 +39,7 @@ namespace dnSpy.Languages.IL {
 				throw new InvalidOperationException();
 		}
 
-		static void AddUnknownByte(this IList<short> instrs) {
-			instrs.Add(-1);
-		}
+		static void AddUnknownByte(this IList<short> instrs) => instrs.Add(-1);
 
 		static void AddUnknownInt16(this IList<short> instrs) {
 			instrs.Add(-1);

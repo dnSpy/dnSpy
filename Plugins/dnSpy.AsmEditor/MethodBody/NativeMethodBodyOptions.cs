@@ -36,8 +36,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return body;
 		}
 
-		public NativeMethodBody Create() {
-			return CopyTo(new NativeMethodBody());
-		}
+		public NativeMethodBody Create() => CopyTo(new NativeMethodBody());
 	}
 }

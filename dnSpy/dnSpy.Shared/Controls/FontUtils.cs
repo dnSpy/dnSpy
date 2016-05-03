@@ -77,9 +77,7 @@ namespace dnSpy.Shared.Controls {
 			return false;
 		}
 
-		public static FontFamily[] GetMonospacedFonts() {
-			return Fonts.SystemFontFamilies.Where(a => IsMonospacedFont(a)).OrderBy(a => a.Source.ToUpperInvariant()).ToArray();
-		}
+		public static FontFamily[] GetMonospacedFonts() => Fonts.SystemFontFamilies.Where(a => IsMonospacedFont(a)).OrderBy(a => a.Source.ToUpperInvariant()).ToArray();
 
 		// Checks chars 0x20-0x7E (the only ones used by the hex editor) whether they have the same
 		// width and height. There's probably a better way of doing this...

@@ -30,25 +30,15 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class TablesStreamNode : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.TBLSSTREAM_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid); }
-		}
-
-		public override object VMObject {
-			get { return tablesStreamVM; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.TBLSSTREAM_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid);
+		public override object VMObject => tablesStreamVM;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return tablesStreamVM; }
 		}
 
-		protected override string IconName {
-			get { return "MetaData"; }
-		}
+		protected override string IconName => "MetaData";
 
 		readonly TablesStreamVM tablesStreamVM;
 
@@ -77,13 +67,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) {
+		protected override void Write(ISyntaxHighlightOutput output) =>
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_TablesStream, BoxedTextTokenKind.InstanceField);
-		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {
 			var mdTblNode = (MetaDataTableNode)TreeNode.DataChildren.FirstOrDefault(a => ((MetaDataTableNode)a).TableInfo.Table == (Table)(token >> 24));
-			return mdTblNode == null ? null : mdTblNode.FindTokenNode(token);
+			return mdTblNode?.FindTokenNode(token);
 		}
 
 		public MetaDataTableVM FindMetaDataTable(Table table) {

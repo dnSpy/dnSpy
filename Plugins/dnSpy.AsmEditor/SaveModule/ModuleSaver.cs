@@ -34,8 +34,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 	}
 
 	sealed class ModuleSaverLogEventArgs : EventArgs {
-		public string Message { get; private set; }
-		public ModuleSaverLogEvent Event { get; private set; }
+		public string Message { get; }
+		public ModuleSaverLogEvent Event { get; }
 
 		public ModuleSaverLogEventArgs(string msg, ModuleSaverLogEvent evType) {
 			this.Message = msg;
@@ -44,8 +44,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 	}
 
 	sealed class ModuleSaverWriteEventArgs : EventArgs {
-		public SaveOptionsVM File { get; private set; }
-		public bool Starting { get; private set; }
+		public SaveOptionsVM File { get; }
+		public bool Starting { get; }
 
 		public ModuleSaverWriteEventArgs(SaveOptionsVM vm, bool starting) {
 			this.File = vm;
@@ -89,9 +89,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		int fileIndex;
 		FileProgress fileProgress;
 
-		double GetFileProgress() {
-			return fileProgress.Progress;
-		}
+		double GetFileProgress() => fileProgress.Progress;
 
 		abstract class FileProgress {
 			public abstract double Progress { get; }
@@ -157,18 +155,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 				1,
 			};
 
-			public override double Progress {
-				get { return eventIndexToCompleted[CurrentEventIndex]; }
-			}
+			public override double Progress => eventIndexToCompleted[CurrentEventIndex];
 		}
 
 		sealed class HexFileProgress : FileProgress {
 			public ulong TotalSize;
 			public ulong BytesWritten;
 
-			public override double Progress {
-				get { return (double)BytesWritten / TotalSize; }
-			}
+			public override double Progress => (double)BytesWritten / TotalSize;
 
 			public HexFileProgress(ulong totalSize) {
 				this.TotalSize = totalSize;
@@ -188,9 +182,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				state.SizeRatio = GetSize(state.File) / totalSize;
 		}
 
-		static ulong GetSize(ulong start, ulong end) {
-			return start == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - start + 1;
-		}
+		static ulong GetSize(ulong start, ulong end) => start == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - start + 1;
 
 		static double GetSize(SaveOptionsVM vm) {
 			switch (vm.Type) {
@@ -214,8 +206,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			for (int i = 0; i < filesToSave.Length; i++) {
 				fileIndex = i;
 				var state = filesToSave[fileIndex];
-				if (OnWritingFile != null)
-					OnWritingFile(this, new ModuleSaverWriteEventArgs(state.File, true));
+				OnWritingFile?.Invoke(this, new ModuleSaverWriteEventArgs(state.File, true));
 
 				fileProgress = null;
 				switch (state.File.Type) {
@@ -225,13 +216,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 				fileProgress = null;
 
-				if (OnWritingFile != null)
-					OnWritingFile(this, new ModuleSaverWriteEventArgs(state.File, false));
+				OnWritingFile?.Invoke(this, new ModuleSaverWriteEventArgs(state.File, false));
 			}
 
 			fileIndex = filesToSave.Length;
-			if (OnProgressUpdated != null)
-				OnProgressUpdated(this, EventArgs.Empty);
+			OnProgressUpdated?.Invoke(this, EventArgs.Empty);
 		}
 
 		void Save(SaveModuleOptionsVM vm) {
@@ -291,10 +280,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 
-		void NotifyProgressUpdated() {
-			if (OnProgressUpdated != null)
-				OnProgressUpdated(this, EventArgs.Empty);
-		}
+		void NotifyProgressUpdated() => OnProgressUpdated?.Invoke(this, EventArgs.Empty);
 
 		void IModuleWriterListener.OnWriterEvent(ModuleWriterBase writer, ModuleWriterEvent evt) {
 			ThrowIfCanceled();
@@ -319,9 +305,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return false;
 		}
 
-		public void CancelAsync() {
-			mustCancel = true;
-		}
+		public void CancelAsync() => mustCancel = true;
 		volatile bool mustCancel;
 
 		void ThrowIfCanceled() {

@@ -49,7 +49,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return -1;
 			// inform AvalonEdit about the next position where we want to build a hyperlink
 			var segment = this.References.FindFirstSegmentWithStartAfter(startOffset);
-			return segment != null ? segment.StartOffset : -1;
+			return segment?.StartOffset ?? -1;
 		}
 
 		public override VisualLineElement ConstructElement(int offset) {
@@ -69,9 +69,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return null;
 		}
 
-		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e) {
+		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e) =>
 			referenceClicked(referenceSegment, e);
-		}
 	}
 
 	/// <summary>
@@ -91,12 +90,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.referenceSegment = referenceSegment;
 		}
 
-		bool CanClick {
-			get {
-				return (Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control) &&
+		bool CanClick => (Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control) &&
 					!referenceSegment.IsLocalTarget;
-			}
-		}
 
 		/// <inheritdoc/>
 		protected override void OnQueryCursor(QueryCursorEventArgs e) {
@@ -112,14 +107,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			// Only allow left click or ctrl + left click, nothing else. That way the user can eg.
 			// hold down shift or alt or shift+ctrl etc and select text where a reference is located
 			// without being taken to the definition.
-			if (!e.Handled && e.ChangedButton == MouseButton.Left && CanClick) {
+			if (!e.Handled && e.ChangedButton == MouseButton.Left && CanClick)
 				parent.JumpToReference(referenceSegment, e);
-			}
 		}
 
 		/// <inheritdoc/>
-		protected override VisualLineText CreateInstance(int length) {
-			return new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
-		}
+		protected override VisualLineText CreateInstance(int length) =>
+			new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
 	}
 }

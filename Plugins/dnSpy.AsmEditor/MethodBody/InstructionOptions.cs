@@ -43,8 +43,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return instr;
 		}
 
-		public Instruction Create(Dictionary<object, object> ops) {
-			return CopyTo(ops, new Instruction());
-		}
+		public Instruction Create(Dictionary<object, object> ops) => CopyTo(ops, new Instruction());
 	}
 }

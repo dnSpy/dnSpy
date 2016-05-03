@@ -29,8 +29,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 	}
 
 	class TabsVMSettings : ViewModelBase, ITabsVMSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
 			get { return syntaxHighlight; }

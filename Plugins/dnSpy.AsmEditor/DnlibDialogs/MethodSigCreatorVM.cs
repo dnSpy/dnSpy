@@ -42,9 +42,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ITypeSigCreator typeSigCreator;
 
-		public ICommand AddReturnTypeCommand {
-			get { return new RelayCommand(a => AddReturnType()); }
-		}
+		public ICommand AddReturnTypeCommand => new RelayCommand(a => AddReturnType());
 
 		public PropertySig PropertySig {
 			get { return CreateSig(new PropertySig()); }
@@ -61,21 +59,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { WriteSignature(value); }
 		}
 
-		public bool ShowSignatureFullName {
-			get { return !options.DontShowSignatureFullName; }
-		}
-
-		public bool IsPropertySig {
-			get { return options.IsPropertySig; }
-		}
-
-		public bool IsMethodSig {
-			get { return !IsPropertySig; }
-		}
-
-		public bool CanHaveSentinel {
-			get { return options.CanHaveSentinel; }
-		}
+		public bool ShowSignatureFullName => !options.DontShowSignatureFullName;
+		public bool IsPropertySig => options.IsPropertySig;
+		public bool IsMethodSig => !IsPropertySig;
+		public bool CanHaveSentinel => options.CanHaveSentinel;
 
 		public string SignatureFullName {
 			get {
@@ -116,9 +103,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set { SetFlags(dnlib.DotNet.CallingConvention.ExplicitThis, value); }
 		}
 
-		bool GetFlags(dnlib.DotNet.CallingConvention flag) {
-			return (CallingConvention & flag) != 0;
-		}
+		bool GetFlags(dnlib.DotNet.CallingConvention flag) => (CallingConvention & flag) != 0;
 
 		void SetFlags(dnlib.DotNet.CallingConvention flag, bool value) {
 			if (value)
@@ -127,10 +112,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				CallingConvention &= ~flag;
 		}
 
-		public EnumListVM MethodCallingConv {
-			get { return methodCallingConvVM; }
-		}
-		readonly EnumListVM methodCallingConvVM;
+		public EnumListVM MethodCallingConv { get; }
 		internal static readonly EnumVM[] methodCallingConvList = EnumVM.Create(typeof(MethodCallingConv));
 
 		public TypeSig ReturnType {
@@ -147,10 +129,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		TypeSig retType;
 
-		public UInt32VM GenericParameterCount {
-			get { return genericParameterCount; }
-		}
-		UInt32VM genericParameterCount;
+		public UInt32VM GenericParameterCount { get; }
 
 		public string Title {
 			get {
@@ -161,27 +140,20 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string title;
 
-		public CreateTypeSigArrayVM ParametersCreateTypeSigArray {
-			get { return parametersCreateTypeSigArray; }
-		}
-		CreateTypeSigArrayVM parametersCreateTypeSigArray;
-
-		public CreateTypeSigArrayVM SentinelCreateTypeSigArray {
-			get { return sentinelCreateTypeSigArray; }
-		}
-		CreateTypeSigArrayVM sentinelCreateTypeSigArray;
+		public CreateTypeSigArrayVM ParametersCreateTypeSigArray { get; }
+		public CreateTypeSigArrayVM SentinelCreateTypeSigArray { get; }
 
 		readonly MethodSigCreatorOptions options;
 
 		public MethodSigCreatorVM(MethodSigCreatorOptions options) {
 			this.options = options.Clone();
 			this.title = options.TypeSigCreatorOptions.Title;
-			this.parametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
+			this.ParametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
 			this.ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged("SignatureFullName");
-			this.sentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
+			this.SentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
 			this.SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged("SignatureFullName");
-			this.sentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
-			this.genericParameterCount = new UInt32VM(0, a => {
+			this.SentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
+			this.GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
 				OnPropertyChanged("SignatureFullName");
 				if (GenericParameterCount != null && !GenericParameterCount.HasError)
@@ -190,7 +162,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
 				Max = ModelUtils.COMPRESSED_UINT32_MAX,
 			};
-			this.methodCallingConvVM = new EnumListVM(methodCallingConvList, (a, b) => {
+			this.MethodCallingConv = new EnumListVM(methodCallingConvList, (a, b) => {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |
@@ -253,12 +225,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError {
-			get {
-				return GenericParameterCount.HasError ||
-					ReturnType == null;
-			}
-		}
+		public override bool HasError => GenericParameterCount.HasError || ReturnType == null;
 
 		public string ErrorText {
 			get {

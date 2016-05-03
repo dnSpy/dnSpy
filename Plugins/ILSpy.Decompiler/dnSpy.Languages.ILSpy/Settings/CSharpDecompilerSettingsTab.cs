@@ -33,30 +33,14 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		readonly DecompilerSettings decompilerSettings;
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-		public double Order {
-			get { return LanguageConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP; }
-		}
+		public double Order => LanguageConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
+		public string Name => dnSpy_Languages_ILSpy_Resources.CSharpDecompilerSettingsTabName;
+		public DecompilerSettings Settings => decompilerSettings;
+		public object UIObject => this;
 
-		public string Name {
-			get { return dnSpy_Languages_ILSpy_Resources.CSharpDecompilerSettingsTabName; }
-		}
-
-		public DecompilerSettings Settings {
-			get { return decompilerSettings; }
-		}
-
-		public object UIObject {
-			get { return this; }
-		}
-
-		public DecompilationObjectVM[] DecompilationObjectsArray {
-			get { return decompilationObjectVMs2; }
-		}
+		public DecompilationObjectVM[] DecompilationObjectsArray => decompilationObjectVMs2;
 		readonly DecompilationObjectVM[] decompilationObjectVMs;
 		readonly DecompilationObjectVM[] decompilationObjectVMs2;
 
@@ -202,19 +186,12 @@ namespace dnSpy.Languages.ILSpy.Settings {
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {
-		public DecompilationObject Object {
-			get { return decompilationObject; }
-		}
-		readonly DecompilationObject decompilationObject;
-
-		public string Text {
-			get { return text; }
-		}
-		readonly string text;
+		public DecompilationObject Object { get; }
+		public string Text { get; }
 
 		public DecompilationObjectVM(DecompilationObject decompilationObject, string text) {
-			this.decompilationObject = decompilationObject;
-			this.text = text;
+			this.Object = decompilationObject;
+			this.Text = text;
 		}
 	}
 }

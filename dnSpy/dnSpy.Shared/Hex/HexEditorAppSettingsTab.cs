@@ -44,17 +44,9 @@ namespace dnSpy.Shared.Hex {
 	}
 
 	sealed class HexEditorAppSettingsTab : IAppSettingsTab {
-		public double Order {
-			get { return AppSettingsConstants.ORDER_SETTINGS_TAB_HEXEDITOR; }
-		}
-
-		public string Title {
-			get { return dnSpy_Shared_Resources.HexEditorAppDlgTitle; }
-		}
-
-		public object UIObject {
-			get { return displayAppSettingsVM; }
-		}
+		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_HEXEDITOR;
+		public string Title => dnSpy_Shared_Resources.HexEditorAppDlgTitle;
+		public object UIObject => displayAppSettingsVM;
 
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;
 		readonly HexEditorAppSettingsVM displayAppSettingsVM;
@@ -73,20 +65,9 @@ namespace dnSpy.Shared.Hex {
 	}
 
 	sealed class HexEditorAppSettingsVM : ViewModelBase {
-		public HexEditorSettings Settings {
-			get { return hexEditorSettings; }
-		}
-		readonly HexEditorSettings hexEditorSettings;
-
-		public Int32VM BytesGroupCountVM {
-			get { return bytesGroupCountVM; }
-		}
-		readonly Int32VM bytesGroupCountVM;
-
-		public Int32VM BytesPerLineVM {
-			get { return bytesPerLineVM; }
-		}
-		readonly Int32VM bytesPerLineVM;
+		public HexEditorSettings Settings { get; }
+		public Int32VM BytesGroupCountVM { get; }
+		public Int32VM BytesPerLineVM { get; }
 
 		public FontFamily[] FontFamilies {
 			get { return fontFamilies; }
@@ -104,17 +85,14 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (fontFamily != value) {
 					fontFamily = value;
-					hexEditorSettings.FontFamily = fontFamily;
+					Settings.FontFamily = fontFamily;
 					OnPropertyChanged("FontFamilyVM");
 				}
 			}
 		}
 		FontFamily fontFamily;
 
-		public EnumListVM AsciiEncodingVM {
-			get { return asciiEncodingVM; }
-		}
-		readonly EnumListVM asciiEncodingVM;
+		public EnumListVM AsciiEncodingVM { get; }
 		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
 			new EnumVM(AsciiEncoding.ASCII, dnSpy_Shared_Resources.HexEditor_CharacterEncoding_ASCII_2),
 			new EnumVM(AsciiEncoding.ANSI, dnSpy_Shared_Resources.HexEditor_CharacterEncoding_ANSI_2),
@@ -126,10 +104,10 @@ namespace dnSpy.Shared.Hex {
 		};
 
 		public HexEditorAppSettingsVM(HexEditorSettings hexEditorSettings) {
-			this.hexEditorSettings = hexEditorSettings;
-			this.asciiEncodingVM = new EnumListVM(asciiEncodingList, (a, b) => hexEditorSettings.AsciiEncoding = (AsciiEncoding)AsciiEncodingVM.SelectedItem);
-			this.bytesGroupCountVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesGroupCount = BytesGroupCountVM.Value; });
-			this.bytesPerLineVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesPerLine = BytesPerLineVM.Value; }) {
+			this.Settings = hexEditorSettings;
+			this.AsciiEncodingVM = new EnumListVM(asciiEncodingList, (a, b) => hexEditorSettings.AsciiEncoding = (AsciiEncoding)AsciiEncodingVM.SelectedItem);
+			this.BytesGroupCountVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesGroupCount = BytesGroupCountVM.Value; });
+			this.BytesPerLineVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesPerLine = BytesPerLineVM.Value; }) {
 				Min = 0,
 				Max = HexEditorSettings.MAX_BYTES_PER_LINE,
 			};

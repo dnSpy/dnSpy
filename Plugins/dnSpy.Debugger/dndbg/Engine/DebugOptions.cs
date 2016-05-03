@@ -24,10 +24,8 @@ namespace dndbg.Engine {
 	public class DebugOptions : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
+		protected void OnPropertyChanged(string propName) =>
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		/// <summary>
 		/// Stepper intercept mask
@@ -198,8 +196,6 @@ namespace dndbg.Engine {
 			return other;
 		}
 
-		public DebugOptions Clone() {
-			return CopyTo(new DebugOptions());
-		}
+		public DebugOptions Clone() => CopyTo(new DebugOptions());
 	}
 }

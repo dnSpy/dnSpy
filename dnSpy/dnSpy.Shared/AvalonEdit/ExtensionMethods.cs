@@ -36,9 +36,7 @@ namespace dnSpy.Shared.AvalonEdit {
 			return new MyHighlightingBrush(brush);
 		}
 
-		public override Brush GetBrush(ITextRunConstructionContext context) {
-			return brush;
-		}
+		public override Brush GetBrush(ITextRunConstructionContext context) => brush;
 	}
 
 	/// <summary>
@@ -71,8 +69,6 @@ namespace dnSpy.Shared.AvalonEdit {
 		/// </summary>
 		/// <param name="brush">Brush</param>
 		/// <returns></returns>
-		public static HighlightingBrush ToHighlightingBrush(this Brush brush) {
-			return MyHighlightingBrush.Create(brush);
-		}
+		public static HighlightingBrush ToHighlightingBrush(this Brush brush) => MyHighlightingBrush.Create(brush);
 	}
 }

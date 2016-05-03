@@ -131,9 +131,7 @@ namespace dnSpy.Languages.MSBuild {
 			return false;
 		}
 
-		public string GetXamlResourceFilename(string resourceName) {
-			return GetBamlResourceName(resourceName);
-		}
+		public string GetXamlResourceFilename(string resourceName) => GetBamlResourceName(resourceName);
 
 		string GetBamlResourceName(string resourceName) {
 			if (namespaces == null)

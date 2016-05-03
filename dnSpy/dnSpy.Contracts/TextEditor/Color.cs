@@ -74,7 +74,6 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
-		public ITextColor ToTextColor(ITheme theme) =>
-			TextColor ?? theme.GetTextColor(ColorType.Value);
+		public ITextColor ToTextColor(ITheme theme) => TextColor ?? theme.GetTextColor(ColorType.Value);
 	}
 }

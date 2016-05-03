@@ -25,9 +25,7 @@ using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {
 	sealed partial class LocalsControl : UserControl {
-		public ListView ListView {
-			get { return treeView; }
-		}
+		public ListView ListView => treeView;
 
 		public LocalsControl() {
 			InitializeComponent();

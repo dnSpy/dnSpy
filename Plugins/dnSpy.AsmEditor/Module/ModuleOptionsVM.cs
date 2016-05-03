@@ -46,40 +46,14 @@ namespace dnSpy.AsmEditor.Module {
 		}
 		IDnlibTypePicker dnlibTypePicker;
 
-		public ICommand PickManagedEntryPointCommand {
-			get { return new RelayCommand(a => PickManagedEntryPoint()); }
-		}
-
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand GenerateNewMvidCommand {
-			get { return new RelayCommand(a => Mvid.Value = Guid.NewGuid()); }
-		}
-
-		public ICommand GenerateNewEncIdCommand {
-			get { return new RelayCommand(a => EncId.Value = Guid.NewGuid()); }
-		}
-
-		public ICommand GenerateNewEncBaseIdCommand {
-			get { return new RelayCommand(a => EncBaseId.Value = Guid.NewGuid()); }
-		}
-
-		public NullableGuidVM Mvid {
-			get { return mvid; }
-		}
-		NullableGuidVM mvid;
-
-		public NullableGuidVM EncId {
-			get { return encId; }
-		}
-		NullableGuidVM encId;
-
-		public NullableGuidVM EncBaseId {
-			get { return encBaseId; }
-		}
-		NullableGuidVM encBaseId;
+		public ICommand PickManagedEntryPointCommand => new RelayCommand(a => PickManagedEntryPoint());
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand GenerateNewMvidCommand => new RelayCommand(a => Mvid.Value = Guid.NewGuid());
+		public ICommand GenerateNewEncIdCommand => new RelayCommand(a => EncId.Value = Guid.NewGuid());
+		public ICommand GenerateNewEncBaseIdCommand => new RelayCommand(a => EncBaseId.Value = Guid.NewGuid());
+		public NullableGuidVM Mvid { get; }
+		public NullableGuidVM EncId { get; }
+		public NullableGuidVM EncBaseId { get; }
 
 		public string Name {
 			get { return options.Name; }
@@ -89,15 +63,8 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		public EnumListVM ClrVersion {
-			get { return clrVersionVM; }
-		}
-		readonly EnumListVM clrVersionVM;
-
-		public EnumListVM ModuleKind {
-			get { return moduleKindVM; }
-		}
-		readonly EnumListVM moduleKindVM;
+		public EnumListVM ClrVersion { get; }
+		public EnumListVM ModuleKind { get; }
 
 		public Characteristics Characteristics {
 			get { return options.Characteristics; }
@@ -205,9 +172,7 @@ namespace dnSpy.AsmEditor.Module {
 			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value); }
 		}
 
-		bool GetFlagValue(Characteristics flag) {
-			return (Characteristics & flag) != 0;
-		}
+		bool GetFlagValue(Characteristics flag) => (Characteristics & flag) != 0;
 
 		void SetFlagValue(Characteristics flag, bool value) {
 			if (value)
@@ -322,9 +287,7 @@ namespace dnSpy.AsmEditor.Module {
 			set { SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value); }
 		}
 
-		bool GetFlagValue(DllCharacteristics flag) {
-			return (DllCharacteristics & flag) != 0;
-		}
+		bool GetFlagValue(DllCharacteristics flag) => (DllCharacteristics & flag) != 0;
 
 		void SetFlagValue(DllCharacteristics flag, bool value) {
 			if (value)
@@ -343,10 +306,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		public EnumListVM Machine {
-			get { return machineVM; }
-		}
-		readonly EnumListVM machineVM;
+		public EnumListVM Machine { get; }
 
 		public ComImageFlags Cor20HeaderFlags {
 			get { return options.Cor20HeaderFlags; }
@@ -394,9 +354,7 @@ namespace dnSpy.AsmEditor.Module {
 			set { SetFlagValue(ComImageFlags._32BitPreferred, value); }
 		}
 
-		bool GetFlagValue(ComImageFlags flag) {
-			return (Cor20HeaderFlags & flag) != 0;
-		}
+		bool GetFlagValue(ComImageFlags flag) => (Cor20HeaderFlags & flag) != 0;
 
 		void SetFlagValue(ComImageFlags flag, bool value) {
 			if (value)
@@ -405,15 +363,8 @@ namespace dnSpy.AsmEditor.Module {
 				Cor20HeaderFlags &= ~flag;
 		}
 
-		public NullableUInt32VM Cor20HeaderRuntimeVersion {
-			get { return cor20HeaderRuntimeVersion; }
-		}
-		NullableUInt32VM cor20HeaderRuntimeVersion;
-
-		public NullableUInt16VM TablesHeaderVersion {
-			get { return tablesHeaderVersion; }
-		}
-		NullableUInt16VM tablesHeaderVersion;
+		public NullableUInt32VM Cor20HeaderRuntimeVersion { get; }
+		public NullableUInt16VM TablesHeaderVersion { get; }
 
 		public EntryPointType EntryPointEnum {
 			get { return entryPointEnum; }
@@ -443,13 +394,8 @@ namespace dnSpy.AsmEditor.Module {
 		}
 		IManagedEntryPoint managedEntryPoint;
 
-		public string EntryPointName {
-			get { return GetEntryPointString(80); }
-		}
-
-		public string EntryPointNameToolTip {
-			get { return ManagedEntryPoint == null ? null : GetEntryPointString(500); }
-		}
+		public string EntryPointName => GetEntryPointString(80);
+		public string EntryPointNameToolTip => ManagedEntryPoint == null ? null : GetEntryPointString(500);
 
 		string GetEntryPointString(int maxChars) {
 			var ep = ManagedEntryPoint;
@@ -473,73 +419,61 @@ namespace dnSpy.AsmEditor.Module {
 			return s;
 		}
 
-		public UInt32VM NativeEntryPointRva {
-			get { return nativeEntryPointRva; }
-		}
-		UInt32VM nativeEntryPointRva;
+		public UInt32VM NativeEntryPointRva { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		readonly ModuleDef module;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
 
 		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, ILanguageManager languageManager) {
 			this.module = module;
 			this.options = new ModuleOptions();
 			this.origOptions = options;
-			moduleKindVM = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, (a, b) => {
+			ModuleKind = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, (a, b) => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
 			});
-			this.machineVM = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, (a, b) => {
+			this.Machine = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, (a, b) => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
-			mvid = new NullableGuidVM(a => HasErrorUpdated());
-			encId = new NullableGuidVM(a => HasErrorUpdated());
-			encBaseId = new NullableGuidVM(a => HasErrorUpdated());
-			clrVersionVM = new EnumListVM(NetModuleOptionsVM.clrVersionList, (a, b) => OnClrVersionChanged());
-			clrVersionVM.Items.Add(new EnumVM(Module.ClrVersion.Unknown, dnSpy_AsmEditor_Resources.Unknown));
-			clrVersionVM.SelectedItem = Module.ClrVersion.Unknown;
-			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
-			tablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
-			nativeEntryPointRva = new UInt32VM(a => HasErrorUpdated());
-			customAttributesVM = new CustomAttributesVM(module, languageManager);
+			Mvid = new NullableGuidVM(a => HasErrorUpdated());
+			EncId = new NullableGuidVM(a => HasErrorUpdated());
+			EncBaseId = new NullableGuidVM(a => HasErrorUpdated());
+			ClrVersion = new EnumListVM(NetModuleOptionsVM.clrVersionList, (a, b) => OnClrVersionChanged());
+			ClrVersion.Items.Add(new EnumVM(Module.ClrVersion.Unknown, dnSpy_AsmEditor_Resources.Unknown));
+			ClrVersion.SelectedItem = Module.ClrVersion.Unknown;
+			Cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
+			TablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
+			NativeEntryPointRva = new UInt32VM(a => HasErrorUpdated());
+			CustomAttributesVM = new CustomAttributesVM(module, languageManager);
 			Reinitialize();
 		}
 
 		void OnClrVersionChanged() {
-			var clrVersion = (Module.ClrVersion)clrVersionVM.SelectedItem;
+			var clrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
 			if (clrValues == null)
 				return;
 
-			if (cor20HeaderRuntimeVersion != null)
-				cor20HeaderRuntimeVersion.Value = clrValues.Cor20HeaderRuntimeVersion;
-			if (tablesHeaderVersion != null)
-				tablesHeaderVersion.Value = clrValues.TablesHeaderVersion;
+			if (Cor20HeaderRuntimeVersion != null)
+				Cor20HeaderRuntimeVersion.Value = clrValues.Cor20HeaderRuntimeVersion;
+			if (TablesHeaderVersion != null)
+				TablesHeaderVersion.Value = clrValues.TablesHeaderVersion;
 			RuntimeVersion = clrValues.RuntimeVersion;
 		}
 
 		void UpdateClrVersion() {
 			ClrVersion clrVersion = Module.ClrVersion.Unknown;
-			if (cor20HeaderRuntimeVersion != null && !cor20HeaderRuntimeVersion.HasError && cor20HeaderRuntimeVersion.Value != null &&
-				tablesHeaderVersion != null && !tablesHeaderVersion.HasError && tablesHeaderVersion.Value != null) {
-				var clrValues = ClrVersionValues.Find(cor20HeaderRuntimeVersion.Value.Value, tablesHeaderVersion.Value.Value, RuntimeVersion);
+			if (Cor20HeaderRuntimeVersion != null && !Cor20HeaderRuntimeVersion.HasError && Cor20HeaderRuntimeVersion.Value != null &&
+				TablesHeaderVersion != null && !TablesHeaderVersion.HasError && TablesHeaderVersion.Value != null) {
+				var clrValues = ClrVersionValues.Find(Cor20HeaderRuntimeVersion.Value.Value, TablesHeaderVersion.Value.Value, RuntimeVersion);
 				if (clrValues != null)
 					clrVersion = clrValues.ClrVersion;
 			}
-			if (clrVersionVM != null)
-				clrVersionVM.SelectedItem = clrVersion;
+			if (ClrVersion != null)
+				ClrVersion.SelectedItem = clrVersion;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ModuleOptions CreateModuleOptions() {
-			return CopyTo(new ModuleOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ModuleOptions CreateModuleOptions() => CopyTo(new ModuleOptions());
 
 		void InitializeFrom(ModuleOptions options) {
 			Mvid.Value = options.Mvid;

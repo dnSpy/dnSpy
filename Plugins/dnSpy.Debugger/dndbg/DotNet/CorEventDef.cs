@@ -33,13 +33,8 @@ namespace dndbg.DotNet {
 		readonly uint origRid;
 		readonly CorTypeDef ownerType;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
-
-		public CorTypeDef OwnerType {
-			get { return ownerType; }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
+		public CorTypeDef OwnerType => ownerType;
 
 		public CorEventDef(CorModuleDef readerModule, uint rid, CorTypeDef ownerType) {
 			this.readerModule = readerModule;
@@ -82,13 +77,9 @@ namespace dndbg.DotNet {
 		}
 		int initCounter;
 
-		void InitCustomAttributes_NoLock() {
-			customAttributes = null;
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void InitCustomAttributes_NoLock() => customAttributes = null;
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, GenericParamContext.Create(ownerType));
-		}
 
 		void InitNameAndAttrs_NoLock() {
 			var mdi = readerModule.MetaDataImport;

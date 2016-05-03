@@ -94,10 +94,7 @@ namespace dnSpy.Contracts.Files {
 			return shortName;
 		}
 
-		static string GetDefaultShortName(IDnSpyFile file) {
-			var m = file.ModuleDef;
-			return m == null ? null : m.Name;
-		}
+		static string GetDefaultShortName(IDnSpyFile file) => file.ModuleDef?.Name;
 
 		static string GetShortName(string filename) {
 			if (string.IsNullOrEmpty(filename))
@@ -138,9 +135,7 @@ namespace dnSpy.Contracts.Files {
 		/// <typeparam name="T"><see cref="ModuleDefMD"/> or <see cref="ModuleDefMD"/></typeparam>
 		/// <param name="file">File</param>
 		/// <returns></returns>
-		public static IEnumerable<T> GetModules<T>(this IDnSpyFile file) where T : ModuleDef {
-			return GetModules(new HashSet<T>(), new[] { file });
-		}
+		public static IEnumerable<T> GetModules<T>(this IDnSpyFile file) where T : ModuleDef => GetModules(new HashSet<T>(), new[] { file });
 
 		/// <summary>
 		/// Gets all modules in this instance and any children
@@ -148,9 +143,7 @@ namespace dnSpy.Contracts.Files {
 		/// <typeparam name="T"><see cref="ModuleDefMD"/> or <see cref="ModuleDefMD"/></typeparam>
 		/// <param name="files">Files</param>
 		/// <returns></returns>
-		public static IEnumerable<T> GetModules<T>(this IEnumerable<IDnSpyFile> files) where T : ModuleDef {
-			return GetModules(new HashSet<T>(), files);
-		}
+		public static IEnumerable<T> GetModules<T>(this IEnumerable<IDnSpyFile> files) where T : ModuleDef => GetModules(new HashSet<T>(), files);
 
 		static IEnumerable<T> GetModules<T>(HashSet<T> hash, IEnumerable<IDnSpyFile> files) where T : ModuleDef {
 			foreach (var f in files.SelectMany(f => f.NonLoadedDescendantsAndSelf())) {

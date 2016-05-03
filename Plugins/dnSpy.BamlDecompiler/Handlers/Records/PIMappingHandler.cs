@@ -24,12 +24,8 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class PIMappingHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PIMapping; }
-		}
+		public BamlRecordType Type => BamlRecordType.PIMapping;
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
-		}
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) => null;
 	}
 }

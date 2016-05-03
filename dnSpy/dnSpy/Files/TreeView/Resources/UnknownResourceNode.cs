@@ -33,9 +33,7 @@ using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class UnknownResourceNode : ResourceNode, IUnknownResourceNode, IDecompileSelf {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.UNKNOWN_RESOURCE_NODE_GUID); }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.UNKNOWN_RESOURCE_NODE_GUID);
 
 		public UnknownResourceNode(ITreeNodeGroup treeNodeGroup, Resource resource)
 			: base(treeNodeGroup, resource) {

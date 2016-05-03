@@ -43,9 +43,7 @@ namespace dnSpy.MainApp {
 		const string IGNORED_SECTION = "Ignored";
 		const string IGNORED_ATTR = "id";
 
-		public bool CanEnableAllWarnings {
-			get { return ignoredMessages.Count > 0; }
-		}
+		public bool CanEnableAllWarnings => ignoredMessages.Count > 0;
 
 		readonly IAppWindow appWindow;
 		readonly ISettingsManager settingsManager;

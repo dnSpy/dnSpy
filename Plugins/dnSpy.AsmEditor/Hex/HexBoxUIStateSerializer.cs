@@ -71,9 +71,7 @@ namespace dnSpy.AsmEditor.Hex {
 			s.HexBoxState.Column = section.Attribute<int?>("HexBoxState-Column") ?? 0;
 			s.HexBoxState.StartOffset = section.Attribute<ulong?>("HexBoxState-StartOffset") ?? 0;
 			s.HexBoxState.EndOffset = section.Attribute<ulong?>("HexBoxState-EndOffset") ?? 0;
-			s.HexBoxState.CaretPosition.Offset = section.Attribute<ulong?>("HexBoxState-HexBoxPosition-Offset") ?? 0;
-			s.HexBoxState.CaretPosition.Kind = section.Attribute<HexBoxPositionKind?>("HexBoxState-HexBoxPosition-Kind") ?? 0;
-			s.HexBoxState.CaretPosition.KindPosition = section.Attribute<byte?>("HexBoxState-HexBoxPosition-KindPosition") ?? 0;
+			s.HexBoxState.CaretPosition = new HexBoxPosition(section.Attribute<ulong?>("HexBoxState-HexBoxPosition-Offset") ?? 0, section.Attribute<HexBoxPositionKind?>("HexBoxState-HexBoxPosition-Kind") ?? 0, section.Attribute<byte?>("HexBoxState-HexBoxPosition-KindPosition") ?? 0);
 
 			var from = section.Attribute<ulong?>("HexBoxState-Selection-From");
 			var to = section.Attribute<ulong?>("HexBoxState-Selection-To");

@@ -32,42 +32,28 @@ namespace dndbg.Engine {
 	public sealed class DnAssembly {
 		readonly DebuggerCollection<ICorDebugModule, DnModule> modules;
 
-		public CorAssembly CorAssembly {
-			get { return assembly; }
-		}
-		readonly CorAssembly assembly;
+		public CorAssembly CorAssembly { get; }
 
 		/// <summary>
 		/// Unique id per debugger
 		/// </summary>
-		public int UniqueId {
-			get { return uniqueId; }
-		}
-		readonly int uniqueId;
+		public int UniqueId { get; }
 
 		/// <summary>
 		/// Unique id per process
 		/// </summary>
-		public int UniqueIdProcess {
-			get { return uniqueIdProcess; }
-		}
-		readonly int uniqueIdProcess;
+		public int UniqueIdProcess { get; }
 
 		/// <summary>
 		/// Unique id per AppDomain
 		/// </summary>
-		public int UniqueIdAppDomain {
-			get { return uniqueIdAppDomain; }
-		}
-		readonly int uniqueIdAppDomain;
+		public int UniqueIdAppDomain { get; }
 
 		/// <summary>
 		/// Assembly name, and is usually the full path to the manifest (first) module on disk
 		/// (the EXE or DLL file).
 		/// </summary>
-		public string Name {
-			get { return assembly.Name; }
-		}
+		public string Name => CorAssembly.Name;
 
 		/// <summary>
 		/// Gets the full name, identical to the dnlib assembly full name
@@ -88,53 +74,36 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if the assembly has been unloaded
 		/// </summary>
-		public bool HasUnloaded {
-			get { return hasUnloaded; }
-		}
-		bool hasUnloaded;
+		public bool HasUnloaded { get; private set; }
 
 		/// <summary>
 		/// Gets the owner debugger
 		/// </summary>
-		public DnDebugger Debugger {
-			get { return AppDomain.Debugger; }
-		}
+		public DnDebugger Debugger => AppDomain.Debugger;
 
 		/// <summary>
 		/// Gets the owner process
 		/// </summary>
-		public DnProcess Process {
-			get { return AppDomain.Process; }
-		}
+		public DnProcess Process => AppDomain.Process;
 
 		/// <summary>
 		/// Gets the owner AppDomain
 		/// </summary>
-		public DnAppDomain AppDomain {
-			get { return appDomain; }
-		}
-		readonly DnAppDomain appDomain;
+		public DnAppDomain AppDomain { get; }
 
 		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
-			this.appDomain = appDomain;
+			this.AppDomain = appDomain;
 			this.modules = new DebuggerCollection<ICorDebugModule, DnModule>(CreateModule);
-			this.assembly = new CorAssembly(assembly);
-			this.uniqueId = uniqueId;
-			this.uniqueIdProcess = uniqueIdProcess;
-			this.uniqueIdAppDomain = uniqueIdAppDomain;
+			this.CorAssembly = new CorAssembly(assembly);
+			this.UniqueId = uniqueId;
+			this.UniqueIdProcess = uniqueIdProcess;
+			this.UniqueIdAppDomain = uniqueIdAppDomain;
 		}
 
-		DnModule CreateModule(ICorDebugModule comModule) {
-			return new DnModule(this, comModule, Debugger.GetNextModuleId(), Process.GetNextModuleId(), AppDomain.GetNextModuleId());
-		}
-
-		internal void SetHasUnloaded() {
-			hasUnloaded = true;
-		}
-
-		internal DnModule TryAdd(ICorDebugModule comModule) {
-			return modules.Add(comModule);
-		}
+		DnModule CreateModule(ICorDebugModule comModule) =>
+			new DnModule(this, comModule, Debugger.GetNextModuleId(), Process.GetNextModuleId(), AppDomain.GetNextModuleId());
+		internal void SetHasUnloaded() => HasUnloaded = true;
+		internal DnModule TryAdd(ICorDebugModule comModule) => modules.Add(comModule);
 
 		/// <summary>
 		/// Gets all modules, sorted on the order they were created
@@ -190,8 +159,6 @@ namespace dndbg.Engine {
 		}
 		CorAssemblyDef corAssemblyDef;
 
-		public override string ToString() {
-			return string.Format("{0} {1}", UniqueId, Name);
-		}
+		public override string ToString() => string.Format("{0} {1}", UniqueId, Name);
 	}
 }

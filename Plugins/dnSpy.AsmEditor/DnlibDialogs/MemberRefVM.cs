@@ -42,33 +42,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ITypeSigCreator typeSigCreator;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand InitializeFromFieldCommand {
-			get { return new RelayCommand(a => InitializeFromField()); }
-		}
-
-		public ICommand InitializeFromMethodCommand {
-			get { return new RelayCommand(a => InitializeFromMethod()); }
-		}
-
-		public ICommand PickTypeCommand {
-			get { return new RelayCommand(a => PickType()); }
-		}
-
-		public ICommand PickTypeSpecCommand {
-			get { return new RelayCommand(a => PickTypeSpec()); }
-		}
-
-		public ICommand PickMethodDefCommand {
-			get { return new RelayCommand(a => PickMethodDef()); }
-		}
-
-		public ICommand PickModuleRefCommand {
-			get { return new RelayCommand(a => PickModuleRef()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand InitializeFromFieldCommand => new RelayCommand(a => InitializeFromField());
+		public ICommand InitializeFromMethodCommand => new RelayCommand(a => InitializeFromMethod());
+		public ICommand PickTypeCommand => new RelayCommand(a => PickType());
+		public ICommand PickTypeSpecCommand => new RelayCommand(a => PickTypeSpec());
+		public ICommand PickMethodDefCommand => new RelayCommand(a => PickMethodDef());
+		public ICommand PickModuleRefCommand => new RelayCommand(a => PickModuleRef());
 
 		public IMemberRefParent Class {
 			get { return @class; }
@@ -102,49 +82,31 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string name;
 
-		public TypeSigCreatorVM TypeSigCreatorVM {
-			get { return typeSigCreatorVM; }
-		}
-		TypeSigCreatorVM typeSigCreatorVM;
-
-		public MethodSigCreatorVM MethodSigCreatorVM {
-			get { return methodSigCreatorVM; }
-		}
-		MethodSigCreatorVM methodSigCreatorVM;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
-
-		public bool IsField {
-			get { return isField; }
-		}
-		readonly bool isField;
-
-		public bool IsMethod {
-			get { return !IsField; }
-		}
+		public TypeSigCreatorVM TypeSigCreatorVM { get; }
+		public MethodSigCreatorVM MethodSigCreatorVM { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
+		public bool IsField { get; }
+		public bool IsMethod => !IsField;
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public MemberRefVM(MemberRefOptions options, TypeSigCreatorOptions typeSigCreatorOptions, bool isField) {
-			this.isField = isField;
+			this.IsField = isField;
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone();
 			this.origOptions = options;
-			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.LanguageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.LanguageManager);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 
-			this.typeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
+			this.TypeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
 			TypeSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			var mopts = new MethodSigCreatorOptions(this.typeSigCreatorOptions.Clone());
 			mopts.CanHaveSentinel = true;
-			this.methodSigCreatorVM = new MethodSigCreatorVM(mopts);
+			this.MethodSigCreatorVM = new MethodSigCreatorVM(mopts);
 			MethodSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			Reinitialize();
@@ -211,20 +173,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public MemberRefOptions CreateMemberRefOptions() {
-			return CopyTo(new MemberRefOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public MemberRefOptions CreateMemberRefOptions() => CopyTo(new MemberRefOptions());
 
 		void InitializeFrom(MemberRefOptions options) {
 			this.Class = options.Class;
 			this.Name = options.Name;
 			if (IsField) {
 				var fs = options.Signature as FieldSig;
-				TypeSigCreatorVM.TypeSig = fs == null ? null : fs.Type;
+				TypeSigCreatorVM.TypeSig = fs?.Type;
 			}
 			else
 				MethodSigCreatorVM.MethodSig = options.Signature as MethodSig;

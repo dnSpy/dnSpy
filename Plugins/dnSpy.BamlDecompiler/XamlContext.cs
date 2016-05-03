@@ -40,15 +40,15 @@ namespace dnSpy.BamlDecompiler {
 		Dictionary<ushort, XamlProperty> propertyMap = new Dictionary<ushort, XamlProperty>();
 		Dictionary<string, XNamespace> xmlnsMap = new Dictionary<string, XNamespace>();
 
-		public ModuleDef Module { get; private set; }
+		public ModuleDef Module { get; }
 		public CancellationToken CancellationToken { get; private set; }
 		public BamlDecompilerOptions BamlDecompilerOptions { get; private set; }
 
 		public BamlContext Baml { get; private set; }
 		public BamlNode RootNode { get; private set; }
-		public IDictionary<BamlRecord, BamlBlockNode> NodeMap { get; private set; }
+		public IDictionary<BamlRecord, BamlBlockNode> NodeMap { get; }
 
-		public XmlnsDictionary XmlNs { get; private set; }
+		public XmlnsDictionary XmlNs { get; }
 
 		public static XamlContext Construct(ModuleDef module, BamlDocument document, CancellationToken token, BamlDecompilerOptions bamlDecompilerOptions) {
 			var ctx = new XamlContext(module);
@@ -96,9 +96,7 @@ namespace dnSpy.BamlDecompiler {
 				this.assemblyDef = assemblyDef;
 			}
 
-			public AssemblyRef FindAssemblyRef(TypeRef nonNestedTypeRef) {
-				return assemblyDef.ToAssemblyRef();
-			}
+			public AssemblyRef FindAssemblyRef(TypeRef nonNestedTypeRef) => assemblyDef.ToAssemblyRef();
 		}
 
 		public XamlType ResolveType(ushort id) {
@@ -189,8 +187,6 @@ namespace dnSpy.BamlDecompiler {
 			return xName;
 		}
 
-		public XName GetPseudoName(string name) {
-			return XNamespace.Get("https://github.com/0xd4d/dnSpy").GetName(name);
-		}
+		public XName GetPseudoName(string name) => XNamespace.Get("https://github.com/0xd4d/dnSpy").GetName(name);
 	}
 }

@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.Exceptions {
 	}
 
 	sealed class ExceptionManagerEventArgs : EventArgs {
-		public ExceptionManagerEventType EventType { get; private set; }
-		public object Argument { get; private set; }
+		public ExceptionManagerEventType EventType { get; }
+		public object Argument { get; }
 
 		public ExceptionManagerEventArgs(ExceptionManagerEventType eventType, object arg = null) {
 			this.EventType = eventType;
@@ -62,10 +62,7 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly ExceptionInfo[] otherExceptions = new ExceptionInfo[(int)ExceptionType.Last];
 
 		public event EventHandler<ExceptionManagerEventArgs> Changed;
-
-		public IEnumerable<ExceptionInfo> ExceptionInfos {
-			get { return exceptions.Values; }
-		}
+		public IEnumerable<ExceptionInfo> ExceptionInfos => exceptions.Values;
 
 		readonly ITheDebugger theDebugger;
 		readonly IDefaultExceptionSettings defaultExceptionSettings;
@@ -130,8 +127,7 @@ namespace dnSpy.Debugger.Exceptions {
 			Debug.Assert(b);
 			if (!b)
 				return;
-			if (Changed != null)
-				Changed(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.ExceptionInfoPropertyChanged, info));
+			Changed?.Invoke(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.ExceptionInfoPropertyChanged, info));
 		}
 
 		public void RestoreDefaults() {
@@ -145,8 +141,7 @@ namespace dnSpy.Debugger.Exceptions {
 				exceptions[info.Key] = info;
 				otherExceptions[i] = info;
 			}
-			if (Changed != null)
-				Changed(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Restored));
+			Changed?.Invoke(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Restored));
 		}
 
 		static ExceptionInfo CreateOtherExceptionInfo(ExceptionType type) {
@@ -186,8 +181,7 @@ namespace dnSpy.Debugger.Exceptions {
 					WriteBreakOnFirstChance(info, breakOnFirstChance);
 				else {
 					exceptions[key] = info = new ExceptionInfo(key, breakOnFirstChance);
-					if (Changed != null)
-						Changed(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Added, info));
+					Changed?.Invoke(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Added, info));
 				}
 			}
 		}
@@ -199,18 +193,12 @@ namespace dnSpy.Debugger.Exceptions {
 					list.Add(info);
 			}
 			if (list.Count != 0) {
-				if (Changed != null)
-					Changed(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Removed, list));
+				Changed?.Invoke(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Removed, list));
 			}
 		}
 
-		public bool CanRemove(ExceptionInfo info) {
-			return !info.IsOtherExceptions;
-		}
-
-		public bool Exists(ExceptionInfoKey key) {
-			return exceptions.ContainsKey(key);
-		}
+		public bool CanRemove(ExceptionInfo info) => !info.IsOtherExceptions;
+		public bool Exists(ExceptionInfoKey key) => exceptions.ContainsKey(key);
 
 		public void Add(ExceptionInfoKey key) {
 			ExceptionInfo info;
@@ -219,8 +207,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 			info = new ExceptionInfo(key, true);
 			exceptions.Add(key, info);
-			if (Changed != null)
-				Changed(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Added, info));
+			Changed?.Invoke(this, new ExceptionManagerEventArgs(ExceptionManagerEventType.Added, info));
 		}
 	}
 }

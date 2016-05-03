@@ -38,9 +38,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// AppDomain Id
 		/// </summary>
-		public int Id {
-			get { return id; }
-		}
+		public int Id => id;
 		readonly int id;
 
 		/// <summary>
@@ -128,9 +126,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// AppDomain name
 		/// </summary>
-		public string Name {
-			get { return GetName(obj) ?? string.Empty; }
-		}
+		public string Name => GetName(obj) ?? string.Empty;
 
 		static string GetName(ICorDebugAppDomain appDomain) {
 			uint cchName = 0;
@@ -170,9 +166,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="state">New state</param>
 		/// <param name="thread">Thread to exempt from the new state or null</param>
-		public void SetAllThreadsDebugState(CorDebugThreadState state, CorThread thread = null) {
-			int hr = obj.SetAllThreadsDebugState(state, thread == null ? null : thread.RawObject);
-		}
+		public void SetAllThreadsDebugState(CorDebugThreadState state, CorThread thread = null) =>
+			obj.SetAllThreadsDebugState(state, thread == null ? null : thread.RawObject);
 
 		/// <summary>
 		/// true if any managed callbacks are currently queued for the specified thread
@@ -185,10 +180,7 @@ namespace dndbg.Engine {
 			return hr >= 0 && queued != 0;
 		}
 
-		public bool Detach() {
-			int hr = obj.Detach();
-			return hr >= 0;
-		}
+		public bool Detach() => obj.Detach() >= 0;
 
 		public CorType GetPtr(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
@@ -243,25 +235,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorAppDomain a, CorAppDomain b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorAppDomain other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorAppDomain);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[AppDomain] {0} {1}", Id, Name);
-		}
+		public static bool operator !=(CorAppDomain a, CorAppDomain b) => !(a == b);
+		public bool Equals(CorAppDomain other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorAppDomain);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[AppDomain] {0} {1}", Id, Name);
 	}
 }

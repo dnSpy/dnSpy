@@ -21,13 +21,8 @@ using System.Windows.Controls;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed partial class ExceptionsControl : UserControl {
-		public ListBox ListBox {
-			get { return listBox; }
-		}
-
-		public TextBox SearchTextBox {
-			get { return searchTextBox; }
-		}
+		public ListBox ListBox => listBox;
+		public TextBox SearchTextBox => searchTextBox;
 
 		public ExceptionsControl() {
 			InitializeComponent();

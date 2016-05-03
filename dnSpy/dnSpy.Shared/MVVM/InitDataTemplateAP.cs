@@ -27,13 +27,8 @@ namespace dnSpy.Shared.MVVM {
 		public static readonly DependencyProperty InitializeProperty = DependencyProperty.RegisterAttached(
 			"Initialize", typeof(bool), typeof(InitDataTemplateAP), new UIPropertyMetadata(false, InitializePropertyChangedCallback));
 
-		public static void SetInitialize(FrameworkElement element, bool value) {
-			element.SetValue(InitializeProperty, value);
-		}
-
-		public static bool GetInitialize(FrameworkElement element) {
-			return (bool)element.GetValue(InitializeProperty);
-		}
+		public static void SetInitialize(FrameworkElement element, bool value) => element.SetValue(InitializeProperty, value);
+		public static bool GetInitialize(FrameworkElement element) => (bool)element.GetValue(InitializeProperty);
 
 		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 		sealed class MefState : IAutoLoaded {

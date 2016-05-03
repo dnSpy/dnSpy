@@ -19,8 +19,6 @@
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	static class HexUtils {
-		public static bool IsModified(ulong start, ulong end, ulong modifiedStart, ulong modifiedEnd) {
-			return modifiedStart <= end && modifiedEnd >= start;
-		}
+		public static bool IsModified(ulong start, ulong end, ulong modifiedStart, ulong modifiedEnd) => modifiedStart <= end && modifiedEnd >= start;
 	}
 }

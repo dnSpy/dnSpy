@@ -27,9 +27,7 @@ namespace dnSpy.TextEditor {
 		int firstIndex;
 		int? selectedIndex;
 
-		public bool HasCommands {
-			get { return commands.Count > 0; }
-		}
+		public bool HasCommands => commands.Count > 0;
 
 		public string SelectedCommand {
 			get {
@@ -49,9 +47,7 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public bool CanSelectPrevious {
-			get { return HasCommands; }
-		}
+		public bool CanSelectPrevious => HasCommands;
 
 		IEnumerable<Tuple<int, string>> PreviousCommands {
 			get {
@@ -94,9 +90,7 @@ namespace dnSpy.TextEditor {
 			return false;
 		}
 
-		public bool CanSelectNext {
-			get { return HasCommands && selectedIndex != null; }
-		}
+		public bool CanSelectNext => HasCommands && selectedIndex != null;
 
 		public bool SelectNext(string text = null) {
 			foreach (var t in NextCommands) {

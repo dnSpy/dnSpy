@@ -34,21 +34,10 @@ namespace dndbg.DotNet {
 		MethodAttributes origAttributes;
 		MethodImplAttributes origImplAttributes;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
-
-		public CorTypeDef OwnerType {
-			get { return ownerType; }
-		}
-
-		public bool CompletelyLoaded {
-			get { return OwnerType.CompletelyLoaded; }
-		}
-
-		protected override bool CanFreeMethodBody {
-			get { return canFreeMethodBody && !readerModule.DisableMDAPICalls; }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
+		public CorTypeDef OwnerType => ownerType;
+		public bool CompletelyLoaded => OwnerType.CompletelyLoaded;
+		protected override bool CanFreeMethodBody => canFreeMethodBody && !readerModule.DisableMDAPICalls;
 		bool canFreeMethodBody;
 
 		public CorMethodDef(CorModuleDef readerModule, uint rid, CorTypeDef ownerType) {
@@ -137,25 +126,14 @@ namespace dndbg.DotNet {
 			Signature = readerModule.ReadSignature(sig, new GenericParamContext(ownerType, this));
 		}
 
-		void InitCustomAttributes_NoLock() {
-			customAttributes = null;
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void InitCustomAttributes_NoLock() => customAttributes = null;
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext(ownerType, this));
-		}
-
-		void InitDeclSecurities_NoLock() {
-			declSecurities = null;
-		}
-
-		protected override void InitializeDeclSecurities() {
+		void InitDeclSecurities_NoLock() => declSecurities = null;
+		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
-		}
-
-		protected override MethodBody GetMethodBody_NoLock() {
-			return readerModule.ReadMethodBody(this, origRva, origAttributes, origImplAttributes, new GenericParamContext(ownerType, this));
-		}
+		protected override MethodBody GetMethodBody_NoLock() =>
+			readerModule.ReadMethodBody(this, origRva, origAttributes, origImplAttributes, new GenericParamContext(ownerType, this));
 
 		public void UpdateParams() {
 			lock (lockObj) {
@@ -168,9 +146,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			var mds = paramDefs;
-			if (mds != null)
-				mds.Clear();
+			paramDefs?.Clear();
 
 			var itemTokens = MDAPI.GetParamTokens(mdi, token);
 			var newItems = new MemberInfo<CorParamDef>[itemTokens.Length];
@@ -193,9 +169,7 @@ namespace dndbg.DotNet {
 			var mdi2 = readerModule.MetaDataImport2;
 			uint token = OriginalToken.Raw;
 
-			var gps = genericParameters;
-			if (gps != null)
-				gps.Clear();
+			genericParameters?.Clear();
 
 			var itemTokens = MDAPI.GetGenericParamTokens(mdi2, token);
 			var newItems = new MemberInfo<CorGenericParam>[itemTokens.Length];

@@ -42,8 +42,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return local;
 		}
 
-		public Local Create() {
-			return CopyTo(new Local(null));
-		}
+		public Local Create() => CopyTo(new Local(null));
 	}
 }

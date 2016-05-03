@@ -31,108 +31,31 @@ namespace dnSpy.Shared.Search {
 			this.filter = filter;
 		}
 
-		public virtual FileTreeNodeFilterResult GetResult(FieldDef field) {
-			return this.filter.GetResult(field);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(PropertyDef prop) {
-			return this.filter.GetResult(prop);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(EventDef evt) {
-			return this.filter.GetResult(evt);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(MethodDef method) {
-			return this.filter.GetResult(method);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(TypeDef type) {
-			return this.filter.GetResult(type);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(ModuleRef modRef) {
-			return this.filter.GetResult(modRef);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeFolderNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypesFolderNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IResourcesFolderNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IResourceElementNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IResourceNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IReferencesFolderNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypeNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeNode node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(AssemblyRef asmRef) {
-			return this.filter.GetResult(asmRef);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(ModuleDef mod) {
-			return this.filter.GetResult(mod);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(AssemblyDef asm) {
-			return this.filter.GetResult(asm);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) {
-			return this.filter.GetResult(method, param);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, Local local) {
-			return this.filter.GetResult(method, local);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(string ns, IDnSpyFile owner) {
-			return this.filter.GetResult(ns, owner);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultBody(MethodDef method) {
-			return this.filter.GetResultBody(method);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultLocals(MethodDef method) {
-			return this.filter.GetResultLocals(method);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IFileTreeNodeData node) {
-			return this.filter.GetResult(node);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResult(IDnSpyFile file) {
-			return this.filter.GetResult(file);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultParamDefs(MethodDef method) {
-			return this.filter.GetResultParamDefs(method);
-		}
-
-		public virtual FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) {
-			return this.filter.GetResultAttributes(hca);
-		}
+		public virtual FileTreeNodeFilterResult GetResult(FieldDef field) => this.filter.GetResult(field);
+		public virtual FileTreeNodeFilterResult GetResult(PropertyDef prop) => this.filter.GetResult(prop);
+		public virtual FileTreeNodeFilterResult GetResult(EventDef evt) => this.filter.GetResult(evt);
+		public virtual FileTreeNodeFilterResult GetResult(MethodDef method) => this.filter.GetResult(method);
+		public virtual FileTreeNodeFilterResult GetResult(TypeDef type) => this.filter.GetResult(type);
+		public virtual FileTreeNodeFilterResult GetResult(ModuleRef modRef) => this.filter.GetResult(modRef);
+		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeFolderNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypesFolderNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IResourcesFolderNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IResourceElementNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IResourceNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IReferencesFolderNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IDerivedTypeNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IBaseTypeNode node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(AssemblyRef asmRef) => this.filter.GetResult(asmRef);
+		public virtual FileTreeNodeFilterResult GetResult(ModuleDef mod) => this.filter.GetResult(mod);
+		public virtual FileTreeNodeFilterResult GetResult(AssemblyDef asm) => this.filter.GetResult(asm);
+		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) => this.filter.GetResult(method, param);
+		public virtual FileTreeNodeFilterResult GetResult(MethodDef method, Local local) => this.filter.GetResult(method, local);
+		public virtual FileTreeNodeFilterResult GetResult(string ns, IDnSpyFile owner) => this.filter.GetResult(ns, owner);
+		public virtual FileTreeNodeFilterResult GetResultBody(MethodDef method) => this.filter.GetResultBody(method);
+		public virtual FileTreeNodeFilterResult GetResultLocals(MethodDef method) => this.filter.GetResultLocals(method);
+		public virtual FileTreeNodeFilterResult GetResult(IFileTreeNodeData node) => this.filter.GetResult(node);
+		public virtual FileTreeNodeFilterResult GetResult(IDnSpyFile file) => this.filter.GetResult(file);
+		public virtual FileTreeNodeFilterResult GetResultParamDefs(MethodDef method) => this.filter.GetResultParamDefs(method);
+		public virtual FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => this.filter.GetResultAttributes(hca);
 	}
 }

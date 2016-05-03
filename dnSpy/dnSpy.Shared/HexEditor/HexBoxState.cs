@@ -48,9 +48,7 @@ namespace dnSpy.Shared.HexEditor {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(HexBoxState a, HexBoxState b) {
-			return !(a == b);
-		}
+		public static bool operator !=(HexBoxState a, HexBoxState b) => !(a == b);
 
 		public bool Equals(HexBoxState other) {
 			if ((object)other == null)
@@ -63,9 +61,7 @@ namespace dnSpy.Shared.HexEditor {
 				Selection == other.Selection;
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as HexBoxState);
-		}
+		public override bool Equals(object obj) => Equals(obj as HexBoxState);
 
 		public override int GetHashCode() {
 			return (int)TopOffset ^ (int)(TopOffset >> 32) ^

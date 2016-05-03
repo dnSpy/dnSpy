@@ -22,9 +22,7 @@ using System.Diagnostics;
 
 namespace dndbg.Engine {
 	public sealed class DisableSystemDebuggerDetection {
-		public static void Initialize(DnDebugger debugger) {
-			new DisableSystemDebuggerDetection(debugger);
-		}
+		public static void Initialize(DnDebugger debugger) => new DisableSystemDebuggerDetection(debugger);
 
 		DisableSystemDebuggerDetection(DnDebugger debugger) {
 			debugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
@@ -80,13 +78,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static bool WriteReturnFalse(CorProcess process, ulong addr) {
-			return WriteBytes(process, addr, returnFalse);
-		}
-
-		static bool WriteReturnTrue(CorProcess process, ulong addr) {
-			return WriteBytes(process, addr, returnTrue);
-		}
+		static bool WriteReturnFalse(CorProcess process, ulong addr) => WriteBytes(process, addr, returnFalse);
+		static bool WriteReturnTrue(CorProcess process, ulong addr) => WriteBytes(process, addr, returnTrue);
 		// Make sure both of these work in x86 and x64 mode
 		static readonly byte[] returnFalse = new byte[] { 0x33, 0xC0, 0xC3 };       // xor eax,eax / retn
 		static readonly byte[] returnTrue = new byte[] { 0x6A, 0x01, 0x58, 0xC3 };  // push 1 / pop eax / retn

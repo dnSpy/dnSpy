@@ -65,16 +65,10 @@ namespace dnSpy.Languages {
 		}
 		readonly WeakEventList<EventArgs> languageChanged;
 
-		public IEnumerable<ILanguage> AllLanguages {
-			get { return languages.AsEnumerable(); }
-		}
-
-		public ILanguage Find(Guid guid) {
-			return this.AllLanguages.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
-		}
-
-		public ILanguage FindOrDefault(Guid guid) {
-			return Find(guid) ?? AllLanguages.FirstOrDefault();
-		}
+		public IEnumerable<ILanguage> AllLanguages => languages;
+		public ILanguage Find(Guid guid) =>
+			this.AllLanguages.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
+		public ILanguage FindOrDefault(Guid guid) =>
+			Find(guid) ?? AllLanguages.FirstOrDefault();
 	}
 }

@@ -50,9 +50,7 @@ namespace dnSpy.Themes {
 		}
 		ITheme theme;
 
-		public IEnumerable<ITheme> AllThemesSorted {
-			get { return themes.Values.OrderBy(x => x.Order); }
-		}
+		public IEnumerable<ITheme> AllThemesSorted => themes.Values.OrderBy(x => x.Order);
 
 		public bool IsHighContrast {
 			get { return isHighContrast; }
@@ -77,9 +75,7 @@ namespace dnSpy.Themes {
 		}
 		readonly WeakEventList<ThemeChangedEventArgs> earlyThemeChanged;
 
-		public ThemeSettings Settings {
-			get { return themeSettings; }
-		}
+		public ThemeSettings Settings => themeSettings;
 		readonly ThemeSettings themeSettings;
 
 		[ImportingConstructor]
@@ -102,9 +98,7 @@ namespace dnSpy.Themes {
 				((Theme)Theme).UpdateResources(app.Resources);
 		}
 
-		Guid CurrentDefaultThemeGuid {
-			get { return IsHighContrast ? DefaultHighContrastThemeGuid : DefaultThemeGuid; }
-		}
+		Guid CurrentDefaultThemeGuid => IsHighContrast ? DefaultHighContrastThemeGuid : DefaultThemeGuid;
 		static readonly Guid DefaultThemeGuid = ThemeConstants.THEME_DARK_GUID;
 		static readonly Guid DefaultHighContrastThemeGuid = ThemeConstants.THEME_HIGHCONTRAST_GUID;
 
@@ -145,9 +139,7 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		IEnumerable<string> GetDnthemePaths() {
-			return AppDirectories.GetDirectories("Themes");
-		}
+		IEnumerable<string> GetDnthemePaths() => AppDirectories.GetDirectories("Themes");
 
 		Theme Load(string filename) {
 			try {

@@ -26,16 +26,14 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CreateTypeSigArrayVM : ViewModelBase {
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
-		}
+		public ICommand AddCommand => new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute());
 
 		public bool IsEnabled {
 			get { return isEnabled; }
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					typeSigCreator.IsEnabled = value;
+					TypeSigCreator.IsEnabled = value;
 					TypeSigCollection.IsEnabled = value;
 					OnPropertyChanged("IsEnabled");
 					OnPropertyChanged("CanAddMore");
@@ -45,19 +43,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public TypeSig[] TypeSigArray {
-			get { return TypeSigCollection.ToArray(); }
-		}
-
-		public MyObservableCollection<TypeSig> TypeSigCollection {
-			get { return typeSigCollection; }
-		}
-		readonly MyObservableCollection<TypeSig> typeSigCollection = new MyObservableCollection<TypeSig>();
-
-		public TypeSigCreatorVM TypeSigCreator {
-			get { return typeSigCreator; }
-		}
-		TypeSigCreatorVM typeSigCreator;
+		public TypeSig[] TypeSigArray => TypeSigCollection.ToArray();
+		public MyObservableCollection<TypeSig> TypeSigCollection { get; } = new MyObservableCollection<TypeSig>();
+		public TypeSigCreatorVM TypeSigCreator { get; }
 
 		public string Title {
 			get {
@@ -88,25 +76,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		int? requiredCount;
 
-		public bool IsFiniteCount {
-			get { return RequiredCount != null; }
-		}
-
-		public bool IsUnlimitedCount {
-			get { return RequiredCount == null; }
-		}
-
-		public int NumberOfTypesLeft {
-			get { return RequiredCount == null ? -1 : RequiredCount.Value - TypeSigCollection.Count; }
-		}
-
-		public bool CanNotAddMore {
-			get { return !CanAddMore; }
-		}
-
-		public bool CanAddMore {
-			get { return IsEnabled && (IsUnlimitedCount || NumberOfTypesLeft > 0); }
-		}
+		public bool IsFiniteCount => RequiredCount != null;
+		public bool IsUnlimitedCount => RequiredCount == null;
+		public int NumberOfTypesLeft => RequiredCount == null ? -1 : RequiredCount.Value - TypeSigCollection.Count;
+		public bool CanNotAddMore => !CanAddMore;
+		public bool CanAddMore => IsEnabled && (IsUnlimitedCount || NumberOfTypesLeft > 0);
 
 		public string NumberOfTypesLeftString {
 			get {
@@ -121,7 +95,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public CreateTypeSigArrayVM(TypeSigCreatorOptions options, int? requiredCount) {
 			this.title = options.Title;
-			this.typeSigCreator = new TypeSigCreatorVM(options);
+			this.TypeSigCreator = new TypeSigCreatorVM(options);
 			this.RequiredCount = requiredCount;
 			this.TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
 		}
@@ -150,8 +124,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSigCreator.TypeSig != null;
 		}
 
-		public override bool HasError {
-			get { return !IsUnlimitedCount && NumberOfTypesLeft > 0; }
-		}
+		public override bool HasError => !IsUnlimitedCount && NumberOfTypesLeft > 0;
 	}
 }

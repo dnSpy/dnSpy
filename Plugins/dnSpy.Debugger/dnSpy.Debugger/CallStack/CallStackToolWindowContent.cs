@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<ICallStackContent> callStackContent;
 
-		public CallStackToolWindowContent CallStackToolWindowContent {
-			get { return callStackToolWindowContent ?? (callStackToolWindowContent = new CallStackToolWindowContent(callStackContent)); }
-		}
+		public CallStackToolWindowContent CallStackToolWindowContent => callStackToolWindowContent ?? (callStackToolWindowContent = new CallStackToolWindowContent(callStackContent));
 		CallStackToolWindowContent callStackToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Debugger.CallStack {
 			get { yield return new ToolWindowContentInfo(CallStackToolWindowContent.THE_GUID, CallStackToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == CallStackToolWindowContent.THE_GUID)
-				return CallStackToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == CallStackToolWindowContent.THE_GUID ? CallStackToolWindowContent : null;
 	}
 
 	sealed class CallStackToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("0E53B79D-EC30-44B6-86A3-DFFCE364EB4A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return callStackContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return callStackContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.Window_CallStack; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return callStackContent.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => callStackContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => callStackContent.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Debugger_Resources.Window_CallStack;
+		public object ToolTip => null;
+		public object UIObject => callStackContent.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<ICallStackContent> callStackContent;
 
@@ -107,8 +81,6 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public void Focus() {
-			callStackContent.Value.Focus();
-		}
+		public void Focus() => callStackContent.Value.Focus();
 	}
 }

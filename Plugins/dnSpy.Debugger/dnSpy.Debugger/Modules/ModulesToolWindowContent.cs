@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Modules {
 	sealed class ModulesToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IModulesContent> modulesContent;
 
-		public ModulesToolWindowContent ModulesToolWindowContent {
-			get { return modulesToolWindowContent ?? (modulesToolWindowContent = new ModulesToolWindowContent(modulesContent)); }
-		}
+		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ?? (modulesToolWindowContent = new ModulesToolWindowContent(modulesContent));
 		ModulesToolWindowContent modulesToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Debugger.Modules {
 			get { yield return new ToolWindowContentInfo(ModulesToolWindowContent.THE_GUID, ModulesToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULES, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == ModulesToolWindowContent.THE_GUID)
-				return ModulesToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == ModulesToolWindowContent.THE_GUID ? ModulesToolWindowContent : null;
 	}
 
 	sealed class ModulesToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("8C95EB2E-25F4-4D2F-A00D-A303754990DF");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return modulesContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return modulesContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.Window_Modules; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return modulesContent.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => modulesContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => modulesContent.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Debugger_Resources.Window_Modules;
+		public object ToolTip => null;
+		public object UIObject => modulesContent.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<IModulesContent> modulesContent;
 
@@ -107,8 +81,6 @@ namespace dnSpy.Debugger.Modules {
 			}
 		}
 
-		public void Focus() {
-			modulesContent.Value.Focus();
-		}
+		public void Focus() => modulesContent.Value.Focus();
 	}
 }

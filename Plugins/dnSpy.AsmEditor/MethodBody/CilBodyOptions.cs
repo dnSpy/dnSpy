@@ -75,8 +75,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return body;
 		}
 
-		public CilBody Create() {
-			return CopyTo(new CilBody());
-		}
+		public CilBody Create() => CopyTo(new CilBody());
 	}
 }

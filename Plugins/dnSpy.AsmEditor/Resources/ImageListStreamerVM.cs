@@ -26,16 +26,8 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(null, null, null, null, null, null) {
 		}
 
-		protected override ImageVM Clone(ImageVM obj) {
-			return new ImageVM(obj.ImageSource);
-		}
-
-		protected override ImageVM Create() {
-			return new ImageVM(null);
-		}
-
-		protected override ImageVM Create(ImageSource model) {
-			return new ImageVM(model);
-		}
+		protected override ImageVM Clone(ImageVM obj) => new ImageVM(obj.ImageSource);
+		protected override ImageVM Create() => new ImageVM(null);
+		protected override ImageVM Create(ImageSource model) => new ImageVM(model);
 	}
 }

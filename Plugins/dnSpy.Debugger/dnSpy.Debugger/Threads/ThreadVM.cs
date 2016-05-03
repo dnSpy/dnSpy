@@ -50,9 +50,9 @@ namespace dnSpy.Debugger.Threads {
 	}
 
 	sealed class ThreadContext : IThreadContext {
-		public IImageManager ImageManager { get; private set; }
-		public ITheDebugger TheDebugger { get; private set; }
-		public IDebuggerSettings DebuggerSettings { get; private set; }
+		public IImageManager ImageManager { get; }
+		public ITheDebugger TheDebugger { get; }
+		public IDebuggerSettings DebuggerSettings { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
@@ -94,9 +94,9 @@ namespace dnSpy.Debugger.Threads {
 			get { return isSuspended; }
 			set {
 				if (isSuspended != value) {
-					thread.CorThread.State = value ? CorDebugThreadState.THREAD_SUSPEND : CorDebugThreadState.THREAD_RUN;
+					Thread.CorThread.State = value ? CorDebugThreadState.THREAD_SUSPEND : CorDebugThreadState.THREAD_RUN;
 					// Read the value again because there could've been an error
-					isSuspended = thread.CorThread.State == CorDebugThreadState.THREAD_SUSPEND;
+					isSuspended = Thread.CorThread.State == CorDebugThreadState.THREAD_SUSPEND;
 					OnPropertyChanged("IsSuspended");
 					OnPropertyChanged("SuspendedObject");
 				}
@@ -130,19 +130,19 @@ namespace dnSpy.Debugger.Threads {
 		}
 		CorDebugUserState userState;
 
-		public object CurrentImageObject { get { return this; } }
-		public object IdObject { get { return this; } }
-		public object ManagedIdObject { get { return this; } }
-		public object CategoryImageObject { get { return this; } }
-		public object CategoryTextObject { get { return this; } }
-		public object NameObject { get { return this; } }
-		public object LocationObject { get { return this; } }
-		public object PriorityObject { get { return this; } }
-		public object AffinityMaskObject { get { return this; } }
-		public object SuspendedObject { get { return this; } }
-		public object ProcessObject { get { return this; } }
-		public object AppDomainObject { get { return this; } }
-		public object UserStateObject { get { return this; } }
+		public object CurrentImageObject => this;
+		public object IdObject => this;
+		public object ManagedIdObject => this;
+		public object CategoryImageObject => this;
+		public object CategoryTextObject => this;
+		public object NameObject => this;
+		public object LocationObject => this;
+		public object PriorityObject => this;
+		public object AffinityMaskObject => this;
+		public object SuspendedObject => this;
+		public object ProcessObject => this;
+		public object AppDomainObject => this;
+		public object UserStateObject => this;
 
 		public int Id {
 			get { return id; }
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Threads {
 
 		bool HasValidThreadObject {
 			get {
-				var obj = thread.CorThread.Object;
+				var obj = Thread.CorThread.Object;
 				return obj != null && !obj.IsNull && obj.NeuterCheckDereferencedValue != null;
 			}
 		}
@@ -166,13 +166,13 @@ namespace dnSpy.Debugger.Threads {
 		public int? ManagedId {
 			get {
 				if (reinitManagedId)
-					reinitManagedId = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_ManagedThreadId", ref managedId);
+					reinitManagedId = !EvalUtils.ReflectionReadValue(Thread.CorThread.Object, "m_ManagedThreadId", ref managedId);
 
 				if (!Context.TheDebugger.EvalCompleted && reinitManagedId) {
 					if (Context.TheDebugger.CanEvaluate && Context.DebuggerSettings.PropertyEvalAndFunctionCalls) {
 						if (HasValidThreadObject) {
 							reinitManagedId = false;
-							managedId = EvalUtils.EvaluateCallMethod<int?>(Context.TheDebugger, Context.DebuggerSettings, thread, thread.CorThread.Object, "get_ManagedThreadId");
+							managedId = EvalUtils.EvaluateCallMethod<int?>(Context.TheDebugger, Context.DebuggerSettings, Thread, Thread.CorThread.Object, "get_ManagedThreadId");
 						}
 					}
 					else {
@@ -196,7 +196,7 @@ namespace dnSpy.Debugger.Threads {
 		public string Name {
 			get {
 				if (reinitName) {
-					reinitName = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_Name", ref name);
+					reinitName = !EvalUtils.ReflectionReadValue(Thread.CorThread.Object, "m_Name", ref name);
 					if (!reinitName)
 						unknownName = false;
 				}
@@ -206,7 +206,7 @@ namespace dnSpy.Debugger.Threads {
 						if (HasValidThreadObject) {
 							reinitName = false;
 							unknownName = false;
-							name = EvalUtils.EvaluateCallMethod<string>(Context.TheDebugger, Context.DebuggerSettings, thread, thread.CorThread.Object, "get_Name");
+							name = EvalUtils.EvaluateCallMethod<string>(Context.TheDebugger, Context.DebuggerSettings, Thread, Thread.CorThread.Object, "get_Name");
 						}
 					}
 					else {
@@ -225,9 +225,9 @@ namespace dnSpy.Debugger.Threads {
 		public IntPtr AffinityMask {
 			get {
 				if (affinityMask == null) {
-					affinityMask = NativeMethods.SetThreadAffinityMask(thread.CorThread.Handle, new IntPtr(-1));
+					affinityMask = NativeMethods.SetThreadAffinityMask(Thread.CorThread.Handle, new IntPtr(-1));
 					if (affinityMask.Value != IntPtr.Zero)
-						NativeMethods.SetThreadAffinityMask(thread.CorThread.Handle, affinityMask.Value);
+						NativeMethods.SetThreadAffinityMask(Thread.CorThread.Handle, affinityMask.Value);
 				}
 				return affinityMask.Value;
 			}
@@ -237,35 +237,28 @@ namespace dnSpy.Debugger.Threads {
 		public ThreadPriority Priority {
 			get {
 				if (prio == null)
-					prio = (ThreadPriority)NativeMethods.GetThreadPriority(thread.CorThread.Handle);
+					prio = (ThreadPriority)NativeMethods.GetThreadPriority(Thread.CorThread.Handle);
 				return prio.Value;
 			}
 		}
 		ThreadPriority? prio;
 
-		public DnThread Thread {
-			get { return thread; }
-		}
-		readonly DnThread thread;
-
-		public IThreadContext Context {
-			get { return context; }
-		}
-		readonly IThreadContext context;
+		public DnThread Thread { get; }
+		public IThreadContext Context { get; }
 
 		public ThreadVM(DnThread thread, IThreadContext context) {
-			this.thread = thread;
-			this.context = context;
+			this.Thread = thread;
+			this.Context = context;
 		}
 
 		internal void NameChanged(DnThread thread) {
-			if (thread == this.thread)
+			if (thread == this.Thread)
 				reinitName = true;
 		}
 
 		internal void UpdateFields() {
 			Type = CalculateType();
-			Id = thread.VolatileThreadId;
+			Id = Thread.VolatileThreadId;
 
 			if (reinitManagedId) {
 				OnPropertyChanged("ManagedId");
@@ -291,22 +284,22 @@ namespace dnSpy.Debugger.Threads {
 
 			OnPropertyChanged("LocationObject");
 
-			if (isSuspended != thread.CorThread.IsSuspended) {
-				isSuspended = thread.CorThread.IsSuspended;
+			if (isSuspended != Thread.CorThread.IsSuspended) {
+				isSuspended = Thread.CorThread.IsSuspended;
 				OnPropertyChanged("IsSuspended");
 				OnPropertyChanged("SuspendedObject");
 			}
 
-			AppDomain = thread.CorThread.AppDomain;
-			UserState = thread.CorThread.UserState;
+			AppDomain = Thread.CorThread.AppDomain;
+			UserState = Thread.CorThread.UserState;
 		}
 
 		ThreadType CalculateType() {
 			//TODO: ICLRTaskManager::GetCurrentTaskType()
 
-			if (thread.CorThread.IsStopped)
+			if (Thread.CorThread.IsStopped)
 				return ThreadType.Terminated;
-			if (thread.CorThread.IsThreadPool)
+			if (Thread.CorThread.IsThreadPool)
 				return ThreadType.ThreadPool;
 			if (CheckIfMainThread())
 				return ThreadType.Main;
@@ -318,27 +311,25 @@ namespace dnSpy.Debugger.Threads {
 			return ThreadType.Unknown;
 		}
 
-		bool CheckIfWorkerThread() {
-			//TODO: This is not correct:
-			return thread.CorThread.IsBackground;
-		}
+		//TODO: This is not correct:
+		bool CheckIfWorkerThread() => Thread.CorThread.IsBackground;
 
 		bool CheckIfMainThread() {
-			if (!thread.Process.WasAttached)
-				return thread.UniqueIdProcess == 0;
+			if (!Thread.Process.WasAttached)
+				return Thread.UniqueIdProcess == 0;
 
-			var ad = thread.AppDomainOrNull;
+			var ad = Thread.AppDomainOrNull;
 			if (ad == null || ad.Id != 1)
 				return false;
-			if (thread.CorThread.IsBackground)
+			if (Thread.CorThread.IsBackground)
 				return false;
-			return thread.UniqueIdProcess == 0;
+			return Thread.UniqueIdProcess == 0;
 		}
 
 		bool CheckIfBGCOrFinalizerThread() {
-			if (thread.CorThread.IsThreadPool)
+			if (Thread.CorThread.IsThreadPool)
 				return false;
-			if (!thread.CorThread.IsBackground)
+			if (!Thread.CorThread.IsBackground)
 				return false;
 			if (Priority != ThreadPriority.Highest)
 				return false;

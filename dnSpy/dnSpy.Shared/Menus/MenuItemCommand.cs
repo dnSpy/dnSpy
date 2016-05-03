@@ -24,28 +24,19 @@ using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Shared.Menus {
 	public abstract class MenuItemCommand : MenuItemBase, ICommandHolder {
-		public ICommand Command {
-			get { return realCommand; }
-		}
+		public ICommand Command => realCommand;
 		readonly ICommand realCommand;
 
 		protected MenuItemCommand(ICommand realCommand) {
 			this.realCommand = realCommand;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			realCommand.Execute(context);
-		}
-
-		public override bool IsEnabled(IMenuItemContext context) {
-			return realCommand.CanExecute(context);
-		}
+		public override void Execute(IMenuItemContext context) => realCommand.Execute(context);
+		public override bool IsEnabled(IMenuItemContext context) => realCommand.CanExecute(context);
 	}
 
 	public abstract class MenuItemCommand<TContext> : MenuItemBase<TContext>, ICommandHolder where TContext : class {
-		public ICommand Command {
-			get { return realCommand; }
-		}
+		public ICommand Command => realCommand;
 		readonly ICommand realCommand;
 
 		protected MenuItemCommand(ICommand realCommand) {
@@ -57,8 +48,6 @@ namespace dnSpy.Shared.Menus {
 			realCommand.Execute(context);
 		}
 
-		public override bool IsEnabled(TContext context) {
-			return realCommand.CanExecute(context);
-		}
+		public override bool IsEnabled(TContext context) => realCommand.CanExecute(context);
 	}
 }

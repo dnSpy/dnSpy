@@ -45,13 +45,7 @@ namespace dnSpy.Debugger.IMModules {
 				return o != null && process == o.process && address == o.address;
 			}
 
-			public override int GetHashCode() {
-				return process.GetHashCode() ^ (int)address ^ (int)(address >> 32);
-			}
-		}
-
-		public override IDnSpyFilenameKey Key {
-			get { return CreateKey(process, address); }
+			public override int GetHashCode() => process.GetHashCode() ^ (int)address ^ (int)(address >> 32);
 		}
 
 		public SerializedDnModule? SerializedDnModule {
@@ -62,41 +56,25 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public override DnSpyFileInfo? SerializedFile {
-			get { return null; }
-		}
-
-		public bool AutoUpdateMemory {
-			get { return autoUpdateMemory; }
-			set { autoUpdateMemory = value; }
-		}
-		bool autoUpdateMemory;
-
-		public DnProcess Process {
-			get { return process; }
-		}
-		readonly DnProcess process;
-
-		public ulong Address {
-			get { return address; }
-		}
-		readonly ulong address;
+		public override IDnSpyFilenameKey Key => CreateKey(Process, Address);
+		public override DnSpyFileInfo? SerializedFile => null;
+		public bool AutoUpdateMemory { get; }
+		public DnProcess Process { get; }
+		public ulong Address { get; }
 
 		readonly byte[] data;
 		readonly bool isInMemory;
 
 		MemoryModuleDefFile(DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
-			this.process = process;
-			this.address = address;
+			this.Process = process;
+			this.Address = address;
 			this.data = data;
 			this.isInMemory = isInMemory;
-			this.autoUpdateMemory = autoUpdateMemory;
+			this.AutoUpdateMemory = autoUpdateMemory;
 		}
 
-		public static IDnSpyFilenameKey CreateKey(DnProcess process, ulong address) {
-			return new MyKey(process, address);
-		}
+		public static IDnSpyFilenameKey CreateKey(DnProcess process, ulong address) => new MyKey(process, address);
 
 		protected override List<IDnSpyFile> CreateChildren() {
 			var list = new List<IDnSpyFile>();
@@ -109,11 +87,11 @@ namespace dnSpy.Debugger.IMModules {
 		List<MemoryModuleDefFile> files;
 
 		public bool UpdateMemory() {
-			if (process.HasExited)
+			if (Process.HasExited)
 				return false;
 			//TODO: Only compare the smallest possible region, eg. all MD and IL bodies. Don't include writable sects.
 			var newData = new byte[data.Length];
-			ProcessMemoryUtils.ReadMemory(process, address, newData, 0, data.Length);
+			ProcessMemoryUtils.ReadMemory(Process, Address, newData, 0, data.Length);
 			if (Equals(data, newData))
 				return false;
 			Array.Copy(newData, data, data.Length);
@@ -136,7 +114,7 @@ namespace dnSpy.Debugger.IMModules {
 
 		public static MemoryModuleDefFile CreateAssembly(List<MemoryModuleDefFile> files) {
 			var manifest = files[0];
-			var file = new MemoryModuleDefFile(manifest.Process, manifest.Address, manifest.data, manifest.isInMemory, manifest.module, false, manifest.AutoUpdateMemory);
+			var file = new MemoryModuleDefFile(manifest.Process, manifest.Address, manifest.data, manifest.isInMemory, manifest.ModuleDef, false, manifest.AutoUpdateMemory);
 			file.files = new List<MemoryModuleDefFile>(files);
 			return file;
 		}

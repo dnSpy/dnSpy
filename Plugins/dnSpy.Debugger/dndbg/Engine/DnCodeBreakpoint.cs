@@ -22,62 +22,40 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class ModuleCodeBreakpoint {
-		public DnModule Module {
-			get { return module; }
-		}
-		readonly DnModule module;
-
-		public CorFunctionBreakpoint FunctionBreakpoint {
-			get { return funcBp; }
-		}
-		readonly CorFunctionBreakpoint funcBp;
+		public DnModule Module { get; }
+		public CorFunctionBreakpoint FunctionBreakpoint { get; }
 
 		public ModuleCodeBreakpoint(DnModule module, CorFunctionBreakpoint funcBp) {
-			this.module = module;
-			this.funcBp = funcBp;
+			this.Module = module;
+			this.FunctionBreakpoint = funcBp;
 		}
 	}
 
 	public abstract class DnCodeBreakpoint : DnBreakpoint {
-		public SerializedDnModule Module {
-			get { return module; }
-		}
-		readonly SerializedDnModule module;
-
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
-
-		public uint Offset {
-			get { return offset; }
-		}
-		readonly uint offset;
+		public SerializedDnModule Module { get; }
+		public uint Token { get; }
+		public uint Offset { get; }
 
 		readonly List<ModuleCodeBreakpoint> rawBps = new List<ModuleCodeBreakpoint>();
 		readonly CorCode code;
 
 		internal DnCodeBreakpoint(SerializedDnModule module, uint token, uint offset) {
-			this.module = module;
-			this.token = token;
-			this.offset = offset;
+			this.Module = module;
+			this.Token = token;
+			this.Offset = offset;
 			this.code = null;
 		}
 
 		internal DnCodeBreakpoint(CorCode code, uint offset) {
-			this.module = GetModule(code);
+			this.Module = GetModule(code);
 			var func = code.Function;
-			this.token = func == null ? 0 : func.Token;
-			this.offset = offset;
+			this.Token = func?.Token ?? 0;
+			this.Offset = offset;
 			this.code = code;
 		}
 
-		static SerializedDnModule GetModule(CorCode code) {
-			var func = code.Function;
-			uint token = func == null ? 0 : func.Token;
-			var mod = func == null ? null : func.Module;
-			return mod == null ? new SerializedDnModule() : mod.SerializedDnModule;
-		}
+		static SerializedDnModule GetModule(CorCode code) =>
+			code.Function?.Module?.SerializedDnModule ?? new SerializedDnModule();
 
 		sealed protected override void OnIsEnabledChanged() {
 			foreach (var bp in rawBps)

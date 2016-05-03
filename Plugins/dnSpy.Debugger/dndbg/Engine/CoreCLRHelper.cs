@@ -28,9 +28,9 @@ using Microsoft.Win32;
 
 namespace dndbg.Engine {
 	public struct CoreCLRInfo {
-		public int ProcessId;
-		public CoreCLRTypeAttachInfo CoreCLRTypeInfo;
-		public string CoreCLRFilename;
+		public int ProcessId { get; }
+		public CoreCLRTypeAttachInfo CoreCLRTypeInfo { get; }
+		public string CoreCLRFilename { get; }
 
 		public CoreCLRInfo(int pid, string filename, string version, string dbgShimFilename) {
 			this.ProcessId = pid;
@@ -66,13 +66,13 @@ namespace dndbg.Engine {
 		public unsafe static CoreCLRInfo[] GetCoreCLRInfos(int pid, string runtimePath, string dbgshimPath) {
 			var dbgShimState = GetOrCreateDbgShimState(runtimePath, dbgshimPath);
 			if (dbgShimState == null)
-				return new CoreCLRInfo[0];
+				return Array.Empty<CoreCLRInfo>();
 
 			IntPtr pHandleArray, pStringArray;
 			uint dwArrayLength;
 			int hr = dbgShimState.EnumerateCLRs((uint)pid, out pHandleArray, out pStringArray, out dwArrayLength);
 			if (hr < 0 || dwArrayLength == 0)
-				return new CoreCLRInfo[0];
+				return Array.Empty<CoreCLRInfo>();
 			try {
 				var ary = new CoreCLRInfo[dwArrayLength];
 				var psa = (IntPtr*)pStringArray;

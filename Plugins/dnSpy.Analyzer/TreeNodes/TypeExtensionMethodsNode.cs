@@ -31,14 +31,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public TypeExtensionMethodsNode(TypeDef analyzedType) {
 			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+				throw new ArgumentNullException(nameof(analyzedType));
 
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindReferencesInType);
@@ -66,14 +65,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return 0;
 		}
 
-		bool HasExtensionAttribute(IHasCustomAttribute p) {
-			return p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") != null;
-		}
+		bool HasExtensionAttribute(IHasCustomAttribute p) => p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") != null;
 
-
-		public static bool CanShow(TypeDef type) {
-			// show on all types except static classes
-			return !(type.IsAbstract && type.IsSealed);
-		}
+		// show on all types except static classes
+		public static bool CanShow(TypeDef type) => !(type.IsAbstract && type.IsSealed);
 	}
 }

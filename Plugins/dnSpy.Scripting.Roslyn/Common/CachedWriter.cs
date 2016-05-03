@@ -27,13 +27,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly List<ColorAndText> cachedList;
 		readonly ScriptGlobals owner;
 
-		IPrintOptions ITextPrinter.PrintOptions => printOptionsImpl;
-		public PrintOptionsImpl PrintOptions => printOptionsImpl;
-		readonly PrintOptionsImpl printOptionsImpl;
+		IPrintOptions ITextPrinter.PrintOptions => PrintOptions;
+		public PrintOptionsImpl PrintOptions { get; }
 
 		public CachedWriter(ScriptGlobals owner) {
 			this.owner = owner;
-			this.printOptionsImpl = owner.PrintOptionsImpl.Clone();
+			this.PrintOptions = owner.PrintOptionsImpl.Clone();
 			this.cachedList = new List<ColorAndText>();
 		}
 

@@ -28,40 +28,20 @@ using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class MethodNode : FileTreeNodeData, IMethodNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.METHOD_NODE_GUID); }
-		}
-
-		public MethodDef MethodDef {
-			get { return method; }
-		}
-		readonly MethodDef method;
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, method.FullName); }
-		}
-
-		IMDTokenProvider IMDTokenNode.Reference {
-			get { return method; }
-		}
-
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(method);
-		}
-
-		public override ITreeNodeGroup TreeNodeGroup {
-			get { return treeNodeGroup; }
-		}
-		readonly ITreeNodeGroup treeNodeGroup;
+		public override Guid Guid => new Guid(FileTVConstants.METHOD_NODE_GUID);
+		public MethodDef MethodDef { get; }
+		public override NodePathName NodePathName => new NodePathName(Guid, MethodDef.FullName);
+		IMDTokenProvider IMDTokenNode.Reference => MethodDef;
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(MethodDef);
+		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public MethodNode(ITreeNodeGroup treeNodeGroup, MethodDef methodDef) {
-			this.treeNodeGroup = treeNodeGroup;
-			this.method = methodDef;
+			this.TreeNodeGroup = treeNodeGroup;
+			this.MethodDef = methodDef;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			new NodePrinter().Write(output, language, method, Context.ShowToken);
-		}
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+			new NodePrinter().Write(output, language, MethodDef, Context.ShowToken);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			var res = filter.GetResult(MethodDef);

@@ -21,7 +21,7 @@ using System.Reflection;
 
 namespace dnSpy.Plugin {
 	sealed class LoadedPlugin {
-		public Assembly Assembly { get; private set; }
+		public Assembly Assembly { get; }
 
 		public LoadedPlugin(Assembly asm) {
 			this.Assembly = asm;

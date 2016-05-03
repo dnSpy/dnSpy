@@ -24,12 +24,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		// 16px wide icon + 1px each side padding + 1px right-side border
 		public const int WIDTH = 1 + 16 + 1 + 1;
 
-		ITextEditorUIContext IIconBarMargin.UIContext {
-			get { return uiContext; }
-		}
-		FrameworkElement IIconBarMargin.FrameworkElement {
-			get { return this; }
-		}
+		ITextEditorUIContext IIconBarMargin.UIContext => uiContext;
+		FrameworkElement IIconBarMargin.FrameworkElement => this;
 
 		readonly ITextEditorUIContext uiContext;
 		readonly ITextLineObjectManager textLineObjectManager;
@@ -43,18 +39,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.themeManager = themeManager;
 		}
 
-		public void Dispose() {
-			this.TextView = null;
-		}
+		public void Dispose() => this.TextView = null;
 
-		protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters) {
-			// accept clicks even when clicking on the background
-			return new PointHitTestResult(this, hitTestParameters.HitPoint);
-		}
+		// accept clicks even when clicking on the background
+		protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters) => new PointHitTestResult(this, hitTestParameters.HitPoint);
 
-		protected override Size MeasureOverride(Size availableSize) {
-			return new Size(WIDTH, 0);
-		}
+		protected override Size MeasureOverride(Size availableSize) => new Size(WIDTH, 0);
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			Size renderSize = this.RenderSize;
@@ -67,7 +57,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 									new Point(renderSize.Width - 0.5, renderSize.Height));
 
 			TextView textView = this.TextView;
-			if (textView != null && textView.VisualLinesValid) {
+			if (textView?.VisualLinesValid == true) {
 				// create a dictionary line number => first bookmark
 				Dictionary<int, List<IIconBarObject>> bookmarkDict = new Dictionary<int, List<IIconBarObject>>();
 				foreach (var obj in textLineObjectManager.GetObjectsOfType<IIconBarObject>()) {

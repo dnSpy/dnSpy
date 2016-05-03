@@ -26,15 +26,15 @@ using dnlib.DotNet;
 
 namespace dnSpy.BamlDecompiler.Baml {
 	internal class BamlContext {
-		public ModuleDef Module { get; private set; }
-		public KnownThings KnownThings { get; private set; }
+		public ModuleDef Module { get; }
+		public KnownThings KnownThings { get; }
 
 		Dictionary<ushort, IAssembly> assemblyMap = new Dictionary<ushort, IAssembly>();
 
-		public Dictionary<ushort, AssemblyInfoRecord> AssemblyIdMap { get; private set; }
-		public Dictionary<ushort, AttributeInfoRecord> AttributeIdMap { get; private set; }
-		public Dictionary<ushort, StringInfoRecord> StringIdMap { get; private set; }
-		public Dictionary<ushort, TypeInfoRecord> TypeIdMap { get; private set; }
+		public Dictionary<ushort, AssemblyInfoRecord> AssemblyIdMap { get; }
+		public Dictionary<ushort, AttributeInfoRecord> AttributeIdMap { get; }
+		public Dictionary<ushort, StringInfoRecord> StringIdMap { get; }
+		public Dictionary<ushort, TypeInfoRecord> TypeIdMap { get; }
 
 		BamlContext(ModuleDef module) {
 			Module = module;

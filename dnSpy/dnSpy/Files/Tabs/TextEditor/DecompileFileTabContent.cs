@@ -39,53 +39,28 @@ using ICSharpCode.AvalonEdit.Highlighting;
 namespace dnSpy.Files.Tabs.TextEditor {
 	[Export, ExportFileTabContentFactory(Order = TabConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
-		public IFileManager FileManager {
-			get { return fileManager; }
-		}
-		readonly IFileManager fileManager;
-
-		public IFileTreeNodeDecompiler FileTreeNodeDecompiler {
-			get { return fileTreeNodeDecompiler; }
-		}
-		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
-
-		public ILanguageManager LanguageManager {
-			get { return languageManager; }
-		}
-		readonly ILanguageManager languageManager;
-
-		public IDecompilationCache DecompilationCache {
-			get { return decompilationCache; }
-		}
-		readonly IDecompilationCache decompilationCache;
-
-		public IMethodAnnotations MethodAnnotations {
-			get { return methodAnnotations; }
-		}
-		readonly IMethodAnnotations methodAnnotations;
-
-		public IContentTypeRegistryService ContentTypeRegistryService {
-			get { return contentTypeRegistryService; }
-		}
-		readonly IContentTypeRegistryService contentTypeRegistryService;
+		public IFileManager FileManager { get; }
+		public IFileTreeNodeDecompiler FileTreeNodeDecompiler { get; }
+		public ILanguageManager LanguageManager { get; }
+		public IDecompilationCache DecompilationCache { get; }
+		public IMethodAnnotations MethodAnnotations { get; }
+		public IContentTypeRegistryService ContentTypeRegistryService { get; }
 
 		[ImportingConstructor]
 		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService) {
-			this.fileManager = fileManager;
-			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
-			this.languageManager = languageManager;
-			this.decompilationCache = decompilationCache;
-			this.methodAnnotations = methodAnnotations;
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.FileManager = fileManager;
+			this.FileTreeNodeDecompiler = fileTreeNodeDecompiler;
+			this.LanguageManager = languageManager;
+			this.DecompilationCache = decompilationCache;
+			this.MethodAnnotations = methodAnnotations;
+			this.ContentTypeRegistryService = contentTypeRegistryService;
 		}
 
-		public IFileTabContent Create(IFileTabContentFactoryContext context) {
-			return new DecompileFileTabContent(this, context.Nodes, languageManager.Language);
-		}
+		public IFileTabContent Create(IFileTabContentFactoryContext context) =>
+			new DecompileFileTabContent(this, context.Nodes, LanguageManager.Language);
 
-		public IFileTabContent Create(IFileTreeNodeData[] nodes) {
-			return new DecompileFileTabContent(this, nodes, languageManager.Language);
-		}
+		public IFileTabContent Create(IFileTreeNodeData[] nodes) =>
+			new DecompileFileTabContent(this, nodes, LanguageManager.Language);
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
 
@@ -103,7 +78,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return null;
 
 			var langGuid = section.Attribute<Guid?>("Language") ?? LanguageConstants.LANGUAGE_CSHARP;
-			var language = languageManager.FindOrDefault(langGuid);
+			var language = LanguageManager.FindOrDefault(langGuid);
 			return new DecompileFileTabContent(this, context.Nodes, language);
 		}
 	}
@@ -112,37 +87,30 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTreeNodeData[] nodes;
 
-		public ILanguage Language {
-			get { return language; }
-			set { language = value; }
-		}
-		ILanguage language;
+		public ILanguage Language { get; set; }
 
 		public DecompileFileTabContent(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTreeNodeData[] nodes, ILanguage language) {
 			this.decompileFileTabContentFactory = decompileFileTabContentFactory;
 			this.nodes = nodes;
-			this.language = language;
+			this.Language = language;
 		}
 
-		public IFileTabContent Clone() {
-			return new DecompileFileTabContent(decompileFileTabContentFactory, nodes, language);
-		}
-
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
-			return locator.Get<ITextEditorUIContext>();
-		}
+		public IFileTabContent Clone() =>
+			new DecompileFileTabContent(decompileFileTabContentFactory, nodes, Language);
+		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) =>
+			locator.Get<ITextEditorUIContext>();
 
 		public string Title {
 			get {
 				if (nodes.Length == 0)
 					return dnSpy_Resources.EmptyTabTitle;
 				if (nodes.Length == 1)
-					return nodes[0].ToString(language);
+					return nodes[0].ToString(Language);
 				var sb = new StringBuilder();
 				foreach (var node in nodes) {
 					if (sb.Length > 0)
 						sb.Append(", ");
-					sb.Append(node.ToString(language));
+					sb.Append(node.ToString(Language));
 				}
 				return sb.ToString();
 			}
@@ -169,9 +137,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		IFileTab fileTab;
 
-		public IEnumerable<IFileTreeNodeData> Nodes {
-			get { return nodes; }
-		}
+		public IEnumerable<IFileTreeNodeData> Nodes => nodes;
 
 		sealed class DecompileContext {
 			public DecompileNodeContext DecompileNodeContext;
@@ -188,7 +154,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			decompilationContext.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var output = new AvalonEditTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
-			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, language, output, dispatcher);
+			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Language, output, dispatcher);
 			if (ctx.IsRefresh) {
 				decompileContext.SavedRefPos = ((ITextEditorUIContext)ctx.UIContext).SaveReferencePosition();
 				if (decompileContext.SavedRefPos != null) {
@@ -208,18 +174,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void UpdateLanguage() {
 			if (FileTab.IsActiveTab)
-				decompileFileTabContentFactory.LanguageManager.Language = language;
+				decompileFileTabContentFactory.LanguageManager.Language = Language;
 		}
 
-		public void OnSelected() {
-			UpdateLanguage();
-		}
-
-		public void OnUnselected() {
-		}
-
-		public void OnHide() {
-		}
+		public void OnSelected() => UpdateLanguage();
+		public void OnUnselected() { }
+		public void OnHide() { }
 
 		public void OnShow(IShowContext ctx) {
 			UpdateLanguage();

@@ -24,13 +24,11 @@ namespace dnSpy.Decompiler.Shared {
 	// the standard XML reader try to parse it, even if we set the data to Fragment.
 	// Since it only operates on one line at a time (no extra context), it won't be
 	// able to handle eg. attributes spanning more than one line, but this rarely happens.
-	static class SimpleXmlParser
-	{
+	static class SimpleXmlParser {
 		static readonly char[] specialChars = new char[] { '<' };
 		static readonly char[] specialCharsTag = new char[] { '<', '>', '"' };
 
-		public static IEnumerable<KeyValuePair<string, object>> Parse(string text)
-		{
+		public static IEnumerable<KeyValuePair<string, object>> Parse(string text) {
 			bool inTag = true;
 			int index = 0;
 			while (index < text.Length) {

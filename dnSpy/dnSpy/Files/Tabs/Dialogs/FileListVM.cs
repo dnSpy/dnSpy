@@ -21,43 +21,22 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class FileListVM : ViewModelBase {
-		public object NameObject { get { return this; } }
-		public object FileCountObject { get { return this; } }
-
-		public string Name {
-			get { return Filter(fileList.Name); }
-		}
-
-		public int FileCount {
-			get { return fileList.Files.Count; }
-		}
-
-		public OpenFileListVM Owner {
-			get { return owner; }
-		}
-
-		public FileList FileList {
-			get { return fileList; }
-		}
-		readonly FileList fileList;
-
-		public bool IsExistingList {
-			get { return isExistingList; }
-		}
-		readonly bool isExistingList;
-
-		public bool IsUserList {
-			get { return isUserList; }
-		}
-		readonly bool isUserList;
+		public object NameObject => this;
+		public object FileCountObject => this;
+		public string Name => Filter(FileList.Name);
+		public int FileCount => FileList.Files.Count;
+		public OpenFileListVM Owner => owner;
+		public FileList FileList { get; }
+		public bool IsExistingList { get; }
+		public bool IsUserList { get; }
 
 		readonly OpenFileListVM owner;
 
 		public FileListVM(OpenFileListVM owner, FileList fileList, bool isExistingList, bool isUserList) {
 			this.owner = owner;
-			this.fileList = fileList;
-			this.isExistingList = isExistingList;
-			this.isUserList = isUserList;
+			this.FileList = fileList;
+			this.IsExistingList = isExistingList;
+			this.IsUserList = isUserList;
 		}
 
 		static string Filter(string s) {

@@ -43,9 +43,7 @@ namespace dndbg.Engine {
 			return output;
 		}
 
-		public string ToString(CorValue value, TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), value, flags).ToString();
-		}
+		public string ToString(CorValue value, TypePrinterFlags flags) => Write(new StringBuilderTypeOutput(), value, flags).ToString();
 
 		public bool Equals(CorValueResult other) {
 			if (IsValid != other.IsValid)
@@ -61,9 +59,7 @@ namespace dndbg.Engine {
 			return Value.Equals(other.Value);
 		}
 
-		public override bool Equals(object obj) {
-			return obj is CorValueResult && Equals((CorValueResult)obj);
-		}
+		public override bool Equals(object obj) => obj is CorValueResult && Equals((CorValueResult)obj);
 
 		public override int GetHashCode() {
 			if (!IsValid)
@@ -85,7 +81,7 @@ namespace dndbg.Engine {
 			if (value == null)
 				return new CorValueResult();
 
-			if (value.IsReference && value.Type == CorElementType.ByRef) {
+			if (value.IsReference && value.ElementType == CorElementType.ByRef) {
 				if (value.IsNull)
 					return new CorValueResult(null);
 				value = value.NeuterCheckDereferencedValue;
@@ -95,7 +91,7 @@ namespace dndbg.Engine {
 			if (value.IsReference) {
 				if (value.IsNull)
 					return new CorValueResult(null);
-				if (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr) {
+				if (value.ElementType == CorElementType.Ptr || value.ElementType == CorElementType.FnPtr) {
 					if (Utils.DebuggeeIntPtrSize == 4)
 						return new CorValueResult((uint)value.ReferenceAddress);
 					return new CorValueResult(value.ReferenceAddress);

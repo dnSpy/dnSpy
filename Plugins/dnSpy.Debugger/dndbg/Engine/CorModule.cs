@@ -67,10 +67,7 @@ namespace dndbg.Engine {
 		/// if one was provided. Otherwise, and for other in-memory modules, this is just the simple
 		/// name stored in the module's metadata.
 		/// </summary>
-		public string Name {
-			get { return name; }
-		}
-		readonly string name;
+		public string Name { get; }
 
 		/// <summary>
 		/// Gets the name from the MD, which is the same as <see cref="ModuleDef.Name"/>
@@ -106,42 +103,30 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the base address of the module or 0
 		/// </summary>
-		public ulong Address {
-			get { return address; }
-		}
+		public ulong Address => address;
 		readonly ulong address;
 
 		/// <summary>
 		/// Gets the size of the module or 0
 		/// </summary>
-		public uint Size {
-			get { return size; }
-		}
+		public uint Size => size;
 		readonly uint size;
 
 		/// <summary>
 		/// Gets the token or 0
 		/// </summary>
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token => token;
 		readonly uint token;
 
 		/// <summary>
 		/// true if it's a dynamic module that can add/remove types
 		/// </summary>
-		public bool IsDynamic {
-			get { return isDynamic; }
-		}
-		readonly bool isDynamic;
+		public bool IsDynamic { get; }
 
 		/// <summary>
 		/// true if this is an in-memory module
 		/// </summary>
-		public bool IsInMemory {
-			get { return isInMemory; }
-		}
-		readonly bool isInMemory;
+		public bool IsInMemory { get; }
 
 		string SerializedName {
 			get {
@@ -151,12 +136,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public SerializedDnModule SerializedDnModule {
-			get {
-				var asm = Assembly;
-				return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, SerializedName, IsDynamic, IsInMemory, false);
-			}
-		}
+		public SerializedDnModule SerializedDnModule => new SerializedDnModule(Assembly?.FullName ?? string.Empty, SerializedName, IsDynamic, IsInMemory, false);
 
 		/// <summary>
 		/// Gets/sets the JIT compiler flags. The setter can only be called from the
@@ -182,7 +162,7 @@ namespace dndbg.Engine {
 
 		public CorModule(ICorDebugModule module)
 			: base(module) {
-			this.name = GetName(module) ?? string.Empty;
+			this.Name = GetName(module) ?? string.Empty;
 
 			int hr = module.GetBaseAddress(out this.address);
 			if (hr < 0)
@@ -196,9 +176,9 @@ namespace dndbg.Engine {
 
 			int b;
 			hr = module.IsDynamic(out b);
-			this.isDynamic = hr >= 0 && b != 0;
+			this.IsDynamic = hr >= 0 && b != 0;
 			hr = module.IsInMemory(out b);
-			this.isInMemory = hr >= 0 && b != 0;
+			this.IsInMemory = hr >= 0 && b != 0;
 
 			//TODO: ICorDebugModule2::ApplyChanges
 		}
@@ -371,25 +351,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorModule a, CorModule b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorModule other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorModule);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[Module] DYN={0} MEM={1} A={2:X8} S={3:X8} {4}", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
-		}
+		public static bool operator !=(CorModule a, CorModule b) => !(a == b);
+		public bool Equals(CorModule other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorModule);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[Module] DYN={0} MEM={1} A={2:X8} S={3:X8} {4}", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
 	}
 }

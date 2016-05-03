@@ -33,9 +33,7 @@ using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class BuiltInResourceElementNode : ResourceElementNode, IBuiltInResourceElementNode, IDecompileSelf {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.BUILT_IN_RESOURCE_ELEMENT_NODE_GUID); }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.BUILT_IN_RESOURCE_ELEMENT_NODE_GUID);
 
 		protected override ImageReference GetIcon() {
 			var asm = GetType().Assembly;

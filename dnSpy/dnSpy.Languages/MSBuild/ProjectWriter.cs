@@ -234,9 +234,7 @@ namespace dnSpy.Languages.MSBuild {
 			return s;
 		}
 
-		string GetRelativePath(string filename) {
-			return GetRelativePath(project.Directory, filename);
-		}
+		string GetRelativePath(string filename) => GetRelativePath(project.Directory, filename);
 
 		void Write(XmlWriter writer, BuildAction buildAction) {
 			var files = project.Files.Where(a => a.BuildAction == buildAction).OrderBy(a => a.Filename, StringComparer.OrdinalIgnoreCase).ToArray();
@@ -352,9 +350,7 @@ namespace dnSpy.Languages.MSBuild {
 			return GetAssemblyName();
 		}
 
-		string GetAssemblyName() {
-			return project.AssemblyName;
-		}
+		string GetAssemblyName() => project.AssemblyName;
 
 		string GetFileAlignment() {
 			var mod = project.Module as ModuleDefMD;
@@ -382,9 +378,7 @@ namespace dnSpy.Languages.MSBuild {
 			return GetRelativePath(asm.ManifestModule.Location);
 		}
 
-		bool IsGacPath(string file) {
-			return GacInfo.IsGacPath(file) || IsUserGacPath(file);
-		}
+		bool IsGacPath(string file) => GacInfo.IsGacPath(file) || IsUserGacPath(file);
 
 		bool IsUserGacPath(string file) {
 			file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
@@ -395,16 +389,10 @@ namespace dnSpy.Languages.MSBuild {
 			return false;
 		}
 
-		bool ExistsInProject(string filename) {
-			return FindOtherProject(filename) != null;
-		}
-
-		bool AssemblyExistsInProject(string asmSimpleName) {
-			return allProjects.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a.AssemblyName, asmSimpleName));
-		}
-
-		Project FindOtherProject(string filename) {
-			return allProjects.FirstOrDefault(f => StringComparer.OrdinalIgnoreCase.Equals(Path.GetFullPath(f.Module.Location), Path.GetFullPath(filename)));
-		}
+		bool ExistsInProject(string filename) => FindOtherProject(filename) != null;
+		bool AssemblyExistsInProject(string asmSimpleName) =>
+			allProjects.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a.AssemblyName, asmSimpleName));
+		Project FindOtherProject(string filename) =>
+			allProjects.FirstOrDefault(f => StringComparer.OrdinalIgnoreCase.Equals(Path.GetFullPath(f.Module.Location), Path.GetFullPath(filename)));
 	}
 }

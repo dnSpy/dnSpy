@@ -27,8 +27,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.TextEditor {
 	class TextEditorSettings : ViewModelBase, ITextEditorSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public FontFamily FontFamily {
 			get { return fontFamily; }
@@ -102,9 +101,7 @@ namespace dnSpy.TextEditor {
 		}
 		bool wordWrap = false;
 
-		public TextEditorSettings Clone() {
-			return CopyTo(new TextEditorSettings());
-		}
+		public TextEditorSettings Clone() => CopyTo(new TextEditorSettings());
 
 		public TextEditorSettings CopyTo(TextEditorSettings other) {
 			other.FontFamily = this.FontFamily;

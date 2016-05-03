@@ -54,33 +54,13 @@ namespace dnSpy.BamlDecompiler.Baml {
 			InitResources();
 		}
 
-		public Func<KnownTypes, TypeDef> Types {
-			get { return id => types[id]; }
-		}
-
-		public Func<KnownMembers, KnownMember> Members {
-			get { return id => members[id]; }
-		}
-
-		public Func<short, string> Strings {
-			get { return id => strings[id]; }
-		}
-
-		public Func<short, Tuple<string, string, string>> Resources {
-			get { return id => resources[id]; }
-		}
-
-		public AssemblyDef FrameworkAssembly {
-			get { return assemblies[0]; }
-		}
-
-		TypeDef InitType(IAssembly assembly, string ns, string name) {
-			return typeResolver.ResolveThrow(new TypeRefUser(module, ns, name, assembly.ToAssemblyRef()));
-		}
-
-		KnownMember InitMember(KnownTypes parent, string name, TypeDef type) {
-			return new KnownMember(parent, types[parent], name, type);
-		}
+		public Func<KnownTypes, TypeDef> Types => id => types[id];
+		public Func<KnownMembers, KnownMember> Members => id => members[id];
+		public Func<short, string> Strings => id => strings[id];
+		public Func<short, Tuple<string, string, string>> Resources => id => resources[id];
+		public AssemblyDef FrameworkAssembly => assemblies[0];
+		TypeDef InitType(IAssembly assembly, string ns, string name) => typeResolver.ResolveThrow(new TypeRefUser(module, ns, name, assembly.ToAssemblyRef()));
+		KnownMember InitMember(KnownTypes parent, string name, TypeDef type) => new KnownMember(parent, types[parent], name, type);
 	}
 
 	internal class KnownMember {
@@ -92,10 +72,10 @@ namespace dnSpy.BamlDecompiler.Baml {
 			Type = type;
 		}
 
-		public KnownTypes Parent { get; private set; }
-		public TypeDef DeclaringType { get; private set; }
-		public PropertyDef Property { get; private set; }
-		public string Name { get; private set; }
-		public TypeDef Type { get; private set; }
+		public KnownTypes Parent { get; }
+		public TypeDef DeclaringType { get; }
+		public PropertyDef Property { get; }
+		public string Name { get; }
+		public TypeDef Type { get; }
 	}
 }

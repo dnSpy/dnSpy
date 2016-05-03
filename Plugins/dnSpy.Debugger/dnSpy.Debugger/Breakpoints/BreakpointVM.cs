@@ -26,15 +26,15 @@ using dnSpy.Shared.MVVM;
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointVM : ViewModelBase, IDisposable {
 		public bool IsEnabled {
-			get { return bp.IsEnabled; }
-			set { bp.IsEnabled = value; }
+			get { return Breakpoint.IsEnabled; }
+			set { Breakpoint.IsEnabled = value; }
 		}
 
-		public object ImageObject { get { return this; } }
-		public object NameObject { get { return this; } }
-		public object AssemblyObject { get { return this; } }
-		public object ModuleObject { get { return this; } }
-		public object FileObject { get { return this; } }
+		public object ImageObject => this;
+		public object NameObject => this;
+		public object AssemblyObject => this;
+		public object ModuleObject => this;
+		public object FileObject => this;
 
 		internal bool NameError {
 			get { return nameError; }
@@ -47,22 +47,15 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		bool nameError;
 
-		public Breakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly Breakpoint bp;
-
-		public IBreakpointContext Context {
-			get { return context; }
-		}
-		readonly IBreakpointContext context;
+		public Breakpoint Breakpoint { get; }
+		public IBreakpointContext Context { get; }
 
 		readonly BreakpointsVM owner;
 
 		public BreakpointVM(BreakpointsVM owner, IBreakpointContext context, Breakpoint bp) {
 			this.owner = owner;
-			this.context = context;
-			this.bp = bp;
+			this.Context = context;
+			this.Breakpoint = bp;
 			bp.PropertyChanged += Breakpoint_PropertyChanged;
 		}
 
@@ -81,13 +74,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			OnPropertyChanged("FileObject");
 		}
 
-		internal void RefreshNameField() {
-			OnPropertyChanged("NameObject");
-		}
-
-		void RefreshImage() {
-			OnPropertyChanged("ImageObject");
-		}
+		internal void RefreshNameField() => OnPropertyChanged("NameObject");
+		void RefreshImage() => OnPropertyChanged("ImageObject");
 
 		internal void RefreshIfNameError(SerializedDnModule serMod) {
 			if (!NameError)
@@ -117,7 +105,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public void Dispose() {
 			NameError = false;	// will notify owner if necessary
-			bp.PropertyChanged -= Breakpoint_PropertyChanged;
+			Breakpoint.PropertyChanged -= Breakpoint_PropertyChanged;
 		}
 	}
 }

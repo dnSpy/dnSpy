@@ -39,9 +39,7 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 	}
 
 	public sealed class ProgressVM : ViewModelBase, IProgress {
-		public ICommand CancelCommand {
-			get { return new RelayCommand(a => Cancel(), a => CanCancel); }
-		}
+		public ICommand CancelCommand => new RelayCommand(a => Cancel(), a => CanCancel);
 
 		readonly Dispatcher dispatcher;
 		readonly IProgressTask task;
@@ -50,18 +48,16 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 		public ProgressVM(Dispatcher dispatcher, IProgressTask task) {
 			this.dispatcher = dispatcher;
 			this.task = task;
-			this.progressMinimum = task.ProgressMinimum;
-			this.progressMaximum = task.ProgressMaximum;
-			this.isIndeterminate = task.IsIndeterminate;
+			this.ProgressMinimum = task.ProgressMinimum;
+			this.ProgressMaximum = task.ProgressMaximum;
+			this.IsIndeterminate = task.IsIndeterminate;
 			this.cancellationTokenSource = new CancellationTokenSource();
 			Start();
 		}
 
 		public event EventHandler OnCompleted;
 
-		public bool CanCancel {
-			get { return !cancelling; }
-		}
+		public bool CanCancel => !cancelling;
 		bool cancelling;
 
 		public void Cancel() {
@@ -70,20 +66,9 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 				cancellationTokenSource.Cancel();
 		}
 
-		public bool IsIndeterminate {
-			get { return isIndeterminate; }
-		}
-		readonly bool isIndeterminate;
-
-		public double ProgressMinimum {
-			get { return progressMinimum; }
-		}
-		readonly double progressMinimum;
-
-		public double ProgressMaximum {
-			get { return progressMaximum; }
-		}
-		readonly double progressMaximum;
+		public bool IsIndeterminate { get; }
+		public double ProgressMinimum { get; }
+		public double ProgressMaximum { get; }
 
 		public double TotalProgress {
 			get { return totalProgress; }
@@ -129,14 +114,9 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 		}
 		string currentItemDescription;
 
-		public bool WasError {
-			get { return errorMessage != null; }
-		}
+		public bool WasError => ErrorMessage != null;
 
-		public string ErrorMessage {
-			get { return errorMessage; }
-		}
-		string errorMessage;
+		public string ErrorMessage { get; private set; }
 
 		class MyAction {
 			public readonly Action Action;
@@ -188,33 +168,25 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 				a.Action();
 		}
 
-		void IProgress.SetTotalProgress(double progress) {
+		void IProgress.SetTotalProgress(double progress) =>
 			QueueAction(new UpdateProgressAction(() => TotalProgress = progress), true);
-		}
 
-		void IProgress.SetDescription(string desc) {
+		void IProgress.SetDescription(string desc) =>
 			QueueAction(new SetDescriptionAction(() => CurrentItemDescription = desc), true);
-		}
 
-		public CancellationToken Token {
-			get { return cancellationTokenSource.Token; }
-		}
+		public CancellationToken Token => cancellationTokenSource.Token;
 
-		void IProgress.ThrowIfCancellationRequested() {
+		void IProgress.ThrowIfCancellationRequested() =>
 			this.cancellationTokenSource.Token.ThrowIfCancellationRequested();
-		}
 
 		void OnTaskCompleted() {
 			cancellationTokenSource.Dispose();
 			cancellationTokenSource = null;
 			HasCompleted = true;
-			if (OnCompleted != null)
-				OnCompleted(this, EventArgs.Empty);
+			OnCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
-		void Start() {
-			new Thread(ThreadProc).Start();
-		}
+		void Start() => new Thread(ThreadProc).Start();
 
 		void ThreadProc() {
 			try {
@@ -224,7 +196,7 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 				QueueAction(new MyAction(() => WasCanceled = true), false);
 			}
 			catch (Exception ex) {
-				errorMessage = ex.Message;
+				ErrorMessage = ex.Message;
 			}
 			QueueAction(new MyAction(OnTaskCompleted), false);
 		}

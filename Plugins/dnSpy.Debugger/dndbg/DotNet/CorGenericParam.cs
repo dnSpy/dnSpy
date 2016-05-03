@@ -28,13 +28,8 @@ namespace dndbg.DotNet {
 		readonly uint origRid;
 		readonly new ICorTypeOrMethodDef owner;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
-
-		public new ICorTypeOrMethodDef Owner {
-			get { return owner; }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
+		public new ICorTypeOrMethodDef Owner => owner;
 
 		public CorGenericParam(CorModuleDef readerModule, uint rid, ICorTypeOrMethodDef owner) {
 			this.readerModule = readerModule;
@@ -84,13 +79,9 @@ namespace dndbg.DotNet {
 			return new GenericParamContext(tmOwner as TypeDef);
 		}
 
-		void InitCustomAttributes_NoLock() {
-			customAttributes = null;
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void InitCustomAttributes_NoLock() => customAttributes = null;
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, GetGenericParamContext(owner));
-		}
 
 		void InitGenericParamProps_NoLock() {
 			var mdi2 = readerModule.MetaDataImport2;
@@ -115,9 +106,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			// Don't clear the list to prevent recursive init
-// 			var gpcs = genericParamConstraints;
-// 			if (gpcs != null)
-// 				gpcs.Clear();
+			//genericParamConstraints?.Clear();
 
 			var itemTokens = MDAPI.GetGenericParamConstraintTokens(mdi2, token);
 			genericParamConstraints = new LazyList<GenericParamConstraint>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => readerModule.ResolveGenericParamConstraintDontCache(itemTokens[index], GetGenericParamContext(owner)));

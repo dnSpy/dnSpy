@@ -38,9 +38,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the process id (pid) of the process
 		/// </summary>
-		public int ProcessId {
-			get { return pid; }
-		}
+		public int ProcessId => pid;
 		readonly int pid;
 
 		/// <summary>
@@ -228,9 +226,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="state">New state</param>
 		/// <param name="thread">Thread to exempt from the new state or null</param>
-		public void SetAllThreadsDebugState(CorDebugThreadState state, CorThread thread = null) {
-			int hr = obj.SetAllThreadsDebugState(state, thread == null ? null : thread.RawObject);
-		}
+		public void SetAllThreadsDebugState(CorDebugThreadState state, CorThread thread = null) =>
+			obj.SetAllThreadsDebugState(state, thread?.RawObject);
 
 		/// <summary>
 		/// true if any managed callbacks are currently queued for the specified thread
@@ -239,7 +236,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public bool HasQueuedCallbacks(CorThread thread) {
 			int queued;
-			int hr = obj.HasQueuedCallbacks(thread == null ? null : thread.RawObject, out queued);
+			int hr = obj.HasQueuedCallbacks(thread?.RawObject, out queued);
 			return hr >= 0 && queued != 0;
 		}
 
@@ -282,9 +279,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public void EnableLogMessages(bool enable) {
-			int hr = obj.EnableLogMessages(enable ? 1 : 0);
-		}
+		public void EnableLogMessages(bool enable) => obj.EnableLogMessages(enable ? 1 : 0);
 
 		public void EnableExceptionCallbacksOutsideOfMyCode(bool value) {
 			var p8 = obj as ICorDebugProcess8;
@@ -300,9 +295,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public bool Terminate(int exitCode) {
-			return obj.Terminate((uint)exitCode) >= 0;
-		}
+		public bool Terminate(int exitCode) => obj.Terminate((uint)exitCode) >= 0;
 
 		public bool Detach() {
 			int hr = obj.Detach();
@@ -315,9 +308,7 @@ namespace dndbg.Engine {
 			return hr >= 0 && ts != 0;
 		}
 
-		public void ClearCurrentException(uint threadId) {
-			int hr = obj.ClearCurrentException(threadId);
-		}
+		public void ClearCurrentException(uint threadId) => obj.ClearCurrentException(threadId);
 
 		public CorThread ThreadForFiberCookie(uint fiberCookie) {
 			ICorDebugThread thread;
@@ -348,25 +339,11 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorProcess a, CorProcess b) {
-			return !(a == b);
-		}
+		public static bool operator !=(CorProcess a, CorProcess b) => !(a == b);
 
-		public bool Equals(CorProcess other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorProcess);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
-
-		public override string ToString() {
-			return string.Format("[Process] {0} CLR v{1} Flags={2}", ProcessId, CLRVersion, DesiredNGENCompilerFlags);
-		}
+		public bool Equals(CorProcess other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorProcess);
+		public override int GetHashCode() => RawObject.GetHashCode();
+		public override string ToString() => string.Format("[Process] {0} CLR v{1} Flags={2}", ProcessId, CLRVersion, DesiredNGENCompilerFlags);
 	}
 }

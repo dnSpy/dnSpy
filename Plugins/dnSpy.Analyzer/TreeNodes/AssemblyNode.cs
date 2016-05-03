@@ -30,20 +30,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzedAssembly = analyzedAssembly;
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(analyzedAssembly);
-		}
-
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(analyzedAssembly);
-		}
-
-		public override IMemberRef Member {
-			get { return null; }
-		}
-
-		public override IMDTokenProvider Reference {
-			get { return analyzedAssembly; }
-		}
+		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedAssembly);
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) => output.Write(analyzedAssembly);
+		public override IMemberRef Member => null;
+		public override IMDTokenProvider Reference => analyzedAssembly;
 	}
 }

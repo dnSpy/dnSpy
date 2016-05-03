@@ -29,36 +29,22 @@ using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageSectionHeaderNode : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.IMGSECTHEADER_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, sectionNumber.ToString()); }
-		}
-
-		public override object VMObject {
-			get { return imageSectionHeaderVM; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.IMGSECTHEADER_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, SectionNumber.ToString());
+		public override object VMObject => imageSectionHeaderVM;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return imageSectionHeaderVM; }
 		}
 
-		protected override string IconName {
-			get { return "BinaryFile"; }
-		}
-
-		public int SectionNumber {
-			get { return sectionNumber; }
-		}
-		readonly int sectionNumber;
+		protected override string IconName => "BinaryFile";
+		public int SectionNumber { get; }
 
 		readonly ImageSectionHeaderVM imageSectionHeaderVM;
 
 		public ImageSectionHeaderNode(HexDocument doc, ImageSectionHeader sectHdr, int sectionNumber)
 			: base((ulong)sectHdr.StartOffset, (ulong)sectHdr.EndOffset - 1) {
-			this.sectionNumber = sectionNumber;
+			this.SectionNumber = sectionNumber;
 			this.imageSectionHeaderVM = new ImageSectionHeaderVM(this, doc, StartOffset);
 		}
 
@@ -72,7 +58,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, BoxedTextTokenKind.Keyword);
 			output.WriteSpace();
 			output.Write("#", BoxedTextTokenKind.Operator);
-			output.Write(sectionNumber.ToString(), BoxedTextTokenKind.Number);
+			output.Write(SectionNumber.ToString(), BoxedTextTokenKind.Number);
 			output.Write(":", BoxedTextTokenKind.Operator);
 			output.WriteSpace();
 			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), BoxedTextTokenKind.Type);

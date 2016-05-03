@@ -27,93 +27,47 @@ namespace dnSpy.MainApp {
 	sealed class AppCommandLineArgs : IAppCommandLineArgs {
 		const char ARG_SEP = ':';
 
-		public string SettingsFilename {
-			get { return settingsFilename; }
-		}
-		readonly string settingsFilename = null;
-
-		public IEnumerable<string> Filenames {
-			get { return filenames.AsEnumerable(); }
-		}
-		readonly List<string> filenames = new List<string>();
-
-		public bool SingleInstance {
-			get { return singleInstance; }
-		}
-		readonly bool singleInstance = true;
-
-		public bool Activate {
-			get { return activate; }
-		}
-		readonly bool activate = true;
-
-		public string Language {
-			get { return language; }
-		}
-		readonly string language = string.Empty;
-
-		public string Culture {
-			get { return culture; }
-		}
-		readonly string culture = string.Empty;
-
-		public string SelectMember {
-			get { return selectMember; }
-		}
-		readonly string selectMember = string.Empty;
-
-		public bool NewTab {
-			get { return newTab; }
-		}
-		readonly bool newTab = false;
-
-		public string SearchText {
-			get { return searchText; }
-		}
-		readonly string searchText = null;
-
-		public string SearchFor {
-			get { return searchFor; }
-		}
-		readonly string searchFor = string.Empty;
-
-		public string SearchIn {
-			get { return searchIn; }
-		}
-		readonly string searchIn = string.Empty;
-
-		public string Theme {
-			get { return theme; }
-		}
-		readonly string theme = string.Empty;
-
-		public bool LoadFiles {
-			get { return loadFiles; }
-		}
-		readonly bool loadFiles = true;
-
-		public bool? FullScreen {
-			get { return fullScreen; }
-		}
-		bool? fullScreen = null;
-
-		public string ShowToolWindow {
-			get { return showToolWindow; }
-		}
-		readonly string showToolWindow = string.Empty;
-
-		public string HideToolWindow {
-			get { return hideToolWindow; }
-		}
-		readonly string hideToolWindow = string.Empty;
+		public string SettingsFilename { get; }
+		public IEnumerable<string> Filenames => filenames;
+		public bool SingleInstance { get; }
+		public bool Activate { get; }
+		public string Language { get; }
+		public string Culture { get; }
+		public string SelectMember { get; }
+		public bool NewTab { get; }
+		public string SearchText { get; }
+		public string SearchFor { get; }
+		public string SearchIn { get; }
+		public string Theme { get; }
+		public bool LoadFiles { get; }
+		public bool? FullScreen { get; }
+		public string ShowToolWindow { get; }
+		public string HideToolWindow { get; }
 
 		readonly Dictionary<string, string> userArgs = new Dictionary<string, string>();
+		readonly List<string> filenames = new List<string>();
 
 		public AppCommandLineArgs()
 			: this(Environment.GetCommandLineArgs().Skip(1).ToArray()) {
 		}
 
 		public AppCommandLineArgs(string[] args) {
+			SettingsFilename = null;
+			SingleInstance = true;
+			Activate = true;
+			Language = string.Empty;
+			Culture = string.Empty;
+			SelectMember = string.Empty;
+			NewTab = false;
+			SearchText = null;
+			SearchFor = string.Empty;
+			SearchIn = string.Empty;
+			Theme = string.Empty;
+			LoadFiles = true;
+			FullScreen = null;
+			ShowToolWindow = string.Empty;
+			HideToolWindow = string.Empty;
+
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {
 				var arg = args[i];
@@ -126,79 +80,79 @@ namespace dnSpy.MainApp {
 						break;
 
 					case "--settings-file":
-						settingsFilename = GetFullPath(next);
+						SettingsFilename = GetFullPath(next);
 						i++;
 						break;
 
 					case "--multiple":
-						singleInstance = false;
+						SingleInstance = false;
 						break;
 
 					case "--dont-activate":
 					case "--no-activate":
-						activate = false;
+						Activate = false;
 						break;
 
 					case "-l":
 					case "--language":
-						language = next;
+						Language = next;
 						i++;
 						break;
 
 					case "--culture":
-						culture = next;
+						Culture = next;
 						i++;
 						break;
 
 					case "--select":
-						selectMember = next;
+						SelectMember = next;
 						i++;
 						break;
 
 					case "--new-tab":
-						newTab = true;
+						NewTab = true;
 						break;
 
 					case "--search":
-						searchText = next;
+						SearchText = next;
 						i++;
 						break;
 
 					case "--search-for":
-						searchFor = next;
+						SearchFor = next;
 						i++;
 						break;
 
 					case "--search-in":
-						searchIn = next;
+						SearchIn = next;
 						i++;
 						break;
 
 					case "--theme":
-						theme = next;
+						Theme = next;
 						i++;
 						break;
 
 					case "--dont-load-files":
 					case "--no-load-files":
-						loadFiles = false;
+						LoadFiles = false;
 						break;
 
 					case "--full-screen":
-						fullScreen = true;
+						FullScreen = true;
 						break;
 
 					case "--not-full-screen":
-						fullScreen = false;
+						FullScreen = false;
 						break;
 
 					case "--show-tool-window":
-						showToolWindow = next;
+						ShowToolWindow = next;
 						i++;
 						break;
 
 					case "--hide-tool-window":
-						hideToolWindow = next;
+						HideToolWindow = next;
 						i++;
 						break;
 
@@ -232,9 +186,7 @@ namespace dnSpy.MainApp {
 			return file;
 		}
 
-		public bool HasArgument(string argName) {
-			return userArgs.ContainsKey(argName);
-		}
+		public bool HasArgument(string argName) => userArgs.ContainsKey(argName);
 
 		public string GetArgumentValue(string argName) {
 			string value;
@@ -242,8 +194,6 @@ namespace dnSpy.MainApp {
 			return value;
 		}
 
-		public IEnumerable<Tuple<string, string>> GetArguments() {
-			return userArgs.Select(a => Tuple.Create(a.Key, a.Value));
-		}
+		public IEnumerable<Tuple<string, string>> GetArguments() => userArgs.Select(a => Tuple.Create(a.Key, a.Value));
 	}
 }

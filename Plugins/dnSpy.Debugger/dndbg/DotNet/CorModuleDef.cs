@@ -57,9 +57,7 @@ namespace dndbg.DotNet {
 			}
 		}
 
-		internal TItem _ItemNoInit {
-			get { return item; }
-		}
+		internal TItem _ItemNoInit => item;
 
 		public MemberInfo(TItem item, Action<TItem> initItem) {
 			this.item = item;
@@ -130,28 +128,20 @@ namespace dndbg.DotNet {
 		/// </summary>
 		public event EventHandler<TypeUpdatedEventArgs> TypeUpdated;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
 		/// <summary>
 		/// Gets the <see cref="IMetaDataImport"/>. This is never null
 		/// </summary>
-		public IMetaDataImport MetaDataImport {
-			get { return mdi; }
-		}
+		public IMetaDataImport MetaDataImport => mdi;
 
 		/// <summary>
 		/// Gets the <see cref="IMetaDataImport2"/>. This is null if it's not available, eg.
 		/// a .NET 1.x process is being debugged using the CLR 1.x runtime.
 		/// </summary>
-		public IMetaDataImport2 MetaDataImport2 {
-			get { return mdi2; }
-		}
+		public IMetaDataImport2 MetaDataImport2 => mdi2;
 
-		public IMetaDataAssemblyImport MetaDataAssemblyImport {
-			get { return mdi as IMetaDataAssemblyImport; }
-		}
+		public IMetaDataAssemblyImport MetaDataAssemblyImport => mdi as IMetaDataAssemblyImport;
 
 		public CorModuleDef(IMetaDataImport mdi, ICorModuleDefHelper corModuleDefHelper) {
 			if (mdi == null)
@@ -257,9 +247,7 @@ namespace dndbg.DotNet {
 			return MDAPI.IsValidToken(mdi, token);
 		}
 
-		bool IsValidToken(Table table, uint rid) {
-			return IsValidToken(new MDToken(table, rid).Raw);
-		}
+		bool IsValidToken(Table table, uint rid) => IsValidToken(new MDToken(table, rid).Raw);
 
 		/// <summary>
 		/// Should be called when a <c>UnloadClass</c> debug event has been received
@@ -310,9 +298,7 @@ namespace dndbg.DotNet {
 		CorTypeDef Initialize(CorTypeDef td, bool created, bool calledFromLoadClass) {
 			td.Initialize(corModuleDefHelper.IsDynamic ? calledFromLoadClass : true);
 			if (corModuleDefHelper.IsDynamic) {
-				var ev = TypeUpdated;
-				if (ev != null)
-					ev(this, new TypeUpdatedEventArgs(td, created, calledFromLoadClass));
+				TypeUpdated?.Invoke(this, new TypeUpdatedEventArgs(td, created, calledFromLoadClass));
 			}
 			return td;
 		}
@@ -344,7 +330,7 @@ namespace dndbg.DotNet {
 
 		CustomAttribute ReadCustomAttribute(uint caToken, GenericParamContext gpContext) {
 			uint typeToken;
-			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out typeToken) ?? new byte[0];
+			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out typeToken) ?? Array.Empty<byte>();
 			var cat = ResolveToken(typeToken, gpContext) as ICustomAttributeType;
 			var ca = CustomAttributeReader.Read(this, caBlob, cat, gpContext);
 			Debug.Assert(ca != null);
@@ -442,13 +428,9 @@ namespace dndbg.DotNet {
 			return ModuleKind.Console;
 		}
 
-		internal byte[] ReadFieldInitialValue(CorFieldDef cfd, uint rva, int size) {
-			return this.corModuleDefHelper.ReadFieldInitialValue(rva, cfd.OriginalToken.Raw, size);
-		}
-
-		public TypeSig ConvertRTInternalAddress(IntPtr address) {
-			return null;
-		}
+		internal byte[] ReadFieldInitialValue(CorFieldDef cfd, uint rva, int size) =>
+			this.corModuleDefHelper.ReadFieldInitialValue(rva, cfd.OriginalToken.Raw, size);
+		public TypeSig ConvertRTInternalAddress(IntPtr address) => null;
 
 		internal MemberInfo<CorFieldDef> Register(CorFieldDef item, Action<CorFieldDef> initItem) {
 			MemberInfo<CorFieldDef> info;
@@ -532,9 +514,7 @@ namespace dndbg.DotNet {
 				return MethodBodyReader.CreateCilBody(this, reader, parameters, gpContext);
 		}
 
-		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken) {
-			return ResolveTypeDefOrRef(codedToken, new GenericParamContext());
-		}
+		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken) => ResolveTypeDefOrRef(codedToken, new GenericParamContext());
 
 		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken, GenericParamContext gpContext) {
 			uint token;
@@ -634,11 +614,9 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetFieldOwnerRid(mdi, new MDToken(Table.Field, rid).Raw);
-			var ctd = (CorTypeDef)ResolveTypeDef(ownerRid);
-			if (ctd != null)
-				ctd.UpdateFields();
+			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateFields();
 			ridToField.TryGetValue(rid, out info);
-			return info == null ? null : info.Item;
+			return info?.Item;
 		}
 
 		MethodDef ResolveMethod(uint rid) {
@@ -650,11 +628,9 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetMethodOwnerRid(mdi, new MDToken(Table.Method, rid).Raw);
-			var ctd = (CorTypeDef)ResolveTypeDef(ownerRid);
-			if (ctd != null)
-				ctd.UpdateMethods();
+			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateMethods();
 			ridToMethod.TryGetValue(rid, out info);
-			return info == null ? null : info.Item;
+			return info?.Item;
 		}
 
 		ParamDef ResolveParam(uint rid) {
@@ -666,16 +642,12 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetParamOwnerRid(mdi, new MDToken(Table.Param, rid).Raw);
-			var cmd = (CorMethodDef)ResolveMethod(ownerRid);
-			if (cmd != null)
-				cmd.UpdateParams();
+			((CorMethodDef)ResolveMethod(ownerRid))?.UpdateParams();
 			ridToParam.TryGetValue(rid, out info);
-			return info == null ? null : info.Item;
+			return info?.Item;
 		}
 
-		InterfaceImpl ResolveInterfaceImpl(uint rid) {
-			return ResolveInterfaceImpl(rid, new GenericParamContext());
-		}
+		InterfaceImpl ResolveInterfaceImpl(uint rid) => ResolveInterfaceImpl(rid, new GenericParamContext());
 
 		internal InterfaceImpl ResolveInterfaceImpl(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.InterfaceImpl, rid))
@@ -713,9 +685,7 @@ namespace dndbg.DotNet {
 			return cii;
 		}
 
-		MemberRef ResolveMemberRef(uint rid) {
-			return ResolveMemberRef(rid, new GenericParamContext());
-		}
+		MemberRef ResolveMemberRef(uint rid) => ResolveMemberRef(rid, new GenericParamContext());
 
 		MemberRef ResolveMemberRef(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.MemberRef, rid))
@@ -765,9 +735,7 @@ namespace dndbg.DotNet {
 			return cds;
 		}
 
-		StandAloneSig ResolveStandAloneSig(uint rid) {
-			return ResolveStandAloneSig(rid, new GenericParamContext());
-		}
+		StandAloneSig ResolveStandAloneSig(uint rid) => ResolveStandAloneSig(rid, new GenericParamContext());
 
 		StandAloneSig ResolveStandAloneSig(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.StandAloneSig, rid))
@@ -813,11 +781,9 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetEventOwnerRid(mdi, new MDToken(Table.Event, rid).Raw);
-			var cmd = (CorTypeDef)ResolveTypeDef(ownerRid);
-			if (cmd != null)
-				cmd.UpdateProperties();
+			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateProperties();
 			ridToEventDef.TryGetValue(rid, out info);
-			return info == null ? null : info.Item;
+			return info?.Item;
 		}
 
 		PropertyDef ResolveProperty(uint rid) {
@@ -829,11 +795,9 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetPropertyOwnerRid(mdi, new MDToken(Table.Property, rid).Raw);
-			var cmd = (CorTypeDef)ResolveTypeDef(ownerRid);
-			if (cmd != null)
-				cmd.UpdateProperties();
+			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateProperties();
 			ridToPropertyDef.TryGetValue(rid, out info);
-			return info == null ? null : info.Item;
+			return info?.Item;
 		}
 
 		ModuleRef ResolveModuleRef(uint rid) {
@@ -849,9 +813,7 @@ namespace dndbg.DotNet {
 			return cmr;
 		}
 
-		TypeSpec ResolveTypeSpec(uint rid) {
-			return ResolveTypeSpec(rid, new GenericParamContext());
-		}
+		TypeSpec ResolveTypeSpec(uint rid) => ResolveTypeSpec(rid, new GenericParamContext());
 
 		TypeSpec ResolveTypeSpec(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.TypeSpec, rid))
@@ -957,16 +919,12 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerToken = MDAPI.GetGenericParamOwner(mdi2, new MDToken(Table.Param, rid).Raw);
-			var cmd = (ICorTypeOrMethodDef)ResolveToken(ownerToken);
-			if (cmd != null)
-				cmd.UpdateGenericParams();
+			((ICorTypeOrMethodDef)ResolveToken(ownerToken))?.UpdateGenericParams();
 			ridToGenericParam.TryGetValue(rid, out info);
-			return info == null ? null : info.Item;
+			return info?.Item;
 		}
 
-		MethodSpec ResolveMethodSpec(uint rid) {
-			return ResolveMethodSpec(rid, new GenericParamContext());
-		}
+		MethodSpec ResolveMethodSpec(uint rid) => ResolveMethodSpec(rid, new GenericParamContext());
 
 		MethodSpec ResolveMethodSpec(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.MethodSpec, rid))
@@ -990,9 +948,7 @@ namespace dndbg.DotNet {
 			return new CorMethodSpec(this, rid, gpContext);
 		}
 
-		GenericParamConstraint ResolveGenericParamConstraint(uint rid) {
-			return ResolveGenericParamConstraint(rid, new GenericParamContext());
-		}
+		GenericParamConstraint ResolveGenericParamConstraint(uint rid) => ResolveGenericParamConstraint(rid, new GenericParamContext());
 
 		GenericParamConstraint ResolveGenericParamConstraint(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.GenericParamConstraint, rid))
@@ -1054,7 +1010,7 @@ namespace dndbg.DotNet {
 			List<uint> list;
 			bool b = ridToNested.TryGetValue(ctd.OriginalToken.Rid, out list);
 			Debug.Assert(b);
-			return list == null ? new uint[0] : list.ToArray();
+			return list == null ? Array.Empty<uint>() : list.ToArray();
 		}
 
 		void InitializeTypeTables() {
@@ -1135,9 +1091,7 @@ namespace dndbg.DotNet {
 						var enclType = ridToType[enclTypeRid];
 						enclType.NestedTypes.Add(td);
 						if (corModuleDefHelper.IsDynamic) {
-							var ev = TypeUpdated;
-							if (ev != null)
-								ev(this, new TypeUpdatedEventArgs(enclType, false, false));
+							TypeUpdated?.Invoke(this, new TypeUpdatedEventArgs(enclType, false, false));
 						}
 					}
 				}
@@ -1262,9 +1216,7 @@ namespace dndbg.DotNet {
 			return new EmbeddedResource(mr.Name, MemoryImageStream.CreateEmpty(), mr.Flags) { Rid = rid, Offset = mr.Offset };
 		}
 
-		IImageStream CreateResourceStream(uint offset) {
-			return corModuleDefHelper.CreateResourceStream(offset) ?? MemoryImageStream.CreateEmpty();
-		}
+		IImageStream CreateResourceStream(uint offset) => corModuleDefHelper.CreateResourceStream(offset) ?? MemoryImageStream.CreateEmpty();
 
 		/// <summary>
 		/// Add all new types that have been added to the module. Returns true if at least one new
@@ -1306,63 +1258,49 @@ namespace dndbg.DotNet {
 		/// </summary>
 		/// <param name="rid">RID of field</param>
 		/// <returns></returns>
-		public MDToken GetFieldOwnerToken(uint rid) {
-			return new MDToken(Table.TypeDef, MDAPI.GetFieldOwnerRid(mdi, new MDToken(Table.Field, rid).Raw));
-		}
+		public MDToken GetFieldOwnerToken(uint rid) => new MDToken(Table.TypeDef, MDAPI.GetFieldOwnerRid(mdi, new MDToken(Table.Field, rid).Raw));
 
 		/// <summary>
 		/// Gets owner token of a method
 		/// </summary>
 		/// <param name="rid">RID of method</param>
 		/// <returns></returns>
-		public MDToken GetMethodOwnerToken(uint rid) {
-			return new MDToken(Table.TypeDef, MDAPI.GetMethodOwnerRid(mdi, new MDToken(Table.Method, rid).Raw));
-		}
+		public MDToken GetMethodOwnerToken(uint rid) => new MDToken(Table.TypeDef, MDAPI.GetMethodOwnerRid(mdi, new MDToken(Table.Method, rid).Raw));
 
 		/// <summary>
 		/// Gets owner token of a parameter
 		/// </summary>
 		/// <param name="rid">RID of parameter</param>
 		/// <returns></returns>
-		public MDToken GetParamOwnerToken(uint rid) {
-			return new MDToken(Table.Method, MDAPI.GetParamOwnerRid(mdi, new MDToken(Table.Param, rid).Raw));
-		}
+		public MDToken GetParamOwnerToken(uint rid) => new MDToken(Table.Method, MDAPI.GetParamOwnerRid(mdi, new MDToken(Table.Param, rid).Raw));
 
 		/// <summary>
 		/// Gets owner token of an event
 		/// </summary>
 		/// <param name="rid">RID of event</param>
 		/// <returns></returns>
-		public MDToken GetEventOwnerToken(uint rid) {
-			return new MDToken(Table.TypeDef, MDAPI.GetEventOwnerRid(mdi, new MDToken(Table.Event, rid).Raw));
-		}
+		public MDToken GetEventOwnerToken(uint rid) => new MDToken(Table.TypeDef, MDAPI.GetEventOwnerRid(mdi, new MDToken(Table.Event, rid).Raw));
 
 		/// <summary>
 		/// Gets owner token of a property
 		/// </summary>
 		/// <param name="rid">RID of property</param>
 		/// <returns></returns>
-		public MDToken GetPropertyOwnerToken(uint rid) {
-			return new MDToken(Table.TypeDef, MDAPI.GetPropertyOwnerRid(mdi, new MDToken(Table.Property, rid).Raw));
-		}
+		public MDToken GetPropertyOwnerToken(uint rid) => new MDToken(Table.TypeDef, MDAPI.GetPropertyOwnerRid(mdi, new MDToken(Table.Property, rid).Raw));
 
 		/// <summary>
 		/// Gets owner token of a generic parameter
 		/// </summary>
 		/// <param name="rid">RID of generic parameter</param>
 		/// <returns></returns>
-		public MDToken GetGenericParamOwnerToken(uint rid) {
-			return new MDToken(MDAPI.GetGenericParamOwner(mdi2, new MDToken(Table.GenericParam, rid).Raw));
-		}
+		public MDToken GetGenericParamOwnerToken(uint rid) => new MDToken(MDAPI.GetGenericParamOwner(mdi2, new MDToken(Table.GenericParam, rid).Raw));
 
 		/// <summary>
 		/// Gets owner token of a generic parameter constraint
 		/// </summary>
 		/// <param name="rid">RID of generic parameter constraint</param>
 		/// <returns></returns>
-		public MDToken GetGenericParamConstraintOwnerToken(uint rid) {
-			return new MDToken(Table.GenericParam, MDAPI.GetGenericParamConstraintOwnerRid(mdi2, new MDToken(Table.GenericParamConstraint, rid).Raw));
-		}
+		public MDToken GetGenericParamConstraintOwnerToken(uint rid) => new MDToken(Table.GenericParam, MDAPI.GetGenericParamConstraintOwnerRid(mdi2, new MDToken(Table.GenericParamConstraint, rid).Raw));
 
 		/// <summary>
 		/// Force initialization of a type. Can be called if the type has gotten new members but

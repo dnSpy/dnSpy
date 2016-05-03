@@ -37,38 +37,17 @@ namespace dnSpy.Debugger.Scripting {
 			set { }
 		}
 
-		public bool IsIL {
-			get { return false; }
-		}
-
-		public bool IsNative {
-			get { return true; }
-		}
-
-		public BreakpointKind Kind {
-			get { return BreakpointKind.Native; }
-		}
-
-		public ModuleName Module {
-			get { return ModuleName.Create(string.Empty, string.Empty, true, true, false); }
-		}
-
-		public uint Offset {
-			get { return 0; }
-		}
-
-		public uint Token {
-			get { return 0x06000000; }
-		}
-
-		public void Remove() {
-		}
+		public bool IsIL => false;
+		public bool IsNative => true;
+		public BreakpointKind Kind => BreakpointKind.Native;
+		public ModuleName Module => ModuleName.Create(string.Empty, string.Empty, true, true, false);
+		public uint Offset => 0;
+		public uint Token => 0x06000000;
+		public void Remove() { }
 	}
 
 	sealed class NativeBreakpoint : INativeBreakpoint {
-		public BreakpointKind Kind {
-			get { return BreakpointKind.Native; }
-		}
+		public BreakpointKind Kind => BreakpointKind.Native;
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -87,44 +66,23 @@ namespace dnSpy.Debugger.Scripting {
 		bool isEnabled;
 
 		public object Tag { get; set; }
+		public bool IsIL => false;
+		public bool IsNative => true;
+		public ModuleName Module { get; }
+		public uint Token { get; }
+		public uint Offset { get; }
+		public DnBreakpoint DnBreakpoint => dbgBreakpoint;
 
-		public bool IsIL {
-			get { return false; }
-		}
-
-		public bool IsNative {
-			get { return true; }
-		}
-
-		public ModuleName Module {
-			get { return module; }
-		}
-		/*readonly*/ ModuleName module;
-
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
-
-		public uint Offset {
-			get { return offset; }
-		}
-		readonly uint offset;
-
-		public DnBreakpoint DnBreakpoint {
-			get { return dbgBreakpoint; }
-		}
 		DnNativeCodeBreakpoint dbgBreakpoint;
-
 		readonly Debugger debugger;
 		readonly Func<INativeBreakpoint, bool> cond;
 		readonly DebuggerCode code;
 
 		public NativeBreakpoint(Debugger debugger, ModuleName module, uint token, uint offset, Func<INativeBreakpoint, bool> cond) {
 			this.debugger = debugger;
-			this.module = module;
-			this.token = token;
-			this.offset = offset;
+			this.Module = module;
+			this.Token = token;
+			this.Offset = offset;
 			this.cond = cond ?? condAlwaysTrue;
 			this.isEnabled = true;
 			this.code = null;
@@ -134,17 +92,15 @@ namespace dnSpy.Debugger.Scripting {
 		public NativeBreakpoint(Debugger debugger, DebuggerCode code, uint offset, Func<INativeBreakpoint, bool> cond) {
 			Debug.Assert(!code.IsIL);
 			this.debugger = debugger;
-			this.module = code.Method.Module.ModuleName;
-			this.token = code.Method.Token;
-			this.offset = offset;
+			this.Module = code.Method.Module.ModuleName;
+			this.Token = code.Method.Token;
+			this.Offset = offset;
 			this.cond = cond ?? condAlwaysTrue;
 			this.isEnabled = true;
 			this.code = code;
 		}
 
-		public void Remove() {
-			debugger.Remove(this);
-		}
+		public void Remove() => debugger.Remove(this);
 
 		public void Initialize(DnDebugger dbg) {
 			Debug.Assert(debugger.Dispatcher.CheckAccess());
@@ -152,9 +108,9 @@ namespace dnSpy.Debugger.Scripting {
 			if (dbgBreakpoint != null)
 				throw new InvalidOperationException();
 			if (code == null)
-				dbgBreakpoint = dbg.CreateNativeBreakpoint(module.ToSerializedDnModule(), token, offset, a => cond(this));
+				dbgBreakpoint = dbg.CreateNativeBreakpoint(Module.ToSerializedDnModule(), Token, Offset, a => cond(this));
 			else
-				dbgBreakpoint = dbg.CreateNativeBreakpoint(code.CorCode, offset, a => cond(this));
+				dbgBreakpoint = dbg.CreateNativeBreakpoint(code.CorCode, Offset, a => cond(this));
 			dbgBreakpoint.IsEnabled = isEnabled;
 			dbgBreakpoint.Tag = this;
 		}

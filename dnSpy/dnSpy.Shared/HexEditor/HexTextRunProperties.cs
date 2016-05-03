@@ -33,37 +33,14 @@ namespace dnSpy.Shared.HexEditor {
 		public TextEffectCollection _TextEffects;
 		public Typeface _Typeface;
 
-		public override Brush BackgroundBrush {
-			get { return _BackgroundBrush; }
-		}
-
-		public override CultureInfo CultureInfo {
-			get { return _CultureInfo; }
-		}
-
-		public override double FontHintingEmSize {
-			get { return _FontHintingEmSize; }
-		}
-
-		public override double FontRenderingEmSize {
-			get { return _FontRenderingEmSize; }
-		}
-
-		public override Brush ForegroundBrush {
-			get { return _ForegroundBrush; }
-		}
-
-		public override TextDecorationCollection TextDecorations {
-			get { return _TextDecorations; }
-		}
-
-		public override TextEffectCollection TextEffects {
-			get { return _TextEffects; }
-		}
-
-		public override Typeface Typeface {
-			get { return _Typeface; }
-		}
+		public override Brush BackgroundBrush => _BackgroundBrush;
+		public override CultureInfo CultureInfo => _CultureInfo;
+		public override double FontHintingEmSize => _FontHintingEmSize;
+		public override double FontRenderingEmSize => _FontRenderingEmSize;
+		public override Brush ForegroundBrush => _ForegroundBrush;
+		public override TextDecorationCollection TextDecorations => _TextDecorations;
+		public override TextEffectCollection TextEffects => _TextEffects;
+		public override Typeface Typeface => _Typeface;
 
 		public HexTextRunProperties() {
 		}

@@ -81,11 +81,11 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		public Guid Guid { get; private set; }
-		public string Name { get; private set; }
-		public string MenuName { get; private set; }
-		public bool IsHighContrast { get; private set; }
-		public double Order { get; private set; }
+		public Guid Guid { get; }
+		public string Name { get; }
+		public string MenuName { get; }
+		public bool IsHighContrast { get; }
+		public double Order { get; }
 
 		public Theme(XElement root) {
 			var guid = root.Attribute("guid");
@@ -246,13 +246,9 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		public IThemeColor GetTextColor(ColorType colorType) {
-			return GetColorInternal(colorType).TextInheritedColor;
-		}
+		public IThemeColor GetTextColor(ColorType colorType) => GetColorInternal(colorType).TextInheritedColor;
 
-		public IThemeColor GetColor(ColorType colorType) {
-			return GetColorInternal(colorType).InheritedColor;
-		}
+		public IThemeColor GetColor(ColorType colorType) => GetColorInternal(colorType).InheritedColor;
 
 		Color GetColorInternal(ColorType colorType) {
 			uint i = (uint)ToIndex(colorType);
@@ -368,8 +364,6 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		public override string ToString() {
-			return string.Format("Theme: {0} {1}", Guid, MenuName);
-		}
+		public override string ToString() => $"Theme: {Guid} {MenuName}";
 	}
 }

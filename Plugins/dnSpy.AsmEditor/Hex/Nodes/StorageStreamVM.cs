@@ -23,40 +23,24 @@ using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageStreamVM : HexVM {
-		public override string Name {
-			get { return "STORAGESTREAM"; }
-		}
+		public override string Name => "STORAGESTREAM";
 
-		public UInt32HexField IOffsetVM {
-			get { return iOffsetVM; }
-		}
-		readonly UInt32HexField iOffsetVM;
-
-		public UInt32HexField ISizeVM {
-			get { return iSizeVM; }
-		}
-		readonly UInt32HexField iSizeVM;
-
-		public StringHexField RCNameVM {
-			get { return rcNameVM; }
-		}
-		readonly StringHexField rcNameVM;
-
-		public override IEnumerable<HexField> HexFields {
-			get { return hexFields; }
-		}
+		public UInt32HexField IOffsetVM { get; }
+		public UInt32HexField ISizeVM { get; }
+		public StringHexField RCNameVM { get; }
+		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
 		public StorageStreamVM(object owner, HexDocument doc, ulong startOffset, int stringLen)
 			: base(owner) {
-			this.iOffsetVM = new UInt32HexField(doc, Name, "iOffset", startOffset + 0);
-			this.iSizeVM = new UInt32HexField(doc, Name, "iSize", startOffset + 4);
-			this.rcNameVM = new StringHexField(doc, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);
+			this.IOffsetVM = new UInt32HexField(doc, Name, "iOffset", startOffset + 0);
+			this.ISizeVM = new UInt32HexField(doc, Name, "iSize", startOffset + 4);
+			this.RCNameVM = new StringHexField(doc, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);
 
 			this.hexFields = new HexField[] {
-				iOffsetVM,
-				iSizeVM,
-				rcNameVM,
+				IOffsetVM,
+				ISizeVM,
+				RCNameVM,
 			};
 		}
 	}

@@ -25,26 +25,11 @@ using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerProperty : IDebuggerProperty {
-		public string Name {
-			get { return name; }
-		}
-
-		public PropertyAttributes Attributes {
-			get { return attributes; }
-		}
-		readonly PropertyAttributes attributes;
-
-		public bool IsSpecialName {
-			get { return (attributes & PropertyAttributes.SpecialName) != 0; }
-		}
-
-		public bool IsRuntimeSpecialName {
-			get { return (attributes & PropertyAttributes.RTSpecialName) != 0; }
-		}
-
-		public bool HasDefault {
-			get { return (attributes & PropertyAttributes.HasDefault) != 0; }
-		}
+		public string Name => name;
+		public PropertyAttributes Attributes { get; }
+		public bool IsSpecialName => (Attributes & PropertyAttributes.SpecialName) != 0;
+		public bool IsRuntimeSpecialName => (Attributes & PropertyAttributes.RTSpecialName) != 0;
+		public bool HasDefault => (Attributes & PropertyAttributes.HasDefault) != 0;
 
 		public PropertySig PropertySig {
 			get {
@@ -62,22 +47,14 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		PropertySig propSig;
 
-		public IDebuggerModule Module {
-			get { return debugger.Dispatcher.UI(() => debugger.FindModuleUI(prop.Module)); }
-		}
+		public IDebuggerModule Module => debugger.Dispatcher.UI(() => debugger.FindModuleUI(prop.Module));
 
-		public IDebuggerClass Class {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var cls = prop.Class;
-					return cls == null ? null : new DebuggerClass(debugger, cls);
-				});
-			}
-		}
+		public IDebuggerClass Class => debugger.Dispatcher.UI(() => {
+			var cls = prop.Class;
+			return cls == null ? null : new DebuggerClass(debugger, cls);
+		});
 
-		public uint Token {
-			get { return token; }
-		}
+		public uint Token => token;
 
 		public IDebuggerMethod Getter {
 			get {
@@ -144,36 +121,18 @@ namespace dnSpy.Debugger.Scripting {
 			this.hashCode = prop.GetHashCode();
 			this.token = prop.Token;
 			this.name = prop.GetName() ?? string.Empty;
-			this.attributes = prop.GetAttributes();
+			this.Attributes = prop.GetAttributes();
 		}
 
-		public override bool Equals(object obj) {
-			var other = obj as DebuggerProperty;
-			return other != null && other.prop == prop;
-		}
-
-		public override int GetHashCode() {
-			return hashCode;
-		}
-
+		public override bool Equals(object obj) => (obj as DebuggerProperty)?.prop == prop;
+		public override int GetHashCode() => hashCode;
 		const TypePrinterFlags DEFAULT_FLAGS = TypePrinterFlags.ShowParameterTypes |
 				TypePrinterFlags.ShowReturnTypes | TypePrinterFlags.ShowNamespaces |
 				TypePrinterFlags.ShowTypeKeywords;
-
-		public void WriteTo(IOutputWriter output) {
-			Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
-		}
-
-		public void Write(IOutputWriter output, TypeFormatFlags flags) {
+		public void WriteTo(IOutputWriter output) => Write(output, (TypeFormatFlags)DEFAULT_FLAGS);
+		public void Write(IOutputWriter output, TypeFormatFlags flags) =>
 			debugger.Dispatcher.UI(() => prop.Write(new OutputWriterConverter(output), (TypePrinterFlags)flags));
-		}
-
-		public string ToString(TypeFormatFlags flags) {
-			return debugger.Dispatcher.UI(() => prop.ToString((TypePrinterFlags)flags));
-		}
-
-		public override string ToString() {
-			return debugger.Dispatcher.UI(() => prop.ToString(DEFAULT_FLAGS));
-		}
+		public string ToString(TypeFormatFlags flags) => debugger.Dispatcher.UI(() => prop.ToString((TypePrinterFlags)flags));
+		public override string ToString() => debugger.Dispatcher.UI(() => prop.ToString(DEFAULT_FLAGS));
 	}
 }

@@ -24,8 +24,6 @@ using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class TextWithConverterHandler : TextHandler, IHandler {
-		BamlRecordType IHandler.Type {
-			get { return BamlRecordType.TextWithConverter; }
-		}
+		BamlRecordType IHandler.Type => BamlRecordType.TextWithConverter;
 	}
 }

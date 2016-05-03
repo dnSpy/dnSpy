@@ -61,13 +61,8 @@ namespace dnSpy.AsmEditor.Resources {
 			set { UserTypeVM.DnlibTypePicker = value; }
 		}
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand PickRawBytesCommand {
-			get { return new RelayCommand(a => PickRawBytes(), a => IsRawBytes); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand PickRawBytesCommand => new RelayCommand(a => PickRawBytes(), a => IsRawBytes);
 
 		public bool CanChangeType {
 			get { return canChangeType; }
@@ -81,10 +76,7 @@ namespace dnSpy.AsmEditor.Resources {
 		bool canChangeType = true;
 
 		internal static readonly EnumVM[] resourceElementTypeList = EnumVM.Create(false, typeof(ResourceElementType));
-		public EnumListVM ResourceElementTypeVM {
-			get { return resourceElementTypeVM; }
-		}
-		readonly EnumListVM resourceElementTypeVM;
+		public EnumListVM ResourceElementTypeVM { get; }
 
 		public string Name {
 			get { return name; }
@@ -108,80 +100,21 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		string @string;
 
-		public BooleanVM BooleanVM {
-			get { return booleanVM; }
-		}
-		readonly BooleanVM booleanVM;
-
-		public CharVM CharVM {
-			get { return charVM; }
-		}
-		readonly CharVM charVM;
-
-		public ByteVM ByteVM {
-			get { return byteVM; }
-		}
-		readonly ByteVM byteVM;
-
-		public SByteVM SByteVM {
-			get { return sbyteVM; }
-		}
-		readonly SByteVM sbyteVM;
-
-		public Int16VM Int16VM {
-			get { return int16VM; }
-		}
-		readonly Int16VM int16VM;
-
-		public UInt16VM UInt16VM {
-			get { return uint16VM; }
-		}
-		readonly UInt16VM uint16VM;
-
-		public Int32VM Int32VM {
-			get { return int32VM; }
-		}
-		readonly Int32VM int32VM;
-
-		public UInt32VM UInt32VM {
-			get { return uint32VM; }
-		}
-		readonly UInt32VM uint32VM;
-
-		public Int64VM Int64VM {
-			get { return int64VM; }
-		}
-		readonly Int64VM int64VM;
-
-		public UInt64VM UInt64VM {
-			get { return uint64VM; }
-		}
-		readonly UInt64VM uint64VM;
-
-		public SingleVM SingleVM {
-			get { return singleVM; }
-		}
-		readonly SingleVM singleVM;
-
-		public DoubleVM DoubleVM {
-			get { return doubleVM; }
-		}
-		readonly DoubleVM doubleVM;
-
-		public DecimalVM DecimalVM {
-			get { return decimalVM; }
-		}
-		readonly DecimalVM decimalVM;
-
-		public DateTimeVM DateTimeVM {
-			get { return dateTimeVM; }
-		}
-		readonly DateTimeVM dateTimeVM;
-
-		public TimeSpanVM TimeSpanVM {
-			get { return timeSpanVM; }
-		}
-		readonly TimeSpanVM timeSpanVM;
+		public BooleanVM BooleanVM { get; }
+		public CharVM CharVM { get; }
+		public ByteVM ByteVM { get; }
+		public SByteVM SByteVM { get; }
+		public Int16VM Int16VM { get; }
+		public UInt16VM UInt16VM { get; }
+		public Int32VM Int32VM { get; }
+		public UInt32VM UInt32VM { get; }
+		public Int64VM Int64VM { get; }
+		public UInt64VM UInt64VM { get; }
+		public SingleVM SingleVM { get; }
+		public DoubleVM DoubleVM { get; }
+		public DecimalVM DecimalVM { get; }
+		public DateTimeVM DateTimeVM { get; }
+		public TimeSpanVM TimeSpanVM { get; }
 
 		public byte[] Data {
 			get { return data; }
@@ -195,14 +128,8 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		byte[] data;
 
-		public string DataString {
-			get { return string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length); }
-		}
-
-		public UserTypeVM UserTypeVM {
-			get { return userTypeVM; }
-		}
-		UserTypeVM userTypeVM;
+		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length);
+		public UserTypeVM UserTypeVM { get; }
 
 		public object ValueVM {
 			get {
@@ -232,17 +159,9 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		public bool IsSerializedType {
-			get { return (ResourceElementType)this.ResourceElementTypeVM.SelectedItem == ResourceElementType.SerializedType; }
-		}
-
-		public bool IsSingleLineValue {
-			get { return !IsMultiLineValue && !IsRawBytes && (ResourceElementType)this.ResourceElementTypeVM.SelectedItem != ResourceElementType.Null; }
-		}
-
-		public bool IsMultiLineValue {
-			get { return (ResourceElementType)this.ResourceElementTypeVM.SelectedItem == ResourceElementType.String; }
-		}
+		public bool IsSerializedType => (ResourceElementType)this.ResourceElementTypeVM.SelectedItem == ResourceElementType.SerializedType;
+		public bool IsSingleLineValue => !IsMultiLineValue && !IsRawBytes && (ResourceElementType)this.ResourceElementTypeVM.SelectedItem != ResourceElementType.Null;
+		public bool IsMultiLineValue => (ResourceElementType)this.ResourceElementTypeVM.SelectedItem == ResourceElementType.String;
 
 		public bool IsRawBytes {
 			get {
@@ -257,23 +176,23 @@ namespace dnSpy.AsmEditor.Resources {
 			this.origOptions = options;
 			this.canDeserialize = canDeserialize;
 
-			this.booleanVM = new BooleanVM(a => HasErrorUpdated());
-			this.charVM = new CharVM(a => HasErrorUpdated());
-			this.byteVM = new ByteVM(a => HasErrorUpdated());
-			this.sbyteVM = new SByteVM(a => HasErrorUpdated());
-			this.int16VM = new Int16VM(a => HasErrorUpdated());
-			this.uint16VM = new UInt16VM(a => HasErrorUpdated());
-			this.int32VM = new Int32VM(a => HasErrorUpdated());
-			this.uint32VM = new UInt32VM(a => HasErrorUpdated());
-			this.int64VM = new Int64VM(a => HasErrorUpdated());
-			this.uint64VM = new UInt64VM(a => HasErrorUpdated());
-			this.singleVM = new SingleVM(a => HasErrorUpdated());
-			this.doubleVM = new DoubleVM(a => HasErrorUpdated());
-			this.decimalVM = new DecimalVM(a => HasErrorUpdated());
-			this.dateTimeVM = new DateTimeVM(a => HasErrorUpdated());
-			this.timeSpanVM = new TimeSpanVM(a => HasErrorUpdated());
-			this.userTypeVM = new UserTypeVM(ownerModule, canDeserialize);
-			this.resourceElementTypeVM = new EnumListVM(resourceElementTypeList, (a, b) => OnResourceElementTypeChanged());
+			this.BooleanVM = new BooleanVM(a => HasErrorUpdated());
+			this.CharVM = new CharVM(a => HasErrorUpdated());
+			this.ByteVM = new ByteVM(a => HasErrorUpdated());
+			this.SByteVM = new SByteVM(a => HasErrorUpdated());
+			this.Int16VM = new Int16VM(a => HasErrorUpdated());
+			this.UInt16VM = new UInt16VM(a => HasErrorUpdated());
+			this.Int32VM = new Int32VM(a => HasErrorUpdated());
+			this.UInt32VM = new UInt32VM(a => HasErrorUpdated());
+			this.Int64VM = new Int64VM(a => HasErrorUpdated());
+			this.UInt64VM = new UInt64VM(a => HasErrorUpdated());
+			this.SingleVM = new SingleVM(a => HasErrorUpdated());
+			this.DoubleVM = new DoubleVM(a => HasErrorUpdated());
+			this.DecimalVM = new DecimalVM(a => HasErrorUpdated());
+			this.DateTimeVM = new DateTimeVM(a => HasErrorUpdated());
+			this.TimeSpanVM = new TimeSpanVM(a => HasErrorUpdated());
+			this.UserTypeVM = new UserTypeVM(ownerModule, canDeserialize);
+			this.ResourceElementTypeVM = new EnumListVM(resourceElementTypeList, (a, b) => OnResourceElementTypeChanged());
 
 			this.UserTypeVM.PropertyChanged += (s, e) => {
 				if (e.PropertyName == "HasError")
@@ -300,13 +219,8 @@ namespace dnSpy.AsmEditor.Resources {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public ResourceElementOptions CreateResourceElementOptions() {
-			return CopyTo(new ResourceElementOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public ResourceElementOptions CreateResourceElementOptions() => CopyTo(new ResourceElementOptions());
 
 		void InitializeFrom(ResourceElementOptions options) {
 			this.Name = options.Name;
@@ -376,8 +290,8 @@ namespace dnSpy.AsmEditor.Resources {
 			case ResourceElementType.Decimal:	return new BuiltInResourceData((ResourceTypeCode)code, DecimalVM.Value);
 			case ResourceElementType.DateTime:	return new BuiltInResourceData((ResourceTypeCode)code, DateTimeVM.Value);
 			case ResourceElementType.TimeSpan:	return new BuiltInResourceData((ResourceTypeCode)code, TimeSpanVM.Value);
-			case ResourceElementType.ByteArray: return new BuiltInResourceData((ResourceTypeCode)code, Data ?? new byte[0]);
-			case ResourceElementType.Stream:	return new BuiltInResourceData((ResourceTypeCode)code, Data ?? new byte[0]);
+			case ResourceElementType.ByteArray: return new BuiltInResourceData((ResourceTypeCode)code, Data ?? Array.Empty<byte>());
+			case ResourceElementType.Stream:	return new BuiltInResourceData((ResourceTypeCode)code, Data ?? Array.Empty<byte>());
 			case ResourceElementType.SerializedType: return new BinaryResourceData(new UserResourceType(UserTypeVM.TypeFullName, ResourceTypeCode.UserTypes), UserTypeVM.GetSerializedData());
 			default: throw new InvalidOperationException();
 			}

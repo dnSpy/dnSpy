@@ -27,9 +27,7 @@ using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.Settings {
 	sealed class LanguageDecompilerSettings : IDecompilerSettings {
-		public DecompilerSettings Settings {
-			get { return decompilerSettings; }
-		}
+		public DecompilerSettings Settings => decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
 
 		public LanguageDecompilerSettings(DecompilerSettings decompilerSettings = null) {
@@ -37,13 +35,9 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			this.options = CreateOptions().ToArray();
 		}
 
-		public IDecompilerSettings Clone() {
-			return new LanguageDecompilerSettings(this.decompilerSettings.Clone());
-		}
+		public IDecompilerSettings Clone() => new LanguageDecompilerSettings(this.decompilerSettings.Clone());
 
-		public IEnumerable<IDecompilerOption> Options {
-			get { return options.AsEnumerable(); }
-		}
+		public IEnumerable<IDecompilerOption> Options => options;
 		readonly IDecompilerOption[] options;
 
 		IEnumerable<IDecompilerOption> CreateOptions() {
@@ -184,13 +178,11 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			};
 		}
 
-		string GetMemberOrder() {
-			return GetMemberOrderString(decompilerSettings.DecompilationObject0) +
-					GetMemberOrderString(decompilerSettings.DecompilationObject1) +
-					GetMemberOrderString(decompilerSettings.DecompilationObject2) +
-					GetMemberOrderString(decompilerSettings.DecompilationObject3) +
-					GetMemberOrderString(decompilerSettings.DecompilationObject4);
-		}
+		string GetMemberOrder() => GetMemberOrderString(decompilerSettings.DecompilationObject0) +
+		GetMemberOrderString(decompilerSettings.DecompilationObject1) +
+		GetMemberOrderString(decompilerSettings.DecompilationObject2) +
+		GetMemberOrderString(decompilerSettings.DecompilationObject3) +
+		GetMemberOrderString(decompilerSettings.DecompilationObject4);
 
 		static string GetMemberOrderString(DecompilationObject d) {
 			switch (d) {
@@ -228,12 +220,9 @@ namespace dnSpy.Languages.ILSpy.Settings {
 
 		public override bool Equals(object obj) {
 			var other = obj as LanguageDecompilerSettings;
-			return other != null &&
-				decompilerSettings.Equals(other.decompilerSettings);
+			return other != null && decompilerSettings.Equals(other.decompilerSettings);
 		}
 
-		public override int GetHashCode() {
-			return decompilerSettings.GetHashCode();
-		}
+		public override int GetHashCode() => decompilerSettings.GetHashCode();
 	}
 }

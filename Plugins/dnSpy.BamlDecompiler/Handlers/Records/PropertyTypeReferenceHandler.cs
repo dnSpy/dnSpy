@@ -26,9 +26,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class PropertyTypeReferenceHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyTypeReference; }
-		}
+		public BamlRecordType Type => BamlRecordType.PropertyTypeReference;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (PropertyTypeReferenceRecord)((BamlRecordNode)node).Record;

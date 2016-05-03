@@ -29,18 +29,9 @@ namespace dnSpy.Shared.TreeView {
 		public abstract object Text { get; }
 		public abstract object ToolTip { get; }
 		public abstract ImageReference Icon { get; }
-
-		public virtual ITreeNodeGroup TreeNodeGroup {
-			get { return null; }
-		}
-
-		public virtual ImageReference? ExpandedIcon {
-			get { return null; }
-		}
-
-		public virtual bool SingleClickExpandsChildren {
-			get { return false; }
-		}
+		public virtual ITreeNodeGroup TreeNodeGroup => null;
+		public virtual ImageReference? ExpandedIcon => null;
+		public virtual bool SingleClickExpandsChildren => false;
 
 		public ITreeNode TreeNode {
 			get { return treeNode; }
@@ -54,49 +45,27 @@ namespace dnSpy.Shared.TreeView {
 		}
 		ITreeNode treeNode;
 
-		public virtual bool ShowExpander(bool defaultValue) {
-			return defaultValue;
-		}
+		public virtual bool ShowExpander(bool defaultValue) => defaultValue;
 
 		public virtual IEnumerable<ITreeNodeData> CreateChildren() {
 			yield break;
 		}
 
-		public virtual void Initialize() {
-		}
-
+		public virtual void Initialize() { }
 		public abstract void OnRefreshUI();
-
-		public virtual bool Activate() {
-			return false;
-		}
-
-		public virtual void OnEnsureChildrenLoaded() {
-		}
-
-		public virtual void OnChildrenChanged(ITreeNodeData[] added, ITreeNodeData[] removed) {
-		}
-
-		public virtual void OnIsVisibleChanged() {
-		}
-
-		public virtual void OnIsExpandedChanged(bool isExpanded) {
-		}
-
-		public virtual bool CanDrag(ITreeNodeData[] nodes) {
-			return false;
-		}
-
-		public virtual void StartDrag(DependencyObject dragSource, ITreeNodeData[] nodes) {
-		}
+		public virtual bool Activate() => false;
+		public virtual void OnEnsureChildrenLoaded() { }
+		public virtual void OnChildrenChanged(ITreeNodeData[] added, ITreeNodeData[] removed) { }
+		public virtual void OnIsVisibleChanged() { }
+		public virtual void OnIsExpandedChanged(bool isExpanded) { }
+		public virtual bool CanDrag(ITreeNodeData[] nodes) => false;
+		public virtual void StartDrag(DependencyObject dragSource, ITreeNodeData[] nodes) { }
 
 		public virtual IDataObject Copy(ITreeNodeData[] nodes) {
 			throw new NotSupportedException();
 		}
 
-		public virtual bool CanDrop(DragEventArgs e, int index) {
-			return false;
-		}
+		public virtual bool CanDrop(DragEventArgs e, int index) => false;
 
 		public virtual void Drop(DragEventArgs e, int index) {
 			throw new NotSupportedException();

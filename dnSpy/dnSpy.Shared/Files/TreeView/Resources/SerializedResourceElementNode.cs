@@ -31,13 +31,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 	public abstract class SerializedResourceElementNode : ResourceElementNode, ISerializedResourceElementNode {
 		object deserializedData;
 
-		string DeserializedStringValue {
-			get { return deserializedData == null ? null : deserializedData.ToString(); }
-		}
-
-		bool IsSerialized {
-			get { return deserializedData == null; }
-		}
+		string DeserializedStringValue => deserializedData == null ? null : deserializedData.ToString();
+		bool IsSerialized => deserializedData == null;
 
 		protected override string ValueString {
 			get {
@@ -47,18 +42,14 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			}
 		}
 
-		protected override ImageReference GetIcon() {
-			return new ImageReference(Context.FileTreeView.GetType().Assembly, "UserDefinedDataType");
-		}
+		protected override ImageReference GetIcon() => new ImageReference(Context.FileTreeView.GetType().Assembly, "UserDefinedDataType");
 
 		protected SerializedResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
 			: base(treeNodeGroup, resourceElement) {
 			Debug.Assert(resourceElement.ResourceData is BinaryResourceData);
 		}
 
-		public override void Initialize() {
-			DeserializeIfPossible();
-		}
+		public override void Initialize() => DeserializeIfPossible();
 
 		void DeserializeIfPossible() {
 			if (Context.DeserializeResources)
@@ -74,12 +65,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
 		}
 
-		protected virtual void OnDeserialized() {
-		}
-
-		public bool CanDeserialize {
-			get { return IsSerialized; }
-		}
+		protected virtual void OnDeserialized() { }
+		public bool CanDeserialize => IsSerialized;
 
 		public void Deserialize() {
 			if (!CanDeserialize)

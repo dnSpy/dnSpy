@@ -31,8 +31,6 @@ namespace dnSpy.ToolWindows {
 			this.tabManagerCreator = tabManagerCreator;
 		}
 
-		public IToolWindowManager Create() {
-			return new ToolWindowManager(tabManagerCreator.Create());
-		}
+		public IToolWindowManager Create() => new ToolWindowManager(tabManagerCreator.Create());
 	}
 }

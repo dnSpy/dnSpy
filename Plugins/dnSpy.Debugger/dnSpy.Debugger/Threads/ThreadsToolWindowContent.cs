@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Threads {
 	sealed class ThreadsToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IThreadsContent> threadsContent;
 
-		public ThreadsToolWindowContent ThreadsToolWindowContent {
-			get { return threadsToolWindowContent ?? (threadsToolWindowContent = new ThreadsToolWindowContent(threadsContent)); }
-		}
+		public ThreadsToolWindowContent ThreadsToolWindowContent => threadsToolWindowContent ?? (threadsToolWindowContent = new ThreadsToolWindowContent(threadsContent));
 		ThreadsToolWindowContent threadsToolWindowContent;
 
 		[ImportingConstructor]
@@ -45,44 +43,20 @@ namespace dnSpy.Debugger.Threads {
 			get { yield return new ToolWindowContentInfo(ThreadsToolWindowContent.THE_GUID, ThreadsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == ThreadsToolWindowContent.THE_GUID)
-				return ThreadsToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == ThreadsToolWindowContent.THE_GUID ? ThreadsToolWindowContent : null;
 	}
 
 	sealed class ThreadsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("3C01719C-B6B5-4261-9CD4-3EDCE1032E5C");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement {
-			get { return threadsContent.Value.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return threadsContent.Value.ScaleElement; }
-		}
-
-		public Guid Guid {
-			get { return THE_GUID; }
-		}
-
-		public string Title {
-			get { return dnSpy_Debugger_Resources.Window_Threads; }
-		}
-
-		public object ToolTip {
-			get { return null; }
-		}
-
-		public object UIObject {
-			get { return threadsContent.Value.UIObject; }
-		}
-
-		public bool CanFocus {
-			get { return true; }
-		}
+		public IInputElement FocusedElement => threadsContent.Value.FocusedElement;
+		public FrameworkElement ScaleElement => threadsContent.Value.ScaleElement;
+		public Guid Guid => THE_GUID;
+		public string Title => dnSpy_Debugger_Resources.Window_Threads;
+		public object ToolTip => null;
+		public object UIObject => threadsContent.Value.UIObject;
+		public bool CanFocus => true;
 
 		readonly Lazy<IThreadsContent> threadsContent;
 
@@ -107,8 +81,6 @@ namespace dnSpy.Debugger.Threads {
 			}
 		}
 
-		public void Focus() {
-			threadsContent.Value.Focus();
-		}
+		public void Focus() => threadsContent.Value.Focus();
 	}
 }

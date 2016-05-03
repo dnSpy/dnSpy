@@ -36,14 +36,12 @@ namespace dnSpy.Output {
 		public void Write(IEnumerable<ColorAndText> text) => cachedList.AddRange(text);
 		public void Write(object color, string text) => cachedList.Add(new ColorAndText(color, text));
 		public void Write(OutputColor color, string text) => cachedList.Add(new ColorAndText(color, text));
+		public void WriteLine(OutputColor color, string text) => WriteLine(color.Box(), text);
 
 		public void Flush() {
 			owner.Write(cachedList);
 			cachedList.Clear();
 		}
-
-		public void WriteLine(OutputColor color, string text) =>
-			WriteLine(color.Box(), text);
 
 		public void WriteLine(object color, string text) {
 			Write(color, text);

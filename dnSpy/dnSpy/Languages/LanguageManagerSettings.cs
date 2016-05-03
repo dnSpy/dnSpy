@@ -30,8 +30,7 @@ namespace dnSpy.Languages {
 	}
 
 	class LanguageManagerSettings : ViewModelBase, ILanguageManagerSettings {
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public Guid LanguageGuid {
 			get { return languageGuid; }

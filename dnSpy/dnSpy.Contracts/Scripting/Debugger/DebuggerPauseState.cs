@@ -90,17 +90,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Reason
 		/// </summary>
-		public PauseReason Reason {
-			get { return reason; }
-		}
-		readonly PauseReason reason;
+		public PauseReason Reason { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="reason">Reason</param>
 		public DebuggerPauseState(PauseReason reason) {
-			this.reason = reason;
+			this.Reason = reason;
 		}
 	}
 
@@ -111,10 +108,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Breakpoint
 		/// </summary>
-		public IEventBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly IEventBreakpoint bp;
+		public IEventBreakpoint Breakpoint { get; }
 
 		/// <summary>
 		/// Constructor
@@ -122,7 +116,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="bp">Breakpoint</param>
 		public EventBreakpointPauseState(IEventBreakpoint bp)
 			: base(PauseReason.DebugEventBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
@@ -133,10 +127,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Breakpoint
 		/// </summary>
-		public IAnyEventBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly IAnyEventBreakpoint bp;
+		public IAnyEventBreakpoint Breakpoint { get; }
 
 		/// <summary>
 		/// Constructor
@@ -144,7 +135,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="bp">Breakpoint</param>
 		public AnyEventBreakpointPauseState(IAnyEventBreakpoint bp)
 			: base(PauseReason.AnyDebugEventBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
@@ -155,10 +146,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Breakpoint
 		/// </summary>
-		public IILBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly IILBreakpoint bp;
+		public IILBreakpoint Breakpoint { get; }
 
 		/// <summary>
 		/// Constructor
@@ -166,7 +154,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="bp">Breakpoint</param>
 		public ILBreakpointPauseState(IILBreakpoint bp)
 			: base(PauseReason.ILCodeBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
@@ -177,10 +165,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Breakpoint
 		/// </summary>
-		public INativeBreakpoint Breakpoint {
-			get { return bp; }
-		}
-		readonly INativeBreakpoint bp;
+		public INativeBreakpoint Breakpoint { get; }
 
 		/// <summary>
 		/// Constructor
@@ -188,7 +173,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="bp">Breakpoint</param>
 		public NativeBreakpointPauseState(INativeBreakpoint bp)
 			: base(PauseReason.NativeCodeBreakpoint) {
-			this.bp = bp;
+			this.Breakpoint = bp;
 		}
 	}
 
@@ -199,10 +184,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Step reason
 		/// </summary>
-		public DebugStepReason StepReason {
-			get { return stepReason; }
-		}
-		readonly DebugStepReason stepReason;
+		public DebugStepReason StepReason { get; }
 
 		/// <summary>
 		/// Constructor
@@ -210,7 +192,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="stepReason">Step reason</param>
 		public StepPauseState(DebugStepReason stepReason)
 			: base(PauseReason.Step) {
-			this.stepReason = stepReason;
+			this.StepReason = stepReason;
 		}
 	}
 }

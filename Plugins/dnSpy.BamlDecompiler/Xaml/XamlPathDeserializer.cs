@@ -49,9 +49,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				Y = y;
 			}
 
-			public override string ToString() {
-				return string.Format(CultureInfo.InvariantCulture, "{0:R},{1:R}", X, Y);
-			}
+			public override string ToString() => string.Format(CultureInfo.InvariantCulture, "{0:R},{1:R}", X, Y);
 		}
 
 		static void UnpackBools(byte b, out bool b1, out bool b2, out bool b3, out bool b4) {
@@ -61,9 +59,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			b4 = (b & 0x80) != 0;
 		}
 
-		static Point ReadPoint(BinaryReader reader) {
-			return new Point(reader.ReadXamlDouble(), reader.ReadXamlDouble());
-		}
+		static Point ReadPoint(BinaryReader reader) => new Point(reader.ReadXamlDouble(), reader.ReadXamlDouble());
 
 		static void ReadPointBoolBool(BinaryReader reader, byte b, out Point pt, out bool b1, out bool b2) {
 			bool sx, sy;

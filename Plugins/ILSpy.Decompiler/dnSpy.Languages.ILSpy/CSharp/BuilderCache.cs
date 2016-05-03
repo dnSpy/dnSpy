@@ -46,9 +46,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		/// Called to re-use this instance for another decompilation. Only the fields that need
 		/// resetting will be reset.
 		/// </summary>
-		public void Reset() {
-			AstBuilder.Reset();
-		}
+		public void Reset() => AstBuilder.Reset();
 	}
 
 	/// <summary>
@@ -65,12 +63,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		static readonly Func<AstBuilderState> createAstBuilderState = () => new AstBuilderState();
 		static readonly Action<AstBuilderState> resetAstBuilderState = abs => abs.Reset();
 
-		public AstBuilderState AllocateAstBuilderState() {
-			return astBuilderStatePool.Allocate();
-		}
-
-		public void Free(AstBuilderState state) {
-			astBuilderStatePool.Free(state);
-		}
+		public AstBuilderState AllocateAstBuilderState() => astBuilderStatePool.Allocate();
+		public void Free(AstBuilderState state) => astBuilderStatePool.Free(state);
 	}
 }

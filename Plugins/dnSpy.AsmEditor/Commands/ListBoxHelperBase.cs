@@ -39,9 +39,7 @@ namespace dnSpy.AsmEditor.Commands {
 			ListBoxHelperBase_ImageManagerLoader.imageManager = imageManager;
 		}
 
-		public static IImageManager ImageManager {
-			get { return imageManager; }
-		}
+		public static IImageManager ImageManager => imageManager;
 		static IImageManager imageManager;
 	}
 
@@ -70,27 +68,20 @@ namespace dnSpy.AsmEditor.Commands {
 				this.cmd = cmd;
 			}
 
-			public bool CanExecute(object parameter) {
-				return cmd.CanExecute(owner.GetSelectedItems());
-			}
+			public bool CanExecute(object parameter) => cmd.CanExecute(owner.GetSelectedItems());
 
 			public event EventHandler CanExecuteChanged {
 				add { CommandManager.RequerySuggested += value; }
 				remove { CommandManager.RequerySuggested -= value; }
 			}
 
-			public void Execute(object parameter) {
-				cmd.Execute(owner.GetSelectedItems());
-			}
+			public void Execute(object parameter) => cmd.Execute(owner.GetSelectedItems());
 		}
 
 		protected abstract T[] GetSelectedItems();
 		protected abstract void CopyItemsAsText(T[] items);
 		protected abstract void OnDataContextChangedInternal(object dataContext);
-
-		protected virtual bool CopyItemsAsTextCanExecute(T[] items) {
-			return items.Length > 0;
-		}
+		protected virtual bool CopyItemsAsTextCanExecute(T[] items) => items.Length > 0;
 
 		protected ListBoxHelperBase(ListBox listBox) {
 			this.listBox = listBox;
@@ -99,13 +90,8 @@ namespace dnSpy.AsmEditor.Commands {
 			this.copiedDataId = Interlocked.Increment(ref classCopiedDataId);
 		}
 
-		protected void AddSeparator() {
-			contextMenuHandlers.Add(null);
-		}
-
-		protected void Add(ContextMenuHandler handler) {
-			contextMenuHandlers.Add(handler);
-		}
+		protected void AddSeparator() => contextMenuHandlers.Add(null);
+		protected void Add(ContextMenuHandler handler) => contextMenuHandlers.Add(handler);
 
 		protected void AddStandardMenuHandlers(string addNewItemIcon = null) {
 			AddAddNewItemHandlers(addNewItemIcon);
@@ -285,9 +271,8 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		protected static void Add16x16Image(MenuItem menuItem, string icon, bool isCtxMenu, bool? enable = null) {
+		protected static void Add16x16Image(MenuItem menuItem, string icon, bool isCtxMenu, bool? enable = null) =>
 			ListBoxHelperBase_ImageManagerLoader.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, icon, isCtxMenu, enable);
-		}
 
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
@@ -323,9 +308,7 @@ namespace dnSpy.AsmEditor.Commands {
 				e.Handled = true;
 		}
 
-		void AddToClipboard(T[] items) {
-			ClipboardDataHolder.Add(new ClipboardData(items, copiedDataId));
-		}
+		void AddToClipboard(T[] items) => ClipboardDataHolder.Add(new ClipboardData(items, copiedDataId));
 
 		static T[] SortClipboardItems(T[] items) {
 			// We must sort the items since they're not sorted when you'd think they're
@@ -344,21 +327,10 @@ namespace dnSpy.AsmEditor.Commands {
 			AddToClipboard(items);
 		}
 
-		bool CutItemsCanExecute(T[] items) {
-			return items.Length > 0;
-		}
-
-		static T[] CloneData(T[] items) {
-			return items.Select(a => (T)a.Clone()).ToArray();
-		}
-
-		void CopyItems(T[] items) {
-			AddToClipboard(CloneData(SortClipboardItems(items)));
-		}
-
-		bool CopyItemsCanExecute(T[] items) {
-			return items.Length > 0;
-		}
+		bool CutItemsCanExecute(T[] items) => items.Length > 0;
+		static T[] CloneData(T[] items) => items.Select(a => (T)a.Clone()).ToArray();
+		void CopyItems(T[] items) => AddToClipboard(CloneData(SortClipboardItems(items)));
+		bool CopyItemsCanExecute(T[] items) => items.Length > 0;
 
 		int GetPasteIndex(int relIndex) {
 			int index = listBox.SelectedIndex;
@@ -379,16 +351,9 @@ namespace dnSpy.AsmEditor.Commands {
 			return cpData;
 		}
 
-		protected virtual bool CanUseClipboardData(T[] data, bool fromThisInstance) {
-			return fromThisInstance;
-		}
-
-		protected virtual T[] BeforeCopyingData(T[] data, bool fromThisInstance) {
-			return data;
-		}
-
-		protected virtual void AfterCopyingData(T[] data, T[] origData, bool fromThisInstance) {
-		}
+		protected virtual bool CanUseClipboardData(T[] data, bool fromThisInstance) => fromThisInstance;
+		protected virtual T[] BeforeCopyingData(T[] data, bool fromThisInstance) => data;
+		protected virtual void AfterCopyingData(T[] data, T[] origData, bool fromThisInstance) { }
 
 		void PasteItems(int relIndex) {
 			var cpData = GetClipboardData();
@@ -404,21 +369,9 @@ namespace dnSpy.AsmEditor.Commands {
 			AfterCopyingData(copiedData, origClonedData, cpData.Id == copiedDataId);
 		}
 
-		void PasteItems() {
-			PasteItems(0);
-		}
-
-		bool PasteItemsCanExecute() {
-			return GetClipboardData() != null;
-		}
-
-		void PasteAfterItems() {
-			PasteItems(1);
-		}
-
-		bool PasteAfterItemsCanExecute() {
-			return listBox.SelectedIndex >= 0 &&
-				GetClipboardData() != null;
-		}
+		void PasteItems() => PasteItems(0);
+		bool PasteItemsCanExecute() => GetClipboardData() != null;
+		void PasteAfterItems() => PasteItems(1);
+		bool PasteAfterItemsCanExecute() => listBox.SelectedIndex >= 0 && GetClipboardData() != null;
 	}
 }

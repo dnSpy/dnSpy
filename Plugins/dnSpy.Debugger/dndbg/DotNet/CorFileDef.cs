@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dndbg.Engine;
 using dnlib.DotNet;
 
@@ -25,9 +26,7 @@ namespace dndbg.DotNet {
 		readonly CorModuleDef readerModule;
 		readonly uint origRid;
 
-		public MDToken OriginalToken {
-			get { return new MDToken(MDToken.Table, origRid); }
-		}
+		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
 		public CorFileDef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
@@ -36,13 +35,9 @@ namespace dndbg.DotNet {
 			Initialize_NoLock();
 		}
 
-		void Initialize_NoLock() {
-			InitNameAndAttrs_NoLock();
-		}
-
-		protected override void InitializeCustomAttributes() {
+		void Initialize_NoLock() => InitNameAndAttrs_NoLock();
+		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
-		}
 
 		void InitNameAndAttrs_NoLock() {
 			var mdai = readerModule.MetaDataAssemblyImport;
@@ -50,7 +45,7 @@ namespace dndbg.DotNet {
 
 			this.Flags = MDAPI.GetFileAttributes(mdai, token) ?? 0;
 			this.Name = MDAPI.GetFileName(mdai, token) ?? string.Empty;
-			this.HashValue = MDAPI.GetFileHash(mdai, token) ?? new byte[0];
+			this.HashValue = MDAPI.GetFileHash(mdai, token) ?? Array.Empty<byte>();
 		}
 	}
 }

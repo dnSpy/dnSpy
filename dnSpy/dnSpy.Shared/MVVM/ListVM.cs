@@ -29,13 +29,8 @@ namespace dnSpy.Shared.MVVM {
 		readonly Action<int, int> onChanged;
 		int index;
 
-		protected int Index {
-			get { return index; }
-		}
-
-		public IList<T> Items {
-			get { return list; }
-		}
+		protected int Index => index;
+		public IList<T> Items => list;
 
 		public void InvalidateSelected(IEnumerable<T> newValues, bool addDefault, T defaultValue) {
 			//TODO: Optimize callers. This method is slow.
@@ -77,8 +72,7 @@ namespace dnSpy.Shared.MVVM {
 					index = value;
 					OnPropertyChanged("SelectedIndex");
 					OnPropertyChanged("SelectedItem");
-					if (onChanged != null)
-						onChanged(oldIndex, index);
+					onChanged?.Invoke(oldIndex, index);
 				}
 			}
 		}
@@ -127,8 +121,7 @@ namespace dnSpy.Shared.MVVM {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
 		public string Error {

@@ -30,9 +30,7 @@ namespace dnSpy.AsmEditor.Property {
 	sealed class PropertyOptionsVM : ViewModelBase {
 		readonly PropertyDefOptions origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public PropertyAttributes Attributes {
 			get { return attributes; }
@@ -65,9 +63,7 @@ namespace dnSpy.AsmEditor.Property {
 			set { SetFlagValue(PropertyAttributes.HasDefault, value); }
 		}
 
-		bool GetFlagValue(PropertyAttributes flag) {
-			return (Attributes & flag) != 0;
-		}
+		bool GetFlagValue(PropertyAttributes flag) => (Attributes & flag) != 0;
 
 		void SetFlagValue(PropertyAttributes flag, bool value) {
 			if (value)
@@ -92,43 +88,14 @@ namespace dnSpy.AsmEditor.Property {
 			set { MethodSigCreator.PropertySig = value; }
 		}
 
-		public string PropertySigHeader {
-			get { return string.Format(dnSpy_AsmEditor_Resources.PropertyX, MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig.ToString()); }
-		}
-
-		public MethodSigCreatorVM MethodSigCreator {
-			get { return methodSigCreator; }
-		}
-		readonly MethodSigCreatorVM methodSigCreator;
-
-		public Constant Constant {
-			get { return HasDefault ? ownerModule.UpdateRowId(new ConstantUser(constantVM.Value)) : null; }
-		}
-
-		public ConstantVM ConstantVM {
-			get { return constantVM; }
-		}
-		readonly ConstantVM constantVM;
-
-		public MethodDefsVM GetMethodsVM {
-			get { return getMethodsVM; }
-		}
-		MethodDefsVM getMethodsVM;
-
-		public MethodDefsVM SetMethodsVM {
-			get { return setMethodsVM; }
-		}
-		MethodDefsVM setMethodsVM;
-
-		public MethodDefsVM OtherMethodsVM {
-			get { return otherMethodsVM; }
-		}
-		MethodDefsVM otherMethodsVM;
-
-		public CustomAttributesVM CustomAttributesVM {
-			get { return customAttributesVM; }
-		}
-		CustomAttributesVM customAttributesVM;
+		public string PropertySigHeader => string.Format(dnSpy_AsmEditor_Resources.PropertyX, MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig.ToString());
+		public MethodSigCreatorVM MethodSigCreator { get; }
+		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public ConstantVM ConstantVM { get; }
+		public MethodDefsVM GetMethodsVM { get; }
+		public MethodDefsVM SetMethodsVM { get; }
+		public MethodDefsVM OtherMethodsVM { get; }
+		public CustomAttributesVM CustomAttributesVM { get; }
 
 		readonly ModuleDef ownerModule;
 
@@ -146,16 +113,16 @@ namespace dnSpy.AsmEditor.Property {
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
 			methodSigCreatorOptions.IsPropertySig = true;
-			this.methodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
-			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.getMethodsVM = new MethodDefsVM(ownerModule, languageManager);
-			this.setMethodsVM = new MethodDefsVM(ownerModule, languageManager);
-			this.otherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
-			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
+			this.MethodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
+			this.MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
+			this.MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
+			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
+			this.GetMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.SetMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.OtherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.ConstantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
+			this.ConstantVM.PropertyChanged += constantVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;
 			Reinitialize();
@@ -172,13 +139,8 @@ namespace dnSpy.AsmEditor.Property {
 			OnPropertyChanged("PropertySigHeader");
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public PropertyDefOptions CreatePropertyDefOptions() {
-			return CopyTo(new PropertyDefOptions());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public PropertyDefOptions CreatePropertyDefOptions() => CopyTo(new PropertyDefOptions());
 
 		void InitializeFrom(PropertyDefOptions options) {
 			Attributes = options.Attributes;

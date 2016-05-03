@@ -101,9 +101,7 @@ namespace dnSpy.Tabs {
 			ScaleValue = scale;
 		}
 
-		void ZoomReset() {
-			ScaleValue = 1;
-		}
+		void ZoomReset() => ScaleValue = 1;
 
 		public double ScaleValue {
 			get { return currentScaleValue; }
@@ -165,8 +163,6 @@ namespace dnSpy.Tabs {
 			AddScaleTransform();
 		}
 
-		public void Dispose() {
-			UninstallScale();
-		}
+		public void Dispose() => UninstallScale();
 	}
 }

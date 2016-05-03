@@ -64,21 +64,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public static ScriptContent GetScriptContent(IReplEditorUI replEditorUI) =>
 			(ScriptContent)replEditorUI.Tag;
-
 		protected abstract ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator);
-
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) =>
 			scriptControlVM.RefreshThemeFields();
-
-		public void OnClose() {
-		}
-
-		public void OnShow() {
-		}
-
-		public void OnHidden() {
-		}
-
+		public void OnClose() { }
+		public void OnShow() { }
+		public void OnHidden() { }
 		public void OnVisible() => scriptControlVM.OnVisible();
 	}
 }

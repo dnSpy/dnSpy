@@ -26,19 +26,13 @@ namespace dnSpy.Languages.MSBuild {
 	sealed class ApplicationManifest : IFileJob {
 		const int RT_MANIFEST = 24;
 
-		public string Description {
-			get { return Languages_Resources.MSBuild_CreateAppManifest; }
-		}
-
-		public string Filename {
-			get { return filename; }
-		}
-		readonly string filename;
+		public string Description => Languages_Resources.MSBuild_CreateAppManifest;
+		public string Filename { get; }
 
 		readonly byte[] data;
 
 		ApplicationManifest(string filename, byte[] data) {
-			this.filename = filename;
+			this.Filename = filename;
 			this.data = data;
 		}
 
@@ -64,21 +58,12 @@ namespace dnSpy.Languages.MSBuild {
 	}
 
 	sealed class ApplicationManifestProjectFile : ProjectFile {
-		public override BuildAction BuildAction {
-			get { return BuildAction.None; }
-		}
-
-		public override string Description {
-			get { return Languages_Resources.MSBuild_CreateAppManifest; }
-		}
-
-		public override string Filename {
-			get { return filename; }
-		}
-		readonly string filename;
+		public override BuildAction BuildAction => BuildAction.None;
+		public override string Description => Languages_Resources.MSBuild_CreateAppManifest;
+		public override string Filename { get; }
 
 		public ApplicationManifestProjectFile(string filename) {
-			this.filename = filename;
+			this.Filename = filename;
 		}
 
 		public override void Create(DecompileContext ctx) {

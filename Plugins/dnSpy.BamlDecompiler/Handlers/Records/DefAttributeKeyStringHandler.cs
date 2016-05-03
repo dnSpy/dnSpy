@@ -26,9 +26,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class DefAttributeStringHandler : IHandler, IDeferHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.DefAttributeKeyString; }
-		}
+		public BamlRecordType Type => BamlRecordType.DefAttributeKeyString;
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			XamlResourceKey.Create(node);

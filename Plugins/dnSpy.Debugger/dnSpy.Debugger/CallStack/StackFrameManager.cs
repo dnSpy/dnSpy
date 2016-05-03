@@ -31,7 +31,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class StackFramesUpdatedEventArgs : EventArgs {
-		public readonly DnDebugger Debugger;
+		public DnDebugger Debugger { get; }
 
 		public StackFramesUpdatedEventArgs(DnDebugger debugger) {
 			this.Debugger = debugger;
@@ -85,9 +85,7 @@ namespace dnSpy.Debugger.CallStack {
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
 
-		bool IsPaused {
-			get { return theDebugger.ProcessState == DebuggerProcessState.Paused; }
-		}
+		bool IsPaused => theDebugger.ProcessState == DebuggerProcessState.Paused;
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var oldState = currentState;
@@ -134,8 +132,7 @@ namespace dnSpy.Debugger.CallStack {
 				throw new InvalidOperationException();
 			}
 
-			if (StackFramesUpdated != null)
-				StackFramesUpdated(this, new StackFramesUpdatedEventArgs(dbg));
+			StackFramesUpdated?.Invoke(this, new StackFramesUpdatedEventArgs(dbg));
 		}
 		CurrentState savedEvalState;
 
@@ -150,9 +147,7 @@ namespace dnSpy.Debugger.CallStack {
 			return false;
 		}
 
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
-			ClearStackFrameLines();
-		}
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) => ClearStackFrameLines();
 
 		void ClearStackFrameLines() {
 			foreach (var tab in fileTabManager.VisibleFirstTabs)
@@ -294,9 +289,7 @@ namespace dnSpy.Debugger.CallStack {
 			return movedCaret;
 		}
 
-		public List<CorFrame> GetFrames(out bool tooManyFrames) {
-			return GetFrames(MAX_SHOWN_FRAMES, out tooManyFrames);
-		}
+		public List<CorFrame> GetFrames(out bool tooManyFrames) => GetFrames(MAX_SHOWN_FRAMES, out tooManyFrames);
 
 		List<CorFrame> GetFrames(int max, out bool tooManyFrames) {
 			tooManyFrames = false;

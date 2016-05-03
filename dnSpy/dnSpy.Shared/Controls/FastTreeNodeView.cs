@@ -82,9 +82,7 @@ namespace dnSpy.Shared.Controls {
 			base.OnToolTipOpening(e);
 		}
 
-		protected override int VisualChildrenCount {
-			get { return 3; }
-		}
+		protected override int VisualChildrenCount => 3;
 
 		protected override Visual GetVisualChild(int index) {
 			switch (index) {
@@ -152,9 +150,7 @@ namespace dnSpy.Shared.Controls {
 			drawingContext.DrawRectangle(TextBackground, null, new Rect(x, 0, w, h));
 		}
 
-		protected override void UpdateTemplate() {
-			UpdateChildren(Node);
-		}
+		protected override void UpdateTemplate() => UpdateChildren(Node);
 
 		void UpdateChildren(SharpTreeNode node) {
 			InitializeChildrens();

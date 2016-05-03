@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.Exceptions {
 	}
 
 	sealed class ExceptionContext : IExceptionContext {
-		public IExceptionManager ExceptionManager { get; private set; }
+		public IExceptionManager ExceptionManager { get; }
 		public bool SyntaxHighlight { get; set; }
 
 		public ExceptionContext(IExceptionManager exceptionManager) {
@@ -35,40 +35,27 @@ namespace dnSpy.Debugger.Exceptions {
 	}
 
 	sealed class ExceptionVM : ViewModelBase {
-		public object NameObject { get { return this; } }
-
 		public bool BreakOnFirstChance {
-			get { return info.BreakOnFirstChance; }
+			get { return ExceptionInfo.BreakOnFirstChance; }
 			set {
-				if (info.BreakOnFirstChance != value) {
-					info.BreakOnFirstChance = value;
+				if (ExceptionInfo.BreakOnFirstChance != value) {
+					ExceptionInfo.BreakOnFirstChance = value;
 					OnPropertyChanged("BreakOnFirstChance");
-					Context.ExceptionManager.BreakOnFirstChanceChanged(info);
+					Context.ExceptionManager.BreakOnFirstChanceChanged(ExceptionInfo);
 				}
 			}
 		}
 
-		public string Name {
-			get { return info.Name; }
-		}
-
-		public ExceptionInfo ExceptionInfo {
-			get { return info; }
-		}
-		readonly ExceptionInfo info;
-
-		public IExceptionContext Context {
-			get { return context; }
-		}
-		readonly IExceptionContext context;
+		public object NameObject => this;
+		public string Name => ExceptionInfo.Name;
+		public ExceptionInfo ExceptionInfo { get; }
+		public IExceptionContext Context { get; }
 
 		public ExceptionVM(ExceptionInfo info, IExceptionContext context) {
-			this.info = info;
-			this.context = context;
+			this.ExceptionInfo = info;
+			this.Context = context;
 		}
 
-		internal void RefreshThemeFields() {
-			OnPropertyChanged("NameObject");
-		}
+		internal void RefreshThemeFields() => OnPropertyChanged("NameObject");
 	}
 }

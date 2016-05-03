@@ -76,9 +76,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
-		public ReplEditorOptions Clone() {
-			return CopyTo(new ReplEditorOptions());
-		}
+		public ReplEditorOptions Clone() => CopyTo(new ReplEditorOptions());
 
 		ReplEditorOptions CopyTo(ReplEditorOptions other) {
 			other.PromptText = PromptText;

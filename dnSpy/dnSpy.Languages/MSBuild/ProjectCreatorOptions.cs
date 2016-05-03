@@ -36,7 +36,7 @@ namespace dnSpy.Languages.MSBuild {
 		/// <summary>
 		/// All modules that should be decompiled
 		/// </summary>
-		public List<ProjectModuleOptions> ProjectModules { get; private set; }
+		public List<ProjectModuleOptions> ProjectModules { get; }
 
 		/// <summary>
 		/// Project version
@@ -52,7 +52,7 @@ namespace dnSpy.Languages.MSBuild {
 		/// Base directory of all project dirs. This is the directory where the .sln file is saved
 		/// if it's written.
 		/// </summary>
-		public string Directory { get; private set; }
+		public string Directory { get; }
 
 		/// <summary>
 		/// Filename relative to <see cref="Directory"/>. Use null if no solution file should be
@@ -63,9 +63,12 @@ namespace dnSpy.Languages.MSBuild {
 		/// <summary>
 		/// User GAC paths. All files stored in any of these directories are considered GAC files.
 		/// </summary>
-		public List<string> UserGACPaths { get; private set; }
+		public List<string> UserGACPaths { get; }
 
-		public CancellationToken CancellationToken { get; private set; }
+		/// <summary>
+		/// Cancellation token
+		/// </summary>
+		public CancellationToken CancellationToken { get; }
 
 		public ProjectCreatorOptions(string dir, CancellationToken cancellationToken) {
 			if (dir == null)

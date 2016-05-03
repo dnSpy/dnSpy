@@ -43,58 +43,34 @@ using ICSharpCode.AvalonEdit.Utils;
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class AppWindow : IAppWindow, IDnSpyLoaderContentProvider {
-		public IFileTabManager FileTabManager {
-			get { return fileTabManager; }
-		}
+		public IFileTabManager FileTabManager => fileTabManager;
 		readonly IFileTabManager fileTabManager;
 
-		public IFileTreeView FileTreeView {
-			get { return fileTabManager.FileTreeView; }
-		}
+		public IFileTreeView FileTreeView => fileTabManager.FileTreeView;
 
-		public IMainToolWindowManager ToolWindowManager {
-			get { return mainWindowControl; }
-		}
+		public IMainToolWindowManager ToolWindowManager => mainWindowControl;
 
-		public ILanguageManager LanguageManager {
-			get { return languageManager; }
-		}
+		public ILanguageManager LanguageManager => languageManager;
 
-		public IAppStatusBar StatusBar {
-			get { return statusBar; }
-		}
+		public IAppStatusBar StatusBar => statusBar;
 		readonly AppStatusBar statusBar;
 
-		Window IAppWindow.MainWindow {
-			get { return mainWindow; }
-		}
-		internal MainWindow MainWindow {
-			get { return mainWindow; }
-		}
+		Window IAppWindow.MainWindow => mainWindow;
+		internal MainWindow MainWindow => mainWindow;
 		MainWindow mainWindow;
 
-		public IWpfCommands MainWindowCommands {
-			get { return mainWindowCommands; }
-		}
+		public IWpfCommands MainWindowCommands => mainWindowCommands;
 		readonly IWpfCommands mainWindowCommands;
 
-		public IAppSettings AppSettings {
-			get { return appSettings; }
-		}
+		public IAppSettings AppSettings => appSettings;
 		readonly IAppSettings appSettings;
 
 		public bool AppLoaded { get; internal set; }
 
-		public string AssemblyInformationalVersion {
-			get { return assemblyInformationalVersion; }
-		}
+		public string AssemblyInformationalVersion => assemblyInformationalVersion;
 		readonly string assemblyInformationalVersion;
 
-		public IAppCommandLineArgs CommandLineArgs {
-			get { return commandLineArgs; }
-			set { commandLineArgs = value; }
-		}
-		IAppCommandLineArgs commandLineArgs;
+		public IAppCommandLineArgs CommandLineArgs { get; set; }
 
 		sealed class UISettings {
 			static readonly Guid SETTINGS_GUID = new Guid("33E1988B-8EFF-4F4C-A064-FA99A7D0C64D");
@@ -178,9 +154,7 @@ namespace dnSpy.MainApp {
 			fileTabManager.Refresh(tabs);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			RefreshToolBar();
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshToolBar();
 
 		static readonly Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);
 		public Window InitializeMainWindow() {
@@ -220,9 +194,7 @@ namespace dnSpy.MainApp {
 			uiSettings.Write();
 		}
 
-		void MainWindow_Closed(object sender, EventArgs e) {
-			mainWindowClosed.Raise(this, e);
-		}
+		void MainWindow_Closed(object sender, EventArgs e) => mainWindowClosed.Raise(this, e);
 
 		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			if (e.NewFocus == MainWindow) {
@@ -252,9 +224,7 @@ namespace dnSpy.MainApp {
 				appToolBar.Initialize(mainWindow);
 		}
 
-		void UpdateTitle() {
-			this.mainWindow.Title = GetDefaultTitle();
-		}
+		void UpdateTitle() => this.mainWindow.Title = GetDefaultTitle();
 
 		string GetDefaultTitle() {
 			var t = string.Format("dnSpy {0} ({1})", AssemblyInformationalVersion, string.Join(", ", titleInfos.ToArray()));

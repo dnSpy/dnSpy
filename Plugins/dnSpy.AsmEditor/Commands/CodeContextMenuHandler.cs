@@ -25,24 +25,20 @@ using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
-		public readonly IFileTreeNodeData[] Nodes;
-		public readonly bool IsLocalTarget;
+		public IFileTreeNodeData[] Nodes { get; }
+		public bool IsLocalTarget { get; }
 
 		public CodeContext(IFileTreeNodeData[] nodes, bool isLocalTarget) {
-			this.Nodes = nodes ?? new IFileTreeNodeData[0];
+			this.Nodes = nodes ?? Array.Empty<IFileTreeNodeData>();
 			this.IsLocalTarget = isLocalTarget;
 		}
 	}
 
 	abstract class CodeContextMenuHandler : MenuItemBase<CodeContext> {
-		protected sealed override object CachedContextKey {
-			get { return ContextKey; }
-		}
+		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		public sealed override bool IsVisible(CodeContext context) {
-			return IsEnabled(context);
-		}
+		public sealed override bool IsVisible(CodeContext context) => IsEnabled(context);
 
 		readonly IFileTreeView fileTreeView;
 
@@ -57,7 +53,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (refSeg == null)
 				return null;
 			var node = fileTreeView.FindNode(refSeg.Reference);
-			var nodes = node == null ? new IFileTreeNodeData[0] : new IFileTreeNodeData[] { node };
+			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
 			return new CodeContext(nodes, refSeg.IsLocalTarget);
 		}
 	}

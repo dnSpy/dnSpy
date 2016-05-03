@@ -27,17 +27,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchOperandVM : ViewModelBase {
 		readonly IList<InstructionVM> origInstructions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand AddInstructionCommand {
-			get { return new RelayCommand(a => AddInstruction(), a => AddInstructionCanExecute()); }
-		}
-
-		public ICommand AppendInstructionCommand {
-			get { return new RelayCommand(a => AppendInstruction(), a => AppendInstructionCanExecute()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand AddInstructionCommand => new RelayCommand(a => AddInstruction(), a => AddInstructionCanExecute());
+		public ICommand AppendInstructionCommand => new RelayCommand(a => AppendInstruction(), a => AppendInstructionCanExecute());
 
 		public int SelectedIndex {
 			get { return selectedIndex; }
@@ -50,43 +42,24 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		int selectedIndex;
 
-		public IndexObservableCollection<SwitchInstructionVM> InstructionsListVM {
-			get { return instructionsListVM; }
-		}
-		readonly IndexObservableCollection<SwitchInstructionVM> instructionsListVM;
-
-		public ListVM<InstructionVM> AllInstructionsVM {
-			get { return allInstructionsVM; }
-		}
-		readonly ListVM<InstructionVM> allInstructionsVM;
+		public IndexObservableCollection<SwitchInstructionVM> InstructionsListVM { get; }
+		public ListVM<InstructionVM> AllInstructionsVM { get; }
 
 		public SwitchOperandVM(IList<InstructionVM> allInstrs, IList<InstructionVM> instrs) {
-			this.allInstructionsVM = new ListVM<InstructionVM>(allInstrs);
+			this.AllInstructionsVM = new ListVM<InstructionVM>(allInstrs);
 			this.origInstructions = instrs;
-			this.instructionsListVM = new IndexObservableCollection<SwitchInstructionVM>();
+			this.InstructionsListVM = new IndexObservableCollection<SwitchInstructionVM>();
 
 			Reinitialize();
 		}
 
-		void AddInstruction() {
+		void AddInstruction() =>
 			InstructionsListVM.Insert(SelectedIndex + 1, new SwitchInstructionVM(AllInstructionsVM.SelectedItem));
-		}
-
-		bool AddInstructionCanExecute() {
-			return SelectedIndex >= 0;
-		}
-
-		void AppendInstruction() {
+		bool AddInstructionCanExecute() => SelectedIndex >= 0;
+		void AppendInstruction() =>
 			InstructionsListVM.Insert(InstructionsListVM.Count, new SwitchInstructionVM(AllInstructionsVM.SelectedItem));
-		}
-
-		bool AppendInstructionCanExecute() {
-			return true;
-		}
-
-		void Reinitialize() {
-			InitializeFrom(origInstructions);
-		}
+		bool AppendInstructionCanExecute() => true;
+		void Reinitialize() => InitializeFrom(origInstructions);
 
 		public void InitializeFrom(IList<InstructionVM> instrs) {
 			InstructionsListVM.Clear();
@@ -95,8 +68,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 			SelectedIndex = InstructionsListVM.Count == 0 ? -1 : 0;
 		}
 
-		public InstructionVM[] GetSwitchList() {
-			return InstructionsListVM.Select(a => a.InstructionVM).ToArray();
-		}
+		public InstructionVM[] GetSwitchList() => InstructionsListVM.Select(a => a.InstructionVM).ToArray();
 	}
 }

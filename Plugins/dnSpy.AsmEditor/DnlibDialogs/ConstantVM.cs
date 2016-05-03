@@ -23,10 +23,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ConstantVM : ViewModelBase {
-		public ConstantTypeVM ConstantTypeVM {
-			get { return constantTypeVM; }
-		}
-		ConstantTypeVM constantTypeVM;
+		public ConstantTypeVM ConstantTypeVM { get; }
 
 		public object Value {
 			get { return ConstantTypeVM.ValueNoSpecialNull; }
@@ -75,7 +72,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		};
 
 		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip) {
-			this.constantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
+			this.ConstantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
 			this.ConstantCheckBoxToolTip = constantCheckBoxToolTip;
 			this.ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 

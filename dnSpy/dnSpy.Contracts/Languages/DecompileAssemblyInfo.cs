@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Gets the module
 		/// </summary>
-		public ModuleDef Module { get; private set; }
+		public ModuleDef Module { get; }
 
 		/// <summary>
 		/// Constructor

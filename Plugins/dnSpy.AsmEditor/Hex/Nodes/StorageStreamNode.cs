@@ -41,42 +41,23 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	sealed class StorageStreamNode : HexNode {
-		public override Guid Guid {
-			get { return new Guid(FileTVConstants.STRGSTREAM_NODE_GUID); }
-		}
-
-		public override NodePathName NodePathName {
-			get { return new NodePathName(Guid, streamNumber.ToString()); }
-		}
-
-		public StorageStreamType StorageStreamType {
-			get { return storageStreamType; }
-		}
-		readonly StorageStreamType storageStreamType;
-
-		public override object VMObject {
-			get { return storageStreamVM; }
-		}
+		public override Guid Guid => new Guid(FileTVConstants.STRGSTREAM_NODE_GUID);
+		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
+		public StorageStreamType StorageStreamType { get; }
+		public override object VMObject => storageStreamVM;
+		protected override string IconName => "BinaryFile";
+		public int StreamNumber { get; }
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return storageStreamVM; }
 		}
 
-		protected override string IconName {
-			get { return "BinaryFile"; }
-		}
-
-		public int StreamNumber {
-			get { return streamNumber; }
-		}
-		readonly int streamNumber;
-
 		readonly StorageStreamVM storageStreamVM;
 
 		public StorageStreamNode(HexDocument doc, StreamHeader sh, int streamNumber, DotNetStream knownStream, IMetaData md)
 			: base((ulong)sh.StartOffset, (ulong)sh.EndOffset - 1) {
-			this.streamNumber = streamNumber;
-			this.storageStreamType = GetStorageStreamType(knownStream);
+			this.StreamNumber = streamNumber;
+			this.StorageStreamType = GetStorageStreamType(knownStream);
 			this.storageStreamVM = new StorageStreamVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 8));
 
 			var tblStream = knownStream as TablesStream;
@@ -93,21 +74,21 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		static StorageStreamType GetStorageStreamType(DotNetStream stream) {
 			if (stream == null)
-				return StorageStreamType.None;
+				return Nodes.StorageStreamType.None;
 			if (stream is StringsStream)
-				return StorageStreamType.Strings;
+				return Nodes.StorageStreamType.Strings;
 			if (stream is USStream)
-				return StorageStreamType.US;
+				return Nodes.StorageStreamType.US;
 			if (stream is BlobStream)
-				return StorageStreamType.Blob;
+				return Nodes.StorageStreamType.Blob;
 			if (stream is GuidStream)
-				return StorageStreamType.Guid;
+				return Nodes.StorageStreamType.Guid;
 			if (stream is TablesStream)
-				return StorageStreamType.Tables;
+				return Nodes.StorageStreamType.Tables;
 			if (stream.Name == "#!")
-				return StorageStreamType.HotHeap;
+				return Nodes.StorageStreamType.HotHeap;
 			Debug.Fail(string.Format("Shouldn't be here when stream is a known stream type: {0}", stream.GetType()));
-			return StorageStreamType.None;
+			return Nodes.StorageStreamType.None;
 		}
 
 		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
@@ -123,10 +104,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, BoxedTextTokenKind.InstanceField);
 			output.WriteSpace();
 			output.Write("#", BoxedTextTokenKind.Operator);
-			output.Write(streamNumber.ToString(), BoxedTextTokenKind.Number);
+			output.Write(StreamNumber.ToString(), BoxedTextTokenKind.Number);
 			output.Write(":", BoxedTextTokenKind.Operator);
 			output.WriteSpace();
-			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? BoxedTextTokenKind.Error : BoxedTextTokenKind.Type);
+			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), StorageStreamType == StorageStreamType.None ? BoxedTextTokenKind.Error : BoxedTextTokenKind.Type);
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

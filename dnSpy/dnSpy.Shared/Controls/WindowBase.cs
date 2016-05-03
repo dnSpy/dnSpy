@@ -31,12 +31,7 @@ namespace dnSpy.Shared.Controls {
 			Close();
 		}
 
-		protected void okButton_Click(object sender, RoutedEventArgs e) {
-			ClickOK();
-		}
-
-		protected void cancelButton_Click(object sender, RoutedEventArgs e) {
-			ClickCancel();
-		}
+		protected void okButton_Click(object sender, RoutedEventArgs e) => ClickOK();
+		protected void cancelButton_Click(object sender, RoutedEventArgs e) => ClickCancel();
 	}
 }

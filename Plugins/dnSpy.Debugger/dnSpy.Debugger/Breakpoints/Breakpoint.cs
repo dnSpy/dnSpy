@@ -30,10 +30,8 @@ namespace dnSpy.Debugger.Breakpoints {
 	abstract class Breakpoint : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
+		protected void OnPropertyChanged(string propName) =>
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public abstract BreakpointKind Kind { get; }
 
@@ -48,13 +46,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		DnBreakpoint dnbp;
 
-		public bool IsILCode {
-			get { return Kind == BreakpointKind.ILCode; }
-		}
-
-		public bool IsDebugEvent {
-			get { return Kind == BreakpointKind.DebugEvent; }
-		}
+		public bool IsILCode => Kind == BreakpointKind.ILCode;
+		public bool IsDebugEvent => Kind == BreakpointKind.DebugEvent;
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -74,7 +67,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.isEnabled = isEnabled;
 		}
 
-		protected virtual void OnIsEnabledChanged() {
-		}
+		protected virtual void OnIsEnabledChanged() { }
 	}
 }

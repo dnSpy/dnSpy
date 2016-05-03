@@ -32,14 +32,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public TypeUsedByNode(TypeDef analyzedType) {
 			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+				throw new ArgumentNullException(nameof(analyzedType));
 
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindTypeUsage);
@@ -76,9 +75,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return new MethodNode(method) { Context = Context, SourceRef = sourceRef };
 		}
 
-		bool IsUsedInTypeRefs(IEnumerable<ITypeDefOrRef> types) {
-			return types.Any(IsUsedInTypeRef);
-		}
+		bool IsUsedInTypeRefs(IEnumerable<ITypeDefOrRef> types) => types.Any(IsUsedInTypeRef);
 
 		bool IsUsedInTypeRef(ITypeDefOrRef type) {
 			if (type == null)
@@ -114,10 +111,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) {
-			return IsUsedInMethodRef(method)
-				   || IsUsedInMethodBody(method, ref sourceRef);
-		}
+		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method)
+	   || IsUsedInMethodBody(method, ref sourceRef);
 
 		bool IsUsedInMethodBody(MethodDef method, ref SourceRef? sourceRef) {
 			if (method == null)
@@ -146,31 +141,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return false;
 		}
 
-		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) {
-			return parameters.Any(IsUsedInMethodParameter);
-		}
-
-		bool IsUsedInMethodParameter(Parameter parameter) {
-			return !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
-		}
-
-		bool TypeMatches(IType tref) {
-			return tref != null && new SigComparer().Equals(analyzedType, tref);
-		}
-
-		public static bool CanShow(TypeDef type) {
-			return type != null;
-		}
+		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
+		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
+		bool TypeMatches(IType tref) => tref != null && new SigComparer().Equals(analyzedType, tref);
+		public static bool CanShow(TypeDef type) => type != null;
 	}
 
 	sealed class AnalyzerEntityTreeNodeComparer : IEqualityComparer<EntityNode> {
-		public bool Equals(EntityNode x, EntityNode y) {
-			return x.Member == y.Member;
-		}
-
-		public int GetHashCode(EntityNode node) {
-			return node.Member.GetHashCode();
-		}
+		public bool Equals(EntityNode x, EntityNode y) => x.Member == y.Member;
+		public int GetHashCode(EntityNode node) => node.Member.GetHashCode();
 	}
-
 }

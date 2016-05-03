@@ -28,12 +28,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.output = output;
 		}
 
-		public void WriteName(FileListVM vm) {
-			output.Write(vm.Name, BoxedTextTokenKind.Assembly);
-		}
-
-		public void WriteFileCount(FileListVM vm) {
-			output.Write(vm.FileCount.ToString(), BoxedTextTokenKind.Number);
-		}
+		public void WriteName(FileListVM vm) => output.Write(vm.Name, BoxedTextTokenKind.Assembly);
+		public void WriteFileCount(FileListVM vm) => output.Write(vm.FileCount.ToString(), BoxedTextTokenKind.Number);
 	}
 }

@@ -34,19 +34,12 @@ namespace dnSpy.AsmEditor.Hex {
 			this.documentSaver = documentSaver;
 		}
 
-		public ITabSaver Create(IFileTab tab) {
-			return HexTabSaver.TryCreate(documentSaver, tab);
-		}
+		public ITabSaver Create(IFileTab tab) => HexTabSaver.TryCreate(documentSaver, tab);
 	}
 
 	sealed class HexTabSaver : ITabSaver {
-		public bool CanSave {
-			get { return true; }
-		}
-
-		public string MenuHeader {
-			get { return dnSpy_AsmEditor_Resources.Save; }
-		}
+		public bool CanSave => true;
+		public string MenuHeader => dnSpy_AsmEditor_Resources.Save;
 
 		public static ITabSaver TryCreate(Lazy<IDocumentSaver> documentSaver, IFileTab tab) {
 			var uiContext = tab.UIContext as HexBoxFileTabUIContext;
@@ -68,8 +61,6 @@ namespace dnSpy.AsmEditor.Hex {
 			this.doc = doc;
 		}
 
-		public void Save() {
-			documentSaver.Value.Save(new[] { doc });
-		}
+		public void Save() => documentSaver.Value.Save(new[] { doc });
 	}
 }

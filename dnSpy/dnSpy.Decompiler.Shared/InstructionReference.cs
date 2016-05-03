@@ -23,26 +23,16 @@ using dnlib.DotNet.Emit;
 
 namespace dnSpy.Decompiler.Shared {
 	public sealed class InstructionReference : IEquatable<InstructionReference> {
-		public readonly MethodDef Method;
-		public readonly Instruction Instruction;
+		public MethodDef Method { get; }
+		public Instruction Instruction { get; }
 
 		public InstructionReference(MethodDef method, Instruction instr) {
 			this.Method = method;
 			this.Instruction = instr;
 		}
 
-		public bool Equals(InstructionReference other) {
-			return other != null &&
-				Method == other.Method &&
-				Instruction == other.Instruction;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as InstructionReference);
-		}
-
-		public override int GetHashCode() {
-			return Method.GetHashCode() ^ Instruction.GetHashCode();
-		}
+		public bool Equals(InstructionReference other) => other != null && Method == other.Method && Instruction == other.Instruction;
+		public override bool Equals(object obj) => Equals(obj as InstructionReference);
+		public override int GetHashCode() => Method.GetHashCode() ^ Instruction.GetHashCode();
 	}
 }

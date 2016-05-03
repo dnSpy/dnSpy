@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Selected tab group or null
 		/// </summary>
-		public ITabGroup Selected { get; private set; }
+		public ITabGroup Selected { get; }
 
 		/// <summary>
 		/// Unselected tab group or null
 		/// </summary>
-		public ITabGroup Unselected { get; private set; }
+		public ITabGroup Unselected { get; }
 
 		/// <summary>
 		/// Constructor

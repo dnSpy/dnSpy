@@ -30,20 +30,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.canAdd = canAdd;
 		}
 
-		protected override CANamedArgumentVM Create(CANamedArgument model) {
-			return new CANamedArgumentVM(ownerModule, model, new TypeSigCreatorOptions(ownerModule, languageManager));
-		}
-
-		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) {
-			return new CANamedArgumentVM(ownerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(ownerModule, languageManager));
-		}
-
-		protected override CANamedArgumentVM Create() {
-			return new CANamedArgumentVM(ownerModule, new CANamedArgument(false, ownerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(ownerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(ownerModule, languageManager));
-		}
-
-		protected override bool AddItemCanExecute() {
-			return canAdd == null || canAdd(this);
-		}
+		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, languageManager));
+		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) => new CANamedArgumentVM(OwnerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(OwnerModule, languageManager));
+		protected override CANamedArgumentVM Create() => new CANamedArgumentVM(OwnerModule, new CANamedArgument(false, OwnerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(OwnerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(OwnerModule, languageManager));
+		protected override bool AddItemCanExecute() => canAdd == null || canAdd(this);
 	}
 }

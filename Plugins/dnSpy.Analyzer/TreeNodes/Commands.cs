@@ -68,70 +68,44 @@ namespace dnSpy.Analyzer.TreeNodes {
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 		}
 
-		void ShowAnalyzerCanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void ShowAnalyzerCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = mainToolWindowManager.IsShown(AnalyzerToolWindowContent.THE_GUID);
-		}
-
-		void ShowAnalyzerExecuted(object sender, ExecutedRoutedEventArgs e) {
+		void ShowAnalyzerExecuted(object sender, ExecutedRoutedEventArgs e) =>
 			mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
-		}
-
-		void TextEditor_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void TextEditor_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), languageManager.Language);
-		}
-
-		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) {
+		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, TextEditor_GetMemberRef());
-		}
-
-		IMemberRef TextEditor_GetMemberRef() {
-			var tab = fileTabManager.ActiveTab;
-			var uiContext = tab == null ? null : tab.UIContext as ITextEditorUIContext;
-			if (uiContext == null)
-				return null;
-			return uiContext.SelectedReference as IMemberRef;
-		}
-
-		void FileTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		IMemberRef TextEditor_GetMemberRef() =>
+			(fileTabManager.ActiveTab?.UIContext as ITextEditorUIContext)?.SelectedReference as IMemberRef;
+		void FileTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(FileTreeView_GetMemberRef(), languageManager.Language);
-		}
-
-		void FileTreeView_Executed(object sender, ExecutedRoutedEventArgs e) {
+		void FileTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, FileTreeView_GetMemberRef());
-		}
 
 		IMemberRef FileTreeView_GetMemberRef() {
 			var nodes = fileTabManager.FileTreeView.TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as IMDTokenNode;
-			return node == null ? null : node.Reference as IMemberRef;
+			return node?.Reference as IMemberRef;
 		}
 
-		void AnalyzerTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void AnalyzerTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(AnalyzerTreeView_GetMemberRef(), languageManager.Language);
-		}
-
-		void AnalyzerTreeView_Executed(object sender, ExecutedRoutedEventArgs e) {
+		void AnalyzerTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, AnalyzerTreeView_GetMemberRef());
-		}
 
 		IMemberRef AnalyzerTreeView_GetMemberRef() {
 			var nodes = analyzerManager.Value.TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as IMDTokenNode;
-			return node == null ? null : node.Reference as IMemberRef;
+			return node?.Reference as IMemberRef;
 		}
 
-		void SearchListBox_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void SearchListBox_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), languageManager.Language);
-		}
-
-		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) {
+		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, SearchListBox_GetMemberRef(e.Source as ListBox));
-		}
-
-		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) {
-			var sr = listBox == null ? null : listBox.SelectedItem as ISearchResult;
-			return sr == null ? null : sr.Reference as IMemberRef;
-		}
+		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) =>
+			(listBox?.SelectedItem as ISearchResult)?.Reference as IMemberRef;
 	}
 
 	static class AnalyzeCommand {
@@ -148,13 +122,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.analyzerManager = analyzerManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetMemberRefs(context).Any();
-			}
-
-			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
-				return GetMemberRefs(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, false, languageManager);
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
+			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
+				GetMemberRefs(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, false, languageManager);
 
 			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, ILanguageManager languageManager) {
 				if (context.CreatorObject.Guid != new Guid(guid))
@@ -173,9 +143,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			public override void Execute(IMenuItemContext context) {
+			public override void Execute(IMenuItemContext context) =>
 				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
-			}
 		}
 
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
@@ -191,17 +160,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.analyzerManager = analyzerManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetMemberRefs(context).Any();
-			}
-
-			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
-				return FilesCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID, true, languageManager);
-			}
-
-			public override void Execute(IMenuItemContext context) {
+			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
+			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
+				FilesCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID, true, languageManager);
+			public override void Execute(IMenuItemContext context) =>
 				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
-			}
 		}
 
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 0)]
@@ -217,13 +180,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.analyzerManager = analyzerManager;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetMemberRefs(context).Any();
-			}
-
-			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
-				return GetMemberRefs(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
-			}
+			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
+			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
+				GetMemberRefs(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 
 			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
@@ -237,9 +196,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			public override void Execute(IMenuItemContext context) {
+			public override void Execute(IMenuItemContext context) =>
 				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
-			}
 		}
 
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
@@ -255,17 +213,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.analyzerManager = analyzerManager;
 			}
 
-			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
-				return CodeCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetMemberRefs(context).Any();
-			}
-
-			public override void Execute(IMenuItemContext context) {
+			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
+				CodeCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
+			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
+			public override void Execute(IMenuItemContext context) =>
 				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
-			}
 		}
 
 		public static bool CanAnalyze(IMemberRef member, ILanguage language) {
@@ -342,17 +294,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			cmds.Add(ApplicationCommands.Delete, (s, e) => DeleteNodes(), (s, e) => e.CanExecute = CanDeleteNodes, ModifierKeys.None, Key.Delete);
 		}
 
-		bool CanDeleteNodes {
-			get { return GetNodes() != null; }
-		}
-
-		void DeleteNodes() {
-			DeleteNodes(GetNodes());
-		}
-
-		ITreeNodeData[] GetNodes() {
-			return GetNodes(analyzerManager.Value.TreeView.TopLevelSelection);
-		}
+		bool CanDeleteNodes => GetNodes() != null;
+		void DeleteNodes() => DeleteNodes(GetNodes());
+		ITreeNodeData[] GetNodes() => GetNodes(analyzerManager.Value.TreeView.TopLevelSelection);
 
 		internal static ITreeNodeData[] GetNodes(ITreeNodeData[] nodes) {
 			if (nodes == null)
@@ -374,9 +318,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 	[ExportMenuItem(Header = "res:RemoveCommand", Icon = "Delete", InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetNodes(context) != null;
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetNodes(context) != null;
 
 		static ITreeNodeData[] GetNodes(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
@@ -384,8 +326,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return RemoveAnalyzeCommand.GetNodes(context.Find<ITreeNodeData[]>());
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			RemoveAnalyzeCommand.DeleteNodes(GetNodes(context));
-		}
+		public override void Execute(IMenuItemContext context) => RemoveAnalyzeCommand.DeleteNodes(GetNodes(context));
 	}
 }

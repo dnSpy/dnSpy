@@ -27,17 +27,17 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// Tab group
 		/// </summary>
-		public IToolWindowGroup TabGroup { get; private set; }
+		public IToolWindowGroup TabGroup { get; }
 
 		/// <summary>
 		/// Selected tab content or null
 		/// </summary>
-		public IToolWindowContent Selected { get; private set; }
+		public IToolWindowContent Selected { get; }
 
 		/// <summary>
 		/// Unselected tab content or null
 		/// </summary>
-		public IToolWindowContent Unselected { get; private set; }
+		public IToolWindowContent Unselected { get; }
 
 		/// <summary>
 		/// Constructor

@@ -28,20 +28,13 @@ namespace dnSpy.Culture {
 	}
 
 	sealed class LanguageInfo : IEquatable<LanguageInfo> {
-		public LanguageType Type { get; private set; }
+		public LanguageType Type { get; }
 
-		public CultureInfo CultureInfo {
-			get { return cultureInfo; }
-		}
-		CultureInfo cultureInfo;
+		public CultureInfo CultureInfo { get; }
 
-		public string UIName {
-			get { return ToString(); }
-		}
+		public string UIName => ToString();
 
-		public static LanguageInfo CreateSystemLanguage() {
-			return new LanguageInfo(LanguageType.SystemLanguage);
-		}
+		public static LanguageInfo CreateSystemLanguage() => new LanguageInfo(LanguageType.SystemLanguage);
 
 		public static LanguageInfo Create(CultureInfo cultureInfo) {
 			if (cultureInfo == null)
@@ -51,28 +44,26 @@ namespace dnSpy.Culture {
 
 		LanguageInfo(LanguageType type) {
 			this.Type = type;
-			this.cultureInfo = null;
+			this.CultureInfo = null;
 		}
 
 		LanguageInfo(CultureInfo cultureInfo) {
 			this.Type = LanguageType.CultureInfo;
-			this.cultureInfo = cultureInfo;
+			this.CultureInfo = cultureInfo;
 		}
 
 		public bool Equals(LanguageInfo other) {
 			if (Type != other.Type)
 				return false;
-			return Type != LanguageType.CultureInfo || cultureInfo.Equals(other.cultureInfo);
+			return Type != LanguageType.CultureInfo || CultureInfo.Equals(other.CultureInfo);
 		}
 
-		public override bool Equals(object obj) {
-			return Equals(obj as LanguageInfo);
-		}
+		public override bool Equals(object obj) => Equals(obj as LanguageInfo);
 
 		public override int GetHashCode() {
 			switch (Type) {
 			case LanguageType.SystemLanguage: return 0x69DCD8A8;
-			case LanguageType.CultureInfo: return cultureInfo.GetHashCode();
+			case LanguageType.CultureInfo: return CultureInfo.GetHashCode();
 			default: throw new InvalidOperationException();
 			}
 		}
@@ -80,7 +71,7 @@ namespace dnSpy.Culture {
 		public override string ToString() {
 			switch (Type) {
 			case LanguageType.SystemLanguage: return dnSpy_Resources.Language_OperatingSystemLanguage;
-			case LanguageType.CultureInfo: return cultureInfo.NativeName;
+			case LanguageType.CultureInfo: return CultureInfo.NativeName;
 			default: throw new InvalidOperationException();
 			}
 		}

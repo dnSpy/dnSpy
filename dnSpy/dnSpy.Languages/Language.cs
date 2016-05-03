@@ -41,44 +41,25 @@ namespace dnSpy.Languages {
 		public abstract Guid GenericGuid { get; }
 		public abstract Guid UniqueGuid { get; }
 		public abstract IDecompilerSettings Settings { get; }
-
 		public abstract string FileExtension { get; }
+		public virtual string ProjectFileExtension => null;
 
-		public virtual string ProjectFileExtension {
-			get { return null; }
-		}
-
-		public void WriteName(ISyntaxHighlightOutput output, TypeDef type) {
+		public void WriteName(ISyntaxHighlightOutput output, TypeDef type) =>
 			FormatTypeName(SyntaxHighlightOutputToTextOutput.Create(output), type);
-		}
-
-		public void WriteType(ISyntaxHighlightOutput output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) {
+		public void WriteType(ISyntaxHighlightOutput output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) =>
 			TypeToString(SyntaxHighlightOutputToTextOutput.Create(output), type, includeNamespace, pd);
-		}
-
-		public void WriteName(ISyntaxHighlightOutput output, PropertyDef property, bool? isIndexer) {
+		public void WriteName(ISyntaxHighlightOutput output, PropertyDef property, bool? isIndexer) =>
 			FormatPropertyName(SyntaxHighlightOutputToTextOutput.Create(output), property, isIndexer);
-		}
-
-		public virtual void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
+		public virtual void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(method.DeclaringType, true) + "." + method.Name);
-		}
-
-		public virtual void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
+		public virtual void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(property.DeclaringType, true) + "." + property.Name);
-		}
-
-		public virtual void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
+		public virtual void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(field.DeclaringType, true) + "." + field.Name);
-		}
-
-		public virtual void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
+		public virtual void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(ev.DeclaringType, true) + "." + ev.Name);
-		}
-
-		public virtual void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+		public virtual void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(type, true));
-		}
 
 		public virtual void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, string.IsNullOrEmpty(@namespace) ? string.Empty : IdentifierEscaper.Escape(@namespace));
@@ -146,13 +127,8 @@ namespace dnSpy.Languages {
 			output.WriteLine();
 		}
 
-		public virtual void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
-			DecompileInternal(asm, output, ctx);
-		}
-
-		public virtual void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
-			DecompileInternal(mod, output, ctx);
-		}
+		public virtual void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) => DecompileInternal(asm, output, ctx);
+		public virtual void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) => DecompileInternal(mod, output, ctx);
 
 		void DecompileInternal(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, asm.ManifestModule.Location);
@@ -226,8 +202,7 @@ namespace dnSpy.Languages {
 				output.Write("//", BoxedTextTokenKind.Comment);
 		}
 
-		public virtual void WriteCommentEnd(ITextOutput output, bool addSpace) {
-		}
+		public virtual void WriteCommentEnd(ITextOutput output, bool addSpace) { }
 
 		string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			var writer = new StringWriter();
@@ -245,17 +220,12 @@ namespace dnSpy.Languages {
 				output.Write(IdentifierEscaper.Escape(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
 		}
 
-		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
+		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
 			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(member);
-		}
-
-		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name) {
+		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name) =>
 			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable, name);
-		}
-
-		public virtual void Write(ISyntaxHighlightOutput output, IMemberRef member, SimplePrinterFlags flags) {
+		public virtual void Write(ISyntaxHighlightOutput output, IMemberRef member, SimplePrinterFlags flags) =>
 			new SimpleCSharpPrinter(output, flags).Write(member);
-		}
 
 		protected static string GetName(IVariable variable, string name) {
 			if (!string.IsNullOrWhiteSpace(name))
@@ -268,31 +238,20 @@ namespace dnSpy.Languages {
 
 		protected virtual void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)
-				throw new ArgumentNullException("property");
+				throw new ArgumentNullException(nameof(property));
 			output.Write(IdentifierEscaper.Escape(property.Name), TextTokenKindUtils.GetTextTokenKind(property));
 		}
 
 		protected virtual void FormatTypeName(ITextOutput output, TypeDef type) {
 			if (type == null)
-				throw new ArgumentNullException("type");
+				throw new ArgumentNullException(nameof(type));
 			output.Write(IdentifierEscaper.Escape(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
 		}
 
-		public virtual bool ShowMember(IMemberRef member) {
-			return true;
-		}
-
-		protected static string GetPlatformDisplayName(ModuleDef module) {
-			return TargetFrameworkUtils.GetArchString(module);
-		}
-
-		protected static string GetRuntimeDisplayName(ModuleDef module) {
-			return TargetFrameworkInfo.Create(module).ToString();
-		}
-
-		public virtual bool CanDecompile(DecompilationType decompilationType) {
-			return false;
-		}
+		public virtual bool ShowMember(IMemberRef member) => true;
+		protected static string GetPlatformDisplayName(ModuleDef module) => TargetFrameworkUtils.GetArchString(module);
+		protected static string GetRuntimeDisplayName(ModuleDef module) => TargetFrameworkInfo.Create(module).ToString();
+		public virtual bool CanDecompile(DecompilationType decompilationType) => false;
 
 		public virtual void Decompile(DecompilationType decompilationType, object data) {
 			throw new NotImplementedException();

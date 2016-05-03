@@ -37,13 +37,10 @@ namespace dnSpy.AsmEditor.Hex {
 			this.undoObject = new UndoObject(this);
 		}
 
-		public UndoObject UndoObject {
-			get { return undoObject; }
-		}
+		public UndoObject UndoObject => undoObject;
 		readonly UndoObject undoObject;
 
-		void IUndoHexDocument.WriteUndo(ulong startOffset, byte[] newData, string descr) {
+		void IUndoHexDocument.WriteUndo(ulong startOffset, byte[] newData, string descr) =>
 			WriteHexUndoCommand.AddAndExecute(undoCommandManager, this, startOffset, newData, descr);
-		}
 	}
 }

@@ -111,23 +111,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public IInputElement FocusedElement {
 			get {
 				var button = textEditorControl.CancelButton;
-				if (button != null && button.IsVisible)
+				if (button?.IsVisible == true)
 					return button;
 				return textEditorControl.TextEditor.FocusedElement;
 			}
 		}
 
-		public object UIObject {
-			get { return textEditorControl; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return textEditorControl.TextEditor.TextArea; }
-		}
-
-		public bool HasSelectedText {
-			get { return textEditorControl.TextEditor.SelectionLength > 0; }
-		}
+		public object UIObject => textEditorControl;
+		public FrameworkElement ScaleElement => textEditorControl.TextEditor.TextArea;
+		public bool HasSelectedText => textEditorControl.TextEditor.SelectionLength > 0;
 
 		public TextEditorLocation Location {
 			get {
@@ -136,8 +128,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		public void OnShow() {
-		}
+		public void OnShow() { }
 
 		public void OnHide() {
 			textEditorControl.Clear();
@@ -244,9 +235,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly WeakEventList<EventArgs> newTextContentEvent;
 
-		public void OnUseNewRendererChanged() {
-			textEditorControl.OnUseNewRendererChanged();
-		}
+		public void OnUseNewRendererChanged() => textEditorControl.OnUseNewRendererChanged();
 
 		void ITextEditorHelper.FollowReference(CodeReference codeRef, bool newTab) {
 			Debug.Assert(FileTab != null);
@@ -255,29 +244,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			FileTab.FollowReference(codeRef, newTab);
 		}
 
-		void ITextEditorHelper.SetFocus() {
-			FileTab.TrySetFocus();
-		}
-
-		public void SetActive() {
-			FileTab.FileTabManager.ActiveTab = FileTab;
-		}
-
-		public void ShowCancelButton(Action onCancel, string msg) {
-			textEditorControl.ShowCancelButton(onCancel, msg);
-		}
-
-		public void HideCancelButton() {
-			textEditorControl.HideCancelButton();
-		}
-
-		public void MoveCaretTo(object @ref) {
-			textEditorControl.GoToLocation(@ref);
-		}
-
-		public object GetReferenceSegmentAt(MouseEventArgs e) {
-			return textEditorControl.GetReferenceSegmentAt(e);
-		}
+		void ITextEditorHelper.SetFocus() => FileTab.TrySetFocus();
+		public void SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
+		public void ShowCancelButton(Action onCancel, string msg) => textEditorControl.ShowCancelButton(onCancel, msg);
+		public void HideCancelButton() => textEditorControl.HideCancelButton();
+		public void MoveCaretTo(object @ref) => textEditorControl.GoToLocation(@ref);
+		public object GetReferenceSegmentAt(MouseEventArgs e) => textEditorControl.GetReferenceSegmentAt(e);
 
 		public void Dispose() {
 			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
@@ -288,42 +260,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			outputData.Clear();
 		}
 
-		public void ScrollAndMoveCaretTo(int line, int column) {
-			textEditorControl.ScrollAndMoveCaretTo(line, column);
-		}
-
-		public object SelectedReference {
-			get {
-				var refSeg = textEditorControl.GetCurrentReferenceSegment();
-				return refSeg == null ? null : refSeg.Reference;
-			}
-		}
-
-		public CodeReference SelectedCodeReference {
-			get {
-				var refSeg = textEditorControl.GetCurrentReferenceSegment();
-				return refSeg == null ? null : refSeg.ToCodeReference();
-			}
-		}
-
-		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
-			return textEditorControl.GetSelectedCodeReferences();
-		}
-
-		public IEnumerable<object> References {
-			get { return textEditorControl.AllReferences; }
-		}
-
-		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
-			return textEditorControl.GetCodeReferences(line, column);
-		}
-
-		public object SaveReferencePosition() {
-			return textEditorControl.SaveReferencePosition(this.GetCodeMappings());
-		}
-
-		public bool RestoreReferencePosition(object obj) {
-			return textEditorControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
-		}
+		public void ScrollAndMoveCaretTo(int line, int column) => textEditorControl.ScrollAndMoveCaretTo(line, column);
+		public object SelectedReference => textEditorControl.GetCurrentReferenceSegment()?.Reference;
+		public CodeReference SelectedCodeReference => textEditorControl.GetCurrentReferenceSegment()?.ToCodeReference();
+		public IEnumerable<CodeReference> GetSelectedCodeReferences() => textEditorControl.GetSelectedCodeReferences();
+		public IEnumerable<object> References => textEditorControl.AllReferences;
+		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) =>
+			textEditorControl.GetCodeReferences(line, column);
+		public object SaveReferencePosition() => textEditorControl.SaveReferencePosition(this.GetCodeMappings());
+		public bool RestoreReferencePosition(object obj) => textEditorControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 	}
 }

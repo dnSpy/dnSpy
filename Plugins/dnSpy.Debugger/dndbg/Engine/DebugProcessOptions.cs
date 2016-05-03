@@ -24,9 +24,7 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DesktopCLRTypeDebugInfo : CLRTypeDebugInfo {
-		public override CLRType CLRType {
-			get { return CLRType.Desktop; }
-		}
+		public override CLRType CLRType => CLRType.Desktop;
 
 		/// <summary>
 		/// null if we should auto detect the version, else it should be a version of an already
@@ -42,9 +40,7 @@ namespace dndbg.Engine {
 			this.DebuggeeVersion = debuggeeVersion;
 		}
 
-		public override CLRTypeDebugInfo Clone() {
-			return new DesktopCLRTypeDebugInfo(DebuggeeVersion);
-		}
+		public override CLRTypeDebugInfo Clone() => new DesktopCLRTypeDebugInfo(DebuggeeVersion);
 	}
 
 	public sealed class CoreCLRTypeDebugInfo : CLRTypeDebugInfo {
@@ -63,9 +59,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string HostCommandLine { get; set; }
 
-		public override CLRType CLRType {
-			get { return CLRType.CoreCLR; }
-		}
+		public override CLRType CLRType => CLRType.CoreCLR;
 
 		public CoreCLRTypeDebugInfo(string dbgShimFilename, string hostFilename, string hostCommandLine) {
 			this.DbgShimFilename = dbgShimFilename;
@@ -73,9 +67,7 @@ namespace dndbg.Engine {
 			this.HostCommandLine = hostCommandLine;
 		}
 
-		public override CLRTypeDebugInfo Clone() {
-			return new CoreCLRTypeDebugInfo(DbgShimFilename, HostFilename, HostCommandLine);
-		}
+		public override CLRTypeDebugInfo Clone() => new CoreCLRTypeDebugInfo(DbgShimFilename, HostFilename, HostCommandLine);
 	}
 
 	public sealed class DebugProcessOptions {
@@ -145,8 +137,6 @@ namespace dndbg.Engine {
 			return other;
 		}
 
-		public DebugProcessOptions Clone() {
-			return CopyTo(new DebugProcessOptions(this.CLRTypeDebugInfo));
-		}
+		public DebugProcessOptions Clone() => CopyTo(new DebugProcessOptions(this.CLRTypeDebugInfo));
 	}
 }

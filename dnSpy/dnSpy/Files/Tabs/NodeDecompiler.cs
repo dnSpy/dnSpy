@@ -192,40 +192,29 @@ namespace dnSpy.Files.Tabs {
 			language.WriteCommentLine(output, NameUtils.CleanName(node.ToString(language)));
 		}
 
-		void Decompile(IAssemblyReferenceNode node) {
-			language.WriteCommentLine(output, NameUtils.CleanName(node.AssemblyRef.ToString()));
-		}
+		void Decompile(IAssemblyReferenceNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.AssemblyRef.ToString()));
 
 		void Decompile(IBaseTypeFolderNode node) {
 			foreach (var child in GetChildren(node).OfType<IBaseTypeNode>())
 				Decompile(child);
 		}
 
-		void Decompile(IBaseTypeNode node) {
-			language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDefOrRef.ReflectionFullName));
-		}
-
-		void Decompile(IDerivedTypeNode node) {
-			language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDef.ReflectionFullName));
-		}
+		void Decompile(IBaseTypeNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDefOrRef.ReflectionFullName));
+		void Decompile(IDerivedTypeNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDef.ReflectionFullName));
 
 		void Decompile(IDerivedTypesFolderNode node) {
 			foreach (var child in GetChildren(node).OfType<IDerivedTypeNode>())
 				Decompile(child);
 		}
 
-		void Decompile(IModuleReferenceNode node) {
-			language.WriteCommentLine(output, NameUtils.CleanName(node.ModuleRef.ToString()));
-		}
+		void Decompile(IModuleReferenceNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.ModuleRef.ToString()));
 
 		void Decompile(INamespaceNode node) {
 			var children = GetChildren(node).OfType<ITypeNode>().Select(a => a.TypeDef).ToArray();
 			language.DecompileNamespace(node.Name, children, output, decompilationContext);
 		}
 
-		void Decompile(IPEFileNode node) {
-			language.WriteCommentLine(output, node.DnSpyFile.Filename);
-		}
+		void Decompile(IPEFileNode node) => language.WriteCommentLine(output, node.DnSpyFile.Filename);
 
 		void Decompile(IReferencesFolderNode node) {
 			foreach (var child in GetChildren(node)) {
@@ -254,9 +243,8 @@ namespace dnSpy.Files.Tabs {
 				node.WriteShort(output, language, language.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 		}
 
-		void Decompile(IResourceElementNode node) {
+		void Decompile(IResourceElementNode node) =>
 			node.WriteShort(output, language, language.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
-		}
 
 		void Decompile(IResourceElementSetNode node) {
 			node.WriteShort(output, language, language.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
@@ -269,13 +257,8 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		void Decompile(IUnknownFileNode node) {
-			language.WriteCommentLine(output, node.DnSpyFile.Filename);
-		}
-
-		void Decompile(IMessageNode node) {
-			language.WriteCommentLine(output, node.Message);
-		}
+		void Decompile(IUnknownFileNode node) => language.WriteCommentLine(output, node.DnSpyFile.Filename);
+		void Decompile(IMessageNode node) => language.WriteCommentLine(output, node.Message);
 
 		static NodeType GetNodeType(IFileTreeNodeData node) {
 			NodeType nodeType;

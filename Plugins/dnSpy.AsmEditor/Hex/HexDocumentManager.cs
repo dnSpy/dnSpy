@@ -88,9 +88,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		public bool Exists(string filename) {
-			return TryGet(filename) != null;
-		}
+		public bool Exists(string filename) => TryGet(filename) != null;
 
 		public void Clear() {
 			lock (lockObj)
@@ -161,13 +159,8 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		HexDocument IHexDocumentManager.GetOrCreate(IPEImage peImage) {
-			return GetOrCreate(peImage);
-		}
-
-		HexDocument IHexDocumentManager.GetOrCreate(string filename) {
-			return GetOrCreate(filename);
-		}
+		HexDocument IHexDocumentManager.GetOrCreate(IPEImage peImage) => GetOrCreate(peImage);
+		HexDocument IHexDocumentManager.GetOrCreate(string filename) => GetOrCreate(filename);
 
 		public AsmEdHexDocument[] GetDocuments() {
 			lock (lockObj)

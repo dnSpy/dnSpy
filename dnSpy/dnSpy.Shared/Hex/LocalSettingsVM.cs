@@ -26,23 +26,11 @@ namespace dnSpy.Shared.Hex {
 	sealed class LocalSettingsVM : ViewModelBase {
 		readonly LocalHexSettings origOptions;
 
-		public ICommand ReinitializeCommand {
-			get { return new RelayCommand(a => Reinitialize()); }
-		}
+		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
+		public ICommand ResetToDefaultCommand => new RelayCommand(a => ResetToDefault(), a => ResetToDefaultCanExecute());
 
-		public ICommand ResetToDefaultCommand {
-			get { return new RelayCommand(a => ResetToDefault(), a => ResetToDefaultCanExecute()); }
-		}
-
-		public NullableInt32VM BytesGroupCountVM {
-			get { return bytesGroupCountVM; }
-		}
-		readonly NullableInt32VM bytesGroupCountVM;
-
-		public NullableInt32VM BytesPerLineVM {
-			get { return bytesPerLineVM; }
-		}
-		readonly NullableInt32VM bytesPerLineVM;
+		public NullableInt32VM BytesGroupCountVM { get; }
+		public NullableInt32VM BytesPerLineVM { get; }
 
 		public bool? UseHexPrefix {
 			get { return useHexPrefix; }
@@ -77,10 +65,7 @@ namespace dnSpy.Shared.Hex {
 		}
 		bool? lowerCaseHex;
 
-		public Int32VM HexOffsetSizeVM {
-			get { return hexOffsetSizeVM; }
-		}
-		readonly Int32VM hexOffsetSizeVM;
+		public Int32VM HexOffsetSizeVM { get; }
 
 		public bool UseRelativeOffsets {
 			get { return useRelativeOffsets; }
@@ -93,25 +78,12 @@ namespace dnSpy.Shared.Hex {
 		}
 		bool useRelativeOffsets;
 
-		public UInt64VM BaseOffsetVM {
-			get { return baseOffsetVM; }
-		}
-		readonly UInt64VM baseOffsetVM;
+		public UInt64VM BaseOffsetVM { get; }
+		public NullableUInt64VM StartOffsetVM { get; }
 
-		public NullableUInt64VM StartOffsetVM {
-			get { return startOffsetVM; }
-		}
-		readonly NullableUInt64VM startOffsetVM;
+		public NullableUInt64VM EndOffsetVM { get; }
 
-		public NullableUInt64VM EndOffsetVM {
-			get { return endOffsetVM; }
-		}
-		readonly NullableUInt64VM endOffsetVM;
-
-		public EnumListVM AsciiEncodingVM {
-			get { return asciiEncodingVM; }
-		}
-		readonly EnumListVM asciiEncodingVM;
+		public EnumListVM AsciiEncodingVM { get; }
 		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
 			new EnumVM(AsciiEncoding.ASCII, dnSpy_Shared_Resources.HexEditor_CharacterEncoding_ASCII_2),
 			new EnumVM(AsciiEncoding.ANSI, dnSpy_Shared_Resources.HexEditor_CharacterEncoding_ANSI_2),
@@ -126,19 +98,19 @@ namespace dnSpy.Shared.Hex {
 
 		public LocalSettingsVM(LocalHexSettings options) {
 			this.origOptions = options;
-			this.bytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
-			this.bytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated(), true) {
+			this.BytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
+			this.BytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated(), true) {
 				Min = 0,
 				Max = HexEditorSettings.MAX_BYTES_PER_LINE,
 			};
-			this.hexOffsetSizeVM = new Int32VM(a => HasErrorUpdated(), true) {
+			this.HexOffsetSizeVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 0,
 				Max = 64,
 			};
-			this.baseOffsetVM = new UInt64VM(a => HasErrorUpdated());
-			this.startOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
-			this.endOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
-			this.asciiEncodingVM = new EnumListVM(asciiEncodingList);
+			this.BaseOffsetVM = new UInt64VM(a => HasErrorUpdated());
+			this.StartOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
+			this.EndOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
+			this.AsciiEncodingVM = new EnumListVM(asciiEncodingList);
 
 			Reinitialize();
 		}
@@ -172,13 +144,8 @@ namespace dnSpy.Shared.Hex {
 			EndOffsetVM.Value = null;
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
-
-		public LocalHexSettings CreateLocalHexSettings() {
-			return CopyTo(new LocalHexSettings());
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
+		public LocalHexSettings CreateLocalHexSettings() => CopyTo(new LocalHexSettings());
 
 		void InitializeFrom(LocalHexSettings options) {
 			BytesGroupCountVM.Value = options.BytesGroupCount;
@@ -213,10 +180,10 @@ namespace dnSpy.Shared.Hex {
 		public override bool HasError {
 			get {
 				return
-					bytesGroupCountVM.HasError ||
-					bytesPerLineVM.HasError ||
-					hexOffsetSizeVM.HasError ||
-					baseOffsetVM.HasError ||
+					BytesGroupCountVM.HasError ||
+					BytesPerLineVM.HasError ||
+					HexOffsetSizeVM.HasError ||
+					BaseOffsetVM.HasError ||
 					StartOffsetVM.HasError ||
 					EndOffsetVM.HasError;
 			}

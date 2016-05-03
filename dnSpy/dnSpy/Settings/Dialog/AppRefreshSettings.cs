@@ -29,9 +29,7 @@ namespace dnSpy.Settings.Dialog {
 			dict[guid] = value;
 		}
 
-		public bool Has(Guid guid) {
-			return dict.ContainsKey(guid);
-		}
+		public bool Has(Guid guid) => dict.ContainsKey(guid);
 
 		public object GetValue(Guid guid) {
 			object value;

@@ -38,7 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public EventFiredByNode(EventDef analyzedEvent) {
 			if (analyzedEvent == null)
-				throw new ArgumentNullException("analyzedEvent");
+				throw new ArgumentNullException(nameof(analyzedEvent));
 
 			this.analyzedEvent = analyzedEvent;
 
@@ -48,9 +48,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
 			output.Write(dnSpy_Analyzer_Resources.RaisedByTreeNode, BoxedTextTokenKind.Text);
-		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
@@ -101,9 +100,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) {
-			return !foundMethods.TryAdd(method, 0);
-		}
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
 
 		// HACK: we should probably examine add/remove methods to determine this
 		static FieldDef GetBackingField(EventDef ev) {
@@ -123,8 +120,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 
-		public static bool CanShow(EventDef ev) {
-			return GetBackingField(ev) != null;
-		}
+		public static bool CanShow(EventDef ev) => GetBackingField(ev) != null;
 	}
 }

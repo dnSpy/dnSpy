@@ -67,19 +67,12 @@ using ICSharpCode.AvalonEdit.Rendering;
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed partial class TextEditorControl : UserControl, IDisposable {
 		readonly ITextEditorHelper textEditorHelper;
-
-		public DnSpyTextEditor TextEditor {
-			get { return textEditor; }
-		}
-		readonly DnSpyTextEditor textEditor;
-
 		readonly CachedColorsList cachedColorsList;
 		readonly IThemeManager themeManager;
 		readonly IconBarMargin iconBarMargin;
 
-		public IEnumerable<object> AllReferences {
-			get { return references.Select(a => a.Reference); }
-		}
+		public DnSpyTextEditor TextEditor { get; }
+		public IEnumerable<object> AllReferences => references.Select(a => a.Reference);
 
 		DefinitionLookup definitionLookup;
 		TextSegmentCollection<ReferenceSegment> references;
@@ -106,9 +99,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
+			TextEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 			cachedColorsList = new CachedColorsList();
-			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
+			TextEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;
@@ -119,7 +112,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
 			TextEditor.TextArea.TextView.ElementGenerators.Insert(0, referenceElementGenerator);
 			this.uiElementGenerator = new UIElementGenerator();
-			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
+			TextEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 
 			iconBarMargin = new IconBarMargin(uiContext, textLineObjectManager, imageManager, themeManager);
 			iconBarCommandManager.Initialize(iconBarMargin);
@@ -160,12 +153,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			base.OnPreviewKeyDown(e);
 		}
 
-		public Button CancelButton {
-			get {
-				var wa = this.waitAdorner.Content as WaitAdorner;
-				return wa == null ? null : wa.button;
-			}
-		}
+		public Button CancelButton => (this.waitAdorner.Content as WaitAdorner)?.button;
 
 		public void ShowCancelButton(Action onCancel, string msg) {
 			var wa = new WaitAdorner(onCancel, msg);
@@ -193,7 +181,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			// version of the .NET Framework is used. I could reproduce it with .NET 4 + VMWare + XP.
 			// Also frees the hard ref to the onCancel() delegate.
 			this.waitAdorner.Content = null;
-			if (wa != null && wa.IsKeyboardFocusWithin)
+			if (wa?.IsKeyboardFocusWithin == true)
 				this.textEditorHelper.SetFocus();
 		}
 
@@ -251,7 +239,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void ClearCustomElementGenerators() {
 			foreach (var elementGenerator in activeCustomElementGenerators)
-				textEditor.TextArea.TextView.ElementGenerators.Remove(elementGenerator);
+				TextEditor.TextArea.TextView.ElementGenerators.Remove(elementGenerator);
 			activeCustomElementGenerators.Clear();
 		}
 
@@ -266,11 +254,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				this.contentType = contentType;
 			}
 
-			public bool Equals(LastOutput other) {
-				return output == other.output &&
-					highlighting == other.highlighting &&
-					contentType == other.contentType;
-			}
+			public bool Equals(LastOutput other) => output == other.output &&
+	highlighting == other.highlighting &&
+	contentType == other.contentType;
 
 			public override bool Equals(object obj) {
 				if (obj is LastOutput)
@@ -278,16 +264,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return false;
 			}
 
-			public override int GetHashCode() {
-				return (output == null ? 0 : output.GetHashCode()) ^
-					(highlighting == null ? 0 : highlighting.GetHashCode()) ^
-					(contentType == null ? 0 : contentType.GetHashCode());
-			}
+			public override int GetHashCode() => (output?.GetHashCode() ?? 0) ^
+	(highlighting?.GetHashCode() ?? 0) ^
+	(contentType?.GetHashCode() ?? 0);
 		}
 
-		public void OnUseNewRendererChanged() {
-			lastOutput = new LastOutput();
-		}
+		public void OnUseNewRendererChanged() => lastOutput = new LastOutput();
 
 		LastOutput lastOutput;
 		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
@@ -338,7 +320,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			cachedColors.Finish();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedColors);
-			textEditor.TextBuffer.RecreateColorizers();
+			TextEditor.TextBuffer.RecreateColorizers();
 		}
 
 		public void Clear() {
@@ -352,9 +334,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			lastOutput = new LastOutput();
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			iconBarMargin.InvalidateVisual();
-		}
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => iconBarMargin.InvalidateVisual();
 
 		void Caret_PositionChanged(object sender, EventArgs e) {
 			toolTipHelper.Close();
@@ -375,19 +355,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return null;
 			int offset = te.TextArea.TextView.Document.GetOffset(pos.Value.Location);
 			var seg = GetReferenceSegmentAt(offset);
-			return seg == null ? null : seg.Reference;
+			return seg?.Reference;
 		}
 
 		public ReferenceSegment GetReferenceSegmentAt(TextViewPosition? position) {
 			if (position == null)
 				return null;
-			int offset = textEditor.TextArea.TextView.Document.GetOffset(position.Value.Location);
+			int offset = TextEditor.TextArea.TextView.Document.GetOffset(position.Value.Location);
 			return GetReferenceSegmentAt(offset);
 		}
 
-		public ReferenceSegment GetCurrentReferenceSegment() {
-			return GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
-		}
+		public ReferenceSegment GetCurrentReferenceSegment() => GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
 
 		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
 			if (TextEditor.SelectionLength <= 0)
@@ -432,9 +410,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return segs.Length == 0 ? null : segs[0];
 		}
 
-		void FollowReference() {
-			GoToTarget(GetCurrentReferenceSegment(), true, true);
-		}
+		void FollowReference() => GoToTarget(GetCurrentReferenceSegment(), true, true);
 
 		void FollowReferenceNewTab() {
 			if (textEditorHelper == null)
@@ -725,7 +701,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (!textEditorSettings.AutoHighlightRefs)
 				ClearMarkedReferences();
 			else {
-				int offset = textEditor.TextArea.Caret.Offset;
+				int offset = TextEditor.TextArea.Caret.Offset;
 				var refSeg = GetReferenceSegmentAt(offset);
 				if (refSeg != null)
 					MarkReferences(refSeg);
@@ -740,12 +716,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
 			textMarkerService.Dispose();
-			textEditor.Dispose();
+			TextEditor.Dispose();
 		}
 
-		public object SaveReferencePosition(ICodeMappings cms) {
-			return GetRefPos(cms);
-		}
+		public object SaveReferencePosition(ICodeMappings cms) => GetRefPos(cms);
 
 		public bool RestoreReferencePosition(ICodeMappings cms, object obj) {
 			var refPos = obj as RefPos;
@@ -768,12 +742,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		RefPos GetRefPos(ICodeMappings cms) {
-			var mappings = cms.Find(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column).ToList();
+			var mappings = cms.Find(TextEditor.TextArea.Caret.Line, TextEditor.TextArea.Caret.Column).ToList();
 			mappings.Sort(Sort);
 			var mapping = mappings.Count == 0 ? null : mappings[0];
 
-			var doc = textEditor.TextArea.TextView.Document;
-			int offset = doc == null ? 0 : doc.GetOffset(textEditor.TextArea.Caret.Line, 0);
+			var doc = TextEditor.TextArea.TextView.Document;
+			int offset = doc == null ? 0 : doc.GetOffset(TextEditor.TextArea.Caret.Line, 0);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 			while (refSeg != null) {
 				if (refSeg.Reference is IMemberDef && refSeg.IsLocalTarget && !refSeg.IsLocal)
@@ -796,9 +770,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return null;
 		}
 
-		static int Sort(SourceCodeMapping a, SourceCodeMapping b) {
-			return a.StartPosition.CompareTo(b.StartPosition);
-		}
+		static int Sort(SourceCodeMapping a, SourceCodeMapping b) => a.StartPosition.CompareTo(b.StartPosition);
 
 		bool GoTo(ICodeMappings cms, RefPos pos) {
 			if (pos == null)

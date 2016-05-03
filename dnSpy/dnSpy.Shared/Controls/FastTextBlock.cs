@@ -76,9 +76,7 @@ namespace dnSpy.Shared.Controls {
 			BackgroundProperty = TextElement.BackgroundProperty.AddOwner(typeof(FastTextBlock));
 		}
 
-		static int H(object obj) {
-			return obj == null ? 0 : obj.GetHashCode();
-		}
+		static int H(object obj) => obj == null ? 0 : obj.GetHashCode();
 
 		int CacheHash() {
 			int hash = 17;
@@ -115,37 +113,14 @@ namespace dnSpy.Shared.Controls {
 				this.tb = tb;
 			}
 
-			public override Brush BackgroundBrush {
-				get { return (Brush)tb.GetValue(BackgroundProperty); }
-			}
-
-			public override CultureInfo CultureInfo {
-				get { return CultureInfo.CurrentUICulture; }
-			}
-
-			public override double FontHintingEmSize {
-				get { return 12; }
-			}
-
-			public override double FontRenderingEmSize {
-				get { return (double)tb.GetValue(FontSizeProperty); }
-			}
-
-			public override Brush ForegroundBrush {
-				get { return (Brush)tb.GetValue(ForegroundProperty); }
-			}
-
-			public override TextDecorationCollection TextDecorations {
-				get { return null; }
-			}
-
-			public override TextEffectCollection TextEffects {
-				get { return null; }
-			}
-
-			public override Typeface Typeface {
-				get { return tb.GetTypeface(); }
-			}
+			public override Brush BackgroundBrush => (Brush)tb.GetValue(BackgroundProperty);
+			public override CultureInfo CultureInfo => CultureInfo.CurrentUICulture;
+			public override double FontHintingEmSize => 12;
+			public override double FontRenderingEmSize => (double)tb.GetValue(FontSizeProperty);
+			public override Brush ForegroundBrush => (Brush)tb.GetValue(ForegroundProperty);
+			public override TextDecorationCollection TextDecorations => null;
+			public override TextEffectCollection TextEffects => null;
+			public override Typeface Typeface => tb.GetTypeface();
 		}
 
 		class TextSrc : TextSource, IFastTextSource {
@@ -173,9 +148,7 @@ namespace dnSpy.Shared.Controls {
 				props = new TextProps(ftb);
 			}
 
-			public TextSource Source {
-				get { return this; }
-			}
+			public TextSource Source => this;
 		}
 
 		internal sealed class ParaProps : TextParagraphProperties {
@@ -187,37 +160,14 @@ namespace dnSpy.Shared.Controls {
 				props = new TextProps(tb);
 			}
 
-			public override TextRunProperties DefaultTextRunProperties {
-				get { return props; }
-			}
-
-			public override bool FirstLineInParagraph {
-				get { return false; }
-			}
-
-			public override FlowDirection FlowDirection {
-				get { return tb.FlowDirection; }
-			}
-
-			public override double Indent {
-				get { return 0; }
-			}
-
-			public override double LineHeight {
-				get { return 0; }
-			}
-
-			public override TextAlignment TextAlignment {
-				get { return TextAlignment.Left; }
-			}
-
-			public override TextMarkerProperties TextMarkerProperties {
-				get { return null; }
-			}
-
-			public override TextWrapping TextWrapping {
-				get { return TextWrapping.NoWrap; }
-			}
+			public override TextRunProperties DefaultTextRunProperties => props;
+			public override bool FirstLineInParagraph => false;
+			public override FlowDirection FlowDirection => tb.FlowDirection;
+			public override double Indent => 0;
+			public override double LineHeight => 0;
+			public override TextAlignment TextAlignment => TextAlignment.Left;
+			public override TextMarkerProperties TextMarkerProperties => null;
+			public override TextWrapping TextWrapping => TextWrapping.NoWrap;
 		}
 
 

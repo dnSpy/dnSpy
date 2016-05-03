@@ -24,61 +24,30 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessVM : ViewModelBase {
-		public string Filename {
-			get { return Path.GetFileName(fullPath); }
-		}
-
-		public object FullPathObject { get { return this; } }
-		public object FilenameObject { get { return this; } }
-		public object PIDObject { get { return this; } }
-		public object CLRVersionObject { get { return this; } }
-		public object MachineObject { get { return this; } }
-		public object TitleObject { get { return this; } }
-		public object TypeObject { get { return this; } }
-
-		public string FullPath {
-			get { return fullPath; }
-		}
-		readonly string fullPath;
-
-		public int PID {
-			get { return pid; }
-		}
-		readonly int pid;
-
-		public string Title {
-			get { return title; }
-		}
-		readonly string title;
-
-		public Machine Machine {
-			get { return machine; }
-		}
-		readonly Machine machine;
-
-		public string CLRVersion {
-			get { return clrVersion; }
-		}
-		readonly string clrVersion;
-
-		public CLRTypeAttachInfo CLRTypeInfo {
-			get { return type; }
-		}
-		readonly CLRTypeAttachInfo type;
-
-		public IProcessContext Context {
-			get { return context; }
-		}
-		readonly IProcessContext context;
+		public string Filename => Path.GetFileName(FullPath);
+		public object FullPathObject => this;
+		public object FilenameObject => this;
+		public object PIDObject => this;
+		public object CLRVersionObject => this;
+		public object MachineObject => this;
+		public object TitleObject => this;
+		public object TypeObject => this;
+		public string FullPath { get; }
+		public int PID { get; }
+		public string Title { get; }
+		public Machine Machine { get; }
+		public string CLRVersion { get; }
+		public CLRTypeAttachInfo CLRTypeInfo { get; }
+		public IProcessContext Context { get; }
 
 		public ProcessVM(int pid, string title, Machine machine, CLRTypeAttachInfo type, string fullPath, IProcessContext context) {
-			this.fullPath = fullPath;
-			this.pid = pid;
-			this.title = title;
-			this.machine = machine;
-			this.clrVersion = type.Version;
-			this.type = type;
-			this.context = context;
+			this.FullPath = fullPath;
+			this.PID = pid;
+			this.Title = title;
+			this.Machine = machine;
+			this.CLRVersion = type.Version;
+			this.CLRTypeInfo = type;
+			this.Context = context;
 		}
 	}
 }

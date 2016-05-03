@@ -23,9 +23,9 @@ using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Files.Tabs {
 	sealed class AsyncShowResult : IAsyncShowResult {
-		public Exception Exception { get; set; }
-		public bool IsCanceled { get; set; }
-		public bool CanShowOutput { get; set; }
+		public Exception Exception { get; }
+		public bool IsCanceled { get; }
+		public bool CanShowOutput { get; }
 
 		public AsyncShowResult() {
 			this.CanShowOutput = true;

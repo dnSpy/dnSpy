@@ -41,8 +41,7 @@ namespace dnSpy.Shared.Hex {
 	class HexEditorSettings : ViewModelBase, IHexEditorSettings {
 		public static readonly int MAX_BYTES_PER_LINE = 128;
 
-		protected virtual void OnModified() {
-		}
+		protected virtual void OnModified() { }
 
 		public int BytesGroupCount {
 			get { return bytesGroupCount; }
@@ -140,9 +139,7 @@ namespace dnSpy.Shared.Hex {
 		}
 		AsciiEncoding asciiEncoding = AsciiEncoding.UTF8;
 
-		public HexEditorSettings Clone() {
-			return CopyTo(new HexEditorSettings());
-		}
+		public HexEditorSettings Clone() => CopyTo(new HexEditorSettings());
 
 		public HexEditorSettings CopyTo(HexEditorSettings other) {
 			other.BytesGroupCount = this.BytesGroupCount;

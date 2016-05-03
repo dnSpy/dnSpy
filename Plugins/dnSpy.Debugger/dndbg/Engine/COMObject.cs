@@ -22,9 +22,7 @@ using System.Diagnostics;
 
 namespace dndbg.Engine {
 	public abstract class COMObject<T> : IEquatable<COMObject<T>> where T : class {
-		public T RawObject {
-			get { return obj; }
-		}
+		public T RawObject => obj;
 		protected readonly T obj;
 
 		protected COMObject(T obj) {
@@ -42,21 +40,9 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(COMObject<T> a, COMObject<T> b) {
-			return !(a == b);
-		}
-
-		public bool Equals(COMObject<T> other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as COMObject<T>);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(COMObject<T> a, COMObject<T> b) => !(a == b);
+		public bool Equals(COMObject<T> other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as COMObject<T>);
+		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

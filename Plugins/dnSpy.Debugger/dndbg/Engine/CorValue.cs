@@ -29,113 +29,80 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugGenericValue"/>
 		/// </summary>
-		public bool IsGeneric {
-			get { return obj is ICorDebugGenericValue; }
-		}
+		public bool IsGeneric => obj is ICorDebugGenericValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugReferenceValue"/>
 		/// </summary>
-		public bool IsReference {
-			get { return obj is ICorDebugReferenceValue; }
-		}
+		public bool IsReference => obj is ICorDebugReferenceValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugHandleValue"/>
 		/// </summary>
-		public bool IsHandle {
-			get { return obj is ICorDebugHandleValue; }
-		}
+		public bool IsHandle => obj is ICorDebugHandleValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugHeapValue"/>, <see cref="ICorDebugArrayValue"/>,
 		/// <see cref="ICorDebugBoxValue"/> or <see cref="ICorDebugStringValue"/>
 		/// </summary>
-		public bool IsHeap {
-			get { return obj is ICorDebugHeapValue; }
-		}
+		public bool IsHeap => obj is ICorDebugHeapValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugArrayValue"/>
 		/// </summary>
-		public bool IsArray {
-			get { return obj is ICorDebugArrayValue; }
-		}
+		public bool IsArray => obj is ICorDebugArrayValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugBoxValue"/>
 		/// </summary>
-		public bool IsBox {
-			get { return obj is ICorDebugBoxValue; }
-		}
+		public bool IsBox => obj is ICorDebugBoxValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugStringValue"/>
 		/// </summary>
-		public bool IsString {
-			get { return obj is ICorDebugStringValue; }
-		}
+		public bool IsString => obj is ICorDebugStringValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugObjectValue"/>
 		/// </summary>
-		public bool IsObject {
-			get { return obj is ICorDebugObjectValue; }
-		}
+		public bool IsObject => obj is ICorDebugObjectValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugContext"/>
 		/// </summary>
-		public bool IsContext {
-			get { return obj is ICorDebugContext; }
-		}
+		public bool IsContext => obj is ICorDebugContext;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugComObjectValue"/>, ie., an RCW (Runtime Callable Wrapper)
 		/// </summary>
-		public bool IsComObject {
-			get { return obj is ICorDebugComObjectValue; }
-		}
+		public bool IsComObject => obj is ICorDebugComObjectValue;
 
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugExceptionObjectValue"/>
 		/// </summary>
-		public bool IsExceptionObject {
-			get { return obj is ICorDebugExceptionObjectValue; }
-		}
+		public bool IsExceptionObject => obj is ICorDebugExceptionObjectValue;
 
 		/// <summary>
 		/// Gets the element type of this value
 		/// </summary>
-		public CorElementType Type {
-			get { return elemType; }
-		}
+		public CorElementType ElementType => elemType;
 		readonly CorElementType elemType;
 
 		/// <summary>
-		/// Returns the enum underlying type if it's an enum, else <see cref="Type"/> is returned
+		/// Returns the enum underlying type if it's an enum, else <see cref="ElementType"/> is returned
 		/// </summary>
-		public CorElementType TypeOrEnumUnderlyingType {
-			get {
-				var et = ExactType;
-				return et == null ? Type : et.TypeOrEnumUnderlyingType;
-			}
-		}
+		public CorElementType TypeOrEnumUnderlyingType => ExactType?.TypeOrEnumUnderlyingType ?? ElementType;
 
 		/// <summary>
 		/// Gets the size of the value
 		/// </summary>
-		public ulong Size {
-			get { return size; }
-		}
+		public ulong Size => size;
 		readonly ulong size;
 
 		/// <summary>
 		/// Gets the address of the value or 0 if it's not available, eg. it could be in a register
 		/// </summary>
-		public ulong Address {
-			get { return address; }
-		}
+		public ulong Address => address;
 		readonly ulong address;
 
 		/// <summary>
@@ -444,9 +411,7 @@ namespace dndbg.Engine {
 		/// Gets the value. Only values of simple types are currently returned: boolean, integers,
 		/// floating points, decimal, string and null.
 		/// </summary>
-		public CorValueResult Value {
-			get { return CorValueReader.ReadSimpleTypeValue(this); }
-		}
+		public CorValueResult Value => CorValueReader.ReadSimpleTypeValue(this);
 
 		/// <summary>
 		/// true if the value has been neutered, eg. because Continue() was called
@@ -532,9 +497,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="index">Index of element</param>
 		/// <returns></returns>
-		public CorValue GetElementAtPosition(int index) {
-			return GetElementAtPosition((uint)index);
-		}
+		public CorValue GetElementAtPosition(int index) => GetElementAtPosition((uint)index);
 
 		/// <summary>
 		/// Gets the value at the specified indices or null
@@ -621,7 +584,7 @@ namespace dndbg.Engine {
 			var info = type.GetFields(checkBaseClasses).FirstOrDefault(a => a.Name == name);
 			if (info == null)
 				return null;
-			return self.GetFieldValue(info.OwnerType == null ? null : info.OwnerType.Class, info.Token);
+			return self.GetFieldValue(info.OwnerType?.Class, info.Token);
 		}
 
 		/// <summary>
@@ -733,22 +696,10 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(CorValue a, CorValue b) {
-			return !(a == b);
-		}
-
-		public bool Equals(CorValue other) {
-			return !ReferenceEquals(other, null) &&
-				RawObject == other.RawObject;
-		}
-
-		public override bool Equals(object obj) {
-			return Equals(obj as CorValue);
-		}
-
-		public override int GetHashCode() {
-			return RawObject.GetHashCode();
-		}
+		public static bool operator !=(CorValue a, CorValue b) => !(a == b);
+		public bool Equals(CorValue other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
+		public override bool Equals(object obj) => Equals(obj as CorValue);
+		public override int GetHashCode() => RawObject.GetHashCode();
 
 		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
 			new TypePrinter(output, flags, getEval).Write(this);
@@ -770,16 +721,8 @@ namespace dndbg.Engine {
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags, Func<DnEval> getEval = null) {
-			return Write(new StringBuilderTypeOutput(), flags, getEval).ToString();
-		}
-
-		public string ToString(Func<DnEval> getEval) {
-			return ToString(TypePrinterFlags.Default, getEval);
-		}
-
-		public override string ToString() {
-			return ToString(TypePrinterFlags.Default);
-		}
+		public string ToString(TypePrinterFlags flags, Func<DnEval> getEval = null) => Write(new StringBuilderTypeOutput(), flags, getEval).ToString();
+		public string ToString(Func<DnEval> getEval) => ToString(TypePrinterFlags.Default, getEval);
+		public override string ToString() => ToString(TypePrinterFlags.Default);
 	}
 }

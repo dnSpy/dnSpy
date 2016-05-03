@@ -72,8 +72,7 @@ namespace dnSpy.Output {
 			this.outputContent = outputContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
-		}
+		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
 	}
 
 	[ExportAutoLoaded]
