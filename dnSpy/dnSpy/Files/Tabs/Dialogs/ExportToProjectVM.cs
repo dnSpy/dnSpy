@@ -82,13 +82,11 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		bool createSolution;
 
 		public ProjectVersion ProjectVersion {
-			get { return (ProjectVersion)projectVersionVM.SelectedItem; }
-			set { projectVersionVM.SelectedItem = value; }
+			get { return (ProjectVersion)ProjectVersionVM.SelectedItem; }
+			set { ProjectVersionVM.SelectedItem = value; }
 		}
 
-		public EnumListVM ProjectVersionVM => projectVersionVM;
-		readonly EnumListVM projectVersionVM = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
-
+		public EnumListVM ProjectVersionVM { get; } = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
 		public IEnumerable<ILanguage> AllLanguages => languageManager.AllLanguages.Where(a => a.ProjectFileExtension != null);
 		readonly ILanguageManager languageManager;
 
@@ -103,8 +101,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 		ILanguage language;
 
-		public NullableGuidVM ProjectGuid => projectGuidVM;
-		readonly NullableGuidVM projectGuidVM;
+		public NullableGuidVM ProjectGuid { get; }
 
 		public bool DontReferenceStdLib {
 			get { return dontReferenceStdLib; }
@@ -254,10 +251,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.createResX = true;
 			this.decompileXaml = canDecompileBaml;
 			this.createSolution = true;
-			this.projectVersionVM.SelectedItem = ProjectVersion.VS2010;
+			this.ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
 			this.language = languageManager.AllLanguages.FirstOrDefault(a => a.ProjectFileExtension != null);
 			this.isIndeterminate = false;
-			this.projectGuidVM = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
+			this.ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}
 
 		bool CanPickDestDir => true;
@@ -340,6 +337,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		public override bool HasError =>
 			!string.IsNullOrEmpty(Verify(nameof(Directory))) ||
 			!string.IsNullOrEmpty(Verify(nameof(SolutionFilename))) ||
-			projectGuidVM.HasError;
+			ProjectGuid.HasError;
 	}
 }
