@@ -64,7 +64,7 @@ namespace dnSpy.Shared.Controls {
 
 		static FastTextBlock() {
 			TextProperty =
-				DependencyProperty.Register("Text", typeof(string), typeof(FastTextBlock),
+				DependencyProperty.Register(nameof(Text), typeof(string), typeof(FastTextBlock),
 					new FrameworkPropertyMetadata("",
 						FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 			FontFamilyProperty = TextElement.FontFamilyProperty.AddOwner(typeof(FastTextBlock));

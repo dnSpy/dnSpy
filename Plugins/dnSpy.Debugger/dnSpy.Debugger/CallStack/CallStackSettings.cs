@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showModuleNames != value) {
 					showModuleNames = value;
-					OnPropertyChanged("ShowModuleNames");
+					OnPropertyChanged(nameof(ShowModuleNames));
 					OnModified();
 				}
 			}
@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showParameterTypes != value) {
 					showParameterTypes = value;
-					OnPropertyChanged("ShowParameterTypes");
+					OnPropertyChanged(nameof(ShowParameterTypes));
 					OnModified();
 				}
 			}
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showParameterNames != value) {
 					showParameterNames = value;
-					OnPropertyChanged("ShowParameterNames");
+					OnPropertyChanged(nameof(ShowParameterNames));
 					OnModified();
 				}
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showParameterValues != value) {
 					showParameterValues = value;
-					OnPropertyChanged("ShowParameterValues");
+					OnPropertyChanged(nameof(ShowParameterValues));
 					OnModified();
 				}
 			}
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showIP != value) {
 					showIP = value;
-					OnPropertyChanged("ShowIP");
+					OnPropertyChanged(nameof(ShowIP));
 					OnModified();
 				}
 			}
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showOwnerTypes != value) {
 					showOwnerTypes = value;
-					OnPropertyChanged("ShowOwnerTypes");
+					OnPropertyChanged(nameof(ShowOwnerTypes));
 					OnModified();
 				}
 			}
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showNamespaces != value) {
 					showNamespaces = value;
-					OnPropertyChanged("ShowNamespaces");
+					OnPropertyChanged(nameof(ShowNamespaces));
 					OnModified();
 				}
 			}
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showTypeKeywords != value) {
 					showTypeKeywords = value;
-					OnPropertyChanged("ShowTypeKeywords");
+					OnPropertyChanged(nameof(ShowTypeKeywords));
 					OnModified();
 				}
 			}
@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showTokens != value) {
 					showTokens = value;
-					OnPropertyChanged("ShowTokens");
+					OnPropertyChanged(nameof(ShowTokens));
 					OnModified();
 				}
 			}
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showReturnTypes != value) {
 					showReturnTypes = value;
-					OnPropertyChanged("ShowReturnTypes");
+					OnPropertyChanged(nameof(ShowReturnTypes));
 					OnModified();
 				}
 			}
@@ -173,16 +173,16 @@ namespace dnSpy.Debugger.CallStack {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			ShowModuleNames = sect.Attribute<bool?>("ShowModuleNames") ?? ShowModuleNames;
-			ShowParameterTypes = sect.Attribute<bool?>("ShowParameterTypes") ?? ShowParameterTypes;
-			ShowParameterNames = sect.Attribute<bool?>("ShowParameterNames") ?? ShowParameterNames;
-			ShowParameterValues = sect.Attribute<bool?>("ShowParameterValues") ?? ShowParameterValues;
-			ShowIP = sect.Attribute<bool?>("ShowIP") ?? ShowIP;
-			ShowOwnerTypes = sect.Attribute<bool?>("ShowOwnerTypes") ?? ShowOwnerTypes;
-			ShowNamespaces = sect.Attribute<bool?>("ShowNamespaces") ?? ShowNamespaces;
-			ShowTypeKeywords = sect.Attribute<bool?>("ShowTypeKeywords") ?? ShowTypeKeywords;
-			ShowTokens = sect.Attribute<bool?>("ShowTokens") ?? ShowTokens;
-			ShowReturnTypes = sect.Attribute<bool?>("ShowReturnTypes") ?? ShowReturnTypes;
+			ShowModuleNames = sect.Attribute<bool?>(nameof(ShowModuleNames)) ?? ShowModuleNames;
+			ShowParameterTypes = sect.Attribute<bool?>(nameof(ShowParameterTypes)) ?? ShowParameterTypes;
+			ShowParameterNames = sect.Attribute<bool?>(nameof(ShowParameterNames)) ?? ShowParameterNames;
+			ShowParameterValues = sect.Attribute<bool?>(nameof(ShowParameterValues)) ?? ShowParameterValues;
+			ShowIP = sect.Attribute<bool?>(nameof(ShowIP)) ?? ShowIP;
+			ShowOwnerTypes = sect.Attribute<bool?>(nameof(ShowOwnerTypes)) ?? ShowOwnerTypes;
+			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
+			ShowTypeKeywords = sect.Attribute<bool?>(nameof(ShowTypeKeywords)) ?? ShowTypeKeywords;
+			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
+			ShowReturnTypes = sect.Attribute<bool?>(nameof(ShowReturnTypes)) ?? ShowReturnTypes;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -191,16 +191,16 @@ namespace dnSpy.Debugger.CallStack {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("ShowModuleNames", ShowModuleNames);
-			sect.Attribute("ShowParameterTypes", ShowParameterTypes);
-			sect.Attribute("ShowParameterNames", ShowParameterNames);
-			sect.Attribute("ShowParameterValues", ShowParameterValues);
-			sect.Attribute("ShowIP", ShowIP);
-			sect.Attribute("ShowOwnerTypes", ShowOwnerTypes);
-			sect.Attribute("ShowNamespaces", ShowNamespaces);
-			sect.Attribute("ShowTypeKeywords", ShowTypeKeywords);
-			sect.Attribute("ShowTokens", ShowTokens);
-			sect.Attribute("ShowReturnTypes", ShowReturnTypes);
+			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);
+			sect.Attribute(nameof(ShowParameterTypes), ShowParameterTypes);
+			sect.Attribute(nameof(ShowParameterNames), ShowParameterNames);
+			sect.Attribute(nameof(ShowParameterValues), ShowParameterValues);
+			sect.Attribute(nameof(ShowIP), ShowIP);
+			sect.Attribute(nameof(ShowOwnerTypes), ShowOwnerTypes);
+			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
+			sect.Attribute(nameof(ShowTypeKeywords), ShowTypeKeywords);
+			sect.Attribute(nameof(ShowTokens), ShowTokens);
+			sect.Attribute(nameof(ShowReturnTypes), ShowReturnTypes);
 		}
 	}
 }

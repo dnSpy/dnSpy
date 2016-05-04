@@ -33,7 +33,7 @@ namespace dnSpy.Files.TreeView {
 			set {
 				if (syntaxHighlightFileTreeView != value) {
 					syntaxHighlightFileTreeView = value;
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -45,7 +45,7 @@ namespace dnSpy.Files.TreeView {
 			set {
 				if (singleClickExpandsTreeViewChildren != value) {
 					singleClickExpandsTreeViewChildren = value;
-					OnPropertyChanged("SingleClickExpandsTreeViewChildren");
+					OnPropertyChanged(nameof(SingleClickExpandsTreeViewChildren));
 					OnModified();
 				}
 			}
@@ -57,7 +57,7 @@ namespace dnSpy.Files.TreeView {
 			set {
 				if (showAssemblyVersion != value) {
 					showAssemblyVersion = value;
-					OnPropertyChanged("ShowAssemblyVersion");
+					OnPropertyChanged(nameof(ShowAssemblyVersion));
 					OnModified();
 				}
 			}
@@ -69,7 +69,7 @@ namespace dnSpy.Files.TreeView {
 			set {
 				if (showAssemblyPublicKeyToken != value) {
 					showAssemblyPublicKeyToken = value;
-					OnPropertyChanged("ShowAssemblyPublicKeyToken");
+					OnPropertyChanged(nameof(ShowAssemblyPublicKeyToken));
 					OnModified();
 				}
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.Files.TreeView {
 			set {
 				if (showToken != value) {
 					showToken = value;
-					OnPropertyChanged("ShowToken");
+					OnPropertyChanged(nameof(ShowToken));
 					OnModified();
 				}
 			}
@@ -93,7 +93,7 @@ namespace dnSpy.Files.TreeView {
 			set {
 				if (deserializeResources != value) {
 					deserializeResources = value;
-					OnPropertyChanged("DeserializeResources");
+					OnPropertyChanged(nameof(DeserializeResources));
 					OnModified();
 				}
 			}
@@ -143,11 +143,12 @@ namespace dnSpy.Files.TreeView {
 				memberKinds[otherIndex] = memberKinds[index];
 				memberKinds[index] = newValue;
 
-				OnPropertyChanged(string.Format("MemberKind{0}", otherIndex));
+				OnPropertyChanged(string.Format(MemberKind_format, otherIndex));
 			}
-			OnPropertyChanged(string.Format("MemberKind{0}", index));
+			OnPropertyChanged(string.Format(MemberKind_format, index));
 			OnModified();
 		}
+		static string MemberKind_format = nameof(MemberKind0).Substring(0, nameof(MemberKind0).Length - 1) + "{0}";
 
 		public FileTreeViewSettings Clone() => CopyTo(new FileTreeViewSettings());
 
@@ -179,17 +180,17 @@ namespace dnSpy.Files.TreeView {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
-			this.SingleClickExpandsTreeViewChildren = sect.Attribute<bool?>("SingleClickExpandsTreeViewChildren") ?? this.SingleClickExpandsTreeViewChildren;
-			this.ShowAssemblyVersion = sect.Attribute<bool?>("ShowAssemblyVersion") ?? this.ShowAssemblyVersion;
-			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>("ShowAssemblyPublicKeyToken") ?? this.ShowAssemblyPublicKeyToken;
-			this.ShowToken = sect.Attribute<bool?>("ShowToken") ?? this.ShowToken;
-			this.DeserializeResources = sect.Attribute<bool?>("DeserializeResources") ?? this.DeserializeResources;
-			this.MemberKind0 = sect.Attribute<MemberKind?>("MemberKind0") ?? this.MemberKind0;
-			this.MemberKind1 = sect.Attribute<MemberKind?>("MemberKind1") ?? this.MemberKind1;
-			this.MemberKind2 = sect.Attribute<MemberKind?>("MemberKind2") ?? this.MemberKind2;
-			this.MemberKind3 = sect.Attribute<MemberKind?>("MemberKind3") ?? this.MemberKind3;
-			this.MemberKind4 = sect.Attribute<MemberKind?>("MemberKind4") ?? this.MemberKind4;
+			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
+			this.SingleClickExpandsTreeViewChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsTreeViewChildren)) ?? this.SingleClickExpandsTreeViewChildren;
+			this.ShowAssemblyVersion = sect.Attribute<bool?>(nameof(ShowAssemblyVersion)) ?? this.ShowAssemblyVersion;
+			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>(nameof(ShowAssemblyPublicKeyToken)) ?? this.ShowAssemblyPublicKeyToken;
+			this.ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? this.ShowToken;
+			this.DeserializeResources = sect.Attribute<bool?>(nameof(DeserializeResources)) ?? this.DeserializeResources;
+			this.MemberKind0 = sect.Attribute<MemberKind?>(nameof(MemberKind0)) ?? this.MemberKind0;
+			this.MemberKind1 = sect.Attribute<MemberKind?>(nameof(MemberKind1)) ?? this.MemberKind1;
+			this.MemberKind2 = sect.Attribute<MemberKind?>(nameof(MemberKind2)) ?? this.MemberKind2;
+			this.MemberKind3 = sect.Attribute<MemberKind?>(nameof(MemberKind3)) ?? this.MemberKind3;
+			this.MemberKind4 = sect.Attribute<MemberKind?>(nameof(MemberKind4)) ?? this.MemberKind4;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -198,17 +199,17 @@ namespace dnSpy.Files.TreeView {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
-			sect.Attribute("SingleClickExpandsTreeViewChildren", SingleClickExpandsTreeViewChildren);
-			sect.Attribute("ShowAssemblyVersion", ShowAssemblyVersion);
-			sect.Attribute("ShowAssemblyPublicKeyToken", ShowAssemblyPublicKeyToken);
-			sect.Attribute("ShowToken", ShowToken);
-			sect.Attribute("DeserializeResources", DeserializeResources);
-			sect.Attribute("MemberKind0", MemberKind0);
-			sect.Attribute("MemberKind1", MemberKind1);
-			sect.Attribute("MemberKind2", MemberKind2);
-			sect.Attribute("MemberKind3", MemberKind3);
-			sect.Attribute("MemberKind4", MemberKind4);
+			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
+			sect.Attribute(nameof(SingleClickExpandsTreeViewChildren), SingleClickExpandsTreeViewChildren);
+			sect.Attribute(nameof(ShowAssemblyVersion), ShowAssemblyVersion);
+			sect.Attribute(nameof(ShowAssemblyPublicKeyToken), ShowAssemblyPublicKeyToken);
+			sect.Attribute(nameof(ShowToken), ShowToken);
+			sect.Attribute(nameof(DeserializeResources), DeserializeResources);
+			sect.Attribute(nameof(MemberKind0), MemberKind0);
+			sect.Attribute(nameof(MemberKind1), MemberKind1);
+			sect.Attribute(nameof(MemberKind2), MemberKind2);
+			sect.Attribute(nameof(MemberKind3), MemberKind3);
+			sect.Attribute(nameof(MemberKind4), MemberKind4);
 		}
 	}
 }

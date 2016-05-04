@@ -337,7 +337,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				foreach (var index in infoCols) {
 					var field = hexFields[index];
 					if (HexUtils.IsModified(field.StartOffset, field.EndOffset, modifiedStart, modifiedEnd)) {
-						OnPropertyChanged("Info");
+						OnPropertyChanged(nameof(Info));
 						break;
 					}
 				}

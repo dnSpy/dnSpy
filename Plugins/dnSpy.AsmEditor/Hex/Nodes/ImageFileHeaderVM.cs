@@ -90,7 +90,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.MachineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
 			this.NumberOfSectionsVM = new UInt16HexField(doc, Name, "NumberOfSections", startOffset + 2);
 			this.TimeDateStampVM = new UInt32HexField(doc, Name, "TimeDateStamp", startOffset + 4);
-			this.TimeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged("TimeDateStampString");
+			this.TimeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged(nameof(TimeDateStampString));
 			this.PointerToSymbolTableVM = new UInt32HexField(doc, Name, "PointerToSymbolTable", startOffset + 8);
 			this.NumberOfSymbolsVM = new UInt32HexField(doc, Name, "NumberOfSymbols", startOffset + 0x0C);
 			this.SizeOfOptionalHeaderVM = new UInt16HexField(doc, Name, "SizeOfOptionalHeader", startOffset + 0x10);

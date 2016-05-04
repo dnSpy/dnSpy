@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.Module {
 			set {
 				if (!value.Equals(name, StringComparison.Ordinal)) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}

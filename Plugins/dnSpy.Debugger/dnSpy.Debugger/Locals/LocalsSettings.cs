@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Locals {
 			set {
 				if (showNamespaces != value) {
 					showNamespaces = value;
-					OnPropertyChanged("ShowNamespaces");
+					OnPropertyChanged(nameof(ShowNamespaces));
 					OnModified();
 				}
 			}
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Locals {
 			set {
 				if (showTypeKeywords != value) {
 					showTypeKeywords = value;
-					OnPropertyChanged("ShowTypeKeywords");
+					OnPropertyChanged(nameof(ShowTypeKeywords));
 					OnModified();
 				}
 			}
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Locals {
 			set {
 				if (showTokens != value) {
 					showTokens = value;
-					OnPropertyChanged("ShowTokens");
+					OnPropertyChanged(nameof(ShowTokens));
 					OnModified();
 				}
 			}
@@ -82,9 +82,9 @@ namespace dnSpy.Debugger.Locals {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			ShowNamespaces = sect.Attribute<bool?>("ShowNamespaces") ?? ShowNamespaces;
-			ShowTypeKeywords = sect.Attribute<bool?>("ShowTypeKeywords") ?? ShowTypeKeywords;
-			ShowTokens = sect.Attribute<bool?>("ShowTokens") ?? ShowTokens;
+			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
+			ShowTypeKeywords = sect.Attribute<bool?>(nameof(ShowTypeKeywords)) ?? ShowTypeKeywords;
+			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -92,10 +92,10 @@ namespace dnSpy.Debugger.Locals {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var secti = settingsManager.RecreateSection(SETTINGS_GUID);
-			secti.Attribute("ShowNamespaces", ShowNamespaces);
-			secti.Attribute("ShowTypeKeywords", ShowTypeKeywords);
-			secti.Attribute("ShowTokens", ShowTokens);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
+			sect.Attribute(nameof(ShowTypeKeywords), ShowTypeKeywords);
+			sect.Attribute(nameof(ShowTokens), ShowTokens);
 		}
 	}
 }

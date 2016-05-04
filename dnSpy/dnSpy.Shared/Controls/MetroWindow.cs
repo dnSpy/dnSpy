@@ -229,7 +229,7 @@ namespace dnSpy.Shared.Controls {
 		public event EventHandler IsFullScreenChanged;
 
 		public static readonly DependencyProperty IsFullScreenProperty =
-			DependencyProperty.Register("IsFullScreen", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(IsFullScreen), typeof(bool), typeof(MetroWindow),
 			new FrameworkPropertyMetadata(false, OnIsFullScreenChanged));
 
 		public bool IsFullScreen {
@@ -249,7 +249,7 @@ namespace dnSpy.Shared.Controls {
 		}
 
 		public static readonly DependencyProperty SystemMenuImageProperty =
-			DependencyProperty.Register("SystemMenuImage", typeof(ImageSource), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(SystemMenuImage), typeof(ImageSource), typeof(MetroWindow),
 			new FrameworkPropertyMetadata(null));
 
 		public ImageSource SystemMenuImage {
@@ -335,7 +335,7 @@ namespace dnSpy.Shared.Controls {
 		public static bool GetMaximizedElement(UIElement element) => (bool)element.GetValue(MaximizedElementProperty);
 
 		public static readonly DependencyProperty UseResizeBorderProperty =
-			DependencyProperty.Register("UseResizeBorder", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(UseResizeBorder), typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true, OnUseResizeBorderChanged));
 
 		public bool UseResizeBorder {
@@ -356,7 +356,7 @@ namespace dnSpy.Shared.Controls {
 		public static bool GetUseResizeBorder(UIElement element) => (bool)element.GetValue(UseResizeBorderProperty);
 
 		public static readonly DependencyProperty IsDebuggingProperty =
-			DependencyProperty.Register("IsDebugging", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(IsDebugging), typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 
 		public bool IsDebugging {
@@ -365,40 +365,40 @@ namespace dnSpy.Shared.Controls {
 		}
 
 		public static readonly DependencyProperty ActiveCaptionProperty =
-			DependencyProperty.Register("ActiveCaption", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ActiveCaption), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ActiveCaptionTextProperty =
-			DependencyProperty.Register("ActiveCaptionText", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ActiveCaptionText), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ActiveDebuggingBorderProperty =
-			DependencyProperty.Register("ActiveDebuggingBorder", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ActiveDebuggingBorder), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ActiveDefaultBorderProperty =
-			DependencyProperty.Register("ActiveDefaultBorder", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ActiveDefaultBorder), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty InactiveBorderProperty =
-			DependencyProperty.Register("InactiveBorder", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(InactiveBorder), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty InactiveCaptionProperty =
-			DependencyProperty.Register("InactiveCaption", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(InactiveCaption), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty InactiveCaptionTextProperty =
-			DependencyProperty.Register("InactiveCaptionText", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(InactiveCaptionText), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonInactiveBorderProperty =
-			DependencyProperty.Register("ButtonInactiveBorder", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ButtonInactiveBorder), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonInactiveGlyphProperty =
-			DependencyProperty.Register("ButtonInactiveGlyph", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ButtonInactiveGlyph), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonHoverInactiveProperty =
-			DependencyProperty.Register("ButtonHoverInactive", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ButtonHoverInactive), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonHoverInactiveBorderProperty =
-			DependencyProperty.Register("ButtonHoverInactiveBorder", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ButtonHoverInactiveBorder), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonHoverInactiveGlyphProperty =
-			DependencyProperty.Register("ButtonHoverInactiveGlyph", typeof(Brush), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ButtonHoverInactiveGlyph), typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 
 		public Brush ActiveCaption {
@@ -451,16 +451,16 @@ namespace dnSpy.Shared.Controls {
 		}
 
 		public static readonly DependencyProperty ShowMenuButtonProperty =
-			DependencyProperty.Register("ShowMenuButton", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ShowMenuButton), typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true));
 		public static readonly DependencyProperty ShowMinimizeButtonProperty =
-			DependencyProperty.Register("ShowMinimizeButton", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ShowMinimizeButton), typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true));
 		public static readonly DependencyProperty ShowMaximizeButtonProperty =
-			DependencyProperty.Register("ShowMaximizeButton", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ShowMaximizeButton), typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true));
 		public static readonly DependencyProperty ShowCloseButtonProperty =
-			DependencyProperty.Register("ShowCloseButton", typeof(bool), typeof(MetroWindow),
+			DependencyProperty.Register(nameof(ShowCloseButton), typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true));
 
 		public bool ShowMenuButton {

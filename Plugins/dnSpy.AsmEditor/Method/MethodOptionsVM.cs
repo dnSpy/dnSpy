@@ -90,14 +90,14 @@ namespace dnSpy.AsmEditor.Method {
 			set {
 				if (implAttributes != value) {
 					implAttributes = value;
-					OnPropertyChanged("ImplAttributes");
-					OnPropertyChanged("ForwardRef");
-					OnPropertyChanged("PreserveSig");
-					OnPropertyChanged("InternalCall");
-					OnPropertyChanged("Synchronized");
-					OnPropertyChanged("NoInlining");
-					OnPropertyChanged("AggressiveInlining");
-					OnPropertyChanged("NoOptimization");
+					OnPropertyChanged(nameof(ImplAttributes));
+					OnPropertyChanged(nameof(ForwardRef));
+					OnPropertyChanged(nameof(PreserveSig));
+					OnPropertyChanged(nameof(InternalCall));
+					OnPropertyChanged(nameof(Synchronized));
+					OnPropertyChanged(nameof(NoInlining));
+					OnPropertyChanged(nameof(AggressiveInlining));
+					OnPropertyChanged(nameof(NoOptimization));
 					HasErrorUpdated();
 				}
 			}
@@ -160,19 +160,19 @@ namespace dnSpy.AsmEditor.Method {
 				if (attributes != value) {
 					bool oldStatic = Static;
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("Static");
-					OnPropertyChanged("Final");
-					OnPropertyChanged("Virtual");
-					OnPropertyChanged("HideBySig");
-					OnPropertyChanged("CheckAccessOnOverride");
-					OnPropertyChanged("Abstract");
-					OnPropertyChanged("SpecialName");
-					OnPropertyChanged("PinvokeImpl");
-					OnPropertyChanged("UnmanagedExport");
-					OnPropertyChanged("RTSpecialName");
-					OnPropertyChanged("HasSecurity");
-					OnPropertyChanged("RequireSecObject");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(Static));
+					OnPropertyChanged(nameof(Final));
+					OnPropertyChanged(nameof(Virtual));
+					OnPropertyChanged(nameof(HideBySig));
+					OnPropertyChanged(nameof(CheckAccessOnOverride));
+					OnPropertyChanged(nameof(Abstract));
+					OnPropertyChanged(nameof(SpecialName));
+					OnPropertyChanged(nameof(PinvokeImpl));
+					OnPropertyChanged(nameof(UnmanagedExport));
+					OnPropertyChanged(nameof(RTSpecialName));
+					OnPropertyChanged(nameof(HasSecurity));
+					OnPropertyChanged(nameof(RequireSecObject));
 					ImplMapVM.IsEnabled = PinvokeImpl;
 					if (oldStatic != Static && MethodSigCreator.HasThis != !Static)
 						MethodSigCreator.HasThis = !Static;
@@ -256,7 +256,7 @@ namespace dnSpy.AsmEditor.Method {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -321,16 +321,16 @@ namespace dnSpy.AsmEditor.Method {
 		}
 
 		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "HasThis") {
+			if (e.PropertyName == nameof(MethodSigCreator.HasThis)) {
 				if (Static != !MethodSigCreator.HasThis)
 					Static = !MethodSigCreator.HasThis;
 			}
 			HasErrorUpdated();
-			OnPropertyChanged("MethodSigHeader");
+			OnPropertyChanged(nameof(MethodSigHeader));
 		}
 
 		void implMapVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(ImplMapVM.IsEnabled))
 				PinvokeImpl = ImplMapVM.IsEnabled;
 			HasErrorUpdated();
 		}

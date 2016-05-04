@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Memory {
 			set {
 				if (canNotEditMemory != value) {
 					canNotEditMemory = value;
-					OnPropertyChanged("CanNotEditMemory");
+					OnPropertyChanged(nameof(CanNotEditMemory));
 				}
 			}
 		}
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Memory {
 			set {
 				if (isStopped != value) {
 					isStopped = value;
-					OnPropertyChanged("IsStopped");
+					OnPropertyChanged(nameof(IsStopped));
 				}
 			}
 		}
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Memory {
 			private set {
 				if (hexDocument != value) {
 					this.hexDocument = value;
-					OnPropertyChanged("HexDocument");
+					OnPropertyChanged(nameof(HexDocument));
 				}
 			}
 		}

@@ -62,14 +62,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set {
 				if (value != saveState) {
 					saveState = value;
-					OnPropertyChanged("IsLoaded");
-					OnPropertyChanged("IsSaving");
-					OnPropertyChanged("IsCanceling");
-					OnPropertyChanged("IsSaved");
-					OnPropertyChanged("CanSave");
-					OnPropertyChanged("CanCancel");
-					OnPropertyChanged("CanClose");
-					OnPropertyChanged("IsSavingOrCanceling");
+					OnPropertyChanged(nameof(IsLoaded));
+					OnPropertyChanged(nameof(IsSaving));
+					OnPropertyChanged(nameof(IsCanceling));
+					OnPropertyChanged(nameof(IsSaved));
+					OnPropertyChanged(nameof(CanSave));
+					OnPropertyChanged(nameof(CanCancel));
+					OnPropertyChanged(nameof(CanClose));
+					OnPropertyChanged(nameof(IsSavingOrCanceling));
 					OnModuleSettingsSaved();
 
 					if (saveState == SaveState.Saved && OnSavedEvent != null)
@@ -109,9 +109,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public void OnModuleSettingsSaved() {
-			OnPropertyChanged("CanExecuteSaveError");
-			OnPropertyChanged("CanExecuteSave");
-			OnPropertyChanged("CanShowModuleErrors");
+			OnPropertyChanged(nameof(CanExecuteSaveError));
+			OnPropertyChanged(nameof(CanExecuteSave));
+			OnPropertyChanged(nameof(CanShowModuleErrors));
 		}
 
 		public bool HasError {
@@ -119,8 +119,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 			private set {
 				if (hasError != value) {
 					hasError = value;
-					OnPropertyChanged("HasError");
-					OnPropertyChanged("HasNoError");
+					OnPropertyChanged(nameof(HasError));
+					OnPropertyChanged(nameof(HasNoError));
 				}
 			}
 		}
@@ -133,7 +133,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set {
 				if (errorCount != value) {
 					errorCount = value;
-					OnPropertyChanged("ErrorCount");
+					OnPropertyChanged(nameof(ErrorCount));
 					HasError = errorCount != 0;
 				}
 			}
@@ -151,7 +151,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			private set {
 				if (totalProgress != value) {
 					totalProgress = value;
-					OnPropertyChanged("TotalProgress");
+					OnPropertyChanged(nameof(TotalProgress));
 				}
 			}
 		}
@@ -162,7 +162,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			private set {
 				if (currentFileProgress != value) {
 					currentFileProgress = value;
-					OnPropertyChanged("CurrentFileProgress");
+					OnPropertyChanged(nameof(CurrentFileProgress));
 				}
 			}
 		}
@@ -173,7 +173,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set {
 				if (currentFileName != value) {
 					currentFileName = value;
-					OnPropertyChanged("CurrentFileName");
+					OnPropertyChanged(nameof(CurrentFileName));
 				}
 			}
 		}
@@ -325,7 +325,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 						ErrorCount += errorsTmp;
 						logMessage.Append(logMsgTmp);
-						OnPropertyChanged("LogMessage");
+						OnPropertyChanged(nameof(LogMessage));
 					});
 				}
 			}

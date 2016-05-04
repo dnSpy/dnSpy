@@ -46,7 +46,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}
@@ -63,8 +63,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (searchingForDefaultLists != value) {
 					searchingForDefaultLists = value;
-					OnPropertyChanged("SearchingForDefaultLists");
-					OnPropertyChanged("NotSearchingForDefaultLists");
+					OnPropertyChanged(nameof(SearchingForDefaultLists));
+					OnPropertyChanged(nameof(NotSearchingForDefaultLists));
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (searchText != value) {
 					searchText = value;
-					OnPropertyChanged("SearchText");
+					OnPropertyChanged(nameof(SearchText));
 					Refilter();
 				}
 			}
@@ -89,7 +89,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (showSavedLists != value) {
 					showSavedLists = value;
-					OnPropertyChanged("ShowSavedLists");
+					OnPropertyChanged(nameof(ShowSavedLists));
 					Refilter();
 				}
 			}

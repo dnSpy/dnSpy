@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			set {
 				if (canShowClrVersion != value) {
 					canShowClrVersion = value;
-					OnPropertyChanged("CanShowClrVersion");
+					OnPropertyChanged(nameof(CanShowClrVersion));
 				}
 			}
 		}
@@ -86,13 +86,13 @@ namespace dnSpy.AsmEditor.Assembly {
 			set {
 				if (flags != value) {
 					flags = value;
-					OnPropertyChanged("AssemblyFullName");
-					OnPropertyChanged("Flags");
-					OnPropertyChanged("FlagsPublicKey");
-					OnPropertyChanged("PA_Specified");
-					OnPropertyChanged("Retargetable");
-					OnPropertyChanged("EnableJITcompileTracking");
-					OnPropertyChanged("DisableJITcompileOptimizer");
+					OnPropertyChanged(nameof(AssemblyFullName));
+					OnPropertyChanged(nameof(Flags));
+					OnPropertyChanged(nameof(FlagsPublicKey));
+					OnPropertyChanged(nameof(PA_Specified));
+					OnPropertyChanged(nameof(Retargetable));
+					OnPropertyChanged(nameof(EnableJITcompileTracking));
+					OnPropertyChanged(nameof(DisableJITcompileOptimizer));
 					ProcessArchitecture.SelectedItem = (AsmProcArch)((uint)(flags & AssemblyAttributes.PA_Mask) >> (int)AssemblyAttributes.PA_Shift);
 					ContentType.SelectedItem = (AsmContType)((uint)(flags & AssemblyAttributes.ContentType_Mask) >> 9);
 				}
@@ -149,8 +149,8 @@ namespace dnSpy.AsmEditor.Assembly {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
-					OnPropertyChanged("AssemblyFullName");
+					OnPropertyChanged(nameof(Name));
+					OnPropertyChanged(nameof(AssemblyFullName));
 				}
 			}
 		}
@@ -161,8 +161,8 @@ namespace dnSpy.AsmEditor.Assembly {
 			set {
 				if (culture != value) {
 					culture = value;
-					OnPropertyChanged("Culture");
-					OnPropertyChanged("AssemblyFullName");
+					OnPropertyChanged(nameof(Culture));
+					OnPropertyChanged(nameof(AssemblyFullName));
 				}
 			}
 		}
@@ -193,13 +193,13 @@ namespace dnSpy.AsmEditor.Assembly {
 		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, ILanguageManager languageManager) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
-			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
-			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
-			this.VersionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.VersionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
-			this.PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
+			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
+			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
+			this.VersionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			this.VersionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			this.VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			this.VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			this.PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
 			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, null, null);
 			Reinitialize();

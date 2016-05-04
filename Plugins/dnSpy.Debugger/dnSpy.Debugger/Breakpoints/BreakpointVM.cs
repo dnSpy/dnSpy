@@ -60,8 +60,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void Breakpoint_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled") {
-				OnPropertyChanged("IsEnabled");
+			if (e.PropertyName == nameof(Breakpoints.Breakpoint.IsEnabled)) {
+				OnPropertyChanged(nameof(IsEnabled));
 				RefreshImage();
 			}
 		}
@@ -69,13 +69,13 @@ namespace dnSpy.Debugger.Breakpoints {
 		internal void RefreshThemeFields() {
 			RefreshImage();
 			RefreshNameField();
-			OnPropertyChanged("AssemblyObject");
-			OnPropertyChanged("ModuleObject");
-			OnPropertyChanged("FileObject");
+			OnPropertyChanged(nameof(AssemblyObject));
+			OnPropertyChanged(nameof(ModuleObject));
+			OnPropertyChanged(nameof(FileObject));
 		}
 
-		internal void RefreshNameField() => OnPropertyChanged("NameObject");
-		void RefreshImage() => OnPropertyChanged("ImageObject");
+		internal void RefreshNameField() => OnPropertyChanged(nameof(NameObject));
+		void RefreshImage() => OnPropertyChanged(nameof(ImageObject));
 
 		internal void RefreshIfNameError(SerializedDnModule serMod) {
 			if (!NameError)

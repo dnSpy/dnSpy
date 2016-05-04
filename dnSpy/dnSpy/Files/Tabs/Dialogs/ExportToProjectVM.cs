@@ -50,7 +50,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (directory != value) {
 					directory = value;
-					OnPropertyChanged("Directory");
+					OnPropertyChanged(nameof(Directory));
 					HasErrorUpdated();
 				}
 			}
@@ -62,7 +62,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (solutionFilename != value) {
 					solutionFilename = value;
-					OnPropertyChanged("SolutionFilename");
+					OnPropertyChanged(nameof(SolutionFilename));
 					HasErrorUpdated();
 				}
 			}
@@ -74,7 +74,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (createSolution != value) {
 					createSolution = value;
-					OnPropertyChanged("CreateSolution");
+					OnPropertyChanged(nameof(CreateSolution));
 					HasErrorUpdated();
 				}
 			}
@@ -97,7 +97,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (language != value) {
 					language = value;
-					OnPropertyChanged("Language");
+					OnPropertyChanged(nameof(Language));
 				}
 			}
 		}
@@ -111,7 +111,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (dontReferenceStdLib != value) {
 					dontReferenceStdLib = value;
-					OnPropertyChanged("DontReferenceStdLib");
+					OnPropertyChanged(nameof(DontReferenceStdLib));
 				}
 			}
 		}
@@ -122,9 +122,9 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (unpackResources != value) {
 					unpackResources = value;
-					OnPropertyChanged("UnpackResources");
-					OnPropertyChanged("CanCreateResX");
-					OnPropertyChanged("CanDecompileBaml");
+					OnPropertyChanged(nameof(UnpackResources));
+					OnPropertyChanged(nameof(CanCreateResX));
+					OnPropertyChanged(nameof(CanDecompileBaml));
 				}
 			}
 		}
@@ -135,7 +135,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (createResX != value) {
 					createResX = value;
-					OnPropertyChanged("CreateResX");
+					OnPropertyChanged(nameof(CreateResX));
 				}
 			}
 		}
@@ -146,7 +146,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (decompileXaml != value) {
 					decompileXaml = value;
-					OnPropertyChanged("DecompileXaml");
+					OnPropertyChanged(nameof(DecompileXaml));
 				}
 			}
 		}
@@ -157,7 +157,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (openProject != value) {
 					openProject = value;
-					OnPropertyChanged("OpenProject");
+					OnPropertyChanged(nameof(OpenProject));
 				}
 			}
 		}
@@ -173,7 +173,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (filesToExportMessage != value) {
 					filesToExportMessage = value;
-					OnPropertyChanged("FilesToExportMessage");
+					OnPropertyChanged(nameof(FilesToExportMessage));
 				}
 			}
 		}
@@ -184,7 +184,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (isIndeterminate != value) {
 					isIndeterminate = value;
-					OnPropertyChanged("IsIndeterminate");
+					OnPropertyChanged(nameof(IsIndeterminate));
 				}
 			}
 		}
@@ -195,7 +195,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (progressMinimum != value) {
 					progressMinimum = value;
-					OnPropertyChanged("ProgressMinimum");
+					OnPropertyChanged(nameof(ProgressMinimum));
 				}
 			}
 		}
@@ -206,7 +206,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (progressMaximum != value) {
 					progressMaximum = value;
-					OnPropertyChanged("ProgressMaximum");
+					OnPropertyChanged(nameof(ProgressMaximum));
 				}
 			}
 		}
@@ -217,7 +217,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (totalProgress != value) {
 					totalProgress = value;
-					OnPropertyChanged("TotalProgress");
+					OnPropertyChanged(nameof(TotalProgress));
 				}
 			}
 		}
@@ -228,11 +228,11 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (state != value) {
 					state = value;
-					OnPropertyChanged("CanEditSettings");
-					OnPropertyChanged("IsComplete");
-					OnPropertyChanged("IsNotComplete");
-					OnPropertyChanged("IsExporting");
-					OnPropertyChanged("CanCreateResX");
+					OnPropertyChanged(nameof(CanEditSettings));
+					OnPropertyChanged(nameof(IsComplete));
+					OnPropertyChanged(nameof(IsNotComplete));
+					OnPropertyChanged(nameof(IsExporting));
+					OnPropertyChanged(nameof(CanCreateResX));
 				}
 			}
 		}
@@ -301,7 +301,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (errorLog != value) {
 					errorLog = value;
-					OnPropertyChanged("ErrorLog");
+					OnPropertyChanged(nameof(ErrorLog));
 				}
 			}
 		}
@@ -312,8 +312,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (exportErrors != value) {
 					exportErrors = value;
-					OnPropertyChanged("ExportErrors");
-					OnPropertyChanged("NoExportErrors");
+					OnPropertyChanged(nameof(ExportErrors));
+					OnPropertyChanged(nameof(NoExportErrors));
 				}
 			}
 		}
@@ -322,14 +322,14 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		public bool NoExportErrors => !exportErrors;
 
 		protected override string Verify(string columnName) {
-			if (columnName == "Directory") {
+			if (columnName == nameof(Directory)) {
 				if (string.IsNullOrWhiteSpace(Directory))
 					return dnSpy_Resources.Error_MissingDestinationFolder;
 				if (File.Exists(Directory))
 					return dnSpy_Resources.Error_FileAlreadyExists;
 				return string.Empty;
 			}
-			if (CreateSolution && columnName == "SolutionFilename") {
+			if (CreateSolution && columnName == nameof(SolutionFilename)) {
 				if (string.IsNullOrWhiteSpace(SolutionFilename))
 					return dnSpy_Resources.Error_MissingFilename;
 				return string.Empty;
@@ -337,8 +337,9 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError => !string.IsNullOrEmpty(Verify("Directory")) ||
-	!string.IsNullOrEmpty(Verify("SolutionFilename")) ||
-	projectGuidVM.HasError;
+		public override bool HasError =>
+			!string.IsNullOrEmpty(Verify(nameof(Directory))) ||
+			!string.IsNullOrEmpty(Verify(nameof(SolutionFilename))) ||
+			projectGuidVM.HasError;
 	}
 }

@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (canChangeType != value) {
 					canChangeType = value;
-					OnPropertyChanged("CanChangeType");
+					OnPropertyChanged(nameof(CanChangeType));
 				}
 			}
 		}
@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (@string != value) {
 					@string = value;
-					OnPropertyChanged("String");
+					OnPropertyChanged(nameof(String));
 				}
 			}
 		}
@@ -121,8 +121,8 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (data != value) {
 					data = value;
-					OnPropertyChanged("Data");
-					OnPropertyChanged("DataString");
+					OnPropertyChanged(nameof(Data));
+					OnPropertyChanged(nameof(DataString));
 				}
 			}
 		}
@@ -195,7 +195,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.ResourceElementTypeVM = new EnumListVM(resourceElementTypeList, (a, b) => OnResourceElementTypeChanged());
 
 			this.UserTypeVM.PropertyChanged += (s, e) => {
-				if (e.PropertyName == "HasError")
+				if (e.PropertyName == nameof(UserTypeVM.HasError))
 					HasErrorUpdated();
 			};
 
@@ -211,11 +211,11 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void OnResourceElementTypeChanged() {
-			OnPropertyChanged("ValueVM");
-			OnPropertyChanged("IsSerializedType");
-			OnPropertyChanged("IsSingleLineValue");
-			OnPropertyChanged("IsMultiLineValue");
-			OnPropertyChanged("IsRawBytes");
+			OnPropertyChanged(nameof(ValueVM));
+			OnPropertyChanged(nameof(IsSerializedType));
+			OnPropertyChanged(nameof(IsSingleLineValue));
+			OnPropertyChanged(nameof(IsMultiLineValue));
+			OnPropertyChanged(nameof(IsRawBytes));
 			HasErrorUpdated();
 		}
 

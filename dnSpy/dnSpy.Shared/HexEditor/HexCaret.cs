@@ -30,7 +30,7 @@ namespace dnSpy.Shared.HexEditor {
 		public static readonly double DEFAULT_ORDER = 3000;
 
 		public static readonly DependencyProperty InactiveCaretForegroundProperty =
-			DependencyProperty.Register("InactiveCaretForeground", typeof(Brush), typeof(HexCaret),
+			DependencyProperty.Register(nameof(InactiveCaretForeground), typeof(Brush), typeof(HexCaret),
 			new FrameworkPropertyMetadata(Brushes.Black));
 
 		public Brush InactiveCaretForeground {

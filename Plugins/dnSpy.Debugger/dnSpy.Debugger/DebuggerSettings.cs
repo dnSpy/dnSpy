@@ -58,7 +58,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (useHexadecimal != value) {
 					useHexadecimal = value;
-					OnPropertyChanged("UseHexadecimal");
+					OnPropertyChanged(nameof(UseHexadecimal));
 					OnModified();
 				}
 			}
@@ -102,8 +102,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightCallStack != value) {
 					syntaxHighlightCallStack = value;
-					OnPropertyChanged("SyntaxHighlightCallStack");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightCallStack));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -115,8 +115,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightBreakpoints != value) {
 					syntaxHighlightBreakpoints = value;
-					OnPropertyChanged("SyntaxHighlightBreakpoints");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightBreakpoints));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -128,8 +128,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightThreads != value) {
 					syntaxHighlightThreads = value;
-					OnPropertyChanged("SyntaxHighlightThreads");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightThreads));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -141,8 +141,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightModules != value) {
 					syntaxHighlightModules = value;
-					OnPropertyChanged("SyntaxHighlightModules");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightModules));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -154,8 +154,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightLocals != value) {
 					syntaxHighlightLocals = value;
-					OnPropertyChanged("SyntaxHighlightLocals");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightLocals));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -167,8 +167,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightAttach != value) {
 					syntaxHighlightAttach = value;
-					OnPropertyChanged("SyntaxHighlightAttach");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightAttach));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -180,8 +180,8 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightExceptions != value) {
 					syntaxHighlightExceptions = value;
-					OnPropertyChanged("SyntaxHighlightExceptions");
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlightExceptions));
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -193,7 +193,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (breakProcessKind != value) {
 					breakProcessKind = value;
-					OnPropertyChanged("BreakProcessKind");
+					OnPropertyChanged(nameof(BreakProcessKind));
 					OnModified();
 				}
 			}
@@ -205,7 +205,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (propertyEvalAndFunctionCalls != value) {
 					propertyEvalAndFunctionCalls = value;
-					OnPropertyChanged("PropertyEvalAndFunctionCalls");
+					OnPropertyChanged(nameof(PropertyEvalAndFunctionCalls));
 					OnModified();
 				}
 			}
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (useStringConversionFunction != value) {
 					useStringConversionFunction = value;
-					OnPropertyChanged("UseStringConversionFunction");
+					OnPropertyChanged(nameof(UseStringConversionFunction));
 					OnModified();
 				}
 			}
@@ -231,7 +231,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (debuggerBrowsableAttributesCanHidePropsFields != value) {
 					debuggerBrowsableAttributesCanHidePropsFields = value;
-					OnPropertyChanged("DebuggerBrowsableAttributesCanHidePropsFields");
+					OnPropertyChanged(nameof(DebuggerBrowsableAttributesCanHidePropsFields));
 					OnModified();
 				}
 			}
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (compilerGeneratedAttributesCanHideFields != value) {
 					compilerGeneratedAttributesCanHideFields = value;
-					OnPropertyChanged("CompilerGeneratedAttributesCanHideFields");
+					OnPropertyChanged(nameof(CompilerGeneratedAttributesCanHideFields));
 					OnModified();
 				}
 			}
@@ -255,7 +255,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (disableManagedDebuggerDetection != value) {
 					disableManagedDebuggerDetection = value;
-					OnPropertyChanged("DisableManagedDebuggerDetection");
+					OnPropertyChanged(nameof(DisableManagedDebuggerDetection));
 					OnModified();
 				}
 			}
@@ -267,7 +267,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (ignoreBreakInstructions != value) {
 					ignoreBreakInstructions = value;
-					OnPropertyChanged("IgnoreBreakInstructions");
+					OnPropertyChanged(nameof(IgnoreBreakInstructions));
 					OnModified();
 				}
 			}
@@ -279,7 +279,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (autoOpenLocalsWindow != value) {
 					autoOpenLocalsWindow = value;
-					OnPropertyChanged("AutoOpenLocalsWindow");
+					OnPropertyChanged(nameof(AutoOpenLocalsWindow));
 					OnModified();
 				}
 			}
@@ -291,7 +291,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (useMemoryModules != value) {
 					useMemoryModules = value;
-					OnPropertyChanged("UseMemoryModules");
+					OnPropertyChanged(nameof(UseMemoryModules));
 					OnModified();
 				}
 			}
@@ -313,9 +313,9 @@ namespace dnSpy.Debugger {
 			set {
 				if (coreCLRDbgShimFilename32 != value) {
 					coreCLRDbgShimFilename32 = value;
-					OnPropertyChanged("CoreCLRDbgShimFilename32");
+					OnPropertyChanged(nameof(CoreCLRDbgShimFilename32));
 					if (IntPtr.Size == 4)
-						OnPropertyChanged("CoreCLRDbgShimFilename");
+						OnPropertyChanged(nameof(CoreCLRDbgShimFilename));
 					OnModified();
 				}
 			}
@@ -327,9 +327,9 @@ namespace dnSpy.Debugger {
 			set {
 				if (coreCLRDbgShimFilename64 != value) {
 					coreCLRDbgShimFilename64 = value;
-					OnPropertyChanged("CoreCLRDbgShimFilename64");
+					OnPropertyChanged(nameof(CoreCLRDbgShimFilename64));
 					if (IntPtr.Size == 8)
-						OnPropertyChanged("CoreCLRDbgShimFilename");
+						OnPropertyChanged(nameof(CoreCLRDbgShimFilename));
 					OnModified();
 				}
 			}
@@ -374,25 +374,25 @@ namespace dnSpy.Debugger {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			UseHexadecimal = sect.Attribute<bool?>("UseHexadecimal") ?? UseHexadecimal;
-			SyntaxHighlightCallStack = sect.Attribute<bool?>("SyntaxHighlightCallStack") ?? SyntaxHighlightCallStack;
-			SyntaxHighlightBreakpoints = sect.Attribute<bool?>("SyntaxHighlightBreakpoints") ?? SyntaxHighlightBreakpoints;
-			SyntaxHighlightThreads = sect.Attribute<bool?>("SyntaxHighlightThreads") ?? SyntaxHighlightThreads;
-			SyntaxHighlightModules = sect.Attribute<bool?>("SyntaxHighlightModules") ?? SyntaxHighlightModules;
-			SyntaxHighlightLocals = sect.Attribute<bool?>("SyntaxHighlightLocals") ?? SyntaxHighlightLocals;
-			SyntaxHighlightAttach = sect.Attribute<bool?>("SyntaxHighlightAttach") ?? SyntaxHighlightAttach;
-			SyntaxHighlightExceptions = sect.Attribute<bool?>("SyntaxHighlightExceptions") ?? SyntaxHighlightExceptions;
-			BreakProcessKind = sect.Attribute<BreakProcessKind?>("BreakProcessKind") ?? BreakProcessKind;
-			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>("PropertyEvalAndFunctionCalls") ?? PropertyEvalAndFunctionCalls;
-			UseStringConversionFunction = sect.Attribute<bool?>("UseStringConversionFunction") ?? UseStringConversionFunction;
-			DebuggerBrowsableAttributesCanHidePropsFields = sect.Attribute<bool?>("DebuggerBrowsableAttributesCanHidePropsFields") ?? DebuggerBrowsableAttributesCanHidePropsFields;
-			CompilerGeneratedAttributesCanHideFields = sect.Attribute<bool?>("CompilerGeneratedAttributesCanHideFields") ?? CompilerGeneratedAttributesCanHideFields;
-			DisableManagedDebuggerDetection = sect.Attribute<bool?>("DisableManagedDebuggerDetection") ?? DisableManagedDebuggerDetection;
-			IgnoreBreakInstructions = sect.Attribute<bool?>("IgnoreBreakInstructions") ?? IgnoreBreakInstructions;
-			AutoOpenLocalsWindow = sect.Attribute<bool?>("AutoOpenLocalsWindow") ?? AutoOpenLocalsWindow;
-			UseMemoryModules = sect.Attribute<bool?>("UseMemoryModules") ?? UseMemoryModules;
-			CoreCLRDbgShimFilename32 = sect.Attribute<string>("CoreCLRDbgShimFilename32") ?? CoreCLRDbgShimFilename32;
-			CoreCLRDbgShimFilename64 = sect.Attribute<string>("CoreCLRDbgShimFilename64") ?? CoreCLRDbgShimFilename64;
+			UseHexadecimal = sect.Attribute<bool?>(nameof(UseHexadecimal)) ?? UseHexadecimal;
+			SyntaxHighlightCallStack = sect.Attribute<bool?>(nameof(SyntaxHighlightCallStack)) ?? SyntaxHighlightCallStack;
+			SyntaxHighlightBreakpoints = sect.Attribute<bool?>(nameof(SyntaxHighlightBreakpoints)) ?? SyntaxHighlightBreakpoints;
+			SyntaxHighlightThreads = sect.Attribute<bool?>(nameof(SyntaxHighlightThreads)) ?? SyntaxHighlightThreads;
+			SyntaxHighlightModules = sect.Attribute<bool?>(nameof(SyntaxHighlightModules)) ?? SyntaxHighlightModules;
+			SyntaxHighlightLocals = sect.Attribute<bool?>(nameof(SyntaxHighlightLocals)) ?? SyntaxHighlightLocals;
+			SyntaxHighlightAttach = sect.Attribute<bool?>(nameof(SyntaxHighlightAttach)) ?? SyntaxHighlightAttach;
+			SyntaxHighlightExceptions = sect.Attribute<bool?>(nameof(SyntaxHighlightExceptions)) ?? SyntaxHighlightExceptions;
+			BreakProcessKind = sect.Attribute<BreakProcessKind?>(nameof(BreakProcessKind)) ?? BreakProcessKind;
+			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
+			UseStringConversionFunction = sect.Attribute<bool?>(nameof(UseStringConversionFunction)) ?? UseStringConversionFunction;
+			DebuggerBrowsableAttributesCanHidePropsFields = sect.Attribute<bool?>(nameof(DebuggerBrowsableAttributesCanHidePropsFields)) ?? DebuggerBrowsableAttributesCanHidePropsFields;
+			CompilerGeneratedAttributesCanHideFields = sect.Attribute<bool?>(nameof(CompilerGeneratedAttributesCanHideFields)) ?? CompilerGeneratedAttributesCanHideFields;
+			DisableManagedDebuggerDetection = sect.Attribute<bool?>(nameof(DisableManagedDebuggerDetection)) ?? DisableManagedDebuggerDetection;
+			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
+			AutoOpenLocalsWindow = sect.Attribute<bool?>(nameof(AutoOpenLocalsWindow)) ?? AutoOpenLocalsWindow;
+			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
+			CoreCLRDbgShimFilename32 = sect.Attribute<string>(nameof(CoreCLRDbgShimFilename32)) ?? CoreCLRDbgShimFilename32;
+			CoreCLRDbgShimFilename64 = sect.Attribute<string>(nameof(CoreCLRDbgShimFilename64)) ?? CoreCLRDbgShimFilename64;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -401,25 +401,25 @@ namespace dnSpy.Debugger {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("UseHexadecimal", UseHexadecimal);
-			sect.Attribute("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
-			sect.Attribute("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
-			sect.Attribute("SyntaxHighlightThreads", SyntaxHighlightThreads);
-			sect.Attribute("SyntaxHighlightModules", SyntaxHighlightModules);
-			sect.Attribute("SyntaxHighlightLocals", SyntaxHighlightLocals);
-			sect.Attribute("SyntaxHighlightAttach", SyntaxHighlightAttach);
-			sect.Attribute("SyntaxHighlightExceptions", SyntaxHighlightExceptions);
-			sect.Attribute("BreakProcessKind", BreakProcessKind);
-			sect.Attribute("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
-			sect.Attribute("UseStringConversionFunction", UseStringConversionFunction);
-			sect.Attribute("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
-			sect.Attribute("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
-			sect.Attribute("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
-			sect.Attribute("IgnoreBreakInstructions", IgnoreBreakInstructions);
-			sect.Attribute("AutoOpenLocalsWindow", AutoOpenLocalsWindow);
-			sect.Attribute("UseMemoryModules", UseMemoryModules);
-			sect.Attribute("CoreCLRDbgShimFilename32", CoreCLRDbgShimFilename32);
-			sect.Attribute("CoreCLRDbgShimFilename64", CoreCLRDbgShimFilename64);
+			sect.Attribute(nameof(UseHexadecimal), UseHexadecimal);
+			sect.Attribute(nameof(SyntaxHighlightCallStack), SyntaxHighlightCallStack);
+			sect.Attribute(nameof(SyntaxHighlightBreakpoints), SyntaxHighlightBreakpoints);
+			sect.Attribute(nameof(SyntaxHighlightThreads), SyntaxHighlightThreads);
+			sect.Attribute(nameof(SyntaxHighlightModules), SyntaxHighlightModules);
+			sect.Attribute(nameof(SyntaxHighlightLocals), SyntaxHighlightLocals);
+			sect.Attribute(nameof(SyntaxHighlightAttach), SyntaxHighlightAttach);
+			sect.Attribute(nameof(SyntaxHighlightExceptions), SyntaxHighlightExceptions);
+			sect.Attribute(nameof(BreakProcessKind), BreakProcessKind);
+			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
+			sect.Attribute(nameof(UseStringConversionFunction), UseStringConversionFunction);
+			sect.Attribute(nameof(DebuggerBrowsableAttributesCanHidePropsFields), DebuggerBrowsableAttributesCanHidePropsFields);
+			sect.Attribute(nameof(CompilerGeneratedAttributesCanHideFields), CompilerGeneratedAttributesCanHideFields);
+			sect.Attribute(nameof(DisableManagedDebuggerDetection), DisableManagedDebuggerDetection);
+			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
+			sect.Attribute(nameof(AutoOpenLocalsWindow), AutoOpenLocalsWindow);
+			sect.Attribute(nameof(UseMemoryModules), UseMemoryModules);
+			sect.Attribute(nameof(CoreCLRDbgShimFilename32), CoreCLRDbgShimFilename32);
+			sect.Attribute(nameof(CoreCLRDbgShimFilename64), CoreCLRDbgShimFilename64);
 		}
 	}
 }

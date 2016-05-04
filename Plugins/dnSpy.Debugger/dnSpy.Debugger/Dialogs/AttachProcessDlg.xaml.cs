@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		void AttachProcessVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsRefreshing") {
+			if (e.PropertyName == nameof(AttachProcessVM.IsRefreshing)) {
 				// Make sure Refresh button gets updated
 				CommandManager.InvalidateRequerySuggested();
 			}

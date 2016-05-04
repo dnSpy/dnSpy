@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Module {
 			get { return options.Name; }
 			set {
 				options.Name = value;
-				OnPropertyChanged("Name");
+				OnPropertyChanged(nameof(Name));
 			}
 		}
 
@@ -71,23 +71,23 @@ namespace dnSpy.AsmEditor.Module {
 			set {
 				if (options.Characteristics != value) {
 					options.Characteristics = value;
-					OnPropertyChanged("Characteristics");
-					OnPropertyChanged("RelocsStripped");
-					OnPropertyChanged("ExecutableImage");
-					OnPropertyChanged("LineNumsStripped");
-					OnPropertyChanged("LocalSymsStripped");
-					OnPropertyChanged("AggressiveWsTrim");
-					OnPropertyChanged("LargeAddressAware");
-					OnPropertyChanged("CharacteristicsReserved1");
-					OnPropertyChanged("BytesReversedLo");
-					OnPropertyChanged("Bit32Machine");
-					OnPropertyChanged("DebugStripped");
-					OnPropertyChanged("RemovableRunFromSwap");
-					OnPropertyChanged("NetRunFromSwap");
-					OnPropertyChanged("System");
-					OnPropertyChanged("Dll");
-					OnPropertyChanged("UpSystemOnly");
-					OnPropertyChanged("BytesReversedHi");
+					OnPropertyChanged(nameof(Characteristics));
+					OnPropertyChanged(nameof(RelocsStripped));
+					OnPropertyChanged(nameof(ExecutableImage));
+					OnPropertyChanged(nameof(LineNumsStripped));
+					OnPropertyChanged(nameof(LocalSymsStripped));
+					OnPropertyChanged(nameof(AggressiveWsTrim));
+					OnPropertyChanged(nameof(LargeAddressAware));
+					OnPropertyChanged(nameof(CharacteristicsReserved1));
+					OnPropertyChanged(nameof(BytesReversedLo));
+					OnPropertyChanged(nameof(Bit32Machine));
+					OnPropertyChanged(nameof(DebugStripped));
+					OnPropertyChanged(nameof(RemovableRunFromSwap));
+					OnPropertyChanged(nameof(NetRunFromSwap));
+					OnPropertyChanged(nameof(System));
+					OnPropertyChanged(nameof(Dll));
+					OnPropertyChanged(nameof(UpSystemOnly));
+					OnPropertyChanged(nameof(BytesReversedHi));
 				}
 			}
 		}
@@ -186,23 +186,23 @@ namespace dnSpy.AsmEditor.Module {
 			set {
 				if (options.DllCharacteristics != value) {
 					options.DllCharacteristics = value;
-					OnPropertyChanged("DllCharacteristics");
-					OnPropertyChanged("DllCharacteristicsReserved1");
-					OnPropertyChanged("DllCharacteristicsReserved2");
-					OnPropertyChanged("DllCharacteristicsReserved3");
-					OnPropertyChanged("DllCharacteristicsReserved4");
-					OnPropertyChanged("DllCharacteristicsReserved5");
-					OnPropertyChanged("HighEntropyVA");
-					OnPropertyChanged("DynamicBase");
-					OnPropertyChanged("ForceIntegrity");
-					OnPropertyChanged("NxCompat");
-					OnPropertyChanged("NoIsolation");
-					OnPropertyChanged("NoSeh");
-					OnPropertyChanged("NoBind");
-					OnPropertyChanged("AppContainer");
-					OnPropertyChanged("WdmDriver");
-					OnPropertyChanged("GuardCf");
-					OnPropertyChanged("TerminalServerAware");
+					OnPropertyChanged(nameof(DllCharacteristics));
+					OnPropertyChanged(nameof(DllCharacteristicsReserved1));
+					OnPropertyChanged(nameof(DllCharacteristicsReserved2));
+					OnPropertyChanged(nameof(DllCharacteristicsReserved3));
+					OnPropertyChanged(nameof(DllCharacteristicsReserved4));
+					OnPropertyChanged(nameof(DllCharacteristicsReserved5));
+					OnPropertyChanged(nameof(HighEntropyVA));
+					OnPropertyChanged(nameof(DynamicBase));
+					OnPropertyChanged(nameof(ForceIntegrity));
+					OnPropertyChanged(nameof(NxCompat));
+					OnPropertyChanged(nameof(NoIsolation));
+					OnPropertyChanged(nameof(NoSeh));
+					OnPropertyChanged(nameof(NoBind));
+					OnPropertyChanged(nameof(AppContainer));
+					OnPropertyChanged(nameof(WdmDriver));
+					OnPropertyChanged(nameof(GuardCf));
+					OnPropertyChanged(nameof(TerminalServerAware));
 				}
 			}
 		}
@@ -300,7 +300,7 @@ namespace dnSpy.AsmEditor.Module {
 			get { return options.RuntimeVersion; }
 			set {
 				options.RuntimeVersion = value;
-				OnPropertyChanged("RuntimeVersion");
+				OnPropertyChanged(nameof(RuntimeVersion));
 				UpdateClrVersion();
 				HasErrorUpdated();
 			}
@@ -313,13 +313,13 @@ namespace dnSpy.AsmEditor.Module {
 			set {
 				if (options.Cor20HeaderFlags != value) {
 					options.Cor20HeaderFlags = value;
-					OnPropertyChanged("Cor20HeaderFlags");
-					OnPropertyChanged("ILOnly");
-					OnPropertyChanged("Bit32Required");
-					OnPropertyChanged("ILLibrary");
-					OnPropertyChanged("StrongNameSigned");
-					OnPropertyChanged("TrackDebugData");
-					OnPropertyChanged("Bit32Preferred");
+					OnPropertyChanged(nameof(Cor20HeaderFlags));
+					OnPropertyChanged(nameof(ILOnly));
+					OnPropertyChanged(nameof(Bit32Required));
+					OnPropertyChanged(nameof(ILLibrary));
+					OnPropertyChanged(nameof(StrongNameSigned));
+					OnPropertyChanged(nameof(TrackDebugData));
+					OnPropertyChanged(nameof(Bit32Preferred));
 				}
 			}
 		}
@@ -371,7 +371,7 @@ namespace dnSpy.AsmEditor.Module {
 			set {
 				if (entryPointEnum != value) {
 					entryPointEnum = value;
-					OnPropertyChanged("EntryPointEnum");
+					OnPropertyChanged(nameof(EntryPointEnum));
 					if (entryPointEnum == EntryPointType.Native)
 						Cor20HeaderFlags |= ComImageFlags.NativeEntryPoint;
 					else
@@ -386,9 +386,9 @@ namespace dnSpy.AsmEditor.Module {
 			set {
 				if (managedEntryPoint != value) {
 					managedEntryPoint = value;
-					OnPropertyChanged("ManagedEntryPoint");
-					OnPropertyChanged("EntryPointName");
-					OnPropertyChanged("EntryPointNameToolTip");
+					OnPropertyChanged(nameof(ManagedEntryPoint));
+					OnPropertyChanged(nameof(EntryPointName));
+					OnPropertyChanged(nameof(EntryPointNameToolTip));
 				}
 			}
 		}
@@ -550,7 +550,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "RuntimeVersion")
+			if (columnName == nameof(RuntimeVersion))
 				return SaveModule.MetaDataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
 
 			return string.Empty;
@@ -558,7 +558,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify("RuntimeVersion")))
+				if (!string.IsNullOrEmpty(Verify(nameof(RuntimeVersion))))
 					return true;
 				return Mvid.HasError ||
 					EncId.HasError ||

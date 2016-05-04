@@ -55,8 +55,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (@class != value) {
 					@class = value;
-					OnPropertyChanged("Class");
-					OnPropertyChanged("ClassFullName");
+					OnPropertyChanged(nameof(Class));
+					OnPropertyChanged(nameof(ClassFullName));
 					HasErrorUpdated();
 				}
 			}
@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}

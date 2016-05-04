@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (value == null)
 					throw new ArgumentNullException();
 				filename = value;
-				OnPropertyChanged("FileName");
+				OnPropertyChanged(nameof(FileName));
 				HasErrorUpdated();
 			}
 		}
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		protected abstract string GetExtension(string filename);
 
 		protected override string Verify(string columnName) {
-			if (columnName == "FileName")
+			if (columnName == nameof(FileName))
 				return filename.ValidateFileName() ?? string.Empty;
 
 			return string.Empty;
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify("FileName")))
+				if (!string.IsNullOrEmpty(Verify(nameof(FileName))))
 					return true;
 
 				return false;

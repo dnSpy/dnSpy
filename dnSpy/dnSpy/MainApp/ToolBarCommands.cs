@@ -64,7 +64,7 @@ namespace dnSpy.MainApp {
 				if (selectedItem != value) {
 					selectedItem = value;
 					languageManager.Language = ((LanguageInfo)value).Language;
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedItem)));
 				}
 			}
 		}
@@ -86,7 +86,7 @@ namespace dnSpy.MainApp {
 				Width = 80,
 				ItemsSource = infos,
 			};
-			this.comboBox.SetBinding(Selector.SelectedItemProperty, new Binding("SelectedItem") {
+			this.comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectedItem)) {
 				Source = this,
 			});
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
@@ -104,7 +104,7 @@ namespace dnSpy.MainApp {
 
 		public Binding GetBinding(IToolBarItemContext context) {
 			Debug.Assert(appWindow != null && appWindow.MainWindow != null);
-			return new Binding("IsFullScreen") {
+			return new Binding(nameof(appWindow.MainWindow.IsFullScreen)) {
 				Source = appWindow.MainWindow,
 			};
 		}

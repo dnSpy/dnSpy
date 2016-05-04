@@ -37,10 +37,10 @@ namespace dnSpy.AsmEditor.Property {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("SpecialName");
-					OnPropertyChanged("RTSpecialName");
-					OnPropertyChanged("HasDefault");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(SpecialName));
+					OnPropertyChanged(nameof(RTSpecialName));
+					OnPropertyChanged(nameof(HasDefault));
 					ConstantVM.IsEnabled = HasDefault;
 					HasErrorUpdated();
 				}
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Property {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -129,14 +129,14 @@ namespace dnSpy.AsmEditor.Property {
 		}
 
 		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(ConstantVM.IsEnabled))
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
 		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			HasErrorUpdated();
-			OnPropertyChanged("PropertySigHeader");
+			OnPropertyChanged(nameof(PropertySigHeader));
 		}
 
 		void Reinitialize() => InitializeFrom(origOptions);

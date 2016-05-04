@@ -135,17 +135,17 @@ namespace dnSpy.AsmEditor.Types {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("Abstract");
-					OnPropertyChanged("Sealed");
-					OnPropertyChanged("SpecialName");
-					OnPropertyChanged("Import");
-					OnPropertyChanged("Serializable");
-					OnPropertyChanged("WindowsRuntime");
-					OnPropertyChanged("BeforeFieldInit");
-					OnPropertyChanged("Forwarder");
-					OnPropertyChanged("RTSpecialName");
-					OnPropertyChanged("HasSecurity");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(Abstract));
+					OnPropertyChanged(nameof(Sealed));
+					OnPropertyChanged(nameof(SpecialName));
+					OnPropertyChanged(nameof(Import));
+					OnPropertyChanged(nameof(Serializable));
+					OnPropertyChanged(nameof(WindowsRuntime));
+					OnPropertyChanged(nameof(BeforeFieldInit));
+					OnPropertyChanged(nameof(Forwarder));
+					OnPropertyChanged(nameof(RTSpecialName));
+					OnPropertyChanged(nameof(HasSecurity));
 					InitializeTypeKind();
 				}
 			}
@@ -216,7 +216,7 @@ namespace dnSpy.AsmEditor.Types {
 			set {
 				if (ns != value) {
 					ns = value;
-					OnPropertyChanged("Namespace");
+					OnPropertyChanged(nameof(Namespace));
 				}
 			}
 		}
@@ -227,7 +227,7 @@ namespace dnSpy.AsmEditor.Types {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -297,8 +297,8 @@ namespace dnSpy.AsmEditor.Types {
 
 		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			InitializeTypeKind();
-			if (e.PropertyName == "TypeSigDnlibFullName")
-				OnPropertyChanged("BaseTypeHeader");
+			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
+				OnPropertyChanged(nameof(BaseTypeHeader));
 			HasErrorUpdated();
 		}
 

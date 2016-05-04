@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 					HasErrorUpdated();
 				}
 			}
@@ -86,7 +86,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (storageType != value) {
 					storageType = value;
-					OnPropertyChanged("StorageType");
+					OnPropertyChanged(nameof(StorageType));
 				}
 			}
 		}

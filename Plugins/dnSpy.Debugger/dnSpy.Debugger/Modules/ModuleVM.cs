@@ -92,25 +92,25 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		internal void RefreshThemeFields() {
-			OnPropertyChanged("ImageObject");
-			OnPropertyChanged("NameObject");
-			OnPropertyChanged("PathObject");
-			OnPropertyChanged("OptimizedObject");
-			OnPropertyChanged("DynamicObject");
-			OnPropertyChanged("InMemoryObject");
-			OnPropertyChanged("OrderObject");
-			OnPropertyChanged("VersionObject");
-			OnPropertyChanged("TimestampObject");
-			OnPropertyChanged("AddressObject");
-			OnPropertyChanged("ProcessObject");
-			OnPropertyChanged("AppDomainObject");
+			OnPropertyChanged(nameof(ImageObject));
+			OnPropertyChanged(nameof(NameObject));
+			OnPropertyChanged(nameof(PathObject));
+			OnPropertyChanged(nameof(OptimizedObject));
+			OnPropertyChanged(nameof(DynamicObject));
+			OnPropertyChanged(nameof(InMemoryObject));
+			OnPropertyChanged(nameof(OrderObject));
+			OnPropertyChanged(nameof(VersionObject));
+			OnPropertyChanged(nameof(TimestampObject));
+			OnPropertyChanged(nameof(AddressObject));
+			OnPropertyChanged(nameof(ProcessObject));
+			OnPropertyChanged(nameof(AppDomainObject));
 		}
 
-		internal void RefreshHexFields() => OnPropertyChanged("ProcessObject");
+		internal void RefreshHexFields() => OnPropertyChanged(nameof(ProcessObject));
 
 		internal void RefreshAppDomainNames(DnAppDomain appDomain) {
 			if (Module.AppDomain == appDomain)
-				OnPropertyChanged("AppDomainObject");
+				OnPropertyChanged(nameof(AppDomainObject));
 		}
 
 		void InitializeExeFields() {

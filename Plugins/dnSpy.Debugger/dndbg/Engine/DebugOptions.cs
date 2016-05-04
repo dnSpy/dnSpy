@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 			set {
 				if (stepperInterceptMask != value) {
 					stepperInterceptMask = value;
-					OnPropertyChanged("StepperInterceptMask");
+					OnPropertyChanged(nameof(StepperInterceptMask));
 				}
 			}
 		}
@@ -49,7 +49,7 @@ namespace dndbg.Engine {
 			set {
 				if (stepperUnmappedStopMask != value) {
 					stepperUnmappedStopMask = value;
-					OnPropertyChanged("StepperUnmappedStopMask");
+					OnPropertyChanged(nameof(StepperUnmappedStopMask));
 				}
 			}
 		}
@@ -63,7 +63,7 @@ namespace dndbg.Engine {
 			set {
 				if (stepperJMC != value) {
 					stepperJMC = value;
-					OnPropertyChanged("StepperJMC");
+					OnPropertyChanged(nameof(StepperJMC));
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace dndbg.Engine {
 			set {
 				if (jitCompilerFlags != value) {
 					jitCompilerFlags = value;
-					OnPropertyChanged("JITCompilerFlags");
+					OnPropertyChanged(nameof(JITCompilerFlags));
 				}
 			}
 		}
@@ -91,7 +91,7 @@ namespace dndbg.Engine {
 			set {
 				if (moduleTrackJITInfo != value) {
 					moduleTrackJITInfo = value;
-					OnPropertyChanged("ModuleTrackJITInfo");
+					OnPropertyChanged(nameof(ModuleTrackJITInfo));
 				}
 			}
 		}
@@ -105,7 +105,7 @@ namespace dndbg.Engine {
 			set {
 				if (moduleAllowJitOptimizations != value) {
 					moduleAllowJitOptimizations = value;
-					OnPropertyChanged("ModuleAllowJitOptimizations");
+					OnPropertyChanged(nameof(ModuleAllowJitOptimizations));
 				}
 			}
 		}
@@ -119,7 +119,7 @@ namespace dndbg.Engine {
 			set {
 				if (moduleClassLoadCallbacks != value) {
 					moduleClassLoadCallbacks = value;
-					OnPropertyChanged("ModuleClassLoadCallbacks");
+					OnPropertyChanged(nameof(ModuleClassLoadCallbacks));
 				}
 			}
 		}
@@ -133,7 +133,7 @@ namespace dndbg.Engine {
 			set {
 				if (ignoreBreakInstructions != value) {
 					ignoreBreakInstructions = value;
-					OnPropertyChanged("IgnoreBreakInstructions");
+					OnPropertyChanged(nameof(IgnoreBreakInstructions));
 				}
 			}
 		}
@@ -147,7 +147,7 @@ namespace dndbg.Engine {
 			set {
 				if (logMessages != value) {
 					logMessages = value;
-					OnPropertyChanged("LogMessages");
+					OnPropertyChanged(nameof(LogMessages));
 				}
 			}
 		}
@@ -161,7 +161,7 @@ namespace dndbg.Engine {
 			set {
 				if (exceptionCallbacksOutsideOfMyCode != value) {
 					exceptionCallbacksOutsideOfMyCode = value;
-					OnPropertyChanged("ExceptionCallbacksOutsideOfMyCode");
+					OnPropertyChanged(nameof(ExceptionCallbacksOutsideOfMyCode));
 				}
 			}
 		}
@@ -175,7 +175,7 @@ namespace dndbg.Engine {
 			set {
 				if (ngenPolicy != value) {
 					ngenPolicy = value;
-					OnPropertyChanged("NGENPolicy");
+					OnPropertyChanged(nameof(NGENPolicy));
 				}
 			}
 		}

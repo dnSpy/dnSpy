@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}

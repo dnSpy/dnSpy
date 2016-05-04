@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (dbgShimFilename != value) {
 					dbgShimFilename = value;
-					OnPropertyChanged("DbgShimFilename");
+					OnPropertyChanged(nameof(DbgShimFilename));
 					HasErrorUpdated();
 				}
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (hostFilename != value) {
 					hostFilename = value;
-					OnPropertyChanged("HostFilename");
+					OnPropertyChanged(nameof(HostFilename));
 					HasErrorUpdated();
 				}
 			}
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (hostCommandLine != value) {
 					hostCommandLine = value;
-					OnPropertyChanged("HostCommandLine");
+					OnPropertyChanged(nameof(HostCommandLine));
 				}
 			}
 		}
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (filename != value) {
 					filename = value;
-					OnPropertyChanged("Filename");
+					OnPropertyChanged(nameof(Filename));
 					HasErrorUpdated();
 					var path = GetPath(filename);
 					if (path != null)
@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (commandLine != value) {
 					commandLine = value;
-					OnPropertyChanged("CommandLine");
+					OnPropertyChanged(nameof(CommandLine));
 				}
 			}
 		}
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (currentDirectory != value) {
 					currentDirectory = value;
-					OnPropertyChanged("CurrentDirectory");
+					OnPropertyChanged(nameof(CurrentDirectory));
 				}
 			}
 		}
@@ -201,14 +201,14 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "HostFilename") {
+			if (columnName == nameof(HostFilename)) {
 				if (string.IsNullOrWhiteSpace(HostFilename))
 					return dnSpy_Debugger_Resources.Error_HostEgCoreRunExe;
 				return VerifyFilename(HostFilename);
 			}
-			if (columnName == "Filename")
+			if (columnName == nameof(Filename))
 				return VerifyFilename(Filename);
-			if (columnName == "DbgShimFilename")
+			if (columnName == nameof(DbgShimFilename))
 				return VerifyFilename(DbgShimFilename);
 
 			return string.Empty;
@@ -216,11 +216,11 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify("HostFilename")))
+				if (!string.IsNullOrEmpty(Verify(nameof(HostFilename))))
 					return true;
-				if (!string.IsNullOrEmpty(Verify("Filename")))
+				if (!string.IsNullOrEmpty(Verify(nameof(Filename))))
 					return true;
-				if (!string.IsNullOrEmpty(Verify("DbgShimFilename")))
+				if (!string.IsNullOrEmpty(Verify(nameof(DbgShimFilename))))
 					return true;
 
 				return false;

@@ -52,14 +52,14 @@ namespace dnSpy.Shared.MVVM {
 			try {
 				list = newList;
 				index = -1;
-				OnPropertyChanged("SelectedIndex");
-				OnPropertyChanged("SelectedItem");
-				OnPropertyChanged("Items");
+				OnPropertyChanged(nameof(SelectedIndex));
+				OnPropertyChanged(nameof(SelectedItem));
+				OnPropertyChanged(nameof(Items));
 			}
 			finally {
 				index = newIndex;
-				OnPropertyChanged("SelectedIndex");
-				OnPropertyChanged("SelectedItem");
+				OnPropertyChanged(nameof(SelectedIndex));
+				OnPropertyChanged(nameof(SelectedItem));
 			}
 		}
 
@@ -70,8 +70,8 @@ namespace dnSpy.Shared.MVVM {
 					int oldIndex = index;
 					Debug.Assert(value >= 0 && value < list.Count);
 					index = value;
-					OnPropertyChanged("SelectedIndex");
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedIndex));
+					OnPropertyChanged(nameof(SelectedItem));
 					onChanged?.Invoke(oldIndex, index);
 				}
 			}
@@ -119,10 +119,7 @@ namespace dnSpy.Shared.MVVM {
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName) {
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-		}
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public string Error {
 			get { throw new NotImplementedException(); }
@@ -130,7 +127,7 @@ namespace dnSpy.Shared.MVVM {
 
 		public string this[string columnName] {
 			get {
-				if (columnName == "SelectedIndex") {
+				if (columnName == nameof(SelectedIndex)) {
 					if (DataErrorInfoDelegate != null)
 						return DataErrorInfoDelegate(this);
 				}

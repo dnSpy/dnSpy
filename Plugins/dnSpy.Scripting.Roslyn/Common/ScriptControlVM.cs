@@ -123,10 +123,10 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		bool hasInitialized;
 
 		public void RefreshThemeFields() {
-			OnPropertyChanged("ResetImageObject");
-			OnPropertyChanged("ClearWindowContentImageObject");
-			OnPropertyChanged("HistoryPreviousImageObject");
-			OnPropertyChanged("HistoryNextImageObject");
+			OnPropertyChanged(nameof(ResetImageObject));
+			OnPropertyChanged(nameof(ClearWindowContentImageObject));
+			OnPropertyChanged(nameof(HistoryPreviousImageObject));
+			OnPropertyChanged(nameof(HistoryNextImageObject));
 		}
 
 		public bool IsCommand(string text) {

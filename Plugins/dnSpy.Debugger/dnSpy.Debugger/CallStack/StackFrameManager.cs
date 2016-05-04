@@ -201,8 +201,8 @@ namespace dnSpy.Debugger.CallStack {
 					currentState.Thread = value;
 					currentState.FrameNumber = 0;
 					UpdateStackFrameLinesInTextViews();
-					OnPropertyChanged(new VMPropertyChangedEventArgs<DnThread>("SelectedThread", oldThread, currentState.Thread));
-					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrameNumber", -1, currentState.FrameNumber));
+					OnPropertyChanged(new VMPropertyChangedEventArgs<DnThread>(nameof(SelectedThread), oldThread, currentState.Thread));
+					OnPropertyChanged(new VMPropertyChangedEventArgs<int>(nameof(SelectedFrameNumber), -1, currentState.FrameNumber));
 				}
 			}
 		}
@@ -216,7 +216,7 @@ namespace dnSpy.Debugger.CallStack {
 					var old = currentState.FrameNumber;
 					currentState.FrameNumber = value;
 					UpdateStackFrameLinesInTextViews();
-					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrameNumber", old, currentState.FrameNumber));
+					OnPropertyChanged(new VMPropertyChangedEventArgs<int>(nameof(SelectedFrameNumber), old, currentState.FrameNumber));
 				}
 			}
 		}

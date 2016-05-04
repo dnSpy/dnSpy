@@ -55,12 +55,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("In");
-					OnPropertyChanged("Out");
-					OnPropertyChanged("Optional");
-					OnPropertyChanged("HasDefault");
-					OnPropertyChanged("HasFieldMarshal");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(In));
+					OnPropertyChanged(nameof(Out));
+					OnPropertyChanged(nameof(Optional));
+					OnPropertyChanged(nameof(HasDefault));
+					OnPropertyChanged(nameof(HasFieldMarshal));
 					ConstantVM.IsEnabled = HasDefault;
 					MarshalTypeVM.IsEnabled = HasFieldMarshal;
 					HasErrorUpdated();
@@ -108,8 +108,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
-					OnPropertyChanged("FullName");
+					OnPropertyChanged(nameof(Name));
+					OnPropertyChanged(nameof(FullName));
 				}
 			}
 		}
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
-			this.Sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
+			this.Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
 			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
@@ -140,16 +140,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(ConstantVM.IsEnabled))
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
 		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(MarshalTypeVM.IsEnabled))
 				HasFieldMarshal = MarshalTypeVM.IsEnabled;
-			else if (e.PropertyName == "TypeString")
-				OnPropertyChanged("MarshalTypeString");
+			else if (e.PropertyName == nameof(MarshalTypeVM.TypeString))
+				OnPropertyChanged(nameof(MarshalTypeString));
 			HasErrorUpdated();
 		}
 

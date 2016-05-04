@@ -40,7 +40,7 @@ namespace dnSpy.BamlDecompiler {
 			set {
 				if (disassembleBaml != value) {
 					disassembleBaml = value;
-					OnPropertyChanged("DisassembleBaml");
+					OnPropertyChanged(nameof(DisassembleBaml));
 					OnModified();
 				}
 			}
@@ -67,7 +67,7 @@ namespace dnSpy.BamlDecompiler {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.DisassembleBaml = sect.Attribute<bool?>("DisassembleBaml") ?? this.DisassembleBaml;
+			this.DisassembleBaml = sect.Attribute<bool?>(nameof(DisassembleBaml)) ?? this.DisassembleBaml;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -76,7 +76,7 @@ namespace dnSpy.BamlDecompiler {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("DisassembleBaml", DisassembleBaml);
+			sect.Attribute(nameof(DisassembleBaml), DisassembleBaml);
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void BamlSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "DisassembleBaml")
+			if (e.PropertyName == nameof(BamlSettings.DisassembleBaml))
 				fileTabManager.Refresh<BamlResourceElementNode>();
 		}
 	}

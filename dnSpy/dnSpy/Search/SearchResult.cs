@@ -60,11 +60,11 @@ namespace dnSpy.Search {
 		public object ObjectInfo { get; set; }
 
 		public void RefreshUI() {
-			OnPropertyChanged("Image");
-			OnPropertyChanged("LocationImage");
-			OnPropertyChanged("NameUI");
-			OnPropertyChanged("LocationUI");
-			OnPropertyChanged("ToolTip");
+			OnPropertyChanged(nameof(Image));
+			OnPropertyChanged(nameof(LocationImage));
+			OnPropertyChanged(nameof(NameUI));
+			OnPropertyChanged(nameof(LocationUI));
+			OnPropertyChanged(nameof(ToolTip));
 		}
 
 		ImageSource GetImage(ImageReference imgRef) {

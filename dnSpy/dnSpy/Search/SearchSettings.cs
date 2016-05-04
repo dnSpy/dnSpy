@@ -41,7 +41,7 @@ namespace dnSpy.Search {
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -53,7 +53,7 @@ namespace dnSpy.Search {
 			set {
 				if (matchWholeWords != value) {
 					matchWholeWords = value;
-					OnPropertyChanged("MatchWholeWords");
+					OnPropertyChanged(nameof(MatchWholeWords));
 					OnModified();
 				}
 			}
@@ -65,7 +65,7 @@ namespace dnSpy.Search {
 			set {
 				if (caseSensitive != value) {
 					caseSensitive = value;
-					OnPropertyChanged("CaseSensitive");
+					OnPropertyChanged(nameof(CaseSensitive));
 					OnModified();
 				}
 			}
@@ -77,7 +77,7 @@ namespace dnSpy.Search {
 			set {
 				if (matchAnySearchTerm != value) {
 					matchAnySearchTerm = value;
-					OnPropertyChanged("MatchAnySearchTerm");
+					OnPropertyChanged(nameof(MatchAnySearchTerm));
 					OnModified();
 				}
 			}
@@ -89,7 +89,7 @@ namespace dnSpy.Search {
 			set {
 				if (searchDecompiledData != value) {
 					searchDecompiledData = value;
-					OnPropertyChanged("SearchDecompiledData");
+					OnPropertyChanged(nameof(SearchDecompiledData));
 					OnModified();
 				}
 			}
@@ -101,7 +101,7 @@ namespace dnSpy.Search {
 			set {
 				if (searchGacAssemblies != value) {
 					searchGacAssemblies = value;
-					OnPropertyChanged("SearchGacAssemblies");
+					OnPropertyChanged(nameof(SearchGacAssemblies));
 					OnModified();
 				}
 			}
@@ -133,12 +133,12 @@ namespace dnSpy.Search {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
-			this.MatchWholeWords = sect.Attribute<bool?>("MatchWholeWords") ?? this.MatchWholeWords;
-			this.CaseSensitive = sect.Attribute<bool?>("CaseSensitive") ?? this.CaseSensitive;
-			this.MatchAnySearchTerm = sect.Attribute<bool?>("MatchAnySearchTerm") ?? this.MatchAnySearchTerm;
-			this.SearchDecompiledData = sect.Attribute<bool?>("SearchDecompiledData") ?? this.SearchDecompiledData;
-			this.SearchGacAssemblies = sect.Attribute<bool?>("SearchGacAssemblies") ?? this.SearchGacAssemblies;
+			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
+			this.MatchWholeWords = sect.Attribute<bool?>(nameof(MatchWholeWords)) ?? this.MatchWholeWords;
+			this.CaseSensitive = sect.Attribute<bool?>(nameof(CaseSensitive)) ?? this.CaseSensitive;
+			this.MatchAnySearchTerm = sect.Attribute<bool?>(nameof(MatchAnySearchTerm)) ?? this.MatchAnySearchTerm;
+			this.SearchDecompiledData = sect.Attribute<bool?>(nameof(SearchDecompiledData)) ?? this.SearchDecompiledData;
+			this.SearchGacAssemblies = sect.Attribute<bool?>(nameof(SearchGacAssemblies)) ?? this.SearchGacAssemblies;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -147,12 +147,12 @@ namespace dnSpy.Search {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
-			sect.Attribute("MatchWholeWords", MatchWholeWords);
-			sect.Attribute("CaseSensitive", CaseSensitive);
-			sect.Attribute("MatchAnySearchTerm", MatchAnySearchTerm);
-			sect.Attribute("SearchDecompiledData", SearchDecompiledData);
-			sect.Attribute("SearchGacAssemblies", SearchGacAssemblies);
+			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
+			sect.Attribute(nameof(MatchWholeWords), MatchWholeWords);
+			sect.Attribute(nameof(CaseSensitive), CaseSensitive);
+			sect.Attribute(nameof(MatchAnySearchTerm), MatchAnySearchTerm);
+			sect.Attribute(nameof(SearchDecompiledData), SearchDecompiledData);
+			sect.Attribute(nameof(SearchGacAssemblies), SearchGacAssemblies);
 		}
 	}
 }

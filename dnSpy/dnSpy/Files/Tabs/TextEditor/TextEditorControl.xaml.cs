@@ -693,7 +693,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void TextEditorSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			if (e.PropertyName == "AutoHighlightRefs")
+			if (e.PropertyName == nameof(textEditorSettings.AutoHighlightRefs))
 				OnAutoHighlightRefsChanged();
 		}
 

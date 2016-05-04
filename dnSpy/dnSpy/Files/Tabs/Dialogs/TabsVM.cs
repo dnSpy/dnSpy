@@ -49,7 +49,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 					InitializeSaveText();
 				}
 			}
@@ -61,7 +61,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (saveText != value) {
 					saveText = value;
-					OnPropertyChanged("SaveText");
+					OnPropertyChanged(nameof(SaveText));
 				}
 			}
 		}

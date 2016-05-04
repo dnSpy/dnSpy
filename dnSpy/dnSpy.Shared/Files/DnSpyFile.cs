@@ -38,7 +38,7 @@ namespace dnSpy.Shared.Files {
 			set {
 				if (this.filename != value) {
 					this.filename = value;
-					OnPropertyChanged("Filename");
+					OnPropertyChanged(nameof(Filename));
 				}
 			}
 		}
@@ -193,7 +193,7 @@ namespace dnSpy.Shared.Files {
 
 		protected override void OnPropertyChanged(string propName) {
 			base.OnPropertyChanged(propName);
-			if (propName == "Filename")
+			if (propName == nameof(Filename))
 				fileInfo = DnSpyFileInfo.CreateFile(Filename);
 		}
 

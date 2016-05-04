@@ -43,7 +43,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void FileTreeViewSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "DeserializeResources") {
+			if (e.PropertyName == nameof(IFileTreeViewSettings.DeserializeResources)) {
 				var fileTreeViewSettings = (IFileTreeViewSettings)sender;
 				if (fileTreeViewSettings.DeserializeResources)
 					DeserializeResources();

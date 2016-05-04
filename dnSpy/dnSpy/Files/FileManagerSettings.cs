@@ -32,7 +32,7 @@ namespace dnSpy.Files {
 			set {
 				if (useMemoryMappedIO != value) {
 					useMemoryMappedIO = value;
-					OnPropertyChanged("UseMemoryMappedIO");
+					OnPropertyChanged(nameof(UseMemoryMappedIO));
 					OnModified();
 				}
 			}
@@ -44,7 +44,7 @@ namespace dnSpy.Files {
 			set {
 				if (loadPDBFiles != value) {
 					loadPDBFiles = value;
-					OnPropertyChanged("LoadPDBFiles");
+					OnPropertyChanged(nameof(LoadPDBFiles));
 					OnModified();
 				}
 			}
@@ -56,7 +56,7 @@ namespace dnSpy.Files {
 			set {
 				if (useGAC != value) {
 					useGAC = value;
-					OnPropertyChanged("UseGAC");
+					OnPropertyChanged(nameof(UseGAC));
 					OnModified();
 				}
 			}
@@ -76,9 +76,9 @@ namespace dnSpy.Files {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.UseMemoryMappedIO = sect.Attribute<bool?>("UseMemoryMappedIO") ?? this.UseMemoryMappedIO;
-			this.LoadPDBFiles = sect.Attribute<bool?>("LoadPDBFiles") ?? this.LoadPDBFiles;
-			this.UseGAC = sect.Attribute<bool?>("UseGAC") ?? this.UseGAC;
+			this.UseMemoryMappedIO = sect.Attribute<bool?>(nameof(UseMemoryMappedIO)) ?? this.UseMemoryMappedIO;
+			this.LoadPDBFiles = sect.Attribute<bool?>(nameof(LoadPDBFiles)) ?? this.LoadPDBFiles;
+			this.UseGAC = sect.Attribute<bool?>(nameof(UseGAC)) ?? this.UseGAC;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -87,9 +87,9 @@ namespace dnSpy.Files {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("UseMemoryMappedIO", UseMemoryMappedIO);
-			sect.Attribute("LoadPDBFiles", LoadPDBFiles);
-			sect.Attribute("UseGAC", UseGAC);
+			sect.Attribute(nameof(UseMemoryMappedIO), UseMemoryMappedIO);
+			sect.Attribute(nameof(LoadPDBFiles), LoadPDBFiles);
+			sect.Attribute(nameof(UseGAC), UseGAC);
 		}
 	}
 }

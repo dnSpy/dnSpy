@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void Breakpoint_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(Breakpoint.IsEnabled))
 				Save();
 		}
 

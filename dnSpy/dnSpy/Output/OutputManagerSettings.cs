@@ -39,7 +39,7 @@ namespace dnSpy.Output {
 			set {
 				if (wordWrap != value) {
 					wordWrap = value;
-					OnPropertyChanged("WordWrap");
+					OnPropertyChanged(nameof(WordWrap));
 					OnModified();
 				}
 			}
@@ -51,7 +51,7 @@ namespace dnSpy.Output {
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;
-					OnPropertyChanged("ShowLineNumbers");
+					OnPropertyChanged(nameof(ShowLineNumbers));
 					OnModified();
 				}
 			}
@@ -63,7 +63,7 @@ namespace dnSpy.Output {
 			set {
 				if (showTimestamps != value) {
 					showTimestamps = value;
-					OnPropertyChanged("ShowTimestamps");
+					OnPropertyChanged(nameof(ShowTimestamps));
 					OnModified();
 				}
 			}
@@ -75,7 +75,7 @@ namespace dnSpy.Output {
 			set {
 				if (selectedGuid != value) {
 					selectedGuid = value;
-					OnPropertyChanged("SelectedGuid");
+					OnPropertyChanged(nameof(SelectedGuid));
 					OnModified();
 				}
 			}
@@ -95,10 +95,10 @@ namespace dnSpy.Output {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.WordWrap = sect.Attribute<bool?>("WordWrap") ?? this.WordWrap;
-			this.ShowLineNumbers = sect.Attribute<bool?>("ShowLineNumbers") ?? this.ShowLineNumbers;
-			this.ShowTimestamps = sect.Attribute<bool?>("ShowTimestamps") ?? this.ShowTimestamps;
-			this.SelectedGuid= sect.Attribute<Guid?>("SelectedGuid") ?? this.SelectedGuid;
+			this.WordWrap = sect.Attribute<bool?>(nameof(WordWrap)) ?? this.WordWrap;
+			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
+			this.ShowTimestamps = sect.Attribute<bool?>(nameof(ShowTimestamps)) ?? this.ShowTimestamps;
+			this.SelectedGuid= sect.Attribute<Guid?>(nameof(SelectedGuid)) ?? this.SelectedGuid;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -107,10 +107,10 @@ namespace dnSpy.Output {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("WordWrap", WordWrap);
-			sect.Attribute("ShowLineNumbers", ShowLineNumbers);
-			sect.Attribute("ShowTimestamps", ShowTimestamps);
-			sect.Attribute("SelectedGuid", SelectedGuid);
+			sect.Attribute(nameof(WordWrap), WordWrap);
+			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
+			sect.Attribute(nameof(ShowTimestamps), ShowTimestamps);
+			sect.Attribute(nameof(SelectedGuid), SelectedGuid);
 		}
 	}
 }

@@ -92,9 +92,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					isRawData = value;
 					ConstructorArguments.IsEnabled = !value;
 					CANamedArgumentsVM.Collection.IsEnabled = !value;
-					OnPropertyChanged("IsRawData");
-					OnPropertyChanged("IsNotRawData");
-					OnPropertyChanged("FullName");
+					OnPropertyChanged(nameof(IsRawData));
+					OnPropertyChanged(nameof(IsNotRawData));
+					OnPropertyChanged(nameof(FullName));
 					HasErrorUpdated();
 				}
 			}
@@ -113,11 +113,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (constructor != value) {
 					constructor = value;
-					OnPropertyChanged("Constructor");
+					OnPropertyChanged(nameof(Constructor));
 					ConstructorArguments.Clear();
 					CreateArguments();
-					OnPropertyChanged("TypeFullName");
-					OnPropertyChanged("FullName");
+					OnPropertyChanged(nameof(TypeFullName));
+					OnPropertyChanged(nameof(FullName));
 					HasErrorUpdated();
 				}
 			}
@@ -149,7 +149,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void Args_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			Hook(e);
-			OnPropertyChanged("FullName");
+			OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();
 		}
 
@@ -165,7 +165,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void arg_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			OnPropertyChanged("FullName");
+			OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();
 		}
 

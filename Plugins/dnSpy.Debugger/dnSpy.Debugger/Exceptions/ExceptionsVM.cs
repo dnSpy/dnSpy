@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.Exceptions {
 			set {
 				if (showOnlyEnabledExceptions != value) {
 					showOnlyEnabledExceptions = value;
-					OnPropertyChanged("ShowOnlyEnabledExceptions");
+					OnPropertyChanged(nameof(ShowOnlyEnabledExceptions));
 					Refilter();
 				}
 			}
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.Exceptions {
 			set {
 				if (filterText != value) {
 					filterText = value;
-					OnPropertyChanged("FilterText");
+					OnPropertyChanged(nameof(FilterText));
 					Refilter();
 				}
 			}
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightExceptions") {
+			if (e.PropertyName == nameof(debuggerSettings.SyntaxHighlightExceptions)) {
 				exceptionContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightExceptions;
 				RefreshThemeFields();
 			}
@@ -186,10 +186,10 @@ namespace dnSpy.Debugger.Exceptions {
 		public void RefreshThemeFields() {
 			foreach (var vm in Collection)
 				vm.RefreshThemeFields();
-			OnPropertyChanged("ShowOnlyEnabledExceptionsImageObject");
-			OnPropertyChanged("AddExceptionImageObject");
-			OnPropertyChanged("RemoveExceptionImageObject");
-			OnPropertyChanged("RestoreDefaultsImageObject");
+			OnPropertyChanged(nameof(ShowOnlyEnabledExceptionsImageObject));
+			OnPropertyChanged(nameof(AddExceptionImageObject));
+			OnPropertyChanged(nameof(RemoveExceptionImageObject));
+			OnPropertyChanged(nameof(RestoreDefaultsImageObject));
 		}
 
 		public bool CanAddException => true;

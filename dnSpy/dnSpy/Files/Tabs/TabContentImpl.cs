@@ -74,7 +74,7 @@ namespace dnSpy.Files.Tabs {
 			set {
 				if (title != value) {
 					title = value;
-					OnPropertyChanged("Title");
+					OnPropertyChanged(nameof(Title));
 				}
 			}
 		}
@@ -85,7 +85,7 @@ namespace dnSpy.Files.Tabs {
 			set {
 				if (toolTip != value) {
 					toolTip = value;
-					OnPropertyChanged("ToolTip");
+					OnPropertyChanged(nameof(ToolTip));
 				}
 			}
 		}
@@ -96,7 +96,7 @@ namespace dnSpy.Files.Tabs {
 			set {
 				if (uiObject != value) {
 					uiObject = value;
-					OnPropertyChanged("UIObject");
+					OnPropertyChanged(nameof(UIObject));
 				}
 			}
 		}

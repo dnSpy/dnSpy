@@ -181,12 +181,12 @@ namespace dnSpy.Images {
 			return false;
 		}
 
-		static bool IsSystemException(ITypeDefOrRef type) => type != null &&
-	type.DeclaringType == null &&
-	type.Namespace == "System" &&
-	type.Name == "Exception" &&
-	type.DefinitionAssembly.IsCorLib();
-
+		static bool IsSystemException(ITypeDefOrRef type) =>
+			type != null &&
+			type.DeclaringType == null &&
+			type.Namespace == "System" &&
+			type.Name == "Exception" &&
+			type.DefinitionAssembly.IsCorLib();
 		static bool IsStaticClass(TypeDef type) =>
 			type.IsSealed && type.IsAbstract;
 		public ImageReference GetImageReference(FieldDef field) =>

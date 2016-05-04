@@ -46,16 +46,16 @@ namespace dnSpy.MainApp {
 		}
 
 		public SavedWindowState Write(ISettingsSection section) {
-			section.Attribute("Bounds", Bounds);
-			section.Attribute("IsFullScreen", IsFullScreen);
-			section.Attribute("WindowState", WindowState);
+			section.Attribute(nameof(Bounds), Bounds);
+			section.Attribute(nameof(IsFullScreen), IsFullScreen);
+			section.Attribute(nameof(WindowState), WindowState);
 			return this;
 		}
 
 		public SavedWindowState Read(ISettingsSection section) {
-			Bounds = section.Attribute<Rect?>("Bounds") ?? Rect.Empty;
-			IsFullScreen = section.Attribute<bool?>("IsFullScreen") ?? false;
-			WindowState = section.Attribute<WindowState?>("WindowState") ?? WindowState.Normal;
+			Bounds = section.Attribute<Rect?>(nameof(Bounds)) ?? Rect.Empty;
+			IsFullScreen = section.Attribute<bool?>(nameof(IsFullScreen)) ?? false;
+			WindowState = section.Attribute<WindowState?>(nameof(WindowState)) ?? WindowState.Normal;
 			return this;
 		}
 	}

@@ -108,7 +108,7 @@ namespace dnSpy.Files.Tabs.Settings {
 			set {
 				if (fontFamilies != value) {
 					fontFamilies = value;
-					OnPropertyChanged("FontFamilies");
+					OnPropertyChanged(nameof(FontFamilies));
 				}
 			}
 		}
@@ -120,7 +120,7 @@ namespace dnSpy.Files.Tabs.Settings {
 				if (fontFamilyVM != value) {
 					fontFamilyVM = value;
 					TextEditorSettings.FontFamily = fontFamilyVM.FontFamily;
-					OnPropertyChanged("FontFamilyVM");
+					OnPropertyChanged(nameof(FontFamilyVM));
 				}
 			}
 		}

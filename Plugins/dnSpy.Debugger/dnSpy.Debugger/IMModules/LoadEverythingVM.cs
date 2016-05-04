@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.IMModules {
 			set {
 				if (wasCanceled != value) {
 					wasCanceled = value;
-					OnPropertyChanged("WasCanceled");
+					OnPropertyChanged(nameof(WasCanceled));
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.IMModules {
 			set {
 				if (hasCompleted != value) {
 					hasCompleted = value;
-					OnPropertyChanged("HasCompleted");
+					OnPropertyChanged(nameof(HasCompleted));
 				}
 			}
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.IMModules {
 			set {
 				if (currentItemName != value) {
 					currentItemName = value;
-					OnPropertyChanged("CurrentItemName");
+					OnPropertyChanged(nameof(CurrentItemName));
 				}
 			}
 		}

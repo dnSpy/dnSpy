@@ -35,7 +35,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (dontShowAgain != value) {
 					dontShowAgain = value;
-					OnPropertyChanged("DontShowAgain");
+					OnPropertyChanged(nameof(DontShowAgain));
 				}
 			}
 		}
@@ -46,7 +46,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (hasDontShowAgain != value) {
 					hasDontShowAgain = value;
-					OnPropertyChanged("HasDontShowAgain");
+					OnPropertyChanged(nameof(HasDontShowAgain));
 				}
 			}
 		}
@@ -57,7 +57,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (hasOKButton != value) {
 					hasOKButton = value;
-					OnPropertyChanged("HasOKButton");
+					OnPropertyChanged(nameof(HasOKButton));
 				}
 			}
 		}
@@ -68,7 +68,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (hasYesButton != value) {
 					hasYesButton = value;
-					OnPropertyChanged("HasYesButton");
+					OnPropertyChanged(nameof(HasYesButton));
 				}
 			}
 		}
@@ -79,7 +79,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (hasNoButton != value) {
 					hasNoButton = value;
-					OnPropertyChanged("HasNoButton");
+					OnPropertyChanged(nameof(HasNoButton));
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (hasCancelButton != value) {
 					hasCancelButton = value;
-					OnPropertyChanged("HasCancelButton");
+					OnPropertyChanged(nameof(HasCancelButton));
 				}
 			}
 		}

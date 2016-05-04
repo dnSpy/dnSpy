@@ -37,7 +37,7 @@ namespace dnSpy.Languages {
 			set {
 				if (languageGuid != value) {
 					languageGuid = value;
-					OnPropertyChanged("LanguageGuid");
+					OnPropertyChanged(nameof(LanguageGuid));
 					OnModified();
 				}
 			}
@@ -57,7 +57,7 @@ namespace dnSpy.Languages {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.LanguageGuid = sect.Attribute<Guid?>("LanguageGuid") ?? this.LanguageGuid;
+			this.LanguageGuid = sect.Attribute<Guid?>(nameof(LanguageGuid)) ?? this.LanguageGuid;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -66,7 +66,7 @@ namespace dnSpy.Languages {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("LanguageGuid", LanguageGuid);
+			sect.Attribute(nameof(LanguageGuid), LanguageGuid);
 		}
 	}
 }

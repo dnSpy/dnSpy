@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (index != value) {
 					index = value;
-					OnPropertyChanged("Index");
+					OnPropertyChanged(nameof(Index));
 				}
 			}
 		}
@@ -73,8 +73,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (type != value) {
 					type = value;
-					OnPropertyChanged("Type");
-					OnPropertyChanged("IsPinned");
+					OnPropertyChanged(nameof(Type));
+					OnPropertyChanged(nameof(IsPinned));
 				}
 			}
 		}
@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -101,8 +101,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (pdbAttributes != value) {
 					pdbAttributes = value;
-					OnPropertyChanged("PdbAttributes");
-					OnPropertyChanged("IsCompilerGenerated");
+					OnPropertyChanged(nameof(PdbAttributes));
+					OnPropertyChanged(nameof(IsCompilerGenerated));
 				}
 			}
 		}

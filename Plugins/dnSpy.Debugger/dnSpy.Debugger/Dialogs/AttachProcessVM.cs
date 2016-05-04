@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 					HasErrorUpdated();
 				}
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Dialogs {
 			Collection.Clear();
 			cancellationToken = new CancellationTokenSource();
 			refreshThread = new Thread(RefreshAsync);
-			OnPropertyChanged("IsRefreshing");
+			OnPropertyChanged(nameof(IsRefreshing));
 			refreshThread.Start();
 		}
 		Thread refreshThread;
@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 			ExecInOriginalThread(() => {
 				refreshThread = null;
-				OnPropertyChanged("IsRefreshing");
+				OnPropertyChanged(nameof(IsRefreshing));
 			});
 		}
 

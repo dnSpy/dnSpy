@@ -128,7 +128,7 @@ namespace dnSpy.Debugger {
 		}
 
 		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SelectedThread")
+			if (e.PropertyName == nameof(IStackFrameManager.SelectedThread))
 				UpdateCurrentLocation(StackFrameManager.FirstILFrame);
 		}
 
@@ -144,11 +144,11 @@ namespace dnSpy.Debugger {
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IgnoreBreakInstructions") {
+			if (e.PropertyName == nameof(IDebuggerSettings.IgnoreBreakInstructions)) {
 				if (TheDebugger.Debugger != null)
 					TheDebugger.Debugger.Options.IgnoreBreakInstructions = DebuggerSettings.IgnoreBreakInstructions;
 			}
-			else if (e.PropertyName == "UseMemoryModules") {
+			else if (e.PropertyName == nameof(IDebuggerSettings.UseMemoryModules)) {
 				if (ProcessState != DebuggerProcessState.Terminated && DebuggerSettings.UseMemoryModules)
 					UpdateCurrentLocationToInMemoryModule();
 			}

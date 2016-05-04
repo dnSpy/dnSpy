@@ -74,7 +74,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (fontFamilies != value) {
 					fontFamilies = value;
-					OnPropertyChanged("FontFamilies");
+					OnPropertyChanged(nameof(FontFamilies));
 				}
 			}
 		}
@@ -86,7 +86,7 @@ namespace dnSpy.Shared.Hex {
 				if (fontFamily != value) {
 					fontFamily = value;
 					Settings.FontFamily = fontFamily;
-					OnPropertyChanged("FontFamilyVM");
+					OnPropertyChanged(nameof(FontFamily));
 				}
 			}
 		}

@@ -39,7 +39,7 @@ namespace dnSpy.Analyzer {
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -51,7 +51,7 @@ namespace dnSpy.Analyzer {
 			set {
 				if (showToken != value) {
 					showToken = value;
-					OnPropertyChanged("ShowToken");
+					OnPropertyChanged(nameof(ShowToken));
 					OnModified();
 				}
 			}
@@ -63,7 +63,7 @@ namespace dnSpy.Analyzer {
 			set {
 				if (singleClickExpandsChildren != value) {
 					singleClickExpandsChildren = value;
-					OnPropertyChanged("SingleClickExpandsChildren");
+					OnPropertyChanged(nameof(SingleClickExpandsChildren));
 					OnModified();
 				}
 			}
@@ -75,7 +75,7 @@ namespace dnSpy.Analyzer {
 			set {
 				if (useNewRenderer != value) {
 					useNewRenderer = value;
-					OnPropertyChanged("UseNewRenderer");
+					OnPropertyChanged(nameof(UseNewRenderer));
 					OnModified();
 				}
 			}
@@ -105,10 +105,10 @@ namespace dnSpy.Analyzer {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
-			this.ShowToken = sect.Attribute<bool?>("ShowToken") ?? this.ShowToken;
-			this.SingleClickExpandsChildren = sect.Attribute<bool?>("SingleClickExpandsChildren") ?? this.SingleClickExpandsChildren;
-			this.UseNewRenderer = sect.Attribute<bool?>("UseNewRenderer") ?? this.UseNewRenderer;
+			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
+			this.ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? this.ShowToken;
+			this.SingleClickExpandsChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsChildren)) ?? this.SingleClickExpandsChildren;
+			this.UseNewRenderer = sect.Attribute<bool?>(nameof(UseNewRenderer)) ?? this.UseNewRenderer;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -117,10 +117,10 @@ namespace dnSpy.Analyzer {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
-			sect.Attribute("ShowToken", ShowToken);
-			sect.Attribute("SingleClickExpandsChildren", SingleClickExpandsChildren);
-			sect.Attribute("UseNewRenderer", UseNewRenderer);
+			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
+			sect.Attribute(nameof(ShowToken), ShowToken);
+			sect.Attribute(nameof(SingleClickExpandsChildren), SingleClickExpandsChildren);
+			sect.Attribute(nameof(UseNewRenderer), UseNewRenderer);
 		}
 	}
 }

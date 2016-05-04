@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.Breakpoints {
 					if (dnbp != null)
 						dnbp.IsEnabled = isEnabled;
 					OnIsEnabledChanged();
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 				}
 			}
 		}

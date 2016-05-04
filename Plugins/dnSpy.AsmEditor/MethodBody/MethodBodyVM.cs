@@ -72,8 +72,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 				throw new InvalidOperationException();
 			}
 
-			OnPropertyChanged("IsNativeBody");
-			OnPropertyChanged("IsCilBody");
+			OnPropertyChanged(nameof(IsNativeBody));
+			OnPropertyChanged(nameof(IsCilBody));
 			HasErrorUpdated();
 		}
 

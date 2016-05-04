@@ -29,7 +29,7 @@ using dnSpy.Debugger.Properties;
 namespace dnSpy.Debugger.Locals {
 	sealed partial class EditValueControl : UserControl {
 		public static readonly DependencyProperty ReadOnlyContentProperty =
-			DependencyProperty.Register("ReadOnlyContent", typeof(object), typeof(EditValueControl),
+			DependencyProperty.Register(nameof(ReadOnlyContent), typeof(object), typeof(EditValueControl),
 			new FrameworkPropertyMetadata(null));
 
 		public object ReadOnlyContent {
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Locals {
 
 		public EditValueControl() {
 			InitializeComponent();
-			var binding = new Binding("ReadOnlyContent") {
+			var binding = new Binding(nameof(ReadOnlyContent)) {
 				Source = this,
 			};
 			content.SetBinding(ContentProperty, binding);
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Locals {
 			if (ev == null)
 				return;
 
-			if (e.PropertyName == "IsEditingValue") {
+			if (e.PropertyName == nameof(IEditableValue.IsEditingValue)) {
 				if (ev.IsEditingValue)
 					StartEditing(ev);
 			}

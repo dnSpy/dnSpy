@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.Memory {
 				CacheLineBytes = true,
 				IsMemory = true,
 			};
-			dnHexBox.SetBinding(HexBox.DocumentProperty, "HexDocument");
+			dnHexBox.SetBinding(HexBox.DocumentProperty, nameof(vmMemory.HexDocument));
 			this.memoryControl.DnHexBox = dnHexBox;
 			dnHexBox.StartOffset = 0;
 			dnHexBox.EndOffset = IntPtr.Size == 4 ? uint.MaxValue : ulong.MaxValue;
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Memory {
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var appSettings = (IAppSettings)sender;
-			if (e.PropertyName == "UseNewRenderer_HexEditor")
+			if (e.PropertyName == nameof(appSettings.UseNewRenderer_HexEditor))
 				UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
 		}
 

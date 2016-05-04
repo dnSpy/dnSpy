@@ -36,7 +36,7 @@ namespace dnSpy.Culture {
 			set {
 				if (uiName != value) {
 					uiName = value;
-					OnPropertyChanged("UIName");
+					OnPropertyChanged(nameof(UIName));
 					OnModified();
 				}
 			}
@@ -56,7 +56,7 @@ namespace dnSpy.Culture {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.UIName = sect.Attribute<string>("UIName") ?? this.UIName;
+			this.UIName = sect.Attribute<string>(nameof(UIName)) ?? this.UIName;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -65,7 +65,7 @@ namespace dnSpy.Culture {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("UIName", UIName);
+			sect.Attribute(nameof(UIName), UIName);
 		}
 	}
 }

@@ -225,7 +225,7 @@ namespace dnSpy.Search {
 
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var searchSettings = (ISearchSettings)sender;
-			if (e.PropertyName == "SyntaxHighlight")
+			if (e.PropertyName == nameof(searchSettings.SyntaxHighlight))
 				RefreshSearchResults();
 		}
 

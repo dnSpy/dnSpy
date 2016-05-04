@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (isEnabled != value) {
 					isEnabled = value;
 					CAArgumentVM.IsEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 					HasErrorUpdated();
 				}
 			}
@@ -59,8 +59,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (enumType != value) {
 					enumType = value;
 					modified = true;
-					OnPropertyChanged("EnumType");
-					OnPropertyChanged("PickEnumToolTip");
+					OnPropertyChanged(nameof(EnumType));
+					OnPropertyChanged(nameof(PickEnumToolTip));
 				}
 			}
 		}
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (name != value) {
 					name = value;
 					modified = true;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -159,7 +159,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void OnConstantTypeChanged() {
 			modified = true;
-			OnPropertyChanged("EnumIsSelected");
+			OnPropertyChanged(nameof(EnumIsSelected));
 			UpdateArgumentType();
 			HasErrorUpdated();
 		}
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void OnNamedArgTypeChanged() {
 			modified = true;
-			OnPropertyChanged("IsField");
+			OnPropertyChanged(nameof(IsField));
 			HasErrorUpdated();
 		}
 
@@ -183,7 +183,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (CAArgumentVM != null)
 				CAArgumentVM.PropertyChanged -= caArgumentVM_PropertyChanged;
 			CAArgumentVM = new CAArgumentVM(ownerModule, namedArg.Argument, options, null);
-			OnPropertyChanged("CAArgumentVM");
+			OnPropertyChanged(nameof(CAArgumentVM));
 			CAArgumentVM.PropertyChanged += caArgumentVM_PropertyChanged;
 
 			Name = namedArg.Name;
@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void caArgumentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Modified")
 				modified = true;
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(CAArgumentVM.IsEnabled))
 				IsEnabled = CAArgumentVM.IsEnabled;
 			HasErrorUpdated();
 		}

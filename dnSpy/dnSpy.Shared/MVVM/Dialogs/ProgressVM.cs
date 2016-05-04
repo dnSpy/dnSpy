@@ -75,7 +75,7 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 			set {
 				if (totalProgress != value) {
 					totalProgress = value;
-					OnPropertyChanged("TotalProgress");
+					OnPropertyChanged(nameof(TotalProgress));
 				}
 			}
 		}
@@ -86,7 +86,7 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 			set {
 				if (wasCanceled != value) {
 					wasCanceled = value;
-					OnPropertyChanged("WasCanceled");
+					OnPropertyChanged(nameof(WasCanceled));
 				}
 			}
 		}
@@ -97,7 +97,7 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 			set {
 				if (hasCompleted != value) {
 					hasCompleted = value;
-					OnPropertyChanged("HasCompleted");
+					OnPropertyChanged(nameof(HasCompleted));
 				}
 			}
 		}
@@ -108,7 +108,7 @@ namespace dnSpy.Shared.MVVM.Dialogs {
 			set {
 				if (currentItemDescription != value) {
 					currentItemDescription = value;
-					OnPropertyChanged("CurrentItemDescription");
+					OnPropertyChanged(nameof(CurrentItemDescription));
 				}
 			}
 		}

@@ -48,18 +48,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
-					OnPropertyChanged("NativeType_IsEnabled");
-					OnPropertyChanged("RawMarshalType_Data_IsEnabled");
-					OnPropertyChanged("FixedSysStringMarshalType_Size_IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
+					OnPropertyChanged(nameof(NativeType_IsEnabled));
+					OnPropertyChanged(nameof(RawMarshalType_Data_IsEnabled));
+					OnPropertyChanged(nameof(FixedSysStringMarshalType_Size_IsEnabled));
 					OnSafeArrayMarshalTypeIsEnabledChanged();
 					OnFixedArrayMarshalTypeIsEnabledChanged();
 					OnArrayMarshalTypeIsEnabledChanged();
-					OnPropertyChanged("CustomMarshalType_GUID_IsEnabled");
-					OnPropertyChanged("CustomMarshalType_NativeTypeName_IsEnabled");
-					OnPropertyChanged("CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled");
-					OnPropertyChanged("CustomMarshalType_Cookie_IsEnabled");
-					OnPropertyChanged("InterfaceMarshalType_IidParamIndex_IsEnabled");
+					OnPropertyChanged(nameof(CustomMarshalType_GUID_IsEnabled));
+					OnPropertyChanged(nameof(CustomMarshalType_NativeTypeName_IsEnabled));
+					OnPropertyChanged(nameof(CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled));
+					OnPropertyChanged(nameof(CustomMarshalType_Cookie_IsEnabled));
+					OnPropertyChanged(nameof(InterfaceMarshalType_IidParamIndex_IsEnabled));
 					TypeStringUpdated();
 					if (!isEnabled)
 						NativeType.SelectedItem = dnlib.DotNet.NativeType.End;
@@ -156,11 +156,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (safeArrayMarshalType_vt != value) {
 					safeArrayMarshalType_vt = value;
-					OnPropertyChanged("SafeArrayMarshalType_VT");
-					OnPropertyChanged("SafeArrayMarshalType_VT_Vector");
-					OnPropertyChanged("SafeArrayMarshalType_VT_Array");
-					OnPropertyChanged("SafeArrayMarshalType_VT_ByRef");
-					OnPropertyChanged("SafeArrayMarshalType_VT_Reserved");
+					OnPropertyChanged(nameof(SafeArrayMarshalType_VT));
+					OnPropertyChanged(nameof(SafeArrayMarshalType_VT_Vector));
+					OnPropertyChanged(nameof(SafeArrayMarshalType_VT_Array));
+					OnPropertyChanged(nameof(SafeArrayMarshalType_VT_ByRef));
+					OnPropertyChanged(nameof(SafeArrayMarshalType_VT_Reserved));
 					TypeStringUpdated();
 				}
 			}
@@ -227,7 +227,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (customMarshalType_guid != value) {
 					customMarshalType_guid = value;
-					OnPropertyChanged("CustomMarshalType_GUID");
+					OnPropertyChanged(nameof(CustomMarshalType_GUID));
 					TypeStringUpdated();
 				}
 			}
@@ -241,7 +241,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (customMarshalType_nativeTypeName != value) {
 					customMarshalType_nativeTypeName = value;
-					OnPropertyChanged("CustomMarshalType_NativeTypeName");
+					OnPropertyChanged(nameof(CustomMarshalType_NativeTypeName));
 					TypeStringUpdated();
 				}
 			}
@@ -257,7 +257,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (customMarshalType_cookie != value) {
 					customMarshalType_cookie = value;
-					OnPropertyChanged("CustomMarshalType_Cookie");
+					OnPropertyChanged(nameof(CustomMarshalType_Cookie));
 					TypeStringUpdated();
 				}
 			}
@@ -268,7 +268,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public NullableCompressedUInt32 InterfaceMarshalType_IidParamIndex { get; }
 		public bool InterfaceMarshalType_IidParamIndex_IsEnabled => IsEnabled;
 		public string TypeString => NativeType.SelectedItem.ToString();
-		void TypeStringUpdated() => OnPropertyChanged("TypeString");
+		void TypeStringUpdated() => OnPropertyChanged(nameof(TypeString));
 
 		public MarshalTypeVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
@@ -290,27 +290,27 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void OnSafeArrayMarshalTypeIsEnabledChanged() {
-			OnPropertyChanged("SafeArrayMarshalType_VT_IsEnabled");
-			OnPropertyChanged("SafeArrayMarshalType_VT_Flags_IsEnabled");
-			OnPropertyChanged("SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled");
+			OnPropertyChanged(nameof(SafeArrayMarshalType_VT_IsEnabled));
+			OnPropertyChanged(nameof(SafeArrayMarshalType_VT_Flags_IsEnabled));
+			OnPropertyChanged(nameof(SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled));
 			HasErrorUpdated();
 			if (!SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled)
 				SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSig = null;
 		}
 
 		void OnFixedArrayMarshalTypeIsEnabledChanged() {
-			OnPropertyChanged("FixedArrayMarshalType_Size_IsEnabled");
-			OnPropertyChanged("FixedArrayMarshalType_NativeType_IsEnabled");
+			OnPropertyChanged(nameof(FixedArrayMarshalType_Size_IsEnabled));
+			OnPropertyChanged(nameof(FixedArrayMarshalType_NativeType_IsEnabled));
 			HasErrorUpdated();
 			if (!FixedArrayMarshalType_NativeType_IsEnabled)
 				FixedArrayMarshalType_NativeType.SelectedItem = dnlib.DotNet.NativeType.NotInitialized;
 		}
 
 		void OnArrayMarshalTypeIsEnabledChanged() {
-			OnPropertyChanged("ArrayMarshalType_NativeType_IsEnabled");
-			OnPropertyChanged("ArrayMarshalType_ParamNum_IsEnabled");
-			OnPropertyChanged("ArrayMarshalType_NumElems_IsEnabled");
-			OnPropertyChanged("ArrayMarshalType_Flags_IsEnabled");
+			OnPropertyChanged(nameof(ArrayMarshalType_NativeType_IsEnabled));
+			OnPropertyChanged(nameof(ArrayMarshalType_ParamNum_IsEnabled));
+			OnPropertyChanged(nameof(ArrayMarshalType_NumElems_IsEnabled));
+			OnPropertyChanged(nameof(ArrayMarshalType_Flags_IsEnabled));
 			HasErrorUpdated();
 			if (!ArrayMarshalType_ParamNum_IsEnabled)
 				ArrayMarshalType_ParamNum.Value = null;
@@ -326,16 +326,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			string.Format(dnSpy_AsmEditor_Resources.Type, CustomMarshalType_CustMarshaler_TypeSigCreator.TypeSigDnlibFullName);
 
 		void safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "TypeSigDnlibFullName")
-				OnPropertyChanged("SafeArrayMarshalType_UserDefinedSubType_TypeHeader");
+			if (e.PropertyName == nameof(SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSigDnlibFullName))
+				OnPropertyChanged(nameof(SafeArrayMarshalType_UserDefinedSubType_TypeHeader));
 			OnSafeArrayMarshalTypeIsEnabledChanged();
 			TypeStringUpdated();
 			HasErrorUpdated();
 		}
 
 		void customMarshalType_custMarshaler_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "TypeSigDnlibFullName")
-				OnPropertyChanged("CustomMarshalType_CustMarshaler_TypeHeader");
+			if (e.PropertyName == nameof(CustomMarshalType_CustMarshaler_TypeSigCreator.TypeSigDnlibFullName))
+				OnPropertyChanged(nameof(CustomMarshalType_CustMarshaler_TypeHeader));
 			TypeStringUpdated();
 			HasErrorUpdated();
 		}
@@ -365,14 +365,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void OnNativeTypeChanged() {
-			OnPropertyChanged("IsMarshalType");
-			OnPropertyChanged("IsRawMarshalType");
-			OnPropertyChanged("IsFixedSysStringMarshalType");
-			OnPropertyChanged("IsSafeArrayMarshalType");
-			OnPropertyChanged("IsFixedArrayMarshalType");
-			OnPropertyChanged("IsArrayMarshalType");
-			OnPropertyChanged("IsCustomMarshalType");
-			OnPropertyChanged("IsInterfaceMarshalType");
+			OnPropertyChanged(nameof(IsMarshalType));
+			OnPropertyChanged(nameof(IsRawMarshalType));
+			OnPropertyChanged(nameof(IsFixedSysStringMarshalType));
+			OnPropertyChanged(nameof(IsSafeArrayMarshalType));
+			OnPropertyChanged(nameof(IsFixedArrayMarshalType));
+			OnPropertyChanged(nameof(IsArrayMarshalType));
+			OnPropertyChanged(nameof(IsCustomMarshalType));
+			OnPropertyChanged(nameof(IsInterfaceMarshalType));
 			HasErrorUpdated();
 		}
 

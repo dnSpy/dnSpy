@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Commands {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 				}
 			}
 		}
@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Commands {
 			set {
 				if (selectedIndex != value) {
 					selectedIndex = value;
-					OnPropertyChanged("SelectedIndex");
+					OnPropertyChanged(nameof(SelectedIndex));
 				}
 			}
 		}

@@ -28,25 +28,25 @@ using dnSpy.AsmEditor.Converters;
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionOperandControl : ContentControl {
 		public static readonly DependencyProperty InstructionOperandVMProperty =
-			DependencyProperty.Register("InstructionOperandVM", typeof(InstructionOperandVM), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(InstructionOperandVM), typeof(InstructionOperandVM), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null, OnInstructionOperandVMChanged));
 		public static readonly DependencyProperty TextBoxStyleProperty =
-			DependencyProperty.Register("TextBoxStyle", typeof(Style), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(TextBoxStyle), typeof(Style), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null));
 		public static readonly DependencyProperty ComboBoxStyleProperty =
-			DependencyProperty.Register("ComboBoxStyle", typeof(Style), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(ComboBoxStyle), typeof(Style), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null));
 		public static readonly DependencyProperty ComboBoxItemTemplateProperty =
-			DependencyProperty.Register("ComboBoxItemTemplate", typeof(DataTemplate), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(ComboBoxItemTemplate), typeof(DataTemplate), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null));
 		public static readonly DependencyProperty ComboBoxSelectionBoxItemTemplateProperty =
-			DependencyProperty.Register("ComboBoxSelectionBoxItemTemplate", typeof(DataTemplate), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(ComboBoxSelectionBoxItemTemplate), typeof(DataTemplate), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonStyleProperty =
-			DependencyProperty.Register("ButtonStyle", typeof(Style), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(ButtonStyle), typeof(Style), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null));
 		public static readonly DependencyProperty ButtonCommandProperty =
-			DependencyProperty.Register("ButtonCommand", typeof(ICommand), typeof(InstructionOperandControl),
+			DependencyProperty.Register(nameof(ButtonCommand), typeof(ICommand), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null));
 
 		public InstructionOperandVM InstructionOperandVM {
@@ -99,7 +99,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void instructionOperandVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "InstructionOperandType")
+			if (e.PropertyName == nameof(MethodBody.InstructionOperandVM.InstructionOperandType))
 				InitializeOperandType((InstructionOperandVM)sender);
 		}
 
@@ -122,14 +122,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 				var textBox = Content as TextBox;
 				if (textBox == null) {
 					textBox = new TextBox();
-					var binding = new Binding("InstructionOperandVM.Text.StringValue") {
+					var binding = new Binding(nameof(InstructionOperandVM) + "." + nameof(InstructionOperandVM.Text) + "." + nameof(InstructionOperandVM.Text.StringValue)) {
 						Source = this,
 						ValidatesOnDataErrors = true,
 						ValidatesOnExceptions = true,
 						UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
 					};
 					textBox.SetBinding(TextBox.TextProperty, binding);
-					binding = new Binding("TextBoxStyle") {
+					binding = new Binding(nameof(TextBoxStyle)) {
 						Source = this,
 					};
 					textBox.SetBinding(TextBox.StyleProperty, binding);
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				var button = Content as FastClickButton;
 				if (button == null) {
 					button = new FastClickButton();
-					var binding = new Binding("InstructionOperandVM.Other") {
+					var binding = new Binding(nameof(InstructionOperandVM) + "." + nameof(InstructionOperandVM.Other)) {
 						Source = this,
 						Mode = BindingMode.OneWay,
 						Converter = CilObjectConverter.Instance,
@@ -155,11 +155,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 						UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
 					};
 					button.SetBinding(Button.ContentProperty, binding);
-					binding = new Binding("ButtonStyle") {
+					binding = new Binding(nameof(ButtonStyle)) {
 						Source = this,
 					};
 					button.SetBinding(Button.StyleProperty, binding);
-					binding = new Binding("ButtonCommand") {
+					binding = new Binding(nameof(ButtonCommand)) {
 						Source = this,
 					};
 					button.SetBinding(Button.CommandProperty, binding);
@@ -176,26 +176,26 @@ namespace dnSpy.AsmEditor.MethodBody {
 					comboBox = new ComboBox();
 					comboBox.ItemTemplate = (DataTemplate)GetValue(ComboBoxItemTemplateProperty);
 					ComboBoxAttachedProps.SetSelectionBoxItemTemplate(comboBox, (DataTemplate)GetValue(ComboBoxSelectionBoxItemTemplateProperty));
-					var binding = new Binding("InstructionOperandVM.OperandListVM.Items") {
+					var binding = new Binding(nameof(InstructionOperandVM) + "." + nameof(InstructionOperandVM.OperandListVM) + "." + nameof(InstructionOperandVM.OperandListVM.Items)) {
 						Source = this,
 					};
 					comboBox.SetBinding(ComboBox.ItemsSourceProperty, binding);
-					binding = new Binding("InstructionOperandVM.OperandListVM.SelectedIndex") {
+					binding = new Binding(nameof(InstructionOperandVM) + "." + nameof(InstructionOperandVM.OperandListVM) + "." + nameof(InstructionOperandVM.OperandListVM.SelectedIndex)) {
 						Source = this,
 						ValidatesOnDataErrors = true,
 						ValidatesOnExceptions = true,
 						UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
 					};
 					comboBox.SetBinding(ComboBox.SelectedIndexProperty, binding);
-					binding = new Binding("ComboBoxStyle") {
+					binding = new Binding(nameof(ComboBoxStyle)) {
 						Source = this,
 					};
 					comboBox.SetBinding(ComboBox.StyleProperty, binding);
-					binding = new Binding("ComboBoxItemTemplate") {
+					binding = new Binding(nameof(ComboBoxItemTemplate)) {
 						Source = this,
 					};
 					comboBox.SetBinding(ComboBox.ItemTemplateProperty, binding);
-					binding = new Binding("ComboBoxSelectionBoxItemTemplate") {
+					binding = new Binding(nameof(ComboBoxSelectionBoxItemTemplate)) {
 						Source = this,
 					};
 					comboBox.SetBinding(ComboBoxAttachedProps.SelectionBoxItemTemplateProperty, binding);

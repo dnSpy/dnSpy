@@ -62,8 +62,8 @@ namespace dnSpy.Decompiler {
 			set {
 				if (selectedLanguageSetting != value) {
 					selectedLanguageSetting = value;
-					OnPropertyChanged("SelectedLanguageSetting");
-					OnPropertyChanged("CurrentUIObject");
+					OnPropertyChanged(nameof(SelectedLanguageSetting));
+					OnPropertyChanged(nameof(CurrentUIObject));
 				}
 			}
 		}

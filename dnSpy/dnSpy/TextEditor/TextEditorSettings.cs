@@ -34,7 +34,7 @@ namespace dnSpy.TextEditor {
 			set {
 				if (fontFamily.Source != value.Source) {
 					fontFamily = value;
-					OnPropertyChanged("FontFamily");
+					OnPropertyChanged(nameof(FontFamily));
 					OnModified();
 				}
 			}
@@ -46,7 +46,7 @@ namespace dnSpy.TextEditor {
 			set {
 				if (fontSize != value) {
 					fontSize = FontUtils.FilterFontSize(value);
-					OnPropertyChanged("FontSize");
+					OnPropertyChanged(nameof(FontSize));
 					OnModified();
 				}
 			}
@@ -58,7 +58,7 @@ namespace dnSpy.TextEditor {
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;
-					OnPropertyChanged("ShowLineNumbers");
+					OnPropertyChanged(nameof(ShowLineNumbers));
 					OnModified();
 				}
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.TextEditor {
 			set {
 				if (autoHighlightRefs != value) {
 					autoHighlightRefs = value;
-					OnPropertyChanged("AutoHighlightRefs");
+					OnPropertyChanged(nameof(AutoHighlightRefs));
 					OnModified();
 				}
 			}
@@ -82,7 +82,7 @@ namespace dnSpy.TextEditor {
 			set {
 				if (highlightCurrentLine != value) {
 					highlightCurrentLine = value;
-					OnPropertyChanged("HighlightCurrentLine");
+					OnPropertyChanged(nameof(HighlightCurrentLine));
 					OnModified();
 				}
 			}
@@ -94,7 +94,7 @@ namespace dnSpy.TextEditor {
 			set {
 				if (wordWrap != value) {
 					wordWrap = value;
-					OnPropertyChanged("WordWrap");
+					OnPropertyChanged(nameof(WordWrap));
 					OnModified();
 				}
 			}
@@ -126,12 +126,12 @@ namespace dnSpy.TextEditor {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.FontFamily = new FontFamily(sect.Attribute<string>("FontFamily") ?? FontUtils.GetDefaultMonospacedFont());
-			this.FontSize = sect.Attribute<double?>("FontSize") ?? this.FontSize;
-			this.ShowLineNumbers = sect.Attribute<bool?>("ShowLineNumbers") ?? this.ShowLineNumbers;
-			this.AutoHighlightRefs = sect.Attribute<bool?>("AutoHighlightRefs") ?? this.AutoHighlightRefs;
-			this.HighlightCurrentLine = sect.Attribute<bool?>("HighlightCurrentLine") ?? this.HighlightCurrentLine;
-			this.WordWrap = sect.Attribute<bool?>("WordWrap") ?? this.WordWrap;
+			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtils.GetDefaultMonospacedFont());
+			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
+			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
+			this.AutoHighlightRefs = sect.Attribute<bool?>(nameof(AutoHighlightRefs)) ?? this.AutoHighlightRefs;
+			this.HighlightCurrentLine = sect.Attribute<bool?>(nameof(HighlightCurrentLine)) ?? this.HighlightCurrentLine;
+			this.WordWrap = sect.Attribute<bool?>(nameof(WordWrap)) ?? this.WordWrap;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -140,12 +140,12 @@ namespace dnSpy.TextEditor {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("FontFamily", FontFamily.Source);
-			sect.Attribute("FontSize", FontSize);
-			sect.Attribute("ShowLineNumbers", ShowLineNumbers);
-			sect.Attribute("AutoHighlightRefs", AutoHighlightRefs);
-			sect.Attribute("HighlightCurrentLine", HighlightCurrentLine);
-			sect.Attribute("WordWrap", WordWrap);
+			sect.Attribute(nameof(FontFamily), FontFamily.Source);
+			sect.Attribute(nameof(FontSize), FontSize);
+			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
+			sect.Attribute(nameof(AutoHighlightRefs), AutoHighlightRefs);
+			sect.Attribute(nameof(HighlightCurrentLine), HighlightCurrentLine);
+			sect.Attribute(nameof(WordWrap), WordWrap);
 		}
 	}
 }

@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}
@@ -144,12 +144,12 @@ namespace dnSpy.Debugger.Breakpoints {
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;
 			switch (e.PropertyName) {
-			case "SyntaxHighlightBreakpoints":
+			case nameof(debuggerSettings.SyntaxHighlightBreakpoints):
 				breakpointContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints;
 				RefreshThemeFields();
 				break;
 
-			case "UseHexadecimal":
+			case nameof(debuggerSettings.UseHexadecimal):
 				breakpointContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 				RefreshThemeFields();
 				break;
@@ -159,35 +159,35 @@ namespace dnSpy.Debugger.Breakpoints {
 		void BreakpointSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var breakpointSettings = (IBreakpointSettings)sender;
 			switch (e.PropertyName) {
-			case "ShowTokens":
+			case nameof(breakpointSettings.ShowTokens):
 				breakpointContext.ShowTokens = breakpointSettings.ShowTokens;
 				RefreshNameField();
 				break;
-			case "ShowModuleNames":
+			case nameof(breakpointSettings.ShowModuleNames):
 				breakpointContext.ShowModuleNames = breakpointSettings.ShowModuleNames;
 				RefreshNameField();
 				break;
-			case "ShowParameterTypes":
+			case nameof(breakpointSettings.ShowParameterTypes):
 				breakpointContext.ShowParameterTypes = breakpointSettings.ShowParameterTypes;
 				RefreshNameField();
 				break;
-			case "ShowParameterNames":
+			case nameof(breakpointSettings.ShowParameterNames):
 				breakpointContext.ShowParameterNames = breakpointSettings.ShowParameterNames;
 				RefreshNameField();
 				break;
-			case "ShowOwnerTypes":
+			case nameof(breakpointSettings.ShowOwnerTypes):
 				breakpointContext.ShowOwnerTypes = breakpointSettings.ShowOwnerTypes;
 				RefreshNameField();
 				break;
-			case "ShowReturnTypes":
+			case nameof(breakpointSettings.ShowReturnTypes):
 				breakpointContext.ShowReturnTypes = breakpointSettings.ShowReturnTypes;
 				RefreshNameField();
 				break;
-			case "ShowNamespaces":
+			case nameof(breakpointSettings.ShowNamespaces):
 				breakpointContext.ShowNamespaces = breakpointSettings.ShowNamespaces;
 				RefreshNameField();
 				break;
-			case "ShowTypeKeywords":
+			case nameof(breakpointSettings.ShowTypeKeywords):
 				breakpointContext.ShowTypeKeywords = breakpointSettings.ShowTypeKeywords;
 				RefreshNameField();
 				break;

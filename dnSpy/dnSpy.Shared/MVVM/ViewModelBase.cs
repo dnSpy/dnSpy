@@ -34,6 +34,6 @@ namespace dnSpy.Shared.MVVM {
 		public string this[string columnName] => Verify(columnName);
 		public virtual bool HasError => false;
 		protected virtual string Verify(string columnName) => string.Empty;
-		protected void HasErrorUpdated() => OnPropertyChanged("HasError");
+		protected void HasErrorUpdated() => OnPropertyChanged(nameof(HasError));
 	}
 }

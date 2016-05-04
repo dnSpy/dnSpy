@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor {
 			Application.Current.Resources["TextEditorFontFamily"] = textEditorSettings.FontFamily;
 
 		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "FontFamily")
+			if (e.PropertyName == nameof(ITextEditorSettings.FontFamily))
 				Initialize((ITextEditorSettings)sender);
 		}
 

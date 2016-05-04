@@ -141,7 +141,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "UseNewRenderer_TextEditor")
+			if (e.PropertyName == nameof(IAppSettings.UseNewRenderer_TextEditor))
 				InitializeTextFormatterProvider();
 		}
 

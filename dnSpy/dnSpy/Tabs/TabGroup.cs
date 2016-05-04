@@ -59,8 +59,8 @@ namespace dnSpy.Tabs {
 					isActive = value;
 					foreach (var tabItem in AllTabItemImpls)
 						tabItem.IsActive = IsActive;
-					OnPropertyChanged("IsActive");
-					OnPropertyChanged("TabGroupState");
+					OnPropertyChanged(nameof(IsActive));
+					OnPropertyChanged(nameof(TabGroupState));
 				}
 			}
 		}
@@ -271,8 +271,8 @@ namespace dnSpy.Tabs {
 		internal void OnThemeChanged() => OnStylePropChange();
 
 		void OnStylePropChange() {
-			OnPropertyChanged("TabGroupState");
-			OnPropertyChanged("HasOpenedDoc");
+			OnPropertyChanged(nameof(TabGroupState));
+			OnPropertyChanged(nameof(HasOpenedDoc));
 		}
 
 		void AddEvents(TabItemImpl impl) {

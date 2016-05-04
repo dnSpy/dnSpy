@@ -37,10 +37,10 @@ namespace dnSpy.Shared.Controls {
 
 	public class WinSysButton : TabButton {
 		public static readonly DependencyProperty WinSysTypeProperty =
-			DependencyProperty.Register("WinSysType", typeof(WinSysType), typeof(WinSysButton),
+			DependencyProperty.Register(nameof(WinSysType), typeof(WinSysType), typeof(WinSysButton),
 			new FrameworkPropertyMetadata(WinSysType.Minimize, OnWinSysTypeChanged));
 		public static readonly DependencyProperty CurrentWinSysTypeProperty =
-			DependencyProperty.Register("CurrentWinSysType", typeof(CurrentWinSysType), typeof(WinSysButton),
+			DependencyProperty.Register(nameof(CurrentWinSysType), typeof(CurrentWinSysType), typeof(WinSysButton),
 			new FrameworkPropertyMetadata(CurrentWinSysType.Minimize));
 
 		public WinSysType WinSysType {

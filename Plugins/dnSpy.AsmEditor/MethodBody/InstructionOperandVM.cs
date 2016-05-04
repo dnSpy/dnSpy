@@ -60,10 +60,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (operandType != value) {
 					operandType = value;
-					OnPropertyChanged("InstructionOperandType");
-					OnPropertyChanged("Text");
-					OnPropertyChanged("Other");
-					OnPropertyChanged("StringIsSelected");
+					OnPropertyChanged(nameof(InstructionOperandType));
+					OnPropertyChanged(nameof(Text));
+					OnPropertyChanged(nameof(Other));
+					OnPropertyChanged(nameof(StringIsSelected));
 					FieldUpdated();
 				}
 			}
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public void SwitchOperandChanged() => OnPropertyChanged("Other");
+		public void SwitchOperandChanged() => OnPropertyChanged(nameof(Other));
 
 		public void BranchOperandChanged(IEnumerable<InstructionVM> instrs) {
 			if (OperandListVM.Items.Count > 0 && !(OperandListVM.SelectedItem is InstructionVM))
@@ -246,7 +246,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (other != value) {
 					other = value;
-					OnPropertyChanged("Other");
+					OnPropertyChanged(nameof(Other));
 					FieldUpdated();
 				}
 			}
@@ -407,7 +407,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "Other") {
+			if (columnName == nameof(Other)) {
 				switch (InstructionOperandType) {
 				case MethodBody.InstructionOperandType.None:
 				case MethodBody.InstructionOperandType.SByte:
@@ -511,7 +511,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case MethodBody.InstructionOperandType.Type:
 				case MethodBody.InstructionOperandType.MethodSig:
 				case MethodBody.InstructionOperandType.SwitchTargets:
-					if (!string.IsNullOrEmpty(Verify("Other"))) return true;
+					if (!string.IsNullOrEmpty(Verify(nameof(Other)))) return true;
 					break;
 
 				case MethodBody.InstructionOperandType.BranchTarget:

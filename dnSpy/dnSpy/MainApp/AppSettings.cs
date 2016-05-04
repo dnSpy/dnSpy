@@ -32,7 +32,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (useNewRenderer_TextEditor != value) {
 					useNewRenderer_TextEditor = value;
-					OnPropertyChanged("UseNewRenderer_TextEditor");
+					OnPropertyChanged(nameof(UseNewRenderer_TextEditor));
 					OnModified();
 				}
 			}
@@ -44,7 +44,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (useNewRenderer_HexEditor != value) {
 					useNewRenderer_HexEditor = value;
-					OnPropertyChanged("UseNewRenderer_HexEditor");
+					OnPropertyChanged(nameof(UseNewRenderer_HexEditor));
 					OnModified();
 				}
 			}
@@ -56,7 +56,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (useNewRenderer_FileTreeView != value) {
 					useNewRenderer_FileTreeView = value;
-					OnPropertyChanged("UseNewRenderer_FileTreeView");
+					OnPropertyChanged(nameof(UseNewRenderer_FileTreeView));
 					OnModified();
 				}
 			}
@@ -76,9 +76,9 @@ namespace dnSpy.MainApp {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.UseNewRenderer_TextEditor = sect.Attribute<bool?>("UseNewRenderer_TextEditor") ?? this.UseNewRenderer_TextEditor;
-			this.UseNewRenderer_HexEditor = sect.Attribute<bool?>("UseNewRenderer_HexEditor") ?? this.UseNewRenderer_HexEditor;
-			this.UseNewRenderer_FileTreeView = sect.Attribute<bool?>("UseNewRenderer_FileTreeView") ?? this.UseNewRenderer_FileTreeView;
+			this.UseNewRenderer_TextEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_TextEditor)) ?? this.UseNewRenderer_TextEditor;
+			this.UseNewRenderer_HexEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_HexEditor)) ?? this.UseNewRenderer_HexEditor;
+			this.UseNewRenderer_FileTreeView = sect.Attribute<bool?>(nameof(UseNewRenderer_FileTreeView)) ?? this.UseNewRenderer_FileTreeView;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -87,9 +87,9 @@ namespace dnSpy.MainApp {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("UseNewRenderer_TextEditor", UseNewRenderer_TextEditor);
-			sect.Attribute("UseNewRenderer_HexEditor", UseNewRenderer_HexEditor);
-			sect.Attribute("UseNewRenderer_FileTreeView", UseNewRenderer_FileTreeView);
+			sect.Attribute(nameof(UseNewRenderer_TextEditor), UseNewRenderer_TextEditor);
+			sect.Attribute(nameof(UseNewRenderer_HexEditor), UseNewRenderer_HexEditor);
+			sect.Attribute(nameof(UseNewRenderer_FileTreeView), UseNewRenderer_FileTreeView);
 		}
 	}
 }

@@ -44,8 +44,8 @@ namespace dnSpy.Search {
 		}
 
 		public void RefreshUI() {
-			OnPropertyChanged("Image");
-			OnPropertyChanged("Name");
+			OnPropertyChanged(nameof(Image));
+			OnPropertyChanged(nameof(Name));
 		}
 	}
 }

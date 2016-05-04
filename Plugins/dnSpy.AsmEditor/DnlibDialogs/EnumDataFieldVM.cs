@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 						ForceWriteStringValue(enumUnderlyingTypeField.StringValue);
 					}
 				}
-				OnPropertyChanged("PickEnumToolTip");
+				OnPropertyChanged(nameof(PickEnumToolTip));
 			}
 		}
 

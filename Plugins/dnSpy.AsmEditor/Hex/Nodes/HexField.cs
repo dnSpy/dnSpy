@@ -513,7 +513,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (boolean == value)
 				return false;
 			boolean = value;
-			OnPropertyChanged("BitValue");
+			OnPropertyChanged(nameof(BitValue));
 			return true;
 		}
 		bool boolean;
@@ -594,7 +594,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			set {
 				if (isVisible != value) {
 					isVisible = value;
-					OnPropertyChanged("IsVisible");
+					OnPropertyChanged(nameof(IsVisible));
 				}
 			}
 		}

@@ -61,18 +61,18 @@ namespace dnSpy.AsmEditor.Field {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("Static");
-					OnPropertyChanged("InitOnly");
-					OnPropertyChanged("Literal");
-					OnPropertyChanged("NotSerialized");
-					OnPropertyChanged("SpecialName");
-					OnPropertyChanged("PinvokeImpl");
-					OnPropertyChanged("RTSpecialName");
-					OnPropertyChanged("HasFieldMarshal");
-					OnPropertyChanged("HasDefault");
-					OnPropertyChanged("HasFieldRVA");
-					OnPropertyChanged("MarshalTypeString");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(Static));
+					OnPropertyChanged(nameof(InitOnly));
+					OnPropertyChanged(nameof(Literal));
+					OnPropertyChanged(nameof(NotSerialized));
+					OnPropertyChanged(nameof(SpecialName));
+					OnPropertyChanged(nameof(PinvokeImpl));
+					OnPropertyChanged(nameof(RTSpecialName));
+					OnPropertyChanged(nameof(HasFieldMarshal));
+					OnPropertyChanged(nameof(HasDefault));
+					OnPropertyChanged(nameof(HasFieldRVA));
+					OnPropertyChanged(nameof(MarshalTypeString));
 					ConstantVM.IsEnabled = HasDefault;
 					MarshalTypeVM.IsEnabled = HasFieldMarshal;
 					ImplMapVM.IsEnabled = PinvokeImpl;
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Field {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -213,28 +213,28 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(ConstantVM.IsEnabled))
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
 		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(MarshalTypeVM.IsEnabled))
 				HasFieldMarshal = MarshalTypeVM.IsEnabled;
-			else if (e.PropertyName == "TypeString")
-				OnPropertyChanged("MarshalTypeString");
+			else if (e.PropertyName == nameof(MarshalTypeVM.TypeString))
+				OnPropertyChanged(nameof(MarshalTypeString));
 			HasErrorUpdated();
 		}
 
 		void implMapVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(ImplMapVM.IsEnabled))
 				PinvokeImpl = ImplMapVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
 		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "TypeSigDnlibFullName")
-				OnPropertyChanged("FieldTypeHeader");
+			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
+				OnPropertyChanged(nameof(FieldTypeHeader));
 			HasErrorUpdated();
 		}
 

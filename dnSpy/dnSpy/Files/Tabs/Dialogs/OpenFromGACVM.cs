@@ -45,7 +45,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}
@@ -56,8 +56,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (searchingGAC != value) {
 					searchingGAC = value;
-					OnPropertyChanged("SearchingGAC");
-					OnPropertyChanged("NotSearchingGAC");
+					OnPropertyChanged(nameof(SearchingGAC));
+					OnPropertyChanged(nameof(NotSearchingGAC));
 				}
 			}
 		}
@@ -70,7 +70,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (searchText != value) {
 					searchText = value;
-					OnPropertyChanged("SearchText");
+					OnPropertyChanged(nameof(SearchText));
 					Refilter();
 				}
 			}
@@ -82,7 +82,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (showDuplicates != value) {
 					showDuplicates = value;
-					OnPropertyChanged("ShowDuplicates");
+					OnPropertyChanged(nameof(ShowDuplicates));
 					Refilter();
 				}
 			}
@@ -118,7 +118,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 
-		void RefreshCounters() => OnPropertyChanged("FilesShownInfo");
+		void RefreshCounters() => OnPropertyChanged(nameof(FilesShownInfo));
 
 		public void AddFiles(IEnumerable<GacFileInfo> files) {
 			foreach (var file in files) {

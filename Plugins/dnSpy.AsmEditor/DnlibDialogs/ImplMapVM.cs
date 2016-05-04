@@ -66,7 +66,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (moduleName != value) {
 					moduleName = value;
-					OnPropertyChanged("ModuleName");
+					OnPropertyChanged(nameof(ModuleName));
 				}
 			}
 		}
@@ -109,9 +109,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("NoMangle");
-					OnPropertyChanged("SupportsLastError");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(NoMangle));
+					OnPropertyChanged(nameof(SupportsLastError));
 				}
 			}
 		}

@@ -32,7 +32,7 @@ namespace dnSpy.Files.Tabs {
 			set {
 				if (restoreTabs != value) {
 					restoreTabs = value;
-					OnPropertyChanged("RestoreTabs");
+					OnPropertyChanged(nameof(RestoreTabs));
 					OnModified();
 				}
 			}
@@ -44,7 +44,7 @@ namespace dnSpy.Files.Tabs {
 			set {
 				if (decompileFullType != value) {
 					decompileFullType = value;
-					OnPropertyChanged("DecompileFullType");
+					OnPropertyChanged(nameof(DecompileFullType));
 					OnModified();
 				}
 			}
@@ -71,8 +71,8 @@ namespace dnSpy.Files.Tabs {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.RestoreTabs = sect.Attribute<bool?>("RestoreTabs") ?? this.RestoreTabs;
-			this.DecompileFullType = sect.Attribute<bool?>("DecompileFullType") ?? this.DecompileFullType;
+			this.RestoreTabs = sect.Attribute<bool?>(nameof(RestoreTabs)) ?? this.RestoreTabs;
+			this.DecompileFullType = sect.Attribute<bool?>(nameof(DecompileFullType)) ?? this.DecompileFullType;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -81,8 +81,8 @@ namespace dnSpy.Files.Tabs {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("RestoreTabs", RestoreTabs);
-			sect.Attribute("DecompileFullType", DecompileFullType);
+			sect.Attribute(nameof(RestoreTabs), RestoreTabs);
+			sect.Attribute(nameof(DecompileFullType), DecompileFullType);
 		}
 	}
 }

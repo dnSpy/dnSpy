@@ -51,9 +51,9 @@ namespace dnSpy.AsmEditor.Event {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("SpecialName");
-					OnPropertyChanged("RTSpecialName");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(SpecialName));
+					OnPropertyChanged(nameof(RTSpecialName));
 				}
 			}
 		}
@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.Event {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -106,8 +106,8 @@ namespace dnSpy.AsmEditor.Event {
 			set {
 				if (addMethod != value) {
 					addMethod = value;
-					OnPropertyChanged("AddMethod");
-					OnPropertyChanged("AddMethodFullName");
+					OnPropertyChanged(nameof(AddMethod));
+					OnPropertyChanged(nameof(AddMethodFullName));
 				}
 			}
 		}
@@ -118,8 +118,8 @@ namespace dnSpy.AsmEditor.Event {
 			set {
 				if (invokeMethod != value) {
 					invokeMethod = value;
-					OnPropertyChanged("InvokeMethod");
-					OnPropertyChanged("InvokeMethodFullName");
+					OnPropertyChanged(nameof(InvokeMethod));
+					OnPropertyChanged(nameof(InvokeMethodFullName));
 				}
 			}
 		}
@@ -130,8 +130,8 @@ namespace dnSpy.AsmEditor.Event {
 			set {
 				if (removeMethod != value) {
 					removeMethod = value;
-					OnPropertyChanged("RemoveMethod");
-					OnPropertyChanged("RemoveMethodFullName");
+					OnPropertyChanged(nameof(RemoveMethod));
+					OnPropertyChanged(nameof(RemoveMethodFullName));
 				}
 			}
 		}
@@ -165,8 +165,8 @@ namespace dnSpy.AsmEditor.Event {
 		}
 
 		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "TypeSigDnlibFullName")
-				OnPropertyChanged("EventTypeHeader");
+			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
+				OnPropertyChanged(nameof(EventTypeHeader));
 			HasErrorUpdated();
 		}
 

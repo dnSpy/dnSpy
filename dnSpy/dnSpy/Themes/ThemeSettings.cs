@@ -56,8 +56,8 @@ namespace dnSpy.Themes {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.ThemeGuid = sect.Attribute<Guid?>("ThemeGuid");
-			this.ShowAllThemes = sect.Attribute<bool?>("ShowAllThemes") ?? ShowAllThemes;
+			this.ThemeGuid = sect.Attribute<Guid?>(nameof(ThemeGuid));
+			this.ShowAllThemes = sect.Attribute<bool?>(nameof(ShowAllThemes)) ?? ShowAllThemes;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -66,8 +66,8 @@ namespace dnSpy.Themes {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("ThemeGuid", ThemeGuid);
-			sect.Attribute("ShowAllThemes", ShowAllThemes);
+			sect.Attribute(nameof(ThemeGuid), ThemeGuid);
+			sect.Attribute(nameof(ShowAllThemes), ShowAllThemes);
 		}
 	}
 }

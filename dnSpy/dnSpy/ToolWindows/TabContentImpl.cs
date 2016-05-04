@@ -54,7 +54,7 @@ namespace dnSpy.ToolWindows {
 			set {
 				if (isActive != value) {
 					isActive = value;
-					OnPropertyChanged("IsActive");
+					OnPropertyChanged(nameof(IsActive));
 				}
 			}
 		}
@@ -116,7 +116,7 @@ namespace dnSpy.ToolWindows {
 				contentUIObject_initd = true;
 				if (contentUIObject != value) {
 					contentUIObject = value;
-					OnPropertyChanged("ContentUIObject");
+					OnPropertyChanged(nameof(ContentUIObject));
 				}
 			}
 		}
@@ -189,7 +189,7 @@ namespace dnSpy.ToolWindows {
 				if (contentPresenter != null)
 					contentPresenter.Content = null;
 				contentPresenter = null;
-				OnPropertyChanged("UIObject");
+				OnPropertyChanged(nameof(UIObject));
 				ContentUIObject = null;
 				break;
 
@@ -235,13 +235,13 @@ namespace dnSpy.ToolWindows {
 		}
 
 		void ToolWindowContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "Title")
-				OnPropertyChanged("Title");
-			else if (e.PropertyName == "ToolTip")
-				OnPropertyChanged("ToolTip");
-			else if (e.PropertyName == "UIObject" && contentUIObject_initd)
+			if (e.PropertyName == nameof(IToolWindowContent.Title))
+				OnPropertyChanged(nameof(Title));
+			else if (e.PropertyName == nameof(IToolWindowContent.ToolTip))
+				OnPropertyChanged(nameof(ToolTip));
+			else if (e.PropertyName == nameof(IToolWindowContent.UIObject) && contentUIObject_initd)
 				ContentUIObject = Content.UIObject;
-			else if (e.PropertyName == "ScaleElement" && contentUIObject_initd)
+			else if (e.PropertyName == nameof(IToolWindowContent.ScaleElement) && contentUIObject_initd)
 				UpdateScaleElement();
 		}
 

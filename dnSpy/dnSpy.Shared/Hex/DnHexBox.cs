@@ -55,8 +55,8 @@ namespace dnSpy.Shared.Hex {
 
 		public DnHexBox(IMenuManager menuManager, IHexEditorSettings hexEditorSettings) {
 			this.hexEditorSettings = hexEditorSettings;
-			SetBinding(Control.FontFamilyProperty, new Binding("FontFamily") { Source = hexEditorSettings });
-			SetBinding(Control.FontSizeProperty, new Binding("FontSize") { Source = hexEditorSettings });
+			SetBinding(Control.FontFamilyProperty, new Binding(nameof(hexEditorSettings.FontFamily)) { Source = hexEditorSettings });
+			SetBinding(Control.FontSizeProperty, new Binding(nameof(hexEditorSettings.FontSize)) { Source = hexEditorSettings });
 			SetResourceReference(Control.BackgroundProperty, HexBoxThemeHelper.GetBackgroundResourceKey(ColorType.HexText));
 			SetResourceReference(Control.ForegroundProperty, HexBoxThemeHelper.GetForegroundResourceKey(ColorType.HexText));
 			SetResourceReference(HexBox.OffsetForegroundProperty, HexBoxThemeHelper.GetForegroundResourceKey(ColorType.HexOffset));
@@ -125,7 +125,7 @@ namespace dnSpy.Shared.Hex {
 				if (value == null) {
 					useDefault_BytesGroupCount = true;
 					ClearValue(HexBox.BytesGroupCountProperty);
-					SetBinding(HexBox.BytesGroupCountProperty, new Binding("BytesGroupCount") { Source = hexEditorSettings });
+					SetBinding(HexBox.BytesGroupCountProperty, new Binding(nameof(hexEditorSettings.BytesGroupCount)) { Source = hexEditorSettings });
 				}
 				else {
 					useDefault_BytesGroupCount = false;
@@ -141,7 +141,7 @@ namespace dnSpy.Shared.Hex {
 				if (value == null) {
 					useDefault_BytesPerLine = true;
 					ClearValue(HexBox.BytesPerLineProperty);
-					SetBinding(HexBox.BytesPerLineProperty, new Binding("BytesPerLine") { Source = hexEditorSettings });
+					SetBinding(HexBox.BytesPerLineProperty, new Binding(nameof(hexEditorSettings.BytesPerLine)) { Source = hexEditorSettings });
 				}
 				else {
 					useDefault_BytesPerLine = false;
@@ -157,7 +157,7 @@ namespace dnSpy.Shared.Hex {
 				if (value == null) {
 					useDefault_UseHexPrefix = true;
 					ClearValue(HexBox.UseHexPrefixProperty);
-					SetBinding(HexBox.UseHexPrefixProperty, new Binding("UseHexPrefix") { Source = hexEditorSettings });
+					SetBinding(HexBox.UseHexPrefixProperty, new Binding(nameof(hexEditorSettings.UseHexPrefix)) { Source = hexEditorSettings });
 				}
 				else {
 					useDefault_UseHexPrefix = false;
@@ -173,7 +173,7 @@ namespace dnSpy.Shared.Hex {
 				if (value == null) {
 					useDefault_ShowAscii = true;
 					ClearValue(HexBox.ShowAsciiProperty);
-					SetBinding(HexBox.ShowAsciiProperty, new Binding("ShowAscii") { Source = hexEditorSettings });
+					SetBinding(HexBox.ShowAsciiProperty, new Binding(nameof(hexEditorSettings.ShowAscii)) { Source = hexEditorSettings });
 				}
 				else {
 					useDefault_ShowAscii = false;
@@ -189,7 +189,7 @@ namespace dnSpy.Shared.Hex {
 				if (value == null) {
 					useDefault_LowerCaseHex = true;
 					ClearValue(HexBox.LowerCaseHexProperty);
-					SetBinding(HexBox.LowerCaseHexProperty, new Binding("LowerCaseHex") { Source = hexEditorSettings });
+					SetBinding(HexBox.LowerCaseHexProperty, new Binding(nameof(hexEditorSettings.LowerCaseHex)) { Source = hexEditorSettings });
 				}
 				else {
 					useDefault_LowerCaseHex = false;
@@ -205,7 +205,7 @@ namespace dnSpy.Shared.Hex {
 				if (value == null) {
 					useDefault_AsciiEncoding = true;
 					ClearValue(HexBox.AsciiEncodingProperty);
-					SetBinding(HexBox.AsciiEncodingProperty, new Binding("AsciiEncoding") { Source = hexEditorSettings });
+					SetBinding(HexBox.AsciiEncodingProperty, new Binding(nameof(hexEditorSettings.AsciiEncoding)) { Source = hexEditorSettings });
 				}
 				else {
 					useDefault_AsciiEncoding = false;

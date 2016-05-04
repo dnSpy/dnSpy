@@ -53,67 +53,67 @@ namespace dnSpy.Shared.HexEditor {
 		readonly Dictionary<ulong, HexLine> offsetToLine = new Dictionary<ulong, HexLine>();
 
 		public static readonly DependencyProperty DocumentProperty =
-			DependencyProperty.Register("Document", typeof(HexDocument), typeof(HexBox),
+			DependencyProperty.Register(nameof(Document), typeof(HexDocument), typeof(HexBox),
 			new FrameworkPropertyMetadata(null, OnDocumentChanged));
 		public static readonly DependencyProperty StartOffsetProperty =
-			DependencyProperty.Register("StartOffset", typeof(ulong), typeof(HexBox),
+			DependencyProperty.Register(nameof(StartOffset), typeof(ulong), typeof(HexBox),
 			new FrameworkPropertyMetadata(0UL, OnStartOffsetChanged));
 		public static readonly DependencyProperty EndOffsetProperty =
-			DependencyProperty.Register("EndOffset", typeof(ulong), typeof(HexBox),
+			DependencyProperty.Register(nameof(EndOffset), typeof(ulong), typeof(HexBox),
 			new FrameworkPropertyMetadata(0UL, OnEndOffsetChanged));
 		public static readonly DependencyProperty BytesGroupCountProperty =
-			DependencyProperty.Register("BytesGroupCount", typeof(int), typeof(HexBox),
+			DependencyProperty.Register(nameof(BytesGroupCount), typeof(int), typeof(HexBox),
 			new FrameworkPropertyMetadata(8, OnBytesGroupCountChanged));
 		public static readonly DependencyProperty BytesPerLineProperty =
-			DependencyProperty.Register("BytesPerLine", typeof(int), typeof(HexBox),
+			DependencyProperty.Register(nameof(BytesPerLine), typeof(int), typeof(HexBox),
 			new FrameworkPropertyMetadata(0, OnBytesPerLineChanged));
 		public static readonly DependencyProperty HexOffsetSizeProperty =
-			DependencyProperty.Register("HexOffsetSize", typeof(int), typeof(HexBox),
+			DependencyProperty.Register(nameof(HexOffsetSize), typeof(int), typeof(HexBox),
 			new FrameworkPropertyMetadata(0, OnHexOffsetSizeChanged));
 		public static readonly DependencyProperty UseRelativeOffsetsProperty =
-			DependencyProperty.Register("UseRelativeOffsets", typeof(bool), typeof(HexBox),
+			DependencyProperty.Register(nameof(UseRelativeOffsets), typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(false, OnUseRelativeOffsetsChanged));
 		public static readonly DependencyProperty UseHexPrefixProperty =
-			DependencyProperty.Register("UseHexPrefix", typeof(bool), typeof(HexBox),
+			DependencyProperty.Register(nameof(UseHexPrefix), typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(false, OnUseHexPrefixChanged));
 		public static readonly DependencyProperty ShowAsciiProperty =
-			DependencyProperty.Register("ShowAscii", typeof(bool), typeof(HexBox),
+			DependencyProperty.Register(nameof(ShowAscii), typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(true, OnShowAsciiChanged));
 		public static readonly DependencyProperty LowerCaseHexProperty =
-			DependencyProperty.Register("LowerCaseHex", typeof(bool), typeof(HexBox),
+			DependencyProperty.Register(nameof(LowerCaseHex), typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(false, OnLowerCaseHexChanged));
 		public static readonly DependencyProperty BaseOffsetProperty =
-			DependencyProperty.Register("BaseOffset", typeof(ulong), typeof(HexBox),
+			DependencyProperty.Register(nameof(BaseOffset), typeof(ulong), typeof(HexBox),
 			new FrameworkPropertyMetadata(0UL, OnBaseOffsetChanged));
 		public static readonly DependencyProperty OffsetForegroundProperty =
-			DependencyProperty.Register("OffsetForeground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(OffsetForeground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black, OnColorChanged));
 		public static readonly DependencyProperty Byte0ForegroundProperty =
-			DependencyProperty.Register("Byte0Foreground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(Byte0Foreground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black, OnColorChanged));
 		public static readonly DependencyProperty Byte1ForegroundProperty =
-			DependencyProperty.Register("Byte1Foreground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(Byte1Foreground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black, OnColorChanged));
 		public static readonly DependencyProperty ByteErrorForegroundProperty =
-			DependencyProperty.Register("ByteErrorForeground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(ByteErrorForeground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black, OnColorChanged));
 		public static readonly DependencyProperty AsciiForegroundProperty =
-			DependencyProperty.Register("AsciiForeground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(AsciiForeground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black, OnColorChanged));
 		public static readonly DependencyProperty CaretForegroundProperty =
-			DependencyProperty.Register("CaretForeground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(CaretForeground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black));
 		public static readonly DependencyProperty InactiveCaretForegroundProperty =
-			DependencyProperty.Register("InactiveCaretForeground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(InactiveCaretForeground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black));
 		public static readonly DependencyProperty SelectionBackgroundProperty =
-			DependencyProperty.Register("SelectionBackground", typeof(Brush), typeof(HexBox),
+			DependencyProperty.Register(nameof(SelectionBackground), typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Blue));
 		public static readonly DependencyProperty AsciiEncodingProperty =
-			DependencyProperty.Register("AsciiEncoding", typeof(AsciiEncoding), typeof(HexBox),
+			DependencyProperty.Register(nameof(AsciiEncoding), typeof(AsciiEncoding), typeof(HexBox),
 			new FrameworkPropertyMetadata(AsciiEncoding.UTF8));
 		public static readonly DependencyProperty CacheLineBytesProperty =
-			DependencyProperty.Register("CacheLineBytes", typeof(bool), typeof(HexBox),
+			DependencyProperty.Register(nameof(CacheLineBytes), typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(false));
 
 		public HexDocument Document {
@@ -324,13 +324,13 @@ namespace dnSpy.Shared.HexEditor {
 			Add(this.hexCaret = new HexCaret());
 			this.hexCaret.Visibility = Visibility.Collapsed;
 
-			this.selectionLayer.SetBinding(BackgroundProperty, new Binding("SelectionBackground") { Source = this });
-			this.hexCaret.SetBinding(ForegroundProperty, new Binding("CaretForeground") { Source = this });
-			this.hexCaret.SetBinding(HexCaret.InactiveCaretForegroundProperty, new Binding("InactiveCaretForeground") { Source = this });
+			this.selectionLayer.SetBinding(BackgroundProperty, new Binding(nameof(SelectionBackground)) { Source = this });
+			this.hexCaret.SetBinding(ForegroundProperty, new Binding(nameof(CaretForeground)) { Source = this });
+			this.hexCaret.SetBinding(HexCaret.InactiveCaretForegroundProperty, new Binding(nameof(InactiveCaretForeground)) { Source = this });
 
 			// Since we don't use a ControlTemplate, the Background property isn't used by WPF. Use
 			// a Canvas to show the background color.
-			this.bgCanvas.SetBinding(Panel.BackgroundProperty, new Binding("Background") { Source = this });
+			this.bgCanvas.SetBinding(Panel.BackgroundProperty, new Binding(nameof(Background)) { Source = this });
 			this.FocusVisualStyle = null;
 
 			InitializeHexOffsetSizeData();

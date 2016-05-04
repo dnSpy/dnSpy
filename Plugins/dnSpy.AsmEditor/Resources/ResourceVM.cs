@@ -49,10 +49,10 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (type != value) {
 					type = value;
-					OnPropertyChanged("Type");
-					OnPropertyChanged("IsEmbedded");
-					OnPropertyChanged("IsAssemblyLinked");
-					OnPropertyChanged("IsLinked");
+					OnPropertyChanged(nameof(Type));
+					OnPropertyChanged(nameof(IsEmbedded));
+					OnPropertyChanged(nameof(IsAssemblyLinked));
+					OnPropertyChanged(nameof(IsLinked));
 				}
 			}
 		}
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (attrs != value) {
 					attrs = value;
-					OnPropertyChanged("Attributes");
+					OnPropertyChanged(nameof(Attributes));
 				}
 			}
 		}
@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
@@ -96,8 +96,8 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (assembly != value) {
 					assembly = value;
-					OnPropertyChanged("Assembly");
-					OnPropertyChanged("AssemblyFullName");
+					OnPropertyChanged(nameof(Assembly));
+					OnPropertyChanged(nameof(AssemblyFullName));
 					HasErrorUpdated();
 				}
 			}
@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (fileName != value) {
 					fileName = value;
-					OnPropertyChanged("FileName");
+					OnPropertyChanged(nameof(FileName));
 				}
 			}
 		}
@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (fileContainsNoMetaData != value) {
 					fileContainsNoMetaData = value;
-					OnPropertyChanged("FileContainsNoMetaData");
+					OnPropertyChanged(nameof(FileContainsNoMetaData));
 				}
 			}
 		}
@@ -181,7 +181,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "AssemblyFullName") {
+			if (columnName == nameof(AssemblyFullName)) {
 				if (Assembly == null)
 					return dnSpy_AsmEditor_Resources.Error_AssemblyFieldMustNotBeEmpty;
 				return string.Empty;

@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (method != value) {
 					method = value;
-					OnPropertyChanged("Method");
+					OnPropertyChanged(nameof(Method));
 					HasErrorUpdated();
 				}
 			}
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void Reinitialize() => Method = origMethod;
 
 		protected override string Verify(string columnName) {
-			if (columnName == "Method") {
+			if (columnName == nameof(Method)) {
 				if (Method == null)
 					return dnSpy_AsmEditor_Resources.MethodCantBeNull;
 				return string.Empty;

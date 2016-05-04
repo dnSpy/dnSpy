@@ -167,8 +167,8 @@ namespace dnSpy.MainApp {
 			set {
 				if (useNewRenderer_TextEditor != value) {
 					useNewRenderer_TextEditor = value;
-					OnPropertyChanged("UseNewRenderer_TextEditor");
-					OnPropertyChanged("UseNewRenderer");
+					OnPropertyChanged(nameof(UseNewRenderer_TextEditor));
+					OnPropertyChanged(nameof(UseNewRenderer));
 				}
 			}
 		}
@@ -179,8 +179,8 @@ namespace dnSpy.MainApp {
 			set {
 				if (useNewRenderer_HexEditor != value) {
 					useNewRenderer_HexEditor = value;
-					OnPropertyChanged("UseNewRenderer_HexEditor");
-					OnPropertyChanged("UseNewRenderer");
+					OnPropertyChanged(nameof(UseNewRenderer_HexEditor));
+					OnPropertyChanged(nameof(UseNewRenderer));
 				}
 			}
 		}
@@ -191,8 +191,8 @@ namespace dnSpy.MainApp {
 			set {
 				if (useNewRenderer_FileTreeView != value) {
 					useNewRenderer_FileTreeView = value;
-					OnPropertyChanged("UseNewRenderer_FileTreeView");
-					OnPropertyChanged("UseNewRenderer");
+					OnPropertyChanged(nameof(UseNewRenderer_FileTreeView));
+					OnPropertyChanged(nameof(UseNewRenderer));
 				}
 			}
 		}

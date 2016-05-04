@@ -58,7 +58,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (isDuplicate != value) {
 					isDuplicate = value;
-					OnPropertyChanged("IsDuplicate");
+					OnPropertyChanged(nameof(IsDuplicate));
 				}
 			}
 		}

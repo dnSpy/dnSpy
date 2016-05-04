@@ -31,7 +31,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			set {
 				if (showILComments != value) {
 					showILComments = value;
-					OnPropertyChanged("ShowILComments");
+					OnPropertyChanged(nameof(ShowILComments));
 					OnModified();
 				}
 			}
@@ -43,7 +43,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			set {
 				if (showXmlDocumentation != value) {
 					showXmlDocumentation = value;
-					OnPropertyChanged("ShowXmlDocumentation");
+					OnPropertyChanged(nameof(ShowXmlDocumentation));
 					OnModified();
 				}
 			}
@@ -55,7 +55,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			set {
 				if (showTokenAndRvaComments != value) {
 					showTokenAndRvaComments = value;
-					OnPropertyChanged("ShowTokenAndRvaComments");
+					OnPropertyChanged(nameof(ShowTokenAndRvaComments));
 					OnModified();
 				}
 			}
@@ -67,7 +67,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			set {
 				if (showILBytes != value) {
 					showILBytes = value;
-					OnPropertyChanged("ShowILBytes");
+					OnPropertyChanged(nameof(ShowILBytes));
 					OnModified();
 				}
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			set {
 				if (sortMembers != value) {
 					sortMembers = value;
-					OnPropertyChanged("SortMembers");
+					OnPropertyChanged(nameof(SortMembers));
 					OnModified();
 				}
 			}
@@ -132,11 +132,11 @@ namespace dnSpy.Languages.ILSpy.Settings {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.ShowILComments = sect.Attribute<bool?>("ShowILComments") ?? this.ShowILComments;
-			this.ShowXmlDocumentation = sect.Attribute<bool?>("ShowXmlDocumentation") ?? this.ShowXmlDocumentation;
-			this.ShowTokenAndRvaComments = sect.Attribute<bool?>("ShowTokenAndRvaComments") ?? this.ShowTokenAndRvaComments;
-			this.ShowILBytes = sect.Attribute<bool?>("ShowILBytes") ?? this.ShowILBytes;
-			this.SortMembers = sect.Attribute<bool?>("SortMembers") ?? this.SortMembers;
+			this.ShowILComments = sect.Attribute<bool?>(nameof(ShowILComments)) ?? this.ShowILComments;
+			this.ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? this.ShowXmlDocumentation;
+			this.ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? this.ShowTokenAndRvaComments;
+			this.ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? this.ShowILBytes;
+			this.SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? this.SortMembers;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -146,11 +146,11 @@ namespace dnSpy.Languages.ILSpy.Settings {
 				return;
 
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("ShowILComments", ShowILComments);
-			sect.Attribute("ShowXmlDocumentation", ShowXmlDocumentation);
-			sect.Attribute("ShowTokenAndRvaComments", ShowTokenAndRvaComments);
-			sect.Attribute("ShowILBytes", ShowILBytes);
-			sect.Attribute("SortMembers", SortMembers);
+			sect.Attribute(nameof(ShowILComments), ShowILComments);
+			sect.Attribute(nameof(ShowXmlDocumentation), ShowXmlDocumentation);
+			sect.Attribute(nameof(ShowTokenAndRvaComments), ShowTokenAndRvaComments);
+			sect.Attribute(nameof(ShowILBytes), ShowILBytes);
+			sect.Attribute(nameof(SortMembers), SortMembers);
 		}
 	}
 }

@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (index != value) {
 					index = value;
-					OnPropertyChanged("Index");
+					OnPropertyChanged(nameof(Index));
 				}
 			}
 		}
@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (offset != value) {
 					offset = value;
-					OnPropertyChanged("Offset");
+					OnPropertyChanged(nameof(Offset));
 				}
 			}
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (sequencePoint != value) {
 					sequencePoint = value;
-					OnPropertyChanged("SequencePoint");
+					OnPropertyChanged(nameof(SequencePoint));
 				}
 			}
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void OnCodeUpdated() {
 			InstructionOperandVM.UpdateOperandType(Code);
-			OnPropertyChanged("Code");
+			OnPropertyChanged(nameof(Code));
 			HasErrorUpdated();
 		}
 

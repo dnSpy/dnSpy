@@ -126,9 +126,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			int textLength = TextView.Document.TextLength;
 			if (startOffset < 0 || startOffset > textLength)
-				throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between 0 and " + textLength);
+				throw new ArgumentOutOfRangeException(nameof(startOffset), startOffset, "Value must be between 0 and " + textLength);
 			if (length < 0 || startOffset + length > textLength)
-				throw new ArgumentOutOfRangeException("length", length, "length must not be negative and startOffset+length must not be after the end of the document");
+				throw new ArgumentOutOfRangeException(nameof(length), length, "length must not be negative and startOffset+length must not be after the end of the document");
 
 			TextMarker m = new TextMarker(this, startOffset, length);
 			markers.Add(m);
@@ -204,9 +204,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public void Draw(ICSharpCode.AvalonEdit.Rendering.TextView textView, DrawingContext drawingContext) {
 			if (textView == null)
-				throw new ArgumentNullException("textView");
+				throw new ArgumentNullException(nameof(textView));
 			if (drawingContext == null)
-				throw new ArgumentNullException("drawingContext");
+				throw new ArgumentNullException(nameof(drawingContext));
 			if (markers == null || markers.Count == 0 || !textView.VisualLinesValid)
 				return;
 			var visualLines = textView.VisualLines;
@@ -285,7 +285,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public TextMarker(TextMarkerService service, int startOffset, int length) {
 			if (service == null)
-				throw new ArgumentNullException("service");
+				throw new ArgumentNullException(nameof(service));
 			this.service = service;
 			this.StartOffset = startOffset;
 			this.Length = length;

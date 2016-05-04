@@ -129,7 +129,7 @@ namespace Example2.Plugin {
 			set {
 				if (stringOption1 != value) {
 					stringOption1 = value;
-					OnPropertyChanged("StringOption1");
+					OnPropertyChanged(nameof(StringOption1));
 				}
 			}
 		}
@@ -140,7 +140,7 @@ namespace Example2.Plugin {
 			set {
 				if (stringOption2 != value) {
 					stringOption2 = value;
-					OnPropertyChanged("StringOption2");
+					OnPropertyChanged(nameof(StringOption2));
 				}
 			}
 		}
@@ -151,7 +151,7 @@ namespace Example2.Plugin {
 			set {
 				if (stringOption3 != value) {
 					stringOption3 = value;
-					OnPropertyChanged("StringOption3");
+					OnPropertyChanged(nameof(StringOption3));
 				}
 			}
 		}
@@ -162,7 +162,7 @@ namespace Example2.Plugin {
 			set {
 				if (stringOption4 != value) {
 					stringOption4 = value;
-					OnPropertyChanged("StringOption4");
+					OnPropertyChanged(nameof(StringOption4));
 				}
 			}
 		}

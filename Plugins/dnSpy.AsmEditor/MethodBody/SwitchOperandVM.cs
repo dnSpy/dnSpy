@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (selectedIndex != value) {
 					selectedIndex = value;
-					OnPropertyChanged("SelectedIndex");
+					OnPropertyChanged(nameof(SelectedIndex));
 				}
 			}
 		}

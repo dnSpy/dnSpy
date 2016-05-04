@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Locals {
 			set {
 				if (isEditingValue != value) {
 					isEditingValue = value;
-					RaisePropertyChanged("IsEditingValue");
+					RaisePropertyChanged(nameof(IsEditingValue));
 				}
 			}
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Locals {
 					return;
 
 				cachedOutputValue = newCachedOutputValue;
-				RaisePropertyChanged("ValueObject");
+				RaisePropertyChanged(nameof(ValueObject));
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Locals {
 					return;
 
 				cachedOutputType = newCachedOutputType;
-				RaisePropertyChanged("TypeObject");
+				RaisePropertyChanged(nameof(TypeObject));
 			}
 		}
 
@@ -123,9 +123,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		internal void RefreshThemeFields() {
-			RaisePropertyChanged("Icon");
-			RaisePropertyChanged("ExpandedIcon");
-			RaisePropertyChanged("NameObject");
+			RaisePropertyChanged(nameof(Icon));
+			RaisePropertyChanged(nameof(ExpandedIcon));
+			RaisePropertyChanged(nameof(NameObject));
 			InvalidateValueObject();
 			InvalidateTypeObject();
 		}
@@ -135,12 +135,12 @@ namespace dnSpy.Debugger.Locals {
 
 		protected void InvalidateValueObject() {
 			cachedOutputValue = null;
-			RaisePropertyChanged("ValueObject");
+			RaisePropertyChanged(nameof(ValueObject));
 		}
 
 		protected void InvalidateTypeObject() {
 			cachedOutputType = null;
-			RaisePropertyChanged("TypeObject");
+			RaisePropertyChanged(nameof(TypeObject));
 		}
 
 		public string GetValueAsText() {
@@ -229,8 +229,8 @@ namespace dnSpy.Debugger.Locals {
 			set {
 				if (corValueError != value) {
 					corValueError = value;
-					RaisePropertyChanged("Icon");
-					RaisePropertyChanged("ExpandedIcon");
+					RaisePropertyChanged(nameof(Icon));
+					RaisePropertyChanged(nameof(ExpandedIcon));
 				}
 			}
 		}
@@ -1177,7 +1177,7 @@ namespace dnSpy.Debugger.Locals {
 		public void InitializeName(string name) {
 			if (this.name != name) {
 				this.name = name;
-				Owner.RaisePropertyChangedInternal("NameObject");
+				Owner.RaisePropertyChangedInternal(nameof(Owner.NameObject));
 			}
 		}
 		string name;
@@ -1202,7 +1202,7 @@ namespace dnSpy.Debugger.Locals {
 			if (this.name != name || this.isThis != isThis) {
 				this.isThis = isThis;
 				this.name = name;
-				Owner.RaisePropertyChangedInternal("NameObject");
+				Owner.RaisePropertyChangedInternal(nameof(Owner.NameObject));
 			}
 		}
 		bool isThis;

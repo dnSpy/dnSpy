@@ -37,7 +37,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (useHexPrefix != value) {
 					useHexPrefix = value;
-					OnPropertyChanged("UseHexPrefix");
+					OnPropertyChanged(nameof(UseHexPrefix));
 				}
 			}
 		}
@@ -48,7 +48,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (showAscii != value) {
 					showAscii = value;
-					OnPropertyChanged("ShowAscii");
+					OnPropertyChanged(nameof(ShowAscii));
 				}
 			}
 		}
@@ -59,7 +59,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (lowerCaseHex != value) {
 					lowerCaseHex = value;
-					OnPropertyChanged("LowerCaseHex");
+					OnPropertyChanged(nameof(LowerCaseHex));
 				}
 			}
 		}
@@ -72,7 +72,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (useRelativeOffsets != value) {
 					useRelativeOffsets = value;
-					OnPropertyChanged("UseRelativeOffsets");
+					OnPropertyChanged(nameof(UseRelativeOffsets));
 				}
 			}
 		}

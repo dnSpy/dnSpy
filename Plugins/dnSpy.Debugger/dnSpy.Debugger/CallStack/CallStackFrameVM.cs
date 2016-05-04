@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.CallStack {
 				if (index != value) {
 					int oldIndex = index;
 					index = value;
-					OnPropertyChanged("Index");
+					OnPropertyChanged(nameof(Index));
 					if (index == 0 || oldIndex == 0)
 						RefreshImage();
 				}
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (isUserCode != value) {
 					isUserCode = value;
-					OnPropertyChanged("IsUserCode");
+					OnPropertyChanged(nameof(IsUserCode));
 				}
 			}
 		}
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (isCurrentFrame != value) {
 					isCurrentFrame = value;
-					OnPropertyChanged("IsCurrentFrame");
+					OnPropertyChanged(nameof(IsCurrentFrame));
 					RefreshImage();
 				}
 			}
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (cachedOutput == null || !HasPropertyChangedHandlers) {
 				cachedOutput = null;
-				OnPropertyChanged("NameObject");
+				OnPropertyChanged(nameof(NameObject));
 			}
 			else {
 				var newCachedOutput = CachedOutput.Create(frame, Context.TypePrinterFlags);
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.CallStack {
 					return;
 
 				cachedOutput = newCachedOutput;
-				OnPropertyChanged("NameObject");
+				OnPropertyChanged(nameof(NameObject));
 			}
 		}
 		CorFrame frame;
@@ -164,9 +164,9 @@ namespace dnSpy.Debugger.CallStack {
 
 		public void RefreshName() {
 			cachedOutput = null;
-			OnPropertyChanged("NameObject");
+			OnPropertyChanged(nameof(NameObject));
 		}
 
-		void RefreshImage() => OnPropertyChanged("ImageObject");
+		void RefreshImage() => OnPropertyChanged(nameof(ImageObject));
 	}
 }

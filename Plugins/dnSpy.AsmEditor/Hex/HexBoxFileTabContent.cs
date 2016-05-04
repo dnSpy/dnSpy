@@ -176,7 +176,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var appSettings = (IAppSettings)sender;
-			if (e.PropertyName == "UseNewRenderer_HexEditor")
+			if (e.PropertyName == nameof(appSettings.UseNewRenderer_HexEditor))
 				UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
 		}
 

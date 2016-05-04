@@ -67,11 +67,11 @@ namespace dnSpy.TreeView {
 		public override Brush Foreground => themeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground;
 
 		public void RefreshUI() {
-			RaisePropertyChanged("Icon");
-			RaisePropertyChanged("ExpandedIcon");
-			RaisePropertyChanged("ToolTip");
-			RaisePropertyChanged("Text");
-			RaisePropertyChanged("Foreground");
+			RaisePropertyChanged(nameof(Icon));
+			RaisePropertyChanged(nameof(ExpandedIcon));
+			RaisePropertyChanged(nameof(ToolTip));
+			RaisePropertyChanged(nameof(Text));
+			RaisePropertyChanged(nameof(Foreground));
 		}
 
 		public override sealed bool IsCheckable => false;

@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ValidatesOnDataErrors = true,
 				ValidatesOnExceptions = true,
 				UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-				Path = new PropertyPath("SelectedItem"),
+				Path = new PropertyPath(nameof(MemberPickerVM.SelectedItem)),
 				Mode = BindingMode.TwoWay,
 			};
 			treeView.SetBinding(Selector.SelectedItemProperty, binding);
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var vm = (MemberPickerVM)sender;
-			if (e.PropertyName == "TooManyResults") {
+			if (e.PropertyName == nameof(MemberPickerVM.TooManyResults)) {
 				if (vm.TooManyResults)
 					listBox.SetResourceReference(Control.BorderBrushProperty, "CommonControlsTextBoxBorderError");
 				else

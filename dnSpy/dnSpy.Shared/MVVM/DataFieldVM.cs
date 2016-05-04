@@ -92,7 +92,7 @@ namespace dnSpy.Shared.MVVM {
 			stringValue = value;
 			cachedError.Invalidate();
 			OnStringValueChanged();
-			OnPropertyChanged("StringValue");
+			OnPropertyChanged(nameof(StringValue));
 			onUpdated(this);
 		}
 
@@ -119,7 +119,7 @@ namespace dnSpy.Shared.MVVM {
 		public abstract string ConvertToObjectValue(out object value);
 
 		protected override string Verify(string columnName) {
-			if (columnName == "StringValue")
+			if (columnName == nameof(StringValue))
 				return cachedError.ErrorMessage;
 
 			return string.Empty;

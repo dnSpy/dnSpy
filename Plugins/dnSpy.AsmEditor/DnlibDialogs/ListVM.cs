@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (isEnabled != value) {
 					isEnabled = value;
 					Collection.IsEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 				}
 			}
 		}
@@ -74,11 +74,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.inlineEditing = inlineEditing;
-			((INotifyPropertyChanged)Collection).PropertyChanged += ListVM_PropertyChanged;
+			((INotifyPropertyChanged)Collection).PropertyChanged += Collection_PropertyChanged;
 		}
 
-		void ListVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
+		void Collection_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(Collection.IsEnabled))
 				IsEnabled = Collection.IsEnabled;
 		}
 

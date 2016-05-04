@@ -178,17 +178,17 @@ namespace dnSpy.Analyzer {
 		void AnalyzerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var analyzerSettings = (IAnalyzerSettings)sender;
 			switch (e.PropertyName) {
-			case "ShowToken":
+			case nameof(analyzerSettings.ShowToken):
 				context.ShowToken = analyzerSettings.ShowToken;
 				RefreshNodes();
 				break;
 
-			case "SyntaxHighlight":
+			case nameof(analyzerSettings.SyntaxHighlight):
 				context.SyntaxHighlight = analyzerSettings.SyntaxHighlight;
 				RefreshNodes();
 				break;
 
-			case "UseNewRenderer":
+			case nameof(analyzerSettings.UseNewRenderer):
 				context.UseNewRenderer = analyzerSettings.UseNewRenderer;
 				RefreshNodes();
 				break;

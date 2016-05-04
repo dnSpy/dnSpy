@@ -48,7 +48,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (bytesGroupCount != value) {
 					bytesGroupCount = value;
-					OnPropertyChanged("BytesGroupCount");
+					OnPropertyChanged(nameof(BytesGroupCount));
 					OnModified();
 				}
 			}
@@ -60,7 +60,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (bytesPerLine != value) {
 					bytesPerLine = value;
-					OnPropertyChanged("BytesPerLine");
+					OnPropertyChanged(nameof(BytesPerLine));
 					OnModified();
 				}
 			}
@@ -72,7 +72,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (useHexPrefix != value) {
 					useHexPrefix = value;
-					OnPropertyChanged("UseHexPrefix");
+					OnPropertyChanged(nameof(UseHexPrefix));
 					OnModified();
 				}
 			}
@@ -84,7 +84,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (showAscii != value) {
 					showAscii = value;
-					OnPropertyChanged("ShowAscii");
+					OnPropertyChanged(nameof(ShowAscii));
 					OnModified();
 				}
 			}
@@ -96,7 +96,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (lowerCaseHex != value) {
 					lowerCaseHex = value;
-					OnPropertyChanged("LowerCaseHex");
+					OnPropertyChanged(nameof(LowerCaseHex));
 					OnModified();
 				}
 			}
@@ -108,7 +108,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (fontFamily.Source != value.Source) {
 					fontFamily = value;
-					OnPropertyChanged("FontFamily");
+					OnPropertyChanged(nameof(FontFamily));
 					OnModified();
 				}
 			}
@@ -120,7 +120,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (fontSize != value) {
 					fontSize = FontUtils.FilterFontSize(value);
-					OnPropertyChanged("FontSize");
+					OnPropertyChanged(nameof(FontSize));
 					OnModified();
 				}
 			}
@@ -132,7 +132,7 @@ namespace dnSpy.Shared.Hex {
 			set {
 				if (asciiEncoding != value) {
 					asciiEncoding = value;
-					OnPropertyChanged("AsciiEncoding");
+					OnPropertyChanged(nameof(AsciiEncoding));
 					OnModified();
 				}
 			}
@@ -166,14 +166,14 @@ namespace dnSpy.Shared.Hex {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			BytesGroupCount = sect.Attribute<int?>("BytesGroupCount") ?? BytesGroupCount;
-			BytesPerLine = sect.Attribute<int?>("BytesPerLine") ?? BytesPerLine;
-			UseHexPrefix = sect.Attribute<bool?>("UseHexPrefix") ?? UseHexPrefix;
-			ShowAscii = sect.Attribute<bool?>("ShowAscii") ?? ShowAscii;
-			LowerCaseHex = sect.Attribute<bool?>("LowerCaseHex") ?? LowerCaseHex;
-			FontFamily = new FontFamily(sect.Attribute<string>("FontFamily") ?? FontUtils.GetDefaultMonospacedFont());
-			FontSize = sect.Attribute<double?>("FontSize") ?? FontSize;
-			AsciiEncoding = sect.Attribute<AsciiEncoding?>("AsciiEncoding") ?? AsciiEncoding;
+			BytesGroupCount = sect.Attribute<int?>(nameof(BytesGroupCount)) ?? BytesGroupCount;
+			BytesPerLine = sect.Attribute<int?>(nameof(BytesPerLine)) ?? BytesPerLine;
+			UseHexPrefix = sect.Attribute<bool?>(nameof(UseHexPrefix)) ?? UseHexPrefix;
+			ShowAscii = sect.Attribute<bool?>(nameof(ShowAscii)) ?? ShowAscii;
+			LowerCaseHex = sect.Attribute<bool?>(nameof(LowerCaseHex)) ?? LowerCaseHex;
+			FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtils.GetDefaultMonospacedFont());
+			FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? FontSize;
+			AsciiEncoding = sect.Attribute<AsciiEncoding?>(nameof(AsciiEncoding)) ?? AsciiEncoding;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -182,14 +182,14 @@ namespace dnSpy.Shared.Hex {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("BytesGroupCount", this.BytesGroupCount);
-			sect.Attribute("BytesPerLine", this.BytesPerLine);
-			sect.Attribute("UseHexPrefix", this.UseHexPrefix);
-			sect.Attribute("ShowAscii", this.ShowAscii);
-			sect.Attribute("LowerCaseHex", this.LowerCaseHex);
-			sect.Attribute("FontFamily", this.FontFamily.Source);
-			sect.Attribute("FontSize", this.FontSize);
-			sect.Attribute("AsciiEncoding", this.AsciiEncoding);
+			sect.Attribute(nameof(BytesGroupCount), this.BytesGroupCount);
+			sect.Attribute(nameof(BytesPerLine), this.BytesPerLine);
+			sect.Attribute(nameof(UseHexPrefix), this.UseHexPrefix);
+			sect.Attribute(nameof(ShowAscii), this.ShowAscii);
+			sect.Attribute(nameof(LowerCaseHex), this.LowerCaseHex);
+			sect.Attribute(nameof(FontFamily), this.FontFamily.Source);
+			sect.Attribute(nameof(FontSize), this.FontSize);
+			sect.Attribute(nameof(AsciiEncoding), this.AsciiEncoding);
 		}
 	}
 }

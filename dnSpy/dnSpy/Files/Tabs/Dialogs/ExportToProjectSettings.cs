@@ -37,7 +37,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (projectVersion != value) {
 					projectVersion = value;
-					OnPropertyChanged("ProjectVersion");
+					OnPropertyChanged(nameof(ProjectVersion));
 					OnModified();
 				}
 			}
@@ -57,7 +57,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.ProjectVersion = sect.Attribute<ProjectVersion?>("ProjectVersion") ?? this.ProjectVersion;
+			this.ProjectVersion = sect.Attribute<ProjectVersion?>(nameof(ProjectVersion)) ?? this.ProjectVersion;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -66,7 +66,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("ProjectVersion", ProjectVersion);
+			sect.Attribute(nameof(ProjectVersion), ProjectVersion);
 		}
 	}
 }

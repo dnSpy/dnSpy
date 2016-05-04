@@ -128,7 +128,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 					if (!isEnabled)
 						Value = null;
 					HasErrorUpdated();
@@ -503,8 +503,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (objectArrayIsNull != value) {
 					objectArrayIsNull = value;
-					OnPropertyChanged("ObjectArrayIsNull");
-					OnPropertyChanged("ObjectArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(ObjectArrayIsNull));
+					OnPropertyChanged(nameof(ObjectArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -516,8 +516,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (booleanArrayIsNull != value) {
 					booleanArrayIsNull = value;
-					OnPropertyChanged("BooleanArrayIsNull");
-					OnPropertyChanged("BooleanArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(BooleanArrayIsNull));
+					OnPropertyChanged(nameof(BooleanArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -529,8 +529,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (charArrayIsNull != value) {
 					charArrayIsNull = value;
-					OnPropertyChanged("CharArrayIsNull");
-					OnPropertyChanged("CharArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(CharArrayIsNull));
+					OnPropertyChanged(nameof(CharArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -542,8 +542,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (sbyteArrayIsNull != value) {
 					sbyteArrayIsNull = value;
-					OnPropertyChanged("SByteArrayIsNull");
-					OnPropertyChanged("SByteArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(SByteArrayIsNull));
+					OnPropertyChanged(nameof(SByteArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -555,8 +555,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (int16ArrayIsNull != value) {
 					int16ArrayIsNull = value;
-					OnPropertyChanged("Int16ArrayIsNull");
-					OnPropertyChanged("Int16ArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(Int16ArrayIsNull));
+					OnPropertyChanged(nameof(Int16ArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -568,8 +568,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (int32ArrayIsNull != value) {
 					int32ArrayIsNull = value;
-					OnPropertyChanged("Int32ArrayIsNull");
-					OnPropertyChanged("Int32ArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(Int32ArrayIsNull));
+					OnPropertyChanged(nameof(Int32ArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -581,8 +581,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (int64ArrayIsNull != value) {
 					int64ArrayIsNull = value;
-					OnPropertyChanged("Int64ArrayIsNull");
-					OnPropertyChanged("Int64ArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(Int64ArrayIsNull));
+					OnPropertyChanged(nameof(Int64ArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -594,8 +594,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (byteArrayIsNull != value) {
 					byteArrayIsNull = value;
-					OnPropertyChanged("ByteArrayIsNull");
-					OnPropertyChanged("ByteArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(ByteArrayIsNull));
+					OnPropertyChanged(nameof(ByteArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -607,8 +607,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (uint16ArrayIsNull != value) {
 					uint16ArrayIsNull = value;
-					OnPropertyChanged("UInt16ArrayIsNull");
-					OnPropertyChanged("UInt16ArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(UInt16ArrayIsNull));
+					OnPropertyChanged(nameof(UInt16ArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -620,8 +620,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (uint32ArrayIsNull != value) {
 					uint32ArrayIsNull = value;
-					OnPropertyChanged("UInt32ArrayIsNull");
-					OnPropertyChanged("UInt32ArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(UInt32ArrayIsNull));
+					OnPropertyChanged(nameof(UInt32ArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -633,8 +633,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (uint64ArrayIsNull != value) {
 					uint64ArrayIsNull = value;
-					OnPropertyChanged("UInt64ArrayIsNull");
-					OnPropertyChanged("UInt64ArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(UInt64ArrayIsNull));
+					OnPropertyChanged(nameof(UInt64ArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -646,8 +646,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (singleArrayIsNull != value) {
 					singleArrayIsNull = value;
-					OnPropertyChanged("SingleArrayIsNull");
-					OnPropertyChanged("SingleArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(SingleArrayIsNull));
+					OnPropertyChanged(nameof(SingleArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -659,8 +659,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (doubleArrayIsNull != value) {
 					doubleArrayIsNull = value;
-					OnPropertyChanged("DoubleArrayIsNull");
-					OnPropertyChanged("DoubleArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(DoubleArrayIsNull));
+					OnPropertyChanged(nameof(DoubleArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -672,8 +672,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (stringArrayIsNull != value) {
 					stringArrayIsNull = value;
-					OnPropertyChanged("StringArrayIsNull");
-					OnPropertyChanged("StringArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(StringArrayIsNull));
+					OnPropertyChanged(nameof(StringArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -685,8 +685,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (enumArrayIsNull != value) {
 					enumArrayIsNull = value;
-					OnPropertyChanged("EnumArrayIsNull");
-					OnPropertyChanged("EnumArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(EnumArrayIsNull));
+					OnPropertyChanged(nameof(EnumArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -698,8 +698,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (typeArrayIsNull != value) {
 					typeArrayIsNull = value;
-					OnPropertyChanged("TypeArrayIsNull");
-					OnPropertyChanged("TypeArrayIsSelectedAndNotNull");
+					OnPropertyChanged(nameof(TypeArrayIsNull));
+					OnPropertyChanged(nameof(TypeArrayIsSelectedAndNotNull));
 					HasErrorUpdated();
 				}
 			}
@@ -761,54 +761,54 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void OnConstantChanged() {
 			OnPropertyChanged("Modified");
-			OnPropertyChanged("NullIsSelected");
-			OnPropertyChanged("BooleanIsSelected");
-			OnPropertyChanged("CharIsSelected");
-			OnPropertyChanged("SByteIsSelected");
-			OnPropertyChanged("Int16IsSelected");
-			OnPropertyChanged("Int32IsSelected");
-			OnPropertyChanged("Int64IsSelected");
-			OnPropertyChanged("ByteIsSelected");
-			OnPropertyChanged("UInt16IsSelected");
-			OnPropertyChanged("UInt32IsSelected");
-			OnPropertyChanged("UInt64IsSelected");
-			OnPropertyChanged("SingleIsSelected");
-			OnPropertyChanged("DoubleIsSelected");
-			OnPropertyChanged("StringIsSelected");
-			OnPropertyChanged("EnumIsSelected");
-			OnPropertyChanged("TypeIsSelected");
-			OnPropertyChanged("ObjectArrayIsSelected");
-			OnPropertyChanged("ObjectArrayIsSelectedAndNotNull");
-			OnPropertyChanged("BooleanArrayIsSelected");
-			OnPropertyChanged("BooleanArrayIsSelectedAndNotNull");
-			OnPropertyChanged("CharArrayIsSelected");
-			OnPropertyChanged("CharArrayIsSelectedAndNotNull");
-			OnPropertyChanged("SByteArrayIsSelected");
-			OnPropertyChanged("SByteArrayIsSelectedAndNotNull");
-			OnPropertyChanged("Int16ArrayIsSelected");
-			OnPropertyChanged("Int16ArrayIsSelectedAndNotNull");
-			OnPropertyChanged("Int32ArrayIsSelected");
-			OnPropertyChanged("Int32ArrayIsSelectedAndNotNull");
-			OnPropertyChanged("Int64ArrayIsSelected");
-			OnPropertyChanged("Int64ArrayIsSelectedAndNotNull");
-			OnPropertyChanged("ByteArrayIsSelected");
-			OnPropertyChanged("ByteArrayIsSelectedAndNotNull");
-			OnPropertyChanged("UInt16ArrayIsSelected");
-			OnPropertyChanged("UInt16ArrayIsSelectedAndNotNull");
-			OnPropertyChanged("UInt32ArrayIsSelected");
-			OnPropertyChanged("UInt32ArrayIsSelectedAndNotNull");
-			OnPropertyChanged("UInt64ArrayIsSelected");
-			OnPropertyChanged("UInt64ArrayIsSelectedAndNotNull");
-			OnPropertyChanged("SingleArrayIsSelected");
-			OnPropertyChanged("SingleArrayIsSelectedAndNotNull");
-			OnPropertyChanged("DoubleArrayIsSelected");
-			OnPropertyChanged("DoubleArrayIsSelectedAndNotNull");
-			OnPropertyChanged("StringArrayIsSelected");
-			OnPropertyChanged("StringArrayIsSelectedAndNotNull");
-			OnPropertyChanged("EnumArrayIsSelected");
-			OnPropertyChanged("EnumArrayIsSelectedAndNotNull");
-			OnPropertyChanged("TypeArrayIsSelected");
-			OnPropertyChanged("TypeArrayIsSelectedAndNotNull");
+			OnPropertyChanged(nameof(NullIsSelected));
+			OnPropertyChanged(nameof(BooleanIsSelected));
+			OnPropertyChanged(nameof(CharIsSelected));
+			OnPropertyChanged(nameof(SByteIsSelected));
+			OnPropertyChanged(nameof(Int16IsSelected));
+			OnPropertyChanged(nameof(Int32IsSelected));
+			OnPropertyChanged(nameof(Int64IsSelected));
+			OnPropertyChanged(nameof(ByteIsSelected));
+			OnPropertyChanged(nameof(UInt16IsSelected));
+			OnPropertyChanged(nameof(UInt32IsSelected));
+			OnPropertyChanged(nameof(UInt64IsSelected));
+			OnPropertyChanged(nameof(SingleIsSelected));
+			OnPropertyChanged(nameof(DoubleIsSelected));
+			OnPropertyChanged(nameof(StringIsSelected));
+			OnPropertyChanged(nameof(EnumIsSelected));
+			OnPropertyChanged(nameof(TypeIsSelected));
+			OnPropertyChanged(nameof(ObjectArrayIsSelected));
+			OnPropertyChanged(nameof(ObjectArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(BooleanArrayIsSelected));
+			OnPropertyChanged(nameof(BooleanArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(CharArrayIsSelected));
+			OnPropertyChanged(nameof(CharArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(SByteArrayIsSelected));
+			OnPropertyChanged(nameof(SByteArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(Int16ArrayIsSelected));
+			OnPropertyChanged(nameof(Int16ArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(Int32ArrayIsSelected));
+			OnPropertyChanged(nameof(Int32ArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(Int64ArrayIsSelected));
+			OnPropertyChanged(nameof(Int64ArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(ByteArrayIsSelected));
+			OnPropertyChanged(nameof(ByteArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(UInt16ArrayIsSelected));
+			OnPropertyChanged(nameof(UInt16ArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(UInt32ArrayIsSelected));
+			OnPropertyChanged(nameof(UInt32ArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(UInt64ArrayIsSelected));
+			OnPropertyChanged(nameof(UInt64ArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(SingleArrayIsSelected));
+			OnPropertyChanged(nameof(SingleArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(DoubleArrayIsSelected));
+			OnPropertyChanged(nameof(DoubleArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(StringArrayIsSelected));
+			OnPropertyChanged(nameof(StringArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(EnumArrayIsSelected));
+			OnPropertyChanged(nameof(EnumArrayIsSelectedAndNotNull));
+			OnPropertyChanged(nameof(TypeArrayIsSelected));
+			OnPropertyChanged(nameof(TypeArrayIsSelectedAndNotNull));
 			HasErrorUpdated();
 		}
 

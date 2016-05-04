@@ -32,7 +32,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (text != value) {
 					text = value;
-					OnPropertyChanged("Text");
+					OnPropertyChanged(nameof(Text));
 					HasErrorUpdated();
 				}
 			}
@@ -53,7 +53,7 @@ namespace dnSpy.MainApp {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "Text") {
+			if (columnName == nameof(Text)) {
 				try {
 					var error = verifier(Text);
 					if (!string.IsNullOrEmpty(error))
@@ -68,6 +68,6 @@ namespace dnSpy.MainApp {
 			return string.Empty;
 		}
 
-		public override bool HasError => !string.IsNullOrEmpty(Verify("Text"));
+		public override bool HasError => !string.IsNullOrEmpty(Verify(nameof(Text)));
 	}
 }

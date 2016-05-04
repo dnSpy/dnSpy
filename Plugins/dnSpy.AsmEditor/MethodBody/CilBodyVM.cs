@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (keepOldMaxStack != value) {
 					keepOldMaxStack = value;
-					OnPropertyChanged("KeepOldMaxStack");
+					OnPropertyChanged(nameof(KeepOldMaxStack));
 				}
 			}
 		}
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (initLocals != value) {
 					initLocals = value;
-					OnPropertyChanged("InitLocals");
+					OnPropertyChanged(nameof(InitLocals));
 				}
 			}
 		}
@@ -640,9 +640,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void instr_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "HasError")
+			if (e.PropertyName == nameof(InstructionVM.HasError))
 				CallHasErrorUpdated();
-			else if (!InstructionsListVM.DisableAutoUpdateProps && e.PropertyName == "Code")
+			else if (!InstructionsListVM.DisableAutoUpdateProps && e.PropertyName == nameof(InstructionVM.Code))
 				InstructionsUpdateIndexes(0);
 		}
 
@@ -673,9 +673,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void local_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "HasError")
+			if (e.PropertyName == nameof(LocalVM.HasError))
 				CallHasErrorUpdated();
-			if (!LocalsListVM.DisableAutoUpdateProps && (e.PropertyName == "Index" || e.PropertyName == "Name")) {
+			if (!LocalsListVM.DisableAutoUpdateProps && (e.PropertyName == nameof(LocalVM.Index) || e.PropertyName == nameof(LocalVM.Name))) {
 				UpdateLocalOperands();
 				UpdateBranchOperands(); // branches whose target instruction is a ldloc/stloc instruction
 			}
@@ -702,7 +702,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void eh_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "HasError")
+			if (e.PropertyName == nameof(ExceptionHandlerVM.HasError))
 				CallHasErrorUpdated();
 		}
 

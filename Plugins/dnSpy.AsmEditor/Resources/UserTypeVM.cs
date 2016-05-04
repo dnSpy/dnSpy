@@ -42,8 +42,8 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (typeFullName != value) {
 					typeFullName = value;
-					OnPropertyChanged("TypeFullName");
-					OnPropertyChanged("StringValue");
+					OnPropertyChanged(nameof(TypeFullName));
+					OnPropertyChanged(nameof(StringValue));
 					HasErrorUpdated();
 				}
 			}
@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (stringValue != value) {
 					stringValue = value;
-					OnPropertyChanged("StringValue");
+					OnPropertyChanged(nameof(StringValue));
 					HasErrorUpdated();
 				}
 			}
@@ -131,7 +131,7 @@ namespace dnSpy.AsmEditor.Resources {
 		ITypeDefOrRef GetTypeRef() => TypeNameParser.ParseReflection(ownerModule, typeFullName, null);
 
 		protected override string Verify(string columnName) {
-			if (columnName == "TypeFullName") {
+			if (columnName == nameof(TypeFullName)) {
 				Type type;
 				var error = LoadType(out type);
 				if (!string.IsNullOrEmpty(error))
@@ -139,7 +139,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return string.Empty;
 			}
 
-			if (columnName == "StringValue") {
+			if (columnName == nameof(StringValue)) {
 				object obj;
 				return GetSerializedData(out obj);
 			}
@@ -148,7 +148,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		public override bool HasError =>
-			!string.IsNullOrEmpty(Verify("TypeFullName")) ||
-			!string.IsNullOrEmpty(Verify("StringValue"));
+			!string.IsNullOrEmpty(Verify(nameof(TypeFullName))) ||
+			!string.IsNullOrEmpty(Verify(nameof(StringValue)));
 	}
 }

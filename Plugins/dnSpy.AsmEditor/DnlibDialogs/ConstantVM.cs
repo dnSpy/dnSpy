@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged(nameof(IsEnabled));
 					ConstantTypeVM.IsEnabled = value;
 					HasErrorUpdated();
 				}
@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (constantCheckBoxToolTip != value) {
 					constantCheckBoxToolTip = value;
-					OnPropertyChanged("ConstantCheckBoxToolTip");
+					OnPropertyChanged(nameof(ConstantCheckBoxToolTip));
 				}
 			}
 		}
@@ -80,9 +80,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "Value")
-				OnPropertyChanged("Value");
-			else if (e.PropertyName == "IsEnabled")
+			if (e.PropertyName == nameof(ConstantTypeVM.Value))
+				OnPropertyChanged(nameof(Value));
+			else if (e.PropertyName == nameof(ConstantTypeVM.IsEnabled))
 				IsEnabled = ConstantTypeVM.IsEnabled;
 			HasErrorUpdated();
 		}

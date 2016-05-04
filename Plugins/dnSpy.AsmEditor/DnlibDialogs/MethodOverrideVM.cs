@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (methodOverride.MethodBody != value) {
 					methodOverride.MethodBody = value;
-					OnPropertyChanged("MethodBody");
+					OnPropertyChanged(nameof(MethodBody));
 				}
 			}
 		}
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (methodOverride.MethodDeclaration != value) {
 					methodOverride.MethodDeclaration = value;
-					OnPropertyChanged("MethodDeclaration");
+					OnPropertyChanged(nameof(MethodDeclaration));
 				}
 			}
 		}

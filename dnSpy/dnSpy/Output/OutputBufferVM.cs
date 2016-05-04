@@ -38,7 +38,7 @@ namespace dnSpy.Output {
 			set {
 				if (index != value) {
 					index = value;
-					OnPropertyChanged("KeyboardShortcut");
+					OnPropertyChanged(nameof(KeyboardShortcut));
 				}
 			}
 		}

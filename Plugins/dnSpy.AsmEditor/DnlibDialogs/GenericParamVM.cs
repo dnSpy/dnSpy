@@ -62,10 +62,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (attributes != value) {
 					attributes = value;
-					OnPropertyChanged("Attributes");
-					OnPropertyChanged("ReferenceTypeConstraint");
-					OnPropertyChanged("NotNullableValueTypeConstraint");
-					OnPropertyChanged("DefaultConstructorConstraint");
+					OnPropertyChanged(nameof(Attributes));
+					OnPropertyChanged(nameof(ReferenceTypeConstraint));
+					OnPropertyChanged(nameof(NotNullableValueTypeConstraint));
+					OnPropertyChanged(nameof(DefaultConstructorConstraint));
 				}
 			}
 		}
@@ -102,8 +102,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
-					OnPropertyChanged("FullName");
+					OnPropertyChanged(nameof(Name));
+					OnPropertyChanged(nameof(FullName));
 				}
 			}
 		}
@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
-			this.Number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
+			this.Number = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
 			this.TypeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, languageManager, ownerType, ownerMethod);
 			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.GPVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));

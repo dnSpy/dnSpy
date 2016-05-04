@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}

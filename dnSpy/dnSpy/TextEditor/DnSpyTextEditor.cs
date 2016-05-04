@@ -189,17 +189,17 @@ namespace dnSpy.TextEditor {
 
 			SetBinding(FontFamilyProperty, new Binding {
 				Source = textEditorSettings,
-				Path = new PropertyPath("FontFamily"),
+				Path = new PropertyPath(nameof(textEditorSettings.FontFamily)),
 				Mode = BindingMode.OneWay,
 			});
 			SetBinding(FontSizeProperty, new Binding {
 				Source = textEditorSettings,
-				Path = new PropertyPath("FontSize"),
+				Path = new PropertyPath(nameof(textEditorSettings.FontSize)),
 				Mode = BindingMode.OneWay,
 			});
 			SetBinding(WordWrapProperty, new Binding {
 				Source = textEditorSettings,
-				Path = new PropertyPath("WordWrap"),
+				Path = new PropertyPath(nameof(textEditorSettings.WordWrap)),
 				Mode = BindingMode.OneWay,
 			});
 
@@ -227,9 +227,9 @@ namespace dnSpy.TextEditor {
 		}
 
 		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "HighlightCurrentLine")
+			if (e.PropertyName == nameof(textEditorSettings.HighlightCurrentLine))
 				OnHighlightCurrentLineChanged();
-			else if (e.PropertyName == "ShowLineNumbers")
+			else if (e.PropertyName == nameof(textEditorSettings.ShowLineNumbers))
 				OnShowLineNumbersChanged();
 		}
 

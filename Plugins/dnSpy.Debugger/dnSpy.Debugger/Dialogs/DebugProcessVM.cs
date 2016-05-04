@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (filename != value) {
 					filename = value;
-					OnPropertyChanged("Filename");
+					OnPropertyChanged(nameof(Filename));
 					HasErrorUpdated();
 					var path = GetPath(filename);
 					if (path != null)
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (commandLine != value) {
 					commandLine = value;
-					OnPropertyChanged("CommandLine");
+					OnPropertyChanged(nameof(CommandLine));
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Dialogs {
 			set {
 				if (currentDirectory != value) {
 					currentDirectory = value;
-					OnPropertyChanged("CurrentDirectory");
+					OnPropertyChanged(nameof(CurrentDirectory));
 				}
 			}
 		}
@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "Filename") {
+			if (columnName == nameof(Filename)) {
 				if (!File.Exists(filename)) {
 					if (string.IsNullOrWhiteSpace(filename))
 						return dnSpy_Debugger_Resources.Error_MissingFilename;
@@ -155,7 +155,7 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify("Filename")))
+				if (!string.IsNullOrEmpty(Verify(nameof(Filename))))
 					return true;
 
 				return false;

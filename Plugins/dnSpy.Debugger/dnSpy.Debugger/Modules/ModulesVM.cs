@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Modules {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}
@@ -82,11 +82,11 @@ namespace dnSpy.Debugger.Modules {
 
 		void DebuggerSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;
-			if (e.PropertyName == "UseHexadecimal") {
+			if (e.PropertyName == nameof(debuggerSettings.UseHexadecimal)) {
 				moduleContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 				RefreshHexFields();
 			}
-			else if (e.PropertyName == "SyntaxHighlightModules") {
+			else if (e.PropertyName == nameof(debuggerSettings.SyntaxHighlightModules)) {
 				moduleContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightModules;
 				RefreshThemeFields();
 			}

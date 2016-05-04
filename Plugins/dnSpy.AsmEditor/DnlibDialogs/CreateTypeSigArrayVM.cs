@@ -35,9 +35,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					isEnabled = value;
 					TypeSigCreator.IsEnabled = value;
 					TypeSigCollection.IsEnabled = value;
-					OnPropertyChanged("IsEnabled");
-					OnPropertyChanged("CanAddMore");
-					OnPropertyChanged("CanNotAddMore");
+					OnPropertyChanged(nameof(IsEnabled));
+					OnPropertyChanged(nameof(CanAddMore));
+					OnPropertyChanged(nameof(CanNotAddMore));
 				}
 			}
 		}
@@ -66,10 +66,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (requiredCount != value) {
 					requiredCount = value;
-					OnPropertyChanged("RequiredCount");
-					OnPropertyChanged("IsUnlimitedCount");
-					OnPropertyChanged("IsFiniteCount");
-					OnPropertyChanged("Title");
+					OnPropertyChanged(nameof(RequiredCount));
+					OnPropertyChanged(nameof(IsUnlimitedCount));
+					OnPropertyChanged(nameof(IsFiniteCount));
+					OnPropertyChanged(nameof(Title));
 					UpdateNumberLeftProperties();
 				}
 			}
@@ -101,10 +101,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void UpdateNumberLeftProperties() {
-			OnPropertyChanged("NumberOfTypesLeft");
-			OnPropertyChanged("NumberOfTypesLeftString");
-			OnPropertyChanged("CanAddMore");
-			OnPropertyChanged("CanNotAddMore");
+			OnPropertyChanged(nameof(NumberOfTypesLeft));
+			OnPropertyChanged(nameof(NumberOfTypesLeftString));
+			OnPropertyChanged(nameof(CanAddMore));
+			OnPropertyChanged(nameof(CanNotAddMore));
 			HasErrorUpdated();
 			TypeSigCreator.IsEnabled = CanAddMore;
 		}

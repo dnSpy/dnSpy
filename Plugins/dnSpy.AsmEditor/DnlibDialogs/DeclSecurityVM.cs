@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (v1XMLString != value) {
 					v1XMLString = value;
-					OnPropertyChanged("V1XMLString");
+					OnPropertyChanged(nameof(V1XMLString));
 				}
 			}
 		}
@@ -102,14 +102,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void CustomAttributesVM_PropertyChanged(object sender, PropertyChangedEventArgs e) => HasErrorUpdated();
 
 		void OnDeclSecVerChanged() {
-			OnPropertyChanged("IsV1");
-			OnPropertyChanged("IsV2");
-			OnPropertyChanged("FullName");
+			OnPropertyChanged(nameof(IsV1));
+			OnPropertyChanged(nameof(IsV2));
+			OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();
 		}
 
 		void OnSecurityActionChanged() {
-			OnPropertyChanged("FullName");
+			OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();
 		}
 

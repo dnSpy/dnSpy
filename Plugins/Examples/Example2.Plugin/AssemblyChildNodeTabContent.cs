@@ -136,8 +136,8 @@ namespace Example2.Plugin {
 
 		// Called to create a value that can be used by Deserialize(). It's read from the settings file.
 		public object CreateSerialized(ISettingsSection section) {
-			var value1 = section.Attribute<string>("Value1");
-			var value2 = section.Attribute<bool?>("Value2");
+			var value1 = section.Attribute<string>(nameof(MySerializedData.Value1));
+			var value2 = section.Attribute<bool?>(nameof(MySerializedData.Value2));
 			if (value1 == null || value2 == null)
 				return null;
 
@@ -150,8 +150,8 @@ namespace Example2.Plugin {
 			if (d == null)
 				return;
 
-			section.Attribute("Value1", d.Value1);
-			section.Attribute("Value2", d.Value2);
+			section.Attribute(nameof(d.Value1), d.Value1);
+			section.Attribute(nameof(d.Value2), d.Value2);
 		}
 
 		// Serializes the UI state
@@ -179,7 +179,7 @@ namespace Example2.Plugin {
 			set {
 				if (someMessage != value) {
 					someMessage = value;
-					OnPropertyChanged("SomeMessage");
+					OnPropertyChanged(nameof(SomeMessage));
 				}
 			}
 		}

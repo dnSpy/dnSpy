@@ -16,7 +16,7 @@ namespace Example1.Plugin {
 			set {
 				if (boolOption1 != value) {
 					boolOption1 = value;
-					OnPropertyChanged("BoolOption1");
+					OnPropertyChanged(nameof(BoolOption1));
 					OnModified();
 				}
 			}
@@ -28,7 +28,7 @@ namespace Example1.Plugin {
 			set {
 				if (boolOption2 != value) {
 					boolOption2 = value;
-					OnPropertyChanged("BoolOption2");
+					OnPropertyChanged(nameof(BoolOption2));
 					OnModified();
 				}
 			}
@@ -40,7 +40,7 @@ namespace Example1.Plugin {
 			set {
 				if (stringOption3 != value) {
 					stringOption3 = value;
-					OnPropertyChanged("StringOption3");
+					OnPropertyChanged(nameof(StringOption3));
 					OnModified();
 				}
 			}
@@ -75,9 +75,9 @@ namespace Example1.Plugin {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			BoolOption1 = sect.Attribute<bool?>("BoolOption1") ?? BoolOption1;
-			BoolOption2 = sect.Attribute<bool?>("BoolOption2") ?? BoolOption2;
-			StringOption3 = sect.Attribute<string>("StringOption3") ?? StringOption3;
+			BoolOption1 = sect.Attribute<bool?>(nameof(BoolOption1)) ?? BoolOption1;
+			BoolOption2 = sect.Attribute<bool?>(nameof(BoolOption2)) ?? BoolOption2;
+			StringOption3 = sect.Attribute<string>(nameof(StringOption3)) ?? StringOption3;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -90,9 +90,9 @@ namespace Example1.Plugin {
 			// Save the settings
 
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("BoolOption1", BoolOption1);
-			sect.Attribute("BoolOption2", BoolOption2);
-			sect.Attribute("StringOption3", StringOption3);
+			sect.Attribute(nameof(BoolOption1), BoolOption1);
+			sect.Attribute(nameof(BoolOption2), BoolOption2);
+			sect.Attribute(nameof(StringOption3), StringOption3);
 		}
 	}
 }

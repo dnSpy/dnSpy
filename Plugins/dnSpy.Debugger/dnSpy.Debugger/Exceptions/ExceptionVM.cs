@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Exceptions {
 			set {
 				if (ExceptionInfo.BreakOnFirstChance != value) {
 					ExceptionInfo.BreakOnFirstChance = value;
-					OnPropertyChanged("BreakOnFirstChance");
+					OnPropertyChanged(nameof(BreakOnFirstChance));
 					Context.ExceptionManager.BreakOnFirstChanceChanged(ExceptionInfo);
 				}
 			}
@@ -56,6 +56,6 @@ namespace dnSpy.Debugger.Exceptions {
 			this.Context = context;
 		}
 
-		internal void RefreshThemeFields() => OnPropertyChanged("NameObject");
+		internal void RefreshThemeFields() => OnPropertyChanged(nameof(NameObject));
 	}
 }

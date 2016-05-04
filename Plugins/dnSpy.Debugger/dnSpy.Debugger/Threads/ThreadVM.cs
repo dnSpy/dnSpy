@@ -69,8 +69,8 @@ namespace dnSpy.Debugger.Threads {
 			set {
 				if (isCurrent != value) {
 					isCurrent = value;
-					OnPropertyChanged("IsCurrent");
-					OnPropertyChanged("CurrentImageObject");
+					OnPropertyChanged(nameof(IsCurrent));
+					OnPropertyChanged(nameof(CurrentImageObject));
 				}
 			}
 		}
@@ -81,10 +81,10 @@ namespace dnSpy.Debugger.Threads {
 			set {
 				if (threadType != value) {
 					threadType = value;
-					OnPropertyChanged("Type");
-					OnPropertyChanged("CurrentImageObject");
-					OnPropertyChanged("CategoryImageObject");
-					OnPropertyChanged("CategoryTextObject");
+					OnPropertyChanged(nameof(Type));
+					OnPropertyChanged(nameof(CurrentImageObject));
+					OnPropertyChanged(nameof(CategoryImageObject));
+					OnPropertyChanged(nameof(CategoryTextObject));
 				}
 			}
 		}
@@ -97,8 +97,8 @@ namespace dnSpy.Debugger.Threads {
 					Thread.CorThread.State = value ? CorDebugThreadState.THREAD_SUSPEND : CorDebugThreadState.THREAD_RUN;
 					// Read the value again because there could've been an error
 					isSuspended = Thread.CorThread.State == CorDebugThreadState.THREAD_SUSPEND;
-					OnPropertyChanged("IsSuspended");
-					OnPropertyChanged("SuspendedObject");
+					OnPropertyChanged(nameof(IsSuspended));
+					OnPropertyChanged(nameof(SuspendedObject));
 				}
 			}
 		}
@@ -110,8 +110,8 @@ namespace dnSpy.Debugger.Threads {
 				if (appDomain != value || (value != null && value.Name != appDomainName)) {
 					appDomain = value;
 					appDomainName = value == null ? null : value.Name;
-					OnPropertyChanged("AppDomain");
-					OnPropertyChanged("AppDomainObject");
+					OnPropertyChanged(nameof(AppDomain));
+					OnPropertyChanged(nameof(AppDomainObject));
 				}
 			}
 		}
@@ -123,8 +123,8 @@ namespace dnSpy.Debugger.Threads {
 			set {
 				if (userState != value) {
 					userState = value;
-					OnPropertyChanged("UserState");
-					OnPropertyChanged("UserStateObject");
+					OnPropertyChanged(nameof(UserState));
+					OnPropertyChanged(nameof(UserStateObject));
 				}
 			}
 		}
@@ -149,8 +149,8 @@ namespace dnSpy.Debugger.Threads {
 			set {
 				if (id != value) {
 					id = value;
-					OnPropertyChanged("Id");
-					OnPropertyChanged("IdObject");
+					OnPropertyChanged(nameof(Id));
+					OnPropertyChanged(nameof(IdObject));
 				}
 			}
 		}
@@ -261,33 +261,33 @@ namespace dnSpy.Debugger.Threads {
 			Id = Thread.VolatileThreadId;
 
 			if (reinitManagedId) {
-				OnPropertyChanged("ManagedId");
-				OnPropertyChanged("ManagedIdObject");
+				OnPropertyChanged(nameof(ManagedId));
+				OnPropertyChanged(nameof(ManagedIdObject));
 			}
 
 			if (reinitName) {
-				OnPropertyChanged("Name");
-				OnPropertyChanged("NameObject");
+				OnPropertyChanged(nameof(Name));
+				OnPropertyChanged(nameof(NameObject));
 			}
 
 			if (affinityMask != null) {
 				affinityMask = null;
-				OnPropertyChanged("AffinityMask");
-				OnPropertyChanged("AffinityMaskObject");
+				OnPropertyChanged(nameof(AffinityMask));
+				OnPropertyChanged(nameof(AffinityMaskObject));
 			}
 
 			if (prio != null) {
 				prio = null;
-				OnPropertyChanged("Priority");
-				OnPropertyChanged("PriorityObject");
+				OnPropertyChanged(nameof(Priority));
+				OnPropertyChanged(nameof(PriorityObject));
 			}
 
-			OnPropertyChanged("LocationObject");
+			OnPropertyChanged(nameof(LocationObject));
 
 			if (isSuspended != Thread.CorThread.IsSuspended) {
 				isSuspended = Thread.CorThread.IsSuspended;
-				OnPropertyChanged("IsSuspended");
-				OnPropertyChanged("SuspendedObject");
+				OnPropertyChanged(nameof(IsSuspended));
+				OnPropertyChanged(nameof(SuspendedObject));
 			}
 
 			AppDomain = Thread.CorThread.AppDomain;
@@ -337,36 +337,36 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		internal void RefreshThemeFields() {
-			OnPropertyChanged("CurrentImageObject");
-			OnPropertyChanged("IdObject");
-			OnPropertyChanged("ManagedIdObject");
-			OnPropertyChanged("CategoryImageObject");
-			OnPropertyChanged("CategoryTextObject");
-			OnPropertyChanged("NameObject");
-			OnPropertyChanged("LocationObject");
-			OnPropertyChanged("PriorityObject");
-			OnPropertyChanged("AffinityMaskObject");
-			OnPropertyChanged("SuspendedObject");
-			OnPropertyChanged("ProcessObject");
-			OnPropertyChanged("AppDomainObject");
+			OnPropertyChanged(nameof(CurrentImageObject));
+			OnPropertyChanged(nameof(IdObject));
+			OnPropertyChanged(nameof(ManagedIdObject));
+			OnPropertyChanged(nameof(CategoryImageObject));
+			OnPropertyChanged(nameof(CategoryTextObject));
+			OnPropertyChanged(nameof(NameObject));
+			OnPropertyChanged(nameof(LocationObject));
+			OnPropertyChanged(nameof(PriorityObject));
+			OnPropertyChanged(nameof(AffinityMaskObject));
+			OnPropertyChanged(nameof(SuspendedObject));
+			OnPropertyChanged(nameof(ProcessObject));
+			OnPropertyChanged(nameof(AppDomainObject));
 		}
 
 		internal void RefreshHexFields() {
-			OnPropertyChanged("IdObject");
-			OnPropertyChanged("ManagedIdObject");
-			OnPropertyChanged("LocationObject");
-			OnPropertyChanged("ProcessObject");
+			OnPropertyChanged(nameof(IdObject));
+			OnPropertyChanged(nameof(ManagedIdObject));
+			OnPropertyChanged(nameof(LocationObject));
+			OnPropertyChanged(nameof(ProcessObject));
 		}
 
 		internal void RefreshEvalFields() {
 			if (unknownName) {
 				name = null;
 				reinitName = true;
-				OnPropertyChanged("NameObject");
+				OnPropertyChanged(nameof(NameObject));
 			}
 			if (managedId == null) {
 				reinitManagedId = true;
-				OnPropertyChanged("ManagedIdObject");
+				OnPropertyChanged(nameof(ManagedIdObject));
 			}
 		}
 	}

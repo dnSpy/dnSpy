@@ -63,10 +63,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
-					OnPropertyChanged("IsEnabled");
-					OnPropertyChanged("CanAddLeafTypeSig");
-					OnPropertyChanged("CanAddNonLeafTypeSig");
-					OnPropertyChanged("CanAddGeneric");
+					OnPropertyChanged(nameof(IsEnabled));
+					OnPropertyChanged(nameof(CanAddLeafTypeSig));
+					OnPropertyChanged(nameof(CanAddNonLeafTypeSig));
+					OnPropertyChanged(nameof(CanAddGeneric));
 				}
 			}
 		}
@@ -78,16 +78,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (typeSig != value) {
 					bool nullChange = typeSig == null || value == null;
 					typeSig = value;
-					OnPropertyChanged("TypeSig");
-					OnPropertyChanged("TypeSigDnlibFullName");
-					OnPropertyChanged("TypeSigLanguageFullName");
-					OnPropertyChanged("IsValidTypeSig");
-					OnPropertyChanged("CanAddLeafTypeSig");
-					OnPropertyChanged("CanAddNonLeafTypeSig");
-					OnPropertyChanged("CanShowTypeFullName");
+					OnPropertyChanged(nameof(TypeSig));
+					OnPropertyChanged(nameof(TypeSigDnlibFullName));
+					OnPropertyChanged(nameof(TypeSigLanguageFullName));
+					OnPropertyChanged(nameof(IsValidTypeSig));
+					OnPropertyChanged(nameof(CanAddLeafTypeSig));
+					OnPropertyChanged(nameof(CanAddNonLeafTypeSig));
+					OnPropertyChanged(nameof(CanShowTypeFullName));
 					if (nullChange) {
-						OnPropertyChanged("AddingLeafTypeSig");
-						OnPropertyChanged("AddingNonLeafTypeSig");
+						OnPropertyChanged(nameof(AddingLeafTypeSig));
+						OnPropertyChanged(nameof(AddingNonLeafTypeSig));
 					}
 					HasErrorUpdated();
 				}
@@ -102,8 +102,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (showTypeFullName != value) {
 					showTypeFullName = value;
-					OnPropertyChanged("ShowTypeFullName");
-					OnPropertyChanged("CanShowTypeFullName");
+					OnPropertyChanged(nameof(ShowTypeFullName));
+					OnPropertyChanged(nameof(CanShowTypeFullName));
 				}
 			}
 		}
@@ -149,8 +149,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (options.Language != value) {
 					options.Language = value;
-					OnPropertyChanged("Language");
-					OnPropertyChanged("TypeSigLanguageFullName");
+					OnPropertyChanged(nameof(Language));
+					OnPropertyChanged(nameof(TypeSigLanguageFullName));
 				}
 			}
 		}
@@ -249,7 +249,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (canAddFnPtr != value) {
 					canAddFnPtr = value;
-					OnPropertyChanged("CanAddFnPtr");
+					OnPropertyChanged(nameof(CanAddFnPtr));
 				}
 			}
 		}

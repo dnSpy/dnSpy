@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Threads {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}
@@ -98,15 +98,15 @@ namespace dnSpy.Debugger.Threads {
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;
-			if (e.PropertyName == "SyntaxHighlightThreads") {
+			if (e.PropertyName == nameof(debuggerSettings.SyntaxHighlightThreads)) {
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightThreads;
 				RefreshThemeFields();
 			}
-			else if (e.PropertyName == "UseHexadecimal") {
+			else if (e.PropertyName == nameof(debuggerSettings.UseHexadecimal)) {
 				threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 				RefreshHexFields();
 			}
-			else if (e.PropertyName == "PropertyEvalAndFunctionCalls")
+			else if (e.PropertyName == nameof(debuggerSettings.PropertyEvalAndFunctionCalls))
 				RefreshEvalFields();
 		}
 
@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SelectedThread")
+			if (e.PropertyName == nameof(IStackFrameManager.SelectedThread))
 				UpdateSelectedThread();
 		}
 

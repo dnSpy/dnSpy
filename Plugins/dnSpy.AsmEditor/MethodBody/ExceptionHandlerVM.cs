@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (index != value) {
 					index = value;
-					OnPropertyChanged("Index");
+					OnPropertyChanged(nameof(Index));
 				}
 			}
 		}
@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			set {
 				if (catchType != value) {
 					catchType = value;
-					OnPropertyChanged("CatchType");
+					OnPropertyChanged(nameof(CatchType));
 				}
 			}
 		}

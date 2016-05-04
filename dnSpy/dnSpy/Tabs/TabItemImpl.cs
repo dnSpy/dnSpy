@@ -50,17 +50,14 @@ namespace dnSpy.Tabs {
 				set {
 					if (isSelected != value) {
 						isSelected = value;
-						OnPropertyChanged("IsSelected");
+						OnPropertyChanged(nameof(IsSelected));
 					}
 				}
 			}
 			bool isSelected;
 
 			public bool IsActive => impl.IsActive;
-
-			internal void IsActiveChanged() {
-				OnPropertyChanged("IsActive");
-			}
+			internal void IsActiveChanged() => OnPropertyChanged(nameof(IsActive));
 
 			public object ToolTip => impl.tabContent.ToolTip;
 			public string Header => impl.tabContent.Title;
@@ -72,10 +69,10 @@ namespace dnSpy.Tabs {
 			}
 
 			internal void TabContentPropertyChanged(string propName) {
-				if (propName == "ToolTip")
-					OnPropertyChanged("ToolTip");
-				else if (propName == "Title")
-					OnPropertyChanged("Header");
+				if (propName == nameof(ITabContent.ToolTip))
+					OnPropertyChanged(nameof(ToolTip));
+				else if (propName == nameof(ITabContent.Title))
+					OnPropertyChanged(nameof(Header));
 			}
 		}
 
@@ -150,7 +147,7 @@ namespace dnSpy.Tabs {
 
 		void TabContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			theHeader.TabContentPropertyChanged(e.PropertyName);
-			if (e.PropertyName == "UIObject")
+			if (e.PropertyName == nameof(tabContent.UIObject))
 				this.Content = tabContent.UIObject;
 		}
 	}

@@ -43,8 +43,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (method != value) {
 					method = value;
-					OnPropertyChanged("Method");
-					OnPropertyChanged("MethodFullName");
+					OnPropertyChanged(nameof(Method));
+					OnPropertyChanged(nameof(MethodFullName));
 					HasErrorUpdated();
 				}
 			}

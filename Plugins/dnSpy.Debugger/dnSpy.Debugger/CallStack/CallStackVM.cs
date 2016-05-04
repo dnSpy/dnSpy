@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 				}
 			}
 		}
@@ -116,18 +116,18 @@ namespace dnSpy.Debugger.CallStack {
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-			case "UseHexadecimal":
+			case nameof(debuggerSettings.UseHexadecimal):
 				callStackFrameContext.TypePrinterFlags = TypePrinterFlags;
 				RefreshFrameNames();
 				break;
 
-			case "SyntaxHighlightCallStack":
+			case nameof(debuggerSettings.SyntaxHighlightCallStack):
 				callStackFrameContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack;
 				RefreshFrameNames();
 				break;
 
-			case "PropertyEvalAndFunctionCalls":
-			case "UseStringConversionFunction":
+			case nameof(debuggerSettings.PropertyEvalAndFunctionCalls):
+			case nameof(debuggerSettings.UseStringConversionFunction):
 				RefreshFrameNames();
 				break;
 			}
@@ -135,16 +135,16 @@ namespace dnSpy.Debugger.CallStack {
 
 		void CallStackSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-			case "ShowModuleNames":
-			case "ShowParameterTypes":
-			case "ShowParameterNames":
-			case "ShowParameterValues":
-			case "ShowIP":
-			case "ShowOwnerTypes":
-			case "ShowNamespaces":
-			case "ShowTypeKeywords":
-			case "ShowTokens":
-			case "ShowReturnTypes":
+			case nameof(callStackSettings.ShowModuleNames):
+			case nameof(callStackSettings.ShowParameterTypes):
+			case nameof(callStackSettings.ShowParameterNames):
+			case nameof(callStackSettings.ShowParameterValues):
+			case nameof(callStackSettings.ShowIP):
+			case nameof(callStackSettings.ShowOwnerTypes):
+			case nameof(callStackSettings.ShowNamespaces):
+			case nameof(callStackSettings.ShowTypeKeywords):
+			case nameof(callStackSettings.ShowTokens):
+			case nameof(callStackSettings.ShowReturnTypes):
 				callStackFrameContext.TypePrinterFlags = TypePrinterFlags;
 				RefreshFrameNames();
 				break;
@@ -152,11 +152,11 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SelectedThread") {
+			if (e.PropertyName == nameof(IStackFrameManager.SelectedThread)) {
 				framesList.Clear();
 				InitializeStackFrames();
 			}
-			else if (e.PropertyName == "SelectedFrameNumber")
+			else if (e.PropertyName == nameof(IStackFrameManager.SelectedFrameNumber))
 				UpdateSelectedFrame(e as VMPropertyChangedEventArgs<int>);
 		}
 

@@ -36,7 +36,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
-					OnPropertyChanged("SyntaxHighlight");
+					OnPropertyChanged(nameof(SyntaxHighlight));
 					OnModified();
 				}
 			}
@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
+			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -65,7 +65,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
+			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 		}
 	}
 }

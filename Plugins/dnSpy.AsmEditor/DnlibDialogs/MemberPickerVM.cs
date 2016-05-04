@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (canOpenAssembly != value) {
 					canOpenAssembly = value;
-					OnPropertyChanged("CanOpenAssembly");
+					OnPropertyChanged(nameof(CanOpenAssembly));
 				}
 			}
 		}
@@ -64,10 +64,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+					OnPropertyChanged(nameof(SelectedItem));
 					if (value != null) {
 						searchResult = null;
-						OnPropertyChanged("SearchResult");
+						OnPropertyChanged(nameof(SearchResult));
 					}
 					HasErrorUpdated();
 				}
@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (tooManyResults != value) {
 					tooManyResults = value;
-					OnPropertyChanged("TooManyResults");
+					OnPropertyChanged(nameof(TooManyResults));
 				}
 			}
 		}
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (selectedSearchResult != value) {
 					selectedSearchResult = value;
-					OnPropertyChanged("SelectedSearchResult");
+					OnPropertyChanged(nameof(SelectedSearchResult));
 				}
 			}
 		}
@@ -168,9 +168,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (searchText != value) {
 					bool hasSearchTextChanged = string.IsNullOrEmpty(searchText) != string.IsNullOrEmpty(value);
 					searchText = value;
-					OnPropertyChanged("SearchText");
+					OnPropertyChanged(nameof(SearchText));
 					if (hasSearchTextChanged)
-						OnPropertyChanged("HasSearchText");
+						OnPropertyChanged(nameof(HasSearchText));
 					delayedSearch.Start();
 				}
 			}
@@ -185,10 +185,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (searchResult != value) {
 					searchResult = value;
-					OnPropertyChanged("SearchResult");
+					OnPropertyChanged(nameof(SearchResult));
 					if (value != null) {
 						selectedItem = null;
-						OnPropertyChanged("SelectedItem");
+						OnPropertyChanged(nameof(SelectedItem));
 					}
 					HasErrorUpdated();
 				}
@@ -203,7 +203,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (language != value) {
 					language = value;
-					OnPropertyChanged("Language");
+					OnPropertyChanged(nameof(Language));
 					RefreshTreeView();
 				}
 			}
@@ -340,7 +340,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "SelectedItem" || columnName == "SearchResult") {
+			if (columnName == nameof(SelectedItem) || columnName == nameof(SearchResult)) {
 				if (SelectedItem == null && SearchResult == null)
 					return dnSpy_AsmEditor_Resources.PickMember_TypeMustBeSelected;
 				if (SelectedDnlibObject == null)
@@ -354,9 +354,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify("SelectedItem")))
+				if (!string.IsNullOrEmpty(Verify(nameof(SelectedItem))))
 					return true;
-				if (!string.IsNullOrEmpty(Verify("SearchResult")))
+				if (!string.IsNullOrEmpty(Verify(nameof(SearchResult))))
 					return true;
 
 				return false;

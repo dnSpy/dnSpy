@@ -62,8 +62,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (attributeType != value) {
 					attributeType = value;
-					OnPropertyChanged("AttributeType");
-					OnPropertyChanged("FullName");
+					OnPropertyChanged(nameof(AttributeType));
+					OnPropertyChanged(nameof(FullName));
 					HasErrorUpdated();
 				}
 			}
@@ -89,7 +89,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void Args_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			Hook(e);
-			OnPropertyChanged("FullName");
+			OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();
 		}
 
@@ -105,7 +105,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void arg_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			OnPropertyChanged("FullName");
+			OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();
 		}
 

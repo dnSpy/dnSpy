@@ -141,9 +141,9 @@ namespace dnSpy.Debugger.Locals {
 		void LocalsSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var localsSettings = (ILocalsSettings)sender;
 			switch (e.PropertyName) {
-			case "ShowNamespaces":
-			case "ShowTypeKeywords":
-			case "ShowTokens":
+			case nameof(localsSettings.ShowNamespaces):
+			case nameof(localsSettings.ShowTypeKeywords):
+			case nameof(localsSettings.ShowTokens):
 				printerContext.TypePrinterFlags = GetTypePrinterFlags(localsSettings, printerContext.TypePrinterFlags);
 				RefreshTypeFields();
 				break;
@@ -153,21 +153,21 @@ namespace dnSpy.Debugger.Locals {
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;
 			switch (e.PropertyName) {
-			case "UseHexadecimal":
+			case nameof(debuggerSettings.UseHexadecimal):
 				printerContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 				printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, printerContext.TypePrinterFlags);
 				RefreshHexFields();
 				break;
-			case "SyntaxHighlightLocals":
+			case nameof(debuggerSettings.SyntaxHighlightLocals):
 				printerContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals;
 				RefreshSyntaxHighlightFields();
 				break;
-			case "PropertyEvalAndFunctionCalls":
-			case "DebuggerBrowsableAttributesCanHidePropsFields":
-			case "CompilerGeneratedAttributesCanHideFields":
+			case nameof(debuggerSettings.PropertyEvalAndFunctionCalls):
+			case nameof(debuggerSettings.DebuggerBrowsableAttributesCanHidePropsFields):
+			case nameof(debuggerSettings.CompilerGeneratedAttributesCanHideFields):
 				RecreateLocals();
 				break;
-			case "UseStringConversionFunction":
+			case nameof(debuggerSettings.UseStringConversionFunction):
 				RefreshToStringFields();
 				break;
 			}
@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SelectedFrameNumber")
+			if (e.PropertyName == nameof(IStackFrameManager.SelectedFrameNumber))
 				InitializeLocals(LocalInitType.Full);
 		}
 

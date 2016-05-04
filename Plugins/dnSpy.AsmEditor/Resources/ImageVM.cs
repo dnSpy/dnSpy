@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Resources {
 			set {
 				if (imageSource != value) {
 					imageSource = value;
-					OnPropertyChanged("ImageSource");
+					OnPropertyChanged(nameof(ImageSource));
 				}
 			}
 		}

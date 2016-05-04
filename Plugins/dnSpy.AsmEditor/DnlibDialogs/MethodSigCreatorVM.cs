@@ -78,11 +78,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (callingConvention != value) {
 					callingConvention = value;
-					OnPropertyChanged("CallingConvention");
-					OnPropertyChanged("SignatureFullName");
-					OnPropertyChanged("IsGeneric");
-					OnPropertyChanged("HasThis");
-					OnPropertyChanged("ExplicitThis");
+					OnPropertyChanged(nameof(CallingConvention));
+					OnPropertyChanged(nameof(SignatureFullName));
+					OnPropertyChanged(nameof(IsGeneric));
+					OnPropertyChanged(nameof(HasThis));
+					OnPropertyChanged(nameof(ExplicitThis));
 				}
 			}
 		}
@@ -120,9 +120,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				if (retType != value) {
 					retType = value;
-					OnPropertyChanged("ReturnType");
-					OnPropertyChanged("SignatureFullName");
-					OnPropertyChanged("ErrorText");
+					OnPropertyChanged(nameof(ReturnType));
+					OnPropertyChanged(nameof(SignatureFullName));
+					OnPropertyChanged(nameof(ErrorText));
 					HasErrorUpdated();
 				}
 			}
@@ -149,13 +149,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.options = options.Clone();
 			this.title = options.TypeSigCreatorOptions.Title;
 			this.ParametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
-			this.ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged("SignatureFullName");
+			this.ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
 			this.SentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
-			this.SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged("SignatureFullName");
+			this.SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
 			this.SentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
 			this.GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
-				OnPropertyChanged("SignatureFullName");
+				OnPropertyChanged(nameof(SignatureFullName));
 				if (GenericParameterCount != null && !GenericParameterCount.HasError)
 					IsGeneric = GenericParameterCount.Value != 0;
 			}) {
@@ -220,7 +220,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "ReturnType")
+			if (columnName == nameof(ReturnType))
 				return ReturnType != null ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
 			return string.Empty;
 		}
@@ -230,7 +230,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string ErrorText {
 			get {
 				string err;
-				if (!string.IsNullOrEmpty(err = Verify("ReturnType")))
+				if (!string.IsNullOrEmpty(err = Verify(nameof(ReturnType))))
 					return err;
 
 				return string.Empty;

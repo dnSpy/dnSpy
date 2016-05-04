@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showExceptionMessages != value) {
 					showExceptionMessages = value;
-					OnPropertyChanged("ShowExceptionMessages");
+					OnPropertyChanged(nameof(ShowExceptionMessages));
 					OnModified();
 				}
 			}
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showStepFilteringMessages != value) {
 					showStepFilteringMessages = value;
-					OnPropertyChanged("ShowStepFilteringMessages");
+					OnPropertyChanged(nameof(ShowStepFilteringMessages));
 					OnModified();
 				}
 			}
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showModuleLoadMessages != value) {
 					showModuleLoadMessages = value;
-					OnPropertyChanged("ShowModuleLoadMessages");
+					OnPropertyChanged(nameof(ShowModuleLoadMessages));
 					OnModified();
 				}
 			}
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showModuleUnloadMessages != value) {
 					showModuleUnloadMessages = value;
-					OnPropertyChanged("ShowModuleUnloadMessages");
+					OnPropertyChanged(nameof(ShowModuleUnloadMessages));
 					OnModified();
 				}
 			}
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showProcessExitMessages != value) {
 					showProcessExitMessages = value;
-					OnPropertyChanged("ShowProcessExitMessages");
+					OnPropertyChanged(nameof(ShowProcessExitMessages));
 					OnModified();
 				}
 			}
@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showThreadExitMessages != value) {
 					showThreadExitMessages = value;
-					OnPropertyChanged("ShowThreadExitMessages");
+					OnPropertyChanged(nameof(ShowThreadExitMessages));
 					OnModified();
 				}
 			}
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showProgramOutputMessages != value) {
 					showProgramOutputMessages = value;
-					OnPropertyChanged("ShowProgramOutputMessages");
+					OnPropertyChanged(nameof(ShowProgramOutputMessages));
 					OnModified();
 				}
 			}
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showMDAMessages != value) {
 					showMDAMessages = value;
-					OnPropertyChanged("ShowMDAMessages");
+					OnPropertyChanged(nameof(ShowMDAMessages));
 					OnModified();
 				}
 			}
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.Logger {
 			set {
 				if (showDebugOutputLog != value) {
 					showDebugOutputLog = value;
-					OnPropertyChanged("ShowDebugOutputLog");
+					OnPropertyChanged(nameof(ShowDebugOutputLog));
 					OnModified();
 				}
 			}
@@ -160,15 +160,15 @@ namespace dnSpy.Debugger.Logger {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.ShowExceptionMessages = sect.Attribute<bool?>("ShowExceptionMessages") ?? this.ShowExceptionMessages;
-			this.ShowStepFilteringMessages = sect.Attribute<bool?>("ShowStepFilteringMessages") ?? this.ShowStepFilteringMessages;
-			this.ShowModuleLoadMessages = sect.Attribute<bool?>("ShowModuleLoadMessages") ?? this.ShowModuleLoadMessages;
-			this.ShowModuleUnloadMessages = sect.Attribute<bool?>("ShowModuleUnloadMessages") ?? this.ShowModuleUnloadMessages;
-			this.ShowProcessExitMessages = sect.Attribute<bool?>("ShowProcessExitMessages") ?? this.ShowProcessExitMessages;
-			this.ShowThreadExitMessages = sect.Attribute<bool?>("ShowThreadExitMessages") ?? this.ShowThreadExitMessages;
-			this.ShowProgramOutputMessages = sect.Attribute<bool?>("ShowProgramOutputMessages") ?? this.ShowProgramOutputMessages;
-			this.ShowMDAMessages = sect.Attribute<bool?>("ShowMDAMessages") ?? this.ShowMDAMessages;
-			this.ShowDebugOutputLog = sect.Attribute<bool?>("ShowDebugOutputLog") ?? this.ShowDebugOutputLog;
+			this.ShowExceptionMessages = sect.Attribute<bool?>(nameof(ShowExceptionMessages)) ?? this.ShowExceptionMessages;
+			this.ShowStepFilteringMessages = sect.Attribute<bool?>(nameof(ShowStepFilteringMessages)) ?? this.ShowStepFilteringMessages;
+			this.ShowModuleLoadMessages = sect.Attribute<bool?>(nameof(ShowModuleLoadMessages)) ?? this.ShowModuleLoadMessages;
+			this.ShowModuleUnloadMessages = sect.Attribute<bool?>(nameof(ShowModuleUnloadMessages)) ?? this.ShowModuleUnloadMessages;
+			this.ShowProcessExitMessages = sect.Attribute<bool?>(nameof(ShowProcessExitMessages)) ?? this.ShowProcessExitMessages;
+			this.ShowThreadExitMessages = sect.Attribute<bool?>(nameof(ShowThreadExitMessages)) ?? this.ShowThreadExitMessages;
+			this.ShowProgramOutputMessages = sect.Attribute<bool?>(nameof(ShowProgramOutputMessages)) ?? this.ShowProgramOutputMessages;
+			this.ShowMDAMessages = sect.Attribute<bool?>(nameof(ShowMDAMessages)) ?? this.ShowMDAMessages;
+			this.ShowDebugOutputLog = sect.Attribute<bool?>(nameof(ShowDebugOutputLog)) ?? this.ShowDebugOutputLog;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -177,15 +177,15 @@ namespace dnSpy.Debugger.Logger {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("ShowExceptionMessages", ShowExceptionMessages);
-			sect.Attribute("ShowStepFilteringMessages", ShowStepFilteringMessages);
-			sect.Attribute("ShowModuleLoadMessages", ShowModuleLoadMessages);
-			sect.Attribute("ShowModuleUnloadMessages", ShowModuleUnloadMessages);
-			sect.Attribute("ShowProcessExitMessages", ShowProcessExitMessages);
-			sect.Attribute("ShowThreadExitMessages", ShowThreadExitMessages);
-			sect.Attribute("ShowProgramOutputMessages", ShowProgramOutputMessages);
-			sect.Attribute("ShowMDAMessages", ShowMDAMessages);
-			sect.Attribute("ShowDebugOutputLog", ShowDebugOutputLog);
+			sect.Attribute(nameof(ShowExceptionMessages), ShowExceptionMessages);
+			sect.Attribute(nameof(ShowStepFilteringMessages), ShowStepFilteringMessages);
+			sect.Attribute(nameof(ShowModuleLoadMessages), ShowModuleLoadMessages);
+			sect.Attribute(nameof(ShowModuleUnloadMessages), ShowModuleUnloadMessages);
+			sect.Attribute(nameof(ShowProcessExitMessages), ShowProcessExitMessages);
+			sect.Attribute(nameof(ShowThreadExitMessages), ShowThreadExitMessages);
+			sect.Attribute(nameof(ShowProgramOutputMessages), ShowProgramOutputMessages);
+			sect.Attribute(nameof(ShowMDAMessages), ShowMDAMessages);
+			sect.Attribute(nameof(ShowDebugOutputLog), ShowDebugOutputLog);
 		}
 	}
 }

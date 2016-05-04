@@ -59,7 +59,7 @@ namespace dnSpy.Output {
 			set {
 				if (outputManagerSettingsImpl.WordWrap != value) {
 					outputManagerSettingsImpl.WordWrap = value;
-					OnPropertyChanged("WordWrap");
+					OnPropertyChanged(nameof(WordWrap));
 					foreach (var vm in OutputBuffers)
 						vm.WordWrap = outputManagerSettingsImpl.WordWrap;
 				}
@@ -71,7 +71,7 @@ namespace dnSpy.Output {
 			set {
 				if (outputManagerSettingsImpl.ShowLineNumbers != value) {
 					outputManagerSettingsImpl.ShowLineNumbers = value;
-					OnPropertyChanged("ShowLineNumbers");
+					OnPropertyChanged(nameof(ShowLineNumbers));
 					foreach (var vm in OutputBuffers)
 						vm.ShowLineNumbers = outputManagerSettingsImpl.ShowLineNumbers;
 				}
@@ -83,7 +83,7 @@ namespace dnSpy.Output {
 			set {
 				if (outputManagerSettingsImpl.ShowTimestamps != value) {
 					outputManagerSettingsImpl.ShowTimestamps = value;
-					OnPropertyChanged("ShowTimestamps");
+					OnPropertyChanged(nameof(ShowTimestamps));
 					foreach (var vm in OutputBuffers)
 						vm.ShowTimestamps = outputManagerSettingsImpl.ShowTimestamps;
 				}
@@ -100,10 +100,10 @@ namespace dnSpy.Output {
 				if (selectedOutputBufferVM != value) {
 					selectedOutputBufferVM = value;
 					outputManagerSettingsImpl.SelectedGuid = value?.Guid ?? Guid.Empty;
-					OnPropertyChanged("SelectedOutputBufferVM");
-					OnPropertyChanged("TextEditorUIObject");
-					OnPropertyChanged("FocusedElement");
-					OnPropertyChanged("HasOutputWindows");
+					OnPropertyChanged(nameof(SelectedOutputBufferVM));
+					OnPropertyChanged(nameof(TextEditorUIObject));
+					OnPropertyChanged(nameof(FocusedElement));
+					OnPropertyChanged(nameof(HasOutputWindows));
 				}
 			}
 		}
@@ -204,9 +204,9 @@ namespace dnSpy.Output {
 		}
 
 		public void RefreshThemeFields() {
-			OnPropertyChanged("ClearAllImageObject");
-			OnPropertyChanged("SaveImageObject");
-			OnPropertyChanged("ToggleWordWrapImageObject");
+			OnPropertyChanged(nameof(ClearAllImageObject));
+			OnPropertyChanged(nameof(SaveImageObject));
+			OnPropertyChanged(nameof(ToggleWordWrapImageObject));
 		}
 
 		public bool CanClearAll => SelectedOutputBufferVM != null;

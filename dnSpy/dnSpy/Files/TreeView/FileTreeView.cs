@@ -194,7 +194,7 @@ namespace dnSpy.Files.TreeView {
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var appSettings = (IAppSettings)sender;
-			if (e.PropertyName == "UseNewRenderer_FileTreeView") {
+			if (e.PropertyName == nameof(appSettings.UseNewRenderer_FileTreeView)) {
 				this.context.UseNewRenderer = appSettings.UseNewRenderer_FileTreeView;
 				RefreshNodes();
 			}
@@ -226,34 +226,34 @@ namespace dnSpy.Files.TreeView {
 		void FileTreeViewSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var fileTreeViewSettings = (IFileTreeViewSettings)sender;
 			switch (e.PropertyName) {
-			case "SyntaxHighlight":
+			case nameof(fileTreeViewSettings.SyntaxHighlight):
 				context.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
 				RefreshNodes();
 				break;
 
-			case "ShowAssemblyVersion":
+			case nameof(fileTreeViewSettings.ShowAssemblyVersion):
 				context.ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion;
 				RefreshNodes();
 				NotifyNodesTextRefreshed();
 				break;
 
-			case "ShowAssemblyPublicKeyToken":
+			case nameof(fileTreeViewSettings.ShowAssemblyPublicKeyToken):
 				context.ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken;
 				RefreshNodes();
 				NotifyNodesTextRefreshed();
 				break;
 
-			case "ShowToken":
+			case nameof(fileTreeViewSettings.ShowToken):
 				context.ShowToken = fileTreeViewSettings.ShowToken;
 				RefreshNodes();
 				NotifyNodesTextRefreshed();
 				break;
 
-			case "SingleClickExpandsTreeViewChildren":
+			case nameof(fileTreeViewSettings.SingleClickExpandsTreeViewChildren):
 				context.SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren;
 				break;
 
-			case "DeserializeResources":
+			case nameof(fileTreeViewSettings.DeserializeResources):
 				context.DeserializeResources = fileTreeViewSettings.DeserializeResources;
 				break;
 

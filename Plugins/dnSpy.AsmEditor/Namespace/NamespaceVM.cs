@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			set {
 				if (name != value) {
 					name = value;
-					OnPropertyChanged("Name");
+					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}

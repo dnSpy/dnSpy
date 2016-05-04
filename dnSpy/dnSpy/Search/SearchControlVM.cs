@@ -56,7 +56,7 @@ namespace dnSpy.Search {
 			set {
 				if (tooManyResults != value) {
 					tooManyResults = value;
-					OnPropertyChanged("TooManyResults");
+					OnPropertyChanged(nameof(TooManyResults));
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Search {
 			set {
 				if (selectedSearchTypeVM != value) {
 					selectedSearchTypeVM = value;
-					OnPropertyChanged("SelectedSearchTypeVM");
+					OnPropertyChanged(nameof(SelectedSearchTypeVM));
 					Restart();
 				}
 			}
@@ -94,7 +94,7 @@ namespace dnSpy.Search {
 			set {
 				if (selectedSearchResult != value) {
 					selectedSearchResult = value;
-					OnPropertyChanged("SelectedSearchResult");
+					OnPropertyChanged(nameof(SelectedSearchResult));
 				}
 			}
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.Search {
 			set {
 				if (searchText != value) {
 					searchText = value;
-					OnPropertyChanged("SearchText");
+					OnPropertyChanged(nameof(SearchText));
 					delayedSearch.Start();
 				}
 			}
@@ -310,15 +310,15 @@ namespace dnSpy.Search {
 
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-			case "SyntaxHighlight":
+			case nameof(SearchSettings.SyntaxHighlight):
 				if (fileSearcher != null)
 					fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;
 				break;
-			case "MatchWholeWords":
-			case "CaseSensitive":
-			case "MatchAnySearchTerm":
-			case "SearchDecompiledData":
-			case "SearchGacAssemblies":
+			case nameof(SearchSettings.MatchWholeWords):
+			case nameof(SearchSettings.CaseSensitive):
+			case nameof(SearchSettings.MatchAnySearchTerm):
+			case nameof(SearchSettings.SearchDecompiledData):
+			case nameof(SearchSettings.SearchGacAssemblies):
 				Restart();
 				break;
 			}
