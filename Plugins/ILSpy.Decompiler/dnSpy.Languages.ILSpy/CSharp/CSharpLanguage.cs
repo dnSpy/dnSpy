@@ -102,14 +102,14 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				yield return new CSharpLanguage(langSettings, orderUI++) {
 					transformAbortCondition = v => transformType.IsInstanceOfType(v),
 					uniqueNameUI = "C# - " + lastTransformName,
-					uniqueGuid = new Guid(string.Format("203F702E-7E87-4F01-84CD-B0E8{0:X8}", id++)),
+					uniqueGuid = new Guid($"203F702E-7E87-4F01-84CD-B0E8{id++:X8}"),
 					showAllMembers = true
 				};
 				lastTransformName = "after " + transformType.Name;
 			}
 			yield return new CSharpLanguage(langSettings, orderUI++) {
 				uniqueNameUI = "C# - " + lastTransformName,
-				uniqueGuid = new Guid(string.Format("203F702E-7E87-4F01-84CD-B0E8{0:X8}", id++)),
+				uniqueGuid = new Guid($"203F702E-7E87-4F01-84CD-B0E8{id++:X8}"),
 				showAllMembers = true
 			};
 		}

@@ -484,7 +484,7 @@ namespace dnSpy_Console {
 				else if (opt.Type == typeof(string))
 					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseString(a)));
 				else
-					Debug.Fail(string.Format("Unsupported type: {0}", opt.Type));
+					Debug.Fail($"Unsupported type: {opt.Type}");
 			}
 
 			return dict;

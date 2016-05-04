@@ -140,7 +140,7 @@ namespace dnSpy.BamlDecompiler {
 				reference = ctx.AssemblyIdMap[id].AssemblyFullName;
 			else
 				reference = null;
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
+			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteTypeId(BamlContext ctx, ushort id) {
@@ -155,7 +155,7 @@ namespace dnSpy.BamlDecompiler {
 			if (reference != null)
 				reference = IdentifierEscaper.Escape(reference);
 
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
+			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteAttributeId(BamlContext ctx, ushort id) {
@@ -173,7 +173,7 @@ namespace dnSpy.BamlDecompiler {
 				else if (ctx.TypeIdMap.ContainsKey(attrInfo.OwnerTypeId))
 					declType = ctx.TypeIdMap[attrInfo.OwnerTypeId].TypeFullName;
 				else
-					declType = string.Format("(0x{0:x4})", attrInfo.OwnerTypeId);
+					declType = $"(0x{attrInfo.OwnerTypeId:x4})";
 				name = attrInfo.Name;
 			}
 			else
@@ -181,8 +181,8 @@ namespace dnSpy.BamlDecompiler {
 
 			string reference = null;
 			if (declType != null && name != null)
-				reference = string.Format("{0}::{1}", IdentifierEscaper.Escape(declType), IdentifierEscaper.Escape(name));
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
+				reference = $"{IdentifierEscaper.Escape(declType)}::{IdentifierEscaper.Escape(name)}";
+			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteStringId(BamlContext ctx, ushort id) {
@@ -196,7 +196,7 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (str != null)
 				reference = NumberVMUtils.ToString(str, true);
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
+			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteDefinition(string value, string def = null) {
@@ -239,7 +239,7 @@ namespace dnSpy.BamlDecompiler {
 			}
 		}
 
-		static string GetRecordReference(BamlRecord record) => string.Format("Position: 0x{0:x}", record.Position);
+		static string GetRecordReference(BamlRecord record) => $"Position: 0x{record.Position:x}";
 
 		Stack<BamlRecord> scopeStack = new Stack<BamlRecord>();
 
@@ -400,8 +400,8 @@ namespace dnSpy.BamlDecompiler {
 			else if (ctx.TypeIdMap.ContainsKey(record.OwnerTypeId))
 				declType = ctx.TypeIdMap[record.OwnerTypeId].TypeFullName;
 			else
-				declType = string.Format("(0x{0:x4})", record.OwnerTypeId);
-			var def = string.Format("{0}::{1}", IdentifierEscaper.Escape(declType), IdentifierEscaper.Escape(record.Name));
+				declType = $"(0x{record.OwnerTypeId:x4})";
+			var def = $"{IdentifierEscaper.Escape(declType)}::{IdentifierEscaper.Escape(record.Name)}";
 
 			WriteText(", Name=");
 			WriteDefinition(record.Name, def);

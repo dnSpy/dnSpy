@@ -219,7 +219,7 @@ namespace dnSpy.Shared.Files {
 			foreach (var subDir in gacInfo.SubDirs) {
 				var baseDir = Path.Combine(gacInfo.Path, subDir);
 				baseDir = Path.Combine(baseDir, asmSimpleName);
-				baseDir = Path.Combine(baseDir, string.Format("{0}{1}_{2}_{3}", gacInfo.Prefix, verString, cultureString, pktString));
+				baseDir = Path.Combine(baseDir, $"{gacInfo.Prefix}{verString}_{cultureString}_{pktString}");
 				var pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
 				if (File.Exists(pathName))
 					yield return pathName;

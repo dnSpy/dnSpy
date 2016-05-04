@@ -36,7 +36,7 @@ namespace dnSpy.Shared.HexEditor {
 		public void WriteSpan(string cssText, string spanText) {
 			sb.Append("<span");
 			if (cssText.Length > 0)
-				sb.Append(string.Format(" style=\"{0}\"", WebUtility.HtmlEncode(cssText)));
+				sb.Append($" style=\"{WebUtility.HtmlEncode(cssText)}\"");
 			sb.Append('>');
 			WriteString(spanText);
 			sb.Append("</span>");

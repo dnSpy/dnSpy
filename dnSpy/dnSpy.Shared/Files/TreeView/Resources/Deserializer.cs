@@ -49,11 +49,11 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 			public MyBinder(string asmName, string typeName) {
 				this.module = new ModuleDefUser();
-				this.type = TypeNameParser.ParseReflection(module, string.Format("{0}, {1}", typeName, asmName), null);
+				this.type = TypeNameParser.ParseReflection(module, $"{typeName}, {asmName}", null);
 			}
 
 			public override Type BindToType(string assemblyName, string typeName) {
-				var otherType = TypeNameParser.ParseReflection(module, string.Format("{0}, {1}", typeName, assemblyName), null);
+				var otherType = TypeNameParser.ParseReflection(module, $"{typeName}, {assemblyName}", null);
 				if (string.IsNullOrEmpty(type.TypeName) || string.IsNullOrEmpty(otherType.TypeName))
 					return typeof(DontDeserializeType);
 				if (!new SigComparer().Equals(type, otherType))

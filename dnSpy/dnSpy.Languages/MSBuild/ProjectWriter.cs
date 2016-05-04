@@ -114,7 +114,7 @@ namespace dnSpy.Languages.MSBuild {
 				// Debug property group
 				var noWarnList = GetNoWarnList();
 				writer.WriteStartElement("PropertyGroup");
-				writer.WriteAttributeString("Condition", string.Format(" '$(Configuration)|$(Platform)' == 'Debug|{0}' ", project.Platform));
+				writer.WriteAttributeString("Condition", $" '$(Configuration)|$(Platform)' == 'Debug|{project.Platform}' ");
 				writer.WriteElementString("PlatformTarget", project.Platform);
 				writer.WriteElementString("DebugSymbols", "true");
 				writer.WriteElementString("DebugType", "full");
@@ -133,7 +133,7 @@ namespace dnSpy.Languages.MSBuild {
 
 				// Release property group
 				writer.WriteStartElement("PropertyGroup");
-				writer.WriteAttributeString("Condition", string.Format(" '$(Configuration)|$(Platform)' == 'Release|{0}' ", project.Platform));
+				writer.WriteAttributeString("Condition", $" '$(Configuration)|$(Platform)' == 'Release|{project.Platform}' ");
 				writer.WriteElementString("PlatformTarget", project.Platform);
 				writer.WriteElementString("DebugType", "pdbonly");
 				writer.WriteElementString("Optimize", "true");

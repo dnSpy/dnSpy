@@ -36,13 +36,13 @@ namespace dnSpy.Shared.MVVM {
 	}
 
 	public static class PickFilenameConstants {
-		public static readonly string ImagesFilter = string.Format("{1}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles, dnSpy_Shared_Resources.Files_Images);
-		public static readonly string StrongNameKeyFilter = string.Format("{1} (*.snk)|*.snk|{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles, dnSpy_Shared_Resources.Files_StrongNameKeyFiles);
-		public static readonly string AnyFilenameFilter = string.Format("{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles);
-		public static readonly string DotNetExecutableFilter = string.Format("{1} (*.exe)|*.exe|{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles, dnSpy_Shared_Resources.Files_DotNetExecutables);
-		public static readonly string DotNetAssemblyOrModuleFilter = string.Format("{1} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles, dnSpy_Shared_Resources.Files_DotNetExecutables);
-		public static readonly string NetModuleFilter = string.Format("{1} (*.netmodule)|*.netmodule|{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles, dnSpy_Shared_Resources.Files_DotNetNetModules);
-		public static readonly string ExecutableFilter = string.Format("{1} (*.exe)|*.exe|{0} (*.*)|*.*", dnSpy_Shared_Resources.AllFiles, dnSpy_Shared_Resources.Files_Executables);
+		public static readonly string ImagesFilter = $"{dnSpy_Shared_Resources.Files_Images}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string StrongNameKeyFilter = $"{dnSpy_Shared_Resources.Files_StrongNameKeyFiles} (*.snk)|*.snk|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string AnyFilenameFilter = $"{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string DotNetExecutableFilter = $"{dnSpy_Shared_Resources.Files_DotNetExecutables} (*.exe)|*.exe|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string DotNetAssemblyOrModuleFilter = $"{dnSpy_Shared_Resources.Files_DotNetExecutables} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string NetModuleFilter = $"{dnSpy_Shared_Resources.Files_DotNetNetModules} (*.netmodule)|*.netmodule|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string ExecutableFilter = $"{dnSpy_Shared_Resources.Files_Executables} (*.exe)|*.exe|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
 	}
 
 	[Export(typeof(IPickFilename)), PartCreationPolicy(CreationPolicy.Shared)]

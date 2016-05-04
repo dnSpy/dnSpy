@@ -212,7 +212,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 						break;
 
 					case ElementType.Char:
-						output.Write(string.Format("'{0}'", c.Value), BoxedTextTokenKind.Char);
+						output.Write($"'{c.Value}'", BoxedTextTokenKind.Char);
 						break;
 
 					case ElementType.I1:
@@ -227,15 +227,15 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 					case ElementType.R8:
 					case ElementType.I:
 					case ElementType.U:
-						output.Write(string.Format("{0}", c.Value), BoxedTextTokenKind.Number);
+						output.Write($"{c.Value}", BoxedTextTokenKind.Number);
 						break;
 
 					case ElementType.String:
-						output.Write(string.Format("{0}", c.Value), BoxedTextTokenKind.String);
+						output.Write($"{c.Value}", BoxedTextTokenKind.String);
 						break;
 
 					default:
-						output.Write(string.Format("{0}", c.Value), BoxedTextTokenKind.Text);
+						output.Write($"{c.Value}", BoxedTextTokenKind.Text);
 						break;
 					}
 				}
@@ -264,7 +264,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		}
 
 		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
-			this.WriteCommentLine(output, string.Format("Type: {0}", type.FullName));
+			this.WriteCommentLine(output, $"Type: {type.FullName}");
 			if (type.BaseType != null) {
 				WriteCommentBegin(output, true);
 				output.Write("Base type: ", BoxedTextTokenKind.Comment);
@@ -303,14 +303,14 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			uint id = 0x64A926A5;
 			yield return new ILAstLanguage(languageSettingsManager.ILAstLanguageDecompilerSettings, orderUI++) {
 				uniqueNameUI = "ILAst (unoptimized)",
-				uniqueGuid = new Guid(string.Format("CB470049-6AFB-4BDB-93DC-1BB9{0:X8}", id++)),
+				uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 				inlineVariables = false
 			};
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
 				yield return new ILAstLanguage(languageSettingsManager.ILAstLanguageDecompilerSettings, orderUI++) {
 					uniqueNameUI = nextName,
-					uniqueGuid = new Guid(string.Format("CB470049-6AFB-4BDB-93DC-1BB9{0:X8}", id++)),
+					uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 					abortBeforeStep = step
 				};
 				nextName = "ILAst (after " + step + ")";

@@ -93,7 +93,7 @@ namespace dnSpy.Shared.MVVM {
 					return i;
 			}
 
-			list.Add(new EnumVM(value, string.Format("0x{0:X}", value)));
+			list.Add(new EnumVM(value, $"0x{value:X}"));
 			return list.Count - 1;
 		}
 	}

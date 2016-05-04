@@ -105,7 +105,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 					break;
 
 				default:
-					Debug.Fail(string.Format("Unknown option: '{0}'", t.Item1));
+					Debug.Fail($"Unknown option: '{t.Item1}'");
 					break;
 				}
 			}

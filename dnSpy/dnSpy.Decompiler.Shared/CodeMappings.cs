@@ -76,14 +76,7 @@ namespace dnSpy.Decompiler.Shared {
 
 		public override bool Equals(object obj) => Equals(obj as SourceCodeMapping);
 		public override int GetHashCode() => Mapping.GetHashCode() ^ ILRange.GetHashCode() ^ StartPosition.GetHashCode() ^ EndPosition.GetHashCode();
-
-		public override string ToString() {
-			return string.Format("{0} {1},{2} - {3},{4}",
-				ILRange,
-				StartPosition.Line, StartPosition.Column,
-				EndPosition.Line, EndPosition.Column
-				);
-		}
+		public override string ToString() => $"{ILRange} {StartPosition.Line},{StartPosition.Column} - {EndPosition.Line},{EndPosition.Column}";
 	}
 
 	/// <summary>

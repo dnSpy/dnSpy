@@ -60,9 +60,9 @@ namespace dnSpy.BamlDecompiler.Xaml {
 
 			if (xmlNs == null) {
 				if (AssemblyNameComparer.CompareAll.Equals(Assembly, ctx.Module.Assembly))
-					xmlNs = string.Format("clr-namespace:{0}", TypeNamespace);
+					xmlNs = $"clr-namespace:{TypeNamespace}";
 				else
-					xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly.Name);
+					xmlNs = $"clr-namespace:{TypeNamespace};assembly={Assembly.Name}";
 
 				var nsSeg = TypeNamespace.Split('.');	
 				var prefix = nsSeg[nsSeg.Length - 1].ToLowerInvariant();

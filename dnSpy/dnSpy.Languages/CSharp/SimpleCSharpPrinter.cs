@@ -543,7 +543,7 @@ namespace dnSpy.Languages.CSharp {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown constant: '{0}'", obj));
+				Debug.Fail($"Unknown constant: '{obj}'");
 				OutputWrite(obj.ToString(), BoxedTextTokenKind.Text);
 				break;
 			}
@@ -1107,7 +1107,7 @@ namespace dnSpy.Languages.CSharp {
 						WriteToken(pd);
 					}
 					else
-						WriteIdentifier(string.Format("A_{0}", i), BoxedTextTokenKind.Parameter);
+						WriteIdentifier($"A_{i}", BoxedTextTokenKind.Parameter);
 				}
 				if (ShowParameterLiteralValues && pd != null && pd.Constant != null) {
 					if (needSpace)
@@ -1175,7 +1175,7 @@ namespace dnSpy.Languages.CSharp {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			return string.Format("#{0}", variable.Index);
+			return $"#{variable.Index}";
 		}
 
 		static bool IsSystemNullable(GenericInstSig gis) {

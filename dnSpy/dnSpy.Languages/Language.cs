@@ -233,7 +233,7 @@ namespace dnSpy.Languages {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			return string.Format("#{0}", variable.Index);
+			return $"#{variable.Index}";
 		}
 
 		protected virtual void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer = null) {

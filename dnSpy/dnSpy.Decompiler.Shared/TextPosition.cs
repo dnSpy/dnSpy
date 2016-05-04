@@ -51,6 +51,6 @@ namespace dnSpy.Decompiler.Shared {
 		}
 
 		public override int GetHashCode() => (Line << 10) ^ Column;
-		public override string ToString() => string.Format("({0},{1})", Line, Column);
+		public override string ToString() => $"({Line},{Column})";
 	}
 }

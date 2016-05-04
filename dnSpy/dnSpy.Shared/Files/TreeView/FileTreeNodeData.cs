@@ -125,7 +125,7 @@ namespace dnSpy.Shared.Files.TreeView {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Invalid type: {0}", res));
+				Debug.Fail($"Invalid type: {res}");
 				goto case FilterType.Default;
 			}
 		}

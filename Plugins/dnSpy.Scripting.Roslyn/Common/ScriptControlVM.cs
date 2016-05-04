@@ -208,7 +208,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				if (!t.IsCanceled && !t.IsFaulted)
 					CommandExecuted();
 				else
-					this.ReplEditor.OutputPrintLine(string.Format("Could not create the script:\n\n{0}", ex), BoxedOutputColor.Error, true);
+					this.ReplEditor.OutputPrintLine($"Could not create the script:\n\n{ex}", BoxedOutputColor.Error, true);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -361,7 +361,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					lock (lockObj)
 						execState.Executing = false;
 				}
-				ReplEditor.OutputPrintLine(string.Format("Error executing script:\n\n{0}", ex), BoxedOutputColor.Error, true);
+				ReplEditor.OutputPrintLine($"Error executing script:\n\n{ex}", BoxedOutputColor.Error, true);
 				return false;
 			}
 		}
@@ -548,7 +548,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				if (File.Exists(path))
 					return path;
 			}
-			Debug.Fail(string.Format("Couldn't find the response file: {0}", filename));
+			Debug.Fail($"Couldn't find the response file: {filename}");
 			return null;
 		}
 	}

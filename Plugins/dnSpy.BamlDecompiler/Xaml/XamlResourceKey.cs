@@ -44,8 +44,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			}
 
 			if (keyRecord.Record.Type != BamlRecordType.ElementStart) {
-				Debug.WriteLine(string.Format("Key record @{0} must be attached to ElementStart (actual {1})",
-					keyRecord.Position, keyRecord.Record.Type));
+				Debug.WriteLine($"Key record @{keyRecord.Position} must be attached to ElementStart (actual {keyRecord.Record.Type})");
 			}
 
 			foreach (var child in node.Parent.Children) {

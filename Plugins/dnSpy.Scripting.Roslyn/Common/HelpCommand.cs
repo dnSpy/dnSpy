@@ -60,7 +60,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		void Print(ScriptControlVM vm, IEnumerable<Tuple<string, string>> descs) {
 			foreach (var t in descs)
-				vm.ReplEditor.OutputPrintLine(string.Format("  {0,-20} {1}", t.Item1, t.Item2), BoxedOutputColor.ReplOutputText);
+				vm.ReplEditor.OutputPrintLine($"  {t.Item1,-20} {t.Item2}", BoxedOutputColor.ReplOutputText);
 		}
 
 		IEnumerable<Tuple<string, string>> GetCommands(ScriptControlVM vm) {

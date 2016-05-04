@@ -68,7 +68,7 @@ namespace dnSpy.Languages.MSBuild {
 				return type.AssemblyQualifiedName;
 			if (AssemblyNameComparer.CompareAll.Equals(oldAsm, newAsm))
 				return type.AssemblyQualifiedName;
-			return string.Format("{0}, {1}", type.FullName, oldAsm.FullName);
+			return $"{type.FullName}, {oldAsm.FullName}";
 		}
 
 		List<ResXDataNode> ReadResourceEntries(DecompileContext ctx) {
@@ -90,13 +90,13 @@ namespace dnSpy.Languages.MSBuild {
 						}
 						catch (Exception ex) {
 							if (errors++ < 30)
-								ctx.Logger.Error(string.Format("Could not add resource '{0}', Message: {1}", key, ex.Message));
+								ctx.Logger.Error($"Could not add resource '{key}', Message: {ex.Message}");
 						}
 					}
 				}
 			}
 			catch (Exception ex) {
-				ctx.Logger.Error(string.Format("Could not read resources from {0}, Message: {1}", embeddedResource.Name, ex.Message));
+				ctx.Logger.Error($"Could not read resources from {embeddedResource.Name}, Message: {ex.Message}");
 			}
 			return list;
 		}

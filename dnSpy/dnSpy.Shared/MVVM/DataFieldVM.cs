@@ -1055,9 +1055,9 @@ namespace dnSpy.Shared.MVVM {
 
 		static DefaultConverterVM() {
 			if (!converter.CanConvertTo(null, typeof(string)))
-				throw new InvalidOperationException(string.Format("Converter can't convert a {0} to a string", typeof(T)));
+				throw new InvalidOperationException($"Converter can't convert a {typeof(T)} to a string");
 			if (!converter.CanConvertFrom(null, typeof(string)))
-				throw new InvalidOperationException(string.Format("Converter can't convert a string to a {0}", typeof(T)));
+				throw new InvalidOperationException($"Converter can't convert a string to a {typeof(T)}");
 		}
 
 		public DefaultConverterVM(Action<DataFieldVM> onUpdated)

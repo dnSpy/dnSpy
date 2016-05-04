@@ -235,9 +235,9 @@ namespace dnSpy.Shared.HexEditor {
 
 			var tf = part.TextRunProperties.Typeface;
 			if (tf.Weight != FontWeights.Normal)
-				writer.Append(string.Format("font-weight: {0}; ", tf.Weight.ToString().ToLowerInvariant()));
+				writer.Append($"font-weight: {tf.Weight.ToString().ToLowerInvariant()}; ");
 			if (tf.Style != FontStyles.Normal)
-				writer.Append(string.Format("font-style: {0}; ", tf.Style.ToString().ToLowerInvariant()));
+				writer.Append($"font-style: {tf.Style.ToString().ToLowerInvariant()}; ");
 		}
 
 		void WriteCssColor(StringBuilder writer, string name, Brush brush) {

@@ -35,8 +35,7 @@ namespace dnSpy.Output {
 	sealed class OutputToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IOutputContent> outputContent;
 
-		public OutputToolWindowContent OutputToolWindowContent =>
-			outputToolWindowContent ?? (outputToolWindowContent = new OutputToolWindowContent(outputContent));
+		public OutputToolWindowContent OutputToolWindowContent => outputToolWindowContent ?? (outputToolWindowContent = new OutputToolWindowContent(outputContent));
 		OutputToolWindowContent outputToolWindowContent;
 
 		[ImportingConstructor]
@@ -48,11 +47,7 @@ namespace dnSpy.Output {
 			get { yield return new ToolWindowContentInfo(OutputToolWindowContent.THE_GUID, OutputToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_OUTPUT, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == OutputToolWindowContent.THE_GUID)
-				return OutputToolWindowContent;
-			return null;
-		}
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == OutputToolWindowContent.THE_GUID ? OutputToolWindowContent : null;
 	}
 
 	sealed class OutputToolWindowContent : IToolWindowContent {

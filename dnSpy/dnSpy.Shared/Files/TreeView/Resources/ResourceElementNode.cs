@@ -106,7 +106,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
 			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
-			output.Write(string.Format(" = {0}", ValueString), BoxedTextTokenKind.Comment);
+			output.Write($" = {ValueString}", BoxedTextTokenKind.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

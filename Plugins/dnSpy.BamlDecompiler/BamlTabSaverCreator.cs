@@ -110,7 +110,7 @@ namespace dnSpy.BamlDecompiler {
 			var saveDlg = new SaveFileDialog {
 				FileName = FilenameUtils.CleanName(RemovePath(bamlNode.GetFilename())),
 				DefaultExt = ext,
-				Filter = string.Format("{1}|*{2}|{0}|*.*", dnSpy_BamlDecompiler_Resources.AllFiles, name, ext),
+				Filter = $"{name}|*{ext}|{dnSpy_BamlDecompiler_Resources.AllFiles}|*.*",
 			};
 			if (saveDlg.ShowDialog() != true)
 				return null;

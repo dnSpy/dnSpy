@@ -92,7 +92,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 			var mod = (node as IFileTreeNodeData).GetModule();
 			var filename = mod == null ? null : mod.Location;
-			output.WriteReference(string.Format("0x{0:X8}", fo), new AddressReference(filename, false, fo, node.Length), BoxedTextTokenKind.Comment);
+			output.WriteReference($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), BoxedTextTokenKind.Comment);
 			output.Write(": ", BoxedTextTokenKind.Comment);
 		}
 

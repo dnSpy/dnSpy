@@ -82,9 +82,9 @@ namespace dnSpy.Languages.ILSpy.Settings {
 				decompilationObjectVMs[otherIndex] = decompilationObjectVMs[index];
 				decompilationObjectVMs[index] = newValue;
 
-				OnPropertyChanged(string.Format("DecompilationObject{0}", otherIndex));
+				OnPropertyChanged($"DecompilationObject{otherIndex}");
 			}
-			OnPropertyChanged(string.Format("DecompilationObject{0}", index));
+			OnPropertyChanged($"DecompilationObject{index}");
 		}
 
 		public CSharpDecompilerSettingsTab(DecompilerSettings decompilerSettings) {

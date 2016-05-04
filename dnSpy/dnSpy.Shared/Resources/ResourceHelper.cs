@@ -69,7 +69,7 @@ namespace dnSpy.Shared.Resources {
 				}
 			}
 
-			Debug.Fail(string.Format("Failed to find the class with the ResourceManager property in assembly {0}", assembly));
+			Debug.Fail($"Failed to find the class with the ResourceManager property in assembly {assembly}");
 			return null;
 		}
 

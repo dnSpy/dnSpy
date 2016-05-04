@@ -2053,6 +2053,6 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public event EventHandler<HexBoxWriteEventArgs> OnWrite;
-		public override string ToString() => string.Format("HexBox: {0}", Document == null ? null : Document.Name);
+		public override string ToString() => $"HexBox: {Document?.Name}";
 	}
 }
