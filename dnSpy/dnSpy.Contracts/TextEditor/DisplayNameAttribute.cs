@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Defines a base content type
+	/// Display name
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class DisplayNameAttribute : Attribute {
