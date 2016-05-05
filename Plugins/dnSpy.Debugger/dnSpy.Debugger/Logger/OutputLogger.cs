@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Output;
@@ -162,9 +163,17 @@ namespace dnSpy.Debugger.Logger {
 		string FilterUserMessage(string s) {
 			if (s == null)
 				return string.Empty;
-			const int MAX_USER_MSG_LEN = 1000;
-			if (s.Length > MAX_USER_MSG_LEN)
-				s = s.Substring(0, MAX_USER_MSG_LEN) + "[...]";
+			const int MAX_USER_MSG_LEN = 16 * 1024;
+			if (s.Length > MAX_USER_MSG_LEN) {
+				const string ELLIPSIS = "[...]";
+				var sb = new StringBuilder(MAX_USER_MSG_LEN + ELLIPSIS.Length + Environment.NewLine.Length);
+				bool endsInNewLine = s[s.Length - 1] == '\n';
+				sb.Append(s, 0, MAX_USER_MSG_LEN);
+				sb.Append(ELLIPSIS);
+				if (endsInNewLine)
+					sb.Append(Environment.NewLine);
+				s = sb.ToString();
+			}
 			return s;
 		}
 
