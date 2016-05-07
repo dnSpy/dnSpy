@@ -1,8 +1,8 @@
 <theme guid="B3D71E74-C353-4206-9AD1-05847BE95CBE" name="light" menu-name="_Light" order="300" is-high-contrast="false">
 	<colors>
 		<color name="defaulttext" fg="Black" bg="White" />
-		<color name="brace" fg="#003399" />
-		<color name="operator" fg="#6666FF" />
+		<color name="brace" fg="#000000" />
+		<color name="operator" fg="#000000" />
 		<color name="number" fg="#5B2DA8" />
 		<color name="comment" fg="#008000" />
 		<color name="keyword" fg="#0000FF" />
