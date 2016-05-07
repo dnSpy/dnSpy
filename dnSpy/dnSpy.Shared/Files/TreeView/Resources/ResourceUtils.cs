@@ -40,9 +40,11 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			if (index >= 0) {
 				switch (name.Substring(index + 1).ToUpperInvariant()) {
 				case "CS":
+				case "CSX":
 					rsrcName = "CSharpFile";
 					break;
 				case "VB":
+				case "VBX":
 					rsrcName = "VisualBasicFile";
 					break;
 				case "TXT":
