@@ -43,11 +43,13 @@ namespace dnSpy.TextEditor {
 	sealed class ReplEditorUI : IReplEditorUI {
 		public object UIObject => textEditor;
 		public IInputElement FocusedElement => textEditor.FocusedElement;
-		public FrameworkElement ScaleElement => textEditor.TextArea;
+		public FrameworkElement ScaleElement => textEditor.ScaleElement;
 		public object Tag { get; set; }
 
+		internal string PrimaryPrompt { get; }
+		internal string SecondaryPrompt { get; }
+
 		readonly DnSpyTextEditor textEditor;
-		readonly ReplEditorOptions options;
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
 
@@ -63,22 +65,22 @@ namespace dnSpy.TextEditor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_REPL_EDITOR_GUID, replEditorUI);
 
-				var teCtrl = (DnSpyTextEditor)creatorObject.Object;
-				var position = openedFromKeyboard ? teCtrl.TextArea.Caret.Position : teCtrl.GetPositionFromMousePosition();
-				if (position != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line, position.Value.Column));
+				var textEditor = (DnSpyTextEditor)creatorObject.Object;
+				foreach (var go in textEditor.GetGuidObjects(openedFromKeyboard))
+					yield return go;
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.options = (options ?? new ReplEditorOptions()).Clone();
+			options = options ?? new ReplEditorOptions();
+			this.PrimaryPrompt = options.PrimaryPrompt;
+			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<SubBuffer>();
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
-			if (options.ContentType != null)
-				this.textEditor.TextBuffer.ContentType = options.ContentType;
+			var buffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
+			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, false);
 			this.cachedColorsList = new CachedColorsList();
-			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
+			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
 			this.textEditor.TextArea.AllowDrop = false;
 			AddNewDocument();
 			this.textEditor.TextArea.TextView.Document.UndoStack.SizeLimit = 100;
@@ -89,12 +91,12 @@ namespace dnSpy.TextEditor {
 			AddBinding(ApplicationCommands.Cut, (s, e) => CutSelection(), (s, e) => e.CanExecute = CanCutSelection && IsAtEditingPosition);
 			WriteOffsetOfPrompt(null, true);
 
-			if (this.options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(this.options.TextEditorCommandGuid.Value, textEditor);
-			if (this.options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(this.options.TextAreaCommandGuid.Value, textEditor.TextArea);
-			if (this.options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, this.options.MenuGuid.Value, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditor, textEditor));
+			if (options.TextEditorCommandGuid != null)
+				wpfCommandManager.Add(options.TextEditorCommandGuid.Value, textEditor);
+			if (options.TextAreaCommandGuid != null)
+				wpfCommandManager.Add(options.TextAreaCommandGuid.Value, textEditor.TextArea);
+			if (options.MenuGuid != null)
+				menuManager.InitializeContextMenu(this.textEditor, options.MenuGuid.Value, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditor, textEditor));
 		}
 
 		void AddBinding(RoutedUICommand routedCmd, ExecutedRoutedEventHandler executed, CanExecuteRoutedEventHandler canExecute) {
@@ -219,7 +221,7 @@ namespace dnSpy.TextEditor {
 			if (offset < offsetOfPrompt.Value)
 				offset = offsetOfPrompt.Value;
 			var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(offset);
-			var prefixString = line.Offset == offsetOfPrompt.Value ? options.PromptText : options.ContinueText;
+			var prefixString = line.Offset == offsetOfPrompt.Value ? PrimaryPrompt : SecondaryPrompt;
 			int col = offset - line.Offset;
 			if (col < prefixString.Length)
 				offset = line.Offset + prefixString.Length;
@@ -369,7 +371,7 @@ namespace dnSpy.TextEditor {
 					return string.Empty;
 
 				string s = this.textEditor.TextArea.TextView.Document.GetText(offsetOfPrompt.Value, LastLine.EndOffset - offsetOfPrompt.Value);
-				return ToInputString(s, options.PromptText);
+				return ToInputString(s, PrimaryPrompt);
 			}
 		}
 
@@ -405,7 +407,7 @@ namespace dnSpy.TextEditor {
 					break;
 				}
 
-				prefixString = options.ContinueText;
+				prefixString = SecondaryPrompt;
 			}
 			return sb.ToString();
 		}
@@ -423,7 +425,7 @@ namespace dnSpy.TextEditor {
 
 		void HandleSelectAll() {
 			var buf = FindBuffer(textEditor.TextArea.Caret.Offset);
-			var newSel = Selection.Create(this.textEditor.TextArea, buf.Kind == BufferKind.Code ? buf.StartOffset + options.PromptText.Length : buf.StartOffset, buf.EndOffset);
+			var newSel = Selection.Create(this.textEditor.TextArea, buf.Kind == BufferKind.Code ? buf.StartOffset + PrimaryPrompt.Length : buf.StartOffset, buf.EndOffset);
 			if (newSel.IsEmpty || this.textEditor.TextArea.Selection.Equals(newSel))
 				newSel = Selection.Create(this.textEditor.TextArea, 0, LastLine.EndOffset);
 			this.textEditor.TextArea.Selection = newSel;
@@ -507,7 +509,7 @@ namespace dnSpy.TextEditor {
 				if (nlOffs >= 0) {
 					sb.Append(s, so, nlOffs - so);
 					sb.Append(Environment.NewLine);
-					sb.Append(options.ContinueText);
+					sb.Append(SecondaryPrompt);
 					so = nlOffs;
 					int nlLen = s[so] == '\r' && so + 1 < s.Length && s[so + 1] == '\n' ? 2 : 1;
 					so += nlLen;
@@ -554,7 +556,6 @@ namespace dnSpy.TextEditor {
 			var doc = new TextDocument();
 			doc.Changed += TextDocument_Changed;
 			this.textEditor.Document = doc;
-			this.textEditor.TextBuffer.RecreateColorizers();
 		}
 		int docVersion;
 
@@ -579,7 +580,7 @@ namespace dnSpy.TextEditor {
 
 				if (changedState.CancellationToken.IsCancellationRequested)
 					return;
-				var cachedColors = new CachedTextTokenColorsCreator(options, totalLength).Create(buf.Input, buf.ColorInfos);
+				var cachedColors = new CachedTextTokenColorsCreator(this, totalLength).Create(buf.Input, buf.ColorInfos);
 				Debug.Assert(cachedColors.Length == totalLength);
 				if (currentDocVersion == docVersion)
 					cachedColorsList.AddOrUpdate(baseOffset, cachedColors);
@@ -608,7 +609,7 @@ namespace dnSpy.TextEditor {
 			var input = CurrentInput;
 
 			var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(e.Offset);
-			var promptText = line.Offset == offsetOfPrompt.Value ? options.PromptText : options.ContinueText;
+			var promptText = line.Offset == offsetOfPrompt.Value ? PrimaryPrompt : SecondaryPrompt;
 			int offset = DocumentOffsetToInputOffset(e.Offset, line);
 
 			var removed = DocumentTextToInputText(e.RemovedText.Text, line, e.Offset, promptText);
@@ -623,18 +624,18 @@ namespace dnSpy.TextEditor {
 			int offset = docOffset;
 			if (line.LineNumber == promptLine.LineNumber) {
 				offset -= offsetOfPrompt.Value;
-				Debug.Assert(line.Length == 0 || line.Length >= options.PromptText.Length);
+				Debug.Assert(line.Length == 0 || line.Length >= PrimaryPrompt.Length);
 				if (line.Length != 0)
-					offset -= options.PromptText.Length;
+					offset -= PrimaryPrompt.Length;
 				if (offset < 0)
 					offset = 0;
 			}
 			else {
-				offset -= offsetOfPrompt.Value + options.PromptText.Length;
-				offset -= (line.LineNumber - promptLine.LineNumber - 1) * options.ContinueText.Length;
-				Debug.Assert(line.Length == 0 || line.Length >= options.ContinueText.Length);
+				offset -= offsetOfPrompt.Value + PrimaryPrompt.Length;
+				offset -= (line.LineNumber - promptLine.LineNumber - 1) * SecondaryPrompt.Length;
+				Debug.Assert(line.Length == 0 || line.Length >= SecondaryPrompt.Length);
 				if (line.Length != 0)
-					offset -= options.ContinueText.Length;
+					offset -= SecondaryPrompt.Length;
 			}
 			Debug.Assert(offset >= 0);
 
@@ -715,9 +716,8 @@ namespace dnSpy.TextEditor {
 			AddUserInput(command, clearSearchText);
 		}
 
-		void RawAppend(string text) {
+		void RawAppend(string text) =>
 			this.textEditor.TextArea.TextView.Document.Insert(LastLine.EndOffset, text);
-		}
 
 		void FlushScriptOutputUIThread() {
 			dispatcher.VerifyAccess();
@@ -862,7 +862,7 @@ namespace dnSpy.TextEditor {
 			AddOrUpdateOutputSubBuffer();
 			WriteOffsetOfPrompt(LastLine.EndOffset);
 			CommandHandler.OnNewCommand();
-			RawAppend(options.PromptText);
+			RawAppend(PrimaryPrompt);
 			ClearUndoRedoHistory();
 			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
 			this.textEditor.TextArea.Caret.BringCaretToView();
@@ -924,7 +924,7 @@ namespace dnSpy.TextEditor {
 
 			var firstLine = textEditor.TextArea.TextView.Document.GetLineByOffset(buf.StartOffset);
 			var startLine = textEditor.TextArea.TextView.Document.GetLineByOffset(startOffset);
-			var prompt = firstLine == startLine ? options.PromptText : options.ContinueText;
+			var prompt = firstLine == startLine ? PrimaryPrompt : SecondaryPrompt;
 
 			int offs = startOffset;
 			while (offs < endOffset) {
@@ -942,7 +942,7 @@ namespace dnSpy.TextEditor {
 				sb.Append(s);
 
 				offs = eol;
-				prompt = options.ContinueText;
+				prompt = SecondaryPrompt;
 			}
 		}
 
@@ -1042,18 +1042,18 @@ namespace dnSpy.TextEditor {
 
 	struct CachedTextTokenColorsCreator {
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
-		readonly ReplEditorOptions options;
+		readonly ReplEditorUI owner;
 		readonly CachedTextTokenColors cachedColors;
 		readonly int totalLength;
 
-		public CachedTextTokenColorsCreator(ReplEditorOptions options, int totalLength) {
-			this.options = options;
+		public CachedTextTokenColorsCreator(ReplEditorUI owner, int totalLength) {
+			this.owner = owner;
 			this.cachedColors = new CachedTextTokenColors();
 			this.totalLength = totalLength;
 		}
 
 		public CachedTextTokenColors Create(string command, List<ColorOffsetInfo> colorInfos) {
-			cachedColors.Append(BoxedTextTokenKind.ReplPrompt1, options.PromptText);
+			cachedColors.Append(BoxedTextTokenKind.ReplPrompt1, owner.PrimaryPrompt);
 			int cmdOffs = 0;
 			foreach (var cinfo in colorInfos) {
 				Debug.Assert(cmdOffs <= cinfo.Offset);
@@ -1079,7 +1079,7 @@ namespace dnSpy.TextEditor {
 					cachedColors.Append(color, s, so, nlOffs - so + nlLen);
 					so = nlOffs + nlLen;
 					if (cachedColors.Length < totalLength)
-						cachedColors.Append(BoxedTextTokenKind.ReplPrompt2, options.ContinueText);
+						cachedColors.Append(BoxedTextTokenKind.ReplPrompt2, owner.SecondaryPrompt);
 				}
 				else {
 					cachedColors.Append(color, s, so, end - so);
@@ -1119,19 +1119,13 @@ namespace dnSpy.TextEditor {
 
 	sealed class ReplCommandInput : IReplCommandInput {
 		public string Input { get; }
-		public int Offset { get; }
-		public string Added { get; }
-		public string Removed { get; }
+		public ITextChange[] Changes { get; }
 
-		public List<ColorOffsetInfo> ColorInfos => colorInfos;
-		readonly List<ColorOffsetInfo> colorInfos;
+		public List<ColorOffsetInfo> ColorInfos { get; } = new List<ColorOffsetInfo>();
 
 		public ReplCommandInput(string input, int offset, string added, string removed) {
 			Input = input;
-			Offset = offset;
-			Added = added;
-			Removed = removed;
-			this.colorInfos = new List<ColorOffsetInfo>();
+			Changes = new ITextChange[] { new TextChange(offset, removed, added) };
 		}
 
 		public void AddColor(int offset, int length, object color) =>
@@ -1147,7 +1141,7 @@ namespace dnSpy.TextEditor {
 				throw new InvalidOperationException();
 			nextMinOffset = info.Offset + info.Length;
 #endif
-			colorInfos.Add(info);
+			ColorInfos.Add(info);
 		}
 #if DEBUG
 		int nextMinOffset;

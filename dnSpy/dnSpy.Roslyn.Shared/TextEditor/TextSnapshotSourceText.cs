@@ -1,0 +1,46 @@
+﻿/*
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Text;
+using dnSpy.Contracts.TextEditor;
+using Microsoft.CodeAnalysis.Text;
+
+namespace dnSpy.Roslyn.Shared.TextEditor {
+	sealed class TextSnapshotSourceText : SourceText {
+		public override char this[int position] => TextSnapshot[position];
+		public override Encoding Encoding { get; }
+		public override int Length => TextSnapshot.Length;
+		public override SourceTextContainer Container { get; }
+		public ITextSnapshot TextSnapshot { get; }
+
+		public TextSnapshotSourceText(ITextSnapshot snapshot, Encoding encoding = null) {
+			if (snapshot == null)
+				throw new ArgumentNullException(nameof(snapshot));
+			this.TextSnapshot = snapshot;
+			this.Encoding = encoding;
+			this.Container = snapshot.TextBuffer.AsTextContainer();
+		}
+
+		public override void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) =>
+			TextSnapshot.CopyTo(sourceIndex, destination, destinationIndex, count);
+
+		public override string ToString(TextSpan span) => TextSnapshot.GetText(span.ToSpan());
+	}
+}

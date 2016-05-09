@@ -30,7 +30,6 @@ using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Roslyn.Shared;
 using dnSpy.Scripting.Roslyn.Properties;
 using dnSpy.Shared.MVVM;
 using Microsoft.CodeAnalysis;
@@ -39,6 +38,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
 using dnSpy.Contracts.Scripting.Roslyn;
+using dnSpy.Roslyn.Shared.Classification;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {
@@ -306,7 +306,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						if (oldState == execState)
 							oldState.ExecTask = execTask;
 					}
-					execTask.ContinueWith((Action<Task<ScriptState<object>>>)((Task<ScriptState<object>> t) => {
+					execTask.ContinueWith(t => {
 						var ex = t.Exception;
 						bool isActive;
 						lock (lockObj) {
@@ -330,7 +330,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 								CommandExecuted();
 							}
 						}
-					}), CancellationToken.None, TaskContinuationOptions.None, taskSched);
+					}, CancellationToken.None, TaskContinuationOptions.None, taskSched);
 				})
 				.ContinueWith(t => {
 					if (execState != null) {

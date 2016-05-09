@@ -77,7 +77,7 @@ namespace dnSpy.TextEditor {
 			var theme = textEditor.ThemeManager.Theme;
 			var allInfos = new List<ColorInfo>();
 			var snapshot = textEditor.TextBuffer.CurrentSnapshot;
-			foreach (var colorizer in textEditor.TextBuffer.Colorizers) {
+			foreach (var colorizer in textEditor.GetAllColorizers()) {
 				foreach (var cspan in colorizer.GetColorSpans(snapshot, span)) {
 					var colorSpan = cspan.Span.Intersection(span);
 					if (colorSpan == null || colorSpan.Value.IsEmpty)

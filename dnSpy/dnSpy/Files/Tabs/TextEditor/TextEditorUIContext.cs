@@ -71,10 +71,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, uiContext);
 
 				var teCtrl = (TextEditorControl)creatorObject.Object;
-				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
-				if (position != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line, position.Value.Column));
+				foreach (var go in teCtrl.TextEditor.GetGuidObjects(openedFromKeyboard))
+					yield return go;
 
+				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
 				var @ref = teCtrl.GetReferenceSegmentAt(position);
 				if (@ref != null)
 					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.ToCodeReference());
@@ -118,7 +118,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public object UIObject => textEditorControl;
-		public FrameworkElement ScaleElement => textEditorControl.TextEditor.TextArea;
+		public FrameworkElement ScaleElement => textEditorControl.TextEditor.ScaleElement;
 		public bool HasSelectedText => textEditorControl.TextEditor.SelectionLength > 0;
 
 		public TextEditorLocation Location {

@@ -23,6 +23,7 @@ using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.TextEditor.Roslyn;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
 
@@ -124,6 +125,12 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="TextEditorLocation"/></summary>
 		public static readonly string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
 
+		/// <summary>Offset of caret</summary>
+		public static readonly string GUIDOBJ_CARET_OFFSET_GUID = "243DDAE1-007A-45FD-9F03-A3683729580E";
+
+		/// <summary><see cref="ITextBuffer"/></summary>
+		public static readonly string GUIDOBJ_TEXTBUFFER_GUID = "375B89C2-ACB8-414B-9F89-645BB7BF98FF";
+
 		/// <summary><c>HexBox</c></summary>
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 
@@ -150,6 +157,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Active <see cref="IOutputTextPane"/></summary>
 		public static readonly string GUIDOBJ_ACTIVE_OUTPUT_TEXTPANE_GUID = "5787A5D8-80DE-437F-A44A-6FD0138DBB57";
+
+		/// <summary><see cref="ICodeEditorUI"/></summary>
+		public static readonly string GUIDOBJ_CODE_EDITOR_GUID = "297907F8-38BE-4C8C-90D1-3400BB0EB36E";
+
+		/// <summary><see cref="IRoslynCodeEditorUI"/></summary>
+		public static readonly string GUIDOBJ_ROSLYN_CODE_EDITOR_GUID = "2DDCEF20-FAE2-4852-B4EF-D1B6A9AED30F";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";

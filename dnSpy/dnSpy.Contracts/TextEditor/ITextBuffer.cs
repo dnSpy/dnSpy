@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.TextEditor {
 	/// </summary>
 	public interface ITextBuffer {
 		/// <summary>
-		/// Gets the content type
+		/// Gets/sets the content type
 		/// </summary>
-		IContentType ContentType { get; }
+		IContentType ContentType { get; set; }
 
 		/// <summary>
 		/// Current content of this buffer
@@ -38,5 +38,50 @@ namespace dnSpy.Contracts.TextEditor {
 		/// Raised when <see cref="ContentType"/> has been changed
 		/// </summary>
 		event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
+
+		/// <summary>
+		/// Raised when the text has been changed
+		/// </summary>
+		event EventHandler<TextContentChangedEventArgs> Changed;
+
+		/// <summary>
+		/// true if an edit operation is in progress
+		/// </summary>
+		bool EditInProgress { get; }
+
+		/// <summary>
+		/// Returns true if the current thread can edit the text buffer
+		/// </summary>
+		/// <returns></returns>
+		bool CheckEditAccess();
+
+		/// <summary>
+		/// Creates a text edit object
+		/// </summary>
+		/// <returns></returns>
+		ITextEdit CreateEdit();
+
+		/// <summary>
+		/// Deletes characters from the buffer. Returns the new <see cref="ITextSnapshot"/> instance
+		/// </summary>
+		/// <param name="deleteSpan">Characters to remove</param>
+		/// <returns></returns>
+		ITextSnapshot Delete(Span deleteSpan);
+
+		/// <summary>
+		/// Inserts text at <paramref name="position"/>. Returns the new <see cref="ITextSnapshot"/> instance
+		/// </summary>
+		/// <param name="position">Position in the buffer</param>
+		/// <param name="text">Text to insert</param>
+		/// <returns></returns>
+		ITextSnapshot Insert(int position, string text);
+
+		/// <summary>
+		/// Replaces characters with a string. Returns the new <see cref="ITextSnapshot"/> instance
+		/// </summary>
+		/// <param name="replaceSpan">Characters to remove</param>
+		/// <param name="replaceWith">New string</param>
+		/// <returns></returns>
+		ITextSnapshot Replace(Span replaceSpan, string replaceWith);
 	}
 }

@@ -33,7 +33,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classification\ClassificationTypeConverter.cs" />
+    <Compile Include="Classification\RoslynClassifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextEditor\Extensions.cs" />
+    <Compile Include="TextEditor\RoslynCodeEditor.cs" />
+    <Compile Include="TextEditor\RoslynCodeEditorCreator.cs" />
+    <Compile Include="TextEditor\RoslynTextSnapshotColorizer.cs" />
+    <Compile Include="TextEditor\RoslynTextSnapshotColorizerProvider.cs" />
+    <Compile Include="TextEditor\TextBufferSourceTextContainer.cs" />
+    <Compile Include="TextEditor\TextSnapshotSourceText.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -48,6 +56,11 @@
       <Project>{9B234472-0E22-428C-9345-C8D9EE5E06AF}</Project>
       <Name>dnSpy.Contracts</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

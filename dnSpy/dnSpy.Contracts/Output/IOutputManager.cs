@@ -43,11 +43,11 @@ namespace dnSpy.Contracts.Output {
 		/// </summary>
 		/// <param name="guid">Guid of text pane</param>
 		/// <param name="name">Name shown in the UI</param>
-		/// <param name="contentType">Content type or null</param>
+		/// <param name="contentType">Content type</param>
 		/// <param name="textAreaCommandGuid">Text area GUID or null</param>
 		/// <param name="textEditorCommandGuid">Text editor GUID or null</param>
 		/// <returns></returns>
-		IOutputTextPane Create(Guid guid, string name, Guid? contentType = null, Guid? textEditorCommandGuid = null, Guid? textAreaCommandGuid = null);
+		IOutputTextPane Create(Guid guid, string name, Guid contentType, Guid? textEditorCommandGuid = null, Guid? textAreaCommandGuid = null);
 
 		/// <summary>
 		/// Returns a <see cref="IOutputTextPane"/>

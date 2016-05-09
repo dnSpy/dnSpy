@@ -28,6 +28,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
+using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
@@ -155,13 +156,33 @@ namespace dnSpy.TextEditor {
 		}
 
 		public IInputElement FocusedElement => this.TextArea;
-		public DnSpyTextBuffer TextBuffer { get; }
+		public FrameworkElement ScaleElement => this.TextArea;
 		internal IThemeManager ThemeManager { get; }
+
+		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) => colorizerCollection.RecreateAutoColorizers();
+		public TextBuffer TextBuffer {
+			get { return textBuffer; }
+			private set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(value));
+				if (textBuffer != value) {
+					if (textBuffer != null)
+						textBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
+					textBuffer = value;
+					textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
+					this.Document = textBuffer.Document;
+				}
+			}
+		}
+		TextBuffer textBuffer;
 
 		readonly ITextEditorSettings textEditorSettings;
 		readonly SearchPanel searchPanel;
+		readonly bool useShowLineNumbersOption;
+		readonly ColorizerCollection colorizerCollection;
 
-		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBuffer textBuffer, bool useShowLineNumbersOption) {
+			this.useShowLineNumbersOption = useShowLineNumbersOption;
 			this.ThemeManager = themeManager;
 			this.textEditorSettings = textEditorSettings;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
@@ -169,7 +190,9 @@ namespace dnSpy.TextEditor {
 			this.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.AllowToggleOverstrikeMode = true;
 			Options.RequireControlModifierForHyperlinkClick = false;
-			this.TextBuffer = new DnSpyTextBuffer(this, textBufferColorizerCreator, contentTypeRegistryService.UnknownContentType);
+			this.TextBuffer = (TextBuffer)textBuffer;
+			this.colorizerCollection = new ColorizerCollection(this, textBufferColorizerCreator);
+			TextArea.TextView.DocumentChanged += TextView_DocumentChanged;
 			UpdateColors(false);
 
 			searchPanel = SearchPanel.Install(TextArea);
@@ -203,13 +226,31 @@ namespace dnSpy.TextEditor {
 				Mode = BindingMode.OneWay,
 			});
 
+			this.lineNumberMargin = new LineNumberMargin { Visibility = Visibility.Collapsed };
+			this.lineNumberMargin.SetBinding(ForegroundProperty, new Binding(nameof(LineNumbersForeground)) { Source = this });
+			TextArea.LeftMargins.Insert(0, this.lineNumberMargin);
+
 			OnHighlightCurrentLineChanged();
-			OnShowLineNumbersChanged();
+			if (useShowLineNumbersOption)
+				ShowLineNumbers = textEditorSettings.ShowLineNumbers;
 		}
 
+		void TextView_DocumentChanged(object sender, EventArgs e) {
+			var newDoc = TextArea.TextView.Document;
+			Debug.Assert(newDoc != null);
+			if (newDoc != null)
+				TextBuffer.Document = newDoc;
+		}
+
+		public void AddColorizer(ITextSnapshotColorizer colorizer) => colorizerCollection.Add(colorizer);
+		public void RemoveColorizer(ITextSnapshotColorizer colorizer) => colorizerCollection.Remove(colorizer);
+		internal ITextSnapshotColorizer[] GetAllColorizers() => colorizerCollection.GetAllColorizers();
+
 		public void Dispose() {
-			this.textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
-			this.ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+			textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
+			ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+			colorizerCollection.Dispose();
+			TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
 			TextBuffer.Dispose();
 		}
 
@@ -229,21 +270,27 @@ namespace dnSpy.TextEditor {
 		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(textEditorSettings.HighlightCurrentLine))
 				OnHighlightCurrentLineChanged();
-			else if (e.PropertyName == nameof(textEditorSettings.ShowLineNumbers))
-				OnShowLineNumbersChanged();
+			else if (useShowLineNumbersOption && e.PropertyName == nameof(textEditorSettings.ShowLineNumbers))
+				ShowLineNumbers = textEditorSettings.ShowLineNumbers;
 		}
 
-		void OnHighlightCurrentLineChanged() => Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
-		public void OnShowLineNumbersChanged() => ShowLineMargin(textEditorSettings.ShowLineNumbers);
+		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
+			base.OnPropertyChanged(e);
+			Debug.Assert(e.Property != ShowLineNumbersProperty, "Don't call base.ShowLineNumbers");
+		}
 
-		public void ShowLineMargin(bool enable) {
-			foreach (var margin in TextArea.LeftMargins) {
-				if (margin is LineNumberMargin)
-					margin.Visibility = enable ? Visibility.Visible : Visibility.Collapsed;
-				else if (margin is System.Windows.Shapes.Line)
-					margin.Visibility = Visibility.Collapsed;
+		public new bool ShowLineNumbers {
+			get { return lineNumberMargin.Visibility != Visibility.Collapsed; }
+			set {
+				if (value)
+					lineNumberMargin.Visibility = Visibility.Visible;
+				else
+					lineNumberMargin.Visibility = Visibility.Collapsed;
 			}
 		}
+		readonly LineNumberMargin lineNumberMargin;
+
+		void OnHighlightCurrentLineChanged() => Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
 
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Show();
@@ -431,6 +478,22 @@ namespace dnSpy.TextEditor {
 
 			protected override IHighlighter CreateHighlighter(TextView textView, TextDocument document) =>
 				new DnSpyTextEditorHighlighter(textEditor, document);
+		}
+
+		public IEnumerable<GuidObject> GetGuidObjects(bool openedFromKeyboard) {
+			var position = openedFromKeyboard ? TextArea.Caret.Position : GetPositionFromMousePosition();
+			if (position != null) {
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line, position.Value.Column));
+
+				var doc = TextArea.TextView.Document;
+				if (doc != null) {
+					Debug.Assert(doc == TextBuffer.Document);
+					int offset = doc.GetOffset(position.Value.Location);
+					yield return new GuidObject(MenuConstants.GUIDOBJ_CARET_OFFSET_GUID, offset);
+				}
+			}
+
+			yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTBUFFER_GUID, TextBuffer);
 		}
 	}
 }

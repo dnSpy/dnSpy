@@ -37,7 +37,7 @@ namespace dnSpy.TextEditor {
 	sealed class LogEditorUI : ILogEditorUI {
 		public object UIObject => textEditor;
 		public IInputElement FocusedElement => textEditor.FocusedElement;
-		public FrameworkElement ScaleElement => textEditor.TextArea;
+		public FrameworkElement ScaleElement => textEditor.ScaleElement;
 		public object Tag { get; set; }
 
 		public bool WordWrap {
@@ -51,7 +51,6 @@ namespace dnSpy.TextEditor {
 				if (textEditor.ShowLineNumbers != value) {
 					textEditor.ShowLineNumbers = value;
 					UpdatePaddingElement();
-					textEditor.OnShowLineNumbersChanged();
 				}
 			}
 		}
@@ -69,7 +68,6 @@ namespace dnSpy.TextEditor {
 
 		readonly DnSpyTextEditor textEditor;
 		readonly CachedColorsList cachedColorsList;
-		readonly LogEditorOptions options;
 		readonly Dispatcher dispatcher;
 		CachedTextTokenColors cachedTextTokenColors;
 
@@ -87,10 +85,9 @@ namespace dnSpy.TextEditor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_LOG_EDITOR_GUID, logEditorUI);
 
-				var teCtrl = (DnSpyTextEditor)creatorObject.Object;
-				var position = openedFromKeyboard ? teCtrl.TextArea.Caret.Position : teCtrl.GetPositionFromMousePosition();
-				if (position != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line, position.Value.Column));
+				var textEditor = (DnSpyTextEditor)creatorObject.Object;
+				foreach (var go in textEditor.GetGuidObjects(openedFromKeyboard))
+					yield return go;
 
 				if (createGuidObjects != null) {
 					foreach (var guidObject in createGuidObjects(creatorObject, openedFromKeyboard))
@@ -99,30 +96,29 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
-			this.options = (options ?? new LogEditorOptions()).Clone();
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
-			if (options.ContentType != null)
-				this.textEditor.TextBuffer.ContentType = options.ContentType;
+			options = options ?? new LogEditorOptions();
+			var buffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
+			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, false);
 			this.cachedColorsList = new CachedColorsList();
-			this.textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
+			this.textEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
 			this.textEditor.TextArea.AllowDrop = false;
 			UpdatePaddingElement();
 			this.textEditor.IsReadOnly = true;
-			// Setting IsReadOnly to true doesn't mean it's readonly since undo/redo still works.
+			// Setting IsReadOnly to true doesn't mean it's readonly since undo and redo still work.
 			// Fix that by removing the commands.
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Undo);
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Redo);
 
-			if (this.options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(this.options.TextEditorCommandGuid.Value, this.textEditor);
-			if (this.options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(this.options.TextAreaCommandGuid.Value, this.textEditor.TextArea);
-			if (this.options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, this.options.MenuGuid.Value, new GuidObjectsCreator(this, this.options.CreateGuidObjects), new ContextMenuInitializer(this.textEditor, this.textEditor));
+			if (options.TextEditorCommandGuid != null)
+				wpfCommandManager.Add(options.TextEditorCommandGuid.Value, this.textEditor);
+			if (options.TextAreaCommandGuid != null)
+				wpfCommandManager.Add(options.TextAreaCommandGuid.Value, this.textEditor.TextArea);
+			if (options.MenuGuid != null)
+				menuManager.InitializeContextMenu(this.textEditor, options.MenuGuid.Value, new GuidObjectsCreator(this, options.CreateGuidObjects), new ContextMenuInitializer(this.textEditor, this.textEditor));
 		}
 
 		static void Remove(CommandBindingCollection bindings, ICommand cmd) {
@@ -138,7 +134,6 @@ namespace dnSpy.TextEditor {
 			textEditor.Document = new TextDocument();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedTextTokenColors);
-			textEditor.TextBuffer.RecreateColorizers();
 		}
 
 		public void Clear() {

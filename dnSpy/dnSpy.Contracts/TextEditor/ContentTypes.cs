@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.TextEditor {
 		public const string ANY = "D53EB38F-3D22-42AE-A0A7-6794A005E265";
 
 		/// <summary>
+		/// Inert content
+		/// </summary>
+		public const string INERT = "FAD13E9E-058B-45EA-9E1E-365B7C3C2A20";
+
+		/// <summary>
 		/// Text
 		/// </summary>
 		public const string TEXT = "C73BA084-F0A4-451F-87A1-B95A5662397A";

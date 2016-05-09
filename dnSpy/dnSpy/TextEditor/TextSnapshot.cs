@@ -17,12 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using dnSpy.Contracts.TextEditor;
 using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.TextEditor {
-	sealed class DnSpyTextSnapshot : ITextSnapshot {
+	sealed class TextSnapshot : ITextSnapshot {
+		public ITextSource TextSource => textSource;
 		readonly ITextSource textSource;
 
 		public char this[int position] => textSource.GetCharAt(position);
@@ -30,7 +33,7 @@ namespace dnSpy.TextEditor {
 		public int Length => textSource.TextLength;
 		public ITextBuffer TextBuffer { get; }
 
-		public DnSpyTextSnapshot(ITextSource textSource, IContentType contentType, ITextBuffer textBuffer) {
+		public TextSnapshot(ITextSource textSource, IContentType contentType, ITextBuffer textBuffer) {
 			this.textSource = textSource;
 			ContentType = contentType;
 			TextBuffer = textBuffer;
@@ -43,5 +46,16 @@ namespace dnSpy.TextEditor {
 		public char[] ToCharArray(int startIndex, int length) => textSource.ToCharArray(startIndex, length);
 		public void Write(TextWriter writer) => textSource.WriteTextTo(writer);
 		public void Write(TextWriter writer, Span span) => textSource.WriteTextTo(writer, span.Start, span.Length);
+
+		public ITextChange[] GetTextChangesFrom(TextSnapshot other) {
+			var list = new List<ITextChange>();
+			Debug.Assert(other.textSource.Version != null);
+			Debug.Assert(textSource.Version != null);
+			foreach (var tca in other.textSource.Version.GetChangesTo(textSource.Version))
+				list.Add(new TextChange(tca.Offset, tca.RemovedText, tca.InsertedText));
+			return list.ToArray();
+		}
+
+		public override string ToString() => GetText();
 	}
 }

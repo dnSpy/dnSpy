@@ -201,5 +201,21 @@ namespace dnSpy.TextEditor {
 		public IContentType AddContentType(string guid, IEnumerable<string> baseTypeGuids) =>
 			AddContentType(Guid.Parse(guid), baseTypeGuids.Select(a => Guid.Parse(a)));
 		public IContentType GetContentType(string guid) => GetContentType(Guid.Parse(guid));
+
+		public IContentType GetContentType(object contentType) {
+			var ct = contentType as IContentType;
+			if (ct != null)
+				return ct;
+
+			var contentTypeGuid = contentType as Guid?;
+			if (contentTypeGuid != null)
+				return GetContentType(contentTypeGuid.Value);
+
+			var contentTypeString = contentType as string;
+			if (contentTypeString != null)
+				return GetContentType(contentTypeString);
+
+			return null;
+		}
 	}
 }

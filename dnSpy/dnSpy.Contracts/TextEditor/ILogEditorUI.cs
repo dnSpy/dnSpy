@@ -44,10 +44,5 @@ namespace dnSpy.Contracts.TextEditor {
 		/// Can be set to any value by the user
 		/// </summary>
 		object Tag { get; set; }
-
-		/// <summary>
-		/// true to show line numbers
-		/// </summary>
-		bool ShowLineNumbers { get; set; }
 	}
 }

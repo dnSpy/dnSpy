@@ -118,16 +118,14 @@ namespace dnSpy.Output {
 		readonly ILogEditorCreator logEditorCreator;
 		readonly OutputManagerSettingsImpl outputManagerSettingsImpl;
 		readonly IPickSaveFilename pickSaveFilename;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
 		Guid prevSelectedGuid;
 
 		[ImportingConstructor]
-		OutputManager(ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IContentTypeRegistryService contentTypeRegistryService) {
+		OutputManager(ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename) {
 			this.logEditorCreator = logEditorCreator;
 			this.outputManagerSettingsImpl = outputManagerSettingsImpl;
 			this.prevSelectedGuid = outputManagerSettingsImpl.SelectedGuid;
 			this.pickSaveFilename = pickSaveFilename;
-			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.outputBuffers = new ObservableCollection<OutputBufferVM>();
 			this.outputBuffers.CollectionChanged += OutputBuffers_CollectionChanged;
 		}
@@ -149,10 +147,13 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public IOutputTextPane Create(Guid guid, string name, Guid? contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) =>
-			Create(guid, name, contentType == null ? null : contentTypeRegistryService.GetContentType(contentType.Value), textEditorCommandGuid, textAreaCommandGuid);
+		public IOutputTextPane Create(Guid guid, string name, Guid contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) =>
+			Create(guid, name, (object)contentType, textEditorCommandGuid, textAreaCommandGuid);
 
-		public IOutputTextPane Create(Guid guid, string name, IContentType contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
+		public IOutputTextPane Create(Guid guid, string name, IContentType contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) =>
+			Create(guid, name, (object)contentType, textEditorCommandGuid, textAreaCommandGuid);
+
+		IOutputTextPane Create(Guid guid, string name, object contentTypeObj, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -165,7 +166,8 @@ namespace dnSpy.Output {
 				TextEditorCommandGuid = textEditorCommandGuid,
 				TextAreaCommandGuid = textAreaCommandGuid,
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
-				ContentType = contentType,
+				ContentType = contentTypeObj as IContentType,
+				ContentTypeGuid = contentTypeObj as Guid?,
 				CreateGuidObjects = (creatorObject, openedFromKeyboard) => CreateGuidObjects(creatorObject, openedFromKeyboard),
 			};
 			var logEditor = logEditorCreator.Create(logEditorOptions);

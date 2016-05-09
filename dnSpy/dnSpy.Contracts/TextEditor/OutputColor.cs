@@ -18,6 +18,7 @@
 */
 
 using System.Diagnostics;
+using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.TextEditor {
@@ -473,5 +474,12 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <param name="color">Color</param>
 		/// <returns></returns>
 		public static TextTokenKind ToTextTokenKind(this OutputColor color) => (TextTokenKind)color;
+
+		/// <summary>
+		/// Converts <paramref name="color"/> to a <see cref="ColorType"/>
+		/// </summary>
+		/// <param name="color">Color</param>
+		/// <returns></returns>
+		public static ColorType ToColorType(this OutputColor color) => (ColorType)((int)ColorType.FirstNR + (int)color);
 	}
 }

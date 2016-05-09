@@ -40,6 +40,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
 using dnSpy.Files.Tabs;
 using dnSpy.Plugin;
+using dnSpy.Roslyn.Shared.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
 using dnSpy.Shared.Controls;
@@ -132,7 +133,10 @@ namespace dnSpy.MainApp {
 		CompositionContainer InitializeCompositionContainer() {
 			var aggregateCatalog = new AggregateCatalog();
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(GetType().Assembly));
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(EnumVM).Assembly));// dnSpy.Shared
+			// dnSpy.Shared
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(EnumVM).Assembly));
+			// dnSpy.Roslyn.Shared
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynClassifier).Assembly));
 			AddPluginFiles(aggregateCatalog);
 			return new CompositionContainer(aggregateCatalog);
 		}

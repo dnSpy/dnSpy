@@ -64,5 +64,12 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <param name="guid">Guid of content type</param>
 		/// <returns></returns>
 		IContentType GetContentType(Guid guid);
+
+		/// <summary>
+		/// Returns a content type or null if it wasn't found
+		/// </summary>
+		/// <param name="contentType">A content type guid, string, or <see cref="IContentType"/></param>
+		/// <returns></returns>
+		IContentType GetContentType(object contentType);
 	}
 }

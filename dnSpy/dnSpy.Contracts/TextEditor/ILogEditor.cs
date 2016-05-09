@@ -25,6 +25,16 @@ namespace dnSpy.Contracts.TextEditor {
 	/// </summary>
 	public interface ILogEditor {
 		/// <summary>
+		/// true to show line numbers
+		/// </summary>
+		bool ShowLineNumbers { get; set; }
+
+		/// <summary>
+		/// Enables/disables word wrapping
+		/// </summary>
+		bool WordWrap { get; set; }
+
+		/// <summary>
 		/// Writes text
 		/// </summary>
 		/// <param name="text">Text</param>
@@ -68,10 +78,5 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <returns></returns>
 		string GetText();
-
-		/// <summary>
-		/// Enables/disables word wrapping
-		/// </summary>
-		bool WordWrap { get; set; }
 	}
 }

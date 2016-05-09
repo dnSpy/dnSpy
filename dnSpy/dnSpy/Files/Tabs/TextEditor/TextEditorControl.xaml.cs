@@ -85,28 +85,27 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
-		readonly IContentType unknownContentType;
+		readonly IContentType defaultContentType;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBufferFactoryService textBufferFactoryService) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
 			this.textEditorSettings = textEditorSettings;
 			this.textEditorHelper = textEditorHelper;
-			this.unknownContentType = contentTypeRegistryService.UnknownContentType;
+			this.defaultContentType = textBufferFactoryService.TextContentType;
 			InitializeComponent();
 			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			TextEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
+			TextEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, (ITextBuffer)textBufferFactoryService.CreateTextBuffer((IContentType)defaultContentType), true);
 			cachedColorsList = new CachedColorsList();
-			TextEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
+			TextEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;
 			TextEditor.IsReadOnly = true;
-			TextEditor.ShowLineNumbers = true;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
@@ -137,7 +136,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.Enter, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndToolTip()), Key.Escape, ModifierKeys.None));
 
-			TextEditor.OnShowLineNumbersChanged();
 			OnAutoHighlightRefsChanged();
 		}
 
@@ -276,7 +274,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (output == null)
 				throw new ArgumentNullException();
 			if (contentType == null)
-				contentType = unknownContentType;
+				contentType = defaultContentType;
 
 			HideCancelButton();
 
@@ -290,16 +288,16 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			ClearMarkedReferences();
 			TextEditor.ScrollToHome();
-			TextEditor.Document = null;
 			TextEditor.SyntaxHighlighting = highlighting;
 			ClearCustomElementGenerators();
 
+			TextDocument newDoc;
 			if (avOutput == null) {
 				uiElementGenerator.UIElements = null;
 				referenceElementGenerator.References = null;
 				references = new TextSegmentCollection<ReferenceSegment>();
 				definitionLookup = null;
-				TextEditor.Document = new TextDocument(output.ToString());
+				newDoc = new TextDocument(output.ToString());
 			}
 			else {
 				uiElementGenerator.UIElements = avOutput.UIElements;
@@ -311,7 +309,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					activeCustomElementGenerators.Add(elementGenerator);
 				}
 
-				TextEditor.Document = avOutput.GetDocument();
+				newDoc = avOutput.GetDocument();
 			}
 
 			TextEditor.TextBuffer.ContentType = contentType;
@@ -320,7 +318,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			cachedColors.Finish();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedColors);
-			TextEditor.TextBuffer.RecreateColorizers();
+			TextEditor.Document = newDoc;
 		}
 
 		public void Clear() {

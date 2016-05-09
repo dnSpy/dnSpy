@@ -26,6 +26,11 @@ namespace dnSpy.TextEditor {
 		[DisplayName("any")]
 		static readonly ContentTypeDefinition AnyContentTypeDefinition;
 
+		[ExportContentTypeDefinition(ContentTypes.INERT)]
+		[DisplayName("inert")]
+		[BaseContentType(ContentTypes.ANY)]
+		static readonly ContentTypeDefinition InertContentTypeDefinition;
+
 		[ExportContentTypeDefinition(ContentTypes.TEXT)]
 		[DisplayName("text")]
 		[BaseContentType(ContentTypes.ANY)]

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//TODO: This class should be removed. It's only used by the REPL code and it should use RoslynClassifier instead.
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

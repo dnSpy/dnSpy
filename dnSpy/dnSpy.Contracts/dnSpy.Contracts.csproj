@@ -310,6 +310,7 @@
     <Compile Include="Tabs\TabGroupSelectedEventArgs.cs" />
     <Compile Include="Tabs\TabSelectedEventArgs.cs" />
     <Compile Include="TextEditor\BaseContentTypeAttribute.cs" />
+    <Compile Include="TextEditor\CodeEditorOptions.cs" />
     <Compile Include="TextEditor\Color.cs" />
     <Compile Include="TextEditor\ColorAndText.cs" />
     <Compile Include="TextEditor\ColorOffsetInfo.cs" />
@@ -320,6 +321,9 @@
     <Compile Include="TextEditor\ContentTypes.cs" />
     <Compile Include="TextEditor\DisplayNameAttribute.cs" />
     <Compile Include="TextEditor\ExportContentTypeDefinitionAttribute.cs" />
+    <Compile Include="TextEditor\ICodeEditor.cs" />
+    <Compile Include="TextEditor\ICodeEditorCreator.cs" />
+    <Compile Include="TextEditor\ICodeEditorUI.cs" />
     <Compile Include="TextEditor\IContentType.cs" />
     <Compile Include="TextEditor\IContentTypeRegistryService.cs" />
     <Compile Include="TextEditor\ILogEditor.cs" />
@@ -332,6 +336,10 @@
     <Compile Include="TextEditor\IReplEditorCreator.cs" />
     <Compile Include="TextEditor\IReplEditorUI.cs" />
     <Compile Include="TextEditor\ITextBuffer.cs" />
+    <Compile Include="TextEditor\ITextBufferEdit.cs" />
+    <Compile Include="TextEditor\ITextBufferFactoryService.cs" />
+    <Compile Include="TextEditor\ITextChange.cs" />
+    <Compile Include="TextEditor\ITextEdit.cs" />
     <Compile Include="TextEditor\ITextEditorSettings.cs" />
     <Compile Include="TextEditor\ITextSnapshot.cs" />
     <Compile Include="TextEditor\ITextSnapshotColorizer.cs" />
@@ -339,7 +347,13 @@
     <Compile Include="TextEditor\LogEditorOptions.cs" />
     <Compile Include="TextEditor\OutputColor.cs" />
     <Compile Include="TextEditor\ReplEditorOptions.cs" />
+    <Compile Include="TextEditor\Roslyn\IRoslynCodeEditor.cs" />
+    <Compile Include="TextEditor\Roslyn\IRoslynCodeEditorCreator.cs" />
+    <Compile Include="TextEditor\Roslyn\IRoslynCodeEditorUI.cs" />
+    <Compile Include="TextEditor\Roslyn\RoslynCodeEditorOptions.cs" />
     <Compile Include="TextEditor\Span.cs" />
+    <Compile Include="TextEditor\TextBufferCreatedEventArgs.cs" />
+    <Compile Include="TextEditor\TextContentChangedEventArgs.cs" />
     <Compile Include="TextEditor\TextEditorLocation.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITextColor.cs" />

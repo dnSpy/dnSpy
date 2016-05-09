@@ -25,32 +25,32 @@ namespace dnSpy.Contracts.TextEditor {
 	/// </summary>
 	public sealed class ReplEditorOptions {
 		/// <summary>
-		/// Default <see cref="PromptText"/> value
+		/// Default <see cref="PrimaryPrompt"/> value
 		/// </summary>
-		public static readonly string DEFAULT_PROMPT_TEXT = "> ";
+		public static readonly string DEFAULT_PRIMARY_PROMPT_TEXT = "> ";
 
 		/// <summary>
-		/// Default <see cref="ContinueText"/> value
+		/// Default <see cref="SecondaryPrompt"/> value
 		/// </summary>
-		public static readonly string DEFAULT_CONTINUE_TEXT = ". ";
+		public static readonly string DEFAULT_SECONDARY_PROMPT_TEXT = ". ";
 
 		/// <summary>
-		/// Prompt, default is <see cref="DEFAULT_PROMPT_TEXT"/>
+		/// Primary prompt, default is <see cref="DEFAULT_PRIMARY_PROMPT_TEXT"/>
 		/// </summary>
-		public string PromptText {
-			get { return promptText ?? DEFAULT_PROMPT_TEXT; }
-			set { promptText = value; }
+		public string PrimaryPrompt {
+			get { return primaryPrompt ?? DEFAULT_PRIMARY_PROMPT_TEXT; }
+			set { primaryPrompt = value; }
 		}
-		string promptText;
+		string primaryPrompt;
 
 		/// <summary>
-		/// Continue text, default is <see cref="DEFAULT_CONTINUE_TEXT"/>
+		/// Secondary prompt text, default is <see cref="DEFAULT_SECONDARY_PROMPT_TEXT"/>
 		/// </summary>
-		public string ContinueText {
-			get { return continueText ?? DEFAULT_CONTINUE_TEXT; }
-			set { continueText = value; }
+		public string SecondaryPrompt {
+			get { return secondaryPrompt ?? DEFAULT_SECONDARY_PROMPT_TEXT; }
+			set { secondaryPrompt = value; }
 		}
-		string continueText;
+		string secondaryPrompt;
 
 		/// <summary>
 		/// Command guid of text editor or null
@@ -73,18 +73,24 @@ namespace dnSpy.Contracts.TextEditor {
 		public IContentType ContentType { get; set; }
 
 		/// <summary>
+		/// Content type guid or null
+		/// </summary>
+		public Guid? ContentTypeGuid { get; set; }
+
+		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
 		public ReplEditorOptions Clone() => CopyTo(new ReplEditorOptions());
 
 		ReplEditorOptions CopyTo(ReplEditorOptions other) {
-			other.PromptText = PromptText;
-			other.ContinueText = ContinueText;
+			other.PrimaryPrompt = PrimaryPrompt;
+			other.SecondaryPrompt = SecondaryPrompt;
 			other.TextEditorCommandGuid = TextEditorCommandGuid;
 			other.TextAreaCommandGuid = TextAreaCommandGuid;
 			other.MenuGuid = MenuGuid;
 			other.ContentType = ContentType;
+			other.ContentTypeGuid = ContentTypeGuid;
 			return other;
 		}
 	}
