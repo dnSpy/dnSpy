@@ -201,6 +201,8 @@
     <Compile Include="Search\FileTreeNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
+    <Compile Include="TextEditor\ColorAggregator.cs" />
+    <Compile Include="TextEditor\ColorInfo.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />
     <Compile Include="Themes\ThemeUtils.cs" />
     <Compile Include="ToolBars\ToolBarButtonBase.cs" />
