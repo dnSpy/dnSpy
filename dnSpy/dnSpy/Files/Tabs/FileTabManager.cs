@@ -36,7 +36,7 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Files.TreeView;
 
 namespace dnSpy.Files.Tabs {
-	[Export, Export(typeof(IFileTabManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IFileTabManager))]
 	sealed class FileTabManager : IFileTabManager {
 		IFileTreeView IFileTabManager.FileTreeView => FileTreeView;
 		public FileTreeView FileTreeView { get; }
@@ -641,9 +641,7 @@ namespace dnSpy.Files.Tabs {
 					return f == null ? 0 : GetHashCode(f.Value);
 				}
 
-				static bool Equals(DnSpyFileInfo x, DnSpyFileInfo y) => StringComparer.Ordinal.Equals(x.Name, y.Name) &&
-		x.Type.Equals(y.Type);
-
+				static bool Equals(DnSpyFileInfo x, DnSpyFileInfo y) => StringComparer.Ordinal.Equals(x.Name, y.Name) && x.Type.Equals(y.Type);
 				static int GetHashCode(DnSpyFileInfo obj) => obj.Name.GetHashCode() ^ obj.Type.GetHashCode();
 			}
 		}

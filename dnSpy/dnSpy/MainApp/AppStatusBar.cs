@@ -27,7 +27,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Controls;
 
 namespace dnSpy.MainApp {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class AppStatusBar : IAppStatusBar, IStackedContentChild {
 		int openCounter;
 

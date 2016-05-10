@@ -23,7 +23,7 @@ using dnSpy.Contracts.Settings;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.Settings {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class DecompilerSettingsImpl : DecompilerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("6745457F-254B-4B7B-90F1-F948F0721C3B");
 

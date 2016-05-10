@@ -28,7 +28,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Shared.Files;
 
 namespace dnSpy.Files {
-	[Export, Export(typeof(IFileManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileManager))]
 	sealed class FileManager : IFileManager {
 		readonly object lockObj;
 		readonly List<IDnSpyFile> files;

@@ -120,7 +120,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		}
 	}
 
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class ILSettingsImpl : ILSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("DD6752B1-5336-4601-A9B2-0879E18AE9F3");
 

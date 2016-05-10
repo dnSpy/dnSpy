@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.Hex {
 		void Uninitialize(HexBox hexBox);
 	}
 
-	[Export, Export(typeof(IHexBoxUndoManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IHexBoxUndoManager))]
 	sealed class HexBoxUndoManager : IHexBoxUndoManager {
 		readonly IUndoCommandManager undoCommandManager;
 

@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		ListView ListView { get; }
 	}
 
-	[Export, Export(typeof(IBreakpointsContent)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IBreakpointsContent))]
 	sealed class BreakpointsContent : IBreakpointsContent {
 		public object UIObject => BreakpointsControl;
 		public IInputElement FocusedElement => BreakpointsControl.ListView;

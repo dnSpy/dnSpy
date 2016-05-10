@@ -114,7 +114,7 @@ namespace dnSpy.TextEditor {
 		}
 	}
 
-	[Export, Export(typeof(ITextEditorSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ITextEditorSettings))]
 	sealed class TextEditorSettingsImpl : TextEditorSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("9D40E1AD-5922-4BBA-B386-E6BABE5D185D");
 

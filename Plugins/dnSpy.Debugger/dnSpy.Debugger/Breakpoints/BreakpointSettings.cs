@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		bool showTypeKeywords = true;
 	}
 
-	[Export, Export(typeof(IBreakpointSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IBreakpointSettings))]
 	sealed class BreakpointSettingsImpl : BreakpointSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("42CB1310-641D-4EB7-971D-16DC5CF9A40D");
 

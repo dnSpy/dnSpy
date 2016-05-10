@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.Exceptions {
 		IEnumerable<ExceptionInfo> ExceptionInfos { get; }
 	}
 
-	[Export, Export(typeof(IDefaultExceptionSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IDefaultExceptionSettings))]
 	sealed class DefaultExceptionSettings : IDefaultExceptionSettings {
 		/*
 		static void Dump() {

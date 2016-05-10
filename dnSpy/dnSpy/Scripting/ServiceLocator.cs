@@ -26,7 +26,7 @@ using dnSpy.Contracts.Scripting;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Scripting {
-	[Export, Export(typeof(IServiceLocator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IServiceLocator))]
 	sealed class ServiceLocator : IServiceLocator {
 		readonly Dispatcher dispatcher;
 

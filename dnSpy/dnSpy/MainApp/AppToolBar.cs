@@ -25,7 +25,7 @@ using dnSpy.Contracts.ToolBars;
 using dnSpy.Controls;
 
 namespace dnSpy.MainApp {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class AppToolBar : IStackedContentChild {
 		public object UIObject => toolBar;
 		readonly ToolBar toolBar;

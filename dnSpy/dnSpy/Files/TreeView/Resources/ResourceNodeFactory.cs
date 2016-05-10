@@ -27,7 +27,7 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Files.TreeView.Resources {
-	[Export, Export(typeof(IResourceNodeFactory)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IResourceNodeFactory))]
 	sealed class ResourceNodeFactory : IResourceNodeFactory {
 		readonly Lazy<IResourceNodeCreator, IResourceNodeCreatorMetadata>[] creators;
 

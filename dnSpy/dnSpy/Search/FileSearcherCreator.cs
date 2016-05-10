@@ -22,18 +22,17 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
-using dnSpy.Images;
 
 namespace dnSpy.Search {
-	[Export, Export(typeof(IFileSearcherCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileSearcherCreator))]
 	sealed class FileSearcherCreator : IFileSearcherCreator {
 		readonly IFileTreeView fileTreeView;
 		readonly IImageManager imageManager;
-		readonly DotNetImageManager dotNetImageManager;
+		readonly IDotNetImageManager dotNetImageManager;
 		readonly ILanguageManager languageManager;
 
 		[ImportingConstructor]
-		FileSearcherCreator(IFileTreeView fileTreeView, IImageManager imageManager, DotNetImageManager dotNetImageManager, ILanguageManager languageManager) {
+		FileSearcherCreator(IFileTreeView fileTreeView, IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager) {
 			this.fileTreeView = fileTreeView;
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;

@@ -24,7 +24,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Controls {
-	[Export, Export(typeof(IWpfCommandManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IWpfCommandManager))]
 	sealed class WpfCommandManager : IWpfCommandManager {
 		readonly Dictionary<Guid, WpfCommands> toWpfCommands;
 

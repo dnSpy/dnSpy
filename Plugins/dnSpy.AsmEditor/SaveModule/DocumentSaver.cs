@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		bool Save(IEnumerable<object> docs);
 	}
 
-	[Export, Export(typeof(IDocumentSaver)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IDocumentSaver))]
 	sealed class DocumentSaver : IDocumentSaver {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
 		readonly Lazy<IMmapDisabler> mmapDisabler;

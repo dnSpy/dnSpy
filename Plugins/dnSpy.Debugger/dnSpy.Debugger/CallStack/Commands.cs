@@ -246,10 +246,10 @@ namespace dnSpy.Debugger.CallStack {
 
 	[Export, ExportMenuItem(Header = "res:RunToCursorCommand", Icon = "Cursor", InputGestureText = "res:ShortCutKeyCtrlF10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
 	sealed class RunToCursorCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		readonly Lazy<DebugManager> debugManager;
+		readonly Lazy<IDebugManager> debugManager;
 
 		[ImportingConstructor]
-		RunToCursorCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<DebugManager> debugManager)
+		RunToCursorCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IDebugManager> debugManager)
 			: base(theDebugger, callStackContent) {
 			this.debugManager = debugManager;
 		}

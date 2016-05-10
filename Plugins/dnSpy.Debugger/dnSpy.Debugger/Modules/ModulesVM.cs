@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Modules {
 		void RefreshThemeFields();
 	}
 
-	[Export, Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug))]
 	sealed class ModulesVM : ViewModelBase, IModulesVM, ILoadBeforeDebug {
 		public ObservableCollection<ModuleVM> Collection => modulesList;
 		readonly ObservableCollection<ModuleVM> modulesList;

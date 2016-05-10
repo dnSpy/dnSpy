@@ -42,7 +42,7 @@ namespace dnSpy.MainApp {
 		void RemoveLoadingContent();
 	}
 
-	[Export, Export(typeof(IDnSpyLoaderManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IDnSpyLoaderManager))]
 	sealed class DnSpyLoaderManager : IDnSpyLoaderManager {
 		readonly IImageManager imageManager;
 		readonly IThemeManager themeManager;

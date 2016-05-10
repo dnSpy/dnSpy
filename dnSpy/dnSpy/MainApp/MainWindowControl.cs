@@ -272,7 +272,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[Export, Export(typeof(IMainToolWindowManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IMainToolWindowManager))]
 	sealed class MainWindowControl : IStackedContentChild, IMainToolWindowManager {
 		readonly StackedContent<IStackedContentChild> horizontalContent;
 		readonly StackedContent<IStackedContentChild> verticalContent;

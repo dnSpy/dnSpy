@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.Logger {
 		bool showDebugOutputLog = true;
 	}
 
-	[Export, Export(typeof(IOutputLoggerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IOutputLoggerSettings))]
 	sealed class OutputLoggerSettingsImpl : OutputLoggerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("87C84585-355B-4BF2-B5EE-C61BC1975552");
 

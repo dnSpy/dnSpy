@@ -26,7 +26,7 @@ using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TextEditor.Roslyn;
 
 namespace dnSpy.Roslyn.Shared.TextEditor {
-	[Export, Export(typeof(IRoslynCodeEditorCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IRoslynCodeEditorCreator))]
 	sealed class RoslynCodeEditorCreator : IRoslynCodeEditorCreator {
 		readonly ICodeEditorCreator codeEditorCreator;
 

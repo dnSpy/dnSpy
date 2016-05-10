@@ -95,7 +95,7 @@ namespace dnSpy.Debugger {
 		public bool CheckCanLoad(bool isReload) => true;
 	}
 
-	[Export, Export(typeof(IDebugManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IDebugManager))]
 	sealed class DebugManager : IDebugManager {
 		readonly IAppWindow appWindow;
 		readonly IFileTabManager fileTabManager;

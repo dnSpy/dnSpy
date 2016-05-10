@@ -34,7 +34,7 @@ namespace dnSpy.Shared.MVVM {
 		string GetFilename(string currentFileName, string defaultExtension, string filter = null);
 	}
 
-	[Export(typeof(IPickSaveFilename)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IPickSaveFilename))]
 	public sealed class PickSaveFilename : IPickSaveFilename {
 		public string GetFilename(string currentFileName, string extension, string filter) {
 			var dialog = new SaveFileDialog() {

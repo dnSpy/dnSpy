@@ -44,7 +44,7 @@ namespace dnSpy.Culture {
 		string uiName = string.Empty;
 	}
 
-	[Export, Export(typeof(ICultureSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ICultureSettings))]
 	sealed class CultureSettingsImpl : CultureSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("4D05C47D-3F6A-429E-9CB3-232E10D45468");
 

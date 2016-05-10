@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Locals {
 		ILocalsVM LocalsVM { get; }
 	}
 
-	[Export, Export(typeof(ILocalsContent)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ILocalsContent))]
 	sealed class LocalsContent : ILocalsContent {
 		public object UIObject => localsControl;
 		public IInputElement FocusedElement => localsControl.ListView;

@@ -72,7 +72,7 @@ namespace dnSpy.ToolBars {
 		}
 	}
 
-	[Export, Export(typeof(IToolBarManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IToolBarManager))]
 	sealed class ToolBarManager : IToolBarManager {
 		readonly IImageManager imageManager;
 

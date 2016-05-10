@@ -26,7 +26,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.TextEditor {
-	[Export, Export(typeof(ITextBufferFactoryService)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITextBufferFactoryService))]
 	sealed class TextBufferFactoryService : ITextBufferFactoryService {
 		public IContentType InertContentType { get; }
 		public IContentType PlaintextContentType { get; }

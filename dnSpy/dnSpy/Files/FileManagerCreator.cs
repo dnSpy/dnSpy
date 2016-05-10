@@ -22,7 +22,7 @@ using System.Linq;
 using dnSpy.Contracts.Files;
 
 namespace dnSpy.Files {
-	[Export, Export(typeof(IFileManagerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileManagerCreator))]
 	sealed class FileManagerCreator : IFileManagerCreator {
 		readonly IFileManagerSettings fileManagerSettings;
 		readonly IDnSpyFileCreator[] mefCreators;

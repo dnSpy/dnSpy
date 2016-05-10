@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointListSettings {
 	}
 
-	[Export, Export(typeof(IBreakpointListSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IBreakpointListSettings))]
 	sealed class BreakpointListSettings : IBreakpointListSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
 

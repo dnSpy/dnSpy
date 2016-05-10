@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[Export, Export(typeof(IMessageBoxManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IMessageBoxManager))]
 	sealed class MessageBoxManager : IMessageBoxManager {
 		static readonly Guid SETTINGS_GUID = new Guid("686C5CFB-FF63-4AA5-8C92-E08607AE5146");
 		const string IGNORED_SECTION = "Ignored";

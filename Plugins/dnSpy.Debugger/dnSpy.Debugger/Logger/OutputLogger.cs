@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Logger {
 		}
 	}
 
-	[Export, Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ILoadBeforeDebug))]
 	sealed class OutputLogger : ILoadBeforeDebug {
 		public static readonly Guid GUID_OUTPUT_LOGGER_DEBUG = new Guid("7B6E802A-B58C-4689-877E-3358FCDCEFAC");
 

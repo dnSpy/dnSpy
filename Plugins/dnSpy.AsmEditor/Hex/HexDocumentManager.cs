@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex {
 		void Clear();
 	}
 
-	[Export, Export(typeof(IHexDocumentManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IHexDocumentManager))]
 	sealed class HexDocumentManager : IHexDocumentManager {
 		readonly object lockObj = new object();
 		readonly Dictionary<string, object> filenameToDoc = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);

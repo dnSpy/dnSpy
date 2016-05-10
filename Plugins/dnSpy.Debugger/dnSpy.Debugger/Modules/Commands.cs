@@ -189,11 +189,11 @@ namespace dnSpy.Debugger.Modules {
 	[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = "AssemblyModule", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
 	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IFileTabManager fileTabManager;
-		readonly Lazy<ModuleLoader> moduleLoader;
+		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 
 		[ImportingConstructor]
-		GoToModuleModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		GoToModuleModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
 			: base(theDebugger, modulesContent) {
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
@@ -205,13 +205,13 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => CanGoToModule(context);
 		internal static bool CanGoToModule(ModulesCtxMenuContext context) => context != null && context.SelectedItems.Length != 0;
 
-		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, Lazy<ModuleLoader> moduleLoader, ModulesCtxMenuContext context, bool newTab) {
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, Lazy<IModuleLoader> moduleLoader, ModulesCtxMenuContext context, bool newTab) {
 			if (context == null || context.SelectedItems.Length == 0)
 				return;
 			ExecuteInternal(fileTabManager, inMemoryModuleManager, moduleLoader, context.SelectedItems[0], newTab);
 		}
 
-		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, Lazy<ModuleLoader> moduleLoader, ModuleVM vm, bool newTab) {
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, Lazy<IModuleLoader> moduleLoader, ModuleVM vm, bool newTab) {
 			if (vm == null)
 				return;
 			if (ShowErrorIfDynamic(inMemoryModuleManager, vm.Module))
@@ -241,11 +241,11 @@ namespace dnSpy.Debugger.Modules {
 	[Export]
 	sealed class GoToModuleNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IFileTabManager fileTabManager;
-		readonly Lazy<ModuleLoader> moduleLoader;
+		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 
 		[ImportingConstructor]
-		GoToModuleNewTabModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		GoToModuleNewTabModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
 			: base(theDebugger, modulesContent) {
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
@@ -259,11 +259,11 @@ namespace dnSpy.Debugger.Modules {
 
 	[ExportMenuItem(Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class LoadModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		readonly Lazy<ModuleLoader> moduleLoader;
+		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 
 		[ImportingConstructor]
-		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
 			: base(theDebugger, modulesContent) {
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleManager = inMemoryModuleManager;

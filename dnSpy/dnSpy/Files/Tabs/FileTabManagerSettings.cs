@@ -59,7 +59,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[Export, Export(typeof(IFileTabManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IFileTabManagerSettings))]
 	sealed class FileTabManagerSettingsImpl : FileTabManagerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("1ACE15FD-D689-40DC-B1E7-6EEC25B3116F");
 

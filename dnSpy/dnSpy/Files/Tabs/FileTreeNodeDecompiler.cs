@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs {
 		void Decompile(IDecompileNodeContext decompileNodeContext, IFileTreeNodeData[] nodes);
 	}
 
-	[Export, Export(typeof(IFileTreeNodeDecompiler)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileTreeNodeDecompiler))]
 	sealed class FileTreeNodeDecompiler : IFileTreeNodeDecompiler {
 		readonly IDecompileNode[] decompileNodes;
 		readonly IDecompileNodeCollection[] decompileNodeCollections;

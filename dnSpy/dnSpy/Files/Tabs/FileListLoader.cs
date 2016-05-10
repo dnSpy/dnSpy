@@ -41,7 +41,7 @@ namespace dnSpy.Files.Tabs {
 		void SaveCurrentFilesToList();
 	}
 
-	[Export, Export(typeof(IFileListLoader)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileListLoader))]
 	sealed class FileListLoader : IFileListLoader {
 		readonly FileListManager fileListManager;
 		readonly FileTabManager fileTabManager;

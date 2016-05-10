@@ -26,7 +26,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Controls {
-	[Export, Export(typeof(IWpfFocusManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IWpfFocusManager))]
 	sealed class WpfFocusManager : IWpfFocusManager {
 		readonly Lazy<IWpfFocusChecker>[] checkers;
 

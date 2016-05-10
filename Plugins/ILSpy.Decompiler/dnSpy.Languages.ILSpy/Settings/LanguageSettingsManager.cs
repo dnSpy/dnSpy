@@ -21,7 +21,7 @@ using System.ComponentModel.Composition;
 using System.Threading;
 
 namespace dnSpy.Languages.ILSpy.Settings {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class LanguageSettingsManager {
 		/// <summary>
 		/// Should only be used indirectly by dnSpy.Console.exe

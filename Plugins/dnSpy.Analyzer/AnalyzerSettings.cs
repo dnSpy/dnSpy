@@ -93,7 +93,7 @@ namespace dnSpy.Analyzer {
 		}
 	}
 
-	[Export, Export(typeof(IAnalyzerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IAnalyzerSettings))]
 	sealed class AnalyzerSettingsImpl : AnalyzerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("0A9208EC-CFAB-41C2-82C6-FCDA44A8E684");
 

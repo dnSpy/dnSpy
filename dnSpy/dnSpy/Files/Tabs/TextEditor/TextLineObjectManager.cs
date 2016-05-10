@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	[Export, Export(typeof(ITextLineObjectManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITextLineObjectManager))]
 	sealed class TextLineObjectManager : ITextLineObjectManager {
 		readonly HashSet<ITextLineObject> objects = new HashSet<ITextLineObject>();
 

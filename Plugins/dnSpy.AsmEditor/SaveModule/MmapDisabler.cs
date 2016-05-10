@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		void Disable(IEnumerable<string> filenames);
 	}
 
-	[Export, Export(typeof(IMmapDisabler)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IMmapDisabler))]
 	sealed class MmapDisabler : IMmapDisabler {
 		readonly IFileTreeView fileTreeView;
 		readonly Lazy<IUndoCommandManager> undoCommandManager;

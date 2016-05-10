@@ -161,7 +161,7 @@ namespace dnSpy.Debugger.CallStack {
 		bool showReturnTypes = false;
 	}
 
-	[Export, Export(typeof(ICallStackSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ICallStackSettings))]
 	sealed class CallStackSettingsImpl : CallStackSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("7280C4EB-1135-4F39-B6E0-57BD0A2454D6");
 

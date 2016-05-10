@@ -49,7 +49,7 @@ namespace dnSpy.Output {
 		OutputBufferVM SelectedOutputBufferVM { get; }
 	}
 
-	[Export, Export(typeof(IOutputManagerInternal)), Export(typeof(IOutputManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IOutputManagerInternal)), Export(typeof(IOutputManager))]
 	sealed class OutputManager : ViewModelBase, IOutputManagerInternal {
 		public ICommand ClearAllCommand => new RelayCommand(a => ClearAll(), a => CanClearAll);
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);

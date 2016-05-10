@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Locals {
 		void RefreshThemeFields();
 	}
 
-	[Export, Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug))]
 	sealed class LocalsVM : ViewModelBase, ILocalsOwner, ILocalsVM, ILoadBeforeDebug {
 		public bool IsEnabled {
 			get { return isEnabled; }

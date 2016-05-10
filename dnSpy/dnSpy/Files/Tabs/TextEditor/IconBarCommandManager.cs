@@ -39,7 +39,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[Export, Export(typeof(IIconBarCommandManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IIconBarCommandManager))]
 	sealed class IconBarCommandManager : IIconBarCommandManager {
 		readonly IMenuManager menuManager;
 		readonly ITextLineObjectManager textLineObjectManager;

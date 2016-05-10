@@ -121,7 +121,7 @@ namespace dnSpy.Search {
 		}
 	}
 
-	[Export, Export(typeof(ISearchSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ISearchSettings))]
 	sealed class SearchSettingsImpl : SearchSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("68377C1D-228A-4317-AB10-11796F6DEB18");
 

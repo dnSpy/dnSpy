@@ -45,7 +45,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		ProjectVersion projectVersion = ProjectVersion.VS2010;
 	}
 
-	[Export, Export(typeof(IExportToProjectSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IExportToProjectSettings))]
 	sealed class ExportToProjectSettingsImpl : ExportToProjectSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("EF5C4F77-AC84-413B-93AB-4773F0013514");
 

@@ -33,7 +33,7 @@ namespace dnSpy.Files.Tabs {
 		IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTreeNodeData[] nodes);
 	}
 
-	[Export, Export(typeof(IFileTabContentFactoryManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileTabContentFactoryManager))]
 	sealed class FileTabContentFactoryManager : IFileTabContentFactoryManager {
 		readonly Lazy<IFileTabContentFactory, IFileTabContentFactoryMetadata>[] tabContentFactories;
 

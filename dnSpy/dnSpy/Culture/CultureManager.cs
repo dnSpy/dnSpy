@@ -39,7 +39,7 @@ namespace dnSpy.Culture {
 		IEnumerable<LanguageInfo> AllLanguages { get; }
 	}
 
-	[Export, Export(typeof(ICultureManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ICultureManager))]
 	sealed class CultureManager : ICultureManager {
 		static readonly string DEFAULT_CULTURE = "en";
 

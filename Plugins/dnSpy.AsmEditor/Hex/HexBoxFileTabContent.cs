@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Hex {
 		HexBoxFileTabContent TryCreate(string filename);
 	}
 
-	[Export, Export(typeof(IHexBoxFileTabContentCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IHexBoxFileTabContentCreator))]
 	sealed class HexBoxFileTabContentCreator : IHexBoxFileTabContentCreator {
 		readonly Lazy<IHexDocumentManager> hexDocumentManager;
 		readonly IMenuManager menuManager;

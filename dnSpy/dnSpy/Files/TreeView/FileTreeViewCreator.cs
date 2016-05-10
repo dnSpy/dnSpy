@@ -33,7 +33,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Files.TreeView {
-	[Export, Export(typeof(IFileTreeViewCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileTreeViewCreator))]
 	sealed class FileTreeViewCreator : IFileTreeViewCreator {
 		readonly IThemeManager themeManager;
 		readonly ITreeViewManager treeViewManager;

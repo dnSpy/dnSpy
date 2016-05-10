@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Exceptions {
 		bool Exists(ExceptionInfoKey key);
 	}
 
-	[Export, Export(typeof(IExceptionManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IExceptionManager)), Export(typeof(ILoadBeforeDebug))]
 	sealed class ExceptionManager : IExceptionManager, ILoadBeforeDebug {
 		readonly Dictionary<ExceptionInfoKey, ExceptionInfo> exceptions = new Dictionary<ExceptionInfoKey, ExceptionInfo>();
 		readonly ExceptionInfo[] otherExceptions = new ExceptionInfo[(int)ExceptionType.Last];

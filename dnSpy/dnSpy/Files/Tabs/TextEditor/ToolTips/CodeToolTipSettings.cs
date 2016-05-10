@@ -44,7 +44,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		bool syntaxHighlight = true;
 	}
 
-	[Export, Export(typeof(ICodeToolTipSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ICodeToolTipSettings))]
 	sealed class FileManagerSettingsImpl : CodeToolTipSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("6AA691D6-C3B8-4823-87EC-DC2E9134CB3E");
 

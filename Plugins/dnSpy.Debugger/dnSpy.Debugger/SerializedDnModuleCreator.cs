@@ -27,7 +27,7 @@ namespace dnSpy.Debugger {
 		SerializedDnModule Create(ModuleDef module);
 	}
 
-	[Export, Export(typeof(ISerializedDnModuleCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ISerializedDnModuleCreator))]
 	sealed class SerializedDnModuleCreator : ISerializedDnModuleCreator {
 		readonly IFileTreeView fileTreeView;
 

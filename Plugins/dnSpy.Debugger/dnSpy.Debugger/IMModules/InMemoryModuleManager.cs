@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.IMModules {
 		IEnumerable<IDnSpyFile> AllDnSpyFiles { get; }
 	}
 
-	[Export, Export(typeof(IInMemoryModuleManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IInMemoryModuleManager)), Export(typeof(ILoadBeforeDebug))]
 	sealed class InMemoryModuleManager : IInMemoryModuleManager, ILoadBeforeDebug {
 		ClassLoader classLoader;
 

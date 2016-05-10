@@ -23,7 +23,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MVVM {
-	[Export(typeof(IInitializeDataTemplate)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IInitializeDataTemplate))]
 	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
 		readonly IMenuManager menuManager;
 

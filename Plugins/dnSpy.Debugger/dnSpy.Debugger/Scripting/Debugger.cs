@@ -34,7 +34,7 @@ using dnSpy.Shared.Scripting;
 using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {
-	[Export, Export(typeof(IDebugger)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IDebugger))]
 	sealed class Debugger : IDebugger {
 		public Dispatcher Dispatcher => dispatcher;
 		readonly Dispatcher dispatcher;

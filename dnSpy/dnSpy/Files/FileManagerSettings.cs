@@ -64,7 +64,7 @@ namespace dnSpy.Files {
 		bool useGAC = true;
 	}
 
-	[Export, Export(typeof(IFileManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IFileManagerSettings))]
 	sealed class FileManagerSettingsImpl : FileManagerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("3643CE93-84D5-455A-9183-94B58BC80942");
 

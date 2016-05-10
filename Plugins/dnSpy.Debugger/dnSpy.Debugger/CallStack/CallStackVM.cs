@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.CallStack {
 		void RefreshThemeFields();
 	}
 
-	[Export, Export(typeof(ICallStackVM)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ICallStackVM))]
 	sealed class CallStackVM : ViewModelBase, ICallStackVM {
 		public bool IsEnabled {
 			get { return isEnabled; }

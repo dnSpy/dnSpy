@@ -25,7 +25,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Events;
 
 namespace dnSpy.Languages {
-	[Export, Export(typeof(ILanguageManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ILanguageManager))]
 	sealed class LanguageManager : ILanguageManager {
 		readonly LanguageManagerSettingsImpl languageManagerSettings;
 		readonly ILanguage[] languages;

@@ -48,7 +48,7 @@ namespace dnSpy.Files.Tabs {
 		public bool CheckCanLoad(bool isReload) => true;
 	}
 
-	[Export(typeof(IDecompilationCache)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IDecompilationCache))]
 	sealed class DecompilationCache : IDecompilationCache {
 		// How often ClearOld() is called
 		const int CLEAR_OLD_ITEMS_EVERY_MS = 30 * 1000;

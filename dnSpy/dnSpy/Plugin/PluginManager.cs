@@ -32,7 +32,7 @@ namespace dnSpy.Plugin {
 		IEnumerable<LoadedPlugin> LoadedPlugins { get; }
 	}
 
-	[Export, Export(typeof(IPluginManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IPluginManager))]
 	sealed class PluginManager : IPluginManager {
 		readonly Lazy<IAutoLoaded, IAutoLoadedMetadata>[] mefAutoLoaded;
 		readonly Lazy<IPlugin, IPluginMetadata>[] mefPlugins;

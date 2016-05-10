@@ -45,7 +45,7 @@ namespace dnSpy.Languages {
 		Guid languageGuid = LanguageConstants.LANGUAGE_CSHARP;
 	}
 
-	[Export, Export(typeof(ILanguageManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(ILanguageManagerSettings))]
 	sealed class LanguageManagerSettingsImpl : LanguageManagerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("6A7E565D-DC09-4AAE-A7C8-E86A835FCBFC");
 

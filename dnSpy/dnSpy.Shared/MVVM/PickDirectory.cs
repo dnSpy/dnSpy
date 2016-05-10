@@ -30,7 +30,7 @@ namespace dnSpy.Shared.MVVM {
 		string GetDirectory(string currentDir = null);
 	}
 
-	[Export(typeof(IPickDirectory)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IPickDirectory))]
 	public class PickDirectory : IPickDirectory {
 		public string GetDirectory(string currentDir = null) {
 			var dlg = new FolderBrowserDialog();

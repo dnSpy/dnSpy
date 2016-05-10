@@ -25,7 +25,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 
 namespace dnSpy.Files {
-	[Export, Export(typeof(IMethodAnnotations)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IMethodAnnotations))]
 	sealed class MethodAnnotations : IMethodAnnotations {
 		const int DELETE_GCD_ITEMS_EVERY_MS = 5 * 60 * 1000;
 		readonly object lockObj = new object();

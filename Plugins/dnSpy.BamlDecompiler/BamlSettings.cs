@@ -55,7 +55,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 	}
 
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class BamlSettingsImpl : BamlSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("D9809EB3-1605-4E05-A84F-6EE241FAAD6C");
 

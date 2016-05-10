@@ -45,7 +45,7 @@ namespace dnSpy.Shared.MVVM {
 		public static readonly string ExecutableFilter = $"{dnSpy_Shared_Resources.Files_Executables} (*.exe)|*.exe|{dnSpy_Shared_Resources.AllFiles} (*.*)|*.*";
 	}
 
-	[Export(typeof(IPickFilename)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IPickFilename))]
 	public sealed class PickFilename : IPickFilename {
 		public string GetFilename(string currentFileName, string extension, string filter) {
 			var dialog = new OpenFileDialog() {

@@ -41,7 +41,7 @@ using dnSpy.Files.Tabs.TextEditor;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.MainApp {
-	[Export, Export(typeof(IAppWindow)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IAppWindow))]
 	sealed class AppWindow : IAppWindow, IDnSpyLoaderContentProvider {
 		public IFileTabManager FileTabManager => fileTabManager;
 		readonly IFileTabManager fileTabManager;

@@ -168,7 +168,7 @@ namespace dnSpy.Files.TreeView {
 		}
 	}
 
-	[Export, Export(typeof(IFileTreeViewSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IFileTreeViewSettings))]
 	sealed class FileTreeViewSettingsImpl : FileTreeViewSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("3E04ABE0-FD5E-4938-B40C-F86AA0FA377D");
 

@@ -154,7 +154,7 @@ namespace dnSpy.Shared.Hex {
 		}
 	}
 
-	[Export, Export(typeof(IHexEditorSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IHexEditorSettings))]
 	sealed class HexEditorSettingsImpl : HexEditorSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("4EFA9642-600F-42AD-9FC0-7B4B9D792225");
 

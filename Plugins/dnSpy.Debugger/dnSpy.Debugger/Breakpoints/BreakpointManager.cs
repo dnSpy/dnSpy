@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		Func<object, object> OnRemoveBreakpoints { get; set; }
 	}
 
-	[Export, Export(typeof(IBreakpointManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IBreakpointManager)), Export(typeof(ILoadBeforeDebug))]
 	sealed class BreakpointManager : IBreakpointManager, ILoadBeforeDebug {
 		public event EventHandler<BreakpointListModifiedEventArgs> OnListModified;
 

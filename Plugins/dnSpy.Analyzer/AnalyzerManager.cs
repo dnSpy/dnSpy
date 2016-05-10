@@ -83,7 +83,7 @@ namespace dnSpy.Analyzer {
 		bool CanFollowNode(ITreeNodeData node, bool useCodeRef);
 	}
 
-	[Export, Export(typeof(IAnalyzerManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IAnalyzerManager))]
 	sealed class AnalyzerManager : IAnalyzerManager, ITreeViewListener {
 		static readonly Guid ANALYZER_TREEVIEW_GUID = new Guid("8981898A-1384-4B67-9577-3CB096195146");
 

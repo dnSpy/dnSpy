@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Memory {
 		void Show(ulong addr, ulong size, int windowIndex);
 	}
 
-	[Export, Export(typeof(IMemoryWindowManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IMemoryWindowManager))]
 	sealed class MemoryWindowManager : IMemoryWindowManager {
 		readonly Lazy<MemoryToolWindowContentCreator> memoryToolWindowContentCreator;
 		readonly IMainToolWindowManager mainToolWindowManager;

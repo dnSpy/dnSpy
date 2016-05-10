@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Threads {
 		void RefreshThemeFields();
 	}
 
-	[Export, Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug))]
 	sealed class ThreadsVM : ViewModelBase, IThreadsVM, ILoadBeforeDebug {
 		public bool IsEnabled {
 			get { return isEnabled; }

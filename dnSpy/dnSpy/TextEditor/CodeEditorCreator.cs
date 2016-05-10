@@ -21,7 +21,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.TextEditor {
-	[Export, Export(typeof(ICodeEditorCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ICodeEditorCreator))]
 	sealed class CodeEditorCreator : ICodeEditorCreator {
 		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
 

@@ -30,7 +30,7 @@ namespace dnSpy.Output {
 	interface IOutputContent : IUIObjectProvider {
 	}
 
-	[Export, Export(typeof(IOutputContent)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IOutputContent))]
 	sealed class OutputContent : IOutputContent {
 		public object UIObject => OutputControl;
 		public IInputElement FocusedElement => OutputManager.FocusedElement;

@@ -30,7 +30,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	interface IVisualBasicContent : IScriptContent {
 	}
 
-	[Export, Export(typeof(IVisualBasicContent)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IVisualBasicContent))]
 	sealed class VisualBasicContent : ScriptContent, IVisualBasicContent {
 		[ImportingConstructor]
 		VisualBasicContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, IServiceLocator serviceLocator)

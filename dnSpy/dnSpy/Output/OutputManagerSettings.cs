@@ -83,7 +83,7 @@ namespace dnSpy.Output {
 		Guid selectedGuid = Guid.Empty;
 	}
 
-	[Export, Export(typeof(IOutputManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IOutputManagerSettings))]
 	sealed class OutputManagerSettingsImpl : OutputManagerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("64414B81-EF07-4DA1-9D21-1F625A6E0080");
 

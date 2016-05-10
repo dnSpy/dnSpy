@@ -362,7 +362,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[Export, Export(typeof(IDebuggerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IDebuggerSettings))]
 	sealed class DebuggerSettingsImpl : DebuggerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("91F1ED94-1BEA-4853-9240-B542A7D022CA");
 

@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.CallStack {
 		List<CorFrame> GetFrames(out bool tooManyFrames);
 	}
 
-	[Export, Export(typeof(IStackFrameManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IStackFrameManager)), Export(typeof(ILoadBeforeDebug))]
 	sealed class StackFrameManager : ViewModelBase, IStackFrameManager, ILoadBeforeDebug {
 		// VS2015 shows at most 5000 frames but we can increase that to 50000, dnSpy had no trouble
 		// showing 12K frames, which was the total number of frames until I got a SO in the test app.

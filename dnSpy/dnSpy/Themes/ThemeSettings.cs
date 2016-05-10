@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Themes {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	[Export]
 	sealed class ThemeSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("34CF0AF5-D265-4393-BC68-9B8C9B8EA622");
 

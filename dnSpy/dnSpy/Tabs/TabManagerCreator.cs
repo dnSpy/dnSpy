@@ -24,7 +24,7 @@ using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Tabs {
-	[Export, Export(typeof(ITabManagerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITabManagerCreator))]
 	sealed class TabManagerCreator : ITabManagerCreator {
 		readonly IThemeManager themeManager;
 		readonly IMenuManager menuManager;

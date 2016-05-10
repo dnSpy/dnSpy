@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Exceptions {
 		void BreakWhenThrown(ExceptionType type, string name);
 	}
 
-	[Export, Export(typeof(IExceptionsVM)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IExceptionsVM))]
 	sealed class ExceptionsVM : ViewModelBase, IExceptionsVM {
 		public ObservableCollection<ExceptionVM> Collection => exceptionsList;
 		readonly ObservableCollection<ExceptionVM> exceptionsList;

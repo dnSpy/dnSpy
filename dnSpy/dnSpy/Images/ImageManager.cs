@@ -28,7 +28,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Images {
-	[Export, Export(typeof(IImageManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IImageManager))]
 	sealed class ImageManager : IImageManager {
 		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
 		bool isHighContrast;

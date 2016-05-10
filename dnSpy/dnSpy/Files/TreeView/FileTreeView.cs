@@ -42,7 +42,7 @@ using dnSpy.Shared.Files;
 using dnSpy.Shared.Search;
 
 namespace dnSpy.Files.TreeView {
-	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IFileTreeView))]
 	sealed class FileTreeView : IFileTreeView, ITreeViewListener {
 		readonly FileTreeNodeDataContext context;
 		readonly Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>[] dnSpyFileNodeCreators;

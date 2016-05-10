@@ -35,7 +35,7 @@ namespace dnSpy.TextEditor {
 		IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer);
 	}
 
-	[Export, Export(typeof(ITextSnapshotColorizerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITextSnapshotColorizerCreator))]
 	sealed class TextSnapshotColorizerCreator : ITextSnapshotColorizerCreator {
 		readonly ITextSnapshotColorizerProvider[] providers;
 

@@ -31,7 +31,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void RaiseNewContentEvent(ITextEditorUIContext uiContext, ITextOutput output, TextEditorUIContextListener listener, double order);
 	}
 
-	[Export, Export(typeof(ITextEditorUIContextManager)), Export(typeof(ITextEditorUIContextManagerImpl)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITextEditorUIContextManager)), Export(typeof(ITextEditorUIContextManagerImpl))]
 	sealed class TextEditorUIContextManagerImpl : ITextEditorUIContextManagerImpl {
 		sealed class ListenerInfo {
 			public readonly TextEditorUIContextListener Listener;

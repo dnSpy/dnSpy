@@ -27,7 +27,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
-	[Export, Export(typeof(ITreeViewManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITreeViewManager))]
 	sealed class TreeViewManager : ITreeViewManager {
 		readonly IThemeManager themeManager;
 		readonly IImageManager imageManager;

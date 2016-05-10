@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Locals {
 		event EventHandler NewMethodInfoAvailable;
 	}
 
-	[Export, Export(typeof(IMethodLocalProvider)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IMethodLocalProvider))]
 	sealed class MethodLocalProvider : IMethodLocalProvider {
 		public event EventHandler NewMethodInfoAvailable;
 

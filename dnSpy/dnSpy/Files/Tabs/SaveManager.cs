@@ -25,7 +25,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Properties;
 
 namespace dnSpy.Files.Tabs {
-	[Export, Export(typeof(ISaveManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ISaveManager))]
 	sealed class SaveManager : ISaveManager {
 		readonly ITabSaverCreator[] creators;
 

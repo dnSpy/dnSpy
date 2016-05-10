@@ -32,7 +32,7 @@ using dnSpy.Events;
 using Microsoft.Win32;
 
 namespace dnSpy.Themes {
-	[Export, Export(typeof(IThemeManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IThemeManager))]
 	sealed class ThemeManager : IThemeManager {
 		readonly Dictionary<Guid, Theme> themes;
 

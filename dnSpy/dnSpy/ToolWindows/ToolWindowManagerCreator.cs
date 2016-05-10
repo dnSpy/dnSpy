@@ -22,7 +22,7 @@ using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.ToolWindows;
 
 namespace dnSpy.ToolWindows {
-	[Export, Export(typeof(IToolWindowManagerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IToolWindowManagerCreator))]
 	sealed class ToolWindowManagerCreator : IToolWindowManagerCreator {
 		readonly ITabManagerCreator tabManagerCreator;
 

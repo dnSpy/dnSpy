@@ -63,7 +63,7 @@ namespace dnSpy.Debugger {
 		void SetUnhandledException(bool value);
 	}
 
-	[Export, Export(typeof(ITheDebugger)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITheDebugger))]
 	sealed class TheDebugger : ITheDebugger {
 		readonly Dispatcher dispatcher;
 		readonly IDebuggerSettings debuggerSettings;

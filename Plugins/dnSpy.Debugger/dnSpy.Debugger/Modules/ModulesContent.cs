@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Modules {
 		IModulesVM ModulesVM { get; }
 	}
 
-	[Export, Export(typeof(IModulesContent)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IModulesContent))]
 	sealed class ModulesContent : IModulesContent {
 		public object UIObject => modulesControl;
 		public IInputElement FocusedElement => modulesControl.ListView;
@@ -50,11 +50,11 @@ namespace dnSpy.Debugger.Modules {
 		readonly ModulesControl modulesControl;
 		readonly IModulesVM vmModules;
 		readonly IFileTabManager fileTabManager;
-		readonly Lazy<ModuleLoader> moduleLoader;
+		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IModulesVM modulesVM, IFileTabManager fileTabManager, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager) {
+		ModulesContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IModulesVM modulesVM, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager) {
 			this.modulesControl = new ModulesControl();
 			this.vmModules = modulesVM;
 			this.fileTabManager = fileTabManager;

@@ -68,7 +68,7 @@ namespace dnSpy.Search {
 		string SearchText { get; set; }
 	}
 
-	[Export, Export(typeof(ISearchManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ISearchManager))]
 	sealed class SearchManager : ISearchManager {
 		readonly SearchControl searchControl;
 		readonly SearchControlVM vmSearch;

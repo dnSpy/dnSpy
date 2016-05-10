@@ -30,7 +30,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 	interface ICSharpContent : IScriptContent {
 	}
 
-	[Export, Export(typeof(ICSharpContent)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ICSharpContent))]
 	sealed class CSharpContent : ScriptContent, ICSharpContent {
 		[ImportingConstructor]
 		CSharpContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, IServiceLocator serviceLocator)

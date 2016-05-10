@@ -64,7 +64,7 @@ namespace dnSpy.MainApp {
 		bool useNewRenderer_FileTreeView = false;
 	}
 
-	[Export, Export(typeof(IAppSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export, Export(typeof(IAppSettings))]
 	sealed class AppSettingsImpl : AppSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("071CF92D-ACFA-46A1-8EEF-DFAC1D01E644");
 

@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Files.Tabs {
-	[Export, Export(typeof(IFileTabUIContextLocatorCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IFileTabUIContextLocatorCreator))]
 	sealed class FileTabUIContextLocatorCreator : IFileTabUIContextLocatorCreator {
 		readonly IFileTabUIContextCreator[] creators;
 

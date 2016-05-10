@@ -25,7 +25,7 @@ using dnlib.PE;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Images {
-	[Export, Export(typeof(IDotNetImageManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IDotNetImageManager))]
 	sealed class DotNetImageManager : IDotNetImageManager {
 		public ImageReference GetImageReference(IPEImage peImage) =>
 			GetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);

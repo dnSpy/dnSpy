@@ -44,7 +44,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		bool syntaxHighlight = true;
 	}
 
-	[Export, Export(typeof(ITabsVMSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ITabsVMSettings))]
 	sealed class TabsVMSettingsImpl : TabsVMSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("EB2D9511-93B9-4985-BB99-1758BF2A5ADE");
 

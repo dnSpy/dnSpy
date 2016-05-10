@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		object CreateToolTip(ILanguage language, object @ref);
 	}
 
-	[Export, Export(typeof(ICodeToolTipManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(ICodeToolTipManager))]
 	sealed class CodeToolTipManager : ICodeToolTipManager {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;

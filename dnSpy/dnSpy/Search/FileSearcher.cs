@@ -28,7 +28,6 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
-using dnSpy.Images;
 using dnSpy.Properties;
 using dnSpy.Decompiler.Shared;
 
@@ -66,7 +65,7 @@ namespace dnSpy.Search {
 
 		public bool TooManyResults { get; set; }
 
-		public FileSearcher(FileSearcherOptions options, IFileTreeView fileTreeView, DotNetImageManager dotNetImageManager, SearchResultContext searchResultContext) {
+		public FileSearcher(FileSearcherOptions options, IFileTreeView fileTreeView, IDotNetImageManager dotNetImageManager, SearchResultContext searchResultContext) {
 			if (options.Filter == null)
 				throw new ArgumentException("options.Filter is null", nameof(options));
 			if (options.SearchComparer == null)

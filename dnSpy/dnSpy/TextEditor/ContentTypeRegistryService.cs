@@ -25,7 +25,7 @@ using System.Linq;
 using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.TextEditor {
-	[Export, Export(typeof(IContentTypeRegistryService)), PartCreationPolicy(CreationPolicy.Shared)]
+	[Export(typeof(IContentTypeRegistryService))]
 	sealed class ContentTypeRegistryService : IContentTypeRegistryService {
 		static readonly Guid UnknownContentTypeGuid = new Guid("CAC55A72-3AD1-4CB3-87BB-B3B607682C0B");
 
