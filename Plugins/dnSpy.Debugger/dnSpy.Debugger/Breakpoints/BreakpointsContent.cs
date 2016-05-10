@@ -42,13 +42,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	interface IBreakpointsContent {
+	interface IBreakpointsContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void Focus();
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
 		IBreakpointsVM BreakpointsVM { get; }
 		ListView ListView { get; }
 	}

@@ -29,10 +29,7 @@ using dnSpy.Debugger.CallStack;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Threads {
-	interface IThreadsContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface IThreadsContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void OnVisible();

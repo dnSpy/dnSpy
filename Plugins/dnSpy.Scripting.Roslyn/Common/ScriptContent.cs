@@ -20,15 +20,13 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	interface IScriptContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface IScriptContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void OnVisible();

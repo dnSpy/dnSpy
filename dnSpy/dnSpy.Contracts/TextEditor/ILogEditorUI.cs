@@ -19,30 +19,12 @@
 
 using System.Windows;
 using System.Windows.Media;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
 	/// A text control that allows appending text
 	/// </summary>
-	public interface ILogEditorUI : ILogEditor {
-		/// <summary>
-		/// UI object
-		/// </summary>
-		object UIObject { get; }
-
-		/// <summary>
-		/// Focused element
-		/// </summary>
-		IInputElement FocusedElement { get; }
-
-		/// <summary>
-		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
-		/// </summary>
-		FrameworkElement ScaleElement { get; }
-
-		/// <summary>
-		/// Can be set to any value by the user
-		/// </summary>
-		object Tag { get; set; }
+	public interface ILogEditorUI : ILogEditor, IUIObjectProvider2 {
 	}
 }

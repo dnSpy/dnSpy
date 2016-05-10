@@ -28,10 +28,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
-	interface ICallStackContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface ICallStackContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void OnVisible();

@@ -26,10 +26,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Exceptions {
-	interface IExceptionsContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface IExceptionsContent : IUIObjectProvider {
 		void Focus();
 		void FocusSearchTextBox();
 		ListBox ListBox { get; }

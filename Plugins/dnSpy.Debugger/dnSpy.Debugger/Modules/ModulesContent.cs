@@ -29,10 +29,7 @@ using dnSpy.Debugger.IMModules;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Modules {
-	interface IModulesContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface IModulesContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void OnVisible();

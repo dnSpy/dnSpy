@@ -27,10 +27,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Output {
-	interface IOutputContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface IOutputContent : IUIObjectProvider {
 	}
 
 	[Export, Export(typeof(IOutputContent)), PartCreationPolicy(CreationPolicy.Shared)]

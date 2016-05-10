@@ -25,9 +25,9 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.ToolWindows {
 	/// <summary>
-	/// Tool window content
+	/// Tool window content. If any of the properties can change, you must implement <see cref="INotifyPropertyChanged"/>
 	/// </summary>
-	public interface IToolWindowContent {
+	public interface IToolWindowContent : IUIObjectProvider {
 		/// <summary>
 		/// Gets the guid of this content
 		/// </summary>
@@ -42,23 +42,6 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// ToolTip or null. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
 		object ToolTip { get; }
-
-		/// <summary>
-		/// The UI object. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
-		/// </summary>
-		object UIObject { get; }
-
-		/// <summary>
-		/// Gets the element that should get focus when the tab is selected or null to use
-		/// <see cref="UIObject"/>. Implement <see cref="IFocusable"/> to set focus yourself.
-		/// </summary>
-		IInputElement FocusedElement { get; }
-
-		/// <summary>
-		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none. If
-		/// this property can change, you must implement <see cref="INotifyPropertyChanged"/>
-		/// </summary>
-		FrameworkElement ScaleElement { get; }
 
 		/// <summary>
 		/// Called when the visibility changes

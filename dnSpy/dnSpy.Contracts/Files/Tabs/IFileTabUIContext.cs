@@ -30,23 +30,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 	/// Implement <see cref="IDisposable"/> to get called when the tab is removed (only called if
 	/// this instance hasn't been GC'd)
 	/// </summary>
-	public interface IFileTabUIContext {
-		/// <summary>
-		/// Gets the UI object
-		/// </summary>
-		object UIObject { get; }
-
-		/// <summary>
-		/// Gets the element that should get focus when the tab is selected, or null. Implement
-		/// <see cref="IFocusable"/> to set focus yourself.
-		/// </summary>
-		IInputElement FocusedElement { get; }
-
-		/// <summary>
-		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
-		/// </summary>
-		FrameworkElement ScaleElement { get; }
-
+	public interface IFileTabUIContext : IUIObjectProvider {
 		/// <summary>
 		/// Saves UI state, eg. line number, caret position, etc
 		/// </summary>

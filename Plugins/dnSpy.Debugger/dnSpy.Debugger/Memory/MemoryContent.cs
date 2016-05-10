@@ -28,10 +28,7 @@ using dnSpy.Shared.Hex;
 using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger.Memory {
-	interface IMemoryContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface IMemoryContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void OnVisible();

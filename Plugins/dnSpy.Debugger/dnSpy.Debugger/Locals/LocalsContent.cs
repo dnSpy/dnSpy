@@ -25,10 +25,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Locals {
-	interface ILocalsContent {
-		object UIObject { get; }
-		IInputElement FocusedElement { get; }
-		FrameworkElement ScaleElement { get; }
+	interface ILocalsContent : IUIObjectProvider {
 		void OnShow();
 		void OnClose();
 		void OnVisible();

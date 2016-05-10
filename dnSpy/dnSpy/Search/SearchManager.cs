@@ -40,22 +40,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
-	interface ISearchManager {
-		/// <summary>
-		/// The UI object
-		/// </summary>
-		object UIObject { get; }
-
-		/// <summary>
-		/// Gets the element that should get focus when the content is selected
-		/// </summary>
-		IInputElement FocusedElement { get; }
-
-		/// <summary>
-		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
-		/// </summary>
-		FrameworkElement ScaleElement { get; }
-
+	interface ISearchManager : IUIObjectProvider {
 		/// <summary>
 		/// Called when it's been added to the UI
 		/// </summary>

@@ -17,15 +17,37 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Controls;
 
-namespace dnSpy.Contracts.TextEditor {
+namespace dnSpy.Contracts.Controls {
 	/// <summary>
-	/// A REPL (Read, Eval, Print, Loop) editor
+	/// UI object provider
 	/// </summary>
-	public interface IReplEditorUI : IReplEditor, IUIObjectProvider2, IDisposable {
+	public interface IUIObjectProvider {
+		/// <summary>
+		/// UI object
+		/// </summary>
+		object UIObject { get; }
+
+		/// <summary>
+		/// Focused element
+		/// </summary>
+		IInputElement FocusedElement { get; }
+
+		/// <summary>
+		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
+		/// </summary>
+		FrameworkElement ScaleElement { get; }
+	}
+
+	/// <summary>
+	/// UI object provider
+	/// </summary>
+	public interface IUIObjectProvider2 : IUIObjectProvider {
+		/// <summary>
+		/// Can be set to any value by the owner
+		/// </summary>
+		object Tag { get; set; }
 	}
 }
