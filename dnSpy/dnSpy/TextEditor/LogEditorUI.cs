@@ -25,10 +25,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
@@ -96,12 +94,11 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
+		public LogEditorUI(LogEditorOptions options, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			options = options ?? new LogEditorOptions();
-			var buffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.Options.ContentType ?? options.Options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, false);
+			this.textEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(options.Options, null, false, () => new GuidObjectsCreator(this, options.Options.CreateGuidObjects)));
 			this.cachedColorsList = new CachedColorsList();
 			this.textEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
@@ -112,13 +109,6 @@ namespace dnSpy.TextEditor {
 			// Fix that by removing the commands.
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Undo);
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Redo);
-
-			if (options.Options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(options.Options.TextEditorCommandGuid.Value, this.textEditor);
-			if (options.Options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(options.Options.TextAreaCommandGuid.Value, this.textEditor.TextArea);
-			if (options.Options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, options.Options.MenuGuid.Value, new GuidObjectsCreator(this, options.Options.CreateGuidObjects), new ContextMenuInitializer(this.textEditor, this.textEditor));
 		}
 
 		static void Remove(CommandBindingCollection bindings, ICommand cmd) {

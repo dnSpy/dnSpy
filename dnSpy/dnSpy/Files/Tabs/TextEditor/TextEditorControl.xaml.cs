@@ -87,7 +87,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextEditorSettings textEditorSettings;
 		readonly IContentType defaultContentType;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBufferFactoryService textBufferFactoryService) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -99,7 +99,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			TextEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, (ITextBuffer)textBufferFactoryService.CreateTextBuffer((IContentType)defaultContentType), true);
+			TextEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(new CommonTextEditorOptions(), null, true, null));
 			cachedColorsList = new CachedColorsList();
 			TextEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			this.toolTipHelper.Initialize(TextEditor);

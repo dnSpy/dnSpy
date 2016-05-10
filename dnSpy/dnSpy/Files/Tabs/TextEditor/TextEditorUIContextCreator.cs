@@ -42,11 +42,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
 		readonly IIconBarCommandManager iconBarCommandManager;
-		readonly ITextSnapshotColorizerCreator textBufferColorizerCreator;
 		readonly ITextBufferFactoryService textBufferFactoryService;
+		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBufferFactoryService textBufferFactoryService) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
 			this.wpfCommandManager = wpfCommandManager;
@@ -56,15 +56,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textLineObjectManager = textLineObjectManager;
 			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
 			this.iconBarCommandManager = iconBarCommandManager;
-			this.textBufferColorizerCreator = textBufferColorizerCreator;
 			this.textBufferFactoryService = textBufferFactoryService;
+			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var ttRefFinder = new ToolTipReferenceFinder();
 				var uiContext = new TextEditorUIContext(wpfCommandManager, textEditorUIContextManagerImpl);
-				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager, iconBarCommandManager, textBufferColorizerCreator, textBufferFactoryService);
+				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager, iconBarCommandManager, textBufferFactoryService, dnSpyTextEditorCreator);
 				uiContext.Initialize(menuManager, tec);
 				ttRefFinder.UIContext = uiContext;
 				textEditorUIContextManagerImpl.RaiseAddedEvent(uiContext);

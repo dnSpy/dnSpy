@@ -28,10 +28,8 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Highlighting;
 using ICSharpCode.AvalonEdit;
@@ -78,14 +76,13 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
+		public ReplEditorUI(ReplEditorOptions options, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options ?? new ReplEditorOptions();
 			this.PrimaryPrompt = options.PrimaryPrompt;
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<SubBuffer>();
-			var buffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.Options.ContentType ?? options.Options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, false);
+			this.textEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(options.Options, null, false, () => new GuidObjectsCreator(this, options.Options.CreateGuidObjects)));
 			this.cachedColorsList = new CachedColorsList();
 			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
 			this.textEditor.TextArea.AllowDrop = false;
@@ -97,13 +94,6 @@ namespace dnSpy.TextEditor {
 			AddBinding(ApplicationCommands.Paste, (s, e) => Paste(), (s, e) => e.CanExecute = CanPaste && IsAtEditingPosition);
 			AddBinding(ApplicationCommands.Cut, (s, e) => CutSelection(), (s, e) => e.CanExecute = CanCutSelection && IsAtEditingPosition);
 			WriteOffsetOfPrompt(null, true);
-
-			if (options.Options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(options.Options.TextEditorCommandGuid.Value, textEditor);
-			if (options.Options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(options.Options.TextAreaCommandGuid.Value, textEditor.TextArea);
-			if (options.Options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, options.Options.MenuGuid.Value, new GuidObjectsCreator(this, options.Options.CreateGuidObjects), new ContextMenuInitializer(textEditor, textEditor));
 		}
 
 		void AddBinding(RoutedUICommand routedCmd, ExecutedRoutedEventHandler executed, CanExecuteRoutedEventHandler canExecute) {

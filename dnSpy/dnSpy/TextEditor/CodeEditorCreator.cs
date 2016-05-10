@@ -18,34 +18,18 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.TextEditor {
 	[Export, Export(typeof(ICodeEditorCreator)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class CodeEditorCreator : ICodeEditorCreator {
-		readonly IThemeManager themeManager;
-		readonly IWpfCommandManager wpfCommandManager;
-		readonly IMenuManager menuManager;
-		readonly ITextEditorSettings textEditorSettings;
-		readonly ITextSnapshotColorizerCreator textBufferColorizerCreator;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly ITextBufferFactoryService textBufferFactoryService;
+		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
 
 		[ImportingConstructor]
-		CodeEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
-			this.themeManager = themeManager;
-			this.wpfCommandManager = wpfCommandManager;
-			this.menuManager = menuManager;
-			this.textEditorSettings = textEditorSettings;
-			this.textBufferColorizerCreator = textBufferColorizerCreator;
-			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.textBufferFactoryService = textBufferFactoryService;
+		CodeEditorCreator(IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
+			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 		}
 
-		public ICodeEditorUI Create(CodeEditorOptions options) =>
-			new CodeEditorUI(options, themeManager, wpfCommandManager, menuManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService, textBufferFactoryService);
+		public ICodeEditorUI Create(CodeEditorOptions options) => new CodeEditorUI(options, dnSpyTextEditorCreator);
 	}
 }

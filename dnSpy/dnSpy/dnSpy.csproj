@@ -343,7 +343,9 @@
     <Compile Include="TextEditor\ContentTypeRegistryService.cs" />
     <Compile Include="TextEditor\ContextMenuInitializer.cs" />
     <Compile Include="TextEditor\DnSpyTextEditor.cs" />
+    <Compile Include="TextEditor\DnSpyTextEditorCreator.cs" />
     <Compile Include="TextEditor\DnSpyTextEditorHighlighter.cs" />
+    <Compile Include="TextEditor\DnSpyTextEditorOptions.cs" />
     <Compile Include="TextEditor\EditorPositionState.cs" />
     <Compile Include="TextEditor\LogEditorCreator.cs" />
     <Compile Include="TextEditor\LogEditorUI.cs" />

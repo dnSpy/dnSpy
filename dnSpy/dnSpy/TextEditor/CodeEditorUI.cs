@@ -20,10 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.TextEditor {
 	sealed class CodeEditorUI : ICodeEditorUI {
@@ -58,17 +56,9 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public CodeEditorUI(CodeEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
+		public CodeEditorUI(CodeEditorOptions options, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
 			options = options ?? new CodeEditorOptions();
-			var buffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.Options.ContentType ?? options.Options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, true);
-
-			if (options.Options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(options.Options.TextEditorCommandGuid.Value, this.textEditor);
-			if (options.Options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(options.Options.TextAreaCommandGuid.Value, this.textEditor.TextArea);
-			if (options.Options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, options.Options.MenuGuid.Value, new GuidObjectsCreator(this, options.Options.CreateGuidObjects), new ContextMenuInitializer(this.textEditor, this.textEditor));
+			this.textEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(options.Options, options.TextBuffer, true, () => new GuidObjectsCreator(this, options.Options.CreateGuidObjects)));
 		}
 	}
 }
