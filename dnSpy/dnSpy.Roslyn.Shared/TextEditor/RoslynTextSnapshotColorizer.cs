@@ -58,8 +58,8 @@ namespace dnSpy.Roslyn.Shared.TextEditor {
 				return Enumerable.Empty<ColorSpan>();
 
 			List<ColorSpan> colorSpans = null;
-			var colorizer = new RoslynClassifier(state.SyntaxRoot, state.SemanticModel, state.Workspace, cancellationToken, true);
-			foreach (var info in colorizer.GetClassificationColors(span.ToTextSpan())) {
+			var classifier = new RoslynClassifier(state.SyntaxRoot, state.SemanticModel, state.Workspace, OutputColor.Error, cancellationToken);
+			foreach (var info in classifier.GetClassificationColors(span.ToTextSpan())) {
 				if (colorSpans == null)
 					colorSpans = new List<ColorSpan>();
 				colorSpans.Add(new ColorSpan(info.Span, new Color(info.Color.ToColorType()), ColorPriority.Default));

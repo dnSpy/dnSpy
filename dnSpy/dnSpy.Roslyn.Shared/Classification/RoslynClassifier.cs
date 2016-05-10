@@ -41,22 +41,20 @@ namespace dnSpy.Roslyn.Shared.Classification {
 		readonly SyntaxNode syntaxRoot;
 		readonly SemanticModel semanticModel;
 		readonly Workspace workspace;
+		readonly OutputColor? defaultColor;
 		/*readonly*/ CancellationToken cancellationToken;
-		readonly bool unknownIsError;
 
-		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, CancellationToken cancellationToken, bool unknownIsError) {
+		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, OutputColor? defaultColor, CancellationToken cancellationToken) {
 			this.syntaxRoot = syntaxRoot;
 			this.semanticModel = semanticModel;
 			this.workspace = workspace;
+			this.defaultColor = defaultColor;
 			this.cancellationToken = cancellationToken;
-			this.unknownIsError = unknownIsError;
 		}
 
 		public IEnumerable<ClassifierResult> GetClassificationColors(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
-				var color = GetColor(cspan);
-				if (color == null && unknownIsError)
-					color = OutputColor.Error;
+				var color = GetColor(cspan) ?? defaultColor;
 				if (color != null)
 					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color.Value);
 			}
