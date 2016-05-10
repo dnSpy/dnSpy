@@ -38,6 +38,7 @@ namespace dnSpy.Debugger {
 			case TypeColor.Space:				return BoxedTextTokenKind.Text;
 			case TypeColor.IPType:				return BoxedTextTokenKind.Text;
 			case TypeColor.Operator:			return BoxedTextTokenKind.Operator;
+			case TypeColor.Punctuation:			return BoxedTextTokenKind.Punctuation;
 			case TypeColor.NativeFrame:			return BoxedTextTokenKind.Text;
 			case TypeColor.InternalFrame:		return BoxedTextTokenKind.Text;
 			case TypeColor.UnknownFrame:		return BoxedTextTokenKind.Text;

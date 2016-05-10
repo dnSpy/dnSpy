@@ -35,28 +35,21 @@ namespace dnSpy.Shared.Highlighting {
 		}
 
 		public static T WriteCommaSpace<T>(this T output) where T : ISyntaxHighlightOutput {
-			output.Write(",", BoxedTextTokenKind.Operator);
+			output.Write(",", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			return output;
 		}
 
 		public static T Write<T>(this T output, Version version) where T : ISyntaxHighlightOutput {
-			if (version == null) {
-				output.Write("?", BoxedTextTokenKind.Error);
-				output.Write(".", BoxedTextTokenKind.Operator);
-				output.Write("?", BoxedTextTokenKind.Error);
-				output.Write(".", BoxedTextTokenKind.Operator);
-				output.Write("?", BoxedTextTokenKind.Error);
-				output.Write(".", BoxedTextTokenKind.Operator);
-				output.Write("?", BoxedTextTokenKind.Error);
-			}
+			if (version == null)
+				output.Write("?.?.?.?", BoxedTextTokenKind.Error);
 			else {
 				output.Write(version.Major.ToString(), BoxedTextTokenKind.Number);
-				output.Write(".", BoxedTextTokenKind.Operator);
+				output.Write(".", BoxedTextTokenKind.Number);
 				output.Write(version.Minor.ToString(), BoxedTextTokenKind.Number);
-				output.Write(".", BoxedTextTokenKind.Operator);
+				output.Write(".", BoxedTextTokenKind.Number);
 				output.Write(version.Build.ToString(), BoxedTextTokenKind.Number);
-				output.Write(".", BoxedTextTokenKind.Operator);
+				output.Write(".", BoxedTextTokenKind.Number);
 				output.Write(version.Revision.ToString(), BoxedTextTokenKind.Number);
 			}
 			return output;
@@ -114,7 +107,7 @@ namespace dnSpy.Shared.Highlighting {
 			if (name == null)
 				return output;
 			if (name.Length == 0)
-				output.Write("-", BoxedTextTokenKind.Operator);
+				output.Write("-", BoxedTextTokenKind.Punctuation);
 			else {
 				var parts = name.Split('.');
 				for (int i = 0; i < parts.Length; i++) {

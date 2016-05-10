@@ -24,12 +24,13 @@ using dnlib.DotNet;
 namespace dnSpy.Decompiler.Shared {
 	public enum TextTokenKind : byte {
 		Text,
-		Brace,
 		Operator,
+		Punctuation,
 		Number,
 		Comment,
 		Keyword,
 		String,
+		VerbatimString,
 		Char,
 		Namespace,
 		Type,
@@ -60,6 +61,7 @@ namespace dnSpy.Decompiler.Shared {
 		OpCode,
 		ILDirective,
 		ILModule,
+		ExcludedCode,
 		XmlDocCommentAttributeName,
 		XmlDocCommentAttributeQuotes,
 		XmlDocCommentAttributeValue,
@@ -170,12 +172,13 @@ namespace dnSpy.Decompiler.Shared {
 
 	public static class BoxedTextTokenKind {
 		public static readonly object Text = TextTokenKind.Text;
-		public static readonly object Brace = TextTokenKind.Brace;
 		public static readonly object Operator = TextTokenKind.Operator;
+		public static readonly object Punctuation = TextTokenKind.Punctuation;
 		public static readonly object Number = TextTokenKind.Number;
 		public static readonly object Comment = TextTokenKind.Comment;
 		public static readonly object Keyword = TextTokenKind.Keyword;
 		public static readonly object String = TextTokenKind.String;
+		public static readonly object VerbatimString = TextTokenKind.VerbatimString;
 		public static readonly object Char = TextTokenKind.Char;
 		public static readonly object Namespace = TextTokenKind.Namespace;
 		public static readonly object Type = TextTokenKind.Type;
@@ -206,6 +209,7 @@ namespace dnSpy.Decompiler.Shared {
 		public static readonly object OpCode = TextTokenKind.OpCode;
 		public static readonly object ILDirective = TextTokenKind.ILDirective;
 		public static readonly object ILModule = TextTokenKind.ILModule;
+		public static readonly object ExcludedCode = TextTokenKind.ExcludedCode;
 		public static readonly object XmlDocCommentAttributeName = TextTokenKind.XmlDocCommentAttributeName;
 		public static readonly object XmlDocCommentAttributeQuotes = TextTokenKind.XmlDocCommentAttributeQuotes;
 		public static readonly object XmlDocCommentAttributeValue = TextTokenKind.XmlDocCommentAttributeValue;
@@ -316,12 +320,13 @@ namespace dnSpy.Decompiler.Shared {
 
 		static readonly object[] boxedColors = new object[(int)TextTokenKind.Last] {
 			Text,
-			Brace,
 			Operator,
+			Punctuation,
 			Number,
 			Comment,
 			Keyword,
 			String,
+			VerbatimString,
 			Char,
 			Namespace,
 			Type,
@@ -352,6 +357,7 @@ namespace dnSpy.Decompiler.Shared {
 			OpCode,
 			ILDirective,
 			ILModule,
+			ExcludedCode,
 			XmlDocCommentAttributeName,
 			XmlDocCommentAttributeQuotes,
 			XmlDocCommentAttributeValue,
@@ -669,16 +675,6 @@ namespace dnSpy.Decompiler.Shared {
 				return BoxedTextTokenKind.Local;
 
 			return BoxedTextTokenKind.Text;
-		}
-
-		public static object GetTextTokenKindFromLangToken(this string text) {
-			if (string.IsNullOrEmpty(text))
-				return BoxedTextTokenKind.Text;
-			if (char.IsLetter(text[0]))
-				return BoxedTextTokenKind.Keyword;
-			if (text == "{" || text == "}")
-				return BoxedTextTokenKind.Brace;
-			return BoxedTextTokenKind.Operator;
 		}
 
 		public static object GetTextTokenKind(Type type) {

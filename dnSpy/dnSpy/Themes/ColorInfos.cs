@@ -1791,12 +1791,8 @@ namespace dnSpy.Themes {
 				Children = new ColorInfo[] {
 					new BrushColorInfo(ColorType.Text, "Default text color in text view") {
 						Children = new ColorInfo[] {
-							new BrushColorInfo(ColorType.Punctuation, "Punctuation") {
-								Children = new ColorInfo[] {
-									new BrushColorInfo(ColorType.Brace, "Braces: {}"),
-									new BrushColorInfo(ColorType.Operator, "+-/etc and other special chars like ,; etc"),
-								},
-							},
+							new BrushColorInfo(ColorType.Operator, "Operator"),
+							new BrushColorInfo(ColorType.Punctuation, "Punctuation"),
 							new BrushColorInfo(ColorType.Comment, "Comments"),
 							new BrushColorInfo(ColorType.XmlDocCommentAttributeName, "XML Doc Comment AttributeName"),
 							new BrushColorInfo(ColorType.XmlDocCommentAttributeQuotes, "XML Doc Comment AttributeQuotes"),
@@ -1832,74 +1828,44 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.XmlProcessingInstruction, "XML Processing Instruction"),
 							new BrushColorInfo(ColorType.XmlText, "XML Text"),
 
-							new BrushColorInfo(ColorType.Literal, "Literal") {
+							new BrushColorInfo(ColorType.Number, "Numbers"),
+							new BrushColorInfo(ColorType.String, "String"),
+							new BrushColorInfo(ColorType.VerbatimString, "Verbatim string"),
+							new BrushColorInfo(ColorType.Char, "Char"),
+							new BrushColorInfo(ColorType.Keyword, "Keyword"),
+							new BrushColorInfo(ColorType.Namespace, "Namespace"),
+							new BrushColorInfo(ColorType.Type, "Type") {
 								Children = new ColorInfo[] {
-									new BrushColorInfo(ColorType.Number, "Numbers"),
-									new BrushColorInfo(ColorType.String, "String"),
-									new BrushColorInfo(ColorType.Char, "Char")
+									new BrushColorInfo(ColorType.SealedType, "Sealed type"),
+									new BrushColorInfo(ColorType.StaticType, "Static type"),
+									new BrushColorInfo(ColorType.Delegate, "Delegate"),
+									new BrushColorInfo(ColorType.Enum, "Enum"),
+									new BrushColorInfo(ColorType.Interface, "Interface"),
+									new BrushColorInfo(ColorType.ValueType, "Value type")
 								},
 							},
-							new BrushColorInfo(ColorType.Identifier, "Identifier") {
-								Children = new ColorInfo[] {
-									new BrushColorInfo(ColorType.Keyword, "Keyword"),
-									new BrushColorInfo(ColorType.Namespace, "Namespace"),
-									new BrushColorInfo(ColorType.Type, "Type") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.SealedType, "Sealed type"),
-											new BrushColorInfo(ColorType.StaticType, "Static type"),
-											new BrushColorInfo(ColorType.Delegate, "Delegate"),
-											new BrushColorInfo(ColorType.Enum, "Enum"),
-											new BrushColorInfo(ColorType.Interface, "Interface"),
-											new BrushColorInfo(ColorType.ValueType, "Value type")
-										},
-									},
-									new BrushColorInfo(ColorType.GenericParameter, "Generic parameter") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.TypeGenericParameter, "Generic type parameter"),
-											new BrushColorInfo(ColorType.MethodGenericParameter, "Generic method parameter")
-										},
-									},
-									new BrushColorInfo(ColorType.Method, "Method") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.InstanceMethod, "Instance method"),
-											new BrushColorInfo(ColorType.StaticMethod, "Static method"),
-											new BrushColorInfo(ColorType.ExtensionMethod, "Extension method")
-										},
-									},
-									new BrushColorInfo(ColorType.Field, "Field") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.InstanceField, "Instance field"),
-											new BrushColorInfo(ColorType.EnumField, "Enum field"),
-											new BrushColorInfo(ColorType.LiteralField, "Literal field"),
-											new BrushColorInfo(ColorType.StaticField, "Static field")
-										},
-									},
-									new BrushColorInfo(ColorType.Event, "Event") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.InstanceEvent, "Instance event"),
-											new BrushColorInfo(ColorType.StaticEvent, "Static event")
-										},
-									},
-									new BrushColorInfo(ColorType.Property, "Property") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.InstanceProperty, "Instance property"),
-											new BrushColorInfo(ColorType.StaticProperty, "Static property")
-										},
-									},
-									new BrushColorInfo(ColorType.Variable, "Local/parameter") {
-										Children = new ColorInfo[] {
-											new BrushColorInfo(ColorType.Local, "Local variable"),
-											new BrushColorInfo(ColorType.Parameter, "Method parameter")
-										},
-									},
-									new BrushColorInfo(ColorType.PreprocessorKeyword, "Preprocessor Keyword"),
-									new BrushColorInfo(ColorType.PreprocessorText, "Preprocessor Text"),
-									new BrushColorInfo(ColorType.Label, "Label"),
-									new BrushColorInfo(ColorType.OpCode, "Opcode"),
-									new BrushColorInfo(ColorType.ILDirective, "IL directive"),
-									new BrushColorInfo(ColorType.ILModule, "IL module")
-								},
-							},
+							new BrushColorInfo(ColorType.TypeGenericParameter, "Generic type parameter"),
+							new BrushColorInfo(ColorType.MethodGenericParameter, "Generic method parameter"),
+							new BrushColorInfo(ColorType.InstanceMethod, "Instance method"),
+							new BrushColorInfo(ColorType.StaticMethod, "Static method"),
+							new BrushColorInfo(ColorType.ExtensionMethod, "Extension method"),
+							new BrushColorInfo(ColorType.InstanceField, "Instance field"),
+							new BrushColorInfo(ColorType.EnumField, "Enum field"),
+							new BrushColorInfo(ColorType.LiteralField, "Literal field"),
+							new BrushColorInfo(ColorType.StaticField, "Static field"),
+							new BrushColorInfo(ColorType.InstanceEvent, "Instance event"),
+							new BrushColorInfo(ColorType.StaticEvent, "Static event"),
+							new BrushColorInfo(ColorType.InstanceProperty, "Instance property"),
+							new BrushColorInfo(ColorType.StaticProperty, "Static property"),
+							new BrushColorInfo(ColorType.Local, "Local variable"),
+							new BrushColorInfo(ColorType.Parameter, "Method parameter"),
+							new BrushColorInfo(ColorType.PreprocessorKeyword, "Preprocessor Keyword"),
+							new BrushColorInfo(ColorType.PreprocessorText, "Preprocessor Text"),
+							new BrushColorInfo(ColorType.Label, "Label"),
+							new BrushColorInfo(ColorType.OpCode, "Opcode"),
+							new BrushColorInfo(ColorType.ILDirective, "IL directive"),
+							new BrushColorInfo(ColorType.ILModule, "IL module"),
+							new BrushColorInfo(ColorType.ExcludedCode, "Excluded code"),
 							new BrushColorInfo(ColorType.LineNumber, "Line number"),
 							new BrushColorInfo(ColorType.Link, "Link"),
 							new BrushColorInfo(ColorType.LocalDefinition, "Local definition"),

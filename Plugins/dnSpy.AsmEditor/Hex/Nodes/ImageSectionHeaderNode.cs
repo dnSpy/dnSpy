@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.WriteSpace();
 			output.Write("#", BoxedTextTokenKind.Operator);
 			output.Write(SectionNumber.ToString(), BoxedTextTokenKind.Number);
-			output.Write(":", BoxedTextTokenKind.Operator);
+			output.Write(":", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), BoxedTextTokenKind.Type);
 		}

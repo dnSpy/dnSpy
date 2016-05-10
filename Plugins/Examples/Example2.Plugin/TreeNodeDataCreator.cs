@@ -128,7 +128,7 @@ namespace Example2.Plugin {
 			context.Output.Write("=", BoxedTextTokenKind.Operator);
 			context.Output.WriteSpace();
 			context.Output.Write("1234", BoxedTextTokenKind.Number);
-			context.Output.Write(";", BoxedTextTokenKind.Operator);
+			context.Output.Write(";", BoxedTextTokenKind.Punctuation);
 			context.Output.WriteLine();
 
 			// We decompiled ourselves so return true

@@ -52,9 +52,9 @@ namespace dnSpy.Debugger {
 			if (appDomain == null)
 				output.Write(dnSpy_Debugger_Resources.AppDomainNotAvailable, BoxedTextTokenKind.Error);
 			else {
-				output.Write("[", BoxedTextTokenKind.Operator);
+				output.Write("[", BoxedTextTokenKind.Punctuation);
 				output.Write(string.Format("{0}", appDomain.Id), BoxedTextTokenKind.Number);
-				output.Write("]", BoxedTextTokenKind.Operator);
+				output.Write("]", BoxedTextTokenKind.Punctuation);
 				output.WriteSpace();
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
 				if (HasSameNameAsProcess(dbg, appDomain))
@@ -87,12 +87,12 @@ namespace dnSpy.Debugger {
 		}
 
 		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ISyntaxHighlightOutput {
-			output.Write("[", BoxedTextTokenKind.Operator);
+			output.Write("[", BoxedTextTokenKind.Punctuation);
 			if (useHex)
 				output.Write(string.Format("0x{0:X}", p.ProcessId), BoxedTextTokenKind.Number);
 			else
 				output.Write(string.Format("{0}", p.ProcessId), BoxedTextTokenKind.Number);
-			output.Write("]", BoxedTextTokenKind.Operator);
+			output.Write("]", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			output.WriteFilename(GetFilename(p.Filename));
 			return output;

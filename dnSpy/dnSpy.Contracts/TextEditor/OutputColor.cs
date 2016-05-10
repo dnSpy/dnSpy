@@ -30,12 +30,13 @@ namespace dnSpy.Contracts.TextEditor {
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Text,
-		Brace,
 		Operator,
+		Punctuation,
 		Number,
 		Comment,
 		Keyword,
 		String,
+		VerbatimString,
 		Char,
 		Namespace,
 		Type,
@@ -66,6 +67,7 @@ namespace dnSpy.Contracts.TextEditor {
 		OpCode,
 		ILDirective,
 		ILModule,
+		ExcludedCode,
 		XmlDocCommentAttributeName,
 		XmlDocCommentAttributeQuotes,
 		XmlDocCommentAttributeValue,
@@ -179,12 +181,13 @@ namespace dnSpy.Contracts.TextEditor {
 	public static class BoxedOutputColor {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly object Text = OutputColor.Text;
-		public static readonly object Brace = OutputColor.Brace;
 		public static readonly object Operator = OutputColor.Operator;
+		public static readonly object Punctuation = OutputColor.Punctuation;
 		public static readonly object Number = OutputColor.Number;
 		public static readonly object Comment = OutputColor.Comment;
 		public static readonly object Keyword = OutputColor.Keyword;
 		public static readonly object String = OutputColor.String;
+		public static readonly object VerbatimString = OutputColor.VerbatimString;
 		public static readonly object Char = OutputColor.Char;
 		public static readonly object Namespace = OutputColor.Namespace;
 		public static readonly object Type = OutputColor.Type;
@@ -215,6 +218,7 @@ namespace dnSpy.Contracts.TextEditor {
 		public static readonly object OpCode = OutputColor.OpCode;
 		public static readonly object ILDirective = OutputColor.ILDirective;
 		public static readonly object ILModule = OutputColor.ILModule;
+		public static readonly object ExcludedCode = OutputColor.ExcludedCode;
 		public static readonly object XmlDocCommentAttributeName = OutputColor.XmlDocCommentAttributeName;
 		public static readonly object XmlDocCommentAttributeQuotes = OutputColor.XmlDocCommentAttributeQuotes;
 		public static readonly object XmlDocCommentAttributeValue = OutputColor.XmlDocCommentAttributeValue;
@@ -325,12 +329,13 @@ namespace dnSpy.Contracts.TextEditor {
 
 		static readonly object[] boxedColors = new object[(int)OutputColor.Last] {
 			Text,
-			Brace,
 			Operator,
+			Punctuation,
 			Number,
 			Comment,
 			Keyword,
 			String,
+			VerbatimString,
 			Char,
 			Namespace,
 			Type,
@@ -361,6 +366,7 @@ namespace dnSpy.Contracts.TextEditor {
 			OpCode,
 			ILDirective,
 			ILModule,
+			ExcludedCode,
 			XmlDocCommentAttributeName,
 			XmlDocCommentAttributeQuotes,
 			XmlDocCommentAttributeValue,

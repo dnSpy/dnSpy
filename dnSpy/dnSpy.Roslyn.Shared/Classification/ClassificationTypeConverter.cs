@@ -132,7 +132,7 @@ namespace dnSpy.Roslyn.Shared.Classification {
 				return OutputColor.Enum;
 
 			case ClassificationTypeNames.ExcludedCode:
-				return OutputColor.Text;
+				return OutputColor.ExcludedCode;
 
 			case ClassificationTypeNames.Identifier:
 				symRes = GetSymbolResult(span.TextSpan);
@@ -296,7 +296,7 @@ the_switch:
 				return OutputColor.PreprocessorText;
 
 			case ClassificationTypeNames.Punctuation:
-				return OutputColor.Operator;
+				return OutputColor.Punctuation;
 
 			case ClassificationTypeNames.StringLiteral:
 				return OutputColor.String;

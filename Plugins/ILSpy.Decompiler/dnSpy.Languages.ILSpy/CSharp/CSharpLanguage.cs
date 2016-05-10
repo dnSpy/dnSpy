@@ -392,18 +392,18 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 					output.Write(".", BoxedTextTokenKind.Operator);
 				}
 				output.Write("this", BoxedTextTokenKind.Keyword);
-				output.Write("[", BoxedTextTokenKind.Operator);
+				output.Write("[", BoxedTextTokenKind.Punctuation);
 				bool addSeparator = false;
 				foreach (var p in property.PropertySig.GetParams()) {
 					if (addSeparator) {
-						output.Write(",", BoxedTextTokenKind.Operator);
+						output.Write(",", BoxedTextTokenKind.Punctuation);
 						output.WriteSpace();
 					}
 					else
 						addSeparator = true;
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				output.Write("]", BoxedTextTokenKind.Operator);
+				output.Write("]", BoxedTextTokenKind.Punctuation);
 			}
 			else
 				WriteIdentifier(output, property.Name, TextTokenKindUtils.GetTextTokenKind(property));
@@ -424,7 +424,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 
 		static void WriteIdentifier(ITextOutput output, string id, object tokenKind) {
 			if (isKeyword.Contains(id))
-				output.Write("@", BoxedTextTokenKind.Operator);
+				output.Write("@", tokenKind);
 			output.Write(IdentifierEscaper.Escape(id), tokenKind);
 		}
 

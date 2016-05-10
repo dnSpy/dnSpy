@@ -1240,7 +1240,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			output.Write("[", BoxedTextTokenKind.Operator);
+			output.Write("[", BoxedTextTokenKind.Punctuation);
 
 			if (state.Dimensions.Length == 1 && state.Indices.Length == 1 && state.Indices[0] == 0) {
 				long i2 = index + (int)state.Indices[0];
@@ -1259,7 +1259,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 				for (int i = 0; i < ary.Length; i++) {
 					if (i > 0) {
-						output.Write(",", BoxedTextTokenKind.Operator);
+						output.Write(",", BoxedTextTokenKind.Punctuation);
 						output.Write(" ", BoxedTextTokenKind.Text);
 					}
 					long i2 = ary[i] + (int)state.Indices[i];
@@ -1268,7 +1268,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
-			output.Write("]", BoxedTextTokenKind.Operator);
+			output.Write("]", BoxedTextTokenKind.Punctuation);
 		}
 	}
 
@@ -1368,9 +1368,9 @@ namespace dnSpy.Debugger.Locals {
 			output.Write(IdentifierEscaper.Escape(name), typeColor);
 			if (overridden) {
 				output.Write(" ", BoxedTextTokenKind.Text);
-				output.Write("(", BoxedTextTokenKind.Operator);
+				output.Write("(", BoxedTextTokenKind.Punctuation);
 				ownerType.Write(new OutputConverter(output), TypePrinterFlags.Default);
-				output.Write(")", BoxedTextTokenKind.Operator);
+				output.Write(")", BoxedTextTokenKind.Punctuation);
 			}
 		}
 

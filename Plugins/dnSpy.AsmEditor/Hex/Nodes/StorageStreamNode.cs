@@ -105,7 +105,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.WriteSpace();
 			output.Write("#", BoxedTextTokenKind.Operator);
 			output.Write(StreamNumber.ToString(), BoxedTextTokenKind.Number);
-			output.Write(":", BoxedTextTokenKind.Operator);
+			output.Write(":", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), StorageStreamType == StorageStreamType.None ? BoxedTextTokenKind.Error : BoxedTextTokenKind.Type);
 		}

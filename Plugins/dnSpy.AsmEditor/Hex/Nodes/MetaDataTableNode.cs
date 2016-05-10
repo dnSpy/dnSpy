@@ -67,9 +67,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.WriteSpace();
 			output.Write(string.Format("{0}", MetaDataTableVM.Table), BoxedTextTokenKind.Type);
 			output.WriteSpace();
-			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Punctuation);
 			output.Write(string.Format("{0}", MetaDataTableVM.Rows), BoxedTextTokenKind.Number);
-			output.Write(")", BoxedTextTokenKind.Operator);
+			output.Write(")", BoxedTextTokenKind.Punctuation);
 		}
 
 		protected override void DecompileFields(ILanguage language, ITextOutput output) {

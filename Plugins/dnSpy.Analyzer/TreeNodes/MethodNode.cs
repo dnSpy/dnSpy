@@ -45,9 +45,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
-				output.Write("(", BoxedTextTokenKind.Operator);
+				output.Write("(", BoxedTextTokenKind.Punctuation);
 				output.Write(dnSpy_Analyzer_Resources.HidesParent, BoxedTextTokenKind.Text);
-				output.Write(")", BoxedTextTokenKind.Operator);
+				output.Write(")", BoxedTextTokenKind.Punctuation);
 				output.WriteSpace();
 			}
 			language.WriteType(output, analyzedMethod.DeclaringType, true);

@@ -23,15 +23,16 @@ namespace dnSpy.Contracts.Themes {
 	/// </summary>
 	public enum ColorType : uint {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		// The order and names of the following constants must match dnSpy.NRefactory.TextTokenKind
+		// The order and names of the following constants must match dnSpy.Decompiler.Shared.TextTokenKind
 		Text = 0x00004000,
-		FirstNR = Text,	// Text should be first so ToString() picks it instead of FirstNR
-		Brace,
+		FirstNR = Text, // Text should be first so ToString() picks it instead of FirstNR
 		Operator,
+		Punctuation,
 		Number,
 		Comment,
 		Keyword,
 		String,
+		VerbatimString,
 		Char,
 		Namespace,
 		Type,
@@ -62,6 +63,7 @@ namespace dnSpy.Contracts.Themes {
 		OpCode,
 		ILDirective,
 		ILModule,
+		ExcludedCode,
 		XmlDocCommentAttributeName,
 		XmlDocCommentAttributeQuotes,
 		XmlDocCommentAttributeValue,
@@ -175,15 +177,6 @@ namespace dnSpy.Contracts.Themes {
 		// ********************************************************************************
 		DefaultText = 0x00100000,
 		FirstUI = DefaultText,
-		Punctuation,
-		Literal,
-		Identifier,
-		GenericParameter,
-		Method,
-		Field,
-		Event,
-		Property,
-		Variable,
 		LineNumber,
 		Link,
 		Selection,

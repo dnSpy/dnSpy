@@ -624,9 +624,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static void WriteLocalParameterIndex(this ISyntaxHighlightOutput output, int index) {
-			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Punctuation);
 			output.Write(index.ToString(), BoxedTextTokenKind.Number);
-			output.Write(")", BoxedTextTokenKind.Operator);
+			output.Write(")", BoxedTextTokenKind.Punctuation);
 		}
 
 		static void WriteLong(this ISyntaxHighlightOutput output, InstructionVM instr) {
@@ -669,21 +669,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 		static void WriteShort(this ISyntaxHighlightOutput output, InstructionVM instr) {
 			output.Write(instr.Index.ToString(), BoxedTextTokenKind.Number);
 			output.WriteSpace();
-			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Punctuation);
 			output.Write(string.Format("{0:X4}", instr.Offset), BoxedTextTokenKind.Number);
-			output.Write(")", BoxedTextTokenKind.Operator);
+			output.Write(")", BoxedTextTokenKind.Punctuation);
 		}
 
 		static void Write(this ISyntaxHighlightOutput output, IList<InstructionVM> instrs) {
-			output.Write("[", BoxedTextTokenKind.Operator);
+			output.Write("[", BoxedTextTokenKind.Punctuation);
 			for (int i = 0; i < instrs.Count; i++) {
 				if (i > 0) {
-					output.Write(",", BoxedTextTokenKind.Operator);
+					output.Write(",", BoxedTextTokenKind.Punctuation);
 					output.WriteSpace();
 				}
 				output.WriteShort(instrs[i]);
 			}
-			output.Write("]", BoxedTextTokenKind.Operator);
+			output.Write("]", BoxedTextTokenKind.Punctuation);
 		}
 	}
 }

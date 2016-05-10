@@ -265,7 +265,7 @@ the_switch:
 				return OutputColor.Enum;
 
 			case ClassificationTypeNames.ExcludedCode:
-				return OutputColor.Text;
+				return OutputColor.ExcludedCode;
 
 			case ClassificationTypeNames.Identifier:
 				return GetColor2(cspan);
@@ -292,7 +292,7 @@ the_switch:
 				return OutputColor.PreprocessorText;
 
 			case ClassificationTypeNames.Punctuation:
-				return OutputColor.Operator;
+				return OutputColor.Punctuation;
 
 			case ClassificationTypeNames.StringLiteral:
 				return OutputColor.String;

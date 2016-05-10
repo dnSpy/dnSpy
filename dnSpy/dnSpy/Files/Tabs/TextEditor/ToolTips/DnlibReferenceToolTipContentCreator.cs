@@ -186,9 +186,9 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
 			creator.Output.Write(opCode.Name, BoxedTextTokenKind.OpCode);
 			creator.Output.WriteSpace();
-			creator.Output.Write("(", BoxedTextTokenKind.Operator);
+			creator.Output.Write("(", BoxedTextTokenKind.Punctuation);
 			creator.Output.Write(opCodeHex, BoxedTextTokenKind.Number);
-			creator.Output.Write(")", BoxedTextTokenKind.Operator);
+			creator.Output.Write(")", BoxedTextTokenKind.Punctuation);
 			if (s != null) {
 				creator.Output.Write(" - ", BoxedTextTokenKind.Text);
 				creator.Output.Write(s, BoxedTextTokenKind.Text);

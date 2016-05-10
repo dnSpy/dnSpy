@@ -33,6 +33,7 @@ namespace dndbg.Engine {
 		Space,
 		IPType,
 		Operator,
+		Punctuation,
 		NativeFrame,
 		InternalFrame,
 		UnknownFrame,
@@ -186,7 +187,7 @@ namespace dndbg.Engine {
 
 		void WriteIdentifier(string id, TypeColor color) {
 			if (isKeyword.Contains(id))
-				OutputWrite("@", TypeColor.Operator);
+				OutputWrite("@", color);
 			OutputWrite(IdentifierEscaper.Escape(id), color);
 		}
 
@@ -224,7 +225,7 @@ namespace dndbg.Engine {
 		void WriteSpace() => OutputWrite(" ", TypeColor.Space);
 
 		void WriteCommaSpace() {
-			OutputWrite(",", TypeColor.Operator);
+			OutputWrite(",", TypeColor.Punctuation);
 			WriteSpace();
 		}
 
@@ -473,9 +474,9 @@ namespace dndbg.Engine {
 
 		void WriteDefaultType(uint token) {
 			OutputWrite("Type", TypeColor.Unknown);
-			OutputWrite("[", TypeColor.Operator);
+			OutputWrite("[", TypeColor.Punctuation);
 			WriteToken(token);
-			OutputWrite("]", TypeColor.Operator);
+			OutputWrite("]", TypeColor.Punctuation);
 		}
 
 		public void Write(CorType type) => Write(type, null);
@@ -508,7 +509,7 @@ namespace dndbg.Engine {
 						var aryType = tuple.Item1;
 						var aryValue = tuple.Item2;
 						if (aryType.ElementType == CorElementType.Array) {
-							OutputWrite("[", TypeColor.Operator);
+							OutputWrite("[", TypeColor.Punctuation);
 							uint rank = aryType.Rank;
 							if (rank == 0)
 								OutputWrite("<RANK0>", TypeColor.Error);
@@ -520,7 +521,7 @@ namespace dndbg.Engine {
 								if (ShowArrayValueSizes && indexes != null && dims != null && (uint)indexes.Length == rank && (uint)dims.Length == rank) {
 									for (uint i = 0; i < rank; i++) {
 										if (i > 0) {
-											OutputWrite(",", TypeColor.Operator);
+											OutputWrite(",", TypeColor.Punctuation);
 											OutputWrite(" ", TypeColor.Space);
 										}
 										if (indexes[i] == 0)
@@ -535,17 +536,17 @@ namespace dndbg.Engine {
 								}
 								else {
 									for (uint i = 1; i < rank; i++)
-										OutputWrite(",", TypeColor.Operator);
+										OutputWrite(",", TypeColor.Punctuation);
 								}
 							}
-							OutputWrite("]", TypeColor.Operator);
+							OutputWrite("]", TypeColor.Punctuation);
 						}
 						else {
 							Debug.Assert(aryType.ElementType == CorElementType.SZArray);
-							OutputWrite("[", TypeColor.Operator);
+							OutputWrite("[", TypeColor.Punctuation);
 							if (ShowArrayValueSizes && aryValue != null)
 								WriteNumber(aryValue.ArrayCount);
-							OutputWrite("]", TypeColor.Operator);
+							OutputWrite("]", TypeColor.Punctuation);
 						}
 					}
 					return;
@@ -659,7 +660,7 @@ namespace dndbg.Engine {
 					Write(list[list.Count - 1].Next, typeGenArgs, methGenArgs, typeTokenAndNames, methTokenAndNames);
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
-							OutputWrite("[", TypeColor.Operator);
+							OutputWrite("[", TypeColor.Punctuation);
 							uint rank = aryType.Rank;
 							if (rank == 0)
 								OutputWrite("<RANK0>", TypeColor.Error);
@@ -667,17 +668,17 @@ namespace dndbg.Engine {
 								if (rank == 1)
 									OutputWrite("*", TypeColor.Operator);
 								for (uint i = 1; i < rank; i++)
-									OutputWrite(",", TypeColor.Operator);
+									OutputWrite(",", TypeColor.Punctuation);
 							}
-							OutputWrite("]", TypeColor.Operator);
+							OutputWrite("]", TypeColor.Punctuation);
 						}
 						else {
 							Debug.Assert(aryType.ElementType == ElementType.SZArray);
 							// Use two strings so we produce the exact same output as the other
 							// Write() that writes CorType arrays. There's code that compares the
 							// output to detect different types, so we must generate the same text.
-							OutputWrite("[", TypeColor.Operator);
-							OutputWrite("]", TypeColor.Operator);
+							OutputWrite("[", TypeColor.Punctuation);
+							OutputWrite("]", TypeColor.Punctuation);
 						}
 					}
 					return;
@@ -751,13 +752,13 @@ namespace dndbg.Engine {
 					}
 					else {
 						Write(gis.GenericType, typeGenArgs, methGenArgs, typeTokenAndNames, methTokenAndNames);
-						OutputWrite("<", TypeColor.Operator);
+						OutputWrite("<", TypeColor.Punctuation);
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
 							if (i > 0)
 								WriteCommaSpace();
 							Write(gis.GenericArguments[i], typeGenArgs, methGenArgs, typeTokenAndNames, methTokenAndNames);
 						}
-						OutputWrite(">", TypeColor.Operator);
+						OutputWrite(">", TypeColor.Punctuation);
 					}
 					break;
 
@@ -974,19 +975,19 @@ namespace dndbg.Engine {
 				WriteTokenComment(prop.Token);
 
 				WriteSpace();
-				OutputWrite("{", TypeColor.Operator);
+				OutputWrite("{", TypeColor.Punctuation);
 				if (getMethod != null) {
 					WriteSpace();
 					OutputWrite("get", TypeColor.Keyword);
-					OutputWrite(";", TypeColor.Operator);
+					OutputWrite(";", TypeColor.Punctuation);
 				}
 				if (setMethod != null) {
 					WriteSpace();
 					OutputWrite("set", TypeColor.Keyword);
-					OutputWrite(";", TypeColor.Operator);
+					OutputWrite(";", TypeColor.Punctuation);
 				}
 				WriteSpace();
-				OutputWrite("}", TypeColor.Operator);
+				OutputWrite("}", TypeColor.Punctuation);
 			}
 			finally {
 				recursionCounter--;
@@ -1172,7 +1173,7 @@ namespace dndbg.Engine {
 
 				if (frame.IsILFrame || frame.IsNativeFrame) {
 					WriteSpace();
-					OutputWrite("(", TypeColor.Operator);
+					OutputWrite("(", TypeColor.Punctuation);
 					bool needComma = false;
 					if (frame.IsILFrame) {
 						var ip = frame.ILFrameIP;
@@ -1212,7 +1213,7 @@ namespace dndbg.Engine {
 							OutputWrite("???", TypeColor.Error);
 						WriteRelativeOffset((int)ip);
 					}
-					OutputWrite(")", TypeColor.Operator);
+					OutputWrite(")", TypeColor.Punctuation);
 				}
 			}
 			finally {
@@ -1283,7 +1284,7 @@ namespace dndbg.Engine {
 			if (gps.Count == 0)
 				return false;
 
-			OutputWrite("<", TypeColor.Operator);
+			OutputWrite("<", TypeColor.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
@@ -1296,7 +1297,7 @@ namespace dndbg.Engine {
 					WriteGenericParameterName(gp.Name, gp.Token, isMethod);
 				}
 			}
-			OutputWrite(">", TypeColor.Operator);
+			OutputWrite(">", TypeColor.Punctuation);
 			return true;
 		}
 
@@ -1324,7 +1325,7 @@ namespace dndbg.Engine {
 			var mdi = GetMetaDataImport(module);
 			var ps = MetaDataUtils.GetParameters(mdi, token);
 
-			OutputWrite(leftParen, TypeColor.Operator);
+			OutputWrite(leftParen, TypeColor.Punctuation);
 			Initialize(mdi, token, ref methodSig);
 			Debug.Assert(methodSig != null);
 			Debug.Assert(methodSig == null || methodSig.GenParamCount == methGenArgs.Count);
@@ -1391,7 +1392,7 @@ namespace dndbg.Engine {
 					needSpace = true;
 				}
 			}
-			OutputWrite(rightParen, TypeColor.Operator);
+			OutputWrite(rightParen, TypeColor.Punctuation);
 		}
 
 		void WriteMethodParameterList(ref MethodSig methodSig, bool retTypeIsLastArgType, CorModule module, uint token, List<TokenAndName> typeTokenAndNames, List<TokenAndName> methTokenAndNames, string leftParen = "(", string rightParen = ")") {
@@ -1401,7 +1402,7 @@ namespace dndbg.Engine {
 			var mdi = GetMetaDataImport(module);
 			var ps = MetaDataUtils.GetParameters(mdi, token);
 
-			OutputWrite(leftParen, TypeColor.Operator);
+			OutputWrite(leftParen, TypeColor.Punctuation);
 			Initialize(mdi, token, ref methodSig);
 			Debug.Assert(methodSig != null);
 			var sigParams = methodSig == null ? (IList<TypeSig>)new TypeSig[0] : methodSig.Params;
@@ -1457,16 +1458,16 @@ namespace dndbg.Engine {
 							t = t.Next;
 						if (c == null && t != null && t.IsValueType) {
 							OutputWrite("default", TypeColor.Keyword);
-							OutputWrite("(", TypeColor.Operator);
+							OutputWrite("(", TypeColor.Punctuation);
 							Write(t, null, null, typeTokenAndNames, methTokenAndNames);
-							OutputWrite(")", TypeColor.Operator);
+							OutputWrite(")", TypeColor.Punctuation);
 						}
 						else
 							WriteConstant(c);
 					}
 				}
 			}
-			OutputWrite(rightParen, TypeColor.Operator);
+			OutputWrite(rightParen, TypeColor.Punctuation);
 		}
 
 		void WriteGenericParameterName(string name, uint token, bool isMethod) {
@@ -1497,16 +1498,16 @@ namespace dndbg.Engine {
 		void WriteNativeFrame(CorFrame frame) {
 			Debug.Assert(frame != null && frame.IsNativeFrame);
 
-			OutputWrite("[", TypeColor.Operator);
+			OutputWrite("[", TypeColor.Punctuation);
 			OutputWrite("Native Frame ", TypeColor.NativeFrame);
 			WriteNativeAddress(frame.NativeFrameIP);
-			OutputWrite("]", TypeColor.Operator);
+			OutputWrite("]", TypeColor.Punctuation);
 		}
 
 		void WriteInternalFrame(CorFrame frame) {
 			Debug.Assert(frame != null && frame.IsInternalFrame);
 
-			OutputWrite("[", TypeColor.Operator);
+			OutputWrite("[", TypeColor.Punctuation);
 			switch (frame.InternalFrameType) {
 			case CorDebugInternalFrameType.STUBFRAME_M2U:
 				OutputWrite("Managed to Native Transition", TypeColor.InternalFrame);
@@ -1553,15 +1554,15 @@ namespace dndbg.Engine {
 				OutputWrite(string.Format("Internal Frame {0}", ConvertNumberToString((int)frame.InternalFrameType)), TypeColor.InternalFrame);
 				break;
 			}
-			OutputWrite("]", TypeColor.Operator);
+			OutputWrite("]", TypeColor.Punctuation);
 		}
 
 		void WriteUnknownFrame(CorFrame frame) {
 			Debug.Assert(frame != null);
 
-			OutputWrite("[", TypeColor.Operator);
+			OutputWrite("[", TypeColor.Punctuation);
 			OutputWrite("Unknown Frame", TypeColor.UnknownFrame);
-			OutputWrite("]", TypeColor.Operator);
+			OutputWrite("]", TypeColor.Punctuation);
 		}
 
 		void WriteTokenComment(uint token) {

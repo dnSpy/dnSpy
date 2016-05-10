@@ -63,7 +63,7 @@ namespace dnSpy.Shared.Files.TreeView {
 
 			if (showAsmVer || showPublicKeyToken) {
 				output.WriteSpace();
-				output.Write("(", BoxedTextTokenKind.Operator);
+				output.Write("(", BoxedTextTokenKind.Punctuation);
 
 				bool needComma = false;
 				if (showAsmVer) {
@@ -86,7 +86,7 @@ namespace dnSpy.Shared.Files.TreeView {
 						output.Write(pkt.ToString(), BoxedTextTokenKind.Number);
 				}
 
-				output.Write(")", BoxedTextTokenKind.Operator);
+				output.Write(")", BoxedTextTokenKind.Punctuation);
 			}
 
 			WriteToken(output, asm, showToken);
@@ -128,7 +128,7 @@ namespace dnSpy.Shared.Files.TreeView {
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, EventDef @event, bool showToken) {
 			output.Write(NameUtils.CleanIdentifier(@event.Name), TextTokenKindUtils.GetTextTokenKind(@event));
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Operator);
+			output.Write(":", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			language.WriteType(output, @event.EventType, false);
 			WriteToken(output, @event, showToken);
@@ -137,7 +137,7 @@ namespace dnSpy.Shared.Files.TreeView {
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, PropertyDef property, bool showToken, bool? isIndexer) {
 			language.WriteName(output, property, isIndexer);
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Operator);
+			output.Write(":", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			language.WriteType(output, property.PropertySig.GetRetType().ToTypeDefOrRef(), false);
 			WriteToken(output, property, showToken);
@@ -146,7 +146,7 @@ namespace dnSpy.Shared.Files.TreeView {
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, FieldDef field, bool showToken) {
 			output.Write(NameUtils.CleanIdentifier(field.Name), TextTokenKindUtils.GetTextTokenKind(field));
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Operator);
+			output.Write(":", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			language.WriteType(output, field.FieldType.ToTypeDefOrRef(), false);
 			WriteToken(output, field, showToken);
@@ -154,7 +154,7 @@ namespace dnSpy.Shared.Files.TreeView {
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, MethodDef method, bool showToken) {
 			output.Write(NameUtils.CleanIdentifier(method.Name), TextTokenKindUtils.GetTextTokenKind(method));
-			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Punctuation);
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
 					continue;
@@ -167,9 +167,9 @@ namespace dnSpy.Shared.Files.TreeView {
 					output.WriteCommaSpace();
 				output.Write("...", BoxedTextTokenKind.Operator);
 			}
-			output.Write(")", BoxedTextTokenKind.Operator);
+			output.Write(")", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Operator);
+			output.Write(":", BoxedTextTokenKind.Punctuation);
 			output.WriteSpace();
 			language.WriteType(output, method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef);
 			WriteToken(output, method, showToken);

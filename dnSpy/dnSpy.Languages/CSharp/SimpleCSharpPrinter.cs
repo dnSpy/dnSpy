@@ -129,7 +129,7 @@ namespace dnSpy.Languages.CSharp {
 
 		void WriteIdentifier(string id, object data) {
 			if (isKeyword.Contains(id))
-				OutputWrite("@", BoxedTextTokenKind.Operator);
+				OutputWrite("@", data);
 			OutputWrite(IdentifierEscaper.Escape(id), data);
 		}
 
@@ -167,7 +167,7 @@ namespace dnSpy.Languages.CSharp {
 		void WriteSpace() => OutputWrite(" ", BoxedTextTokenKind.Text);
 
 		void WriteCommaSpace() {
-			OutputWrite(",", BoxedTextTokenKind.Operator);
+			OutputWrite(",", BoxedTextTokenKind.Punctuation);
 			WriteSpace();
 		}
 
@@ -187,7 +187,7 @@ namespace dnSpy.Languages.CSharp {
 		void WriteSystemType(string name) {
 			if (ShowNamespaces) {
 				OutputWrite("System", BoxedTextTokenKind.Namespace);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 			}
 			OutputWrite(name, BoxedTextTokenKind.Type);
 		}
@@ -371,7 +371,7 @@ namespace dnSpy.Languages.CSharp {
 					this.flags |= SimplePrinterFlags.ShowNamespaces;
 				Write(type.DeclaringType);
 				this.flags = oldFlags;
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 				numGenParams = numGenParams - td.DeclaringType.GenericParameters.Count;
 				if (numGenParams < 0)
 					numGenParams = 0;
@@ -379,7 +379,7 @@ namespace dnSpy.Languages.CSharp {
 			else if (useNamespaces && !UTF8String.IsNullOrEmpty(td.Namespace)) {
 				foreach (var ns in td.Namespace.String.Split('.')) {
 					WriteIdentifier(ns, BoxedTextTokenKind.Namespace);
-					OutputWrite(".", BoxedTextTokenKind.Operator);
+					WritePeriod();
 				}
 			}
 
@@ -416,14 +416,14 @@ namespace dnSpy.Languages.CSharp {
 
 			if (ShowOwnerTypes) {
 				Write(method.DeclaringType);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 			}
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
 				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), TextTokenKindUtils.GetTextTokenKind(method));
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 				WriteMethodName(method, ovrMeth.Name);
 			}
 			else
@@ -471,7 +471,7 @@ namespace dnSpy.Languages.CSharp {
 			}
 			if (ShowOwnerTypes) {
 				Write(field.DeclaringType);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 			}
 			WriteIdentifier(field.Name, TextTokenKindUtils.GetTextTokenKind(field));
 			WriteToken(field);
@@ -570,13 +570,13 @@ namespace dnSpy.Languages.CSharp {
 			WriteReturnType(info);
 			if (ShowOwnerTypes) {
 				Write(prop.DeclaringType);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 			}
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
 			if (prop.IsIndexer()) {
 				if (ovrMeth != null) {
 					WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
-					OutputWrite(".", BoxedTextTokenKind.Operator);
+					WritePeriod();
 				}
 				OutputWrite("this", BoxedTextTokenKind.Keyword);
 				WriteGenericArguments(info);
@@ -584,7 +584,7 @@ namespace dnSpy.Languages.CSharp {
 			}
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 				WriteIdentifier(GetPropName(ovrMeth), TextTokenKindUtils.GetTextTokenKind(prop));
 			}
 			else
@@ -592,19 +592,19 @@ namespace dnSpy.Languages.CSharp {
 			WriteToken(prop);
 
 			WriteSpace();
-			OutputWrite("{", BoxedTextTokenKind.Operator);
+			OutputWrite("{", BoxedTextTokenKind.Punctuation);
 			if (prop.GetMethods.Count > 0) {
 				WriteSpace();
 				OutputWrite("get", BoxedTextTokenKind.Keyword);
-				OutputWrite(";", BoxedTextTokenKind.Operator);
+				OutputWrite(";", BoxedTextTokenKind.Punctuation);
 			}
 			if (prop.SetMethods.Count > 0) {
 				WriteSpace();
 				OutputWrite("set", BoxedTextTokenKind.Keyword);
-				OutputWrite(";", BoxedTextTokenKind.Operator);
+				OutputWrite(";", BoxedTextTokenKind.Punctuation);
 			}
 			WriteSpace();
-			OutputWrite("}", BoxedTextTokenKind.Operator);
+			OutputWrite("}", BoxedTextTokenKind.Punctuation);
 		}
 
 		static string GetPropName(IMethod method) {
@@ -628,7 +628,7 @@ namespace dnSpy.Languages.CSharp {
 			WriteSpace();
 			if (ShowOwnerTypes) {
 				Write(evt.DeclaringType);
-				OutputWrite(".", BoxedTextTokenKind.Operator);
+				WritePeriod();
 			}
 			WriteIdentifier(evt.Name, TextTokenKindUtils.GetTextTokenKind(evt));
 			WriteToken(evt);
@@ -809,7 +809,7 @@ namespace dnSpy.Languages.CSharp {
 					Write(list[list.Count - 1].Next, typeGenArgs, methGenArgs);
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
-							OutputWrite("[", BoxedTextTokenKind.Operator);
+							OutputWrite("[", BoxedTextTokenKind.Punctuation);
 							uint rank = aryType.Rank;
 							if (rank == 0)
 								OutputWrite("<RANK0>", BoxedTextTokenKind.Error);
@@ -834,16 +834,16 @@ namespace dnSpy.Languages.CSharp {
 								}
 								else {
 									for (uint i = 1; i < rank; i++)
-										OutputWrite(",", BoxedTextTokenKind.Operator);
+										OutputWrite(",", BoxedTextTokenKind.Punctuation);
 								}
 								for (uint i = 1; i < rank; i++)
-									OutputWrite(",", BoxedTextTokenKind.Operator);
+									OutputWrite(",", BoxedTextTokenKind.Punctuation);
 							}
-							OutputWrite("]", BoxedTextTokenKind.Operator);
+							OutputWrite("]", BoxedTextTokenKind.Punctuation);
 						}
 						else {
 							Debug.Assert(aryType.ElementType == ElementType.SZArray);
-							OutputWrite("[]", BoxedTextTokenKind.Operator);
+							OutputWrite("[]", BoxedTextTokenKind.Punctuation);
 						}
 					}
 					return;
@@ -905,13 +905,13 @@ namespace dnSpy.Languages.CSharp {
 					}
 					else {
 						Write(gis.GenericType, typeGenArgs, methGenArgs);
-						OutputWrite("<", BoxedTextTokenKind.Operator);
+						OutputWrite("<", BoxedTextTokenKind.Punctuation);
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
 							if (i > 0)
 								WriteCommaSpace();
 							Write(gis.GenericArguments[i], typeGenArgs, methGenArgs);
 						}
-						OutputWrite(">", BoxedTextTokenKind.Operator);
+						OutputWrite(">", BoxedTextTokenKind.Punctuation);
 					}
 					break;
 
@@ -1073,7 +1073,7 @@ namespace dnSpy.Languages.CSharp {
 			if (!ShowParameterTypes && !ShowParameterNames)
 				return;
 
-			OutputWrite(lparen, BoxedTextTokenKind.Operator);
+			OutputWrite(lparen, BoxedTextTokenKind.Punctuation);
 			int baseIndex = info.MethodSig.HasThis ? 1 : 0;
 			int count = info.MethodSig.Params.Count;
 			if (info.RetTypeIsLastArgType)
@@ -1124,21 +1124,21 @@ namespace dnSpy.Languages.CSharp {
 						t = t.Next;
 					if (c == null && t != null && t.IsValueType) {
 						OutputWrite("default", BoxedTextTokenKind.Keyword);
-						OutputWrite("(", BoxedTextTokenKind.Operator);
+						OutputWrite("(", BoxedTextTokenKind.Punctuation);
 						Write(t, pd, info.TypeGenericParams, info.MethodGenericParams);
-						OutputWrite(")", BoxedTextTokenKind.Operator);
+						OutputWrite(")", BoxedTextTokenKind.Punctuation);
 					}
 					else
 						WriteConstant(c);
 				}
 			}
-			OutputWrite(rparen, BoxedTextTokenKind.Operator);
+			OutputWrite(rparen, BoxedTextTokenKind.Punctuation);
 		}
 
 		void WriteGenerics(IList<GenericParam> gps, object gpTokenType) {
 			if (gps == null || gps.Count == 0)
 				return;
-			OutputWrite("<", BoxedTextTokenKind.Operator);
+			OutputWrite("<", BoxedTextTokenKind.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
@@ -1154,19 +1154,19 @@ namespace dnSpy.Languages.CSharp {
 				WriteIdentifier(gp.Name, gpTokenType);
 				WriteToken(gp);
 			}
-			OutputWrite(">", BoxedTextTokenKind.Operator);
+			OutputWrite(">", BoxedTextTokenKind.Punctuation);
 		}
 
 		void WriteGenerics(IList<TypeSig> gps, object gpTokenType, GenericParamContext gpContext) {
 			if (gps == null || gps.Count == 0)
 				return;
-			OutputWrite("<", BoxedTextTokenKind.Operator);
+			OutputWrite("<", BoxedTextTokenKind.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				Write(gps[i], null, null, null);
 			}
-			OutputWrite(">", BoxedTextTokenKind.Operator);
+			OutputWrite(">", BoxedTextTokenKind.Punctuation);
 		}
 
 		static string GetName(IVariable variable, string name) {

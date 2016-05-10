@@ -117,7 +117,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 
 			if (context.CurrentMethodIsAsync) {
 				output.Write("async", BoxedTextTokenKind.Keyword);
-				output.Write("/", BoxedTextTokenKind.Operator);
+				output.Write("/", BoxedTextTokenKind.Punctuation);
 				output.WriteLine("await", BoxedTextTokenKind.Keyword);
 			}
 
@@ -127,7 +127,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? BoxedTextTokenKind.Parameter : BoxedTextTokenKind.Local);
 				if (v.Type != null) {
 					output.WriteSpace();
-					output.Write(":", BoxedTextTokenKind.Operator);
+					output.Write(":", BoxedTextTokenKind.Punctuation);
 					output.WriteSpace();
 					if (v.IsPinned) {
 						output.Write("pinned", BoxedTextTokenKind.Keyword);
@@ -137,9 +137,9 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 				}
 				if (v.GeneratedByDecompiler) {
 					output.WriteSpace();
-					output.Write("[", BoxedTextTokenKind.Operator);
+					output.Write("[", BoxedTextTokenKind.Punctuation);
 					output.Write("generated", BoxedTextTokenKind.Keyword);
-					output.Write("]", BoxedTextTokenKind.Operator);
+					output.Write("]", BoxedTextTokenKind.Punctuation);
 				}
 				output.WriteLine();
 			}

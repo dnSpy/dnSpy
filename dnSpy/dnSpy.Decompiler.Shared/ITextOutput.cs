@@ -54,20 +54,20 @@ namespace dnSpy.Decompiler.Shared {
 			output.Write(" ", BoxedTextTokenKind.Text);
 
 		public static void WriteLineLeftBrace(this ITextOutput output) {
-			output.Write("{", BoxedTextTokenKind.Brace);
+			output.Write("{", BoxedTextTokenKind.Punctuation);
 			output.WriteLine();
 		}
 
 		public static void WriteLineRightBrace(this ITextOutput output) {
-			output.Write("}", BoxedTextTokenKind.Brace);
+			output.Write("}", BoxedTextTokenKind.Punctuation);
 			output.WriteLine();
 		}
 
 		public static void WriteLeftBrace(this ITextOutput output) =>
-			output.Write("{", BoxedTextTokenKind.Brace);
+			output.Write("{", BoxedTextTokenKind.Punctuation);
 
 		public static void WriteRightBrace(this ITextOutput output) =>
-			output.Write("}", BoxedTextTokenKind.Brace);
+			output.Write("}", BoxedTextTokenKind.Punctuation);
 
 		public static void WriteXmlDoc(this ITextOutput output, string text) {
 			foreach (var kv in SimpleXmlParser.Parse(text))

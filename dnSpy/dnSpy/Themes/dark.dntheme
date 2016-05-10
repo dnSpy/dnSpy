@@ -1,12 +1,13 @@
 <theme guid="64EFBB2C-0ACA-467C-8389-9FA350376F3F" name="dark" menu-name="_Dark" order="200" is-high-contrast="false">
 	<colors>
 		<color name="defaulttext" fg="#DCDCDC" bg="#1E1E1E" />
-		<color name="brace" fg="#DCDCDC" />
 		<color name="operator" fg="#DCDCDC" />
+		<color name="punctuation" fg="#DCDCDC" />
 		<color name="number" fg="#B5CEA8" />
 		<color name="comment" fg="#57A64A" />
 		<color name="keyword" fg="#569CD6" />
 		<color name="string" fg="#D69D85" />
+		<color name="verbatimstring" fg="#D69D85" />
 		<color name="char" fg="#9999FF" />
 		<color name="namespace" fg="#FFD700" />
 		<color name="type" fg="#4EC9B0" />
@@ -29,7 +30,7 @@
 		<color name="staticevent" fg="#DB94B8" />
 		<color name="instanceproperty" fg="#248F8F" />
 		<color name="staticproperty" fg="#1F8E8E" />
-		<color name="variable" fg="#BDB76B" />
+		<color name="local" fg="#BDB76B" />
 		<color name="parameter" fg="#BDB76B" bold="true" />
 		<color name="preprocessorkeyword" fg="#FF9B9B9B" />
 		<color name="preprocessortext" fg="#FFDCDCDC" />
@@ -37,6 +38,7 @@
 		<color name="opcode" fg="#AD5C85" />
 		<color name="ildirective" fg="#9999FF" />
 		<color name="ilmodule" fg="#666699" />
+		<color name="excludedcode" fg="#9B9B9B" />
 		<color name="xmldoccommentattributename" fg="#FFC8C8C8" />
 		<color name="xmldoccommentattributequotes" fg="#FFC8C8C8" />
 		<color name="xmldoccommentattributevalue" fg="#FFC8C8C8" />
