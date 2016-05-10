@@ -36,16 +36,16 @@ namespace dnSpy.TextEditor {
 		readonly DnSpyTextEditor textEditor;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly CodeEditorUI codeEditor;
+			readonly CodeEditorUI codeEditorUI;
 			readonly Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects;
 
-			public GuidObjectsCreator(CodeEditorUI codeEditor, Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects) {
-				this.codeEditor = codeEditor;
+			public GuidObjectsCreator(CodeEditorUI codeEditorUI, Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects) {
+				this.codeEditorUI = codeEditorUI;
 				this.createGuidObjects = createGuidObjects;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditor);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditorUI);
 
 				var textEditor = (DnSpyTextEditor)creatorObject.Object;
 				foreach (var go in textEditor.GetGuidObjects(openedFromKeyboard))
@@ -60,15 +60,15 @@ namespace dnSpy.TextEditor {
 
 		public CodeEditorUI(CodeEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			options = options ?? new CodeEditorOptions();
-			var buffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
+			var buffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.Options.ContentType ?? options.Options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
 			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, true);
 
-			if (options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(options.TextEditorCommandGuid.Value, this.textEditor);
-			if (options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(options.TextAreaCommandGuid.Value, this.textEditor.TextArea);
-			if (options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, options.MenuGuid.Value, new GuidObjectsCreator(this, options.CreateGuidObjects), new ContextMenuInitializer(this.textEditor, this.textEditor));
+			if (options.Options.TextEditorCommandGuid != null)
+				wpfCommandManager.Add(options.Options.TextEditorCommandGuid.Value, this.textEditor);
+			if (options.Options.TextAreaCommandGuid != null)
+				wpfCommandManager.Add(options.Options.TextAreaCommandGuid.Value, this.textEditor.TextArea);
+			if (options.Options.MenuGuid != null)
+				menuManager.InitializeContextMenu(this.textEditor, options.Options.MenuGuid.Value, new GuidObjectsCreator(this, options.Options.CreateGuidObjects), new ContextMenuInitializer(this.textEditor, this.textEditor));
 		}
 	}
 }

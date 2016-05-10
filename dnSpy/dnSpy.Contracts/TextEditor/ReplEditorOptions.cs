@@ -25,6 +25,15 @@ namespace dnSpy.Contracts.TextEditor {
 	/// </summary>
 	public sealed class ReplEditorOptions {
 		/// <summary>
+		/// Text editor options
+		/// </summary>
+		public CommonTextEditorOptions Options {
+			get { return options ?? (options = new CommonTextEditorOptions()); }
+			set { options = value; }
+		}
+		CommonTextEditorOptions options;
+
+		/// <summary>
 		/// Default <see cref="PrimaryPrompt"/> value
 		/// </summary>
 		public static readonly string DEFAULT_PRIMARY_PROMPT_TEXT = "> ";
@@ -53,31 +62,6 @@ namespace dnSpy.Contracts.TextEditor {
 		string secondaryPrompt;
 
 		/// <summary>
-		/// Command guid of text editor or null
-		/// </summary>
-		public Guid? TextEditorCommandGuid { get; set; }
-
-		/// <summary>
-		/// Command guid of text area or null
-		/// </summary>
-		public Guid? TextAreaCommandGuid { get; set; }
-
-		/// <summary>
-		/// Guid of context menu or null
-		/// </summary>
-		public Guid? MenuGuid { get; set; }
-
-		/// <summary>
-		/// Content type or null
-		/// </summary>
-		public IContentType ContentType { get; set; }
-
-		/// <summary>
-		/// Content type guid or null
-		/// </summary>
-		public Guid? ContentTypeGuid { get; set; }
-
-		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
@@ -86,11 +70,7 @@ namespace dnSpy.Contracts.TextEditor {
 		ReplEditorOptions CopyTo(ReplEditorOptions other) {
 			other.PrimaryPrompt = PrimaryPrompt;
 			other.SecondaryPrompt = SecondaryPrompt;
-			other.TextEditorCommandGuid = TextEditorCommandGuid;
-			other.TextAreaCommandGuid = TextAreaCommandGuid;
-			other.MenuGuid = MenuGuid;
-			other.ContentType = ContentType;
-			other.ContentTypeGuid = ContentTypeGuid;
+			other.Options = Options.Clone();
 			return other;
 		}
 	}

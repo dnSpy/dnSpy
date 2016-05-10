@@ -36,9 +36,9 @@ namespace dnSpy.Roslyn.Shared.TextEditor {
 		}
 
 		public IRoslynCodeEditorUI Create(RoslynCodeEditorOptions options) {
-			var helper = new CreateGuidObjectHelper(options.CreateGuidObjects);
+			var helper = new CreateGuidObjectHelper(options.Options.CreateGuidObjects);
 			var newOpts = options.ToCodeEditorOptions();
-			newOpts.CreateGuidObjects = helper.CreateFunc;
+			newOpts.Options.CreateGuidObjects = helper.CreateFunc;
 			var rce = new RoslynCodeEditor(options, codeEditorCreator.Create(newOpts));
 			helper.RoslynCodeEditor = rce;
 			return rce;

@@ -317,6 +317,7 @@
     <Compile Include="TextEditor\ColorOffsetInfo.cs" />
     <Compile Include="TextEditor\ColorPriority.cs" />
     <Compile Include="TextEditor\ColorSpan.cs" />
+    <Compile Include="TextEditor\CommonTextEditorOptions.cs" />
     <Compile Include="TextEditor\ContentTypeChangedEventArgs.cs" />
     <Compile Include="TextEditor\ContentTypeDefinition.cs" />
     <Compile Include="TextEditor\ContentTypes.cs" />

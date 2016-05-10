@@ -42,10 +42,12 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 
 		static ReplEditorOptions CreateReplEditorOptions() {
 			return new ReplEditorOptions {
-				TextEditorCommandGuid = CommandConstants.GUID_REPL_CSHARP_TEXTEDITOR,
-				TextAreaCommandGuid = CommandConstants.GUID_REPL_CSHARP_TEXTAREA,
-				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
-				ContentTypeGuid = new Guid(ContentTypes.REPL_CSHARP_ROSLYN),
+				Options = new CommonTextEditorOptions {
+					TextEditorCommandGuid = CommandConstants.GUID_REPL_CSHARP_TEXTEDITOR,
+					TextAreaCommandGuid = CommandConstants.GUID_REPL_CSHARP_TEXTAREA,
+					MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
+					ContentTypeGuid = new Guid(ContentTypes.REPL_CSHARP_ROSLYN),
+				},
 			};
 		}
 	}

@@ -57,9 +57,11 @@ namespace dnSpy.TextEditor {
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ReplEditorUI replEditorUI;
+			readonly Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects;
 
-			public GuidObjectsCreator(ReplEditorUI replEditorUI) {
+			public GuidObjectsCreator(ReplEditorUI replEditorUI, Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects) {
 				this.replEditorUI = replEditorUI;
+				this.createGuidObjects = createGuidObjects;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
@@ -68,6 +70,11 @@ namespace dnSpy.TextEditor {
 				var textEditor = (DnSpyTextEditor)creatorObject.Object;
 				foreach (var go in textEditor.GetGuidObjects(openedFromKeyboard))
 					yield return go;
+
+				if (createGuidObjects != null) {
+					foreach (var guidObject in createGuidObjects(creatorObject, openedFromKeyboard))
+						yield return guidObject;
+				}
 			}
 		}
 
@@ -77,7 +84,7 @@ namespace dnSpy.TextEditor {
 			this.PrimaryPrompt = options.PrimaryPrompt;
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<SubBuffer>();
-			var buffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
+			var buffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.Options.ContentType ?? options.Options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
 			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, buffer, false);
 			this.cachedColorsList = new CachedColorsList();
 			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
@@ -91,12 +98,12 @@ namespace dnSpy.TextEditor {
 			AddBinding(ApplicationCommands.Cut, (s, e) => CutSelection(), (s, e) => e.CanExecute = CanCutSelection && IsAtEditingPosition);
 			WriteOffsetOfPrompt(null, true);
 
-			if (options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(options.TextEditorCommandGuid.Value, textEditor);
-			if (options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(options.TextAreaCommandGuid.Value, textEditor.TextArea);
-			if (options.MenuGuid != null)
-				menuManager.InitializeContextMenu(this.textEditor, options.MenuGuid.Value, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditor, textEditor));
+			if (options.Options.TextEditorCommandGuid != null)
+				wpfCommandManager.Add(options.Options.TextEditorCommandGuid.Value, textEditor);
+			if (options.Options.TextAreaCommandGuid != null)
+				wpfCommandManager.Add(options.Options.TextAreaCommandGuid.Value, textEditor.TextArea);
+			if (options.Options.MenuGuid != null)
+				menuManager.InitializeContextMenu(this.textEditor, options.Options.MenuGuid.Value, new GuidObjectsCreator(this, options.Options.CreateGuidObjects), new ContextMenuInitializer(textEditor, textEditor));
 		}
 
 		void AddBinding(RoutedUICommand routedCmd, ExecutedRoutedEventHandler executed, CanExecuteRoutedEventHandler canExecute) {

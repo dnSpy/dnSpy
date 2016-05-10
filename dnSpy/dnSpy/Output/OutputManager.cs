@@ -163,12 +163,14 @@ namespace dnSpy.Output {
 				return vm;
 
 			var logEditorOptions = new LogEditorOptions {
-				TextEditorCommandGuid = textEditorCommandGuid,
-				TextAreaCommandGuid = textAreaCommandGuid,
-				MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
-				ContentType = contentTypeObj as IContentType,
-				ContentTypeGuid = contentTypeObj as Guid?,
-				CreateGuidObjects = (creatorObject, openedFromKeyboard) => CreateGuidObjects(creatorObject, openedFromKeyboard),
+				Options = new CommonTextEditorOptions {
+					TextEditorCommandGuid = textEditorCommandGuid,
+					TextAreaCommandGuid = textAreaCommandGuid,
+					MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
+					ContentType = contentTypeObj as IContentType,
+					ContentTypeGuid = contentTypeObj as Guid?,
+					CreateGuidObjects = (creatorObject, openedFromKeyboard) => CreateGuidObjects(creatorObject, openedFromKeyboard),
+				},
 			};
 			var logEditor = logEditorCreator.Create(logEditorOptions);
 
