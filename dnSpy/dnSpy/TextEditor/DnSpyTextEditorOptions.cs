@@ -29,7 +29,7 @@ namespace dnSpy.TextEditor {
 		public Guid? MenuGuid { get; }
 		public IContentType ContentType { get; }
 		public Guid? ContentTypeGuid { get; }
-		public Func<GuidObject, bool, IEnumerable<GuidObject>> CreateGuidObjects { get; }
+		public Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; }
 		public ITextBuffer TextBuffer { get; }
 		public bool UseShowLineNumbersOption { get; }
 		public Func<IGuidObjectsCreator> CreateGuidObjectsCreator { get; }

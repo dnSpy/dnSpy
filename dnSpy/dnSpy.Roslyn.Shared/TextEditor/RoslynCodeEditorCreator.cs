@@ -45,17 +45,17 @@ namespace dnSpy.Roslyn.Shared.TextEditor {
 		}
 
 		sealed class CreateGuidObjectHelper {
-			readonly Func<GuidObject, bool, IEnumerable<GuidObject>> origCreateGuidObjects;
+			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> origCreateGuidObjects;
 
 			public RoslynCodeEditor RoslynCodeEditor { get; set; }
 
-			public CreateGuidObjectHelper(Func<GuidObject, bool, IEnumerable<GuidObject>> origCreateGuidObjects) {
+			public CreateGuidObjectHelper(Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> origCreateGuidObjects) {
 				this.origCreateGuidObjects = origCreateGuidObjects;
 			}
 
-			public IEnumerable<GuidObject> CreateFunc(GuidObject creatorObject, bool openedFromKeyboard) {
+			public IEnumerable<GuidObject> CreateFunc(GuidObjectsCreatorArgs args) {
 				if (origCreateGuidObjects != null) {
-					foreach (var go in origCreateGuidObjects(creatorObject, openedFromKeyboard))
+					foreach (var go in origCreateGuidObjects(args))
 						yield return go;
 				}
 

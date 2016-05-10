@@ -78,8 +78,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				this.textLineObjectManager = textLineObjectManager;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
-				var iconBarMargin = (IIconBarMargin)creatorObject.Object;
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+				var iconBarMargin = (IIconBarMargin)args.CreatorObject.Object;
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, iconBarMargin.UIContext);
 
 				var line = iconBarMargin.GetLineFromMousePosition();

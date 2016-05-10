@@ -169,7 +169,7 @@ namespace dnSpy.Output {
 					MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
 					ContentType = contentTypeObj as IContentType,
 					ContentTypeGuid = contentTypeObj as Guid?,
-					CreateGuidObjects = (creatorObject, openedFromKeyboard) => CreateGuidObjects(creatorObject, openedFromKeyboard),
+					CreateGuidObjects = args => CreateGuidObjects(args),
 				},
 			};
 			var logEditor = logEditorCreator.Create(logEditorOptions);
@@ -182,7 +182,7 @@ namespace dnSpy.Output {
 			return vm;
 		}
 
-		IEnumerable<GuidObject> CreateGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+		IEnumerable<GuidObject> CreateGuidObjects(GuidObjectsCreatorArgs args) {
 			yield return new GuidObject(MenuConstants.GUIDOBJ_OUTPUT_MANAGER_GUID, this);
 			var vm = SelectedOutputBufferVM as IOutputTextPane;
 			if (vm != null)

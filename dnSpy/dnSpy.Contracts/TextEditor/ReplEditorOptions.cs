@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
 	/// <see cref="IReplEditor"/> options

@@ -67,14 +67,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				this.uiContext = uiContext;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, uiContext);
 
-				var teCtrl = (TextEditorControl)creatorObject.Object;
-				foreach (var go in teCtrl.TextEditor.GetGuidObjects(openedFromKeyboard))
+				var teCtrl = (TextEditorControl)args.CreatorObject.Object;
+				foreach (var go in teCtrl.TextEditor.GetGuidObjects(args.OpenedFromKeyboard))
 					yield return go;
 
-				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
+				var position = args.OpenedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
 				var @ref = teCtrl.GetReferenceSegmentAt(position);
 				if (@ref != null)
 					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.ToCodeReference());

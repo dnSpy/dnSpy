@@ -73,7 +73,7 @@ namespace dnSpy.ToolWindows {
 					this.tabGroup = tabGroup;
 				}
 
-				public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+				public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 					Debug.Assert(owner.ToolWindowGroupManager != null);
 					if (owner.ToolWindowGroupManager != null) {
 						var twg = owner.ToolWindowGroupManager.GetToolWindowGroup(tabGroup);

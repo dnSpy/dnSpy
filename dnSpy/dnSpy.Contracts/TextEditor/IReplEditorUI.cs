@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Windows;
-using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.TextEditor {

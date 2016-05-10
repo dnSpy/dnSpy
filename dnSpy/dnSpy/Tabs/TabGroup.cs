@@ -215,7 +215,7 @@ namespace dnSpy.Tabs {
 				this.tabGroup = tabGroup;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TABGROUP_GUID, tabGroup);
 			}
 		}

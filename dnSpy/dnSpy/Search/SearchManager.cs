@@ -96,8 +96,8 @@ namespace dnSpy.Search {
 		public object UIObject => searchControl;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
-				var listBox = (ListBox)creatorObject.Object;
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+				var listBox = (ListBox)args.CreatorObject.Object;
 				var searchResult = listBox.SelectedItem as ISearchResult;
 				if (searchResult != null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);

@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.TextEditor {

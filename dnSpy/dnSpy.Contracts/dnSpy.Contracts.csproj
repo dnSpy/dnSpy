@@ -203,6 +203,7 @@
     <Compile Include="Menus\ExportMenuAttribute.cs" />
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />
     <Compile Include="Menus\GuidObject.cs" />
+    <Compile Include="Menus\GuidObjectsCreatorArgs.cs" />
     <Compile Include="Menus\IContextMenuCreator.cs" />
     <Compile Include="Menus\IContextMenuInitializer.cs" />
     <Compile Include="Menus\IGuidObjectsCreator.cs" />

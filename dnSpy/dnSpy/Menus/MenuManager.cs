@@ -241,7 +241,7 @@ namespace dnSpy.Menus {
 			if (prevEventArgs.Target == evArgs)
 				return null;
 
-			var ctx = new MenuItemContext(topLevelMenuGuid, openedFromKeyboard, creatorObject, creator == null ? null : creator.GetGuidObjects(creatorObject, openedFromKeyboard));
+			var ctx = new MenuItemContext(topLevelMenuGuid, openedFromKeyboard, creatorObject, creator?.GetGuidObjects(new GuidObjectsCreatorArgs(creatorObject, openedFromKeyboard)));
 
 			List<MenuItemGroupMD> groups;
 			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out groups);

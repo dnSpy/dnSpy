@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <summary>
 		/// Creates <see cref="GuidObject"/>s, can be null
 		/// </summary>
-		public Func<GuidObject, bool, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
+		public Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
 
 		/// <summary>
 		/// Clones this

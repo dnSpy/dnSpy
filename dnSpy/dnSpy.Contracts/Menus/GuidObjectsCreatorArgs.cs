@@ -17,18 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
-	/// Creates <see cref="GuidObject"/>s
+	/// Data passed to <see cref="IGuidObjectsCreator.GetGuidObjects(GuidObjectsCreatorArgs)"/>
 	/// </summary>
-	public interface IGuidObjectsCreator {
+	public struct GuidObjectsCreatorArgs {
 		/// <summary>
-		/// Gets extra <see cref="GuidObject"/>s to add to <see cref="IMenuItemContext.GuidObjects"/>
+		/// The owner object (<see cref="IMenuItemContext.CreatorObject"/>)
 		/// </summary>
-		/// <param name="args">Args</param>
-		/// <returns></returns>
-		IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args);
+		public GuidObject CreatorObject { get; }
+
+		/// <summary>
+		/// true if it was opened from the keyboard
+		/// </summary>
+		public bool OpenedFromKeyboard { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="creatorObject">The owner object (<see cref="IMenuItemContext.CreatorObject"/>)</param>
+		/// <param name="openedFromKeyboard">true if it was opened from the keyboard</param>
+		public GuidObjectsCreatorArgs(GuidObject creatorObject, bool openedFromKeyboard) {
+			CreatorObject = creatorObject;
+			OpenedFromKeyboard = openedFromKeyboard;
+		}
 	}
 }

@@ -35,22 +35,22 @@ namespace dnSpy.TextEditor {
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly CodeEditorUI codeEditorUI;
-			readonly Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects;
+			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
 
-			public GuidObjectsCreator(CodeEditorUI codeEditorUI, Func<GuidObject, bool, IEnumerable<GuidObject>> createGuidObjects) {
+			public GuidObjectsCreator(CodeEditorUI codeEditorUI, Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects) {
 				this.codeEditorUI = codeEditorUI;
 				this.createGuidObjects = createGuidObjects;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditorUI);
 
-				var textEditor = (DnSpyTextEditor)creatorObject.Object;
-				foreach (var go in textEditor.GetGuidObjects(openedFromKeyboard))
+				var textEditor = (DnSpyTextEditor)args.CreatorObject.Object;
+				foreach (var go in textEditor.GetGuidObjects(args.OpenedFromKeyboard))
 					yield return go;
 
 				if (createGuidObjects != null) {
-					foreach (var guidObject in createGuidObjects(creatorObject, openedFromKeyboard))
+					foreach (var guidObject in createGuidObjects(args))
 						yield return guidObject;
 				}
 			}

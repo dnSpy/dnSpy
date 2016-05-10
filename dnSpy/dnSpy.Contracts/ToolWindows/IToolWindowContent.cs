@@ -19,8 +19,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.ToolWindows {
