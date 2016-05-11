@@ -67,6 +67,7 @@ namespace dnSpy.Shared.TextEditor {
 		public void CleanUp() {
 			theme = null;
 			colorInfos.Clear();
+			(extraListWeakRef?.Target as List<ColorInfo>)?.Clear();
 		}
 
 		public void Add(ColorSpan colorSpan) {
@@ -100,7 +101,6 @@ namespace dnSpy.Shared.TextEditor {
 				Debug.Assert(colorInfos.Count != 0);
 
 				list = extraListWeakRef?.Target as List<ColorInfo> ?? new List<ColorInfo>();
-				list.Clear();
 				var stack = new List<ColorInfo>();
 				int currOffs = 0;
 				for (int i = 0; i < colorInfos.Count;) {
@@ -114,14 +114,9 @@ namespace dnSpy.Shared.TextEditor {
 					}
 					Debug.Assert(stack.Count != 0);
 					Debug.Assert(stack.All(a => a.Span.Start == currOffs));
-					stack.Sort((a, b) => b.Priority.CompareTo(a.Priority));
-					int end = stack.Min(a => a.Span.End);
-					end = Math.Min(end, i < colorInfos.Count ? colorInfos[i].Span.Start : span.End);
-					var fgColor = stack.FirstOrDefault(a => a.Foreground?.Foreground != null);
-					var bgColor = stack.FirstOrDefault(a => a.Background?.Background != null);
-					var newInfo = new ColorInfo(Span.FromBounds(currOffs, end), fgColor.Foreground, bgColor.Background, 0);
-					Debug.Assert(list.Count == 0 || list[list.Count - 1].Span.End <= newInfo.Span.Start);
-					list.Add(newInfo);
+
+					var newInfo = AddColor(list, stack, currOffs, i);
+
 					for (int j = stack.Count - 1; j >= 0; j--) {
 						var info = stack[j];
 						if (newInfo.Span.End >= info.Span.End)
@@ -131,11 +126,28 @@ namespace dnSpy.Shared.TextEditor {
 					}
 					currOffs = newInfo.Span.End;
 				}
+				if (stack.Count != 0) {
+					Debug.Assert(stack.All(a => a.Span == stack[0].Span));
+					AddColor(list, stack, currOffs, colorInfos.Count);
+				}
+
 				if (extraListWeakRef?.Target == null)
 					extraListWeakRef = new WeakReference(list);
 			}
 			Debug.Assert(!HasOverlaps(list));
 			return list;
+		}
+
+		ColorInfo AddColor(List<ColorInfo> list, List<ColorInfo> stack, int currOffs, int index) {
+			stack.Sort((a, b) => b.Priority.CompareTo(a.Priority));
+			int end = stack.Min(a => a.Span.End);
+			end = Math.Min(end, index < colorInfos.Count ? colorInfos[index].Span.Start : span.End);
+			var fgColor = stack.FirstOrDefault(a => a.Foreground?.Foreground != null);
+			var bgColor = stack.FirstOrDefault(a => a.Background?.Background != null);
+			var newInfo = new ColorInfo(Span.FromBounds(currOffs, end), fgColor.Foreground, bgColor.Background, 0);
+			Debug.Assert(list.Count == 0 || list[list.Count - 1].Span.End <= newInfo.Span.Start);
+			list.Add(newInfo);
+			return newInfo;
 		}
 
 		bool HasOverlaps(List<ColorInfo> sortedList) {
