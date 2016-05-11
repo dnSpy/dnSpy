@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyChildNodeTabContent.cs" />
+    <Compile Include="Colorizer.cs" />
     <Compile Include="NewDnSpyFile.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
