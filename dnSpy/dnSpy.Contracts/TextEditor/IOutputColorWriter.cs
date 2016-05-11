@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <param name="writer">Writer</param>
 		/// <param name="text">Text</param>
-		public static void WriteLine(this IOutputColorWriter writer, string text) {
+		public static void WriteLine(this IOutputColorWriter writer, string text = null) {
 			writer.Write(BoxedOutputColor.Text, text);
 			writer.Write(BoxedOutputColor.Text, Environment.NewLine);
 		}

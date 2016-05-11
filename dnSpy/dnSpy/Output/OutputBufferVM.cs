@@ -100,6 +100,8 @@ namespace dnSpy.Output {
 		}
 
 		void WriteInternal(object color, string text) {
+			if (text == null)
+				return;
 			int so = 0;
 			while (so < text.Length) {
 				if (needTimestamp) {
