@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (func == null)
 				return false;
 
-			return DebugUtils.GoToIL(fileTabManager, moduleLoader.LoadModule(func.Module, true), frame.Token, frame.GetILOffset(moduleLoader), newTab);
+			return DebugUtils.GoToIL(fileTabManager, moduleLoader.LoadModule(func.Module, canLoadDynFile: true, isAutoLoaded: true), frame.Token, frame.GetILOffset(moduleLoader), newTab);
 		}
 
 		public static bool CanGoToDisasm(CorFrame frame) {
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.CallStack {
 				return 0;
 
 			if (ip.IsEpilog) {
-				var mod = moduleLoader.LoadModule(frame.Function?.Module, true)?.ModuleDef;
+				var mod = moduleLoader.LoadModule(frame.Function?.Module, canLoadDynFile: true, isAutoLoaded: true)?.ModuleDef;
 				var md = mod?.ResolveToken(frame.Token) as MethodDef;
 				if (md != null && md.Body != null && md.Body.Instructions.Count > 0)
 					return md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;

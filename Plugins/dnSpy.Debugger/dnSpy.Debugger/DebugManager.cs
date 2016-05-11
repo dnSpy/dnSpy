@@ -1003,7 +1003,7 @@ namespace dnSpy.Debugger {
 			}
 
 			if (file == null)
-				file = moduleLoader.Value.LoadModule(currentLocation.Value.Function.Module, true);
+				file = moduleLoader.Value.LoadModule(currentLocation.Value.Function.Module, canLoadDynFile: true, isAutoLoaded: true);
 			Debug.Assert(file != null);
 			var loadedMod = file?.ModuleDef;
 			if (loadedMod == null) {

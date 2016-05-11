@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var bp = Breakpoint as ILCodeBreakpoint;
 			if (bp == null)
 				return null;
-			var file = Context.ModuleLoader.LoadModule(bp.SerializedDnToken.Module, canLoadDynFile, true);
+			var file = Context.ModuleLoader.LoadModule(bp.SerializedDnToken.Module, canLoadDynFile, diskFileOk: true, isAutoLoaded: true);
 			var mod = file == null ? null : file.ModuleDef;
 			return mod == null ? null : mod.ResolveToken(bp.SerializedDnToken.Token) as MethodDef;
 		}

@@ -30,7 +30,7 @@ using dnSpy.Decompiler.Shared;
 namespace dnSpy.Debugger {
 	static class DebugUtils {
 		public static void GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, SerializedDnModule serAsm, uint token, uint ilOffset, bool newTab) {
-			var file = moduleLoader.LoadModule(serAsm, true);
+			var file = moduleLoader.LoadModule(serAsm, canLoadDynFile: true, diskFileOk: false, isAutoLoaded: true);
 			GoToIL(fileTabManager, file, token, ilOffset, newTab);
 		}
 

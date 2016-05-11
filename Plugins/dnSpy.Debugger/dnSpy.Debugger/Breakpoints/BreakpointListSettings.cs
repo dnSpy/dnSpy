@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		string GetMethodAsString(SerializedDnToken key) {
-			var file = moduleLoader.Value.LoadModule(key.Module, true, true);
+			var file = moduleLoader.Value.LoadModule(key.Module, canLoadDynFile: true, diskFileOk: true, isAutoLoaded: true);
 			var method = file?.ModuleDef?.ResolveToken(key.Token) as MethodDef;
 			return method?.ToString();
 		}

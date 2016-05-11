@@ -216,7 +216,7 @@ namespace dnSpy.Debugger.Modules {
 			if (vm == null)
 				return;
 			if (ShowErrorIfDynamic(inMemoryModuleManager, vm.Module))
-				GoToFile(fileTabManager, moduleLoader.Value.LoadModule(vm.Module, true), newTab);
+				GoToFile(fileTabManager, moduleLoader.Value.LoadModule(vm.Module, canLoadDynFile: true, isAutoLoaded: false), newTab);
 		}
 
 		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleManager> inMemoryModuleManager, DnModule module, bool canShowDlgBox = true) {
@@ -286,7 +286,7 @@ namespace dnSpy.Debugger.Modules {
 				if (!res)
 					canShowDlgBox = false;
 				if (res)
-					moduleLoader.Value.LoadModule(vm.Module, true);
+					moduleLoader.Value.LoadModule(vm.Module, canLoadDynFile: true, isAutoLoaded: false);
 			}
 		}
 	}

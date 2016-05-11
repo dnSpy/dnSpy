@@ -29,9 +29,9 @@ using dnSpy.Debugger.IMModules;
 
 namespace dnSpy.Debugger {
 	interface IModuleLoader {
-		IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile);
-		IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile);
-		IDnSpyFile LoadModule(SerializedDnModule serMod, bool canLoadDynFile, bool diskFileOk = false);
+		IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile, bool isAutoLoaded);
+		IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded);
+		IDnSpyFile LoadModule(SerializedDnModule serMod, bool canLoadDynFile, bool diskFileOk, bool isAutoLoaded);
 		DnModule GetDnModule(CorModule module);
 	}
 
@@ -75,19 +75,19 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile) {
+		public IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile, bool isAutoLoaded) {
 			if (module == null)
 				return null;
 
 			var dnModule = GetDnModule(module);
 			Debug.Assert(dnModule != null);
 			if (dnModule != null)
-				return LoadModule(dnModule, canLoadDynFile);
+				return LoadModule(dnModule, canLoadDynFile, isAutoLoaded);
 
-			return LoadModule(module.SerializedDnModule, canLoadDynFile);
+			return LoadModule(module.SerializedDnModule, canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
 		}
 
-		public IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile) {
+		public IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded) {
 			if (module == null)
 				return null;
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger {
 			if (file != null)
 				return file;
 			var serMod = module.SerializedDnModule;
-			return LoadModule(serMod, canLoadDynFile);
+			return LoadModule(serMod, canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
 		}
 
 		IEnumerable<IDnSpyFile> AllDnSpyFiles => inMemoryModuleManager.Value.AllDnSpyFiles;
@@ -151,9 +151,7 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public IDnSpyFile LoadModule(SerializedDnModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
-			const bool isAutoLoaded = true;
-
+		public IDnSpyFile LoadModule(SerializedDnModule serMod, bool canLoadDynFile, bool diskFileOk, bool isAutoLoaded) {
 			IDnSpyFile file;
 			if (diskFileOk) {
 				file = LoadExisting(serMod) ?? LoadNonDiskFile(serMod, canLoadDynFile);
