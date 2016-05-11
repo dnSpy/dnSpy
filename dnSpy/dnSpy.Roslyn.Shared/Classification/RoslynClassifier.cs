@@ -307,7 +307,7 @@ the_switch:
 				return color ?? OutputColor.TypeGenericParameter;
 
 			case ClassificationTypeNames.VerbatimStringLiteral:
-				return OutputColor.String;
+				return OutputColor.VerbatimString;
 
 			case ClassificationTypeNames.WhiteSpace:
 				return OutputColor.Text;

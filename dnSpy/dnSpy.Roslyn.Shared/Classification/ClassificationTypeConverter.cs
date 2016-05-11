@@ -314,7 +314,7 @@ the_switch:
 				return GetTypeParamKind(symRes.Symbol);
 
 			case ClassificationTypeNames.VerbatimStringLiteral:
-				return OutputColor.String;
+				return OutputColor.VerbatimString;
 
 			case ClassificationTypeNames.WhiteSpace:
 				return OutputColor.Text;
