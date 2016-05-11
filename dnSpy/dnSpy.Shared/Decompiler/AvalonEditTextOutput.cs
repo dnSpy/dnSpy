@@ -113,13 +113,6 @@ namespace dnSpy.Shared.Decompiler {
 		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) =>
 			ElementGenerators.Add(elementGenerator);
 
-		/// <summary>
-		/// Controls the maximum length of the text.
-		/// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
-		/// thus aborting the decompilation.
-		/// </summary>
-		public int LengthLimit = int.MaxValue;
-
 		public int TextLength => b.Length;
 		public override string ToString() => b.ToString();
 		public TextPosition Location => new TextPosition(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
@@ -190,9 +183,6 @@ namespace dnSpy.Shared.Decompiler {
 			needsIndent = true;
 			lastLineStart = b.Length;
 			lineNumber++;
-			if (this.TextLength > LengthLimit) {
-				throw new OutputLengthExceededException();
-			}
 		}
 
 		public void WriteDefinition(string text, object definition, object data, bool isLocal) {
