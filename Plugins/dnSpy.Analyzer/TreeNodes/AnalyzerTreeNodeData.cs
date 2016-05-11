@@ -21,11 +21,12 @@ using System;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
+using dnSpy.Shared.TextEditor;
 using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -40,7 +41,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public sealed override object Text {
 			get {
-				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
+				var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
 
 				var cached = cachedText?.Target;
 				if (cached != null)
@@ -55,12 +56,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 		WeakReference cachedText;
 
-		protected abstract void Write(ISyntaxHighlightOutput output, ILanguage language);
+		protected abstract void Write(IOutputColorWriter output, ILanguage language);
 		public sealed override object ToolTip => null;
 		public sealed override string ToString() => ToString(Context.Language);
 
 		public string ToString(ILanguage language) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			Write(output, language);
 			return output.ToString();
 		}

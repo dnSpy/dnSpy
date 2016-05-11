@@ -28,29 +28,30 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.Controls;
+using dnSpy.Shared.TextEditor;
 using dnSpy.Shared.Themes;
 using ICSharpCode.AvalonEdit.Utils;
 
-namespace dnSpy.Shared.Highlighting {
-	sealed class SyntaxHighlighter : ISyntaxHighlightOutput {
+namespace dnSpy.Shared.Controls {
+	sealed class TextBlockColorOutput : IOutputColorWriter {
 		readonly CachedTextTokenColors cachedTextTokenColors;
 		readonly StringBuilder sb;
 
 		public bool IsEmpty => sb.Length == 0;
 		public string Text => sb.ToString();
 
-		public SyntaxHighlighter() {
+		public TextBlockColorOutput() {
 			this.cachedTextTokenColors = new CachedTextTokenColors();
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(string s, object data) {
-			cachedTextTokenColors.Append(data, s);
-			sb.Append(s);
+		public void Write(OutputColor color, string text) => Write(color.Box(), text);
+		public void Write(object color, string text) {
+			cachedTextTokenColors.Append(color, text);
+			sb.Append(text);
 			Debug.Assert(sb.Length == cachedTextTokenColors.Length);
 		}
 
@@ -140,7 +141,7 @@ namespace dnSpy.Shared.Highlighting {
 		sealed class ThemeManagerLoader : IAutoLoaded {
 			[ImportingConstructor]
 			ThemeManagerLoader(IThemeManager themeManager) {
-				SyntaxHighlighter.themeManager = themeManager;
+				TextBlockColorOutput.themeManager = themeManager;
 			}
 		}
 		static IThemeManager themeManager;

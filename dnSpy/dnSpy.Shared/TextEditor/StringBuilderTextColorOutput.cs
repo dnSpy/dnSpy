@@ -18,20 +18,21 @@
 */
 
 using System.Text;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 
-namespace dnSpy.Shared.Highlighting {
-	public sealed class NoSyntaxHighlightOutput : ISyntaxHighlightOutput {
+namespace dnSpy.Shared.TextEditor {
+	public sealed class StringBuilderTextColorOutput : IOutputColorWriter {
 		readonly StringBuilder sb;
 
 		public bool IsEmpty => sb.Length == 0;
 		public string Text => sb.ToString();
 
-		public NoSyntaxHighlightOutput() {
+		public StringBuilderTextColorOutput() {
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(string s, object data) => sb.Append(s);
+		public void Write(object color, string text) => sb.Append(text);
+		public void Write(OutputColor color, string text) => Write(color.Box(), text);
 		public override string ToString() => sb.ToString();
 	}
 }

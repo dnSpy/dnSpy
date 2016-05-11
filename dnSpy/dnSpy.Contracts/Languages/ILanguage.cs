@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
 
@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="type">Type</param>
-		void WriteName(ISyntaxHighlightOutput output, TypeDef type);
+		void WriteName(IOutputColorWriter output, TypeDef type);
 
 		/// <summary>
 		/// Writes a property name
@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="property">Type</param>
 		/// <param name="isIndexer">true if it's an indexer</param>
-		void WriteName(ISyntaxHighlightOutput output, PropertyDef property, bool? isIndexer);
+		void WriteName(IOutputColorWriter output, PropertyDef property, bool? isIndexer);
 
 		/// <summary>
 		/// Writes a type name
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="type">Type</param>
 		/// <param name="includeNamespace">true to include namespace</param>
 		/// <param name="pd"><see cref="ParamDef"/> or null</param>
-		void WriteType(ISyntaxHighlightOutput output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null);
+		void WriteType(IOutputColorWriter output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null);
 
 		/// <summary>
 		/// Decompiles a method
@@ -171,7 +171,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="member">Member</param>
 		/// <param name="typeAttributes">Type containing attributes, used to detect the dynamic types and out/ref params</param>
-		void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes);
+		void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes);
 
 		/// <summary>
 		/// Writes a tooltip
@@ -179,7 +179,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="variable">Local or argument</param>
 		/// <param name="name">Name or null</param>
-		void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name);
+		void WriteToolTip(IOutputColorWriter output, IVariable variable, string name);
 
 		/// <summary>
 		/// Writes <paramref name="member"/> to <paramref name="output"/>
@@ -187,7 +187,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="member">Member</param>
 		/// <param name="flags">Flags</param>
-		void Write(ISyntaxHighlightOutput output, IMemberRef member, SimplePrinterFlags flags);
+		void Write(IOutputColorWriter output, IMemberRef member, SimplePrinterFlags flags);
 
 		/// <summary>
 		/// Writes a comment prefix
@@ -239,7 +239,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="comment">Comment</param>
 		public static void WriteCommentLine(this ILanguage self, ITextOutput output, string comment) {
 			self.WriteCommentBegin(output, true);
-			output.Write(comment, BoxedTextTokenKind.Comment);
+			output.Write(comment, BoxedOutputColor.Comment);
 			self.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

@@ -20,18 +20,18 @@
 using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 		readonly bool useHex;
 		readonly ILanguage language;
 
-		public BreakpointPrinter(ISyntaxHighlightOutput output, bool useHex, ILanguage language) {
+		public BreakpointPrinter(IOutputColorWriter output, bool useHex, ILanguage language) {
 			this.output = output;
 			this.useHex = useHex;
 			this.language = language;
@@ -53,17 +53,17 @@ namespace dnSpy.Debugger.Breakpoints {
 				return "0x{0:X8}";
 		}
 
-		void WriteILOffset(ISyntaxHighlightOutput output, uint offset) {
+		void WriteILOffset(IOutputColorWriter output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(string.Format(GetHexFormatUInt16(), offset), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format(GetHexFormatUInt16(), offset));
 			else
-				output.Write(string.Format(GetHexFormatUInt32(), offset), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format(GetHexFormatUInt32(), offset));
 		}
 
-		void WriteToken(ISyntaxHighlightOutput output, uint token) {
+		void WriteToken(IOutputColorWriter output, uint token) {
 			// Tokens are always in hex
-			output.Write(string.Format(GetHexFormatUInt32(), token), BoxedTextTokenKind.Number);
+			output.Write(BoxedOutputColor.Number, string.Format(GetHexFormatUInt32(), token));
 		}
 
 		public void WriteName(BreakpointVM vm) {
@@ -85,14 +85,14 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (method == null) {
 					vm.NameError = true;
 					if (printedToken)
-						output.Write("???", BoxedTextTokenKind.Error);
+						output.Write(BoxedOutputColor.Error, "???");
 					else
-						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), BoxedTextTokenKind.Number);
+						output.Write(BoxedOutputColor.Number, string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token));
 				}
 				else
 					MethodLanguage.Write(output, method, GetFlags(vm.Context));
 				output.WriteSpace();
-				output.Write("+", BoxedTextTokenKind.Operator);
+				output.Write(BoxedOutputColor.Operator, "+");
 				output.WriteSpace();
 				WriteILOffset(output, ilbp.ILOffset);
 				return;

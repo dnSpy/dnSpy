@@ -22,7 +22,6 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.ILSpy.CSharp;
-using dnSpy.Shared.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;

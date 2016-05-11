@@ -174,7 +174,6 @@
     <Compile Include="Files\TreeView\Resources\IUnknownSerializedResourceElementNode.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceData.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceDataType.cs" />
-    <Compile Include="Highlighting\ISyntaxHighlightOutput.cs" />
     <Compile Include="Images\BackgroundType.cs" />
     <Compile Include="Images\IDotNetImageManager.cs" />
     <Compile Include="Images\IImageManager.cs" />
@@ -198,7 +197,7 @@
     <Compile Include="Languages\ISimpleILPrinter.cs" />
     <Compile Include="Languages\LanguageConstants.cs" />
     <Compile Include="Languages\SimplePrinterFlags.cs" />
-    <Compile Include="Languages\SyntaxHighlightOutputToTextOutput.cs" />
+    <Compile Include="Languages\TextColorOutputToTextOutput.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />

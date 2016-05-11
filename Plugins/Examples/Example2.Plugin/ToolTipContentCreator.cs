@@ -1,5 +1,5 @@
 ﻿using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace Example2.Plugin {
 	// This reference is added to the "decompiled" code by ModuleChildNode.Decompile()
@@ -19,7 +19,7 @@ namespace Example2.Plugin {
 			var sref = @ref as StringInfoReference;
 			if (sref != null) {
 				var creator = context.Create();
-				creator.Output.Write(sref.Message, BoxedTextTokenKind.String);
+				creator.Output.Write(BoxedOutputColor.String, sref.Message);
 				return creator.Create();
 			}
 

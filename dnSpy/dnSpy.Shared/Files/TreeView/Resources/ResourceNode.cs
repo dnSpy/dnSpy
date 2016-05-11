@@ -25,23 +25,23 @@ using dnlib.DotNet;
 using dnlib.IO;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
 	public abstract class ResourceNode : FileTreeNodeData, IResourceNode {
 		public Resource Resource { get; set; }
 		public string Name => Resource.Name;
 
-		protected sealed override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected sealed override void Write(IOutputColorWriter output, ILanguage language) =>
 			output.WriteFilename(Resource.Name);
-		protected sealed override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected sealed override void WriteToolTip(IOutputColorWriter output, ILanguage language) =>
 			base.WriteToolTip(output, language);
 		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
 
@@ -114,7 +114,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
-			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
+			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
 			string extra = null;
 			switch (Resource.ResourceType) {
 			case ResourceType.AssemblyLinked:
@@ -128,7 +128,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				extra = string.Format(dnSpy_Shared_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);
 				break;
 			}
-			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedTextTokenKind.Comment);
+			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedOutputColor.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

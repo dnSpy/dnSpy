@@ -17,19 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Contracts.TextEditor;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabPrinter {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 
-		public TabPrinter(ISyntaxHighlightOutput output) {
+		public TabPrinter(IOutputColorWriter output) {
 			this.output = output;
 		}
 
-		public void WriteName(TabVM vm) => output.Write(vm.Name, BoxedTextTokenKind.Text);
+		public void WriteName(TabVM vm) => output.Write(BoxedOutputColor.Text, vm.Name);
 		public void WriteModule(TabVM vm) => output.WriteModule(vm.Module);
 		public void WritePath(TabVM vm) => output.WriteFilename(vm.Path);
 	}

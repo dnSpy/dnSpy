@@ -17,10 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Contracts.TextEditor;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AssemblyNode : EntityNode {
@@ -31,7 +31,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedAssembly);
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) => output.Write(analyzedAssembly);
+		protected override void Write(IOutputColorWriter output, ILanguage language) => output.Write(analyzedAssembly);
 		public override IMemberRef Member => null;
 		public override IMDTokenProvider Reference => analyzedAssembly;
 	}

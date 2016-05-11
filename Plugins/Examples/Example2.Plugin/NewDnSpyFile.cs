@@ -4,14 +4,12 @@ using System.IO;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files;
 using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 // Adds a new IDnSpyFile that can be loaded into the file treeview. It gets its own IDnSpyFileNode.
 // Open a .txt/.xml/.cs/.vb (see supportedExtensions) file to trigger this code.
@@ -123,13 +121,13 @@ namespace Example2.Plugin {
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
 			new ImageReference(GetType().Assembly, "TextFile");
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(IOutputColorWriter output, ILanguage language) {
 			output.WriteFilename(Path.GetFileName(file.Filename));
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeGuid = new Guid(ContentTypes.PLAIN_TEXT);
-			context.Output.Write(file.Text, BoxedTextTokenKind.Text);
+			context.Output.Write(file.Text, BoxedOutputColor.Text);
 			return true;
 		}
 	}

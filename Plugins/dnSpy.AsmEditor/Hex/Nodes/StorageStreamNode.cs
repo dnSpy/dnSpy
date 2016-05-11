@@ -23,11 +23,11 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	enum StorageStreamType {
@@ -100,14 +100,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, BoxedTextTokenKind.InstanceField);
+		protected override void Write(IOutputColorWriter output) {
+			output.Write(BoxedOutputColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageStream);
 			output.WriteSpace();
-			output.Write("#", BoxedTextTokenKind.Operator);
-			output.Write(StreamNumber.ToString(), BoxedTextTokenKind.Number);
-			output.Write(":", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Operator, "#");
+			output.Write(BoxedOutputColor.Number, StreamNumber.ToString());
+			output.Write(BoxedOutputColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), StorageStreamType == StorageStreamType.None ? BoxedTextTokenKind.Error : BoxedTextTokenKind.Type);
+			output.Write(StorageStreamType == StorageStreamType.None ? BoxedOutputColor.Error : BoxedOutputColor.Type, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

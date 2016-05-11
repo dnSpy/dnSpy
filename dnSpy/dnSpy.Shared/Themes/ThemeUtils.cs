@@ -38,7 +38,7 @@ namespace dnSpy.Shared.Themes {
 				return new Color((ColorType)data);
 
 			if (data is OutputColor)
-				return new Color(((OutputColor)data).ToTextTokenKind().ToColorType());
+				return new Color(((OutputColor)data).ToColorType());
 
 			Debug.Fail($"Unknown color: '{data}'");
 			return new Color(ColorType.Error);

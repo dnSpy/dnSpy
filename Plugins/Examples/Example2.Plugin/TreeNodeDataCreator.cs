@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TextEditor;
@@ -41,9 +40,8 @@ namespace Example2.Plugin {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "EntryPoint");
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Assembly Child", BoxedTextTokenKind.Text);
-		}
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, "Assembly Child");
 
 		// If you don't want the node to be appended to the children, override this
 		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
@@ -98,8 +96,8 @@ namespace Example2.Plugin {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Module Child", BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) {
+			output.Write(BoxedOutputColor.Text, "Module Child");
 		}
 
 		// Gets called by dnSpy if there's only one node to decompile. This method gets called in a
@@ -121,14 +119,14 @@ namespace Example2.Plugin {
 			context.HighlightingExtension = ".cs";
 			context.ContentTypeGuid = new Guid(ContentTypes.CSHARP);
 			context.Language.WriteCommentLine(context.Output, "Initialize it to the secret key");
-			context.Output.WriteReference("int", new StringInfoReference("This is a reference added by the code"), BoxedTextTokenKind.Keyword);
+			context.Output.WriteReference("int", new StringInfoReference("This is a reference added by the code"), BoxedOutputColor.Keyword);
 			context.Output.WriteSpace();
-			context.Output.WriteReference("secret", new StringInfoReference("The real secret is actually 42 not 1234"), BoxedTextTokenKind.Local);
+			context.Output.WriteReference("secret", new StringInfoReference("The real secret is actually 42 not 1234"), BoxedOutputColor.Local);
 			context.Output.WriteSpace();
-			context.Output.Write("=", BoxedTextTokenKind.Operator);
+			context.Output.Write("=", BoxedOutputColor.Operator);
 			context.Output.WriteSpace();
-			context.Output.Write("1234", BoxedTextTokenKind.Number);
-			context.Output.Write(";", BoxedTextTokenKind.Punctuation);
+			context.Output.Write("1234", BoxedOutputColor.Number);
+			context.Output.Write(";", BoxedOutputColor.Punctuation);
 			context.Output.WriteLine();
 
 			// We decompiled ourselves so return true
@@ -175,8 +173,8 @@ namespace Example2.Plugin {
 		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(Message, BoxedTextTokenKind.Comment);
+		protected override void Write(IOutputColorWriter output, ILanguage language) {
+			output.Write(BoxedOutputColor.Comment, Message);
 		}
 
 		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;

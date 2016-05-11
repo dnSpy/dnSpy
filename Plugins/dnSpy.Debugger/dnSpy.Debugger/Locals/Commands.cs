@@ -34,13 +34,14 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Locals {
 	[ExportAutoLoaded]
@@ -184,18 +185,18 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
 				var printer = new ValuePrinter(output, debuggerSettings.UseHexadecimal);
 				printer.WriteExpander(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				// Add an extra here to emulate VS output
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteName(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteValue(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteType(vm);
 				output.WriteLine();
 			}
@@ -249,7 +250,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
 				var printer = new ValuePrinter(output, debuggerSettings.UseHexadecimal);

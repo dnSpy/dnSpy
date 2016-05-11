@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips {
 	/// <summary>
 	/// Writes tooltips
 	/// </summary>
-	public interface ICodeToolTipWriter : ISyntaxHighlightOutput {
+	public interface ICodeToolTipWriter : IOutputColorWriter {
 		/// <summary>
 		/// Writes an XML doc comment. Returns true if it was written, false otherwise
 		/// </summary>

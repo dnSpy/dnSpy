@@ -21,9 +21,9 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -44,7 +44,7 @@ namespace dnSpy.Files.TreeView {
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
 			new ImageReference();
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) { }
+		protected override void Write(IOutputColorWriter output, ILanguage language) { }
 
 		public override bool CanDrop(DragEventArgs e, int index) {
 			if (!Context.CanDragAndDrop) {

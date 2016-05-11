@@ -29,7 +29,6 @@ using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
 using dnSpy.Languages.ILSpy.XmlDoc;
-using dnSpy.Shared.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;

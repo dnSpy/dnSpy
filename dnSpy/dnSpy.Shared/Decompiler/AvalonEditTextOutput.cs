@@ -23,8 +23,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 
@@ -161,7 +162,7 @@ namespace dnSpy.Shared.Decompiler {
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
-					Append(BoxedTextTokenKind.Text, "\t");
+					Append(BoxedOutputColor.Text, "\t");
 				}
 			}
 		}

@@ -24,9 +24,8 @@ using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventFiredByNode : SearchNode {
@@ -48,8 +47,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(dnSpy_Analyzer_Resources.RaisedByTreeNode, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.RaisedByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();

@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.IL;
 using dnSpy.Shared.Languages.XmlDoc;
@@ -203,8 +202,8 @@ namespace dnSpy.Languages.ILSpy.IL {
 		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 
-		public override void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
-			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(SyntaxHighlightOutputToTextOutput.Create(output), member))
+		public override void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {
+			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(TextColorOutputToTextOutput.Create(output), member))
 				return;
 
 			base.WriteToolTip(output, member, typeAttributes);

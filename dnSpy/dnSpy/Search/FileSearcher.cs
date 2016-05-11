@@ -29,7 +29,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 using dnSpy.Properties;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Search {
 	[Serializable]
@@ -109,7 +109,7 @@ namespace dnSpy.Search {
 
 		void SearchNewThread(object o) {
 			try {
-				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, BoxedTextTokenKind.Text, true);
+				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, BoxedOutputColor.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var opts = new ParallelOptions {
@@ -158,7 +158,7 @@ namespace dnSpy.Search {
 			lock (lockObj) {
 				if (totalResultsFound++ >= options.MaxResults) {
 					if (totalResultsFound == options.MaxResults + 1)
-						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), BoxedTextTokenKind.Error, true));
+						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), BoxedOutputColor.Error, true));
 					throw new TooManyResultsException();
 				}
 			}

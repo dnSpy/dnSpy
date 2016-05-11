@@ -31,11 +31,12 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]
@@ -121,15 +122,15 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, languageManager.Language);
 				printer.WriteName(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteAssembly(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteModule(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteFile(vm);
 				output.WriteLine();
 			}

@@ -24,14 +24,15 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Search {
 	class SearchResult : ViewModelBase, ISearchResult, IMDTokenNode, IComparable<ISearchResult> {
@@ -98,19 +99,19 @@ namespace dnSpy.Search {
 		public object LocationUI => CreateUI(LocationObject, true);
 
 		public override string ToString() {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			CreateUI(output, NameObject, false);
 			return output.ToString();
 		}
 
 		object CreateUI(object o, bool includeNamespace) {
-			var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
 			var output = gen.Output;
 			CreateUI(gen.Output, o, includeNamespace);
 			return gen.CreateResult();
 		}
 
-		void CreateUI(ISyntaxHighlightOutput output, object o, bool includeNamespace) {
+		void CreateUI(IOutputColorWriter output, object o, bool includeNamespace) {
 			var ns = o as NamespaceSearchResult;
 			if (ns != null) {
 				output.WriteNamespace(ns.Namespace);
@@ -126,25 +127,25 @@ namespace dnSpy.Search {
 
 			var md = o as MethodDef;
 			if (md != null) {
-				output.Write(IdentifierEscaper.Escape(md.Name), TextTokenKindUtils.GetTextTokenKind(md));
+				output.Write(TextTokenKindUtils.GetTextTokenKind(md), IdentifierEscaper.Escape(md.Name));
 				return;
 			}
 
 			var fd = o as FieldDef;
 			if (fd != null) {
-				output.Write(IdentifierEscaper.Escape(fd.Name), TextTokenKindUtils.GetTextTokenKind(fd));
+				output.Write(TextTokenKindUtils.GetTextTokenKind(fd), IdentifierEscaper.Escape(fd.Name));
 				return;
 			}
 
 			var pd = o as PropertyDef;
 			if (pd != null) {
-				output.Write(IdentifierEscaper.Escape(pd.Name), TextTokenKindUtils.GetTextTokenKind(pd));
+				output.Write(TextTokenKindUtils.GetTextTokenKind(pd), IdentifierEscaper.Escape(pd.Name));
 				return;
 			}
 
 			var ed = o as EventDef;
 			if (ed != null) {
-				output.Write(IdentifierEscaper.Escape(ed.Name), TextTokenKindUtils.GetTextTokenKind(ed));
+				output.Write(TextTokenKindUtils.GetTextTokenKind(ed), IdentifierEscaper.Escape(ed.Name));
 				return;
 			}
 
@@ -175,7 +176,7 @@ namespace dnSpy.Search {
 			// non-.NET file
 			var file = o as IDnSpyFile;
 			if (file != null) {
-				output.Write(file.GetShortName(), BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, file.GetShortName());
 				return;
 			}
 
@@ -193,7 +194,7 @@ namespace dnSpy.Search {
 
 			var em = o as ErrorMessage;
 			if (em != null) {
-				output.Write(em.Text, em.Color);
+				output.Write(em.Color, em.Text);
 				return;
 			}
 

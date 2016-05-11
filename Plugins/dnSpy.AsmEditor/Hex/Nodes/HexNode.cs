@@ -20,9 +20,9 @@
 using System.Collections.Generic;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.Files.TreeView;
@@ -63,8 +63,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) => Write(output);
-		protected abstract void Write(ISyntaxHighlightOutput output);
+		protected override void Write(IOutputColorWriter output, ILanguage language) => Write(output);
+		protected abstract void Write(IOutputColorWriter output);
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
 			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))

@@ -23,9 +23,8 @@ using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	/// <summary>
@@ -41,8 +40,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.UsesTreeNode);
 
 		struct DefRef<T> where T : IDnlibDef {
 			public readonly T Def;

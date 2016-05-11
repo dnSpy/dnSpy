@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.Files.TreeView;
 
@@ -41,7 +41,7 @@ namespace dnSpy.Files.TreeView {
 			this.PropertyDef = property;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, PropertyDef, Context.ShowToken, null);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

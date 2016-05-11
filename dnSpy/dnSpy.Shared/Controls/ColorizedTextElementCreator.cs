@@ -20,28 +20,28 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.Highlighting;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.TextEditor;
+using dnSpy.Shared.TextEditor;
 using ICSharpCode.AvalonEdit.Utils;
 
-namespace dnSpy.Shared.Highlighting {
-	public struct UISyntaxHighlighter {
-		SyntaxHighlighter syntaxHighlighter;
-		NoSyntaxHighlightOutput output;
+namespace dnSpy.Shared.Controls {
+	public struct ColorizedTextElementCreator {
+		TextBlockColorOutput syntaxHighlighter;
+		StringBuilderTextColorOutput output;
 
 		public bool IsEmpty => syntaxHighlighter != null ? syntaxHighlighter.IsEmpty : output.IsEmpty;
 		public string Text => syntaxHighlighter != null ? syntaxHighlighter.Text : output.Text;
-		public ISyntaxHighlightOutput Output => (ISyntaxHighlightOutput)output ?? syntaxHighlighter;
-		public static UISyntaxHighlighter Create(bool syntaxHighlight) => new UISyntaxHighlighter(syntaxHighlight);
+		public IOutputColorWriter Output => (IOutputColorWriter)output ?? syntaxHighlighter;
+		public static ColorizedTextElementCreator Create(bool syntaxHighlight) => new ColorizedTextElementCreator(syntaxHighlight);
 
-		UISyntaxHighlighter(bool syntaxHighlight) {
+		ColorizedTextElementCreator(bool syntaxHighlight) {
 			if (syntaxHighlight) {
-				this.syntaxHighlighter = new SyntaxHighlighter();
+				this.syntaxHighlighter = new TextBlockColorOutput();
 				this.output = null;
 			}
 			else {
 				this.syntaxHighlighter = null;
-				this.output = new NoSyntaxHighlightOutput();
+				this.output = new StringBuilderTextColorOutput();
 			}
 		}
 

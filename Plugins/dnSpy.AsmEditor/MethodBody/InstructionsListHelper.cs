@@ -34,10 +34,11 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {
@@ -241,56 +242,56 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public static void CopyItemsAsTextToClipboard(InstructionVM[] instrs) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 
 			for (int i = 0; i < instrs.Length; i++) {
 				if (i > 0)
 					output.WriteLine();
 
 				var instr = instrs[i];
-				output.Write(instr.Index.ToString(), BoxedTextTokenKind.Number);
-				output.Write("\t", BoxedTextTokenKind.Text);
-				output.Write(string.Format("{0:X4}", instr.Offset), BoxedTextTokenKind.Label);
-				output.Write("\t", BoxedTextTokenKind.Text);
-				output.Write(instr.Code.ToOpCode().ToString(), BoxedTextTokenKind.OpCode);
+				output.Write(BoxedOutputColor.Number, instr.Index.ToString());
+				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedOutputColor.Label, string.Format("{0:X4}", instr.Offset));
+				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedOutputColor.OpCode, instr.Code.ToOpCode().ToString());
 
 				switch (instr.InstructionOperandVM.InstructionOperandType) {
 				case InstructionOperandType.None:
 					break;
 
 				case InstructionOperandType.SByte:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.SByte.StringValue, BoxedTextTokenKind.Number);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.SByte.StringValue);
 					break;
 
 				case InstructionOperandType.Byte:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Byte.StringValue, BoxedTextTokenKind.Number);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Byte.StringValue);
 					break;
 
 				case InstructionOperandType.Int32:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Int32.StringValue, BoxedTextTokenKind.Number);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Int32.StringValue);
 					break;
 
 				case InstructionOperandType.Int64:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Int64.StringValue, BoxedTextTokenKind.Number);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Int64.StringValue);
 					break;
 
 				case InstructionOperandType.Single:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Single.StringValue, BoxedTextTokenKind.Number);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Single.StringValue);
 					break;
 
 				case InstructionOperandType.Double:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Double.StringValue, BoxedTextTokenKind.Number);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Double.StringValue);
 					break;
 
 				case InstructionOperandType.String:
-					output.Write("\t", BoxedTextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.String.StringValue, BoxedTextTokenKind.String);
+					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedOutputColor.String, instr.InstructionOperandVM.String.StringValue);
 					break;
 
 				case InstructionOperandType.Field:
@@ -302,7 +303,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case InstructionOperandType.SwitchTargets:
 				case InstructionOperandType.Local:
 				case InstructionOperandType.Parameter:
-					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(BoxedOutputColor.Text, "\t");
 					BodyUtils.WriteObject(output, instr.InstructionOperandVM.Value);
 					break;
 

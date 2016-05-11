@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.AsmEditor.MethodBody;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.AsmEditor.Converters {
 	sealed class CilObjectConverter : IValueConverter {
@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Converters {
 					}
 				}
 
-				var gen = UISyntaxHighlighter.Create(true);
+				var gen = ColorizedTextElementCreator.Create(true);
 				BodyUtils.WriteObject(gen.Output, value, flags);
 				return gen.CreateResult(true, true);
 			}

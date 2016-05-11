@@ -19,66 +19,65 @@
 
 using System.Diagnostics;
 using dndbg.Engine;
-using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Debugger {
 	sealed class OutputConverter : ITypeOutput {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 
-		public OutputConverter(ISyntaxHighlightOutput output) {
+		public OutputConverter(IOutputColorWriter output) {
 			this.output = output;
 		}
 
-		public void Write(string s, TypeColor type) => output.Write(s, Convert(type));
+		public void Write(string s, TypeColor type) => output.Write(Convert(type), s);
 
 		public static object Convert(TypeColor color) {
 			switch (color) {
-			case TypeColor.Unknown:				return BoxedTextTokenKind.Text;
-			case TypeColor.Space:				return BoxedTextTokenKind.Text;
-			case TypeColor.IPType:				return BoxedTextTokenKind.Text;
-			case TypeColor.Operator:			return BoxedTextTokenKind.Operator;
-			case TypeColor.Punctuation:			return BoxedTextTokenKind.Punctuation;
-			case TypeColor.NativeFrame:			return BoxedTextTokenKind.Text;
-			case TypeColor.InternalFrame:		return BoxedTextTokenKind.Text;
-			case TypeColor.UnknownFrame:		return BoxedTextTokenKind.Text;
-			case TypeColor.Number:				return BoxedTextTokenKind.Number;
-			case TypeColor.Error:				return BoxedTextTokenKind.Error;
-			case TypeColor.Module:				return BoxedTextTokenKind.Module;
-			case TypeColor.Token:				return BoxedTextTokenKind.Number;
-			case TypeColor.Namespace:			return BoxedTextTokenKind.Namespace;
-			case TypeColor.InstanceProperty:	return BoxedTextTokenKind.InstanceProperty;
-			case TypeColor.StaticProperty:		return BoxedTextTokenKind.StaticProperty;
-			case TypeColor.InstanceEvent:		return BoxedTextTokenKind.InstanceEvent;
-			case TypeColor.StaticEvent:			return BoxedTextTokenKind.StaticEvent;
-			case TypeColor.Type:				return BoxedTextTokenKind.Type;
-			case TypeColor.SealedType:			return BoxedTextTokenKind.SealedType;
-			case TypeColor.StaticType:			return BoxedTextTokenKind.StaticType;
-			case TypeColor.Delegate:			return BoxedTextTokenKind.Delegate;
-			case TypeColor.Enum:				return BoxedTextTokenKind.Enum;
-			case TypeColor.Interface:			return BoxedTextTokenKind.Interface;
-			case TypeColor.ValueType:			return BoxedTextTokenKind.ValueType;
-			case TypeColor.Comment:				return BoxedTextTokenKind.Comment;
-			case TypeColor.StaticMethod:		return BoxedTextTokenKind.StaticMethod;
-			case TypeColor.ExtensionMethod:		return BoxedTextTokenKind.ExtensionMethod;
-			case TypeColor.InstanceMethod:		return BoxedTextTokenKind.InstanceMethod;
-			case TypeColor.TypeKeyword:			return BoxedTextTokenKind.Keyword;
-			case TypeColor.TypeGenericParameter:return BoxedTextTokenKind.TypeGenericParameter;
-			case TypeColor.MethodGenericParameter:return BoxedTextTokenKind.MethodGenericParameter;
-			case TypeColor.Keyword:				return BoxedTextTokenKind.Keyword;
-			case TypeColor.Parameter:			return BoxedTextTokenKind.Parameter;
-			case TypeColor.String:				return BoxedTextTokenKind.String;
-			case TypeColor.Char:				return BoxedTextTokenKind.Char;
-			case TypeColor.InstanceField:		return BoxedTextTokenKind.InstanceField;
-			case TypeColor.EnumField:			return BoxedTextTokenKind.EnumField;
-			case TypeColor.LiteralField:		return BoxedTextTokenKind.LiteralField;
-			case TypeColor.StaticField:			return BoxedTextTokenKind.StaticField;
-			case TypeColor.TypeStringBrace:		return BoxedTextTokenKind.Error;
-			case TypeColor.ToStringBrace:		return BoxedTextTokenKind.ToStringEval;
-			case TypeColor.ToStringResult:		return BoxedTextTokenKind.ToStringEval;
+			case TypeColor.Unknown:				return BoxedOutputColor.Text;
+			case TypeColor.Space:				return BoxedOutputColor.Text;
+			case TypeColor.IPType:				return BoxedOutputColor.Text;
+			case TypeColor.Operator:			return BoxedOutputColor.Operator;
+			case TypeColor.Punctuation:			return BoxedOutputColor.Punctuation;
+			case TypeColor.NativeFrame:			return BoxedOutputColor.Text;
+			case TypeColor.InternalFrame:		return BoxedOutputColor.Text;
+			case TypeColor.UnknownFrame:		return BoxedOutputColor.Text;
+			case TypeColor.Number:				return BoxedOutputColor.Number;
+			case TypeColor.Error:				return BoxedOutputColor.Error;
+			case TypeColor.Module:				return BoxedOutputColor.Module;
+			case TypeColor.Token:				return BoxedOutputColor.Number;
+			case TypeColor.Namespace:			return BoxedOutputColor.Namespace;
+			case TypeColor.InstanceProperty:	return BoxedOutputColor.InstanceProperty;
+			case TypeColor.StaticProperty:		return BoxedOutputColor.StaticProperty;
+			case TypeColor.InstanceEvent:		return BoxedOutputColor.InstanceEvent;
+			case TypeColor.StaticEvent:			return BoxedOutputColor.StaticEvent;
+			case TypeColor.Type:				return BoxedOutputColor.Type;
+			case TypeColor.SealedType:			return BoxedOutputColor.SealedType;
+			case TypeColor.StaticType:			return BoxedOutputColor.StaticType;
+			case TypeColor.Delegate:			return BoxedOutputColor.Delegate;
+			case TypeColor.Enum:				return BoxedOutputColor.Enum;
+			case TypeColor.Interface:			return BoxedOutputColor.Interface;
+			case TypeColor.ValueType:			return BoxedOutputColor.ValueType;
+			case TypeColor.Comment:				return BoxedOutputColor.Comment;
+			case TypeColor.StaticMethod:		return BoxedOutputColor.StaticMethod;
+			case TypeColor.ExtensionMethod:		return BoxedOutputColor.ExtensionMethod;
+			case TypeColor.InstanceMethod:		return BoxedOutputColor.InstanceMethod;
+			case TypeColor.TypeKeyword:			return BoxedOutputColor.Keyword;
+			case TypeColor.TypeGenericParameter:return BoxedOutputColor.TypeGenericParameter;
+			case TypeColor.MethodGenericParameter:return BoxedOutputColor.MethodGenericParameter;
+			case TypeColor.Keyword:				return BoxedOutputColor.Keyword;
+			case TypeColor.Parameter:			return BoxedOutputColor.Parameter;
+			case TypeColor.String:				return BoxedOutputColor.String;
+			case TypeColor.Char:				return BoxedOutputColor.Char;
+			case TypeColor.InstanceField:		return BoxedOutputColor.InstanceField;
+			case TypeColor.EnumField:			return BoxedOutputColor.EnumField;
+			case TypeColor.LiteralField:		return BoxedOutputColor.LiteralField;
+			case TypeColor.StaticField:			return BoxedOutputColor.StaticField;
+			case TypeColor.TypeStringBrace:		return BoxedOutputColor.Error;
+			case TypeColor.ToStringBrace:		return BoxedOutputColor.ToStringEval;
+			case TypeColor.ToStringResult:		return BoxedOutputColor.ToStringEval;
 			default:
 				Debug.Fail(string.Format("Unknown color: {0}", color));
-				return BoxedTextTokenKind.Text;
+				return BoxedOutputColor.Text;
 			}
 		}
 	}

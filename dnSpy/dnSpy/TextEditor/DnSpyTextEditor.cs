@@ -32,7 +32,6 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.AvalonEdit;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Themes;
@@ -65,18 +64,18 @@ namespace dnSpy.TextEditor {
 			SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background;
 			SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground;
 
-			foreach (var f in typeof(TextTokenKind).GetFields()) {
+			foreach (var f in typeof(OutputColor).GetFields()) {
 				if (!f.IsLiteral)
 					continue;
-				var val = (TextTokenKind)f.GetValue(null);
-				if (val != TextTokenKind.Last)
+				var val = (OutputColor)f.GetValue(null);
+				if (val != OutputColor.Last)
 					UpdateTextEditorResource(val, f.Name);
 			}
 
 			UpdateDefaultHighlighter();
 		}
 
-		void UpdateTextEditorResource(TextTokenKind colorType, string name) {
+		void UpdateTextEditorResource(OutputColor colorType, string name) {
 			var theme = themeManager.Theme;
 
 			var color = theme.GetTextColor(colorType.ToColorType());

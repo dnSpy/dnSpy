@@ -28,12 +28,13 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.Files.TreeView.Resources;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_IMAGE_RESOURCE_NODE)]
@@ -185,9 +186,9 @@ namespace dnSpy.Files.TreeView.Resources {
 						Source = imageSource,
 					};
 				});
-				output.Write(" = ", BoxedTextTokenKind.Comment);
+				output.Write(" = ", BoxedOutputColor.Comment);
 				const string LTR = "\u200E";
-				output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
+				output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;

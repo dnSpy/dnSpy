@@ -17,16 +17,32 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Highlighting {
-	/// <summary>
-	/// Syntax highlight output
-	/// </summary>
-	public interface ISyntaxHighlightOutput {
-		/// <summary>
-		/// Writes a string
-		/// </summary>
-		/// <param name="s">String</param>
-		/// <param name="data">Data</param>
-		void Write(string s, object data);
+using System.Text;
+using dnSpy.Decompiler.Shared;
+
+namespace dnSpy.Shared.TextEditor {
+	public static class NameUtils {
+		public static string CleanName(string n) {
+			if (n == null)
+				return n;
+			const int MAX_LEN = 0x100;
+			if (n.Length > MAX_LEN)
+				n = n.Substring(0, MAX_LEN);
+			var sb = new StringBuilder(n.Length);
+			for (int i = 0; i < n.Length; i++) {
+				var c = n[i];
+				if (c < 0x20)
+					c = '_';
+				sb.Append(c);
+			}
+			return sb.ToString();
+		}
+
+		public static string CleanIdentifier(string id) {
+			if (id == null)
+				return id;
+			id = IdentifierEscaper.Escape(id);
+			return CleanName(id);
+		}
 	}
 }

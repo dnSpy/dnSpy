@@ -66,7 +66,7 @@ namespace dnSpy.BamlDecompiler {
 			var decompiler = new XamlDecompiler();
 			var xaml = decompiler.Decompile(module, document, token, BamlDecompilerOptions.Create(lang), null);
 
-			output.Write(xaml.ToString(), BoxedTextTokenKind.Text);
+			output.Write(xaml.ToString(), BoxedOutputColor.Text);
 			ext = ".xml";
 		}
 

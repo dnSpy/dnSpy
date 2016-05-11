@@ -22,10 +22,10 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Shared.Files.TreeView {
 	public struct NodePrinter {
@@ -44,26 +44,26 @@ namespace dnSpy.Shared.Files.TreeView {
 			return filename;
 		}
 
-		public void WriteNamespace(ISyntaxHighlightOutput output, ILanguage language, string name) => output.WriteNamespace(name);
+		public void WriteNamespace(IOutputColorWriter output, ILanguage language, string name) => output.WriteNamespace(name);
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, IDnSpyFile file) {
+		public void Write(IOutputColorWriter output, ILanguage language, IDnSpyFile file) {
 			var filename = GetFilename(file);
 			var peImage = file.PEImage;
 			if (peImage != null)
-				output.Write(NameUtils.CleanName(filename), IsExe(peImage) ? BoxedTextTokenKind.AssemblyExe : BoxedTextTokenKind.Assembly);
+				output.Write(IsExe(peImage) ? BoxedOutputColor.AssemblyExe : BoxedOutputColor.Assembly, NameUtils.CleanName(filename));
 			else
-				output.Write(NameUtils.CleanName(filename), BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, NameUtils.CleanName(filename));
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, AssemblyDef asm, bool showToken, bool showAssemblyVersion, bool showAssemblyPublicKeyToken) {
-			output.Write(asm.Name, IsExe(asm.ManifestModule) ? BoxedTextTokenKind.AssemblyExe : BoxedTextTokenKind.Assembly);
+		public void Write(IOutputColorWriter output, ILanguage language, AssemblyDef asm, bool showToken, bool showAssemblyVersion, bool showAssemblyPublicKeyToken) {
+			output.Write(IsExe(asm.ManifestModule) ? BoxedOutputColor.AssemblyExe : BoxedOutputColor.Assembly, asm.Name);
 
 			bool showAsmVer = showAssemblyVersion;
 			bool showPublicKeyToken = showAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken);
 
 			if (showAsmVer || showPublicKeyToken) {
 				output.WriteSpace();
-				output.Write("(", BoxedTextTokenKind.Punctuation);
+				output.Write(BoxedOutputColor.Punctuation, "(");
 
 				bool needComma = false;
 				if (showAsmVer) {
@@ -81,80 +81,80 @@ namespace dnSpy.Shared.Files.TreeView {
 
 					var pkt = asm.PublicKeyToken;
 					if (PublicKeyBase.IsNullOrEmpty2(pkt))
-						output.Write("null", BoxedTextTokenKind.Keyword);
+						output.Write(BoxedOutputColor.Keyword, "null");
 					else
-						output.Write(pkt.ToString(), BoxedTextTokenKind.Number);
+						output.Write(BoxedOutputColor.Number, pkt.ToString());
 				}
 
-				output.Write(")", BoxedTextTokenKind.Punctuation);
+				output.Write(BoxedOutputColor.Punctuation, ")");
 			}
 
 			WriteToken(output, asm, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, ModuleDef mod, bool showToken) {
+		public void Write(IOutputColorWriter output, ILanguage language, ModuleDef mod, bool showToken) {
 			output.WriteModule(mod.Name);
 			WriteToken(output, mod, showToken);
 		}
 
-		void WriteToken(ISyntaxHighlightOutput output, IMDTokenProvider tok, bool showToken) {
+		void WriteToken(IOutputColorWriter output, IMDTokenProvider tok, bool showToken) {
 			if (!showToken)
 				return;
 			output.WriteSpace();
-			output.Write("@", BoxedTextTokenKind.Operator);
-			output.Write(string.Format("{0:X8}", tok.MDToken.Raw), BoxedTextTokenKind.Number);
+			output.Write(BoxedOutputColor.Operator, "@");
+			output.Write(BoxedOutputColor.Number, string.Format("{0:X8}", tok.MDToken.Raw));
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, AssemblyRef asmRef, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(asmRef.Name), BoxedTextTokenKind.Text);
+		public void Write(IOutputColorWriter output, ILanguage language, AssemblyRef asmRef, bool showToken) {
+			output.Write(BoxedOutputColor.Text, NameUtils.CleanIdentifier(asmRef.Name));
 			WriteToken(output, asmRef, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, ModuleRef modRef, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(modRef.Name), BoxedTextTokenKind.Text);
+		public void Write(IOutputColorWriter output, ILanguage language, ModuleRef modRef, bool showToken) {
+			output.Write(BoxedOutputColor.Text, NameUtils.CleanIdentifier(modRef.Name));
 			WriteToken(output, modRef, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, TypeDef type, bool showToken) {
+		public void Write(IOutputColorWriter output, ILanguage language, TypeDef type, bool showToken) {
 			language.WriteName(output, type);
 			WriteToken(output, type, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, ITypeDefOrRef type, bool showToken) {
+		public void Write(IOutputColorWriter output, ILanguage language, ITypeDefOrRef type, bool showToken) {
 			language.WriteType(output, type, false);
 			WriteToken(output, type, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, EventDef @event, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(@event.Name), TextTokenKindUtils.GetTextTokenKind(@event));
+		public void Write(IOutputColorWriter output, ILanguage language, EventDef @event, bool showToken) {
+			output.Write(TextTokenKindUtils.GetTextTokenKind(@event), NameUtils.CleanIdentifier(@event.Name));
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, @event.EventType, false);
 			WriteToken(output, @event, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, PropertyDef property, bool showToken, bool? isIndexer) {
+		public void Write(IOutputColorWriter output, ILanguage language, PropertyDef property, bool showToken, bool? isIndexer) {
 			language.WriteName(output, property, isIndexer);
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, property.PropertySig.GetRetType().ToTypeDefOrRef(), false);
 			WriteToken(output, property, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, FieldDef field, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(field.Name), TextTokenKindUtils.GetTextTokenKind(field));
+		public void Write(IOutputColorWriter output, ILanguage language, FieldDef field, bool showToken) {
+			output.Write(TextTokenKindUtils.GetTextTokenKind(field), NameUtils.CleanIdentifier(field.Name));
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, field.FieldType.ToTypeDefOrRef(), false);
 			WriteToken(output, field, showToken);
 		}
 
-		public void Write(ISyntaxHighlightOutput output, ILanguage language, MethodDef method, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(method.Name), TextTokenKindUtils.GetTextTokenKind(method));
-			output.Write("(", BoxedTextTokenKind.Punctuation);
+		public void Write(IOutputColorWriter output, ILanguage language, MethodDef method, bool showToken) {
+			output.Write(TextTokenKindUtils.GetTextTokenKind(method), NameUtils.CleanIdentifier(method.Name));
+			output.Write(BoxedOutputColor.Punctuation, "(");
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
 					continue;
@@ -165,11 +165,11 @@ namespace dnSpy.Shared.Files.TreeView {
 			if (method.CallingConvention == CallingConvention.VarArg || method.CallingConvention == CallingConvention.NativeVarArg) {
 				if (method.MethodSig.GetParamCount() > 0)
 					output.WriteCommaSpace();
-				output.Write("...", BoxedTextTokenKind.Operator);
+				output.Write(BoxedOutputColor.Operator, "...");
 			}
-			output.Write(")", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Punctuation, ")");
 			output.WriteSpace();
-			output.Write(":", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef);
 			WriteToken(output, method, showToken);

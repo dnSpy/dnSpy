@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class LocalColumnConverter : IValueConverter {
@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Locals {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = UISyntaxHighlighter.Create(vm.PrinterContext.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(vm.PrinterContext.SyntaxHighlight);
 			var printer = new ValuePrinter(gen.Output, vm.PrinterContext.UseHexadecimal);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

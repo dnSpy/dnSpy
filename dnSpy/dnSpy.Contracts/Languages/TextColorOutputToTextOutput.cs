@@ -19,15 +19,15 @@
 
 using System;
 using System.Text;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
-	/// Converts a <see cref="ISyntaxHighlightOutput"/> to a <see cref="ITextOutput"/>
+	/// Converts a <see cref="IOutputColorWriter"/> to a <see cref="ITextOutput"/>
 	/// </summary>
-	public sealed class SyntaxHighlightOutputToTextOutput : ITextOutput {
-		readonly ISyntaxHighlightOutput output;
+	public sealed class TextColorOutputToTextOutput : ITextOutput {
+		readonly IOutputColorWriter output;
 		int line, col;
 		int indent;
 
@@ -36,10 +36,10 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="output">Output to use</param>
 		/// <returns></returns>
-		public static ITextOutput Create(ISyntaxHighlightOutput output) =>
-			new SyntaxHighlightOutputToTextOutput(output);
+		public static ITextOutput Create(IOutputColorWriter output) =>
+			new TextColorOutputToTextOutput(output);
 
-		SyntaxHighlightOutputToTextOutput(ISyntaxHighlightOutput output) {
+		TextColorOutputToTextOutput(IOutputColorWriter output) {
 			this.output = output;
 			this.line = 1;
 			this.col = 1;
@@ -66,8 +66,8 @@ namespace dnSpy.Contracts.Languages {
 
 		void ITextOutput.Write(string text, object data) {
 			if (col == 1 && indent > 0)
-				output.Write(new string('\t', indent), BoxedTextTokenKind.Text);
-			output.Write(text, data);
+				output.Write(BoxedOutputColor.Text, new string('\t', indent));
+			output.Write(data, text);
 			int index = text.LastIndexOfAny(newLineChars);
 			if (index >= 0) {
 				line += text.Split(lineFeedChar).Length - 1;	// good enough for our purposes
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Languages {
 		void ITextOutput.WriteDefinition(string text, object definition, object data, bool isLocal) =>
 			((ITextOutput)this).Write(text, data);
 		void ITextOutput.WriteLine() =>
-			((ITextOutput)this).Write(Environment.NewLine, BoxedTextTokenKind.Text);
+			((ITextOutput)this).Write(Environment.NewLine, BoxedOutputColor.Text);
 		void ITextOutput.WriteReference(string text, object reference, object data, bool isLocal) =>
 			((ITextOutput)this).Write(text, data);
 		void ITextOutput.Write(string text, TextTokenKind tokenKind) =>

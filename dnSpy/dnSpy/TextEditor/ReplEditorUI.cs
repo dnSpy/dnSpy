@@ -31,7 +31,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -1050,7 +1050,7 @@ namespace dnSpy.TextEditor {
 		}
 
 		public CachedTextTokenColors Create(string command, List<ColorOffsetInfo> colorInfos) {
-			cachedColors.Append(BoxedTextTokenKind.ReplPrompt1, owner.PrimaryPrompt);
+			cachedColors.Append(BoxedOutputColor.ReplPrompt1, owner.PrimaryPrompt);
 			int cmdOffs = 0;
 			foreach (var cinfo in colorInfos) {
 				Debug.Assert(cmdOffs <= cinfo.Offset);
@@ -1076,7 +1076,7 @@ namespace dnSpy.TextEditor {
 					cachedColors.Append(color, s, so, nlOffs - so + nlLen);
 					so = nlOffs + nlLen;
 					if (cachedColors.Length < totalLength)
-						cachedColors.Append(BoxedTextTokenKind.ReplPrompt2, owner.SecondaryPrompt);
+						cachedColors.Append(BoxedOutputColor.ReplPrompt2, owner.SecondaryPrompt);
 				}
 				else {
 					cachedColors.Append(color, s, so, end - so);

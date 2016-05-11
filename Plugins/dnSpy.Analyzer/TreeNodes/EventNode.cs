@@ -20,13 +20,13 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventNode : EntityNode {
@@ -45,15 +45,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override IMDTokenProvider Reference => analyzedEvent;
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(IOutputColorWriter output, ILanguage language) {
 			if (hidesParent) {
-				output.Write("(", BoxedTextTokenKind.Punctuation);
-				output.Write(dnSpy_Analyzer_Resources.HidesParent, BoxedTextTokenKind.Text);
-				output.Write(")", BoxedTextTokenKind.Punctuation);
+				output.Write(BoxedOutputColor.Punctuation, "(");
+				output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.HidesParent);
+				output.Write(BoxedOutputColor.Punctuation, ")");
 				output.WriteSpace();
 			}
 			language.WriteType(output, analyzedEvent.DeclaringType, true);
-			output.Write(".", BoxedTextTokenKind.Operator);
+			output.Write(BoxedOutputColor.Operator, ".");
 			new NodePrinter().Write(output, language, analyzedEvent, Context.ShowToken);
 		}
 

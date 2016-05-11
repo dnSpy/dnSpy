@@ -31,7 +31,6 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -223,13 +222,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			AvalonEditTextOutput output;
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextTokenKind.Error);
+				output.Write(dnSpy_Resources.DecompilationCanceled, BoxedOutputColor.Error);
 			}
 			else if (result.Exception != null) {
 				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationException, BoxedTextTokenKind.Error);
+				output.Write(dnSpy_Resources.DecompilationException, BoxedOutputColor.Error);
 				output.WriteLine();
-				output.Write(result.Exception.ToString(), BoxedTextTokenKind.Text);
+				output.Write(result.Exception.ToString(), BoxedOutputColor.Text);
 			}
 			else {
 				output = decompileContext.CachedOutput;

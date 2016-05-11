@@ -22,10 +22,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using dndbg.Engine;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger {
 	static class DebugOutputUtils {
@@ -48,19 +48,19 @@ namespace dnSpy.Debugger {
 			return sb.ToString();
 		}
 
-		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : ISyntaxHighlightOutput {
+		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : IOutputColorWriter {
 			if (appDomain == null)
-				output.Write(dnSpy_Debugger_Resources.AppDomainNotAvailable, BoxedTextTokenKind.Error);
+				output.Write(BoxedOutputColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
 			else {
-				output.Write("[", BoxedTextTokenKind.Punctuation);
-				output.Write(string.Format("{0}", appDomain.Id), BoxedTextTokenKind.Number);
-				output.Write("]", BoxedTextTokenKind.Punctuation);
+				output.Write(BoxedOutputColor.Punctuation, "[");
+				output.Write(BoxedOutputColor.Number, string.Format("{0}", appDomain.Id));
+				output.Write(BoxedOutputColor.Punctuation, "]");
 				output.WriteSpace();
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
 				if (HasSameNameAsProcess(dbg, appDomain))
 					output.WriteFilename(filteredName);
 				else
-					output.Write(filteredName, BoxedTextTokenKind.String);
+					output.Write(BoxedOutputColor.String, filteredName);
 			}
 			return output;
 		}
@@ -86,23 +86,23 @@ namespace dnSpy.Debugger {
 			return s;
 		}
 
-		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ISyntaxHighlightOutput {
-			output.Write("[", BoxedTextTokenKind.Punctuation);
+		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : IOutputColorWriter {
+			output.Write(BoxedOutputColor.Punctuation, "[");
 			if (useHex)
-				output.Write(string.Format("0x{0:X}", p.ProcessId), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("0x{0:X}", p.ProcessId));
 			else
-				output.Write(string.Format("{0}", p.ProcessId), BoxedTextTokenKind.Number);
-			output.Write("]", BoxedTextTokenKind.Punctuation);
+				output.Write(BoxedOutputColor.Number, string.Format("{0}", p.ProcessId));
+			output.Write(BoxedOutputColor.Punctuation, "]");
 			output.WriteSpace();
 			output.WriteFilename(GetFilename(p.Filename));
 			return output;
 		}
 
-		public static T WriteYesNo<T>(this T output, bool value) where T : ISyntaxHighlightOutput {
+		public static T WriteYesNo<T>(this T output, bool value) where T : IOutputColorWriter {
 			if (value)
-				output.Write(dnSpy_Debugger_Resources.YesNo_Yes, BoxedTextTokenKind.Keyword);
+				output.Write(BoxedOutputColor.Keyword, dnSpy_Debugger_Resources.YesNo_Yes);
 			else
-				output.Write(dnSpy_Debugger_Resources.YesNo_No, BoxedTextTokenKind.InstanceMethod);
+				output.Write(BoxedOutputColor.InstanceMethod, dnSpy_Debugger_Resources.YesNo_No);
 			return output;
 		}
 	}

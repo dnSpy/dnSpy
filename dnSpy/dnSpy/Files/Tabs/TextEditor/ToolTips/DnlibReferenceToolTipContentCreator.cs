@@ -25,10 +25,11 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Languages.IL;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Languages.XmlDoc;
 using dnSpy.Decompiler.Shared;
 using System.Text;
+using dnSpy.Shared.TextEditor;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	[ExportToolTipContentCreator(Order = TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
@@ -150,7 +151,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			if (v == null) {
 				if (name == null)
 					return null;
-				creator.Output.Write(string.Format("(local variable) {0}", name), BoxedTextTokenKind.Text);
+				creator.Output.Write(BoxedOutputColor.Text, string.Format("(local variable) {0}", name));
 				return creator.Create();
 			}
 
@@ -184,14 +185,14 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
 			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
-			creator.Output.Write(opCode.Name, BoxedTextTokenKind.OpCode);
+			creator.Output.Write(BoxedOutputColor.OpCode, opCode.Name);
 			creator.Output.WriteSpace();
-			creator.Output.Write("(", BoxedTextTokenKind.Punctuation);
-			creator.Output.Write(opCodeHex, BoxedTextTokenKind.Number);
-			creator.Output.Write(")", BoxedTextTokenKind.Punctuation);
+			creator.Output.Write(BoxedOutputColor.Punctuation, "(");
+			creator.Output.Write(BoxedOutputColor.Number, opCodeHex);
+			creator.Output.Write(BoxedOutputColor.Punctuation, ")");
 			if (s != null) {
-				creator.Output.Write(" - ", BoxedTextTokenKind.Text);
-				creator.Output.Write(s, BoxedTextTokenKind.Text);
+				creator.Output.Write(BoxedOutputColor.Text, " - ");
+				creator.Output.Write(BoxedOutputColor.Text, s);
 			}
 
 			return creator.Create();

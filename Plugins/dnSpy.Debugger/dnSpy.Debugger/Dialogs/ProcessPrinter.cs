@@ -20,17 +20,16 @@
 using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.PE;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessPrinter {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 		readonly bool useHex;
 
-		public ProcessPrinter(ISyntaxHighlightOutput output, bool useHex) {
+		public ProcessPrinter(IOutputColorWriter output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
 		}
@@ -38,16 +37,16 @@ namespace dnSpy.Debugger.Dialogs {
 		void WriteFilename(ProcessVM vm, string filename) => output.WriteFilename(filename);
 		public void WriteFilename(ProcessVM vm) => WriteFilename(vm, DebugOutputUtils.GetFilename(vm.FullPath));
 		public void WriteFullPath(ProcessVM vm) => WriteFilename(vm, vm.FullPath);
-		public void WriteCLRVersion(ProcessVM vm) => output.Write(vm.CLRVersion, BoxedTextTokenKind.Number);
-		public void WriteType(ProcessVM vm) => output.Write(TypeToString(vm.CLRTypeInfo.CLRType), BoxedTextTokenKind.EnumField);
-		public void WriteMachine(ProcessVM vm) => output.Write(ToString(vm.Machine), BoxedTextTokenKind.InstanceMethod);
-		public void WriteTitle(ProcessVM vm) => output.Write(vm.Title, BoxedTextTokenKind.String);
+		public void WriteCLRVersion(ProcessVM vm) => output.Write(BoxedOutputColor.Number, vm.CLRVersion);
+		public void WriteType(ProcessVM vm) => output.Write(BoxedOutputColor.EnumField, TypeToString(vm.CLRTypeInfo.CLRType));
+		public void WriteMachine(ProcessVM vm) => output.Write(BoxedOutputColor.InstanceMethod, ToString(vm.Machine));
+		public void WriteTitle(ProcessVM vm) => output.Write(BoxedOutputColor.String, vm.Title);
 
 		public void WritePID(ProcessVM vm) {
 			if (useHex)
-				output.Write(string.Format("0x{0:X8}", vm.PID), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("0x{0:X8}", vm.PID));
 			else
-				output.Write(string.Format("{0}", vm.PID), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("{0}", vm.PID));
 		}
 
 		static string TypeToString(CLRType type) {

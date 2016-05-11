@@ -27,11 +27,10 @@ using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView;
 using dnSpy.Shared.HexEditor;
 
@@ -149,8 +148,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return stgStreamNode?.FindTokenNode(token);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
 		public override Guid Guid => new Guid(FileTVConstants.PE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override ITreeNodeGroup TreeNodeGroup => PETreeNodeGroup.Instance;

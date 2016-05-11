@@ -23,12 +23,12 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableNode : HexNode {
@@ -62,14 +62,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
-		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(string.Format("{0:X2}", (byte)MetaDataTableVM.Table), BoxedTextTokenKind.Number);
+		protected override void Write(IOutputColorWriter output) {
+			output.Write(BoxedOutputColor.Number, string.Format("{0:X2}", (byte)MetaDataTableVM.Table));
 			output.WriteSpace();
-			output.Write(string.Format("{0}", MetaDataTableVM.Table), BoxedTextTokenKind.Type);
+			output.Write(BoxedOutputColor.Type, string.Format("{0}", MetaDataTableVM.Table));
 			output.WriteSpace();
-			output.Write("(", BoxedTextTokenKind.Punctuation);
-			output.Write(string.Format("{0}", MetaDataTableVM.Rows), BoxedTextTokenKind.Number);
-			output.Write(")", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Punctuation, "(");
+			output.Write(BoxedOutputColor.Number, string.Format("{0}", MetaDataTableVM.Rows));
+			output.Write(BoxedOutputColor.Punctuation, ")");
 		}
 
 		protected override void DecompileFields(ILanguage language, ITextOutput output) {
@@ -91,14 +91,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void WriteHeader(ITextOutput output) {
 			var cols = MetaDataTableVM.TableInfo.Columns;
 
-			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedTextTokenKind.Comment);
+			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedOutputColor.Comment);
 			for (int i = 0; i < cols.Count; i++) {
-				output.Write("\t", BoxedTextTokenKind.Comment);
-				output.Write(MetaDataTableVM.GetColumnName(i), BoxedTextTokenKind.Comment);
+				output.Write("\t", BoxedOutputColor.Comment);
+				output.Write(MetaDataTableVM.GetColumnName(i), BoxedOutputColor.Comment);
 			}
 			if (MetaDataTableVM.HasInfo) {
-				output.Write("\t", BoxedTextTokenKind.Comment);
-				output.Write(MetaDataTableVM.InfoName, BoxedTextTokenKind.Comment);
+				output.Write("\t", BoxedOutputColor.Comment);
+				output.Write(MetaDataTableVM.InfoName, BoxedOutputColor.Comment);
 			}
 			output.WriteLine();
 		}
@@ -106,18 +106,18 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void Write(ITextOutput output, MetaDataTableRecordVM mdVM) {
 			var cols = MetaDataTableVM.TableInfo.Columns;
 
-			output.Write(mdVM.RidString, BoxedTextTokenKind.Comment);
-			output.Write("\t", BoxedTextTokenKind.Comment);
-			output.Write(mdVM.TokenString, BoxedTextTokenKind.Comment);
-			output.Write("\t", BoxedTextTokenKind.Comment);
-			output.Write(mdVM.OffsetString, BoxedTextTokenKind.Comment);
+			output.Write(mdVM.RidString, BoxedOutputColor.Comment);
+			output.Write("\t", BoxedOutputColor.Comment);
+			output.Write(mdVM.TokenString, BoxedOutputColor.Comment);
+			output.Write("\t", BoxedOutputColor.Comment);
+			output.Write(mdVM.OffsetString, BoxedOutputColor.Comment);
 			for (int j = 0; j < cols.Count; j++) {
-				output.Write("\t", BoxedTextTokenKind.Comment);
-				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, BoxedTextTokenKind.Comment);
+				output.Write("\t", BoxedOutputColor.Comment);
+				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, BoxedOutputColor.Comment);
 			}
 			if (MetaDataTableVM.HasInfo) {
-				output.Write("\t", BoxedTextTokenKind.Comment);
-				output.Write(mdVM.Info, BoxedTextTokenKind.Comment);
+				output.Write("\t", BoxedOutputColor.Comment);
+				output.Write(mdVM.Info, BoxedOutputColor.Comment);
 			}
 			output.WriteLine();
 		}

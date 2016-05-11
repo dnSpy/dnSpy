@@ -18,11 +18,10 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Contracts.TextEditor;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class ModuleNode : EntityNode {
@@ -36,7 +35,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(module);
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(NameUtils.CleanIdentifier(module.Name), BoxedTextTokenKind.Module);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Module, NameUtils.CleanIdentifier(module.Name));
 	}
 }

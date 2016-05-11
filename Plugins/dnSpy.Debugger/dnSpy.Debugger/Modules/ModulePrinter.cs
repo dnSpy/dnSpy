@@ -20,18 +20,17 @@
 using System;
 using System.Globalization;
 using dndbg.Engine;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModulePrinter {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 		readonly bool useHex;
 		readonly DnDebugger dbg;
 
-		public ModulePrinter(ISyntaxHighlightOutput output, bool useHex, DnDebugger dbg) {
+		public ModulePrinter(IOutputColorWriter output, bool useHex, DnDebugger dbg) {
 			this.output = output;
 			this.useHex = useHex;
 			this.dbg = dbg;
@@ -48,7 +47,7 @@ namespace dnSpy.Debugger.Modules {
 		public void WriteOptimized(ModuleVM vm) => output.WriteYesNo(vm.IsOptimized);
 		public void WriteDynamic(ModuleVM vm) => output.WriteYesNo(vm.Module.IsDynamic);
 		public void WriteInMemory(ModuleVM vm) => output.WriteYesNo(vm.Module.IsInMemory);
-		public void WriteOrder(ModuleVM vm) => output.Write(string.Format("{0}", vm.Module.UniqueId), BoxedTextTokenKind.Number);
+		public void WriteOrder(ModuleVM vm) => output.Write(BoxedOutputColor.Number, string.Format("{0}", vm.Module.UniqueId));
 		public void WriteProcess(ModuleVM vm) => output.Write(vm.Module.Process, useHex);
 		public void WriteAppDomain(ModuleVM vm) => output.Write(vm.Module.AppDomain.CorAppDomain, dbg);
 
@@ -62,7 +61,7 @@ namespace dnSpy.Debugger.Modules {
 			if (ts != null) {
 				var date = Epoch.AddSeconds(ts.Value);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(dateString, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dateString);
 			}
 		}
 		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -71,19 +70,19 @@ namespace dnSpy.Debugger.Modules {
 			ulong addr = vm.Module.Address;
 			ulong endAddr = addr + vm.Module.Size;
 			if (addr == 0)
-				output.Write(dnSpy_Debugger_Resources.Module_NoAddress, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.Module_NoAddress);
 			else {
 				WriteAddress(addr);
-				output.Write("-", BoxedTextTokenKind.Operator);
+				output.Write(BoxedOutputColor.Operator, "-");
 				WriteAddress(endAddr);
 			}
 		}
 
 		void WriteAddress(ulong addr) {
 			if (IntPtr.Size == 4)
-				output.Write(string.Format("{0:X8}", addr), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("{0:X8}", addr));
 			else
-				output.Write(string.Format("{0:X16}", addr), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("{0:X16}", addr));
 		}
 	}
 }

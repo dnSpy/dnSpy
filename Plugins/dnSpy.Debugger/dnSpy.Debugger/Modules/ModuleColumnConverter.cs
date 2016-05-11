@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModuleColumnConverter : IValueConverter {
@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Modules {
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image"))
 				return vm.Context.ImageManager.GetImage(GetType().Assembly, vm.IsExe ? "AssemblyExe" : "AssemblyModule", BackgroundType.GridViewItem);
 
-			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
 			var printer = new ModulePrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

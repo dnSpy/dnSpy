@@ -22,40 +22,43 @@ using System.IO;
 using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 using dnSpy.Shared.Languages.XmlDoc;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	sealed class CodeToolTipWriter : ICodeToolTipWriter, IXmlDocOutput {
-		readonly UISyntaxHighlighter uiSyntaxHighlighter;
+		readonly ColorizedTextElementCreator creator;
 
-		public bool IsEmpty => uiSyntaxHighlighter.IsEmpty;
+		public bool IsEmpty => creator.IsEmpty;
 
 		public CodeToolTipWriter(bool syntaxHighlight) {
-			this.uiSyntaxHighlighter = UISyntaxHighlighter.Create(syntaxHighlight);
+			this.creator = ColorizedTextElementCreator.Create(syntaxHighlight);
 		}
 
-		public UIElement Create() => uiSyntaxHighlighter.CreateResult(false, false);
-		public void Write(string s, object data) => uiSyntaxHighlighter.Output.Write(s, data);
+		public UIElement Create() => creator.CreateResult(false, false);
+		public void Write(object color, string text) => creator.Output.Write(color, text);
+		public void Write(OutputColor color, string text) => creator.Output.Write(color.Box(), text);
 
 		bool needsNewLine = false;
 
 		void IXmlDocOutput.Write(string s, object data) {
 			if (needsNewLine)
 				((IXmlDocOutput)this).WriteNewLine();
-			uiSyntaxHighlighter.Output.Write(s, data);
+			creator.Output.Write(data, s);
 		}
 
 		void IXmlDocOutput.WriteNewLine() {
-			uiSyntaxHighlighter.Output.WriteLine();
+			creator.Output.WriteLine();
 			needsNewLine = false;
 		}
 
-		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedTextTokenKind.Text);
+		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedOutputColor.Text);
 
 		void InitializeNeedsNewLine() {
-			var text = uiSyntaxHighlighter.Text;
+			var text = creator.Text;
 			needsNewLine = text.Length > 0 && !text.EndsWith(Environment.NewLine);
 		}
 
@@ -100,22 +103,22 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextTokenKind.XmlDocToolTipSummary);
+					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedOutputColor.XmlDocToolTipSummary);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
 						if (cref != null)
-							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextTokenKind.XmlDocToolTipSeeCref);
+							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedOutputColor.XmlDocToolTipSeeCref);
 						var langword = xelem.Attribute("langword");
 						if (langword != null)
-							output.Write(((string)langword).Trim(), BoxedTextTokenKind.XmlDocToolTipSeeLangword);
+							output.Write(((string)langword).Trim(), BoxedOutputColor.XmlDocToolTipSeeLangword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
 						if (nameAttr != null)
-							output.Write(((string)nameAttr).Trim(), BoxedTextTokenKind.XmlDocToolTipParamRefName);
+							output.Write(((string)nameAttr).Trim(), BoxedOutputColor.XmlDocToolTipParamRefName);
 						break;
 					case "BR":
 					case "PARA":
@@ -126,7 +129,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 					}
 				}
 				else
-					output.Write(elem.ToString(), BoxedTextTokenKind.XmlDocToolTipSummary);
+					output.Write(elem.ToString(), BoxedOutputColor.XmlDocToolTipSummary);
 			}
 		}
 	}

@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView;
@@ -64,7 +64,7 @@ namespace dnSpy.Files.TreeView {
 				yield return new TypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.TypeTreeNodeGroupType), t);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, TypeDef, Context.ShowToken);
 		public IMethodNode Create(MethodDef method) => Context.FileTreeView.Create(method);
 		public IPropertyNode Create(PropertyDef property) => Context.FileTreeView.Create(property);

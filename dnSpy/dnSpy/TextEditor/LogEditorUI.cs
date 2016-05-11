@@ -28,7 +28,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.TextEditor {

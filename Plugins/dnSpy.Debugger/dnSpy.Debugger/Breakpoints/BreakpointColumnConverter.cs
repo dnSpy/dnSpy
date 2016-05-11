@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointColumnConverter : IValueConverter {
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				return vm.Context.ImageManager.GetImage(GetType().Assembly, img, BackgroundType.GridViewItem);
 			}
 
-			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
 			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Language);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

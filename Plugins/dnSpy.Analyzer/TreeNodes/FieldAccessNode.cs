@@ -23,9 +23,8 @@ using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class FieldAccessNode : SearchNode {
@@ -42,8 +41,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.showWrites = showWrites;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);

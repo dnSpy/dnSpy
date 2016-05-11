@@ -20,9 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 
-namespace dnSpy.Shared.Highlighting {
+namespace dnSpy.Shared.TextEditor {
 	public sealed class CachedTextTokenColors {
 		public int Length => currentOffset;
 
@@ -62,7 +63,7 @@ namespace dnSpy.Shared.Highlighting {
 			TokenInfo info;
 			if (!offsetToTokenInfo.TryGetValue(offset, out info)) {
 				defaultTextLength = 0;
-				data = BoxedTextTokenKind.Text;
+				data = BoxedOutputColor.Text;
 				tokenLength = 0;
 				return false;
 			}
@@ -108,7 +109,7 @@ namespace dnSpy.Shared.Highlighting {
 
 		public void AppendLine() {
 			// We must append the same type of new line string as StringBuilder
-			Append(BoxedTextTokenKind.Text, Environment.NewLine);
+			Append(BoxedOutputColor.Text, Environment.NewLine);
 		}
 
 		// Gets called to add one token. No newlines are allowed
@@ -122,7 +123,7 @@ namespace dnSpy.Shared.Highlighting {
 
 redo:
 			if (isAppendingDefaultText) {
-				if (data.Equals(BoxedTextTokenKind.Text)) {
+				if (data.Equals(BoxedTextTokenKind.Text) || data.Equals(BoxedOutputColor.Text)) {
 					int newLength = currentDefaultTextLength + length;
 					while (newLength > TEXT_TOKEN_LENGTH_MAX) {
 						currentDefaultTextLength = Math.Min(newLength, TEXT_TOKEN_LENGTH_MAX);

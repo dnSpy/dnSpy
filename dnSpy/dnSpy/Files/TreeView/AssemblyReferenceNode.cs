@@ -23,9 +23,9 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.Files.TreeView;
 
@@ -50,7 +50,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, AssemblyRef, Context.ShowToken);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

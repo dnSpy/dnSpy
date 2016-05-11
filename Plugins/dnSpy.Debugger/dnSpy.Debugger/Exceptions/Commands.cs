@@ -32,9 +32,9 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Exceptions {
 	[ExportAutoLoaded]
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override void Execute(ExceptionsCtxMenuContext context) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ExceptionPrinter(output);
 				printer.WriteName(vm);

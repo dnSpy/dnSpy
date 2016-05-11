@@ -17,29 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class ValuePrinter {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 		readonly bool useHex;
 
-		public ValuePrinter(ISyntaxHighlightOutput output, bool useHex) {
+		public ValuePrinter(IOutputColorWriter output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
 		}
 
 		public void WriteExpander(ValueVM vm) {
 			if (vm.LazyLoading)
-				output.Write("+", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "+");
 			else if (vm.Children.Count == 0) {
 				// VS prints nothing
 			}
 			else if (vm.IsExpanded)
-				output.Write("-", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "-");
 			else
-				output.Write("+", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "+");
 		}
 
 		public void WriteName(ValueVM vm) => vm.WriteName(output);

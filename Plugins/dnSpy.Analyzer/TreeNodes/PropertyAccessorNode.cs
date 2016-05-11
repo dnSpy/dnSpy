@@ -17,9 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyAccessorNode : MethodNode {
@@ -30,9 +29,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.name = name;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(IOutputColorWriter output, ILanguage language) {
 			if (name != null)
-				output.Write(name, BoxedTextTokenKind.Keyword);
+				output.Write(BoxedOutputColor.Keyword, name);
 			else
 				base.Write(output, language);
 		}

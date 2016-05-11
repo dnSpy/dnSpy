@@ -23,9 +23,8 @@ using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -67,8 +66,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) =>
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_TablesStream, BoxedTextTokenKind.InstanceField);
+		protected override void Write(IOutputColorWriter output) =>
+			output.Write(BoxedOutputColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_TablesStream);
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {
 			var mdTblNode = (MetaDataTableNode)TreeNode.DataChildren.FirstOrDefault(a => ((MetaDataTableNode)a).TableInfo.Table == (Table)(token >> 24));

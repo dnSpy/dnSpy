@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageSectionHeaderNode : HexNode {
@@ -54,14 +54,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				TreeNode.RefreshUI();
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, BoxedTextTokenKind.Keyword);
+		protected override void Write(IOutputColorWriter output) {
+			output.Write(BoxedOutputColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_PE_Section);
 			output.WriteSpace();
-			output.Write("#", BoxedTextTokenKind.Operator);
-			output.Write(SectionNumber.ToString(), BoxedTextTokenKind.Number);
-			output.Write(":", BoxedTextTokenKind.Punctuation);
+			output.Write(BoxedOutputColor.Operator, "#");
+			output.Write(BoxedOutputColor.Number, SectionNumber.ToString());
+			output.Write(BoxedOutputColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), BoxedTextTokenKind.Type);
+			output.Write(BoxedOutputColor.Type, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
 		}
 	}
 }

@@ -33,9 +33,9 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IInitializeDataTemplate))]
@@ -351,8 +351,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
-			var output = new NoSyntaxHighlightOutput();
-			var output2 = SyntaxHighlightOutputToTextOutput.Create(output);
+			var output = new StringBuilderTextColorOutput();
+			var output2 = TextColorOutputToTextOutput.Create(output);
 			context.Node.WriteHeader(output2);
 			foreach (var rec in context.Records)
 				context.Node.Write(output2, rec);

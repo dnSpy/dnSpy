@@ -24,14 +24,14 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages;
 using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Files.TreeView {
 	sealed class AssemblyFileNode : DnSpyFileNode, IAssemblyFileNode {
@@ -52,17 +52,17 @@ namespace dnSpy.Files.TreeView {
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
 
-		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void WriteToolTip(IOutputColorWriter output, ILanguage language) {
 			output.Write(DnSpyFile.AssemblyDef);
 
 			output.WriteLine();
-			output.Write(TargetFrameworkInfo.Create(DnSpyFile.AssemblyDef.ManifestModule).ToString(), BoxedTextTokenKind.EnumField);
+			output.Write(BoxedOutputColor.EnumField, TargetFrameworkInfo.Create(DnSpyFile.AssemblyDef.ManifestModule).ToString());
 
 			output.WriteLine();
-			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.AssemblyDef.ManifestModule), BoxedTextTokenKind.EnumField);
+			output.Write(BoxedOutputColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.AssemblyDef.ManifestModule));
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

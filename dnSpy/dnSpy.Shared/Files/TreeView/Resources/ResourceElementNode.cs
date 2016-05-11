@@ -26,14 +26,14 @@ using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
 	public abstract class ResourceElementNode : FileTreeNodeData, IResourceElementNode {
@@ -42,9 +42,9 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 		public string Name => resourceElement.Name;
 
-		protected sealed override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected sealed override void Write(IOutputColorWriter output, ILanguage language) =>
 			output.WriteFilename(resourceElement.Name);
-		protected sealed override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected sealed override void WriteToolTip(IOutputColorWriter output, ILanguage language) =>
 			base.WriteToolTip(output, language);
 		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
 
@@ -105,8 +105,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
-			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
-			output.Write($" = {ValueString}", BoxedTextTokenKind.Comment);
+			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
+			output.Write($" = {ValueString}", BoxedOutputColor.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

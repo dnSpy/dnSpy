@@ -17,18 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class FileListPrinter {
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 
-		public FileListPrinter(ISyntaxHighlightOutput output) {
+		public FileListPrinter(IOutputColorWriter output) {
 			this.output = output;
 		}
 
-		public void WriteName(FileListVM vm) => output.Write(vm.Name, BoxedTextTokenKind.Assembly);
-		public void WriteFileCount(FileListVM vm) => output.Write(vm.FileCount.ToString(), BoxedTextTokenKind.Number);
+		public void WriteName(FileListVM vm) => output.Write(BoxedOutputColor.Assembly, vm.Name);
+		public void WriteFileCount(FileListVM vm) => output.Write(BoxedOutputColor.Number, vm.FileCount.ToString());
 	}
 }

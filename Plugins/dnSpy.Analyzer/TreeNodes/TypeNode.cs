@@ -19,9 +19,9 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.Files.TreeView;
 
@@ -37,7 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public override void Initialize() => this.TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedType);
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, analyzedType, Context.ShowToken);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

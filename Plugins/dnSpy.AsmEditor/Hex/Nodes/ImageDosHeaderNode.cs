@@ -22,8 +22,7 @@ using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -43,7 +42,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageDosHeaderVM = new ImageDosHeaderVM(this, doc, StartOffset);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output) =>
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_DOSHeader, BoxedTextTokenKind.Keyword);
+		protected override void Write(IOutputColorWriter output) =>
+			output.Write(BoxedOutputColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_DOSHeader);
 	}
 }

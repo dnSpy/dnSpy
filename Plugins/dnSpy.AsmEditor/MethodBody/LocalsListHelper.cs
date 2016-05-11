@@ -26,8 +26,9 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {
@@ -70,21 +71,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 		protected override void CopyItemsAsText(LocalVM[] locals) {
 			Array.Sort(locals, (a, b) => a.Index.CompareTo(b.Index));
 
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 
 			for (int i = 0; i < locals.Length; i++) {
 				if (i > 0)
 					output.WriteLine();
 
 				var local = locals[i];
-				output.Write(local.Index.ToString(), BoxedTextTokenKind.Number);
-				output.Write("\t", BoxedTextTokenKind.Text);
-				output.Write(local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty, BoxedTextTokenKind.Text);
-				output.Write("\t", BoxedTextTokenKind.Text);
-				output.Write(local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty, BoxedTextTokenKind.Text);
-				output.Write("\t", BoxedTextTokenKind.Text);
-				output.Write(local.Name ?? string.Empty, BoxedTextTokenKind.Local);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Number, local.Index.ToString());
+				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedOutputColor.Text, local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty);
+				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedOutputColor.Text, local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty);
+				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedOutputColor.Local, local.Name ?? string.Empty);
+				output.Write(BoxedOutputColor.Text, "\t");
 				BodyUtils.WriteObject(output, local.Type);
 			}
 			if (locals.Length > 1)

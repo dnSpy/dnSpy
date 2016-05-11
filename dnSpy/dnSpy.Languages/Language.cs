@@ -23,8 +23,8 @@ using System.IO;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.CSharp;
 using dnSpy.Languages.Properties;
@@ -44,12 +44,12 @@ namespace dnSpy.Languages {
 		public abstract string FileExtension { get; }
 		public virtual string ProjectFileExtension => null;
 
-		public void WriteName(ISyntaxHighlightOutput output, TypeDef type) =>
-			FormatTypeName(SyntaxHighlightOutputToTextOutput.Create(output), type);
-		public void WriteType(ISyntaxHighlightOutput output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) =>
-			TypeToString(SyntaxHighlightOutputToTextOutput.Create(output), type, includeNamespace, pd);
-		public void WriteName(ISyntaxHighlightOutput output, PropertyDef property, bool? isIndexer) =>
-			FormatPropertyName(SyntaxHighlightOutputToTextOutput.Create(output), property, isIndexer);
+		public void WriteName(IOutputColorWriter output, TypeDef type) =>
+			FormatTypeName(TextColorOutputToTextOutput.Create(output), type);
+		public void WriteType(IOutputColorWriter output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) =>
+			TypeToString(TextColorOutputToTextOutput.Create(output), type, includeNamespace, pd);
+		public void WriteName(IOutputColorWriter output, PropertyDef property, bool? isIndexer) =>
+			FormatPropertyName(TextColorOutputToTextOutput.Create(output), property, isIndexer);
 		public virtual void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(method.DeclaringType, true) + "." + method.Name);
 		public virtual void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) =>
@@ -220,11 +220,11 @@ namespace dnSpy.Languages {
 				output.Write(IdentifierEscaper.Escape(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
 		}
 
-		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
+		public virtual void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
 			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(member);
-		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name) =>
+		public virtual void WriteToolTip(IOutputColorWriter output, IVariable variable, string name) =>
 			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable, name);
-		public virtual void Write(ISyntaxHighlightOutput output, IMemberRef member, SimplePrinterFlags flags) =>
+		public virtual void Write(IOutputColorWriter output, IMemberRef member, SimplePrinterFlags flags) =>
 			new SimpleCSharpPrinter(output, flags).Write(member);
 
 		protected static string GetName(IVariable variable, string name) {

@@ -29,12 +29,13 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Threads {
 	[ExportAutoLoaded]
@@ -122,31 +123,31 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ThreadPrinter(output, debuggerSettings.UseHexadecimal, theDebugger.Value.Debugger);
 				printer.WriteCurrent(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteId(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteManagedId(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteCategory(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteName(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteLocation(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WritePriority(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteAffinityMask(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteSuspended(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteProcess(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteAppDomain(vm);
-				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, "\t");
 				printer.WriteUserState(vm);
 				output.WriteLine();
 			}

@@ -23,20 +23,19 @@ using System.Linq;
 using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadPrinter {
 		const int MAX_THREAD_NAME = 128;
 
-		readonly ISyntaxHighlightOutput output;
+		readonly IOutputColorWriter output;
 		readonly bool useHex;
 		readonly DnDebugger dbg;
 
-		public ThreadPrinter(ISyntaxHighlightOutput output, bool useHex, DnDebugger dbg) {
+		public ThreadPrinter(IOutputColorWriter output, bool useHex, DnDebugger dbg) {
 			this.output = output;
 			this.useHex = useHex;
 			this.dbg = dbg;
@@ -44,12 +43,12 @@ namespace dnSpy.Debugger.Threads {
 
 		void WriteInt32(int value) {
 			if (useHex)
-				output.Write(string.Format("0x{0:X8}", value), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("0x{0:X8}", value));
 			else
-				output.Write(string.Format("{0}", value), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("{0}", value));
 		}
 
-		public void WriteCurrent(ThreadVM vm) => output.Write(vm.IsCurrent ? ">" : " ", BoxedTextTokenKind.Text);
+		public void WriteCurrent(ThreadVM vm) => output.Write(BoxedOutputColor.Text, vm.IsCurrent ? ">" : " ");
 		public void WriteId(ThreadVM vm) => WriteInt32(vm.Id);
 		public void WriteSuspended(ThreadVM vm) => output.WriteYesNo(vm.IsSuspended);
 		public void WriteProcess(ThreadVM vm) => output.Write(vm.Thread.Process, useHex);
@@ -60,7 +59,7 @@ namespace dnSpy.Debugger.Threads {
 			if (id != null)
 				WriteInt32(id.Value);
 			else {
-				output.Write("???", BoxedTextTokenKind.Error);
+				output.Write(BoxedOutputColor.Error, "???");
 				WriteInt32(vm.Thread.UniqueIdProcess + 1);
 			}
 		}
@@ -68,23 +67,23 @@ namespace dnSpy.Debugger.Threads {
 		public void WriteCategory(ThreadVM vm) {
 			switch (vm.Type) {
 			case ThreadType.Unknown:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Unknown, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.ThreadType_Unknown);
 				break;
 			case ThreadType.Main:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Main, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.ThreadType_Main);
 				break;
 			case ThreadType.ThreadPool:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_ThreadPool, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.ThreadType_ThreadPool);
 				break;
 			case ThreadType.Worker:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Worker, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.ThreadType_Worker);
 				break;
 			case ThreadType.BGCOrFinalizer:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_BackgroundGC_or_Finalizer, BoxedTextTokenKind.Text);
-				output.Write("???", BoxedTextTokenKind.Error);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.ThreadType_BackgroundGC_or_Finalizer);
+				output.Write(BoxedOutputColor.Error, "???");
 				break;
 			case ThreadType.Terminated:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Terminated, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.ThreadType_Terminated);
 				break;
 			default:
 				Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
@@ -95,17 +94,17 @@ namespace dnSpy.Debugger.Threads {
 		public void WriteName(ThreadVM vm) {
 			var name = vm.Name;
 			if (vm.UnknownName)
-				output.Write("???", BoxedTextTokenKind.Error);
+				output.Write(BoxedOutputColor.Error, "???");
 			else if (name == null)
-				output.Write(dnSpy_Debugger_Resources.Thread_NoName, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.Thread_NoName);
 			else
-				output.Write(DebugOutputUtils.FilterName(name, MAX_THREAD_NAME), BoxedTextTokenKind.String);
+				output.Write(BoxedOutputColor.String, DebugOutputUtils.FilterName(name, MAX_THREAD_NAME));
 		}
 
 		public void WriteLocation(ThreadVM vm) {
 			var frame = vm.Thread.CorThread.AllFrames.FirstOrDefault();
 			if (frame == null)
-				output.Write(dnSpy_Debugger_Resources.Thread_LocationNotAvailable, BoxedTextTokenKind.Text);
+				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable);
 			else {
 				var flags = TypePrinterFlags.Default | TypePrinterFlags.ShowIP;
 				if (!useHex)
@@ -116,12 +115,12 @@ namespace dnSpy.Debugger.Threads {
 
 		public void WritePriority(ThreadVM vm) {
 			switch (vm.Priority) {
-			case ThreadPriority.Lowest:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Lowest, BoxedTextTokenKind.EnumField); break;
-			case ThreadPriority.BelowNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_BelowNormal, BoxedTextTokenKind.EnumField); break;
-			case ThreadPriority.Normal:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Normal, BoxedTextTokenKind.EnumField); break;
-			case ThreadPriority.AboveNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_AboveNormal, BoxedTextTokenKind.EnumField); break;
-			case ThreadPriority.Highest:		output.Write(dnSpy_Debugger_Resources.Thread_Priority_Highest, BoxedTextTokenKind.EnumField); break;
-			default:							output.Write(string.Format("???({0})", (int)vm.Priority), BoxedTextTokenKind.Error); break;
+			case ThreadPriority.Lowest:			output.Write(BoxedOutputColor.EnumField, dnSpy_Debugger_Resources.Thread_Priority_Lowest); break;
+			case ThreadPriority.BelowNormal:	output.Write(BoxedOutputColor.EnumField, dnSpy_Debugger_Resources.Thread_Priority_BelowNormal); break;
+			case ThreadPriority.Normal:			output.Write(BoxedOutputColor.EnumField, dnSpy_Debugger_Resources.Thread_Priority_Normal); break;
+			case ThreadPriority.AboveNormal:	output.Write(BoxedOutputColor.EnumField, dnSpy_Debugger_Resources.Thread_Priority_AboveNormal); break;
+			case ThreadPriority.Highest:		output.Write(BoxedOutputColor.EnumField, dnSpy_Debugger_Resources.Thread_Priority_Highest); break;
+			default:							output.Write(BoxedOutputColor.Error, string.Format("???({0})", (int)vm.Priority)); break;
 			}
 		}
 
@@ -141,7 +140,7 @@ namespace dnSpy.Debugger.Threads {
 						sb.Append('0');
 				}
 			}
-			output.Write(sb.ToString(), BoxedTextTokenKind.Number);
+			output.Write(BoxedOutputColor.Number, sb.ToString());
 		}
 
 		static readonly Tuple<CorDebugUserState, string>[] UserStates = new Tuple<CorDebugUserState, string>[] {
@@ -165,13 +164,13 @@ namespace dnSpy.Debugger.Threads {
 					if (needComma)
 						output.WriteCommaSpace();
 					needComma = true;
-					output.Write(t.Item2, BoxedTextTokenKind.EnumField);
+					output.Write(BoxedOutputColor.EnumField, t.Item2);
 				}
 			}
 			if (state != 0) {
 				if (needComma)
 					output.WriteCommaSpace();
-				output.Write(string.Format("0x{0:X}", (int)state), BoxedTextTokenKind.Number);
+				output.Write(BoxedOutputColor.Number, string.Format("0x{0:X}", (int)state));
 			}
 		}
 	}

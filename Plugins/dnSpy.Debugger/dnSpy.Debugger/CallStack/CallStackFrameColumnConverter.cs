@@ -20,9 +20,9 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Contracts.TextEditor;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackFrameColumnConverter : IValueConverter {
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.CallStack {
 				return null;
 			}
 
-			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				CreateContent(gen.Output, vm.CachedOutput, vm.Context.SyntaxHighlight);
 			else
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.CallStack {
 			return gen.CreateResult(true);
 		}
 
-		void CreateContent(ISyntaxHighlightOutput output, CachedOutput cachedOutput, bool highlight) {
+		void CreateContent(IOutputColorWriter output, CachedOutput cachedOutput, bool highlight) {
 			var conv = new OutputConverter(output);
 			foreach (var t in cachedOutput.data)
 				conv.Write(t.Item1, t.Item2);

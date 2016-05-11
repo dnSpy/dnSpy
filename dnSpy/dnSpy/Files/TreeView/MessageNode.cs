@@ -19,11 +19,10 @@
 
 using System;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -43,8 +42,8 @@ namespace dnSpy.Files.TreeView {
 			this.Message = msg;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(Message, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, Message);
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;
 	}

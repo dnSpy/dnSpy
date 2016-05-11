@@ -21,11 +21,10 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -65,10 +64,10 @@ namespace dnSpy.Files.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
+		protected override void Write(IOutputColorWriter output, ILanguage language) {
 			var td = TryGetTypeDef();
 			if (td == null)
-				output.Write("???", BoxedTextTokenKind.Error);
+				output.Write(BoxedOutputColor.Error, "???");
 			else
 				new NodePrinter().Write(output, language, td, Context.ShowToken);
 		}

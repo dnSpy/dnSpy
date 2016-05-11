@@ -71,17 +71,18 @@
     <Compile Include="App\MsgBox.cs" />
     <Compile Include="AvalonEdit\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
+    <Compile Include="Controls\ColorizedTextElementCreator.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FastTreeNodeView.cs" />
     <Compile Include="Controls\FontUtils.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
+    <Compile Include="Controls\TextBlockColorOutput.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
     <Compile Include="Decompiler\ISmartTextOutput.cs" />
     <Compile Include="Decompiler\OutputLengthExceededException.cs" />
-    <Compile Include="Highlighting\CachedTextTokenColors.cs" />
     <Compile Include="Languages\StringBuilderExtensions.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\dnSpy.Shared.Resources.Designer.cs">
@@ -152,11 +153,6 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Hex\SelectVM.cs" />
-    <Compile Include="Highlighting\ISyntaxHighlightOutput.cs" />
-    <Compile Include="Highlighting\NameUtils.cs" />
-    <Compile Include="Highlighting\NoSyntaxHighlightOutput.cs" />
-    <Compile Include="Highlighting\SyntaxHighlighter.cs" />
-    <Compile Include="Highlighting\UISyntaxHighlighter.cs" />
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
@@ -201,8 +197,12 @@
     <Compile Include="Search\FileTreeNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
+    <Compile Include="TextEditor\CachedTextTokenColors.cs" />
     <Compile Include="TextEditor\ColorAggregator.cs" />
     <Compile Include="TextEditor\ColorInfo.cs" />
+    <Compile Include="TextEditor\NameUtils.cs" />
+    <Compile Include="TextEditor\StringBuilderTextColorOutput.cs" />
+    <Compile Include="TextEditor\TextColorOutputExtensionMethods.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />
     <Compile Include="Themes\ThemeUtils.cs" />
     <Compile Include="ToolBars\ToolBarButtonBase.cs" />

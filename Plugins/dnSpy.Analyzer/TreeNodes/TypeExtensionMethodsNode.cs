@@ -21,9 +21,8 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExtensionMethodsNode : SearchNode {
@@ -36,8 +35,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindReferencesInType);

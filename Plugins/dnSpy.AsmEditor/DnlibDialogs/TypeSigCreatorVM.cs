@@ -24,9 +24,9 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeSigCreatorVM : ViewModelBase {
@@ -121,7 +121,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				if (TypeSig == null)
 					return "null";
-				var output = new NoSyntaxHighlightOutput();
+				var output = new StringBuilderTextColorOutput();
 				Language.WriteType(output, TypeSig.ToTypeDefOrRef(), true);
 				return output.ToString();
 			}

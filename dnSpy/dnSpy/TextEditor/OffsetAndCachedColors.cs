@@ -18,7 +18,7 @@
 */
 
 using System.Diagnostics;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.TextEditor {
 	struct OffsetAndCachedColors {

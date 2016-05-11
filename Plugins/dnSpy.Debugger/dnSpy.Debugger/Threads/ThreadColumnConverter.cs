@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadColumnConverter : IValueConverter {
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Threads {
 				}
 			}
 
-			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
 			var printer = new ThreadPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Id"))
 				printer.WriteId(vm);

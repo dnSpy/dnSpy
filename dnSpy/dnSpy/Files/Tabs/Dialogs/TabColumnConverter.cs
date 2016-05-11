@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabColumnConverter : IValueConverter {
@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = UISyntaxHighlighter.Create(vm.Owner.Settings.SyntaxHighlight);
+			var gen = ColorizedTextElementCreator.Create(vm.Owner.Settings.SyntaxHighlight);
 			var printer = new TabPrinter(gen.Output);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

@@ -23,14 +23,14 @@ using System.Diagnostics;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages;
 using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 
 namespace dnSpy.Files.TreeView {
 	sealed class PEFileNode : DnSpyFileNode, IPEFileNode {
@@ -49,11 +49,11 @@ namespace dnSpy.Files.TreeView {
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile);
 
-		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine), BoxedTextTokenKind.EnumField);
+		protected override void WriteToolTip(IOutputColorWriter output, ILanguage language) {
+			output.Write(BoxedOutputColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine));
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

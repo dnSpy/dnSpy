@@ -28,7 +28,7 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TextEditor;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
@@ -94,8 +94,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 			var mod = (node as IFileTreeNodeData).GetModule();
 			var filename = mod == null ? null : mod.Location;
-			output.WriteReference($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), BoxedTextTokenKind.Comment);
-			output.Write(": ", BoxedTextTokenKind.Comment);
+			output.WriteReference($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), BoxedOutputColor.Comment);
+			output.Write(": ", BoxedOutputColor.Comment);
 		}
 
 		public static string TryGetString(Stream stream) {
@@ -120,7 +120,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				return false;
 
 			stream.Position = 0;
-			context.Output.Write(FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd(), BoxedTextTokenKind.Text);
+			context.Output.Write(FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd(), BoxedOutputColor.Text);
 			string ext;
 			if (type == FileType.Xml)
 				ext = ".xml";

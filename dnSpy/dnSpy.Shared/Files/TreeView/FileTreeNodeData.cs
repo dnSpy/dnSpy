@@ -23,11 +23,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Controls;
+using dnSpy.Shared.TextEditor;
 using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Shared.Files.TreeView {
@@ -42,7 +43,7 @@ namespace dnSpy.Shared.Files.TreeView {
 
 		public sealed override object Text {
 			get {
-				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
+				var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
 
 				var cached = cachedText != null ? cachedText.Target : null;
 				if (cached != null)
@@ -57,12 +58,12 @@ namespace dnSpy.Shared.Files.TreeView {
 		}
 		WeakReference cachedText;
 
-		protected abstract void Write(ISyntaxHighlightOutput output, ILanguage language);
-		protected virtual void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) => Write(output, language);
+		protected abstract void Write(IOutputColorWriter output, ILanguage language);
+		protected virtual void WriteToolTip(IOutputColorWriter output, ILanguage language) => Write(output, language);
 
 		public sealed override object ToolTip {
 			get {
-				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
+				var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
 				WriteToolTip(gen.Output, Context.Language);
 				return gen.CreateResult(filterOutNewLines: false);
 			}
@@ -71,7 +72,7 @@ namespace dnSpy.Shared.Files.TreeView {
 		public sealed override string ToString() => ToString(Context.Language);
 
 		public string ToString(ILanguage language) {
-			var output = new NoSyntaxHighlightOutput();
+			var output = new StringBuilderTextColorOutput();
 			Write(output, language);
 			return output.ToString();
 		}

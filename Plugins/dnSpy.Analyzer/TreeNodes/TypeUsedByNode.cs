@@ -22,8 +22,8 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -37,8 +37,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindTypeUsage);

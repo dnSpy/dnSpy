@@ -28,7 +28,6 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
@@ -74,7 +73,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		public bool Decompile(IDecompileNodeContext context) {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.String) {
-				context.Output.Write((string)((BuiltInResourceData)ResourceElement.ResourceData).Data, BoxedTextTokenKind.Text);
+				context.Output.Write((string)((BuiltInResourceData)ResourceElement.ResourceData).Data, BoxedOutputColor.Text);
 				context.HighlightingExtension = ".txt";
 				context.ContentTypeGuid = new Guid(ContentTypes.PLAIN_TEXT);
 				return true;

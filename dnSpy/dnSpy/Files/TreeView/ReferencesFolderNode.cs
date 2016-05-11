@@ -22,11 +22,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Files.TreeView;
 
@@ -46,8 +45,8 @@ namespace dnSpy.Files.TreeView {
 			this.moduleNode = moduleNode;
 		}
 
-		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) =>
-			output.Write(dnSpy_Resources.ReferencesFolder, BoxedTextTokenKind.Text);
+		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+			output.Write(BoxedOutputColor.Text, dnSpy_Resources.ReferencesFolder);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var asmRef in moduleNode.DnSpyFile.ModuleDef.GetAssemblyRefs())
