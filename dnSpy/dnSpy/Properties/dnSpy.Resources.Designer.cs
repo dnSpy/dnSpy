@@ -1881,6 +1881,69 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error:.
+        /// </summary>
+        public static string SearchPanel_ErrorText {
+            get {
+                return ResourceManager.GetString("SearchPanel_ErrorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find next (F3).
+        /// </summary>
+        public static string SearchPanel_FindNextText {
+            get {
+                return ResourceManager.GetString("SearchPanel_FindNextText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find previous (Shift+F3).
+        /// </summary>
+        public static string SearchPanel_FindPreviousText {
+            get {
+                return ResourceManager.GetString("SearchPanel_FindPreviousText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match case.
+        /// </summary>
+        public static string SearchPanel_MatchCaseText {
+            get {
+                return ResourceManager.GetString("SearchPanel_MatchCaseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match whole words.
+        /// </summary>
+        public static string SearchPanel_MatchWholeWordsText {
+            get {
+                return ResourceManager.GetString("SearchPanel_MatchWholeWordsText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No matches found!.
+        /// </summary>
+        public static string SearchPanel_NoMatchesFoundText {
+            get {
+                return ResourceManager.GetString("SearchPanel_NoMatchesFoundText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use regular expressions.
+        /// </summary>
+        public static string SearchPanel_UseRegexText {
+            get {
+                return ResourceManager.GetString("SearchPanel_UseRegexText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All of the Above.
         /// </summary>
         public static string SearchWindow_AllAbove {

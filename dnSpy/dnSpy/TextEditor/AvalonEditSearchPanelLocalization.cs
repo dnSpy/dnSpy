@@ -17,17 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Shared.Properties;
+using dnSpy.Properties;
 using ICSharpCode.AvalonEdit.Search;
 
 namespace dnSpy.TextEditor {
-	public sealed class AvalonEditSearchPanelLocalization : Localization {
-		public override string MatchCaseText => dnSpy_Shared_Resources.SearchPanel_MatchCaseText;
-		public override string MatchWholeWordsText => dnSpy_Shared_Resources.SearchPanel_MatchWholeWordsText;
-		public override string UseRegexText => dnSpy_Shared_Resources.SearchPanel_UseRegexText;
-		public override string FindNextText => dnSpy_Shared_Resources.SearchPanel_FindNextText;
-		public override string FindPreviousText => dnSpy_Shared_Resources.SearchPanel_FindPreviousText;
-		public override string ErrorText => dnSpy_Shared_Resources.SearchPanel_ErrorText;
-		public override string NoMatchesFoundText => dnSpy_Shared_Resources.SearchPanel_NoMatchesFoundText;
+	sealed class AvalonEditSearchPanelLocalization : Localization {
+		public override string MatchCaseText => dnSpy_Resources.SearchPanel_MatchCaseText;
+		public override string MatchWholeWordsText => dnSpy_Resources.SearchPanel_MatchWholeWordsText;
+		public override string UseRegexText => dnSpy_Resources.SearchPanel_UseRegexText;
+		public override string FindNextText => dnSpy_Resources.SearchPanel_FindNextText;
+		public override string FindPreviousText => dnSpy_Resources.SearchPanel_FindPreviousText;
+		public override string ErrorText => dnSpy_Resources.SearchPanel_ErrorText;
+		public override string NoMatchesFoundText => dnSpy_Resources.SearchPanel_NoMatchesFoundText;
 	}
 }

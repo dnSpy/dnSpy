@@ -550,25 +550,4 @@ Error: {1}</value>
   <data name="LocalHexSettings_Encoding" xml:space="preserve">
     <value>E_ncoding</value>
   </data>
-  <data name="SearchPanel_ErrorText" xml:space="preserve">
-    <value>Error:</value>
-  </data>
-  <data name="SearchPanel_FindNextText" xml:space="preserve">
-    <value>Find next (F3)</value>
-  </data>
-  <data name="SearchPanel_FindPreviousText" xml:space="preserve">
-    <value>Find previous (Shift+F3)</value>
-  </data>
-  <data name="SearchPanel_MatchCaseText" xml:space="preserve">
-    <value>Match case</value>
-  </data>
-  <data name="SearchPanel_MatchWholeWordsText" xml:space="preserve">
-    <value>Match whole words</value>
-  </data>
-  <data name="SearchPanel_NoMatchesFoundText" xml:space="preserve">
-    <value>No matches found!</value>
-  </data>
-  <data name="SearchPanel_UseRegexText" xml:space="preserve">
-    <value>Use regular expressions</value>
-  </data>
 </root>
