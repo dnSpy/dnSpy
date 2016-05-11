@@ -199,7 +199,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			var info = GetInfo(token.Table, token.Rid);
 			if (string.IsNullOrEmpty(info))
-				return string.Format("{0}: {1}[{2}], 0x{3:X8})", codedTokenName, token.Table, token.Rid, token.Raw);
+				return string.Format("{0}: {1}[{2}], 0x{3:X8}", codedTokenName, token.Table, token.Rid, token.Raw);
 			return string.Format("{0} ({1}: {2}[{3}], 0x{4:X8})", info, codedTokenName, token.Table, token.Rid, token.Raw);
 		}
 
