@@ -294,13 +294,13 @@ namespace dnSpy.TextEditor {
 
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Show();
-			UpdateCurrentLineColors(true);
+			UpdateCurrentLineColors(textEditorSettings.HighlightCurrentLine);
 			OnHighlightCurrentLineChanged();
 		}
 
 		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Hide();
-			UpdateCurrentLineColors(true);
+			UpdateCurrentLineColors(textEditorSettings.HighlightCurrentLine);
 			// Do as VS: don't hide the highlighted line
 		}
 
@@ -458,8 +458,12 @@ namespace dnSpy.TextEditor {
 			var currentLine = theme.GetColor(hasFocus ? ColorType.CurrentLine : ColorType.CurrentLineNoFocus);
 			TextArea.TextView.CurrentLineBackground = currentLine.Background;
 			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground, 2);
-			if (redraw)
-				TextArea.TextView.Redraw();
+			if (redraw) {
+				// Redraw the highlighted line
+				int oldLine = TextArea.TextView.HighlightedLine;
+				TextArea.TextView.HighlightedLine = -1;
+				TextArea.TextView.HighlightedLine = oldLine;
+			}
 		}
 
 		protected override IVisualLineTransformer CreateColorizer(IHighlightingDefinition highlightingDefinition) {
