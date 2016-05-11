@@ -233,6 +233,15 @@ namespace dnSpy.TextEditor {
 			OnHighlightCurrentLineChanged();
 			if (useShowLineNumbersOption)
 				ShowLineNumbers = textEditorSettings.ShowLineNumbers;
+
+			Loaded += DnSpyTextEditor_Loaded;
+		}
+
+		void DnSpyTextEditor_Loaded(object sender, RoutedEventArgs e) {
+			Loaded -= DnSpyTextEditor_Loaded;
+			// Fix the highlighted line, it won't be shown correctly if this control is in
+			// a hidden tab that now got activated for the first time.
+			UpdateCurrentLineColors(textEditorSettings.HighlightCurrentLine);
 		}
 
 		void TextView_DocumentChanged(object sender, EventArgs e) {
