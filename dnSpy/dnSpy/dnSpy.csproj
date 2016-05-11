@@ -333,6 +333,7 @@
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabManagerCreator.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
+    <Compile Include="TextEditor\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="TextEditor\CachedColorsList.cs" />
     <Compile Include="TextEditor\CachedColorsListColorizer.cs" />
     <Compile Include="TextEditor\CodeEditorCreator.cs" />

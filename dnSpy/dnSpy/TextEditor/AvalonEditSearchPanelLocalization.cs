@@ -20,7 +20,7 @@
 using dnSpy.Shared.Properties;
 using ICSharpCode.AvalonEdit.Search;
 
-namespace dnSpy.Shared.AvalonEdit {
+namespace dnSpy.TextEditor {
 	public sealed class AvalonEditSearchPanelLocalization : Localization {
 		public override string MatchCaseText => dnSpy_Shared_Resources.SearchPanel_MatchCaseText;
 		public override string MatchWholeWordsText => dnSpy_Shared_Resources.SearchPanel_MatchWholeWordsText;

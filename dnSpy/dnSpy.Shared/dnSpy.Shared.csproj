@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\MsgBox.cs" />
-    <Compile Include="AvalonEdit\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
     <Compile Include="Controls\ColorizedTextElementCreator.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
