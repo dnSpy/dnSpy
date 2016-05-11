@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		void ClearRedo();
 	}
 
-	[Export, Export(typeof(IUndoCommandManager))]
+	[Export(typeof(IUndoCommandManager))]
 	sealed class UndoCommandManager : IUndoCommandManager {
 		readonly List<UndoState> undoCommands = new List<UndoState>();
 		readonly List<UndoState> redoCommands = new List<UndoState>();

@@ -33,13 +33,13 @@ namespace dnSpy.Search {
 	[ExportAutoLoaded]
 	sealed class SearchToolCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		SearchToolCommandLoader(IMainToolWindowManager mainToolWindowManager, Lazy<SearchToolWindowContentCreator> searchToolWindowContentCreator, IWpfCommandManager wpfCommandManager) {
+		SearchToolCommandLoader(IMainToolWindowManager mainToolWindowManager, IWpfCommandManager wpfCommandManager) {
 			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_SEARCH_CONTROL);
-			cmds.Add(new RelayCommand(a => mainToolWindowManager.Close(searchToolWindowContentCreator.Value.SearchToolWindowContent)), ModifierKeys.None, Key.Escape);
+			cmds.Add(new RelayCommand(a => mainToolWindowManager.Close(SearchToolWindowContent.THE_GUID)), ModifierKeys.None, Key.Escape);
 		}
 	}
 
-	[Export, Export(typeof(IMainToolWindowContentCreator))]
+	[Export(typeof(IMainToolWindowContentCreator))]
 	sealed class SearchToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<ISearchManager> searchManager;
 

@@ -40,7 +40,7 @@ using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.Menus;
 
 namespace dnSpy.MainApp {
-	[Export, ExportFileTabContentFactory(Order = double.MaxValue)]
+	[ExportFileTabContentFactory(Order = double.MaxValue)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		readonly IAppWindow appWindow;
 		readonly IPluginManager pluginManager;

@@ -32,7 +32,7 @@ namespace dnSpy.MainApp {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins, Order = double.MinValue)]
 	sealed class MessageBoxManagerLoader : IAutoLoaded {
 		[ImportingConstructor]
-		MessageBoxManagerLoader(MessageBoxManager messageBoxManager) {
+		MessageBoxManagerLoader(IMessageBoxManager messageBoxManager) {
 			MsgBox.Instance = messageBoxManager;
 		}
 	}
