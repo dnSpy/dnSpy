@@ -21,7 +21,7 @@ using System;
 using System.Windows.Threading;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
 

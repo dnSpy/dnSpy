@@ -27,12 +27,12 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {
 	public abstract class ResourceNode : FileTreeNodeData, IResourceNode {

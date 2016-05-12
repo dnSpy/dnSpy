@@ -26,9 +26,9 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[Flags]

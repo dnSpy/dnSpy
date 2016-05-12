@@ -31,7 +31,7 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
 using System.Text;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Languages.ILSpy.VB {
 	sealed class LanguageProvider : ILanguageProvider {

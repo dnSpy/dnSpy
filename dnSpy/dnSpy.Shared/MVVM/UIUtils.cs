@@ -26,7 +26,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Shared.MVVM {
 	public static class UIUtils {

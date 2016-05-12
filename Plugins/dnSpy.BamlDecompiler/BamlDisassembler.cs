@@ -27,7 +27,7 @@ using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.MVVM;
 

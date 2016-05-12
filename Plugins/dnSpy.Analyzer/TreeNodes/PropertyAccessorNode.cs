@@ -18,7 +18,7 @@
 
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyAccessorNode : MethodNode {

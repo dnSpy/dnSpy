@@ -25,7 +25,7 @@ using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
 using dnSpy.Shared.MVVM;

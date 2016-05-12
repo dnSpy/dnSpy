@@ -30,7 +30,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;

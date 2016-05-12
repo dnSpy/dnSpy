@@ -20,7 +20,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Shared.Languages.XmlDoc {
 	public interface IXmlDocOutput {

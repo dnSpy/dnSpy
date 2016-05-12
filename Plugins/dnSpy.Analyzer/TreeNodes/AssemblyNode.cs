@@ -19,8 +19,8 @@
 using dnlib.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Contracts.Text;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AssemblyNode : EntityNode {

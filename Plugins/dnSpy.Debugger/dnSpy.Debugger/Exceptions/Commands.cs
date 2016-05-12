@@ -34,7 +34,7 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Exceptions {
 	[ExportAutoLoaded]

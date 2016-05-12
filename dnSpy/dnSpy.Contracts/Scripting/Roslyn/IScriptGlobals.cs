@@ -22,7 +22,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Scripting.Roslyn {
 	/// <summary>

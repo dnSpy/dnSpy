@@ -29,7 +29,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.Files.TreeView;
 using dnSpy.Shared.HexEditor;

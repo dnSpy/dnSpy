@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.BamlDecompiler {
 	[ExportToolTipContentCreator(Order = 0)]

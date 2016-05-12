@@ -23,9 +23,9 @@ using System.Linq;
 using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadPrinter {

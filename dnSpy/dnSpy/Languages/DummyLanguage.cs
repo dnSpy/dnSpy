@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Languages {
 	sealed class DummyLanguage : Language {

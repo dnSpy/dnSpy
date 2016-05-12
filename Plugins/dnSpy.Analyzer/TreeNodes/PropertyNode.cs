@@ -22,11 +22,11 @@ using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyNode : EntityNode {

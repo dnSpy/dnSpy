@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.TextEditor;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Contracts.Text;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabPrinter {

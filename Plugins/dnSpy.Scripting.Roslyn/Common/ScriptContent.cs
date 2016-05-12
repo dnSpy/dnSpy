@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Scripting.Roslyn.Common {

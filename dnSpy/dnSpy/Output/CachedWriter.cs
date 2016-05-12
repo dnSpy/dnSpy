@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Output;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Output {
 	sealed class CachedWriter : ICachedWriter {

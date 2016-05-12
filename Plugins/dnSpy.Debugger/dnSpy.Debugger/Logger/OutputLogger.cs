@@ -28,7 +28,7 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Logger {

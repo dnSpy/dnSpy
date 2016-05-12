@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Scripting.Roslyn.Properties;
 
 namespace dnSpy.Scripting.Roslyn.Common {

@@ -23,9 +23,9 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Shared.Files.TreeView {
 	public struct NodePrinter {

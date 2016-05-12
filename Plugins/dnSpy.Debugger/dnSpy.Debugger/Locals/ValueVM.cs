@@ -26,7 +26,7 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.TreeView;

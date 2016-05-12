@@ -26,7 +26,7 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeSigCreatorVM : ViewModelBase {

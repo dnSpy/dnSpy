@@ -19,7 +19,7 @@
 
 using System;
 using System.Text;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis.Text;
 
 namespace dnSpy.Roslyn.Shared.TextEditor {

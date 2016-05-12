@@ -26,9 +26,9 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.Files.TreeView.Resources {

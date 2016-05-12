@@ -31,12 +31,12 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]

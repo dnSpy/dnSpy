@@ -24,7 +24,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.CSharp;
 using dnSpy.Languages.Properties;

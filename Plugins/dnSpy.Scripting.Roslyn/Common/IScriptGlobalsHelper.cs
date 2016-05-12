@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	interface IScriptGlobalsHelper {

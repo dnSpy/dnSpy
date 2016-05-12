@@ -25,10 +25,10 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.TextEditor;
+using dnSpy.Text;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]

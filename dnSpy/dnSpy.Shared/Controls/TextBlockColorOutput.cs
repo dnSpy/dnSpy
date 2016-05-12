@@ -29,9 +29,9 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 using dnSpy.Shared.Themes;
 using ICSharpCode.AvalonEdit.Utils;
 

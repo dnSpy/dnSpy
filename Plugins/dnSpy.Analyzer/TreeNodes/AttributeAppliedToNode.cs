@@ -25,7 +25,7 @@ using dnlib.DotNet;
 using dnlib.Threading;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AttributeAppliedToNode : SearchNode {

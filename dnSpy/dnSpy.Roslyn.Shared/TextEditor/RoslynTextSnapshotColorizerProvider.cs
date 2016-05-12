@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Roslyn.Shared.TextEditor {
 	[Export(typeof(ITextSnapshotColorizerProvider))]

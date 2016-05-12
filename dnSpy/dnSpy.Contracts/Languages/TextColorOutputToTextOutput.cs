@@ -19,7 +19,7 @@
 
 using System;
 using System.Text;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {

@@ -19,7 +19,7 @@
 
 using System.Diagnostics;
 using dndbg.Engine;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger {
 	sealed class OutputConverter : ITypeOutput {

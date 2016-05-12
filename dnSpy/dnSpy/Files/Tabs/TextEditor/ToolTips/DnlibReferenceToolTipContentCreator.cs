@@ -28,8 +28,8 @@ using dnSpy.Languages.IL;
 using dnSpy.Shared.Languages.XmlDoc;
 using dnSpy.Decompiler.Shared;
 using System.Text;
-using dnSpy.Shared.TextEditor;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Shared.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	[ExportToolTipContentCreator(Order = TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]

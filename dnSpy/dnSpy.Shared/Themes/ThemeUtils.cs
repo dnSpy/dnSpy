@@ -18,7 +18,7 @@
 */
 
 using System.Diagnostics;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 

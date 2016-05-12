@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;

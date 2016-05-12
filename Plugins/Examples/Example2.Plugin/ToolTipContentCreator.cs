@@ -1,5 +1,5 @@
 ﻿using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace Example2.Plugin {
 	// This reference is added to the "decompiled" code by ModuleChildNode.Decompile()

@@ -29,7 +29,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Scripting.Roslyn.Properties;
 using dnSpy.Shared.MVVM;
 using Microsoft.CodeAnalysis;

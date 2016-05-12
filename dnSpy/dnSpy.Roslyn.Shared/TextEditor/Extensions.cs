@@ -18,7 +18,7 @@
 */
 
 using System.Runtime.CompilerServices;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 

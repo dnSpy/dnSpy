@@ -29,7 +29,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Output;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
 

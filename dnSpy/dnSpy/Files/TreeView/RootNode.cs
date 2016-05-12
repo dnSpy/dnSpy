@@ -23,7 +23,7 @@ using System.Windows;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {

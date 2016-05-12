@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.TextEditor;
-using dnSpy.Contracts.TextEditor.Roslyn;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Roslyn;
 
 namespace dnSpy.Roslyn.Shared.TextEditor {
 	[Export(typeof(IRoslynCodeEditorCreator))]

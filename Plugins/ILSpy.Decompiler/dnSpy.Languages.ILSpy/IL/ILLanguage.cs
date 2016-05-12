@@ -29,7 +29,7 @@ using dnSpy.Languages.ILSpy.XmlDoc;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
 using System.Text;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	sealed class LanguageProvider : ILanguageProvider {

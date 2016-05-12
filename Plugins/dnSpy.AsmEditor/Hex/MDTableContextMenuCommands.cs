@@ -35,7 +35,7 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IInitializeDataTemplate))]

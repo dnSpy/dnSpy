@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Roslyn.Shared.Classification;
 using Microsoft.CodeAnalysis;
 

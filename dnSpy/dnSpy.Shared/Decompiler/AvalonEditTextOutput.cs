@@ -23,9 +23,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 

@@ -22,10 +22,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using dndbg.Engine;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger {
 	static class DebugOutputUtils {

@@ -20,8 +20,8 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.TextEditor;
-using dnSpy.Shared.TextEditor;
+using dnSpy.Contracts.Text;
+using dnSpy.Shared.Text;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.Controls {

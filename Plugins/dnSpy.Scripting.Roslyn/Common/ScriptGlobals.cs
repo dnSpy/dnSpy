@@ -25,7 +25,7 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting.Roslyn;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Scripting.Roslyn.Common {

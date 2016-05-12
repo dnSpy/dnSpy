@@ -20,4 +20,4 @@
 /u:dnSpy.Contracts.Scripting
 /u:dnSpy.Contracts.Scripting.Roslyn
 # For OutputColor
-/u:dnSpy.Contracts.TextEditor
+/u:dnSpy.Contracts.Text

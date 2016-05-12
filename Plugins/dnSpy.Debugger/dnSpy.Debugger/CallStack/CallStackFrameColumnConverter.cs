@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.TextEditor;
+using dnSpy.Contracts.Text;
 using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.CallStack {
