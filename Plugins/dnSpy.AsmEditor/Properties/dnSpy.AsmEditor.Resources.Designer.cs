@@ -422,6 +422,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compile.
+        /// </summary>
+        public static string Button_Compile {
+            get {
+                return ResourceManager.GetString("Button_Compile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Delete.
         /// </summary>
         public static string Button_Delete {
@@ -535,6 +544,42 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Column_Metadata_RID {
             get {
                 return ResourceManager.GetString("Column_Metadata_RID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code.
+        /// </summary>
+        public static string CompileDiagnostics_Header_Code {
+            get {
+                return ResourceManager.GetString("CompileDiagnostics_Header_Code", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string CompileDiagnostics_Header_Description {
+            get {
+                return ResourceManager.GetString("CompileDiagnostics_Header_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        public static string CompileDiagnostics_Header_File {
+            get {
+                return ResourceManager.GetString("CompileDiagnostics_Header_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line.
+        /// </summary>
+        public static string CompileDiagnostics_Header_Line {
+            get {
+                return ResourceManager.GetString("CompileDiagnostics_Header_Line", resourceCulture);
             }
         }
         
@@ -1277,6 +1322,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decompiling....
+        /// </summary>
+        public static string Decompiling {
+            get {
+                return ResourceManager.GetString("Decompiling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Del.
         /// </summary>
         public static string DeleteCommandKey {
@@ -1448,6 +1502,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Code.
+        /// </summary>
+        public static string EditCodeTitle {
+            get {
+                return ResourceManager.GetString("EditCodeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Custom Attribute.
         /// </summary>
         public static string EditCustomAttribute {
@@ -1543,6 +1606,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string EditMemberRef {
             get {
                 return ResourceManager.GetString("EditMemberRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit {0} Code....
+        /// </summary>
+        public static string EditMethodBodyCode {
+            get {
+                return ResourceManager.GetString("EditMethodBodyCode", resourceCulture);
             }
         }
         
@@ -6044,6 +6116,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+E.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftE {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift+S.
         /// </summary>
         public static string ShortCutKeyCtrlShiftS {
@@ -6283,6 +6364,42 @@ namespace dnSpy.AsmEditor.Properties {
         public static string SortTable_RowIdentifier {
             get {
                 return ResourceManager.GetString("SortTable_RowIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string StatusError {
+            get {
+                return ResourceManager.GetString("StatusError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hidden.
+        /// </summary>
+        public static string StatusHidden {
+            get {
+                return ResourceManager.GetString("StatusHidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        public static string StatusInfo {
+            get {
+                return ResourceManager.GetString("StatusInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string StatusWarning {
+            get {
+                return ResourceManager.GetString("StatusWarning", resourceCulture);
             }
         }
         

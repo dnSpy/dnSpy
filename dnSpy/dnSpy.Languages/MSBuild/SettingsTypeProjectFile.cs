@@ -45,7 +45,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
-			var opts = new DecompilePartialType(Type, output, decompilationContext);
+			var opts = new DecompilePartialType(output, decompilationContext, Type);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);
 			language.Decompile(DecompilationType.PartialType, opts);
@@ -136,7 +136,7 @@ namespace dnSpy.Languages.MSBuild {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				if (typeFile.Language.CanDecompile(DecompilationType.PartialType)) {
 					var output = new PlainTextOutput(writer);
-					var opts = new DecompilePartialType(typeFile.Type, output, typeFile.DecompilationContext);
+					var opts = new DecompilePartialType(output, typeFile.DecompilationContext, typeFile.Type);
 					foreach (var d in typeFile.GetDefsToRemove())
 						opts.Definitions.Add(d);
 					opts.ShowDefinitions = true;

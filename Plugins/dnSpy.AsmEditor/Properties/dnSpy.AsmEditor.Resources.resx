@@ -2414,4 +2414,43 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Assembly editor</value>
   </data>
+  <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
+    <value>Ctrl+Shift+E</value>
+  </data>
+  <data name="EditMethodBodyCode" xml:space="preserve">
+    <value>Edit {0} Code...</value>
+  </data>
+  <data name="EditCodeTitle" xml:space="preserve">
+    <value>Edit Code</value>
+  </data>
+  <data name="Decompiling" xml:space="preserve">
+    <value>Decompiling...</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="CompileDiagnostics_Header_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="Button_Compile" xml:space="preserve">
+    <value>Compile</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="StatusHidden" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="StatusInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="StatusWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
 </root>

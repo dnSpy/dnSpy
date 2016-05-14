@@ -24,19 +24,19 @@ namespace dnSpy.Contracts.Languages {
 	/// Language constants
 	/// </summary>
 	public static class LanguageConstants {
-		/// <summary>Order of C# language</summary>
+		/// <summary>Order of C# language (ILSpy)</summary>
 		public static readonly double CSHARP_ILSPY_ORDERUI = 0;
 
-		/// <summary>Order of VB language</summary>
-		public static readonly double VB_ILSPY_ORDERUI = 100;
+		/// <summary>Order of Visual Basic language (ILSpy)</summary>
+		public static readonly double VISUALBASIC_ILSPY_ORDERUI = 100;
 
-		/// <summary>Order of IL language</summary>
+		/// <summary>Order of IL language (ILSpy)</summary>
 		public static readonly double IL_ILSPY_ORDERUI = 200;
 
-		/// <summary>Order of C# debug languages</summary>
+		/// <summary>Order of C# debug languages (ILSpy)</summary>
 		public static readonly double CSHARP_ILSPY_DEBUG_ORDERUI = 10000;
 
-		/// <summary>Order of ILAst debug languages</summary>
+		/// <summary>Order of ILAst debug languages (ILSpy)</summary>
 		public static readonly double ILAST_ILSPY_DEBUG_ORDERUI = 20000;
 
 		/// <summary>IL language</summary>
@@ -54,11 +54,11 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>C# language (ILSpy)</summary>
 		public static readonly Guid LANGUAGE_CSHARP_ILSPY = new Guid("4162DADA-67C3-4DE4-A5F3-6552C8353ECE");
 
-		/// <summary>VB language</summary>
-		public static readonly Guid LANGUAGE_VB = new Guid("B6849618-8239-4FBB-8DFF-D45EB023C193");
+		/// <summary>Visual Basic language</summary>
+		public static readonly Guid LANGUAGE_VISUALBASIC = new Guid("B6849618-8239-4FBB-8DFF-D45EB023C193");
 
-		/// <summary>VB language (ILSpy)</summary>
-		public static readonly Guid LANGUAGE_VB_ILSPY = new Guid("BBA40092-76B2-4184-8E81-0F1E3ED14E72");
+		/// <summary>Visual Basic language (ILSpy)</summary>
+		public static readonly Guid LANGUAGE_VISUALBASIC_ILSPY = new Guid("BBA40092-76B2-4184-8E81-0F1E3ED14E72");
 
 		/// <summary>Name of IL language returned by <see cref="ILanguage.GenericNameUI"/></summary>
 		public static readonly string GENERIC_NAMEUI_IL = "IL";
@@ -66,8 +66,8 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>Name of C# language returned by <see cref="ILanguage.GenericNameUI"/></summary>
 		public static readonly string GENERIC_NAMEUI_CSHARP = "C#";
 
-		/// <summary>Name of VB language returned by <see cref="ILanguage.GenericNameUI"/></summary>
-		public static readonly string GENERIC_NAMEUI_VB= "VB";
+		/// <summary>Name of Visual Basic language returned by <see cref="ILanguage.GenericNameUI"/></summary>
+		public static readonly string GENERIC_NAMEUI_VISUALBASIC = "Visual Basic";
 
 		/// <summary>
 		/// Order of ILSpy C#/VB decompiler settings

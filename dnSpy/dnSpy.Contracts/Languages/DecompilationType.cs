@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Languages {
 	/// </summary>
 	public enum DecompilationType {
 		/// <summary>
-		/// Decompile a partial type, data is a <see cref="DecompilePartialType"/> instance
+		/// Decompiles a partial type, data is a <see cref="DecompilePartialType"/> instance
 		/// </summary>
 		PartialType,
 
@@ -31,5 +31,10 @@ namespace dnSpy.Contracts.Languages {
 		/// Decompiles AssemblyInfo.{cs,vb}, data is a <see cref="DecompileAssemblyInfo"/> instance
 		/// </summary>
 		AssemblyInfo,
+
+		/// <summary>
+		/// Decompiles selected methods, the other ones have empty bodies, data is a <see cref="DecompileTypeMethods"/>
+		/// </summary>
+		TypeMethods,
 	}
 }

@@ -400,7 +400,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static IList<SourceCodeMapping> GetMappings(HexContext context) {
 			if (context.Line == null || context.Column == null)
 				return null;
-			return MethodBody.EditILInstructionsCommand.GetMappings(context.CreatorObject.Object as ITextEditorUIContext, context.Line.Value, context.Column.Value);
+			return MethodBody.BodyCommandUtils.GetMappings(context.CreatorObject.Object as ITextEditorUIContext, context.Line.Value, context.Column.Value);
 		}
 	}
 

@@ -24,6 +24,7 @@ using System.IO;
 using System.Threading;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text;
+using dnSpy.Roslyn.Shared.VisualBasic;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
@@ -35,12 +36,6 @@ using Microsoft.CodeAnalysis.VisualBasic.Scripting.Hosting;
 
 namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	sealed class VisualBasicControlVM : ScriptControlVM {
-		static VisualBasicControlVM() {
-			const LanguageVersion latestVersion = LanguageVersion.VisualBasic14;
-			Debug.Assert(!Enum.IsDefined(typeof(LanguageVersion), (LanguageVersion)((int)latestVersion + 1)));
-			parseOptions = new VisualBasicParseOptions(languageVersion: latestVersion, kind: SourceCodeKind.Script);
-		}
-
 		protected override string Logo {
 			get {
 				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/VisualBasic/Interactive/VisualBasicReplServiceProvider.vb
@@ -62,7 +57,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 
 		protected override bool IsCompleteSubmission(string text) =>
 			SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
-		static readonly VisualBasicParseOptions parseOptions;
+		static readonly VisualBasicParseOptions parseOptions = new VisualBasicParseOptions(languageVersion: VisualBasicConstants.LatestVersion, kind: SourceCodeKind.Script);
 
 		protected override SyntaxTree CreateSyntaxTree(string code, CancellationToken cancellationToken) =>
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);

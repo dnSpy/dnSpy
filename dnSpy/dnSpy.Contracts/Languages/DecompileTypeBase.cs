@@ -41,8 +41,10 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
 		protected DecompileTypeBase(ITextOutput output, DecompilationContext ctx) {
-			if (output == null || ctx == null)
-				throw new ArgumentNullException();
+			if (output == null)
+				throw new ArgumentNullException(nameof(output));
+			if (ctx == null)
+				throw new ArgumentNullException(nameof(ctx));
 			this.Output = output;
 			this.Context = ctx;
 		}

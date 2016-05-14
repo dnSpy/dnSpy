@@ -58,7 +58,7 @@ namespace dnSpy.Text {
 		}
 
 		public DnSpyTextEditor Create(DnSpyTextEditorOptions options) {
-			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
+			var textBuffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
 			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, textBuffer, options.UseShowLineNumbersOption);
 
 			if (options.TextEditorCommandGuid != null)

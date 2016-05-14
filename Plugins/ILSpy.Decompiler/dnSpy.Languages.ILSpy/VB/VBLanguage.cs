@@ -76,17 +76,17 @@ namespace dnSpy.Languages.ILSpy.VB {
 		public override IDecompilerSettings Settings => langSettings;
 		readonly LanguageDecompilerSettings langSettings;
 
-		public override double OrderUI => LanguageConstants.VB_ILSPY_ORDERUI;
+		public override double OrderUI => LanguageConstants.VISUALBASIC_ILSPY_ORDERUI;
 
 		public VBLanguage(LanguageDecompilerSettings langSettings) {
 			this.langSettings = langSettings;
 		}
 
 		public override Guid ContentTypeGuid => new Guid(ContentTypes.VISUALBASIC_ILSPY);
-		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_VB;
+		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_VISUALBASIC;
 		public override string UniqueNameUI => "Visual Basic";
-		public override Guid GenericGuid => LanguageConstants.LANGUAGE_VB;
-		public override Guid UniqueGuid => LanguageConstants.LANGUAGE_VB_ILSPY;
+		public override Guid GenericGuid => LanguageConstants.LANGUAGE_VISUALBASIC;
+		public override Guid UniqueGuid => LanguageConstants.LANGUAGE_VISUALBASIC_ILSPY;
 		public override string FileExtension => ".vb";
 		public override string ProjectFileExtension => ".vbproj";
 
@@ -260,6 +260,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			switch (decompilationType) {
 			case DecompilationType.PartialType:
 			case DecompilationType.AssemblyInfo:
+			case DecompilationType.TypeMethods:
 				return true;
 			}
 			return base.CanDecompile(decompilationType);
@@ -272,6 +273,9 @@ namespace dnSpy.Languages.ILSpy.VB {
 				return;
 			case DecompilationType.AssemblyInfo:
 				DecompileAssemblyInfo((DecompileAssemblyInfo)data);
+				return;
+			case DecompilationType.TypeMethods:
+				DecompileTypeMethods((DecompileTypeMethods)data);
 				return;
 			}
 			base.Decompile(decompilationType, data);
@@ -293,6 +297,18 @@ namespace dnSpy.Languages.ILSpy.VB {
 			try {
 				state.AstBuilder.AddAssembly(info.Module, true, info.Module.IsManifestModule, true);
 				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new AssemblyInfoTransform());
+			}
+			finally {
+				state.Dispose();
+			}
+		}
+
+		void DecompileTypeMethods(DecompileTypeMethods info) {
+			var state = CreateAstBuilder(info.Context, CSharpLanguage.CreateDecompilerSettings(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
+			try {
+				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => CSharpLanguage.GetDecompiledBodyKind(info, builder, method);
+				state.AstBuilder.AddType(info.Type);
+				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic));
 			}
 			finally {
 				state.Dispose();

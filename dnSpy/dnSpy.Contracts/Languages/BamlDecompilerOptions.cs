@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="language">Language</param>
 		/// <returns></returns>
 		public static BamlDecompilerOptions Create(ILanguage language) {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return CreateVB();
 			return CreateCSharp();
 		}

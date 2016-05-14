@@ -40,14 +40,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		ILanguage MethodLanguage => language;
 
 		string GetHexFormatUInt16() {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return "&H{0:X4}";
 			else
 				return "0x{0:X4}";
 		}
 
 		string GetHexFormatUInt32() {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return "&H{0:X8}";
 			else
 				return "0x{0:X8}";

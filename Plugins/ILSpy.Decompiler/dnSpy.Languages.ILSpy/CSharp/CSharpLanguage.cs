@@ -440,6 +440,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			switch (decompilationType) {
 			case DecompilationType.PartialType:
 			case DecompilationType.AssemblyInfo:
+			case DecompilationType.TypeMethods:
 				return true;
 			}
 			return base.CanDecompile(decompilationType);
@@ -452,6 +453,9 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				return;
 			case DecompilationType.AssemblyInfo:
 				DecompileAssemblyInfo((DecompileAssemblyInfo)data);
+				return;
+			case DecompilationType.TypeMethods:
+				DecompileTypeMethods((DecompileTypeMethods)data);
 				return;
 			}
 			base.Decompile(decompilationType, data);
@@ -468,13 +472,6 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		internal static DecompilerSettings CreateDecompilerSettings(DecompilerSettings settings, bool useUsingDeclarations) {
-			var newOne = settings.Clone();
-			newOne.UsingDeclarations = useUsingDeclarations;
-			newOne.FullyQualifyAllTypes = !useUsingDeclarations;
-			return newOne;
-		}
-
 		void DecompileAssemblyInfo(DecompileAssemblyInfo info) {
 			var state = CreateAstBuilder(info.Context, langSettings.Settings, currentModule: info.Module);
 			try {
@@ -484,6 +481,33 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			finally {
 				state.Dispose();
 			}
+		}
+
+		void DecompileTypeMethods(DecompileTypeMethods info) {
+			var state = CreateAstBuilder(info.Context, CreateDecompilerSettings(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
+			try {
+				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => GetDecompiledBodyKind(info, builder, method);
+				state.AstBuilder.AddType(info.Type);
+				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic));
+			}
+			finally {
+				state.Dispose();
+			}
+		}
+
+		internal static DecompilerSettings CreateDecompilerSettings(DecompilerSettings settings, bool useUsingDeclarations) {
+			var newOne = settings.Clone();
+			newOne.UsingDeclarations = useUsingDeclarations;
+			newOne.FullyQualifyAllTypes = !useUsingDeclarations;
+			return newOne;
+		}
+
+		internal static DecompiledBodyKind GetDecompiledBodyKind(DecompileTypeMethods info, AstBuilder builder, MethodDef method) {
+			if (info.DecompileHidden)
+				return DecompiledBodyKind.Empty;
+			if (info.Methods.Contains(method))
+				return DecompiledBodyKind.Full;
+			return DecompiledBodyKind.Empty;
 		}
 	}
 }

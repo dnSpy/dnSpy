@@ -71,7 +71,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		static Guid CalculateLanguageGuid(ILanguage language) {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return new Guid("F184B08F-C81C-45F6-A57F-5ABD9991F28F");
 
 			Debug.Assert(language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP);
@@ -79,7 +79,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		string CalculatePropertiesFolder() {
-			if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return "My Project";
 			return "Properties";
 		}
@@ -307,7 +307,7 @@ namespace dnSpy.Languages.MSBuild {
 
 			if (hasXamlClasses || ReferencesWPFClasses()) {
 				ProjectTypeGuids.Add(new Guid("60DC8134-EBA5-43B8-BCC9-BB4BC16C2548"));
-				if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+				if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 					ProjectTypeGuids.Add(new Guid("F184B08F-C81C-45F6-A57F-5ABD9991F28F"));
 				else if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP)
 					ProjectTypeGuids.Add(new Guid("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"));

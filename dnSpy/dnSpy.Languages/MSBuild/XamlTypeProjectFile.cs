@@ -29,7 +29,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
-			var opts = new DecompilePartialType(Type, output, decompilationContext);
+			var opts = new DecompilePartialType(output, decompilationContext, Type);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);
 			opts.InterfacesToRemove.Add(new TypeRefUser(Type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef()));

@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 			var treeView = (Control)newFileTreeView.TreeView.UIObject;
 			cpTreeView.Content = treeView;
-			Validation.SetErrorTemplate(treeView, (ControlTemplate)FindResource("noRedBorderOnValidationError"));
+			System.Windows.Controls.Validation.SetErrorTemplate(treeView, (ControlTemplate)FindResource("noRedBorderOnValidationError"));
 			treeView.AllowDrop = false;
 			treeView.BorderThickness = new Thickness(1);
 

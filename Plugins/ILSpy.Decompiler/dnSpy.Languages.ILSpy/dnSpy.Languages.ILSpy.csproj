@@ -50,6 +50,7 @@
     <Compile Include="CSharp\BuilderState.cs" />
     <Compile Include="CSharp\CSharpLanguage.cs" />
     <Compile Include="CSharp\DecompilePartialTransform.cs" />
+    <Compile Include="CSharp\DecompileTypeMethodsTransform.cs" />
     <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
     <Compile Include="Properties\dnSpy.Languages.ILSpy.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

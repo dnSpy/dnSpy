@@ -333,13 +333,13 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		string GetAppDesignerFolder() {
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return null;
 			return project.PropertiesFolder;
 		}
 
 		string GetNoWarnList() {
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return "41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314";
 			return null;
 		}
@@ -362,7 +362,7 @@ namespace dnSpy.Languages.MSBuild {
 		string GetLanguageTargets() {
 			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP)
 				return @"$(MSBuildToolsPath)\Microsoft.CSharp.targets";
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VB)
+			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
 				return @"$(MSBuildToolsPath)\Microsoft.VisualBasic.targets";
 			return @"$(MSBuildToolsPath)\Microsoft.CSharp.targets";
 		}

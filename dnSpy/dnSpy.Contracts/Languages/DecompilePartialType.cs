@@ -61,18 +61,18 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="type">Type</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		public DecompilePartialType(TypeDef type, ITextOutput output, DecompilationContext ctx)
+		/// <param name="type">Type</param>
+		public DecompilePartialType(ITextOutput output, DecompilationContext ctx, TypeDef type)
 			: base(output, ctx) {
 			if (type == null)
-				throw new ArgumentNullException();
-			this.Type = type;
-			this.AddPartialKeyword = true;
-			this.UseUsingDeclarations = true;
-			this.Definitions = new HashSet<IMemberDef>();
-			this.InterfacesToRemove = new List<ITypeDefOrRef>();
+				throw new ArgumentNullException(nameof(type));
+			Type = type;
+			AddPartialKeyword = true;
+			UseUsingDeclarations = true;
+			Definitions = new HashSet<IMemberDef>();
+			InterfacesToRemove = new List<ITypeDefOrRef>();
 		}
 	}
 }

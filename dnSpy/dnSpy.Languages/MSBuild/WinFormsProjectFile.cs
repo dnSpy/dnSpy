@@ -41,7 +41,7 @@ namespace dnSpy.Languages.MSBuild {
 			if (!language.CanDecompile(DecompilationType.PartialType))
 				base.Decompile(ctx, output);
 			else {
-				var opts = new DecompilePartialType(Type, output, decompilationContext);
+				var opts = new DecompilePartialType(output, decompilationContext, Type);
 				foreach (var d in GetDefsToRemove())
 					opts.Definitions.Add(d);
 				language.Decompile(DecompilationType.PartialType, opts);
@@ -128,7 +128,7 @@ namespace dnSpy.Languages.MSBuild {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				if (winFormsFile.Language.CanDecompile(DecompilationType.PartialType)) {
 					var output = new PlainTextOutput(writer);
-					var opts = new DecompilePartialType(winFormsFile.Type, output, winFormsFile.DecompilationContext);
+					var opts = new DecompilePartialType(output, winFormsFile.DecompilationContext, winFormsFile.Type);
 					foreach (var d in winFormsFile.GetDefsToRemove())
 						opts.Definitions.Add(d);
 					opts.ShowDefinitions = true;

@@ -34,14 +34,14 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="module">Type</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		public DecompileAssemblyInfo(ModuleDef module, ITextOutput output, DecompilationContext ctx)
+		/// <param name="module">Type</param>
+		public DecompileAssemblyInfo(ITextOutput output, DecompilationContext ctx, ModuleDef module)
 			: base(output, ctx) {
 			if (module == null)
-				throw new ArgumentNullException();
-			this.Module = module;
+				throw new ArgumentNullException(nameof(module));
+			Module = module;
 		}
 	}
 }

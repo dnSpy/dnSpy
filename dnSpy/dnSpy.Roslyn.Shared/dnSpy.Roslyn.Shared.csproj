@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="Classification\ClassificationTypeConverter.cs" />
     <Compile Include="Classification\RoslynClassifier.cs" />
+    <Compile Include="CSharp\CSharpConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextEditor\Extensions.cs" />
     <Compile Include="TextEditor\RoslynCodeEditor.cs" />
@@ -42,6 +43,7 @@
     <Compile Include="TextEditor\RoslynTextSnapshotColorizerProvider.cs" />
     <Compile Include="TextEditor\TextBufferSourceTextContainer.cs" />
     <Compile Include="TextEditor\TextSnapshotSourceText.cs" />
+    <Compile Include="VisualBasic\VisualBasicConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

@@ -21,23 +21,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Menus;
 
@@ -58,8 +53,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 	}
 
 	[DebuggerDisplay("{Description}")]
-	sealed class MethodBodySettingsCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 10)]
+	sealed class EditMethodBodyILCommand : IUndoCommand {
+		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 20)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -72,12 +67,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) => MethodBodySettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) =>
-				MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
+			public override bool IsVisible(AsmEditorContext context) => EditMethodBodyILCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 40)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 50)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -91,12 +85,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsVisible(AsmEditorContext context) => MethodBodySettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) =>
-				MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
+			public override bool IsVisible(AsmEditorContext context) => EditMethodBodyILCommand.CanExecute(context.Nodes);
+			public override void Execute(AsmEditorContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
+		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 20)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -110,10 +103,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) =>
-				context.IsLocalTarget && MethodBodySettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) =>
-				MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && EditMethodBodyILCommand.CanExecute(context.Nodes);
+			public override void Execute(CodeContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
 		}
 
 		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IMethodNode;
@@ -141,7 +132,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (win.ShowDialog() != true)
 				return;
 
-			undoCommandManager.Value.Add(new MethodBodySettingsCommand(methodAnnotations.Value, methodNode, data.CreateMethodBodyOptions()));
+			undoCommandManager.Value.Add(new EditMethodBodyILCommand(methodAnnotations.Value, methodNode, data.CreateMethodBodyOptions()));
 		}
 
 		readonly IMethodAnnotations methodAnnotations;
@@ -150,7 +141,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly dnlib.DotNet.Emit.MethodBody origMethodBody;
 		bool isBodyModified;
 
-		MethodBodySettingsCommand(IMethodAnnotations methodAnnotations, IMethodNode methodNode, MethodBodyOptions options) {
+		EditMethodBodyILCommand(IMethodAnnotations methodAnnotations, IMethodNode methodNode, MethodBodyOptions options) {
 			this.methodAnnotations = methodAnnotations;
 			this.methodNode = methodNode;
 			this.newOptions = options;
@@ -175,7 +166,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = "ILEditor", InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = "ILEditor", InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
 	sealed class EditILInstructionsCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -188,17 +179,16 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.appWindow = appWindow;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => IsVisible(GetMappings(context));
+		public override bool IsVisible(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
 
 		static bool IsVisible(IList<SourceCodeMapping> list) {
 			return list != null &&
 				list.Count != 0 &&
-				list[0].Mapping.Method != null &&
-				list[0].Mapping.Method.Body != null &&
+				list[0].Mapping.Method?.Body != null &&
 				list[0].Mapping.Method.Body.Instructions.Count > 0;
 		}
 
-		public override void Execute(IMenuItemContext context) => Execute(GetMappings(context));
+		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetMappings(context));
 
 		void Execute(IList<SourceCodeMapping> list) {
 			if (list == null)
@@ -211,57 +201,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 			}
 
-			MethodBodySettingsCommand.Execute(methodAnnotations, undoCommandManager, appWindow, new IFileTreeNodeData[] { methodNode }, GetInstructionOffsets(method, list));
-		}
-
-		static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
-				return null;
-			var uiContext = context.Find<ITextEditorUIContext>();
-			if (uiContext == null)
-				return null;
-			var pos = context.Find<TextEditorLocation?>();
-			if (pos == null)
-				return null;
-			return GetMappings(uiContext, pos.Value.Line, pos.Value.Column);
-		}
-
-		internal static IList<SourceCodeMapping> GetMappings(ITextEditorUIContext uiContext, int line, int col) {
-			if (uiContext == null)
-				return null;
-			var cm = uiContext.GetCodeMappings();
-			var list = cm.Find(line, col);
-			if (list.Count == 0)
-				return null;
-			if (!(list[0].StartPosition.Line <= line && line <= list[0].EndPosition.Line))
-				return null;
-			return list;
-		}
-
-		static uint[] GetInstructionOffsets(MethodDef method, IList<SourceCodeMapping> list) {
-			if (method == null)
-				return null;
-			var body = method.Body;
-			if (body == null)
-				return null;
-
-			var foundInstrs = new HashSet<uint>();
-			// The instructions' offset field is assumed to be valid
-			var instrs = body.Instructions.Select(a => a.Offset).ToArray();
-			foreach (var range in list.Select(a => a.ILRange)) {
-				int index = Array.BinarySearch(instrs, range.From);
-				if (index < 0)
-					continue;
-				for (int i = index; i < instrs.Length; i++) {
-					uint instrOffset = instrs[i];
-					if (instrOffset >= range.To)
-						break;
-
-					foundInstrs.Add(instrOffset);
-				}
-			}
-
-			return foundInstrs.ToArray();
+			EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandManager, appWindow, new IFileTreeNodeData[] { methodNode }, BodyCommandUtils.GetInstructionOffsets(method, list));
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
@@ -277,7 +217,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return null;
 
 			var pos = uiContext.Location;
-			return GetMappings(uiContext, pos.Line, pos.Column);
+			return BodyCommandUtils.GetMappings(uiContext, pos.Line, pos.Column);
 		}
 
 		void ICommand.Execute(object parameter) => Execute(GetMappings());
