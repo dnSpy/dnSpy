@@ -139,14 +139,21 @@ namespace dnSpy.AsmEditor.Compile {
 				caughtException = ex;
 			}
 
+			string mainCode, hiddenCode;
 			if (canceled) {
 				// This will never be shown to the user so there's no need to translate the string.
-				languageCompiler.AddDecompiledCode("Canceled!", string.Empty, assemblyReferences, assemblyReferenceResolver);
+				mainCode = "Canceled!";
+				hiddenCode = string.Empty;
 			}
-			else if (caughtException != null)
-				languageCompiler.AddDecompiledCode(caughtException.ToString(), string.Empty, assemblyReferences, assemblyReferenceResolver);
-			else
-				languageCompiler.AddDecompiledCode(decompileCodeState.MainOutput.ToString(), decompileCodeState.HiddenOutput.ToString(), assemblyReferences, assemblyReferenceResolver);
+			else if (caughtException != null) {
+				mainCode = caughtException.ToString();
+				hiddenCode = string.Empty;
+			}
+			else {
+				mainCode = decompileCodeState.MainOutput.ToString();
+				hiddenCode = decompileCodeState.HiddenOutput.ToString();
+			}
+			languageCompiler.AddDecompiledCode(mainCode, hiddenCode, assemblyReferences, assemblyReferenceResolver);
 
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;
@@ -248,7 +255,7 @@ namespace dnSpy.AsmEditor.Compile {
 			}
 			else if (caughtException != null) {
 				compilerDiagnostics = new CompilerDiagnostic[] {
-					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {caughtException.GetType()}: {caughtException.Message}", "DSBUGG", null, null),
+					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {caughtException.GetType()}: {caughtException.Message}", "DS1BUG", null, null),
 				};
 			}
 

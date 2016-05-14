@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Compile {
 			if (string.IsNullOrEmpty(diag.File))
 				return;
 
-			var doc = vm.Documents.FirstOrDefault(a => a.Name == diag.File);
+			var doc = vm.Documents.FirstOrDefault(a => a.Name == diag.FullPath);
 			Debug.Assert(doc != null);
 			if (doc == null)
 				return;

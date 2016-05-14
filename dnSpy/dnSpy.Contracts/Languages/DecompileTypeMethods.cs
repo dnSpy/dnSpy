@@ -33,7 +33,8 @@ namespace dnSpy.Contracts.Languages {
 		public TypeDef Type { get; }
 
 		/// <summary>
-		/// Methods to decompile. All the other methods will have an empty body.
+		/// Methods to decompile. All the other methods will have an empty body, except for possible
+		/// <code>return default(XXX);</code> statements and other code to keep the compiler happy.
 		/// </summary>
 		public HashSet<MethodDef> Methods { get; }
 
@@ -44,7 +45,7 @@ namespace dnSpy.Contracts.Languages {
 		public bool DecompileHidden { get; set; }
 
 		/// <summary>
-		/// true to make every type, method, field public
+		/// true to make every type, method, field, property, event public
 		/// </summary>
 		public bool MakeEverythingPublic { get; set; }
 

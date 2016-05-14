@@ -65,11 +65,6 @@ namespace dnSpy.AsmEditor.Compile {
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
 			}
-			else {
-				var corLib = module.Context.AssemblyResolver.Resolve(module.CorLibTypes.AssemblyRef, module);
-				if (corLib != null)
-					yield return corLib;
-			}
 
 			foreach (var asmRef in module.GetAssemblyRefs()) {
 				cancellationToken.ThrowIfCancellationRequested();
@@ -85,7 +80,8 @@ namespace dnSpy.AsmEditor.Compile {
 			yield return asm;
 			foreach (var m in asm.Modules) {
 				cancellationToken.ThrowIfCancellationRequested();
-				// Also include all contract assemblies
+				// Also include all contract assemblies since they have type forwarders
+				// to eg. mscorlib.
 				foreach (var a in GetResolvedContractAssemblies(m))
 					yield return a;
 			}

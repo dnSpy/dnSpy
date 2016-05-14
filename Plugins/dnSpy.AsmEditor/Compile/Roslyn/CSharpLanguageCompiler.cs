@@ -29,6 +29,7 @@ using Microsoft.CodeAnalysis.CSharp;
 namespace dnSpy.AsmEditor.Compile.Roslyn {
 	[Export(typeof(ILanguageCompilerCreator))]
 	sealed class CSharpLanguageCompilerCreator : ILanguageCompilerCreator {
+		public double Order => 0;
 		public string Icon => "CSharpFile";
 		public Guid Language => LanguageConstants.LANGUAGE_CSHARP;
 		public ILanguageCompiler Create() => new CSharpLanguageCompiler(roslynCodeEditorCreator);

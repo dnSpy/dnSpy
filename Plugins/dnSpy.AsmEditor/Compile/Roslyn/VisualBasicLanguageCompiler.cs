@@ -29,6 +29,7 @@ using Microsoft.CodeAnalysis.VisualBasic;
 namespace dnSpy.AsmEditor.Compile.Roslyn {
 	[Export(typeof(ILanguageCompilerCreator))]
 	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerCreator {
+		public double Order => 0;
 		public string Icon => "VisualBasicFile";
 		public Guid Language => LanguageConstants.LANGUAGE_VISUALBASIC;
 		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(roslynCodeEditorCreator);

@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.Compile {
 	/// </summary>
 	interface IAssemblyReferenceResolver {
 		/// <summary>
-		/// Resolve a reference
+		/// Resolves a reference
 		/// </summary>
 		/// <param name="asmRef">Assembly reference</param>
 		/// <returns></returns>

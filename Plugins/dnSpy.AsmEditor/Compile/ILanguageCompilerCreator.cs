@@ -25,6 +25,11 @@ namespace dnSpy.AsmEditor.Compile {
 	/// </summary>
 	interface ILanguageCompilerCreator {
 		/// <summary>
+		/// Order of this creator
+		/// </summary>
+		double Order { get; }
+
+		/// <summary>
 		/// Gets the icon shown in menus or null
 		/// </summary>
 		string Icon { get; }

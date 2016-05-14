@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Compile {
 		EditCodeVMCreator(IImageManager imageManager, ILanguageManager languageManager, [ImportMany] IEnumerable<ILanguageCompilerCreator> languageCompilerCreators) {
 			this.imageManager = imageManager;
 			this.languageManager = languageManager;
-			this.languageCompilerCreators = languageCompilerCreators.ToArray();
+			this.languageCompilerCreators = languageCompilerCreators.OrderBy(a => a.Order).ToArray();
 		}
 
 		public string GetIcon() {
@@ -49,9 +49,7 @@ namespace dnSpy.AsmEditor.Compile {
 			if (lang == null)
 				return null;
 
-			var icon = languageCompilerCreators.FirstOrDefault(a => a.Language == lang.GenericGuid)?.Icon;
-			Debug.Assert(icon != null);
-			return icon;
+			return languageCompilerCreators.FirstOrDefault(a => a.Language == lang.GenericGuid)?.Icon;
 		}
 
 		public string GetHeader() {

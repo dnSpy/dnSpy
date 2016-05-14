@@ -38,7 +38,6 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 		protected abstract string FileExtension { get; }
 
 		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
-
 		readonly List<RoslynCodeDocument> documents = new List<RoslynCodeDocument>();
 		RoslynCodeDocument mainDocument;
 		AdhocWorkspace workspace;
@@ -89,7 +88,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {
 			var project = workspace.CurrentSolution.Projects.First();
 			Debug.Assert(project.SupportsCompilation);
-			var compilation = await project.GetCompilationAsync(cancellationToken);
+			var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
 			if (compilation == null)
 				throw new InvalidOperationException("Project returned a null Compilation");
 			var outputStream = new MemoryStream();

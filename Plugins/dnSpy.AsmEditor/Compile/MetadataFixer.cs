@@ -22,6 +22,9 @@ using dnlib.DotNet.MD;
 using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Compile {
+	/// <summary>
+	/// Overwrites the metadata to make everything public
+	/// </summary>
 	struct MetadataFixer {
 		readonly byte[] data;
 		IMetaData md;

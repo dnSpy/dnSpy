@@ -27,11 +27,11 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 	sealed class RoslynMetadataReferenceResolver : MetadataReferenceResolver {
 		readonly object lockObj = new object();
 		readonly IAssemblyReferenceResolver assemblyReferenceResolver;
-		readonly Dictionary<IAssembly, PortableExecutableReference> asmIdToPeRef;
+		readonly Dictionary<IAssembly, PortableExecutableReference> asmRefToPeRef;
 
 		public RoslynMetadataReferenceResolver(IAssemblyReferenceResolver assemblyReferenceResolver) {
 			this.assemblyReferenceResolver = assemblyReferenceResolver;
-			this.asmIdToPeRef = new Dictionary<IAssembly, PortableExecutableReference>();
+			this.asmRefToPeRef = new Dictionary<IAssembly, PortableExecutableReference>();
 		}
 
 		public override ImmutableArray<PortableExecutableReference> ResolveReference(string reference, string baseFilePath, MetadataReferenceProperties properties) =>
@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 		static PublicKeyBase ToPublicKeyBase(AssemblyIdentity referenceIdentity) {
 			if (referenceIdentity.HasPublicKey)
 				return new PublicKey(referenceIdentity.PublicKey.ToArray());
-			if (!referenceIdentity.PublicKeyToken.IsEmpty)
+			if (!referenceIdentity.PublicKeyToken.IsDefault)
 				return new PublicKeyToken(referenceIdentity.PublicKeyToken.ToArray());
 			return null;
 		}
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			var asmRef = ToAssemblyRef(referenceIdentity);
 			lock (lockObj) {
 				PortableExecutableReference peRef;
-				if (asmIdToPeRef.TryGetValue(asmRef, out peRef))
+				if (asmRefToPeRef.TryGetValue(asmRef, out peRef))
 					return peRef;
 
 				var mdRef = assemblyReferenceResolver.Resolve(asmRef);
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			var asmRef = mdRef.Assembly;
 			if (asmRef != null) {
 				lock (lockObj)
-					asmIdToPeRef[asmRef] = peRef;
+					asmRefToPeRef[asmRef] = peRef;
 			}
 			return peRef;
 		}

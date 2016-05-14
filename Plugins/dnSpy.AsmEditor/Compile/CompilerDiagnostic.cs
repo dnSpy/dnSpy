@@ -62,10 +62,10 @@ namespace dnSpy.AsmEditor.Compile {
 				sb.Append(LineLocationSpan.Value.StartLinePosition.ToString());
 			sb.Append(": ");
 			switch (Severity) {
-			case CompilerDiagnosticSeverity.Hidden: sb.Append("hidden"); break;
-			case CompilerDiagnosticSeverity.Info: sb.Append("info"); break;
-			case CompilerDiagnosticSeverity.Warning: sb.Append("warning"); break;
-			case CompilerDiagnosticSeverity.Error: sb.Append("error"); break;
+			case CompilerDiagnosticSeverity.Hidden:	sb.Append("hidden"); break;
+			case CompilerDiagnosticSeverity.Info:	sb.Append("info"); break;
+			case CompilerDiagnosticSeverity.Warning:sb.Append("warning"); break;
+			case CompilerDiagnosticSeverity.Error:	sb.Append("error"); break;
 			default: Debug.Fail($"Unknown severity {Severity}"); sb.Append("???"); break;
 			}
 			sb.Append(' ');

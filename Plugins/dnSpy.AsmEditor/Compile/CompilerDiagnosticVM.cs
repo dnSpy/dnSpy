@@ -31,6 +31,7 @@ namespace dnSpy.AsmEditor.Compile {
 		public string Code => diag.Id;
 		public string Description => diag.Description;
 		public string File => GetFilename(diag.Filename);
+		public string FullPath => diag.Filename;
 		public string Line => diag.LineLocationSpan == null ? string.Empty : diag.LineLocationSpan.Value.StartLinePosition.Line.ToString();
 		public LineLocationSpan? LineLocationSpan => diag.LineLocationSpan;
 
@@ -46,7 +47,7 @@ namespace dnSpy.AsmEditor.Compile {
 			sb.Append('\t');
 			sb.Append(Description);
 			sb.Append('\t');
-			sb.Append(diag.Filename ?? string.Empty);
+			sb.Append(FullPath ?? string.Empty);
 			sb.Append('\t');
 			sb.Append(Line);
 		}
