@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			AddDocument(projectId, mainFilename + ".g" + FileExtension, hiddenCode);
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
-				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithMetadataReferenceResolver(new RoslynMetadataReferenceResolver(assemblyReferenceResolver)),
+				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release),
 				parseOptions: ParseOptions,
 				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,

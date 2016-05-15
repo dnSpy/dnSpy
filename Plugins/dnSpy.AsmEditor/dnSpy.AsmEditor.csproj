@@ -105,7 +105,6 @@
     <Compile Include="Compile\Roslyn\DiagnosticExtensions.cs" />
     <Compile Include="Compile\Roslyn\RoslynCodeDocument.cs" />
     <Compile Include="Compile\Roslyn\RoslynLanguageCompiler.cs" />
-    <Compile Include="Compile\Roslyn\RoslynMetadataReferenceResolver.cs" />
     <Compile Include="Compile\Roslyn\VisualBasicLanguageCompiler.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Hex\AsmEdHexDocument.cs" />
