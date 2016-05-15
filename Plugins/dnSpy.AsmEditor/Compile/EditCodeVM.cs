@@ -128,8 +128,7 @@ namespace dnSpy.AsmEditor.Compile {
 			bool canCompile = false;
 			var assemblyReferences = Array.Empty<CompilerMetadataReference>();
 			try {
-				await DecompileAsync(method);
-				assemblyReferences = await CreateCompilerMetadataReferencesAsync(method, assemblyReferenceResolver, decompileCodeState.CancellationToken);
+				assemblyReferences = await DecompileAndGetRefsAsync(method);
 				canCompile = true;
 			}
 			catch (OperationCanceledException) {
@@ -165,6 +164,11 @@ namespace dnSpy.AsmEditor.Compile {
 			CanCompile = canCompile;
 			HasDecompiled = true;
 			OnPropertyChanged(nameof(HasDecompiled));
+		}
+
+		async Task<CompilerMetadataReference[]> DecompileAndGetRefsAsync(MethodDef method) {
+			await DecompileAsync(method).ConfigureAwait(false);
+			return await CreateCompilerMetadataReferencesAsync(method, assemblyReferenceResolver, decompileCodeState.CancellationToken).ConfigureAwait(false);
 		}
 
 		Task DecompileAsync(MethodDef method) {
