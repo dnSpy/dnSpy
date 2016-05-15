@@ -38,7 +38,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
-using dnSpy.Files.Tabs;
+using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Plugin;
 using dnSpy.Roslyn.Shared.Classification;
 using dnSpy.Scripting;
@@ -375,7 +375,7 @@ namespace dnSpy.MainApp {
 
 			var files = appArgs.Filenames.ToArray();
 			if (files.Length > 0)
-				OpenFileInit.OpenFiles(fileTabManager.Value.FileTreeView, appWindow.MainWindow, files, false);
+				OpenFilesHelper.OpenFiles(fileTabManager.Value.FileTreeView, appWindow.MainWindow, files, false);
 
 			// The files were lazily added to the treeview. Make sure they've been added to the TV
 			// before we process the remaining command line args.

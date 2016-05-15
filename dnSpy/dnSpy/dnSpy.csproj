@@ -111,6 +111,8 @@
       <DependentUpon>OpenFileListDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Files\Tabs\Dialogs\OpenFileListVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\OpenFilesHelper.cs" />
+    <Compile Include="Files\Tabs\Dialogs\OpenFromGAC.cs" />
     <Compile Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
       <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
     </Compile>

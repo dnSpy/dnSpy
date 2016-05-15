@@ -18,15 +18,12 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
@@ -65,20 +62,7 @@ namespace dnSpy.Files.Tabs {
 			};
 			if (openDlg.ShowDialog() != true)
 				return;
-			OpenFiles(fileTreeView, appWindow.MainWindow, openDlg.FileNames);
-		}
-
-		public static void OpenFiles(IFileTreeView fileTreeView, Window ownerWindow, IEnumerable<string> filenames, bool selectFile = true) {
-			var fileLoader = new FileLoader(fileTreeView.FileManager, ownerWindow);
-			var loadedFiles = fileLoader.Load(filenames.Select(a => new FileToLoad(DnSpyFileInfo.CreateFile(a))));
-			var file = loadedFiles.Length == 0 ? null : loadedFiles[loadedFiles.Length - 1];
-			if (selectFile && file != null) {
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					var node = fileTreeView.FindNode(file);
-					if (node != null)
-						fileTreeView.TreeView.SelectItems(new IFileTreeNodeData[] { node });
-				}));
-			}
+			OpenFilesHelper.OpenFiles(fileTreeView, appWindow.MainWindow, openDlg.FileNames);
 		}
 	}
 
@@ -99,28 +83,18 @@ namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
 	sealed class OpenFromGacCommandLoader : IAutoLoaded {
 		public static readonly RoutedCommand OpenFromGac = new RoutedCommand("OpenFromGac", typeof(OpenFromGacCommandLoader));
-		readonly IFileTreeView fileTreeView;
-		readonly IAppWindow appWindow;
+
+		readonly IOpenFromGAC openFromGAC;
 
 		[ImportingConstructor]
-		OpenFromGacCommandLoader(IFileTreeView fileTreeView, IAppWindow appWindow, IWpfCommandManager wpfCommandManager) {
-			this.fileTreeView = fileTreeView;
-			this.appWindow = appWindow;
+		OpenFromGacCommandLoader(IOpenFromGAC openFromGAC, IWpfCommandManager wpfCommandManager) {
+			this.openFromGAC = openFromGAC;
 
 			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
 			cmds.Add(OpenFromGac, (s, e) => Execute(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.O);
 		}
 
-		void Execute() {
-			var win = new OpenFromGACDlg();
-			const bool syntaxHighlight = true;
-			var vm = new OpenFromGACVM(syntaxHighlight);
-			win.DataContext = vm;
-			win.Owner = appWindow.MainWindow;
-			if (win.ShowDialog() != true)
-				return;
-			OpenFileInit.OpenFiles(fileTreeView, appWindow.MainWindow, win.SelectedItems.Select(a => a.Path));
-		}
+		void Execute() => openFromGAC.OpenAssemblies(true);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenGACCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Icon = "Library", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
