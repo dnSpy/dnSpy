@@ -22,7 +22,7 @@ using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace dnSpy.Roslyn.Shared.TextEditor {
+namespace dnSpy.Roslyn.Shared.Text {
 	/// <summary>
 	/// Extension methods
 	/// </summary>

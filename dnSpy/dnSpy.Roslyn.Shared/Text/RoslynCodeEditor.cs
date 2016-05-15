@@ -17,16 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Windows;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Roslyn;
 
-namespace dnSpy.Roslyn.Shared.TextEditor {
-	[Export(typeof(ITextSnapshotColorizerProvider))]
-	sealed class RoslynTextSnapshotColorizerProvider : ITextSnapshotColorizerProvider {
-		public IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer) {
-			if (textBuffer.ContentType.IsOfType(ContentTypes.ROSLYN_CODE))
-				yield return new RoslynTextSnapshotColorizer();
+namespace dnSpy.Roslyn.Shared.Text {
+	sealed class RoslynCodeEditor : IRoslynCodeEditorUI {
+		public ITextBuffer TextBuffer => codeEditor.TextBuffer;
+		public object UIObject => codeEditor.UIObject;
+		public IInputElement FocusedElement => codeEditor.FocusedElement;
+		public FrameworkElement ScaleElement => codeEditor.ScaleElement;
+		public object Tag { get; set; }
+
+		readonly ICodeEditorUI codeEditor;
+
+		public RoslynCodeEditor(RoslynCodeEditorOptions options, ICodeEditorUI codeEditor) {
+			this.codeEditor = codeEditor;
 		}
 	}
 }

@@ -21,7 +21,7 @@ using System;
 using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis.Text;
 
-namespace dnSpy.Roslyn.Shared.TextEditor {
+namespace dnSpy.Roslyn.Shared.Text {
 	sealed class TextBufferSourceTextContainer : SourceTextContainer {
 		public ITextBuffer TextBuffer { get; }
 		public override SourceText CurrentText => TextBuffer.CurrentSnapshot.AsText();

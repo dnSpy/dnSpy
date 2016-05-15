@@ -27,7 +27,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Roslyn.Shared.Classification;
 using Microsoft.CodeAnalysis;
 
-namespace dnSpy.Roslyn.Shared.TextEditor {
+namespace dnSpy.Roslyn.Shared.Text {
 	sealed class RoslynTextSnapshotColorizer : ITextSnapshotColorizer {
 		struct RoslynState {
 			public SyntaxNode SyntaxRoot { get; }

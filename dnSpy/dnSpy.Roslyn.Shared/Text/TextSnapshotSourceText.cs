@@ -22,7 +22,7 @@ using System.Text;
 using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis.Text;
 
-namespace dnSpy.Roslyn.Shared.TextEditor {
+namespace dnSpy.Roslyn.Shared.Text {
 	sealed class TextSnapshotSourceText : SourceText {
 		public override char this[int position] => TextSnapshot[position];
 		public override Encoding Encoding { get; }
