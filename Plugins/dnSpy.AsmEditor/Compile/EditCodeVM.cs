@@ -123,36 +123,27 @@ namespace dnSpy.AsmEditor.Compile {
 		CompileCodeState compileCodeState;
 
 		async Task StartDecompileAsync(MethodDef method) {
-			bool canceled = false;
-			Exception caughtException = null;
-			bool canCompile = false;
+			bool canCompile = false, canceled = false;
 			var assemblyReferences = Array.Empty<CompilerMetadataReference>();
+			string mainCode, hiddenCode;
 			try {
 				assemblyReferences = await DecompileAndGetRefsAsync(method);
+				mainCode = decompileCodeState.MainOutput.ToString();
+				hiddenCode = decompileCodeState.HiddenOutput.ToString();
 				canCompile = true;
 			}
 			catch (OperationCanceledException) {
 				canceled = true;
+				mainCode = string.Empty;
+				hiddenCode = string.Empty;
 			}
 			catch (Exception ex) {
-				caughtException = ex;
+				mainCode = ex.ToString();
+				hiddenCode = string.Empty;
 			}
 
-			string mainCode, hiddenCode;
-			if (canceled) {
-				// This will never be shown to the user so there's no need to translate the string.
-				mainCode = "Canceled!";
-				hiddenCode = string.Empty;
-			}
-			else if (caughtException != null) {
-				mainCode = caughtException.ToString();
-				hiddenCode = string.Empty;
-			}
-			else {
-				mainCode = decompileCodeState.MainOutput.ToString();
-				hiddenCode = decompileCodeState.HiddenOutput.ToString();
-			}
-			languageCompiler.AddDecompiledCode(mainCode, hiddenCode, assemblyReferences, assemblyReferenceResolver);
+			if (!canceled)
+				languageCompiler.AddDecompiledCode(mainCode, hiddenCode, assemblyReferences, assemblyReferenceResolver);
 
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;
