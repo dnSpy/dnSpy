@@ -33,7 +33,8 @@ namespace dnSpy.AsmEditor.Compile {
 		/// <param name="hiddenCode">Other code that's not important to the user, eg. method stubs</param>
 		/// <param name="assemblyReferences">Assembly and module references</param>
 		/// <param name="assemblyReferenceResolver">Reference resolver</param>
-		void AddDecompiledCode(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver);
+		/// <param name="platform">Platform</param>
+		void AddDecompiledCode(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, CompilePlatform platform);
 
 		/// <summary>
 		/// Gets all code documents. Called after <see cref="AddDecompiledCode(string, string, CompilerMetadataReference[], IAssemblyReferenceResolver)"/>

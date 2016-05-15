@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
 		}
 
-		public void AddDecompiledCode(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver) {
+		public void AddDecompiledCode(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, CompilePlatform platform) {
 			Debug.Assert(workspace == null);
 
 			workspace = new AdhocWorkspace();
@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			AddDocument(projectId, mainFilename + ".g" + FileExtension, hiddenCode);
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
-				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release),
+				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(platform.ToPlatform()),
 				parseOptions: ParseOptions,
 				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,

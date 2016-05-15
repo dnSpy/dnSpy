@@ -84,6 +84,7 @@
     <Compile Include="Commands\RootDnSpyFileNodeCreator.cs" />
     <Compile Include="Compile\AssemblyReferenceResolver.cs" />
     <Compile Include="Compile\Commands.cs" />
+    <Compile Include="Compile\CompilePlatform.cs" />
     <Compile Include="Compile\CompilerDiagnostic.cs" />
     <Compile Include="Compile\CompilationResult.cs" />
     <Compile Include="Compile\CompilerDiagnosticComparer.cs" />
@@ -101,8 +102,10 @@
     <Compile Include="Compile\ILanguageCompilerCreator.cs" />
     <Compile Include="Compile\MetadataFixer.cs" />
     <Compile Include="Compile\MetadataReferenceFinder.cs" />
+    <Compile Include="Compile\PlatformHelper.cs" />
     <Compile Include="Compile\Roslyn\CSharpLanguageCompiler.cs" />
     <Compile Include="Compile\Roslyn\DiagnosticExtensions.cs" />
+    <Compile Include="Compile\Roslyn\Extensions.cs" />
     <Compile Include="Compile\Roslyn\RoslynCodeDocument.cs" />
     <Compile Include="Compile\Roslyn\RoslynLanguageCompiler.cs" />
     <Compile Include="Compile\Roslyn\VisualBasicLanguageCompiler.cs" />
