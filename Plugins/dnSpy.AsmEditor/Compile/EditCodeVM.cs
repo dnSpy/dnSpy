@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.Compile {
 			}
 
 			if (!canceled)
-				languageCompiler.AddDecompiledCode(mainCode, hiddenCode, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(method.Module));
+				languageCompiler.AddDecompiledCode(new DecompiledCodeResult(mainCode, hiddenCode, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(method.Module)));
 
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;

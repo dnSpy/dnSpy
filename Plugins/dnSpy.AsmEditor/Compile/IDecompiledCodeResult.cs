@@ -17,34 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace dnSpy.AsmEditor.Compile {
 	/// <summary>
-	/// Compiles source code
+	/// Decompiled code result, passed to <see cref="ILanguageCompiler.AddDecompiledCode(IDecompiledCodeResult)"/>
 	/// </summary>
-	interface ILanguageCompiler : IDisposable {
+	interface IDecompiledCodeResult {
 		/// <summary>
-		/// Called after the code has been decompiled
+		/// Main code
 		/// </summary>
-		/// <param name="decompiledCodeResult">Decompiled code</param>
-		void AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
+		string MainCode { get; }
 
 		/// <summary>
-		/// Gets all code documents. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
-		/// has been called.
+		/// Other code that's not important to the user, eg. method stubs
 		/// </summary>
-		/// <param name="mainDocument">Main document</param>
-		/// <returns></returns>
-		ICodeDocument[] GetCodeDocuments(out ICodeDocument mainDocument);
+		string HiddenCode { get; }
 
 		/// <summary>
-		/// Compiles the code
+		/// Assembly and module references
 		/// </summary>
-		/// <param name="cancellationToken">Cancellation token</param>
-		/// <returns></returns>
-		Task<CompilationResult> CompileAsync(CancellationToken cancellationToken);
+		CompilerMetadataReference[] AssemblyReferences { get; }
+
+		/// <summary>
+		/// Reference resolver
+		/// </summary>
+		IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
+
+		/// <summary>
+		/// Platform
+		/// </summary>
+		CompilePlatform Platform { get; }
 	}
 }

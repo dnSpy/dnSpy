@@ -91,6 +91,7 @@
     <Compile Include="Compile\CompilerDiagnosticVM.cs" />
     <Compile Include="Compile\CompilerMetadataReference.cs" />
     <Compile Include="Compile\CompilerMetadataReferenceCreator.cs" />
+    <Compile Include="Compile\DecompiledCodeResult.cs" />
     <Compile Include="Compile\EditCodeDlg.xaml.cs">
       <DependentUpon>EditCodeDlg.xaml</DependentUpon>
     </Compile>
@@ -98,6 +99,7 @@
     <Compile Include="Compile\EditCodeVMCreator.cs" />
     <Compile Include="Compile\IAssemblyReferenceResolver.cs" />
     <Compile Include="Compile\ICodeDocument.cs" />
+    <Compile Include="Compile\IDecompiledCodeResult.cs" />
     <Compile Include="Compile\ILanguageCompiler.cs" />
     <Compile Include="Compile\ILanguageCompilerCreator.cs" />
     <Compile Include="Compile\MetadataFixer.cs" />

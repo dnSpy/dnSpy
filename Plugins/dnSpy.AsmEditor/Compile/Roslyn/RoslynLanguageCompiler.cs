@@ -46,19 +46,19 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
 		}
 
-		public void AddDecompiledCode(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, CompilePlatform platform) {
+		public void AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
 			Debug.Assert(workspace == null);
 
 			workspace = new AdhocWorkspace();
-			var refs = assemblyReferences.Select(a => MetadataReference.CreateFromImage(a.Data, a.IsAssemblyReference ? MetadataReferenceProperties.Assembly : MetadataReferenceProperties.Module)).ToArray();
+			var refs = decompiledCodeResult.AssemblyReferences.Select(a => MetadataReference.CreateFromImage(a.Data, a.IsAssemblyReference ? MetadataReferenceProperties.Assembly : MetadataReferenceProperties.Module)).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
 			const string mainFilename = "main";
-			mainDocument = AddDocument(projectId, mainFilename + FileExtension, mainCode);
-			AddDocument(projectId, mainFilename + ".g" + FileExtension, hiddenCode);
+			mainDocument = AddDocument(projectId, mainFilename + FileExtension, decompiledCodeResult.MainCode);
+			AddDocument(projectId, mainFilename + ".g" + FileExtension, decompiledCodeResult.HiddenCode);
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
-				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(platform.ToPlatform()),
+				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(decompiledCodeResult.Platform.ToPlatform()),
 				parseOptions: ParseOptions,
 				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,
