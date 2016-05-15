@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Roslyn;
 using dnSpy.Roslyn.Shared.Text;

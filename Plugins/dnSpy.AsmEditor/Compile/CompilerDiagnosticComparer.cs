@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.AsmEditor.Compile;
 
 namespace dnSpy.AsmEditor.Compile {
 	sealed class CompilerDiagnosticComparer : IComparer<CompilerDiagnostic> {

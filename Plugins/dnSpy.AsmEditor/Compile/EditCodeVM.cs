@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;

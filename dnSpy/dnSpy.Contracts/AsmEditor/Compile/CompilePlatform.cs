@@ -17,24 +17,39 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
-using dnSpy.Contracts.AsmEditor.Compile;
-using Microsoft.CodeAnalysis;
+namespace dnSpy.Contracts.AsmEditor.Compile {
+	/// <summary>
+	/// Platform
+	/// </summary>
+	public enum CompilePlatform {
+		/// <summary>
+		/// Any CPU
+		/// </summary>
+		AnyCpu,
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
-	static class Extensions {
-		public static Platform ToPlatform(this CompilePlatform platform) {
-			switch (platform) {
-			case CompilePlatform.AnyCpu:				return Platform.AnyCpu;
-			case CompilePlatform.X86:					return Platform.X86;
-			case CompilePlatform.X64:					return Platform.X64;
-			case CompilePlatform.Itanium:				return Platform.Itanium;
-			case CompilePlatform.AnyCpu32BitPreferred:	return Platform.AnyCpu32BitPreferred;
-			case CompilePlatform.Arm:					return Platform.Arm;
-			default:
-				Debug.Fail($"Unknown platform: {platform}");
-				return Platform.AnyCpu;
-			}
-		}
+		/// <summary>
+		/// x86
+		/// </summary>
+		X86,
+
+		/// <summary>
+		/// x64
+		/// </summary>
+		X64,
+
+		/// <summary>
+		/// IA-64
+		/// </summary>
+		Itanium,
+
+		/// <summary>
+		/// Any CPU, but prefer 32-bit
+		/// </summary>
+		AnyCpu32BitPreferred,
+
+		/// <summary>
+		/// ARM
+		/// </summary>
+		Arm,
 	}
 }

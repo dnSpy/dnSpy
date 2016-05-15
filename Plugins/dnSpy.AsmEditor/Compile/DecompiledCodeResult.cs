@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.AsmEditor.Compile;
+
 namespace dnSpy.AsmEditor.Compile {
 	sealed class DecompiledCodeResult : IDecompiledCodeResult {
 		public string MainCode { get; }

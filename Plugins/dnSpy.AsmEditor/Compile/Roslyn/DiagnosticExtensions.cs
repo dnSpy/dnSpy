@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.AsmEditor.Compile;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 

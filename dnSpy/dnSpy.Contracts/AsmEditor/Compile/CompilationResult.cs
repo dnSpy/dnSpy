@@ -18,9 +18,13 @@
 */
 
 using System;
+using System.Diagnostics;
 
-namespace dnSpy.AsmEditor.Compile {
-	struct CompilationResult {
+namespace dnSpy.Contracts.AsmEditor.Compile {
+	/// <summary>
+	/// Compilation result
+	/// </summary>
+	public struct CompilationResult {
 		/// <summary>
 		/// true if the compilation succeeded
 		/// </summary>
@@ -36,6 +40,11 @@ namespace dnSpy.AsmEditor.Compile {
 		/// </summary>
 		public CompilerDiagnostic[] Diagnostics { get; }
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="rawFile">Raw file data</param>
+		/// <param name="diagnostics">Diagnostics or null</param>
 		public CompilationResult(byte[] rawFile, CompilerDiagnostic[] diagnostics = null) {
 			if (rawFile == null)
 				throw new ArgumentNullException(nameof(rawFile));
@@ -43,9 +52,14 @@ namespace dnSpy.AsmEditor.Compile {
 			Diagnostics = diagnostics ?? Array.Empty<CompilerDiagnostic>();
 		}
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="diagnostics">Diagnostics</param>
 		public CompilationResult(CompilerDiagnostic[] diagnostics) {
 			if (diagnostics == null)
 				throw new ArgumentNullException(nameof(diagnostics));
+			Debug.Assert(diagnostics.Length != 0);
 			RawFile = null;
 			Diagnostics = diagnostics;
 		}

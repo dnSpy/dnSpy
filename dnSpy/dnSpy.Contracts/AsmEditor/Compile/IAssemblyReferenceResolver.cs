@@ -19,11 +19,11 @@
 
 using dnlib.DotNet;
 
-namespace dnSpy.AsmEditor.Compile {
+namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
 	/// Resolves assemblies
 	/// </summary>
-	interface IAssemblyReferenceResolver {
+	public interface IAssemblyReferenceResolver {
 		/// <summary>
 		/// Resolves a reference
 		/// </summary>

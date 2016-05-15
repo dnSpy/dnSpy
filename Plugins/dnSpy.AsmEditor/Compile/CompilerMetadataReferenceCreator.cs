@@ -20,6 +20,7 @@
 using System.IO;
 using dnlib.DotNet;
 using dnlib.IO;
+using dnSpy.Contracts.AsmEditor.Compile;
 
 namespace dnSpy.AsmEditor.Compile {
 	static class CompilerMetadataReferenceCreator {

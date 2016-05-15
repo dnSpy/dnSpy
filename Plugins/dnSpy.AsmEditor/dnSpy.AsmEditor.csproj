@@ -84,12 +84,8 @@
     <Compile Include="Commands\RootDnSpyFileNodeCreator.cs" />
     <Compile Include="Compile\AssemblyReferenceResolver.cs" />
     <Compile Include="Compile\Commands.cs" />
-    <Compile Include="Compile\CompilePlatform.cs" />
-    <Compile Include="Compile\CompilerDiagnostic.cs" />
-    <Compile Include="Compile\CompilationResult.cs" />
     <Compile Include="Compile\CompilerDiagnosticComparer.cs" />
     <Compile Include="Compile\CompilerDiagnosticVM.cs" />
-    <Compile Include="Compile\CompilerMetadataReference.cs" />
     <Compile Include="Compile\CompilerMetadataReferenceCreator.cs" />
     <Compile Include="Compile\DecompiledCodeResult.cs" />
     <Compile Include="Compile\EditCodeDlg.xaml.cs">
@@ -97,11 +93,6 @@
     </Compile>
     <Compile Include="Compile\EditCodeVM.cs" />
     <Compile Include="Compile\EditCodeVMCreator.cs" />
-    <Compile Include="Compile\IAssemblyReferenceResolver.cs" />
-    <Compile Include="Compile\ICodeDocument.cs" />
-    <Compile Include="Compile\IDecompiledCodeResult.cs" />
-    <Compile Include="Compile\ILanguageCompiler.cs" />
-    <Compile Include="Compile\ILanguageCompilerCreator.cs" />
     <Compile Include="Compile\MetadataFixer.cs" />
     <Compile Include="Compile\MetadataReferenceFinder.cs" />
     <Compile Include="Compile\PlatformHelper.cs" />

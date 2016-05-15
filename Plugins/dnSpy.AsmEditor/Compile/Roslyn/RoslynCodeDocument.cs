@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Contracts.Text.Roslyn;
 using Microsoft.CodeAnalysis;
 

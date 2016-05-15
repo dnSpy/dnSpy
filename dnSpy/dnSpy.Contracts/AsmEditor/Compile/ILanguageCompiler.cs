@@ -18,32 +18,33 @@
 */
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace dnSpy.AsmEditor.Compile {
+namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
-	/// Creates <see cref="ILanguageCompiler"/> instances
+	/// Compiles source code
 	/// </summary>
-	interface ILanguageCompilerCreator {
+	public interface ILanguageCompiler : IDisposable {
 		/// <summary>
-		/// Order of this creator
+		/// Called after the code has been decompiled
 		/// </summary>
-		double Order { get; }
+		/// <param name="decompiledCodeResult">Decompiled code</param>
+		void AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
 
 		/// <summary>
-		/// Gets the icon shown in menus or null
+		/// Gets all code documents. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
+		/// has been called.
 		/// </summary>
-		string Icon { get; }
-
-		/// <summary>
-		/// Language it supports, eg. <see cref="dnSpy.Contracts.Languages.LanguageConstants.LANGUAGE_CSHARP"/>.
-		/// This property is compared against <see cref="dnSpy.Contracts.Languages.ILanguage.GenericGuid"/>.
-		/// </summary>
-		Guid Language { get; }
-
-		/// <summary>
-		/// Creates a new <see cref="ILanguageCompiler"/> instance
-		/// </summary>
+		/// <param name="mainDocument">Main document</param>
 		/// <returns></returns>
-		ILanguageCompiler Create();
+		ICodeDocument[] GetCodeDocuments(out ICodeDocument mainDocument);
+
+		/// <summary>
+		/// Compiles the code
+		/// </summary>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		Task<CompilationResult> CompileAsync(CancellationToken cancellationToken);
 	}
 }

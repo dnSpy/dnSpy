@@ -17,34 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.AsmEditor.Compile {
+using System;
+
+namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
-	/// Decompiled code result, passed to <see cref="ILanguageCompiler.AddDecompiledCode(IDecompiledCodeResult)"/>
+	/// Line location
 	/// </summary>
-	interface IDecompiledCodeResult {
+	public struct LineLocation {
 		/// <summary>
-		/// Main code
+		/// Line, 1-based
 		/// </summary>
-		string MainCode { get; }
+		public int Line { get; }
 
 		/// <summary>
-		/// Other code that's not important to the user, eg. method stubs
+		/// Column, 1-based
 		/// </summary>
-		string HiddenCode { get; }
+		public int Character { get; }
 
 		/// <summary>
-		/// Assembly and module references
+		/// Constructor
 		/// </summary>
-		CompilerMetadataReference[] AssemblyReferences { get; }
+		/// <param name="line">Line, 1-based</param>
+		/// <param name="character">Column, 1-based</param>
+		public LineLocation(int line, int character) {
+			if (line <= 0)
+				throw new ArgumentOutOfRangeException(nameof(line));
+			if (character <= 0)
+				throw new ArgumentOutOfRangeException(nameof(line));
+			Line = line;
+			Character = character;
+		}
 
 		/// <summary>
-		/// Reference resolver
+		/// ToString()
 		/// </summary>
-		IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
-
-		/// <summary>
-		/// Platform
-		/// </summary>
-		CompilePlatform Platform { get; }
+		/// <returns></returns>
+		public override string ToString() => $"({Line},{Character})";
 	}
 }

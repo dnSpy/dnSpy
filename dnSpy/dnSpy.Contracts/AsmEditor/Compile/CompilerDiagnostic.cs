@@ -20,8 +20,11 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace dnSpy.AsmEditor.Compile {
-	sealed class CompilerDiagnostic {
+namespace dnSpy.Contracts.AsmEditor.Compile {
+	/// <summary>
+	/// Compiler diagnostic
+	/// </summary>
+	public sealed class CompilerDiagnostic {
 		/// <summary>
 		/// Gets the severity
 		/// </summary>
@@ -47,6 +50,14 @@ namespace dnSpy.AsmEditor.Compile {
 		/// </summary>
 		public LineLocationSpan? LineLocationSpan { get; }
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="severity">Severity</param>
+		/// <param name="description">Description</param>
+		/// <param name="id">Id</param>
+		/// <param name="filename">Filename</param>
+		/// <param name="lineLocationSpan">Line location or null</param>
 		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string filename, LineLocationSpan? lineLocationSpan) {
 			Severity = severity;
 			Description = description ?? string.Empty;
@@ -55,6 +66,10 @@ namespace dnSpy.AsmEditor.Compile {
 			LineLocationSpan = lineLocationSpan;
 		}
 
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString() {
 			var sb = new StringBuilder();
 			sb.Append(Filename ?? "???");
@@ -74,36 +89,5 @@ namespace dnSpy.AsmEditor.Compile {
 			sb.Append(Description);
 			return sb.ToString();
 		}
-	}
-
-	enum CompilerDiagnosticSeverity {
-		Hidden,
-		Info,
-		Warning,
-		Error,
-	}
-
-	struct LineLocation {
-		public int Line { get; }
-		public int Character { get; }
-
-		public LineLocation(int line, int character) {
-			Line = line;
-			Character = character;
-		}
-
-		public override string ToString() => $"({Line},{Character})";
-	}
-
-	struct LineLocationSpan {
-		public LineLocation StartLinePosition { get; }
-		public LineLocation EndLinePosition { get; }
-
-		public LineLocationSpan(LineLocation startLinePosition, LineLocation endLinePosition) {
-			StartLinePosition = startLinePosition;
-			EndLinePosition = endLinePosition;
-		}
-
-		public override string ToString() => $"{StartLinePosition}-{EndLinePosition}";
 	}
 }

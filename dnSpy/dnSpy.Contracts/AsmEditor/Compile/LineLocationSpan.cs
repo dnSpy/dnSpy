@@ -17,34 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace dnSpy.AsmEditor.Compile {
+namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
-	/// Compiles source code
+	/// Line location span
 	/// </summary>
-	interface ILanguageCompiler : IDisposable {
+	public struct LineLocationSpan {
 		/// <summary>
-		/// Called after the code has been decompiled
+		/// Start line position
 		/// </summary>
-		/// <param name="decompiledCodeResult">Decompiled code</param>
-		void AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
+		public LineLocation StartLinePosition { get; }
 
 		/// <summary>
-		/// Gets all code documents. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
-		/// has been called.
+		/// End line position
 		/// </summary>
-		/// <param name="mainDocument">Main document</param>
-		/// <returns></returns>
-		ICodeDocument[] GetCodeDocuments(out ICodeDocument mainDocument);
+		public LineLocation EndLinePosition { get; }
 
 		/// <summary>
-		/// Compiles the code
+		/// Constructor
 		/// </summary>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="startLinePosition">Start line position</param>
+		/// <param name="endLinePosition">End line position</param>
+		public LineLocationSpan(LineLocation startLinePosition, LineLocation endLinePosition) {
+			StartLinePosition = startLinePosition;
+			EndLinePosition = endLinePosition;
+		}
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
 		/// <returns></returns>
-		Task<CompilationResult> CompileAsync(CancellationToken cancellationToken);
+		public override string ToString() => $"{StartLinePosition}-{EndLinePosition}";
 	}
 }

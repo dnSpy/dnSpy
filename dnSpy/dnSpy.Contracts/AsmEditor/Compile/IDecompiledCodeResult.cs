@@ -17,19 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.AsmEditor.Compile {
+namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
-	/// Code document
+	/// Decompiled code result, passed to <see cref="ILanguageCompiler.AddDecompiledCode(IDecompiledCodeResult)"/>
 	/// </summary>
-	interface ICodeDocument {
+	public interface IDecompiledCodeResult {
 		/// <summary>
-		/// Name of document
+		/// Main code
 		/// </summary>
-		string Name { get; }
+		string MainCode { get; }
 
 		/// <summary>
-		/// UI object of code editor
+		/// Other code that's not important to the user, eg. method stubs
 		/// </summary>
-		object CodeEditorUIObject { get; }
+		string HiddenCode { get; }
+
+		/// <summary>
+		/// Assembly and module references
+		/// </summary>
+		CompilerMetadataReference[] AssemblyReferences { get; }
+
+		/// <summary>
+		/// Reference resolver
+		/// </summary>
+		IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
+
+		/// <summary>
+		/// Platform
+		/// </summary>
+		CompilePlatform Platform { get; }
 	}
 }

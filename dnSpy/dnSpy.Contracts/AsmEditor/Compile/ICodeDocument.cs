@@ -17,39 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.AsmEditor.Compile {
+namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
-	/// Platform
+	/// Code document
 	/// </summary>
-	enum CompilePlatform {
+	public interface ICodeDocument {
 		/// <summary>
-		/// Any CPU
+		/// Name of document
 		/// </summary>
-		AnyCpu,
+		string Name { get; }
 
 		/// <summary>
-		/// x86
+		/// UI object of code editor
 		/// </summary>
-		X86,
-
-		/// <summary>
-		/// x64
-		/// </summary>
-		X64,
-
-		/// <summary>
-		/// IA-64
-		/// </summary>
-		Itanium,
-
-		/// <summary>
-		/// Any CPU, but prefer 32-bit
-		/// </summary>
-		AnyCpu32BitPreferred,
-
-		/// <summary>
-		/// ARM
-		/// </summary>
-		Arm,
+		object CodeEditorUIObject { get; }
 	}
 }

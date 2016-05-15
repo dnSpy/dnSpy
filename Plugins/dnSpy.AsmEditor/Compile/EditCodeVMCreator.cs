@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 

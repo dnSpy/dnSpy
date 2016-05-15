@@ -20,6 +20,7 @@
 using System;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.AsmEditor.Compile;
 
 namespace dnSpy.AsmEditor.Compile {
 	static class PlatformHelper {

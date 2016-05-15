@@ -18,6 +18,7 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.Contracts.AsmEditor.Compile;
 
 namespace dnSpy.AsmEditor.Compile {
 	sealed class AssemblyReferenceResolver : IAssemblyReferenceResolver {

@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Compile {

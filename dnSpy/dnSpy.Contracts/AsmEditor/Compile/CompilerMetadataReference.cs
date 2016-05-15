@@ -20,8 +20,11 @@
 using System;
 using dnlib.DotNet;
 
-namespace dnSpy.AsmEditor.Compile {
-	struct CompilerMetadataReference {
+namespace dnSpy.Contracts.AsmEditor.Compile {
+	/// <summary>
+	/// Metadata reference
+	/// </summary>
+	public struct CompilerMetadataReference {
 		/// <summary>
 		/// Raw bytes
 		/// </summary>
@@ -45,7 +48,20 @@ namespace dnSpy.AsmEditor.Compile {
 			IsAssemblyReference = isAssemblyReference;
 		}
 
+		/// <summary>
+		/// Creates an assembly metadata reference
+		/// </summary>
+		/// <param name="data">File data</param>
+		/// <param name="assembly">Assembly owner or null</param>
+		/// <returns></returns>
 		public static CompilerMetadataReference CreateAssemblyReference(byte[] data, IAssembly assembly) => new CompilerMetadataReference(data, assembly, true);
+
+		/// <summary>
+		/// Creates a module metadata reference
+		/// </summary>
+		/// <param name="data">File data</param>
+		/// <param name="assembly">Assembly owner or null</param>
+		/// <returns></returns>
 		public static CompilerMetadataReference CreateModuleReference(byte[] data, IAssembly assembly) => new CompilerMetadataReference(data, assembly, false);
 	}
 }
