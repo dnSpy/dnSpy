@@ -27,10 +27,12 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
 		public IFileTreeNodeData[] Nodes { get; }
 		public bool IsLocalTarget { get; }
+		public IMenuItemContext MenuItemContextOrNull { get; }
 
-		public CodeContext(IFileTreeNodeData[] nodes, bool isLocalTarget) {
+		public CodeContext(IFileTreeNodeData[] nodes, bool isLocalTarget, IMenuItemContext menuItemContext) {
 			this.Nodes = nodes ?? Array.Empty<IFileTreeNodeData>();
 			this.IsLocalTarget = isLocalTarget;
+			this.MenuItemContextOrNull = menuItemContext;
 		}
 	}
 
@@ -54,7 +56,7 @@ namespace dnSpy.AsmEditor.Commands {
 				return null;
 			var node = fileTreeView.FindNode(refSeg.Reference);
 			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
-			return new CodeContext(nodes, refSeg.IsLocalTarget);
+			return new CodeContext(nodes, refSeg.IsLocalTarget, context);
 		}
 	}
 }

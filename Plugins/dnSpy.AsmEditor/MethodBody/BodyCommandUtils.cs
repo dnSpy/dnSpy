@@ -30,6 +30,8 @@ using dnSpy.Decompiler.Shared;
 namespace dnSpy.AsmEditor.MethodBody {
 	static class BodyCommandUtils {
 		public static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
+			if (context == null)
+				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return null;
 			var uiContext = context.Find<ITextEditorUIContext>();

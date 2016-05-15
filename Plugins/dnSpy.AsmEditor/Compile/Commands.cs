@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Compile {
 
 			public override string GetIcon(CodeContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(CodeContext context) => editCodeVMCreator.GetHeader();
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
+			public override bool IsEnabled(CodeContext context) => !EditBodyCommand.IsVisibleInternal(context.MenuItemContextOrNull) && context.IsLocalTarget && EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
 			public override void Execute(CodeContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
 		}
 
@@ -167,8 +167,9 @@ namespace dnSpy.AsmEditor.Compile {
 
 		public override string GetIcon(IMenuItemContext context) => editCodeVMCreator.GetIcon();
 		public override string GetHeader(IMenuItemContext context) => editCodeVMCreator.GetHeader();
-		public override bool IsVisible(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
+		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 
+		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
 		static bool IsVisible(IList<SourceCodeMapping> list) {
 			return list != null &&
 				list.Count != 0 &&

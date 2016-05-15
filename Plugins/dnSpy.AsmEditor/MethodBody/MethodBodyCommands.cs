@@ -103,7 +103,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appWindow = appWindow;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && EditMethodBodyILCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => !EditILInstructionsCommand.IsVisibleInternal(context.MenuItemContextOrNull) && context.IsLocalTarget && EditMethodBodyILCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandManager, appWindow, context.Nodes);
 		}
 
@@ -179,8 +179,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.appWindow = appWindow;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
+		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 
+		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
 		static bool IsVisible(IList<SourceCodeMapping> list) {
 			return list != null &&
 				list.Count != 0 &&
