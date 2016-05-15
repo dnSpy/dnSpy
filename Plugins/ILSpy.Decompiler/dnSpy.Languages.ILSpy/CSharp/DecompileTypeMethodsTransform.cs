@@ -104,12 +104,14 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 
 					bool clearModifiers = false;
 
-					// If it's a getter/setter/adder/remover, its owner (the property/event) already is public,
-					// so remove the modifier from the accessor
-					if (en is Accessor)
+					var owner = en.Parent as TypeDeclaration;
+					if (owner?.ClassType == ClassType.Enum || owner?.ClassType == ClassType.Interface)
 						clearModifiers = true;
-					else if (en.SymbolKind == SymbolKind.Field && en is EnumMemberDeclaration)
+					else if (en is Accessor) {
+						// If it's a getter/setter/adder/remover, its owner (the property/event) already is public,
+						// so remove the modifier from the accessor
 						clearModifiers = true;
+					}
 					else if (en.SymbolKind == SymbolKind.Destructor)
 						clearModifiers = true;
 					else if (en.SymbolKind == SymbolKind.Constructor && en.HasModifier(Modifiers.Static))
