@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -24,6 +25,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
@@ -31,6 +33,9 @@ namespace dnSpy.AsmEditor.Compile {
 	partial class EditCodeDlg : WindowBase {
 		public EditCodeDlg() {
 			InitializeComponent();
+
+			decompilingControl.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
+
 			DataContextChanged += (s, e) => {
 				var vm = DataContext as EditCodeVM;
 				if (vm != null) {
