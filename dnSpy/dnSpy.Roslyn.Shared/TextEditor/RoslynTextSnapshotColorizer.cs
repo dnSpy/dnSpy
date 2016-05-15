@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -48,7 +49,12 @@ namespace dnSpy.Roslyn.Shared.TextEditor {
 
 			//TODO: Try to use async. Will need to notify caller when our async method has the result.
 			var cancellationToken = CancellationToken.None;
-			return GetColorSpansAsync(snapshot, span, cancellationToken).GetAwaiter().GetResult();
+			try {
+				return GetColorSpansAsync(snapshot, span, cancellationToken).GetAwaiter().GetResult();
+			}
+			catch (OperationCanceledException) {
+				return Enumerable.Empty<ColorSpan>();
+			}
 		}
 
 		async Task<IEnumerable<ColorSpan>> GetColorSpansAsync(ITextSnapshot snapshot, Span span, CancellationToken cancellationToken) {

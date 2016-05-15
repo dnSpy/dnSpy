@@ -251,7 +251,11 @@ namespace dnSpy.AsmEditor.Compile {
 
 			var compilerDiagnostics = result?.Diagnostics ?? Array.Empty<CompilerDiagnostic>();
 			if (canceled) {
-				// It gets canceled when the dialog box gets closed
+				// It gets canceled when the dialog box gets closed, or when Roslyn cancels the task
+				// for some unknown reason.
+				compilerDiagnostics = new CompilerDiagnostic[] {
+					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null),
+				};
 			}
 			else if (caughtException != null) {
 				compilerDiagnostics = new CompilerDiagnostic[] {
