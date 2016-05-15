@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Images {
 		/// </summary>
 		/// <param name="asm">Assembly of image</param>
 		/// <param name="icon">Name of image, without the .png extension. Must be in the images/ folder</param>
-		/// <param name="bgColor">Background color</param>
+		/// <param name="bgColor">Background color or null to not modify the image</param>
 		/// <returns></returns>
-		BitmapSource GetImage(Assembly asm, string icon, Color bgColor);
+		BitmapSource GetImage(Assembly asm, string icon, Color? bgColor);
 	}
 }

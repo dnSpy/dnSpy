@@ -290,7 +290,7 @@ namespace dnSpy.AsmEditor.Compile {
 			var imageName = GetImageName(diag.Severity);
 			if (imageName == null)
 				return null;
-			return imageManager.GetImage(GetType().Assembly, imageName, BackgroundType.GridViewItem);
+			return imageManager.GetImage(GetType().Assembly, imageName, null);
 		}
 
 		static string GetImageName(CompilerDiagnosticSeverity severity) {

@@ -30,7 +30,7 @@ using dnSpy.Contracts.Themes;
 namespace dnSpy.Images {
 	[Export(typeof(IImageManager))]
 	sealed class ImageManager : IImageManager {
-		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
+		readonly Dictionary<Tuple<string, Color?>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color?>, BitmapSource>();
 		bool isHighContrast;
 		readonly IThemeManager themeManager;
 
@@ -77,19 +77,21 @@ namespace dnSpy.Images {
 		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType) =>
 			GetImage(asm, icon, GetColor(bgType));
 
-		public BitmapSource GetImage(Assembly asm, string icon, Color bgColor) {
+		public BitmapSource GetImage(Assembly asm, string icon, Color? bgColor) {
 			var name = asm.GetName();
 			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + icon + ".png";
 			return GetImageUsingUri(uri, bgColor);
 		}
 
-		BitmapSource GetImageUsingUri(string uri, Color bgColor) {
+		BitmapSource GetImageUsingUri(string uri, Color? bgColor) {
 			var key = Tuple.Create(uri, bgColor);
 			BitmapSource image;
 			if (imageCache.TryGetValue(key, out image))
 				return image;
 
-			image = ThemedImageCreator.CreateThemedBitmapSource(new BitmapImage(new Uri(uri)), bgColor, isHighContrast);
+			image = new BitmapImage(new Uri(uri));
+			if (bgColor != null)
+				image = ThemedImageCreator.CreateThemedBitmapSource(image, bgColor.Value, isHighContrast);
 			imageCache.Add(key, image);
 			return image;
 		}
