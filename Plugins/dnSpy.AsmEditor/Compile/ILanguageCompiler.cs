@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compile {
 		void AddDecompiledCode(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver);
 
 		/// <summary>
-		/// Gets all code documents. Called after <see cref="AddDecompiledCode(string, string, CompilerMetadataReference[], int)"/>
+		/// Gets all code documents. Called after <see cref="AddDecompiledCode(string, string, CompilerMetadataReference[], IAssemblyReferenceResolver)"/>
 		/// has been called.
 		/// </summary>
 		/// <param name="mainDocument">Main document</param>

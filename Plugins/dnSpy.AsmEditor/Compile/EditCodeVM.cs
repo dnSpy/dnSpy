@@ -189,6 +189,8 @@ namespace dnSpy.AsmEditor.Compile {
 				options.MakeEverythingPublic = makeEverythingPublic;
 				language.Decompile(DecompilationType.TypeMethods, options);
 
+				state.CancellationToken.ThrowIfCancellationRequested();
+
 				options = new DecompileTypeMethods(state.HiddenOutput, state.DecompilationContext, type);
 				options.Methods.Add(method);
 				options.DecompileHidden = true;

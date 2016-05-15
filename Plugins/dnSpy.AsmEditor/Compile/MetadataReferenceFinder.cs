@@ -51,6 +51,7 @@ namespace dnSpy.AsmEditor.Compile {
 
 		void Initialize() {
 			foreach (var asm in GetAssemblies(module)) {
+				cancellationToken.ThrowIfCancellationRequested();
 				AssemblyDef otherAsm;
 				if (!assemblies.TryGetValue(asm, out otherAsm))
 					assemblies[asm] = asm;
@@ -92,6 +93,7 @@ namespace dnSpy.AsmEditor.Compile {
 			var nonContractAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 			var stack = new Stack<AssemblyRef>(module.GetAssemblyRefs());
 			while (stack.Count > 0) {
+				cancellationToken.ThrowIfCancellationRequested();
 				var asmRef = stack.Pop();
 				if (!contractsPublicKeyToken.Equals(asmRef.PublicKeyOrToken?.Token))
 					continue;
@@ -104,6 +106,7 @@ namespace dnSpy.AsmEditor.Compile {
 					yield return contractsAsm;
 					foreach (var m in contractsAsm.Modules) {
 						foreach (var ar in m.GetAssemblyRefs()) {
+							cancellationToken.ThrowIfCancellationRequested();
 							if (contractsPublicKeyToken.Equals(ar.PublicKeyOrToken))
 								stack.Push(ar);
 							else
@@ -113,6 +116,7 @@ namespace dnSpy.AsmEditor.Compile {
 				}
 			}
 			foreach (var asmRef in nonContractAsms) {
+				cancellationToken.ThrowIfCancellationRequested();
 				var asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
 				if (asm != null)
 					yield return asm;
