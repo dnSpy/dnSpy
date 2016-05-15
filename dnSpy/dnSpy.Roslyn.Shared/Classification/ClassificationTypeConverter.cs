@@ -185,15 +185,6 @@ the_switch:
 						case MethodKind.Ordinary:
 						case MethodKind.DelegateInvoke:
 						case MethodKind.ExplicitInterfaceImplementation:
-							if (methSym.IsExtensionMethod)
-								return OutputColor.ExtensionMethod;
-							if (methSym.IsStatic)
-								return OutputColor.StaticMethod;
-							return OutputColor.InstanceMethod;
-
-						case MethodKind.ReducedExtension:
-							return OutputColor.ExtensionMethod;
-
 						case MethodKind.AnonymousFunction:
 						case MethodKind.Conversion:
 						case MethodKind.EventAdd:
@@ -205,9 +196,15 @@ the_switch:
 						case MethodKind.BuiltinOperator:
 						case MethodKind.DeclareMethod:
 						default:
-							break;
+							if (methSym.IsExtensionMethod)
+								return OutputColor.ExtensionMethod;
+							if (methSym.IsStatic)
+								return OutputColor.StaticMethod;
+							return OutputColor.InstanceMethod;
+
+						case MethodKind.ReducedExtension:
+							return OutputColor.ExtensionMethod;
 						}
-						break;
 
 					case SymbolKind.NetModule:
 						break;
