@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			Debug.Assert(workspace == null);
 
 			workspace = new AdhocWorkspace();
-			var refs = decompiledCodeResult.AssemblyReferences.Select(a => MetadataReference.CreateFromImage(a.Data, a.IsAssemblyReference ? MetadataReferenceProperties.Assembly : MetadataReferenceProperties.Module)).ToArray();
+			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
 			const string mainFilename = "main";
@@ -97,6 +97,14 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 			if (!emitResult.Success)
 				return new CompilationResult(emitResult.Diagnostics.ToCompilerDiagnostics().ToArray());
 			return new CompilationResult(outputStream.ToArray(), emitResult.Diagnostics.ToCompilerDiagnostics().ToArray());
+		}
+
+		public bool AddMetadataReferences(CompilerMetadataReference[] metadataReferences) {
+			Debug.Assert(workspace != null);
+			if (workspace == null)
+				throw new InvalidOperationException();
+			var newProj = workspace.CurrentSolution.Projects.First().AddMetadataReferences(metadataReferences.Select(a => a.CreateMetadataReference()));
+			return workspace.TryApplyChanges(newProj.Solution);
 		}
 
 		public void Dispose() {

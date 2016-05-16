@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.App {
@@ -27,14 +28,16 @@ namespace dnSpy.Contracts.App {
 		/// <summary>
 		/// Returns an array of selected GAC assemblies
 		/// </summary>
+		/// <param name="ownerWindow">Owner window or null</param>
 		/// <returns></returns>
-		string[] GetPaths();
+		string[] GetPaths(Window ownerWindow = null);
 
 		/// <summary>
 		/// Returns an array of selected GAC assemblies
 		/// </summary>
 		/// <param name="selectAssembly">true to select the assembly in <c>Assembly Explorer</c></param>
+		/// <param name="ownerWindow">Owner window or null</param>
 		/// <returns></returns>
-		ModuleDef[] OpenAssemblies(bool selectAssembly);
+		ModuleDef[] OpenAssemblies(bool selectAssembly, Window ownerWindow = null);
 	}
 }

@@ -24,8 +24,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
+using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
@@ -35,9 +39,13 @@ using dnSpy.Shared.MVVM;
 namespace dnSpy.AsmEditor.Compile {
 	sealed class EditCodeVM : ViewModelBase, IDisposable {
 		readonly IImageManager imageManager;
+		readonly IOpenFromGAC openFromGAC;
+		readonly IOpenAssembly openAssembly;
 		readonly ILanguageCompiler languageCompiler;
 		readonly ILanguage language;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
+
+		internal Window OwnerWindow { get; set; }
 
 		// Make all types, methods, fields public so we don't get a compilation error when trying
 		// to reference an internal type or a private method in the original assembly.
@@ -45,6 +53,10 @@ namespace dnSpy.AsmEditor.Compile {
 
 		public bool HasDecompiled { get; private set; }
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
+		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
+		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
+		public object AddAssemblyReferenceImageObject => imageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
+		public object AddGacReferenceImageObject => imageManager.GetImage(GetType().Assembly, "Library", BackgroundType.DialogWindow);
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -71,9 +83,11 @@ namespace dnSpy.AsmEditor.Compile {
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		public EditCodeVM(IImageManager imageManager, ILanguageCompiler languageCompiler, ILanguage language, MethodDef method) {
+		public EditCodeVM(IImageManager imageManager, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, ILanguage language, MethodDef method) {
 			Debug.Assert(language.CanDecompile(DecompilationType.TypeMethods));
 			this.imageManager = imageManager;
+			this.openFromGAC = openFromGAC;
+			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
 			this.language = language;
 			this.assemblyReferenceResolver = new AssemblyReferenceResolver(method.Module.Context.AssemblyResolver, method.Module, makeEverythingPublic);
@@ -304,6 +318,48 @@ namespace dnSpy.AsmEditor.Compile {
 			case CompilerDiagnosticSeverity.Warning:return "StatusWarning";
 			case CompilerDiagnosticSeverity.Error:	return "StatusError";
 			default: Debug.Fail($"Unknown severity: {severity}"); return null;
+			}
+		}
+
+		bool CanAddAssemblyReference => true;
+		void AddAssemblyReference() {
+			if (!CanAddAssemblyReference)
+				return;
+			var module = openAssembly.Open()?.ModuleDef;
+			if (module == null)
+				return;
+			AddReferences(new[] { module });
+		}
+
+		bool CanAddGacReference => true;
+		void AddGacReference() {
+			if (!CanAddGacReference)
+				return;
+			AddReferences(openFromGAC.OpenAssemblies(false, OwnerWindow));
+		}
+
+		void AddReferences(ModuleDef[] modules) {
+			var mdRefs = new List<CompilerMetadataReference>();
+			foreach (var module in modules) {
+				CompilerMetadataReference? cmr;
+				if (module.IsManifestModule)
+					cmr = assemblyReferenceResolver.Create(module.Assembly);
+				else
+					cmr = assemblyReferenceResolver.Create(module);
+				if (cmr == null)
+					continue;
+
+				mdRefs.Add(cmr.Value);
+			}
+			if (mdRefs.Count == 0)
+				return;
+
+			try {
+				if (!languageCompiler.AddMetadataReferences(mdRefs.ToArray()))
+					Shared.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_CouldNotAddAssemblyReferences);
+			}
+			catch (Exception ex) {
+				Shared.App.MsgBox.Instance.Show(ex);
 			}
 		}
 

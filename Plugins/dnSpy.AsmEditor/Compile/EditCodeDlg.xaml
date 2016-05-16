@@ -116,13 +116,22 @@
         <Grid Grid.Row="1" Margin="5 0 5 5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Row="0" Margin="0 0 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" VerticalContentAlignment="Center" Width="100" />
-            <Button Grid.Column="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Compile}" IsDefault="True" Command="{Binding CompileCommand}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" />
-            <Button Grid.Column="3" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
+            <ComboBox Grid.Row="0" Margin="0 0 5 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" VerticalContentAlignment="Center" Width="100" />
+            <Button Grid.Column="1" Margin="0 0 5 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddAssemblyReferenceCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AddAssemblyReferenceToolTip}">
+                <Image Width="16" Height="16" Source="{Binding AddAssemblyReferenceImageObject}"/>
+            </Button>
+            <Button Grid.Column="2" Margin="0 0 5 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddGacReferenceCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AddGacReferenceToolTip}">
+                <Image Width="16" Height="16" Source="{Binding AddGacReferenceImageObject}"/>
+            </Button>
+
+            <Button Grid.Column="4" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Compile}" IsDefault="True" Command="{Binding CompileCommand}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" />
+            <Button Grid.Column="5" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

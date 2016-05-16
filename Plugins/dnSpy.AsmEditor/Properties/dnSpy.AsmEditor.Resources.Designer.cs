@@ -70,6 +70,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Assembly Reference (Ctrl+O).
+        /// </summary>
+        public static string AddAssemblyReferenceToolTip {
+            get {
+                return ResourceManager.GetString("AddAssemblyReferenceToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Existing NetModule to Assembly....
         /// </summary>
         public static string AddExistingNetModuleToAssemblyCommand {
@@ -84,6 +93,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string AddExistingNetModuleToAssemblyCommand2 {
             get {
                 return ResourceManager.GetString("AddExistingNetModuleToAssemblyCommand2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Assembly Reference (GAC) (Ctrl+Shift+O).
+        /// </summary>
+        public static string AddGacReferenceToolTip {
+            get {
+                return ResourceManager.GetString("AddGacReferenceToolTip", resourceCulture);
             }
         }
         
@@ -1993,6 +2011,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Error_AssemblyFieldMustNotBeEmpty {
             get {
                 return ResourceManager.GetString("Error_AssemblyFieldMustNotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t add the assembly references..
+        /// </summary>
+        public static string Error_CouldNotAddAssemblyReferences {
+            get {
+                return ResourceManager.GetString("Error_CouldNotAddAssemblyReferences", resourceCulture);
             }
         }
         

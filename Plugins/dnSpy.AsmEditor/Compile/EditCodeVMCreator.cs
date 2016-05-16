@@ -24,7 +24,10 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compile;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 
@@ -32,14 +35,18 @@ namespace dnSpy.AsmEditor.Compile {
 	[Export(typeof(EditCodeVMCreator))]
 	sealed class EditCodeVMCreator {
 		readonly IImageManager imageManager;
+		readonly IOpenFromGAC openFromGAC;
+		readonly IOpenAssembly openAssembly;
 		readonly ILanguageManager languageManager;
 		readonly ILanguageCompilerCreator[] languageCompilerCreators;
 
 		public bool CanCreate => TryGetUsedLanguage() != null;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IImageManager imageManager, ILanguageManager languageManager, [ImportMany] IEnumerable<ILanguageCompilerCreator> languageCompilerCreators) {
+		EditCodeVMCreator(IImageManager imageManager, IOpenFromGAC openFromGAC, IFileTreeView fileTreeView, ILanguageManager languageManager, [ImportMany] IEnumerable<ILanguageCompilerCreator> languageCompilerCreators) {
 			this.imageManager = imageManager;
+			this.openFromGAC = openFromGAC;
+			this.openAssembly = new OpenAssembly(fileTreeView.FileManager);
 			this.languageManager = languageManager;
 			this.languageCompilerCreators = languageCompilerCreators.OrderBy(a => a.Order).ToArray();
 		}
@@ -93,7 +100,7 @@ namespace dnSpy.AsmEditor.Compile {
 			if (serviceCreator == null)
 				throw new InvalidOperationException();
 
-			return new EditCodeVM(imageManager, serviceCreator.Create(), language, method);
+			return new EditCodeVM(imageManager, openFromGAC, openAssembly, serviceCreator.Create(), language, method);
 		}
 	}
 }

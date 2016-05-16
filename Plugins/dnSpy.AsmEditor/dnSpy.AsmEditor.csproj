@@ -822,6 +822,7 @@
     <Resource Include="Images\Field.png" />
     <Resource Include="Images\Generic.png" />
     <Resource Include="Images\ILEditor.png" />
+    <Resource Include="Images\Library.png" />
     <Resource Include="Images\MetaData.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\ModuleFile.png" />

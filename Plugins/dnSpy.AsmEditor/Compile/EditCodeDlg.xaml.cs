@@ -39,6 +39,7 @@ namespace dnSpy.AsmEditor.Compile {
 			DataContextChanged += (s, e) => {
 				var vm = DataContext as EditCodeVM;
 				if (vm != null) {
+					vm.OwnerWindow = this;
 					if (vm.HasDecompiled)
 						RemoveProgressBar();
 					else {
@@ -47,6 +48,8 @@ namespace dnSpy.AsmEditor.Compile {
 								RemoveProgressBar();
 						};
 					}
+					InputBindings.Add(new KeyBinding(vm.AddGacReferenceCommand, Key.O, ModifierKeys.Control | ModifierKeys.Shift));
+					InputBindings.Add(new KeyBinding(vm.AddAssemblyReferenceCommand, Key.O, ModifierKeys.Control));
 				}
 			};
 			diagnosticsListView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,

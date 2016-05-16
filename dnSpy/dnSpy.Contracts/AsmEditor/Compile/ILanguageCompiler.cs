@@ -46,5 +46,13 @@ namespace dnSpy.Contracts.AsmEditor.Compile {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		Task<CompilationResult> CompileAsync(CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Adds new metadata references. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
+		/// has been called.
+		/// </summary>
+		/// <param name="metadataReferences">Metadata references</param>
+		/// <returns></returns>
+		bool AddMetadataReferences(CompilerMetadataReference[] metadataReferences);
 	}
 }

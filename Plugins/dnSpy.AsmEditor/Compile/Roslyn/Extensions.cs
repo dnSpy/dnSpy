@@ -36,5 +36,8 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 				return Platform.AnyCpu;
 			}
 		}
+
+		public static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef) =>
+			MetadataReference.CreateFromImage(mdRef.Data, mdRef.IsAssemblyReference ? MetadataReferenceProperties.Assembly : MetadataReferenceProperties.Module);
 	}
 }

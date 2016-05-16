@@ -2453,4 +2453,13 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="StatusWarning" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
+    <value>Add Assembly Reference (Ctrl+O)</value>
+  </data>
+  <data name="AddGacReferenceToolTip" xml:space="preserve">
+    <value>Add Assembly Reference (GAC) (Ctrl+Shift+O)</value>
+  </data>
+  <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
+    <value>Couldn't add the assembly references.</value>
+  </data>
 </root>

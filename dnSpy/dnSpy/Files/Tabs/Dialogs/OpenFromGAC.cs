@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
@@ -36,18 +37,18 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.fileTreeView = fileTreeView;
 		}
 
-		public string[] GetPaths() {
+		public string[] GetPaths(Window ownerWindow) {
 			var win = new OpenFromGACDlg();
 			const bool syntaxHighlight = true;
 			var vm = new OpenFromGACVM(syntaxHighlight);
 			win.DataContext = vm;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = ownerWindow ?? appWindow.MainWindow;
 			if (win.ShowDialog() != true)
 				return Array.Empty<string>();
 			return win.SelectedItems.Select(a => a.Path).ToArray();
 		}
 
-		public ModuleDef[] OpenAssemblies(bool selectAssembly) =>
-			OpenFilesHelper.OpenFiles(fileTreeView, appWindow.MainWindow, GetPaths(), selectAssembly).Select(a => a.ModuleDef).Where(a => a != null).ToArray();
+		public ModuleDef[] OpenAssemblies(bool selectAssembly, Window ownerWindow) =>
+			OpenFilesHelper.OpenFiles(fileTreeView, appWindow.MainWindow, GetPaths(ownerWindow), selectAssembly).Select(a => a.ModuleDef).Where(a => a != null).ToArray();
 	}
 }
