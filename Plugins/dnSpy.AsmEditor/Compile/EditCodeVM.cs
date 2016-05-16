@@ -266,6 +266,9 @@ namespace dnSpy.AsmEditor.Compile {
 			compileCodeState?.Dispose();
 			compileCodeState = null;
 			CanCompile = true;
+
+			// The compile button sometimes doesn't get enabled again
+			CommandManager.InvalidateRequerySuggested();
 		}
 
 		Task<CompilationResult> CompileAsync() {
