@@ -134,11 +134,9 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 
 		public bool IsMethodGroup(ICSharpCode.NRefactory.CSharp.Expression expression) {
 			var annotation = expression.Annotation<MethodDef>();
-			if (annotation != null) {
-				return true;
-			}
-
-			return false;
+			if (annotation == null)
+				return false;
+			return expression.Annotation<PropertyDef>() == null && expression.Annotation<EventDef>() == null;
 		}
 
 		public ICSharpCode.NRefactory.CSharp.ParameterDeclaration[] GetParametersForProperty(ICSharpCode.NRefactory.CSharp.PropertyDeclaration property) {
@@ -150,10 +148,13 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 			sb.Clear();
 			var getMethod = propInfo.GetMethod;
 			if (getMethod != null)
-				return getMethod.Parameters.Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
+				return getMethod.Parameters.Where(p => p.IsNormalMethodParameter).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
 			var setMethod = propInfo.SetMethod;
-			if (setMethod != null && setMethod.Parameters.Count > 0)
-				return getMethod.Parameters.Skip(1).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
+			if (setMethod != null) {
+				var ps = setMethod.Parameters.Where(p => p.IsNormalMethodParameter).ToArray();
+				if (ps.Length > 1)
+					return ps.Take(ps.Length - 1).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
+			}
 
 			return new ICSharpCode.NRefactory.CSharp.ParameterDeclaration[0];
 		}

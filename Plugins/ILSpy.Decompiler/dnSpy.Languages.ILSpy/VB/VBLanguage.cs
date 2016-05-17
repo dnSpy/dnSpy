@@ -199,7 +199,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			CSharpLanguage.AddXmlDocumentation(ref state, langSettings.Settings, astBuilder);
 			var csharpUnit = astBuilder.SyntaxTree;
 			csharpUnit.AcceptVisitor(new ICSharpCode.NRefactory.CSharp.InsertParenthesesVisitor() { InsertParenthesesForReadability = true });
-			var unit = csharpUnit.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider(state.State.XmlDoc_StringBuilder)), null);
+			var unit = csharpUnit.AcceptVisitor(new CSharpToVBConverterVisitor(state.AstBuilder.Context.CurrentModule, new ILSpyEnvironmentProvider(state.State.XmlDoc_StringBuilder)), null);
 			var outputFormatter = new VBTextOutputFormatter(output);
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
@@ -214,7 +214,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			settings.IntroduceIncrementAndDecrement = false;
 			settings.MakeAssignmentExpressions = false;
 			settings.QueryExpressions = false;
-			settings.AlwaysGenerateExceptionVariableForCatchBlocks = true;
+			settings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject = true;
 			var cache = ctx.GetOrCreate<BuilderCache>();
 			var state = new BuilderState(ctx, cache);
 			state.AstBuilder.Context.CurrentModule = currentModule;
@@ -241,7 +241,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
 			var envProvider = new ILSpyEnvironmentProvider();
-			var converter = new CSharpToVBConverterVisitor(envProvider);
+			var converter = new CSharpToVBConverterVisitor(type.Module, envProvider);
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
 			if (type.TryGetByRefSig() != null) {

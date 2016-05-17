@@ -61,7 +61,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			this.RemoveEmptyDefaultConstructors = sect.Attribute<bool?>(nameof(RemoveEmptyDefaultConstructors)) ?? this.RemoveEmptyDefaultConstructors;
 			//this.IntroduceIncrementAndDecrement = sect.Attribute<bool?>(nameof(IntroduceIncrementAndDecrement)) ?? this.IntroduceIncrementAndDecrement;
 			//this.MakeAssignmentExpressions = sect.Attribute<bool?>(nameof(MakeAssignmentExpressions)) ?? this.MakeAssignmentExpressions;
-			//this.AlwaysGenerateExceptionVariableForCatchBlocks = sect.Attribute<bool?>(nameof(AlwaysGenerateExceptionVariableForCatchBlocks)) ?? this.AlwaysGenerateExceptionVariableForCatchBlocks;
+			//this.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject = sect.Attribute<bool?>(nameof(AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject)) ?? this.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject;
 			this.ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? this.ShowTokenAndRvaComments;
 			this.SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? this.SortMembers;
 			this.ForceShowAllMembers = sect.Attribute<bool?>(nameof(ForceShowAllMembers)) ?? this.ForceShowAllMembers;
@@ -103,7 +103,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			sect.Attribute(nameof(RemoveEmptyDefaultConstructors), RemoveEmptyDefaultConstructors);
 			//sect.Attribute(nameof(IntroduceIncrementAndDecrement), IntroduceIncrementAndDecrement);
 			//sect.Attribute(nameof(MakeAssignmentExpressions), MakeAssignmentExpressions);
-			//sect.Attribute(nameof(AlwaysGenerateExceptionVariableForCatchBlocks), AlwaysGenerateExceptionVariableForCatchBlocks);
+			//sect.Attribute(nameof(AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject), AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject);
 			sect.Attribute(nameof(ShowTokenAndRvaComments), ShowTokenAndRvaComments);
 			sect.Attribute(nameof(SortMembers), SortMembers);
 			sect.Attribute(nameof(ForceShowAllMembers), ForceShowAllMembers);

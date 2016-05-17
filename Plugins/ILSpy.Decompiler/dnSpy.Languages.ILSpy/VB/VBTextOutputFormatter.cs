@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.ILAst;
@@ -100,7 +101,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 		public void WriteIdentifier(string identifier, object data) {
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, data);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, data, false);
 				return;
 			}
 
@@ -127,7 +128,15 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		IMemberRef GetCurrentMemberReference() {
 			AstNode node = nodeStack.Peek();
-			IMemberRef memberRef = node.Annotation<IMemberRef>();
+			if (node.Annotation<ILVariable>() != null)
+				return null;
+			var memberRef = node.Annotation<IMemberRef>();
+			if (node.Parent is ObjectCreationExpression)
+				memberRef = node.Parent.Annotation<IMethod>();
+			if (memberRef == null && node is Identifier) {
+				node = node.Parent ?? node;
+				memberRef = node.Annotation<IMemberRef>();
+			}
 			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreationExpression)) {
 				memberRef = node.Parent.Annotation<IMemberRef>();
 			}
@@ -137,6 +146,8 @@ namespace dnSpy.Languages.ILSpy.VB {
 		object GetCurrentLocalReference() {
 			AstNode node = nodeStack.Peek();
 			ILVariable variable = node.Annotation<ILVariable>();
+			if (variable == null && node.Parent is IdentifierExpression)
+				variable = node.Parent.Annotation<ILVariable>();
 			if (variable != null) {
 				if (variable.OriginalParameter != null)
 					return variable.OriginalParameter;
@@ -153,7 +164,9 @@ namespace dnSpy.Languages.ILSpy.VB {
 			if (parameterDef != null)
 				return parameterDef;
 
-			if (node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
+			if (node is VariableIdentifier)
+				node = node.Parent ?? node;
+			if (node is VariableDeclaratorWithTypeAndInitializer || node is CatchBlock || node is ForEachStatement) {
 				var variable = node.Annotation<ILVariable>();
 				if (variable != null) {
 					if (variable.OriginalParameter != null)
@@ -162,10 +175,15 @@ namespace dnSpy.Languages.ILSpy.VB {
 					//    return variable.OriginalVariable;
 					return variable;
 				}
-				else {
-
-				}
 			}
+
+			var label = node as LabelDeclarationStatement;
+			if (label != null) {
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
+				if (method != null)
+					return method.ToString() + label.Label;
+			}
+
 
 			return null;
 		}
@@ -175,12 +193,18 @@ namespace dnSpy.Languages.ILSpy.VB {
 				return null;
 
 			var node = nodeStack.Peek();
+			if (node is ParameterDeclaration)
+				return null;
+			if (node is VariableIdentifier)
+				return ((VariableIdentifier)node).Name.Annotation<IMemberDef>();
 			if (IsDefinition(node))
 				return node.Annotation<IMemberRef>();
 
-			node = node.Parent;
-			if (IsDefinition(node))
-				return node.Annotation<IMemberRef>();
+			if (node is Identifier) {
+				node = node.Parent;
+				if (IsDefinition(node))
+					return node.Annotation<IMemberRef>();
+			}
 
 			return null;
 		}
@@ -188,19 +212,51 @@ namespace dnSpy.Languages.ILSpy.VB {
 		public void WriteKeyword(string keyword) {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
-			if (memberRef != null && node is PrimitiveType)
+			if (memberRef != null && (node is PrimitiveType || node is InstanceExpression))
 				output.WriteReference(keyword, memberRef, BoxedTextTokenKind.Keyword);
+			else if (memberRef != null && (node is ConstructorDeclaration && keyword == "New"))
+				output.WriteDefinition(keyword, memberRef, BoxedTextTokenKind.Keyword);
+			else if (memberRef != null && (node is Accessor && (keyword == "Get" || keyword == "Set" || keyword == "AddHandler" || keyword == "RemoveHandler" || keyword == "RaiseEvent"))) {
+				if (canPrintAccessor)
+					output.WriteDefinition(keyword, memberRef, BoxedTextTokenKind.Keyword);
+				else
+					output.Write(keyword, BoxedTextTokenKind.Keyword);
+				canPrintAccessor = !canPrintAccessor;
+			}
 			else
 				output.Write(keyword, BoxedTextTokenKind.Keyword);
 		}
+		bool canPrintAccessor = true;
 
 		public void WriteToken(string token, object data) {
-			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
-			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
+			var node = nodeStack.Peek();
+
+			bool addRef = memberRef != null &&
+					(node is BinaryOperatorExpression ||
+					node is UnaryOperatorExpression ||
+					node is AssignmentExpression);
+
+			// Add a ref to the method if it's a delegate call
+			if (!addRef && node is InvocationExpression && memberRef is IMethod) {
+				var md = Resolve(memberRef as IMethod);
+				if (md != null && md.DeclaringType != null && md.DeclaringType.IsDelegate)
+					addRef = true;
+			}
+
+			if (addRef)
 				output.WriteReference(token, memberRef, data);
 			else
 				output.Write(token, data);
+		}
+
+		static MethodDef Resolve(IMethod method) {
+			if (method is MethodSpec)
+				method = ((MethodSpec)method).Method;
+			if (method is MemberRef)
+				return ((MemberRef)method).ResolveMethod();
+			else
+				return (MethodDef)method;
 		}
 
 		public void Space() => output.WriteSpace();
@@ -225,7 +281,10 @@ namespace dnSpy.Languages.ILSpy.VB {
 			node is DelegateDeclaration ||
 			node is OperatorDeclaration ||
 			node is MemberDeclaration ||
-			node is TypeDeclaration;
+			node is TypeDeclaration ||
+			node is EnumDeclaration ||
+			node is EnumMemberDeclaration ||
+			node is TypeParameterDeclaration;
 
 		class DebugState {
 			public List<AstNode> Nodes = new List<AstNode>();

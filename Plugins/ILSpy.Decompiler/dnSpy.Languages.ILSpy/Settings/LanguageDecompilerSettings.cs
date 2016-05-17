@@ -147,7 +147,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 				Name = DecompilerOptionConstants.MakeAssignmentExpressions_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.AlwaysGenerateExceptionVariableForCatchBlocks_GUID,
-						() => decompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocks, a => decompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocks = a) {
+						() => decompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject, a => decompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject = a) {
 				Description = dnSpy_Languages_ILSpy_Resources.DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocks,
 				Name = DecompilerOptionConstants.AlwaysGenerateExceptionVariableForCatchBlocks_NAME,
 			};

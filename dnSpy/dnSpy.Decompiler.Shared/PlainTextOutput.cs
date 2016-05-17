@@ -106,9 +106,9 @@ namespace dnSpy.Decompiler.Shared {
 		}
 
 		public void WriteDefinition(string text, object definition, object data, bool isLocal) =>
-			Write(text, BoxedTextTokenKind.Text);
+			Write(text, data);
 		public void WriteReference(string text, object reference, object data, bool isLocal) =>
-			Write(text, BoxedTextTokenKind.Text);
+			Write(text, data);
 		public void Write(string text, TextTokenKind tokenKind) =>
 			Write(text, tokenKind.Box());
 		public void Write(string text, int index, int count, TextTokenKind tokenKind) =>

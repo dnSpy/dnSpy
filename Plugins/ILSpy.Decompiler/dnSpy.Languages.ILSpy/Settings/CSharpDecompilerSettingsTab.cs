@@ -160,7 +160,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			if (g.RemoveEmptyDefaultConstructors != d.RemoveEmptyDefaultConstructors) flags |= RefreshFlags.CSharp;
 			if (g.IntroduceIncrementAndDecrement != d.IntroduceIncrementAndDecrement) flags |= RefreshFlags.ILAst;
 			if (g.MakeAssignmentExpressions != d.MakeAssignmentExpressions) flags |= RefreshFlags.ILAst;
-			if (g.AlwaysGenerateExceptionVariableForCatchBlocks != d.AlwaysGenerateExceptionVariableForCatchBlocks) flags |= RefreshFlags.ILAst;
+			if (g.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject != d.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject) flags |= RefreshFlags.ILAst;
 			if (g.ShowTokenAndRvaComments != d.ShowTokenAndRvaComments) flags |= RefreshFlags.DecompileAll;
 			if (g.DecompilationObject0 != d.DecompilationObject0) flags |= RefreshFlags.CSharp;
 			if (g.DecompilationObject1 != d.DecompilationObject1) flags |= RefreshFlags.CSharp;
