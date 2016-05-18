@@ -301,7 +301,9 @@ namespace dnSpy.AsmEditor.Compile {
 
 		void SetDiagnostics(IEnumerable<CompilerDiagnostic> diags) {
 			Diagnostics.Clear();
-			Diagnostics.AddRange(diags.OrderBy(a => a, CompilerDiagnosticComparer.Instance).Select(a => new CompilerDiagnosticVM(a, CreateImage(a))));
+			Diagnostics.AddRange(diags.OrderBy(a => a, CompilerDiagnosticComparer.Instance).
+				Where(a => a.Severity != CompilerDiagnosticSeverity.Hidden).
+				Select(a => new CompilerDiagnosticVM(a, CreateImage(a))));
 		}
 
 		object CreateImage(CompilerDiagnostic diag) {
