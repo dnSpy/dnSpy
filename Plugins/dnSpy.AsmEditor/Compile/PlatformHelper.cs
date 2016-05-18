@@ -24,7 +24,7 @@ using dnSpy.Contracts.AsmEditor.Compile;
 
 namespace dnSpy.AsmEditor.Compile {
 	static class PlatformHelper {
-		public static CompilePlatform GetPlatform(ModuleDef module) {
+		public static TargetPlatform GetPlatform(ModuleDef module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 
@@ -35,31 +35,31 @@ namespace dnSpy.AsmEditor.Compile {
 				switch (c) {
 				case 0: // no special meaning, MachineType and ILONLY flag determine image requirements
 					if (!module.IsILOnly)
-						return CompilePlatform.X86;
-					return CompilePlatform.AnyCpu;
+						return TargetPlatform.X86;
+					return TargetPlatform.AnyCpu;
 				case 1: // illegal, reserved for future use
-					return CompilePlatform.AnyCpu;
+					return TargetPlatform.AnyCpu;
 				default:
 				case 2: // image is x86-specific
-					return CompilePlatform.X86;
+					return TargetPlatform.X86;
 				case 3: // image is platform neutral and prefers to be loaded 32-bit when possible
-					return CompilePlatform.AnyCpu32BitPreferred;
+					return TargetPlatform.AnyCpu32BitPreferred;
 				}
 
 			case Machine.AMD64:
-				return CompilePlatform.X64;
+				return TargetPlatform.X64;
 
 			case Machine.IA64:
-				return CompilePlatform.Itanium;
+				return TargetPlatform.Itanium;
 
 			case Machine.ARMNT:
-				return CompilePlatform.Arm;
+				return TargetPlatform.Arm;
 
 			case Machine.ARM64:
-				return CompilePlatform.Arm;
+				return TargetPlatform.Arm;
 
 			default:
-				return CompilePlatform.AnyCpu;
+				return TargetPlatform.AnyCpu;
 			}
 		}
 	}

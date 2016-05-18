@@ -23,14 +23,14 @@ using Microsoft.CodeAnalysis;
 
 namespace dnSpy.Roslyn.Shared.Compile {
 	static class Extensions {
-		public static Platform ToPlatform(this CompilePlatform platform) {
+		public static Platform ToPlatform(this TargetPlatform platform) {
 			switch (platform) {
-			case CompilePlatform.AnyCpu:				return Platform.AnyCpu;
-			case CompilePlatform.X86:					return Platform.X86;
-			case CompilePlatform.X64:					return Platform.X64;
-			case CompilePlatform.Itanium:				return Platform.Itanium;
-			case CompilePlatform.AnyCpu32BitPreferred:	return Platform.AnyCpu32BitPreferred;
-			case CompilePlatform.Arm:					return Platform.Arm;
+			case TargetPlatform.AnyCpu:					return Platform.AnyCpu;
+			case TargetPlatform.X86:					return Platform.X86;
+			case TargetPlatform.X64:					return Platform.X64;
+			case TargetPlatform.Itanium:				return Platform.Itanium;
+			case TargetPlatform.AnyCpu32BitPreferred:	return Platform.AnyCpu32BitPreferred;
+			case TargetPlatform.Arm:					return Platform.Arm;
 			default:
 				Debug.Fail($"Unknown platform: {platform}");
 				return Platform.AnyCpu;

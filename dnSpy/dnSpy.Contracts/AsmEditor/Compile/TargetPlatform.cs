@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
 	/// Platform
 	/// </summary>
-	public enum CompilePlatform {
+	public enum TargetPlatform {
 		/// <summary>
 		/// Any CPU
 		/// </summary>

@@ -45,6 +45,6 @@ namespace dnSpy.Contracts.AsmEditor.Compile {
 		/// <summary>
 		/// Platform
 		/// </summary>
-		CompilePlatform Platform { get; }
+		TargetPlatform Platform { get; }
 	}
 }

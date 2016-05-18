@@ -25,9 +25,9 @@ namespace dnSpy.AsmEditor.Compile {
 		public string HiddenCode { get; }
 		public CompilerMetadataReference[] AssemblyReferences { get; }
 		public IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
-		public CompilePlatform Platform { get; }
+		public TargetPlatform Platform { get; }
 
-		public DecompiledCodeResult(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, CompilePlatform platform) {
+		public DecompiledCodeResult(string mainCode, string hiddenCode, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, TargetPlatform platform) {
 			MainCode = mainCode;
 			HiddenCode = hiddenCode;
 			AssemblyReferences = assemblyReferences;
