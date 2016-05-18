@@ -110,7 +110,7 @@ namespace dnSpy.TreeView {
 		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) =>
 			list.Cast<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
 		internal object GetIcon(ImageReference imgRef) =>
-			imageManager.GetImage(imgRef.Assembly, imgRef.Name, BackgroundType.TreeNode);
+			imageManager.GetImage(imgRef, BackgroundType.TreeNode);
 		ITreeNode ITreeView.Create(ITreeNodeData data) => Create(data);
 
 		TreeNodeImpl Create(ITreeNodeData data) {

@@ -55,8 +55,8 @@ namespace dnSpy.AsmEditor.Compile {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
-		public object AddAssemblyReferenceImageObject => imageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
-		public object AddGacReferenceImageObject => imageManager.GetImage(GetType().Assembly, "Library", BackgroundType.DialogWindow);
+		public object AddAssemblyReferenceImageObject => imageManager.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
+		public object AddGacReferenceImageObject => imageManager.GetImage(new ImageReference(GetType().Assembly, "Library"), BackgroundType.DialogWindow);
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -308,7 +308,7 @@ namespace dnSpy.AsmEditor.Compile {
 			var imageName = GetImageName(diag.Severity);
 			if (imageName == null)
 				return null;
-			return imageManager.GetImage(GetType().Assembly, imageName, null);
+			return imageManager.GetImage(new ImageReference(GetType().Assembly, imageName), null);
 		}
 
 		static string GetImageName(CompilerDiagnosticSeverity severity) {

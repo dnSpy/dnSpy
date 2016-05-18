@@ -74,12 +74,12 @@ namespace dnSpy.Images {
 			return c.Color;
 		}
 
-		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType) =>
-			GetImage(asm, icon, GetColor(bgType));
+		public BitmapSource GetImage(ImageReference imageReference, BackgroundType bgType) =>
+			GetImage(imageReference, GetColor(bgType));
 
-		public BitmapSource GetImage(Assembly asm, string icon, Color? bgColor) {
-			var name = asm.GetName();
-			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + icon + ".png";
+		public BitmapSource GetImage(ImageReference imageReference, Color? bgColor) {
+			var name = imageReference.Assembly.GetName();
+			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + imageReference.Name + ".png";
 			return GetImageUsingUri(uri, bgColor);
 		}
 

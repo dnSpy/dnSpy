@@ -41,7 +41,7 @@ namespace dnSpy.MainApp {
 
 		void UpdateSystemMenuImage() {
 			var bgType = IsActive ? BackgroundType.TitleAreaActive : BackgroundType.TitleAreaInactive;
-			SystemMenuImage = imageManager.GetImage(GetType().Assembly, "Assembly", bgType);
+			SystemMenuImage = imageManager.GetImage(new ImageReference(GetType().Assembly, "Assembly"), bgType);
 		}
 	}
 }

@@ -82,7 +82,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 						Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
 						var imgRef = bm.ImageReference;
 						if (imgRef != null)
-							drawingContext.DrawImage(imageManager.GetImage(imgRef.Value.Assembly, imgRef.Value.Name, bgColor), rect);
+							drawingContext.DrawImage(imageManager.GetImage(imgRef.Value, bgColor), rect);
 					}
 				}
 			}

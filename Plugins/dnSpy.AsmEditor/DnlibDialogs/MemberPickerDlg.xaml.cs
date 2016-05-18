@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}
 			};
-			openImage.Source = imageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
+			openImage.Source = imageManager.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
 
 			var treeView = (Control)newFileTreeView.TreeView.UIObject;
 			cpTreeView.Content = treeView;

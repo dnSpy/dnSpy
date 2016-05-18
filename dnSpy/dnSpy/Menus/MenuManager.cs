@@ -312,13 +312,13 @@ namespace dnSpy.Menus {
 
 			string header = ResourceHelper.GetString(item, metadata.Header);
 			string inputGestureText = ResourceHelper.GetString(item, metadata.InputGestureText);
-			string iconName = metadata.Icon;
+			ImageReference? iconImgRef = string.IsNullOrEmpty(metadata.Icon) ? (ImageReference?)null : new ImageReference(item.GetType().Assembly, metadata.Icon);
 
 			var mi2 = item as IMenuItem2;
 			if (mi2 != null) {
 				header = mi2.GetHeader(ctx) ?? header;
 				inputGestureText = mi2.GetInputGestureText(ctx) ?? inputGestureText;
-				iconName = mi2.GetIcon(ctx) ?? iconName;
+				iconImgRef = mi2.GetIcon(ctx) ?? iconImgRef;
 				menuItem.IsChecked = mi2.IsChecked(ctx);
 			}
 
@@ -327,14 +327,14 @@ namespace dnSpy.Menus {
 
 			var cmdHolder = item as ICommandHolder;
 			bool lastIsEnabledCallValue = false;
-			if (!string.IsNullOrEmpty(iconName)) {
+			if (iconImgRef != null) {
 				if (cmdHolder == null)
 					lastIsEnabledCallValue = item.IsEnabled(ctx);
 				else {
 					var routedCommand = cmdHolder.Command as RoutedCommand;
 					lastIsEnabledCallValue = commandTarget == null || routedCommand == null || routedCommand.CanExecute(ctx, commandTarget);
 				}
-				imageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue);
+				imageManager.Add16x16Image(menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue);
 			}
 
 			if (metadata.Guid != null) {
@@ -357,8 +357,8 @@ namespace dnSpy.Menus {
 
 			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => {
 				bool b = item.IsEnabled(ctx);
-				if (lastIsEnabledCallValue != b && !string.IsNullOrEmpty(iconName))
-					imageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue = b);
+				if (lastIsEnabledCallValue != b && iconImgRef != null)
+					imageManager.Add16x16Image(menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue = b);
 				return b;
 			});
 

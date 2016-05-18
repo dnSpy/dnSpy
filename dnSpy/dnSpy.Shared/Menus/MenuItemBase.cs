@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Shared.Menus {
@@ -25,7 +26,7 @@ namespace dnSpy.Shared.Menus {
 		public virtual bool IsEnabled(IMenuItemContext context) => true;
 		public virtual bool IsVisible(IMenuItemContext context) => true;
 		public virtual string GetHeader(IMenuItemContext context) => null;
-		public virtual string GetIcon(IMenuItemContext context) => null;
+		public virtual ImageReference? GetIcon(IMenuItemContext context) => null;
 		public virtual string GetInputGestureText(IMenuItemContext context) => null;
 		public virtual bool IsChecked(IMenuItemContext context) => false;
 	}
@@ -63,7 +64,7 @@ namespace dnSpy.Shared.Menus {
 			return ctx != null ? GetHeader(ctx) : null;
 		}
 
-		string IMenuItem2.GetIcon(IMenuItemContext context) {
+		ImageReference? IMenuItem2.GetIcon(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? GetIcon(ctx) : null;
 		}
@@ -82,7 +83,7 @@ namespace dnSpy.Shared.Menus {
 		public virtual bool IsEnabled(TContext context) => true;
 		public virtual bool IsVisible(TContext context) => true;
 		public virtual string GetHeader(TContext context) => null;
-		public virtual string GetIcon(TContext context) => null;
+		public virtual ImageReference? GetIcon(TContext context) => null;
 		public virtual string GetInputGestureText(TContext context) => null;
 		public virtual bool IsChecked(TContext context) => false;
 	}

@@ -272,7 +272,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		protected static void Add16x16Image(MenuItem menuItem, string icon, bool isCtxMenu, bool? enable = null) =>
-			ListBoxHelperBase_ImageManagerLoader.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, icon, isCtxMenu, enable);
+			ListBoxHelperBase_ImageManagerLoader.ImageManager.Add16x16Image(menuItem, new ImageReference(typeof(ListBoxHelperBase<T>).Assembly, icon), isCtxMenu, enable);
 
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();

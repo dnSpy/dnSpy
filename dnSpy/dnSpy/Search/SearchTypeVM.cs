@@ -24,7 +24,7 @@ using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {
 	sealed class SearchTypeVM : ViewModelBase {
-		public ImageSource Image => imageManager.GetImage(imageReference.Assembly, imageReference.Name, BackgroundType.ComboBox);
+		public ImageSource Image => imageManager.GetImage(imageReference, BackgroundType.ComboBox);
 		readonly ImageReference imageReference;
 
 		public string Name { get; }

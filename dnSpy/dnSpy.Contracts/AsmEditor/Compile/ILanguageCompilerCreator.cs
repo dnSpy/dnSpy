@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.AsmEditor.Compile {
 	/// <summary>
@@ -32,7 +33,7 @@ namespace dnSpy.Contracts.AsmEditor.Compile {
 		/// <summary>
 		/// Gets the icon shown in menus or null
 		/// </summary>
-		string Icon { get; }
+		ImageReference? Icon { get; }
 
 		/// <summary>
 		/// Language it supports, eg. <see cref="dnSpy.Contracts.Languages.LanguageConstants.LANGUAGE_CSHARP"/>.

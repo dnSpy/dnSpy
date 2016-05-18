@@ -61,7 +61,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 				sp.Children.Add(new Image {
 					Width = 16,
 					Height = 16,
-					Source = imageManager.GetImage(Image.Value.Assembly, Image.Value.Name, BackgroundType.CodeToolTip),
+					Source = imageManager.GetImage(Image.Value, BackgroundType.CodeToolTip),
 					Margin = new Thickness(0, 0, 4, 0),
 					VerticalAlignment = VerticalAlignment.Top,
 					HorizontalAlignment = HorizontalAlignment.Left,

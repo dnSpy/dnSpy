@@ -210,7 +210,7 @@ namespace dnSpy.ToolBars {
 
 			BitmapSource imageSource = null;
 			if (!string.IsNullOrEmpty(icon))
-				imageSource = imageManager.GetImage(item.GetType().Assembly, icon, BackgroundType.ToolBar);
+				imageSource = imageManager.GetImage(new ImageReference(item.GetType().Assembly, icon), BackgroundType.ToolBar);
 
 			var toggleButtonCmd = item as IToolBarToggleButton;
 			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");

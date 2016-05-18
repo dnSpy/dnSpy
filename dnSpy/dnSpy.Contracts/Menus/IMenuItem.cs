@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Images;
+
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// A menu item command. See also <see cref="IMenuItem2"/>
@@ -65,12 +67,11 @@ namespace dnSpy.Contracts.Menus {
 		string GetInputGestureText(IMenuItemContext context);
 
 		/// <summary>
-		/// Gets the menu item icon name or null if the default icon name from the attribute should
-		/// be used.
+		/// Gets the menu item icon or null if the default icon from the attribute should be used.
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		string GetIcon(IMenuItemContext context);
+		ImageReference? GetIcon(IMenuItemContext context);
 
 		/// <summary>
 		/// Returns true if the menu item is checked

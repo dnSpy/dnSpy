@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Modules {
 				return null;
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image"))
-				return vm.Context.ImageManager.GetImage(GetType().Assembly, vm.IsExe ? "AssemblyExe" : "AssemblyModule", BackgroundType.GridViewItem);
+				return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, vm.IsExe ? "AssemblyExe" : "AssemblyModule"), BackgroundType.GridViewItem);
 
 			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
 			var printer = new ModulePrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);

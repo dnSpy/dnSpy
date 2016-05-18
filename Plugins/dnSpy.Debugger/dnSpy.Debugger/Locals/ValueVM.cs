@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.Locals {
 		public virtual bool CanEdit => false;
 		protected abstract string IconName { get; }
 		public IPrinterContext PrinterContext => context.LocalsOwner.PrinterContext;
-		public sealed override object Icon => context.LocalsOwner.PrinterContext.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode);
+		public sealed override object Icon => context.LocalsOwner.PrinterContext.ImageManager.GetImage(new ImageReference(GetType().Assembly, IconName), BackgroundType.TreeNode);
 		public sealed override bool ShowIcon => true;
 
 		public CachedOutput CachedOutputValue {

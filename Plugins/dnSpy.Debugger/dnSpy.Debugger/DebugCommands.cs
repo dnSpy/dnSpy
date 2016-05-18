@@ -234,7 +234,7 @@ namespace dnSpy.Debugger {
 			return GetHeaderInternal(enabled, count);
 		}
 
-		public override string GetIcon(IMenuItemContext context) => GetIconInternal();
+		public override ImageReference? GetIcon(IMenuItemContext context) => GetIconInternal();
 		internal static bool IsMenuItemEnabledInternal(int count) => count > 0;
 
 		internal static string GetHeaderInternal(bool enabled, int count) {
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger {
 			return count <= 1 ? dnSpy_Debugger_Resources.EnableBreakpointCommand2 : dnSpy_Debugger_Resources.EnableBreakpointsCommand2;
 		}
 
-		internal static string GetIconInternal() => "DisableEnableBreakpoint";
+		internal static ImageReference? GetIconInternal() => new ImageReference(typeof(EnableDisableBreakpointDebugCtxMenuCommand).Assembly, "DisableEnableBreakpoint");
 	}
 
 	[ExportMenuItem(Icon = "CurrentLineToolBar", Header = "res:ShowNextStatementCommand", InputGestureText = "res:ShortCutAltAsterisk", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 30)]
@@ -571,6 +571,6 @@ namespace dnSpy.Debugger {
 		public override void Execute(ILCodeBreakpoint context) => context.IsEnabled = !context.IsEnabled;
 		public override bool IsEnabled(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
 		public override string GetHeader(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(context.IsEnabled, 1);
-		public override string GetIcon(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal();
+		public override ImageReference? GetIcon(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal();
 	}
 }

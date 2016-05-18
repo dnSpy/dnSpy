@@ -32,6 +32,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
@@ -70,7 +71,7 @@ namespace dnSpy.AsmEditor.Compile {
 				this.editCodeVMCreator = editCodeVMCreator;
 			}
 
-			public override string GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon();
+			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader();
 			public override bool IsVisible(AsmEditorContext context) => EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
 			public override void Execute(AsmEditorContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
@@ -92,7 +93,7 @@ namespace dnSpy.AsmEditor.Compile {
 				this.editCodeVMCreator = editCodeVMCreator;
 			}
 
-			public override string GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon();
+			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader();
 			public override bool IsVisible(AsmEditorContext context) => EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
 			public override void Execute(AsmEditorContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
@@ -114,7 +115,7 @@ namespace dnSpy.AsmEditor.Compile {
 				this.editCodeVMCreator = editCodeVMCreator;
 			}
 
-			public override string GetIcon(CodeContext context) => editCodeVMCreator.GetIcon();
+			public override ImageReference? GetIcon(CodeContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(CodeContext context) => editCodeVMCreator.GetHeader();
 			public override bool IsEnabled(CodeContext context) => !EditBodyCommand.IsVisibleInternal(context.MenuItemContextOrNull) && context.IsLocalTarget && EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
 			public override void Execute(CodeContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
@@ -165,7 +166,7 @@ namespace dnSpy.AsmEditor.Compile {
 			this.editCodeVMCreator = editCodeVMCreator;
 		}
 
-		public override string GetIcon(IMenuItemContext context) => editCodeVMCreator.GetIcon();
+		public override ImageReference? GetIcon(IMenuItemContext context) => editCodeVMCreator.GetIcon();
 		public override string GetHeader(IMenuItemContext context) => editCodeVMCreator.GetHeader();
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 

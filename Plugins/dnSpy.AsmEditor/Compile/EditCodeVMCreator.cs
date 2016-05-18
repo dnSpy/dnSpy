@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Compile {
 			this.languageCompilerCreators = languageCompilerCreators.OrderBy(a => a.Order).ToArray();
 		}
 
-		public string GetIcon() {
+		public ImageReference? GetIcon() {
 			var lang = TryGetUsedLanguage();
 			Debug.Assert(lang != null);
 			if (lang == null)

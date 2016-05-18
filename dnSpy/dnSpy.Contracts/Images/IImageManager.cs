@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -29,19 +28,17 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Returns an image
 		/// </summary>
-		/// <param name="asm">Assembly of image</param>
-		/// <param name="icon">Name of image, without the .png extension. Must be in the images/ folder</param>
+		/// <param name="imageReference">Image reference</param>
 		/// <param name="bgType">Background type</param>
 		/// <returns></returns>
-		BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType);
+		BitmapSource GetImage(ImageReference imageReference, BackgroundType bgType);
 
 		/// <summary>
 		/// Returns an image
 		/// </summary>
-		/// <param name="asm">Assembly of image</param>
-		/// <param name="icon">Name of image, without the .png extension. Must be in the images/ folder</param>
+		/// <param name="imageReference">Image reference</param>
 		/// <param name="bgColor">Background color or null to not modify the image</param>
 		/// <returns></returns>
-		BitmapSource GetImage(Assembly asm, string icon, Color? bgColor);
+		BitmapSource GetImage(ImageReference imageReference, Color? bgColor);
 	}
 }

@@ -17,17 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Reflection;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Shared.Images {
 	public static class ImageManagerExtensionMethods {
-		public static void Add16x16Image(this IImageManager self, MenuItem menuItem, Assembly asm, string icon, bool isCtxMenu, bool? enable = null) {
+		public static void Add16x16Image(this IImageManager self, MenuItem menuItem, ImageReference imageReference, bool isCtxMenu, bool? enable = null) {
 			var image = new Image {
 				Width = 16,
 				Height = 16,
-				Source = self.GetImage(asm, icon, isCtxMenu ? BackgroundType.ContextMenuItem : BackgroundType.AppMenuMenuItem),
+				Source = self.GetImage(imageReference, isCtxMenu ? BackgroundType.ContextMenuItem : BackgroundType.AppMenuMenuItem),
 			};
 			menuItem.Icon = image;
 			if (enable == false)

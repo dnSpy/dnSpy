@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.AsmEditor.Compile;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Roslyn;
@@ -31,7 +32,7 @@ namespace dnSpy.AsmEditor.Compile.Roslyn {
 	[Export(typeof(ILanguageCompilerCreator))]
 	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerCreator {
 		public double Order => 0;
-		public string Icon => "VisualBasicFile";
+		public ImageReference? Icon => new ImageReference(GetType().Assembly, "VisualBasicFile");
 		public Guid Language => LanguageConstants.LANGUAGE_VISUALBASIC;
 		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(roslynCodeEditorCreator);
 

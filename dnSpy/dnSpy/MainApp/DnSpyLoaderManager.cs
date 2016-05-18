@@ -105,7 +105,7 @@ namespace dnSpy.MainApp {
 			this.window = window;
 			this.appArgs = appArgs;
 			this.dnSpyLoaderControl = new DnSpyLoaderControl();
-			this.dnSpyLoaderControl.Image.Source = imageManager.GetImage(GetType().Assembly, "dnSpy-Big", ((SolidColorBrush)themeManager.Theme.GetColor(ColorType.EnvironmentBackground).Background).Color);
+			this.dnSpyLoaderControl.Image.Source = imageManager.GetImage(new ImageReference(GetType().Assembly, "dnSpy-Big"), ((SolidColorBrush)themeManager.Theme.GetColor(ColorType.EnvironmentBackground).Background).Color);
 			this.content = content;
 			this.content.SetLoadingContent(this.dnSpyLoaderControl);
 
