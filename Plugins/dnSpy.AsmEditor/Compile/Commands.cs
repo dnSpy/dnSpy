@@ -117,7 +117,7 @@ namespace dnSpy.AsmEditor.Compile {
 
 			public override ImageReference? GetIcon(CodeContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(CodeContext context) => editCodeVMCreator.GetHeader();
-			public override bool IsEnabled(CodeContext context) => !EditBodyCommand.IsVisibleInternal(context.MenuItemContextOrNull) && context.IsLocalTarget && EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
+			public override bool IsEnabled(CodeContext context) => !EditBodyCommand.IsVisibleInternal(editCodeVMCreator, context.MenuItemContextOrNull) && context.IsLocalTarget && EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
 			public override void Execute(CodeContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
 		}
 
@@ -168,11 +168,12 @@ namespace dnSpy.AsmEditor.Compile {
 
 		public override ImageReference? GetIcon(IMenuItemContext context) => editCodeVMCreator.GetIcon();
 		public override string GetHeader(IMenuItemContext context) => editCodeVMCreator.GetHeader();
-		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
+		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
-		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
-		static bool IsVisible(IList<SourceCodeMapping> list) {
-			return list != null &&
+		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetMappings(context));
+		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<SourceCodeMapping> list) {
+			return editCodeVMCreator.CanCreate &&
+				list != null &&
 				list.Count != 0 &&
 				list[0].Mapping.Method?.Body != null &&
 				list[0].Mapping.Method.Body.Instructions.Count > 0;
@@ -211,6 +212,6 @@ namespace dnSpy.AsmEditor.Compile {
 		}
 
 		void ICommand.Execute(object parameter) => Execute(GetMappings());
-		bool ICommand.CanExecute(object parameter) => IsVisible(GetMappings());
+		bool ICommand.CanExecute(object parameter) => IsVisible(editCodeVMCreator, GetMappings());
 	}
 }
