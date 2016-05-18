@@ -30,7 +30,7 @@ using dnSpy.Contracts.Text.Roslyn;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
+namespace dnSpy.Roslyn.Shared.Compile {
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {
 		protected abstract Guid ContentType { get; }
 		protected abstract string LanguageName { get; }

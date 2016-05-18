@@ -21,7 +21,7 @@ using dnSpy.Contracts.AsmEditor.Compile;
 using dnSpy.Contracts.Text.Roslyn;
 using Microsoft.CodeAnalysis;
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
+namespace dnSpy.Roslyn.Shared.Compile {
 	sealed class RoslynCodeDocument : ICodeDocument {
 		public string Name => Info.Name;
 		public object CodeEditorUIObject => codeEditor.UIObject;

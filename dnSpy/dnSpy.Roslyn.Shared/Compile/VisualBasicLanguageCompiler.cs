@@ -28,7 +28,7 @@ using dnSpy.Roslyn.Shared.VisualBasic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
+namespace dnSpy.Roslyn.Shared.Compile {
 	[Export(typeof(ILanguageCompilerCreator))]
 	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerCreator {
 		public double Order => 0;

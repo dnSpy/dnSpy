@@ -34,6 +34,12 @@
   <ItemGroup>
     <Compile Include="Classification\ClassificationTypeConverter.cs" />
     <Compile Include="Classification\RoslynClassifier.cs" />
+    <Compile Include="Compile\CSharpLanguageCompiler.cs" />
+    <Compile Include="Compile\DiagnosticExtensions.cs" />
+    <Compile Include="Compile\Extensions.cs" />
+    <Compile Include="Compile\RoslynCodeDocument.cs" />
+    <Compile Include="Compile\RoslynLanguageCompiler.cs" />
+    <Compile Include="Compile\VisualBasicLanguageCompiler.cs" />
     <Compile Include="CSharp\CSharpConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Text\Extensions.cs" />
@@ -63,6 +69,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.ComponentModel.Composition" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CSharpFile.png" />
+    <Resource Include="Images\VisualBasicFile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

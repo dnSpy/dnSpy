@@ -46,10 +46,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\dnSpy\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
-      <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
-      <Name>dnSpy.Roslyn.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
@@ -96,12 +92,6 @@
     <Compile Include="Compile\MetadataFixer.cs" />
     <Compile Include="Compile\MetadataReferenceFinder.cs" />
     <Compile Include="Compile\PlatformHelper.cs" />
-    <Compile Include="Compile\Roslyn\CSharpLanguageCompiler.cs" />
-    <Compile Include="Compile\Roslyn\DiagnosticExtensions.cs" />
-    <Compile Include="Compile\Roslyn\Extensions.cs" />
-    <Compile Include="Compile\Roslyn\RoslynCodeDocument.cs" />
-    <Compile Include="Compile\Roslyn\RoslynLanguageCompiler.cs" />
-    <Compile Include="Compile\Roslyn\VisualBasicLanguageCompiler.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Hex\AsmEdHexDocument.cs" />
     <Compile Include="Commands\AsmEditorContext.cs" />
@@ -815,7 +805,6 @@
     <Resource Include="Images\Branch.png" />
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\DeleteHistory.png" />
@@ -851,7 +840,6 @@
     <Resource Include="Images\StatusWarning.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
-    <Resource Include="Images\VisualBasicFile.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.resx">
@@ -865,9 +853,6 @@
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

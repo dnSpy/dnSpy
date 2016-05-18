@@ -21,7 +21,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.AsmEditor.Compile;
 using Microsoft.CodeAnalysis;
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
+namespace dnSpy.Roslyn.Shared.Compile {
 	static class Extensions {
 		public static Platform ToPlatform(this CompilePlatform platform) {
 			switch (platform) {

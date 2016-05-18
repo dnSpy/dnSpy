@@ -28,7 +28,7 @@ using dnSpy.Roslyn.Shared.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
+namespace dnSpy.Roslyn.Shared.Compile {
 	[Export(typeof(ILanguageCompilerCreator))]
 	sealed class CSharpLanguageCompilerCreator : ILanguageCompilerCreator {
 		public double Order => 0;

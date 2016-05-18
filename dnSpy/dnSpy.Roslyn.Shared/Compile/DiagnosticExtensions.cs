@@ -23,7 +23,7 @@ using dnSpy.Contracts.AsmEditor.Compile;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace dnSpy.AsmEditor.Compile.Roslyn {
+namespace dnSpy.Roslyn.Shared.Compile {
 	static class DiagnosticExtensions {
 		public static IEnumerable<CompilerDiagnostic> ToCompilerDiagnostics(this IEnumerable<Diagnostic> diagnostics) {
 			foreach (var d in diagnostics) {
