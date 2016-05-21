@@ -1,9 +1,9 @@
 {
 	"dependencies": {
-		"Microsoft.CodeAnalysis.CSharp": "1.2.1",
-		"Microsoft.CodeAnalysis.VisualBasic": "1.2.1",
-		"Microsoft.CodeAnalysis.CSharp.Workspaces": "1.2.1",
-		"Microsoft.CodeAnalysis.VisualBasic.Workspaces": "1.2.1"
+		"Microsoft.CodeAnalysis.CSharp": "1.2.2",
+		"Microsoft.CodeAnalysis.VisualBasic": "1.2.2",
+		"Microsoft.CodeAnalysis.CSharp.Workspaces": "1.2.2",
+		"Microsoft.CodeAnalysis.VisualBasic.Workspaces": "1.2.2"
 	},
 	"frameworks": {
 		"net46": { }

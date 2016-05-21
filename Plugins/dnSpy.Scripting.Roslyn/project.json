@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"Microsoft.CodeAnalysis.CSharp.Scripting": "1.2.1"
+		"Microsoft.CodeAnalysis.CSharp.Scripting": "1.2.2"
 	},
 	"frameworks": {
 		"net46": { }
