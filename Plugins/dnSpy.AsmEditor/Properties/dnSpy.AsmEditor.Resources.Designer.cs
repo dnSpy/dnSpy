@@ -1655,6 +1655,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Method Code.
+        /// </summary>
+        public static string EditMethodCode {
+            get {
+                return ResourceManager.GetString("EditMethodCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Method....
         /// </summary>
         public static string EditMethodCommand {
@@ -1993,6 +2002,87 @@ namespace dnSpy.AsmEditor.Properties {
         public static string EnumType {
             get {
                 return ResourceManager.GetString("EnumType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adding or removing &apos;static&apos; or &apos;Shared&apos; from edited methods isn&apos;t supported: {0}.
+        /// </summary>
+        public static string ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported {
+            get {
+                return ResourceManager.GetString("ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find the edited method. Make sure you didn&apos;t add or remove &apos;static&apos; or &apos;Shared&apos; or changed the parameter types, return type or method name: {0}.
+        /// </summary>
+        public static string ERR_IM_CouldNotFindEditedMethod {
+            get {
+                return ResourceManager.GetString("ERR_IM_CouldNotFindEditedMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find field: {0}.
+        /// </summary>
+        public static string ERR_IM_CouldNotFindField {
+            get {
+                return ResourceManager.GetString("ERR_IM_CouldNotFindField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find method: {0}.
+        /// </summary>
+        public static string ERR_IM_CouldNotFindMethod {
+            get {
+                return ResourceManager.GetString("ERR_IM_CouldNotFindMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find the edited method&apos;s type: {0}.
+        /// </summary>
+        public static string ERR_IM_CouldNotFindMethodType {
+            get {
+                return ResourceManager.GetString("ERR_IM_CouldNotFindMethodType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find type: {0}.
+        /// </summary>
+        public static string ERR_IM_CouldNotFindType {
+            get {
+                return ResourceManager.GetString("ERR_IM_CouldNotFindType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Renaming of virtual events isn&apos;t supported: {0}.
+        /// </summary>
+        public static string ERR_IM_RenamingVirtualEventsIsNotSupported {
+            get {
+                return ResourceManager.GetString("ERR_IM_RenamingVirtualEventsIsNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Renaming of virtual methods isn&apos;t supported: {0}.
+        /// </summary>
+        public static string ERR_IM_RenamingVirtualMethodsIsNotSupported {
+            get {
+                return ResourceManager.GetString("ERR_IM_RenamingVirtualMethodsIsNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Renaming of virtual properties isn&apos;t supported: {0}.
+        /// </summary>
+        public static string ERR_IM_RenamingVirtualPropsIsNotSupported {
+            get {
+                return ResourceManager.GetString("ERR_IM_RenamingVirtualPropsIsNotSupported", resourceCulture);
             }
         }
         

@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
@@ -36,8 +37,8 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		ImageReference? Icon { get; }
 
 		/// <summary>
-		/// Language it supports, eg. <see cref="dnSpy.Contracts.Languages.LanguageConstants.LANGUAGE_CSHARP"/>.
-		/// This property is compared against <see cref="dnSpy.Contracts.Languages.ILanguage.GenericGuid"/>.
+		/// Language it supports, eg. <see cref="LanguageConstants.LANGUAGE_CSHARP"/>.
+		/// This property is compared against <see cref="ILanguage.GenericGuid"/>.
 		/// </summary>
 		Guid Language { get; }
 

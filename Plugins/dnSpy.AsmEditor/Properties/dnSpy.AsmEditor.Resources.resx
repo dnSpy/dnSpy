@@ -2462,4 +2462,34 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
     <value>Couldn't add the assembly references.</value>
   </data>
+  <data name="EditMethodCode" xml:space="preserve">
+    <value>Edit Method Code</value>
+  </data>
+  <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
+    <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
+    <value>Couldn't find the edited method. Make sure you didn't add or remove 'static' or 'Shared' or changed the parameter types, return type or method name: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
+    <value>Couldn't find field: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
+    <value>Couldn't find method: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
+    <value>Couldn't find the edited method's type: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
+    <value>Couldn't find type: {0}</value>
+  </data>
+  <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
+    <value>Renaming of virtual events isn't supported: {0}</value>
+  </data>
+  <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
+    <value>Renaming of virtual methods isn't supported: {0}</value>
+  </data>
+  <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
+    <value>Renaming of virtual properties isn't supported: {0}</value>
+  </data>
 </root>

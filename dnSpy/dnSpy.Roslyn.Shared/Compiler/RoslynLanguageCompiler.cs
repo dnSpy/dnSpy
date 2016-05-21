@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			AddDocument(projectId, mainFilename + ".g" + FileExtension, decompiledCodeResult.HiddenCode);
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
-				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(decompiledCodeResult.Platform.ToPlatform()),
+				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(GetPlatform(decompiledCodeResult.Platform)),
 				parseOptions: ParseOptions,
 				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,
@@ -67,6 +67,13 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			workspace.AddProject(projectInfo);
 			foreach (var doc in documents)
 				workspace.OpenDocument(doc.Info.Id);
+		}
+
+		static Platform GetPlatform(TargetPlatform platform) {
+			// AnyCpu32BitPreferred can only be used when creating executables (we create a dll)
+			if (platform == TargetPlatform.AnyCpu32BitPreferred)
+				return Platform.AnyCpu;
+			return platform.ToPlatform();
 		}
 
 		RoslynCodeDocument AddDocument(ProjectId projectId, string name, string code) {

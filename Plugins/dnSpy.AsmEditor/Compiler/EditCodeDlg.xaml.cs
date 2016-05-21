@@ -40,6 +40,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				var vm = DataContext as EditCodeVM;
 				if (vm != null) {
 					vm.OwnerWindow = this;
+					vm.CodeCompiled += EditCodeVM_CodeCompiled;
 					if (vm.HasDecompiled)
 						RemoveProgressBar();
 					else {
@@ -55,6 +56,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			diagnosticsListView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
 				(s, e) => CopyToClipboard(diagnosticsListView.SelectedItems.OfType<CompilerDiagnosticVM>().ToArray()),
 				(s, e) => e.CanExecute = diagnosticsListView.SelectedItems.Count != 0));
+		}
+
+		void EditCodeVM_CodeCompiled(object sender, EventArgs e) {
+			((EditCodeVM)sender).CodeCompiled -= EditCodeVM_CodeCompiled;
+			this.ClickOK();
+		}
+
+		protected override void OnClosed(EventArgs e) {
+			base.OnClosed(e);
+			var vm = DataContext as EditCodeVM;
+			if (vm != null)
+				vm.CodeCompiled -= EditCodeVM_CodeCompiled;
 		}
 
 		void RemoveProgressBar() {

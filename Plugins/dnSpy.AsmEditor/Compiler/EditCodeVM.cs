@@ -51,6 +51,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		// to reference an internal type or a private method in the original assembly.
 		const bool makeEverythingPublic = true;
 
+		public ModuleImporter Result { get; set; }
+		public event EventHandler CodeCompiled;
 		public bool HasDecompiled { get; private set; }
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
@@ -81,17 +83,20 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 		ICodeDocument selectedDocument;
 
+		readonly MethodDef methodToEdit;
+
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		public EditCodeVM(IImageManager imageManager, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, ILanguage language, MethodDef method) {
+		public EditCodeVM(IImageManager imageManager, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, ILanguage language, MethodDef methodToEdit) {
 			Debug.Assert(language.CanDecompile(DecompilationType.TypeMethods));
 			this.imageManager = imageManager;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
 			this.language = language;
-			this.assemblyReferenceResolver = new AssemblyReferenceResolver(method.Module.Context.AssemblyResolver, method.Module, makeEverythingPublic);
-			StartDecompileAsync(method).ContinueWith(t => {
+			this.methodToEdit = methodToEdit;
+			this.assemblyReferenceResolver = new AssemblyReferenceResolver(methodToEdit.Module.Context.AssemblyResolver, methodToEdit.Module, makeEverythingPublic);
+			StartDecompileAsync(methodToEdit).ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
@@ -246,6 +251,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		async Task StartCompileAsync() {
+			Result = null;
 			SetDiagnostics(Array.Empty<CompilerDiagnostic>());
 
 			bool canceled = false;
@@ -261,6 +267,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				caughtException = ex;
 			}
 
+			ModuleImporter moduleImporterResult = null;
 			var compilerDiagnostics = result?.Diagnostics ?? Array.Empty<CompilerDiagnostic>();
 			if (canceled) {
 				// It gets canceled when the dialog box gets closed, or when Roslyn cancels the task
@@ -270,9 +277,25 @@ namespace dnSpy.AsmEditor.Compiler {
 				};
 			}
 			else if (caughtException != null) {
-				compilerDiagnostics = new CompilerDiagnostic[] {
-					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {caughtException.GetType()}: {caughtException.Message}", "DS1BUG", null, null),
-				};
+				compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(caughtException) };
+			}
+			else if (result?.Success == true) {
+				try {
+					moduleImporterResult = new ModuleImporter(methodToEdit.Module);
+					moduleImporterResult.Import(result.Value.RawFile, methodToEdit);
+					compilerDiagnostics = moduleImporterResult.Diagnostics;
+					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
+						moduleImporterResult = null;
+				}
+				catch (ModuleImporterException) {
+					compilerDiagnostics = moduleImporterResult.Diagnostics;
+					Debug.Assert(compilerDiagnostics.Length != 0);
+					moduleImporterResult = null;
+				}
+				catch (Exception ex) {
+					compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(ex) };
+					moduleImporterResult = null;
+				}
 			}
 
 			SetDiagnostics(compilerDiagnostics);
@@ -281,9 +304,17 @@ namespace dnSpy.AsmEditor.Compiler {
 			compileCodeState = null;
 			CanCompile = true;
 
+			if (moduleImporterResult != null) {
+				Result = moduleImporterResult;
+				CodeCompiled?.Invoke(this, EventArgs.Empty);
+			}
+
 			// The compile button sometimes doesn't get enabled again
 			CommandManager.InvalidateRequerySuggested();
 		}
+
+		static CompilerDiagnostic ToCompilerDiagnostic(Exception ex) =>
+			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null);
 
 		Task<CompilationResult> CompileAsync() {
 			Debug.Assert(compileCodeState == null);

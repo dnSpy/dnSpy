@@ -71,13 +71,21 @@
     <Compile Include="Commands\ClipboardDataHolder.cs" />
     <Compile Include="Commands\CommandUtils.cs" />
     <Compile Include="Commands\ContextMenuHandler.cs" />
+    <Compile Include="Commands\EditedMethodBodyUpdater.cs" />
+    <Compile Include="Commands\EventNodeCreator.cs" />
+    <Compile Include="Commands\FieldNodeCreator.cs" />
     <Compile Include="Commands\IIndexedItem.cs" />
     <Compile Include="Commands\IndexObservableCollection.cs" />
     <Compile Include="Commands\InstructionCommands.cs" />
     <Compile Include="Commands\ListBoxHelperBase.cs" />
+    <Compile Include="Commands\MethodNodeCreator.cs" />
     <Compile Include="Commands\MyObservableCollection.cs" />
     <Compile Include="Commands\NamespaceNodeCreator.cs" />
+    <Compile Include="Commands\NestedTypeNodeCreator.cs" />
+    <Compile Include="Commands\PropertyNodeCreator.cs" />
     <Compile Include="Commands\RootDnSpyFileNodeCreator.cs" />
+    <Compile Include="Commands\TypeNodeCreator.cs" />
+    <Compile Include="Compiler\AddUpdatedNodesHelper.cs" />
     <Compile Include="Compiler\AssemblyReferenceResolver.cs" />
     <Compile Include="Compiler\Commands.cs" />
     <Compile Include="Compiler\CompilerDiagnosticComparer.cs" />
@@ -89,8 +97,11 @@
     </Compile>
     <Compile Include="Compiler\EditCodeVM.cs" />
     <Compile Include="Compiler\EditCodeVMCreator.cs" />
+    <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
+    <Compile Include="Compiler\ImportedType.cs" />
     <Compile Include="Compiler\MetadataFixer.cs" />
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
+    <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Hex\AsmEdHexDocument.cs" />

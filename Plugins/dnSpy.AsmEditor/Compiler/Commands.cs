@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	}
 
 	[DebuggerDisplay("{Description}")]
-	sealed class EditMethodBodyCodeCommand {
+	sealed class EditMethodBodyCodeCommand : IUndoCommand {
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
@@ -129,8 +129,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var methodNode = (IMethodNode)nodes[0];
-
-			var module = nodes[0].GetModule();
+			var modNode = methodNode.GetModuleNode();
+			Debug.Assert(modNode != null);
+			if (modNode == null)
+				throw new InvalidOperationException();
+			var module = modNode.DnSpyFile.ModuleDef;
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
@@ -145,10 +148,22 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
+			Debug.Assert(vm.Result != null);
 
-			//TODO: undoCommandManager.Value.Add(new EditMethodBodyCodeCommand(XXXXXXXXXXXXXXX));
+			undoCommandManager.Value.Add(new EditMethodBodyCodeCommand(methodAnnotations, modNode, vm.Result));
 			vm.Dispose();
 		}
+
+		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
+
+		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, IModuleFileNode modNode, ModuleImporter importer) {
+			this.addUpdatedNodesHelper = new AddUpdatedNodesHelper(methodAnnotations, modNode, importer);
+		}
+
+		public string Description => dnSpy_AsmEditor_Resources.EditMethodCode;
+		public void Execute() => addUpdatedNodesHelper.Execute();
+		public void Undo() => addUpdatedNodesHelper.Undo();
+		public IEnumerable<object> ModifiedObjects => addUpdatedNodesHelper.ModifiedObjects;
 	}
 
 	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 0)]
