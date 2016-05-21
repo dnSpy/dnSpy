@@ -83,14 +83,16 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				if (def == null)
 					continue;
 
-				// The decompiler doesn't remove IteratorStateMachineAttributes. These usually contain
-				// the name of a type with invalid characters in its name and will prevent the user from
-				// compiling the code.
+				// The decompiler doesn't remove IteratorStateMachineAttributes/AsyncStateMachineAttribute.
+				// These attributes usually contain the name of a type with invalid characters in its name
+				// and will prevent the user from compiling the code.
 				if (en.SymbolKind == SymbolKind.Method) {
 					foreach (var sect in en.Attributes) {
 						foreach (var attr in sect.Attributes) {
 							var ca = attr.Annotation<CustomAttribute>();
-							if (ca?.TypeFullName == "System.Runtime.CompilerServices.IteratorStateMachineAttribute")
+							var fn = ca?.TypeFullName;
+							if (fn == "System.Runtime.CompilerServices.IteratorStateMachineAttribute" ||
+								fn == "System.Runtime.CompilerServices.AsyncStateMachineAttribute")
 								attr.Remove();
 						}
 						if (!sect.Attributes.Any())
