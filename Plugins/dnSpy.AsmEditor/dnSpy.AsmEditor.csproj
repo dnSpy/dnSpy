@@ -99,6 +99,7 @@
     <Compile Include="Compiler\EditCodeVMCreator.cs" />
     <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
     <Compile Include="Compiler\ImportedType.cs" />
+    <Compile Include="Compiler\ImportSigComparer.cs" />
     <Compile Include="Compiler\MetadataFixer.cs" />
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
     <Compile Include="Compiler\ModuleImporter.cs" />
