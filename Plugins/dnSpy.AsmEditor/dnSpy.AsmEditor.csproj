@@ -103,6 +103,7 @@
     <Compile Include="Compiler\MetadataFixer.cs" />
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
     <Compile Include="Compiler\ModuleImporter.cs" />
+    <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Hex\AsmEdHexDocument.cs" />

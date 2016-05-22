@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class ModuleImporterAbortedException : Exception {
 	}
 
-	sealed class ModuleImporter {
+	sealed partial class ModuleImporter {
 		const string IM0001 = nameof(IM0001);
 		const string IM0002 = nameof(IM0002);
 		const string IM0003 = nameof(IM0003);
@@ -67,9 +67,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		ImportSigComparerOptions importSigComparerOptions;
 
 		struct ExtraImportedTypeData {
-			public TypeDef OriginalType { get; }
-			public ExtraImportedTypeData(TypeDef origType) {
-				OriginalType = origType;
+			/// <summary>
+			/// New type in temporary module created by the compiler
+			/// </summary>
+			public TypeDef CompiledType { get; }
+			public ExtraImportedTypeData(TypeDef compiledType) {
+				CompiledType = compiledType;
 			}
 		}
 
@@ -285,14 +288,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var f in mergedType.TargetType.Fields)
 				existingEventsFields.Add(f.Name);
 
-			var origType = toExtraData[mergedType].OriginalType;
-			foreach (var origProp in origType.Properties) {
-				var newProp = oldPropertyToNewProperty[origProp];
+			var compiledType = toExtraData[mergedType].CompiledType;
+			foreach (var compiledProp in compiledType.Properties) {
+				var newProp = oldPropertyToNewProperty[compiledProp];
 				if (!existingProps.Contains(newProp))
 					continue;
 
-				if (IsVirtual(origProp))
-					AddError(IM0006, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_RenamingVirtualPropsIsNotSupported, origProp));
+				if (IsVirtual(compiledProp))
+					AddError(IM0006, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_RenamingVirtualPropsIsNotSupported, compiledProp));
 
 				var origName = newProp.Name;
 				int counter = 0;
@@ -305,13 +308,13 @@ namespace dnSpy.AsmEditor.Compiler {
 					suggestedNames[newProp.SetMethod] = "set_" + newProp.Name;
 			}
 
-			foreach (var origEvent in origType.Events) {
-				var newEvent = oldEventToNewEvent[origEvent];
+			foreach (var compiledEvent in compiledType.Events) {
+				var newEvent = oldEventToNewEvent[compiledEvent];
 				if (!existingEventsFields.Contains(newEvent.Name))
 					continue;
 
-				if (IsVirtual(origEvent))
-					AddError(IM0007, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_RenamingVirtualEventsIsNotSupported, origEvent));
+				if (IsVirtual(compiledEvent))
+					AddError(IM0007, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_RenamingVirtualEventsIsNotSupported, compiledEvent));
 
 				var origName = newEvent.Name;
 				int counter = 0;
@@ -326,8 +329,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					suggestedNames[newEvent.InvokeMethod] = "raise_" + newEvent.Name;
 			}
 
-			foreach (var origMethod in origType.Methods) {
-				var newMethod = oldMethodToNewMethod[origMethod];
+			foreach (var compiledMethod in compiledType.Methods) {
+				var newMethod = oldMethodToNewMethod[compiledMethod];
 
 				string suggestedName;
 				suggestedNames.TryGetValue(newMethod, out suggestedName);
@@ -335,8 +338,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (suggestedName == null && !existingMethods.Contains(newMethod))
 					continue;
 
-				if (origMethod.IsVirtual)
-					AddError(IM0008, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_RenamingVirtualMethodsIsNotSupported, origMethod));
+				if (compiledMethod.IsVirtual)
+					AddError(IM0008, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_RenamingVirtualMethodsIsNotSupported, compiledMethod));
 
 				string baseName = suggestedName ?? newMethod.Name;
 				int counter = 0;
@@ -346,8 +349,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				existingMethods.Add(newMethod);
 			}
 
-			foreach (var origField in origType.Fields) {
-				var newField = oldFieldToNewField[origField];
+			foreach (var compiledField in compiledType.Fields) {
+				var newField = oldFieldToNewField[compiledField];
 				if (!existingEventsFields.Contains(newField.Name))
 					continue;
 
@@ -411,52 +414,49 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void InitializeTypes(IEnumerable<NewImportedType> importedTypes) {
 			foreach (var importedType in importedTypes) {
-				var origType = toExtraData[importedType].OriginalType;
-				importedType.TargetType.BaseType = Import(origType.BaseType);
-				ImportCustomAttributes(importedType.TargetType, origType);
-				ImportDeclSecurities(importedType.TargetType, origType);
-				importedType.TargetType.ClassLayout = Import(origType.ClassLayout);
-				foreach (var genericParam in origType.GenericParameters)
+				var compiledType = toExtraData[importedType].CompiledType;
+				importedType.TargetType.BaseType = Import(compiledType.BaseType);
+				ImportCustomAttributes(importedType.TargetType, compiledType);
+				ImportDeclSecurities(importedType.TargetType, compiledType);
+				importedType.TargetType.ClassLayout = Import(compiledType.ClassLayout);
+				foreach (var genericParam in compiledType.GenericParameters)
 					importedType.TargetType.GenericParameters.Add(Import(genericParam));
-				foreach (var iface in origType.Interfaces)
+				foreach (var iface in compiledType.Interfaces)
 					importedType.TargetType.Interfaces.Add(Import(iface));
-				foreach (var nestedType in origType.NestedTypes)
+				foreach (var nestedType in compiledType.NestedTypes)
 					importedType.TargetType.NestedTypes.Add(oldTypeToNewType[nestedType].TargetType);
 
-				foreach (var field in origType.Fields)
+				foreach (var field in compiledType.Fields)
 					importedType.TargetType.Fields.Add(Import(field));
-				foreach (var method in origType.Methods)
+				foreach (var method in compiledType.Methods)
 					importedType.TargetType.Methods.Add(Import(method));
 
 				// Import the properties and events after the methods have been created
-				foreach (var prop in origType.Properties)
+				foreach (var prop in compiledType.Properties)
 					importedType.TargetType.Properties.Add(Import(prop));
-				foreach (var evt in origType.Events)
+				foreach (var evt in compiledType.Events)
 					importedType.TargetType.Events.Add(Import(evt));
 			}
 		}
 
 		void InitializeTypes(IEnumerable<MergedImportedType> importedTypes) {
-			var existingProperties = new Dictionary<PropertyDef, PropertyDef>(new ImportPropertyEqualityComparer(new ImportSigComparer(importSigComparerOptions, 0, targetModule)));
-			var existingEvents = new Dictionary<EventDef, EventDef>(new ImportEventEqualityComparer(new ImportSigComparer(importSigComparerOptions, 0, targetModule)));
-			var existingMethods = new Dictionary<MethodDef, MethodDef>(new ImportMethodEqualityComparer(new ImportSigComparer(importSigComparerOptions, 0, targetModule)));
-			var existingFields = new Dictionary<FieldDef, FieldDef>(new ImportFieldEqualityComparer(new ImportSigComparer(importSigComparerOptions, 0, targetModule)));
+			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
 
 			foreach (var importedType in importedTypes) {
-				var origType = toExtraData[importedType].OriginalType;
+				var compiledType = toExtraData[importedType].CompiledType;
 
 				if (importedType.RenameDuplicates) {
 					// All dupes are assumed to be new members and they're all renamed
 
-					foreach (var field in origType.Fields)
+					foreach (var field in compiledType.Fields)
 						importedType.NewFields.Add(Import(field));
-					foreach (var method in origType.Methods)
+					foreach (var method in compiledType.Methods)
 						importedType.NewMethods.Add(Import(method));
 
 					// Import the properties and events after the methods have been created
-					foreach (var prop in origType.Properties)
+					foreach (var prop in compiledType.Properties)
 						importedType.NewProperties.Add(Import(prop));
-					foreach (var evt in origType.Events)
+					foreach (var evt in compiledType.Events)
 						importedType.NewEvents.Add(Import(evt));
 
 					RenameMergedMembers(importedType);
@@ -465,64 +465,53 @@ namespace dnSpy.AsmEditor.Compiler {
 					// Duplicate members are assumed to be original members (stubs) and
 					// we should just redirect refs to them to the original members.
 
-					existingProperties.Clear();
-					existingEvents.Clear();
-					existingMethods.Clear();
-					existingFields.Clear();
-					foreach (var p in importedType.TargetType.Properties)
-						existingProperties[p] = p;
-					foreach (var e in importedType.TargetType.Events)
-						existingEvents[e] = e;
-					foreach (var m in importedType.TargetType.Methods)
-						existingMethods[m] = m;
-					foreach (var f in importedType.TargetType.Fields)
-						existingFields[f] = f;
+					memberDict.Initialize(importedType.TargetType);
 
-					foreach (var field in origType.Fields) {
-						FieldDef origField;
-						if (existingFields.TryGetValue(field, out origField)) {
-							existingFields.Remove(field);
-							isStub.Add(field);
-							isStub.Add(origField);
-							oldFieldToNewField.Add(field, origField);
+					foreach (var compiledField in compiledType.Fields) {
+						FieldDef targetField;
+						if ((targetField = memberDict.FindField(compiledField)) != null) {
+							memberDict.Remove(targetField);
+							isStub.Add(compiledField);
+							isStub.Add(targetField);
+							oldFieldToNewField.Add(compiledField, targetField);
 						}
 						else
-							importedType.NewFields.Add(Import(field));
+							importedType.NewFields.Add(Import(compiledField));
 					}
-					foreach (var method in origType.Methods) {
-						MethodDef origMethod;
-						if (existingMethods.TryGetValue(method, out origMethod) || editedMethodsToFix.TryGetValue(method, out origMethod)) {
-							existingMethods.Remove(method);
-							isStub.Add(method);
-							isStub.Add(origMethod);
-							oldMethodToNewMethod.Add(method, origMethod);
+					foreach (var compiledMethod in compiledType.Methods) {
+						MethodDef targetMethod;
+						if ((targetMethod = memberDict.FindMethod(compiledMethod)) != null || editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod)) {
+							memberDict.Remove(targetMethod);
+							isStub.Add(compiledMethod);
+							isStub.Add(targetMethod);
+							oldMethodToNewMethod.Add(compiledMethod, targetMethod);
 						}
 						else
-							importedType.NewMethods.Add(Import(method));
+							importedType.NewMethods.Add(Import(compiledMethod));
 					}
 
 					// Import the properties and events after the methods have been created
-					foreach (var prop in origType.Properties) {
-						PropertyDef origProp;
-						if (existingProperties.TryGetValue(prop, out origProp)) {
-							existingProperties.Remove(prop);
-							isStub.Add(prop);
-							isStub.Add(origProp);
-							oldPropertyToNewProperty.Add(prop, origProp);
+					foreach (var compiledProp in compiledType.Properties) {
+						PropertyDef targetProp;
+						if ((targetProp = memberDict.FindProperty(compiledProp)) != null) {
+							memberDict.Remove(targetProp);
+							isStub.Add(compiledProp);
+							isStub.Add(targetProp);
+							oldPropertyToNewProperty.Add(compiledProp, targetProp);
 						}
 						else
-							importedType.NewProperties.Add(Import(prop));
+							importedType.NewProperties.Add(Import(compiledProp));
 					}
-					foreach (var evt in origType.Events) {
-						EventDef origEvent;
-						if (existingEvents.TryGetValue(evt, out origEvent)) {
-							existingEvents.Remove(evt);
-							isStub.Add(evt);
-							isStub.Add(origEvent);
-							oldEventToNewEvent.Add(evt, origEvent);
+					foreach (var compiledEvent in compiledType.Events) {
+						EventDef targetEvent;
+						if ((targetEvent = memberDict.FindEvent(compiledEvent)) != null) {
+							memberDict.Remove(targetEvent);
+							isStub.Add(compiledEvent);
+							isStub.Add(targetEvent);
+							oldEventToNewEvent.Add(compiledEvent, targetEvent);
 						}
 						else
-							importedType.NewEvents.Add(Import(evt));
+							importedType.NewEvents.Add(Import(compiledEvent));
 					}
 				}
 			}
@@ -530,34 +519,34 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void InitializeTypesMethods(IEnumerable<NewImportedType> importedTypes) {
 			foreach (var importedType in importedTypes) {
-				foreach (var origMethod in toExtraData[importedType].OriginalType.Methods) {
-					var targetMethod = oldMethodToNewMethod[origMethod];
-					foreach (var o in origMethod.Overrides)
+				foreach (var compiledMethod in toExtraData[importedType].CompiledType.Methods) {
+					var targetMethod = oldMethodToNewMethod[compiledMethod];
+					foreach (var o in compiledMethod.Overrides)
 						targetMethod.Overrides.Add(Import(o));
-					InitializeBody(targetMethod, origMethod);
+					InitializeBody(targetMethod, compiledMethod);
 				}
 			}
 		}
 
 		void InitializeTypesMethods(IEnumerable<MergedImportedType> importedTypes) {
 			foreach (var importedType in importedTypes) {
-				foreach (var origMethod in toExtraData[importedType].OriginalType.Methods) {
-					var targetMethod = oldMethodToNewMethod[origMethod];
+				foreach (var compiledMethod in toExtraData[importedType].CompiledType.Methods) {
+					var targetMethod = oldMethodToNewMethod[compiledMethod];
 					MethodDef targetMethod2;
-					if (editedMethodsToFix.TryGetValue(origMethod, out targetMethod2)) {
+					if (editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod2)) {
 						if (targetMethod != targetMethod2)
 							throw new InvalidOperationException();
-						if (origMethod.IsStatic != targetMethod.IsStatic) {
+						if (compiledMethod.IsStatic != targetMethod.IsStatic) {
 							// The method signature and method attributes (the IsStatic flag) would need to be
 							// updated too, but we only update the method body and the impl attributes.
 							AddError(IM0009, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported, targetMethod));
 						}
-						InitializeBody(origMethod, origMethod);
+						InitializeBody(compiledMethod, compiledMethod);
 					}
 					else if (!isStub.Contains(targetMethod)) {
-						foreach (var o in origMethod.Overrides)
+						foreach (var o in compiledMethod.Overrides)
 							targetMethod.Overrides.Add(Import(o));
-						InitializeBody(targetMethod, origMethod);
+						InitializeBody(targetMethod, compiledMethod);
 					}
 				}
 			}
