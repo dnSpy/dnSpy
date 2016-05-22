@@ -304,7 +304,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 		}
 
 		void DecompileTypeMethods(DecompileTypeMethods info) {
-			var state = CreateAstBuilder(info.Context, CSharpLanguage.CreateDecompilerSettings(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
+			var state = CreateAstBuilder(info.Context, CSharpLanguage.CreateDecompilerSettings_DecompileTypeMethods(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
 			try {
 				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => CSharpLanguage.GetDecompiledBodyKind(info, builder, method);
 				state.AstBuilder.AddType(info.Type);

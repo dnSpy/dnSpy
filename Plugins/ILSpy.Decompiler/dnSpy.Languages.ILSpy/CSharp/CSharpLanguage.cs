@@ -484,7 +484,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		}
 
 		void DecompileTypeMethods(DecompileTypeMethods info) {
-			var state = CreateAstBuilder(info.Context, CreateDecompilerSettings(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
+			var state = CreateAstBuilder(info.Context, CreateDecompilerSettings_DecompileTypeMethods(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
 			try {
 				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => GetDecompiledBodyKind(info, builder, method);
 				state.AstBuilder.AddType(info.Type);
@@ -493,6 +493,13 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			finally {
 				state.Dispose();
 			}
+		}
+
+		internal static DecompilerSettings CreateDecompilerSettings_DecompileTypeMethods(DecompilerSettings settings, bool useUsingDeclarations) {
+			var s = CreateDecompilerSettings(settings, useUsingDeclarations);
+			// Make sure the ctor is shown if the user tries to edit an empty ctor/cctor
+			s.RemoveEmptyDefaultConstructors = false;
+			return s;
 		}
 
 		internal static DecompilerSettings CreateDecompilerSettings(DecompilerSettings settings, bool useUsingDeclarations) {
