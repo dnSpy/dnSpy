@@ -23,14 +23,9 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// </summary>
 	public interface IDecompiledCodeResult {
 		/// <summary>
-		/// Main code
+		/// Gets the documents
 		/// </summary>
-		string MainCode { get; }
-
-		/// <summary>
-		/// Other code that's not important to the user, eg. method stubs
-		/// </summary>
-		string HiddenCode { get; }
+		IDecompiledDocument[] Documents { get; }
 
 		/// <summary>
 		/// Assembly and module references

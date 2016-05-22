@@ -20,17 +20,13 @@
 using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
-	sealed class DecompiledCodeResult : IDecompiledCodeResult {
-		public IDecompiledDocument[] Documents { get; }
-		public CompilerMetadataReference[] AssemblyReferences { get; }
-		public IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
-		public TargetPlatform Platform { get; }
+	sealed class DecompiledDocument : IDecompiledDocument {
+		public string Code { get; }
+		public string NameNoExtension { get; }
 
-		public DecompiledCodeResult(IDecompiledDocument[] documents, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, TargetPlatform platform) {
-			Documents = documents;
-			AssemblyReferences = assemblyReferences;
-			AssemblyReferenceResolver = assemblyReferenceResolver;
-			Platform = platform;
+		public DecompiledDocument(string code, string nameNoExtension) {
+			Code = code;
+			NameNoExtension = nameNoExtension;
 		}
 	}
 }

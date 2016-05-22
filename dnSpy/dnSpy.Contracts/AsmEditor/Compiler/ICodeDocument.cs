@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		string Name { get; }
 
 		/// <summary>
+		/// Name of document without the extension. Identical to <see cref="IDecompiledDocument.NameNoExtension"/>
+		/// </summary>
+		string NameNoExtension { get; }
+
+		/// <summary>
 		/// UI object of code editor
 		/// </summary>
 		object CodeEditorUIObject { get; }

@@ -58,6 +58,7 @@
     <Compile Include="AsmEditor\Compiler\IAssemblyReferenceResolver.cs" />
     <Compile Include="AsmEditor\Compiler\ICodeDocument.cs" />
     <Compile Include="AsmEditor\Compiler\IDecompiledCodeResult.cs" />
+    <Compile Include="AsmEditor\Compiler\IDecompiledDocument.cs" />
     <Compile Include="AsmEditor\Compiler\ILanguageCompiler.cs" />
     <Compile Include="AsmEditor\Compiler\ILanguageCompilerCreator.cs" />
     <Compile Include="AsmEditor\Compiler\LineLocation.cs" />

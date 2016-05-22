@@ -24,14 +24,16 @@ using Microsoft.CodeAnalysis;
 namespace dnSpy.Roslyn.Shared.Compiler {
 	sealed class RoslynCodeDocument : ICodeDocument {
 		public string Name => Info.Name;
+		public string NameNoExtension { get; }
 		public object CodeEditorUIObject => codeEditor.UIObject;
 		public DocumentInfo Info { get; }
 
 		readonly IRoslynCodeEditorUI codeEditor;
 
-		public RoslynCodeDocument(IRoslynCodeEditorUI codeEditor, DocumentInfo documentInfo) {
+		public RoslynCodeDocument(IRoslynCodeEditorUI codeEditor, DocumentInfo documentInfo, string nameNoExtension) {
 			this.codeEditor = codeEditor;
 			Info = documentInfo;
+			NameNoExtension = nameNoExtension;
 		}
 	}
 }

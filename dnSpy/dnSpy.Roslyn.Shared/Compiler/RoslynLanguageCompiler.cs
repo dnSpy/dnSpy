@@ -42,7 +42,6 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
 		readonly List<RoslynCodeDocument> documents = new List<RoslynCodeDocument>();
-		RoslynCodeDocument mainDocument;
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator) {
@@ -56,9 +55,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
-			const string mainFilename = "main";
-			mainDocument = AddDocument(projectId, mainFilename + FileExtension, decompiledCodeResult.MainCode);
-			AddDocument(projectId, mainFilename + ".g" + FileExtension, decompiledCodeResult.HiddenCode);
+			foreach (var doc in decompiledCodeResult.Documents)
+				AddDocument(projectId, doc.NameNoExtension, doc.Code);
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
 				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(GetPlatform(decompiledCodeResult.Platform)),
@@ -78,22 +76,18 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			return platform.ToPlatform();
 		}
 
-		RoslynCodeDocument AddDocument(ProjectId projectId, string name, string code) {
+		void AddDocument(ProjectId projectId, string nameNoExtension, string code) {
 			var options = new RoslynCodeEditorOptions();
 			options.Options.ContentTypeGuid = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
 
-			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), name, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
-			var doc = new RoslynCodeDocument(codeEditor, documentInfo);
+			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), nameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
+			var doc = new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);
 			documents.Add(doc);
-			return doc;
 		}
 
-		public ICodeDocument[] GetCodeDocuments(out ICodeDocument mainDocument) {
-			mainDocument = this.mainDocument;
-			return documents.ToArray();
-		}
+		public ICodeDocument[] GetCodeDocuments() => documents.ToArray();
 
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {
 			var project = workspace.CurrentSolution.Projects.First();

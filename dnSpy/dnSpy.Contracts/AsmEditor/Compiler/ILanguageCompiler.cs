@@ -45,9 +45,8 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Gets all code documents. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
 		/// has been called.
 		/// </summary>
-		/// <param name="mainDocument">Main document</param>
 		/// <returns></returns>
-		ICodeDocument[] GetCodeDocuments(out ICodeDocument mainDocument);
+		ICodeDocument[] GetCodeDocuments();
 
 		/// <summary>
 		/// Compiles the code

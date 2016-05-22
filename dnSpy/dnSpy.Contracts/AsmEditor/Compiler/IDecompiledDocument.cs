@@ -17,20 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.AsmEditor.Compiler;
+namespace dnSpy.Contracts.AsmEditor.Compiler {
+	/// <summary>
+	/// Decompiled code document
+	/// </summary>
+	public interface IDecompiledDocument {
+		/// <summary>
+		/// All code
+		/// </summary>
+		string Code { get; }
 
-namespace dnSpy.AsmEditor.Compiler {
-	sealed class DecompiledCodeResult : IDecompiledCodeResult {
-		public IDecompiledDocument[] Documents { get; }
-		public CompilerMetadataReference[] AssemblyReferences { get; }
-		public IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
-		public TargetPlatform Platform { get; }
-
-		public DecompiledCodeResult(IDecompiledDocument[] documents, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, TargetPlatform platform) {
-			Documents = documents;
-			AssemblyReferences = assemblyReferences;
-			AssemblyReferenceResolver = assemblyReferenceResolver;
-			Platform = platform;
-		}
+		/// <summary>
+		/// Name of document, without the extension
+		/// </summary>
+		string NameNoExtension { get; }
 	}
 }
