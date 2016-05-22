@@ -282,7 +282,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			else if (result?.Success == true) {
 				try {
 					moduleImporterResult = new ModuleImporter(methodToEdit.Module);
-					moduleImporterResult.Import(result.Value.RawFile, methodToEdit);
+					moduleImporterResult.Import(result.Value.RawFile, result.Value.DebugFile, methodToEdit);
 					compilerDiagnostics = moduleImporterResult.Diagnostics;
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
 						moduleImporterResult = null;

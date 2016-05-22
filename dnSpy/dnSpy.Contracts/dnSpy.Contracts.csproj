@@ -53,6 +53,8 @@
     <Compile Include="AsmEditor\Compiler\CompilerDiagnostic.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnosticSeverity.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerMetadataReference.cs" />
+    <Compile Include="AsmEditor\Compiler\DebugFileFormat.cs" />
+    <Compile Include="AsmEditor\Compiler\DebugFileResult.cs" />
     <Compile Include="AsmEditor\Compiler\IAssemblyReferenceResolver.cs" />
     <Compile Include="AsmEditor\Compiler\ICodeDocument.cs" />
     <Compile Include="AsmEditor\Compiler\IDecompiledCodeResult.cs" />

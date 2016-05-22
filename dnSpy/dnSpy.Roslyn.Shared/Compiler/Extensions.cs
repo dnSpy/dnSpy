@@ -20,6 +20,7 @@
 using System.Diagnostics;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	static class Extensions {
@@ -39,5 +40,17 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		public static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef) =>
 			MetadataReference.CreateFromImage(mdRef.Data, mdRef.IsAssemblyReference ? MetadataReferenceProperties.Assembly : MetadataReferenceProperties.Module);
+
+		public static DebugFileFormat ToDebugFileFormat(this DebugInformationFormat format) {
+			switch (format) {
+			case 0:										return DebugFileFormat.None;
+			case DebugInformationFormat.Pdb:			return DebugFileFormat.Pdb;
+			case DebugInformationFormat.PortablePdb:	return DebugFileFormat.PortablePdb;
+			case DebugInformationFormat.Embedded:		return DebugFileFormat.Embedded;
+			default:
+				Debug.Fail($"Unknown debug info format: {format}");
+				return DebugFileFormat.None;
+			}
+		}
 	}
 }

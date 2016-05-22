@@ -36,6 +36,11 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public byte[] RawFile { get; }
 
 		/// <summary>
+		/// Debug file data (eg. PDB data)
+		/// </summary>
+		public DebugFileResult DebugFile { get; }
+
+		/// <summary>
 		/// Gets the diagnostics
 		/// </summary>
 		public CompilerDiagnostic[] Diagnostics { get; }
@@ -44,11 +49,13 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="rawFile">Raw file data</param>
+		/// <param name="debugFile">Debug file result or null</param>
 		/// <param name="diagnostics">Diagnostics or null</param>
-		public CompilationResult(byte[] rawFile, CompilerDiagnostic[] diagnostics = null) {
+		public CompilationResult(byte[] rawFile, DebugFileResult? debugFile = null, CompilerDiagnostic[] diagnostics = null) {
 			if (rawFile == null)
 				throw new ArgumentNullException(nameof(rawFile));
 			RawFile = rawFile;
+			DebugFile = debugFile ?? new DebugFileResult();
 			Diagnostics = diagnostics ?? Array.Empty<CompilerDiagnostic>();
 		}
 
@@ -61,6 +68,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 				throw new ArgumentNullException(nameof(diagnostics));
 			Debug.Assert(diagnostics.Length != 0);
 			RawFile = null;
+			DebugFile = new DebugFileResult();
 			Diagnostics = diagnostics;
 		}
 	}

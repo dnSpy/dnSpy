@@ -30,7 +30,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 		public override SourceTextContainer Container { get; }
 		public ITextSnapshot TextSnapshot { get; }
 
-		public TextSnapshotSourceText(ITextSnapshot snapshot, Encoding encoding = null) {
+		public TextSnapshotSourceText(ITextSnapshot snapshot, Encoding encoding) {
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
 			this.TextSnapshot = snapshot;

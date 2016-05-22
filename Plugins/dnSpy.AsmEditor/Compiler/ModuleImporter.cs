@@ -102,6 +102,33 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new ModuleImporterAbortedException();
 		}
 
+		ModuleDefMD LoadModule(byte[] rawGeneratedModule, DebugFileResult debugFile) {
+			var opts = new ModuleCreationOptions();
+
+			switch (debugFile.Format) {
+			case DebugFileFormat.None:
+				break;
+
+			case DebugFileFormat.Pdb:
+				opts.PdbFileOrData = debugFile.RawFile;
+				break;
+
+			case DebugFileFormat.PortablePdb:
+				Debug.Fail("Portable PDB isn't supported yet");//TODO:
+				break;
+
+			case DebugFileFormat.Embedded:
+				Debug.Fail("Embedded Portable PDB isn't supported yet");//TODO:
+				break;
+
+			default:
+				Debug.Fail($"Unknown debug file format: {debugFile.Format}");
+				break;
+			}
+
+			return ModuleDefMD.Load(rawGeneratedModule, opts);
+		}
+
 		/// <summary>
 		/// Imports all new types and methods (compiler generated or created by the user). All new types and members
 		/// in the global type are added to the target's global type. All duplicates are renamed.
@@ -112,10 +139,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="targetMethod">Original method that was edited</param>
-		public void Import(byte[] rawGeneratedModule, MethodDef targetMethod) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
-			SetSourceModule(ModuleDefMD.Load(rawGeneratedModule));
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			var newMethod = FindSourceMethod(targetMethod);
 			var newMethodNonNestedDeclType = newMethod.DeclaringType;

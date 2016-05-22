@@ -18,6 +18,7 @@
 */
 
 using System.Runtime.CompilerServices;
+using System.Text;
 using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -27,7 +28,8 @@ namespace dnSpy.Roslyn.Shared.Text {
 	/// Extension methods
 	/// </summary>
 	public static class Extensions {
-		static readonly ConditionalWeakTable<ITextSnapshot, SourceText>.CreateValueCallback createSourceText = a => new TextSnapshotSourceText(a);
+		// Pass in UTF8 (or any other valid encoding) so we can compile and get a PDB file
+		static readonly ConditionalWeakTable<ITextSnapshot, SourceText>.CreateValueCallback createSourceText = a => new TextSnapshotSourceText(a, Encoding.UTF8);
 		static readonly ConditionalWeakTable<ITextSnapshot, SourceText> snapshotToSourceText = new ConditionalWeakTable<ITextSnapshot, SourceText>();
 		public static SourceText AsText(this ITextSnapshot textSnapshot) => snapshotToSourceText.GetValue(textSnapshot, createSourceText);
 

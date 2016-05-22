@@ -29,6 +29,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Roslyn;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {
@@ -99,11 +100,16 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
 			if (compilation == null)
 				throw new InvalidOperationException("Project returned a null Compilation");
-			var outputStream = new MemoryStream();
-			var emitResult = compilation.Emit(outputStream, cancellationToken: cancellationToken);
+			var peStream = new MemoryStream();
+			MemoryStream pdbStream = null;
+			var emitOpts = new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb);
+			if (emitOpts.DebugInformationFormat == DebugInformationFormat.Pdb || emitOpts.DebugInformationFormat == DebugInformationFormat.PortablePdb)
+				pdbStream = new MemoryStream();
+			var emitResult = compilation.Emit(peStream, pdbStream, options: emitOpts, cancellationToken: cancellationToken);
+			var diagnostics = emitResult.Diagnostics.ToCompilerDiagnostics().ToArray();
 			if (!emitResult.Success)
-				return new CompilationResult(emitResult.Diagnostics.ToCompilerDiagnostics().ToArray());
-			return new CompilationResult(outputStream.ToArray(), emitResult.Diagnostics.ToCompilerDiagnostics().ToArray());
+				return new CompilationResult(diagnostics);
+			return new CompilationResult(peStream.ToArray(), new DebugFileResult(emitOpts.DebugInformationFormat.ToDebugFileFormat(), pdbStream?.ToArray()), diagnostics);
 		}
 
 		public bool AddMetadataReferences(CompilerMetadataReference[] metadataReferences) {
