@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
@@ -50,6 +51,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override CompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: CSharpConstants.LatestVersion);
 		protected override string FileExtension => ".cs";
+		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
 		public CSharpLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator)
 			: base(roslynCodeEditorCreator) {

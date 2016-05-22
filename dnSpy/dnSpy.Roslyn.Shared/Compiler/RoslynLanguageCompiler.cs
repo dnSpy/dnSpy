@@ -38,6 +38,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected abstract CompilationOptions CompilationOptions { get; }
 		protected abstract ParseOptions ParseOptions { get; }
 		protected abstract string FileExtension { get; }
+		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
 		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
 		readonly List<RoslynCodeDocument> documents = new List<RoslynCodeDocument>();

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +27,14 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// Compiles source code
 	/// </summary>
 	public interface ILanguageCompiler : IDisposable {
+		/// <summary>
+		/// Assembly references that must be included when compiling the code, even if the
+		/// references aren't part of the edited assembly. This is usually empty unless the
+		/// language uses types from certain language specific assemblies, eg. Visual Basic
+		/// usually needs <c>Microsoft.VisualBasic</c>.
+		/// </summary>
+		IEnumerable<string> RequiredAssemblyReferences { get; }
+
 		/// <summary>
 		/// Called after the code has been decompiled
 		/// </summary>

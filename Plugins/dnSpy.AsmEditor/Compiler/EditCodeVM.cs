@@ -179,7 +179,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		async Task<CompilerMetadataReference[]> DecompileAndGetRefsAsync(MethodDef method) {
 			await DecompileAsync(method).ConfigureAwait(false);
-			return await CreateCompilerMetadataReferencesAsync(method, assemblyReferenceResolver, decompileCodeState.CancellationToken).ConfigureAwait(false);
+			return await CreateCompilerMetadataReferencesAsync(method, assemblyReferenceResolver, languageCompiler.RequiredAssemblyReferences, decompileCodeState.CancellationToken).ConfigureAwait(false);
 		}
 
 		Task DecompileAsync(MethodDef method) {
@@ -227,10 +227,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		static Task<CompilerMetadataReference[]> CreateCompilerMetadataReferencesAsync(MethodDef method, AssemblyReferenceResolver assemblyReferenceResolver, CancellationToken cancellationToken) {
+		static Task<CompilerMetadataReference[]> CreateCompilerMetadataReferencesAsync(MethodDef method, AssemblyReferenceResolver assemblyReferenceResolver, IEnumerable<string> extraAssemblyReferences, CancellationToken cancellationToken) {
 			cancellationToken.ThrowIfCancellationRequested();
 
-			var modules = new HashSet<ModuleDef>(new MetadataReferenceFinder(method.Module, cancellationToken).Find());
+			var modules = new HashSet<ModuleDef>(new MetadataReferenceFinder(method.Module, cancellationToken).Find(extraAssemblyReferences));
 
 			var mdRefs = new List<CompilerMetadataReference>();
 			foreach (var module in modules) {

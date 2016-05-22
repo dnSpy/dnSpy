@@ -38,8 +38,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.checkedContractsAssemblies = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 		}
 
-		public IEnumerable<ModuleDef> Find() {
-			Initialize();
+		public IEnumerable<ModuleDef> Find(IEnumerable<string> extraAssemblyReferences) {
+			Initialize(extraAssemblyReferences);
 			yield return module;
 			foreach (var asm in assemblies.Values) {
 				foreach (var m in asm.Modules) {
@@ -49,8 +49,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		void Initialize() {
-			foreach (var asm in GetAssemblies(module)) {
+		void Initialize(IEnumerable<string> extraAssemblyReferences) {
+			foreach (var asm in GetAssemblies(module, extraAssemblyReferences)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				AssemblyDef otherAsm;
 				if (!assemblies.TryGetValue(asm, out otherAsm))
@@ -60,20 +60,30 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		IEnumerable<AssemblyDef> GetAssemblies(ModuleDef module) {
+		IEnumerable<AssemblyDef> GetAssemblies(ModuleDef module, IEnumerable<string> extraAssemblyReferences) {
 			var asm = module.Assembly;
 			if (asm != null) {
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
 			}
 
-			foreach (var asmRef in module.GetAssemblyRefs()) {
+			foreach (var asmRef in GetAssemblyRefs(module, extraAssemblyReferences)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
 				if (asm == null)
 					continue;
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
+			}
+		}
+
+		IEnumerable<IAssembly> GetAssemblyRefs(ModuleDef module, IEnumerable<string> extraAssemblyReferences) {
+			foreach (var a in module.GetAssemblyRefs())
+				yield return a;
+			foreach (var s in extraAssemblyReferences) {
+				var info = new AssemblyNameInfo(s);
+				if (info.Version != null)
+					yield return info;
 			}
 		}
 
