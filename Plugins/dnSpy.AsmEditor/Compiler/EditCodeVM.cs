@@ -287,7 +287,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
 						moduleImporterResult = null;
 				}
-				catch (ModuleImporterException) {
+				catch (ModuleImporterAbortedException) {
 					compilerDiagnostics = moduleImporterResult.Diagnostics;
 					Debug.Assert(compilerDiagnostics.Length != 0);
 					moduleImporterResult = null;

@@ -30,7 +30,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[Serializable]
-	sealed class ModuleImporterException : Exception {
+	sealed class ModuleImporterAbortedException : Exception {
 	}
 
 	sealed class ModuleImporter {
@@ -96,7 +96,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void AddErrorThrow(string id, string msg) {
 			AddError(id, msg);
-			throw new ModuleImporterException();
+			throw new ModuleImporterAbortedException();
 		}
 
 		/// <summary>
@@ -691,8 +691,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		bool IsSourceOrTarget(AssemblyRef asmRef) => IsSource(asmRef) || IsTarget(asmRef);
-		bool IsSource(AssemblyRef asmRef) => new AssemblyNameComparer(AssemblyNameComparerFlags.All).Equals(asmRef, sourceModule.Assembly);
-		bool IsTarget(AssemblyRef asmRef) => new AssemblyNameComparer(AssemblyNameComparerFlags.All).Equals(asmRef, targetModule.Assembly);
+		bool IsSource(AssemblyRef asmRef) => AssemblyNameComparer.CompareAll.Equals(asmRef, sourceModule.Assembly);
+		bool IsTarget(AssemblyRef asmRef) => AssemblyNameComparer.CompareAll.Equals(asmRef, targetModule.Assembly);
 
 		bool IsSourceOrTarget(ModuleRef modRef) => IsSource(modRef) || IsTarget(modRef);
 		bool IsSource(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, sourceModule.Name);
