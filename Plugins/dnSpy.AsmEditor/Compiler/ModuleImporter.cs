@@ -586,7 +586,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (type == null)
 				return null;
 
-			var res = TryGetTypeInTargetModule(type);
+			ImportedType importedType;
+			var res = TryGetTypeInTargetModule(type, out importedType);
 			if (res != null)
 				return res;
 
@@ -650,33 +651,39 @@ namespace dnSpy.AsmEditor.Compiler {
 			return importedTypeSpec;
 		}
 
-		TypeDef TryGetTypeInTargetModule(ITypeDefOrRef tdr) {
-			if (tdr == null)
+		TypeDef TryGetTypeInTargetModule(ITypeDefOrRef tdr, out ImportedType importedType) {
+			if (tdr == null) {
+				importedType = null;
 				return null;
+			}
 
 			var td = tdr as TypeDef;
 			if (td != null)
-				return oldTypeToNewType[td].TargetType;
+				return (importedType = oldTypeToNewType[td]).TargetType;
 
 			var tr = tdr as TypeRef;
 			if (tr != null) {
-				ImportedType importedType;
-				if (oldTypeRefToNewType.TryGetValue(tr, out importedType))
-					return importedType.TargetType;
+				ImportedType importedTypeTmp;
+				if (oldTypeRefToNewType.TryGetValue(tr, out importedTypeTmp))
+					return (importedType = importedTypeTmp).TargetType;
 
 				var tr2 = (TypeRef)tr.GetNonNestedTypeRefScope();
 				if (IsTarget(tr2.ResolutionScope)) {
 					td = targetModule.Find(tr);
-					if (td == null) {
-						AddError(IM0003, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindType, tr));
-						return null;
+					if (td != null) {
+						importedType = null;
+						return td;
 					}
-					return td;
+
+					AddError(IM0003, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindType, tr));
+					importedType = null;
+					return null;
 				}
 				if (IsSource(tr2.ResolutionScope))
 					throw new InvalidOperationException();
 			}
 
+			importedType = null;
 			return null;
 		}
 
@@ -1233,14 +1240,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			var mr = (MemberRef)method;
-			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef);
-			if (td != null && mr.MethodSig.ParamsAfterSentinel == null) {
+			ImportedType importedType;
+			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out importedType);
+			if (td != null) {
 				var targetMethod = FindMethod(td, mr);
-				if (targetMethod == null) {
-					AddError(IM0004, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindMethod, mr));
-					return null;
+				if (targetMethod != null)
+					return targetMethod;
+				if (importedType != null) {
+					var compiledMethod = FindMethod(toExtraData[importedType].CompiledType, mr);
+					if (compiledMethod != null)
+						return oldMethodToNewMethod[compiledMethod];
 				}
-				return targetMethod;
+
+				AddError(IM0004, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindMethod, mr));
+				return null;
 			}
 
 			return ImportNoCheckForDefs(mr);
@@ -1266,14 +1279,20 @@ namespace dnSpy.AsmEditor.Compiler {
 				return oldFieldToNewField[fd];
 
 			var mr = (MemberRef)field;
-			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef);
+			ImportedType importedType;
+			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out importedType);
 			if (td != null) {
 				var targetField = FindField(td, mr);
-				if (targetField == null) {
-					AddError(IM0005, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindField, mr));
-					return null;
+				if (targetField != null)
+					return targetField;
+				if (importedType != null) {
+					var compiledField = FindField(toExtraData[importedType].CompiledType, mr);
+					if (compiledField != null)
+						return oldFieldToNewField[compiledField];
 				}
-				return targetField;
+
+				AddError(IM0005, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindField, mr));
+				return null;
 			}
 
 			return ImportNoCheckForDefs(mr);
