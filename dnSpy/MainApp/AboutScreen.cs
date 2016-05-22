@@ -83,7 +83,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			var tab = fileTabManager.GetOrCreateActiveTab();
+			var tab = fileTabManager.OpenEmptyTab();
 			tab.Show(new AboutScreenFileTabContent(appWindow, pluginManager), null, null);
 			fileTabManager.SetFocus(tab);
 		}
