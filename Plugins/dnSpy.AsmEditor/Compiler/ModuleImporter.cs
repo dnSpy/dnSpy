@@ -112,17 +112,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		public void Import(byte[] rawGeneratedModule, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
-			var genMod = ModuleDefMD.Load(rawGeneratedModule);
+			SetSourceModule(ModuleDefMD.Load(rawGeneratedModule));
 
-			var newType = genMod.Find(targetMethod.Module.Import(targetMethod.DeclaringType));
-			if (newType == null)
-				AddErrorThrow(IM0001, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindMethodType, targetMethod.DeclaringType));
-			// Don't check type scopes or we won't be able to find methods with edited nested types.
-			var newMethod = newType.FindMethod(targetMethod.Name, targetMethod.MethodSig, SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareTypeScope, targetMethod.Module);
-			if (newMethod == null)
-				AddErrorThrow(IM0002, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindEditedMethod, targetMethod));
-			SetSourceModule(genMod);
-
+			var newMethod = FindSourceMethod(targetMethod);
 			var newMethodNonNestedDeclType = newMethod.DeclaringType;
 			while (newMethodNonNestedDeclType.DeclaringType != null)
 				newMethodNonNestedDeclType = newMethodNonNestedDeclType.DeclaringType;
@@ -144,6 +136,36 @@ namespace dnSpy.AsmEditor.Compiler {
 			UpdateEditedMethods();
 
 			SetSourceModule(null);
+		}
+
+		MethodDef FindSourceMethod(MethodDef targetMethod) {
+			var newType = sourceModule.Find(targetMethod.Module.Import(targetMethod.DeclaringType));
+			if (newType == null)
+				AddErrorThrow(IM0001, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindMethodType, targetMethod.DeclaringType));
+
+			// Don't check type scopes or we won't be able to find methods with edited nested types.
+			const SigComparerOptions comparerFlags = SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareTypeScope;
+
+			var newMethod = newType.FindMethod(targetMethod.Name, targetMethod.MethodSig, comparerFlags, targetMethod.Module);
+			if (newMethod != null)
+				return newMethod;
+
+			if (targetMethod.Overrides.Count != 0) {
+				var targetOverriddenMethod = targetMethod.Overrides[0].MethodDeclaration;
+				var comparer = new SigComparer(comparerFlags, targetModule);
+				foreach (var method in newType.Methods) {
+					foreach (var o in method.Overrides) {
+						if (!comparer.Equals(o.MethodDeclaration, targetOverriddenMethod))
+							continue;
+						if (!comparer.Equals(o.MethodDeclaration.DeclaringType, targetOverriddenMethod.DeclaringType))
+							continue;
+						return method;
+					}
+				}
+			}
+
+			AddErrorThrow(IM0002, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindEditedMethod, targetMethod));
+			throw new InvalidOperationException();
 		}
 
 		void SetSourceModule(ModuleDef newSourceModule) {
@@ -469,7 +491,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var method in origType.Methods) {
 						MethodDef origMethod;
-						if (existingMethods.TryGetValue(method, out origMethod)) {
+						if (existingMethods.TryGetValue(method, out origMethod) || editedMethodsToFix.TryGetValue(method, out origMethod)) {
 							existingMethods.Remove(method);
 							isStub.Add(method);
 							isStub.Add(origMethod);
