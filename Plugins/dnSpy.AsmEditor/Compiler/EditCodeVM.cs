@@ -163,18 +163,19 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			const string MAIN_CODE_NAME = "main";
+			var codeDocs = Array.Empty<ICodeDocument>();
 			if (!canceled) {
 				var docs = new List<IDecompiledDocument>();
 				docs.Add(new DecompiledDocument(mainCode, MAIN_CODE_NAME));
 				if (hiddenCode != string.Empty)
 					docs.Add(new DecompiledDocument(hiddenCode, MAIN_CODE_NAME + ".g"));
-				languageCompiler.AddDecompiledCode(new DecompiledCodeResult(docs.ToArray(), assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(method.Module)));
+				codeDocs = languageCompiler.AddDecompiledCode(new DecompiledCodeResult(docs.ToArray(), assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(method.Module)));
 			}
 
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;
 
-			Documents.AddRange(languageCompiler.GetCodeDocuments());
+			Documents.AddRange(codeDocs);
 			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
 
 			CanCompile = canCompile;

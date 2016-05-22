@@ -41,22 +41,22 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
 		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
-		readonly List<RoslynCodeDocument> documents = new List<RoslynCodeDocument>();
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator) {
 			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
 		}
 
-		public void AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
+		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
 			Debug.Assert(workspace == null);
 
+			var documents = new List<RoslynCodeDocument>();
 			workspace = new AdhocWorkspace();
 			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
 			foreach (var doc in decompiledCodeResult.Documents)
-				AddDocument(projectId, doc.NameNoExtension, doc.Code);
+				documents.Add(CreateDocument(projectId, doc.NameNoExtension, doc.Code));
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
 				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(GetPlatform(decompiledCodeResult.Platform)),
@@ -67,6 +67,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			workspace.AddProject(projectInfo);
 			foreach (var doc in documents)
 				workspace.OpenDocument(doc.Info.Id);
+			return documents.ToArray();
 		}
 
 		static Platform GetPlatform(TargetPlatform platform) {
@@ -76,18 +77,15 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			return platform.ToPlatform();
 		}
 
-		void AddDocument(ProjectId projectId, string nameNoExtension, string code) {
+		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension, string code) {
 			var options = new RoslynCodeEditorOptions();
 			options.Options.ContentTypeGuid = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
 
 			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), nameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
-			var doc = new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);
-			documents.Add(doc);
+			return new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);
 		}
-
-		public ICodeDocument[] GetCodeDocuments() => documents.ToArray();
 
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {
 			var project = workspace.CurrentSolution.Projects.First();

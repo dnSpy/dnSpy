@@ -39,14 +39,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Called after the code has been decompiled
 		/// </summary>
 		/// <param name="decompiledCodeResult">Decompiled code</param>
-		void AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
-
-		/// <summary>
-		/// Gets all code documents. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
-		/// has been called.
-		/// </summary>
-		/// <returns></returns>
-		ICodeDocument[] GetCodeDocuments();
+		ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
 
 		/// <summary>
 		/// Compiles the code
