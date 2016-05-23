@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Text.Editor.Roslyn {
 	/// <summary>
-	/// <see cref="IRoslynCodeEditorUI"/> options
+	/// <see cref="IRoslynCodeEditor"/> options
 	/// </summary>
 	public sealed class RoslynCodeEditorOptions : CommonTextEditorOptions {
 		/// <summary>

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 
 namespace dnSpy.Roslyn.Shared.Text.Editor {
-	sealed class RoslynCodeEditor : IRoslynCodeEditorUI {
+	sealed class RoslynCodeEditor : IRoslynCodeEditor {
 		public IWpfTextView TextView => codeEditor.TextView;
 		public ITextBuffer TextBuffer => codeEditor.TextBuffer;
 		public object UIObject => codeEditor.UIObject;
@@ -31,9 +31,9 @@ namespace dnSpy.Roslyn.Shared.Text.Editor {
 		public FrameworkElement ScaleElement => codeEditor.ScaleElement;
 		public object Tag { get; set; }
 
-		readonly ICodeEditorUI codeEditor;
+		readonly ICodeEditor codeEditor;
 
-		public RoslynCodeEditor(RoslynCodeEditorOptions options, ICodeEditorUI codeEditor) {
+		public RoslynCodeEditor(RoslynCodeEditorOptions options, ICodeEditor codeEditor) {
 			this.codeEditor = codeEditor;
 		}
 

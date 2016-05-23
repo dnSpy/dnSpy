@@ -30,6 +30,6 @@ namespace dnSpy.Text.Editor {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
 		}
 
-		public ILogEditorUI Create(LogEditorOptions options) => new LogEditorUI(options, textEditorFactoryService2);
+		public ILogEditor Create(LogEditorOptions options) => new LogEditor(options, textEditorFactoryService2);
 	}
 }

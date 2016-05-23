@@ -19,12 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// A REPL (Read, Eval, Print, Loop) editor
 	/// </summary>
-	public interface IReplEditor : IDisposable {
+	public interface IReplEditor : IUIObjectProvider2, IDisposable {
 		/// <summary>
 		/// true if <see cref="Clear"/> can be called
 		/// </summary>

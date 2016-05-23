@@ -349,12 +349,12 @@
     <Compile Include="Text\DnSpyTextEditorOptions.cs" />
     <Compile Include="Text\EditorPositionState.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
-    <Compile Include="Text\Editor\CodeEditorUI.cs" />
+    <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
-    <Compile Include="Text\Editor\LogEditorUI.cs" />
+    <Compile Include="Text\Editor\LogEditor.cs" />
     <Compile Include="Text\Editor\ReplCommands.cs" />
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
-    <Compile Include="Text\Editor\ReplEditorUI.cs" />
+    <Compile Include="Text\Editor\ReplEditor.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\TextEditorSettings.cs" />
     <Compile Include="Text\Editor\TextViewModel.cs" />

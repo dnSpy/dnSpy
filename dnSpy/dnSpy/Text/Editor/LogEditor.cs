@@ -33,7 +33,7 @@ using dnSpy.Shared.Text;
 using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Text.Editor {
-	sealed class LogEditorUI : ILogEditorUI {
+	sealed class LogEditor : ILogEditor {
 		public object UIObject => textEditor;
 		public IInputElement FocusedElement => textEditor.FocusedElement;
 		public FrameworkElement ScaleElement => textEditor.ScaleElement;
@@ -74,9 +74,9 @@ namespace dnSpy.Text.Editor {
 		const int LEFT_MARGIN = 15;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly LogEditorUI logEditorUI;
+			readonly LogEditor logEditorUI;
 
-			public GuidObjectsCreator(LogEditorUI logEditorUI) {
+			public GuidObjectsCreator(LogEditor logEditorUI) {
 				this.logEditorUI = logEditorUI;
 			}
 
@@ -85,7 +85,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public LogEditorUI(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public LogEditor(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			options = options ?? new LogEditorOptions();

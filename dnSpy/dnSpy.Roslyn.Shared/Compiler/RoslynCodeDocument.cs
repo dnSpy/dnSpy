@@ -28,9 +28,9 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public object CodeEditorUIObject => codeEditor.UIObject;
 		public DocumentInfo Info { get; }
 
-		readonly IRoslynCodeEditorUI codeEditor;
+		readonly IRoslynCodeEditor codeEditor;
 
-		public RoslynCodeDocument(IRoslynCodeEditorUI codeEditor, DocumentInfo documentInfo, string nameNoExtension) {
+		public RoslynCodeDocument(IRoslynCodeEditor codeEditor, DocumentInfo documentInfo, string nameNoExtension) {
 			this.codeEditor = codeEditor;
 			Info = documentInfo;
 			NameNoExtension = nameNoExtension;

@@ -341,15 +341,12 @@
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
-    <Compile Include="Text\Editor\ICodeEditorUI.cs" />
     <Compile Include="Text\Editor\ILogEditor.cs" />
     <Compile Include="Text\Editor\ILogEditorCreator.cs" />
-    <Compile Include="Text\Editor\ILogEditorUI.cs" />
     <Compile Include="Text\Editor\IReplCommandHandler.cs" />
     <Compile Include="Text\Editor\IReplCommandInput.cs" />
     <Compile Include="Text\Editor\IReplEditor.cs" />
     <Compile Include="Text\Editor\IReplEditorCreator.cs" />
-    <Compile Include="Text\Editor\IReplEditorUI.cs" />
     <Compile Include="Text\Editor\ITextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\ITextEditorSettings.cs" />
     <Compile Include="Text\Editor\ITextView.cs" />
@@ -377,7 +374,6 @@
     <Compile Include="Text\OutputColor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
-    <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorUI.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />
     <Compile Include="Text\Span.cs" />
     <Compile Include="Text\TextBufferCreatedEventArgs.cs" />

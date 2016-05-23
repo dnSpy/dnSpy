@@ -18,12 +18,18 @@
 */
 
 using System;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Code text editor
 	/// </summary>
-	public interface ICodeEditor : IDisposable {
+	public interface ICodeEditor : IUIObjectProvider2, IDisposable {
+		/// <summary>
+		/// Gets the text view
+		/// </summary>
+		IWpfTextView TextView { get; }
+
 		/// <summary>
 		/// Gets the <see cref="ITextBuffer"/> instance
 		/// </summary>

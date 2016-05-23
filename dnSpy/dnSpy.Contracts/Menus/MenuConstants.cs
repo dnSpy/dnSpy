@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>REPL text editor control</summary>
 		public static readonly string GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID = "18953907-F276-43F8-B267-DFEA192DD9B8";
 
-		/// <summary><see cref="IReplEditorUI"/></summary>
+		/// <summary><see cref="IReplEditor"/></summary>
 		public static readonly string GUIDOBJ_REPL_EDITOR_GUID = "530F5283-6FCF-49EC-A7D1-52D456C9C846";
 
 		/// <summary><see cref="IWpfTextView"/></summary>
@@ -153,7 +153,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Log text editor control</summary>
 		public static readonly string GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID = "898C7BE5-EDAE-42E5-A97F-1FA73C18ED36";
 
-		/// <summary><see cref="ILogEditorUI"/></summary>
+		/// <summary><see cref="ILogEditor"/></summary>
 		public static readonly string GUIDOBJ_LOG_EDITOR_GUID = "7ED3CA27-F8F2-4EB8-B9CA-690B27243403";
 
 		/// <summary><see cref="IOutputManager"/></summary>
@@ -162,10 +162,10 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Active <see cref="IOutputTextPane"/></summary>
 		public static readonly string GUIDOBJ_ACTIVE_OUTPUT_TEXTPANE_GUID = "5787A5D8-80DE-437F-A44A-6FD0138DBB57";
 
-		/// <summary><see cref="ICodeEditorUI"/></summary>
+		/// <summary><see cref="ICodeEditor"/></summary>
 		public static readonly string GUIDOBJ_CODE_EDITOR_GUID = "297907F8-38BE-4C8C-90D1-3400BB0EB36E";
 
-		/// <summary><see cref="IRoslynCodeEditorUI"/></summary>
+		/// <summary><see cref="IRoslynCodeEditor"/></summary>
 		public static readonly string GUIDOBJ_ROSLYN_CODE_EDITOR_GUID = "2DDCEF20-FAE2-4852-B4EF-D1B6A9AED30F";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>

@@ -26,10 +26,10 @@ using dnSpy.Shared.Menus;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ReplEditorCtxMenuContext {
-		public readonly IReplEditorUI UI;
+		public readonly IReplEditor UI;
 		public readonly ScriptControlVM VM;
 
-		public ReplEditorCtxMenuContext(IReplEditorUI ui) {
+		public ReplEditorCtxMenuContext(IReplEditor ui) {
 			this.UI = ui;
 			this.VM = ScriptContent.GetScriptContent(ui).ScriptControlVM;
 		}
@@ -44,7 +44,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		internal static ReplEditorCtxMenuContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID))
 				return null;
-			var ui = context.Find<IReplEditorUI>();
+			var ui = context.Find<IReplEditor>();
 			if (ui == null)
 				return null;
 
@@ -106,7 +106,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ReplCommandInstaller {
 		static readonly RoutedCommand CopyCodeCommand = new RoutedCommand("CopyCodeCommand", typeof(ReplCommandInstaller));
 
-		public static void Install(IReplEditorUI ui, UIElement elem) {
+		public static void Install(IReplEditor ui, UIElement elem) {
 			elem.CommandBindings.Add(new CommandBinding(CopyCodeCommand, (s, e) => ui.CopyCode(), (s, e) => e.CanExecute = ui.CanCopyCode));
 			elem.InputBindings.Add(new KeyBinding(CopyCodeCommand, Key.C, ModifierKeys.Control | ModifierKeys.Shift));
 		}

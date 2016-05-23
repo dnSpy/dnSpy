@@ -30,6 +30,6 @@ namespace dnSpy.Text.Editor {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
 		}
 
-		public IReplEditorUI Create(ReplEditorOptions options) => new ReplEditorUI(options, textEditorFactoryService2);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, textEditorFactoryService2);
 	}
 }

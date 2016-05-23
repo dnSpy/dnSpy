@@ -24,7 +24,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	sealed class CodeEditorUI : ICodeEditorUI {
+	sealed class CodeEditor : ICodeEditor {
 		public IWpfTextView TextView { get; }
 		public ITextBuffer TextBuffer => TextView.TextViewModel.EditBuffer;
 		public object UIObject => TextView.UIObject;
@@ -36,9 +36,9 @@ namespace dnSpy.Text.Editor {
 		readonly DnSpyTextEditor textEditor;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly CodeEditorUI codeEditorUI;
+			readonly CodeEditor codeEditorUI;
 
-			public GuidObjectsCreator(CodeEditorUI codeEditorUI) {
+			public GuidObjectsCreator(CodeEditor codeEditorUI) {
 				this.codeEditorUI = codeEditorUI;
 			}
 
@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public CodeEditorUI(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public CodeEditor(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			options = options ?? new CodeEditorOptions();
 			var wpfTextView = textEditorFactoryService2.CreateTextView(options.TextBuffer, options, (object)options.ContentType ?? options.ContentTypeGuid, true, () => new GuidObjectsCreator(this));
 			this.wpfTextView = wpfTextView;

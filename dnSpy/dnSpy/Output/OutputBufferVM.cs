@@ -28,8 +28,8 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Output {
 	sealed class OutputBufferVM : ViewModelBase, IOutputTextPane {
-		public IInputElement FocusedElement => logEditorUI.FocusedElement;
-		public object TextEditorUIObject => logEditorUI.UIObject;
+		public IInputElement FocusedElement => logEditor.FocusedElement;
+		public object TextEditorUIObject => logEditor.UIObject;
 
 		public Guid Guid { get; }
 		public string Name { get; }
@@ -57,34 +57,34 @@ namespace dnSpy.Output {
 		}
 
 		public bool WordWrap {
-			get { return logEditorUI.WordWrap; }
-			set { logEditorUI.WordWrap = value; }
+			get { return logEditor.WordWrap; }
+			set { logEditor.WordWrap = value; }
 		}
 
 		public bool ShowLineNumbers {
-			get { return logEditorUI.ShowLineNumbers; }
-			set { logEditorUI.ShowLineNumbers = value; }
+			get { return logEditor.ShowLineNumbers; }
+			set { logEditor.ShowLineNumbers = value; }
 		}
 
 		public bool ShowTimestamps { get; set; }
 
-		readonly ILogEditorUI logEditorUI;
+		readonly ILogEditor logEditor;
 
-		public OutputBufferVM(Guid guid, string name, ILogEditorUI logEditorUI) {
+		public OutputBufferVM(Guid guid, string name, ILogEditor logEditor) {
 			Guid = guid;
 			Name = name;
-			this.logEditorUI = logEditorUI;
+			this.logEditor = logEditor;
 			this.index = -1;
 			this.needTimestamp = true;
 		}
 
 		public void Clear() {
-			logEditorUI.Clear();
+			logEditor.Clear();
 			needTimestamp = true;
 		}
 		bool needTimestamp;
 
-		public string GetText() => logEditorUI.GetText();
+		public string GetText() => logEditor.GetText();
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
 		public void Write(object color, string s) => WriteInternal(color, s);
 		public void Write(OutputColor color, string s) => WriteInternal(color.Box(), s);
@@ -108,8 +108,8 @@ namespace dnSpy.Output {
 				if (needTimestamp) {
 					needTimestamp = false;
 					if (ShowTimestamps) {
-						logEditorUI.Write(DateTime.Now.ToLongTimeString(), BoxedOutputColor.DebugLogTimestamp);
-						logEditorUI.Write(" ", BoxedOutputColor.Text);
+						logEditor.Write(DateTime.Now.ToLongTimeString(), BoxedOutputColor.DebugLogTimestamp);
+						logEditor.Write(" ", BoxedOutputColor.Text);
 					}
 				}
 
@@ -117,12 +117,12 @@ namespace dnSpy.Output {
 				if (nlOffs >= 0) {
 					int nlLen = text[nlOffs] == '\r' && nlOffs + 1 < text.Length && text[nlOffs + 1] == '\n' ? 2 : 1;
 					int soNext = nlOffs + nlLen;
-					logEditorUI.Write(text.Substring(so, soNext - so), color);
+					logEditor.Write(text.Substring(so, soNext - so), color);
 					so = soNext;
 					needTimestamp = true;
 				}
 				else {
-					logEditorUI.Write(so == 0 ? text : text.Substring(so, text.Length - so), color);
+					logEditor.Write(so == 0 ? text : text.Substring(so, text.Length - so), color);
 					break;
 				}
 			}

@@ -19,14 +19,14 @@
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Creates <see cref="ILogEditorUI"/> instances
+	/// Creates <see cref="ILogEditor"/> instances
 	/// </summary>
 	public interface ILogEditorCreator {
 		/// <summary>
-		/// Creates a new <see cref="ILogEditorUI"/> instance
+		/// Creates a new <see cref="ILogEditor"/> instance
 		/// </summary>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		ILogEditorUI Create(LogEditorOptions options);
+		ILogEditor Create(LogEditorOptions options);
 	}
 }

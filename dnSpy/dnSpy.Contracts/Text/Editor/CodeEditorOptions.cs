@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ICodeEditorUI"/> options
+	/// <see cref="ICodeEditor"/> options
 	/// </summary>
 	public sealed class CodeEditorOptions : CommonTextEditorOptions {
 		/// <summary>

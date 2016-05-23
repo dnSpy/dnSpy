@@ -39,7 +39,7 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Text.Editor {
-	sealed class ReplEditorUI : IReplEditorUI {
+	sealed class ReplEditor : IReplEditor {
 		public object UIObject => textEditor;
 		public IInputElement FocusedElement => textEditor.FocusedElement;
 		public FrameworkElement ScaleElement => textEditor.ScaleElement;
@@ -56,9 +56,9 @@ namespace dnSpy.Text.Editor {
 		const int LEFT_MARGIN = 15;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly ReplEditorUI replEditorUI;
+			readonly ReplEditor replEditorUI;
 
-			public GuidObjectsCreator(ReplEditorUI replEditorUI) {
+			public GuidObjectsCreator(ReplEditor replEditorUI) {
 				this.replEditorUI = replEditorUI;
 			}
 
@@ -67,7 +67,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options ?? new ReplEditorOptions();
 			this.PrimaryPrompt = options.PrimaryPrompt;
@@ -1037,11 +1037,11 @@ namespace dnSpy.Text.Editor {
 
 	struct CachedTextTokenColorsCreator {
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
-		readonly ReplEditorUI owner;
+		readonly ReplEditor owner;
 		readonly CachedTextTokenColors cachedColors;
 		readonly int totalLength;
 
-		public CachedTextTokenColorsCreator(ReplEditorUI owner, int totalLength) {
+		public CachedTextTokenColorsCreator(ReplEditor owner, int totalLength) {
 			this.owner = owner;
 			this.cachedColors = new CachedTextTokenColors();
 			this.totalLength = totalLength;

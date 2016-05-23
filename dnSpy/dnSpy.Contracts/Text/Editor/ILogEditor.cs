@@ -19,12 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// A text control that allows appending text. Writing text is thread safe.
 	/// </summary>
-	public interface ILogEditor : IDisposable {
+	public interface ILogEditor : IUIObjectProvider2, IDisposable {
 		/// <summary>
 		/// true to show line numbers
 		/// </summary>

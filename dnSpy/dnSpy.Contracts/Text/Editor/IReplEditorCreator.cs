@@ -23,10 +23,10 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface IReplEditorCreator {
 		/// <summary>
-		/// Creates a new <see cref="IReplEditorUI"/> instance
+		/// Creates a new <see cref="IReplEditor"/> instance
 		/// </summary>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IReplEditorUI Create(ReplEditorOptions options = null);
+		IReplEditor Create(ReplEditorOptions options = null);
 	}
 }

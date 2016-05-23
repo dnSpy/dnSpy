@@ -19,14 +19,14 @@
 
 namespace dnSpy.Contracts.Text.Editor.Roslyn {
 	/// <summary>
-	/// Creates <see cref="IRoslynCodeEditorUI"/> instances
+	/// Creates <see cref="IRoslynCodeEditor"/> instances
 	/// </summary>
 	public interface IRoslynCodeEditorCreator {
 		/// <summary>
-		/// Creates a new <see cref="IRoslynCodeEditorUI"/> instance
+		/// Creates a new <see cref="IRoslynCodeEditor"/> instance
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		IRoslynCodeEditorUI Create(RoslynCodeEditorOptions options);
+		IRoslynCodeEditor Create(RoslynCodeEditorOptions options);
 	}
 }

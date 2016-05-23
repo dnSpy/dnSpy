@@ -35,24 +35,24 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 	abstract class ScriptContent : IScriptContent {
 		public object UIObject => scriptControl;
-		public IInputElement FocusedElement => replEditorUI.FocusedElement;
-		public FrameworkElement ScaleElement => replEditorUI.ScaleElement;
+		public IInputElement FocusedElement => replEditor.FocusedElement;
+		public FrameworkElement ScaleElement => replEditor.ScaleElement;
 		public ScriptControlVM ScriptControlVM => scriptControlVM;
 
-		readonly IReplEditorUI replEditorUI;
+		readonly IReplEditor replEditor;
 		readonly ScriptControl scriptControl;
 		readonly ScriptControlVM scriptControlVM;
 
 		protected ScriptContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, ReplEditorOptions replOpts, IServiceLocator serviceLocator) {
-			this.replEditorUI = replEditorCreator.Create(replOpts);
+			this.replEditor = replEditorCreator.Create(replOpts);
 			this.scriptControl = new ScriptControl();
-			this.scriptControl.SetTextEditorObject(this.replEditorUI.UIObject);
-			this.scriptControlVM = CreateScriptControlVM(this.replEditorUI, serviceLocator);
+			this.scriptControl.SetTextEditorObject(this.replEditor.UIObject);
+			this.scriptControlVM = CreateScriptControlVM(this.replEditor, serviceLocator);
 			this.scriptControlVM.OnCommandExecuted += ScriptControlVM_OnCommandExecuted;
-			this.replEditorUI.Tag = this;
+			this.replEditor.Tag = this;
 			this.scriptControl.DataContext = this.scriptControlVM;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			ReplCommandInstaller.Install(replEditorUI, scriptControl);
+			ReplCommandInstaller.Install(replEditor, scriptControl);
 		}
 
 		void ScriptControlVM_OnCommandExecuted(object sender, EventArgs e) {
@@ -60,8 +60,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			CommandManager.InvalidateRequerySuggested();
 		}
 
-		public static ScriptContent GetScriptContent(IReplEditorUI replEditorUI) =>
-			(ScriptContent)replEditorUI.Tag;
+		public static ScriptContent GetScriptContent(IReplEditor replEditor) => (ScriptContent)replEditor.Tag;
 		protected abstract ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator);
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) =>
 			scriptControlVM.RefreshThemeFields();

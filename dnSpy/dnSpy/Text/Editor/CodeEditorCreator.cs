@@ -30,6 +30,6 @@ namespace dnSpy.Text.Editor {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
 		}
 
-		public ICodeEditorUI Create(CodeEditorOptions options) => new CodeEditorUI(options, textEditorFactoryService2);
+		public ICodeEditor Create(CodeEditorOptions options) => new CodeEditor(options, textEditorFactoryService2);
 	}
 }
