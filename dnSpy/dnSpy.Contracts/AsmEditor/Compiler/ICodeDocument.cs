@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
@@ -35,8 +36,8 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		string NameNoExtension { get; }
 
 		/// <summary>
-		/// UI object of code editor
+		/// Gets the text editor
 		/// </summary>
-		object CodeEditorUIObject { get; }
+		IWpfTextView TextView { get; }
 	}
 }

@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using Microsoft.CodeAnalysis;
 
@@ -25,7 +26,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	sealed class RoslynCodeDocument : ICodeDocument {
 		public string Name => Info.Name;
 		public string NameNoExtension { get; }
-		public object CodeEditorUIObject => codeEditor.UIObject;
+		public IWpfTextView TextView => codeEditor.TextView;
 		public DocumentInfo Info { get; }
 
 		readonly IRoslynCodeEditor codeEditor;
