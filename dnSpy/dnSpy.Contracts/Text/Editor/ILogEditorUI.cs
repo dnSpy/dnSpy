@@ -17,25 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.AsmEditor.Compiler;
-using dnSpy.Contracts.Text.Editor.Roslyn;
-using Microsoft.CodeAnalysis;
+using dnSpy.Contracts.Controls;
 
-namespace dnSpy.Roslyn.Shared.Compiler {
-	sealed class RoslynCodeDocument : ICodeDocument {
-		public string Name => Info.Name;
-		public string NameNoExtension { get; }
-		public object CodeEditorUIObject => codeEditor.UIObject;
-		public DocumentInfo Info { get; }
-
-		readonly IRoslynCodeEditorUI codeEditor;
-
-		public RoslynCodeDocument(IRoslynCodeEditorUI codeEditor, DocumentInfo documentInfo, string nameNoExtension) {
-			this.codeEditor = codeEditor;
-			Info = documentInfo;
-			NameNoExtension = nameNoExtension;
-		}
-
-		public void Dispose() => codeEditor.Dispose();
+namespace dnSpy.Contracts.Text.Editor {
+	/// <summary>
+	/// A text control that allows appending text
+	/// </summary>
+	public interface ILogEditorUI : ILogEditor, IUIObjectProvider2 {
 	}
 }

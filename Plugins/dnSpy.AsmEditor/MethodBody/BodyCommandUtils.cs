@@ -24,7 +24,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.MethodBody {

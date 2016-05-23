@@ -26,6 +26,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Text.Editor;

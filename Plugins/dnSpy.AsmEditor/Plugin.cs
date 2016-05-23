@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.AsmEditor {
 	[ExportPlugin]

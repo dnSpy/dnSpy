@@ -30,6 +30,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
 

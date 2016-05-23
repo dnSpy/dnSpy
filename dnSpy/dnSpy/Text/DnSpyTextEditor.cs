@@ -31,6 +31,7 @@ using System.Xml;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Shared.AvalonEdit;
 using dnSpy.Shared.MVVM;

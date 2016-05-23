@@ -21,7 +21,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Shared.Menus;
 
 namespace dnSpy.Scripting.Roslyn.Common {

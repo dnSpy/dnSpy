@@ -24,7 +24,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Roslyn;
+using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.VisualBasic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;

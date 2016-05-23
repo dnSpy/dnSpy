@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
 

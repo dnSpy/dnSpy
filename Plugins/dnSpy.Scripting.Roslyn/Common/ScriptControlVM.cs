@@ -39,6 +39,7 @@ using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
 using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Roslyn.Shared.Classification;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {

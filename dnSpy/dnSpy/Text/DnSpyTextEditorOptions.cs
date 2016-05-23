@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text {
 	sealed class DnSpyTextEditorOptions {

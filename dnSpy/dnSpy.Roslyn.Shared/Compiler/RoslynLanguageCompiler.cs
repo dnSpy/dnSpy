@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Roslyn;
+using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;

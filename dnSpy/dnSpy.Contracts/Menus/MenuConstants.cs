@@ -24,7 +24,7 @@ using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Roslyn;
+using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
 
