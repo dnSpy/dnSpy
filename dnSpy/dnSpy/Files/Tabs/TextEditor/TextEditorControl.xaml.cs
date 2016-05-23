@@ -50,6 +50,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
@@ -58,6 +59,7 @@ using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Text;
 using dnSpy.Text;
+using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -86,8 +88,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
 		readonly IContentType defaultContentType;
+		readonly IWpfTextView wpfTextView;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -99,7 +102,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			TextEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(new CommonTextEditorOptions(), null, true, null));
+			var wpfTextView = textEditorFactoryService2.CreateTextView(null, new TextViewCreatorOptions(), null, true, null);
+			this.wpfTextView = wpfTextView;
+			TextEditor = wpfTextView.DnSpyTextEditor;
 			cachedColorsList = new CachedColorsList();
 			TextEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			this.toolTipHelper.Initialize(TextEditor);
@@ -714,6 +719,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
 			textMarkerService.Dispose();
+			if (!wpfTextView.IsClosed)
+				wpfTextView.Close();
 			TextEditor.Dispose();
 		}
 

@@ -30,8 +30,10 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
+using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -50,39 +52,32 @@ namespace dnSpy.Text {
 		readonly DnSpyTextEditor textEditor;
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
+		readonly IWpfTextView wpfTextView;
 
 		const int LEFT_MARGIN = 15;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ReplEditorUI replEditorUI;
-			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
 
-			public GuidObjectsCreator(ReplEditorUI replEditorUI, Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects) {
+			public GuidObjectsCreator(ReplEditorUI replEditorUI) {
 				this.replEditorUI = replEditorUI;
-				this.createGuidObjects = createGuidObjects;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_REPL_EDITOR_GUID, replEditorUI);
-
-				var textEditor = (DnSpyTextEditor)args.CreatorObject.Object;
-				foreach (var go in textEditor.GetGuidObjects(args.OpenedFromKeyboard))
-					yield return go;
-
-				if (createGuidObjects != null) {
-					foreach (var guidObject in createGuidObjects(args))
-						yield return guidObject;
-				}
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
+		public ReplEditorUI(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options ?? new ReplEditorOptions();
 			this.PrimaryPrompt = options.PrimaryPrompt;
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<SubBuffer>();
-			this.textEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(options.Options, null, false, () => new GuidObjectsCreator(this, options.Options.CreateGuidObjects)));
+
+			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, false, () => new GuidObjectsCreator(this));
+			this.wpfTextView = wpfTextView;
+			this.textEditor = wpfTextView.DnSpyTextEditor;
 			this.cachedColorsList = new CachedColorsList();
 			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
 			this.textEditor.TextArea.AllowDrop = false;
@@ -959,7 +954,11 @@ namespace dnSpy.Text {
 			}
 		}
 
-		public void Dispose() => this.textEditor.Dispose();
+		public void Dispose() {
+			if (!wpfTextView.IsClosed)
+				wpfTextView.Close();
+			textEditor.Dispose();
+		}
 
 		enum BufferKind {
 			Output,

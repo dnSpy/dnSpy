@@ -17,26 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
+using System;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Roslyn;
 
-namespace dnSpy.Roslyn.Shared.Text {
-	sealed class RoslynCodeEditor : IRoslynCodeEditorUI {
-		public IWpfTextView TextView => codeEditor.TextView;
-		public ITextBuffer TextBuffer => codeEditor.TextBuffer;
-		public object UIObject => codeEditor.UIObject;
-		public IInputElement FocusedElement => codeEditor.FocusedElement;
-		public FrameworkElement ScaleElement => codeEditor.ScaleElement;
-		public object Tag { get; set; }
+namespace dnSpy.Text.Editor {
+	sealed class TextViewModel : ITextViewModel {
+		public ITextDataModel DataModel { get; }
+		public ITextBuffer DataBuffer => DataModel.DataBuffer;
+		public ITextBuffer EditBuffer { get; }
+		public ITextBuffer VisualBuffer => EditBuffer;
 
-		readonly ICodeEditorUI codeEditor;
-
-		public RoslynCodeEditor(RoslynCodeEditorOptions options, ICodeEditorUI codeEditor) {
-			this.codeEditor = codeEditor;
+		public TextViewModel(ITextDataModel textDataModel)
+			: this(textDataModel, textDataModel.DataBuffer) {
 		}
 
-		public void Dispose() => codeEditor.Dispose();
+		public TextViewModel(ITextDataModel textDataModel, ITextBuffer editBuffer) {
+			if (textDataModel == null)
+				throw new ArgumentNullException(nameof(textDataModel));
+			if (editBuffer == null)
+				throw new ArgumentNullException(nameof(editBuffer));
+			DataModel = textDataModel;
+			EditBuffer = editBuffer;
+		}
+
+		public void Dispose() { }
 	}
 }

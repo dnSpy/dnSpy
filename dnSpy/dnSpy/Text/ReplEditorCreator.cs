@@ -19,17 +19,18 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using dnSpy.Text.Editor;
 
 namespace dnSpy.Text {
 	[Export(typeof(IReplEditorCreator))]
 	sealed class ReplEditorCreator : IReplEditorCreator {
-		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
+		readonly ITextEditorFactoryService2 textEditorFactoryService2;
 
 		[ImportingConstructor]
-		ReplEditorCreator(IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
-			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
+		ReplEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2) {
+			this.textEditorFactoryService2 = textEditorFactoryService2;
 		}
 
-		public IReplEditorUI Create(ReplEditorOptions options) => new ReplEditorUI(options, dnSpyTextEditorCreator);
+		public IReplEditorUI Create(ReplEditorOptions options) => new ReplEditorUI(options, textEditorFactoryService2);
 	}
 }

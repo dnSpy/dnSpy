@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using dnSpy.Contracts.Images;

@@ -66,7 +66,7 @@ namespace dnSpy.Text {
 			if (options.TextAreaCommandGuid != null)
 				wpfCommandManager.Add(options.TextAreaCommandGuid.Value, textEditor.TextArea);
 			if (options.MenuGuid != null)
-				menuManager.InitializeContextMenu(textEditor, options.MenuGuid.Value, options?.CreateGuidObjectsCreator(), new ContextMenuInitializer(textEditor, textEditor));
+				menuManager.InitializeContextMenu(textEditor, options.MenuGuid.Value, options.CreateGuidObjectsCreator?.Invoke(), new ContextMenuInitializer(textEditor, textEditor));
 
 			return textEditor;
 		}

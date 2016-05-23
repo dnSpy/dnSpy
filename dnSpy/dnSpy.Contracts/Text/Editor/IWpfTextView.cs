@@ -17,26 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text {
+using System.Windows;
+using dnSpy.Contracts.Controls;
+
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ICodeEditorUI"/> options
+	/// WPF text view
 	/// </summary>
-	public sealed class CodeEditorOptions : CommonTextEditorOptions {
+	public interface IWpfTextView : ITextView, IUIObjectProvider2 {
 		/// <summary>
-		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
+		/// Gets WPF text view's element
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
-
-		/// <summary>
-		/// Clones this
-		/// </summary>
-		/// <returns></returns>
-		public new CodeEditorOptions Clone() => CopyTo(new CodeEditorOptions());
-
-		CodeEditorOptions CopyTo(CodeEditorOptions other) {
-			base.CopyTo(other);
-			other.TextBuffer = TextBuffer;
-			return other;
-		}
+		FrameworkElement VisualElement { get; }
 	}
 }

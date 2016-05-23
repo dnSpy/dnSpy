@@ -18,39 +18,34 @@
 */
 
 using System;
-using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// Common text editor options
+	/// <see cref="ITextDataModel"/> content type changed event args
 	/// </summary>
-	public class CommonTextEditorOptions : TextViewCreatorOptions {
+	public sealed class TextDataModelContentTypeChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Content type or null
+		/// Old content type
 		/// </summary>
-		public IContentType ContentType { get; set; }
+		public IContentType BeforeContentType { get; }
 
 		/// <summary>
-		/// Content type guid or null
+		/// New content type
 		/// </summary>
-		public Guid? ContentTypeGuid { get; set; }
+		public IContentType AfterContentType { get; }
 
 		/// <summary>
-		/// Clones this
+		/// Constructor
 		/// </summary>
-		/// <returns></returns>
-		public new CommonTextEditorOptions Clone() => CopyTo(new CommonTextEditorOptions());
-
-		/// <summary>
-		/// Copy this to <paramref name="other"/>
-		/// </summary>
-		/// <param name="other">Other instance</param>
-		/// <returns></returns>
-		public CommonTextEditorOptions CopyTo(CommonTextEditorOptions other) {
-			base.CopyTo(other);
-			other.ContentType = ContentType;
-			other.ContentTypeGuid = ContentTypeGuid;
-			return other;
+		/// <param name="beforeContentType">Old content type</param>
+		/// <param name="afterContentType">New content type</param>
+		public TextDataModelContentTypeChangedEventArgs(IContentType beforeContentType, IContentType afterContentType) {
+			if (beforeContentType == null)
+				throw new ArgumentNullException(nameof(beforeContentType));
+			if (afterContentType == null)
+				throw new ArgumentNullException(nameof(afterContentType));
+			BeforeContentType = beforeContentType;
+			AfterContentType = afterContentType;
 		}
 	}
 }

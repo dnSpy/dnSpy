@@ -23,6 +23,7 @@ using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Roslyn;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
@@ -145,6 +146,9 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary><see cref="IReplEditorUI"/></summary>
 		public static readonly string GUIDOBJ_REPL_EDITOR_GUID = "530F5283-6FCF-49EC-A7D1-52D456C9C846";
+
+		/// <summary><see cref="IWpfTextView"/></summary>
+		public static readonly string GUIDOBJ_WPF_TEXTVIEW_GUID = "2579A07D-C6F5-4A13-B0FB-2C8828278C0C";
 
 		/// <summary>Log text editor control</summary>
 		public static readonly string GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID = "898C7BE5-EDAE-42E5-A97F-1FA73C18ED36";

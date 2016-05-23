@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Code text editor
 	/// </summary>
-	public interface ICodeEditor {
+	public interface ICodeEditor : IDisposable {
 		/// <summary>
 		/// Gets the <see cref="ITextBuffer"/> instance
 		/// </summary>

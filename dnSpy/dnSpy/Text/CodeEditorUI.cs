@@ -17,48 +17,48 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.Editor;
 
 namespace dnSpy.Text {
 	sealed class CodeEditorUI : ICodeEditorUI {
-		public ITextBuffer TextBuffer => textEditor.TextBuffer;
-		public object UIObject => textEditor;
-		public IInputElement FocusedElement => textEditor.FocusedElement;
-		public FrameworkElement ScaleElement => textEditor.ScaleElement;
+		public IWpfTextView TextView { get; }
+		public ITextBuffer TextBuffer => TextView.TextViewModel.EditBuffer;
+		public object UIObject => TextView.UIObject;
+		public IInputElement FocusedElement => TextView.FocusedElement;
+		public FrameworkElement ScaleElement => TextView.ScaleElement;
 		public object Tag { get; set; }
 
+		readonly IWpfTextView wpfTextView;
 		readonly DnSpyTextEditor textEditor;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly CodeEditorUI codeEditorUI;
-			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
 
-			public GuidObjectsCreator(CodeEditorUI codeEditorUI, Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects) {
+			public GuidObjectsCreator(CodeEditorUI codeEditorUI) {
 				this.codeEditorUI = codeEditorUI;
-				this.createGuidObjects = createGuidObjects;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditorUI);
-
-				var textEditor = (DnSpyTextEditor)args.CreatorObject.Object;
-				foreach (var go in textEditor.GetGuidObjects(args.OpenedFromKeyboard))
-					yield return go;
-
-				if (createGuidObjects != null) {
-					foreach (var guidObject in createGuidObjects(args))
-						yield return guidObject;
-				}
 			}
 		}
 
-		public CodeEditorUI(CodeEditorOptions options, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
+		public CodeEditorUI(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			options = options ?? new CodeEditorOptions();
-			this.textEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(options.Options, options.TextBuffer, true, () => new GuidObjectsCreator(this, options.Options.CreateGuidObjects)));
+			var wpfTextView = textEditorFactoryService2.CreateTextView(options.TextBuffer, options, (object)options.ContentType ?? options.ContentTypeGuid, true, () => new GuidObjectsCreator(this));
+			this.wpfTextView = wpfTextView;
+			TextView = wpfTextView;
+			this.textEditor = wpfTextView.DnSpyTextEditor;
+		}
+
+		public void Dispose() {
+			if (!wpfTextView.IsClosed)
+				wpfTextView.Close();
 		}
 	}
 }

@@ -18,11 +18,16 @@
 */
 
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Code text editor
 	/// </summary>
 	public interface ICodeEditorUI : ICodeEditor, IUIObjectProvider2 {
+		/// <summary>
+		/// Gets the text view
+		/// </summary>
+		IWpfTextView TextView { get; }
 	}
 }

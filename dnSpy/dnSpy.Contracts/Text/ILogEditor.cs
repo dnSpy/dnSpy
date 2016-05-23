@@ -17,13 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// A text control that allows appending text. Writing text is thread safe.
 	/// </summary>
-	public interface ILogEditor {
+	public interface ILogEditor : IDisposable {
 		/// <summary>
 		/// true to show line numbers
 		/// </summary>

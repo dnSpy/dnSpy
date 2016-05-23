@@ -154,7 +154,7 @@ namespace dnSpy.Text {
 			);
 		}
 
-		public IInputElement FocusedElement => this.TextArea;
+		public FrameworkElement FocusedElement => this.TextArea;
 		public FrameworkElement ScaleElement => this.TextArea;
 		internal IThemeManager ThemeManager { get; }
 

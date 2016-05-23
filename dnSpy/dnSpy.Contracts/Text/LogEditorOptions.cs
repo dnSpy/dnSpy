@@ -21,24 +21,15 @@ namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// <see cref="ILogEditor"/> options
 	/// </summary>
-	public sealed class LogEditorOptions {
-		/// <summary>
-		/// Text editor options
-		/// </summary>
-		public CommonTextEditorOptions Options {
-			get { return options ?? (options = new CommonTextEditorOptions()); }
-			set { options = value; }
-		}
-		CommonTextEditorOptions options;
-
+	public sealed class LogEditorOptions : CommonTextEditorOptions {
 		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
-		public LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
+		public new LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
 
 		LogEditorOptions CopyTo(LogEditorOptions other) {
-			other.Options = Options.Clone();
+			base.CopyTo(other);
 			return other;
 		}
 	}

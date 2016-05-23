@@ -18,38 +18,52 @@
 */
 
 using System;
-using dnSpy.Contracts.Text.Editor;
+using System.Collections.Generic;
+using dnSpy.Contracts.Menus;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Common text editor options
+	/// <see cref="IWpfTextView"/> creator options
 	/// </summary>
-	public class CommonTextEditorOptions : TextViewCreatorOptions {
+	public class TextViewCreatorOptions {
 		/// <summary>
-		/// Content type or null
+		/// Command guid of text editor or null
 		/// </summary>
-		public IContentType ContentType { get; set; }
+		public Guid? TextEditorCommandGuid { get; set; }
 
 		/// <summary>
-		/// Content type guid or null
+		/// Command guid of text area or null
 		/// </summary>
-		public Guid? ContentTypeGuid { get; set; }
+		public Guid? TextAreaCommandGuid { get; set; }
+
+		/// <summary>
+		/// Guid of context menu or null
+		/// </summary>
+		public Guid? MenuGuid { get; set; }
+
+		/// <summary>
+		/// Creates <see cref="GuidObject"/>s, can be null
+		/// </summary>
+		public Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
 
 		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
-		public new CommonTextEditorOptions Clone() => CopyTo(new CommonTextEditorOptions());
+		public TextViewCreatorOptions Clone() => CopyTo(new TextViewCreatorOptions());
 
 		/// <summary>
 		/// Copy this to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public CommonTextEditorOptions CopyTo(CommonTextEditorOptions other) {
-			base.CopyTo(other);
-			other.ContentType = ContentType;
-			other.ContentTypeGuid = ContentTypeGuid;
+		public TextViewCreatorOptions CopyTo(TextViewCreatorOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			other.TextEditorCommandGuid = TextEditorCommandGuid;
+			other.TextAreaCommandGuid = TextAreaCommandGuid;
+			other.MenuGuid = MenuGuid;
+			other.CreateGuidObjects = CreateGuidObjects;
 			return other;
 		}
 	}

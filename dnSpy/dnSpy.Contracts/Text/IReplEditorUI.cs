@@ -17,13 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// A REPL (Read, Eval, Print, Loop) editor
 	/// </summary>
-	public interface IReplEditorUI : IReplEditor, IUIObjectProvider2, IDisposable {
+	public interface IReplEditorUI : IReplEditor, IUIObjectProvider2 {
 	}
 }

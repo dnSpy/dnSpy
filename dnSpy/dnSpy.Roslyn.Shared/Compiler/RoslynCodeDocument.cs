@@ -35,5 +35,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			Info = documentInfo;
 			NameNoExtension = nameNoExtension;
 		}
+
+		public void Dispose() => codeEditor.Dispose();
 	}
 }

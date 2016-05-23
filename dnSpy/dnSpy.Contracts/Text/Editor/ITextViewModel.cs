@@ -17,26 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text {
+using System;
+
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ICodeEditorUI"/> options
+	/// <see cref="ITextView"/> model
 	/// </summary>
-	public sealed class CodeEditorOptions : CommonTextEditorOptions {
+	public interface ITextViewModel : IDisposable {
 		/// <summary>
-		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
+		/// Gets the data model
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
+		ITextDataModel DataModel { get; }
 
 		/// <summary>
-		/// Clones this
+		/// Data level text buffer
 		/// </summary>
-		/// <returns></returns>
-		public new CodeEditorOptions Clone() => CopyTo(new CodeEditorOptions());
+		ITextBuffer DataBuffer { get; }
 
-		CodeEditorOptions CopyTo(CodeEditorOptions other) {
-			base.CopyTo(other);
-			other.TextBuffer = TextBuffer;
-			return other;
-		}
+		/// <summary>
+		/// Buffer used for editing text. It may be identical to <see cref="DataBuffer"/>
+		/// </summary>
+		ITextBuffer EditBuffer { get; }
+
+		/// <summary>
+		/// Buffer shown in the text view. It may be identical to <see cref="EditBuffer"/>
+		/// </summary>
+		ITextBuffer VisualBuffer { get; }
 	}
 }

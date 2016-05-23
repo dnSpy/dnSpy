@@ -17,26 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text {
+using System;
+
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ICodeEditorUI"/> options
+	/// <see cref="ITextView"/> created event
 	/// </summary>
-	public sealed class CodeEditorOptions : CommonTextEditorOptions {
+	public sealed class TextViewCreatedEventArgs : EventArgs {
 		/// <summary>
-		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
+		/// New <see cref="ITextView"/>
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
+		public ITextView TextView { get; }
 
 		/// <summary>
-		/// Clones this
+		/// Constructor
 		/// </summary>
-		/// <returns></returns>
-		public new CodeEditorOptions Clone() => CopyTo(new CodeEditorOptions());
-
-		CodeEditorOptions CopyTo(CodeEditorOptions other) {
-			base.CopyTo(other);
-			other.TextBuffer = TextBuffer;
-			return other;
+		/// <param name="textView">New <see cref="ITextView"/></param>
+		public TextViewCreatedEventArgs(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			TextView = textView;
 		}
 	}
 }

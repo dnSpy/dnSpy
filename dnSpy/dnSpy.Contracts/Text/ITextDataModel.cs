@@ -17,26 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// <see cref="ICodeEditorUI"/> options
+	/// Text data model
 	/// </summary>
-	public sealed class CodeEditorOptions : CommonTextEditorOptions {
+	public interface ITextDataModel {
 		/// <summary>
-		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
+		/// Gets the content type (it's usually <see cref="DocumentBuffer"/>'s content type)
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
+		IContentType ContentType { get; }
 
 		/// <summary>
-		/// Clones this
+		/// Text buffer shown in the text editor and may be identical to <see cref="DocumentBuffer"/>
 		/// </summary>
-		/// <returns></returns>
-		public new CodeEditorOptions Clone() => CopyTo(new CodeEditorOptions());
+		ITextBuffer DataBuffer { get; }
 
-		CodeEditorOptions CopyTo(CodeEditorOptions other) {
-			base.CopyTo(other);
-			other.TextBuffer = TextBuffer;
-			return other;
-		}
+		/// <summary>
+		/// Text buffer source document and may be identical to <see cref="DataBuffer"/>
+		/// </summary>
+		ITextBuffer DocumentBuffer { get; }
+
+		/// <summary>
+		/// Raised when <see cref="ContentType"/> has been changed
+		/// </summary>
+		event EventHandler<TextDataModelContentTypeChangedEventArgs> ContentTypeChanged;
 	}
 }

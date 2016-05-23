@@ -27,8 +27,10 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
+using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Text {
@@ -64,6 +66,7 @@ namespace dnSpy.Text {
 		}
 		readonly FrameworkElement paddingElement;
 
+		readonly IWpfTextView wpfTextView;
 		readonly DnSpyTextEditor textEditor;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
@@ -73,32 +76,24 @@ namespace dnSpy.Text {
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly LogEditorUI logEditorUI;
-			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
 
-			public GuidObjectsCreator(LogEditorUI logEditorUI, Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects) {
+			public GuidObjectsCreator(LogEditorUI logEditorUI) {
 				this.logEditorUI = logEditorUI;
-				this.createGuidObjects = createGuidObjects;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_LOG_EDITOR_GUID, logEditorUI);
-
-				var textEditor = (DnSpyTextEditor)args.CreatorObject.Object;
-				foreach (var go in textEditor.GetGuidObjects(args.OpenedFromKeyboard))
-					yield return go;
-
-				if (createGuidObjects != null) {
-					foreach (var guidObject in createGuidObjects(args))
-						yield return guidObject;
-				}
 			}
 		}
 
-		public LogEditorUI(LogEditorOptions options, IDnSpyTextEditorCreator dnSpyTextEditorCreator) {
+		public LogEditorUI(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			options = options ?? new LogEditorOptions();
-			this.textEditor = dnSpyTextEditorCreator.Create(new DnSpyTextEditorOptions(options.Options, null, false, () => new GuidObjectsCreator(this, options.Options.CreateGuidObjects)));
+
+			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, false, () => new GuidObjectsCreator(this));
+			this.wpfTextView = wpfTextView;
+			this.textEditor = wpfTextView.DnSpyTextEditor;
 			this.cachedColorsList = new CachedColorsList();
 			this.textEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
@@ -240,6 +235,11 @@ namespace dnSpy.Text {
 				pendingOutput = new List<ColorAndText>();
 				pendingOutput_dispatching = false;
 			}
+		}
+
+		public void Dispose() {
+			if (!wpfTextView.IsClosed)
+				wpfTextView.Close();
 		}
 	}
 }

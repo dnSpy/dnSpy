@@ -339,6 +339,13 @@
     <Compile Include="Text\ContentTypeDefinition.cs" />
     <Compile Include="Text\ContentTypes.cs" />
     <Compile Include="Text\DisplayNameAttribute.cs" />
+    <Compile Include="Text\Editor\ITextEditorFactoryService.cs" />
+    <Compile Include="Text\Editor\ITextView.cs" />
+    <Compile Include="Text\Editor\ITextViewModel.cs" />
+    <Compile Include="Text\Editor\IWpfTextView.cs" />
+    <Compile Include="Text\Editor\IWpfTextViewHost.cs" />
+    <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
+    <Compile Include="Text\Editor\TextViewCreatedEventArgs.cs" />
     <Compile Include="Text\ExportContentTypeDefinitionAttribute.cs" />
     <Compile Include="Text\ICodeEditor.cs" />
     <Compile Include="Text\ICodeEditorCreator.cs" />
@@ -358,6 +365,7 @@
     <Compile Include="Text\ITextBufferEdit.cs" />
     <Compile Include="Text\ITextBufferFactoryService.cs" />
     <Compile Include="Text\ITextChange.cs" />
+    <Compile Include="Text\ITextDataModel.cs" />
     <Compile Include="Text\ITextEdit.cs" />
     <Compile Include="Text\ITextEditorSettings.cs" />
     <Compile Include="Text\ITextSnapshot.cs" />
@@ -373,6 +381,7 @@
     <Compile Include="Text\Span.cs" />
     <Compile Include="Text\TextBufferCreatedEventArgs.cs" />
     <Compile Include="Text\TextContentChangedEventArgs.cs" />
+    <Compile Include="Text\TextDataModelContentTypeChangedEventArgs.cs" />
     <Compile Include="Text\TextEditorLocation.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITextColor.cs" />

@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Code document
 	/// </summary>
-	public interface ICodeDocument {
+	public interface ICodeDocument : IDisposable {
 		/// <summary>
 		/// Name of document
 		/// </summary>

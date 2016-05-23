@@ -51,8 +51,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: VisualBasicConstants.LatestVersion);
 		protected override string FileExtension => ".vb";
-		public override IEnumerable<string> RequiredAssemblyReferences => defaultAssemblyReferences;
-		static readonly string[] defaultAssemblyReferences = new string[] {
+		public override IEnumerable<string> RequiredAssemblyReferences => requiredAssemblyReferences;
+		static readonly string[] requiredAssemblyReferences = new string[] {
 			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 		};
 

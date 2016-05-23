@@ -21,16 +21,7 @@ namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// <see cref="IReplEditor"/> options
 	/// </summary>
-	public sealed class ReplEditorOptions {
-		/// <summary>
-		/// Text editor options
-		/// </summary>
-		public CommonTextEditorOptions Options {
-			get { return options ?? (options = new CommonTextEditorOptions()); }
-			set { options = value; }
-		}
-		CommonTextEditorOptions options;
-
+	public sealed class ReplEditorOptions : CommonTextEditorOptions {
 		/// <summary>
 		/// Default <see cref="PrimaryPrompt"/> value
 		/// </summary>
@@ -63,12 +54,12 @@ namespace dnSpy.Contracts.Text {
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
-		public ReplEditorOptions Clone() => CopyTo(new ReplEditorOptions());
+		public new ReplEditorOptions Clone() => CopyTo(new ReplEditorOptions());
 
 		ReplEditorOptions CopyTo(ReplEditorOptions other) {
+			base.CopyTo(other);
 			other.PrimaryPrompt = PrimaryPrompt;
 			other.SecondaryPrompt = SecondaryPrompt;
-			other.Options = Options.Clone();
 			return other;
 		}
 	}

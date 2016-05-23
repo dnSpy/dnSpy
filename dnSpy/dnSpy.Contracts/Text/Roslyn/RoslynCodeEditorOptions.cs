@@ -21,16 +21,7 @@ namespace dnSpy.Contracts.Text.Roslyn {
 	/// <summary>
 	/// <see cref="IRoslynCodeEditorUI"/> options
 	/// </summary>
-	public sealed class RoslynCodeEditorOptions {
-		/// <summary>
-		/// Text editor options
-		/// </summary>
-		public CommonTextEditorOptions Options {
-			get { return options ?? (options = new CommonTextEditorOptions()); }
-			set { options = value; }
-		}
-		CommonTextEditorOptions options;
-
+	public sealed class RoslynCodeEditorOptions : CommonTextEditorOptions {
 		/// <summary>
 		/// Text buffer to use or null
 		/// </summary>
@@ -40,10 +31,10 @@ namespace dnSpy.Contracts.Text.Roslyn {
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
-		public RoslynCodeEditorOptions Clone() => CopyTo(new RoslynCodeEditorOptions());
+		public new RoslynCodeEditorOptions Clone() => CopyTo(new RoslynCodeEditorOptions());
 
 		RoslynCodeEditorOptions CopyTo(RoslynCodeEditorOptions other) {
-			other.Options = Options.Clone();
+			base.CopyTo(other);
 			other.TextBuffer = TextBuffer;
 			return other;
 		}
@@ -53,10 +44,11 @@ namespace dnSpy.Contracts.Text.Roslyn {
 		/// </summary>
 		/// <returns></returns>
 		public CodeEditorOptions ToCodeEditorOptions() {
-			return new CodeEditorOptions {
-				Options = Options.Clone(),
+			var res = new CodeEditorOptions {
 				TextBuffer = TextBuffer,
 			};
+			CopyTo(res);
+			return res;
 		}
 	}
 }

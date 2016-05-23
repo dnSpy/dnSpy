@@ -41,16 +41,17 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
 		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
+		readonly List<RoslynCodeDocument> documents;
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator) {
 			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
+			this.documents = new List<RoslynCodeDocument>();
 		}
 
 		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
 			Debug.Assert(workspace == null);
 
-			var documents = new List<RoslynCodeDocument>();
 			workspace = new AdhocWorkspace();
 			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
 			var projectId = ProjectId.CreateNewId();
@@ -79,7 +80,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension, string code) {
 			var options = new RoslynCodeEditorOptions();
-			options.Options.ContentTypeGuid = ContentType;
+			options.ContentTypeGuid = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
 
@@ -116,6 +117,9 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public void Dispose() {
 			// This also closes all documents
 			workspace?.Dispose();
+			foreach (var doc in documents)
+				doc.Dispose();
+			documents.Clear();
 		}
 	}
 }

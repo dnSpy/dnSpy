@@ -17,26 +17,38 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text {
+using System;
+using System.Windows.Controls;
+using dnSpy.Contracts.Controls;
+
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ICodeEditorUI"/> options
+	/// <see cref="IWpfTextView"/> host control
 	/// </summary>
-	public sealed class CodeEditorOptions : CommonTextEditorOptions {
+	public interface IWpfTextViewHost : IUIObjectProvider2 {
 		/// <summary>
-		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
+		/// true if it's been closed
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
+		bool IsClosed { get; }
 
 		/// <summary>
-		/// Clones this
+		/// Gets the text view
 		/// </summary>
-		/// <returns></returns>
-		public new CodeEditorOptions Clone() => CopyTo(new CodeEditorOptions());
+		IWpfTextView TextView { get; }
 
-		CodeEditorOptions CopyTo(CodeEditorOptions other) {
-			base.CopyTo(other);
-			other.TextBuffer = TextBuffer;
-			return other;
-		}
+		/// <summary>
+		/// Raised after <see cref="Close"/> has been called
+		/// </summary>
+		event EventHandler Closed;
+
+		/// <summary>
+		/// Closes the host and its <see cref="IWpfTextView"/>
+		/// </summary>
+		void Close();
+
+		/// <summary>
+		/// Gets the WPF control
+		/// </summary>
+		Control HostControl { get; }
 	}
 }
