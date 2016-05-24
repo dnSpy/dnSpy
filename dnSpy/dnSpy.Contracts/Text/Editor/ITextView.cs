@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface ITextView {
 		/// <summary>
-		/// Closes the text view and its host
+		/// Closes the text view
 		/// </summary>
 		void Close();
 

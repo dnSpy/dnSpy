@@ -42,7 +42,7 @@ namespace dnSpy.Shared.HexEditor {
 			sb.Append("</span>");
 		}
 
-		static readonly char[] whitespace = new char[] { '\r', '\n', '\t', ' ' };
+		static readonly char[] whitespace = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029', '\t', ' ' };
 		void WriteString(string s) {
 			for (int i = 0; i < s.Length;) {
 				int wsi = s.IndexOfAny(whitespace, i);
@@ -64,6 +64,9 @@ namespace dnSpy.Shared.HexEditor {
 				case '\r':
 					break;
 				case '\n':
+				case '\u0085':
+				case '\u2028':
+				case '\u2029':
 					WriteBr();
 					break;
 				default:

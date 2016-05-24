@@ -84,7 +84,7 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 			this.index = newLineIndex + 1;
 			return true;
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n' };
+		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		public void Reset() {
 			throw new NotImplementedException();

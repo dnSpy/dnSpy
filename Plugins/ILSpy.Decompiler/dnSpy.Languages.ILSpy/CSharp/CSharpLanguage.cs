@@ -276,13 +276,14 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 					new AddXmlDocTransform(state.State.XmlDoc_StringBuilder).Run(astBuilder.SyntaxTree);
 				}
 				catch (XmlException ex) {
-					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(newLineChars, StringSplitOptions.RemoveEmptyEntries);
 					var insertionPoint = astBuilder.SyntaxTree.FirstChild;
 					for (int i = 0; i < msg.Length; i++)
 						astBuilder.SyntaxTree.InsertChildBefore(insertionPoint, new Comment(msg[i], CommentType.Documentation), Roles.Comment);
 				}
 			}
 		}
+		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
 			WriteAssembly(asm, output, ctx);

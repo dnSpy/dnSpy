@@ -512,7 +512,7 @@ namespace dnSpy.Text.Editor {
 			}
 			return sb.ToString();
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n' };
+		internal static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		void AddUserInput(string text, bool clearSearchText = true) {
 			if (!UpdateCaretForEdit())
@@ -1036,7 +1036,6 @@ namespace dnSpy.Text.Editor {
 	}
 
 	struct CachedTextTokenColorsCreator {
-		static readonly char[] newLineChars = new char[] { '\r', '\n' };
 		readonly ReplEditor owner;
 		readonly CachedTextTokenColors cachedColors;
 		readonly int totalLength;
@@ -1068,7 +1067,7 @@ namespace dnSpy.Text.Editor {
 			int so = offset;
 			int end = offset + length;
 			while (so < end) {
-				int nlOffs = s.IndexOfAny(newLineChars, so, end - so);
+				int nlOffs = s.IndexOfAny(ReplEditor.newLineChars, so, end - so);
 				if (nlOffs >= 0) {
 					int nlLen = s[nlOffs] == '\r' && nlOffs + 1 < end && s[nlOffs + 1] == '\n' ? 2 : 1;
 					cachedColors.Append(color, s, so, nlOffs - so + nlLen);

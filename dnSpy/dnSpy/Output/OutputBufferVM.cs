@@ -127,6 +127,6 @@ namespace dnSpy.Output {
 				}
 			}
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n' };
+		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 	}
 }

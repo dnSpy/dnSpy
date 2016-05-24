@@ -59,14 +59,13 @@ namespace dnSpy.Shared.Controls {
 			var sb = new StringBuilder();
 			for (int offs = 0; offs < s.Length;) {
 				sb.Clear();
-				while (offs < s.Length && s[offs] != '\r' && s[offs] != '\n')
+				char c;
+				while (offs < s.Length && (c = s[offs]) != '\r' && c != '\n' && c != '\u0085' && c != '\u2028' && c != '\u2029')
 					sb.Append(s[offs++]);
 				int nlLen;
 				if (offs >= s.Length)
 					nlLen = 0;
-				else if (s[offs] == '\n')
-					nlLen = 1;
-				else if (offs + 1 < s.Length && s[offs + 1] == '\n')
+				else if (s[offs] == '\r' && offs + 1 < s.Length && s[offs + 1] == '\n')
 					nlLen = 2;
 				else
 					nlLen = 1;
@@ -179,6 +178,20 @@ namespace dnSpy.Shared.Controls {
 			public void UpdateParent(FastTextBlock ftb) => parent = ftb;
 			public TextSource Source => this;
 
+			TextRunProperties GetDefaultTextRunProperties() {
+				return new TextProps {
+					background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
+					foreground = TextElement.GetForeground(parent),
+					typeface = new Typeface(
+											TextElement.GetFontFamily(parent),
+											TextElement.GetFontStyle(parent),
+											TextElement.GetFontWeight(parent),
+											TextElement.GetFontStretch(parent)
+										),
+					fontSize = TextElement.GetFontSize(parent),
+				};
+			}
+
 			Dictionary<int, TextRun> runs = new Dictionary<int, TextRun>();
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
 				var index = textSourceCharacterIndex;
@@ -189,35 +202,26 @@ namespace dnSpy.Shared.Controls {
 					return run;
 				}
 
-				if (index >= text.Length || text[index] == '\r' || text[index] == '\n') {
-					if (index < text.Length && text[index] != '\r')
-						return new TextCharacters(" ", null);
-					else
-						return new TextEndOfParagraph(1);
+				if (index >= text.Length)
+					return new TextEndOfParagraph(1);
+				char c = text[index];
+				if (c == '\r' || c == '\n' || c == '\u0085' || c == '\u2028' || c == '\u2029') {
+					int nlLen = c == '\r' && index + 1 < text.Length && text[index + 1] == '\n' ? 2 : 1;
+					return new TextEndOfParagraph(nlLen);
 				}
 
 				int defaultTextLength, tokenLength;
 				object color;
 				if (!cachedTextTokenColors.Find(index, out defaultTextLength, out color, out tokenLength)) {
 					Debug.Fail("Could not find token info");
-					return new TextCharacters(" ", null);
+					return new TextCharacters(" ", GetDefaultTextRunProperties());
 				}
 
 				TextCharacters defaultRun = null, tokenRun = null;
 				if (defaultTextLength != 0) {
 					var defaultText = text.Substring(index, defaultTextLength);
 
-					defaultRun = new TextCharacters(defaultText, new TextProps {
-						background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
-						foreground = TextElement.GetForeground(parent),
-						typeface = new Typeface(
-							TextElement.GetFontFamily(parent),
-							TextElement.GetFontStyle(parent),
-							TextElement.GetFontWeight(parent),
-							TextElement.GetFontStretch(parent)
-						),
-						fontSize = TextElement.GetFontSize(parent),
-					});
+					defaultRun = new TextCharacters(defaultText, GetDefaultTextRunProperties());
 				}
 				index += defaultTextLength;
 
@@ -238,7 +242,7 @@ namespace dnSpy.Shared.Controls {
 						TextElement.GetFontStretch(parent)
 					);
 
-					tokenRun = new TextCharacters(tokenText, textProps);
+					tokenRun = new TextCharacters(tokenText.Length == 0 ? " " : tokenText, textProps);
 				}
 
 				Debug.Assert(defaultRun != null || tokenRun != null);

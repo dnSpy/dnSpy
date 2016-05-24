@@ -42,7 +42,7 @@ namespace dnSpy.Shared.Text {
 		bool isAppendingDefaultText = true;
 		Dictionary<int, TokenInfo> offsetToTokenInfo = new Dictionary<int, TokenInfo>();
 
-		static readonly char[] newLineChars = new char[] { '\r', '\n' };
+		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		const int TEXT_TOKEN_LENGTH_MAX = ushort.MaxValue;
 		const int TOKEN_LENGTH_MAX = ushort.MaxValue;

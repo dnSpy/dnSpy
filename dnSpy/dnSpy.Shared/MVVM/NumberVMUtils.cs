@@ -31,6 +31,9 @@ namespace dnSpy.Shared.MVVM {
 			s = s.Replace("\t", string.Empty);
 			s = s.Replace("\r", string.Empty);
 			s = s.Replace("\n", string.Empty);
+			s = s.Replace("\u0085", string.Empty);
+			s = s.Replace("\u2028", string.Empty);
+			s = s.Replace("\u2029", string.Empty);
 			if (s.Length % 2 != 0) {
 				error = dnSpy_Shared_Resources.InvalidHexStringSize;
 				return null;

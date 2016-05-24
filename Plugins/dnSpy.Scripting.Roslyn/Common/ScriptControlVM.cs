@@ -381,7 +381,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			name = parts[0];
 			return true;
 		}
-		static readonly char[] argSeps = new char[] { ' ', '\t', '\r', '\n' };
+		static readonly char[] argSeps = new char[] { ' ', '\t', '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		sealed class ExecScriptCommandState {
 			public readonly IScriptCommand Command;

@@ -50,7 +50,7 @@ namespace dnSpy.Shared.Controls {
 				return s;
 			var sb = new StringBuilder(s.Length);
 			foreach (var c in s) {
-				if (c == '\r' || c == '\n')
+				if (c == '\r' || c == '\n' || c == '\u0085' || c == '\u2028' || c == '\u2029')
 					continue;
 				sb.Append(c);
 			}

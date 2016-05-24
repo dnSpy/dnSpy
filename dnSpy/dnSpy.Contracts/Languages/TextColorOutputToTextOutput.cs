@@ -70,15 +70,15 @@ namespace dnSpy.Contracts.Languages {
 			output.Write(data, text);
 			int index = text.LastIndexOfAny(newLineChars);
 			if (index >= 0) {
-				line += text.Split(lineFeedChar).Length - 1;	// good enough for our purposes
+				line += text.Split(oneCharNewLineChars).Length - 1;	// good enough for our purposes
 				col = text.Length - (index + 1) + 1;
 				indent = 0;
 			}
 			else
 				col += text.Length;
 		}
-		static readonly char[] lineFeedChar = new char[] { '\n' };
-		static readonly char[] newLineChars = new char[] { '\r', '\n' };
+		static readonly char[] oneCharNewLineChars = new char[] { '\n', '\u0085', '\u2028', '\u2029' };
+		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		void ITextOutput.WriteDefinition(string text, object definition, object data, bool isLocal) =>
 			((ITextOutput)this).Write(text, data);
