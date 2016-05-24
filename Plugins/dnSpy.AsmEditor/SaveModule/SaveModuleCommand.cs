@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		object[] GetDirtyDocs() => undoCommandManager.Value.GetModifiedDocuments().ToArray();
-		bool SaveAll_CanExecute => GetDirtyDocs().Length > 0;
+		bool SaveAll_CanExecute => undoCommandManager.Value.CachedHasModifiedDocuments;
 		void SaveAll_Execute() => documentSaver.Value.Save(GetDirtyDocs());
 	}
 

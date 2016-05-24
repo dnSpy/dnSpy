@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace dnSpy.AsmEditor.UndoRedo {
@@ -67,6 +68,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IEnumerable<IUndoObject> UndoObjects { get; }
 		IEnumerable<IUndoObject> RedoObjects { get; }
 		void CallGc();
+		bool CachedHasModifiedDocuments { get; }
 		IEnumerable<object> GetModifiedDocuments();
 		IEnumerable<IUndoObject> GetAllObjects();
 		IUndoObject GetUndoObject(object obj);
@@ -85,8 +87,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		public event EventHandler<UndoCommandManagerEventArgs> OnEvent;
 
-		void NotifyEvent(UndoCommandManagerEventType type, IUndoObject obj = null) =>
+		void NotifyEvent(UndoCommandManagerEventType type, IUndoObject obj = null) {
+			UndoRedoChanged();
 			OnEvent?.Invoke(this, new UndoCommandManagerEventArgs(type, obj));
+		}
 
 		[ImportingConstructor]
 		UndoCommandManager([ImportMany] Lazy<IUndoableDocumentsProvider>[] undoableDocumentsProviders) {
@@ -282,6 +286,33 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			UpdateAssemblySavedStateRedo(group);
 			NotifyEvent(UndoCommandManagerEventType.Redo);
 		}
+
+		void UndoRedoChanged() {
+			// Make sure the save all button gets enabled or disabled
+			cachedHasModifiedDocumentsDateTime = DateTime.MinValue;
+			CommandManager.InvalidateRequerySuggested();
+		}
+
+		// If there are many files opened (say 400), figuring out all the modified documents could
+		// take a while because DnSpyFileUndoableDocumentsProvider calls FileTreeView.FindNode()
+		// for every file. This property caches the result to minimize CPU usage.
+		// If we got notified every time a document got closed, we could count the number of
+		// modified docs in WriteIsDirty() and remove this caching logic.
+		public bool CachedHasModifiedDocuments {
+			get {
+				var currValue = DateTime.UtcNow;
+				var diff = currValue - cachedHasModifiedDocumentsDateTime;
+				const int CACHED_WAIT_MS = 2000;
+				if (diff.TotalMilliseconds < CACHED_WAIT_MS)
+					return cachedHasModifiedDocumentsValue;
+				cachedHasModifiedDocumentsDateTime = currValue;
+				return cachedHasModifiedDocumentsValue = HasModifiedDocuments;
+			}
+		}
+		bool cachedHasModifiedDocumentsValue;
+		DateTime cachedHasModifiedDocumentsDateTime = DateTime.MinValue;
+
+		bool HasModifiedDocuments => GetModifiedDocuments().Any();
 
 		public IEnumerable<object> GetModifiedDocuments() {
 			var hash = new HashSet<object>();
