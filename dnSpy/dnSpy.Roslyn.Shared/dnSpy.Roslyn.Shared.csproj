@@ -49,6 +49,7 @@
     <Compile Include="Text\RoslynTextSnapshotColorizerProvider.cs" />
     <Compile Include="Text\TextBufferSourceTextContainer.cs" />
     <Compile Include="Text\TextSnapshotSourceText.cs" />
+    <Compile Include="Text\TextSnapshotTextLineCollection.cs" />
     <Compile Include="VisualBasic\VisualBasicConstants.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -40,7 +40,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 
 		public override void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) =>
 			TextSnapshot.CopyTo(sourceIndex, destination, destinationIndex, count);
-
+		protected override TextLineCollection GetLinesCore() => new TextSnapshotTextLineCollection(this);
 		public override string ToString(TextSpan span) => TextSnapshot.GetText(span.ToSpan());
 	}
 }

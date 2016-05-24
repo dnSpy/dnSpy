@@ -44,28 +44,28 @@ namespace dnSpy.Roslyn.Shared.Text {
 
 		//TODO: Remove this and replace it with false when GetColorSpans() works async
 		const bool continueOnCapturedContext = true;
-		public IEnumerable<ColorSpan> GetColorSpans(ITextSnapshot snapshot, Span span) {
+		public IEnumerable<ColorSpan> GetColorSpans(SnapshotSpan snapshotSpan) {
 			//TODO: Use a one-key cache (key=snapshot) stored in a weak ref?
 
 			//TODO: Try to use async. Will need to notify caller when our async method has the result.
 			var cancellationToken = CancellationToken.None;
 			try {
-				return GetColorSpansAsync(snapshot, span, cancellationToken).GetAwaiter().GetResult();
+				return GetColorSpansAsync(snapshotSpan, cancellationToken).GetAwaiter().GetResult();
 			}
 			catch (OperationCanceledException) {
 				return Enumerable.Empty<ColorSpan>();
 			}
 		}
 
-		async Task<IEnumerable<ColorSpan>> GetColorSpansAsync(ITextSnapshot snapshot, Span span, CancellationToken cancellationToken) {
-			var state = await GetStateAsync(snapshot, cancellationToken).ConfigureAwait(continueOnCapturedContext);
+		async Task<IEnumerable<ColorSpan>> GetColorSpansAsync(SnapshotSpan snapshotSpan, CancellationToken cancellationToken) {
+			var state = await GetStateAsync(snapshotSpan.Snapshot, cancellationToken).ConfigureAwait(continueOnCapturedContext);
 			Debug.Assert(state.IsValid);
 			if (!state.IsValid)
 				return Enumerable.Empty<ColorSpan>();
 
 			List<ColorSpan> colorSpans = null;
 			var classifier = new RoslynClassifier(state.SyntaxRoot, state.SemanticModel, state.Workspace, OutputColor.Error, cancellationToken);
-			foreach (var info in classifier.GetClassificationColors(span.ToTextSpan())) {
+			foreach (var info in classifier.GetClassificationColors(snapshotSpan.Span.ToTextSpan())) {
 				if (colorSpans == null)
 					colorSpans = new List<ColorSpan>();
 				colorSpans.Add(new ColorSpan(info.Span, new Color(info.Color.ToColorType()), ColorPriority.Default));

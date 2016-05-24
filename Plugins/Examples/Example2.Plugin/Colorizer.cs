@@ -30,11 +30,11 @@ namespace Example2.Plugin {
 		static readonly ITextColor color2 = new TextColor(Brushes.White, Brushes.Red);
 
 		// Gets called to colorize a range of the file. It's typically called once per visible line
-		public IEnumerable<ColorSpan> GetColorSpans(ITextSnapshot snapshot, Span span) {
-			foreach (var word in GetWords(snapshot.GetText(span))) {
+		public IEnumerable<ColorSpan> GetColorSpans(SnapshotSpan snapshotSpan) {
+			foreach (var word in GetWords(snapshotSpan.GetText())) {
 				// Create a new span. word.Item2 is the offset within the string, so add span.Start to
 				// get the offset in the snapshot.
-				var wordSpan = new Span(span.Start + word.Item2, word.Item1.Length);
+				var wordSpan = new Span(snapshotSpan.Span.Start + word.Item2, word.Item1.Length);
 				if (word.Item1 == "if")
 					yield return new ColorSpan(wordSpan, ColorType.Yellow);
 				else if (word.Item1.Length == 2)

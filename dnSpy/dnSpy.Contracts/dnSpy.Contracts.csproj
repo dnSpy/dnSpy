@@ -372,11 +372,14 @@
     <Compile Include="Text\ITextSnapshot.cs" />
     <Compile Include="Text\ITextSnapshotColorizer.cs" />
     <Compile Include="Text\ITextSnapshotColorizerProvider.cs" />
+    <Compile Include="Text\ITextSnapshotLine.cs" />
     <Compile Include="Text\OutputColor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />
     <Compile Include="Text\PropertyCollection.cs" />
+    <Compile Include="Text\SnapshotPoint.cs" />
+    <Compile Include="Text\SnapshotSpan.cs" />
     <Compile Include="Text\Span.cs" />
     <Compile Include="Text\TextBufferCreatedEventArgs.cs" />
     <Compile Include="Text\TextContentChangedEventArgs.cs" />

@@ -32,11 +32,12 @@ namespace dnSpy.Text {
 			this.priority = priority;
 		}
 
-		public IEnumerable<ColorSpan> GetColorSpans(ITextSnapshot snapshot, Span span) {
-			int offs = span.Start;
+		public IEnumerable<ColorSpan> GetColorSpans(SnapshotSpan snapshotSpan) {
+			int offs = snapshotSpan.Span.Start;
+			int end = snapshotSpan.Span.End;
 
 			var infoPart = cachedColorsList.Find(offs);
-			while (offs < span.End) {
+			while (offs < end) {
 				int defaultTextLength, tokenLength;
 				object color;
 				if (!infoPart.FindByDocOffset(offs, out defaultTextLength, out color, out tokenLength))
@@ -47,7 +48,7 @@ namespace dnSpy.Text {
 
 				offs += defaultTextLength + tokenLength;
 			}
-			Debug.Assert(offs == span.End);
+			Debug.Assert(offs == end);
 		}
 	}
 }

@@ -368,6 +368,7 @@
     <Compile Include="Text\TextEdit.cs" />
     <Compile Include="Text\TextSnapshot.cs" />
     <Compile Include="Text\TextSnapshotColorizerCreator.cs" />
+    <Compile Include="Text\TextSnapshotLine.cs" />
     <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />

@@ -48,9 +48,9 @@ namespace dnSpy.Text {
 
 			var span = Span.FromBounds(lineStartOffs, lineEndOffs);
 			colorAggregator.Initialize(textEditor.ThemeManager.Theme, span);
-			var snapshot = textEditor.TextBuffer.CurrentSnapshot;
+			var snapshotSpan = new SnapshotSpan(textEditor.TextBuffer.CurrentSnapshot, span);
 			foreach (var colorizer in textEditor.GetAllColorizers())
-				colorAggregator.Add(colorizer.GetColorSpans(snapshot, span));
+				colorAggregator.Add(colorizer.GetColorSpans(snapshotSpan));
 
 			foreach (var info in colorAggregator.Finish()) {
 				hl.Sections.Add(new HighlightedSection {

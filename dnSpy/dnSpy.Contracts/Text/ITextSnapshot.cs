@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.IO;
 
 namespace dnSpy.Contracts.Text {
@@ -42,6 +43,16 @@ namespace dnSpy.Contracts.Text {
 		int Length { get; }
 
 		/// <summary>
+		/// Number of lines
+		/// </summary>
+		int LineCount { get; }
+
+		/// <summary>
+		/// Gets all the lines
+		/// </summary>
+		IEnumerable<ITextSnapshotLine> Lines { get; }
+
+		/// <summary>
 		/// Gets the text buffer owner
 		/// </summary>
 		ITextBuffer TextBuffer { get; }
@@ -54,6 +65,27 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="destinationIndex">Destination index</param>
 		/// <param name="count">Number of characters to copy</param>
 		void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count);
+
+		/// <summary>
+		/// Gets a line
+		/// </summary>
+		/// <param name="lineNumber">Line number (0-based)</param>
+		/// <returns></returns>
+		ITextSnapshotLine GetLineFromLineNumber(int lineNumber);
+
+		/// <summary>
+		/// Gets a line
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		ITextSnapshotLine GetLineFromPosition(int position);
+
+		/// <summary>
+		/// Converts a position to a line number (0-based)
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		int GetLineNumberFromPosition(int position);
 
 		/// <summary>
 		/// Gets all the text
