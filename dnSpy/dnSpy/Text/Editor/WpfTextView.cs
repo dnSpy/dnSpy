@@ -24,6 +24,7 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextView : IWpfTextView {
+		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => DnSpyTextEditor.FocusedElement;
 		public object UIObject => DnSpyTextEditor;
 		public IInputElement FocusedElement => DnSpyTextEditor.FocusedElement;
@@ -36,6 +37,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
 				throw new ArgumentNullException(nameof(textViewModel));
+			Properties = new PropertyCollection();
 			this.DnSpyTextEditor = dnSpyTextEditor;
 			TextViewModel = textViewModel;
 		}

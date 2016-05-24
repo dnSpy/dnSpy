@@ -362,6 +362,7 @@
     <Compile Include="Text\IContentType.cs" />
     <Compile Include="Text\IContentTypeRegistryService.cs" />
     <Compile Include="Text\IOutputColorWriter.cs" />
+    <Compile Include="Text\IPropertyOwner.cs" />
     <Compile Include="Text\ITextBuffer.cs" />
     <Compile Include="Text\ITextBufferEdit.cs" />
     <Compile Include="Text\ITextBufferFactoryService.cs" />
@@ -375,6 +376,7 @@
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />
+    <Compile Include="Text\PropertyCollection.cs" />
     <Compile Include="Text\Span.cs" />
     <Compile Include="Text\TextBufferCreatedEventArgs.cs" />
     <Compile Include="Text\TextContentChangedEventArgs.cs" />

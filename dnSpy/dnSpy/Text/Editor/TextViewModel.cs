@@ -23,6 +23,7 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextViewModel : ITextViewModel {
+		public PropertyCollection Properties { get; }
 		public ITextDataModel DataModel { get; }
 		public ITextBuffer DataBuffer => DataModel.DataBuffer;
 		public ITextBuffer EditBuffer { get; }
@@ -37,6 +38,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(textDataModel));
 			if (editBuffer == null)
 				throw new ArgumentNullException(nameof(editBuffer));
+			Properties = new PropertyCollection();
 			DataModel = textDataModel;
 			EditBuffer = editBuffer;
 		}

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Text buffer
 	/// </summary>
-	public interface ITextBuffer {
+	public interface ITextBuffer : IPropertyOwner {
 		/// <summary>
 		/// Gets/sets the content type
 		/// </summary>

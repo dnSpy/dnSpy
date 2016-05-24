@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Text view
 	/// </summary>
-	public interface ITextView {
+	public interface ITextView : IPropertyOwner {
 		/// <summary>
 		/// Closes the text view
 		/// </summary>

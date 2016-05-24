@@ -72,6 +72,7 @@ namespace dnSpy.Text {
 		}
 		TextDocument document;
 
+		public PropertyCollection Properties { get; }
 		readonly Dispatcher dispatcher;
 
 		public TextBuffer(Dispatcher dispatcher, IContentType contentType, string text) {
@@ -79,6 +80,7 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(dispatcher));
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
+			Properties = new PropertyCollection();
 			this.dispatcher = dispatcher;
 			this.Document = new TextDocument(text);
 			this.contentType = contentType;

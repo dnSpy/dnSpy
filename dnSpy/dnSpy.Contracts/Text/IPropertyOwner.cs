@@ -17,31 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// <see cref="ITextView"/> model
+	/// Property owner
 	/// </summary>
-	public interface ITextViewModel : IPropertyOwner, IDisposable {
+	public interface IPropertyOwner {
 		/// <summary>
-		/// Gets the data model
+		/// Gets the property collection
 		/// </summary>
-		ITextDataModel DataModel { get; }
-
-		/// <summary>
-		/// Data level text buffer
-		/// </summary>
-		ITextBuffer DataBuffer { get; }
-
-		/// <summary>
-		/// Buffer used for editing text. It may be identical to <see cref="DataBuffer"/>
-		/// </summary>
-		ITextBuffer EditBuffer { get; }
-
-		/// <summary>
-		/// Buffer shown in the text view. It may be identical to <see cref="EditBuffer"/>
-		/// </summary>
-		ITextBuffer VisualBuffer { get; }
+		PropertyCollection Properties { get; }
 	}
 }
