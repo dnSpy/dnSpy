@@ -60,7 +60,7 @@ namespace dnSpy.Text {
 
 		public DnSpyTextEditor Create(DnSpyTextEditorOptions options) {
 			var textBuffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
-			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, textBuffer, options.UseShowLineNumbersOption);
+			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, textBuffer);
 
 			if (options.TextEditorCommandGuid != null)
 				wpfCommandManager.Add(options.TextEditorCommandGuid.Value, textEditor);

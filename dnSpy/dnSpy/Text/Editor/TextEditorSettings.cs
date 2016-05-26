@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 		}
 		bool highlightCurrentLine = true;
 
-		public bool WordWrap {
+		public WordWrapStyles WordWrap {
 			get { return wordWrap; }
 			set {
 				if (wordWrap != value) {
@@ -99,19 +99,19 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		bool wordWrap = false;
+		WordWrapStyles wordWrap = WordWrapStyles.None;
 
-		public TextEditorSettings Clone() => CopyTo(new TextEditorSettings());
-
-		public TextEditorSettings CopyTo(TextEditorSettings other) {
-			other.FontFamily = this.FontFamily;
-			other.FontSize = this.FontSize;
-			other.ShowLineNumbers = this.ShowLineNumbers;
-			other.AutoHighlightRefs = this.AutoHighlightRefs;
-			other.HighlightCurrentLine = this.HighlightCurrentLine;
-			other.WordWrap = this.WordWrap;
-			return other;
+		public bool ConvertTabsToSpaces {
+			get { return convertTabsToSpaces; }
+			set {
+				if (convertTabsToSpaces != value) {
+					convertTabsToSpaces = value;
+					OnPropertyChanged(nameof(ConvertTabsToSpaces));
+					OnModified();
+				}
+			}
 		}
+		bool convertTabsToSpaces = false;
 	}
 
 	[Export, Export(typeof(ITextEditorSettings))]
@@ -131,7 +131,8 @@ namespace dnSpy.Text.Editor {
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
 			this.AutoHighlightRefs = sect.Attribute<bool?>(nameof(AutoHighlightRefs)) ?? this.AutoHighlightRefs;
 			this.HighlightCurrentLine = sect.Attribute<bool?>(nameof(HighlightCurrentLine)) ?? this.HighlightCurrentLine;
-			this.WordWrap = sect.Attribute<bool?>(nameof(WordWrap)) ?? this.WordWrap;
+			this.WordWrap = sect.Attribute<WordWrapStyles?>(nameof(WordWrap)) ?? this.WordWrap;
+			this.ConvertTabsToSpaces = sect.Attribute<bool?>(nameof(ConvertTabsToSpaces)) ?? this.ConvertTabsToSpaces;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -146,6 +147,7 @@ namespace dnSpy.Text.Editor {
 			sect.Attribute(nameof(AutoHighlightRefs), AutoHighlightRefs);
 			sect.Attribute(nameof(HighlightCurrentLine), HighlightCurrentLine);
 			sect.Attribute(nameof(WordWrap), WordWrap);
+			sect.Attribute(nameof(ConvertTabsToSpaces), ConvertTabsToSpaces);
 		}
 	}
 }

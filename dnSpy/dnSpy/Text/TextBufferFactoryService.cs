@@ -22,7 +22,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
@@ -57,7 +56,7 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(text));
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
-			var textBuffer = new TextBuffer(Dispatcher.CurrentDispatcher, contentType, text);
+			var textBuffer = new TextBuffer(contentType, text);
 			TextBufferCreated?.Invoke(this, new TextBufferCreatedEventArgs(textBuffer));
 			return textBuffer;
 		}

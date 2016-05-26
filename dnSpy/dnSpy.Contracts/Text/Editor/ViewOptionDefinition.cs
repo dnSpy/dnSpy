@@ -17,27 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-using System.Windows.Media;
-
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Settings used by all text editors
+	/// <see cref="ITextView"/> option definition
 	/// </summary>
-	public interface ITextEditorSettings : INotifyPropertyChanged {
+	/// <typeparam name="T">Value type</typeparam>
+	public abstract class ViewOptionDefinition<T> : EditorOptionDefinition<T> {
 		/// <summary>
-		/// Font family
+		/// Returns true if <paramref name="scope"/> is a <see cref="ITextView"/>
 		/// </summary>
-		FontFamily FontFamily { get; }
-
-		/// <summary>
-		/// Font size
-		/// </summary>
-		double FontSize { get; }
-
-		/// <summary>
-		/// true if references are highlighted
-		/// </summary>
-		bool AutoHighlightRefs { get; }
+		/// <param name="scope">Scope</param>
+		/// <returns></returns>
+		public override bool IsApplicableToScope(IPropertyOwner scope) => scope is ITextView;
 	}
 }

@@ -17,27 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-using System.Windows.Media;
-
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Settings used by all text editors
+	/// Predefined <see cref="ITextView"/> roles
 	/// </summary>
-	public interface ITextEditorSettings : INotifyPropertyChanged {
-		/// <summary>
-		/// Font family
-		/// </summary>
-		FontFamily FontFamily { get; }
-
-		/// <summary>
-		/// Font size
-		/// </summary>
-		double FontSize { get; }
-
-		/// <summary>
-		/// true if references are highlighted
-		/// </summary>
-		bool AutoHighlightRefs { get; }
+	public static class PredefinedTextViewRoles {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public const string Analyzable = "ANALYZABLE";
+		public const string Debuggable = "DEBUGGABLE";
+		public const string Document = "DOCUMENT";
+		public const string Editable = "EDITABLE";
+		public const string Interactive = "INTERACTIVE";
+		public const string PrimaryDocument = "PRIMARYDOCUMENT";
+		public const string Structured = "STRUCTURED";
+		public const string Zoomable = "ZOOMABLE";
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

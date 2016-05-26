@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Gets/sets the content type
 		/// </summary>
-		IContentType ContentType { get; set; }
+		IContentType ContentType { get; }
 
 		/// <summary>
 		/// Current content of this buffer
@@ -40,9 +40,44 @@ namespace dnSpy.Contracts.Text {
 		event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
 
 		/// <summary>
-		/// Raised when the text has been changed
+		/// Raised when the text has been changed. It is raised before <see cref="Changed"/>
+		/// and <see cref="ChangedLowPriority"/>
+		/// </summary>
+		event EventHandler<TextContentChangedEventArgs> ChangedHighPriority;
+
+		/// <summary>
+		/// Raised when the text has been changed. It is raised after <see cref="ChangedHighPriority"/>
+		/// and before <see cref="ChangedLowPriority"/>
 		/// </summary>
 		event EventHandler<TextContentChangedEventArgs> Changed;
+
+		/// <summary>
+		/// Raised when the text has been changed. It is raised after <see cref="ChangedHighPriority"/>
+		/// and <see cref="Changed"/>
+		/// </summary>
+		event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;
+
+		/// <summary>
+		/// Raised when the buffer is about to change
+		/// </summary>
+		event EventHandler<TextContentChangingEventArgs> Changing;
+
+		/// <summary>
+		/// Raised after an edit operation has been applied or canceled
+		/// </summary>
+		event EventHandler PostChanged;
+
+		/// <summary>
+		/// Takes ownership of this text buffer for the current thread. Can only be called once.
+		/// </summary>
+		void TakeThreadOwnership();
+
+		/// <summary>
+		/// Changes <see cref="ContentType"/>
+		/// </summary>
+		/// <param name="newContentType">New content type</param>
+		/// <param name="editTag">Edit tag or null</param>
+		void ChangeContentType(IContentType newContentType, object editTag);
 
 		/// <summary>
 		/// true if an edit operation is in progress
@@ -60,6 +95,13 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <returns></returns>
 		ITextEdit CreateEdit();
+
+		/// <summary>
+		/// Creates a text edit object
+		/// </summary>
+		/// <param name="editTag">Edit tag</param>
+		/// <returns></returns>
+		ITextEdit CreateEdit(object editTag);
 
 		/// <summary>
 		/// Deletes characters from the buffer. Returns the new <see cref="ITextSnapshot"/> instance

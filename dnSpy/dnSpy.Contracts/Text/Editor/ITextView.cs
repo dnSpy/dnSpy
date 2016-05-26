@@ -64,5 +64,15 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Gets the text view model
 		/// </summary>
 		ITextViewModel TextViewModel { get; }
+
+		/// <summary>
+		/// Gets the roles
+		/// </summary>
+		ITextViewRoleSet Roles { get; }
+
+		/// <summary>
+		/// Gets the options
+		/// </summary>
+		IEditorOptions Options { get; }
 	}
 }

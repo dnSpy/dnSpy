@@ -21,26 +21,38 @@ using System;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// Text content changed event args
+	/// Text snapshot changed event args
 	/// </summary>
-	public sealed class TextContentChangedEventArgs : TextSnapshotChangedEventArgs {
+	public abstract class TextSnapshotChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Gets all the changes
+		/// New snapshot
 		/// </summary>
-		public ITextChange[] Changes { get; }
+		public ITextSnapshot After { get; }
+
+		/// <summary>
+		/// Old snapshot
+		/// </summary>
+		public ITextSnapshot Before { get; }
+
+		/// <summary>
+		/// Edit tag
+		/// </summary>
+		public object EditTag { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="beforeSnapshot">Old snapshot</param>
 		/// <param name="afterSnapshot">New snapshot</param>
-		/// <param name="textChanges">Text changes</param>
-		/// <param name="editTag">Edit tag or null</param>
-		public TextContentChangedEventArgs(ITextSnapshot beforeSnapshot, ITextSnapshot afterSnapshot, ITextChange[] textChanges, object editTag)
-			: base(beforeSnapshot, afterSnapshot, editTag) {
-			if (textChanges == null)
-				throw new ArgumentNullException(nameof(textChanges));
-			Changes = textChanges;
+		/// <param name="editTag">Edit tag</param>
+		protected TextSnapshotChangedEventArgs(ITextSnapshot beforeSnapshot, ITextSnapshot afterSnapshot, object editTag) {
+			if (beforeSnapshot == null)
+				throw new ArgumentNullException(nameof(beforeSnapshot));
+			if (afterSnapshot == null)
+				throw new ArgumentNullException(nameof(afterSnapshot));
+			Before = beforeSnapshot;
+			After = afterSnapshot;
+			EditTag = editTag;
 		}
 	}
 }

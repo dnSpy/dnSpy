@@ -31,6 +31,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Files.TreeView;
 using dnSpy.Properties;
 using dnSpy.Shared.Controls;
@@ -40,19 +41,21 @@ using dnSpy.Text.Editor;
 namespace dnSpy.Files.Tabs.Settings {
 	[Export(typeof(IAppSettingsTabCreator))]
 	sealed class DisplayAppSettingsTabCreator : IAppSettingsTabCreator {
-		readonly TextEditorSettingsImpl textEditorSettings;
+		readonly TextEditorSettingsImpl textEditorSettingsImpl;
+		readonly IEditorOptions editorOptions;
 		readonly FileTreeViewSettingsImpl fileTreeViewSettings;
 		readonly FileTabManagerSettingsImpl fileTabManagerSettings;
 
 		[ImportingConstructor]
-		DisplayAppSettingsTabCreator(TextEditorSettingsImpl textEditorSettings, FileTreeViewSettingsImpl fileTreeViewSettings, FileTabManagerSettingsImpl fileTabManagerSettings) {
-			this.textEditorSettings = textEditorSettings;
+		DisplayAppSettingsTabCreator(TextEditorSettingsImpl textEditorSettingsImpl, IEditorOptionsFactoryService editorOptionsFactoryService, FileTreeViewSettingsImpl fileTreeViewSettings, FileTabManagerSettingsImpl fileTabManagerSettings) {
+			this.textEditorSettingsImpl = textEditorSettingsImpl;
+			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 			this.fileTreeViewSettings = fileTreeViewSettings;
 			this.fileTabManagerSettings = fileTabManagerSettings;
 		}
 
 		public IEnumerable<IAppSettingsTab> Create() {
-			yield return new DisplayAppSettingsTab(textEditorSettings, fileTreeViewSettings, fileTabManagerSettings);
+			yield return new DisplayAppSettingsTab(textEditorSettingsImpl, editorOptions, fileTreeViewSettings, fileTabManagerSettings);
 		}
 	}
 
@@ -61,16 +64,18 @@ namespace dnSpy.Files.Tabs.Settings {
 		public string Title => dnSpy_Resources.DisplayDlgTabTitle;
 		public object UIObject => displayAppSettingsVM;
 
-		readonly TextEditorSettings textEditorSettings;
+		readonly TextEditorSettingsImpl textEditorSettingsImpl;
+		readonly IEditorOptions editorOptions;
 		readonly FileTreeViewSettings fileTreeViewSettings;
 		readonly FileTabManagerSettings fileTabManagerSettings;
 		readonly DisplayAppSettingsVM displayAppSettingsVM;
 
-		public DisplayAppSettingsTab(TextEditorSettings textEditorSettings, FileTreeViewSettings fileTreeViewSettings, FileTabManagerSettings fileTabManagerSettings) {
-			this.textEditorSettings = textEditorSettings;
+		public DisplayAppSettingsTab(TextEditorSettingsImpl textEditorSettingsImpl, IEditorOptions editorOptions, FileTreeViewSettings fileTreeViewSettings, FileTabManagerSettings fileTabManagerSettings) {
+			this.textEditorSettingsImpl = textEditorSettingsImpl;
+			this.editorOptions = editorOptions;
 			this.fileTreeViewSettings = fileTreeViewSettings;
 			this.fileTabManagerSettings = fileTabManagerSettings;
-			this.displayAppSettingsVM = new DisplayAppSettingsVM(textEditorSettings.Clone(), fileTreeViewSettings.Clone(), fileTabManagerSettings.Clone());
+			this.displayAppSettingsVM = new DisplayAppSettingsVM(new TextEditorSettingsVM(textEditorSettingsImpl, editorOptions), fileTreeViewSettings.Clone(), fileTabManagerSettings.Clone());
 		}
 
 		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
@@ -78,9 +83,69 @@ namespace dnSpy.Files.Tabs.Settings {
 				return;
 
 			displayAppSettingsVM.OnBeforeSave(appRefreshSettings);
-			displayAppSettingsVM.TextEditorSettings.CopyTo(textEditorSettings);
+			displayAppSettingsVM.TextEditorSettings.CopyTo(textEditorSettingsImpl, editorOptions);
 			displayAppSettingsVM.FileTreeViewSettings.CopyTo(fileTreeViewSettings);
 			displayAppSettingsVM.FileTabManagerSettings.CopyTo(fileTabManagerSettings);
+		}
+	}
+
+	sealed class TextEditorSettingsVM : ViewModelBase {
+		public FontFamily FontFamily {
+			get { return fontFamily; }
+			set {
+				if (fontFamily == null || fontFamily.Source != value.Source) {
+					fontFamily = value;
+					OnPropertyChanged(nameof(FontFamily));
+				}
+			}
+		}
+		FontFamily fontFamily;
+
+		public double FontSize {
+			get { return fontSize; }
+			set {
+				if (fontSize != value) {
+					fontSize = FontUtils.FilterFontSize(value);
+					OnPropertyChanged(nameof(FontSize));
+				}
+			}
+		}
+		double fontSize = FontUtils.DEFAULT_FONT_SIZE;
+
+		public bool ShowLineNumbers {
+			get { return showLineNumbers; }
+			set {
+				if (showLineNumbers != value) {
+					showLineNumbers = value;
+					OnPropertyChanged(nameof(ShowLineNumbers));
+				}
+			}
+		}
+		bool showLineNumbers = true;
+
+		public bool AutoHighlightRefs {
+			get { return autoHighlightRefs; }
+			set {
+				if (autoHighlightRefs != value) {
+					autoHighlightRefs = value;
+					OnPropertyChanged(nameof(AutoHighlightRefs));
+				}
+			}
+		}
+		bool autoHighlightRefs = true;
+
+		public TextEditorSettingsVM(TextEditorSettingsImpl textEditorSettings, IEditorOptions editorOptions) {
+			FontFamily = textEditorSettings.FontFamily;
+			FontSize = textEditorSettings.FontSize;
+			ShowLineNumbers = editorOptions.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId);
+			AutoHighlightRefs = textEditorSettings.AutoHighlightRefs;
+		}
+
+		public void CopyTo(TextEditorSettingsImpl textEditorSettings, IEditorOptions editorOptions) {
+			textEditorSettings.FontFamily = FontFamily;
+			textEditorSettings.FontSize = FontSize;
+			editorOptions.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, ShowLineNumbers);
+			textEditorSettings.AutoHighlightRefs = AutoHighlightRefs;
 		}
 	}
 
@@ -126,7 +191,7 @@ namespace dnSpy.Files.Tabs.Settings {
 		}
 		FontFamilyVM fontFamilyVM;
 
-		public TextEditorSettings TextEditorSettings { get; }
+		public TextEditorSettingsVM TextEditorSettings { get; }
 		public FileTreeViewSettings FileTreeViewSettings { get; }
 		public FileTabManagerSettings FileTabManagerSettings { get; }
 
@@ -177,12 +242,12 @@ namespace dnSpy.Files.Tabs.Settings {
 			OnPropertyChanged(string.Format("MemberKind{0}", index));
 		}
 
-		public DisplayAppSettingsVM(TextEditorSettings textEditorSettings, FileTreeViewSettings fileTreeViewSettings, FileTabManagerSettings fileTabManagerSettings) {
-			this.TextEditorSettings = textEditorSettings;
+		public DisplayAppSettingsVM(TextEditorSettingsVM textEditorSettingsVM, FileTreeViewSettings fileTreeViewSettings, FileTabManagerSettings fileTabManagerSettings) {
+			this.TextEditorSettings = textEditorSettingsVM;
 			this.FileTreeViewSettings = fileTreeViewSettings;
 			this.FileTabManagerSettings = fileTabManagerSettings;
 			this.fontFamilies = null;
-			this.fontFamilyVM = new FontFamilyVM(textEditorSettings.FontFamily);
+			this.fontFamilyVM = new FontFamilyVM(textEditorSettingsVM.FontFamily);
 			Task.Factory.StartNew(() =>
 				Fonts.SystemFontFamilies.Where(a => !FontUtils.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray()
 			)

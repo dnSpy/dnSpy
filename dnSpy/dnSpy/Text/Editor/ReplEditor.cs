@@ -53,8 +53,6 @@ namespace dnSpy.Text.Editor {
 		readonly CachedColorsList cachedColorsList;
 		readonly IWpfTextView wpfTextView;
 
-		const int LEFT_MARGIN = 15;
-
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ReplEditor replEditorUI;
 
@@ -74,7 +72,11 @@ namespace dnSpy.Text.Editor {
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<SubBuffer>();
 
-			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, false, () => new GuidObjectsCreator(this));
+			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, () => new GuidObjectsCreator(this));
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			this.cachedColorsList = new CachedColorsList();
@@ -82,7 +84,6 @@ namespace dnSpy.Text.Editor {
 			this.textEditor.TextArea.AllowDrop = false;
 			AddNewDocument();
 			this.textEditor.TextArea.TextView.Document.UndoStack.SizeLimit = 100;
-			this.textEditor.TextArea.LeftMargins.Insert(0, new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) });
 			this.textEditor.TextArea.TextEntering += TextArea_TextEntering;
 			this.textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
 			AddBinding(ApplicationCommands.Paste, (s, e) => Paste(), (s, e) => e.CanExecute = CanPaste && IsAtEditingPosition);

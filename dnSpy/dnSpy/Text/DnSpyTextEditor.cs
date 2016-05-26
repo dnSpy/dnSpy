@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
@@ -143,7 +142,7 @@ namespace dnSpy.Text {
 		}
 	}
 
-	sealed class DnSpyTextEditor : ICSharpCode.AvalonEdit.TextEditor, IDisposable {
+	sealed class DnSpyTextEditor : TextEditor, IDisposable {
 		static DnSpyTextEditor() {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"IL", new string[] { ".il" }, () => {
@@ -176,20 +175,13 @@ namespace dnSpy.Text {
 		}
 		TextBuffer textBuffer;
 
-		readonly ITextEditorSettings textEditorSettings;
 		readonly SearchPanel searchPanel;
-		readonly bool useShowLineNumbersOption;
 		readonly ColorizerCollection colorizerCollection;
 
-		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBuffer textBuffer, bool useShowLineNumbersOption) {
-			this.useShowLineNumbersOption = useShowLineNumbersOption;
+		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBuffer textBuffer) {
 			this.ThemeManager = themeManager;
-			this.textEditorSettings = textEditorSettings;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
-			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 			this.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			Options.AllowToggleOverstrikeMode = true;
-			Options.RequireControlModifierForHyperlinkClick = false;
 			this.TextBuffer = (TextBuffer)textBuffer;
 			this.colorizerCollection = new ColorizerCollection(this, textBufferColorizerCreator);
 			TextArea.TextView.DocumentChanged += TextView_DocumentChanged;
@@ -220,28 +212,11 @@ namespace dnSpy.Text {
 				Path = new PropertyPath(nameof(textEditorSettings.FontSize)),
 				Mode = BindingMode.OneWay,
 			});
-			SetBinding(WordWrapProperty, new Binding {
-				Source = textEditorSettings,
-				Path = new PropertyPath(nameof(textEditorSettings.WordWrap)),
-				Mode = BindingMode.OneWay,
-			});
 
 			this.lineNumberMargin = new LineNumberMargin { Visibility = Visibility.Collapsed };
 			this.lineNumberMargin.SetBinding(ForegroundProperty, new Binding(nameof(LineNumbersForeground)) { Source = this });
 			TextArea.LeftMargins.Insert(0, this.lineNumberMargin);
-
 			OnHighlightCurrentLineChanged();
-			if (useShowLineNumbersOption)
-				ShowLineNumbers = textEditorSettings.ShowLineNumbers;
-
-			Loaded += DnSpyTextEditor_Loaded;
-		}
-
-		void DnSpyTextEditor_Loaded(object sender, RoutedEventArgs e) {
-			Loaded -= DnSpyTextEditor_Loaded;
-			// Fix the highlighted line, it won't be shown correctly if this control is in
-			// a hidden tab that now got activated for the first time.
-			UpdateCurrentLineColors(textEditorSettings.HighlightCurrentLine);
 		}
 
 		void TextView_DocumentChanged(object sender, EventArgs e) {
@@ -256,7 +231,6 @@ namespace dnSpy.Text {
 		internal ITextSnapshotColorizer[] GetAllColorizers() => colorizerCollection.GetAllColorizers();
 
 		public void Dispose() {
-			textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
 			ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 			colorizerCollection.Dispose();
 			TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
@@ -276,13 +250,6 @@ namespace dnSpy.Text {
 			}
 		}
 
-		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(textEditorSettings.HighlightCurrentLine))
-				OnHighlightCurrentLineChanged();
-			else if (useShowLineNumbersOption && e.PropertyName == nameof(textEditorSettings.ShowLineNumbers))
-				ShowLineNumbers = textEditorSettings.ShowLineNumbers;
-		}
-
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
 			base.OnPropertyChanged(e);
 			Debug.Assert(e.Property != ShowLineNumbersProperty, "Don't call base.ShowLineNumbers");
@@ -299,17 +266,29 @@ namespace dnSpy.Text {
 		}
 		readonly LineNumberMargin lineNumberMargin;
 
-		void OnHighlightCurrentLineChanged() => Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
+		public bool HighlightCurrentLine {
+			get { return highlightCurrentLine; }
+			set {
+				if (highlightCurrentLine != value) {
+					highlightCurrentLine = value;
+					Options.HighlightCurrentLine = highlightCurrentLine;
+					OnHighlightCurrentLineChanged();
+				}
+			}
+		}
+		bool highlightCurrentLine;
+
+		void OnHighlightCurrentLineChanged() => Options.HighlightCurrentLine = HighlightCurrentLine;
 
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Show();
-			UpdateCurrentLineColors(textEditorSettings.HighlightCurrentLine);
+			UpdateCurrentLineColors(HighlightCurrentLine);
 			OnHighlightCurrentLineChanged();
 		}
 
 		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Hide();
-			UpdateCurrentLineColors(textEditorSettings.HighlightCurrentLine);
+			UpdateCurrentLineColors(HighlightCurrentLine);
 			// Do as VS: don't hide the highlighted line
 		}
 
@@ -461,6 +440,7 @@ namespace dnSpy.Text {
 				TextArea.TextView.Redraw();
 		}
 
+		internal void UpdateCurrentLineColors() => UpdateCurrentLineColors(HighlightCurrentLine);
 		void UpdateCurrentLineColors(bool redraw) {
 			var theme = ThemeManager.Theme;
 			bool hasFocus = this.IsKeyboardFocusWithin;

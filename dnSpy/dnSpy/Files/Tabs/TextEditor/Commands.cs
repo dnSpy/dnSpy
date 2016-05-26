@@ -28,58 +28,61 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using dnSpy.Shared.Menus;
-using dnSpy.Text.Editor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportAutoLoaded]
 	sealed class WordWrapInit : IAutoLoaded {
 		public static readonly RoutedCommand WordWrap = new RoutedCommand("WordWrap", typeof(WordWrapInit));
 
-		readonly TextEditorSettingsImpl textEditorSettings;
+		readonly IEditorOptions editorOptions;
 		readonly IAppSettings appSettings;
 		readonly IMessageBoxManager messageBoxManager;
 
 		[ImportingConstructor]
-		WordWrapInit(IAppWindow appWindow, TextEditorSettingsImpl textEditorSettings, IAppSettings appSettings, IMessageBoxManager messageBoxManager) {
-			this.textEditorSettings = textEditorSettings;
+		WordWrapInit(IAppWindow appWindow, IEditorOptionsFactoryService editorOptionsFactoryService, IAppSettings appSettings, IMessageBoxManager messageBoxManager) {
+			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 			this.appSettings = appSettings;
 			this.messageBoxManager = messageBoxManager;
 			appWindow.MainWindowCommands.Add(WordWrap, (s, e) => ToggleWordWrap(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
 		}
 
 		void ToggleWordWrap() {
-			textEditorSettings.WordWrap = !textEditorSettings.WordWrap;
-			if (textEditorSettings.WordWrap && appSettings.UseNewRenderer_TextEditor)
+			if ((editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+				editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
+			else
+				editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.WordWrap | WordWrapStyles.AutoIndent);
+			if ((editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0 && appSettings.UseNewRenderer_TextEditor)
 				messageBoxManager.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:WordWrapKey", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
 	sealed class WordWrapCommand : MenuItemCommand {
-		readonly TextEditorSettingsImpl textEditorSettings;
+		readonly IEditorOptions editorOptions;
 
 		[ImportingConstructor]
-		WordWrapCommand(TextEditorSettingsImpl textEditorSettings)
+		WordWrapCommand(IEditorOptionsFactoryService editorOptionsFactoryService)
 			: base(WordWrapInit.WordWrap) {
-			this.textEditorSettings = textEditorSettings;
+			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) => textEditorSettings.WordWrap;
+		public override bool IsChecked(IMenuItemContext context) => (editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:HighlightLine", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]
 	sealed class HighlightCurrentLineCommand : MenuItemBase {
-		readonly TextEditorSettingsImpl textEditorSettings;
+		readonly IEditorOptions editorOptions;
 
 		[ImportingConstructor]
-		HighlightCurrentLineCommand(TextEditorSettingsImpl textEditorSettings) {
-			this.textEditorSettings = textEditorSettings;
+		HighlightCurrentLineCommand(IEditorOptionsFactoryService editorOptionsFactoryService) {
+			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) => textEditorSettings.HighlightCurrentLine;
-		public override void Execute(IMenuItemContext context) => textEditorSettings.HighlightCurrentLine = !textEditorSettings.HighlightCurrentLine;
+		public override bool IsChecked(IMenuItemContext context) => editorOptions.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId);
+		public override void Execute(IMenuItemContext context) => editorOptions.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, !editorOptions.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId));
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 0)]

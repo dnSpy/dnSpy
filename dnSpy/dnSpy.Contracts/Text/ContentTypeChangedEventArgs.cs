@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Content type changed event args
 	/// </summary>
-	public sealed class ContentTypeChangedEventArgs : EventArgs {
+	public sealed class ContentTypeChangedEventArgs : TextSnapshotChangedEventArgs {
 		/// <summary>
 		/// Original content type
 		/// </summary>
@@ -37,9 +37,13 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="beforeSnapshot">Original snapshot</param>
+		/// <param name="afterSnapshot">New snapshot</param>
 		/// <param name="beforeContentType">Original content type</param>
 		/// <param name="afterContentType">New content type</param>
-		public ContentTypeChangedEventArgs(IContentType beforeContentType, IContentType afterContentType) {
+		/// <param name="editTag">Edit tag or null</param>
+		public ContentTypeChangedEventArgs(ITextSnapshot beforeSnapshot, ITextSnapshot afterSnapshot, IContentType beforeContentType, IContentType afterContentType, object editTag)
+			: base(beforeSnapshot, afterSnapshot, editTag) {
 			if (beforeContentType == null)
 				throw new ArgumentNullException(nameof(beforeContentType));
 			if (afterContentType == null)

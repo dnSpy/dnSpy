@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -40,38 +39,30 @@ namespace dnSpy.Text.Editor {
 		public object Tag { get; set; }
 
 		public bool WordWrap {
-			get { return textEditor.WordWrap; }
-			set { textEditor.WordWrap = value; }
+			get { return (wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0; }
+			set {
+				if (value)
+					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.WordWrap | WordWrapStyles.AutoIndent);
+				else
+					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
+			}
 		}
 
 		public bool ShowLineNumbers {
-			get { return textEditor.ShowLineNumbers; }
+			get { return wpfTextView.Options.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId); }
 			set {
-				if (textEditor.ShowLineNumbers != value) {
-					textEditor.ShowLineNumbers = value;
-					UpdatePaddingElement();
-				}
+				wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value);
+				UpdatePaddingElement();
 			}
 		}
 
-		void UpdatePaddingElement() {
-			Debug.Assert(paddingElement != null);
-			if (textEditor.ShowLineNumbers)
-				this.textEditor.TextArea.LeftMargins.Remove(paddingElement);
-			else {
-				Debug.Assert(!this.textEditor.TextArea.LeftMargins.Contains(paddingElement));
-				this.textEditor.TextArea.LeftMargins.Insert(0, paddingElement);
-			}
-		}
-		readonly FrameworkElement paddingElement;
+		void UpdatePaddingElement() => wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !ShowLineNumbers);
 
 		readonly IWpfTextView wpfTextView;
 		readonly DnSpyTextEditor textEditor;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
 		CachedTextTokenColors cachedTextTokenColors;
-
-		const int LEFT_MARGIN = 15;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly LogEditor logEditorUI;
@@ -87,22 +78,26 @@ namespace dnSpy.Text.Editor {
 
 		public LogEditor(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			options = options ?? new LogEditorOptions();
 
-			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, false, () => new GuidObjectsCreator(this));
+			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, () => new GuidObjectsCreator(this));
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			this.cachedColorsList = new CachedColorsList();
 			this.textEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
 			this.textEditor.TextArea.AllowDrop = false;
-			UpdatePaddingElement();
-			this.textEditor.IsReadOnly = true;
 			// Setting IsReadOnly to true doesn't mean it's readonly since undo and redo still work.
 			// Fix that by removing the commands.
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Undo);
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Redo);
+			UpdatePaddingElement();
 		}
 
 		static void Remove(CommandBindingCollection bindings, ICommand cmd) {

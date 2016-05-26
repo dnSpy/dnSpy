@@ -102,7 +102,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			var wpfTextView = textEditorFactoryService2.CreateTextView(null, new TextViewCreatorOptions(), null, true, null);
+			var wpfTextView = textEditorFactoryService2.CreateTextView(null, new TextViewCreatorOptions(), null, null);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			this.wpfTextView = wpfTextView;
 			TextEditor = wpfTextView.DnSpyTextEditor;
 			cachedColorsList = new CachedColorsList();
@@ -110,7 +114,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;
-			TextEditor.IsReadOnly = true;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
@@ -257,9 +260,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				this.contentType = contentType;
 			}
 
-			public bool Equals(LastOutput other) => output == other.output &&
-	highlighting == other.highlighting &&
-	contentType == other.contentType;
+			public bool Equals(LastOutput other) => output == other.output && highlighting == other.highlighting && contentType == other.contentType;
 
 			public override bool Equals(object obj) {
 				if (obj is LastOutput)
@@ -267,9 +268,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return false;
 			}
 
-			public override int GetHashCode() => (output?.GetHashCode() ?? 0) ^
-	(highlighting?.GetHashCode() ?? 0) ^
-	(contentType?.GetHashCode() ?? 0);
+			public override int GetHashCode() => (output?.GetHashCode() ?? 0) ^ (highlighting?.GetHashCode() ?? 0) ^ (contentType?.GetHashCode() ?? 0);
 		}
 
 		public void OnUseNewRendererChanged() => lastOutput = new LastOutput();
@@ -317,7 +316,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				newDoc = avOutput.GetDocument();
 			}
 
-			TextEditor.TextBuffer.ContentType = contentType;
+			wpfTextView.TextBuffer.ChangeContentType(contentType, null);
 
 			var cachedColors = avOutput?.CachedColors ?? new CachedTextTokenColors();
 			cachedColors.Finish();

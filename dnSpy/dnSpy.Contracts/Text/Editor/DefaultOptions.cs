@@ -17,27 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-using System.Windows.Media;
-
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Settings used by all text editors
+	/// Default options
 	/// </summary>
-	public interface ITextEditorSettings : INotifyPropertyChanged {
-		/// <summary>
-		/// Font family
-		/// </summary>
-		FontFamily FontFamily { get; }
-
-		/// <summary>
-		/// Font size
-		/// </summary>
-		double FontSize { get; }
-
-		/// <summary>
-		/// true if references are highlighted
-		/// </summary>
-		bool AutoHighlightRefs { get; }
+	public static class DefaultOptions {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public static readonly EditorOptionKey<int> TabSizeOptionId = new EditorOptionKey<int>("Default/TabSize");
+		public static readonly EditorOptionKey<string> NewLineCharacterOptionId = new EditorOptionKey<string>("Default/NewLineCharacter");
+		public static readonly EditorOptionKey<bool> ReplicateNewLineCharacterOptionId = new EditorOptionKey<bool>("Default/ReplicateNewLineCharacter");
+		public static readonly EditorOptionKey<bool> ConvertTabsToSpacesOptionId = new EditorOptionKey<bool>("Default/ConvertTabsToSpaces");
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

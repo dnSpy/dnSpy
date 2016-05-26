@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
@@ -83,6 +84,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			options.ContentTypeGuid = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
+			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
+			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !codeEditor.TextView.Options.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId));
 
 			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), nameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
 			return new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);

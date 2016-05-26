@@ -28,7 +28,7 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Text.Editor {
 	//TODO: This iface should be removed. The users shouldn't depend on the text editor impl
 	interface ITextEditorFactoryService2 : ITextEditorFactoryService {
-		WpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, object contentTypeObj, bool useShowLineNumbersOption, Func<IGuidObjectsCreator> createGuidObjectsCreator);
+		WpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, object contentTypeObj, Func<IGuidObjectsCreator> createGuidObjectsCreator);
 	}
 
 	[Export(typeof(ITextEditorFactoryService))]
@@ -38,6 +38,29 @@ namespace dnSpy.Text.Editor {
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
+
+		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
+		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
+		public ITextViewRoleSet NoRoles => new TextViewRoleSet(Array.Empty<string>());
+		static readonly string[] allPredefinedRolesList = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Debuggable,
+			PredefinedTextViewRoles.Document,
+			PredefinedTextViewRoles.Editable,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.PrimaryDocument,
+			PredefinedTextViewRoles.Structured,
+			PredefinedTextViewRoles.Zoomable,
+		};
+		static readonly string[] defaultRolesList = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Document,
+			PredefinedTextViewRoles.Editable,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.Structured,
+			PredefinedTextViewRoles.Zoomable,
+		};
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
@@ -70,26 +93,60 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IContentTypeRegistryService contentTypeRegistryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
-		public IWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), options);
+		public IWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
+
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			return CreateTextView(new TextDataModel(textBuffer), options);
+			return CreateTextView(new TextDataModel(textBuffer), DefaultRoles, editorOptionsFactoryService.GlobalOptions, options);
 		}
 
-		IWpfTextView CreateTextView(ITextDataModel textDataModel, TextViewCreatorOptions options) {
-			if (textDataModel == null)
-				throw new ArgumentNullException(nameof(textDataModel));
-			return CreateTextView(new TextViewModel(textDataModel), options);
+		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			if (roles == null)
+				throw new ArgumentNullException(nameof(roles));
+			return CreateTextView(new TextDataModel(textBuffer), roles, editorOptionsFactoryService.GlobalOptions, options);
 		}
 
-		WpfTextView CreateTextView(ITextViewModel textViewModel, TextViewCreatorOptions options, bool useShowLineNumbersOption = true, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
+		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			if (roles == null)
+				throw new ArgumentNullException(nameof(roles));
+			if (parentOptions == null)
+				throw new ArgumentNullException(nameof(parentOptions));
+			return CreateTextView(new TextDataModel(textBuffer), roles, parentOptions, options);
+		}
+
+		public IWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+			if (dataModel == null)
+				throw new ArgumentNullException(nameof(dataModel));
+			if (roles == null)
+				throw new ArgumentNullException(nameof(roles));
+			if (parentOptions == null)
+				throw new ArgumentNullException(nameof(parentOptions));
+			return CreateTextView(new TextViewModel(dataModel), roles, parentOptions, options);
+		}
+
+		public IWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+			if (viewModel == null)
+				throw new ArgumentNullException(nameof(viewModel));
+			if (roles == null)
+				throw new ArgumentNullException(nameof(roles));
+			if (parentOptions == null)
+				throw new ArgumentNullException(nameof(parentOptions));
+			return CreateTextViewImpl(viewModel, roles, parentOptions, options);
+		}
+
+		WpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
 			var commonTextEditorOptions = new CommonTextEditorOptions {
 				TextEditorCommandGuid = options?.TextEditorCommandGuid,
 				TextAreaCommandGuid = options?.TextAreaCommandGuid,
@@ -98,19 +155,19 @@ namespace dnSpy.Text.Editor {
 				CreateGuidObjects = options?.CreateGuidObjects,
 			};
 			var guidObjectsCreator = new GuidObjectsCreator(options?.CreateGuidObjects, createGuidObjectsCreator?.Invoke());
-			var dnSpyTextEditorOptions = new DnSpyTextEditorOptions(commonTextEditorOptions, textViewModel.EditBuffer, useShowLineNumbersOption, () => guidObjectsCreator);
+			var dnSpyTextEditorOptions = new DnSpyTextEditorOptions(commonTextEditorOptions, textViewModel.EditBuffer, () => guidObjectsCreator);
 			var dnSpyTextEditor = dnSpyTextEditorCreator.Create(dnSpyTextEditorOptions);
-			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel);
+			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService);
 			guidObjectsCreator.WpfTextView = wpfTextView;
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));
 			return wpfTextView;
 		}
 
-		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, object contentTypeObj, bool useShowLineNumbersOption, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
+		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, object contentTypeObj, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
 			var contentType = contentTypeRegistryService.GetContentType(contentTypeObj) ?? textBufferFactoryService.TextContentType;
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
-			return CreateTextView(new TextViewModel(new TextDataModel(textBuffer)), options, useShowLineNumbersOption, createGuidObjectsCreator);
+			return CreateTextViewImpl(new TextViewModel(new TextDataModel(textBuffer)), DefaultRoles, editorOptionsFactoryService.GlobalOptions, options, createGuidObjectsCreator);
 		}
 
 		public IWpfTextViewHost CreateTextViewHost(IWpfTextView wpfTextView, bool setFocus) {
@@ -118,5 +175,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return new WpfTextViewHost(wpfTextView, setFocus);
 		}
+
+		public ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new TextViewRoleSet(roles);
+		public ITextViewRoleSet CreateTextViewRoleSet(params string[] roles) => new TextViewRoleSet(roles);
 	}
 }

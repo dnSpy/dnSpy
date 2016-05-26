@@ -32,10 +32,9 @@ namespace dnSpy.Text {
 		public Guid? ContentTypeGuid { get; }
 		public Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; }
 		public ITextBuffer TextBuffer { get; }
-		public bool UseShowLineNumbersOption { get; }
 		public Func<IGuidObjectsCreator> CreateGuidObjectsCreator { get; }
 
-		public DnSpyTextEditorOptions(CommonTextEditorOptions options, ITextBuffer textBuffer, bool useShowLineNumbersOption, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
+		public DnSpyTextEditorOptions(CommonTextEditorOptions options, ITextBuffer textBuffer, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
 			TextEditorCommandGuid = options.TextEditorCommandGuid;
 			TextAreaCommandGuid = options.TextAreaCommandGuid;
 			MenuGuid = options.MenuGuid;
@@ -43,7 +42,6 @@ namespace dnSpy.Text {
 			ContentTypeGuid = options.ContentTypeGuid;
 			CreateGuidObjects = options.CreateGuidObjects;
 			TextBuffer = textBuffer;
-			UseShowLineNumbersOption = useShowLineNumbersOption;
 			CreateGuidObjectsCreator = createGuidObjectsCreator;
 		}
 	}

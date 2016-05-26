@@ -32,32 +32,27 @@ namespace dnSpy.Text.Editor {
 		public FrameworkElement ScaleElement => TextView.ScaleElement;
 		public object Tag { get; set; }
 
-		readonly IWpfTextView wpfTextView;
-		readonly DnSpyTextEditor textEditor;
-
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly CodeEditor codeEditorUI;
+			readonly CodeEditor codeEditor;
 
 			public GuidObjectsCreator(CodeEditor codeEditorUI) {
-				this.codeEditorUI = codeEditorUI;
+				this.codeEditor = codeEditorUI;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditorUI);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditor);
 			}
 		}
 
 		public CodeEditor(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
 			options = options ?? new CodeEditorOptions();
-			var wpfTextView = textEditorFactoryService2.CreateTextView(options.TextBuffer, options, (object)options.ContentType ?? options.ContentTypeGuid, true, () => new GuidObjectsCreator(this));
-			this.wpfTextView = wpfTextView;
-			TextView = wpfTextView;
-			this.textEditor = wpfTextView.DnSpyTextEditor;
+			TextView = textEditorFactoryService2.CreateTextView(options.TextBuffer, options, (object)options.ContentType ?? options.ContentTypeGuid, () => new GuidObjectsCreator(this));
+			TextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 		}
 
 		public void Dispose() {
-			if (!wpfTextView.IsClosed)
-				wpfTextView.Close();
+			if (!TextView.IsClosed)
+				TextView.Close();
 		}
 	}
 }
