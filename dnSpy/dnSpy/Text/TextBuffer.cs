@@ -125,12 +125,12 @@ namespace dnSpy.Text {
 		public bool CheckEditAccess() => CheckAccess();
 		TextEdit textEditInProgress;
 
-		public ITextEdit CreateEdit() => CreateEdit(null);
-		public ITextEdit CreateEdit(object editTag) {
+		public ITextEdit CreateEdit() => CreateEdit(null, null);
+		public ITextEdit CreateEdit(int? reiteratedVersionNumber, object editTag) {
 			VerifyAccess();
 			if (EditInProgress)
 				throw new InvalidOperationException("An edit operation is in progress");
-			return textEditInProgress = new TextEdit(this, editTag);
+			return textEditInProgress = new TextEdit(this, reiteratedVersionNumber, editTag);
 		}
 
 		internal void Cancel(TextEdit textEdit) {
@@ -177,7 +177,7 @@ namespace dnSpy.Text {
 			return args.Canceled;
 		}
 
-		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, object editTag) {
+		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, int? reiteratedVersionNumber, object editTag) {
 			VerifyAccess();
 			if (textEdit != textEditInProgress)
 				throw new InvalidOperationException();
@@ -202,6 +202,7 @@ namespace dnSpy.Text {
 						Document.Replace(change.OldPosition, change.OldLength, change.NewText);
 				}
 			}
+			//TODO: Use reiteratedVersionNumber and editTag
 			PostChanged?.Invoke(this, EventArgs.Empty);
 		}
 

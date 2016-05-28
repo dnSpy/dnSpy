@@ -99,9 +99,10 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Creates a text edit object
 		/// </summary>
+		/// <param name="reiteratedVersionNumber">A <see cref="ITextVersion.ReiteratedVersionNumber"/> or null</param>
 		/// <param name="editTag">Edit tag</param>
 		/// <returns></returns>
-		ITextEdit CreateEdit(object editTag);
+		ITextEdit CreateEdit(int? reiteratedVersionNumber, object editTag);
 
 		/// <summary>
 		/// Deletes characters from the buffer. Returns the new <see cref="ITextSnapshot"/> instance

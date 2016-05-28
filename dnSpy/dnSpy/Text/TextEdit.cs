@@ -29,14 +29,16 @@ namespace dnSpy.Text {
 
 		readonly TextBuffer textBuffer;
 		readonly List<ITextChange> changes;
+		readonly int? reiteratedVersionNumber;
 		readonly object editTag;
 
-		public TextEdit(TextBuffer textBuffer, object editTag) {
+		public TextEdit(TextBuffer textBuffer, int? reiteratedVersionNumber, object editTag) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			this.textBuffer = textBuffer;
 			TextSnapshot = textBuffer.CurrentSnapshot;
 			this.changes = new List<ITextChange>();
+			this.reiteratedVersionNumber = reiteratedVersionNumber;
 			this.editTag = editTag;
 		}
 
@@ -45,7 +47,7 @@ namespace dnSpy.Text {
 			if (Canceled || hasApplied)
 				throw new InvalidOperationException();
 			hasApplied = true;
-			textBuffer.ApplyChanges(this, changes, editTag);
+			textBuffer.ApplyChanges(this, changes, reiteratedVersionNumber, editTag);
 			return textBuffer.CurrentSnapshot;
 		}
 
