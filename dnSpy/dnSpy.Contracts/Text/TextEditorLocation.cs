@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Text editor location
 	/// </summary>

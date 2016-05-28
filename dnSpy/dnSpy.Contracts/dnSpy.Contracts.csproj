@@ -371,7 +371,6 @@
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
-    <Compile Include="Text\Editor\TextEditorLocation.cs" />
     <Compile Include="Text\Editor\TextSelectionMode.cs" />
     <Compile Include="Text\Editor\TextViewCreatedEventArgs.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
@@ -417,6 +416,7 @@
     <Compile Include="Text\TextContentChangedEventArgs.cs" />
     <Compile Include="Text\TextContentChangingEventArgs.cs" />
     <Compile Include="Text\TextDataModelContentTypeChangedEventArgs.cs" />
+    <Compile Include="Text\TextEditorLocation.cs" />
     <Compile Include="Text\TextSnapshotChangedEventArgs.cs" />
     <Compile Include="Text\Tracking.cs" />
     <Compile Include="Text\TrackingFidelityMode.cs" />
