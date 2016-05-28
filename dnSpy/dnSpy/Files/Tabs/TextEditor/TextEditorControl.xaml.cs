@@ -452,8 +452,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					}
 					else {
 						var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(refSeg.StartOffset);
-						int column = refSeg.StartOffset - line.Offset + 1;
-						ScrollAndMoveCaretTo(line.LineNumber, column);
+						int column = refSeg.StartOffset - line.Offset;
+						ScrollAndMoveCaretTo(line.LineNumber - 1, column);
 					}
 					return true;
 				}
@@ -511,8 +511,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
 				if (RefSegEquals(newSeg, refSeg)) {
 					var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(newSeg.StartOffset);
-					int column = newSeg.StartOffset - line.Offset + 1;
-					ScrollAndMoveCaretTo(line.LineNumber, column);
+					int column = newSeg.StartOffset - line.Offset;
+					ScrollAndMoveCaretTo(line.LineNumber - 1, column);
 					break;
 				}
 			}
@@ -527,8 +527,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
 				if (newSeg.IsLocalTarget && newSeg.Reference is IMemberDef) {
 					var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(newSeg.StartOffset);
-					int column = newSeg.StartOffset - line.Offset + 1;
-					ScrollAndMoveCaretTo(line.LineNumber, column);
+					int column = newSeg.StartOffset - line.Offset;
+					ScrollAndMoveCaretTo(line.LineNumber - 1, column);
 					break;
 				}
 			}
