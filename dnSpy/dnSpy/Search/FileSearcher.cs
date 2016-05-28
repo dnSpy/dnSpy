@@ -119,16 +119,28 @@ namespace dnSpy.Search {
 
 				if (o is IDnSpyFileNode[]) {
 					Parallel.ForEach((IDnSpyFileNode[])o, opts, node => {
-						cancellationTokenSource.Token.ThrowIfCancellationRequested();
-						var searcher = new FilterSearcher(filterSearcherOptions);
-						searcher.SearchAssemblies(new IDnSpyFileNode[] { node });
+						try {
+							cancellationTokenSource.Token.ThrowIfCancellationRequested();
+							var searcher = new FilterSearcher(filterSearcherOptions);
+							searcher.SearchAssemblies(new IDnSpyFileNode[] { node });
+						}
+						catch {
+							Cancel();
+							throw;
+						}
 					});
 				}
 				else if (o is SearchTypeInfo[]) {
 					Parallel.ForEach((SearchTypeInfo[])o, opts, info => {
-						cancellationTokenSource.Token.ThrowIfCancellationRequested();
-						var searcher = new FilterSearcher(filterSearcherOptions);
-						searcher.SearchTypes(new SearchTypeInfo[] { info });
+						try {
+							cancellationTokenSource.Token.ThrowIfCancellationRequested();
+							var searcher = new FilterSearcher(filterSearcherOptions);
+							searcher.SearchTypes(new SearchTypeInfo[] { info });
+						}
+						catch {
+							Cancel();
+							throw;
+						}
 					});
 				}
 				else
