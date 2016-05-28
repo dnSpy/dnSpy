@@ -40,6 +40,36 @@ namespace dnSpy.Contracts.Text.Editor {
 		event EventHandler Closed;
 
 		/// <summary>
+		/// Raised when it or any of its adornments got the keyboard focus
+		/// </summary>
+		event EventHandler GotAggregateFocus;
+
+		/// <summary>
+		/// Raised when it and all its adornments lost the keyboard focus
+		/// </summary>
+		event EventHandler LostAggregateFocus;
+
+		/// <summary>
+		/// true if it or any of its adornments has focus
+		/// </summary>
+		bool HasAggregateFocus { get; }
+
+		/// <summary>
+		/// true if the mouse is over it or any of its adornments
+		/// </summary>
+		bool IsMouseOverViewOrAdornments { get; }
+
+		/// <summary>
+		/// Gets the caret
+		/// </summary>
+		ITextCaret Caret { get; }
+
+		/// <summary>
+		/// Gets the selection
+		/// </summary>
+		ITextSelection Selection { get; }
+
+		/// <summary>
 		/// Text buffer shown in this text view
 		/// </summary>
 		ITextBuffer TextBuffer { get; }

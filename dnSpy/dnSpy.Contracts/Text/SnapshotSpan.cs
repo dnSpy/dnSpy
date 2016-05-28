@@ -122,6 +122,25 @@ namespace dnSpy.Contracts.Text {
 		}
 
 		/// <summary>
+		/// Translates this span to a span in another snapshot
+		/// </summary>
+		/// <param name="targetSnapshot">Target snapshot</param>
+		/// <param name="spanTrackingMode">Tracking mode</param>
+		/// <returns></returns>
+		public SnapshotSpan TranslateTo(ITextSnapshot targetSnapshot, SpanTrackingMode spanTrackingMode) {
+			if (targetSnapshot == null)
+				throw new ArgumentNullException(nameof(targetSnapshot));
+			if (targetSnapshot == this.Snapshot)
+				return this;
+			if (targetSnapshot.TextBuffer != Snapshot.TextBuffer)
+				throw new ArgumentException();
+			var newSpan = targetSnapshot.Version.VersionNumber > Snapshot.Version.VersionNumber ?
+				Tracking.TrackSpanForwardInTime(spanTrackingMode, Span, Snapshot.Version, targetSnapshot.Version) :
+				Tracking.TrackSpanBackwardInTime(spanTrackingMode, Span, Snapshot.Version, targetSnapshot.Version);
+			return new SnapshotSpan(targetSnapshot, newSpan);
+		}
+
+		/// <summary>
 		/// Returns true if <paramref name="position"/> lies within this span
 		/// </summary>
 		/// <param name="position">Position</param>
@@ -298,7 +317,7 @@ namespace dnSpy.Contracts.Text {
 			if (Snapshot == null)
 				return "<default>";
 			const int MAXLEN = 40;
-			return $"{Span.ToString()}_'{(Length <= MAXLEN ? GetText() : Snapshot.GetText(position, MAXLEN))}'";
+			return $"v{Snapshot.Version.VersionNumber}_{Span.ToString()}_'{(Length <= MAXLEN ? GetText() : Snapshot.GetText(position, MAXLEN))}'";
 		}
 	}
 }

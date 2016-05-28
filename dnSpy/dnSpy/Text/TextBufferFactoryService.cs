@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
@@ -65,14 +66,22 @@ namespace dnSpy.Text {
 			if (reader == null)
 				throw new ArgumentNullException(nameof(reader));
 			var sb = new StringBuilder();
-			var buf = new char[1024];
+			var buf = Cache.GetReadBuffer();
 			for (;;) {
 				int len = reader.Read(buf, 0, buf.Length);
 				if (len == 0)
 					break;
 				sb.Append(buf, 0, len);
 			}
+			Cache.FreeReadBuffer(buf);
 			return sb.ToString();
+		}
+
+		static class Cache {
+			public static void FreeReadBuffer(char[] buffer) => Interlocked.Exchange(ref __readBuffer, new WeakReference(buffer));
+			public static char[] GetReadBuffer() => Interlocked.Exchange(ref __readBuffer, null)?.Target as char[] ?? new char[BUF_LENGTH];
+			static WeakReference __readBuffer;
+			const int BUF_LENGTH = 4096;
 		}
 	}
 }

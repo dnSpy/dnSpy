@@ -76,12 +76,6 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class RectangularSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.RectangularSelectionId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
 	sealed class HideCaretWhileTypingEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.HideCaretWhileTypingId;
 		public override bool Default => false;

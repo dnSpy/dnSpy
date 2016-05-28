@@ -28,6 +28,7 @@ namespace dnSpy.Text {
 	sealed class TextBuffer : ITextBuffer, IDisposable {
 		public IContentType ContentType => contentType;
 		IContentType contentType;
+		TextVersion currentTextVersion;
 
 		public void ChangeContentType(IContentType newContentType, object editTag) {
 			VerifyAccess();
@@ -38,13 +39,19 @@ namespace dnSpy.Text {
 				contentType = newContentType;
 				// ContentType is part of the snapshot, so make sure we create a new one
 				var beforeSnapshot = CurrentSnapshot;
-				CreateNewCurrentSnapshot();
+				CreateNewCurrentSnapshot(Array.Empty<ITextChange>());
 				var afterSnapshot = CurrentSnapshot;
 				ContentTypeChanged?.Invoke(this, new ContentTypeChangedEventArgs(beforeSnapshot, afterSnapshot, oldContentType, contentType, editTag));
 			}
 		}
 
-		void CreateNewCurrentSnapshot() => CurrentSnapshot = new TextSnapshot(Document.CreateSnapshot(), ContentType, this);
+		void CreateNewCurrentSnapshot(IList<ITextChange> changes, int? reiteratedVersionNumber = null, ITextSource afterTextSource = null) {
+			// It's null the first time it's called from the ctor
+			if (changes != null)
+				currentTextVersion = currentTextVersion.SetChanges(changes, reiteratedVersionNumber);
+			CurrentSnapshot = new TextSnapshot(afterTextSource ?? Document.CreateSnapshot(), ContentType, this, currentTextVersion);
+		}
+
 		ITextSnapshot ITextBuffer.CurrentSnapshot => CurrentSnapshot;
 		public TextSnapshot CurrentSnapshot { get; private set; }
 
@@ -66,11 +73,19 @@ namespace dnSpy.Text {
 					if (document != null)
 						document.TextChanged -= TextDocument_TextChanged;
 					document = value;
-					CreateNewCurrentSnapshot();
+					ITextChange[] changes;
+					if (oldDocSnapshot == null)
+						changes = null;
+					else {
+						changes = new ITextChange[] { new TextChange(0, oldDocSnapshot, document.CreateSnapshot()) };
+						if (changes[0].NewLength == 0)
+							changes = Array.Empty<ITextChange>();
+					}
+					CreateNewCurrentSnapshot(changes);
 					document.TextChanged += TextDocument_TextChanged;
 					if (oldDocSnapshot != null) {
 						Debug.Assert(oldCurrentSnapshot != null);
-						Changed?.Invoke(this, new TextContentChangedEventArgs(oldCurrentSnapshot, CurrentSnapshot, new ITextChange[] { new TextChange(0, oldDocSnapshot, document.CreateSnapshot()) }, null));
+						Changed?.Invoke(this, new TextContentChangedEventArgs(oldCurrentSnapshot, CurrentSnapshot, changes, null));
 					}
 				}
 			}
@@ -83,7 +98,9 @@ namespace dnSpy.Text {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 			Properties = new PropertyCollection();
+			this.currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
 			this.Document = new TextDocument(text);
+			this.Document.SetOwnerThread(null);
 			this.contentType = contentType;
 		}
 
@@ -91,15 +108,17 @@ namespace dnSpy.Text {
 		//		to listen for changes to it. This code should be in ApplyChanges().
 		void TextDocument_TextChanged(object sender, EventArgs e) {
 			var beforeSnapshot = CurrentSnapshot;
-			CreateNewCurrentSnapshot();
+			var afterTextSource = Document.CreateSnapshot();
+			var changes = TextSnapshot.GetTextChangesFromTo(beforeSnapshot.TextSource, afterTextSource);
+			CreateNewCurrentSnapshot(changes, afterTextSource: afterTextSource);
 			var afterSnapshot = CurrentSnapshot;
 			TextContentChangedEventArgs args = null;
 			object editTag = null;//TODO: Should be the editTag passed to ApplyChanges()
 			//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 			//		raised after all of these three events have been raised.
-			ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, afterSnapshot.GetTextChangesFrom(beforeSnapshot), editTag)));
-			Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, afterSnapshot.GetTextChangesFrom(beforeSnapshot), editTag)));
-			ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, afterSnapshot.GetTextChangesFrom(beforeSnapshot), editTag)));
+			ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, changes, editTag)));
+			Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, changes, editTag)));
+			ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, changes, editTag)));
 		}
 
 		public bool EditInProgress => textEditInProgress != null;
@@ -190,7 +209,6 @@ namespace dnSpy.Text {
 			if (ownerThread != null && ownerThread != Thread.CurrentThread)
 				throw new InvalidOperationException();
 			ownerThread = Thread.CurrentThread;
-			//TODO: AvalonEdit doesn't allow access from any thread if TakeThreadOwnership() hasn't been called
 			Document.SetOwnerThread(ownerThread);
 		}
 

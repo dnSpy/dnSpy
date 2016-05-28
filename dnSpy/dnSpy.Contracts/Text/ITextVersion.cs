@@ -17,122 +17,40 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using System.IO;
-
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// Text snapshot
+	/// Text version
 	/// </summary>
-	public interface ITextSnapshot {
+	public interface ITextVersion {
 		/// <summary>
-		/// Gets a character at <paramref name="position"/>
-		/// </summary>
-		/// <param name="position">Character position</param>
-		/// <returns></returns>
-		char this[int position] { get; }
-
-		/// <summary>
-		/// Gets the content type
-		/// </summary>
-		IContentType ContentType { get; }
-
-		/// <summary>
-		/// Gets the length of the document
-		/// </summary>
-		int Length { get; }
-
-		/// <summary>
-		/// Number of lines
-		/// </summary>
-		int LineCount { get; }
-
-		/// <summary>
-		/// Gets all the lines
-		/// </summary>
-		IEnumerable<ITextSnapshotLine> Lines { get; }
-
-		/// <summary>
-		/// Gets the text buffer owner
+		/// Gets the owner buffer
 		/// </summary>
 		ITextBuffer TextBuffer { get; }
 
 		/// <summary>
-		/// Gets the version
+		/// Gets the version number
 		/// </summary>
-		ITextVersion Version { get; }
+		int VersionNumber { get; }
 
 		/// <summary>
-		/// Copies this to <paramref name="destination"/>
+		/// Gets the oldest version number for which all text changes between that version and this version have been canceled out by corresponding undo/redo operations
 		/// </summary>
-		/// <param name="sourceIndex">Source position</param>
-		/// <param name="destination">Destination</param>
-		/// <param name="destinationIndex">Destination index</param>
-		/// <param name="count">Number of characters to copy</param>
-		void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count);
+		int ReiteratedVersionNumber { get; }
 
 		/// <summary>
-		/// Gets a line
+		/// Gets the next version or null if this is the latest version
 		/// </summary>
-		/// <param name="lineNumber">Line number (0-based)</param>
-		/// <returns></returns>
-		ITextSnapshotLine GetLineFromLineNumber(int lineNumber);
+		ITextVersion Next { get; }
 
 		/// <summary>
-		/// Gets a line
+		/// Gets all the changes to the next version or null if this is the latest version
 		/// </summary>
-		/// <param name="position">Position</param>
-		/// <returns></returns>
-		ITextSnapshotLine GetLineFromPosition(int position);
+		INormalizedTextChangeCollection Changes { get; }
 
 		/// <summary>
-		/// Converts a position to a line number (0-based)
+		/// Gets the length in characters of the text
 		/// </summary>
-		/// <param name="position">Position</param>
-		/// <returns></returns>
-		int GetLineNumberFromPosition(int position);
-
-		/// <summary>
-		/// Gets all the text
-		/// </summary>
-		/// <returns></returns>
-		string GetText();
-
-		/// <summary>
-		/// Gets text
-		/// </summary>
-		/// <param name="span">Span</param>
-		/// <returns></returns>
-		string GetText(Span span);
-
-		/// <summary>
-		/// Gets text
-		/// </summary>
-		/// <param name="startIndex">Start position</param>
-		/// <param name="length">Length</param>
-		/// <returns></returns>
-		string GetText(int startIndex, int length);
-
-		/// <summary>
-		/// Copy part of this to a character array
-		/// </summary>
-		/// <param name="startIndex">Start position</param>
-		/// <param name="length">Number of characters</param>
-		/// <returns></returns>
-		char[] ToCharArray(int startIndex, int length);
-
-		/// <summary>
-		/// Writes the snapshot to <paramref name="writer"/>
-		/// </summary>
-		/// <param name="writer">Destination</param>
-		void Write(TextWriter writer);
-
-		/// <summary>
-		/// Writes a region to <paramref name="writer"/>
-		/// </summary>
-		/// <param name="writer">Destination</param>
-		/// <param name="span">Span</param>
-		void Write(TextWriter writer, Span span);
+		int Length { get; }
 
 		/// <summary>
 		/// Creates a tracking point

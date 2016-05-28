@@ -25,6 +25,30 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface ITextViewModel : IPropertyOwner, IDisposable {
 		/// <summary>
+		/// Gets the nearest point in the visual buffer
+		/// </summary>
+		/// <param name="editBufferPoint">Edit buffer</param>
+		/// <returns></returns>
+		SnapshotPoint GetNearestPointInVisualBuffer(SnapshotPoint editBufferPoint);
+
+		/// <summary>
+		/// Gets the nearest point in visual snapshot
+		/// </summary>
+		/// <param name="editBufferPoint">Edit buffer point</param>
+		/// <param name="targetVisualSnapshot">Target visual snapshot</param>
+		/// <param name="trackingMode">Tracking mode</param>
+		/// <returns></returns>
+		SnapshotPoint GetNearestPointInVisualSnapshot(SnapshotPoint editBufferPoint, ITextSnapshot targetVisualSnapshot, PointTrackingMode trackingMode);
+
+		/// <summary>
+		/// Returns true if the editor point is in the visual buffer
+		/// </summary>
+		/// <param name="editBufferPoint">Edit buffer point</param>
+		/// <param name="affinity">Affinity</param>
+		/// <returns></returns>
+		bool IsPointInVisualBuffer(SnapshotPoint editBufferPoint, PositionAffinity affinity);
+
+		/// <summary>
 		/// Gets the data model
 		/// </summary>
 		ITextDataModel DataModel { get; }

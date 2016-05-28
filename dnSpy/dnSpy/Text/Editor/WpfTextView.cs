@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 
@@ -34,6 +35,10 @@ namespace dnSpy.Text.Editor {
 		public object Tag { get; set; }
 		public ITextViewRoleSet Roles { get; }
 		public IEditorOptions Options { get; }
+		public ITextCaret Caret { get; }
+		public ITextSelection Selection { get; }
+		public bool HasAggregateFocus => DnSpyTextEditor.IsKeyboardFocusWithin;
+		public bool IsMouseOverViewOrAdornments => DnSpyTextEditor.IsMouseOver;
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
 		public DnSpyTextEditor DnSpyTextEditor { get; }
 
@@ -57,8 +62,29 @@ namespace dnSpy.Text.Editor {
 			Options = editorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
 			Options.OptionChanged += EditorOptions_OptionChanged;
+			Selection = new TextSelection(this, dnSpyTextEditor);
+			Caret = new TextCaret(this, dnSpyTextEditor);
 			InitializeFrom(Options);
 			DnSpyTextEditor.Loaded += DnSpyTextEditor_Loaded;
+			DnSpyTextEditor.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(DnSpyTextEditor_GotKeyboardFocus), true);
+			DnSpyTextEditor.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(DnSpyTextEditor_LostKeyboardFocus), true);
+			hasKeyboardFocus = DnSpyTextEditor.IsKeyboardFocusWithin;
+		}
+
+		bool hasKeyboardFocus;
+		void DnSpyTextEditor_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => UpdateKeyboardFocus();
+		void DnSpyTextEditor_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => UpdateKeyboardFocus();
+		public event EventHandler GotAggregateFocus;
+		public event EventHandler LostAggregateFocus;
+		void UpdateKeyboardFocus() {
+			bool newValue = DnSpyTextEditor.IsKeyboardFocusWithin;
+			if (hasKeyboardFocus != newValue) {
+				hasKeyboardFocus = newValue;
+				if (hasKeyboardFocus)
+					GotAggregateFocus?.Invoke(this, EventArgs.Empty);
+				else
+					LostAggregateFocus?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 		void DnSpyTextEditor_Loaded(object sender, RoutedEventArgs e) {
@@ -105,7 +131,6 @@ namespace dnSpy.Text.Editor {
 			UpdateOption(DefaultTextViewOptions.ViewProhibitUserInputId.Name);
 			UpdateOption(DefaultTextViewOptions.WordWrapStyleId.Name);
 			UpdateOption(DefaultTextViewOptions.ScrollBelowDocumentId.Name);
-			UpdateOption(DefaultTextViewOptions.RectangularSelectionId.Name);
 			UpdateOption(DefaultTextViewOptions.HideCaretWhileTypingId.Name);
 			UpdateOption(DefaultTextViewOptions.ShowColumnRulerId.Name);
 			UpdateOption(DefaultTextViewOptions.ColumnRulerPositionId.Name);
@@ -171,8 +196,6 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (optionId == DefaultTextViewOptions.ScrollBelowDocumentId.Name)
 				DnSpyTextEditor.Options.AllowScrollBelowDocument = Options.GetOptionValue(DefaultTextViewOptions.ScrollBelowDocumentId);
-			else if (optionId == DefaultTextViewOptions.RectangularSelectionId.Name)
-				DnSpyTextEditor.Options.EnableRectangularSelection = Options.GetOptionValue(DefaultTextViewOptions.RectangularSelectionId);
 			else if (optionId == DefaultTextViewOptions.HideCaretWhileTypingId.Name)
 				DnSpyTextEditor.Options.HideCursorWhileTyping = Options.GetOptionValue(DefaultTextViewOptions.HideCaretWhileTypingId);
 			else if (optionId == DefaultTextViewOptions.ShowColumnRulerId.Name)

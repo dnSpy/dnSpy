@@ -37,11 +37,13 @@ namespace dnSpy.Text {
 		public IContentType ContentType { get; }
 		public int Length => textSource.TextLength;
 		public ITextBuffer TextBuffer { get; }
+		public ITextVersion Version { get; }
 
-		public TextSnapshot(ITextSource textSource, IContentType contentType, ITextBuffer textBuffer) {
+		public TextSnapshot(ITextSource textSource, IContentType contentType, ITextBuffer textBuffer, ITextVersion textVersion) {
 			this.textSource = textSource;
 			ContentType = contentType;
 			TextBuffer = textBuffer;
+			Version = textVersion;
 		}
 
 		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) => textSource.CopyTo(sourceIndex, destination, destinationIndex, count);
@@ -52,11 +54,12 @@ namespace dnSpy.Text {
 		public void Write(TextWriter writer) => textSource.WriteTextTo(writer);
 		public void Write(TextWriter writer, Span span) => textSource.WriteTextTo(writer, span.Start, span.Length);
 
-		public ITextChange[] GetTextChangesFrom(TextSnapshot other) {
+		public ITextChange[] GetTextChangesFrom(TextSnapshot other) => GetTextChangesFromTo(other.textSource, textSource);
+		public static ITextChange[] GetTextChangesFromTo(ITextSource source, ITextSource target) {
 			var list = new List<ITextChange>();
-			Debug.Assert(other.textSource.Version != null);
-			Debug.Assert(textSource.Version != null);
-			foreach (var tca in other.textSource.Version.GetChangesTo(textSource.Version))
+			Debug.Assert(source.Version != null);
+			Debug.Assert(target.Version != null);
+			foreach (var tca in source.Version.GetChangesTo(target.Version))
 				list.Add(new TextChange(tca.Offset, tca.RemovedText, tca.InsertedText));
 			return list.ToArray();
 		}
@@ -209,6 +212,19 @@ namespace dnSpy.Text {
 			}
 			static WeakReference __offsetBuilderWeakRef;
 		}
+
+		public ITrackingPoint CreateTrackingPoint(int position, PointTrackingMode trackingMode) =>
+			Version.CreateTrackingPoint(position, trackingMode);
+		public ITrackingPoint CreateTrackingPoint(int position, PointTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) =>
+			Version.CreateTrackingPoint(position, trackingMode, trackingFidelity);
+		public ITrackingSpan CreateTrackingSpan(Span span, SpanTrackingMode trackingMode) =>
+			Version.CreateTrackingSpan(span, trackingMode);
+		public ITrackingSpan CreateTrackingSpan(Span span, SpanTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) =>
+			Version.CreateTrackingSpan(span, trackingMode, trackingFidelity);
+		public ITrackingSpan CreateTrackingSpan(int start, int length, SpanTrackingMode trackingMode) =>
+			Version.CreateTrackingSpan(start, length, trackingMode);
+		public ITrackingSpan CreateTrackingSpan(int start, int length, SpanTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) =>
+			Version.CreateTrackingSpan(start, length, trackingMode, trackingFidelity);
 
 		public override string ToString() => GetText();
 	}

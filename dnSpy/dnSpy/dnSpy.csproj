@@ -362,12 +362,17 @@
     <Compile Include="Text\Editor\ReplCommands.cs" />
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplEditor.cs" />
+    <Compile Include="Text\Editor\TextCaret.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\TextEditorSettings.cs" />
+    <Compile Include="Text\Editor\TextSelection.cs" />
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextViewHost.cs" />
+    <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
+    <Compile Include="Text\MappingPoint.cs" />
+    <Compile Include="Text\NormalizedTextChangeCollection.cs" />
     <Compile Include="Text\OffsetAndCachedColors.cs" />
     <Compile Include="Text\TextBuffer.cs" />
     <Compile Include="Text\TextBufferFactoryService.cs" />
@@ -377,6 +382,9 @@
     <Compile Include="Text\TextSnapshot.cs" />
     <Compile Include="Text\TextSnapshotColorizerCreator.cs" />
     <Compile Include="Text\TextSnapshotLine.cs" />
+    <Compile Include="Text\TextVersion.cs" />
+    <Compile Include="Text\TrackingPoint.cs" />
+    <Compile Include="Text\TrackingSpan.cs" />
     <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />

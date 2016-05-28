@@ -61,6 +61,25 @@ namespace dnSpy.Contracts.Text {
 		public ITextSnapshotLine GetContainingLine() => Snapshot.GetLineFromPosition(Position);
 
 		/// <summary>
+		/// Translates this point to a point in another snapshot
+		/// </summary>
+		/// <param name="targetSnapshot">Target snapshot</param>
+		/// <param name="trackingMode">Tracking mode</param>
+		/// <returns></returns>
+		public SnapshotPoint TranslateTo(ITextSnapshot targetSnapshot, PointTrackingMode trackingMode) {
+			if (targetSnapshot == null)
+				throw new ArgumentNullException(nameof(targetSnapshot));
+			if (targetSnapshot == Snapshot)
+				return this;
+			if (targetSnapshot.TextBuffer != Snapshot.TextBuffer)
+				throw new ArgumentException();
+			int newPosition = targetSnapshot.Version.VersionNumber > Snapshot.Version.VersionNumber ?
+				Tracking.TrackPositionForwardInTime(trackingMode, Position, Snapshot.Version, targetSnapshot.Version) :
+				Tracking.TrackPositionBackwardInTime(trackingMode, Position, Snapshot.Version, targetSnapshot.Version);
+			return new SnapshotPoint(targetSnapshot, newPosition);
+		}
+
+		/// <summary>
 		/// Creates a new instance with the added offset
 		/// </summary>
 		/// <param name="offset">Offset</param>
@@ -205,7 +224,7 @@ namespace dnSpy.Contracts.Text {
 		public override string ToString() {
 			if (Snapshot == null)
 				return "<default>";
-			return $"{Position}_'{(Position == Snapshot.Length ? "<end>" : Snapshot.GetText(Position, 1))}'";
+			return $"v{Snapshot.Version.VersionNumber}_{Position}_'{(Position == Snapshot.Length ? "<end>" : Snapshot.GetText(Position, 1))}'";
 		}
 	}
 }

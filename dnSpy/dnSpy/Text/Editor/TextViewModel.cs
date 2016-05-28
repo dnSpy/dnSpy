@@ -43,6 +43,10 @@ namespace dnSpy.Text.Editor {
 			EditBuffer = editBuffer;
 		}
 
+		public SnapshotPoint GetNearestPointInVisualBuffer(SnapshotPoint editBufferPoint) => editBufferPoint;
+		public SnapshotPoint GetNearestPointInVisualSnapshot(SnapshotPoint editBufferPoint, ITextSnapshot targetVisualSnapshot, PointTrackingMode trackingMode) =>
+			editBufferPoint.TranslateTo(targetVisualSnapshot, trackingMode);
+		public bool IsPointInVisualBuffer(SnapshotPoint editBufferPoint, PositionAffinity affinity) => true;
 		public void Dispose() { }
 	}
 }
