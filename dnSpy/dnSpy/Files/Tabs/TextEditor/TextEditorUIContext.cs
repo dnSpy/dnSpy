@@ -32,7 +32,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Events;
-using dnSpy.Text;
+using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 

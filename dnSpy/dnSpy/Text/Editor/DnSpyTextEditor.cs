@@ -43,7 +43,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 
-namespace dnSpy.Text {
+namespace dnSpy.Text.Editor {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class DnSpyTextEditorThemeInitializer : IAutoLoaded {
 		readonly IThemeManager themeManager;

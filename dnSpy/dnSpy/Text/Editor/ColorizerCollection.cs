@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Text {
+namespace dnSpy.Text.Editor {
 	sealed class ColorizerCollection : IDisposable {
 		ITextSnapshotColorizer[] AutoColorizers { get; set; } = Array.Empty<ITextSnapshotColorizer>();
 		List<ITextSnapshotColorizer> UserColorizers { get; } = new List<ITextSnapshotColorizer>();

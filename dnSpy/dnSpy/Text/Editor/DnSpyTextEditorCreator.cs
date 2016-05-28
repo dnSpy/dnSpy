@@ -24,7 +24,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 
-namespace dnSpy.Text {
+namespace dnSpy.Text.Editor {
 	/// <summary>
 	/// Creates <see cref="DnSpyTextEditor"/> instances
 	/// </summary>

@@ -335,27 +335,27 @@
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabManagerCreator.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
-    <Compile Include="Text\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="Text\CachedColorsList.cs" />
     <Compile Include="Text\CachedColorsListColorizer.cs" />
-    <Compile Include="Text\ColorizerCollection.cs" />
     <Compile Include="Text\ContentType.cs" />
     <Compile Include="Text\ContentTypeDefinitions.cs" />
     <Compile Include="Text\ContentTypeRegistryService.cs" />
-    <Compile Include="Text\ContextMenuInitializer.cs" />
-    <Compile Include="Text\DnSpyTextEditor.cs" />
-    <Compile Include="Text\DnSpyTextEditorCreator.cs" />
-    <Compile Include="Text\DnSpyTextEditorHighlighter.cs" />
-    <Compile Include="Text\DnSpyTextEditorOptions.cs" />
-    <Compile Include="Text\EditorPositionState.cs" />
+    <Compile Include="Text\Editor\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
+    <Compile Include="Text\Editor\ColorizerCollection.cs" />
+    <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewHostEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
+    <Compile Include="Text\Editor\DnSpyTextEditor.cs" />
+    <Compile Include="Text\Editor\DnSpyTextEditorCreator.cs" />
+    <Compile Include="Text\Editor\DnSpyTextEditorHighlighter.cs" />
+    <Compile Include="Text\Editor\DnSpyTextEditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
+    <Compile Include="Text\Editor\EditorPositionState.cs" />
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
@@ -454,7 +454,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <EmbeddedResource Include="Text\IL.xshd" />
+    <EmbeddedResource Include="Text\Editor\IL.xshd" />
     <None Include="Themes\blue.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

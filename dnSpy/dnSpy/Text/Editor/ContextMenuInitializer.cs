@@ -23,7 +23,7 @@ using System.Windows.Controls.Primitives;
 using dnSpy.Contracts.Menus;
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace dnSpy.Text {
+namespace dnSpy.Text.Editor {
 	sealed class ContextMenuInitializer : IContextMenuInitializer {
 		readonly Control ctrl;
 		readonly DnSpyTextEditor textEditor;

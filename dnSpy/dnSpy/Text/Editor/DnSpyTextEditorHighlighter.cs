@@ -25,7 +25,7 @@ using dnSpy.Shared.Text;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 
-namespace dnSpy.Text {
+namespace dnSpy.Text.Editor {
 	sealed class DnSpyTextEditorHighlighter : IHighlighter {
 		readonly DnSpyTextEditor textEditor;
 		readonly TextDocument document;

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 
-namespace dnSpy.Text {
+namespace dnSpy.Text.Editor {
 	sealed class DnSpyTextEditorOptions {
 		public Guid? TextEditorCommandGuid { get; }
 		public Guid? TextAreaCommandGuid { get; }
