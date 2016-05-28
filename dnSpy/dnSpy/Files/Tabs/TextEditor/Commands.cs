@@ -149,7 +149,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (uiContext == null)
 				return;
 
-			var res = messageBoxManager.Ask<Tuple<int, int>>(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
+			var res = messageBoxManager.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				int? line, column;
 				TryGetRowCol(s, uiContext.Location.Line, out line, out column);
 				return Tuple.Create(line.Value, column.Value);
@@ -166,12 +166,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			column = null;
 			Match match;
 			if ((match = goToLineRegex1.Match(s)) != null && match.Groups.Count == 4) {
-				line = TryParse(match.Groups[1].Value);
-				column = match.Groups[3].Value != string.Empty ? TryParse(match.Groups[3].Value) : 1;
+				line = TryParseOneBasedToZeroBased(match.Groups[1].Value);
+				column = match.Groups[3].Value != string.Empty ? TryParseOneBasedToZeroBased(match.Groups[3].Value) : 1;
 			}
 			else if ((match = goToLineRegex2.Match(s)) != null && match.Groups.Count == 2) {
 				line = currentLine;
-				column = TryParse(match.Groups[1].Value);
+				column = TryParseOneBasedToZeroBased(match.Groups[1].Value);
 			}
 			if (line == null || column == null) {
 				if (string.IsNullOrWhiteSpace(s))
@@ -183,9 +183,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		static readonly Regex goToLineRegex1 = new Regex(@"^\s*(\d+)\s*(,\s*(\d+))?\s*$");
 		static readonly Regex goToLineRegex2 = new Regex(@"^\s*,\s*(\d+)\s*$");
 
-		static int? TryParse(string valText) {
+		static int? TryParseOneBasedToZeroBased(string valText) {
 			int val;
-			return int.TryParse(valText, out val) ? (int?)val : null;
+			return int.TryParse(valText, out val) && val > 0 ? (int?)(val - 1) : null;
 		}
 	}
 }

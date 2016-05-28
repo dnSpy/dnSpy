@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// </summary>
 	public interface IIconBarObject : ITextLineObject {
 		/// <summary>
-		/// Gets the line number
+		/// Gets the line number, 0-based
 		/// </summary>
 		/// <param name="uiContext">Text editor</param>
 		/// <returns></returns>

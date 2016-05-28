@@ -114,7 +114,7 @@ namespace Example1.Plugin {
 			var uiContext = GetUIContext(context);
 			if (uiContext != null) {
 				try {
-					Clipboard.SetText(string.Format("Line,col: {0},{1}", uiContext.Location.Line, uiContext.Location.Column));
+					Clipboard.SetText(string.Format("Line,col: {0},{1}", uiContext.Location.Line + 1, uiContext.Location.Column + 1));
 				}
 				catch (ExternalException) { }
 			}
@@ -124,7 +124,7 @@ namespace Example1.Plugin {
 			var uiContext = GetUIContext(context);
 			if (uiContext == null)
 				return "Copy line and column";
-			return string.Format("Copy line,col {0},{1}", uiContext.Location.Line, uiContext.Location.Column);
+			return string.Format("Copy line,col {0},{1}", uiContext.Location.Line + 1, uiContext.Location.Column + 1);
 		}
 
 		ITextEditorUIContext GetUIContext(IMenuItemContext context) {

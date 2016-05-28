@@ -161,7 +161,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 						if (e.Success && !e.HasMovedCaret) {
 							e.HasMovedCaret = ((ITextEditorUIContext)ctx.UIContext).RestoreReferencePosition(decompileContext.SavedRefPos);
 							if (!e.HasMovedCaret) {
-								((ITextEditorUIContext)ctx.UIContext).ScrollAndMoveCaretTo(1, 1);
+								((ITextEditorUIContext)ctx.UIContext).ScrollAndMoveCaretTo(0, 0);
 								e.HasMovedCaret = true;
 							}
 						}

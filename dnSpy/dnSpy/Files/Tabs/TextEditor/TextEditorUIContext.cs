@@ -125,7 +125,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public TextEditorLocation Location {
 			get {
 				var caret = textEditorControl.TextEditor.TextArea.Caret;
-				return new TextEditorLocation(caret.Line, caret.Column);
+				return new TextEditorLocation(caret.Line - 1, caret.Column - 1);
 			}
 		}
 

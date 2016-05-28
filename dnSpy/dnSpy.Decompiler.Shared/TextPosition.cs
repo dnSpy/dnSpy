@@ -21,9 +21,21 @@ using System;
 
 namespace dnSpy.Decompiler.Shared {
 	public struct TextPosition : IEquatable<TextPosition>, IComparable<TextPosition> {
+		/// <summary>
+		/// Line, 0-based
+		/// </summary>
 		public int Line { get; }
+
+		/// <summary>
+		/// Column, 0-based
+		/// </summary>
 		public int Column { get; }
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="line">Line, 0-based</param>
+		/// <param name="column">Column, 0-based</param>
 		public TextPosition(int line, int column) {
 			this.Line = line;
 			this.Column = column;
@@ -51,6 +63,6 @@ namespace dnSpy.Decompiler.Shared {
 		}
 
 		public override int GetHashCode() => (Line << 10) ^ Column;
-		public override string ToString() => $"({Line},{Column})";
+		public override string ToString() => $"({Line + 1},{Column + 1})";
 	}
 }

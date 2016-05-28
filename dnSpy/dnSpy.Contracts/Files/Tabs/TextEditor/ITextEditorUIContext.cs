@@ -86,8 +86,8 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Scrolls to a line and column
 		/// </summary>
-		/// <param name="line">Line</param>
-		/// <param name="column">Column</param>
+		/// <param name="line">Line, 0-based</param>
+		/// <param name="column">Column, 0-based</param>
 		void ScrollAndMoveCaretTo(int line, int column);
 
 		/// <summary>
@@ -114,8 +114,8 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Gets all code references starting from a certain location
 		/// </summary>
-		/// <param name="line">Line</param>
-		/// <param name="column">Column</param>
+		/// <param name="line">Line, 0-based</param>
+		/// <param name="column">Column, 0-based</param>
 		/// <returns></returns>
 		IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column);
 

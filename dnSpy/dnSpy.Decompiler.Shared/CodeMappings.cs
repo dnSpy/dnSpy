@@ -76,7 +76,7 @@ namespace dnSpy.Decompiler.Shared {
 
 		public override bool Equals(object obj) => Equals(obj as SourceCodeMapping);
 		public override int GetHashCode() => Mapping.GetHashCode() ^ ILRange.GetHashCode() ^ StartPosition.GetHashCode() ^ EndPosition.GetHashCode();
-		public override string ToString() => $"{ILRange} {StartPosition.Line},{StartPosition.Column} - {EndPosition.Line},{EndPosition.Column}";
+		public override string ToString() => $"{ILRange} {StartPosition.Line + 1},{StartPosition.Column + 1} - {EndPosition.Line + 1},{EndPosition.Column + 1}";
 	}
 
 	/// <summary>
@@ -160,8 +160,8 @@ namespace dnSpy.Decompiler.Shared {
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
 		/// <param name="typeName">Member reference name.</param>
-		/// <param name="lineNumber">Line number.</param>
-		/// <param name="columnNumber">Column number or 0 for any column.</param>
+		/// <param name="lineNumber">Line number, 0-based</param>
+		/// <param name="columnNumber">Column number, 0-based, or -1 for any column.</param>
 		/// <returns></returns>
 		public static SourceCodeMapping GetInstructionByLineNumber(
 			this MemberMapping codeMapping,
@@ -170,7 +170,7 @@ namespace dnSpy.Decompiler.Shared {
 			if (codeMapping == null)
 				throw new ArgumentException("CodeMappings storage must be valid!");
 
-			if (columnNumber != 0) {
+			if (columnNumber >= 0) {
 				var loc = new TextPosition(lineNumber, columnNumber);
 				foreach (var m in codeMapping.MemberCodeMappings.OrderBy(a => a.ILRange.From)) {
 					if (m.StartPosition <= loc && loc <= m.EndPosition)

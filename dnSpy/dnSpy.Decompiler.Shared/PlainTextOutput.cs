@@ -41,7 +41,7 @@ namespace dnSpy.Decompiler.Shared {
 			this.writer = new StringWriter();
 		}
 
-		public TextPosition Location => new TextPosition(line, column + (needsIndent ? indent : 0));
+		public TextPosition Location => new TextPosition(line - 1, column - 1 + (needsIndent ? indent : 0));
 		public override string ToString() => writer.ToString();
 		public void Indent() => indent++;
 		public void Unindent() => indent--;

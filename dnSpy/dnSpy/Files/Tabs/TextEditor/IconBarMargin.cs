@@ -73,7 +73,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				const double imagePadding = 1.0;
 				Size pixelSize = PixelSnapHelpers.GetPixelSize(this);
 				foreach (VisualLine line in textView.VisualLines) {
-					int lineNumber = line.FirstDocumentLine.LineNumber;
+					int lineNumber = line.FirstDocumentLine.LineNumber - 1;
 					List<IIconBarObject> list;
 					if (!bookmarkDict.TryGetValue(lineNumber, out list))
 						continue;
@@ -102,7 +102,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var vl = textView.GetVisualLineFromVisualTop(Mouse.GetPosition(textView).Y + textView.ScrollOffset.Y);
 			if (vl == null)
 				return null;
-			return vl.FirstDocumentLine.LineNumber;
+			return vl.FirstDocumentLine.LineNumber - 1;
 		}
 	}
 }

@@ -84,10 +84,10 @@ namespace dnSpy.Debugger {
 			if (!GetLocation(uiContext, out location, out endLocation))
 				throw new InvalidOperationException();
 
-			var line = markerService.TextView.Document.GetLineByNumber(location.Line);
-			var endLine = markerService.TextView.Document.GetLineByNumber(endLocation.Line);
-			int startOffset = line.Offset + location.Column - 1;
-			int endOffset = endLine.Offset + endLocation.Column - 1;
+			var line = markerService.TextView.Document.GetLineByNumber(location.Line + 1);
+			var endLine = markerService.TextView.Document.GetLineByNumber(endLocation.Line + 1);
+			int startOffset = line.Offset + location.Column;
+			int endOffset = endLine.Offset + endLocation.Column;
 
 			return markerService.Create(startOffset, endOffset - startOffset);
 		}

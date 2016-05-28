@@ -115,7 +115,7 @@ namespace dnSpy.Shared.Decompiler {
 
 		public int TextLength => b.Length;
 		public override string ToString() => b.ToString();
-		public TextPosition Location => new TextPosition(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
+		public TextPosition Location => new TextPosition(lineNumber - 1, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0) - 1);
 
 		#region Text Document
 		TextDocument textDocument;

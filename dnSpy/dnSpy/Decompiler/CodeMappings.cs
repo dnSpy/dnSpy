@@ -63,13 +63,13 @@ namespace dnSpy.Decompiler {
 		}
 
 		public IList<SourceCodeMapping> Find(int line, int column) {
-			if (line <= 0)
+			if (line < 0)
 				return Array.Empty<SourceCodeMapping>();
 			if (memberMappings.Count == 0)
 				return Array.Empty<SourceCodeMapping>();
 
 			var bp = FindByLineColumn(line, column);
-			if (bp == null && column != 0)
+			if (bp == null && column >= 0)
 				bp = FindByLineColumn(line, 0);
 			if (bp == null)
 				bp = GetClosest(line);

@@ -389,7 +389,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
-			int offset = TextEditor.TextArea.TextView.Document.GetOffset(line, column);
+			int offset = TextEditor.TextArea.TextView.Document.GetOffset(line + 1, column + 1);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 
 			while (refSeg != null) {
@@ -400,7 +400,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		TextEditorLocation GetLocation(ReferenceSegment refSeg) {
 			var loc = TextEditor.TextArea.TextView.Document.GetLocation(refSeg.StartOffset);
-			return new TextEditorLocation(loc.Line, loc.Column);
+			return new TextEditorLocation(loc.Line - 1, loc.Column - 1);
 		}
 
 		public ReferenceSegment GetReferenceSegmentAt(int offset) {
@@ -623,8 +623,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
-			TextEditor.ScrollTo(line, column);
-			TextEditor.SetCaretPosition(line, column);
+			TextEditor.ScrollTo(line + 1, column + 1);
+			TextEditor.SetCaretPosition(line + 1, column + 1);
 			if (focus)
 				textEditorHelper.SetFocus();
 		}
@@ -765,7 +765,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			else if (refSeg == null)
 				return new RefPos(mappings);
 			else {
-				offset = doc == null ? 0 : doc.GetOffset(mapping.StartPosition.Line, mapping.StartPosition.Column);
+				offset = doc == null ? 0 : doc.GetOffset(mapping.StartPosition.Line + 1, mapping.StartPosition.Column + 1);
 				if (offset < refSeg.StartOffset)
 					return new RefPos(mappings);
 				return new RefPos(refSeg);

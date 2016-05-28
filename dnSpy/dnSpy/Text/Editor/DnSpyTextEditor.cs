@@ -476,7 +476,7 @@ namespace dnSpy.Text.Editor {
 		public IEnumerable<GuidObject> GetGuidObjects(bool openedFromKeyboard) {
 			var position = openedFromKeyboard ? TextArea.Caret.Position : GetPositionFromMousePosition();
 			if (position != null) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line, position.Value.Column));
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line - 1, position.Value.Column - 1));
 
 				var doc = TextArea.TextView.Document;
 				if (doc != null) {

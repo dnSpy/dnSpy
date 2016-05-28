@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Clear();
 		bool? GetAddRemoveBreakpointsInfo(out int count);
 		bool GetEnableDisableBreakpointsInfo(out int count);
-		void Toggle(ITextEditorUIContext uiContext, int line, int column = 0);
+		void Toggle(ITextEditorUIContext uiContext, int line, int column = -1);
 		Func<object, object> OnRemoveBreakpoints { get; set; }
 	}
 
@@ -361,7 +361,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			return list;
 		}
 
-		public void Toggle(ITextEditorUIContext uiContext, int line, int column = 0) {
+		public void Toggle(ITextEditorUIContext uiContext, int line, int column = -1) {
 			var bps = uiContext.GetCodeMappings().Find(line, column);
 			var ilbps = GetILCodeBreakpoints(uiContext, bps);
 			if (ilbps.Count > 0) {

@@ -23,20 +23,20 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public struct TextEditorLocation {
 		/// <summary>
-		/// Line
+		/// Line, 0-based
 		/// </summary>
 		public int Line { get; set; }
 
 		/// <summary>
-		/// Column
+		/// Column, 0-based
 		/// </summary>
 		public int Column { get; set; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="line">Line</param>
-		/// <param name="column">Column</param>
+		/// <param name="line">Line, 0-based</param>
+		/// <param name="column">Column, 0-based</param>
 		public TextEditorLocation(int line, int column) {
 			this.Line = line;
 			this.Column = column;

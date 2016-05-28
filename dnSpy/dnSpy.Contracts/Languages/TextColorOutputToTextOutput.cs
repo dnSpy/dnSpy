@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Languages {
 			this.indent = 0;
 		}
 
-		TextPosition ITextOutput.Location => new TextPosition(line, col + indent);
+		TextPosition ITextOutput.Location => new TextPosition(line - 1, col - 1 + indent);
 
 		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) { }
 		void ITextOutput.Indent() => indent++;
