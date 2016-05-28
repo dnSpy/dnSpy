@@ -70,11 +70,14 @@ namespace dnSpy.Search {
 			if (!res.IsMatch)
 				return;
 			foreach (var ca in hca.CustomAttributes) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				foreach (var o in ca.ConstructorArguments) {
+					options.CancellationToken.ThrowIfCancellationRequested();
 					if (CheckCA(file, hca, parent, o))
 						return;
 				}
 				foreach (var o in ca.NamedArguments) {
+					options.CancellationToken.ThrowIfCancellationRequested();
 					if (CheckCA(file, hca, parent, o.Argument))
 						return;
 				}
@@ -205,6 +208,7 @@ namespace dnSpy.Search {
 				return;
 
 			foreach (var asmRef in module.ModuleDef.GetAssemblyRefs()) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				res = options.Filter.GetResult(asmRef);
 				if (res.FilterType == FilterType.Hide)
 					continue;
@@ -223,6 +227,7 @@ namespace dnSpy.Search {
 			}
 
 			foreach (var modRef in module.ModuleDef.GetModuleRefs()) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				res = options.Filter.GetResult(modRef);
 				if (res.FilterType == FilterType.Hide)
 					continue;
@@ -263,8 +268,10 @@ namespace dnSpy.Search {
 				}
 			}));
 
-			foreach (var node in resNodes)
+			foreach (var node in resNodes) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				SearchResourceTreeNodes(module, node);
+			}
 		}
 
 		string ToString(IResourceDataProvider resource) {
@@ -306,8 +313,10 @@ namespace dnSpy.Search {
 				resNodes.AddRange(resTreeNode.TreeNode.DataChildren.OfType<IResourceElementNode>());
 			}));
 
-			foreach (var resElNode in resNodes)
+			foreach (var resElNode in resNodes) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				SearchResourceElementTreeNode(module, resTreeNode, resElNode);
+			}
 		}
 
 		void SearchResourceElementTreeNode(IDnSpyFile module, IResourceNode resTreeNode, IResourceElementNode resElNode) {
@@ -446,17 +455,22 @@ namespace dnSpy.Search {
 		}
 
 		void SearchMembers(IDnSpyFile ownerModule, TypeDef type) {
-			foreach (var method in type.Methods)
+			foreach (var method in type.Methods) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				Search(ownerModule, type, method);
-			options.CancellationToken.ThrowIfCancellationRequested();
-			foreach (var field in type.Fields)
+			}
+			foreach (var field in type.Fields) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				Search(ownerModule, type, field);
-			options.CancellationToken.ThrowIfCancellationRequested();
-			foreach (var prop in type.Properties)
+			}
+			foreach (var prop in type.Properties) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				Search(ownerModule, type, prop);
-			options.CancellationToken.ThrowIfCancellationRequested();
-			foreach (var evt in type.Events)
+			}
+			foreach (var evt in type.Events) {
+				options.CancellationToken.ThrowIfCancellationRequested();
 				Search(ownerModule, type, evt);
+			}
 		}
 
 		void Search(IDnSpyFile ownerModule, TypeDef type, MethodDef method) {
@@ -482,6 +496,7 @@ namespace dnSpy.Search {
 			res = options.Filter.GetResultParamDefs(method);
 			if (res.FilterType != FilterType.Hide) {
 				foreach (var pd in method.ParamDefs) {
+					options.CancellationToken.ThrowIfCancellationRequested();
 					CheckCustomAttributes(ownerModule, pd, method);
 					res = options.Filter.GetResult(method, pd);
 					if (res.FilterType == FilterType.Hide)
@@ -514,6 +529,7 @@ namespace dnSpy.Search {
 					return; // Return immediately. All code here depends on a non-null body
 
 				foreach (var local in body.Variables) {
+					options.CancellationToken.ThrowIfCancellationRequested();
 					res = options.Filter.GetResult(method, local);
 					if (res.FilterType == FilterType.Hide)
 						continue;
@@ -541,7 +557,12 @@ namespace dnSpy.Search {
 			body = method.Body;
 			if (body == null)
 				return;
+			int counter = 0;
 			foreach (var instr in body.Instructions) {
+				if (counter++ > 1000) {
+					options.CancellationToken.ThrowIfCancellationRequested();
+					counter = 0;
+				}
 				object operand;
 				// Only check numbers and strings. Don't pass in any type of operand to IsMatch()
 				switch (instr.OpCode.Code) {
