@@ -27,7 +27,7 @@ Chinese Simplified
 	linkinshi
 
 Russian
-	Igor
+	Igor Besedin
 	Konctantin
 
 
