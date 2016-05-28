@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Text {
 		ITextBuffer DocumentBuffer { get; }
 
 		/// <summary>
-		/// Raised when <see cref="ContentType"/> has been changed
+		/// Raised when <see cref="ContentType"/> has changed
 		/// </summary>
 		event EventHandler<TextDataModelContentTypeChangedEventArgs> ContentTypeChanged;
 	}

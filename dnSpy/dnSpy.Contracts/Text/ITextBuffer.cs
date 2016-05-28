@@ -35,24 +35,24 @@ namespace dnSpy.Contracts.Text {
 		ITextSnapshot CurrentSnapshot { get; }
 
 		/// <summary>
-		/// Raised when <see cref="ContentType"/> has been changed
+		/// Raised when <see cref="ContentType"/> has changed
 		/// </summary>
 		event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
 
 		/// <summary>
-		/// Raised when the text has been changed. It is raised before <see cref="Changed"/>
+		/// Raised when the text has changed. It is raised before <see cref="Changed"/>
 		/// and <see cref="ChangedLowPriority"/>
 		/// </summary>
 		event EventHandler<TextContentChangedEventArgs> ChangedHighPriority;
 
 		/// <summary>
-		/// Raised when the text has been changed. It is raised after <see cref="ChangedHighPriority"/>
+		/// Raised when the text has changed. It is raised after <see cref="ChangedHighPriority"/>
 		/// and before <see cref="ChangedLowPriority"/>
 		/// </summary>
 		event EventHandler<TextContentChangedEventArgs> Changed;
 
 		/// <summary>
-		/// Raised when the text has been changed. It is raised after <see cref="ChangedHighPriority"/>
+		/// Raised when the text has changed. It is raised after <see cref="ChangedHighPriority"/>
 		/// and <see cref="Changed"/>
 		/// </summary>
 		event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;

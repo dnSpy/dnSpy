@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.TreeView {
 		void OnEnsureChildrenLoaded();
 
 		/// <summary>
-		/// Called when the children has been changed
+		/// Called when the children has changed
 		/// </summary>
 		/// <param name="added">Added nodes</param>
 		/// <param name="removed">Removed nodes</param>

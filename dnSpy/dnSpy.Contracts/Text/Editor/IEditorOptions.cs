@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		IEnumerable<EditorOptionDefinition> SupportedOptions { get; }
 
 		/// <summary>
-		/// Raised when an option has been changed
+		/// Raised when an option has changed
 		/// </summary>
 		event EventHandler<EditorOptionChangedEventArgs> OptionChanged;
 

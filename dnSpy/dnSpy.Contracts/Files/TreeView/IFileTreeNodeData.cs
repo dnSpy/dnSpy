@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		string ToString(ILanguage language);
 
 		/// <summary>
-		/// Called when <see cref="IFileTreeNodeDataContext.Filter"/> has been changed
+		/// Called when <see cref="IFileTreeNodeDataContext.Filter"/> has changed
 		/// </summary>
 		void Refilter();
 
