@@ -177,6 +177,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			Documents.AddRange(codeDocs);
 			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
+			foreach (var doc in Documents)
+				doc.TextView.Caret.MoveTo(0, 0);
 
 			CanCompile = canCompile;
 			HasDecompiled = true;

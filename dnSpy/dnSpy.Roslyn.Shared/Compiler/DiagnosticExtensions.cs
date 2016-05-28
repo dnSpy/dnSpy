@@ -60,6 +60,6 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		static LineLocationSpan ToLineLocationSpan(this FileLinePositionSpan pos) =>
 			new LineLocationSpan(pos.StartLinePosition.ToLineLocation(), pos.EndLinePosition.ToLineLocation());
 
-		static LineLocation ToLineLocation(this LinePosition pos) => new LineLocation(pos.Line + 1, pos.Character + 1);
+		static LineLocation ToLineLocation(this LinePosition pos) => new LineLocation(pos.Line, pos.Character);
 	}
 }

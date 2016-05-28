@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -26,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
@@ -39,6 +41,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			DataContextChanged += (s, e) => {
 				var vm = DataContext as EditCodeVM;
 				if (vm != null) {
+					vm.PropertyChanged += EditCodeVM_PropertyChanged;
 					vm.OwnerWindow = this;
 					vm.CodeCompiled += EditCodeVM_CodeCompiled;
 					if (vm.HasDecompiled)
@@ -86,7 +89,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			Debug.Assert(vm != null && diag != null);
 			if (vm == null || diag == null)
 				return;
-			if (string.IsNullOrEmpty(diag.File))
+
+			HandleActivatedDiagnostic(vm, diag);
+		}
+
+		void HandleActivatedDiagnostic(EditCodeVM vm, CompilerDiagnosticVM diag) {
+			if (string.IsNullOrEmpty(diag.FullPath))
 				return;
 
 			var doc = vm.Documents.FirstOrDefault(a => a.Name == diag.FullPath);
@@ -96,8 +104,22 @@ namespace dnSpy.AsmEditor.Compiler {
 			vm.SelectedDocument = doc;
 
 			if (diag.LineLocationSpan != null) {
-				//TODO: Go to the line and column
+				UIUtils.Focus(doc.TextView.FocusedElement, () => {
+					// The caret isn't always moved unless we wait a little
+					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+						if (doc == vm.SelectedDocument) {
+							doc.TextView.Caret.MoveTo(diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
+							doc.TextView.Caret.EnsureVisible();
+						}
+					}));
+				});
 			}
+		}
+
+		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var vm = (EditCodeVM)sender;
+			if (e.PropertyName == nameof(vm.SelectedDocument))
+				UIUtils.Focus(vm.SelectedDocument?.TextView?.FocusedElement);
 		}
 
 		void CopyToClipboard(CompilerDiagnosticVM[] diags) {
