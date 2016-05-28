@@ -173,6 +173,12 @@ namespace dnSpy.Search {
 				return;
 			}
 
+			var paramDef = o as ParamDef;
+			if (paramDef != null) {
+				output.Write(BoxedTextTokenKind.Parameter, IdentifierEscaper.Escape(paramDef.Name));
+				return;
+			}
+
 			// non-.NET file
 			var file = o as IDnSpyFile;
 			if (file != null) {
