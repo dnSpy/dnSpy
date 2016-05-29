@@ -30,11 +30,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		string Input { get; }
 
 		/// <summary>
-		/// Gets the changes
-		/// </summary>
-		ITextChange[] Changes { get; }
-
-		/// <summary>
 		/// Add color info. No overlaps, and must be in order.
 		/// </summary>
 		/// <param name="offset">Offset of text</param>

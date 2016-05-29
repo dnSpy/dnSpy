@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
@@ -152,6 +153,22 @@ namespace dnSpy.Text.Editor {
 			var vsp1 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l1.Offset + startColumn));
 			var vsp2 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l2.Offset + endColumn));
 			Select(vsp1, vsp2);
+		}
+
+		public string GetText() {
+			if (Mode == TextSelectionMode.Stream)
+				return StreamSelectionSpan.GetText();
+			var sb = new StringBuilder();
+			var snapshot = TextView.TextSnapshot;
+			int i = 0;
+			foreach (var s in SelectedSpans) {
+				if (i++ > 0)
+					sb.AppendLine();
+				sb.Append(snapshot.GetText(s));
+			}
+			if (i > 1)
+				sb.AppendLine();
+			return sb.ToString();
 		}
 	}
 }

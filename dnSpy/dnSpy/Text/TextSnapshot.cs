@@ -180,14 +180,19 @@ namespace dnSpy.Text {
 					lastCharWasCR = false;
 				}
 			}
-			if (lineLen != 0 || lastCharWasCR) {
-				int lineBreakSize = lastCharWasCR ? 1 : 0;
+			Debug.Assert(pos == endPos);
+			if (lastCharWasCR) {
+				const int lineBreakSize = 1;
+				builder.Add((uint)((lineBreakSize << LINEBREAK_SHIFT) | linePos));
+				linePos += lineLen + lineBreakSize;
+				lineLen = 0;
+			}
+			{
+				const int lineBreakSize = 0;
 				builder.Add((uint)((lineBreakSize << LINEBREAK_SHIFT) | linePos));
 				linePos += lineLen + lineBreakSize;
 			}
 			Debug.Assert(linePos == endPos);
-			if (endPos == 0)
-				builder.Add(0);
 
 			Cache.FreeReadBuffer(buffer);
 			Debug.Assert(builder.Count > 0);

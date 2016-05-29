@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Text {
 		int Length { get; }
 
 		/// <summary>
-		/// Number of lines
+		/// Number of lines. There's always one or more lines available.
 		/// </summary>
 		int LineCount { get; }
 

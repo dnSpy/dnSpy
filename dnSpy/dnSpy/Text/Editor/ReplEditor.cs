@@ -35,14 +35,13 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Text.Editor {
 	sealed class ReplEditor : IReplEditor {
-		public object UIObject => textEditor;
-		public IInputElement FocusedElement => textEditor.FocusedElement;
-		public FrameworkElement ScaleElement => textEditor.ScaleElement;
+		public object UIObject => wpfTextView.UIObject;
+		public IInputElement FocusedElement => wpfTextView.FocusedElement;
+		public FrameworkElement ScaleElement => wpfTextView.ScaleElement;
 		public object Tag { get; set; }
 
 		internal string PrimaryPrompt { get; }
@@ -78,11 +77,11 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			this.wpfTextView = wpfTextView;
+			this.wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			this.cachedColorsList = new CachedColorsList();
 			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
 			AddNewDocument();
-			this.textEditor.TextArea.TextView.Document.UndoStack.SizeLimit = 100;
 			this.textEditor.TextArea.TextEntering += TextArea_TextEntering;
 			this.textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
 			AddBinding(ApplicationCommands.Paste, (s, e) => Paste(), (s, e) => e.CanExecute = CanPaste && IsAtEditingPosition);
@@ -103,14 +102,28 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
+		void Select(int start, int end) {
+			bool isReversed = start > end;
+			var pos = !isReversed ?
+				new SnapshotSpan(new SnapshotPoint(wpfTextView.TextSnapshot, start), new SnapshotPoint(wpfTextView.TextSnapshot, end)) :
+				new SnapshotSpan(new SnapshotPoint(wpfTextView.TextSnapshot, end), new SnapshotPoint(wpfTextView.TextSnapshot, start));
+			wpfTextView.Selection.Select(pos, isReversed);
+		}
+
+		void MoveToEnd() => MoveTo(wpfTextView.TextSnapshot.Length);
+		void MoveTo(int offset) =>
+			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, offset));
+		int CaretOffset => GetOffset(wpfTextView.Caret.Position.VirtualBufferPosition);
+		static int GetOffset(VirtualSnapshotPoint point) => point.Position.Position;
+
 		void WriteOffsetOfPrompt(int? newValue, bool force = false) {
 			if (force || offsetOfPrompt.HasValue != newValue.HasValue) {
 				if (newValue == null) {
 					Debug.Assert(scriptOutputCachedTextTokenColors == null);
 					scriptOutputCachedTextTokenColors = new CachedTextTokenColors();
 					Debug.Assert(LastLine.Length == 0);
-					cachedColorsList.AddOrUpdate(LastLine.EndOffset, scriptOutputCachedTextTokenColors);
-					textEditor.TextArea.TextView.Redraw(LastLine.EndOffset, scriptOutputCachedTextTokenColors.Length);
+					cachedColorsList.AddOrUpdate(wpfTextView.TextSnapshot.Length, scriptOutputCachedTextTokenColors);
+					textEditor.TextArea.TextView.Redraw(wpfTextView.TextSnapshot.Length, scriptOutputCachedTextTokenColors.Length);
 				}
 				else {
 					Debug.Assert(scriptOutputCachedTextTokenColors != null);
@@ -133,12 +146,12 @@ namespace dnSpy.Text.Editor {
 			WriteOffsetOfPrompt(null, true);
 		}
 
-		bool CanCutSelection => !this.textEditor.TextArea.Selection.IsEmpty;
+		bool CanCutSelection => !wpfTextView.Selection.IsEmpty;
 
 		void CutSelection() {
 			if (!UpdateCaretForEdit())
 				return;
-			var text = this.textEditor.TextArea.Selection.GetText();
+			var text = wpfTextView.Selection.GetText();
 			try {
 				Clipboard.SetText(text);
 			}
@@ -148,7 +161,7 @@ namespace dnSpy.Text.Editor {
 
 		bool CanPaste {
 			get {
-				if (!this.textEditor.TextArea.ReadOnlySectionProvider.CanInsert(this.textEditor.TextArea.Caret.Offset))
+				if (!this.textEditor.TextArea.ReadOnlySectionProvider.CanInsert(CaretOffset))
 					return false;
 				try {
 					return Clipboard.ContainsText();
@@ -180,7 +193,7 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (!IsCommandMode)
 					return false;
-				return this.textEditor.TextArea.Caret.Offset >= offsetOfPrompt.Value;
+				return CaretOffset >= offsetOfPrompt.Value;
 			}
 		}
 
@@ -193,15 +206,12 @@ namespace dnSpy.Text.Editor {
 		bool UpdateCaretForEdit() {
 			if (!IsAtEditingPosition)
 				return false;
-			var caret = this.textEditor.TextArea.Caret;
-			caret.Offset = FilterOffset(caret.Offset);
+			MoveTo(FilterOffset(CaretOffset));
 
-			var sel = this.textEditor.TextArea.Selection;
-			if (!sel.IsEmpty) {
-				var doc = this.textEditor.TextArea.TextView.Document;
-				int start = FilterOffset(doc.GetOffset(sel.StartPosition.Location));
-				int end = FilterOffset(doc.GetOffset(sel.EndPosition.Location));
-				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, start, end);
+			if (!wpfTextView.Selection.IsEmpty) {
+				int start = FilterOffset(GetOffset(wpfTextView.Selection.AnchorPoint));
+				int end = FilterOffset(GetOffset(wpfTextView.Selection.ActivePoint));
+				Select(start, end);
 			}
 
 			return true;
@@ -211,13 +221,13 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(offsetOfPrompt != null);
 			if (offset < offsetOfPrompt.Value)
 				offset = offsetOfPrompt.Value;
-			var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(offset);
-			var prefixString = line.Offset == offsetOfPrompt.Value ? PrimaryPrompt : SecondaryPrompt;
-			int col = offset - line.Offset;
+			var line = wpfTextView.TextSnapshot.GetLineFromPosition(offset);
+			var prefixString = line.Start.Position == offsetOfPrompt.Value ? PrimaryPrompt : SecondaryPrompt;
+			int col = offset - line.Start.Position;
 			if (col < prefixString.Length)
-				offset = line.Offset + prefixString.Length;
-			if (offset > LastLine.EndOffset)
-				offset = LastLine.EndOffset;
+				offset = line.Start.Position + prefixString.Length;
+			if (offset > wpfTextView.TextSnapshot.Length)
+				offset = wpfTextView.TextSnapshot.Length;
 			return offset;
 		}
 
@@ -255,8 +265,8 @@ namespace dnSpy.Text.Editor {
 			if (mod == ModifierKeys.None && key == Key.Enter)
 				return HandleEnter(false);
 			if (mod == ModifierKeys.Control && key == Key.Enter) {
-				this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
-				this.textEditor.TextArea.ClearSelection();
+				MoveToEnd();
+				wpfTextView.Selection.Clear();
 				return HandleEnter(true);
 			}
 			if (mod == ModifierKeys.Shift && key == Key.Enter)
@@ -304,24 +314,23 @@ namespace dnSpy.Text.Editor {
 			if (!IsCommandMode)
 				return;
 			int offs = removePrompt ? offsetOfPrompt.Value : FilterOffset(offsetOfPrompt.Value);
-			this.textEditor.TextArea.Caret.Offset = offs;
-			var sel = Selection.Create(this.textEditor.TextArea, offs, LastLine.EndOffset);
-			this.textEditor.TextArea.Selection = sel;
+			MoveTo(offs);
+			var span = Contracts.Text.Span.FromBounds(offs, wpfTextView.TextSnapshot.Length);
 
 			if (removePrompt) {
 				var oldValue = offsetOfPrompt;
 				offsetOfPrompt = null;
 
-				this.textEditor.TextArea.Selection.ReplaceSelectionWithText(string.Empty);
-				this.textEditor.TextArea.Caret.BringCaretToView();
+				wpfTextView.TextBuffer.Delete(span);
+				wpfTextView.Caret.EnsureVisible();
 				SearchText = null;
 
 				offsetOfPrompt = oldValue;
 				WriteOffsetOfPrompt(null);
 			}
 			else {
-				this.textEditor.TextArea.Selection.ReplaceSelectionWithText(string.Empty);
-				this.textEditor.TextArea.Caret.BringCaretToView();
+				wpfTextView.TextBuffer.Delete(span);
+				wpfTextView.Caret.EnsureVisible();
 				SearchText = null;
 			}
 		}
@@ -329,9 +338,9 @@ namespace dnSpy.Text.Editor {
 		bool HandleEnter(bool force) {
 			if (!UpdateCaretForEdit())
 				return false;
-			if (this.textEditor.TextArea.Caret.Offset != LastLine.EndOffset)
+			if (CaretOffset != wpfTextView.TextSnapshot.Length)
 				return true;
-			if (!this.textEditor.TextArea.Selection.IsEmpty)
+			if (!wpfTextView.Selection.IsEmpty)
 				return true;
 
 			var input = CurrentInput;
@@ -348,7 +357,7 @@ namespace dnSpy.Text.Editor {
 			AddCodeSubBuffer();
 			WriteOffsetOfPrompt(null);
 			ClearUndoRedoHistory();
-			this.textEditor.TextArea.Caret.BringCaretToView();
+			wpfTextView.Caret.EnsureVisible();
 			commandVersion++;
 			this.CommandHandler.ExecuteCommand(input);
 			return false;
@@ -361,7 +370,7 @@ namespace dnSpy.Text.Editor {
 				if (!IsCommandMode)
 					return string.Empty;
 
-				string s = this.textEditor.TextArea.TextView.Document.GetText(offsetOfPrompt.Value, LastLine.EndOffset - offsetOfPrompt.Value);
+				string s = wpfTextView.TextBuffer.CurrentSnapshot.GetText(offsetOfPrompt.Value, wpfTextView.TextSnapshot.Length - offsetOfPrompt.Value);
 				return ToInputString(s, PrimaryPrompt);
 			}
 		}
@@ -406,8 +415,8 @@ namespace dnSpy.Text.Editor {
 		bool HandleTab() {
 			if (!UpdateCaretForEdit())
 				return false;
-			if (!this.textEditor.TextArea.Selection.IsEmpty) {
-				AddUserInput(string.Empty);
+			if (!wpfTextView.Selection.IsEmpty) {
+				AddUserInput("\t");
 				return false;
 			}
 
@@ -415,56 +424,54 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void HandleSelectAll() {
-			var buf = FindBuffer(textEditor.TextArea.Caret.Offset);
-			var newSel = Selection.Create(this.textEditor.TextArea, buf.Kind == BufferKind.Code ? buf.StartOffset + PrimaryPrompt.Length : buf.StartOffset, buf.EndOffset);
-			if (newSel.IsEmpty || this.textEditor.TextArea.Selection.Equals(newSel))
-				newSel = Selection.Create(this.textEditor.TextArea, 0, LastLine.EndOffset);
-			this.textEditor.TextArea.Selection = newSel;
+			var buf = FindBuffer(CaretOffset);
+			var newSel = new SnapshotSpan(new SnapshotPoint(wpfTextView.TextSnapshot, buf.Kind == BufferKind.Code ? buf.StartOffset + PrimaryPrompt.Length : buf.StartOffset), new SnapshotPoint(wpfTextView.TextSnapshot, buf.EndOffset));
+			if (newSel.IsEmpty || (wpfTextView.Selection.Mode == TextSelectionMode.Stream && wpfTextView.Selection.StreamSelectionSpan == new VirtualSnapshotSpan(newSel)))
+				newSel = new SnapshotSpan(wpfTextView.TextSnapshot, 0, wpfTextView.TextSnapshot.Length);
+			wpfTextView.Selection.Select(newSel, false);
 			// We don't move the caret to the end of the selection because then we can't press
 			// Ctrl+A again to toggle between selecting all or just the current buffer.
-			this.textEditor.TextArea.Caret.BringCaretToView();
+			wpfTextView.Caret.EnsureVisible();
 		}
 
 		void HandleDelete() {
 			if (!UpdateCaretForEdit())
 				return;
-			if (!this.textEditor.TextArea.Selection.IsEmpty)
+			if (!wpfTextView.Selection.IsEmpty)
 				AddUserInput(string.Empty);
 			else {
-				if (this.textEditor.TextArea.Caret.Offset >= LastLine.EndOffset)
+				if (CaretOffset >= wpfTextView.TextSnapshot.Length)
 					return;
-				int start = FilterOffset(this.textEditor.TextArea.Caret.Offset);
+				int start = FilterOffset(CaretOffset);
 				int end = start + 1;
-				var startLine = this.textEditor.TextArea.TextView.Document.GetLineByOffset(start);
-				var endLine = this.textEditor.TextArea.TextView.Document.GetLineByOffset(end);
-				if (startLine != endLine || end > endLine.EndOffset) {
-					endLine = this.textEditor.TextArea.TextView.Document.GetLineByNumber(startLine.LineNumber + 1);
-					end = FilterOffset(endLine.Offset);
+				var startLine = wpfTextView.TextSnapshot.GetLineFromPosition(start);
+				var endLine = wpfTextView.TextSnapshot.GetLineFromPosition(end);
+				if (startLine.Start != endLine.Start || end > endLine.End.Position) {
+					endLine = wpfTextView.TextSnapshot.GetLineFromLineNumber(startLine.LineNumber + 1);
+					end = FilterOffset(endLine.Start.Position);
 				}
-				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, start, end);
-				AddUserInput(string.Empty);
+				AddUserInput(start, end, string.Empty);
 			}
 		}
 
 		void HandleBackspace() {
 			if (!UpdateCaretForEdit())
 				return;
-			if (!this.textEditor.TextArea.Selection.IsEmpty)
+			if (!wpfTextView.Selection.IsEmpty)
 				AddUserInput(string.Empty);
 			else {
 				int start = FilterOffset(offsetOfPrompt.Value);
-				int offs = this.textEditor.TextArea.Caret.Offset;
+				int offs = CaretOffset;
 				if (offs <= start)
 					return;
-				int end = this.textEditor.TextArea.Caret.Offset;
+				int end = offs;
 				start = end - 1;
-				var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(end);
-				if (line.Offset == end || FilterOffset(start) != start) {
-					var prevLine = this.textEditor.TextArea.TextView.Document.GetLineByNumber(line.LineNumber - 1);
-					start = prevLine.EndOffset;
+				var line = wpfTextView.TextSnapshot.GetLineFromPosition(end);
+				if (line.Start.Position == end || FilterOffset(start) != start) {
+					var prevLine = wpfTextView.TextSnapshot.GetLineFromLineNumber(line.LineNumber - 1);
+					start = prevLine.End.Position;
 				}
-				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, start, end);
-				AddUserInput(string.Empty);
+				AddUserInput(start, end, string.Empty);
 			}
 		}
 
@@ -486,9 +493,10 @@ namespace dnSpy.Text.Editor {
 			if (!UpdateCaretForEdit())
 				return;
 
-			var ta = textEditor.TextArea;
-			if (ta.OverstrikeMode && ta.Selection.IsEmpty && ta.TextView.Document.GetLineByNumber(ta.Caret.Line).EndOffset > ta.Caret.Offset)
-				EditingCommands.SelectRightByCharacter.Execute(null, ta);
+			if (wpfTextView.Caret.OverwriteMode && wpfTextView.Selection.IsEmpty &&
+				wpfTextView.TextSnapshot.GetLineFromPosition(CaretOffset).End.Position > CaretOffset) {
+				EditingCommands.SelectRightByCharacter.Execute(null, textEditor.TextArea);
+			}
 			AddUserInput(e.Text);
 		}
 
@@ -514,12 +522,52 @@ namespace dnSpy.Text.Editor {
 		}
 		internal static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
+		// Always returns at least one span, even if it's empty
+		IEnumerable<SnapshotSpan> GetNormalizedSpansToReplaceWithText() {
+			if (wpfTextView.Selection.IsEmpty)
+				yield return new SnapshotSpan(wpfTextView.TextSnapshot, new Contracts.Text.Span(CaretOffset, 0));
+			else {
+				var selectedSpans = wpfTextView.Selection.SelectedSpans;
+				Debug.Assert(selectedSpans.Count != 0);
+				foreach (var s in selectedSpans)
+					yield return s;
+			}
+		}
+
 		void AddUserInput(string text, bool clearSearchText = true) {
 			if (!UpdateCaretForEdit())
 				return;
 			var s = GetNewString(text);
-			this.textEditor.TextArea.Selection.ReplaceSelectionWithText(s);
-			this.textEditor.TextArea.Caret.BringCaretToView();
+			var firstSpan = default(SnapshotSpan);
+			using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
+				foreach (var span in GetNormalizedSpansToReplaceWithText()) {
+					Debug.Assert(span.Snapshot != null);
+					if (firstSpan.Snapshot == null)
+						firstSpan = span;
+					ed.Replace(span, s);
+				}
+				ed.Apply();
+			}
+			Debug.Assert(firstSpan.Snapshot != null);
+			wpfTextView.Selection.Clear();
+			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, firstSpan.Start.Position + s.Length));
+			wpfTextView.Caret.EnsureVisible();
+			if (clearSearchText)
+				SearchText = null;
+		}
+
+		void AddUserInput(int start, int end, string text, bool clearSearchText = true) {
+			Debug.Assert(start <= end);
+			if (!UpdateCaretForEdit())
+				return;
+
+			Debug.Assert(wpfTextView.Selection.IsEmpty);
+			wpfTextView.Selection.Clear();
+
+			var s = GetNewString(text);
+			wpfTextView.TextBuffer.Replace(Contracts.Text.Span.FromBounds(start, end), s);
+			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, start + s.Length));
+			wpfTextView.Caret.EnsureVisible();
 			if (clearSearchText)
 				SearchText = null;
 		}
@@ -544,13 +592,11 @@ namespace dnSpy.Text.Editor {
 			subBuffers.Clear();
 			scriptOutputCachedTextTokenColors = null;
 			cachedColorsList.Clear();
-			var doc = new TextDocument();
-			doc.Changed += TextDocument_Changed;
-			this.textEditor.Document = doc;
+			this.textEditor.Document = new TextDocument();
 		}
 		int docVersion;
 
-		async void TextDocument_Changed(object sender, DocumentChangeEventArgs e) {
+		async void TextBuffer_Changed(object sender, TextContentChangedEventArgs e) {
 			if (!IsCommandMode)
 				return;
 			var buf = CreateReplCommandInput(e);
@@ -558,7 +604,7 @@ namespace dnSpy.Text.Editor {
 				return;
 
 			int baseOffset = this.offsetOfPrompt.Value;
-			int totalLength = LastLine.EndOffset - baseOffset;
+			int totalLength = wpfTextView.TextSnapshot.Length - baseOffset;
 			int currentDocVersion = docVersion;
 
 			prevCommandTextChangedState?.CancelIfSameVersion(commandVersion);
@@ -591,60 +637,13 @@ namespace dnSpy.Text.Editor {
 		}
 		CommandTextChangedState prevCommandTextChangedState;
 
-		ReplCommandInput CreateReplCommandInput(DocumentChangeEventArgs e) {
+		ReplCommandInput CreateReplCommandInput(TextContentChangedEventArgs e) {
 			Debug.Assert(IsCommandMode);
 			if (!IsCommandMode)
 				return null;
-			Debug.Assert(e.Offset >= offsetOfPrompt.Value);
-
-			var input = CurrentInput;
-
-			var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(e.Offset);
-			var promptText = line.Offset == offsetOfPrompt.Value ? PrimaryPrompt : SecondaryPrompt;
-			int offset = DocumentOffsetToInputOffset(e.Offset, line);
-
-			var removed = DocumentTextToInputText(e.RemovedText.Text, line, e.Offset, promptText);
-			var added = DocumentTextToInputText(e.InsertedText.Text, line, e.Offset, promptText);
-
-			return new ReplCommandInput(input, offset, added, removed);
-		}
-
-		int DocumentOffsetToInputOffset(int docOffset, DocumentLine line) {
-			var promptLine = this.textEditor.TextArea.TextView.Document.GetLineByOffset(offsetOfPrompt.Value);
-
-			int offset = docOffset;
-			if (line.LineNumber == promptLine.LineNumber) {
-				offset -= offsetOfPrompt.Value;
-				Debug.Assert(line.Length == 0 || line.Length >= PrimaryPrompt.Length);
-				if (line.Length != 0)
-					offset -= PrimaryPrompt.Length;
-				if (offset < 0)
-					offset = 0;
-			}
-			else {
-				offset -= offsetOfPrompt.Value + PrimaryPrompt.Length;
-				offset -= (line.LineNumber - promptLine.LineNumber - 1) * SecondaryPrompt.Length;
-				Debug.Assert(line.Length == 0 || line.Length >= SecondaryPrompt.Length);
-				if (line.Length != 0)
-					offset -= SecondaryPrompt.Length;
-			}
-			Debug.Assert(offset >= 0);
-
-			return offset;
-		}
-
-		string DocumentTextToInputText(string text, DocumentLine line, int offset, string promptText) {
-			if (text.Length == 0)
-				return text;
-
-			int lineOffset = offset - line.Offset;
-			Debug.Assert(lineOffset >= 0);
-			if (lineOffset >= promptText.Length)
-				promptText = string.Empty;
-			else if (lineOffset != 0)
-				promptText = promptText.Substring(lineOffset);
-
-			return ToInputString(text, promptText);
+			if (e.Changes.Length == 0)
+				return null;
+			return new ReplCommandInput(CurrentInput);
 		}
 
 		public bool CanSelectPreviousCommand => IsCommandMode && replCommands.CanSelectPrevious;
@@ -697,21 +696,23 @@ namespace dnSpy.Text.Editor {
 			if (command == null)
 				return;
 
-			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
+			MoveToEnd();
 			var currentInput = CurrentInput;
 			if (currentInput.Equals(command))
 				return;
 
-			this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, FilterOffset(offsetOfPrompt.Value), LastLine.EndOffset);
-			this.textEditor.TextArea.Caret.Offset = FilterOffset(offsetOfPrompt.Value);
-			AddUserInput(command, clearSearchText);
+			wpfTextView.Selection.Clear();
+			AddUserInput(FilterOffset(offsetOfPrompt.Value), wpfTextView.TextSnapshot.Length, command, clearSearchText);
 		}
 
 		void RawAppend(string text) =>
-			this.textEditor.TextArea.TextView.Document.Insert(LastLine.EndOffset, text);
+			wpfTextView.TextBuffer.Insert(wpfTextView.TextSnapshot.Length, text);
 
 		void FlushScriptOutputUIThread() {
 			dispatcher.VerifyAccess();
+
+			var caretPos = wpfTextView.Caret.Position;
+			bool caretIsInEditingArea = offsetOfPrompt != null && GetOffset(caretPos.VirtualBufferPosition) >= offsetOfPrompt.Value;
 
 			ColorAndText[] newPendingOutput = null;
 			var sb = new StringBuilder();
@@ -737,14 +738,22 @@ namespace dnSpy.Text.Editor {
 				scriptOutputCachedTextTokenColors?.Flush();
 			}
 			RawAppend(sb.ToString());
-			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
+			MoveToEnd();
 			if (isCommandMode) {
+				int posBeforeNewLine = wpfTextView.TextSnapshot.Length;
+				CreateEmptyLastLineIfNeededAndMoveCaret();
+				int extraLen = wpfTextView.TextSnapshot.Length - posBeforeNewLine;
+
 				PrintPrompt();
 				AddUserInput(currentCommand);
+
+				if (caretIsInEditingArea) {
+					var newPos = new SnapshotPoint(wpfTextView.TextSnapshot, caretPos.BufferPosition.Position + sb.Length + extraLen);
+					wpfTextView.Caret.MoveTo(newPos, caretPos.Affinity);
+				}
 			}
 
-			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
-			this.textEditor.TextArea.Caret.BringCaretToView();
+			wpfTextView.Caret.EnsureVisible();
 		}
 
 		void FlushScriptOutput() {
@@ -827,19 +836,19 @@ namespace dnSpy.Text.Editor {
 
 		void ClearUndoRedoHistory() => this.textEditor.TextArea.TextView.Document.UndoStack.ClearAll();
 
-		DocumentLine LastLine {
+		ITextSnapshotLine LastLine {
 			get {
-				var doc = this.textEditor.TextArea.TextView.Document;
-				return doc.GetLineByNumber(doc.LineCount);
+				var line = wpfTextView.TextSnapshot.GetLineFromLineNumber(wpfTextView.TextSnapshot.LineCount - 1);
+				Debug.Assert(line.Length == line.LengthIncludingLineBreak);
+				return line;
 			}
 		}
 
 		void CreateEmptyLastLineIfNeededAndMoveCaret() {
-			var lastLine = LastLine;
-			if (lastLine.Length != 0)
+			if (LastLine.Length != 0)
 				RawAppend(Environment.NewLine);
-			this.textEditor.TextArea.Caret.Offset = lastLine.EndOffset;
-			this.textEditor.TextArea.Caret.BringCaretToView();
+			MoveToEnd();
+			wpfTextView.Caret.EnsureVisible();
 		}
 
 		public void OnCommandExecuted() => PrintPrompt();
@@ -851,19 +860,19 @@ namespace dnSpy.Text.Editor {
 
 			CreateEmptyLastLineIfNeededAndMoveCaret();
 			AddOrUpdateOutputSubBuffer();
-			WriteOffsetOfPrompt(LastLine.EndOffset);
+			WriteOffsetOfPrompt(wpfTextView.TextSnapshot.Length);
 			CommandHandler.OnNewCommand();
 			RawAppend(PrimaryPrompt);
 			ClearUndoRedoHistory();
-			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
-			this.textEditor.TextArea.Caret.BringCaretToView();
+			MoveToEnd();
+			wpfTextView.Caret.EnsureVisible();
 
 			// Somehow the caret isn't shown if we have word-wrap enabled and lots of text is shown
 			// so the window gets scrolled, eg. try: typeof(IntPtr).GetMethods()
-			var tempOffs = this.textEditor.TextArea.Caret.Offset;
+			var tempPos = wpfTextView.Caret.Position;
 			dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				if (this.textEditor.TextArea.Caret.Offset == tempOffs)
-					this.textEditor.TextArea.Caret.BringCaretToView();
+				if (wpfTextView.Caret.Position == tempPos)
+					wpfTextView.Caret.EnsureVisible();
 			}));
 		}
 
@@ -877,19 +886,14 @@ namespace dnSpy.Text.Editor {
 		/// </summary>
 		bool IsExecMode => offsetOfPrompt == null;
 
-		public bool CanCopyCode => !textEditor.TextArea.Selection.IsEmpty;
+		public bool CanCopyCode => !wpfTextView.Selection.IsEmpty;
 
 		public void CopyCode() {
 			if (!CanCopyCode)
 				return;
 
-			int startOffset = textEditor.TextArea.TextView.Document.GetOffset(textEditor.TextArea.Selection.StartPosition.Location);
-			int endOffset = textEditor.TextArea.TextView.Document.GetOffset(textEditor.TextArea.Selection.EndPosition.Location);
-			if (startOffset > endOffset) {
-				var tmp = startOffset;
-				startOffset = endOffset;
-				endOffset = tmp;
-			}
+			int startOffset = GetOffset(wpfTextView.Selection.Start);
+			int endOffset = GetOffset(wpfTextView.Selection.End);
 			Debug.Assert(endOffset > startOffset);
 			if (endOffset <= startOffset)
 				return;
@@ -913,23 +917,24 @@ namespace dnSpy.Text.Editor {
 			if (startOffset >= endOffset)
 				return;
 
-			var firstLine = textEditor.TextArea.TextView.Document.GetLineByOffset(buf.StartOffset);
-			var startLine = textEditor.TextArea.TextView.Document.GetLineByOffset(startOffset);
-			var prompt = firstLine == startLine ? PrimaryPrompt : SecondaryPrompt;
+			var firstLine = wpfTextView.TextSnapshot.GetLineFromPosition(buf.StartOffset);
+			var startLine = wpfTextView.TextSnapshot.GetLineFromPosition(startOffset);
+			var prompt = firstLine.Start == startLine.Start ? PrimaryPrompt : SecondaryPrompt;
 
 			int offs = startOffset;
 			while (offs < endOffset) {
-				var line = textEditor.TextArea.TextView.Document.GetLineByOffset(offs);
-				int skipChars = offs - line.Offset;
+				var line = wpfTextView.TextSnapshot.GetLineFromPosition(offs);
+				int skipChars = offs - line.Start.Position;
 				if (skipChars < prompt.Length)
 					offs += prompt.Length - skipChars;
-				int eol = line.EndOffset + line.DelimiterLength;
+				int eol = line.EndIncludingLineBreak.Position;
 				int end = eol;
 				if (end >= endOffset)
 					end = endOffset;
 				if (offs >= end)
 					break;
-				var s = textEditor.TextArea.TextView.Document.GetText(offs, end - offs);
+				var s = wpfTextView.TextSnapshot.GetText(offs, end - offs);
+				Debug.Assert(s.Length == end - offs);
 				sb.Append(s);
 
 				offs = eol;
@@ -948,7 +953,7 @@ namespace dnSpy.Text.Editor {
 		SubBuffer ActiveSubBuffer {
 			get {
 				int startOffset = subBuffers.Count == 0 ? 0 : subBuffers[subBuffers.Count - 1].EndOffset;
-				int endOffset = LastLine.EndOffset;
+				int endOffset = wpfTextView.TextSnapshot.Length;
 				return new SubBuffer(IsCommandMode ? BufferKind.Code : BufferKind.Output, startOffset, endOffset);
 			}
 		}
@@ -989,8 +994,8 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(subBuffers.Count == 0 || subBuffers[subBuffers.Count - 1].EndOffset == buffer.StartOffset);
 			// AddOrUpdateOutputSubBuffer() should be called to merge output sub buffers
 			Debug.Assert(buffer.Kind == BufferKind.Code || subBuffers.Count == 0 || subBuffers[subBuffers.Count - 1].Kind != BufferKind.Output);
-			Debug.Assert(textEditor.TextArea.TextView.Document.GetLineByOffset(buffer.StartOffset).Offset == buffer.StartOffset);
-			Debug.Assert(textEditor.TextArea.TextView.Document.GetLineByOffset(buffer.EndOffset).Offset == buffer.EndOffset);
+			Debug.Assert(wpfTextView.TextSnapshot.GetLineFromPosition(buffer.StartOffset).Start.Position == buffer.StartOffset);
+			Debug.Assert(wpfTextView.TextSnapshot.GetLineFromPosition(buffer.EndOffset).Start.Position == buffer.EndOffset);
 			if (buffer.Kind == BufferKind.Output && buffer.Length == 0)
 				return;
 			subBuffers.Add(buffer);
@@ -999,7 +1004,7 @@ namespace dnSpy.Text.Editor {
 		void AddCodeSubBuffer() {
 			Debug.Assert(offsetOfPrompt != null);
 			Debug.Assert(LastLine.Length == 0);
-			AddSubBuffer(new SubBuffer(BufferKind.Code, offsetOfPrompt.Value, LastLine.Offset));
+			AddSubBuffer(new SubBuffer(BufferKind.Code, offsetOfPrompt.Value, LastLine.Start.Position));
 		}
 
 		/// <summary>
@@ -1011,7 +1016,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(LastLine.Length == 0);
 
 			int startOffset = subBuffers.Count == 0 ? 0 : subBuffers[subBuffers.Count - 1].EndOffset;
-			int endOffset = LastLine.Offset;
+			int endOffset = LastLine.Start.Position;
 
 			if (subBuffers.Count > 0 && subBuffers[subBuffers.Count - 1].Kind == BufferKind.Output) {
 				var buf = subBuffers[subBuffers.Count - 1];
@@ -1019,7 +1024,7 @@ namespace dnSpy.Text.Editor {
 				buf.EndOffset = endOffset;
 			}
 			else
-				AddSubBuffer(new SubBuffer(BufferKind.Output, startOffset, LastLine.Offset));
+				AddSubBuffer(new SubBuffer(BufferKind.Output, startOffset, LastLine.Start.Position));
 		}
 
 		SubBuffer FindBuffer(int offset) {
@@ -1047,7 +1052,10 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CachedTextTokenColors Create(string command, List<ColorOffsetInfo> colorInfos) {
-			cachedColors.Append(BoxedOutputColor.ReplPrompt1, owner.PrimaryPrompt);
+			if (owner.PrimaryPrompt.Length > totalLength)
+				cachedColors.Append(BoxedOutputColor.ReplPrompt1, owner.PrimaryPrompt.Substring(0, totalLength));
+			else
+				cachedColors.Append(BoxedOutputColor.ReplPrompt1, owner.PrimaryPrompt);
 			int cmdOffs = 0;
 			foreach (var cinfo in colorInfos) {
 				Debug.Assert(cmdOffs <= cinfo.Offset);
@@ -1113,13 +1121,11 @@ namespace dnSpy.Text.Editor {
 
 	sealed class ReplCommandInput : IReplCommandInput {
 		public string Input { get; }
-		public ITextChange[] Changes { get; }
 
 		public List<ColorOffsetInfo> ColorInfos { get; } = new List<ColorOffsetInfo>();
 
-		public ReplCommandInput(string input, int offset, string added, string removed) {
+		public ReplCommandInput(string input) {
 			Input = input;
-			Changes = new ITextChange[] { new TextChange(offset, removed, added) };
 		}
 
 		public void AddColor(int offset, int length, object color) =>

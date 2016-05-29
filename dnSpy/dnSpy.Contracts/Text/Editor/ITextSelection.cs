@@ -131,5 +131,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="endLine">End line, 0-based</param>
 		/// <param name="endColumn">End column, 0-based</param>
 		void Select(int startLine, int startColumn, int endLine, int endColumn);
+
+		/// <summary>
+		/// Gets the selected text
+		/// </summary>
+		/// <returns></returns>
+		string GetText();
 	}
 }

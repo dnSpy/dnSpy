@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -33,9 +34,9 @@ using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
-		public object UIObject => textEditor;
-		public IInputElement FocusedElement => textEditor.FocusedElement;
-		public FrameworkElement ScaleElement => textEditor.ScaleElement;
+		public object UIObject => wpfTextView.UIObject;
+		public IInputElement FocusedElement => wpfTextView.FocusedElement;
+		public FrameworkElement ScaleElement => wpfTextView.ScaleElement;
 		public object Tag { get; set; }
 
 		public bool WordWrap {
@@ -119,7 +120,7 @@ namespace dnSpy.Text.Editor {
 			SetNewDocument();
 		}
 
-		public string GetText() => textEditor.TextArea.TextView.Document.Text;
+		public string GetText() => wpfTextView.TextSnapshot.GetText();
 		public void Write(string text, object color) => OutputPrint(text, color);
 		public void Write(string text, OutputColor color) => OutputPrint(text, color.Box());
 		public void WriteLine(string text, OutputColor color) => WriteLine(text, color.Box());
@@ -162,20 +163,22 @@ namespace dnSpy.Text.Editor {
 			FlushOutput();
 		}
 
-		DocumentLine LastLine {
+		ITextSnapshotLine LastLine {
 			get {
-				var doc = textEditor.TextArea.TextView.Document;
-				return doc.GetLineByNumber(doc.LineCount);
+				var line = wpfTextView.TextSnapshot.GetLineFromLineNumber(wpfTextView.TextSnapshot.LineCount - 1);
+				Debug.Assert(line.Length == line.LengthIncludingLineBreak);
+				return line;
 			}
 		}
 
-		void RawAppend(string text) => textEditor.TextArea.TextView.Document.Insert(LastLine.EndOffset, text);
+		void RawAppend(string text) => wpfTextView.TextBuffer.Insert(wpfTextView.TextSnapshot.Length, text);
+		int CaretOffset => wpfTextView.Caret.Position.BufferPosition.Position;
 
 		void FlushOutputUIThread() {
 			dispatcher.VerifyAccess();
 
-			var currentLine = textEditor.TextArea.TextView.Document.GetLineByOffset(textEditor.TextArea.Caret.Offset);
-			bool canMoveCaret = currentLine == LastLine;
+			var currentLine = wpfTextView.TextSnapshot.GetLineFromPosition(CaretOffset);
+			bool canMoveCaret = currentLine.Start == LastLine.Start;
 
 			ColorAndText[] newPendingOutput;
 			var sb = new StringBuilder();
@@ -196,8 +199,8 @@ namespace dnSpy.Text.Editor {
 			RawAppend(sb.ToString());
 
 			if (canMoveCaret) {
-				textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
-				textEditor.TextArea.Caret.BringCaretToView();
+				wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, wpfTextView.TextSnapshot.Length));
+				wpfTextView.Caret.EnsureVisible();
 			}
 		}
 

@@ -51,8 +51,8 @@ namespace dnSpy.Shared.Text {
 			public readonly ushort TextLength;
 			public readonly object Data;
 			public TokenInfo(int tokenLength, int textLength, object data) {
-				Debug.Assert(tokenLength < TOKEN_LENGTH_MAX);
-				Debug.Assert(textLength < TEXT_TOKEN_LENGTH_MAX);
+				Debug.Assert(tokenLength <= TOKEN_LENGTH_MAX);
+				Debug.Assert(textLength <= TEXT_TOKEN_LENGTH_MAX);
 				TokenLength = (ushort)tokenLength;
 				TextLength = (ushort)textLength;
 				Data = data;
