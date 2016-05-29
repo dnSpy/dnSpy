@@ -131,6 +131,7 @@ namespace dnSpy.Text.Editor {
 			UpdateOption(DefaultTextViewOptions.ViewProhibitUserInputId.Name);
 			UpdateOption(DefaultTextViewOptions.WordWrapStyleId.Name);
 			UpdateOption(DefaultTextViewOptions.ScrollBelowDocumentId.Name);
+			UpdateOption(DefaultTextViewOptions.RectangularSelectionId.Name);
 			UpdateOption(DefaultTextViewOptions.HideCaretWhileTypingId.Name);
 			UpdateOption(DefaultTextViewOptions.ShowColumnRulerId.Name);
 			UpdateOption(DefaultTextViewOptions.ColumnRulerPositionId.Name);
@@ -200,6 +201,8 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (optionId == DefaultTextViewOptions.ScrollBelowDocumentId.Name)
 				DnSpyTextEditor.Options.AllowScrollBelowDocument = Options.GetOptionValue(DefaultTextViewOptions.ScrollBelowDocumentId);
+			else if (optionId == DefaultTextViewOptions.RectangularSelectionId.Name)
+				DnSpyTextEditor.Options.EnableRectangularSelection = Options.GetOptionValue(DefaultTextViewOptions.RectangularSelectionId);
 			else if (optionId == DefaultTextViewOptions.HideCaretWhileTypingId.Name)
 				DnSpyTextEditor.Options.HideCursorWhileTyping = Options.GetOptionValue(DefaultTextViewOptions.HideCaretWhileTypingId);
 			else if (optionId == DefaultTextViewOptions.ShowColumnRulerId.Name)
