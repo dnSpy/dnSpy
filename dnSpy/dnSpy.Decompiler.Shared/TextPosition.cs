@@ -37,6 +37,10 @@ namespace dnSpy.Decompiler.Shared {
 		/// <param name="line">Line, 0-based</param>
 		/// <param name="column">Column, 0-based</param>
 		public TextPosition(int line, int column) {
+			if (line < 0)
+				throw new ArgumentOutOfRangeException(nameof(line));
+			if (column < 0)
+				throw new ArgumentOutOfRangeException(nameof(column));
 			this.Line = line;
 			this.Column = column;
 		}

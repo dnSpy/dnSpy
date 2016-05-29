@@ -113,18 +113,19 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var button = textEditorControl.CancelButton;
 				if (button?.IsVisible == true)
 					return button;
-				return textEditorControl.TextEditor.FocusedElement;
+				return textEditorControl.WpfTextView.FocusedElement;
 			}
 		}
 
 		public object UIObject => textEditorControl;
-		public FrameworkElement ScaleElement => textEditorControl.TextEditor.ScaleElement;
-		public bool HasSelectedText => textEditorControl.TextEditor.SelectionLength > 0;
+		public FrameworkElement ScaleElement => textEditorControl.WpfTextView.ScaleElement;
+		public bool HasSelectedText => !textEditorControl.WpfTextView.Selection.IsEmpty;
 
 		public TextEditorLocation Location {
 			get {
-				var caret = textEditorControl.TextEditor.TextArea.Caret;
-				return new TextEditorLocation(caret.Line - 1, caret.Column - 1);
+				int caretPos = textEditorControl.WpfTextView.Caret.Position.BufferPosition.Position;
+				var line = textEditorControl.WpfTextView.TextSnapshot.GetLineFromPosition(caretPos);
+				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position);
 			}
 		}
 

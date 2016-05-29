@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Text editor location
@@ -38,6 +40,10 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="line">Line, 0-based</param>
 		/// <param name="column">Column, 0-based</param>
 		public TextEditorLocation(int line, int column) {
+			if (line < 0)
+				throw new ArgumentOutOfRangeException(nameof(line));
+			if (column < 0)
+				throw new ArgumentOutOfRangeException(nameof(column));
 			this.Line = line;
 			this.Column = column;
 		}

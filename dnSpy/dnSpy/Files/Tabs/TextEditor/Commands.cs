@@ -167,7 +167,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Match match;
 			if ((match = goToLineRegex1.Match(s)) != null && match.Groups.Count == 4) {
 				line = TryParseOneBasedToZeroBased(match.Groups[1].Value);
-				column = match.Groups[3].Value != string.Empty ? TryParseOneBasedToZeroBased(match.Groups[3].Value) : 1;
+				column = match.Groups[3].Value != string.Empty ? TryParseOneBasedToZeroBased(match.Groups[3].Value) : 0;
 			}
 			else if ((match = goToLineRegex2.Match(s)) != null && match.Groups.Count == 2) {
 				line = currentLine;

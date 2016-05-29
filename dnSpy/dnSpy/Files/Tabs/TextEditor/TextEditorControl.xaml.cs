@@ -73,6 +73,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IThemeManager themeManager;
 		readonly IconBarMargin iconBarMargin;
 
+		public IWpfTextView WpfTextView => wpfTextView;
 		public DnSpyTextEditor TextEditor { get; }
 		public IEnumerable<object> AllReferences => references.Select(a => a.Reference);
 
@@ -130,7 +131,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 
-			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+			wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
@@ -341,7 +342,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => iconBarMargin.InvalidateVisual();
 
-		void Caret_PositionChanged(object sender, EventArgs e) {
+		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
 			toolTipHelper.Close();
 
 			OnAutoHighlightRefsChanged();
@@ -353,12 +354,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public object GetReferenceSegmentAt(MouseEventArgs e) {
-			var te = TextEditor;
-			var tv = te.TextArea.TextView;
+			var tv = TextEditor.TextArea.TextView;
 			var pos = tv.GetPosition(e.GetPosition(tv) + tv.ScrollOffset);
 			if (pos == null)
 				return null;
-			int offset = te.TextArea.TextView.Document.GetOffset(pos.Value.Location);
+			int offset = LineColumnToOffset(pos.Value.Location);
 			var seg = GetReferenceSegmentAt(offset);
 			return seg?.Reference;
 		}
@@ -366,17 +366,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public ReferenceSegment GetReferenceSegmentAt(TextViewPosition? position) {
 			if (position == null)
 				return null;
-			int offset = TextEditor.TextArea.TextView.Document.GetOffset(position.Value.Location);
+			int offset = LineColumnToOffset(position.Value.Location);
 			return GetReferenceSegmentAt(offset);
 		}
 
-		public ReferenceSegment GetCurrentReferenceSegment() => GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
+		public ReferenceSegment GetCurrentReferenceSegment() => GetReferenceSegmentAt(wpfTextView.Caret.Position.BufferPosition.Position);
 
 		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
-			if (TextEditor.SelectionLength <= 0)
+			if (wpfTextView.Selection.IsEmpty)
 				yield break;
-			int start = TextEditor.SelectionStart;
-			int end = start + TextEditor.SelectionLength;
+			int start = wpfTextView.Selection.Start.Position.Position;
+			int end = wpfTextView.Selection.End.Position.Position;
 
 			var refs = references;
 			if (refs == null)
@@ -392,7 +392,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
-			int offset = TextEditor.TextArea.TextView.Document.GetOffset(line + 1, column + 1);
+			int offset = LineColumnToOffset(line, column);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 
 			while (refSeg != null) {
@@ -402,8 +402,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		TextEditorLocation GetLocation(ReferenceSegment refSeg) {
-			var loc = TextEditor.TextArea.TextView.Document.GetLocation(refSeg.StartOffset);
-			return new TextEditorLocation(loc.Line - 1, loc.Column - 1);
+			var line = wpfTextView.TextSnapshot.GetLineFromPosition(refSeg.StartOffset);
+			return new TextEditorLocation(line.LineNumber, refSeg.StartOffset - line.Start.Position);
 		}
 
 		public ReferenceSegment GetReferenceSegmentAt(int offset) {
@@ -454,9 +454,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 						textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 					}
 					else {
-						var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(refSeg.StartOffset);
-						int column = refSeg.StartOffset - line.Offset;
-						ScrollAndMoveCaretTo(line.LineNumber - 1, column);
+						var line = wpfTextView.TextSnapshot.GetLineFromPosition(refSeg.StartOffset);
+						int column = refSeg.StartOffset - line.Start.Position;
+						ScrollAndMoveCaretTo(line.LineNumber, column);
 					}
 					return true;
 				}
@@ -489,7 +489,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					else {
 						MarkReferences(refSeg);
 						textEditorHelper.SetFocus();
-						TextEditor.Select(pos, 0);
+						wpfTextView.Selection.Clear();
+						wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, pos));
 						TextEditor.ScrollTo(TextEditor.TextArea.Caret.Line, TextEditor.TextArea.Caret.Column);
 					}
 					return true;
@@ -513,25 +514,25 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
 				if (RefSegEquals(newSeg, refSeg)) {
-					var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(newSeg.StartOffset);
-					int column = newSeg.StartOffset - line.Offset;
-					ScrollAndMoveCaretTo(line.LineNumber - 1, column);
+					var line = wpfTextView.TextSnapshot.GetLineFromPosition(newSeg.StartOffset);
+					int column = newSeg.StartOffset - line.Start.Position;
+					ScrollAndMoveCaretTo(line.LineNumber, column);
 					break;
 				}
 			}
 		}
 
 		void MoveToNextDefinition(bool forward) {
-			int offset = TextEditor.CaretOffset;
+			int offset = wpfTextView.Caret.Position.BufferPosition.Position;
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset) ?? (forward ? references.LastSegment : references.FirstSegment);
 			if (refSeg == null)
 				return;
 
 			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
 				if (newSeg.IsLocalTarget && newSeg.Reference is IMemberDef) {
-					var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(newSeg.StartOffset);
-					int column = newSeg.StartOffset - line.Offset;
-					ScrollAndMoveCaretTo(line.LineNumber - 1, column);
+					var line = wpfTextView.TextSnapshot.GetLineFromPosition(newSeg.StartOffset);
+					int column = newSeg.StartOffset - line.Start.Position;
+					ScrollAndMoveCaretTo(line.LineNumber, column);
 					break;
 				}
 			}
@@ -643,8 +644,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		bool MarkReferences(ReferenceSegment referenceSegment) {
-			if (TextEditor.TextArea.TextView.Document == null)
-				return false;
 			if (previousReferenceSegment == referenceSegment)
 				return true;
 			object reference = referenceSegment.Reference;
@@ -706,7 +705,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (!textEditorSettings.AutoHighlightRefs)
 				ClearMarkedReferences();
 			else {
-				int offset = TextEditor.TextArea.Caret.Offset;
+				int offset = wpfTextView.Caret.Position.BufferPosition.Position;
 				var refSeg = GetReferenceSegmentAt(offset);
 				if (refSeg != null)
 					MarkReferences(refSeg);
@@ -748,13 +747,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
+		int LineColumnToOffset(TextLocation location) => LineColumnToOffset(location.Line - 1, location.Column - 1);
+		int LineColumnToOffset(TextPosition pos) => LineColumnToOffset(pos.Line, pos.Column);
+		int LineColumnToOffset(int line, int column) {
+			var snapshotLine = wpfTextView.TextSnapshot.GetLineFromLineNumber(line);
+			return snapshotLine.Start.Position + column;
+		}
+
 		RefPos GetRefPos(ICodeMappings cms) {
-			var mappings = cms.Find(TextEditor.TextArea.Caret.Line - 1, TextEditor.TextArea.Caret.Column - 1).ToList();
+			int caretPos = wpfTextView.Caret.Position.BufferPosition.Position;
+			var line = wpfTextView.TextSnapshot.GetLineFromPosition(caretPos);
+			var mappings = cms.Find(line.LineNumber, caretPos - line.Start.Position).ToList();
 			mappings.Sort(Sort);
 			var mapping = mappings.Count == 0 ? null : mappings[0];
 
-			var doc = TextEditor.TextArea.TextView.Document;
-			int offset = doc == null ? 0 : doc.GetOffset(TextEditor.TextArea.Caret.Line, 0);
+			int offset = line.Start.Position;
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 			while (refSeg != null) {
 				if (refSeg.Reference is IMemberDef && refSeg.IsLocalTarget && !refSeg.IsLocal)
@@ -768,7 +775,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			else if (refSeg == null)
 				return new RefPos(mappings);
 			else {
-				offset = doc == null ? 0 : doc.GetOffset(mapping.StartPosition.Line + 1, mapping.StartPosition.Column + 1);
+				offset = LineColumnToOffset(mapping.StartPosition);
 				if (offset < refSeg.StartOffset)
 					return new RefPos(mappings);
 				return new RefPos(refSeg);
