@@ -83,7 +83,7 @@ namespace dnSpy.Shared.Decompiler {
 
 		int lastLineStart = 0;
 		int lineNumber = 1;
-		readonly StringBuilder b = new StringBuilder();
+		StringBuilder b = new StringBuilder();
 
 		/// <summary>Current indentation level</summary>
 		int indent;
@@ -117,41 +117,20 @@ namespace dnSpy.Shared.Decompiler {
 		public override string ToString() => b.ToString();
 		public TextPosition Location => new TextPosition(lineNumber - 1, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0) - 1);
 
-		#region Text Document
-		TextDocument textDocument;
-
-		/// <summary>
-		/// Prepares the TextDocument.
-		/// This method may be called by the background thread writing to the output.
-		/// Once the document is prepared, it can no longer be written to.
-		/// </summary>
-		/// <remarks>
-		/// Calling this method on the background thread ensures the TextDocument's line tokenization
-		/// runs in the background and does not block the GUI.
-		/// </remarks>
-		public void PrepareDocument() {
-			if (textDocument == null) {
-				textDocument = new TextDocument(b.ToString());
-				textDocument.SetOwnerThread(null); // release ownership
-			}
+		public string GetCachedText() {
+			if (cachedText != null)
+				return cachedText;
+			cachedText = b.ToString();
+			b = null;
+			return cachedText;
 		}
-
-		/// <summary>
-		/// Retrieves the TextDocument.
-		/// Once the document is retrieved, it can no longer be written to.
-		/// </summary>
-		public TextDocument GetDocument() {
-			PrepareDocument();
-			textDocument.SetOwnerThread(System.Threading.Thread.CurrentThread); // acquire ownership
-			return textDocument;
-		}
-		#endregion
+		string cachedText;
 
 		public void Indent() => indent++;
 		public void Unindent() => indent--;
 
 		void WriteIndent() {
-			Debug.Assert(textDocument == null);
+			Debug.Assert(cachedText == null);
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
@@ -178,7 +157,7 @@ namespace dnSpy.Shared.Decompiler {
 		}
 
 		public void WriteLine() {
-			Debug.Assert(textDocument == null);
+			Debug.Assert(cachedText == null);
 			AppendLine();
 			needsIndent = true;
 			lastLineStart = b.Length;

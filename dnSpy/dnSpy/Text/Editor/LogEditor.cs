@@ -30,7 +30,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
-using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
@@ -110,7 +109,8 @@ namespace dnSpy.Text.Editor {
 
 		void SetNewDocument() {
 			cachedTextTokenColors = new CachedTextTokenColors();
-			textEditor.Document = new TextDocument();
+			wpfTextView.TextBuffer.Replace(new Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
+			textEditor.TextArea.TextView.Document.UndoStack.ClearAll();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedTextTokenColors);
 		}

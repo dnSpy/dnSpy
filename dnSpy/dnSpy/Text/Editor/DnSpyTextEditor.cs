@@ -162,15 +162,13 @@ namespace dnSpy.Text.Editor {
 		public TextBuffer TextBuffer {
 			get { return textBuffer; }
 			private set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				if (textBuffer != value) {
-					if (textBuffer != null)
-						textBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
-					textBuffer = value;
-					textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
-					this.Document = textBuffer.Document;
-				}
+				if (textBuffer != null)
+					throw new InvalidOperationException();
+				textBuffer = value;
+				textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
+				if (this.Document != null && this.Document.TextLength != 0)
+					throw new InvalidOperationException();
+				this.Document = textBuffer.Document;
 			}
 		}
 		TextBuffer textBuffer;
@@ -220,10 +218,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void TextView_DocumentChanged(object sender, EventArgs e) {
-			var newDoc = TextArea.TextView.Document;
-			Debug.Assert(newDoc != null);
-			if (newDoc != null)
-				TextBuffer.Document = newDoc;
+			// Document must not change
+			throw new InvalidOperationException();
 		}
 
 		public void AddColorizer(ITextSnapshotColorizer colorizer) => colorizerCollection.Add(colorizer);

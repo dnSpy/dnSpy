@@ -64,30 +64,12 @@ namespace dnSpy.Text {
 
 		public TextDocument Document {
 			get { return document; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				if (document != value) {
-					var oldCurrentSnapshot = CurrentSnapshot;
-					var oldDocSnapshot = document?.CreateSnapshot();
-					if (document != null)
-						document.TextChanged -= TextDocument_TextChanged;
-					document = value;
-					ITextChange[] changes;
-					if (oldDocSnapshot == null)
-						changes = null;
-					else {
-						changes = new ITextChange[] { new TextChange(0, oldDocSnapshot, document.CreateSnapshot()) };
-						if (changes[0].NewLength == 0)
-							changes = Array.Empty<ITextChange>();
-					}
-					CreateNewCurrentSnapshot(changes);
-					document.TextChanged += TextDocument_TextChanged;
-					if (oldDocSnapshot != null) {
-						Debug.Assert(oldCurrentSnapshot != null);
-						Changed?.Invoke(this, new TextContentChangedEventArgs(oldCurrentSnapshot, CurrentSnapshot, changes, null));
-					}
-				}
+			private set {
+				if (document != null)
+					throw new InvalidOperationException();
+				document = value;
+				CreateNewCurrentSnapshot(null);
+				document.TextChanged += TextDocument_TextChanged;
 			}
 		}
 		TextDocument document;
@@ -98,10 +80,10 @@ namespace dnSpy.Text {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 			Properties = new PropertyCollection();
+			this.contentType = contentType;
 			this.currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
 			this.Document = new TextDocument(text);
 			this.Document.SetOwnerThread(null);
-			this.contentType = contentType;
 		}
 
 		//TODO: Remove this method. No-one but us should be allowed to directly modify the Document, so we don't need

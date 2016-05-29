@@ -578,9 +578,9 @@ namespace dnSpy.Text.Editor {
 			if (!CanClear)
 				return;
 			ClearPendingOutput();
+			bool hasPrompt = offsetOfPrompt != null;
 			AddNewDocument();
 			ClearUndoRedoHistory();
-			bool hasPrompt = offsetOfPrompt != null;
 			WriteOffsetOfPrompt(null, true);
 			if (hasPrompt)
 				PrintPrompt();
@@ -592,7 +592,9 @@ namespace dnSpy.Text.Editor {
 			subBuffers.Clear();
 			scriptOutputCachedTextTokenColors = null;
 			cachedColorsList.Clear();
-			this.textEditor.Document = new TextDocument();
+			offsetOfPrompt = null;
+			wpfTextView.TextBuffer.Replace(new Contracts.Text.Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
+			ClearUndoRedoHistory();
 		}
 		int docVersion;
 

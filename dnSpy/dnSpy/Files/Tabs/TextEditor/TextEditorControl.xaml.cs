@@ -295,13 +295,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextEditor.SyntaxHighlighting = highlighting;
 			ClearCustomElementGenerators();
 
-			TextDocument newDoc;
+			string newText;
 			if (avOutput == null) {
 				uiElementGenerator.UIElements = null;
 				referenceElementGenerator.References = null;
 				references = new TextSegmentCollection<ReferenceSegment>();
 				definitionLookup = null;
-				newDoc = new TextDocument(output.ToString());
+				newText = output.ToString();
 			}
 			else {
 				uiElementGenerator.UIElements = avOutput.UIElements;
@@ -313,7 +313,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					activeCustomElementGenerators.Add(elementGenerator);
 				}
 
-				newDoc = avOutput.GetDocument();
+				newText = avOutput.GetCachedText();
 			}
 
 			wpfTextView.TextBuffer.ChangeContentType(contentType, null);
@@ -322,13 +322,16 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			cachedColors.Finish();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedColors);
-			TextEditor.Document = newDoc;
+			wpfTextView.TextBuffer.Replace(new Contracts.Text.Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), newText);
+			TextEditor.TextArea.TextView.Document.UndoStack.ClearAll();
+			textMarkerService.OnTextChanged();
 		}
 
 		public void Clear() {
 			ClearMarkedReferences();
 			ClearCustomElementGenerators();
-			TextEditor.Document = new TextDocument();
+			wpfTextView.TextBuffer.Replace(new Contracts.Text.Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
+			TextEditor.TextArea.TextView.Document.UndoStack.ClearAll();
 			definitionLookup = null;
 			uiElementGenerator.UIElements = null;
 			referenceElementGenerator.References = null;

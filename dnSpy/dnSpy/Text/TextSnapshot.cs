@@ -40,6 +40,14 @@ namespace dnSpy.Text {
 		public ITextVersion Version { get; }
 
 		public TextSnapshot(ITextSource textSource, IContentType contentType, ITextBuffer textBuffer, ITextVersion textVersion) {
+			if (textSource == null)
+				throw new ArgumentNullException(nameof(textSource));
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			if (textVersion == null)
+				throw new ArgumentNullException(nameof(textVersion));
 			this.textSource = textSource;
 			ContentType = contentType;
 			TextBuffer = textBuffer;

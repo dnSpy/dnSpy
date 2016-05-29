@@ -44,9 +44,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.uiContext = uiContext;
 			this.textLineObjectManager = textLineObjectManager;
 			uiContext.NewTextContent += TextEditorUIContext_NewTextContent;
-			TextView.DocumentChanged += TextView_DocumentChanged;
 			textLineObjectManager.OnListModified += TextLineObjectManager_OnListModified;
-			OnDocumentChanged();
+			OnTextChanged();
 		}
 
 		void TextEditorUIContext_NewTextContent(object sender, EventArgs e) => RecreateMarkers();
@@ -54,7 +53,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void Dispose() {
 			uiContext.NewTextContent -= TextEditorUIContext_NewTextContent;
 			textLineObjectManager.OnListModified -= TextLineObjectManager_OnListModified;
-			TextView.DocumentChanged -= TextView_DocumentChanged;
 			ClearMarkers();
 		}
 
@@ -63,9 +61,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				RemoveMarker(obj);
 		}
 
-		void TextView_DocumentChanged(object sender, EventArgs e) => OnDocumentChanged();
-
-		void OnDocumentChanged() {
+		public void OnTextChanged() {
 			ClearMarkers();
 			if (TextView.Document != null)
 				markers = new TextSegmentCollection<TextMarker>(TextView.Document);
