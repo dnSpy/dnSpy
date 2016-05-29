@@ -176,8 +176,12 @@ namespace dnSpy.Text.Editor {
 				DnSpyTextEditor.Options.EnableEmailHyperlinks = newValue;
 				DnSpyTextEditor.Options.RequireControlModifierForHyperlinkClick = false;
 			}
-			else if (optionId == DefaultTextViewOptions.DragDropEditingId.Name)
-				DnSpyTextEditor.Options.EnableTextDragDrop = Options.GetOptionValue(DefaultTextViewOptions.DragDropEditingId);
+			else if (optionId == DefaultTextViewOptions.DragDropEditingId.Name) {
+				// DnSpyTextEditor.Options.EnableTextDragDrop also exists, but it's better to disable drag and drop
+				// to the text area. If EnableTextDragDrop is false, the user can't drag selected text to another
+				// window / application that supports drag and drop.
+				DnSpyTextEditor.TextArea.AllowDrop = Options.GetOptionValue(DefaultTextViewOptions.DragDropEditingId);
+			}
 			else if (optionId == DefaultTextViewOptions.OverwriteModeId.Name)
 				DnSpyTextEditor.Options.AllowToggleOverstrikeMode = Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
 			else if (optionId == DefaultTextViewOptions.UseVirtualSpaceId.Name)

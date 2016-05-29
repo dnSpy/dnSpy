@@ -81,7 +81,6 @@ namespace dnSpy.Text.Editor {
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			this.cachedColorsList = new CachedColorsList();
 			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
-			this.textEditor.TextArea.AllowDrop = false;
 			AddNewDocument();
 			this.textEditor.TextArea.TextView.Document.UndoStack.SizeLimit = 100;
 			this.textEditor.TextArea.TextEntering += TextArea_TextEntering;

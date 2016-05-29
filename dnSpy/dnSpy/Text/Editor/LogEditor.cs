@@ -92,7 +92,6 @@ namespace dnSpy.Text.Editor {
 			this.cachedColorsList = new CachedColorsList();
 			this.textEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
-			this.textEditor.TextArea.AllowDrop = false;
 			// Setting IsReadOnly to true doesn't mean it's readonly since undo and redo still work.
 			// Fix that by removing the commands.
 			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Undo);
