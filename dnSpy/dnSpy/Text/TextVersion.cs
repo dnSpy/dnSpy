@@ -75,5 +75,7 @@ namespace dnSpy.Text {
 				throw new NotSupportedException();
 			return new TrackingSpan(this, span, trackingMode, trackingFidelity);
 		}
+
+		public override string ToString() => $"V{VersionNumber} (r{ReiteratedVersionNumber})";
 	}
 }
