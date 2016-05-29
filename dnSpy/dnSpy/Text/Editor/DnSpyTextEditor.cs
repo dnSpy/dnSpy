@@ -222,8 +222,6 @@ namespace dnSpy.Text.Editor {
 			throw new InvalidOperationException();
 		}
 
-		public void AddColorizer(ITextSnapshotColorizer colorizer) => colorizerCollection.Add(colorizer);
-		public void RemoveColorizer(ITextSnapshotColorizer colorizer) => colorizerCollection.Remove(colorizer);
 		internal ITextSnapshotColorizer[] GetAllColorizers() => colorizerCollection.GetAllColorizers();
 
 		public void Dispose() {

@@ -18,18 +18,23 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ILogEditorCreator))]
 	sealed class LogEditorCreator : ILogEditorCreator {
 		readonly ITextEditorFactoryService2 textEditorFactoryService2;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly ITextBufferFactoryService textBufferFactoryService;
 
 		[ImportingConstructor]
-		LogEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2) {
+		LogEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
+			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.textBufferFactoryService = textBufferFactoryService;
 		}
 
-		public ILogEditor Create(LogEditorOptions options) => new LogEditor(options, textEditorFactoryService2);
+		public ILogEditor Create(LogEditorOptions options) => new LogEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService);
 	}
 }

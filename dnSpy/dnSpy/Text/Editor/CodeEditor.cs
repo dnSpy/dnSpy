@@ -44,9 +44,13 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public CodeEditor(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public CodeEditor(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			options = options ?? new CodeEditorOptions();
-			TextView = textEditorFactoryService2.CreateTextView(options.TextBuffer, options, (object)options.ContentType ?? options.ContentTypeGuid, () => new GuidObjectsCreator(this));
+			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
+			var textBuffer = options.TextBuffer;
+			if (textBuffer == null)
+				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
+			TextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
 			TextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 		}
 

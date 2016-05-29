@@ -97,20 +97,20 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textEditorSettings = textEditorSettings;
 			this.textEditorHelper = textEditorHelper;
 			this.defaultContentType = textBufferFactoryService.TextContentType;
+			this.cachedColorsList = new CachedColorsList();
 			InitializeComponent();
 			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
-
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			var wpfTextView = textEditorFactoryService2.CreateTextView(null, new TextViewCreatorOptions(), null, null);
+			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
+			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
+			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, new TextViewCreatorOptions(), null);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			this.wpfTextView = wpfTextView;
 			TextEditor = wpfTextView.DnSpyTextEditor;
-			cachedColorsList = new CachedColorsList();
-			TextEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;

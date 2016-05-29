@@ -18,18 +18,23 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ICodeEditorCreator))]
 	sealed class CodeEditorCreator : ICodeEditorCreator {
 		readonly ITextEditorFactoryService2 textEditorFactoryService2;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly ITextBufferFactoryService textBufferFactoryService;
 
 		[ImportingConstructor]
-		CodeEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2) {
+		CodeEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
+			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.textBufferFactoryService = textBufferFactoryService;
 		}
 
-		public ICodeEditor Create(CodeEditorOptions options) => new CodeEditor(options, textEditorFactoryService2);
+		public ICodeEditor Create(CodeEditorOptions options) => new CodeEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService);
 	}
 }

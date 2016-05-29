@@ -28,7 +28,7 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Text.Editor {
 	//TODO: This iface should be removed. The users shouldn't depend on the text editor impl
 	interface ITextEditorFactoryService2 : ITextEditorFactoryService {
-		WpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, object contentTypeObj, Func<IGuidObjectsCreator> createGuidObjectsCreator);
+		WpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator);
 	}
 
 	[Export(typeof(ITextEditorFactoryService))]
@@ -37,7 +37,6 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler<TextViewCreatedEventArgs> TextViewCreated;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
@@ -93,10 +92,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IContentTypeRegistryService contentTypeRegistryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
-			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
@@ -163,10 +161,9 @@ namespace dnSpy.Text.Editor {
 			return wpfTextView;
 		}
 
-		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, object contentTypeObj, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
-			var contentType = contentTypeRegistryService.GetContentType(contentTypeObj) ?? textBufferFactoryService.TextContentType;
+		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
 			if (textBuffer == null)
-				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
+				throw new ArgumentNullException(nameof(textBuffer));
 			return CreateTextViewImpl(new TextViewModel(new TextDataModel(textBuffer)), DefaultRoles, editorOptionsFactoryService.GlobalOptions, options, createGuidObjectsCreator);
 		}
 

@@ -76,11 +76,15 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public LogEditor(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public LogEditor(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.cachedColorsList = new CachedColorsList();
 			options = options ?? new LogEditorOptions();
 
-			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, () => new GuidObjectsCreator(this));
+			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
+			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
+			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
+			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
@@ -89,8 +93,6 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
-			this.cachedColorsList = new CachedColorsList();
-			this.textEditor.AddColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
 			// Setting IsReadOnly to true doesn't mean it's readonly since undo and redo still work.
 			// Fix that by removing the commands.

@@ -18,19 +18,40 @@
 */
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Shared.Themes;
 
 namespace dnSpy.Text {
+	[Export(typeof(ITextSnapshotColorizerProvider))]
+	sealed class CachedColorsListColorizerProvider : ITextSnapshotColorizerProvider {
+		public IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer) {
+			CachedColorsListColorizer colorizer;
+			if (textBuffer.Properties.TryGetProperty(typeof(CachedColorsListColorizer), out colorizer))
+				yield return colorizer;
+		}
+
+		public static void AddColorizer(ITextBuffer textBuffer, CachedColorsList cachedColorsList, double priority) {
+			if (textBuffer == null)
+				throw new System.ArgumentNullException(nameof(textBuffer));
+			if (cachedColorsList == null)
+				throw new System.ArgumentNullException(nameof(cachedColorsList));
+			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListColorizer), () => CachedColorsListColorizer.Create(cachedColorsList, priority));
+		}
+	}
+
 	sealed class CachedColorsListColorizer : ITextSnapshotColorizer {
 		readonly CachedColorsList cachedColorsList;
 		readonly double priority;
 
-		public CachedColorsListColorizer(CachedColorsList cachedColorsList, double priority) {
+		CachedColorsListColorizer(CachedColorsList cachedColorsList, double priority) {
 			this.cachedColorsList = cachedColorsList;
 			this.priority = priority;
 		}
+
+		internal static CachedColorsListColorizer Create(CachedColorsList cachedColorsList, double priority) =>
+			new CachedColorsListColorizer(cachedColorsList, priority);
 
 		public IEnumerable<ColorSpan> GetColorSpans(SnapshotSpan snapshotSpan) {
 			int offs = snapshotSpan.Span.Start;

@@ -64,14 +64,18 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options ?? new ReplEditorOptions();
 			this.PrimaryPrompt = options.PrimaryPrompt;
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<SubBuffer>();
+			this.cachedColorsList = new CachedColorsList();
 
-			var wpfTextView = textEditorFactoryService2.CreateTextView(null, options, (object)options.ContentType ?? options.ContentTypeGuid, () => new GuidObjectsCreator(this));
+			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
+			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
+			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
+			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
@@ -81,8 +85,6 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextView = wpfTextView;
 			this.wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
-			this.cachedColorsList = new CachedColorsList();
-			textEditor.AddColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
 			AddNewDocument();
 			this.textEditor.TextArea.TextEntering += TextArea_TextEntering;
 			this.textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
