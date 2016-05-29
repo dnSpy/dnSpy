@@ -749,7 +749,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		RefPos GetRefPos(ICodeMappings cms) {
-			var mappings = cms.Find(TextEditor.TextArea.Caret.Line, TextEditor.TextArea.Caret.Column).ToList();
+			var mappings = cms.Find(TextEditor.TextArea.Caret.Line - 1, TextEditor.TextArea.Caret.Column - 1).ToList();
 			mappings.Sort(Sort);
 			var mapping = mappings.Count == 0 ? null : mappings[0];
 
