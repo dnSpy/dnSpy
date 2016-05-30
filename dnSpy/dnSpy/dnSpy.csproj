@@ -63,6 +63,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CommandManager.cs" />
+    <Compile Include="Commands\RegisteredCommandElement.cs" />
     <Compile Include="Controls\IStackedContentChild.cs" />
     <Compile Include="Controls\StackedContent.cs" />
     <Compile Include="Controls\StackedContentState.cs" />

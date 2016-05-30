@@ -64,7 +64,13 @@
     <Compile Include="AsmEditor\Compiler\LineLocation.cs" />
     <Compile Include="AsmEditor\Compiler\LineLocationSpan.cs" />
     <Compile Include="AsmEditor\Compiler\TargetPlatform.cs" />
+    <Compile Include="Command\CommandInfo.cs" />
+    <Compile Include="Command\CommandTargetStatus.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
+    <Compile Include="Command\ICommandInfoCreator.cs" />
+    <Compile Include="Command\ICommandManager.cs" />
+    <Compile Include="Command\ICommandTarget.cs" />
+    <Compile Include="Command\IRegisteredCommandElement.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IUIObjectProvider.cs" />
