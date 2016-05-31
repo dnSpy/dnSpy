@@ -685,6 +685,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return GoToTarget(refSeg, false, false);
 			}
 
+			var pd = @ref as ParamDef;
+			if (pd != null) {
+				var refSeg = references.FirstOrDefault(a => a.IsLocalTarget && a.Reference is Parameter && ((Parameter)a.Reference).ParamDef == pd);
+				return GoToTarget(refSeg, false, false);
+			}
+
 			var codeRef = @ref as CodeReference;
 			if (codeRef != null) {
 				var refSeg = references.FirstOrDefault(a => a.Equals(codeRef));

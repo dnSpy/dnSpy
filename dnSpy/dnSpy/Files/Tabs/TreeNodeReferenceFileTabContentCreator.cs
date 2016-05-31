@@ -39,7 +39,10 @@ namespace dnSpy.Files.Tabs {
 			this.fileTabManagerSettings = fileTabManagerSettings;
 		}
 
-		static IMemberDef ResolveMemberDef(IMemberRef @ref) {
+		static object ResolveMemberDef(object @ref) {
+			if (@ref is ParamDef)
+				return @ref;
+
 			if (@ref is ITypeDefOrRef)
 				return ((ITypeDefOrRef)@ref).ResolveTypeDef();
 
@@ -69,10 +72,11 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		object GetReference(object @ref) {
-			var def = ResolveMemberDef(@ref as IMemberRef);
+			var @ref2 = ResolveMemberDef(@ref);
+			var def = @ref2 as IMemberDef ?? (@ref2 as ParamDef)?.DeclaringMethod;
 
-			if (!fileTabManagerSettings.DecompileFullType || def == null)
-				return def ?? @ref;
+			if (!fileTabManagerSettings.DecompileFullType || @ref2 == null || def == null)
+				return @ref2 ?? @ref;
 
 			const int MAX = 100;
 			for (int i = 0; i < MAX && def.DeclaringType != null; i++)
@@ -107,7 +111,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		FileTabReferenceResult CreateMemberRefResult(IFileTabManager fileTabManager, object @ref) {
-			var resolvedRef = ResolveMemberDef(@ref as IMemberRef);
+			var resolvedRef = ResolveMemberDef(@ref);
 			if (!IsSupportedReference(resolvedRef))
 				return null;
 			var newRef = GetReference(@ref);
@@ -117,7 +121,7 @@ namespace dnSpy.Files.Tabs {
 				// was never inserted because adding an assembly had been temporarily disabled.
 				// Add the assembly to the list again. Next time the user clicks on the link,
 				// FindNode() above will succeed.
-				var def = @ref as IMemberDef;
+				var def = @ref as IMemberDef ?? (@ref as ParamDef)?.DeclaringMethod;
 				if (def != null) {
 					DnSpyFile file = null;
 					var mod = def.Module;
@@ -144,7 +148,7 @@ namespace dnSpy.Files.Tabs {
 			});
 		}
 
-		static bool IsSupportedReference(object @ref) => @ref is CodeReference || @ref is IMemberDef;
+		static bool IsSupportedReference(object @ref) => @ref is CodeReference || @ref is IMemberDef || @ref is ParamDef;
 
 		void GoToReference(IFileTabContent content, object @ref) {
 			Debug.Assert(IsSupportedReference(@ref));

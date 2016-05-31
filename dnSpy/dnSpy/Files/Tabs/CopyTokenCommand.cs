@@ -48,10 +48,13 @@ namespace dnSpy.Files.Tabs {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var @ref = context.Find<CodeReference>();
-				if (@ref?.Reference is IMDTokenProvider)
-					return ((IMDTokenProvider)@ref.Reference).MDToken.Raw;
-				if (@ref?.Reference is TokenReference)
-					return ((TokenReference)@ref.Reference).Token;
+				var realRef = @ref?.Reference;
+				if (realRef is Parameter)
+					realRef = ((Parameter)realRef).ParamDef;
+				if (realRef is IMDTokenProvider)
+					return ((IMDTokenProvider)realRef).MDToken.Raw;
+				if (realRef is TokenReference)
+					return ((TokenReference)realRef).Token;
 				return null;
 			}
 		}

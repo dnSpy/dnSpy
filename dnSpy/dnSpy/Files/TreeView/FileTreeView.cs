@@ -445,6 +445,8 @@ namespace dnSpy.Files.TreeView {
 				return FindNode((PropertyDef)@ref);
 			if (@ref is EventDef)
 				return FindNode((EventDef)@ref);
+			if (@ref is ParamDef)
+				return FindNode(((ParamDef)@ref).DeclaringMethod);
 			if (@ref is NamespaceRef) {
 				var nsRef = (NamespaceRef)@ref;
 				return FindNamespaceNode(nsRef.Module, nsRef.Namespace);

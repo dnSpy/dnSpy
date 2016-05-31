@@ -67,7 +67,9 @@ namespace dnSpy.Files.Tabs {
 			return GetResolver(fileTabManager, out tab) != null;
 		}
 
-		static IDnlibDef ResolveDef(object mr) {
+		static object ResolveDef(object mr) {
+			if (mr is ParamDef)
+				return mr;
 			if (mr is ITypeDefOrRef)
 				return ((ITypeDefOrRef)mr).ResolveTypeDef();
 			if (mr is IMethod && ((IMethod)mr).IsMethod)
@@ -90,7 +92,7 @@ namespace dnSpy.Files.Tabs {
 			tab.FollowReference(member, false);
 		}
 
-		static IDnlibDef AskForDef(string title, ITokenResolver resolver) => Shared.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
+		static object AskForDef(string title, ITokenResolver resolver) => Shared.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
 			string error;
 			uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 			var memberRef = resolver.ResolveToken(token);
