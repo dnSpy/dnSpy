@@ -140,8 +140,8 @@ namespace dnSpy.Shared.MVVM {
 
 		public static string ToString(long value) => ToString(value, long.MinValue, long.MaxValue, false);
 		public static string ToString(ulong value) => ToString(value, ulong.MinValue, ulong.MaxValue, false);
-		public static string ToString(float value) => value.ToString();
-		public static string ToString(double value) => value.ToString();
+		public static string ToString(float value) => value.ToString("R");
+		public static string ToString(double value) => value.ToString("R");
 		public static string ToString(decimal value) => value.ToString();
 		public static string ToString(DateTime value) => value.ToString();
 		public static string ToString(TimeSpan value) => value.ToString();
