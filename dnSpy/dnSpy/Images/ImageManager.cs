@@ -36,10 +36,10 @@ namespace dnSpy.Images {
 		[ImportingConstructor]
 		ImageManager(IThemeManager themeManager) {
 			this.themeManager = themeManager;
-			this.themeManager.EarlyThemeChanged += ThemeManager_EarlyThemeChanged;
+			this.themeManager.ThemeChangedHighPriority += ThemeManager_ThemeChangedHighPriority;
 		}
 
-		void ThemeManager_EarlyThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
 			imageCache.Clear();
 			isHighContrast = themeManager.Theme.IsHighContrast;
 		}

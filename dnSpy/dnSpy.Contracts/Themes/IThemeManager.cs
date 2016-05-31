@@ -31,14 +31,21 @@ namespace dnSpy.Contracts.Themes {
 		ITheme Theme { get; }
 
 		/// <summary>
-		/// Notified when <see cref="Theme"/> gets changed
+		/// Raised when <see cref="Theme"/> gets changed, and is raised before <see cref="ThemeChanged"/>
+		/// and <see cref="ThemeChangedLowPriority"/>
+		/// </summary>
+		event EventHandler<ThemeChangedEventArgs> ThemeChangedHighPriority;
+
+		/// <summary>
+		/// Raised when <see cref="Theme"/> gets changed and is notified after <see cref="ThemeChangedHighPriority"/>
+		/// and before <see cref="ThemeChangedLowPriority"/>
 		/// </summary>
 		event EventHandler<ThemeChangedEventArgs> ThemeChanged;
 
 		/// <summary>
-		/// Notified when <see cref="Theme"/> gets changed. Gets notified before <see cref="ThemeChanged"/>
-		/// and should normally not be used (it's currently only used by <see cref="IImageManager"/>)
+		/// Raised when <see cref="Theme"/> gets changed and is notified after <see cref="ThemeChangedHighPriority"/>
+		/// and <see cref="ThemeChanged"/>
 		/// </summary>
-		event EventHandler<ThemeChangedEventArgs> EarlyThemeChanged;
+		event EventHandler<ThemeChangedEventArgs> ThemeChangedLowPriority;
 	}
 }

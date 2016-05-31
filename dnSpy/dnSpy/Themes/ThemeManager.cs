@@ -43,8 +43,9 @@ namespace dnSpy.Themes {
 					theme = value;
 					themeSettings.ThemeGuid = value.Guid;
 					InitializeResources();
-					earlyThemeChanged.Raise(this, new ThemeChangedEventArgs());
+					themeChangedHighPriority.Raise(this, new ThemeChangedEventArgs());
 					themeChanged.Raise(this, new ThemeChangedEventArgs());
+					themeChangedLowPriority.Raise(this, new ThemeChangedEventArgs());
 				}
 			}
 		}
@@ -63,17 +64,23 @@ namespace dnSpy.Themes {
 		}
 		bool isHighContrast;
 
+		public event EventHandler<ThemeChangedEventArgs> ThemeChangedHighPriority {
+			add { themeChangedHighPriority.Add(value); }
+			remove { themeChangedHighPriority.Remove(value); }
+		}
+		readonly WeakEventList<ThemeChangedEventArgs> themeChangedHighPriority;
+
 		public event EventHandler<ThemeChangedEventArgs> ThemeChanged {
 			add { themeChanged.Add(value); }
 			remove { themeChanged.Remove(value); }
 		}
 		readonly WeakEventList<ThemeChangedEventArgs> themeChanged;
 
-		public event EventHandler<ThemeChangedEventArgs> EarlyThemeChanged {
-			add { earlyThemeChanged.Add(value); }
-			remove { earlyThemeChanged.Remove(value); }
+		public event EventHandler<ThemeChangedEventArgs> ThemeChangedLowPriority {
+			add { themeChangedLowPriority.Add(value); }
+			remove { themeChangedLowPriority.Remove(value); }
 		}
-		readonly WeakEventList<ThemeChangedEventArgs> earlyThemeChanged;
+		readonly WeakEventList<ThemeChangedEventArgs> themeChangedLowPriority;
 
 		public ThemeSettings Settings => themeSettings;
 		readonly ThemeSettings themeSettings;
@@ -81,8 +88,9 @@ namespace dnSpy.Themes {
 		[ImportingConstructor]
 		ThemeManager(ThemeSettings themeSettings) {
 			this.themeSettings = themeSettings;
+			this.themeChangedHighPriority = new WeakEventList<ThemeChangedEventArgs>();
 			this.themeChanged = new WeakEventList<ThemeChangedEventArgs>();
-			this.earlyThemeChanged = new WeakEventList<ThemeChangedEventArgs>();
+			this.themeChangedLowPriority = new WeakEventList<ThemeChangedEventArgs>();
 			this.themes = new Dictionary<Guid, Theme>();
 			Load();
 			Debug.Assert(themes.Count != 0);
