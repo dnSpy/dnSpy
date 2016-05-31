@@ -30,15 +30,9 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Gets all keyboard shortcuts
 		/// </summary>
-		IEnumerable<Tuple<KeyShortcut, CommandInfo>> KeyShortcuts { get; }
-
-		/// <summary>
-		/// Returns true if this command can be used with <paramref name="target"/>
-		/// </summary>
 		/// <param name="target">Target object</param>
-		/// <param name="keyShortcut">Keyboard shortcut returned by <see cref="KeyShortcuts"/></param>
 		/// <returns></returns>
-		bool IsValid(object target, KeyShortcut keyShortcut);
+		IEnumerable<Tuple<KeyShortcut, CommandInfo>> GetKeyShortcuts(object target);
 
 		/// <summary>
 		/// Returns a <see cref="CommandInfo"/> created from user text

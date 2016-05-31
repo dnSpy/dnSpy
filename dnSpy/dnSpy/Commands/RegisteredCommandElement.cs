@@ -96,7 +96,7 @@ namespace dnSpy.Commands {
 			if (prevKey != null) {
 				waitForSecondKey = false;
 				var keyShortcut = new KeyShortcut(prevKey.Value, keyInput);
-				result = keyShortcutCollection.GetTwoKeyShortcuts(keyShortcut).FirstOrDefault(a => a.Creator.IsValid(target, keyShortcut));
+				result = keyShortcutCollection.GetTwoKeyShortcuts(keyShortcut).FirstOrDefault();
 				prevKey = null;
 			}
 			else {
@@ -107,8 +107,7 @@ namespace dnSpy.Commands {
 				}
 				else {
 					waitForSecondKey = false;
-					var keyShortcut = new KeyShortcut(keyInput, KeyInput.Default);
-					result = keyShortcutCollection.GetOneKeyShortcuts(keyInput).FirstOrDefault(a => a.Creator.IsValid(target, keyShortcut));
+					result = keyShortcutCollection.GetOneKeyShortcuts(keyInput).FirstOrDefault();
 				}
 			}
 			if (result.IsDefault)

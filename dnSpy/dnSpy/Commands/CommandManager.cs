@@ -38,17 +38,17 @@ namespace dnSpy.Commands {
 			this.commandTargetFilterCreator = commandTargetFilterCreator.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public IRegisteredCommandElement Register(UIElement sourceElement, object owner) {
+		public IRegisteredCommandElement Register(UIElement sourceElement, object target) {
 			if (sourceElement == null)
 				throw new ArgumentNullException(nameof(sourceElement));
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
 
-			var commandTargets = commandTargetFilterCreator.Select(a => a.Value.Create(owner)).Where(a => a != null).ToArray();
+			var commandTargets = commandTargetFilterCreator.Select(a => a.Value.Create(target)).Where(a => a != null).ToArray();
 			var coll = new KeyShortcutCollection();
 			foreach (var creator in commandInfoCreators)
-				coll.Add(creator.Value);
-			return new RegisteredCommandElement(this, sourceElement, coll, commandTargets, owner);
+				coll.Add(creator.Value, target);
+			return new RegisteredCommandElement(this, sourceElement, coll, commandTargets, target);
 		}
 
 		public CommandInfo? CreateCommandInfo(object target, string text) {

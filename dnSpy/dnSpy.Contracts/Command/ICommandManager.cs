@@ -28,8 +28,8 @@ namespace dnSpy.Contracts.Command {
 		/// Registers an element
 		/// </summary>
 		/// <param name="sourceElement">Source element that provides the keyboard input</param>
-		/// <param name="owner">Owner object</param>
+		/// <param name="target">Target object</param>
 		/// <returns></returns>
-		IRegisteredCommandElement Register(UIElement sourceElement, object owner);
+		IRegisteredCommandElement Register(UIElement sourceElement, object target);
 	}
 }

@@ -32,8 +32,8 @@ namespace dnSpy.Commands {
 			this.dict = new Dictionary<KeyShortcut, List<CreatorAndCommand>>();
 		}
 
-		public void Add(ICommandInfoCreator creator) {
-			foreach (var t in creator.KeyShortcuts) {
+		public void Add(ICommandInfoCreator creator, object target) {
+			foreach (var t in creator.GetKeyShortcuts(target)) {
 				List<CreatorAndCommand> list;
 				if (!dict.TryGetValue(t.Item1, out list))
 					dict.Add(t.Item1, list = new List<CreatorAndCommand>());
