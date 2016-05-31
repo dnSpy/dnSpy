@@ -21,26 +21,32 @@ using System;
 
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Handles commands
+	/// Command constants
 	/// </summary>
-	/// <remarks>IOleCommandTarget</remarks>
-	public interface ICommandTarget {
+	public static class CommandConstants {
 		/// <summary>
-		/// Executes the command
+		/// Default command IDs (<see cref="DefaultIds"/>)
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
-		/// <param name="cmdId">Command ID</param>
-		/// <param name="args">Arguments or null</param>
-		/// <param name="result">Updated with the result</param>
-		/// <returns></returns>
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result);
+		public static readonly Guid DefaultGroup = new Guid("14608CB3-3965-49B2-A8A9-46CDBB4E2E30");
 
 		/// <summary>
-		/// Checks whether the command can execute. If it can execute, it must return <see cref="CommandTargetStatus.Handled"/>
+		/// Text editor command IDs (<see cref="TextEditorIds"/>)
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
-		/// <param name="cmdId">Command ID</param>
-		/// <returns></returns>
-		CommandTargetStatus CanExecute(Guid group, int cmdId);
+		public static readonly Guid TextEditorGroup = new Guid("2313BC9A-8895-4390-87BF-FA563F35B33B");
+
+		/// <summary>
+		/// Order of default <see cref="ICommandInfoCreator"/>
+		/// </summary>
+		public const double CMDINFO_ORDER_DEFAULT = 10000;
+
+		/// <summary>
+		/// Order of default text editor <see cref="ICommandInfoCreator"/>
+		/// </summary>
+		public const double CMDINFO_ORDER_TEXT_EDITOR = 5000;
+
+		/// <summary>
+		/// Order of default text editor <see cref="ICommandTargetFilterCreator"/>
+		/// </summary>
+		public const double CMDFILTERCREATOR_ORDER_TEXT_EDITOR = 5000;
 	}
 }

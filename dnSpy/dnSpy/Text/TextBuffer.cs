@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Text;
 using ICSharpCode.AvalonEdit.Document;

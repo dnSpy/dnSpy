@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 
@@ -35,6 +36,8 @@ namespace dnSpy.Text.Editor {
 		public object Tag { get; set; }
 		public ITextViewRoleSet Roles { get; }
 		public IEditorOptions Options { get; }
+		public ICommandTarget CommandTarget => RegisteredCommandElement.CommandTarget;
+		IRegisteredCommandElement RegisteredCommandElement { get; }
 		public ITextCaret Caret { get; }
 		public ITextSelection Selection { get; }
 		public bool HasAggregateFocus => DnSpyTextEditor.IsKeyboardFocusWithin;
@@ -45,7 +48,7 @@ namespace dnSpy.Text.Editor {
 		const int LEFT_MARGIN = 15;
 		readonly FrameworkElement paddingElement;
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -57,6 +60,7 @@ namespace dnSpy.Text.Editor {
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
+			RegisteredCommandElement = commandManager.Register(dnSpyTextEditor.TextArea, this);
 			TextViewModel = textViewModel;
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
@@ -107,6 +111,7 @@ namespace dnSpy.Text.Editor {
 		public void Close() {
 			if (IsClosed)
 				throw new InvalidOperationException();
+			RegisteredCommandElement.Unregister();
 			TextViewModel.Dispose();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);

@@ -18,8 +18,8 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
 	/// <summary>
@@ -28,12 +28,25 @@ namespace dnSpy.Contracts.Command {
 	/// </summary>
 	public interface ICommandInfoCreator {
 		/// <summary>
-		/// Converts raw input to a <see cref="CommandInfo"/> or returns null
+		/// Gets all keyboard shortcuts
 		/// </summary>
-		/// <param name="e">Key event args</param>
-		/// <param name="owner">Owner object</param>
+		IEnumerable<Tuple<KeyShortcut, CommandInfo>> KeyShortcuts { get; }
+
+		/// <summary>
+		/// Returns true if this command can be used with <paramref name="target"/>
+		/// </summary>
+		/// <param name="target">Target object</param>
+		/// <param name="keyShortcut">Keyboard shortcut returned by <see cref="KeyShortcuts"/></param>
 		/// <returns></returns>
-		CommandInfo? Create(KeyEventArgs e, object owner);
+		bool IsValid(object target, KeyShortcut keyShortcut);
+
+		/// <summary>
+		/// Returns a <see cref="CommandInfo"/> created from user text
+		/// </summary>
+		/// <param name="target">Target object</param>
+		/// <param name="text">Text typed by the user</param>
+		/// <returns></returns>
+		CommandInfo? CreateFromTextInput(object target, string text);
 	}
 
 	/// <summary>Metadata</summary>
@@ -48,9 +61,10 @@ namespace dnSpy.Contracts.Command {
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ExportCommandInfoCreatorAttribute : ExportAttribute, ICommandInfoCreatorMetadata {
 		/// <summary>Constructor</summary>
-		public ExportCommandInfoCreatorAttribute()
+		/// <param name="order">Order of this instance, eg. <see cref="CommandConstants.CMDINFO_ORDER_DEFAULT"/></param>
+		public ExportCommandInfoCreatorAttribute(double order)
 			: base(typeof(ICommandInfoCreator)) {
-			Order = double.MaxValue;
+			Order = order;
 		}
 
 		/// <summary>

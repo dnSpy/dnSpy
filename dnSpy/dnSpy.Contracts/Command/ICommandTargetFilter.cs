@@ -23,24 +23,25 @@ namespace dnSpy.Contracts.Command {
 	/// <summary>
 	/// Handles commands
 	/// </summary>
-	/// <remarks>IOleCommandTarget</remarks>
-	public interface ICommandTarget {
+	public interface ICommandTargetFilter : IDisposable {
 		/// <summary>
 		/// Executes the command
 		/// </summary>
+		/// <param name="target">Target object</param>
 		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		/// <param name="args">Arguments or null</param>
 		/// <param name="result">Updated with the result</param>
 		/// <returns></returns>
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result);
+		CommandTargetStatus Execute(object target, Guid group, int cmdId, object args, ref object result);
 
 		/// <summary>
 		/// Checks whether the command can execute. If it can execute, it must return <see cref="CommandTargetStatus.Handled"/>
 		/// </summary>
+		/// <param name="target">Target object</param>
 		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		/// <returns></returns>
-		CommandTargetStatus CanExecute(Guid group, int cmdId);
+		CommandTargetStatus CanExecute(object target, Guid group, int cmdId);
 	}
 }

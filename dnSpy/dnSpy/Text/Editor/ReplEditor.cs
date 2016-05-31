@@ -127,7 +127,6 @@ namespace dnSpy.Text.Editor {
 					scriptOutputCachedTextTokenColors = new CachedTextTokenColors();
 					Debug.Assert(LastLine.Length == 0);
 					cachedColorsList.AddOrUpdate(wpfTextView.TextSnapshot.Length, scriptOutputCachedTextTokenColors);
-					textEditor.TextArea.TextView.Redraw(wpfTextView.TextSnapshot.Length, scriptOutputCachedTextTokenColors.Length);
 				}
 				else {
 					Debug.Assert(scriptOutputCachedTextTokenColors != null);

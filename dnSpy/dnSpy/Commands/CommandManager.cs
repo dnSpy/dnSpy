@@ -30,12 +30,12 @@ namespace dnSpy.Commands {
 	[Export(typeof(ICommandManager))]
 	sealed class CommandManager : ICommandManager {
 		readonly Lazy<ICommandInfoCreator, ICommandInfoCreatorMetadata>[] commandInfoCreators;
-		readonly ICommandTarget[] commandTargets;
+		readonly Lazy<ICommandTargetFilterCreator, ICommandTargetFilterCreatorMetadata>[] commandTargetFilterCreator;
 
 		[ImportingConstructor]
-		CommandManager([ImportMany] IEnumerable<Lazy<ICommandInfoCreator, ICommandInfoCreatorMetadata>> commandInfoCreators, [ImportMany] IEnumerable<ICommandTarget> commandTargets) {
+		CommandManager([ImportMany] IEnumerable<Lazy<ICommandInfoCreator, ICommandInfoCreatorMetadata>> commandInfoCreators, [ImportMany] IEnumerable<Lazy<ICommandTargetFilterCreator, ICommandTargetFilterCreatorMetadata>> commandTargetFilterCreator) {
 			this.commandInfoCreators = commandInfoCreators.OrderBy(a => a.Metadata.Order).ToArray();
-			this.commandTargets = commandTargets.OrderBy(a => a.Order).ToArray();
+			this.commandTargetFilterCreator = commandTargetFilterCreator.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public IRegisteredCommandElement Register(UIElement sourceElement, object owner) {
@@ -43,44 +43,21 @@ namespace dnSpy.Commands {
 				throw new ArgumentNullException(nameof(sourceElement));
 			if (owner == null)
 				throw new ArgumentNullException(nameof(owner));
-			return new RegisteredCommandElement(this, sourceElement, owner);
+
+			var commandTargets = commandTargetFilterCreator.Select(a => a.Value.Create(owner)).Where(a => a != null).ToArray();
+			var coll = new KeyShortcutCollection();
+			foreach (var creator in commandInfoCreators)
+				coll.Add(creator.Value);
+			return new RegisteredCommandElement(this, sourceElement, coll, commandTargets, owner);
 		}
 
-		internal CommandInfo? GetCommand(KeyEventArgs e, object owner) {
-			if (e == null)
-				throw new ArgumentNullException(nameof(e));
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
-
-			foreach (var creator in commandInfoCreators) {
-				var info = creator.Value.Create(e, owner);
-				if (info != null)
-					return info;
+		public CommandInfo? CreateCommandInfo(object target, string text) {
+			foreach (var c in commandInfoCreators) {
+				var cmd = c.Value.CreateFromTextInput(target, text);
+				if (cmd != null)
+					return cmd;
 			}
-
 			return null;
-		}
-
-		internal CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			foreach (var ct in commandTargets) {
-				var res = ct.CanExecute(group, cmdId);
-				if (res == CommandTargetStatus.Handled)
-					return res;
-				Debug.Assert(res == CommandTargetStatus.NotHandled);
-			}
-			return CommandTargetStatus.NotHandled;
-		}
-
-		internal CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-			foreach (var ct in commandTargets) {
-				result = null;
-				var res = ct.Execute(group, cmdId, args, ref result);
-				if (res == CommandTargetStatus.Handled)
-					return res;
-				Debug.Assert(res == CommandTargetStatus.NotHandled);
-			}
-			result = null;
-			return CommandTargetStatus.NotHandled;
 		}
 	}
 }

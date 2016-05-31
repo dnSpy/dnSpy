@@ -17,30 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Handles commands
+	/// Extension methods
 	/// </summary>
-	/// <remarks>IOleCommandTarget</remarks>
-	public interface ICommandTarget {
+	public static class TextEditorIdsExtensions {
 		/// <summary>
-		/// Executes the command
+		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
-		/// <param name="cmdId">Command ID</param>
-		/// <param name="args">Arguments or null</param>
-		/// <param name="result">Updated with the result</param>
+		/// <param name="id">ID</param>
 		/// <returns></returns>
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result);
+		public static CommandInfo ToCommandInfo(this TextEditorIds id) => new CommandInfo(CommandConstants.TextEditorGroup, (int)id);
 
 		/// <summary>
-		/// Checks whether the command can execute. If it can execute, it must return <see cref="CommandTargetStatus.Handled"/>
+		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
-		/// <param name="cmdId">Command ID</param>
+		/// <param name="id">ID</param>
+		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		CommandTargetStatus CanExecute(Guid group, int cmdId);
+		public static CommandInfo ToCommandInfo(this TextEditorIds id, object arguments) => new CommandInfo(CommandConstants.TextEditorGroup, (int)id, arguments);
 	}
 }

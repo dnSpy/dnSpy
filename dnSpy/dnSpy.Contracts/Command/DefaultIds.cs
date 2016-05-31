@@ -17,38 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Command data
+	/// Default command IDs (group = <see cref="CommandConstants.DefaultGroup"/>)
 	/// </summary>
-	public struct CommandInfo {
+	public enum DefaultIds {
 		/// <summary>
-		/// Gets the group
+		/// Unknown command, if no other command is found
 		/// </summary>
-		public Guid Group { get; }
-
+		Unknown,
 		/// <summary>
-		/// Gets the command id
+		/// Copy
 		/// </summary>
-		public int ID { get; }
-
+		Copy,
 		/// <summary>
-		/// Gets the arguments or null
+		/// Cut
 		/// </summary>
-		public object Arguments { get; }
-
+		Cut,
 		/// <summary>
-		/// Constructor
+		/// Paste
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
-		/// <param name="id">Command id</param>
-		/// <param name="arguments">Command arguments or null</param>
-		public CommandInfo(Guid group, int id, object arguments = null) {
-			Group = group;
-			ID = id;
-			Arguments = arguments;
-		}
+		Paste,
+		/// <summary>
+		/// Undo
+		/// </summary>
+		Undo,
+		/// <summary>
+		/// Redo
+		/// </summary>
+		Redo,
 	}
 }

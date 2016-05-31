@@ -64,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandManager.cs" />
+    <Compile Include="Commands\CreatorAndCommand.cs" />
+    <Compile Include="Commands\DefaultCommandInfoCreator.cs" />
+    <Compile Include="Commands\KeyShortcutCollection.cs" />
     <Compile Include="Commands\RegisteredCommandElement.cs" />
     <Compile Include="Controls\IStackedContentChild.cs" />
     <Compile Include="Controls\StackedContent.cs" />
@@ -348,6 +351,8 @@
     <Compile Include="Text\Editor\ColorizerCollection.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
+    <Compile Include="Text\Editor\DefaultTextEditorCommandInfoCreator.cs" />
+    <Compile Include="Text\Editor\DefaultTextViewCommandTarget.cs" />
     <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewHostEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
