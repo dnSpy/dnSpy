@@ -68,7 +68,7 @@ namespace dnSpy.Menus {
 
 	[Export(typeof(IWpfFocusChecker))]
 	sealed class MenuWpfFocusChecker : IWpfFocusChecker {
-		public bool CanFocus => !menuManager.IsMenuOpened;
+		public bool CanFocus => !InputManager.Current.IsInMenuMode;
 
 		readonly MenuManager menuManager;
 
@@ -81,22 +81,6 @@ namespace dnSpy.Menus {
 	[Export, Export(typeof(IMenuManager))]
 	sealed class MenuManager : IMenuManager {
 		readonly IImageManager imageManager;
-
-		public bool IsMenuOpened {
-			get {
-				foreach (var mi in openedMenuItems) {
-					if (mi.IsSubmenuOpen)
-						return true;
-				}
-
-				foreach (var cm in openedContextMenus) {
-					if (cm.IsOpen)
-						return true;
-				}
-
-				return false;
-			}
-		}
 
 		[ImportingConstructor]
 		MenuManager(IImageManager imageManager, [ImportMany] IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus, [ImportMany] IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems) {
@@ -255,18 +239,13 @@ namespace dnSpy.Menus {
 			foreach (var i in allItems)
 				menu.Items.Add(i);
 
-			menu.Opened += (s, e) => openedContextMenus.Add(menu);
-			menu.Closed += (s, e) => {
-				openedContextMenus.Remove(menu);
-				ctxMenuElem.ContextMenu = new ContextMenu();
-			};
+			menu.Closed += (s, e) => ctxMenuElem.ContextMenu = new ContextMenu();
 			if (initCtxMenu != null)
 				initCtxMenu.Initialize(ctx, menu);
 			ctxMenuElem.ContextMenu = menu;
 			prevEventArgs.Target = evArgs;
 			return true;
 		}
-		readonly List<ContextMenu> openedContextMenus = new List<ContextMenu>();
 
 		List<object> CreateMenuItems(IMenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem, bool isCtxMenu) {
 			var allItems = new List<object>();
@@ -427,14 +406,11 @@ namespace dnSpy.Menus {
 				topMenuItem.Items.Add(new MenuItem());
 				var mdTmp = md;
 				topMenuItem.SubmenuOpened += (s, e) => {
-					if (e.Source == topMenuItem) {
-						openedMenuItems.Add(topMenuItem);
+					if (e.Source == topMenuItem)
 						InitializeMainSubMenu(topMenuItem, mdTmp, commandTarget);
-					}
 				};
 				topMenuItem.SubmenuClosed += (s, e) => {
 					if (e.Source == topMenuItem) {
-						openedMenuItems.Remove(topMenuItem);
 						// There must always be exactly one MenuItem in the list when it's not shown.
 						// We must re-use the first one or the first menu item won't be highlighted
 						// when the menu is opened from the keyboard, eg. Alt+F.
@@ -447,6 +423,5 @@ namespace dnSpy.Menus {
 
 			return menu;
 		}
-		readonly List<MenuItem> openedMenuItems = new List<MenuItem>();
 	}
 }
