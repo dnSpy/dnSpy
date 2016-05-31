@@ -51,7 +51,6 @@ namespace dnSpy.Text.Editor {
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			TextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
-			TextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 		}
 
 		public void Dispose() {

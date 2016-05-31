@@ -17,12 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Command {
+namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
-	/// Handles commands
+	/// Creates <see cref="IEditorOperations2"/> instances
 	/// </summary>
-	public interface ICommandTargetFilter : ICommandTarget, IDisposable {
+	public interface IEditorOperationsFactoryService {
+		/// <summary>
+		/// Gets or creates <see cref="IEditorOperations2"/> instances
+		/// </summary>
+		/// <param name="textView">Owner text view</param>
+		/// <returns></returns>
+		IEditorOperations2 GetEditorOperations(ITextView textView);
 	}
 }

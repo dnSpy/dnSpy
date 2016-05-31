@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Text.Editor.Operations;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -110,5 +111,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Gets the command target
 		/// </summary>
 		ICommandTarget CommandTarget { get; }
+
+		/// <summary>
+		/// Gets the editor operations
+		/// </summary>
+		IEditorOperations2 EditorOperations { get; }
 	}
 }

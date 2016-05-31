@@ -18,11 +18,17 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Operations;
 
-namespace dnSpy.Contracts.Command {
-	/// <summary>
-	/// Handles commands
-	/// </summary>
-	public interface ICommandTargetFilter : ICommandTarget, IDisposable {
+namespace dnSpy.Text.Editor.Operations {
+	[Export(typeof(IEditorOperationsFactoryService))]
+	sealed class EditorOperationsFactoryService : IEditorOperationsFactoryService {
+		public IEditorOperations2 GetEditorOperations(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return textView.Properties.GetOrCreateSingletonProperty(typeof(IEditorOperations), () => new EditorOperations(textView));
+		}
 	}
 }

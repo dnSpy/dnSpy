@@ -25,6 +25,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Operations;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextView : IWpfTextView {
@@ -40,6 +41,7 @@ namespace dnSpy.Text.Editor {
 		IRegisteredCommandElement RegisteredCommandElement { get; }
 		public ITextCaret Caret { get; }
 		public ITextSelection Selection { get; }
+		public IEditorOperations2 EditorOperations { get; }
 		public bool HasAggregateFocus => DnSpyTextEditor.IsKeyboardFocusWithin;
 		public bool IsMouseOverViewOrAdornments => DnSpyTextEditor.IsMouseOver;
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
@@ -48,7 +50,7 @@ namespace dnSpy.Text.Editor {
 		const int LEFT_MARGIN = 15;
 		readonly FrameworkElement paddingElement;
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -60,6 +62,7 @@ namespace dnSpy.Text.Editor {
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
+			DnSpyTextEditor.Options.AllowToggleOverstrikeMode = true;
 			RegisteredCommandElement = commandManager.Register(dnSpyTextEditor.TextArea, this);
 			TextViewModel = textViewModel;
 			Roles = roles;
@@ -67,6 +70,7 @@ namespace dnSpy.Text.Editor {
 			Options.Parent = parentOptions;
 			Options.OptionChanged += EditorOptions_OptionChanged;
 			Selection = new TextSelection(this, dnSpyTextEditor);
+			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
 			Caret = new TextCaret(this, dnSpyTextEditor);
 			InitializeFrom(Options);
 			DnSpyTextEditor.Loaded += DnSpyTextEditor_Loaded;
@@ -130,8 +134,10 @@ namespace dnSpy.Text.Editor {
 			UpdateOption(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId.Name);
 			UpdateOption(DefaultTextViewOptions.DisplayUrlsAsHyperlinksId.Name);
 			UpdateOption(DefaultTextViewOptions.DragDropEditingId.Name);
+			UpdateOption(DefaultTextViewOptions.CanChangeOverwriteModeId.Name);
 			UpdateOption(DefaultTextViewOptions.OverwriteModeId.Name);
 			UpdateOption(DefaultTextViewOptions.UseVirtualSpaceId.Name);
+			UpdateOption(DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId.Name);
 			UpdateOption(DefaultTextViewOptions.UseVisibleWhitespaceId.Name);
 			UpdateOption(DefaultTextViewOptions.ViewProhibitUserInputId.Name);
 			UpdateOption(DefaultTextViewOptions.WordWrapStyleId.Name);
@@ -188,10 +194,16 @@ namespace dnSpy.Text.Editor {
 				// window / application that supports drag and drop.
 				DnSpyTextEditor.TextArea.AllowDrop = Options.GetOptionValue(DefaultTextViewOptions.DragDropEditingId);
 			}
+			else if (optionId == DefaultTextViewOptions.CanChangeOverwriteModeId.Name) {
+				// Nothing to do
+			}
 			else if (optionId == DefaultTextViewOptions.OverwriteModeId.Name)
-				DnSpyTextEditor.Options.AllowToggleOverstrikeMode = Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
+				DnSpyTextEditor.TextArea.OverstrikeMode = Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
 			else if (optionId == DefaultTextViewOptions.UseVirtualSpaceId.Name)
 				DnSpyTextEditor.Options.EnableVirtualSpace = Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId);
+			else if (optionId == DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId.Name) {
+				// Nothing to do
+			}
 			else if (optionId == DefaultTextViewOptions.UseVisibleWhitespaceId.Name) {
 				var newValue = Options.GetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId);
 				DnSpyTextEditor.Options.ShowSpaces = newValue;

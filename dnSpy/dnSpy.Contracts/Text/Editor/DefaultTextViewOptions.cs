@@ -26,8 +26,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> CutOrCopyBlankLineIfNoSelectionId = new EditorOptionKey<bool>("ITextView/CutOrCopyBlankLineIfNoSelection");
 		public static readonly EditorOptionKey<bool> DisplayUrlsAsHyperlinksId = new EditorOptionKey<bool>("ITextView/DisplayUrlsAsHyperlinks");
 		public static readonly EditorOptionKey<bool> DragDropEditingId = new EditorOptionKey<bool>("ITextView/DragDrop");
+		public static readonly EditorOptionKey<bool> CanChangeOverwriteModeId = new EditorOptionKey<bool>("ITextView/CanChangeOverwriteMode");
 		public static readonly EditorOptionKey<bool> OverwriteModeId = new EditorOptionKey<bool>("ITextView/OverwriteMode");
 		public static readonly EditorOptionKey<bool> UseVirtualSpaceId = new EditorOptionKey<bool>("ITextView/UseVirtualSpace");
+		public static readonly EditorOptionKey<bool> CanChangeUseVisibleWhitespaceId = new EditorOptionKey<bool>("ITextView/CanChangeUseVisibleWhitespace");
 		public static readonly EditorOptionKey<bool> UseVisibleWhitespaceId = new EditorOptionKey<bool>("ITextView/UseVisibleWhitespace");
 		public static readonly EditorOptionKey<bool> ViewProhibitUserInputId = new EditorOptionKey<bool>("ITextView/ProhibitUserInput");
 		public static readonly EditorOptionKey<WordWrapStyles> WordWrapStyleId = new EditorOptionKey<WordWrapStyles>("ITextView/WordWrapStyle");

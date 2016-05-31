@@ -78,7 +78,6 @@ namespace dnSpy.Text.Editor {
 			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			//TODO: Support box selection
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.RectangularSelectionId, false);

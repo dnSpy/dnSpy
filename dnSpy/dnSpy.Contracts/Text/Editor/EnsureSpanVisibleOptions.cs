@@ -19,10 +19,30 @@
 
 using System;
 
-namespace dnSpy.Contracts.Command {
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Handles commands
+	/// Ensure span visible options
 	/// </summary>
-	public interface ICommandTargetFilter : ICommandTarget, IDisposable {
+	[Flags]
+	public enum EnsureSpanVisibleOptions {
+		/// <summary>
+		/// Ensure that the end of the span is visible if it is impossible to display the entire span. If none of the text in the span is currently visible, center the span in the view.
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Ensure that the start of the span is visible if it is impossible to display the entire span.
+		/// </summary>
+		ShowStart			= 1,
+
+		/// <summary>
+		/// Do the minimum amount of scrolling to display the span in the view.
+		/// </summary>
+		MinimumScroll		= 2,
+
+		/// <summary>
+		/// Always center the span in the view.
+		/// </summary>
+		AlwaysCenter		= 4,
 	}
 }

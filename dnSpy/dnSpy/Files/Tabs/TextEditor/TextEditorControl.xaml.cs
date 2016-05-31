@@ -107,7 +107,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
 			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, new TextViewCreatorOptions(), null);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			this.wpfTextView = wpfTextView;

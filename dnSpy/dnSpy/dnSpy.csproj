@@ -366,6 +366,8 @@
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
+    <Compile Include="Text\Editor\Operations\EditorOperations.cs" />
+    <Compile Include="Text\Editor\Operations\EditorOperationsFactoryService.cs" />
     <Compile Include="Text\Editor\ReplCommands.cs" />
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplEditor.cs" />

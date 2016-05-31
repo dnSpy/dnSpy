@@ -40,6 +40,12 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
+	sealed class CanChangeOverwriteModeEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CanChangeOverwriteModeId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
 	sealed class OverwriteModeEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.OverwriteModeId;
 		public override bool Default => false;
@@ -49,6 +55,12 @@ namespace dnSpy.Text.Editor {
 	sealed class UseVirtualSpaceEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.UseVirtualSpaceId;
 		public override bool Default => false;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class CanChangeUseVisibleWhitespaceEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId;
+		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]

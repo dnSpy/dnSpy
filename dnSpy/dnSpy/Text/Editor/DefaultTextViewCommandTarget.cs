@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 
@@ -42,8 +41,7 @@ namespace dnSpy.Text.Editor {
 			this.textView = textView;
 		}
 
-		public CommandTargetStatus CanExecute(object target, Guid group, int cmdId) {
-			Debug.Assert(target == textView);
+		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (group == CommandConstants.DefaultGroup) {
 				switch ((DefaultIds)cmdId) {
 				case DefaultIds.Copy:
@@ -163,8 +161,7 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(object target, Guid group, int cmdId, object args, ref object result) {
-			Debug.Assert(target == textView);
+		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
 			if (group == CommandConstants.DefaultGroup) {
 				switch ((DefaultIds)cmdId) {
 				case DefaultIds.Copy:
@@ -189,49 +186,66 @@ namespace dnSpy.Text.Editor {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.BACKSPACE:
-					return CommandTargetStatus.Handled;//TODO:
+					if (textView.EditorOperations.ProvisionalCompositionSpan != null)
+						textView.EditorOperations.InsertText(string.Empty);
+					else
+						textView.EditorOperations.Backspace();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BACKTAB:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.Unindent();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOL:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToHome(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOL_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToHome(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOL_EXT_COL:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.BOTTOMLINE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToBottomOfView(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOTTOMLINE_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToBottomOfView(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.CANCEL:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ResetSelection();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.CUTLINE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.CutFullLine();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.Delete();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEBLANKLINES:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.DeleteBlankLines();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETELINE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.DeleteFullLine();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETETOBOL:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.DeleteToBeginningOfLine();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETETOEOL:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.DeleteToEndOfLine();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEWHITESPACE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.DeleteHorizontalWhiteSpace();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEWORDLEFT:
 					return CommandTargetStatus.Handled;//TODO:
@@ -240,52 +254,66 @@ namespace dnSpy.Text.Editor {
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.DOWN:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveLineDown(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DOWN_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveLineDown(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DOWN_EXT_COL:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.ECMD_CONVERTSPACESTOTABS:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ConvertSpacesToTabs();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.ECMD_CONVERTTABSTOSPACES:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ConvertTabsToSpaces();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EditorLineFirstColumn:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfLine(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EditorLineFirstColumnExtend:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfLine(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.END:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToEndOfDocument(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.END_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToEndOfDocument(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EOL:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToEndOfLine(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EOL_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToEndOfLine(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EOL_EXT_COL:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.FIRSTCHAR:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfLineAfterWhiteSpace(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTCHAR_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfLineAfterWhiteSpace(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTNONWHITENEXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfNextLineAfterWhiteSpace(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTNONWHITEPREV:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.GOTOBRACE:
 					return CommandTargetStatus.Handled;//TODO:
@@ -297,160 +325,209 @@ namespace dnSpy.Text.Editor {
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.HOME:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfDocument(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.HOME_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToStartOfDocument(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.INDENT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.IncreaseLineIndent();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LASTCHAR:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToLastNonWhiteSpaceCharacter(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LASTCHAR_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToLastNonWhiteSpaceCharacter(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LEFT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToPreviousCharacter(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LEFT_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToPreviousCharacter(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LEFT_EXT_COL:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.MoveSelLinesDown:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveSelectedLinesDown();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.MoveSelLinesUp:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveSelectedLinesUp();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.OPENLINEABOVE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.OpenLineAbove();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.OPENLINEBELOW:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.OpenLineBelow();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEDN:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.PageDown(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEDN_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.PageDown(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEUP:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.PageUp(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEUP_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.PageUp(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RETURN:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.InsertNewLine();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RIGHT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToNextCharacter(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RIGHT_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToNextCharacter(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RIGHT_EXT_COL:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.SCROLLBOTTOM:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollLineBottom();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLCENTER:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollLineCenter();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLDN:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollDownAndMoveCaretIfNecessary();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLLEFT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollColumnLeft();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLPAGEDN:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollPageDown();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLPAGEUP:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollPageUp();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLRIGHT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollColumnRight();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLTOP:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollLineTop();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLUP:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ScrollUpAndMoveCaretIfNecessary();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELECTALL:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.SelectAll();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELECTCURRENTWORD:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.SelectCurrentWord();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELLOWCASE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MakeLowercase();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELSWAPANCHOR:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.SwapCaretAndAnchor();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELTABIFY:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.Tabify();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELTITLECASE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.Capitalize();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELTOGGLECASE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.ToggleCase();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELUNTABIFY:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.Untabify();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELUPCASE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MakeUppercase();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SmartBreakLine:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.TAB:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.Indent();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
-					return CommandTargetStatus.Handled;//TODO:
+					if (textView.Options.GetOptionValue(DefaultTextViewOptions.CanChangeOverwriteModeId))
+						textView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, !textView.Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId));
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEVISSPACE:
-					return CommandTargetStatus.Handled;//TODO:
+					if (textView.Options.GetOptionValue(DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId))
+						textView.Options.SetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId, !textView.Options.GetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId));
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEWORDWRAP:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.TOPLINE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToTopOfView(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOPLINE_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveToTopOfView(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TRANSPOSECHAR:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.TransposeCharacter();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TRANSPOSELINE:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.TransposeLine();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TRANSPOSEWORD:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.TransposeWord();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TYPECHAR:
 					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.UNINDENT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.DecreaseLineIndent();
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UP:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveLineUp(false);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UP_EXT:
-					return CommandTargetStatus.Handled;//TODO:
+					textView.EditorOperations.MoveLineUp(true);
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UP_EXT_COL:
 					return CommandTargetStatus.Handled;//TODO:

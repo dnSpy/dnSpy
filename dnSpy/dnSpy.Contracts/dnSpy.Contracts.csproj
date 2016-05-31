@@ -364,6 +364,7 @@
     <Compile Include="Text\Editor\EditorOptionDefinition.cs" />
     <Compile Include="Text\Editor\EditorOptionDefinition`1.cs" />
     <Compile Include="Text\Editor\EditorOptionKey.cs" />
+    <Compile Include="Text\Editor\EnsureSpanVisibleOptions.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
     <Compile Include="Text\Editor\IEditorOptions.cs" />
@@ -384,6 +385,9 @@
     <Compile Include="Text\Editor\IWpfTextView.cs" />
     <Compile Include="Text\Editor\IWpfTextViewHost.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
+    <Compile Include="Text\Editor\Operations\IEditorOperations.cs" />
+    <Compile Include="Text\Editor\Operations\IEditorOperations2.cs" />
+    <Compile Include="Text\Editor\Operations\IEditorOperationsFactoryService.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\TextSelectionMode.cs" />

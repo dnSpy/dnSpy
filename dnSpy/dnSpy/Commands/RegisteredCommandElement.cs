@@ -41,21 +41,19 @@ namespace dnSpy.Commands {
 			}
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-				var target = registeredCommandElement?.TryGetTargetOrUnregister();
-				if (target == null) {
+				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
 					registeredCommandElement = null;
 					return CommandTargetStatus.NotHandled;
 				}
-				return registeredCommandElement.CanExecute(target, group, cmdId);
+				return registeredCommandElement.CanExecute(group, cmdId);
 			}
 
 			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-				var target = registeredCommandElement?.TryGetTargetOrUnregister();
-				if (target == null) {
+				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
 					registeredCommandElement = null;
 					return CommandTargetStatus.NotHandled;
 				}
-				return registeredCommandElement.Execute(target, group, cmdId, args, ref result);
+				return registeredCommandElement.Execute(group, cmdId, args, ref result);
 			}
 		}
 
@@ -157,9 +155,9 @@ namespace dnSpy.Commands {
 			ExecuteCommand(cmd.Value, e);
 		}
 
-		CommandTargetStatus CanExecute(object target, Guid group, int cmdId) {
+		CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			foreach (var ct in commandTargets) {
-				var res = ct.CanExecute(target, group, cmdId);
+				var res = ct.CanExecute(group, cmdId);
 				if (res == CommandTargetStatus.Handled)
 					return res;
 				Debug.Assert(res == CommandTargetStatus.NotHandled);
@@ -167,10 +165,10 @@ namespace dnSpy.Commands {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		CommandTargetStatus Execute(object target, Guid group, int cmdId, object args, ref object result) {
+		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
 			foreach (var ct in commandTargets) {
 				result = null;
-				var res = ct.Execute(target, group, cmdId, args, ref result);
+				var res = ct.Execute(group, cmdId, args, ref result);
 				if (res == CommandTargetStatus.Handled)
 					return res;
 				Debug.Assert(res == CommandTargetStatus.NotHandled);
