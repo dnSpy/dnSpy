@@ -22,10 +22,12 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextView : IWpfTextView {
@@ -111,7 +113,115 @@ namespace dnSpy.Text.Editor {
 		public ITextViewModel TextViewModel { get; }
 
 		public bool IsClosed { get; set; }
+
+		public Brush Background {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+			set {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ZoomLevel {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+			set {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
+		public IWpfTextViewLineCollection TextViewLines {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public bool InLayout {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ViewportTop {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ViewportBottom {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ViewportLeft {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+			set {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ViewportRight {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ViewportWidth {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double ViewportHeight {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double LineHeight {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double MaxTextRightCoordinate {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public ITrackingSpan ProvisionalTextHighlight {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+			set {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public IViewScroller ViewScroller {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
 		public event EventHandler Closed;
+#pragma warning disable CS0067
+		public event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;//TODO: Use this event
+		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;//TODO: Use this event
+		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;//TODO: Use this event
+		public event EventHandler ViewportHeightChanged;//TODO: Use this event
+		public event EventHandler ViewportLeftChanged;//TODO: Use this event
+		public event EventHandler ViewportWidthChanged;//TODO: Use this event
+		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
+#pragma warning restore CS0067
+
 		public void Close() {
 			if (IsClosed)
 				throw new InvalidOperationException();
@@ -228,6 +338,21 @@ namespace dnSpy.Text.Editor {
 				DnSpyTextEditor.Options.ColumnRulerPosition = Options.GetOptionValue(DefaultTextViewOptions.ColumnRulerPositionId);
 			else if (optionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
 				DnSpyTextEditor.HighlightCurrentLine = Options.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId);
+		}
+
+		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
+		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>
+			DisplayTextLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
+		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public SnapshotSpan GetTextElementSpan(SnapshotPoint point) {
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }

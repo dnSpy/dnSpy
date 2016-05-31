@@ -18,21 +18,24 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Formatting;
 
-namespace dnSpy.Text.Formatting {
-	sealed class WpfTextViewLine : IWpfTextViewLine {
-		public SnapshotSpan ExtentIncludingLineBreak {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+namespace dnSpy.Contracts.Text.Editor {
+	/// <summary>
+	/// Mouse hover attribute, used by <see cref="ITextView.MouseHover"/>
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+	public sealed class MouseHoverAttribute : Attribute {
+		/// <summary>
+		/// Delay in milliseconds, default is 150
+		/// </summary>
+		public int Delay { get; }
 
-		public ITextSnapshot Snapshot {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="delay">Delay in milliseconds, default is 150</param>
+		public MouseHoverAttribute(int delay) {
+			Delay = delay;
 		}
 	}
 }

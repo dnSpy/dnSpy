@@ -17,21 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Editor;
+using System;
+using System.Windows.Media;
 
-namespace dnSpy.Contracts.Text.Formatting {
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ITextView"/> line
+	/// Zoom level changed event args
 	/// </summary>
-	public interface ITextViewLine {
+	public sealed class ZoomLevelChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Extent including the line break
+		/// New zoom level
 		/// </summary>
-		SnapshotSpan ExtentIncludingLineBreak { get; }
+		public double NewZoomLevel { get; }
 
 		/// <summary>
-		/// Gets the snapshot
+		/// New zoom transform
 		/// </summary>
-		ITextSnapshot Snapshot { get; }
+		public Transform ZoomTransform { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="newZoomLevel">New zoom level</param>
+		/// <param name="transform">New zoom transform</param>
+		public ZoomLevelChangedEventArgs(double newZoomLevel, Transform transform) {
+			if (transform == null)
+				throw new ArgumentNullException(nameof(transform));
+			NewZoomLevel = newZoomLevel;
+			ZoomTransform = transform;
+		}
 	}
 }

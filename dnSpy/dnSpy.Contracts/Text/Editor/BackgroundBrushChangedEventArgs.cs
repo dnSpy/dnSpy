@@ -18,21 +18,24 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Formatting;
+using System.Windows.Media;
 
-namespace dnSpy.Text.Formatting {
-	sealed class WpfTextViewLine : IWpfTextViewLine {
-		public SnapshotSpan ExtentIncludingLineBreak {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+namespace dnSpy.Contracts.Text.Editor {
+	/// <summary>
+	/// Background brush changed event args
+	/// </summary>
+	public sealed class BackgroundBrushChangedEventArgs : EventArgs {
+		/// <summary>
+		/// New background brush
+		/// </summary>
+		public Brush NewBackgroundBrush { get; }
 
-		public ITextSnapshot Snapshot {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="newBackgroundBrush">New background brush</param>
+		public BackgroundBrushChangedEventArgs(Brush newBackgroundBrush) {
+			NewBackgroundBrush = newBackgroundBrush;
 		}
 	}
 }

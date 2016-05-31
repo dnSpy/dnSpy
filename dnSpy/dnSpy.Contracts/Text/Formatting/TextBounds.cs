@@ -17,22 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Formatting;
-
-namespace dnSpy.Text.Formatting {
-	sealed class WpfTextViewLine : IWpfTextViewLine {
-		public SnapshotSpan ExtentIncludingLineBreak {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public ITextSnapshot Snapshot {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+namespace dnSpy.Contracts.Text.Formatting {
+	/// <summary>
+	/// Text bounds
+	/// </summary>
+	public struct TextBounds {
 	}
 }

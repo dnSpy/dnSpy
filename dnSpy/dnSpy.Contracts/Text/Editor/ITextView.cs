@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -52,6 +53,31 @@ namespace dnSpy.Contracts.Text.Editor {
 		event EventHandler LostAggregateFocus;
 
 		/// <summary>
+		/// Raised when layout has changed
+		/// </summary>
+		event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
+
+		/// <summary>
+		/// Raised when <see cref="ViewportHeight"/> has changed
+		/// </summary>
+		event EventHandler ViewportHeightChanged;
+
+		/// <summary>
+		/// Raised when <see cref="ViewportLeft"/> has changed
+		/// </summary>
+		event EventHandler ViewportLeftChanged;
+
+		/// <summary>
+		/// Raised when <see cref="ViewportWidth"/> has changed
+		/// </summary>
+		event EventHandler ViewportWidthChanged;
+
+		/// <summary>
+		/// Raised when the mouse has has hovered over a character
+		/// </summary>
+		event EventHandler<MouseHoverEventArgs> MouseHover;
+
+		/// <summary>
 		/// true if it or any of its adornments has focus
 		/// </summary>
 		bool HasAggregateFocus { get; }
@@ -60,6 +86,56 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// true if the mouse is over it or any of its adornments
 		/// </summary>
 		bool IsMouseOverViewOrAdornments { get; }
+
+		/// <summary>
+		/// true if it's being laid out
+		/// </summary>
+		bool InLayout { get; }
+
+		/// <summary>
+		/// View port top
+		/// </summary>
+		double ViewportTop { get; }
+
+		/// <summary>
+		/// View port bottom
+		/// </summary>
+		double ViewportBottom { get; }
+
+		/// <summary>
+		/// View port left
+		/// </summary>
+		double ViewportLeft { get; set; }
+
+		/// <summary>
+		/// View port right
+		/// </summary>
+		double ViewportRight { get; }
+
+		/// <summary>
+		/// View port width (includes margin)
+		/// </summary>
+		double ViewportWidth { get; }
+
+		/// <summary>
+		/// View port height (includes margin)
+		/// </summary>
+		double ViewportHeight { get; }
+
+		/// <summary>
+		/// Gets the nominal height of a line of text in the view
+		/// </summary>
+		double LineHeight { get; }
+
+		/// <summary>
+		/// Gets the right coordinate of the longest line, whether or not that line is currently visible, in logical pixels
+		/// </summary>
+		double MaxTextRightCoordinate { get; }
+
+		/// <summary>
+		/// Provisional text highlight span or null if none
+		/// </summary>
+		ITrackingSpan ProvisionalTextHighlight { get; set; }
 
 		/// <summary>
 		/// Gets the caret
@@ -116,5 +192,47 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Gets the editor operations
 		/// </summary>
 		IEditorOperations2 EditorOperations { get; }
+
+		/// <summary>
+		/// Gets the text view lines that have been rendered, some of them could be hidden.
+		/// </summary>
+		ITextViewLineCollection TextViewLines { get; }
+
+		/// <summary>
+		/// Gets the view scroller
+		/// </summary>
+		IViewScroller ViewScroller { get; }
+
+		/// <summary>
+		/// Formats and displays the contents of the text buffer so that the ITextViewLine containing the buffer position is displayed at the desired position
+		/// </summary>
+		/// <param name="bufferPosition">Buffer position</param>
+		/// <param name="verticalDistance">The distance (in pixels) between the ITextViewLine and the edge of the view</param>
+		/// <param name="relativeTo">Relative to top or bottom</param>
+		void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo);
+
+		/// <summary>
+		/// Formats and displays the contents of the text buffer so that the ITextViewLine containing the specified buffer position is displayed at the desired position
+		/// </summary>
+		/// <param name="bufferPosition">Buffer position</param>
+		/// <param name="verticalDistance">The distance (in pixels) between the ITextViewLine and the edge of the view</param>
+		/// <param name="relativeTo">Relative to top or bottom</param>
+		/// <param name="viewportWidthOverride">If specified, the text is formatted as if the viewport had the specified width</param>
+		/// <param name="viewportHeightOverride">If specified, the text is formatted as if the viewport had the specified height</param>
+		void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
+
+		/// <summary>
+		/// Gets the SnapshotSpan of text that constitutes a text element (a single visual representation) at the given SnapshotPoint
+		/// </summary>
+		/// <param name="point">Position in the text snapshot</param>
+		/// <returns></returns>
+		SnapshotSpan GetTextElementSpan(SnapshotPoint point);
+
+		/// <summary>
+		/// Gets the <see cref="IWpfTextViewLine"/> that contains the specified text buffer position
+		/// </summary>
+		/// <param name="bufferPosition">Buffer position</param>
+		/// <returns></returns>
+		ITextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition);
 	}
 }

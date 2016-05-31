@@ -17,8 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
+using System.Windows.Media;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -29,5 +32,37 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Gets WPF text view's element
 		/// </summary>
 		FrameworkElement VisualElement { get; }
+
+		/// <summary>
+		/// Gets/sets the background color
+		/// </summary>
+		Brush Background { get; set; }
+
+		/// <summary>
+		/// Zoom level, between 20% and 400% (.2 and 4.0)
+		/// </summary>
+		double ZoomLevel { get; set; }
+
+		/// <summary>
+		/// Gets the text view lines
+		/// </summary>
+		new IWpfTextViewLineCollection TextViewLines { get; }
+
+		/// <summary>
+		/// Gets the IWpfTextViewLine that contains the specified text buffer position
+		/// </summary>
+		/// <param name="bufferPosition">Position</param>
+		/// <returns></returns>
+		new IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition);
+
+		/// <summary>
+		/// Raised when <see cref="Background"/> has changed
+		/// </summary>
+		event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
+
+		/// <summary>
+		/// Raised when <see cref="ZoomLevel"/> has changed
+		/// </summary>
+		event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;
 	}
 }
