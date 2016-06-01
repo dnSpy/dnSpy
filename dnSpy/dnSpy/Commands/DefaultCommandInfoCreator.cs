@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
@@ -25,18 +24,18 @@ using dnSpy.Contracts.Command;
 namespace dnSpy.Commands {
 	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_DEFAULT)]
 	sealed class DefaultCommandInfoCreator : ICommandInfoCreator {
-		public IEnumerable<Tuple<KeyShortcut, CommandInfo>> GetKeyShortcuts(object target) {
-			yield return Tuple.Create(KeyShortcut.Control(Key.Z), DefaultIds.Undo.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Alt(Key.Back), DefaultIds.Undo.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Control(Key.Y), DefaultIds.Redo.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.CtrlShift(Key.Z), DefaultIds.Redo.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.ShiftAlt(Key.Back), DefaultIds.Redo.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Control(Key.X), DefaultIds.Cut.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Shift(Key.Delete), DefaultIds.Cut.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Control(Key.C), DefaultIds.Copy.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Control(Key.Insert), DefaultIds.Copy.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Control(Key.V), DefaultIds.Paste.ToCommandInfo());
-			yield return Tuple.Create(KeyShortcut.Shift(Key.Insert), DefaultIds.Paste.ToCommandInfo());
+		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
+			yield return CommandShortcut.Control(Key.Z, DefaultIds.Undo.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Back, DefaultIds.Undo.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Y, DefaultIds.Redo.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.Z, DefaultIds.Redo.ToCommandInfo());
+			yield return CommandShortcut.ShiftAlt(Key.Back, DefaultIds.Redo.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.X, DefaultIds.Cut.ToCommandInfo());
+			yield return CommandShortcut.Shift(Key.Delete, DefaultIds.Cut.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.C, DefaultIds.Copy.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Insert, DefaultIds.Copy.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.V, DefaultIds.Paste.ToCommandInfo());
+			yield return CommandShortcut.Shift(Key.Insert, DefaultIds.Paste.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) => null;

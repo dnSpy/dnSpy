@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		/// <param name="target">Target object</param>
 		/// <returns></returns>
-		IEnumerable<Tuple<KeyShortcut, CommandInfo>> GetKeyShortcuts(object target);
+		IEnumerable<CommandShortcut> GetCommandShortcuts(object target);
 
 		/// <summary>
 		/// Returns a <see cref="CommandInfo"/> created from user text

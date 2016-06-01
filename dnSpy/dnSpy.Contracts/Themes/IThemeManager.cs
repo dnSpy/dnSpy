@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Themes {
 	/// <summary>

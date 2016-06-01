@@ -20,10 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using dnSpy.Contracts.Command;
 
 namespace dnSpy.Commands {

@@ -33,13 +33,13 @@ namespace dnSpy.Commands {
 		}
 
 		public void Add(ICommandInfoCreator creator, object target) {
-			foreach (var t in creator.GetKeyShortcuts(target)) {
+			foreach (var t in creator.GetCommandShortcuts(target)) {
 				List<CreatorAndCommand> list;
-				if (!dict.TryGetValue(t.Item1, out list))
-					dict.Add(t.Item1, list = new List<CreatorAndCommand>());
-				list.Add(new CreatorAndCommand(creator, t.Item2));
-				if (t.Item1.HasTwoKeyInputs)
-					twoKeyCombos.Add(t.Item1.KeyInput1);
+				if (!dict.TryGetValue(t.KeyShortcut, out list))
+					dict.Add(t.KeyShortcut, list = new List<CreatorAndCommand>());
+				list.Add(new CreatorAndCommand(creator, t.CommandInfo));
+				if (t.KeyShortcut.HasTwoKeyInputs)
+					twoKeyCombos.Add(t.KeyShortcut.KeyInput1);
 			}
 		}
 
