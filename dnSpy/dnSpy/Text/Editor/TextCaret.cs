@@ -21,7 +21,6 @@ using System;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
-using dnSpy.Text.Formatting;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 
@@ -35,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		public double Height => caret.CaretRect.Height;
 		public bool InVirtualSpace => caret.IsInVirtualSpace;
 		public bool OverwriteMode => caret.OverstrikeMode;
-		public ITextViewLine ContainingTextViewLine => new WpfTextViewLine();//TODO:
+		public ITextViewLine ContainingTextViewLine => GetLine(Position.BufferPosition, Affinity);
 		PositionAffinity Affinity { get; set; }
 
 		public bool IsHidden {
@@ -54,7 +53,14 @@ namespace dnSpy.Text.Editor {
 
 		VirtualSnapshotPoint BufferPosition {
 			get {
-				int virtualSpaces = 0;//TODO: Calculate VirtualSpaces
+				int virtualSpaces = 0;
+				int vcol = caret.VisualColumn;
+				if (vcol > 0) {
+					var line = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(caret.Line);
+					int vspaces = vcol - line.Length;
+					if (vspaces > 0)
+						virtualSpaces = vspaces;
+				}
 				return new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, caret.Offset), virtualSpaces);
 			}
 		}
@@ -83,8 +89,10 @@ namespace dnSpy.Text.Editor {
 		void OnCaretPositionChanged() {
 			var oldPos = cachedCaretPosition;
 			cachedCaretPosition = new CaretPosition(BufferPosition, new MappingPoint(), Affinity);
-			PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
+			if (oldPos != cachedCaretPosition)
+				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
 		}
+		internal void OnVisualLinesCreated() => OnCaretPositionChanged();
 
 		public void EnsureVisible() => caret.BringCaretToView();
 
@@ -95,7 +103,9 @@ namespace dnSpy.Text.Editor {
 		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate) =>
 			MoveTo(textLine, xCoordinate, true);
 		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate, bool captureHorizontalPosition) {
-			throw new NotSupportedException();
+			if (textLine == null)
+				throw new ArgumentNullException(nameof(textLine));
+			throw new NotSupportedException();//TODO:
 		}
 
 		public CaretPosition MoveTo(SnapshotPoint bufferPosition) =>
@@ -115,7 +125,7 @@ namespace dnSpy.Text.Editor {
 			//TODO: Use captureHorizontalPosition
 			var line = dnSpyTextEditor.TextArea.TextView.Document.GetLineByOffset(bufferPosition.Position.Position);
 			Affinity = caretAffinity;
-			caret.Position = new TextViewPosition(line.LineNumber, bufferPosition.Position.Position - (line.Offset - 1));
+			caret.Position = new TextViewPosition(line.LineNumber, bufferPosition.Position.Position - (line.Offset - 1), line.Length + bufferPosition.VirtualSpaces >= 0 ? line.Length + bufferPosition.VirtualSpaces : int.MaxValue);
 			return Position;
 		}
 
@@ -136,21 +146,67 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CaretPosition MoveToNextCaretPosition() {
-			if (cachedCaretPosition.BufferPosition.Position == textView.TextSnapshot.Length)
+			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId)) {
+				bool useVirtSpaces;
+				if (Position.VirtualSpaces > 0)
+					useVirtSpaces = true;
+				else {
+					var docLine = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(caret.Line);
+					useVirtSpaces = Position.BufferPosition >= docLine.EndOffset;
+				}
+				if (useVirtSpaces) {
+					if (Position.VirtualSpaces != int.MaxValue)
+						return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces + 1));
+					return Position;
+				}
+			}
+			if (Position.BufferPosition.Position == Position.BufferPosition.Snapshot.Length)
 				return Position;
-			//TODO: Handle UTF-16 surrogate pairs and combining character sequences
-			return MoveTo(new SnapshotPoint(textView.TextSnapshot, cachedCaretPosition.BufferPosition.Position + 1));
+
+			var line = ContainingTextViewLine;
+			var span = line.GetTextElementSpan(Position.BufferPosition);
+			return MoveTo(new SnapshotPoint(textView.TextSnapshot, span.End));
 		}
 
 		public CaretPosition MoveToPreviousCaretPosition() {
-			if (cachedCaretPosition.BufferPosition.Position == 0)
+			if (Position.VirtualSpaces > 0)
+				return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces - 1));
+			if (Position.BufferPosition.Position == 0)
 				return Position;
-			//TODO: Handle UTF-16 surrogate pairs and combining character sequences
-			return MoveTo(new SnapshotPoint(textView.TextSnapshot, cachedCaretPosition.BufferPosition.Position - 1));
+
+			var currentLine = ContainingTextViewLine;
+			var span = currentLine.GetTextElementSpan(Position.BufferPosition);
+			var newPos = span.Start;
+			if (newPos.Position != 0 && Position.BufferPosition.Position != Position.BufferPosition.Snapshot.Length) {
+				newPos -= 1;
+				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
+				if (line.IsLastTextViewLineForSnapshotLine && newPos > line.End)
+					newPos = line.End;
+				newPos = line.GetTextElementSpan(newPos).Start;
+			}
+			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId)) {
+				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
+				if (line != currentLine)
+					newPos = currentLine.Start;
+			}
+			return MoveTo(newPos);
 		}
 
 		public CaretPosition MoveToPreferredCoordinates() {
 			return Position;//TODO:
+		}
+
+		ITextViewLine GetLine(SnapshotPoint bufferPosition, PositionAffinity affinity) {
+			var line = textView.GetTextViewLineContainingBufferPosition(bufferPosition);
+			if (line == null)
+				return null;
+			if (affinity == PositionAffinity.Successor)
+				return line;
+			if (line.Start.Position == 0 || line.Start != bufferPosition)
+				return line;
+			if (bufferPosition.GetContainingLine().Start == bufferPosition)
+				return line;
+			return textView.GetTextViewLineContainingBufferPosition(bufferPosition - 1);
 		}
 	}
 }

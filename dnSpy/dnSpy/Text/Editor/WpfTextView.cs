@@ -18,16 +18,23 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Text.Formatting;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextView : IWpfTextView {
@@ -41,9 +48,11 @@ namespace dnSpy.Text.Editor {
 		public IEditorOptions Options { get; }
 		public ICommandTarget CommandTarget => RegisteredCommandElement.CommandTarget;
 		IRegisteredCommandElement RegisteredCommandElement { get; }
-		public ITextCaret Caret { get; }
+		public ITextCaret Caret => TextCaret;
+		TextCaret TextCaret { get; }
 		public ITextSelection Selection { get; }
 		public IEditorOperations2 EditorOperations { get; }
+		public IViewScroller ViewScroller { get; }
 		public bool HasAggregateFocus => DnSpyTextEditor.IsKeyboardFocusWithin;
 		public bool IsMouseOverViewOrAdornments => DnSpyTextEditor.IsMouseOver;
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
@@ -64,6 +73,7 @@ namespace dnSpy.Text.Editor {
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
+			TextViewLines = new WpfTextViewLineCollection();
 			DnSpyTextEditor.Options.AllowToggleOverstrikeMode = true;
 			RegisteredCommandElement = commandManager.Register(dnSpyTextEditor.TextArea, this);
 			TextViewModel = textViewModel;
@@ -73,17 +83,22 @@ namespace dnSpy.Text.Editor {
 			Options.OptionChanged += EditorOptions_OptionChanged;
 			Selection = new TextSelection(this, dnSpyTextEditor);
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
-			Caret = new TextCaret(this, dnSpyTextEditor);
+			TextCaret = new TextCaret(this, dnSpyTextEditor);
+			ViewScroller = new ViewScroller(this);
 			InitializeFrom(Options);
 			DnSpyTextEditor.Loaded += DnSpyTextEditor_Loaded;
-			DnSpyTextEditor.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(DnSpyTextEditor_GotKeyboardFocus), true);
-			DnSpyTextEditor.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(DnSpyTextEditor_LostKeyboardFocus), true);
+			DnSpyTextEditor.IsKeyboardFocusWithinChanged += DnSpyTextEditor_IsKeyboardFocusWithinChanged;
 			hasKeyboardFocus = DnSpyTextEditor.IsKeyboardFocusWithin;
+			DnSpyTextEditor.TextArea.TextView.SizeChanged += AvalonEdit_TextView_SizeChanged;
+			DnSpyTextEditor.TextArea.TextView.ScrollOffsetChanged += AvalonEdit_TextView_ScrollOffsetChanged;
+			DnSpyTextEditor.TextArea.TextView.VisualLinesCreated += AvalonEdit_TextView_VisualLinesCreated;
+			DnSpyTextEditor.TextArea.TextView.VisualLineConstructionStarting += AvalonEdit_TextView_VisualLineConstructionStarting;
+			oldViewportLeft = ViewportLeft;
+			oldViewState = new ViewState(this);
 		}
 
 		bool hasKeyboardFocus;
-		void DnSpyTextEditor_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => UpdateKeyboardFocus();
-		void DnSpyTextEditor_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => UpdateKeyboardFocus();
+		void DnSpyTextEditor_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e) => UpdateKeyboardFocus();
 		public event EventHandler GotAggregateFocus;
 		public event EventHandler LostAggregateFocus;
 		void UpdateKeyboardFocus() {
@@ -115,11 +130,12 @@ namespace dnSpy.Text.Editor {
 		public bool IsClosed { get; set; }
 
 		public Brush Background {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
+			get { return DnSpyTextEditor.Background; }
 			set {
-				throw new NotImplementedException();//TODO:
+				if (DnSpyTextEditor.Background != value) {
+					DnSpyTextEditor.Background = value;
+					BackgroundBrushChanged?.Invoke(this, new BackgroundBrushChangedEventArgs(value));
+				}
 			}
 		}
 
@@ -132,61 +148,37 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
+		public bool InLayout { get; private set; }
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
-		public IWpfTextViewLineCollection TextViewLines {
+		IWpfTextViewLineCollection IWpfTextView.TextViewLines => TextViewLines;
+		public WpfTextViewLineCollection TextViewLines {
 			get {
-				throw new NotImplementedException();//TODO:
+				Debug.Assert(wpfTextViewLineCollection != null);
+				if (InLayout)
+					throw new InvalidOperationException();
+				return wpfTextViewLineCollection;
+			}
+			private set {
+				wpfTextViewLineCollection = value;
 			}
 		}
+		WpfTextViewLineCollection wpfTextViewLineCollection;
 
-		public bool InLayout {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public double ViewportTop {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public double ViewportBottom {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
+		public double LineHeight => DnSpyTextEditor.TextArea.TextView.DefaultLineHeight;
+		public double ViewportTop => DnSpyTextEditor.TextArea.TextView.VerticalOffset;
+		public double ViewportBottom => ViewportTop + ViewportHeight;
+		public double ViewportRight => ViewportLeft + ViewportWidth;
+		public double ViewportWidth => ((IScrollInfo)DnSpyTextEditor.TextArea.TextView).ViewportWidth;
+		public double ViewportHeight => ((IScrollInfo)DnSpyTextEditor.TextArea.TextView).ViewportHeight;
 		public double ViewportLeft {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
+			get { return DnSpyTextEditor.TextArea.TextView.HorizontalOffset; }
 			set {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public double ViewportRight {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public double ViewportWidth {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public double ViewportHeight {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public double LineHeight {
-			get {
-				throw new NotImplementedException();//TODO:
+				if (double.IsNaN(value))
+					throw new ArgumentOutOfRangeException(nameof(value));
+				double left = value;
+				if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+					left = 0;
+				((IScrollInfo)DnSpyTextEditor.TextArea.TextView).SetHorizontalOffset(left);
 			}
 		}
 
@@ -196,31 +188,127 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ITrackingSpan ProvisionalTextHighlight {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-			set {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public IViewScroller ViewScroller {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+		//TODO: Use this prop
+		public ITrackingSpan ProvisionalTextHighlight { get; set; }
 
 		public event EventHandler Closed;
+		public event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
+		public event EventHandler ViewportLeftChanged;
+		public event EventHandler ViewportHeightChanged;
+		public event EventHandler ViewportWidthChanged;
 #pragma warning disable CS0067
-		public event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;//TODO: Use this event
-		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;//TODO: Use this event
 		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;//TODO: Use this event
-		public event EventHandler ViewportHeightChanged;//TODO: Use this event
-		public event EventHandler ViewportLeftChanged;//TODO: Use this event
-		public event EventHandler ViewportWidthChanged;//TODO: Use this event
+		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;//TODO: Use this event
 		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
 #pragma warning restore CS0067
+
+		void AvalonEdit_TextView_SizeChanged(object sender, SizeChangedEventArgs e) {
+			if (IsClosed)
+				return;
+			if (e.PreviousSize.Height != e.NewSize.Height)
+				ViewportHeightChanged?.Invoke(this, EventArgs.Empty);
+			if (e.PreviousSize.Width != e.NewSize.Width)
+				ViewportWidthChanged?.Invoke(this, EventArgs.Empty);
+			UpdateVisibleArea();
+		}
+
+		void AvalonEdit_TextView_ScrollOffsetChanged(object sender, EventArgs e) {
+			if (IsClosed)
+				return;
+			if (oldViewportLeft != ViewportLeft) {
+				oldViewportLeft = ViewportLeft;
+				RaiseLayoutChanged(ViewportWidth, ViewportHeight, Array.Empty<ITextViewLine>(), Array.Empty<ITextViewLine>());
+				ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
+			}
+			UpdateVisibleArea();
+		}
+		double oldViewportLeft;
+
+		void AvalonEdit_TextView_VisualLineConstructionStarting(object sender, VisualLineConstructionStartEventArgs e) {
+			Debug.Assert(!InLayout);
+			InLayout = true;
+		}
+
+		void AvalonEdit_TextView_VisualLinesCreated(object sender, VisualLinesCreatedEventArgs e) {
+			InLayout = false;
+
+			ITextViewLine[] newOrReformattedLines = null;
+			ITextViewLine[] translatedLines = null;
+			var wpfLines = InitializeTextViewLines(e, out newOrReformattedLines, out translatedLines);
+			TextViewLines.SetIsInvalid();
+			TextViewLines = new WpfTextViewLineCollection(TextSnapshot, wpfLines);
+
+			TextCaret.OnVisualLinesCreated();
+			RaiseLayoutChanged(ViewportWidth, ViewportHeight, newOrReformattedLines, translatedLines);
+		}
+
+		void UpdateVisibleArea() {
+			foreach (WpfTextViewLine line in TextViewLines)
+				line.VisibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
+		}
+
+		List<IWpfTextViewLine> InitializeTextViewLines(VisualLinesCreatedEventArgs e, out ITextViewLine[] newOrReformattedLines, out ITextViewLine[] translatedLines) {
+			var collLines = new List<IWpfTextViewLine>();
+			var reusedHash = new HashSet<VisualLine>(e.ReusedVisualLines);
+			var newList = new List<ITextViewLine>();
+			var translatedList = new List<ITextViewLine>();
+			var reusedLinesDict = new Dictionary<TextLine, WpfTextViewLine>();
+
+			foreach (WpfTextViewLine line in TextViewLines) {
+				if (!reusedHash.Contains(line.VisualLine))
+					line.SetIsInvalid();
+				else
+					reusedLinesDict.Add(line.TextLine, line);
+			}
+
+			Debug.Assert(DnSpyTextEditor.TextArea.TextView.VisualLinesValid);
+			if (DnSpyTextEditor.TextArea.TextView.VisualLinesValid) {
+				var visualLines = DnSpyTextEditor.TextArea.TextView.VisualLines;
+
+				var snapshot = TextSnapshot;
+				foreach (var line in visualLines) {
+					var top = line.VisualTop - DnSpyTextEditor.TextArea.TextView.VerticalOffset + ViewportTop;
+
+					foreach (var info in line.TextLineInfos) {
+						object identityTag;
+						WpfTextViewLine oldWpfLine;
+						var change = TextViewLineChange.NewOrReformatted;
+						double deltaY = 0;
+						if (reusedLinesDict.TryGetValue(info.TextLine, out oldWpfLine)) {
+							deltaY = top - oldWpfLine.GetTop();
+							change = TextViewLineChange.Translated;
+							identityTag = oldWpfLine.IdentityTag;
+						}
+						else
+							identityTag = new object();
+
+						var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
+						double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
+						var wpfLine = new WpfTextViewLine(snapshot, line, info, identityTag, top, deltaY, change, visibleArea, virtualSpaceWidth);
+						if (!reusedHash.Contains(line))
+							newList.Add(wpfLine);
+						else
+							translatedList.Add(wpfLine);
+						collLines.Add(wpfLine);
+
+						top += wpfLine.Height;
+					}
+				}
+			}
+
+			newOrReformattedLines = newList.ToArray();
+			translatedLines = translatedList.ToArray();
+			return collLines;
+		}
+
+		void RaiseLayoutChanged(double effectiveViewportWidth, double effectiveViewportHeight, ITextViewLine[] newOrReformattedLines, ITextViewLine[] translatedLines) {
+			if (IsClosed)
+				return;
+			var newViewState = new ViewState(this, effectiveViewportWidth, effectiveViewportHeight);
+			LayoutChanged?.Invoke(this, new TextViewLayoutChangedEventArgs(oldViewState, newViewState, newOrReformattedLines, translatedLines));
+			oldViewState = newViewState;
+		}
+		ViewState oldViewState;
 
 		public void Close() {
 			if (IsClosed)
@@ -309,8 +397,15 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (optionId == DefaultTextViewOptions.OverwriteModeId.Name)
 				DnSpyTextEditor.TextArea.OverstrikeMode = Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
-			else if (optionId == DefaultTextViewOptions.UseVirtualSpaceId.Name)
-				DnSpyTextEditor.Options.EnableVirtualSpace = Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId);
+			else if (optionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
+				var newValue = Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId);
+				DnSpyTextEditor.Options.EnableVirtualSpace = newValue;
+				// Move to a non-virtual location
+				if (!newValue && Caret.Position.VirtualSpaces > 0) {
+					var line = GetTextViewLineContainingBufferPosition(Caret.Position.BufferPosition);
+					Caret.MoveTo(line.End);
+				}
+			}
 			else if (optionId == DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId.Name) {
 				// Nothing to do
 			}
@@ -341,18 +436,73 @@ namespace dnSpy.Text.Editor {
 		}
 
 		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
-		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
-			throw new NotImplementedException();//TODO:
+		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) =>
+			TextViewLines.GetTextViewLineContainingBufferPosition(bufferPosition) ?? CreateWpfTextViewLine(bufferPosition);
+
+		IWpfTextViewLine CreateWpfTextViewLine(SnapshotPoint bufferPosition) {
+			if (bufferPosition.Snapshot != TextSnapshot)
+				throw new ArgumentException();
+			var docLine = DnSpyTextEditor.TextArea.TextView.Document.GetLineByOffset(bufferPosition.Position);
+			var visualLine = DnSpyTextEditor.TextArea.TextView.GetOrConstructVisualLine(docLine);
+
+			var lineStart = docLine.Offset;
+			var info = visualLine.TextLineInfos.FirstOrDefault(a => lineStart + a.StartOffset <= bufferPosition.Position && bufferPosition.Position <= lineStart + a.EndOffset);
+			if (info == null)
+				info = visualLine.TextLineInfos[visualLine.TextLineInfos.Count - 1];
+
+			var change = TextViewLineChange.None;
+			double deltaY = 0;
+			double top = double.MinValue;
+
+			var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
+			double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
+			return new WpfTextViewLine(TextSnapshot, visualLine, info, new object(), top, deltaY, change, visibleArea, virtualSpaceWidth);
 		}
 
 		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>
 			DisplayTextLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
 		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
-			throw new NotImplementedException();//TODO:
+			if (bufferPosition.Snapshot != TextSnapshot)
+				throw new ArgumentException();
+
+			double viewportWidth = viewportWidthOverride ?? ViewportWidth;
+			double viewportHeight = viewportHeightOverride ?? ViewportHeight;
+			if (viewportWidth != ViewportWidth)
+				throw new NotSupportedException();
+			if (viewportHeight != ViewportHeight)
+				throw new NotSupportedException();
+
+			var textView = DnSpyTextEditor.TextArea.TextView;
+			var line = textView.Document.GetLineByOffset(bufferPosition.Position);
+			var visualLine = textView.GetOrConstructVisualLine(line);
+			double newTop;
+			int column;
+			Point point;
+			switch (relativeTo) {
+			case ViewRelativePosition.Top:
+				column = visualLine.Height > ViewportHeight ? bufferPosition.Position - line.Offset : 0;
+				point = textView.GetVisualPosition(new TextViewPosition(line.LineNumber, column + 1), VisualYPosition.LineTop);
+				newTop = point.Y - verticalDistance;
+				break;
+
+			case ViewRelativePosition.Bottom:
+				column = visualLine.Height > ViewportHeight ? bufferPosition.Position - line.Offset : line.Length;
+				point = textView.GetVisualPosition(new TextViewPosition(line.LineNumber, column + 1), VisualYPosition.LineBottom);
+				newTop = point.Y - ViewportHeight + verticalDistance;
+				break;
+
+			default:
+				throw new ArgumentException();
+			}
+			if (newTop < 0)
+				newTop = 0;
+			((IScrollInfo)textView).SetVerticalOffset(newTop);
 		}
 
 		public SnapshotSpan GetTextElementSpan(SnapshotPoint point) {
-			throw new NotImplementedException();//TODO:
+			if (point.Snapshot != TextSnapshot)
+				throw new ArgumentException();
+			return GetTextViewLineContainingBufferPosition(point).GetTextElementSpan(point);
 		}
 	}
 }

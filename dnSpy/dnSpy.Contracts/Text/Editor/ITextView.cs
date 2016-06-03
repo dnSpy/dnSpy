@@ -204,7 +204,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		IViewScroller ViewScroller { get; }
 
 		/// <summary>
-		/// Formats and displays the contents of the text buffer so that the ITextViewLine containing the buffer position is displayed at the desired position
+		/// Formats and displays the contents of the text buffer so that the <see cref="ITextViewLine"/> containing the buffer position is displayed at the desired position
 		/// </summary>
 		/// <param name="bufferPosition">Buffer position</param>
 		/// <param name="verticalDistance">The distance (in pixels) between the ITextViewLine and the edge of the view</param>
@@ -212,7 +212,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo);
 
 		/// <summary>
-		/// Formats and displays the contents of the text buffer so that the ITextViewLine containing the specified buffer position is displayed at the desired position
+		/// Formats and displays the contents of the text buffer so that the <see cref="ITextViewLine"/> containing the specified buffer position is displayed at the desired position
 		/// </summary>
 		/// <param name="bufferPosition">Buffer position</param>
 		/// <param name="verticalDistance">The distance (in pixels) between the ITextViewLine and the edge of the view</param>
@@ -222,7 +222,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
 
 		/// <summary>
-		/// Gets the SnapshotSpan of text that constitutes a text element (a single visual representation) at the given SnapshotPoint
+		/// Gets the <see cref="SnapshotSpan"/> of text that constitutes a text element (a single visual representation) at the given <see cref="SnapshotPoint"/>
 		/// </summary>
 		/// <param name="point">Position in the text snapshot</param>
 		/// <returns></returns>

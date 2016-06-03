@@ -377,8 +377,10 @@
     <Compile Include="Text\Editor\TextSelection.cs" />
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
+    <Compile Include="Text\Editor\ViewScroller.cs" />
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextViewHost.cs" />
+    <Compile Include="Text\Editor\WpfTextViewLineCollection.cs" />
     <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
     <Compile Include="Text\MappingPoint.cs" />
     <Compile Include="Text\NormalizedTextChangeCollection.cs" />

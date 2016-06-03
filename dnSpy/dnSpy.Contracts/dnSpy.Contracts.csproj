@@ -397,6 +397,7 @@
     <Compile Include="Text\Editor\Operations\IEditorOperationsFactoryService.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
+    <Compile Include="Text\Editor\ScrollDirection.cs" />
     <Compile Include="Text\Editor\TextSelectionMode.cs" />
     <Compile Include="Text\Editor\TextViewCreatedEventArgs.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
@@ -410,10 +411,14 @@
     <Compile Include="Text\ExportContentTypeDefinitionAttribute.cs" />
     <Compile Include="Text\Formatting\ITextViewLine.cs" />
     <Compile Include="Text\Formatting\IWpfTextViewLine.cs" />
+    <Compile Include="Text\Formatting\LineTransform.cs" />
     <Compile Include="Text\Formatting\TextBounds.cs" />
+    <Compile Include="Text\Formatting\TextViewLineChange.cs" />
+    <Compile Include="Text\Formatting\VisibilityState.cs" />
     <Compile Include="Text\IContentType.cs" />
     <Compile Include="Text\IContentTypeRegistryService.cs" />
     <Compile Include="Text\IMappingPoint.cs" />
+    <Compile Include="Text\IMappingSpan.cs" />
     <Compile Include="Text\INormalizedTextChangeCollection.cs" />
     <Compile Include="Text\IOutputColorWriter.cs" />
     <Compile Include="Text\IPropertyOwner.cs" />

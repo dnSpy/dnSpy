@@ -22,5 +22,56 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// View scroller
 	/// </summary>
 	public interface IViewScroller {
+		/// <summary>
+		/// Ensures that all the text in the specified span is entirely visible in the view.
+		/// </summary>
+		/// <param name="span">The span to make visible</param>
+		void EnsureSpanVisible(SnapshotSpan span);
+
+		/// <summary>
+		/// Ensures that all the text in the specified span is entirely visible in the view.
+		/// </summary>
+		/// <param name="span">The span to make visible</param>
+		/// <param name="options">Options</param>
+		void EnsureSpanVisible(SnapshotSpan span, EnsureSpanVisibleOptions options);
+
+		/// <summary>
+		/// Ensures that all the text in the specified span is entirely visible in the view.
+		/// </summary>
+		/// <param name="span">The span to make visible</param>
+		/// <param name="options">Options</param>
+		void EnsureSpanVisible(VirtualSnapshotSpan span, EnsureSpanVisibleOptions options);
+
+		/// <summary>
+		/// Scrolls the viewport horizontally by the specified distance.
+		/// </summary>
+		/// <param name="distanceToScroll">The distance to scroll the viewport in the text rendering coordinate system. Positive values scroll the viewport to the right, and negative values scroll the viewport to the left.</param>
+		void ScrollViewportHorizontallyByPixels(double distanceToScroll);
+
+		/// <summary>
+		/// Scrolls the viewport vertically one line up or down.
+		/// </summary>
+		/// <param name="direction">The direction in which to scroll</param>
+		void ScrollViewportVerticallyByLine(ScrollDirection direction);
+
+		/// <summary>
+		/// Scrolls the viewport vertically by multiple lines up or down.
+		/// </summary>
+		/// <param name="direction">The direction in which to scroll</param>
+		/// <param name="count">The number of lines to scroll up or down</param>
+		void ScrollViewportVerticallyByLines(ScrollDirection direction, int count);
+
+		/// <summary>
+		/// Scrolls the viewport vertically one page up or down.
+		/// </summary>
+		/// <param name="direction">The direction in which to scroll</param>
+		/// <returns></returns>
+		bool ScrollViewportVerticallyByPage(ScrollDirection direction);
+
+		/// <summary>
+		/// Scrolls the viewport vertically by the specified distance.
+		/// </summary>
+		/// <param name="distanceToScroll">The distance to scroll in the text rendering coordinate system. Positive values scroll the viewport up, and negative values scroll the viewport down.</param>
+		void ScrollViewportVerticallyByPixels(double distanceToScroll);
 	}
 }

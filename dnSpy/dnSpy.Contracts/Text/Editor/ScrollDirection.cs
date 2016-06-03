@@ -17,31 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Text.Editor;
-
-namespace dnSpy.Contracts.Text.Formatting {
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// WPF <see cref="ITextView"/> line
+	/// Scroll direction
 	/// </summary>
-	public interface IWpfTextViewLine : ITextViewLine {
+	public enum ScrollDirection {
 		/// <summary>
-		/// Gets a list of text lines that make up the formatted text line
+		/// Up
 		/// </summary>
-		ReadOnlyCollection<TextLine> TextLines { get; }
+		Up,
 
 		/// <summary>
-		/// Gets the visible area in which this text line will be rendered
+		/// Down
 		/// </summary>
-		Rect VisibleArea { get; }
-
-		/// <summary>
-		/// Gets the formatting for a particular character in the line
-		/// </summary>
-		/// <param name="bufferPosition">The buffer position of the desired character</param>
-		/// <returns></returns>
-		TextRunProperties GetCharacterFormatting(SnapshotPoint bufferPosition);
+		Down,
 	}
 }

@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		Brush Background { get; set; }
 
 		/// <summary>
-		/// Zoom level, between 20% and 400% (.2 and 4.0)
+		/// Zoom level, between 20% and 400% (20.0 and 400.0)
 		/// </summary>
 		double ZoomLevel { get; set; }
 
