@@ -186,7 +186,7 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		public object IdentityTag { get; }
+		public object IdentityTag => this;
 		public bool IsFirstTextViewLineForSnapshotLine => isFirstTextViewLineForSnapshotLine;
 		public bool IsLastTextViewLineForSnapshotLine => isLastTextViewLineForSnapshotLine;
 		public bool IsValid => isValid;
@@ -232,7 +232,6 @@ namespace dnSpy.Text.Formatting {
 				return extentIncludingLineBreak.Start;
 			}
 		}
-
 
 		public SnapshotPoint End {
 			get {
@@ -330,17 +329,13 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		public WpfTextViewLine(ITextSnapshot snapshot, VisualLine visualLine, TextLineInfo info, object identityTag, double top, double deltaY, TextViewLineChange change, Rect visibleArea, double virtualSpaceWidth) {
+		public WpfTextViewLine(ITextSnapshot snapshot, VisualLine visualLine, TextLineInfo info, double top, double deltaY, TextViewLineChange change, Rect visibleArea, double virtualSpaceWidth) {
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
 			if (visualLine == null)
 				throw new ArgumentNullException(nameof(visualLine));
 			if (info == null)
 				throw new ArgumentNullException(nameof(info));
-			if (identityTag == null)
-				throw new ArgumentNullException(nameof(identityTag));
-
-			IdentityTag = identityTag;
 
 			this.lineStartOffset = visualLine.FirstDocumentLine.Offset;
 			var startOffset = lineStartOffset + info.StartOffset;

@@ -36,6 +36,7 @@ namespace dnSpy.Text.Editor {
 		public WpfTextViewLineCollection() {
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(Array.Empty<IWpfTextViewLine>());
 			this.snapshot = null;
+			this.formattedSpan = default(SnapshotSpan);
 		}
 
 		public WpfTextViewLineCollection(ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
@@ -46,6 +47,10 @@ namespace dnSpy.Text.Editor {
 			this.snapshot = snapshot;
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(lines);
 			this.isValid = true;
+			if (lines.Count == 0)
+				this.formattedSpan = new SnapshotSpan(snapshot, new Span(0, 0));
+			else
+				this.formattedSpan = new SnapshotSpan(snapshot, lines[0].Start.Position, lines[lines.Count - 1].EndIncludingLineBreak.Position - lines[0].Start.Position);
 			Debug.Assert(this.lines.Count > 0);
 		}
 
@@ -58,12 +63,21 @@ namespace dnSpy.Text.Editor {
 		public int Count => lines.Count;
 		public bool IsReadOnly => true;
 
-		public ReadOnlyCollection<IWpfTextViewLine> WpfTextViewLines => lines;
+		public ReadOnlyCollection<IWpfTextViewLine> WpfTextViewLines {
+			get {
+				if (!IsValid)
+					throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+				return lines;
+			}
+		}
+
 		ITextViewLine ITextViewLineCollection.FirstVisibleLine => FirstVisibleLine;
 		ITextViewLine ITextViewLineCollection.LastVisibleLine => LastVisibleLine;
 
 		public IWpfTextViewLine FirstVisibleLine {
 			get {
+				if (!IsValid)
+					throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 				foreach (var l in lines) {
 					if (l.VisibilityState == VisibilityState.FullyVisible || l.VisibilityState == VisibilityState.PartiallyVisible)
 						return l;
@@ -75,6 +89,8 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextViewLine LastVisibleLine {
 			get {
+				if (!IsValid)
+					throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 				for (int i = lines.Count - 1; i >= 0; i--) {
 					var l = lines[i];
 					if (l.VisibilityState == VisibilityState.FullyVisible || l.VisibilityState == VisibilityState.PartiallyVisible)
@@ -87,9 +103,12 @@ namespace dnSpy.Text.Editor {
 
 		public SnapshotSpan FormattedSpan {
 			get {
-				throw new NotImplementedException();//TODO:
+				if (!IsValid)
+					throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+				return formattedSpan;
 			}
 		}
+		readonly SnapshotSpan formattedSpan;
 
 		public bool IsValid => isValid;
 		bool isValid;
@@ -99,15 +118,50 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public bool ContainsBufferPosition(SnapshotPoint bufferPosition) {
-			throw new NotImplementedException();//TODO:
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (bufferPosition.Snapshot != snapshot)
+				throw new ArgumentException();
+			if (FormattedSpan.Contains(bufferPosition))
+				return true;
+			if (lines.Count > 0 && lines[lines.Count - 1].ContainsBufferPosition(bufferPosition))
+				return true;
+			return false;
+		}
+
+		public bool IntersectsBufferSpan(SnapshotSpan bufferSpan) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
+			if (FormattedSpan.IntersectsWith(bufferSpan))
+				return true;
+			if (lines.Count > 0 && lines[lines.Count - 1].IntersectsBufferSpan(bufferSpan))
+				return true;
+			return false;
 		}
 
 		public TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) {
-			throw new NotImplementedException();//TODO:
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (bufferPosition.Snapshot != snapshot)
+				throw new ArgumentException();
+			var line = GetTextViewLineContainingBufferPosition(bufferPosition);
+			if (line == null)
+				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
+			return line.GetCharacterBounds(bufferPosition);
 		}
 
 		public int GetIndexOfTextLine(ITextViewLine textLine) {
-			throw new NotImplementedException();//TODO:
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (textLine == null)
+				throw new ArgumentNullException(nameof(textLine));
+			for (int i = 0; i < lines.Count; i++) {
+				if (lines[i] == textLine)
+					return i;
+			}
+			return -1;
 		}
 
 		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan) {
@@ -115,30 +169,51 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
 			throw new NotImplementedException();//TODO:
 		}
 
 		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan) {
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
 			throw new NotImplementedException();//TODO:
 		}
 
 		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
 			throw new NotImplementedException();//TODO:
 		}
 
 		public Collection<TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
 			throw new NotImplementedException();//TODO:
 		}
 
 		public SnapshotSpan GetTextElementSpan(SnapshotPoint bufferPosition) {
-			throw new NotImplementedException();//TODO:
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (bufferPosition.Snapshot != snapshot)
+				throw new ArgumentException();
+			var line = GetTextViewLineContainingBufferPosition(bufferPosition);
+			if (line == null)
+				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
+			return line.GetTextElementSpan(bufferPosition);
 		}
 
 		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan) {
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
 			throw new NotImplementedException();//TODO:
 		}
 
 		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
 			throw new NotImplementedException();//TODO:
 		}
 
@@ -149,7 +224,7 @@ namespace dnSpy.Text.Editor {
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 			if (bufferPosition.Snapshot != snapshot)
 				throw new ArgumentException();
-			foreach (var line in WpfTextViewLines) {
+			foreach (var line in lines) {
 				if (line.ContainsBufferPosition(bufferPosition))
 					return line;
 			}
@@ -157,18 +232,33 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public ITextViewLine GetTextViewLineContainingYCoordinate(double y) {
-			throw new NotImplementedException();//TODO:
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (double.IsNaN(y))
+				throw new ArgumentOutOfRangeException(nameof(y));
+			foreach (var line in lines) {
+				if (line.Top <= y && y < line.Bottom)
+					return line;
+			}
+			return null;// Documented to return null, so don't throw AOOR
 		}
 
 		public Collection<ITextViewLine> GetTextViewLinesIntersectingSpan(SnapshotSpan bufferSpan) {
-			throw new NotImplementedException();//TODO:
-		}
-
-		public bool IntersectsBufferSpan(SnapshotSpan bufferSpan) {
-			throw new NotImplementedException();//TODO:
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
+			if (bufferSpan.Snapshot != snapshot)
+				throw new ArgumentException();
+			var coll = new Collection<ITextViewLine>();
+			for (int i = 0; i < lines.Count; i++) {
+				if (lines[i].IntersectsBufferSpan(bufferSpan))
+					coll.Add(lines[i]);
+			}
+			return coll;
 		}
 
 		public void CopyTo(ITextViewLine[] array, int arrayIndex) {
+			if (array == null)
+				throw new ArgumentNullException(nameof(array));
 			for (int i = 0; i < lines.Count; i++)
 				array[arrayIndex + i] = lines[i];
 		}

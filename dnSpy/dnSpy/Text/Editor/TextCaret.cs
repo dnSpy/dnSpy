@@ -72,6 +72,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextView textView;
 		readonly DnSpyTextEditor dnSpyTextEditor;
 		readonly Caret caret;
+		double preferredXCoordinate;
 
 		public TextCaret(ITextView textView, DnSpyTextEditor dnSpyTextEditor) {
 			this.textView = textView;
@@ -96,15 +97,16 @@ namespace dnSpy.Text.Editor {
 
 		public void EnsureVisible() => caret.BringCaretToView();
 
-		public CaretPosition MoveTo(ITextViewLine textLine) {
-			double preferredXCoordinate = 0;//TODO: Use captured horizontal position
-			return MoveTo(textLine, preferredXCoordinate);
-		}
+		public CaretPosition MoveTo(ITextViewLine textLine) =>
+			MoveTo(textLine, preferredXCoordinate, true);
 		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate) =>
 			MoveTo(textLine, xCoordinate, true);
 		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate, bool captureHorizontalPosition) {
 			if (textLine == null)
 				throw new ArgumentNullException(nameof(textLine));
+			if (captureHorizontalPosition) {
+				//TODO: Update preferredXCoordinate with new value
+			}
 			throw new NotSupportedException();//TODO:
 		}
 
@@ -122,7 +124,9 @@ namespace dnSpy.Text.Editor {
 		public CaretPosition MoveTo(VirtualSnapshotPoint bufferPosition, PositionAffinity caretAffinity, bool captureHorizontalPosition) {
 			if (bufferPosition.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
-			//TODO: Use captureHorizontalPosition
+			if (captureHorizontalPosition) {
+				//TODO: Update preferredXCoordinate with new value
+			}
 			var line = dnSpyTextEditor.TextArea.TextView.Document.GetLineByOffset(bufferPosition.Position.Position);
 			Affinity = caretAffinity;
 			caret.Position = new TextViewPosition(line.LineNumber, bufferPosition.Position.Position - (line.Offset - 1), line.Length + bufferPosition.VirtualSpaces >= 0 ? line.Length + bufferPosition.VirtualSpaces : int.MaxValue);

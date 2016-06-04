@@ -24,7 +24,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Command;
@@ -196,8 +195,8 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler ViewportLeftChanged;
 		public event EventHandler ViewportHeightChanged;
 		public event EventHandler ViewportWidthChanged;
+		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
 #pragma warning disable CS0067
-		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;//TODO: Use this event
 		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;//TODO: Use this event
 		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
 #pragma warning restore CS0067
@@ -270,21 +269,17 @@ namespace dnSpy.Text.Editor {
 					var top = line.VisualTop - DnSpyTextEditor.TextArea.TextView.VerticalOffset + ViewportTop;
 
 					foreach (var info in line.TextLineInfos) {
-						object identityTag;
 						WpfTextViewLine oldWpfLine;
 						var change = TextViewLineChange.NewOrReformatted;
 						double deltaY = 0;
 						if (reusedLinesDict.TryGetValue(info.TextLine, out oldWpfLine)) {
 							deltaY = top - oldWpfLine.GetTop();
 							change = TextViewLineChange.Translated;
-							identityTag = oldWpfLine.IdentityTag;
 						}
-						else
-							identityTag = new object();
 
 						var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
 						double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-						var wpfLine = new WpfTextViewLine(snapshot, line, info, identityTag, top, deltaY, change, visibleArea, virtualSpaceWidth);
+						var wpfLine = new WpfTextViewLine(snapshot, line, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
 						if (!reusedHash.Contains(line))
 							newList.Add(wpfLine);
 						else
@@ -456,7 +451,7 @@ namespace dnSpy.Text.Editor {
 
 			var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
 			double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-			return new WpfTextViewLine(TextSnapshot, visualLine, info, new object(), top, deltaY, change, visibleArea, virtualSpaceWidth);
+			return new WpfTextViewLine(TextSnapshot, visualLine, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
 		}
 
 		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>

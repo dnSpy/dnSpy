@@ -125,7 +125,10 @@ namespace dnSpy.Text.Editor {
 				dnSpyTextEditor.TextArea.Selection = Selection.Create(dnSpyTextEditor.TextArea, ActivePoint.Position, ActivePoint.Position);
 		}
 
-		public VirtualSnapshotSpan? GetSelectionOnTextViewLine(ITextViewLine line) => null;//TODO:
+		public VirtualSnapshotSpan? GetSelectionOnTextViewLine(ITextViewLine line) {
+			//TODO:
+			return null;
+		}
 
 		public void Select(SnapshotSpan selectionSpan, bool isReversed) {
 			if (isReversed)
