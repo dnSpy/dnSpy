@@ -26,4 +26,17 @@ namespace dnSpy.Text.Editor {
 		public override EditorOptionKey<bool> Key => DefaultWpfViewOptions.EnableHighlightCurrentLineId;
 		public override bool Default => false;
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class EnableMouseWheelZoomEditorOptionDefinition : WpfViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultWpfViewOptions.EnableMouseWheelZoomId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class ZoomLevelEditorOptionDefinition : WpfViewOptionDefinition<double> {
+		public override EditorOptionKey<double> Key => DefaultWpfViewOptions.ZoomLevelId;
+		public override double Default => 100;
+		public override bool IsValid(ref double proposedValue) => 20 <= proposedValue && proposedValue <= 400;
+	}
 }

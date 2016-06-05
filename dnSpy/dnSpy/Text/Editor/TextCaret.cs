@@ -53,14 +53,7 @@ namespace dnSpy.Text.Editor {
 
 		VirtualSnapshotPoint BufferPosition {
 			get {
-				int virtualSpaces = 0;
-				int vcol = caret.VisualColumn;
-				if (vcol > 0) {
-					var line = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(caret.Line);
-					int vspaces = vcol - line.Length;
-					if (vspaces > 0)
-						virtualSpaces = vspaces;
-				}
+				int virtualSpaces = Utils.GetVirtualSpaces(dnSpyTextEditor, caret.Offset, caret.VisualColumn);
 				return new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, caret.Offset), virtualSpaces);
 			}
 		}
@@ -77,20 +70,39 @@ namespace dnSpy.Text.Editor {
 		public TextCaret(ITextView textView, DnSpyTextEditor dnSpyTextEditor) {
 			this.textView = textView;
 			this.dnSpyTextEditor = dnSpyTextEditor;
+			this.preferredXCoordinate = 0;
 			this.caret = dnSpyTextEditor.TextArea.Caret;
 			Affinity = PositionAffinity.Successor;
 			caret.Position = new TextViewPosition(1, 1, 0);
 			caret.PositionChanged += AvalonEdit_Caret_PositionChanged;
+			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
+			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 
 			// Update cached pos
 			OnCaretPositionChanged();
 		}
 
+		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+			// The value is cached, make sure it uses the latest snapshot
+			OnCaretPositionChanged();
+		}
+
+		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
+			// The value is cached, make sure it uses the latest snapshot
+			OnCaretPositionChanged();
+		}
+
+		// Compares two caret positions, ignoring the snapshot
+		static bool CaretEquals(CaretPosition a, CaretPosition b) =>
+			a.Affinity == b.Affinity &&
+			a.VirtualSpaces == b.VirtualSpaces &&
+			a.BufferPosition.Position == b.BufferPosition.Position;
+
 		void AvalonEdit_Caret_PositionChanged(object sender, EventArgs e) => OnCaretPositionChanged();
 		void OnCaretPositionChanged() {
 			var oldPos = cachedCaretPosition;
 			cachedCaretPosition = new CaretPosition(BufferPosition, new MappingPoint(), Affinity);
-			if (oldPos != cachedCaretPosition)
+			if (!CaretEquals(oldPos, cachedCaretPosition))
 				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
 		}
 		internal void OnVisualLinesCreated() => OnCaretPositionChanged();

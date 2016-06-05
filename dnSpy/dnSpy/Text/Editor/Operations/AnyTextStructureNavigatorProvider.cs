@@ -17,26 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor.Operations;
 
 namespace dnSpy.Text.Editor.Operations {
-	[Export(typeof(IEditorOperationsFactoryService))]
-	sealed class EditorOperationsFactoryService : IEditorOperationsFactoryService {
-		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
+	[Export(typeof(ITextStructureNavigatorProvider))]
+	sealed class AnyTextStructureNavigatorProvider : ITextStructureNavigatorProvider {
+		public IEnumerable<IContentType> ContentTypes {
+			get { yield return contentType; }
+		}
+		readonly IContentType contentType;
 
 		[ImportingConstructor]
-		EditorOperationsFactoryService(ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService) {
-			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
+		AnyTextStructureNavigatorProvider(IContentTypeRegistryService contentTypeRegistryService) {
+			this.contentType = contentTypeRegistryService.GetContentType(Contracts.Text.ContentTypes.ANY);
 		}
 
-		public IEditorOperations2 GetEditorOperations(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			return textView.Properties.GetOrCreateSingletonProperty(typeof(IEditorOperations),
-				() => new EditorOperations(textView, textStructureNavigatorSelectorService));
-		}
+		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer) =>
+			new AnyTextStructureNavigator(textBuffer, contentType);
 	}
 }

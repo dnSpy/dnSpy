@@ -24,6 +24,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Command;
@@ -70,6 +71,7 @@ namespace dnSpy.Text.Editor {
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
+			this.zoomLevel = 100;
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
 			TextViewLines = new WpfTextViewLineCollection();
@@ -139,13 +141,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public double ZoomLevel {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
+			get { return zoomLevel; }
 			set {
-				throw new NotImplementedException();//TODO:
+				//TODO:
 			}
 		}
+		double zoomLevel;
 
 		public bool InLayout { get; private set; }
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
@@ -316,6 +317,7 @@ namespace dnSpy.Text.Editor {
 
 		void InitializeFrom(IEditorOptions options) {
 			UpdateOption(DefaultOptions.TabSizeOptionId.Name);
+			UpdateOption(DefaultOptions.IndentSizeOptionId.Name);
 			UpdateOption(DefaultOptions.NewLineCharacterOptionId.Name);
 			UpdateOption(DefaultOptions.ReplicateNewLineCharacterOptionId.Name);
 			UpdateOption(DefaultOptions.ConvertTabsToSpacesOptionId.Name);
@@ -340,6 +342,8 @@ namespace dnSpy.Text.Editor {
 			UpdateOption(DefaultTextViewOptions.ShowColumnRulerId.Name);
 			UpdateOption(DefaultTextViewOptions.ColumnRulerPositionId.Name);
 			UpdateOption(DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name);
+			UpdateOption(DefaultWpfViewOptions.EnableMouseWheelZoomId.Name);
+			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
 		}
 
 		void UpdateOption(string optionId) {
@@ -347,6 +351,9 @@ namespace dnSpy.Text.Editor {
 				return;
 			if (optionId == DefaultOptions.TabSizeOptionId.Name)
 				DnSpyTextEditor.Options.IndentationSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
+			else if (optionId == DefaultOptions.IndentSizeOptionId.Name) {
+				// Nothing to do
+			}
 			else if (optionId == DefaultOptions.NewLineCharacterOptionId.Name)
 				DnSpyTextEditor.Options.NewLineCharacter = Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId);
 			else if (optionId == DefaultOptions.ReplicateNewLineCharacterOptionId.Name)
@@ -428,11 +435,21 @@ namespace dnSpy.Text.Editor {
 				DnSpyTextEditor.Options.ColumnRulerPosition = Options.GetOptionValue(DefaultTextViewOptions.ColumnRulerPositionId);
 			else if (optionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
 				DnSpyTextEditor.HighlightCurrentLine = Options.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId);
+			else if (optionId == DefaultWpfViewOptions.EnableMouseWheelZoomId.Name) {
+				// Nothing to do
+			}
+			else if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
+				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
+					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
+			}
 		}
 
 		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
-		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) =>
-			TextViewLines.GetTextViewLineContainingBufferPosition(bufferPosition) ?? CreateWpfTextViewLine(bufferPosition);
+		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
+			if (TextViewLines.IsValidSnapshot(bufferPosition.Snapshot))
+				TextViewLines.GetTextViewLineContainingBufferPosition(bufferPosition);
+			return CreateWpfTextViewLine(bufferPosition);
+		}
 
 		IWpfTextViewLine CreateWpfTextViewLine(SnapshotPoint bufferPosition) {
 			if (bufferPosition.Snapshot != TextSnapshot)

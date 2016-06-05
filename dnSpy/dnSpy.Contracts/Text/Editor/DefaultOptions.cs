@@ -24,6 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	public static class DefaultOptions {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly EditorOptionKey<int> TabSizeOptionId = new EditorOptionKey<int>("Default/TabSize");
+		public static readonly EditorOptionKey<int> IndentSizeOptionId = new EditorOptionKey<int>("Default/IndentSize");
 		public static readonly EditorOptionKey<string> NewLineCharacterOptionId = new EditorOptionKey<string>("Default/NewLineCharacter");
 		public static readonly EditorOptionKey<bool> ReplicateNewLineCharacterOptionId = new EditorOptionKey<bool>("Default/ReplicateNewLineCharacter");
 		public static readonly EditorOptionKey<bool> ConvertTabsToSpacesOptionId = new EditorOptionKey<bool>("Default/ConvertTabsToSpaces");

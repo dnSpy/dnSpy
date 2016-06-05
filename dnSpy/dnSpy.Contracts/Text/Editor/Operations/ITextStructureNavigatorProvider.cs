@@ -17,15 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
+using System.Collections.Generic;
+
+namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
-	/// Default <see cref="IWpfTextView"/> options
+	/// <see cref="ITextStructureNavigator"/> provider
 	/// </summary>
-	public static class DefaultWpfViewOptions {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static readonly EditorOptionKey<bool> EnableHighlightCurrentLineId = new EditorOptionKey<bool>("IWpfTextView/HighlightCurrentLine");
-		public static readonly EditorOptionKey<bool> EnableMouseWheelZoomId = new EditorOptionKey<bool>("IWpfTextView/MouseWheelZoom");
-		public static readonly EditorOptionKey<double> ZoomLevelId = new EditorOptionKey<double>("IWpfTextView/ZoomLevel");
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+	public interface ITextStructureNavigatorProvider {
+		/// <summary>
+		/// Supported content types
+		/// </summary>
+		IEnumerable<IContentType> ContentTypes { get; }
+
+		/// <summary>
+		/// Creates a new <see cref="ITextStructureNavigator"/> for the specified ITextBuffer or returns null
+		/// </summary>
+		/// <param name="textBuffer">Text buffer</param>
+		/// <returns></returns>
+		ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer);
 	}
 }

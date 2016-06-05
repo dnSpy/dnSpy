@@ -185,6 +185,13 @@ namespace dnSpy.Contracts.Text.Editor.Operations {
 		void GotoLine(int lineNumber);
 
 		/// <summary>
+		/// Moves the caret to the start of the specified line and column.
+		/// </summary>
+		/// <param name="lineNumber">The line number to which to move the caret.</param>
+		/// <param name="column">The column number to which to move the caret.</param>
+		void GotoLine(int lineNumber, int column);
+
+		/// <summary>
 		/// If there is a multi-line selection, adds indentation to every line in the selection, otherwise adds indentation to the line the caret is on.
 		/// </summary>
 		/// <returns></returns>

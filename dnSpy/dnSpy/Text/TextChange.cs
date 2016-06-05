@@ -23,20 +23,22 @@ using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Text {
 	sealed class TextChange : ITextChange {
-		readonly int offset;
+		readonly int oldOffset;
+		readonly int newOffset;
 		readonly ITextSource oldText;
 		readonly ITextSource newText;
 
 		public int Delta => newText.TextLength - oldText.TextLength;
-		public int NewEnd => offset + newText.TextLength;
+		public int NewEnd => newOffset + newText.TextLength;
 		public int NewLength => newText.TextLength;
-		public int NewPosition => offset;
-		public Span NewSpan => new Span(offset, newText.TextLength);
+		public int NewPosition => newOffset;
+		public Span NewSpan => new Span(newOffset, newText.TextLength);
 		public string NewText => newText.Text;
-		public int OldEnd => offset + oldText.TextLength;
+
+		public int OldEnd => oldOffset + oldText.TextLength;
 		public int OldLength => oldText.TextLength;
-		public int OldPosition => offset;
-		public Span OldSpan => new Span(offset, oldText.TextLength);
+		public int OldPosition => oldOffset;
+		public Span OldSpan => new Span(oldOffset, oldText.TextLength);
 		public string OldText => oldText.Text;
 
 		public TextChange(int offset, ITextSource oldText, ITextSource newText) {
@@ -44,19 +46,36 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(oldText));
 			if (newText == null)
 				throw new ArgumentNullException(nameof(newText));
-			this.offset = offset;
+			this.oldOffset = offset;
+			this.newOffset = offset;
 			this.oldText = oldText;
 			this.newText = newText;
 		}
 
 		public TextChange(int offset, string oldText, string newText) {
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException(nameof(offset), offset, $"{nameof(offset)} can't be less than 0.");
+				throw new ArgumentOutOfRangeException(nameof(offset));
 			if (oldText == null)
 				throw new ArgumentNullException(nameof(oldText));
 			if (newText == null)
 				throw new ArgumentNullException(nameof(newText));
-			this.offset = offset;
+			this.oldOffset = offset;
+			this.newOffset = offset;
+			this.oldText = new StringTextSource(oldText);
+			this.newText = new StringTextSource(newText);
+		}
+
+		public TextChange(int oldOffset, string oldText, int newOffset, string newText) {
+			if (oldOffset < 0)
+				throw new ArgumentOutOfRangeException(nameof(oldOffset));
+			if (oldText == null)
+				throw new ArgumentNullException(nameof(oldText));
+			if (newOffset < 0)
+				throw new ArgumentOutOfRangeException(nameof(newOffset));
+			if (newText == null)
+				throw new ArgumentNullException(nameof(newText));
+			this.oldOffset = oldOffset;
+			this.newOffset = newOffset;
 			this.oldText = new StringTextSource(oldText);
 			this.newText = new StringTextSource(newText);
 		}

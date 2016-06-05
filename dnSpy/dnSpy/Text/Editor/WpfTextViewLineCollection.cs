@@ -117,6 +117,8 @@ namespace dnSpy.Text.Editor {
 			isValid = false;
 		}
 
+		internal bool IsValidSnapshot(ITextSnapshot snapshot) => this.snapshot == snapshot;
+
 		public bool ContainsBufferPosition(SnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));

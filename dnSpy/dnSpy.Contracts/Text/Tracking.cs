@@ -69,15 +69,15 @@ namespace dnSpy.Contracts.Text {
 						currentPosition = trackingMode == PointTrackingMode.Negative ? c.OldPosition : c.OldEnd;
 						break;
 					}
-					if (currentPosition > c.NewEnd) {
-						currentPosition += -c.NewEnd + c.OldEnd;
+					if (currentPosition > c.NewEnd && i + 1 < changes.Count && currentPosition < changes[i + 1].NewPosition) {
+						currentPosition -= -c.Delta;
 						break;
 					}
 				}
 				if (i == changes.Count && i != 0) {
 					var c = changes[i - 1];
 					if (currentPosition > c.NewEnd)
-						currentPosition += -c.NewEnd + c.OldEnd;
+						currentPosition -= -c.Delta;
 				}
 			}
 			return currentPosition;
@@ -117,15 +117,15 @@ namespace dnSpy.Contracts.Text {
 						currentPosition = trackingMode == PointTrackingMode.Negative ? c.NewPosition : c.NewEnd;
 						break;
 					}
-					if (currentPosition > c.OldEnd) {
-						currentPosition += -c.OldEnd + c.NewEnd;
+					if (currentPosition > c.OldEnd && i + 1 < changes.Count && currentPosition < changes[i + 1].OldPosition) {
+						currentPosition += c.Delta;
 						break;
 					}
 				}
 				if (i == changes.Count && i != 0) {
 					var c = changes[i - 1];
 					if (currentPosition > c.OldEnd)
-						currentPosition += -c.OldEnd + c.NewEnd;
+						currentPosition += c.Delta;
 				}
 				currentVersion = currentVersion.Next;
 			}

@@ -62,7 +62,6 @@ namespace dnSpy.Text {
 		public void Write(TextWriter writer) => textSource.WriteTextTo(writer);
 		public void Write(TextWriter writer, Span span) => textSource.WriteTextTo(writer, span.Start, span.Length);
 
-		public ITextChange[] GetTextChangesFrom(TextSnapshot other) => GetTextChangesFromTo(other.textSource, textSource);
 		public static ITextChange[] GetTextChangesFromTo(ITextSource source, ITextSource target) {
 			var list = new List<ITextChange>();
 			Debug.Assert(source.Version != null);

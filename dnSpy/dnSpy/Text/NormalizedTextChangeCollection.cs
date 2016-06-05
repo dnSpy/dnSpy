@@ -20,6 +20,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
@@ -38,10 +40,14 @@ namespace dnSpy.Text {
 		}
 
 		public static INormalizedTextChangeCollection Create(IList<ITextChange> changes) {
-			if (changes.Count == 1)
-				return new NormalizedTextChangeCollection(new ITextChange[1] { changes[0] });
 			if (changes.Count == 0)
 				return new NormalizedTextChangeCollection(Array.Empty<ITextChange>());
+			return new NormalizedTextChangeCollection(CreateNormalizedList(changes).ToArray());
+		}
+
+		public static IList<ITextChange> CreateNormalizedList(IList<ITextChange> changes) {
+			if (changes.Count == 0)
+				return Array.Empty<ITextChange>();
 
 			var list = new List<ITextChange>(changes.Count);
 			list.AddRange(changes);
@@ -49,12 +55,24 @@ namespace dnSpy.Text {
 			for (int i = list.Count - 2; i >= 0; i--) {
 				var a = list[i];
 				var b = list[i + 1];
+				// We'll fix these in the next loop, and they must not have been normalized yet
+				Debug.Assert(a.OldPosition == a.NewPosition && b.OldPosition == b.NewPosition);
 				if (a.OldSpan.OverlapsWith(b.OldSpan))
-					throw new NotSupportedException("Overlapping ITextChanges is not supported");
+					throw new NotSupportedException($"Overlapping {nameof(ITextChange)}s is not supported");
 				if (a.OldSpan.IntersectsWith(b.OldSpan)) {
 					list[i] = new TextChange(a.OldPosition, a.OldText + b.OldText, a.NewText + b.NewText);
 					list.RemoveAt(i + 1);
 				}
+			}
+
+			int deletedChars = 0;
+			for (int i = 0; i < list.Count; i++) {
+				var change = list[i];
+				if (deletedChars != 0) {
+					var newChange = new TextChange(change.OldPosition, change.OldText, change.NewPosition - deletedChars, change.NewText);
+					list[i] = newChange;
+				}
+				deletedChars += -change.Delta;
 			}
 			return new NormalizedTextChangeCollection(list.ToArray());
 		}

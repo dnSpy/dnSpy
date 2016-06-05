@@ -33,7 +33,7 @@ namespace dnSpy.Text.Editor {
 		public void EnsureSpanVisible(SnapshotSpan span) =>
 			EnsureSpanVisible(new VirtualSnapshotSpan(span), EnsureSpanVisibleOptions.None);
 		public void EnsureSpanVisible(SnapshotSpan span, EnsureSpanVisibleOptions options) =>
-			EnsureSpanVisible(new VirtualSnapshotSpan(span), EnsureSpanVisibleOptions.None);
+			EnsureSpanVisible(new VirtualSnapshotSpan(span), options);
 		public void EnsureSpanVisible(VirtualSnapshotSpan span, EnsureSpanVisibleOptions options) {
 			if (span.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Text;
 using ICSharpCode.AvalonEdit.Document;
@@ -97,9 +98,10 @@ namespace dnSpy.Text {
 			object editTag = null;//TODO: Should be the editTag passed to ApplyChanges()
 			//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 			//		raised after all of these three events have been raised.
-			ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, changes, editTag)));
-			Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, changes, editTag)));
-			ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, changes, editTag)));
+			ITextChange[] normalizedChanges = null;
+			ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, normalizedChanges ?? (normalizedChanges = NormalizedTextChangeCollection.CreateNormalizedList(changes).ToArray()), editTag)));
+			Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, normalizedChanges ?? (normalizedChanges = NormalizedTextChangeCollection.CreateNormalizedList(changes).ToArray()), editTag)));
+			ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, normalizedChanges ?? (normalizedChanges = NormalizedTextChangeCollection.CreateNormalizedList(changes).ToArray()), editTag)));
 		}
 
 		public bool EditInProgress => textEditInProgress != null;
