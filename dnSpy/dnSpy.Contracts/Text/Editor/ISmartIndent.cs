@@ -21,33 +21,14 @@ using System;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Word wrap style
+	/// Smart indent
 	/// </summary>
-	[Flags]
-	public enum WordWrapStyles {
+	public interface ISmartIndent : IDisposable {
 		/// <summary>
-		/// Word wrap is disabled
+		/// Gets the desired indentation of an <see cref="ITextSnapshotLine"/>.
 		/// </summary>
-		None = 0,
-
-		/// <summary>
-		/// Word wrap is enabled
-		/// </summary>
-		WordWrap = 1,
-
-		/// <summary>
-		/// Word wrap glyphs are shown, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		VisibleGlyphs = 2,
-
-		/// <summary>
-		/// The wrapped line is auto indented, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		AutoIndent = 4,
-
-		/// <summary>
-		/// Word wrap disabled with <see cref="VisibleGlyphs"/> and <see cref="AutoIndent"/> set
-		/// </summary>
-		DefaultDisabled = None | VisibleGlyphs | AutoIndent,
+		/// <param name="line">The line for which to compute the indentation</param>
+		/// <returns>The number of spaces to place at the start of the line, or null if there is no desired indentation</returns>
+		int? GetDesiredIndentation(ITextSnapshotLine line);
 	}
 }

@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		event EventHandler ViewportWidthChanged;
 
 		/// <summary>
-		/// Raised when the mouse has has hovered over a character
+		/// Raised when the mouse has hovered over a character
 		/// </summary>
 		event EventHandler<MouseHoverEventArgs> MouseHover;
 
@@ -153,8 +153,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		ITextBuffer TextBuffer { get; }
 
 		/// <summary>
-		/// <see cref="ITextSnapshot"/> of <see cref="TextBuffer"/> except when handling a <see cref="ITextBuffer.Changed"/>
-		/// event on that buffer
+		/// <see cref="ITextSnapshot"/> of <see cref="TextBuffer"/>
 		/// </summary>
 		ITextSnapshot TextSnapshot { get; }
 

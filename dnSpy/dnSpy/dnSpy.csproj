@@ -351,6 +351,7 @@
     <Compile Include="Text\Editor\ColorizerCollection.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
+    <Compile Include="Text\Editor\DefaultSmartIndent.cs" />
     <Compile Include="Text\Editor\DefaultTextEditorCommandInfoCreator.cs" />
     <Compile Include="Text\Editor\DefaultTextViewCommandTarget.cs" />
     <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
@@ -363,7 +364,9 @@
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
     <Compile Include="Text\Editor\EditorPositionState.cs" />
+    <Compile Include="Text\Editor\FormattedLineSource.cs" />
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
+    <Compile Include="Text\Editor\IndentHelper.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
     <Compile Include="Text\Editor\Operations\AnyTextStructureNavigator.cs" />
@@ -373,13 +376,18 @@
     <Compile Include="Text\Editor\Operations\TextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\WordParser.cs" />
+    <Compile Include="Text\Editor\ProviderSelector.cs" />
     <Compile Include="Text\Editor\ReplCommands.cs" />
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplEditor.cs" />
+    <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\TextEditorSettings.cs" />
     <Compile Include="Text\Editor\TextSelection.cs" />
+    <Compile Include="Text\Editor\TextSnapshotLineExtensions.cs" />
+    <Compile Include="Text\Editor\TextViewExtensions.cs" />
+    <Compile Include="Text\Editor\TextViewLineExtensions.cs" />
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
     <Compile Include="Text\Editor\Utils.cs" />

@@ -18,36 +18,20 @@
 */
 
 using System;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 
-namespace dnSpy.Contracts.Text.Editor {
-	/// <summary>
-	/// Word wrap style
-	/// </summary>
-	[Flags]
-	public enum WordWrapStyles {
-		/// <summary>
-		/// Word wrap is disabled
-		/// </summary>
-		None = 0,
+namespace dnSpy.Text.Editor {
+	sealed class DefaultSmartIndent : ISmartIndent {
+		readonly ITextView textView;
 
-		/// <summary>
-		/// Word wrap is enabled
-		/// </summary>
-		WordWrap = 1,
+		public DefaultSmartIndent(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			this.textView = textView;
+		}
 
-		/// <summary>
-		/// Word wrap glyphs are shown, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		VisibleGlyphs = 2,
-
-		/// <summary>
-		/// The wrapped line is auto indented, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		AutoIndent = 4,
-
-		/// <summary>
-		/// Word wrap disabled with <see cref="VisibleGlyphs"/> and <see cref="AutoIndent"/> set
-		/// </summary>
-		DefaultDisabled = None | VisibleGlyphs | AutoIndent,
+		public int? GetDesiredIndentation(ITextSnapshotLine line) => IndentHelper.GetDesiredBlockIndentation(textView, line);
+		public void Dispose() { }
 	}
 }

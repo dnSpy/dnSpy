@@ -99,7 +99,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		WordWrapStyles wordWrap = WordWrapStyles.None;
+		WordWrapStyles wordWrap = WordWrapStyles.DefaultDisabled;
 
 		public bool ConvertTabsToSpaces {
 			get { return convertTabsToSpaces; }

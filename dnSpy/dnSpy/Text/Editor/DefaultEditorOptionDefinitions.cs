@@ -37,6 +37,12 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
+	sealed class IndentStyleEditorOptionDefinition : EditorOptionDefinition<IndentStyle> {
+		public override EditorOptionKey<IndentStyle> Key => DefaultOptions.IndentStyleOptionId;
+		public override IndentStyle Default => IndentStyle.Smart;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
 	sealed class NewLineCharacterEditorOptionDefinition : EditorOptionDefinition<string> {
 		public override EditorOptionKey<string> Key => DefaultOptions.NewLineCharacterOptionId;
 		public override string Default => Environment.NewLine;

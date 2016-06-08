@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
@@ -47,7 +48,7 @@ namespace dnSpy.Text.Editor {
 			var lines = textView.TextViewLines;
 			if (lines.Count == 0)
 				return;
-			var line = distanceToScroll >= 0 ? lines[0] : lines[lines.Count - 1];
+			var line = distanceToScroll >= 0 ? lines.FirstVisibleLine : lines.LastVisibleLine;
 			textView.DisplayTextLineContainingBufferPosition(line.Start, line.Top - textView.ViewportTop + distanceToScroll, ViewRelativePosition.Top);
 		}
 
@@ -65,8 +66,6 @@ namespace dnSpy.Text.Editor {
 						var prevLine = textView.GetTextViewLineContainingBufferPosition(new SnapshotPoint(line.Snapshot, line.Start.Position - 1));
 						pixels += prevLine?.Height ?? 0;
 					}
-					if (pixels == 0)
-						break;
 					ScrollViewportVerticallyByPixels(pixels);
 				}
 			}
@@ -74,6 +73,8 @@ namespace dnSpy.Text.Editor {
 				for (int i = 0; i < count; i++) {
 					double pixels = 0;
 					var line = textView.TextViewLines.FirstVisibleLine;
+					if (line.IsLastDocumentLine())
+						break;
 					if (line.VisibilityState == VisibilityState.FullyVisible)
 						pixels += line.Height;
 					else {
@@ -81,15 +82,47 @@ namespace dnSpy.Text.Editor {
 						var nextLine = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
 						pixels += nextLine?.Height ?? 0;
 					}
-					if (pixels == 0)
-						break;
 					ScrollViewportVerticallyByPixels(-pixels);
 				}
 			}
 		}
 
 		public bool ScrollViewportVerticallyByPage(ScrollDirection direction) {
-			throw new NotImplementedException();//TODO:
+			bool hasFullyVisibleLines = textView.TextViewLines.Any(a => a.VisibilityState == VisibilityState.FullyVisible);
+
+			if (direction == ScrollDirection.Up) {
+				var firstVisibleLine = textView.TextViewLines.FirstVisibleLine;
+				double top;
+				if (firstVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
+					if (firstVisibleLine.IsFirstDocumentLine())
+						return hasFullyVisibleLines;
+					top = firstVisibleLine.Top;
+				}
+				else
+					top = textView.GetTextViewLineContainingBufferPosition(firstVisibleLine.EndIncludingLineBreak).Top;
+				var line = firstVisibleLine;
+				var prevLine = line;
+				while (line.Top + textView.ViewportHeight > top) {
+					prevLine = line;
+					if (line.IsFirstDocumentLine())
+						break;
+					line = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+				}
+				textView.DisplayTextLineContainingBufferPosition(prevLine.Start, 0, ViewRelativePosition.Top);
+			}
+			else {
+				double pixels = textView.ViewportHeight;
+				var lastVisibleLine = textView.TextViewLines.LastVisibleLine;
+				if (lastVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
+					if (lastVisibleLine.IsLastDocumentLine())
+						return hasFullyVisibleLines;
+				}
+				else
+					pixels -= textView.ViewportBottom - lastVisibleLine.Top;
+				ScrollViewportVerticallyByPixels(-pixels);
+			}
+
+			return hasFullyVisibleLines;
 		}
 	}
 }

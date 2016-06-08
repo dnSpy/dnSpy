@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text;
@@ -37,6 +38,7 @@ namespace dnSpy.Text.Editor {
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(Array.Empty<IWpfTextViewLine>());
 			this.snapshot = null;
 			this.formattedSpan = default(SnapshotSpan);
+			this.isValid = true;
 		}
 
 		public WpfTextViewLineCollection(ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
@@ -79,11 +81,11 @@ namespace dnSpy.Text.Editor {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 				foreach (var l in lines) {
-					if (l.VisibilityState == VisibilityState.FullyVisible || l.VisibilityState == VisibilityState.PartiallyVisible)
+					if (l.IsVisible())
 						return l;
 				}
 				Debug.Fail("No visible line");
-				return lines[0];
+				return lines.FirstOrDefault(a => a.IsValid) ?? lines.First();
 			}
 		}
 
@@ -93,11 +95,11 @@ namespace dnSpy.Text.Editor {
 					throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 				for (int i = lines.Count - 1; i >= 0; i--) {
 					var l = lines[i];
-					if (l.VisibilityState == VisibilityState.FullyVisible || l.VisibilityState == VisibilityState.PartiallyVisible)
+					if (l.IsVisible())
 						return l;
 				}
 				Debug.Fail("No visible line");
-				return lines[lines.Count - 1];
+				return lines.LastOrDefault(a => a.IsValid) ?? lines.Last();
 			}
 		}
 

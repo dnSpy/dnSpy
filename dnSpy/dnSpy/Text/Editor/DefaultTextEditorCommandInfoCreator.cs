@@ -62,8 +62,8 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Create(Key.End, TextEditorIds.EOL.ToCommandInfo());
 			yield return CommandShortcut.Shift(Key.End, TextEditorIds.EOL_EXT.ToCommandInfo());
 			yield return CommandShortcut.ShiftAlt(Key.End, TextEditorIds.EOL_EXT_COL.ToCommandInfo());
-			yield return CommandShortcut.Create(Key.Home, TextEditorIds.FIRSTCHAR.ToCommandInfo());
-			yield return CommandShortcut.Shift(Key.Home, TextEditorIds.FIRSTCHAR_EXT.ToCommandInfo());
+			yield return CommandShortcut.Create(Key.Home, TextEditorIds.BOL.ToCommandInfo());
+			yield return CommandShortcut.Shift(Key.Home, TextEditorIds.BOL_EXT.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.FIRSTNONWHITENEXT.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.FIRSTNONWHITEPREV.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.GOTOBRACE.ToCommandInfo());
@@ -117,7 +117,8 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Create(KeyInput.Control(Key.R), KeyInput.Control(Key.W), TextEditorIds.TOGGLEVISSPACE.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Create(Key.S), TextEditorIds.TOGGLEVISSPACE.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.S), TextEditorIds.TOGGLEVISSPACE.ToCommandInfo());
-			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.TOGGLEWORDWRAP.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Create(Key.W), TextEditorIds.TOGGLEWORDWRAP.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.W), TextEditorIds.TOGGLEWORDWRAP.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.PageUp, TextEditorIds.TOPLINE.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.PageUp, TextEditorIds.TOPLINE_EXT.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.T, TextEditorIds.TRANSPOSECHAR.ToCommandInfo());

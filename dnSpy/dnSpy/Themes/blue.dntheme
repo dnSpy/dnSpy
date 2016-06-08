@@ -82,6 +82,7 @@
 		<color name="tostringeval" fg="#2E387C" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="link" fg="Blue" />
+		<color name="visiblewhitespace" fg="#FF2B91AF" />
 		<color name="selection" bg="#663399FF" />
 		<color name="localdefinition" bg="#DBE0CC" />
 		<color name="localreference" bg="#DBE0CC" />

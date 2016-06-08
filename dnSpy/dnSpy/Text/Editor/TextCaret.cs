@@ -26,13 +26,13 @@ using ICSharpCode.AvalonEdit.Editing;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextCaret : ITextCaret {
-		public double Left => caret.CaretRect.Left;
-		public double Right => caret.CaretRect.Right;
-		public double Top => caret.CaretRect.Top;
-		public double Bottom => caret.CaretRect.Bottom;
-		public double Width => caret.CaretRect.Width;
-		public double Height => caret.CaretRect.Height;
-		public bool InVirtualSpace => caret.IsInVirtualSpace;
+		public double Left => textView.ViewportLeft + caret.CalculateCaretRectangle().Left;
+		public double Right => textView.ViewportLeft + caret.CalculateCaretRectangle().Right;
+		public double Top => textView.ViewportTop + caret.CalculateCaretRectangle().Top;
+		public double Bottom => textView.ViewportTop + caret.CalculateCaretRectangle().Bottom;
+		public double Width => caret.CalculateCaretRectangle().Width;
+		public double Height => caret.CalculateCaretRectangle().Height;
+		public bool InVirtualSpace => Position.VirtualSpaces > 0;
 		public bool OverwriteMode => caret.OverstrikeMode;
 		public ITextViewLine ContainingTextViewLine => GetLine(Position.BufferPosition, Affinity);
 		PositionAffinity Affinity { get; set; }
@@ -64,22 +64,41 @@ namespace dnSpy.Text.Editor {
 
 		readonly ITextView textView;
 		readonly DnSpyTextEditor dnSpyTextEditor;
+		readonly ISmartIndentationService smartIndentationService;
 		readonly Caret caret;
 		double preferredXCoordinate;
 
-		public TextCaret(ITextView textView, DnSpyTextEditor dnSpyTextEditor) {
+		public TextCaret(ITextView textView, DnSpyTextEditor dnSpyTextEditor, ISmartIndentationService smartIndentationService) {
 			this.textView = textView;
 			this.dnSpyTextEditor = dnSpyTextEditor;
+			this.smartIndentationService = smartIndentationService;
 			this.preferredXCoordinate = 0;
+			this.__preferredYCoordinate = 0;
 			this.caret = dnSpyTextEditor.TextArea.Caret;
 			Affinity = PositionAffinity.Successor;
-			caret.Position = new TextViewPosition(1, 1, 0);
+			caret.SetPosition(new TextViewPosition(1, 1, 0), true);
+			caret.DesiredXPos = double.NaN;
 			caret.PositionChanged += AvalonEdit_Caret_PositionChanged;
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
+			textView.Options.OptionChanged += Options_OptionChanged;
+			dnSpyTextEditor.TextArea.TextView.VisualLinesChanged += AvalonEdit_TextView_VisualLinesChanged;
 
 			// Update cached pos
 			OnCaretPositionChanged();
+		}
+
+		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
+				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+					MoveTo(Position.BufferPosition);
+			}
+		}
+
+		void AvalonEdit_TextView_VisualLinesChanged(object sender, EventArgs e) {
+			// Needed because VisualLengths could've changed, eg. when toggling show-whitespace option.
+			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, cachedCaretPosition.VirtualBufferPosition, cachedCaretPosition.Affinity == PositionAffinity.Predecessor), invalidateVisualColumn: false);
+			caret.DesiredXPos = double.NaN;
 		}
 
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
@@ -109,17 +128,59 @@ namespace dnSpy.Text.Editor {
 
 		public void EnsureVisible() => caret.BringCaretToView();
 
+		bool CanAutoIndent(ITextViewLine line) {
+			if (line.Start != line.End)
+				return false;
+			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+				return false;
+			if (textView.Selection.Mode != TextSelectionMode.Stream)
+				return false;
+
+			return true;
+		}
+
+		VirtualSnapshotPoint FilterColumn(VirtualSnapshotPoint pos) {
+			if (!pos.IsInVirtualSpace)
+				return pos;
+			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+				return pos;
+			if (textView.Selection.Mode != TextSelectionMode.Stream)
+				return pos;
+			return new VirtualSnapshotPoint(pos.Position);
+		}
+
 		public CaretPosition MoveTo(ITextViewLine textLine) =>
-			MoveTo(textLine, preferredXCoordinate, true);
+			MoveTo(textLine, preferredXCoordinate, false, true, true);
 		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate) =>
-			MoveTo(textLine, xCoordinate, true);
-		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate, bool captureHorizontalPosition) {
+			MoveTo(textLine, xCoordinate, true, true, true);
+		public CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate, bool captureHorizontalPosition) =>
+			MoveTo(textLine, xCoordinate, captureHorizontalPosition, true, true);
+		CaretPosition MoveTo(ITextViewLine textLine, double xCoordinate, bool captureHorizontalPosition, bool captureVerticalPosition, bool canAutoIndent) {
 			if (textLine == null)
 				throw new ArgumentNullException(nameof(textLine));
-			if (captureHorizontalPosition) {
-				//TODO: Update preferredXCoordinate with new value
+
+			bool filterPos = true;
+			// Don't auto indent if it's at column 0
+			if (canAutoIndent && CanAutoIndent(textLine) && xCoordinate > textLine.TextRight) {
+				var wpfView = textView as IWpfTextView;
+				if (wpfView != null) {
+					int indentation = IndentHelper.GetDesiredIndentation(textView, smartIndentationService, textLine.Start.GetContainingLine()) ?? 0;
+					xCoordinate = indentation * wpfView.FormattedLineSource.ColumnWidth;
+					filterPos = false;
+				}
 			}
-			throw new NotSupportedException();//TODO:
+
+			var bufferPosition = textLine.GetInsertionBufferPositionFromXCoordinate(xCoordinate);
+			Affinity = textLine.IsLastTextViewLineForSnapshotLine || bufferPosition.Position != textLine.End ? PositionAffinity.Successor : PositionAffinity.Predecessor;
+			if (filterPos)
+				bufferPosition = FilterColumn(bufferPosition);
+			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, bufferPosition, Affinity == PositionAffinity.Predecessor), invalidateVisualColumn: false);
+			caret.DesiredXPos = double.NaN;
+			if (captureHorizontalPosition)
+				preferredXCoordinate = Left;
+			if (captureVerticalPosition)
+				SavePreferredYCoordinate();
+			return Position;
 		}
 
 		public CaretPosition MoveTo(SnapshotPoint bufferPosition) =>
@@ -136,12 +197,15 @@ namespace dnSpy.Text.Editor {
 		public CaretPosition MoveTo(VirtualSnapshotPoint bufferPosition, PositionAffinity caretAffinity, bool captureHorizontalPosition) {
 			if (bufferPosition.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
-			if (captureHorizontalPosition) {
-				//TODO: Update preferredXCoordinate with new value
-			}
-			var line = dnSpyTextEditor.TextArea.TextView.Document.GetLineByOffset(bufferPosition.Position.Position);
+
 			Affinity = caretAffinity;
-			caret.Position = new TextViewPosition(line.LineNumber, bufferPosition.Position.Position - (line.Offset - 1), line.Length + bufferPosition.VirtualSpaces >= 0 ? line.Length + bufferPosition.VirtualSpaces : int.MaxValue);
+			// Don't call FilterColumn() or pressing END on an empty line won't indent it to a virtual column
+			//bufferPosition = FilterColumn(bufferPosition);
+			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, bufferPosition, Affinity == PositionAffinity.Predecessor), invalidateVisualColumn: false);
+			caret.DesiredXPos = double.NaN;
+			if (captureHorizontalPosition)
+				preferredXCoordinate = Left;
+			SavePreferredYCoordinate();
 			return Position;
 		}
 
@@ -179,21 +243,21 @@ namespace dnSpy.Text.Editor {
 			if (Position.BufferPosition.Position == Position.BufferPosition.Snapshot.Length)
 				return Position;
 
-			var line = ContainingTextViewLine;
+			var line = textView.GetTextViewLineContainingBufferPosition(Position.BufferPosition);
 			var span = line.GetTextElementSpan(Position.BufferPosition);
 			return MoveTo(new SnapshotPoint(textView.TextSnapshot, span.End));
 		}
 
 		public CaretPosition MoveToPreviousCaretPosition() {
-			if (Position.VirtualSpaces > 0)
+			if (Position.VirtualSpaces > 0 && textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
 				return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces - 1));
 			if (Position.BufferPosition.Position == 0)
 				return Position;
 
-			var currentLine = ContainingTextViewLine;
+			var currentLine = textView.GetTextViewLineContainingBufferPosition(Position.BufferPosition);
 			var span = currentLine.GetTextElementSpan(Position.BufferPosition);
 			var newPos = span.Start;
-			if (newPos.Position != 0 && Position.BufferPosition.Position != Position.BufferPosition.Snapshot.Length) {
+			if (Position.VirtualSpaces == 0 && newPos.Position != 0 && Position.BufferPosition.Position != Position.BufferPosition.Snapshot.Length) {
 				newPos -= 1;
 				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
 				if (line.IsLastTextViewLineForSnapshotLine && newPos > line.End)
@@ -202,14 +266,41 @@ namespace dnSpy.Text.Editor {
 			}
 			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId)) {
 				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
-				if (line != currentLine)
+				if (line.ExtentIncludingLineBreak != currentLine.ExtentIncludingLineBreak)
 					newPos = currentLine.Start;
 			}
 			return MoveTo(newPos);
 		}
 
+		double PreferredYCoordinate {
+			get { return Math.Min(__preferredYCoordinate, textView.ViewportHeight) + textView.ViewportTop; }
+		}
+		double __preferredYCoordinate;
+
+		ITextViewLine GetVisibleCaretLine() {
+			if (textView.TextViewLines.Count == 0)
+				return null;
+			var line = ContainingTextViewLine;
+			if (line.IsVisible())
+				return line;
+			return textView.TextViewLines.FirstVisibleLine;
+		}
+
+		void SavePreferredYCoordinate() {
+			var line = GetVisibleCaretLine();
+			if (line != null)
+				__preferredYCoordinate = line.Top + (line.Bottom - line.Top) / 2 - textView.ViewportTop;
+			else
+				__preferredYCoordinate = 0;
+		}
+
 		public CaretPosition MoveToPreferredCoordinates() {
-			return Position;//TODO:
+			var textLine = textView.GetVisibleTextViewLineContainingYCoordinate(PreferredYCoordinate);
+			if (textLine == null)
+				textLine = textView.GetVisibleTextViewLineContainingYCoordinate(textView.ViewportBottom - 0.01);
+			if (textLine == null)
+				textLine = textView.TextViewLines.LastVisibleLine;
+			return MoveTo(textLine, preferredXCoordinate, false, false, true);
 		}
 
 		ITextViewLine GetLine(SnapshotPoint bufferPosition, PositionAffinity affinity) {

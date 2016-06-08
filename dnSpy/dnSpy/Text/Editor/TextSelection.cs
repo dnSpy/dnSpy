@@ -154,7 +154,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			}
 			ActivationTracksFocus = true;
-			dnSpyTextEditor.TextArea.Selection = Selection.Create(dnSpyTextEditor.TextArea, Utils.ToTextViewPosition(dnSpyTextEditor, anchorPoint), Utils.ToTextViewPosition(dnSpyTextEditor, activePoint));
+			dnSpyTextEditor.TextArea.Selection = Selection.Create(dnSpyTextEditor.TextArea, Utils.ToTextViewPosition(dnSpyTextEditor, anchorPoint, false), Utils.ToTextViewPosition(dnSpyTextEditor, activePoint, false));
 		}
 
 		public void Select(int startLine, int startColumn, int endLine, int endColumn) {

@@ -76,6 +76,12 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
+	sealed class CanChangeWordWrapStyleEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CanChangeWordWrapStyleId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
 	sealed class WordWrapStyleEditorOptionDefinition : ViewOptionDefinition<WordWrapStyles> {
 		public override EditorOptionKey<WordWrapStyles> Key => DefaultTextViewOptions.WordWrapStyleId;
 		public override WordWrapStyles Default => WordWrapStyles.None;

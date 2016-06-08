@@ -50,10 +50,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void ToggleWordWrap() {
-			if ((editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
-				editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
-			else
-				editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.WordWrap | WordWrapStyles.AutoIndent);
+			editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) ^ WordWrapStyles.WordWrap);
 			if ((editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0 && appSettings.UseNewRenderer_TextEditor)
 				messageBoxManager.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
 		}

@@ -1868,6 +1868,7 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.ExcludedCode, "Excluded code"),
 							new BrushColorInfo(ColorType.LineNumber, "Line number"),
 							new BrushColorInfo(ColorType.Link, "Link"),
+							new BrushColorInfo(ColorType.VisibleWhitespace, "Visible whitespace"),
 							new BrushColorInfo(ColorType.LocalDefinition, "Local definition"),
 							new BrushColorInfo(ColorType.LocalReference, "Local reference"),
 							new BrushColorInfo(ColorType.CurrentStatement, "Current statement"),

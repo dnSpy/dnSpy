@@ -42,9 +42,9 @@ namespace dnSpy.Text.Editor {
 			get { return (wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0; }
 			set {
 				if (value)
-					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.WordWrap | WordWrapStyles.AutoIndent);
+					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) | WordWrapStyles.WordWrap);
 				else
-					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
+					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & ~WordWrapStyles.WordWrap);
 			}
 		}
 
@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.None);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.DefaultDisabled);
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			SetNewDocument();

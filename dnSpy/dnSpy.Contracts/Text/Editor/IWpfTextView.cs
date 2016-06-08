@@ -44,6 +44,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		double ZoomLevel { get; set; }
 
 		/// <summary>
+		/// Gets the formatter
+		/// </summary>
+		IFormattedLineSource FormattedLineSource { get; }
+
+		/// <summary>
 		/// Gets the text view lines
 		/// </summary>
 		new IWpfTextViewLineCollection TextViewLines { get; }

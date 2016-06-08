@@ -373,10 +373,14 @@
     <Compile Include="Text\Editor\IEditorOptionsFactoryService.cs" />
     <Compile Include="Text\Editor\ILogEditor.cs" />
     <Compile Include="Text\Editor\ILogEditorCreator.cs" />
+    <Compile Include="Text\Editor\IndentStyle.cs" />
     <Compile Include="Text\Editor\IReplCommandHandler.cs" />
     <Compile Include="Text\Editor\IReplCommandInput.cs" />
     <Compile Include="Text\Editor\IReplEditor.cs" />
     <Compile Include="Text\Editor\IReplEditorCreator.cs" />
+    <Compile Include="Text\Editor\ISmartIndent.cs" />
+    <Compile Include="Text\Editor\ISmartIndentationService.cs" />
+    <Compile Include="Text\Editor\ISmartIndentProvider.cs" />
     <Compile Include="Text\Editor\ITextCaret.cs" />
     <Compile Include="Text\Editor\ITextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\ITextEditorSettings.cs" />
@@ -413,6 +417,7 @@
     <Compile Include="Text\Editor\WpfViewOptionDefinition.cs" />
     <Compile Include="Text\Editor\ZoomLevelChangedEventArgs.cs" />
     <Compile Include="Text\ExportContentTypeDefinitionAttribute.cs" />
+    <Compile Include="Text\Formatting\IFormattedLineSource.cs" />
     <Compile Include="Text\Formatting\ITextViewLine.cs" />
     <Compile Include="Text\Formatting\IWpfTextViewLine.cs" />
     <Compile Include="Text\Formatting\LineTransform.cs" />

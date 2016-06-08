@@ -17,37 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Word wrap style
+	/// Smart indent provider
 	/// </summary>
-	[Flags]
-	public enum WordWrapStyles {
+	public interface ISmartIndentProvider {
 		/// <summary>
-		/// Word wrap is disabled
+		/// Gets the supported content types
 		/// </summary>
-		None = 0,
+		IEnumerable<IContentType> ContentTypes { get; }
 
 		/// <summary>
-		/// Word wrap is enabled
+		/// Creates a <see cref="ISmartIndent"/> for the given <see cref="ITextView"/> or returns null
 		/// </summary>
-		WordWrap = 1,
-
-		/// <summary>
-		/// Word wrap glyphs are shown, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		VisibleGlyphs = 2,
-
-		/// <summary>
-		/// The wrapped line is auto indented, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		AutoIndent = 4,
-
-		/// <summary>
-		/// Word wrap disabled with <see cref="VisibleGlyphs"/> and <see cref="AutoIndent"/> set
-		/// </summary>
-		DefaultDisabled = None | VisibleGlyphs | AutoIndent,
+		/// <param name="textView">The <see cref="ITextView"/> on which the <see cref="ISmartIndent"/> will navigate</param>
+		/// <returns></returns>
+		ISmartIndent CreateSmartIndent(ITextView textView);
 	}
 }

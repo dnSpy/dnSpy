@@ -32,6 +32,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> CanChangeUseVisibleWhitespaceId = new EditorOptionKey<bool>("ITextView/CanChangeUseVisibleWhitespace");
 		public static readonly EditorOptionKey<bool> UseVisibleWhitespaceId = new EditorOptionKey<bool>("ITextView/UseVisibleWhitespace");
 		public static readonly EditorOptionKey<bool> ViewProhibitUserInputId = new EditorOptionKey<bool>("ITextView/ProhibitUserInput");
+		public static readonly EditorOptionKey<bool> CanChangeWordWrapStyleId = new EditorOptionKey<bool>("ITextView/CanChangeWordWrapStyle");
 		public static readonly EditorOptionKey<WordWrapStyles> WordWrapStyleId = new EditorOptionKey<WordWrapStyles>("ITextView/WordWrapStyle");
 		public static readonly EditorOptionKey<bool> ScrollBelowDocumentId = new EditorOptionKey<bool>("ITextView/ScrollBelowDocument");
 		public static readonly EditorOptionKey<bool> RectangularSelectionId = new EditorOptionKey<bool>("ITextView/RectangularSelection");

@@ -320,6 +320,7 @@ namespace dnSpy.Text.Formatting {
 			textLines = null;
 		}
 
+		bool IsLastVisualLine { get; }
 		internal VisualLine VisualLine { get; private set; }
 
 		internal TextLine TextLine {
@@ -348,6 +349,8 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			isValid = true;
 			VisualLine = visualLine;
+			IsLastVisualLine = VisualLine.TextLines.IndexOf(info.TextLine) == VisualLine.TextLines.Count - 1 &&
+						VisualLine.LastDocumentLine.LineNumber == VisualLine.Document.LineCount;
 
 			// Only one line must be used
 			Debug.Assert(visualLine.FirstDocumentLine == visualLine.LastDocumentLine);
@@ -377,16 +380,15 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		VisibilityState CalculateVisibilityState() {
-			if (Top >= visibleArea.Bottom)
+			const double eps = 0.01;
+			if (Top + eps >= visibleArea.Bottom)
 				return VisibilityState.Hidden;
-			if (Bottom <= visibleArea.Top)
+			if (Bottom - eps <= visibleArea.Top)
 				return VisibilityState.Hidden;
-			if (visibleArea.Top <= Top && Bottom <= visibleArea.Bottom)
+			if (visibleArea.Top <= Top + eps && Bottom - eps <= visibleArea.Bottom)
 				return VisibilityState.FullyVisible;
 			return VisibilityState.PartiallyVisible;
 		}
-
-		bool IsLastLine => Snapshot.Length == ExtentIncludingLineBreak.End.Position;
 
 		public bool ContainsBufferPosition(SnapshotPoint bufferPosition) {
 			if (!IsValid)
@@ -395,7 +397,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			if (!(ExtentIncludingLineBreak.Start <= bufferPosition))
 				return false;
-			if (IsLastLine)
+			if (IsLastVisualLine)
 				return bufferPosition <= ExtentIncludingLineBreak.End;
 			return bufferPosition < ExtentIncludingLineBreak.End;
 		}
@@ -405,7 +407,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferSpan.Snapshot != Snapshot)
 				throw new ArgumentException();
-			if (IsLastLine)
+			if (IsLastVisualLine)
 				return ExtentIncludingLineBreak.IntersectsWith(bufferSpan);
 			return ExtentIncludingLineBreak.OverlapsWith(bufferSpan);
 		}
@@ -437,29 +439,39 @@ namespace dnSpy.Text.Formatting {
 			//TODO: Use textOnly
 
 			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate);
-			return new SnapshotPoint(Snapshot, lineStartOffset + charHit.FirstCharacterIndex);
+			return new SnapshotPoint(Snapshot, lineStartOffset + VisualLine.GetRelativeOffset(charHit.FirstCharacterIndex + charHit.TrailingLength));
 		}
 
 		public VirtualSnapshotPoint GetVirtualBufferPositionFromXCoordinate(double xCoordinate) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 
-			if (xCoordinate >= TextLine.WidthIncludingTrailingWhitespace) {
-				if (IsLastTextViewLineForSnapshotLine)
-					return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength, (int)Math.Round((xCoordinate - TextLine.WidthIncludingTrailingWhitespace) / VirtualSpaceWidth));
-				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength);
-			}
+			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
+			if (pos != null)
+				return new VirtualSnapshotPoint(pos.Value);
 			if (xCoordinate <= TextLeft)
 				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.Start);
-
-			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate);
-			return new VirtualSnapshotPoint(new SnapshotPoint(Snapshot, lineStartOffset + charHit.FirstCharacterIndex));
+			if (xCoordinate >= TextRight && IsLastTextViewLineForSnapshotLine)
+				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength, (int)Math.Round((xCoordinate - TextRight) / VirtualSpaceWidth));
+			return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength);
 		}
 
 		public VirtualSnapshotPoint GetInsertionBufferPositionFromXCoordinate(double xCoordinate) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			throw new NotImplementedException();//TODO:
+
+			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
+			if (pos != null) {
+				if (pos.Value < End) {
+					//TODO: Handle RTL text
+				}
+				return new VirtualSnapshotPoint(pos.Value);
+			}
+			if (xCoordinate <= TextLeft)
+				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.Start);
+			if (xCoordinate >= TextRight && IsLastTextViewLineForSnapshotLine)
+				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength, (int)Math.Round((xCoordinate - TextRight) / VirtualSpaceWidth));
+			return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength);
 		}
 
 		public Contracts.Text.Formatting.TextBounds GetExtendedCharacterBounds(SnapshotPoint bufferPosition) =>
@@ -510,7 +522,7 @@ namespace dnSpy.Text.Formatting {
 				column -= textSpan.Length;
 			}
 
-			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
+			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
 		}
 
 		public Collection<Contracts.Text.Formatting.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
@@ -529,11 +541,11 @@ namespace dnSpy.Text.Formatting {
 			if (bufferPosition >= ExtentIncludingLineBreak.End - LineBreakLength)
 				return new SnapshotSpan(ExtentIncludingLineBreak.End - LineBreakLength, LineBreakLength);
 
-			int column = bufferPosition.Position - lineStartOffset;
-			Debug.Assert(column >= 0);
+			int visualColumn = VisualLine.GetVisualColumn(bufferPosition.Position - lineStartOffset);
+			Debug.Assert(visualColumn >= 0);
 
-			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(column, 0));
-			return new SnapshotSpan(Snapshot, lineStartOffset + charHit.FirstCharacterIndex, charHit.TrailingLength);
+			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(visualColumn, 0));
+			return new SnapshotSpan(Snapshot, lineStartOffset + VisualLine.GetRelativeOffset(charHit.FirstCharacterIndex), charHit.TrailingLength);
 		}
 	}
 }

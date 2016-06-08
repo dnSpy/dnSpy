@@ -24,7 +24,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Command;
@@ -33,7 +32,6 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Text.Formatting;
-using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Text.Editor {
@@ -58,10 +56,19 @@ namespace dnSpy.Text.Editor {
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
 		public DnSpyTextEditor DnSpyTextEditor { get; }
 
+		public IFormattedLineSource FormattedLineSource {
+			get {
+				if (formattedLineSource == null)
+					formattedLineSource = new FormattedLineSource(DnSpyTextEditor.TextArea.TextView.WideSpaceWidth);
+				return formattedLineSource;
+			}
+		}
+		IFormattedLineSource formattedLineSource;
+
 		const int LEFT_MARGIN = 15;
 		readonly FrameworkElement paddingElement;
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -84,7 +91,7 @@ namespace dnSpy.Text.Editor {
 			Options.OptionChanged += EditorOptions_OptionChanged;
 			Selection = new TextSelection(this, dnSpyTextEditor);
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
-			TextCaret = new TextCaret(this, dnSpyTextEditor);
+			TextCaret = new TextCaret(this, dnSpyTextEditor, smartIndentationService);
 			ViewScroller = new ViewScroller(this);
 			InitializeFrom(Options);
 			DnSpyTextEditor.Loaded += DnSpyTextEditor_Loaded;
@@ -94,6 +101,7 @@ namespace dnSpy.Text.Editor {
 			DnSpyTextEditor.TextArea.TextView.ScrollOffsetChanged += AvalonEdit_TextView_ScrollOffsetChanged;
 			DnSpyTextEditor.TextArea.TextView.VisualLinesCreated += AvalonEdit_TextView_VisualLinesCreated;
 			DnSpyTextEditor.TextArea.TextView.VisualLineConstructionStarting += AvalonEdit_TextView_VisualLineConstructionStarting;
+			DnSpyTextEditor.TextArea.TextView.DefaultTextMetricsInvalidated += (s, e) => formattedLineSource = null;
 			oldViewportLeft = ViewportLeft;
 			oldViewState = new ViewState(this);
 		}
@@ -154,8 +162,6 @@ namespace dnSpy.Text.Editor {
 		public WpfTextViewLineCollection TextViewLines {
 			get {
 				Debug.Assert(wpfTextViewLineCollection != null);
-				if (InLayout)
-					throw new InvalidOperationException();
 				return wpfTextViewLineCollection;
 			}
 			private set {
@@ -318,6 +324,7 @@ namespace dnSpy.Text.Editor {
 		void InitializeFrom(IEditorOptions options) {
 			UpdateOption(DefaultOptions.TabSizeOptionId.Name);
 			UpdateOption(DefaultOptions.IndentSizeOptionId.Name);
+			UpdateOption(DefaultOptions.IndentStyleOptionId.Name);
 			UpdateOption(DefaultOptions.NewLineCharacterOptionId.Name);
 			UpdateOption(DefaultOptions.ReplicateNewLineCharacterOptionId.Name);
 			UpdateOption(DefaultOptions.ConvertTabsToSpacesOptionId.Name);
@@ -335,6 +342,7 @@ namespace dnSpy.Text.Editor {
 			UpdateOption(DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId.Name);
 			UpdateOption(DefaultTextViewOptions.UseVisibleWhitespaceId.Name);
 			UpdateOption(DefaultTextViewOptions.ViewProhibitUserInputId.Name);
+			UpdateOption(DefaultTextViewOptions.CanChangeWordWrapStyleId.Name);
 			UpdateOption(DefaultTextViewOptions.WordWrapStyleId.Name);
 			UpdateOption(DefaultTextViewOptions.ScrollBelowDocumentId.Name);
 			UpdateOption(DefaultTextViewOptions.RectangularSelectionId.Name);
@@ -352,6 +360,9 @@ namespace dnSpy.Text.Editor {
 			if (optionId == DefaultOptions.TabSizeOptionId.Name)
 				DnSpyTextEditor.Options.IndentationSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
 			else if (optionId == DefaultOptions.IndentSizeOptionId.Name) {
+				// Nothing to do
+			}
+			else if (optionId == DefaultOptions.IndentStyleOptionId.Name) {
 				// Nothing to do
 			}
 			else if (optionId == DefaultOptions.NewLineCharacterOptionId.Name)
@@ -418,6 +429,9 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (optionId == DefaultTextViewOptions.ViewProhibitUserInputId.Name)
 				DnSpyTextEditor.IsReadOnly = Options.GetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId);
+			else if (optionId == DefaultTextViewOptions.CanChangeWordWrapStyleId.Name) {
+				// Nothing to do
+			}
 			else if (optionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
 				var newValue = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
 				DnSpyTextEditor.WordWrap = (newValue & WordWrapStyles.WordWrap) != 0;
@@ -446,8 +460,11 @@ namespace dnSpy.Text.Editor {
 
 		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
 		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
-			if (TextViewLines.IsValidSnapshot(bufferPosition.Snapshot))
-				TextViewLines.GetTextViewLineContainingBufferPosition(bufferPosition);
+			if (TextViewLines.IsValidSnapshot(bufferPosition.Snapshot)) {
+				var line = TextViewLines.GetTextViewLineContainingBufferPosition(bufferPosition);
+				if (line != null)
+					return line;
+			}
 			return CreateWpfTextViewLine(bufferPosition);
 		}
 
@@ -458,13 +475,18 @@ namespace dnSpy.Text.Editor {
 			var visualLine = DnSpyTextEditor.TextArea.TextView.GetOrConstructVisualLine(docLine);
 
 			var lineStart = docLine.Offset;
-			var info = visualLine.TextLineInfos.FirstOrDefault(a => lineStart + a.StartOffset <= bufferPosition.Position && bufferPosition.Position <= lineStart + a.EndOffset);
+			var info = visualLine.TextLineInfos.FirstOrDefault(a => lineStart + a.StartOffset <= bufferPosition.Position && bufferPosition.Position < lineStart + a.EndOffset);
 			if (info == null)
 				info = visualLine.TextLineInfos[visualLine.TextLineInfos.Count - 1];
+			var top = visualLine.VisualTop - DnSpyTextEditor.TextArea.TextView.VerticalOffset + ViewportTop;
+			foreach (var x in visualLine.TextLineInfos) {
+				if (x == info)
+					break;
+				top += x.TextLine.Height;
+			}
 
 			var change = TextViewLineChange.None;
 			double deltaY = 0;
-			double top = double.MinValue;
 
 			var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
 			double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
@@ -485,26 +507,23 @@ namespace dnSpy.Text.Editor {
 				throw new NotSupportedException();
 
 			var textView = DnSpyTextEditor.TextArea.TextView;
-			var line = textView.Document.GetLineByOffset(bufferPosition.Position);
-			var visualLine = textView.GetOrConstructVisualLine(line);
+			var viewLine = GetTextViewLineContainingBufferPosition(bufferPosition);
 			double newTop;
-			int column;
 			Point point;
+			var textViewPosition = Utils.ToTextViewPosition(DnSpyTextEditor, new VirtualSnapshotPoint(bufferPosition), isAtEndOfLine: false);
 			switch (relativeTo) {
 			case ViewRelativePosition.Top:
-				column = visualLine.Height > ViewportHeight ? bufferPosition.Position - line.Offset : 0;
-				point = textView.GetVisualPosition(new TextViewPosition(line.LineNumber, column + 1), VisualYPosition.LineTop);
+				point = textView.GetVisualPosition(textViewPosition, VisualYPosition.LineTop);
 				newTop = point.Y - verticalDistance;
 				break;
 
 			case ViewRelativePosition.Bottom:
-				column = visualLine.Height > ViewportHeight ? bufferPosition.Position - line.Offset : line.Length;
-				point = textView.GetVisualPosition(new TextViewPosition(line.LineNumber, column + 1), VisualYPosition.LineBottom);
+				point = textView.GetVisualPosition(textViewPosition, VisualYPosition.LineBottom);
 				newTop = point.Y - ViewportHeight + verticalDistance;
 				break;
 
 			default:
-				throw new ArgumentException();
+				throw new ArgumentOutOfRangeException(nameof(relativeTo));
 			}
 			if (newTop < 0)
 				newTop = 0;

@@ -17,37 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Word wrap style
+	/// Indent style
 	/// </summary>
-	[Flags]
-	public enum WordWrapStyles {
+	public enum IndentStyle {
 		/// <summary>
-		/// Word wrap is disabled
+		/// No indentation, always move caret to column 0
 		/// </summary>
-		None = 0,
+		None,
 
 		/// <summary>
-		/// Word wrap is enabled
+		/// Block, use same indentation as the previous line (or first non-empty line)
 		/// </summary>
-		WordWrap = 1,
+		Block,
 
 		/// <summary>
-		/// Word wrap glyphs are shown, only used if <see cref="WordWrap"/> bit is set
+		/// Use the language service to find the correct indentation
 		/// </summary>
-		VisibleGlyphs = 2,
-
-		/// <summary>
-		/// The wrapped line is auto indented, only used if <see cref="WordWrap"/> bit is set
-		/// </summary>
-		AutoIndent = 4,
-
-		/// <summary>
-		/// Word wrap disabled with <see cref="VisibleGlyphs"/> and <see cref="AutoIndent"/> set
-		/// </summary>
-		DefaultDisabled = None | VisibleGlyphs | AutoIndent,
+		Smart,
 	}
 }

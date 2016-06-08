@@ -49,8 +49,8 @@ namespace dnSpy.Text.Editor.Operations {
 			int position = line.Start.Position + column;
 			var snapshot = line.Snapshot;
 			for (;;) {
-				if (position + 1 >= line.EndIncludingLineBreak.Position)
-					return new SnapshotPoint(snapshot, line.EndIncludingLineBreak.Position);
+				if (position + 1 >= line.End.Position)
+					return new SnapshotPoint(snapshot, line.End.Position);
 				position++;
 				if (GetWordKind(snapshot[position]) != kind)
 					return new SnapshotPoint(snapshot, position);

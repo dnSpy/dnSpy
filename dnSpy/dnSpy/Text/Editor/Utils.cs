@@ -33,11 +33,16 @@ namespace dnSpy.Text.Editor {
 			return 0;
 		}
 
-		public static TextViewPosition ToTextViewPosition(DnSpyTextEditor dnSpyTextEditor, VirtualSnapshotPoint point) {
+		public static TextViewPosition ToTextViewPosition(DnSpyTextEditor dnSpyTextEditor, VirtualSnapshotPoint point, bool isAtEndOfLine) {
 			var docLine = dnSpyTextEditor.TextArea.TextView.Document.GetLineByOffset(point.Position.Position);
 			var visualLine = dnSpyTextEditor.TextArea.TextView.GetOrConstructVisualLine(docLine);
-			int visualColumn = visualLine.VisualLength + point.VirtualSpaces;
-			return new TextViewPosition(docLine.LineNumber, point.Position.Position - docLine.Offset + 1, visualColumn);
+			int column = point.Position.Position - docLine.Offset;
+			int visualColumn = column < docLine.Length ?
+				visualLine.GetVisualColumn(column) :
+				visualLine.VisualLength + point.VirtualSpaces;
+			return new TextViewPosition(docLine.LineNumber, column + 1, visualColumn) {
+				IsAtEndOfLine = isAtEndOfLine,
+			};
 		}
 	}
 }

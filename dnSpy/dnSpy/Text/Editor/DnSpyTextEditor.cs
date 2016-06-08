@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
@@ -33,7 +32,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Shared.AvalonEdit;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Themes;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
@@ -190,11 +188,6 @@ namespace dnSpy.Text.Editor {
 			searchPanel.Localization = new AvalonEditSearchPanelLocalization();
 
 			TextArea.SelectionCornerRadius = 0;
-			TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
-			TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => PageUp()), Key.PageUp, ModifierKeys.Control));
-			TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => PageDown()), Key.PageDown, ModifierKeys.Control));
-			TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => UpDownLine(false)), Key.Down, ModifierKeys.Control));
-			TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => UpDownLine(true)), Key.Up, ModifierKeys.Control));
 			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
 
@@ -330,78 +323,6 @@ namespace dnSpy.Text.Editor {
 			return pt;
 		}
 
-		void TextArea_PreviewKeyDown(object sender, KeyEventArgs e) {
-			if (Keyboard.Modifiers == ModifierKeys.None && (e.Key == Key.PageDown || e.Key == Key.PageUp)) {
-				var textView = TextArea.TextView;
-				var si = (System.Windows.Controls.Primitives.IScrollInfo)textView;
-
-				// Re-use the existing code in AvalonEdit
-				var cmd = e.Key == Key.PageDown ? EditingCommands.MoveDownByPage : EditingCommands.MoveUpByPage;
-				var target = textView;
-				bool canExec = cmd.CanExecute(null, target);
-				Debug.Assert(canExec);
-				if (canExec) {
-					if (e.Key == Key.PageDown)
-						si.PageDown();
-					else
-						si.PageUp();
-
-					cmd.Execute(null, target);
-					e.Handled = true;
-				}
-				return;
-			}
-		}
-
-		new void PageUp() {
-			var textView = TextArea.TextView;
-			textView.EnsureVisualLines();
-			if (textView.VisualLines.Count > 0) {
-				var line = textView.VisualLines[0];
-				// If the full height isn't visible, pick the next one
-				if (line.VisualTop < textView.VerticalOffset && textView.VisualLines.Count > 1)
-					line = textView.VisualLines[1];
-				var docLine = line.FirstDocumentLine;
-				var caret = TextArea.Caret;
-				SetCaretPosition(docLine.LineNumber, caret.Location.Column);
-			}
-		}
-
-		new void PageDown() {
-			var textView = TextArea.TextView;
-			textView.EnsureVisualLines();
-			if (textView.VisualLines.Count > 0) {
-				var line = textView.VisualLines[textView.VisualLines.Count - 1];
-				// If the full height isn't visible, pick the previous one
-				if (line.VisualTop - textView.VerticalOffset + line.Height > textView.ActualHeight && textView.VisualLines.Count > 1)
-					line = textView.VisualLines[textView.VisualLines.Count - 2];
-				var docLine = line.LastDocumentLine;
-				var caret = TextArea.Caret;
-				SetCaretPosition(docLine.LineNumber, caret.Location.Column);
-			}
-		}
-
-		void UpDownLine(bool up) {
-			var textView = TextArea.TextView;
-			var scrollViewer = ((System.Windows.Controls.Primitives.IScrollInfo)textView).ScrollOwner;
-			textView.EnsureVisualLines();
-
-			var currPos = FilterCaretPos(textView, textView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineMiddle));
-
-			if (!up)
-				scrollViewer.LineDown();
-			else
-				scrollViewer.LineUp();
-			textView.UpdateLayout();
-			textView.EnsureVisualLines();
-
-			var newPos = FilterCaretPos(textView, currPos);
-			var newVisPos = textView.GetPosition(newPos);
-			Debug.Assert(newVisPos != null);
-			if (newVisPos != null)
-				TextArea.Caret.Position = newVisPos.Value;
-		}
-
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			var theme = ThemeManager.Theme;
 			var marker = theme.GetColor(ColorType.SearchResultMarker);
@@ -422,6 +343,9 @@ namespace dnSpy.Text.Editor {
 			var linkColor = theme.GetTextColor(ColorType.Link);
 			TextArea.TextView.LinkTextForegroundBrush = (linkColor.Foreground ?? textColor.Foreground);
 			TextArea.TextView.LinkTextBackgroundBrush = linkColor.Background ?? Brushes.Transparent;
+
+			var visWsColor = theme.GetTextColor(ColorType.VisibleWhitespace);
+			TextArea.TextView.NonPrintableCharacterBrush = visWsColor.Foreground ?? textColor.Foreground;
 
 			var sel = theme.GetColor(ColorType.Selection);
 			TextArea.SelectionBorder = null;

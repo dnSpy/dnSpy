@@ -26,17 +26,19 @@ namespace dnSpy.Text.Editor.Operations {
 	[Export(typeof(IEditorOperationsFactoryService))]
 	sealed class EditorOperationsFactoryService : IEditorOperationsFactoryService {
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
+		readonly ISmartIndentationService smartIndentationService;
 
 		[ImportingConstructor]
-		EditorOperationsFactoryService(ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService) {
+		EditorOperationsFactoryService(ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService) {
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
+			this.smartIndentationService = smartIndentationService;
 		}
 
 		public IEditorOperations2 GetEditorOperations(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(IEditorOperations),
-				() => new EditorOperations(textView, textStructureNavigatorSelectorService));
+				() => new EditorOperations(textView, textStructureNavigatorSelectorService, smartIndentationService));
 		}
 	}
 }

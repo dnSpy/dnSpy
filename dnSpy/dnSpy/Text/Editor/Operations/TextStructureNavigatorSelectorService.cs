@@ -30,7 +30,7 @@ namespace dnSpy.Text.Editor.Operations {
 	sealed class TextStructureNavigatorSelectorService : ITextStructureNavigatorSelectorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextStructureNavigatorProvider[] textStructureNavigatorProviders;
-		Dictionary<IContentType, List<ITextStructureNavigatorProvider>> providerDict;
+		ProviderSelector<ITextStructureNavigatorProvider> providerSelector;
 
 		[ImportingConstructor]
 		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<ITextStructureNavigatorProvider> textStructureNavigatorProviders) {
@@ -63,88 +63,15 @@ namespace dnSpy.Text.Editor.Operations {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 
-			foreach (var p in GetProviders(contentType)) {
+			if (providerSelector == null)
+				providerSelector = providerSelector = new ProviderSelector<ITextStructureNavigatorProvider>(textStructureNavigatorProviders, a => a.ContentTypes);
+			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var nav = p.CreateTextStructureNavigator(textBuffer);
 				if (nav != null)
 					return nav;
 			}
 			Debug.Fail($"Couldn't find a {nameof(ITextStructureNavigatorProvider)}");
 			return new TextStructureNavigator(textBuffer, contentTypeRegistryService.UnknownContentType);
-		}
-
-		IEnumerable<ITextStructureNavigatorProvider> GetProviders(IContentType contentType) {
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-
-			var ctDict = new Dictionary<IContentType, int>();
-			GetContentTypes(ctDict, contentType, 0);
-
-			var dict = GetProviderDictionary();
-			List<ITextStructureNavigatorProvider> list;
-			foreach (var c in ctDict.OrderBy(a => a.Value)) {
-				if (dict.TryGetValue(c.Key, out list))
-					return list;
-			}
-			return Array.Empty<ITextStructureNavigatorProvider>();
-		}
-
-		void GetContentTypes(Dictionary<IContentType, int> dict, IContentType contentType, int depth) {
-			if (dict.ContainsKey(contentType))
-				return;
-			dict.Add(contentType, depth);
-			foreach (var c in contentType.BaseTypes)
-				GetContentTypes(dict, c, depth + 1);
-		}
-
-		Dictionary<IContentType, List<ITextStructureNavigatorProvider>> GetProviderDictionary() =>
-			providerDict ?? (providerDict = GetProviderDictionary(textStructureNavigatorProviders));
-
-		static Dictionary<IContentType, List<ITextStructureNavigatorProvider>> GetProviderDictionary(ITextStructureNavigatorProvider[] textStructureNavigatorProviders) {
-			var dict = new Dictionary<IContentType, List<ITextStructureNavigatorProvider>>();
-			var hash = new HashSet<IContentType>();
-			var stack = new Stack<IContentType>();
-			foreach (var p in textStructureNavigatorProviders) {
-				foreach (var c in p.ContentTypes) {
-					Debug.Assert(c != null);
-					if (c == null)
-						break;
-					Add(dict, p, c, true);
-					foreach (var bc in GetAllBaseTypes(c, hash, stack)) {
-						Debug.Assert(bc != c);
-						if (bc == c)
-							continue;
-						Add(dict, p, bc, false);
-					}
-				}
-			}
-			return dict;
-		}
-
-		static IEnumerable<IContentType> GetAllBaseTypes(IContentType contentType, HashSet<IContentType> hash, Stack<IContentType> stack) {
-			hash.Clear();
-			stack.Clear();
-			hash.Add(contentType);
-			foreach (var c in contentType.BaseTypes)
-				stack.Push(c);
-			while (stack.Count > 0) {
-				contentType = stack.Pop();
-				if (hash.Contains(contentType))
-					continue;
-				yield return contentType;
-				hash.Add(contentType);
-				foreach (var c in contentType.BaseTypes)
-					stack.Push(c);
-			}
-		}
-
-		static void Add(Dictionary<IContentType, List<ITextStructureNavigatorProvider>> dict, ITextStructureNavigatorProvider textStructureNavigatorProvider, IContentType contentType, bool isDef) {
-			List<ITextStructureNavigatorProvider> list;
-			if (!dict.TryGetValue(contentType, out list))
-				dict.Add(contentType, list = new List<ITextStructureNavigatorProvider>());
-			if (isDef)
-				list.Insert(0, textStructureNavigatorProvider);
-			else
-				list.Add(textStructureNavigatorProvider);
 		}
 	}
 }

@@ -179,6 +179,7 @@ namespace dnSpy.Contracts.Themes {
 		FirstUI = DefaultText,
 		LineNumber,
 		Link,
+		VisibleWhitespace,
 		Selection,
 		LocalDefinition,
 		LocalReference,
