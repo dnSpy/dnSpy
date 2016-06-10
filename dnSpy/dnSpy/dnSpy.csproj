@@ -167,6 +167,13 @@
     <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabCommandConstants.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabCommandInfoCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabCommandTargetFilter.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabCommandTargetFilterCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabIds.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabIdsExtensions.cs" />
+    <Compile Include="Files\Tabs\TextEditor\FileTabTextViewRoles.cs" />
     <Compile Include="Files\Tabs\TextEditor\IconBarCommandManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
     <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />

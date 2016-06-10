@@ -23,7 +23,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;

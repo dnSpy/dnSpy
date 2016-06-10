@@ -26,7 +26,7 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Text.Editor {
 	sealed class CodeEditor : ICodeEditor {
 		public IWpfTextView TextView { get; }
-		public ITextBuffer TextBuffer => TextView.TextViewModel.EditBuffer;
+		public ITextBuffer TextBuffer => TextView.TextBuffer;
 		public object UIObject => TextView.UIObject;
 		public IInputElement FocusedElement => TextView.FocusedElement;
 		public FrameworkElement ScaleElement => TextView.ScaleElement;

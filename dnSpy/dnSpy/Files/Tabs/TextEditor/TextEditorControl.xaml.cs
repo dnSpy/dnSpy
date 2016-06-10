@@ -56,7 +56,6 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.AvalonEdit;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Text;
 using dnSpy.Text;
 using dnSpy.Text.Editor;
@@ -98,7 +97,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Structured,
 			PredefinedTextViewRoles.Zoomable,
+			FileTabTextViewRoles.FileTab,
 		};
+
+		internal static TextEditorControl TryGetInstance(ITextView textView) {
+			TextEditorControl instance;
+			textView.Properties.TryGetProperty(typeof(TextEditorControl), out instance);
+			return instance;
+		}
 
 		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
@@ -116,6 +122,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
 			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
+			wpfTextView.Properties.AddProperty(typeof(TextEditorControl), this);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
@@ -142,31 +149,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
 
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Down, ModifierKeys.Control | ModifierKeys.Shift));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Up, ModifierKeys.Control | ModifierKeys.Shift));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveToNextDefinition(true)), Key.Down, ModifierKeys.Alt));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveToNextDefinition(false)), Key.Up, ModifierKeys.Alt));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.F12, ModifierKeys.None));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.Enter, ModifierKeys.None));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.F12, ModifierKeys.Control));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.Enter, ModifierKeys.Control));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndToolTip()), Key.Escape, ModifierKeys.None));
-
 			OnAutoHighlightRefsChanged();
-		}
-
-		protected override void OnPreviewKeyDown(KeyEventArgs e) {
-			// Check for this combo here because of the scrollviewer
-			if (e.KeyboardDevice.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift)) {
-				if (e.Key == Key.Up || e.Key == Key.Down) {
-					MoveReference(e.Key == Key.Down);
-					e.Handled = true;
-					return;
-				}
-			}
-			base.OnPreviewKeyDown(e);
 		}
 
 		public Button CancelButton => (this.waitAdorner.Content as WaitAdorner)?.button;
@@ -357,7 +340,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			OnAutoHighlightRefsChanged();
 		}
 
-		void ClearMarkedReferencesAndToolTip() {
+		internal void ClearMarkedReferencesAndToolTip() {
 			ClearMarkedReferences();
 			toolTipHelper.Close();
 		}
@@ -424,9 +407,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return segs.Length == 0 ? null : segs[0];
 		}
 
-		void FollowReference() => GoToTarget(GetCurrentReferenceSegment(), true, true);
+		internal void FollowReference() => GoToTarget(GetCurrentReferenceSegment(), true, true);
 
-		void FollowReferenceNewTab() {
+		internal void FollowReferenceNewTab() {
 			if (textEditorHelper == null)
 				return;
 			GoTo(GetCurrentReferenceSegment(), true, true, true, true);
@@ -516,7 +499,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		void MoveReference(bool forward) {
+		internal void MoveReference(bool forward) {
 			var refSeg = GetCurrentReferenceSegment();
 			if (refSeg == null)
 				return;
@@ -531,7 +514,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		void MoveToNextDefinition(bool forward) {
+		internal void MoveToNextDefinition(bool forward) {
 			int offset = wpfTextView.Caret.Position.BufferPosition.Position;
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset) ?? (forward ? references.LastSegment : references.FirstSegment);
 			if (refSeg == null)
