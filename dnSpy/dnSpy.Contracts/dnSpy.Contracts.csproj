@@ -74,6 +74,7 @@
     <Compile Include="Command\ICommandInfoCreator.cs" />
     <Compile Include="Command\ICommandManager.cs" />
     <Compile Include="Command\ICommandTarget.cs" />
+    <Compile Include="Command\ICommandTargetCollection.cs" />
     <Compile Include="Command\ICommandTargetFilter.cs" />
     <Compile Include="Command\ICommandTargetFilterCreator.cs" />
     <Compile Include="Command\IRegisteredCommandElement.cs" />

@@ -17,17 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Handles commands
+	/// Allows adding and removing <see cref="ICommandTargetFilter"/>s
 	/// </summary>
-	public interface ICommandTargetFilter : ICommandTarget, IDisposable {
+	public interface ICommandTargetCollection : ICommandTarget {
 		/// <summary>
-		/// Called once to set its next handler
+		/// Adds a new filter
 		/// </summary>
-		/// <param name="commandTarget">Next command target</param>
-		void SetNextCommandTarget(ICommandTarget commandTarget);
+		/// <param name="filter">Filter to add</param>
+		/// <param name="order">Order, eg. <see cref="CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR"/></param>
+		void AddFilter(ICommandTargetFilter filter, double order);
+
+		/// <summary>
+		/// Removes an added filter
+		/// </summary>
+		/// <param name="filter">Filter to remove</param>
+		void RemoveFilter(ICommandTargetFilter filter);
 	}
 }

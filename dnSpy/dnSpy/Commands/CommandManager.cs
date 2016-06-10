@@ -42,11 +42,18 @@ namespace dnSpy.Commands {
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
 
-			var commandTargets = commandTargetFilterCreator.Select(a => a.Value.Create(target)).Where(a => a != null).ToArray();
 			var coll = new KeyShortcutCollection();
 			foreach (var creator in commandInfoCreators)
 				coll.Add(creator.Value, target);
-			return new RegisteredCommandElement(this, sourceElement, coll, commandTargets, target);
+
+			var cmdElem = new RegisteredCommandElement(this, sourceElement, coll, target);
+			foreach (var c in commandTargetFilterCreator) {
+				var filter = c.Value.Create(target);
+				if (filter == null)
+					continue;
+				cmdElem.AddFilter(filter, c.Metadata.Order);
+			}
+			return cmdElem;
 		}
 
 		public CommandInfo? CreateCommandInfo(object target, string text) {

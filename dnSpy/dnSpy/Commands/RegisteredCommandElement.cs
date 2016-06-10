@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -26,17 +27,27 @@ using dnSpy.Contracts.Command;
 
 namespace dnSpy.Commands {
 	sealed class RegisteredCommandElement : IRegisteredCommandElement {
-		public ICommandTarget CommandTarget { get; }
+		public ICommandTargetCollection CommandTarget { get; }
 		readonly CommandManager commandManager;
 		readonly KeyShortcutCollection keyShortcutCollection;
-		readonly ICommandTargetFilter[] commandTargets;
+		readonly List<CommandTargetFilterInfo> commandTargetInfos;
 		WeakReference weakSourceElement;
 		WeakReference weakTarget;
 
-		sealed class MyCommandTarget : ICommandTarget {
+		struct CommandTargetFilterInfo {
+			public ICommandTargetFilter Filter { get; }
+			public double Order { get; }
+
+			public CommandTargetFilterInfo(ICommandTargetFilter filter, double order) {
+				Filter = filter;
+				Order = order;
+			}
+		}
+
+		sealed class CommandTargetCollection : ICommandTargetCollection {
 			RegisteredCommandElement registeredCommandElement;
 
-			public MyCommandTarget(RegisteredCommandElement registeredCommandElement) {
+			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) {
 				this.registeredCommandElement = registeredCommandElement;
 			}
 
@@ -55,25 +66,54 @@ namespace dnSpy.Commands {
 				}
 				return registeredCommandElement.Execute(group, cmdId, args, ref result);
 			}
+
+			public void AddFilter(ICommandTargetFilter filter, double order) =>
+				registeredCommandElement.AddFilter(filter, order);
+			public void RemoveFilter(ICommandTargetFilter filter) =>
+				registeredCommandElement.RemoveFilter(filter);
 		}
 
-		public RegisteredCommandElement(CommandManager commandManager, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, ICommandTargetFilter[] commandTargets, object target) {
+		sealed class NextCommandTarget : ICommandTarget {
+			readonly WeakReference filterWeakRef;
+			readonly WeakReference ownerWeakRef;
+
+			public NextCommandTarget(RegisteredCommandElement owner, ICommandTargetFilter filter) {
+				this.ownerWeakRef = new WeakReference(owner);
+				this.filterWeakRef = new WeakReference(filter);
+			}
+
+			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
+				var filter = filterWeakRef.Target as ICommandTargetFilter;
+				var owner = ownerWeakRef.Target as RegisteredCommandElement;
+				if (filter != null && owner != null)
+					return owner.CanExecuteNext(filter, group, cmdId);
+				return CommandTargetStatus.NotHandled;
+			}
+
+			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+				var filter = filterWeakRef.Target as ICommandTargetFilter;
+				var owner = ownerWeakRef.Target as RegisteredCommandElement;
+				if (filter != null && owner != null)
+					owner.ExecuteNext(filter, group, cmdId, args, ref result);
+				return CommandTargetStatus.NotHandled;
+			}
+		}
+
+		public RegisteredCommandElement(CommandManager commandManager, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, object target) {
 			if (commandManager == null)
 				throw new ArgumentNullException(nameof(commandManager));
 			if (sourceElement == null)
 				throw new ArgumentNullException(nameof(sourceElement));
 			if (keyShortcutCollection == null)
 				throw new ArgumentNullException(nameof(keyShortcutCollection));
-			if (commandTargets == null)
-				throw new ArgumentNullException(nameof(commandTargets));
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
 			this.commandManager = commandManager;
 			this.weakSourceElement = new WeakReference(sourceElement);
 			this.weakTarget = new WeakReference(target);
 			this.keyShortcutCollection = keyShortcutCollection;
-			this.commandTargets = commandTargets;
-			CommandTarget = new MyCommandTarget(this);
+			this.commandTargetInfos = new List<CommandTargetFilterInfo>();
+			CommandTarget = new CommandTargetCollection(this);
 			sourceElement.PreviewKeyDown += SourceElement_PreviewKeyDown;
 			sourceElement.PreviewTextInput += SourceElement_PreviewTextInput;
 		}
@@ -154,9 +194,30 @@ namespace dnSpy.Commands {
 			ExecuteCommand(cmd.Value, e);
 		}
 
-		CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			foreach (var ct in commandTargets) {
-				var res = ct.CanExecute(group, cmdId);
+		CommandTargetStatus CanExecute(Guid group, int cmdId) => CanExecute(0, group, cmdId);
+		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) =>
+			Execute(0, group, cmdId, args, ref result);
+
+		CommandTargetStatus CanExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId) {
+			int index = IndexOf(filter);
+			if (index < 0)
+				return CommandTargetStatus.NotHandled;
+			return CanExecute(index, group, cmdId);
+		}
+
+		CommandTargetStatus ExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId, object args, ref object result) {
+			int index = IndexOf(filter);
+			if (index < 0)
+				return CommandTargetStatus.NotHandled;
+			return Execute(index, group, cmdId, args, ref result);
+		}
+
+		CommandTargetStatus CanExecute(int currentIndex, Guid group, int cmdId) {
+			if (currentIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(currentIndex));
+			var infos = commandTargetInfos.ToArray();
+			for (int i = currentIndex; i < infos.Length; i++) {
+				var res = infos[i].Filter.CanExecute(group, cmdId);
 				if (res == CommandTargetStatus.Handled)
 					return res;
 				Debug.Assert(res == CommandTargetStatus.NotHandled);
@@ -164,16 +225,54 @@ namespace dnSpy.Commands {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-			foreach (var ct in commandTargets) {
+		CommandTargetStatus Execute(int currentIndex, Guid group, int cmdId, object args, ref object result) {
+			if (currentIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(currentIndex));
+			var infos = commandTargetInfos.ToArray();
+			for (int i = currentIndex; i < infos.Length; i++) {
 				result = null;
-				var res = ct.Execute(group, cmdId, args, ref result);
+				var res = infos[i].Filter.Execute(group, cmdId, args, ref result);
 				if (res == CommandTargetStatus.Handled)
 					return res;
 				Debug.Assert(res == CommandTargetStatus.NotHandled);
 			}
 			result = null;
 			return CommandTargetStatus.NotHandled;
+		}
+
+		int GetNewFilterIndex(double order) {
+			for (int i = 0; i < commandTargetInfos.Count; i++) {
+				if (order <= commandTargetInfos[i].Order)
+					return i;
+			}
+			return commandTargetInfos.Count;
+		}
+
+		int IndexOf(ICommandTargetFilter filter) {
+			for (int i = 0; i < commandTargetInfos.Count; i++) {
+				if (commandTargetInfos[i].Filter == filter)
+					return i;
+			}
+			return -1;
+		}
+
+		public void AddFilter(ICommandTargetFilter filter, double order) {
+			if (filter == null)
+				throw new ArgumentNullException(nameof(filter));
+			if (IndexOf(filter) >= 0)
+				throw new ArgumentException("Filter has already been added to the list");
+			int index = GetNewFilterIndex(order);
+			commandTargetInfos.Insert(index, new CommandTargetFilterInfo(filter, order));
+			filter.SetNextCommandTarget(new NextCommandTarget(this, filter));
+		}
+
+		public void RemoveFilter(ICommandTargetFilter filter) {
+			if (filter == null)
+				throw new ArgumentNullException(nameof(filter));
+			int index = IndexOf(filter);
+			if (index < 0)
+				return;
+			commandTargetInfos.RemoveAt(index);
 		}
 
 		public void Unregister() {
@@ -184,8 +283,9 @@ namespace dnSpy.Commands {
 			}
 			weakSourceElement = new WeakReference(null);
 			weakTarget = new WeakReference(null);
-			foreach (var c in commandTargets)
-				c.Dispose();
+			foreach (var c in commandTargetInfos)
+				c.Filter.Dispose();
+			commandTargetInfos.Clear();
 		}
 	}
 }

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandTargetFilterCreator(CommandConstants.CMDFILTERCREATOR_ORDER_TEXT_EDITOR)]
+	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR)]
 	sealed class DefaultTextViewCommandTargetFilterCreator : ICommandTargetFilterCreator {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
@@ -739,6 +739,7 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
+		public void SetNextCommandTarget(ICommandTarget commandTarget) { }
 		public void Dispose() { }
 	}
 }

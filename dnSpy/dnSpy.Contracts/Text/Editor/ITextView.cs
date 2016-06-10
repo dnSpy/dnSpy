@@ -185,7 +185,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the command target
 		/// </summary>
-		ICommandTarget CommandTarget { get; }
+		ICommandTargetCollection CommandTarget { get; }
 
 		/// <summary>
 		/// Gets the editor operations

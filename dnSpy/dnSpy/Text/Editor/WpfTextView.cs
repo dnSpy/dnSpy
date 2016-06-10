@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor {
 		public object Tag { get; set; }
 		public ITextViewRoleSet Roles { get; }
 		public IEditorOptions Options { get; }
-		public ICommandTarget CommandTarget => RegisteredCommandElement.CommandTarget;
+		public ICommandTargetCollection CommandTarget => RegisteredCommandElement.CommandTarget;
 		IRegisteredCommandElement RegisteredCommandElement { get; }
 		public ITextCaret Caret => TextCaret;
 		TextCaret TextCaret { get; }
@@ -83,7 +83,6 @@ namespace dnSpy.Text.Editor {
 			DnSpyTextEditor = dnSpyTextEditor;
 			TextViewLines = new WpfTextViewLineCollection();
 			DnSpyTextEditor.Options.AllowToggleOverstrikeMode = true;
-			RegisteredCommandElement = commandManager.Register(dnSpyTextEditor.TextArea, this);
 			TextViewModel = textViewModel;
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
@@ -104,6 +103,7 @@ namespace dnSpy.Text.Editor {
 			DnSpyTextEditor.TextArea.TextView.DefaultTextMetricsInvalidated += (s, e) => formattedLineSource = null;
 			oldViewportLeft = ViewportLeft;
 			oldViewState = new ViewState(this);
+			RegisteredCommandElement = commandManager.Register(dnSpyTextEditor.TextArea, this);
 		}
 
 		bool hasKeyboardFocus;

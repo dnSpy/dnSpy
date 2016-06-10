@@ -45,8 +45,8 @@ namespace dnSpy.Contracts.Command {
 		public const double CMDINFO_ORDER_TEXT_EDITOR = 5000;
 
 		/// <summary>
-		/// Order of default text editor <see cref="ICommandTargetFilterCreator"/>
+		/// Order of default text editor <see cref="ICommandTargetFilter"/>
 		/// </summary>
-		public const double CMDFILTERCREATOR_ORDER_TEXT_EDITOR = 5000;
+		public const double CMDTARGETFILTER_ORDER_TEXT_EDITOR = 5000;
 	}
 }

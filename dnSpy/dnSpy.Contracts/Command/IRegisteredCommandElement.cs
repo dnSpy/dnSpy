@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Command target
 		/// </summary>
-		ICommandTarget CommandTarget { get; }
+		ICommandTargetCollection CommandTarget { get; }
 
 		/// <summary>
 		/// Unregisters it from <see cref="ICommandManager"/>
