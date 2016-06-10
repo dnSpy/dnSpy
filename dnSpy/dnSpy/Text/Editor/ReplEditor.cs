@@ -163,8 +163,6 @@ namespace dnSpy.Text.Editor {
 
 		bool CanPaste {
 			get {
-				if (!this.textEditor.TextArea.ReadOnlySectionProvider.CanInsert(CaretOffset))
-					return false;
 				try {
 					return Clipboard.ContainsText();
 				}
@@ -965,7 +963,6 @@ namespace dnSpy.Text.Editor {
 		public void Dispose() {
 			if (!wpfTextView.IsClosed)
 				wpfTextView.Close();
-			textEditor.Dispose();
 		}
 
 		enum BufferKind {

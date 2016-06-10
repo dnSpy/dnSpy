@@ -126,12 +126,6 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="TextEditorLocation"/></summary>
 		public static readonly string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
 
-		/// <summary>Offset of caret</summary>
-		public static readonly string GUIDOBJ_CARET_OFFSET_GUID = "243DDAE1-007A-45FD-9F03-A3683729580E";
-
-		/// <summary><see cref="ITextBuffer"/></summary>
-		public static readonly string GUIDOBJ_TEXTBUFFER_GUID = "375B89C2-ACB8-414B-9F89-645BB7BF98FF";
-
 		/// <summary><c>HexBox</c></summary>
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 

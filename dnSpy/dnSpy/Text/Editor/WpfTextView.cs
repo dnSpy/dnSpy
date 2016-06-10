@@ -319,6 +319,7 @@ namespace dnSpy.Text.Editor {
 			TextViewModel.Dispose();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
+			DnSpyTextEditor.Dispose();
 		}
 
 		void InitializeFrom(IEditorOptions options) {

@@ -157,28 +157,22 @@ namespace dnSpy.Text.Editor {
 		internal IThemeManager ThemeManager { get; }
 
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) => colorizerCollection.RecreateAutoColorizers();
-		public TextBuffer TextBuffer {
-			get { return textBuffer; }
-			private set {
-				if (textBuffer != null)
-					throw new InvalidOperationException();
-				textBuffer = value;
-				textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
-				if (this.Document != null && this.Document.TextLength != 0)
-					throw new InvalidOperationException();
-				this.Document = textBuffer.Document;
-			}
-		}
-		TextBuffer textBuffer;
+		public ITextBuffer TextBuffer => textBuffer;
 
 		readonly SearchPanel searchPanel;
 		readonly ColorizerCollection colorizerCollection;
+		readonly ITextBuffer textBuffer;
 
 		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBuffer textBuffer) {
 			this.ThemeManager = themeManager;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
 			this.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			this.TextBuffer = (TextBuffer)textBuffer;
+
+			Debug.Assert(textBuffer is TextBuffer, $"{nameof(ITextBuffer)} must currently be our implementation!");
+			this.textBuffer = textBuffer;
+			this.textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
+			this.Document = ((TextBuffer)this.textBuffer).Document;
+
 			this.colorizerCollection = new ColorizerCollection(this, textBufferColorizerCreator);
 			TextArea.TextView.DocumentChanged += TextView_DocumentChanged;
 			UpdateColors(false);
@@ -221,7 +215,6 @@ namespace dnSpy.Text.Editor {
 			ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 			colorizerCollection.Dispose();
 			TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
-			TextBuffer.Dispose();
 		}
 
 		protected override void OnDragOver(DragEventArgs e) {
@@ -393,18 +386,8 @@ namespace dnSpy.Text.Editor {
 
 		public IEnumerable<GuidObject> GetGuidObjects(bool openedFromKeyboard) {
 			var position = openedFromKeyboard ? TextArea.Caret.Position : GetPositionFromMousePosition();
-			if (position != null) {
+			if (position != null)
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line - 1, position.Value.Column - 1));
-
-				var doc = TextArea.TextView.Document;
-				if (doc != null) {
-					Debug.Assert(doc == TextBuffer.Document);
-					int offset = doc.GetOffset(position.Value.Location);
-					yield return new GuidObject(MenuConstants.GUIDOBJ_CARET_OFFSET_GUID, offset);
-				}
-			}
-
-			yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTBUFFER_GUID, TextBuffer);
 		}
 	}
 }

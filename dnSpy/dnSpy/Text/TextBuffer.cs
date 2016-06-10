@@ -25,7 +25,7 @@ using dnSpy.Contracts.Text;
 using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Text {
-	sealed class TextBuffer : ITextBuffer, IDisposable {
+	sealed class TextBuffer : ITextBuffer {
 		public IContentType ContentType => contentType;
 		IContentType contentType;
 		TextVersion currentTextVersion;
@@ -201,11 +201,6 @@ namespace dnSpy.Text {
 		void VerifyAccess() {
 			if (!CheckAccess())
 				throw new InvalidOperationException();
-		}
-
-		public void Dispose() {
-			if (document != null)
-				document.TextChanged -= TextDocument_TextChanged;
 		}
 	}
 }

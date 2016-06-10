@@ -93,19 +93,7 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			SetNewDocument();
-			// Setting IsReadOnly to true doesn't mean it's readonly since undo and redo still work.
-			// Fix that by removing the commands.
-			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Undo);
-			Remove(this.textEditor.TextArea.CommandBindings, ApplicationCommands.Redo);
 			UpdatePaddingElement();
-		}
-
-		static void Remove(CommandBindingCollection bindings, ICommand cmd) {
-			for (int i = bindings.Count - 1; i >= 0; i--) {
-				var b = bindings[i];
-				if (b.Command == cmd)
-					bindings.RemoveAt(i);
-			}
 		}
 
 		void SetNewDocument() {

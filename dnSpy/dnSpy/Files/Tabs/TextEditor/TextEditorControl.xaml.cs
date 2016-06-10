@@ -113,7 +113,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextEditor = wpfTextView.DnSpyTextEditor;
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
-			dnSpyTextEditor.Content = TextEditor;
+			dnSpyTextEditor.Content = wpfTextView.UIObject;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
@@ -291,7 +291,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Debug.Assert(avOutput != null, "output should be an AvalonEditTextOutput instance");
 
 			ClearMarkedReferences();
-			TextEditor.ScrollToHome();
+			wpfTextView.EditorOperations.MoveToStartOfDocument(false);
 			TextEditor.SyntaxHighlighting = highlighting;
 			ClearCustomElementGenerators();
 
@@ -627,7 +627,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line + 1, column + 1);
-			TextEditor.SetCaretPosition(line + 1, column + 1);
+			wpfTextView.Caret.MoveTo(line, column);
 			if (focus)
 				textEditorHelper.SetFocus();
 		}
@@ -727,7 +727,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			textMarkerService.Dispose();
 			if (!wpfTextView.IsClosed)
 				wpfTextView.Close();
-			TextEditor.Dispose();
 		}
 
 		public object SaveReferencePosition(ICodeMappings cms) => GetRefPos(cms);
