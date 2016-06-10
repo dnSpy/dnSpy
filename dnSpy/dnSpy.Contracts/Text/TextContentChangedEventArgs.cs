@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Text content changed event args
@@ -27,20 +25,16 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Gets all the changes
 		/// </summary>
-		public ITextChange[] Changes { get; }
+		public INormalizedTextChangeCollection Changes => Before.Version.Changes;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="beforeSnapshot">Old snapshot</param>
 		/// <param name="afterSnapshot">New snapshot</param>
-		/// <param name="textChanges">Text changes</param>
 		/// <param name="editTag">Edit tag or null</param>
-		public TextContentChangedEventArgs(ITextSnapshot beforeSnapshot, ITextSnapshot afterSnapshot, ITextChange[] textChanges, object editTag)
+		public TextContentChangedEventArgs(ITextSnapshot beforeSnapshot, ITextSnapshot afterSnapshot, object editTag)
 			: base(beforeSnapshot, afterSnapshot, editTag) {
-			if (textChanges == null)
-				throw new ArgumentNullException(nameof(textChanges));
-			Changes = textChanges;
 		}
 	}
 }

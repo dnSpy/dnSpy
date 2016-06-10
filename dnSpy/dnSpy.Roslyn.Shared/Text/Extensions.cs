@@ -56,8 +56,8 @@ namespace dnSpy.Roslyn.Shared.Text {
 		internal static TextChangeRange ToTextChangeRange(this ITextChange textChange) =>
 			new TextChangeRange(textChange.OldSpan.ToTextSpan(), textChange.NewLength);
 
-		internal static TextChangeRange[] ToTextChangeRange(this ITextChange[] changes) {
-			var res = new TextChangeRange[changes.Length];
+		internal static TextChangeRange[] ToTextChangeRange(this INormalizedTextChangeCollection changes) {
+			var res = new TextChangeRange[changes.Count];
 			for (int i = 0; i < res.Length; i++)
 				res[i] = changes[i].ToTextChangeRange();
 			return res;

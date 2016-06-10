@@ -317,7 +317,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(IsCommandMode);
 			if (!IsCommandMode)
 				return null;
-			if (e.Changes.Length == 0)
+			if (e.Changes.Count == 0)
 				return null;
 			return new ReplCommandInput(CurrentInput);
 		}

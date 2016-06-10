@@ -54,7 +54,7 @@ namespace dnSpy.Text.Editor {
 		VirtualSnapshotPoint BufferPosition {
 			get {
 				int virtualSpaces = Utils.GetVirtualSpaces(dnSpyTextEditor, caret.Offset, caret.VisualColumn);
-				return new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, caret.Offset), virtualSpaces);
+				return new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, Math.Min(textView.TextSnapshot.Length, caret.Offset)), virtualSpaces);
 			}
 		}
 

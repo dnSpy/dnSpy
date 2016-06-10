@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Text;
@@ -84,24 +85,6 @@ namespace dnSpy.Text {
 			this.currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
 			this.Document = new TextDocument(text);
 			this.Document.SetOwnerThread(null);
-		}
-
-		//TODO: Remove this method. No-one but us should be allowed to directly modify the Document, so we don't need
-		//		to listen for changes to it. This code should be in ApplyChanges().
-		void TextDocument_TextChanged(object sender, EventArgs e) {
-			var beforeSnapshot = CurrentSnapshot;
-			var afterTextSource = Document.CreateSnapshot();
-			var changes = TextSnapshot.GetTextChangesFromTo(beforeSnapshot.TextSource, afterTextSource);
-			CreateNewCurrentSnapshot(changes, afterTextSource: afterTextSource);
-			var afterSnapshot = CurrentSnapshot;
-			TextContentChangedEventArgs args = null;
-			object editTag = null;//TODO: Should be the editTag passed to ApplyChanges()
-			//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
-			//		raised after all of these three events have been raised.
-			ITextChange[] normalizedChanges = null;
-			ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, normalizedChanges ?? (normalizedChanges = NormalizedTextChangeCollection.CreateNormalizedList(changes).ToArray()), editTag)));
-			Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, normalizedChanges ?? (normalizedChanges = NormalizedTextChangeCollection.CreateNormalizedList(changes).ToArray()), editTag)));
-			ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, normalizedChanges ?? (normalizedChanges = NormalizedTextChangeCollection.CreateNormalizedList(changes).ToArray()), editTag)));
 		}
 
 		public bool EditInProgress => textEditInProgress != null;
@@ -179,14 +162,43 @@ namespace dnSpy.Text {
 						throw new InvalidOperationException("Two edit operations overlap");
 				}
 
+				var beforeSnapshot = CurrentSnapshot;
+				// We must create the snapshot inside our event handler because the AvalonEdit caret
+				// will create a visual line to verify its location. This will lead to our highlighting
+				// code getting called, but it will use the old snapshot unless we create a new one
+				// in our TextChanged handler.
+				Debug.Assert(__new_changes == null);
+				if (__new_changes != null)
+					throw new InvalidOperationException("Recursive edit");
+				__new_changes = changes;
 				using (Document.RunUpdate()) {
 					// changes is sorted in reverse order by OldPosition
 					foreach (var change in changes)
 						Document.Replace(change.OldPosition, change.OldLength, change.NewText);
 				}
+				Debug.Assert(__new_changes == null);
+				__new_changes = null;
+
+				var afterSnapshot = CurrentSnapshot;
+				TextContentChangedEventArgs args = null;
+				//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
+				//		raised after all of these three events have been raised.
+				ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, editTag)));
+				Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, editTag)));
+				ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, editTag)));
 			}
-			//TODO: Use reiteratedVersionNumber and editTag
+			//TODO: Use reiteratedVersionNumber
 			PostChanged?.Invoke(this, EventArgs.Empty);
+		}
+		List<ITextChange> __new_changes;
+
+		void TextDocument_TextChanged(object sender, EventArgs e) {
+			Debug.Assert(__new_changes != null);
+			if (__new_changes == null)
+				throw new InvalidOperationException();
+			var changes = __new_changes;
+			__new_changes = null;
+			CreateNewCurrentSnapshot(changes, afterTextSource: Document.CreateSnapshot());
 		}
 
 		public void TakeThreadOwnership() {
