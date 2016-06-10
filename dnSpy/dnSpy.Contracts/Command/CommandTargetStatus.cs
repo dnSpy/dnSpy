@@ -31,5 +31,10 @@ namespace dnSpy.Contracts.Command {
 		/// Command was not handled, call the next <see cref="ICommandTarget"/> in the chain
 		/// </summary>
 		NotHandled,
+
+		/// <summary>
+		/// Command was not handled, but don't call the next <see cref="ICommandTarget"/> in the chain
+		/// </summary>
+		NotHandledDontCallNextHandler,
 	}
 }

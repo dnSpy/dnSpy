@@ -47,14 +47,12 @@ namespace dnSpy.Text.Editor {
 				case DefaultIds.Cut:
 					if (replEditor.ReplEditorOperations.CanCut)
 						return CommandTargetStatus.Handled;
-					//TODO: This should return "not handled, but don't send to next handler"
-					return CommandTargetStatus.Handled;
+					return CommandTargetStatus.NotHandledDontCallNextHandler;
 
 				case DefaultIds.Paste:
 					if (replEditor.ReplEditorOperations.CanPaste)
 						return CommandTargetStatus.Handled;
-					//TODO: This should return "not handled, but don't send to next handler"
-					return CommandTargetStatus.Handled;
+					return CommandTargetStatus.NotHandledDontCallNextHandler;
 
 				case DefaultIds.Redo:
 				case DefaultIds.Undo:

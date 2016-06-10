@@ -220,6 +220,8 @@ namespace dnSpy.Commands {
 				var res = infos[i].Filter.CanExecute(group, cmdId);
 				if (res == CommandTargetStatus.Handled)
 					return res;
+				if (res == CommandTargetStatus.NotHandledDontCallNextHandler)
+					return CommandTargetStatus.NotHandled;
 				Debug.Assert(res == CommandTargetStatus.NotHandled);
 			}
 			return CommandTargetStatus.NotHandled;
@@ -234,6 +236,8 @@ namespace dnSpy.Commands {
 				var res = infos[i].Filter.Execute(group, cmdId, args, ref result);
 				if (res == CommandTargetStatus.Handled)
 					return res;
+				if (res == CommandTargetStatus.NotHandledDontCallNextHandler)
+					return CommandTargetStatus.NotHandled;
 				Debug.Assert(res == CommandTargetStatus.NotHandled);
 			}
 			result = null;
