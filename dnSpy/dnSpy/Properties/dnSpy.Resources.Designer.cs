@@ -340,15 +340,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+W.
-        /// </summary>
-        public static string CloseTabKey {
-            get {
-                return ResourceManager.GetString("CloseTabKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Collapse Tree_View Nodes.
         /// </summary>
         public static string CollapseTreeViewNodesCommand {
@@ -390,15 +381,6 @@ namespace dnSpy.Properties {
         public static string CouldNotStartBrowser {
             get {
                 return ResourceManager.GetString("CouldNotStartBrowser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ctrl+E, Ctrl+W.
-        /// </summary>
-        public static string CtrlECtrlW {
-            get {
-                return ResourceManager.GetString("CtrlECtrlW", resourceCulture);
             }
         }
         
@@ -2399,6 +2381,24 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlDIGIT {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlDIGIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+E, Ctrl+W.
+        /// </summary>
+        public static string ShortCutKeyCtrlECtrlW {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlECtrlW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+F4.
+        /// </summary>
+        public static string ShortCutKeyCtrlF4 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlF4", resourceCulture);
             }
         }
         

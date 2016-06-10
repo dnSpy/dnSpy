@@ -186,9 +186,6 @@
   <data name="CloseTabGroupCommand" xml:space="preserve">
     <value>Close Tab Group</value>
   </data>
-  <data name="CloseTabKey" xml:space="preserve">
-    <value>Ctrl+W</value>
-  </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Cop_y</value>
   </data>
@@ -998,7 +995,10 @@
   <data name="SearchPanel_UseRegexText" xml:space="preserve">
     <value>Use regular expressions</value>
   </data>
-  <data name="CtrlECtrlW" xml:space="preserve">
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShortCutKeyCtrlF4" xml:space="preserve">
+    <value>Ctrl+F4</value>
   </data>
 </root>

@@ -44,7 +44,7 @@ namespace dnSpy.Files.Tabs {
 			this.fileTabManager = fileTabManager;
 			var cmds = appWindow.MainWindowCommands;
 			cmds.Add(new RoutedCommand("OpenNewTab", typeof(InstallTabCommands)), (s, e) => OpenNewTab(), (s, e) => e.CanExecute = CanOpenNewTab, ModifierKeys.Control, Key.T);
-			cmds.Add(new RoutedCommand("CloseActiveTab", typeof(InstallTabCommands)), (s, e) => CloseActiveTab(), (s, e) => e.CanExecute = CanCloseActiveTab, ModifierKeys.Control, Key.W, ModifierKeys.Control, Key.F4);
+			cmds.Add(new RoutedCommand("CloseActiveTab", typeof(InstallTabCommands)), (s, e) => CloseActiveTab(), (s, e) => e.CanExecute = CanCloseActiveTab, ModifierKeys.Control, Key.F4);
 			cmds.Add(new RoutedCommand("SelectNextTab", typeof(InstallTabCommands)), (s, e) => SelectNextTab(), (s, e) => e.CanExecute = CanSelectNextTab, ModifierKeys.Control, Key.Tab);
 			cmds.Add(new RoutedCommand("SelectPrevTab", typeof(InstallTabCommands)), (s, e) => SelectPrevTab(), (s, e) => e.CanExecute = CanSelectPrevTab, ModifierKeys.Control | ModifierKeys.Shift, Key.Tab);
 		}
@@ -116,7 +116,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:CloseTabCommand", InputGestureText = "res:CloseTabKey", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:CloseTabCommand", InputGestureText = "res:ShortCutKeyCtrlF4", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 10)]
 	sealed class CloseTabCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseTabCtxMenuCommand(IFileTabManager fileTabManager)
@@ -388,7 +388,7 @@ namespace dnSpy.Files.Tabs {
 		public override void Execute(MenuTabGroupContext context) => InstallTabCommands.OpenNewTabInternal(fileTabManager);
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseTabCommand", InputGestureText = "res:CloseTabKey", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseTabCommand", InputGestureText = "res:ShortCutKeyCtrlF4", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 10)]
 	sealed class CloseTabCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseTabCommand(IFileTabManager fileTabManager)

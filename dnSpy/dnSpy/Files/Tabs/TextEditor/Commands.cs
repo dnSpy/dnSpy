@@ -46,8 +46,25 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 			this.appSettings = appSettings;
 			this.messageBoxManager = messageBoxManager;
-			appWindow.MainWindowCommands.Add(WordWrap, (s, e) => ToggleWordWrap(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
+			appWindow.MainWindow.PreviewKeyDown += MainWindow_PreviewKeyDown;
 		}
+
+		void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e) {
+			if (!waitingForSecondKey && e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.E) {
+				waitingForSecondKey = true;
+				e.Handled = true;
+				return;
+			}
+			if (waitingForSecondKey && (e.KeyboardDevice.Modifiers == ModifierKeys.Control || e.KeyboardDevice.Modifiers == ModifierKeys.None) && e.Key == Key.W) {
+				waitingForSecondKey = false;
+				e.Handled = true;
+				ToggleWordWrap();
+				return;
+			}
+
+			waitingForSecondKey = false;
+		}
+		bool waitingForSecondKey;
 
 		void ToggleWordWrap() {
 			editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) ^ WordWrapStyles.WordWrap);
@@ -56,7 +73,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:CtrlECtrlW", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
 	sealed class WordWrapCommand : MenuItemCommand {
 		readonly IEditorOptions editorOptions;
 
