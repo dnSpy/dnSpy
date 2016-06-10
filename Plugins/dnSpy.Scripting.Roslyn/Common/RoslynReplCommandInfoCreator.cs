@@ -24,7 +24,7 @@ using dnSpy.Scripting.Roslyn.Commands;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	[ExportCommandInfoCreator(RoslynReplCommandConstants.CMDINFO_ORDER_ROSLYN_REPL)]
-	sealed class RoslynRepCommandInfoCreator : ICommandInfoCreator {
+	sealed class RoslynReplCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(RoslynReplTextViewRoles.RoslynRepl) != true)

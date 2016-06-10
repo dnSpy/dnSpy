@@ -57,7 +57,7 @@
     <Compile Include="Common\ResetCommand.cs" />
     <Compile Include="Common\RespFileUtils.cs" />
     <Compile Include="Common\ResponseFileReader.cs" />
-    <Compile Include="Common\RoslynRepCommandInfoCreator.cs" />
+    <Compile Include="Common\RoslynReplCommandInfoCreator.cs" />
     <Compile Include="Common\RoslynReplCommandTargetFilter.cs" />
     <Compile Include="Common\RoslynReplCommandTargetFilterCreator.cs" />
     <Compile Include="Common\RoslynReplEditorUtils.cs" />
