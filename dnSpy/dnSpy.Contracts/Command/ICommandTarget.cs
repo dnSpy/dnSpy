@@ -31,6 +31,15 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		/// <param name="args">Arguments or null</param>
+		/// <returns></returns>
+		CommandTargetStatus Execute(Guid group, int cmdId, object args = null);
+
+		/// <summary>
+		/// Executes the command
+		/// </summary>
+		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
+		/// <param name="cmdId">Command ID</param>
+		/// <param name="args">Arguments or null</param>
 		/// <param name="result">Updated with the result</param>
 		/// <returns></returns>
 		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result);

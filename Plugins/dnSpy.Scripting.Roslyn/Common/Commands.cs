@@ -54,43 +54,37 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 	[ExportMenuItem(Header = "res:Script_ToolTip_Reset", Icon = "Reset", Group = MenuConstants.GROUP_CTX_REPL_RESET, Order = 0)]
 	sealed class ResetReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
-		object dummy;
-		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.Reset, null, ref dummy);
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.Reset);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.Reset) == CommandTargetStatus.Handled;
 	}
 
 	[ExportMenuItem(Header = "res:CutCommand", Icon = "Cut", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 0)]
 	sealed class CutReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
-		object dummy;
-		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.DefaultGroup, (int)DefaultIds.Cut, null, ref dummy);
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.DefaultGroup, (int)DefaultIds.Cut);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.DefaultGroup, (int)DefaultIds.Cut) == CommandTargetStatus.Handled;
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 10)]
 	sealed class CopyReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
-		object dummy;
-		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.DefaultGroup, (int)DefaultIds.Copy, null, ref dummy);
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.DefaultGroup, (int)DefaultIds.Copy);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.DefaultGroup, (int)DefaultIds.Copy) == CommandTargetStatus.Handled;
 	}
 
 	[ExportMenuItem(Header = "res:CopyCodeCommand", Icon = "CopyItem", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 20)]
 	sealed class CopyCodeReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
-		object dummy;
-		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.ReplGroup, (int)ReplIds.CopyCode, null, ref dummy);
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.ReplGroup, (int)ReplIds.CopyCode);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.ReplGroup, (int)ReplIds.CopyCode) == CommandTargetStatus.Handled;
 	}
 
 	[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 30)]
 	sealed class PasteReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
-		object dummy;
-		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.DefaultGroup, (int)DefaultIds.Paste, null, ref dummy);
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.DefaultGroup, (int)DefaultIds.Paste);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.DefaultGroup, (int)DefaultIds.Paste) == CommandTargetStatus.Handled;
 	}
 
 	[ExportMenuItem(Header = "res:ClearScreenCommand", Icon = "ClearWindowContent", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_REPL_CLEAR, Order = 0)]
 	sealed class ClearReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
-		object dummy;
-		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.ReplGroup, (int)ReplIds.ClearScreen, null, ref dummy);
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.ReplGroup, (int)ReplIds.ClearScreen);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.ReplGroup, (int)ReplIds.ClearScreen) == CommandTargetStatus.Handled;
 	}
 }

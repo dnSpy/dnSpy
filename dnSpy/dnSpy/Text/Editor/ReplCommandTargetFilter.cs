@@ -194,6 +194,11 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
+		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
+			object result = null;
+			return Execute(group, cmdId, args, ref result);
+		}
+
 		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
 			var replEditor = TryGetInstance();
 			if (replEditor == null)

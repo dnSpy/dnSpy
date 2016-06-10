@@ -59,6 +59,11 @@ namespace dnSpy.Commands {
 				return registeredCommandElement.CanExecute(group, cmdId);
 			}
 
+			public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
+				object result = null;
+				return Execute(group, cmdId, args, ref result);
+			}
+
 			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
 				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
 					registeredCommandElement = null;
@@ -88,6 +93,11 @@ namespace dnSpy.Commands {
 				if (filter != null && owner != null)
 					return owner.CanExecuteNext(filter, group, cmdId);
 				return CommandTargetStatus.NotHandled;
+			}
+
+			public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
+				object result = null;
+				return Execute(group, cmdId, args, ref result);
 			}
 
 			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
