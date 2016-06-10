@@ -257,7 +257,7 @@ namespace dnSpy.Text.Editor {
 			var currentLine = textView.GetTextViewLineContainingBufferPosition(Position.BufferPosition);
 			var span = currentLine.GetTextElementSpan(Position.BufferPosition);
 			var newPos = span.Start;
-			if (Position.VirtualSpaces == 0 && newPos.Position != 0 && Position.BufferPosition.Position != Position.BufferPosition.Snapshot.Length) {
+			if (Position.VirtualSpaces == 0 && newPos.Position != 0) {
 				newPos -= 1;
 				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
 				if (line.IsLastTextViewLineForSnapshotLine && newPos > line.End)

@@ -30,7 +30,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (textView?.Roles.Contains(RoslynReplTextViewRoles.RoslynRepl) != true)
 				yield break;
 
-			// Nothing at the moment...
+			//yield return CommandShortcut.YYYYYYYYY(Key.XXXXXXXXXXX, RoslynReplIds.Reset.ToCommandInfo());
 		}
 	}
 }
