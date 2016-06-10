@@ -35,6 +35,11 @@ namespace dnSpy.Contracts.Command {
 		public static readonly Guid TextEditorGroup = new Guid("2313BC9A-8895-4390-87BF-FA563F35B33B");
 
 		/// <summary>
+		/// REPL command IDs (<see cref="ReplIds"/>)
+		/// </summary>
+		public static readonly Guid ReplGroup = new Guid("8DBB0C94-6B10-4AC3-A715-CC4D478F7B67");
+
+		/// <summary>
 		/// Order of default <see cref="ICommandInfoCreator"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_DEFAULT = 10000;
@@ -48,5 +53,15 @@ namespace dnSpy.Contracts.Command {
 		/// Order of default text editor <see cref="ICommandTargetFilter"/>
 		/// </summary>
 		public const double CMDTARGETFILTER_ORDER_TEXT_EDITOR = 5000;
+
+		/// <summary>
+		/// Order of REPL editor <see cref="ICommandInfoCreator"/>
+		/// </summary>
+		public const double CMDINFO_ORDER_REPL = CMDINFO_ORDER_TEXT_EDITOR - 100;
+
+		/// <summary>
+		/// Order of REPL editor <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_REPL = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 100;
 	}
 }

@@ -42,12 +42,14 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 			new VisualBasicControlVM(replEditor, serviceLocator);
 
 		static ReplEditorOptions CreateReplEditorOptions() {
-			return new ReplEditorOptions {
+			var options = new ReplEditorOptions {
 				TextEditorCommandGuid = CommandConstants.GUID_REPL_VISUALBASIC_TEXTEDITOR,
 				TextAreaCommandGuid = CommandConstants.GUID_REPL_VISUALBASIC_TEXTAREA,
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
 				ContentTypeGuid = new Guid(ContentTypes.REPL_VISUALBASIC_ROSLYN),
 			};
+			options.Roles.Add(RoslynScriptingTextViewRoles.VisualBasicRepl);
+			return options;
 		}
 	}
 }

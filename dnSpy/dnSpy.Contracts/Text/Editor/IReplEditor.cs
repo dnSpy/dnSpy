@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text.Editor.Operations;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -27,14 +29,14 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface IReplEditor : IUIObjectProvider2, IDisposable {
 		/// <summary>
-		/// true if <see cref="Clear"/> can be called
+		/// true if <see cref="ClearScreen"/> can be called
 		/// </summary>
-		bool CanClear { get; }
+		bool CanClearScreen { get; }
 
 		/// <summary>
 		/// Clears the screen
 		/// </summary>
-		void Clear();
+		void ClearScreen();
 
 		/// <summary>
 		/// true if <see cref="CopyCode"/> can be called
@@ -118,5 +120,20 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Resets the state to original executing state, but doesn't reset history or clears the screen
 		/// </summary>
 		void Reset();
+
+		/// <summary>
+		/// Gets the REPL editor operations
+		/// </summary>
+		IReplEditorOperations ReplEditorOperations { get; }
+
+		/// <summary>
+		/// Gets the command target
+		/// </summary>
+		ICommandTargetCollection CommandTarget { get; }
+
+		/// <summary>
+		/// Gets the text view
+		/// </summary>
+		ITextView TextView { get; }
 	}
 }

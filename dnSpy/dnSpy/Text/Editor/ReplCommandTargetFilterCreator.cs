@@ -17,19 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Scripting.Roslyn.Properties;
+using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Text.Editor;
 
-namespace dnSpy.Scripting.Roslyn.Common {
-	sealed class ClearCommand : IScriptCommand {
-		public IEnumerable<string> Names {
-			get {
-				yield return "clear";
-				yield return "cls";
-			}
+namespace dnSpy.Text.Editor {
+	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_REPL)]
+	sealed class ReplCommandTargetFilterCreator : ICommandTargetFilterCreator {
+		public ICommandTargetFilter Create(object target) {
+			var textView = target as ITextView;
+			if (textView?.Roles.Contains(ReplTextViewRoles.REPL) != true)
+				return null;
+
+			return new ReplCommandTargetFilter(textView);
 		}
-
-		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpClearDescription;
-		public void Execute(ScriptControlVM vm, string[] args) => vm.ReplEditor.ClearScreen();
 	}
 }

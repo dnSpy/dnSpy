@@ -44,6 +44,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\RoslynReplCommandConstants.cs" />
+    <Compile Include="Commands\RoslynReplIds.cs" />
+    <Compile Include="Commands\RoslynReplIdsExtensions.cs" />
     <Compile Include="Common\CachedWriter.cs" />
     <Compile Include="Common\ClearCommand.cs" />
     <Compile Include="Common\Commands.cs" />
@@ -54,6 +57,11 @@
     <Compile Include="Common\ResetCommand.cs" />
     <Compile Include="Common\RespFileUtils.cs" />
     <Compile Include="Common\ResponseFileReader.cs" />
+    <Compile Include="Common\RoslynRepCommandInfoCreator.cs" />
+    <Compile Include="Common\RoslynReplCommandTargetFilter.cs" />
+    <Compile Include="Common\RoslynReplCommandTargetFilterCreator.cs" />
+    <Compile Include="Common\RoslynReplEditorUtils.cs" />
+    <Compile Include="Common\RoslynReplTextViewRoles.cs" />
     <Compile Include="Common\ScriptContent.cs" />
     <Compile Include="Common\ScriptControl.xaml.cs">
       <DependentUpon>ScriptControl.xaml</DependentUpon>

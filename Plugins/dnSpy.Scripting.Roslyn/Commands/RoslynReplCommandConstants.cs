@@ -20,10 +20,21 @@
 using System;
 using dnSpy.Contracts.Command;
 
-namespace dnSpy.Files.Tabs.TextEditor {
-	static class FileTabCommandConstants {
-		public static readonly Guid FileTabGroup = new Guid("76CB650C-61E4-49E7-B820-5DE5476CE29D");
-		public const double CMDINFO_ORDER_FILETAB = CommandConstants.CMDINFO_ORDER_TEXT_EDITOR - 100;
-		public const double CMDTARGETFILTER_ORDER_FILETAB = CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 100;
+namespace dnSpy.Scripting.Roslyn.Commands {
+	static class RoslynReplCommandConstants {
+		/// <summary>
+		/// Roslyn REPL command IDs (<see cref="RoslynReplIds"/>)
+		/// </summary>
+		public static readonly Guid RoslynReplGroup = new Guid("75758152-7214-4C5C-8F5C-180441233B46");
+
+		/// <summary>
+		/// Order of Roslyn REPL editor <see cref="ICommandInfoCreator"/>
+		/// </summary>
+		public const double CMDINFO_ORDER_ROSLYN_REPL = CommandConstants.CMDINFO_ORDER_REPL - 100;
+
+		/// <summary>
+		/// Order of Roslyn REPL editor <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_ROSLYN_REPL = CommandConstants.CMDTARGETFILTER_ORDER_REPL - 100;
 	}
 }

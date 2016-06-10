@@ -17,19 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Scripting.Roslyn.Properties;
-
 namespace dnSpy.Scripting.Roslyn.Common {
-	sealed class ClearCommand : IScriptCommand {
-		public IEnumerable<string> Names {
-			get {
-				yield return "clear";
-				yield return "cls";
-			}
-		}
+	/// <summary>
+	/// Roslyn scripting text view roles
+	/// </summary>
+	static class RoslynReplTextViewRoles {
+		/// <summary>
+		/// Roslyn REPL (any supported language, eg. C# and Visual Basic)
+		/// </summary>
+		public const string RoslynRepl = "C785863B-E460-42FB-9CB8-6F05A8413C2B";
 
-		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpClearDescription;
-		public void Execute(ScriptControlVM vm, string[] args) => vm.ReplEditor.ClearScreen();
+		/// <summary>
+		/// C# REPL
+		/// </summary>
+		public const string CSharpRepl = "71560089-DAD6-410B-A43B-5BF93B8E257C";
+
+		/// <summary>
+		/// Visual Basic REPL
+		/// </summary>
+		public const string VisualBasicRepl = "CE4A1AB2-FAA7-44DD-ACF0-B6D6FC1BA2BC";
 	}
 }

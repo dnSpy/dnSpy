@@ -53,7 +53,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		internal const string CMD_PREFIX = "#";
 
 		public ICommand ResetCommand => new RelayCommand(a => Reset(), a => CanReset);
-		public ICommand ClearCommand => new RelayCommand(a => ReplEditor.Clear(), a => ReplEditor.CanClear);
+		public ICommand ClearCommand => new RelayCommand(a => ReplEditor.ClearScreen(), a => ReplEditor.CanClearScreen);
 		public ICommand HistoryPreviousCommand => new RelayCommand(a => ReplEditor.SelectPreviousCommand(), a => ReplEditor.CanSelectPreviousCommand);
 		public ICommand HistoryNextCommand => new RelayCommand(a => ReplEditor.SelectNextCommand(), a => ReplEditor.CanSelectNextCommand);
 		public object ResetImageObject => this;

@@ -80,6 +80,8 @@
     <Compile Include="Command\IRegisteredCommandElement.cs" />
     <Compile Include="Command\KeyInput.cs" />
     <Compile Include="Command\KeyShortcut.cs" />
+    <Compile Include="Command\ReplIds.cs" />
+    <Compile Include="Command\ReplIdsExtensions.cs" />
     <Compile Include="Command\TextEditorIds.cs" />
     <Compile Include="Command\TextEditorIdsExtensions.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
@@ -402,12 +404,14 @@
     <Compile Include="Text\Editor\Operations\IEditorOperations.cs" />
     <Compile Include="Text\Editor\Operations\IEditorOperations2.cs" />
     <Compile Include="Text\Editor\Operations\IEditorOperationsFactoryService.cs" />
+    <Compile Include="Text\Editor\Operations\IReplEditorOperations.cs" />
     <Compile Include="Text\Editor\Operations\ITextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\ITextStructureNavigatorProvider.cs" />
     <Compile Include="Text\Editor\Operations\ITextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\TextExtent.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
+    <Compile Include="Text\Editor\ReplEditorUtils.cs" />
     <Compile Include="Text\Editor\ReplTextViewRoles.cs" />
     <Compile Include="Text\Editor\ScrollDirection.cs" />
     <Compile Include="Text\Editor\TextSelectionMode.cs" />

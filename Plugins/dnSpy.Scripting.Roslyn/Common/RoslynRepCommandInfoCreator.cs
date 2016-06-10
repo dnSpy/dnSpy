@@ -18,18 +18,21 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Scripting.Roslyn.Properties;
+using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Scripting.Roslyn.Commands;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	sealed class ClearCommand : IScriptCommand {
-		public IEnumerable<string> Names {
-			get {
-				yield return "clear";
-				yield return "cls";
-			}
+	[ExportCommandInfoCreator(RoslynReplCommandConstants.CMDINFO_ORDER_ROSLYN_REPL)]
+	sealed class RoslynRepCommandInfoCreator : ICommandInfoCreator {
+		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
+			var textView = target as ITextView;
+			if (textView?.Roles.Contains(RoslynReplTextViewRoles.RoslynRepl) != true)
+				yield break;
+
+			// Nothing at the moment...
 		}
 
-		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpClearDescription;
-		public void Execute(ScriptControlVM vm, string[] args) => vm.ReplEditor.ClearScreen();
+		public CommandInfo? CreateFromTextInput(object target, string text) => null;
 	}
 }

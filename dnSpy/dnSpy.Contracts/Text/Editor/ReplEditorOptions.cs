@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// <see cref="IReplEditor"/> options
@@ -51,6 +54,26 @@ namespace dnSpy.Contracts.Text.Editor {
 		string secondaryPrompt;
 
 		/// <summary>
+		/// All <see cref="ITextView"/> roles
+		/// </summary>
+		public HashSet<string> Roles { get; }
+
+		static readonly string[] defaultRoles = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Editable,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.Zoomable,
+			ReplTextViewRoles.REPL,
+		};
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ReplEditorOptions() {
+			Roles = new HashSet<string>(defaultRoles, StringComparer.InvariantCultureIgnoreCase);
+		}
+
+		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
@@ -60,6 +83,9 @@ namespace dnSpy.Contracts.Text.Editor {
 			base.CopyTo(other);
 			other.PrimaryPrompt = PrimaryPrompt;
 			other.SecondaryPrompt = SecondaryPrompt;
+			other.Roles.Clear();
+			foreach (var r in Roles)
+				other.Roles.Add(r);
 			return other;
 		}
 	}

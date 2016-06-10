@@ -23,7 +23,7 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	[ExportCommandInfoCreator(FileTabCommandConstants.CMDTARGETFILTER_ORDER_FILETAB)]
+	[ExportCommandInfoCreator(FileTabCommandConstants.CMDINFO_ORDER_FILETAB)]
 	sealed class FileTabCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;

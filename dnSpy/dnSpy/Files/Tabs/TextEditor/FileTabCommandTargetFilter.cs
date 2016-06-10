@@ -30,12 +30,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textView = textView;
 		}
 
-		TextEditorControl GetTextEditorControl() =>
+		TextEditorControl TryGetInstance() =>
 			__textEditorControl ?? (__textEditorControl = TextEditorControl.TryGetInstance(textView));
 		TextEditorControl __textEditorControl;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (GetTextEditorControl() == null)
+			if (TryGetInstance() == null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == FileTabCommandConstants.FileTabGroup) {
@@ -58,7 +58,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-			var tabControl = GetTextEditorControl();
+			var tabControl = TryGetInstance();
 			if (tabControl == null)
 				return CommandTargetStatus.NotHandled;
 

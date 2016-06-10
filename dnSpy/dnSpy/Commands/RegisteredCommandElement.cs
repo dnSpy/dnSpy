@@ -202,14 +202,14 @@ namespace dnSpy.Commands {
 			int index = IndexOf(filter);
 			if (index < 0)
 				return CommandTargetStatus.NotHandled;
-			return CanExecute(index, group, cmdId);
+			return CanExecute(index + 1, group, cmdId);
 		}
 
 		CommandTargetStatus ExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId, object args, ref object result) {
 			int index = IndexOf(filter);
 			if (index < 0)
 				return CommandTargetStatus.NotHandled;
-			return Execute(index, group, cmdId, args, ref result);
+			return Execute(index + 1, group, cmdId, args, ref result);
 		}
 
 		CommandTargetStatus CanExecute(int currentIndex, Guid group, int cmdId) {

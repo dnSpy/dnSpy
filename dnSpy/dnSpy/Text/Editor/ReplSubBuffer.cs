@@ -17,19 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Scripting.Roslyn.Properties;
+using dnSpy.Contracts.Text;
 
-namespace dnSpy.Scripting.Roslyn.Common {
-	sealed class ClearCommand : IScriptCommand {
-		public IEnumerable<string> Names {
-			get {
-				yield return "clear";
-				yield return "cls";
-			}
+namespace dnSpy.Text.Editor {
+	sealed class ReplSubBuffer {
+		public ReplBufferKind Kind { get; }
+		public Span Span { get; }
+
+		public ReplSubBuffer(ReplBufferKind kind, int start, int end) {
+			Kind = kind;
+			Span = Span.FromBounds(start, end);
 		}
-
-		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpClearDescription;
-		public void Execute(ScriptControlVM vm, string[] args) => vm.ReplEditor.ClearScreen();
 	}
 }

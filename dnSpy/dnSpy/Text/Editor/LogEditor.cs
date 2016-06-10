@@ -167,12 +167,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void RawAppend(string text) => wpfTextView.TextBuffer.Insert(wpfTextView.TextSnapshot.Length, text);
-		int CaretOffset => wpfTextView.Caret.Position.BufferPosition.Position;
 
 		void FlushOutputUIThread() {
 			dispatcher.VerifyAccess();
 
-			var currentLine = wpfTextView.TextSnapshot.GetLineFromPosition(CaretOffset);
+			var currentLine = wpfTextView.Caret.Position.BufferPosition.GetContainingLine();
 			bool canMoveCaret = currentLine.Start == LastLine.Start;
 
 			ColorAndText[] newPendingOutput;

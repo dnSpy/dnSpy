@@ -19,7 +19,6 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Shared.Themes;
 
@@ -69,7 +68,6 @@ namespace dnSpy.Text {
 
 				offs += defaultTextLength + tokenLength;
 			}
-			Debug.Assert(offs == end);
 		}
 	}
 }

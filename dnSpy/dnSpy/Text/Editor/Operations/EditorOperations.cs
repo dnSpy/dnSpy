@@ -1246,19 +1246,7 @@ namespace dnSpy.Text.Editor.Operations {
 			return true;
 		}
 
-		string GetLineBreak(SnapshotPoint pos) {
-			if (Options.GetOptionValue(DefaultOptions.ReplicateNewLineCharacterOptionId)) {
-				var line = pos.GetContainingLine();
-				if (line.LineBreakLength != 0)
-					return pos.Snapshot.GetText(line.Extent.End.Position, line.LineBreakLength);
-				if (line.LineNumber != 0) {
-					line = pos.Snapshot.GetLineFromLineNumber(line.LineNumber - 1);
-					return pos.Snapshot.GetText(line.Extent.End.Position, line.LineBreakLength);
-				}
-			}
-			var linebreak = Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId);
-			return linebreak.Length != 0 ? linebreak : Environment.NewLine;
-		}
+		string GetLineBreak(SnapshotPoint pos) => Options.GetLineBreak(pos);
 
 		public void PageDown(bool extendSelection) {
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();

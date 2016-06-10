@@ -38,7 +38,7 @@ namespace dnSpy.Text {
 		}
 
 		public int DocOffsetToRelativeOffset(int docOffset) {
-			Debug.Assert(CachedColors == Default.CachedColors || (Offset <= docOffset && docOffset < Offset + CachedColors.Length));
+			Debug.Assert(CachedColors == Default.CachedColors || Offset <= docOffset);
 			return docOffset - Offset;
 		}
 
