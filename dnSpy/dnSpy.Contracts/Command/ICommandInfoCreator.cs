@@ -33,7 +33,12 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="target">Target object</param>
 		/// <returns></returns>
 		IEnumerable<CommandShortcut> GetCommandShortcuts(object target);
+	}
 
+	/// <summary>
+	/// Converts user input to a <see cref="CommandInfo"/>
+	/// </summary>
+	public interface ICommandInfoCreator2 : ICommandInfoCreator {
 		/// <summary>
 		/// Returns a <see cref="CommandInfo"/> created from user text
 		/// </summary>

@@ -32,7 +32,5 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 			// Nothing at the moment...
 		}
-
-		public CommandInfo? CreateFromTextInput(object target, string text) => null;
 	}
 }

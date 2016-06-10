@@ -24,7 +24,7 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_TEXT_EDITOR)]
-	sealed class DefaultTextEditorCommandInfoCreator : ICommandInfoCreator {
+	sealed class DefaultTextEditorCommandInfoCreator : ICommandInfoCreator2 {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			if (!(target is ITextView))
 				yield break;

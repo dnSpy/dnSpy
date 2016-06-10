@@ -42,7 +42,5 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			yield return CommandShortcut.Control(Key.Enter, FileTabIds.FollowReferenceNewTab.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.Escape, FileTabIds.ClearMarkedReferencesAndToolTip.ToCommandInfo());
 		}
-
-		public CommandInfo? CreateFromTextInput(object target, string text) => null;
 	}
 }

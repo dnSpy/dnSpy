@@ -37,7 +37,5 @@ namespace dnSpy.Commands {
 			yield return CommandShortcut.Control(Key.V, DefaultIds.Paste.ToCommandInfo());
 			yield return CommandShortcut.Shift(Key.Insert, DefaultIds.Paste.ToCommandInfo());
 		}
-
-		public CommandInfo? CreateFromTextInput(object target, string text) => null;
 	}
 }

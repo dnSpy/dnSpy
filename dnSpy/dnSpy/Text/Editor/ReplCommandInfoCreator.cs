@@ -40,7 +40,5 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.CtrlAlt(Key.Up, ReplIds.SelectSameTextPreviousCommand.ToCommandInfo());
 			yield return CommandShortcut.CtrlAlt(Key.Down, ReplIds.SelectSameTextNextCommand.ToCommandInfo());
 		}
-
-		public CommandInfo? CreateFromTextInput(object target, string text) => null;
 	}
 }

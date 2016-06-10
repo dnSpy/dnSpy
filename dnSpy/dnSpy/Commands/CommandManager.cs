@@ -58,7 +58,10 @@ namespace dnSpy.Commands {
 
 		public CommandInfo? CreateCommandInfo(object target, string text) {
 			foreach (var c in commandInfoCreators) {
-				var cmd = c.Value.CreateFromTextInput(target, text);
+				var c2 = c.Value as ICommandInfoCreator2;
+				if (c2 == null)
+					continue;
+				var cmd = c2.CreateFromTextInput(target, text);
 				if (cmd != null)
 					return cmd;
 			}
