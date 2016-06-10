@@ -355,7 +355,7 @@ namespace dnSpy.Text.Editor.Operations {
 			using (var ed = TextBuffer.CreateEdit()) {
 				for (int lineNumber = startLineNumber; lineNumber <= endLineNumber; lineNumber++) {
 					var line = Snapshot.GetLineFromLineNumber(lineNumber);
-					if (line.IsLineEmpty())
+					if (line.IsEmptyOrWhitespace())
 						ed.Delete(line.ExtentIncludingLineBreak.Span);
 				}
 				ed.Apply();
@@ -724,10 +724,10 @@ namespace dnSpy.Text.Editor.Operations {
 				if (c != '\t')
 					sb.Append(c);
 				else {
-					int spaces = tabSize - (sb.Length % tabSize);
+					int spaces = tabSize - sb.Length % tabSize;
 					for (int j = 0; j < spaces; j++)
 						sb.Append(' ');
-					Debug.Assert((sb.Length % tabSize) == 0);
+					Debug.Assert(sb.Length % tabSize == 0);
 				}
 			}
 			return sb.ToString();

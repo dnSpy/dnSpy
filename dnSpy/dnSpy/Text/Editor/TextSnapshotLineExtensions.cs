@@ -21,7 +21,7 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text.Editor {
 	static class TextSnapshotLineExtensions {
-		public static bool IsLineEmpty(this ITextSnapshotLine line) {
+		public static bool IsEmptyOrWhitespace(this ITextSnapshotLine line) {
 			if (line.Length == 0)
 				return true;
 			// Check the end first, it's rarely whitespace if there's non-whitespace on the line
