@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 					return false;
 
 				default:
-					Debug.Fail($"Unknown command: {group} {cmdId}");
+					Debug.Fail($"Unknown {nameof(DefaultIds)} value: {group} {(DefaultIds)cmdId}");
 					return true;
 				}
 			}
@@ -164,7 +164,7 @@ namespace dnSpy.Text.Editor {
 					return false;
 
 				default:
-					Debug.Fail($"Unknown command: {group} {cmdId}");
+					Debug.Fail($"Unknown {nameof(TextEditorIds)} value: {group} {(TextEditorIds)cmdId}");
 					return true;
 				}
 			}
