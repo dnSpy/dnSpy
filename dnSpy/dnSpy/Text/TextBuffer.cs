@@ -177,6 +177,8 @@ namespace dnSpy.Text {
 						Document.Replace(change.OldPosition, change.OldLength, change.NewText);
 				}
 				Debug.Assert(__new_changes == null);
+				if (__new_changes != null)
+					throw new InvalidOperationException("TextChanged handler wasn't called");
 				__new_changes = null;
 
 				var afterSnapshot = CurrentSnapshot;
