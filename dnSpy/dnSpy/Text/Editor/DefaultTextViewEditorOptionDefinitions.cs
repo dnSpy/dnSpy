@@ -94,8 +94,8 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class RectangularSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.RectangularSelectionId;
+	sealed class AllowBoxSelectionIdEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.AllowBoxSelectionId;
 		public override bool Default => true;
 	}
 
