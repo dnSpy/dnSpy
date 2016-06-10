@@ -42,7 +42,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using dnlib.DotNet;
@@ -61,7 +60,6 @@ using dnSpy.Text;
 using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 
@@ -129,7 +127,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfTextView = wpfTextView;
 			TextEditor = wpfTextView.DnSpyTextEditor;
 			this.toolTipHelper.Initialize(TextEditor);
-			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = wpfTextView.UIObject;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
@@ -182,58 +179,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.waitAdorner.Content = null;
 			if (wa?.IsKeyboardFocusWithin == true)
 				this.textEditorHelper.SetFocus();
-		}
-
-		// Remove commands the text editor added so we can use them for our own purposes
-		static void RemoveCommands(DnSpyTextEditor textEditor) {
-			var handler = textEditor.TextArea.DefaultInputHandler;
-
-			RemoveCommands(handler.Editing);
-			RemoveCommands(handler.CaretNavigation);
-			RemoveCommands(handler.CommandBindings);
-		}
-
-		static void RemoveCommands(TextAreaInputHandler handler) {
-			var commands = new HashSet<ICommand>();
-			var inputList = (IList<InputBinding>)handler.InputBindings;
-			for (int i = inputList.Count - 1; i >= 0; i--) {
-				var kb = inputList[i] as KeyBinding;
-				if (kb == null)
-					continue;
-				if ((kb.Modifiers == ModifierKeys.None && kb.Key == Key.Back) ||
-					(kb.Modifiers == ModifierKeys.Shift && kb.Key == Key.Back) ||
-					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Enter) ||
-					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Tab) ||
-					(kb.Modifiers == ModifierKeys.Shift && kb.Key == Key.Tab) ||
-					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter) ||
-					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Delete)) {
-					inputList.RemoveAt(i);
-					commands.Add(kb.Command);
-				}
-			}
-			RemoveCommands(handler.CommandBindings);
-			var bindingList = (IList<CommandBinding>)handler.CommandBindings;
-			for (int i = bindingList.Count - 1; i >= 0; i--) {
-				var binding = bindingList[i];
-				if (commands.Contains(binding.Command))
-					bindingList.RemoveAt(i);
-			}
-		}
-
-		static void RemoveCommands(ICollection<CommandBinding> commandBindings) {
-			var bindingList = (IList<CommandBinding>)commandBindings;
-			for (int i = bindingList.Count - 1; i >= 0; i--) {
-				var binding = bindingList[i];
-				if (binding.Command == AvalonEditCommands.DeleteLine ||
-					binding.Command == ApplicationCommands.Undo ||
-					binding.Command == ApplicationCommands.Redo ||
-					binding.Command == ApplicationCommands.Cut ||
-					binding.Command == ApplicationCommands.Delete ||
-					binding.Command == EditingCommands.Delete ||
-					binding.Command == EditingCommands.Backspace ||
-					binding.Command == NavigationCommands.BrowseBack)
-					bindingList.RemoveAt(i);
-			}
 		}
 
 		void ClearCustomElementGenerators() {
