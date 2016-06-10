@@ -90,8 +90,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void Initialize(IMenuManager menuManager, TextEditorControl textEditorControl) {
 			this.textEditorControl = textEditorControl;
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
-			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
-			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
 			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorControl, textEditorControl.TextEditor));
 		}
 
@@ -255,8 +253,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void Dispose() {
 			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
-			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
-			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
 			textEditorControl.Dispose();
 			outputData.Clear();
 		}

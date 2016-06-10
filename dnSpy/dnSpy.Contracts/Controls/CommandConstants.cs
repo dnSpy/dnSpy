@@ -33,12 +33,6 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of <see cref="ITextEditorUIContext"/> UI control</summary>
 		public static readonly Guid GUID_TEXTEDITOR_UICONTEXT = new Guid("AD0DD2EF-2DCB-4079-BBC4-1D678114D66A");
 
-		/// <summary>Guid of <see cref="ITextEditorUIContext"/>'s text editor</summary>
-		public static readonly Guid GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR = new Guid("B31795A9-44FA-4DCF-BEC4-5BEE981C9C9E");
-
-		/// <summary>Guid of <see cref="ITextEditorUIContext"/>'s text area</summary>
-		public static readonly Guid GUID_TEXTEDITOR_UICONTEXT_TEXTAREA = new Guid("DF8282E5-E5B0-4A57-8C8A-3B8F7D2624AA");
-
 		/// <summary>Guid of file <see cref="ITreeView"/></summary>
 		public static readonly Guid GUID_FILE_TREEVIEW = new Guid("E0ABA20F-5CD7-4CFD-A9D4-F9F3C655DD4A");
 
