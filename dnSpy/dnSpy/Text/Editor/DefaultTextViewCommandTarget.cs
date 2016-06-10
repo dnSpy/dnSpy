@@ -175,7 +175,7 @@ namespace dnSpy.Text.Editor {
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (IsReadOnly && IsEditCommand(group, cmdId))
-				return CommandTargetStatus.Handled;
+				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.DefaultGroup) {
 				switch ((DefaultIds)cmdId) {
@@ -298,7 +298,7 @@ namespace dnSpy.Text.Editor {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
 			if (IsReadOnly && IsEditCommand(group, cmdId))
-				return CommandTargetStatus.Handled;
+				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.DefaultGroup) {
 				switch ((DefaultIds)cmdId) {
