@@ -44,13 +44,22 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
+		static readonly string[] defaultRoles = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Editable,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.Zoomable,
+			CodeEditorTextViewRoles.CODE,
+		};
+
 		public CodeEditor(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			options = options ?? new CodeEditorOptions();
 			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = options.TextBuffer;
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
-			TextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
+			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
+			TextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
 		}
 
 		public void Dispose() {

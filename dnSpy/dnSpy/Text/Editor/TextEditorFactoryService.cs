@@ -30,7 +30,7 @@ using dnSpy.Contracts.Text.Editor.Operations;
 namespace dnSpy.Text.Editor {
 	//TODO: This iface should be removed. The users shouldn't depend on the text editor impl
 	interface ITextEditorFactoryService2 : ITextEditorFactoryService {
-		WpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator);
+		WpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator);
 	}
 
 	[Export(typeof(ITextEditorFactoryService))]
@@ -169,10 +169,12 @@ namespace dnSpy.Text.Editor {
 			return wpfTextView;
 		}
 
-		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
+		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			return CreateTextViewImpl(new TextViewModel(new TextDataModel(textBuffer)), DefaultRoles, editorOptionsFactoryService.GlobalOptions, options, createGuidObjectsCreator);
+			if (roles == null)
+				throw new ArgumentNullException(nameof(roles));
+			return CreateTextViewImpl(new TextViewModel(new TextDataModel(textBuffer)), roles, editorOptionsFactoryService.GlobalOptions, options, createGuidObjectsCreator);
 		}
 
 		public IWpfTextViewHost CreateTextViewHost(IWpfTextView wpfTextView, bool setFocus) {

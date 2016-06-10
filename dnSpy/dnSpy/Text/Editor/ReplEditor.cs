@@ -64,6 +64,14 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
+		static readonly string[] defaultRoles = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Editable,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.Zoomable,
+			ReplTextViewRoles.REPL,
+		};
+
 		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options ?? new ReplEditorOptions();
@@ -75,7 +83,8 @@ namespace dnSpy.Text.Editor {
 			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
-			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, options, () => new GuidObjectsCreator(this));
+			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
+			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);

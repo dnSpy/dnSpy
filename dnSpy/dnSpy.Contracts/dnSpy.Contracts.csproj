@@ -358,6 +358,7 @@
     <Compile Include="Text\Editor\CaretPosition.cs" />
     <Compile Include="Text\Editor\CaretPositionChangedEventArgs.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />
+    <Compile Include="Text\Editor\CodeEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
     <Compile Include="Text\Editor\DefaultOptions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewHostOptions.cs" />
@@ -395,6 +396,7 @@
     <Compile Include="Text\Editor\IWpfTextViewHost.cs" />
     <Compile Include="Text\Editor\IWpfTextViewLineCollection.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
+    <Compile Include="Text\Editor\LogEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\MouseHoverAttribute.cs" />
     <Compile Include="Text\Editor\MouseHoverEventArgs.cs" />
     <Compile Include="Text\Editor\Operations\IEditorOperations.cs" />
@@ -406,6 +408,7 @@
     <Compile Include="Text\Editor\Operations\TextExtent.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
+    <Compile Include="Text\Editor\ReplTextViewRoles.cs" />
     <Compile Include="Text\Editor\ScrollDirection.cs" />
     <Compile Include="Text\Editor\TextSelectionMode.cs" />
     <Compile Include="Text\Editor\TextViewCreatedEventArgs.cs" />

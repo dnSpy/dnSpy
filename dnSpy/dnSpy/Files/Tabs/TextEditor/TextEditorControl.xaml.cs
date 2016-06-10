@@ -91,6 +91,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IContentType defaultContentType;
 		readonly IWpfTextView wpfTextView;
 
+		static readonly string[] defaultRoles = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Debuggable,
+			PredefinedTextViewRoles.Document,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.Structured,
+			PredefinedTextViewRoles.Zoomable,
+		};
+
 		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
@@ -105,7 +114,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
-			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, new TextViewCreatorOptions(), null);
+			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
+			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
