@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 
@@ -48,11 +49,15 @@ namespace dnSpy.Text.Editor {
 				case DefaultIds.Paste:
 				case DefaultIds.Redo:
 				case DefaultIds.Undo:
+				case DefaultIds.Unknown:
 					return true;
 
 				case DefaultIds.Copy:
-				default:
 					return false;
+
+				default:
+					Debug.Fail($"Unknown command: {group} {cmdId}");
+					return true;
 				}
 			}
 			else if (group == CommandConstants.TextEditorGroup) {
@@ -156,8 +161,11 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.WORDPREV_EXT_COL:
 				case TextEditorIds.ZoomIn:
 				case TextEditorIds.ZoomOut:
-				default:
 					return false;
+
+				default:
+					Debug.Fail($"Unknown command: {group} {cmdId}");
+					return true;
 				}
 			}
 			return false;
