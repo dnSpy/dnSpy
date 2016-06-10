@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 			GetContentTypes(dict, contentType, 0);
 			return dict;
 		}
-			
+
 		static void GetContentTypes(Dictionary<IContentType, int> dict, IContentType contentType, int depth) {
 			if (dict.ContainsKey(contentType))
 				return;

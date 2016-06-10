@@ -64,7 +64,7 @@ namespace dnSpy.Text.Editor.Operations {
 				throw new ArgumentNullException(nameof(contentType));
 
 			if (providerSelector == null)
-				providerSelector = providerSelector = new ProviderSelector<ITextStructureNavigatorProvider>(textStructureNavigatorProviders, a => a.ContentTypes);
+				providerSelector = new ProviderSelector<ITextStructureNavigatorProvider>(textStructureNavigatorProviders, a => a.ContentTypes);
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var nav = p.CreateTextStructureNavigator(textBuffer);
 				if (nav != null)
