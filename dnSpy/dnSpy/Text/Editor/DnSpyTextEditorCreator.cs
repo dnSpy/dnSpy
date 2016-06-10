@@ -62,10 +62,6 @@ namespace dnSpy.Text.Editor {
 			var textBuffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
 			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, textBuffer);
 
-			if (options.TextEditorCommandGuid != null)
-				wpfCommandManager.Add(options.TextEditorCommandGuid.Value, textEditor);
-			if (options.TextAreaCommandGuid != null)
-				wpfCommandManager.Add(options.TextAreaCommandGuid.Value, textEditor.TextArea);
 			if (options.MenuGuid != null)
 				menuManager.InitializeContextMenu(textEditor, options.MenuGuid.Value, options.CreateGuidObjectsCreator?.Invoke(), new ContextMenuInitializer(textEditor, textEditor));
 

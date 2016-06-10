@@ -80,5 +80,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <returns></returns>
 		string GetText();
+
+		/// <summary>
+		/// Gets the underlying text view. It's not thread safe.
+		/// </summary>
+		ITextView TextView { get; }
 	}
 }

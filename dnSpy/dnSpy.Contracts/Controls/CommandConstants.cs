@@ -87,18 +87,6 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of debugger memory <c>HexBox</c></summary>
 		public static readonly Guid GUID_DEBUGGER_MEMORY_HEXBOX = new Guid("34F1BAA4-36F1-4687-8552-7D71BDDBC1F3");
 
-		/// <summary>Guid of C# Interactive's text editor</summary>
-		public static readonly Guid GUID_REPL_CSHARP_TEXTEDITOR = new Guid("29157769-57F7-40B1-BE9B-F790A31049B9");
-
-		/// <summary>Guid of C# Interactive's text area</summary>
-		public static readonly Guid GUID_REPL_CSHARP_TEXTAREA = new Guid("C34EA6FC-E0AA-465F-A1C9-EA82DB3E9550");
-
-		/// <summary>Guid of Visual Basic Interactive's text editor</summary>
-		public static readonly Guid GUID_REPL_VISUALBASIC_TEXTEDITOR = new Guid("FA8135DF-F0FE-41CD-8C06-328D0FE3DAE9");
-
-		/// <summary>Guid of Visual Basic Interactive's text area</summary>
-		public static readonly Guid GUID_REPL_VISUALBASIC_TEXTAREA = new Guid("198589C0-D2F3-4672-A472-15DF63EFF47F");
-
 		/// <summary>Guid of output control</summary>
 		public static readonly Guid GUID_OUTPUT_CONTROL = new Guid("0DD9693D-DA25-40A0-A9AC-4393D5819969");
 	}

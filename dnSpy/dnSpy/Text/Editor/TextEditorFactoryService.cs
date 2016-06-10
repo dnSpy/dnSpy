@@ -154,8 +154,6 @@ namespace dnSpy.Text.Editor {
 
 		WpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
 			var commonTextEditorOptions = new CommonTextEditorOptions {
-				TextEditorCommandGuid = options?.TextEditorCommandGuid,
-				TextAreaCommandGuid = options?.TextAreaCommandGuid,
 				MenuGuid = options?.MenuGuid,
 				ContentType = textViewModel.DataModel.ContentType,
 				CreateGuidObjects = options?.CreateGuidObjects,

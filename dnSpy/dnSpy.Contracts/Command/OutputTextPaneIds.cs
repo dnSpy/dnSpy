@@ -17,29 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using dnSpy.Contracts.Output;
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// <see cref="ILogEditor"/> options
+	/// <see cref="IOutputTextPane"/> command IDs
 	/// </summary>
-	public sealed class LogEditorOptions : CommonTextEditorOptions {
+	public enum OutputTextPaneIds {
 		/// <summary>
-		/// Extra text view roles
+		/// Clears all text
 		/// </summary>
-		public List<string> ExtraRoles { get; } = new List<string>();
-
-		/// <summary>
-		/// Clones this
-		/// </summary>
-		/// <returns></returns>
-		public new LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
-
-		LogEditorOptions CopyTo(LogEditorOptions other) {
-			base.CopyTo(other);
-			other.ExtraRoles.Clear();
-			other.ExtraRoles.AddRange(ExtraRoles);
-			return other;
-		}
+		ClearAll,
 	}
 }

@@ -25,8 +25,6 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class DnSpyTextEditorOptions {
-		public Guid? TextEditorCommandGuid { get; }
-		public Guid? TextAreaCommandGuid { get; }
 		public Guid? MenuGuid { get; }
 		public IContentType ContentType { get; }
 		public Guid? ContentTypeGuid { get; }
@@ -35,8 +33,6 @@ namespace dnSpy.Text.Editor {
 		public Func<IGuidObjectsCreator> CreateGuidObjectsCreator { get; }
 
 		public DnSpyTextEditorOptions(CommonTextEditorOptions options, ITextBuffer textBuffer, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
-			TextEditorCommandGuid = options.TextEditorCommandGuid;
-			TextAreaCommandGuid = options.TextAreaCommandGuid;
 			MenuGuid = options.MenuGuid;
 			ContentType = options.ContentType;
 			ContentTypeGuid = options.ContentTypeGuid;

@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Command {
 		public static readonly Guid ReplGroup = new Guid("8DBB0C94-6B10-4AC3-A715-CC4D478F7B67");
 
 		/// <summary>
+		/// Output logger text pane command IDs (<see cref="OutputTextPaneIds"/>)
+		/// </summary>
+		public static readonly Guid OutputTextPaneGroup = new Guid("091D1F2F-175A-4BD9-A0F3-C5F052D22D75");
+
+		/// <summary>
 		/// Order of default <see cref="ICommandInfoCreator"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_DEFAULT = 10000;
@@ -63,5 +68,15 @@ namespace dnSpy.Contracts.Command {
 		/// Order of REPL editor <see cref="ICommandTargetFilter"/>
 		/// </summary>
 		public const double CMDTARGETFILTER_ORDER_REPL = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 100;
+
+		/// <summary>
+		/// Order of output logger text pane <see cref="ICommandInfoCreator"/>
+		/// </summary>
+		public const double CMDINFO_ORDER_OUTPUT_TEXTPANE = CMDINFO_ORDER_TEXT_EDITOR - 100;
+
+		/// <summary>
+		/// Order of output logger text pane <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_OUTPUT_TEXTPANE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 100;
 	}
 }

@@ -80,6 +80,8 @@
     <Compile Include="Command\IRegisteredCommandElement.cs" />
     <Compile Include="Command\KeyInput.cs" />
     <Compile Include="Command\KeyShortcut.cs" />
+    <Compile Include="Command\OutputTextPaneIds.cs" />
+    <Compile Include="Command\OutputTextPaneIdsExtensions.cs" />
     <Compile Include="Command\ReplIds.cs" />
     <Compile Include="Command\ReplIdsExtensions.cs" />
     <Compile Include="Command\TextEditorIds.cs" />
@@ -409,6 +411,7 @@
     <Compile Include="Text\Editor\Operations\ITextStructureNavigatorProvider.cs" />
     <Compile Include="Text\Editor\Operations\ITextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\TextExtent.cs" />
+    <Compile Include="Text\Editor\OutputLogEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />

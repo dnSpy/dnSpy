@@ -33,6 +33,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
+using dnSpy.Text.Editor;
 
 namespace dnSpy.Output {
 	interface IOutputManagerInternal : IOutputManager {
@@ -148,13 +149,13 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public IOutputTextPane Create(Guid guid, string name, Guid contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) =>
-			Create(guid, name, (object)contentType, textEditorCommandGuid, textAreaCommandGuid);
+		public IOutputTextPane Create(Guid guid, string name, Guid contentType) =>
+			Create(guid, name, (object)contentType);
 
-		public IOutputTextPane Create(Guid guid, string name, IContentType contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) =>
-			Create(guid, name, (object)contentType, textEditorCommandGuid, textAreaCommandGuid);
+		public IOutputTextPane Create(Guid guid, string name, IContentType contentType) =>
+			Create(guid, name, (object)contentType);
 
-		IOutputTextPane Create(Guid guid, string name, object contentTypeObj, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
+		IOutputTextPane Create(Guid guid, string name, object contentTypeObj) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -164,13 +165,12 @@ namespace dnSpy.Output {
 				return vm;
 
 			var logEditorOptions = new LogEditorOptions {
-				TextEditorCommandGuid = textEditorCommandGuid,
-				TextAreaCommandGuid = textAreaCommandGuid,
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
 				ContentType = contentTypeObj as IContentType,
 				ContentTypeGuid = contentTypeObj as Guid?,
 				CreateGuidObjects = args => CreateGuidObjects(args),
 			};
+			logEditorOptions.ExtraRoles.Add(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE);
 			var logEditor = logEditorCreator.Create(logEditorOptions);
 
 			vm = new OutputBufferVM(guid, name, logEditor);
@@ -178,6 +178,8 @@ namespace dnSpy.Output {
 			OutputBuffers.Insert(index, vm);
 			while (index < OutputBuffers.Count)
 				OutputBuffers[index].Index = index++;
+
+			OutputTextPaneUtils.AddInstance(vm, logEditor.TextView);
 			return vm;
 		}
 

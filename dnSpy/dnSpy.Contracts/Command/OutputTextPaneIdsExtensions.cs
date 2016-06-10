@@ -17,29 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// <see cref="ILogEditor"/> options
+	/// Extension methods
 	/// </summary>
-	public sealed class LogEditorOptions : CommonTextEditorOptions {
+	public static class OutputTextPaneIdsExtensions {
 		/// <summary>
-		/// Extra text view roles
+		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
 		/// </summary>
-		public List<string> ExtraRoles { get; } = new List<string>();
-
-		/// <summary>
-		/// Clones this
-		/// </summary>
+		/// <param name="id">ID</param>
 		/// <returns></returns>
-		public new LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
+		public static CommandInfo ToCommandInfo(this OutputTextPaneIds id) => new CommandInfo(CommandConstants.OutputTextPaneGroup, (int)id);
 
-		LogEditorOptions CopyTo(LogEditorOptions other) {
-			base.CopyTo(other);
-			other.ExtraRoles.Clear();
-			other.ExtraRoles.AddRange(ExtraRoles);
-			return other;
-		}
+		/// <summary>
+		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
+		/// </summary>
+		/// <param name="id">ID</param>
+		/// <param name="arguments">Arguments or null</param>
+		/// <returns></returns>
+		public static CommandInfo ToCommandInfo(this OutputTextPaneIds id, object arguments) => new CommandInfo(CommandConstants.OutputTextPaneGroup, (int)id, arguments);
 	}
 }

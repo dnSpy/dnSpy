@@ -18,28 +18,19 @@
 */
 
 using System.Collections.Generic;
+using System.Windows.Input;
+using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Text.Editor;
 
-namespace dnSpy.Contracts.Text.Editor {
-	/// <summary>
-	/// <see cref="ILogEditor"/> options
-	/// </summary>
-	public sealed class LogEditorOptions : CommonTextEditorOptions {
-		/// <summary>
-		/// Extra text view roles
-		/// </summary>
-		public List<string> ExtraRoles { get; } = new List<string>();
+namespace dnSpy.Text.Editor {
+	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_OUTPUT_TEXTPANE)]
+	sealed class OutputTextPaneCommandInfoCreator : ICommandInfoCreator {
+		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
+			var textView = target as ITextView;
+			if (textView?.Roles.Contains(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE) != true)
+				yield break;
 
-		/// <summary>
-		/// Clones this
-		/// </summary>
-		/// <returns></returns>
-		public new LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
-
-		LogEditorOptions CopyTo(LogEditorOptions other) {
-			base.CopyTo(other);
-			other.ExtraRoles.Clear();
-			other.ExtraRoles.AddRange(ExtraRoles);
-			return other;
+			yield return CommandShortcut.Control(Key.L, OutputTextPaneIds.ClearAll.ToCommandInfo());
 		}
 	}
 }

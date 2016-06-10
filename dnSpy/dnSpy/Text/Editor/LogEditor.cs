@@ -36,6 +36,7 @@ namespace dnSpy.Text.Editor {
 		public IInputElement FocusedElement => wpfTextView.FocusedElement;
 		public FrameworkElement ScaleElement => wpfTextView.ScaleElement;
 		public object Tag { get; set; }
+		public ITextView TextView => wpfTextView;
 
 		public bool WordWrap {
 			get { return (wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0; }
@@ -89,7 +90,9 @@ namespace dnSpy.Text.Editor {
 			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList, ColorPriority.Default);
-			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
+			var rolesList = new List<string>(defaultRoles);
+			rolesList.AddRange(options.ExtraRoles);
+			var roles = textEditorFactoryService2.CreateTextViewRoleSet(rolesList);
 			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);

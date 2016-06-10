@@ -386,6 +386,10 @@
     <Compile Include="Text\Editor\Operations\TextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\WordParser.cs" />
+    <Compile Include="Text\Editor\OutputTextPaneCommandInfoCreator.cs" />
+    <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilter.cs" />
+    <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilterCreator.cs" />
+    <Compile Include="Text\Editor\OutputTextPaneUtils.cs" />
     <Compile Include="Text\Editor\ProviderSelector.cs" />
     <Compile Include="Text\Editor\ReplBufferKind.cs" />
     <Compile Include="Text\Editor\ReplCommandInfoCreator.cs" />

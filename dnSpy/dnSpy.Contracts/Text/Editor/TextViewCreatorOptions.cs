@@ -27,16 +27,6 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public class TextViewCreatorOptions {
 		/// <summary>
-		/// Command guid of text editor or null
-		/// </summary>
-		public Guid? TextEditorCommandGuid { get; set; }
-
-		/// <summary>
-		/// Command guid of text area or null
-		/// </summary>
-		public Guid? TextAreaCommandGuid { get; set; }
-
-		/// <summary>
 		/// Guid of context menu or null
 		/// </summary>
 		public Guid? MenuGuid { get; set; }
@@ -60,8 +50,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		public TextViewCreatorOptions CopyTo(TextViewCreatorOptions other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
-			other.TextEditorCommandGuid = TextEditorCommandGuid;
-			other.TextAreaCommandGuid = TextAreaCommandGuid;
 			other.MenuGuid = MenuGuid;
 			other.CreateGuidObjects = CreateGuidObjects;
 			return other;
