@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:WordWrapKey", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:CtrlECtrlW", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
 	sealed class WordWrapCommand : MenuItemCommand {
 		readonly IEditorOptions editorOptions;
 

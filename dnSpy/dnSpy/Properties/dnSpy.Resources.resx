@@ -597,9 +597,6 @@
   <data name="WordWrapHeader" xml:space="preserve">
     <value>_Word Wrap</value>
   </data>
-  <data name="WordWrapKey" xml:space="preserve">
-    <value>Ctrl+Alt+W</value>
-  </data>
   <data name="CloseTabButtonToolTip" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -951,7 +948,7 @@
     <value>_Show output from:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+Alt+W)</value>
+    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -1000,5 +997,8 @@
   </data>
   <data name="SearchPanel_UseRegexText" xml:space="preserve">
     <value>Use regular expressions</value>
+  </data>
+  <data name="CtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
   </data>
 </root>

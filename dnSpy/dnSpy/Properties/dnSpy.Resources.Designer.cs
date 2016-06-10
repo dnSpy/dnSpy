@@ -394,6 +394,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+E, Ctrl+W.
+        /// </summary>
+        public static string CtrlECtrlW {
+            get {
+                return ResourceManager.GetString("CtrlECtrlW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The operation was canceled.
         /// </summary>
         public static string DecompilationCanceled {
@@ -1764,7 +1773,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle Word Wrap (Ctrl+Alt+W).
+        ///   Looks up a localized string similar to Toggle Word Wrap (Ctrl+E, Ctrl+W).
         /// </summary>
         public static string Output_WordWrap_ToolTip {
             get {
@@ -2696,15 +2705,6 @@ namespace dnSpy.Properties {
         public static string WordWrapHeader {
             get {
                 return ResourceManager.GetString("WordWrapHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ctrl+Alt+W.
-        /// </summary>
-        public static string WordWrapKey {
-            get {
-                return ResourceManager.GetString("WordWrapKey", resourceCulture);
             }
         }
     }

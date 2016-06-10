@@ -66,7 +66,6 @@ namespace dnSpy.Output {
 			cmds.Add(OutputCommands.ToggleWordWrapCommand,
 				(s, e) => OutputManager.WordWrap = !OutputManager.WordWrap,
 				(s, e) => e.CanExecute = true);
-			cmds.Add(OutputCommands.ToggleWordWrapCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
 			cmds.Add(OutputCommands.ToggleShowLineNumbersCommand,
 				(s, e) => OutputManager.ShowLineNumbers = !OutputManager.ShowLineNumbers,
 				(s, e) => e.CanExecute = true);
@@ -79,7 +78,26 @@ namespace dnSpy.Output {
 					(s, e) => SelectLog(tmpIndex),
 					(s, e) => e.CanExecute = OutputManager.CanSelectLog(tmpIndex));
 			}
+
+			outputControl.PreviewKeyDown += OutputControl_PreviewKeyDown;
 		}
+
+		void OutputControl_PreviewKeyDown(object sender, KeyEventArgs e) {
+			if (!waitingForSecondKey && e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.E) {
+				waitingForSecondKey = true;
+				e.Handled = true;
+				return;
+			}
+			if (waitingForSecondKey && (e.KeyboardDevice.Modifiers == ModifierKeys.Control || e.KeyboardDevice.Modifiers == ModifierKeys.None) && e.Key == Key.W) {
+				waitingForSecondKey = false;
+				e.Handled = true;
+				OutputCommands.ToggleWordWrapCommand.Execute(null, outputControl);
+				return;
+			}
+
+			waitingForSecondKey = false;
+		}
+		bool waitingForSecondKey;
 
 		void SelectLog(int tmpIndex) {
 			var vm = OutputManager.SelectLog(tmpIndex);
