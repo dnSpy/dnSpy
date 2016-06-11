@@ -221,10 +221,12 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentOutOfRangeException(nameof(line));
 			if (column < 0)
 				throw new ArgumentOutOfRangeException(nameof(column));
-			var l = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(line + 1);
-			if (column >= l.Length)
-				column = l.Length;
-			return MoveTo(new SnapshotPoint(textView.TextSnapshot, l.Offset + column), caretAffinity, captureHorizontalPosition);
+			if (line >= textView.TextSnapshot.LineCount)
+				line = textView.TextSnapshot.LineCount - 1;
+			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
+			if (column >= snapshotLine.Length)
+				column = snapshotLine.Length;
+			return MoveTo(snapshotLine.Start + column, caretAffinity, captureHorizontalPosition);
 		}
 
 		public CaretPosition MoveToNextCaretPosition() {
@@ -233,8 +235,8 @@ namespace dnSpy.Text.Editor {
 				if (Position.VirtualSpaces > 0)
 					useVirtSpaces = true;
 				else {
-					var docLine = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(caret.Line);
-					useVirtSpaces = Position.BufferPosition >= docLine.EndOffset;
+					var snapshotLine = Position.BufferPosition.GetContainingLine();
+					useVirtSpaces = Position.BufferPosition >= snapshotLine.End;
 				}
 				if (useVirtSpaces) {
 					if (Position.VirtualSpaces != int.MaxValue)
