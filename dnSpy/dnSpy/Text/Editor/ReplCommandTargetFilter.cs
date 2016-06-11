@@ -100,7 +100,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.FIRSTNONWHITEPREV:
 				case TextEditorIds.GOTOBRACE:
 				case TextEditorIds.GOTOBRACE_EXT:
-				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.HOME:
 				case TextEditorIds.HOME_EXT:
 				case TextEditorIds.INDENT:
@@ -161,6 +160,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.ZoomOut:
 					return CommandTargetStatus.Handled;
 
+				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
 				case TextEditorIds.TOGGLEVISSPACE:
 				case TextEditorIds.TOGGLEWORDWRAP:
@@ -374,11 +374,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.GOTOBRACE_EXT:
 					return CommandTargetStatus.Handled;//TODO:
 
-				case TextEditorIds.GOTOLINE:
-					if (args is int)
-						replEditor.ReplEditorOperations.GotoLine((int)args);
-					return CommandTargetStatus.Handled;
-
 				case TextEditorIds.HOME:
 					replEditor.ReplEditorOperations.MoveToStartOfDocument(false);
 					return CommandTargetStatus.Handled;
@@ -541,6 +536,7 @@ namespace dnSpy.Text.Editor {
 					replEditor.ReplEditorOperations.Indent();
 					return CommandTargetStatus.Handled;
 
+				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
 				case TextEditorIds.TOGGLEVISSPACE:
 				case TextEditorIds.TOGGLEWORDWRAP:

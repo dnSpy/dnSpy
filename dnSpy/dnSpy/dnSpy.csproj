@@ -373,6 +373,7 @@
     <Compile Include="Text\Editor\EditorPositionState.cs" />
     <Compile Include="Text\Editor\FormattedLineSource.cs" />
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
+    <Compile Include="Text\Editor\GoToCommand.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
