@@ -46,10 +46,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 			this.appSettings = appSettings;
 			this.messageBoxManager = messageBoxManager;
-			appWindow.MainWindow.PreviewKeyDown += MainWindow_PreviewKeyDown;
+			appWindow.MainWindow.KeyDown += MainWindow_KeyDown;
 		}
 
-		void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e) {
+		void MainWindow_KeyDown(object sender, KeyEventArgs e) {
 			if (!waitingForSecondKey && e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.E) {
 				waitingForSecondKey = true;
 				e.Handled = true;
