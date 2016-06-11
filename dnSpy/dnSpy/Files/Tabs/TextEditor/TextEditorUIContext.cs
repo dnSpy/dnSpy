@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
@@ -29,10 +30,10 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Events;
 using dnSpy.Text.Editor;
-using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs.TextEditor {
@@ -137,7 +138,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public object Serialize() {
 			if (cachedEditorPositionState != null)
 				return cachedEditorPositionState;
-			return new EditorPositionState(textEditorControl.TextEditor);
+			return new EditorPositionState(textEditorControl.WpfTextView);
 		}
 
 		public void Deserialize(object obj) {
@@ -160,10 +161,42 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		EditorPositionState cachedEditorPositionState;
 
 		void InitializeState(EditorPositionState state) {
-			textEditorControl.TextEditor.ScrollToVerticalOffset(state.VerticalOffset);
-			textEditorControl.TextEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
-			textEditorControl.TextEditor.TextArea.Caret.Position = state.TextViewPosition;
-			textEditorControl.TextEditor.TextArea.Caret.DesiredXPos = state.DesiredXPos;
+			var textView = textEditorControl.WpfTextView;
+
+			var topPos = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
+			if (IsValid(state)) {
+				textView.Caret.MoveTo(topPos);
+				textView.ViewportLeft = state.ViewportLeft;
+				textView.DisplayTextLineContainingBufferPosition(new SnapshotPoint(textView.TextSnapshot, state.TopLinePosition), state.TopLineVerticalDistance, ViewRelativePosition.Top);
+
+				// Needed because AvalonEdit knows about the word wrap state at some later time due to some WPF feature.
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+					if (topPos == textView.Caret.Position.VirtualBufferPosition) {
+						var newPos = new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, state.CaretPosition), state.CaretVirtualSpaces);
+						textView.Caret.MoveTo(newPos, state.CaretAffinity, true);
+					}
+				}));
+			}
+			else
+				textView.Caret.MoveTo(topPos);
+		}
+
+		bool IsValid(EditorPositionState state) {
+			var textView = textEditorControl.WpfTextView;
+			if (state.CaretAffinity != PositionAffinity.Successor && state.CaretAffinity != PositionAffinity.Predecessor)
+				return false;
+			if (state.CaretVirtualSpaces < 0)
+				return false;
+			if (state.CaretPosition < 0 || state.CaretPosition > textView.TextSnapshot.Length)
+				return false;
+			if (double.IsNaN(state.ViewportLeft) || state.ViewportLeft < 0)
+				return false;
+			if (state.TopLinePosition < 0 || state.TopLinePosition > textView.TextSnapshot.Length)
+				return false;
+			if (double.IsNaN(state.TopLineVerticalDistance))
+				return false;
+
+			return true;
 		}
 
 		void TextEditor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
@@ -175,21 +208,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public object CreateSerialized(ISettingsSection section) {
-			double? verticalOffset = section.Attribute<double?>("VerticalOffset");
-			double? horizontalOffset = section.Attribute<double?>("HorizontalOffset");
-			double? desiredXPos = section.Attribute<double?>("DesiredXPos");
-			int? textViewPosition_Line = section.Attribute<int?>("TextViewPosition.Line");
-			int? textViewPosition_Column = section.Attribute<int?>("TextViewPosition.Column");
-			int? textViewPosition_VisualColumn = section.Attribute<int?>("TextViewPosition.VisualColumn");
-			bool? textViewPosition_IsAtEndOfLine = section.Attribute<bool?>("TextViewPosition.IsAtEndOfLine");
-			Debug.Assert(verticalOffset != null);
-			if (verticalOffset == null || horizontalOffset == null || desiredXPos == null)
+			var caretAffinity = section.Attribute<PositionAffinity?>("CaretAffinity");
+			var caretVirtualSpaces = section.Attribute<int?>("CaretVirtualSpaces");
+			var caretPosition = section.Attribute<int?>("CaretPosition");
+			var viewportLeft = section.Attribute<double?>("ViewportLeft");
+			var topLinePosition = section.Attribute<int?>("TopLinePosition");
+			var topLineVerticalDistance = section.Attribute<double?>("TopLineVerticalDistance");
+
+			if (caretAffinity == null || caretVirtualSpaces == null || caretPosition == null)
 				return null;
-			if (textViewPosition_Line == null || textViewPosition_Column == null)
+			if (viewportLeft == null || topLinePosition == null || topLineVerticalDistance == null)
 				return null;
-			if (textViewPosition_VisualColumn == null || textViewPosition_IsAtEndOfLine == null)
-				return null;
-			return new EditorPositionState(verticalOffset.Value, horizontalOffset.Value, new TextViewPosition(textViewPosition_Line.Value, textViewPosition_Column.Value, textViewPosition_VisualColumn.Value) { IsAtEndOfLine = textViewPosition_IsAtEndOfLine.Value }, desiredXPos.Value);
+			return new EditorPositionState(caretAffinity.Value, caretVirtualSpaces.Value, caretPosition.Value, viewportLeft.Value, topLinePosition.Value, topLineVerticalDistance.Value);
 		}
 
 		public void SaveSerialized(ISettingsSection section, object obj) {
@@ -198,13 +228,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (state == null)
 				return;
 
-			section.Attribute("VerticalOffset", state.VerticalOffset);
-			section.Attribute("HorizontalOffset", state.HorizontalOffset);
-			section.Attribute("DesiredXPos", state.DesiredXPos);
-			section.Attribute("TextViewPosition.Line", state.TextViewPosition.Line);
-			section.Attribute("TextViewPosition.Column", state.TextViewPosition.Column);
-			section.Attribute("TextViewPosition.VisualColumn", state.TextViewPosition.VisualColumn);
-			section.Attribute("TextViewPosition.IsAtEndOfLine", state.TextViewPosition.IsAtEndOfLine);
+			section.Attribute("CaretAffinity", state.CaretAffinity);
+			section.Attribute("CaretVirtualSpaces", state.CaretVirtualSpaces);
+			section.Attribute("CaretPosition", state.CaretPosition);
+			section.Attribute("ViewportLeft", state.ViewportLeft);
+			section.Attribute("TopLinePosition", state.TopLinePosition);
+			section.Attribute("TopLineVerticalDistance", state.TopLineVerticalDistance);
 		}
 
 		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {

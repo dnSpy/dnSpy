@@ -260,7 +260,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			cachedColors.Finish();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedColors);
-			wpfTextView.TextBuffer.Replace(new Contracts.Text.Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), newText);
+			wpfTextView.TextBuffer.Replace(new Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), newText);
+			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, 0));
 			TextEditor.TextArea.TextView.Document.UndoStack.ClearAll();
 			textMarkerService.OnTextChanged();
 		}

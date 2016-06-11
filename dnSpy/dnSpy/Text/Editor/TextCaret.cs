@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
@@ -283,7 +284,8 @@ namespace dnSpy.Text.Editor {
 			var line = ContainingTextViewLine;
 			if (line.IsVisible())
 				return line;
-			return textView.TextViewLines.FirstVisibleLine;
+			// Don't use FirstVisibleLine since it will return a hidden line if it fails to find a visible line
+			return textView.TextViewLines.FirstOrDefault(a => a.IsVisible());
 		}
 
 		void SavePreferredYCoordinate() {
