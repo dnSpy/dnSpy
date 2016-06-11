@@ -95,11 +95,19 @@ namespace dnSpy.Text.Editor {
 				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
 					MoveTo(Position.BufferPosition);
 			}
+			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
+				ReInitializeAvalonEditPosition();
 		}
 
 		void AvalonEdit_TextView_VisualLinesChanged(object sender, EventArgs e) {
 			// Needed because VisualLengths could've changed, eg. when toggling show-whitespace option.
-			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, cachedCaretPosition.VirtualBufferPosition, cachedCaretPosition.Affinity == PositionAffinity.Predecessor), invalidateVisualColumn: false);
+			ReInitializeAvalonEditPosition();
+		}
+
+		void ReInitializeAvalonEditPosition() {
+			bool isWordWrap = (textView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0;
+			bool isAtEndOfLine = isWordWrap && cachedCaretPosition.Affinity == PositionAffinity.Predecessor;
+			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, cachedCaretPosition.VirtualBufferPosition, isAtEndOfLine), invalidateVisualColumn: false);
 			caret.DesiredXPos = double.NaN;
 		}
 
