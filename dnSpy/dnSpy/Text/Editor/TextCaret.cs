@@ -27,10 +27,11 @@ using ICSharpCode.AvalonEdit.Editing;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextCaret : ITextCaret {
-		public double Left => textView.ViewportLeft + caret.CalculateCaretRectangle().Left;
-		public double Right => textView.ViewportLeft + caret.CalculateCaretRectangle().Right;
-		public double Top => textView.ViewportTop + caret.CalculateCaretRectangle().Top;
-		public double Bottom => textView.ViewportTop + caret.CalculateCaretRectangle().Bottom;
+		// These subtractions should equal 0 at the moment but could change in the future
+		public double Left => textView.ViewportLeft - dnSpyTextEditor.TextArea.TextView.HorizontalOffset + caret.CalculateCaretRectangle().Left;
+		public double Right => textView.ViewportLeft - dnSpyTextEditor.TextArea.TextView.HorizontalOffset + caret.CalculateCaretRectangle().Right;
+		public double Top => textView.ViewportTop - dnSpyTextEditor.TextArea.TextView.VerticalOffset + caret.CalculateCaretRectangle().Top;
+		public double Bottom => textView.ViewportTop - dnSpyTextEditor.TextArea.TextView.VerticalOffset + caret.CalculateCaretRectangle().Bottom;
 		public double Width => caret.CalculateCaretRectangle().Width;
 		public double Height => caret.CalculateCaretRectangle().Height;
 		public bool InVirtualSpace => Position.VirtualSpaces > 0;
