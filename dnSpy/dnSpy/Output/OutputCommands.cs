@@ -21,6 +21,7 @@ using System.Windows.Input;
 
 namespace dnSpy.Output {
 	static class OutputCommands {
+		public static readonly RoutedCommand CopyCommand = new RoutedCommand("CopyCommand", typeof(OutputCommands));
 		public static readonly RoutedCommand ClearAllCommand = new RoutedCommand("ClearAllCommand", typeof(OutputCommands));
 		public static readonly RoutedCommand ToggleWordWrapCommand = new RoutedCommand("ToggleWordWrapCommand", typeof(OutputCommands));
 		public static readonly RoutedCommand ToggleShowLineNumbersCommand = new RoutedCommand("ToggleShowLineNumbersCommand", typeof(OutputCommands));

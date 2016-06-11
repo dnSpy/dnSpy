@@ -38,6 +38,8 @@ using dnSpy.Text.Editor;
 namespace dnSpy.Output {
 	interface IOutputManagerInternal : IOutputManager {
 		IInputElement FocusedElement { get; }
+		bool CanCopy { get; }
+		void Copy();
 		bool CanClearAll { get; }
 		void ClearAll();
 		bool CanSaveText { get; }
@@ -213,6 +215,9 @@ namespace dnSpy.Output {
 			OnPropertyChanged(nameof(SaveImageObject));
 			OnPropertyChanged(nameof(ToggleWordWrapImageObject));
 		}
+
+		public bool CanCopy => SelectedOutputBufferVM?.CanCopy == true;
+		public void Copy() => SelectedOutputBufferVM?.Copy();
 
 		public bool CanClearAll => SelectedOutputBufferVM != null;
 

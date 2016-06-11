@@ -78,6 +78,19 @@ namespace dnSpy.Output {
 			this.needTimestamp = true;
 		}
 
+		public bool CanCopy {
+			get {
+				if (!logEditor.TextView.Selection.IsEmpty)
+					return true;
+
+				var line = logEditor.TextView.Caret.Position.BufferPosition.GetContainingLine();
+				bool cutEmptyLines = logEditor.TextView.Options.GetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId);
+				return cutEmptyLines || !string.IsNullOrWhiteSpace(line.GetText());
+			}
+		}
+
+		public void Copy() => logEditor.TextView.EditorOperations.CopySelection();
+
 		public void Clear() {
 			logEditor.Clear();
 			needTimestamp = true;

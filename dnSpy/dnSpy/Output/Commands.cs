@@ -60,7 +60,7 @@ namespace dnSpy.Output {
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_OUTPUT_COPY, Order = 0)]
 	sealed class CopyOutputEditorCtxMenuCommand : LogEditorCtxMenuCommand {
 		CopyOutputEditorCtxMenuCommand()
-			: base(ApplicationCommands.Copy) {
+			: base(OutputCommands.CopyCommand) {
 		}
 	}
 

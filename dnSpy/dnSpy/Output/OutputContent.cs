@@ -59,6 +59,10 @@ namespace dnSpy.Output {
 			cmds.Add(ApplicationCommands.Save,
 				(s, e) => OutputManager.SaveText(),
 				(s, e) => e.CanExecute = OutputManager.CanSaveText);
+			cmds.Add(OutputCommands.CopyCommand,
+				(s, e) => OutputManager.Copy(),
+				(s, e) => e.CanExecute = OutputManager.CanCopy);
+			cmds.Add(OutputCommands.CopyCommand, ModifierKeys.Control, Key.C);
 			cmds.Add(OutputCommands.ClearAllCommand,
 				(s, e) => OutputManager.ClearAll(),
 				(s, e) => e.CanExecute = OutputManager.CanClearAll);
