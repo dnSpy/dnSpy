@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.CtrlShift(Key.L, TextEditorIds.DELETELINE.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.DELETETOBOL.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.DELETETOEOL.ToCommandInfo());
-			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.OemBackslash), TextEditorIds.DELETEWHITESPACE.ToCommandInfo());
+			//yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.OemBackslash), TextEditorIds.DELETEWHITESPACE.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Create(Key.OemBackslash), TextEditorIds.DELETEWHITESPACE.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.OemBackslash), TextEditorIds.DELETEWHITESPACE.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.Back, TextEditorIds.DELETEWORDLEFT.ToCommandInfo());
@@ -102,7 +102,7 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Control(Key.W, TextEditorIds.SELECTCURRENTWORD.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.W, TextEditorIds.SELECTCURRENTWORD.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.U, TextEditorIds.SELLOWCASE.ToCommandInfo());
-			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.A), TextEditorIds.SELSWAPANCHOR.ToCommandInfo());
+			//yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.A), TextEditorIds.SELSWAPANCHOR.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Create(Key.A), TextEditorIds.SELSWAPANCHOR.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.A), TextEditorIds.SELSWAPANCHOR.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.Q, TextEditorIds.SELTABIFY.ToCommandInfo());
