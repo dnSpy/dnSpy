@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
@@ -43,6 +44,7 @@ namespace dnSpy.Text.Editor {
 		readonly ICommandManager commandManager;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly ISmartIndentationService smartIndentationService;
+		readonly IWpfTextViewCreationListener[] wpfTextViewCreationListeners;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -97,13 +99,14 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandManager = commandManager;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.smartIndentationService = smartIndentationService;
+			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.ToArray();
 		}
 
 		public IWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
@@ -163,7 +166,11 @@ namespace dnSpy.Text.Editor {
 			var dnSpyTextEditor = dnSpyTextEditorCreator.Create(dnSpyTextEditorOptions);
 			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, editorOperationsFactoryService, smartIndentationService);
 			guidObjectsCreator.WpfTextView = wpfTextView;
+
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));
+			foreach (var listener in wpfTextViewCreationListeners)
+				listener.TextViewCreated(wpfTextView);
+
 			return wpfTextView;
 		}
 

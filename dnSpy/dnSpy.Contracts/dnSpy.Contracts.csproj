@@ -397,6 +397,7 @@
     <Compile Include="Text\Editor\ITextViewRoleSet.cs" />
     <Compile Include="Text\Editor\IViewScroller.cs" />
     <Compile Include="Text\Editor\IWpfTextView.cs" />
+    <Compile Include="Text\Editor\IWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\IWpfTextViewHost.cs" />
     <Compile Include="Text\Editor\IWpfTextViewLineCollection.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
