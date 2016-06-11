@@ -92,6 +92,7 @@ namespace dnSpy.Text.Editor {
 			AddNewDocument();
 			WriteOffsetOfPrompt(null, true);
 			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView);
+			wpfTextView.VisualElement.Loaded += WpfTextView_Loaded;
 		}
 
 		void MoveToEnd() => MoveTo(wpfTextView.TextSnapshot.Length);
@@ -428,6 +429,18 @@ namespace dnSpy.Text.Editor {
 			}
 
 			wpfTextView.Caret.EnsureVisible();
+		}
+
+		// This fixes a problem when one or more lines have been added to the window before it's fully
+		// visible. The first lines won't be shown at all (you have to scroll up to see them). I could
+		// only reproduce it at startup when the REPL editor was the active tool window and at least one
+		// other decompilation tab was opened at the same time.
+		void WpfTextView_Loaded(object sender, RoutedEventArgs e) {
+			wpfTextView.VisualElement.Loaded -= WpfTextView_Loaded;
+			if (wpfTextView.TextSnapshot.Length != 0) {
+				wpfTextView.DisplayTextLineContainingBufferPosition(new SnapshotPoint(wpfTextView.TextSnapshot, 0), 0, ViewRelativePosition.Top);
+				wpfTextView.Caret.EnsureVisible();
+			}
 		}
 
 		void FlushScriptOutput() {
