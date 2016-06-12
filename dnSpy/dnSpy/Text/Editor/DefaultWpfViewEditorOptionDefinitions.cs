@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class ZoomLevelEditorOptionDefinition : WpfViewOptionDefinition<double> {
 		public override EditorOptionKey<double> Key => DefaultWpfViewOptions.ZoomLevelId;
-		public override double Default => 100;
-		public override bool IsValid(ref double proposedValue) => 20 <= proposedValue && proposedValue <= 400;
+		public override double Default => ZoomConstants.DefaultZoom;
+		public override bool IsValid(ref double proposedValue) => ZoomConstants.MinZoom <= proposedValue && proposedValue <= ZoomConstants.MaxZoom;
 	}
 }

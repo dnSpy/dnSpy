@@ -433,6 +433,7 @@
     <Compile Include="Text\Editor\ViewState.cs" />
     <Compile Include="Text\Editor\WordWrapStyles.cs" />
     <Compile Include="Text\Editor\WpfViewOptionDefinition.cs" />
+    <Compile Include="Text\Editor\ZoomConstants.cs" />
     <Compile Include="Text\Editor\ZoomLevelChangedEventArgs.cs" />
     <Compile Include="Text\ExportContentTypeDefinitionAttribute.cs" />
     <Compile Include="Text\Formatting\IFormattedLineSource.cs" />

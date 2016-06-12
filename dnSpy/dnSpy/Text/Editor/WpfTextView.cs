@@ -78,7 +78,7 @@ namespace dnSpy.Text.Editor {
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
-			this.zoomLevel = 100;
+			this.zoomLevel = ZoomConstants.DefaultZoom;
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
 			TextViewLines = new WpfTextViewLineCollection();
