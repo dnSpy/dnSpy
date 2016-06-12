@@ -409,6 +409,7 @@
     <Compile Include="Text\Editor\LogEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\MouseHoverAttribute.cs" />
     <Compile Include="Text\Editor\MouseHoverEventArgs.cs" />
+    <Compile Include="Text\Editor\MouseProcessorBase.cs" />
     <Compile Include="Text\Editor\Operations\IEditorOperations.cs" />
     <Compile Include="Text\Editor\Operations\IEditorOperations2.cs" />
     <Compile Include="Text\Editor\Operations\IEditorOperationsFactoryService.cs" />
