@@ -19,12 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;

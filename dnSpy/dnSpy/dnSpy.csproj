@@ -358,11 +358,13 @@
     <Compile Include="Text\Editor\ColorizerCollection.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
+    <Compile Include="Text\Editor\DefaultMouseProcessor.cs" />
     <Compile Include="Text\Editor\DefaultSmartIndent.cs" />
     <Compile Include="Text\Editor\DefaultTextEditorCommandInfoCreator.cs" />
     <Compile Include="Text\Editor\DefaultTextViewCommandTarget.cs" />
     <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewHostEditorOptionDefinitions.cs" />
+    <Compile Include="Text\Editor\DefaultTextViewMouseProcessor.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditor.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditorCreator.cs" />
@@ -376,8 +378,13 @@
     <Compile Include="Text\Editor\GoToCommand.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />
+    <Compile Include="Text\Editor\KeyboardWpfTextViewCreationListener.cs" />
+    <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
+    <Compile Include="Text\Editor\MouseProcessorCollection.cs" />
+    <Compile Include="Text\Editor\MouseWpfTextViewCreationListener.cs" />
+    <Compile Include="Text\Editor\NullRegisteredCommandElement.cs" />
     <Compile Include="Text\Editor\Operations\AnyTextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\AnyTextStructureNavigatorProvider.cs" />
     <Compile Include="Text\Editor\Operations\EditorOperations.cs" />
@@ -409,6 +416,7 @@
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\TextViewLineExtensions.cs" />
     <Compile Include="Text\Editor\TextViewModel.cs" />
+    <Compile Include="Text\Editor\TextViewMouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
     <Compile Include="Text\Editor\Utils.cs" />
     <Compile Include="Text\Editor\ViewScroller.cs" />

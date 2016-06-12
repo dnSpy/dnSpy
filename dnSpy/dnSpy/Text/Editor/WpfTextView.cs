@@ -103,7 +103,10 @@ namespace dnSpy.Text.Editor {
 			DnSpyTextEditor.TextArea.TextView.DefaultTextMetricsInvalidated += (s, e) => formattedLineSource = null;
 			oldViewportLeft = ViewportLeft;
 			oldViewState = new ViewState(this);
-			RegisteredCommandElement = commandManager.Register(dnSpyTextEditor.TextArea, this);
+			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
+				RegisteredCommandElement = commandManager.Register(VisualElement, this);
+			else
+				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 		}
 
 		bool hasKeyboardFocus;

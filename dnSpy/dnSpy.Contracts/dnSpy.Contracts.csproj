@@ -377,8 +377,12 @@
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
     <Compile Include="Text\Editor\IEditorOptions.cs" />
     <Compile Include="Text\Editor\IEditorOptionsFactoryService.cs" />
+    <Compile Include="Text\Editor\IKeyProcessorProvider.cs" />
     <Compile Include="Text\Editor\ILogEditor.cs" />
     <Compile Include="Text\Editor\ILogEditorCreator.cs" />
+    <Compile Include="Text\Editor\IMouseProcessor.cs" />
+    <Compile Include="Text\Editor\IMouseProcessor2.cs" />
+    <Compile Include="Text\Editor\IMouseProcessorProvider.cs" />
     <Compile Include="Text\Editor\IndentStyle.cs" />
     <Compile Include="Text\Editor\IReplCommandHandler.cs" />
     <Compile Include="Text\Editor\IReplCommandInput.cs" />
@@ -400,6 +404,7 @@
     <Compile Include="Text\Editor\IWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\IWpfTextViewHost.cs" />
     <Compile Include="Text\Editor\IWpfTextViewLineCollection.cs" />
+    <Compile Include="Text\Editor\KeyProcessor.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
     <Compile Include="Text\Editor\LogEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\MouseHoverAttribute.cs" />
