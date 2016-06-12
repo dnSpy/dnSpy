@@ -84,7 +84,6 @@ namespace dnSpy.Text.Editor {
 					if (l.IsVisible())
 						return l;
 				}
-				Debug.Fail("No visible line");
 				return lines.FirstOrDefault(a => a.IsValid) ?? lines.First();
 			}
 		}
@@ -98,7 +97,6 @@ namespace dnSpy.Text.Editor {
 					if (l.IsVisible())
 						return l;
 				}
-				Debug.Fail("No visible line");
 				return lines.LastOrDefault(a => a.IsValid) ?? lines.Last();
 			}
 		}
