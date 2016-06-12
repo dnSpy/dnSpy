@@ -382,6 +382,7 @@
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
+    <Compile Include="Text\Editor\MouseLocation.cs" />
     <Compile Include="Text\Editor\MouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\MouseWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\NullRegisteredCommandElement.cs" />

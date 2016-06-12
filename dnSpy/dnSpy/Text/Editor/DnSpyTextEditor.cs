@@ -185,8 +185,6 @@ namespace dnSpy.Text.Editor {
 			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
 
-			TextArea.MouseRightButtonDown += (s, e) => GoToMousePosition();
-
 			SetBinding(FontFamilyProperty, new Binding {
 				Source = textEditorSettings,
 				Path = new PropertyPath(nameof(textEditorSettings.FontFamily)),

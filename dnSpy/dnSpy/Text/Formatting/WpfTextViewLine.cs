@@ -34,7 +34,6 @@ namespace dnSpy.Text.Formatting {
 		readonly double textHeight;
 		readonly double textLeft;
 		readonly double textWidth;
-		readonly double textRight;
 		readonly double virtualSpaceWidth;
 		readonly double deltaY;
 		readonly double endOfLineWidth;
@@ -142,7 +141,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return textRight;
+				return TextLeft + TextWidth;
 			}
 		}
 
@@ -330,7 +329,22 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		public WpfTextViewLine(ITextSnapshot snapshot, VisualLine visualLine, TextLineInfo info, double top, double deltaY, TextViewLineChange change, Rect visibleArea, double virtualSpaceWidth) {
+		readonly Editor.WpfTextView HACK_wpfTextView;
+		void HACK_RecreateVisualIfDisposed() {
+			if (HACK_wpfTextView == null)
+				return;
+			if (!VisualLine.IsDisposed)
+				return;
+			if (HACK_wpfTextView.TextSnapshot != Snapshot)
+				return;
+			var tuple = HACK_wpfTextView.HACK_GetVisualLine(this);
+			if (tuple == null)
+				return;
+			VisualLine = tuple.Item1;
+			textLines = new ReadOnlyCollection<TextLine>(new TextLine[] { tuple.Item2 });
+		}
+
+		public WpfTextViewLine(Editor.WpfTextView HACK_wpfTextView, ITextSnapshot snapshot, VisualLine visualLine, TextLineInfo info, double top, double deltaY, TextViewLineChange change, Rect visibleArea, double virtualSpaceWidth) {
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
 			if (visualLine == null)
@@ -338,6 +352,7 @@ namespace dnSpy.Text.Formatting {
 			if (info == null)
 				throw new ArgumentNullException(nameof(info));
 
+			this.HACK_wpfTextView = HACK_wpfTextView;
 			this.lineStartOffset = visualLine.FirstDocumentLine.Offset;
 			var startOffset = lineStartOffset + info.StartOffset;
 			var endOffset = lineStartOffset + info.EndOffset;
@@ -373,7 +388,6 @@ namespace dnSpy.Text.Formatting {
 			this.textWidth = info.TextLine.WidthIncludingTrailingWhitespace - info.Indentation;
 			this.endOfLineWidth = Math.Floor(this.textHeight * 0.58333333333333337);// Same as VS
 			this.width = this.textWidth + (info.TextLine.NewlineLength == 0 ? 0 : this.endOfLineWidth);
-			this.textRight = this.textLeft + this.textWidth;
 			this.lineTransform = new LineTransform(0, 0, 1, Right);
 
 			this.visibilityState = CalculateVisibilityState();
@@ -431,13 +445,12 @@ namespace dnSpy.Text.Formatting {
 		public SnapshotPoint? GetBufferPositionFromXCoordinate(double xCoordinate, bool textOnly) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			if (!(TextLeft <= xCoordinate && xCoordinate < Right))
+			if (!(TextLeft <= xCoordinate && xCoordinate < TextRight))
 				return null;
-			if (xCoordinate >= TextRight)
-				return ExtentIncludingLineBreak.End - LineBreakLength;
 
 			//TODO: Use textOnly
 
+			HACK_RecreateVisualIfDisposed();
 			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate);
 			return new SnapshotPoint(Snapshot, lineStartOffset + VisualLine.GetRelativeOffset(charHit.FirstCharacterIndex + charHit.TrailingLength));
 		}
@@ -514,6 +527,7 @@ namespace dnSpy.Text.Formatting {
 			int column = bufferPosition - ExtentIncludingLineBreak.Start;
 			Debug.Assert(column >= 0);
 
+			HACK_RecreateVisualIfDisposed();
 			TextSpan<TextRun> lastTextSpan = null;
 			foreach (var textSpan in TextLine.GetTextRunSpans()) {
 				lastTextSpan = textSpan;
@@ -544,6 +558,7 @@ namespace dnSpy.Text.Formatting {
 			int visualColumn = VisualLine.GetVisualColumn(bufferPosition.Position - lineStartOffset);
 			Debug.Assert(visualColumn >= 0);
 
+			HACK_RecreateVisualIfDisposed();
 			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(visualColumn, 0));
 			return new SnapshotSpan(Snapshot, lineStartOffset + VisualLine.GetRelativeOffset(charHit.FirstCharacterIndex), charHit.TrailingLength);
 		}

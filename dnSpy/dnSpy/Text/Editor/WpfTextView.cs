@@ -289,7 +289,7 @@ namespace dnSpy.Text.Editor {
 
 						var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
 						double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-						var wpfLine = new WpfTextViewLine(snapshot, line, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
+						var wpfLine = new WpfTextViewLine(this, snapshot, line, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
 						if (!reusedHash.Contains(line))
 							newList.Add(wpfLine);
 						else
@@ -494,7 +494,7 @@ namespace dnSpy.Text.Editor {
 
 			var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
 			double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-			return new WpfTextViewLine(TextSnapshot, visualLine, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
+			return new WpfTextViewLine(null, TextSnapshot, visualLine, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
 		}
 
 		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>
@@ -538,6 +538,11 @@ namespace dnSpy.Text.Editor {
 			if (point.Snapshot != TextSnapshot)
 				throw new ArgumentException();
 			return GetTextViewLineContainingBufferPosition(point).GetTextElementSpan(point);
+		}
+
+		internal Tuple<VisualLine, TextLine> HACK_GetVisualLine(WpfTextViewLine line) {
+			var line2 = (WpfTextViewLine)CreateWpfTextViewLine(line.Start);
+			return Tuple.Create(line2.VisualLine, line2.TextLine);
 		}
 	}
 }

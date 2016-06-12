@@ -195,8 +195,8 @@ namespace dnSpy.Text.Editor {
 					break;
 				m.PreprocessMouseLeftButtonUp(e);
 			}
-			if (!e.Handled)
-				defaultMouseProcessor.OnMouseLeftButtonUp(sender, e);
+			// Always call it, since it captures the mouse
+			defaultMouseProcessor.OnMouseLeftButtonUp(sender, e);
 			foreach (var m in mouseProcessors)
 				m.PostprocessMouseLeftButtonUp(e);
 		}
