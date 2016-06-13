@@ -29,6 +29,7 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Classification;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Text.Formatting;
@@ -55,20 +56,16 @@ namespace dnSpy.Text.Editor {
 		public bool IsMouseOverViewOrAdornments => DnSpyTextEditor.IsMouseOver;
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
 		public DnSpyTextEditor DnSpyTextEditor { get; }
-
-		public IFormattedLineSource FormattedLineSource {
-			get {
-				if (formattedLineSource == null)
-					formattedLineSource = new FormattedLineSource(DnSpyTextEditor.TextArea.TextView.WideSpaceWidth);
-				return formattedLineSource;
-			}
-		}
-		IFormattedLineSource formattedLineSource;
+		public IFormattedLineSource FormattedLineSource { get; private set; }
 
 		const int LEFT_MARGIN = 15;
 		readonly FrameworkElement paddingElement;
+		readonly IFormattedTextSourceFactoryService formattedTextSourceFactoryService;
+		readonly IClassifier aggregateClassifier;
+		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
+		readonly IClassificationFormatMap classificationFormatMap;
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -77,6 +74,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(roles));
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
+			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			this.zoomLevel = ZoomConstants.DefaultZoom;
 			Properties = new PropertyCollection();
@@ -100,13 +98,43 @@ namespace dnSpy.Text.Editor {
 			DnSpyTextEditor.TextArea.TextView.ScrollOffsetChanged += AvalonEdit_TextView_ScrollOffsetChanged;
 			DnSpyTextEditor.TextArea.TextView.VisualLinesCreated += AvalonEdit_TextView_VisualLinesCreated;
 			DnSpyTextEditor.TextArea.TextView.VisualLineConstructionStarting += AvalonEdit_TextView_VisualLineConstructionStarting;
-			DnSpyTextEditor.TextArea.TextView.DefaultTextMetricsInvalidated += (s, e) => formattedLineSource = null;
+			DnSpyTextEditor.TextArea.TextView.DefaultTextMetricsInvalidated += (s, e) => CreateFormattedLineSource();
 			oldViewportLeft = ViewportLeft;
 			oldViewState = new ViewState(this);
+			this.aggregateClassifier = viewClassifierAggregatorService.GetClassifier(this);
+			this.textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(this);
 			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
 				RegisteredCommandElement = commandManager.Register(VisualElement, this);
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
+		}
+
+		//TODO: Call this each time one of the values it uses gets updated
+		void CreateFormattedLineSource() {
+			var wordWrapStyle = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
+			bool isWordWrap = (wordWrapStyle & WordWrapStyles.WordWrap) != 0;
+			bool isAutoIndent = isWordWrap && (wordWrapStyle & WordWrapStyles.AutoIndent) != 0;
+			double wordWrapWidth = isWordWrap ? ViewportWidth : 0;
+			var maxAutoIndent = isAutoIndent ? ViewportWidth / 4 : 0;
+			bool useDisplayMode = false;//TODO:
+
+			// This value is what VS uses, see: https://msdn.microsoft.com/en-us/library/microsoft.visualstudio.text.formatting.iformattedlinesource.baseindentation.aspx
+			//	"This is generally a small value like 2.0, so that some characters (such as an italic
+			//	 slash) will not be clipped by the left edge of the view."
+			const double baseIndent = 2.0;
+			FormattedLineSource = formattedTextSourceFactoryService.Create(
+				TextSnapshot,
+				VisualSnapshot,
+				Options.GetOptionValue(DefaultOptions.TabSizeOptionId),
+				baseIndent,
+				wordWrapWidth,
+				maxAutoIndent,
+				useDisplayMode,
+				aggregateClassifier,
+				textAndAdornmentSequencer,
+				classificationFormatMap,
+				isWordWrap);
 		}
 
 		bool hasKeyboardFocus;
@@ -356,6 +384,7 @@ namespace dnSpy.Text.Editor {
 			UpdateOption(DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name);
 			UpdateOption(DefaultWpfViewOptions.EnableMouseWheelZoomId.Name);
 			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
+			UpdateOption(DefaultWpfViewOptions.AppearanceCategory.Name);
 		}
 
 		void UpdateOption(string optionId) {
@@ -459,6 +488,9 @@ namespace dnSpy.Text.Editor {
 			else if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
+			}
+			else if (optionId == DefaultWpfViewOptions.AppearanceCategory.Name) {
+				// Nothing to do
 			}
 		}
 

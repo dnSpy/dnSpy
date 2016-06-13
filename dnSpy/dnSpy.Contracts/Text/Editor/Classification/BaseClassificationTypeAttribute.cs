@@ -20,23 +20,23 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
+	/// Defines a base content type
 	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
+	public sealed class BaseClassificationTypeAttribute : Attribute {
 		/// <summary>
-		/// Gets the guid
+		/// Gets the guid of the base classification type
 		/// </summary>
-		public string Guid { get; }
+		public string BaseDefinition { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+		/// <param name="guid">Guid of base classification type</param>
+		public BaseClassificationTypeAttribute(string guid) {
+			BaseDefinition = guid;
 		}
 	}
 }

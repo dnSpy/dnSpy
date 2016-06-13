@@ -17,26 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
+	/// <see cref="ITextView"/> classifier aggregator service
 	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
+	public interface IViewClassifierAggregatorService {
 		/// <summary>
-		/// Gets the guid
+		/// Gets the <see cref="IClassifier"/> for the given <see cref="ITextView"/>
 		/// </summary>
-		public string Guid { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
-		}
+		/// <param name="textView">Text view</param>
+		/// <returns></returns>
+		IClassifier GetClassifier(ITextView textView);
 	}
 }

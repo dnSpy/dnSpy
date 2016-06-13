@@ -20,12 +20,12 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
+	/// Exports a <see cref="ClassificationTypeDefinition"/>
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
+	public sealed class ExportClassificationTypeDefinitionAttribute : ExportAttribute {
 		/// <summary>
 		/// Gets the guid
 		/// </summary>
@@ -34,8 +34,8 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
+		/// <param name="guid">Guid of the classification type</param>
+		public ExportClassificationTypeDefinitionAttribute(string guid) {
 			Guid = guid;
 		}
 	}

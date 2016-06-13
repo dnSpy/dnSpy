@@ -19,24 +19,16 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor.Classification;
 
-namespace dnSpy.Contracts.Text {
-	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
-		/// <summary>
-		/// Gets the guid
-		/// </summary>
-		public string Guid { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+namespace dnSpy.Text.Editor.Classification {
+	[Export(typeof(IClassifierAggregatorService))]
+	sealed class ClassifierAggregatorService : IClassifierAggregatorService {
+		public IClassifier GetClassifier(ITextBuffer textBuffer) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			return new ClassifierAggregator(textBuffer);
 		}
 	}
 }

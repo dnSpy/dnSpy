@@ -19,24 +19,16 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Formatting;
 
-namespace dnSpy.Contracts.Text {
-	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
-		/// <summary>
-		/// Gets the guid
-		/// </summary>
-		public string Guid { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+namespace dnSpy.Text.Formatting {
+	[Export(typeof(ITextAndAdornmentSequencerFactoryService))]
+	sealed class TextAndAdornmentSequencerFactoryService : ITextAndAdornmentSequencerFactoryService {
+		public ITextAndAdornmentSequencer Create(ITextView view) {
+			if (view == null)
+				throw new ArgumentNullException(nameof(view));
+			return view.Properties.GetOrCreateSingletonProperty(typeof(ITextAndAdornmentSequencer), () => new TextAndAdornmentSequencer(view));
 		}
 	}
 }

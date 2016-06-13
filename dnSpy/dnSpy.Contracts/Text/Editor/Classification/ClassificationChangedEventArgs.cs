@@ -18,25 +18,25 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
+	/// Classification changed event args
 	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
+	public sealed class ClassificationChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Gets the guid
+		/// Gets the span of the classification that changed
 		/// </summary>
-		public string Guid { get; }
+		public SnapshotSpan ChangeSpan { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+		/// <param name="changeSpan">Change span</param>
+		public ClassificationChangedEventArgs(SnapshotSpan changeSpan) {
+			if (changeSpan.Snapshot == null)
+				throw new ArgumentException();
+			ChangeSpan = changeSpan;
 		}
 	}
 }

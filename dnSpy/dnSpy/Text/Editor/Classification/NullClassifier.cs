@@ -18,25 +18,19 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor.Classification;
 
-namespace dnSpy.Contracts.Text {
-	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
-		/// <summary>
-		/// Gets the guid
-		/// </summary>
-		public string Guid { get; }
+namespace dnSpy.Text.Editor.Classification {
+	sealed class NullClassifier : IClassifier {
+		public static readonly IClassifier Instance = new NullClassifier();
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged {
+			add { }
+			remove { }
 		}
+
+		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) => Array.Empty<ClassificationSpan>();
 	}
 }

@@ -20,34 +20,34 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor.Classification;
 
-namespace dnSpy.Text {
-	sealed class ContentType : IContentType {
-		public IEnumerable<IContentType> BaseTypes {
+namespace dnSpy.Text.Editor.Classification {
+	sealed class ClassificationType : IClassificationType {
+		public IEnumerable<IClassificationType> BaseTypes {
 			get {
 				foreach (var bt in baseTypes)
 					yield return bt;
 			}
 		}
-		readonly IContentType[] baseTypes;
+		readonly IClassificationType[] baseTypes;
 
-		public Guid Guid { get; }
+		public Guid Classification { get; }
 		public string DisplayName { get; }
 
-		public ContentType(Guid guid, string displayName, IEnumerable<IContentType> baseTypes) {
-			Guid = guid;
+		public ClassificationType(Guid type, string displayName, IEnumerable<IClassificationType> baseTypes) {
+			Classification = type;
 			DisplayName = displayName;
 			this.baseTypes = baseTypes.ToArray();
 		}
 
-		public bool IsOfType(string guid) => IsOfType(Guid.Parse(guid));
-		public bool IsOfType(Guid guid) {
-			if (Guid == guid)
+		public bool IsOfType(string type) => IsOfType(Guid.Parse(type));
+		public bool IsOfType(Guid type) {
+			if (Classification == type)
 				return true;
 
 			foreach (var bt in baseTypes) {
-				if (bt.IsOfType(guid))
+				if (bt.IsOfType(type))
 					return true;
 			}
 

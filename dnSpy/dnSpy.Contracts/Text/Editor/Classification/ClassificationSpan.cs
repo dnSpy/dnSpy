@@ -18,25 +18,34 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
+	/// Classification span
 	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
+	public sealed class ClassificationSpan {
 		/// <summary>
-		/// Gets the guid
+		/// Gets the span
 		/// </summary>
-		public string Guid { get; }
+		public SnapshotSpan Span { get; }
+
+		/// <summary>
+		/// Gets the classification type
+		/// </summary>
+		public IClassificationType ClassificationType { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+		/// <param name="span">Span</param>
+		/// <param name="classification">Classification type</param>
+		public ClassificationSpan(SnapshotSpan span, IClassificationType classification) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			if (classification == null)
+				throw new ArgumentNullException(nameof(classification));
+			Span = span;
+			ClassificationType = classification;
 		}
 	}
 }

@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Classification;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
@@ -38,5 +39,12 @@ namespace dnSpy.Text.Editor {
 		public override EditorOptionKey<double> Key => DefaultWpfViewOptions.ZoomLevelId;
 		public override double Default => ZoomConstants.DefaultZoom;
 		public override bool IsValid(ref double proposedValue) => ZoomConstants.MinZoom <= proposedValue && proposedValue <= ZoomConstants.MaxZoom;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class AppearanceCategoryEditorOptionDefinition : WpfViewOptionDefinition<string> {
+		public override EditorOptionKey<string> Key => DefaultWpfViewOptions.AppearanceCategory;
+		public override string Default => AppearanceCategoryConstants.TextEditor;
+		public override bool IsValid(ref string proposedValue) => !string.IsNullOrEmpty(proposedValue);
 	}
 }

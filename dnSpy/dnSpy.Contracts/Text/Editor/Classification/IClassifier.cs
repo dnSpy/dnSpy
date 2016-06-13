@@ -18,25 +18,23 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
+	/// Assigns <see cref="IClassificationType"/> objects to the text in a <see cref="ITextBuffer"/>
 	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
+	public interface IClassifier {
 		/// <summary>
-		/// Gets the guid
+		/// Gets all the ClassificationSpan objects that overlap the given range of text
 		/// </summary>
-		public string Guid { get; }
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span);
 
 		/// <summary>
-		/// Constructor
+		/// Ocurs when the classification of a span of text has changed
 		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
-		}
+		event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 	}
 }

@@ -26,6 +26,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> EnableHighlightCurrentLineId = new EditorOptionKey<bool>("IWpfTextView/HighlightCurrentLine");
 		public static readonly EditorOptionKey<bool> EnableMouseWheelZoomId = new EditorOptionKey<bool>("IWpfTextView/MouseWheelZoom");
 		public static readonly EditorOptionKey<double> ZoomLevelId = new EditorOptionKey<double>("IWpfTextView/ZoomLevel");
+		public static readonly EditorOptionKey<string> AppearanceCategory = new EditorOptionKey<string>("IWpfTextView/AppearanceCategory");
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

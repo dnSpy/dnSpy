@@ -17,14 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Formatting;
+using System;
+using System.Collections.ObjectModel;
 
-namespace dnSpy.Text.Editor {
-	sealed class FormattedLineSource : IFormattedLineSource {
-		public double ColumnWidth { get; }
+namespace dnSpy.Contracts.Text.Editor.Classification {
+	/// <summary>
+	/// Format items event args
+	/// </summary>
+	public sealed class FormatItemsEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the changed items
+		/// </summary>
+		public ReadOnlyCollection<string> ChangedItems { get; }
 
-		public FormattedLineSource(double columnWidth) {
-			ColumnWidth = columnWidth;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="items">Changed items</param>
+		public FormatItemsEventArgs(ReadOnlyCollection<string> items) {
+			if (items == null)
+				throw new ArgumentNullException(nameof(items));
+			ChangedItems = items;
 		}
 	}
 }

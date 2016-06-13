@@ -353,6 +353,16 @@
     <Compile Include="Text\ContentTypeDefinitions.cs" />
     <Compile Include="Text\ContentTypeRegistryService.cs" />
     <Compile Include="Text\Editor\AvalonEditSearchPanelLocalization.cs" />
+    <Compile Include="Text\Editor\Classification\ClassificationFormatMap.cs" />
+    <Compile Include="Text\Editor\Classification\ClassificationFormatMapService.cs" />
+    <Compile Include="Text\Editor\Classification\ClassificationType.cs" />
+    <Compile Include="Text\Editor\Classification\ClassificationTypeRegistryService.cs" />
+    <Compile Include="Text\Editor\Classification\ClassifierAggregator.cs" />
+    <Compile Include="Text\Editor\Classification\ClassifierAggregatorBase.cs" />
+    <Compile Include="Text\Editor\Classification\ClassifierAggregatorService.cs" />
+    <Compile Include="Text\Editor\Classification\NullClassifier.cs" />
+    <Compile Include="Text\Editor\Classification\ViewClassifierAggregator.cs" />
+    <Compile Include="Text\Editor\Classification\ViewClassifierAggregatorService.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\ColorizerCollection.cs" />
@@ -373,7 +383,6 @@
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
     <Compile Include="Text\Editor\EditorPositionState.cs" />
-    <Compile Include="Text\Editor\FormattedLineSource.cs" />
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\GoToCommand.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
@@ -424,6 +433,10 @@
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextViewHost.cs" />
     <Compile Include="Text\Editor\WpfTextViewLineCollection.cs" />
+    <Compile Include="Text\Formatting\FormattedLineSource.cs" />
+    <Compile Include="Text\Formatting\FormattedTextSourceFactoryService.cs" />
+    <Compile Include="Text\Formatting\TextAndAdornmentSequencer.cs" />
+    <Compile Include="Text\Formatting\TextAndAdornmentSequencerFactoryService.cs" />
     <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
     <Compile Include="Text\MappingPoint.cs" />
     <Compile Include="Text\NormalizedTextChangeCollection.cs" />

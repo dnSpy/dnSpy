@@ -17,26 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Formatting;
 
-namespace dnSpy.Contracts.Text {
-	/// <summary>
-	/// Exports a <see cref="ContentTypeDefinition"/>
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-	public sealed class ExportContentTypeDefinitionAttribute : ExportAttribute {
-		/// <summary>
-		/// Gets the guid
-		/// </summary>
-		public string Guid { get; }
+namespace dnSpy.Text.Formatting {
+	sealed class TextAndAdornmentSequencer : ITextAndAdornmentSequencer {
+		readonly ITextView textView;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="guid">Guid of the content type</param>
-		public ExportContentTypeDefinitionAttribute(string guid) {
-			Guid = guid;
+		public TextAndAdornmentSequencer(ITextView textView) {
+			if (textView == null)
+				throw new System.ArgumentNullException(nameof(textView));
+			this.textView = textView;
 		}
 	}
 }
