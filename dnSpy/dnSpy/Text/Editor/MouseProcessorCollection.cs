@@ -25,11 +25,11 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Text.Editor {
 	sealed class MouseProcessorCollection : IDisposable {
 		readonly UIElement mouseElement;
-		readonly UIElement manipulationElem;
+		readonly UIElement manipulationElement;
 		readonly DefaultMouseProcessor defaultMouseProcessor;
 		readonly IMouseProcessor[] mouseProcessors;
 
-		public MouseProcessorCollection(UIElement mouseElement, UIElement manipulationElem, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors) {
+		public MouseProcessorCollection(UIElement mouseElement, UIElement manipulationElement, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors) {
 			if (mouseElement == null)
 				throw new ArgumentNullException(nameof(mouseElement));
 			if (defaultMouseProcessor == null)
@@ -37,37 +37,37 @@ namespace dnSpy.Text.Editor {
 			if (mouseProcessors == null)
 				throw new ArgumentNullException(nameof(mouseProcessors));
 			this.mouseElement = mouseElement;
-			this.manipulationElem = manipulationElem;
+			this.manipulationElement = manipulationElement;
 			this.defaultMouseProcessor = defaultMouseProcessor;
 			this.mouseProcessors = mouseProcessors;
-			mouseElement.AddHandler(UIElement.QueryContinueDragEvent, new QueryContinueDragEventHandler(VisualElement_QueryContinueDrag), true);
-			mouseElement.AddHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(VisualElement_MouseWheel), true);
-			mouseElement.AddHandler(UIElement.MouseUpEvent, new MouseButtonEventHandler(VisualElement_MouseUp), true);
-			mouseElement.AddHandler(UIElement.MouseRightButtonUpEvent, new MouseButtonEventHandler(VisualElement_MouseRightButtonUp), true);
-			mouseElement.AddHandler(UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(VisualElement_MouseRightButtonDown), true);
-			mouseElement.AddHandler(UIElement.MouseMoveEvent, new MouseEventHandler(VisualElement_MouseMove), true);
-			mouseElement.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(VisualElement_MouseLeftButtonUp), true);
-			mouseElement.AddHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(VisualElement_MouseLeftButtonDown), true);
-			mouseElement.AddHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(VisualElement_MouseLeave), true);
-			mouseElement.AddHandler(UIElement.MouseEnterEvent, new MouseEventHandler(VisualElement_MouseEnter), true);
-			mouseElement.AddHandler(UIElement.MouseDownEvent, new MouseButtonEventHandler(VisualElement_MouseDown), true);
-			mouseElement.AddHandler(UIElement.GiveFeedbackEvent, new GiveFeedbackEventHandler(VisualElement_GiveFeedback), true);
-			mouseElement.AddHandler(UIElement.DropEvent, new DragEventHandler(VisualElement_Drop), true);
-			mouseElement.AddHandler(UIElement.DragOverEvent, new DragEventHandler(VisualElement_DragOver), true);
-			mouseElement.AddHandler(UIElement.DragLeaveEvent, new DragEventHandler(VisualElement_DragLeave), true);
-			mouseElement.AddHandler(UIElement.DragEnterEvent, new DragEventHandler(VisualElement_DragEnter), true);
-			if (manipulationElem != null) {
-				manipulationElem.AddHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(VisualElement_TouchUp), true);
-				manipulationElem.AddHandler(UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(VisualElement_TouchDown), true);
-				manipulationElem.AddHandler(UIElement.StylusSystemGestureEvent, new StylusSystemGestureEventHandler(VisualElement_StylusSystemGesture), true);
-				manipulationElem.AddHandler(UIElement.ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(VisualElement_ManipulationStarting), true);
-				manipulationElem.AddHandler(UIElement.ManipulationInertiaStartingEvent, new EventHandler<ManipulationInertiaStartingEventArgs>(VisualElement_ManipulationInertiaStarting), true);
-				manipulationElem.AddHandler(UIElement.ManipulationDeltaEvent, new EventHandler<ManipulationDeltaEventArgs>(VisualElement_ManipulationDelta), true);
-				manipulationElem.AddHandler(UIElement.ManipulationCompletedEvent, new EventHandler<ManipulationCompletedEventArgs>(VisualElement_ManipulationCompleted), true);
+			mouseElement.AddHandler(UIElement.QueryContinueDragEvent, new QueryContinueDragEventHandler(MouseElement_QueryContinueDrag), true);
+			mouseElement.AddHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(MouseElement_MouseWheel), true);
+			mouseElement.AddHandler(UIElement.MouseUpEvent, new MouseButtonEventHandler(MouseElement_MouseUp), true);
+			mouseElement.AddHandler(UIElement.MouseRightButtonUpEvent, new MouseButtonEventHandler(MouseElement_MouseRightButtonUp), true);
+			mouseElement.AddHandler(UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(MouseElement_MouseRightButtonDown), true);
+			mouseElement.AddHandler(UIElement.MouseMoveEvent, new MouseEventHandler(MouseElement_MouseMove), true);
+			mouseElement.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(MouseElement_MouseLeftButtonUp), true);
+			mouseElement.AddHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(MouseElement_MouseLeftButtonDown), true);
+			mouseElement.AddHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(MouseElement_MouseLeave), true);
+			mouseElement.AddHandler(UIElement.MouseEnterEvent, new MouseEventHandler(MouseElement_MouseEnter), true);
+			mouseElement.AddHandler(UIElement.MouseDownEvent, new MouseButtonEventHandler(MouseElement_MouseDown), true);
+			mouseElement.AddHandler(UIElement.GiveFeedbackEvent, new GiveFeedbackEventHandler(MouseElement_GiveFeedback), true);
+			mouseElement.AddHandler(UIElement.DropEvent, new DragEventHandler(MouseElement_Drop), true);
+			mouseElement.AddHandler(UIElement.DragOverEvent, new DragEventHandler(MouseElement_DragOver), true);
+			mouseElement.AddHandler(UIElement.DragLeaveEvent, new DragEventHandler(MouseElement_DragLeave), true);
+			mouseElement.AddHandler(UIElement.DragEnterEvent, new DragEventHandler(MouseElement_DragEnter), true);
+			if (manipulationElement != null) {
+				manipulationElement.AddHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchUp), true);
+				manipulationElement.AddHandler(UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchDown), true);
+				manipulationElement.AddHandler(UIElement.StylusSystemGestureEvent, new StylusSystemGestureEventHandler(ManipulationElement_StylusSystemGesture), true);
+				manipulationElement.AddHandler(UIElement.ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(ManipulationElement_ManipulationStarting), true);
+				manipulationElement.AddHandler(UIElement.ManipulationInertiaStartingEvent, new EventHandler<ManipulationInertiaStartingEventArgs>(ManipulationElement_ManipulationInertiaStarting), true);
+				manipulationElement.AddHandler(UIElement.ManipulationDeltaEvent, new EventHandler<ManipulationDeltaEventArgs>(ManipulationElement_ManipulationDelta), true);
+				manipulationElement.AddHandler(UIElement.ManipulationCompletedEvent, new EventHandler<ManipulationCompletedEventArgs>(ManipulationElement_ManipulationCompleted), true);
 			}
 		}
 
-		void VisualElement_DragEnter(object sender, DragEventArgs e) {
+		void MouseElement_DragEnter(object sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDragEnter(e);
 		}
 
-		void VisualElement_DragLeave(object sender, DragEventArgs e) {
+		void MouseElement_DragLeave(object sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -91,7 +91,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDragLeave(e);
 		}
 
-		void VisualElement_DragOver(object sender, DragEventArgs e) {
+		void MouseElement_DragOver(object sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -103,7 +103,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDragOver(e);
 		}
 
-		void VisualElement_Drop(object sender, DragEventArgs e) {
+		void MouseElement_Drop(object sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -115,7 +115,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDrop(e);
 		}
 
-		void VisualElement_GiveFeedback(object sender, GiveFeedbackEventArgs e) {
+		void MouseElement_GiveFeedback(object sender, GiveFeedbackEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		void VisualElement_MouseDown(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseDown(object sender, MouseButtonEventArgs e) {
 			bool focused = e.ChangedButton != MouseButton.Left && e.ChangedButton != MouseButton.Right && TryFocusMouseElement(e.Handled);
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
@@ -151,7 +151,7 @@ namespace dnSpy.Text.Editor {
 			e.Handled |= focused;
 		}
 
-		void VisualElement_MouseEnter(object sender, MouseEventArgs e) {
+		void MouseElement_MouseEnter(object sender, MouseEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -163,7 +163,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseEnter(e);
 		}
 
-		void VisualElement_MouseLeave(object sender, MouseEventArgs e) {
+		void MouseElement_MouseLeave(object sender, MouseEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -175,7 +175,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseLeave(e);
 		}
 
-		void VisualElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 			bool focused = TryFocusMouseElement(e.Handled);
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
@@ -189,7 +189,7 @@ namespace dnSpy.Text.Editor {
 			e.Handled |= focused;
 		}
 
-		void VisualElement_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -201,7 +201,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseLeftButtonUp(e);
 		}
 
-		void VisualElement_MouseMove(object sender, MouseEventArgs e) {
+		void MouseElement_MouseMove(object sender, MouseEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -213,7 +213,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseMove(e);
 		}
 
-		void VisualElement_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			bool focused = TryFocusMouseElement(e.Handled);
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
@@ -227,7 +227,7 @@ namespace dnSpy.Text.Editor {
 			e.Handled |= focused;
 		}
 
-		void VisualElement_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -239,7 +239,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseRightButtonUp(e);
 		}
 
-		void VisualElement_MouseUp(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseUp(object sender, MouseButtonEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -251,7 +251,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseUp(e);
 		}
 
-		void VisualElement_MouseWheel(object sender, MouseWheelEventArgs e) {
+		void MouseElement_MouseWheel(object sender, MouseWheelEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -263,7 +263,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseWheel(e);
 		}
 
-		void VisualElement_QueryContinueDrag(object sender, QueryContinueDragEventArgs e) {
+		void MouseElement_QueryContinueDrag(object sender, QueryContinueDragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -275,7 +275,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessQueryContinueDrag(e);
 		}
 
-		void VisualElement_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e) {
+		void ManipulationElement_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -287,7 +287,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationCompleted(e);
 		}
 
-		void VisualElement_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
+		void ManipulationElement_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -299,7 +299,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationDelta(e);
 		}
 
-		void VisualElement_ManipulationInertiaStarting(object sender, ManipulationInertiaStartingEventArgs e) {
+		void ManipulationElement_ManipulationInertiaStarting(object sender, ManipulationInertiaStartingEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -311,7 +311,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationInertiaStarting(e);
 		}
 
-		void VisualElement_ManipulationStarting(object sender, ManipulationStartingEventArgs e) {
+		void ManipulationElement_ManipulationStarting(object sender, ManipulationStartingEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -323,7 +323,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationStarting(e);
 		}
 
-		void VisualElement_StylusSystemGesture(object sender, StylusSystemGestureEventArgs e) {
+		void ManipulationElement_StylusSystemGesture(object sender, StylusSystemGestureEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -335,7 +335,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessStylusSystemGesture(e);
 		}
 
-		void VisualElement_TouchDown(object sender, TouchEventArgs e) {
+		void ManipulationElement_TouchDown(object sender, TouchEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -347,7 +347,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessTouchDown(e);
 		}
 
-		void VisualElement_TouchUp(object sender, TouchEventArgs e) {
+		void ManipulationElement_TouchUp(object sender, TouchEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -360,30 +360,30 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Dispose() {
-			mouseElement.RemoveHandler(UIElement.QueryContinueDragEvent, new QueryContinueDragEventHandler(VisualElement_QueryContinueDrag));
-			mouseElement.RemoveHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(VisualElement_MouseWheel));
-			mouseElement.RemoveHandler(UIElement.MouseUpEvent, new MouseButtonEventHandler(VisualElement_MouseUp));
-			mouseElement.RemoveHandler(UIElement.MouseRightButtonUpEvent, new MouseButtonEventHandler(VisualElement_MouseRightButtonUp));
-			mouseElement.RemoveHandler(UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(VisualElement_MouseRightButtonDown));
-			mouseElement.RemoveHandler(UIElement.MouseMoveEvent, new MouseEventHandler(VisualElement_MouseMove));
-			mouseElement.RemoveHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(VisualElement_MouseLeftButtonUp));
-			mouseElement.RemoveHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(VisualElement_MouseLeftButtonDown));
-			mouseElement.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(VisualElement_MouseLeave));
-			mouseElement.RemoveHandler(UIElement.MouseEnterEvent, new MouseEventHandler(VisualElement_MouseEnter));
-			mouseElement.RemoveHandler(UIElement.MouseDownEvent, new MouseButtonEventHandler(VisualElement_MouseDown));
-			mouseElement.RemoveHandler(UIElement.GiveFeedbackEvent, new GiveFeedbackEventHandler(VisualElement_GiveFeedback));
-			mouseElement.RemoveHandler(UIElement.DropEvent, new DragEventHandler(VisualElement_Drop));
-			mouseElement.RemoveHandler(UIElement.DragOverEvent, new DragEventHandler(VisualElement_DragOver));
-			mouseElement.RemoveHandler(UIElement.DragLeaveEvent, new DragEventHandler(VisualElement_DragLeave));
-			mouseElement.RemoveHandler(UIElement.DragEnterEvent, new DragEventHandler(VisualElement_DragEnter));
-			if (manipulationElem != null) {
-				manipulationElem.RemoveHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(VisualElement_TouchUp));
-				manipulationElem.RemoveHandler(UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(VisualElement_TouchDown));
-				manipulationElem.RemoveHandler(UIElement.StylusSystemGestureEvent, new StylusSystemGestureEventHandler(VisualElement_StylusSystemGesture));
-				manipulationElem.RemoveHandler(UIElement.ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(VisualElement_ManipulationStarting));
-				manipulationElem.RemoveHandler(UIElement.ManipulationInertiaStartingEvent, new EventHandler<ManipulationInertiaStartingEventArgs>(VisualElement_ManipulationInertiaStarting));
-				manipulationElem.RemoveHandler(UIElement.ManipulationDeltaEvent, new EventHandler<ManipulationDeltaEventArgs>(VisualElement_ManipulationDelta));
-				manipulationElem.RemoveHandler(UIElement.ManipulationCompletedEvent, new EventHandler<ManipulationCompletedEventArgs>(VisualElement_ManipulationCompleted));
+			mouseElement.RemoveHandler(UIElement.QueryContinueDragEvent, new QueryContinueDragEventHandler(MouseElement_QueryContinueDrag));
+			mouseElement.RemoveHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(MouseElement_MouseWheel));
+			mouseElement.RemoveHandler(UIElement.MouseUpEvent, new MouseButtonEventHandler(MouseElement_MouseUp));
+			mouseElement.RemoveHandler(UIElement.MouseRightButtonUpEvent, new MouseButtonEventHandler(MouseElement_MouseRightButtonUp));
+			mouseElement.RemoveHandler(UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(MouseElement_MouseRightButtonDown));
+			mouseElement.RemoveHandler(UIElement.MouseMoveEvent, new MouseEventHandler(MouseElement_MouseMove));
+			mouseElement.RemoveHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(MouseElement_MouseLeftButtonUp));
+			mouseElement.RemoveHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(MouseElement_MouseLeftButtonDown));
+			mouseElement.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(MouseElement_MouseLeave));
+			mouseElement.RemoveHandler(UIElement.MouseEnterEvent, new MouseEventHandler(MouseElement_MouseEnter));
+			mouseElement.RemoveHandler(UIElement.MouseDownEvent, new MouseButtonEventHandler(MouseElement_MouseDown));
+			mouseElement.RemoveHandler(UIElement.GiveFeedbackEvent, new GiveFeedbackEventHandler(MouseElement_GiveFeedback));
+			mouseElement.RemoveHandler(UIElement.DropEvent, new DragEventHandler(MouseElement_Drop));
+			mouseElement.RemoveHandler(UIElement.DragOverEvent, new DragEventHandler(MouseElement_DragOver));
+			mouseElement.RemoveHandler(UIElement.DragLeaveEvent, new DragEventHandler(MouseElement_DragLeave));
+			mouseElement.RemoveHandler(UIElement.DragEnterEvent, new DragEventHandler(MouseElement_DragEnter));
+			if (manipulationElement != null) {
+				manipulationElement.RemoveHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchUp));
+				manipulationElement.RemoveHandler(UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchDown));
+				manipulationElement.RemoveHandler(UIElement.StylusSystemGestureEvent, new StylusSystemGestureEventHandler(ManipulationElement_StylusSystemGesture));
+				manipulationElement.RemoveHandler(UIElement.ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(ManipulationElement_ManipulationStarting));
+				manipulationElement.RemoveHandler(UIElement.ManipulationInertiaStartingEvent, new EventHandler<ManipulationInertiaStartingEventArgs>(ManipulationElement_ManipulationInertiaStarting));
+				manipulationElement.RemoveHandler(UIElement.ManipulationDeltaEvent, new EventHandler<ManipulationDeltaEventArgs>(ManipulationElement_ManipulationDelta));
+				manipulationElement.RemoveHandler(UIElement.ManipulationCompletedEvent, new EventHandler<ManipulationCompletedEventArgs>(ManipulationElement_ManipulationCompleted));
 			}
 			foreach (var k in mouseProcessors)
 				(k as IDisposable)?.Dispose();
