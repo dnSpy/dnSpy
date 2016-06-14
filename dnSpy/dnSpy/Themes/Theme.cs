@@ -85,6 +85,8 @@ namespace dnSpy.Themes {
 		public string Name { get; }
 		public string MenuName { get; }
 		public bool IsHighContrast { get; }
+		public bool IsDark { get; }
+		public bool IsLight { get; }
 		public double Order { get; }
 
 		public Theme(XElement root) {
@@ -102,10 +104,13 @@ namespace dnSpy.Themes {
 			this.MenuName = menuName.Value;
 
 			var hcName = root.Attribute("is-high-contrast");
-			if (hcName != null)
-				this.IsHighContrast = (bool)hcName;
-			else
-				this.IsHighContrast = false;
+			this.IsHighContrast = hcName != null && (bool)hcName;
+
+			var darkThemeName = root.Attribute("is-dark");
+			this.IsDark = darkThemeName != null && (bool)darkThemeName;
+
+			var lightThemeName = root.Attribute("is-light");
+			this.IsLight = lightThemeName != null && (bool)lightThemeName;
 
 			var sort = root.Attribute("order");
 			this.Order = sort == null ? 1 : (double)sort;
@@ -246,8 +251,8 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
+		public IThemeColor GetExplicitColor(ColorType colorType) => GetColorInternal(colorType).OriginalColor;
 		public IThemeColor GetTextColor(ColorType colorType) => GetColorInternal(colorType).TextInheritedColor;
-
 		public IThemeColor GetColor(ColorType colorType) => GetColorInternal(colorType).InheritedColor;
 
 		Color GetColorInternal(ColorType colorType) {

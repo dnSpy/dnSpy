@@ -1,4 +1,4 @@
-<theme guid="64EFBB2C-0ACA-467C-8389-9FA350376F3F" name="dark" menu-name="_Dark" order="200" is-high-contrast="false">
+<theme guid="64EFBB2C-0ACA-467C-8389-9FA350376F3F" name="dark" menu-name="_Dark" order="200" is-dark="true" is-high-contrast="false">
 	<colors>
 		<color name="defaulttext" fg="#DCDCDC" bg="#1E1E1E" />
 		<color name="operator" fg="#DCDCDC" />

@@ -36,6 +36,16 @@ namespace dnSpy.Contracts.Themes {
 		/// <summary>true if this is a high-contrast theme</summary>
 		bool IsHighContrast { get; }
 
+		/// <summary>
+		/// true if it's a dark colored theme
+		/// </summary>
+		bool IsDark { get; }
+
+		/// <summary>
+		/// true if it's a light colored theme
+		/// </summary>
+		bool IsLight { get; }
+
 		/// <summary>Theme order. Can be used by a UI class to sort the themes before showing them
 		/// to the user</summary>
 		double Order { get; }
@@ -53,5 +63,12 @@ namespace dnSpy.Contracts.Themes {
 		/// <param name="colorType">Color</param>
 		/// <returns></returns>
 		IThemeColor GetTextColor(ColorType colorType);
+
+		/// <summary>
+		/// Gets the color that was defined in the theme file. Inherited colors aren't included.
+		/// </summary>
+		/// <param name="colorType">Color</param>
+		/// <returns></returns>
+		IThemeColor GetExplicitColor(ColorType colorType);
 	}
 }
