@@ -1834,16 +1834,13 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.Char, "Char"),
 							new BrushColorInfo(ColorType.Keyword, "Keyword"),
 							new BrushColorInfo(ColorType.Namespace, "Namespace"),
-							new BrushColorInfo(ColorType.Type, "Type") {
-								Children = new ColorInfo[] {
-									new BrushColorInfo(ColorType.SealedType, "Sealed type"),
-									new BrushColorInfo(ColorType.StaticType, "Static type"),
-									new BrushColorInfo(ColorType.Delegate, "Delegate"),
-									new BrushColorInfo(ColorType.Enum, "Enum"),
-									new BrushColorInfo(ColorType.Interface, "Interface"),
-									new BrushColorInfo(ColorType.ValueType, "Value type")
-								},
-							},
+							new BrushColorInfo(ColorType.Type, "Type"),
+							new BrushColorInfo(ColorType.SealedType, "Sealed type"),
+							new BrushColorInfo(ColorType.StaticType, "Static type"),
+							new BrushColorInfo(ColorType.Delegate, "Delegate"),
+							new BrushColorInfo(ColorType.Enum, "Enum"),
+							new BrushColorInfo(ColorType.Interface, "Interface"),
+							new BrushColorInfo(ColorType.ValueType, "Value type"),
 							new BrushColorInfo(ColorType.TypeGenericParameter, "Generic type parameter"),
 							new BrushColorInfo(ColorType.MethodGenericParameter, "Generic method parameter"),
 							new BrushColorInfo(ColorType.InstanceMethod, "Instance method"),

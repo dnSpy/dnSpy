@@ -62,6 +62,8 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (tabSize <= 0)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
+			if (sourceTextSnapshot != visualBufferSnapshot)
+				throw new NotSupportedException("Text snapshot must be identical to visual snapshot");
 
 			SourceTextSnapshot = sourceTextSnapshot;
 			TopTextSnapshot = visualBufferSnapshot;
@@ -79,7 +81,11 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public Collection<IFormattedLine> FormatLineInVisualBuffer(ITextSnapshotLine visualLine) {
-			throw new System.NotImplementedException();//TODO:
+			if (visualLine == null)
+				throw new ArgumentNullException(nameof(visualLine));
+			if (visualLine.Snapshot != TopTextSnapshot)
+				throw new ArgumentException();
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }

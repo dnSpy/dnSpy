@@ -19,9 +19,9 @@
 
 namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Classification type definition. Use <see cref="ExportClassificationTypeDefinitionAttribute"/>
-	/// to export an instance.
+	/// Base class of all editor classification definitions. Use
+	/// <see cref="ExportClassificationFormatDefinitionAttribute"/> to export an instance
 	/// </summary>
-	public sealed class ClassificationTypeDefinition {
+	public abstract class ClassificationFormatDefinition : EditorFormatDefinition {
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
 using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Contracts.Text.Editor.Classification {

@@ -353,7 +353,7 @@
     <Compile Include="Text\ContentTypeDefinitions.cs" />
     <Compile Include="Text\ContentTypeRegistryService.cs" />
     <Compile Include="Text\Editor\AvalonEditSearchPanelLocalization.cs" />
-    <Compile Include="Text\Editor\Classification\ClassificationFormatMap.cs" />
+    <Compile Include="Text\Editor\Classification\CategoryClassificationFormatMap.cs" />
     <Compile Include="Text\Editor\Classification\ClassificationFormatMapService.cs" />
     <Compile Include="Text\Editor\Classification\ClassificationType.cs" />
     <Compile Include="Text\Editor\Classification\ClassificationTypeRegistryService.cs" />
@@ -361,6 +361,9 @@
     <Compile Include="Text\Editor\Classification\ClassifierAggregatorBase.cs" />
     <Compile Include="Text\Editor\Classification\ClassifierAggregatorService.cs" />
     <Compile Include="Text\Editor\Classification\NullClassifier.cs" />
+    <Compile Include="Text\Editor\Classification\PredefinedClassificationFormatDefinitions.cs" />
+    <Compile Include="Text\Editor\Classification\ThemeClassificationFormatDefinitions.cs" />
+    <Compile Include="Text\Editor\Classification\ViewClassificationFormatMap.cs" />
     <Compile Include="Text\Editor\Classification\ViewClassifierAggregator.cs" />
     <Compile Include="Text\Editor\Classification\ViewClassifierAggregatorService.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />

@@ -17,11 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor.Classification {
-	/// <summary>
-	/// Classification type definition. Use <see cref="ExportClassificationTypeDefinitionAttribute"/>
-	/// to export an instance.
-	/// </summary>
-	public sealed class ClassificationTypeDefinition {
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor.Classification;
+
+namespace dnSpy.Text.Editor.Classification {
+	static class PredefinedClassificationFormatDefinitions {
+#pragma warning disable CS0169
+		[ExportClassificationTypeDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		[DisplayName("FormalLanguage")]
+		static ClassificationTypeDefinition FormalLanguageClassificationTypeDefinition;
+
+		[ExportClassificationTypeDefinition(PredefinedClassificationTypeNames.NaturalLanguage)]
+		[DisplayName("NaturalLanguage")]
+		static ClassificationTypeDefinition NaturalLanguageClassificationTypeDefinition;
+#pragma warning restore CS0169
 	}
 }

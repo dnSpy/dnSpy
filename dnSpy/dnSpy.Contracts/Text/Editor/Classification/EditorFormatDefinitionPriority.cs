@@ -19,9 +19,21 @@
 
 namespace dnSpy.Contracts.Text.Editor.Classification {
 	/// <summary>
-	/// Classification type definition. Use <see cref="ExportClassificationTypeDefinitionAttribute"/>
-	/// to export an instance.
+	/// <see cref="EditorFormatDefinition"/> priority constants
 	/// </summary>
-	public sealed class ClassificationTypeDefinition {
+	public static class EditorFormatDefinitionPriority {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public const double BeforeLow = Low - 100000;
+		public const double Low = -1000000;
+		public const double AfterLow = Low + 100000;
+
+		public const double BeforeDefault = Default - 100000;
+		public const double Default = 0;
+		public const double AfterDefault = Default + 100000;
+
+		public const double BeforeHigh = High - 100000;
+		public const double High = 1000000;
+		public const double AfterHigh = High + 100000;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

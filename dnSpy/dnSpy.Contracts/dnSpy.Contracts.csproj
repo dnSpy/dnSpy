@@ -364,8 +364,12 @@
     <Compile Include="Text\Editor\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Editor\Classification\BaseClassificationTypeAttribute.cs" />
     <Compile Include="Text\Editor\Classification\ClassificationChangedEventArgs.cs" />
+    <Compile Include="Text\Editor\Classification\ClassificationFormatDefinition.cs" />
     <Compile Include="Text\Editor\Classification\ClassificationSpan.cs" />
     <Compile Include="Text\Editor\Classification\ClassificationTypeDefinition.cs" />
+    <Compile Include="Text\Editor\Classification\EditorFormatDefinition.cs" />
+    <Compile Include="Text\Editor\Classification\EditorFormatDefinitionPriority.cs" />
+    <Compile Include="Text\Editor\Classification\ExportClassificationFormatDefinitionAttribute.cs" />
     <Compile Include="Text\Editor\Classification\ExportClassificationTypeDefinitionAttribute.cs" />
     <Compile Include="Text\Editor\Classification\FormatItemsEventArgs.cs" />
     <Compile Include="Text\Editor\Classification\IClassificationFormatMap.cs" />
@@ -375,6 +379,9 @@
     <Compile Include="Text\Editor\Classification\IClassifier.cs" />
     <Compile Include="Text\Editor\Classification\IClassifierAggregatorService.cs" />
     <Compile Include="Text\Editor\Classification\IViewClassifierAggregatorService.cs" />
+    <Compile Include="Text\Editor\Classification\PredefinedClassificationTypeNames.cs" />
+    <Compile Include="Text\Editor\Classification\ThemeClassificationFormatDefinition.cs" />
+    <Compile Include="Text\Editor\Classification\ThemeClassificationTypeNames.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />
     <Compile Include="Text\Editor\CodeEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
