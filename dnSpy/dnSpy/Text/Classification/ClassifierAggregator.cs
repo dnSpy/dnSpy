@@ -18,11 +18,12 @@
 */
 
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	sealed class ClassifierAggregator : ClassifierAggregatorBase {
-		public ClassifierAggregator(ITextBuffer textBuffer)
-			: base(textBuffer) {
+		public ClassifierAggregator(IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBuffer textBuffer)
+			: base(bufferTagAggregatorFactoryService.CreateTagAggregator<IClassificationTag>(textBuffer, TagAggregatorOptions.MapByContentType), contentTypeRegistryService, textBuffer) {
 		}
 	}
 }

@@ -17,14 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Tagging;
+using System;
+using dnSpy.Contracts.Text.Classification;
 
-namespace dnSpy.Text.Classification {
-	sealed class ViewClassifierAggregator : ClassifierAggregatorBase {
-		public ViewClassifierAggregator(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextView textView)
-			: base(viewTagAggregatorFactoryService.CreateTagAggregator<IClassificationTag>(textView, TagAggregatorOptions.MapByContentType), contentTypeRegistryService, textView.TextBuffer) {
+namespace dnSpy.Contracts.Text.Tagging {
+	/// <summary>
+	/// Implements <see cref="IClassificationTag"/>
+	/// </summary>
+	public sealed class ClassificationTag : IClassificationTag {
+		/// <summary>
+		/// Gets the classification type
+		/// </summary>
+		public IClassificationType ClassificationType { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="type">Classification type</param>
+		public ClassificationTag(IClassificationType type) {
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
+			ClassificationType = type;
 		}
 	}
 }

@@ -17,10 +17,40 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Mapping point
 	/// </summary>
 	public interface IMappingPoint {
+		/// <summary>
+		/// The <see cref="ITextBuffer"/> from which this point was created
+		/// </summary>
+		ITextBuffer AnchorBuffer { get; }
+
+		/// <summary>
+		/// Maps the point to a particular <see cref="ITextBuffer"/>
+		/// </summary>
+		/// <param name="targetBuffer">Target buffer</param>
+		/// <param name="affinity">Affinity</param>
+		/// <returns></returns>
+		SnapshotPoint? GetPoint(ITextBuffer targetBuffer, PositionAffinity affinity);
+
+		/// <summary>
+		/// Maps the point to a particular <see cref="ITextSnapshot"/>
+		/// </summary>
+		/// <param name="targetSnapshot">Target snapshot</param>
+		/// <param name="affinity">Affinity</param>
+		/// <returns></returns>
+		SnapshotPoint? GetPoint(ITextSnapshot targetSnapshot, PositionAffinity affinity);
+
+		/// <summary>
+		/// Maps the point to a matching <see cref="ITextBuffer"/>
+		/// </summary>
+		/// <param name="match">The predicate used to match the <see cref="ITextBuffer"/></param>
+		/// <param name="affinity">Affinity</param>
+		/// <returns></returns>
+		SnapshotPoint? GetPoint(Predicate<ITextBuffer> match, PositionAffinity affinity);
 	}
 }

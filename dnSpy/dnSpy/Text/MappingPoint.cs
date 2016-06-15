@@ -17,9 +17,43 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
 	sealed class MappingPoint : IMappingPoint {
+		public ITextBuffer AnchorBuffer => snapshotPoint.Snapshot.TextBuffer;
+
+		/*readonly*/ SnapshotPoint snapshotPoint;
+		readonly PointTrackingMode trackingMode;
+
+		public MappingPoint(SnapshotPoint snapshotPoint, PointTrackingMode trackingMode) {
+			if (snapshotPoint.Snapshot == null)
+				throw new ArgumentException();
+			this.snapshotPoint = snapshotPoint;
+			this.trackingMode = trackingMode;
+		}
+
+		public SnapshotPoint? GetPoint(Predicate<ITextBuffer> match, PositionAffinity affinity) {
+			if (match == null)
+				throw new ArgumentNullException(nameof(match));
+			if (match(AnchorBuffer))
+				return GetPoint(AnchorBuffer.CurrentSnapshot, affinity);
+			return null;
+		}
+
+		public SnapshotPoint? GetPoint(ITextSnapshot targetSnapshot, PositionAffinity affinity) {
+			if (targetSnapshot == null)
+				throw new ArgumentNullException(nameof(targetSnapshot));
+			return snapshotPoint.TranslateTo(targetSnapshot, trackingMode);
+		}
+
+		public SnapshotPoint? GetPoint(ITextBuffer targetBuffer, PositionAffinity affinity) {
+			if (targetBuffer == null)
+				throw new ArgumentNullException(nameof(targetBuffer));
+			return GetPoint(targetBuffer.CurrentSnapshot, affinity);
+		}
+
+		public override string ToString() => nameof(IMappingPoint) + "@" + snapshotPoint.ToString();
 	}
 }

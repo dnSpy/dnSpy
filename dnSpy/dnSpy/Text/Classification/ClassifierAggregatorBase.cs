@@ -21,24 +21,34 @@ using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	abstract class ClassifierAggregatorBase : IClassifier, IDisposable {
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly ITagAggregator<IClassificationTag> tagAggregator;
 		readonly ITextBuffer textBuffer;
 
 		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 
-		protected ClassifierAggregatorBase(ITextBuffer textBuffer) {
+		protected ClassifierAggregatorBase(ITagAggregator<IClassificationTag> tagAggregator, IContentTypeRegistryService contentTypeRegistryService, ITextBuffer textBuffer) {
+			if (tagAggregator == null)
+				throw new ArgumentNullException(nameof(tagAggregator));
+			if (contentTypeRegistryService == null)
+				throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
+			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.tagAggregator = tagAggregator;
 			this.textBuffer = textBuffer;
+			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
 
-		protected ClassifierAggregatorBase(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textBuffer = textView.TextBuffer;
+		void TagAggregator_TagsChanged(object sender, TagsChangedEventArgs e) {
+			if (ClassificationChanged == null)
+				return;
+			foreach (var span in e.Span.GetSpans(textBuffer))
+				ClassificationChanged?.Invoke(this, new ClassificationChangedEventArgs(span));
 		}
 
 		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) {
@@ -46,7 +56,8 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public void Dispose() {
-			//TODO:
+			tagAggregator.TagsChanged -= TagAggregator_TagsChanged;
+			(tagAggregator as IDisposable)?.Dispose();
 		}
 	}
 }

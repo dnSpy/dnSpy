@@ -53,6 +53,32 @@ namespace dnSpy.Contracts.Text {
 			: base(CreateNormalizedList(spans)) {
 		}
 
+		/// <summary>
+		/// Checks whether this instance intersects with <paramref name="span"/>
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public bool IntersectsWith(Span span) {
+			foreach (var s in this) {
+				if (s.IntersectsWith(span))
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Checks whether this instance overlapsWith with <paramref name="span"/>
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public bool OverlapsWith(Span span) {
+			foreach (var s in this) {
+				if (s.OverlapsWith(span))
+					return true;
+			}
+			return false;
+		}
+
 		static List<Span> CreateNormalizedList(IEnumerable<Span> spans) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));

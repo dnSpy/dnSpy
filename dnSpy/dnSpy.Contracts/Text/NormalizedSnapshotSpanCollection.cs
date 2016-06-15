@@ -167,6 +167,28 @@ namespace dnSpy.Contracts.Text {
 		}
 
 		/// <summary>
+		/// Checks whether this instance intersects with <paramref name="span"/>
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public bool IntersectsWith(SnapshotSpan span) {
+			if (span.Snapshot != snapshot)
+				throw new ArgumentException();
+			return spans.IntersectsWith(span.Span);
+		}
+
+		/// <summary>
+		/// Checks whether this instance overlapsWith with <paramref name="span"/>
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public bool OverlapsWith(SnapshotSpan span) {
+			if (span.Snapshot != snapshot)
+				throw new ArgumentException();
+			return spans.OverlapsWith(span.Span);
+		}
+
+		/// <summary>
 		/// implicit operator <see cref="NormalizedSpanCollection"/>
 		/// </summary>
 		/// <param name="spans"></param>

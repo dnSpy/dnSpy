@@ -351,6 +351,7 @@ namespace dnSpy.Text.Editor {
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
 			DnSpyTextEditor.Dispose();
+			(aggregateClassifier as IDisposable)?.Dispose();
 		}
 
 		void InitializeFrom(IEditorOptions options) {

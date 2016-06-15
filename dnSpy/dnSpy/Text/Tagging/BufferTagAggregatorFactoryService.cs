@@ -20,25 +20,23 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Tagging;
 
-namespace dnSpy.Text.Classification {
-	[Export(typeof(IClassifierAggregatorService))]
-	sealed class ClassifierAggregatorService : IClassifierAggregatorService {
-		readonly IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
+namespace dnSpy.Text.Tagging {
+	[Export(typeof(IBufferTagAggregatorFactoryService))]
+	sealed class BufferTagAggregatorFactoryService : IBufferTagAggregatorFactoryService {
+		readonly ITaggerFactory taggerFactory;
 
 		[ImportingConstructor]
-		ClassifierAggregatorService(IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService, IContentTypeRegistryService contentTypeRegistryService) {
-			this.bufferTagAggregatorFactoryService = bufferTagAggregatorFactoryService;
-			this.contentTypeRegistryService = contentTypeRegistryService;
+		BufferTagAggregatorFactoryService(ITaggerFactory taggerFactory) {
+			this.taggerFactory = taggerFactory;
 		}
 
-		public IClassifier GetClassifier(ITextBuffer textBuffer) {
+		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer) where T : ITag => CreateTagAggregator<T>(textBuffer, TagAggregatorOptions.None);
+		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer, TagAggregatorOptions options) where T : ITag {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			return new ClassifierAggregator(bufferTagAggregatorFactoryService, contentTypeRegistryService, textBuffer);
+			return new TextBufferTagAggregator<T>(taggerFactory, textBuffer, options);
 		}
 	}
 }

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Editor option key
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="T">The type of the option value</typeparam>
 	public struct EditorOptionKey<T> : IEquatable<EditorOptionKey<T>> {
 		/// <summary>
 		/// Name

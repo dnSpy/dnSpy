@@ -356,6 +356,8 @@
     <Compile Include="Text\Classification\ClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ClassifierAggregatorBase.cs" />
     <Compile Include="Text\Classification\ClassifierAggregatorService.cs" />
+    <Compile Include="Text\Classification\ClassifierTagger.cs" />
+    <Compile Include="Text\Classification\ClassifierTaggerProvider.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationFormatDefinitions.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
@@ -442,8 +444,16 @@
     <Compile Include="Text\Formatting\TextAndAdornmentSequencerFactoryService.cs" />
     <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
     <Compile Include="Text\MappingPoint.cs" />
+    <Compile Include="Text\MappingSpan.cs" />
     <Compile Include="Text\NormalizedTextChangeCollection.cs" />
     <Compile Include="Text\OffsetAndCachedColors.cs" />
+    <Compile Include="Text\Tagging\BufferTagAggregatorFactoryService.cs" />
+    <Compile Include="Text\Tagging\ITaggerFactory.cs" />
+    <Compile Include="Text\Tagging\TagAggregatorBase.cs" />
+    <Compile Include="Text\Tagging\TaggerFactory.cs" />
+    <Compile Include="Text\Tagging\TextBufferTagAggregator.cs" />
+    <Compile Include="Text\Tagging\TextViewTagAggregator.cs" />
+    <Compile Include="Text\Tagging\ViewTagAggregatorFactoryService.cs" />
     <Compile Include="Text\TextBuffer.cs" />
     <Compile Include="Text\TextBufferFactoryService.cs" />
     <Compile Include="Text\TextChange.cs" />

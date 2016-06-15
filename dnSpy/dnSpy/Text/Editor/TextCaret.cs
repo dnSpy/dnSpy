@@ -130,7 +130,8 @@ namespace dnSpy.Text.Editor {
 		void AvalonEdit_Caret_PositionChanged(object sender, EventArgs e) => OnCaretPositionChanged();
 		void OnCaretPositionChanged() {
 			var oldPos = cachedCaretPosition;
-			cachedCaretPosition = new CaretPosition(BufferPosition, new MappingPoint(), Affinity);
+			var bufPos = BufferPosition;
+			cachedCaretPosition = new CaretPosition(bufPos, new MappingPoint(bufPos.Position, PointTrackingMode.Negative), Affinity);
 			if (!CaretEquals(oldPos, cachedCaretPosition))
 				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
 		}

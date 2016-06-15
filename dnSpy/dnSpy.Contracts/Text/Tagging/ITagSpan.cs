@@ -17,14 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Tagging;
+namespace dnSpy.Contracts.Text.Tagging {
+	/// <summary>
+	/// Associates an <see cref="ITag"/> with a given <see cref="SnapshotSpan"/>,
+	/// see also <see cref="TagSpan{T}"/>
+	/// </summary>
+	/// <typeparam name="T">The type, which must be a subclass of <see cref="ITag"/></typeparam>
+	public interface ITagSpan<out T> where T : ITag {
+		/// <summary>
+		/// Gets the snapshot span
+		/// </summary>
+		SnapshotSpan Span { get; }
 
-namespace dnSpy.Text.Classification {
-	sealed class ViewClassifierAggregator : ClassifierAggregatorBase {
-		public ViewClassifierAggregator(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextView textView)
-			: base(viewTagAggregatorFactoryService.CreateTagAggregator<IClassificationTag>(textView, TagAggregatorOptions.MapByContentType), contentTypeRegistryService, textView.TextBuffer) {
-		}
+		/// <summary>
+		/// Gets the tag
+		/// </summary>
+		T Tag { get; }
 	}
 }

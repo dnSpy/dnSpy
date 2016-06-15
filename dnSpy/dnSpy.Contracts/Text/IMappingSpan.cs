@@ -17,10 +17,47 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Mapping span
 	/// </summary>
 	public interface IMappingSpan {
+		/// <summary>
+		/// Gets the <see cref="ITextBuffer"/> from which this span was created
+		/// </summary>
+		ITextBuffer AnchorBuffer { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IMappingPoint"/> for the start of this span
+		/// </summary>
+		IMappingPoint Start { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IMappingPoint"/> for the end of this span
+		/// </summary>
+		IMappingPoint End { get; }
+
+		/// <summary>
+		/// Maps the span to a particular <see cref="ITextBuffer"/>
+		/// </summary>
+		/// <param name="targetBuffer">Target buffer</param>
+		/// <returns></returns>
+		NormalizedSnapshotSpanCollection GetSpans(ITextBuffer targetBuffer);
+
+		/// <summary>
+		/// Maps the span to a particular <see cref="ITextSnapshot"/>
+		/// </summary>
+		/// <param name="targetSnapshot">Target snapshot</param>
+		/// <returns></returns>
+		NormalizedSnapshotSpanCollection GetSpans(ITextSnapshot targetSnapshot);
+
+		/// <summary>
+		/// Maps the span to a matching <see cref="ITextBuffer"/>
+		/// </summary>
+		/// <param name="match">The predicate used to identify the <see cref="ITextBuffer"/></param>
+		/// <returns></returns>
+		NormalizedSnapshotSpanCollection GetSpans(Predicate<ITextBuffer> match);
 	}
 }
