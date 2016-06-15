@@ -21,7 +21,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Classification;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {

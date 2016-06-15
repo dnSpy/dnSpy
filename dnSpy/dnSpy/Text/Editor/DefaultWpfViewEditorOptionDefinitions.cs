@@ -18,8 +18,8 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Classification;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]

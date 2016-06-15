@@ -25,8 +25,8 @@ using System.Linq;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Classification;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
 

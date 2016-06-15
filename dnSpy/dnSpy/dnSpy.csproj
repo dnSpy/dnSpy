@@ -122,6 +122,7 @@
       <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Files\Tabs\Dialogs\OpenFromGACVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabPrinter.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabsDlg.xaml.cs">
       <DependentUpon>TabsDlg.xaml</DependentUpon>
@@ -159,7 +160,6 @@
     <Compile Include="Files\Tabs\SaveManager.cs" />
     <Compile Include="Files\Tabs\SearchMsdnCommand.cs" />
     <Compile Include="Files\Tabs\SerializedTabs.cs" />
-    <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
     <Compile Include="Files\Tabs\Settings\DisplaySettingsTab.cs" />
     <Compile Include="Files\Tabs\TabCommands.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
@@ -349,25 +349,25 @@
     <Compile Include="Tabs\TabUtils.cs" />
     <Compile Include="Text\CachedColorsList.cs" />
     <Compile Include="Text\CachedColorsListColorizer.cs" />
+    <Compile Include="Text\Classification\CategoryClassificationFormatMap.cs" />
+    <Compile Include="Text\Classification\ClassificationFormatMapService.cs" />
+    <Compile Include="Text\Classification\ClassificationType.cs" />
+    <Compile Include="Text\Classification\ClassificationTypeRegistryService.cs" />
+    <Compile Include="Text\Classification\ClassifierAggregator.cs" />
+    <Compile Include="Text\Classification\ClassifierAggregatorBase.cs" />
+    <Compile Include="Text\Classification\ClassifierAggregatorService.cs" />
+    <Compile Include="Text\Classification\NullClassifier.cs" />
+    <Compile Include="Text\Classification\PredefinedClassificationFormatDefinitions.cs" />
+    <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
+    <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />
+    <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />
+    <Compile Include="Text\Classification\ViewClassifierAggregatorService.cs" />
     <Compile Include="Text\ContentType.cs" />
     <Compile Include="Text\ContentTypeDefinitions.cs" />
     <Compile Include="Text\ContentTypeRegistryService.cs" />
     <Compile Include="Text\Editor\AvalonEditSearchPanelLocalization.cs" />
-    <Compile Include="Text\Editor\Classification\CategoryClassificationFormatMap.cs" />
-    <Compile Include="Text\Editor\Classification\ClassificationFormatMapService.cs" />
-    <Compile Include="Text\Editor\Classification\ClassificationType.cs" />
-    <Compile Include="Text\Editor\Classification\ClassificationTypeRegistryService.cs" />
-    <Compile Include="Text\Editor\Classification\ClassifierAggregator.cs" />
-    <Compile Include="Text\Editor\Classification\ClassifierAggregatorBase.cs" />
-    <Compile Include="Text\Editor\Classification\ClassifierAggregatorService.cs" />
-    <Compile Include="Text\Editor\Classification\NullClassifier.cs" />
-    <Compile Include="Text\Editor\Classification\PredefinedClassificationFormatDefinitions.cs" />
-    <Compile Include="Text\Editor\Classification\ThemeClassificationFormatDefinitions.cs" />
-    <Compile Include="Text\Editor\Classification\ViewClassificationFormatMap.cs" />
-    <Compile Include="Text\Editor\Classification\ViewClassifierAggregator.cs" />
-    <Compile Include="Text\Editor\Classification\ViewClassifierAggregatorService.cs" />
-    <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
+    <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\ColorizerCollection.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
@@ -392,8 +392,8 @@
     <Compile Include="Text\Editor\IReplEditor2.cs" />
     <Compile Include="Text\Editor\KeyboardWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
-    <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
+    <Compile Include="Text\Editor\LogEditorCreator.cs" />
     <Compile Include="Text\Editor\MouseLocation.cs" />
     <Compile Include="Text\Editor\MouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\MouseWpfTextViewCreationListener.cs" />
@@ -417,8 +417,8 @@
     <Compile Include="Text\Editor\ReplCommands.cs" />
     <Compile Include="Text\Editor\ReplCommandTargetFilter.cs" />
     <Compile Include="Text\Editor\ReplCommandTargetFilterCreator.cs" />
-    <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplEditor.cs" />
+    <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplSubBuffer.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
