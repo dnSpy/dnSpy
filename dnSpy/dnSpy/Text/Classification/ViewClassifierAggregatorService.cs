@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Tagging;
@@ -28,18 +27,18 @@ namespace dnSpy.Text.Classification {
 	[Export(typeof(IViewClassifierAggregatorService))]
 	sealed class ViewClassifierAggregatorService : IViewClassifierAggregatorService {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		ViewClassifierAggregatorService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IContentTypeRegistryService contentTypeRegistryService) {
+		ViewClassifierAggregatorService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
 		public IClassifier GetClassifier(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			return new ViewClassifierAggregator(viewTagAggregatorFactoryService, contentTypeRegistryService, textView);
+			return new ViewClassifierAggregator(viewTagAggregatorFactoryService, classificationTypeRegistryService, textView);
 		}
 	}
 }

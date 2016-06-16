@@ -32,6 +32,7 @@ namespace dnSpy.Text.Tagging {
 			this.taggerFactory = taggerFactory;
 			this.textView = textView;
 			textView.Closed += TextView_Closed;
+			Initialize();
 		}
 
 		void TextView_Closed(object sender, EventArgs e) => Dispose();

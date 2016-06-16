@@ -28,6 +28,7 @@ namespace dnSpy.Text.Tagging {
 		public TextBufferTagAggregator(ITaggerFactory taggerFactory, ITextBuffer textBuffer, TagAggregatorOptions options)
 			: base(textBuffer, options) {
 			this.taggerFactory = taggerFactory;
+			Initialize();
 		}
 
 		protected override IEnumerable<ITagger<T>> CreateTaggers() => taggerFactory.Create<T>(TextBuffer, TextBuffer.ContentType);

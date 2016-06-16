@@ -19,26 +19,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	abstract class ClassifierAggregatorBase : IClassifier, IDisposable {
-		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly ITagAggregator<IClassificationTag> tagAggregator;
 		readonly ITextBuffer textBuffer;
 
 		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 
-		protected ClassifierAggregatorBase(ITagAggregator<IClassificationTag> tagAggregator, IContentTypeRegistryService contentTypeRegistryService, ITextBuffer textBuffer) {
+		protected ClassifierAggregatorBase(ITagAggregator<IClassificationTag> tagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, ITextBuffer textBuffer) {
 			if (tagAggregator == null)
 				throw new ArgumentNullException(nameof(tagAggregator));
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
+			if (classificationTypeRegistryService == null)
+				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
 			this.tagAggregator = tagAggregator;
 			this.textBuffer = textBuffer;
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
@@ -51,8 +52,105 @@ namespace dnSpy.Text.Classification {
 				ClassificationChanged?.Invoke(this, new ClassificationChangedEventArgs(span));
 		}
 
+		sealed class ClassificationSpanComparer : IComparer<ClassificationSpan> {
+			public static readonly ClassificationSpanComparer Instance = new ClassificationSpanComparer();
+			public int Compare(ClassificationSpan x, ClassificationSpan y) => x.Span.Start.Position - y.Span.Start.Position;
+		}
+
 		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) {
-			return Array.Empty<ClassificationSpan>();//TODO:
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			if (span.Length == 0)
+				return Array.Empty<ClassificationSpan>();
+
+			var list = new List<ClassificationSpan>();
+			var targetSnapshot = span.Snapshot;
+			foreach (var mspan in tagAggregator.GetTags(span)) {
+				foreach (var s in mspan.Span.GetSpans(textBuffer)) {
+					var overlap = span.Overlap(s.TranslateTo(targetSnapshot, SpanTrackingMode.EdgeExclusive));
+					if (overlap != null)
+						list.Add(new ClassificationSpan(overlap.Value, mspan.Tag.ClassificationType));
+				}
+			}
+
+			if (list.Count <= 1)
+				return list;
+
+			list.Sort(ClassificationSpanComparer.Instance);
+
+			// Common case
+			if (!HasOverlaps(list))
+				return Merge(list);
+
+			int min = 0;
+			int minOffset = span.Start.Position;
+			var newList = new List<ClassificationSpan>();
+			var ctList = new List<IClassificationType>();
+			while (min < list.Count) {
+				while (min < list.Count && minOffset >= list[min].Span.End)
+					min++;
+				if (min >= list.Count)
+					break;
+				var cspan = list[min];
+				minOffset = Math.Max(minOffset, cspan.Span.Start.Position);
+				int end = cspan.Span.End.Position;
+				ctList.Clear();
+				ctList.Add(cspan.ClassificationType);
+				for (int i = min + 1; i < list.Count; i++) {
+					cspan = list[i];
+					int cspanStart = cspan.Span.Start.Position;
+					if (cspanStart > minOffset) {
+						if (cspanStart < end)
+							end = cspanStart;
+						break;
+					}
+					int cspanEnd = cspan.Span.End.Position;
+					if (minOffset >= cspanEnd)
+						continue;
+					if (cspanEnd < end)
+						end = cspanEnd;
+					if (!ctList.Contains(cspan.ClassificationType))
+						ctList.Add(cspan.ClassificationType);
+				}
+				Debug.Assert(minOffset < end);
+				var newSnapshotSpan = new SnapshotSpan(targetSnapshot, minOffset, end - minOffset);
+				var ct = ctList.Count == 1 ? ctList[0] : classificationTypeRegistryService.CreateTransientClassificationType(ctList);
+				newList.Add(new ClassificationSpan(newSnapshotSpan, ct));
+				minOffset = end;
+			}
+
+			Debug.Assert(!HasOverlaps(newList));
+			return Merge(newList);
+		}
+
+		static List<ClassificationSpan> Merge(List<ClassificationSpan> list) {
+			if (list.Count <= 1)
+				return list;
+
+			var prev = list[0];
+			int read = 1, write = 0;
+			for (; read < list.Count; read++) {
+				var a = list[read];
+				if (prev.ClassificationType == a.ClassificationType && prev.Span.End == a.Span.Start)
+					list[write] = prev = new ClassificationSpan(new SnapshotSpan(prev.Span.Start, a.Span.End), prev.ClassificationType);
+				else {
+					prev = a;
+					list[++write] = a;
+				}
+			}
+			write++;
+			if (list.Count != write)
+				list.RemoveRange(write, list.Count - write);
+
+			return list;
+		}
+
+		static bool HasOverlaps(List<ClassificationSpan> sortedList) {
+			for (int i = 1; i < sortedList.Count; i++) {
+				if (sortedList[i - 1].Span.End > sortedList[i].Span.Start)
+					return true;
+			}
+			return false;
 		}
 
 		public void Dispose() {

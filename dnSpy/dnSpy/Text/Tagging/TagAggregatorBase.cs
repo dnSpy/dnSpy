@@ -41,8 +41,9 @@ namespace dnSpy.Text.Tagging {
 			TextBuffer = textBuffer;
 			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			this.taggers = Array.Empty<ITagger<T>>();
-			RecreateTaggers();
 		}
+
+		protected void Initialize() => RecreateTaggers();
 
 		public event EventHandler<BatchedTagsChangedEventArgs> BatchedTagsChanged;
 		public event EventHandler<TagsChangedEventArgs> TagsChanged;

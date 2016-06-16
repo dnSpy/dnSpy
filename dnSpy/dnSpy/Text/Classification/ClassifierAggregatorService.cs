@@ -27,18 +27,18 @@ namespace dnSpy.Text.Classification {
 	[Export(typeof(IClassifierAggregatorService))]
 	sealed class ClassifierAggregatorService : IClassifierAggregatorService {
 		readonly IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		ClassifierAggregatorService(IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService, IContentTypeRegistryService contentTypeRegistryService) {
+		ClassifierAggregatorService(IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.bufferTagAggregatorFactoryService = bufferTagAggregatorFactoryService;
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
 		public IClassifier GetClassifier(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			return new ClassifierAggregator(bufferTagAggregatorFactoryService, contentTypeRegistryService, textBuffer);
+			return new ClassifierAggregator(bufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
 		}
 	}
 }
