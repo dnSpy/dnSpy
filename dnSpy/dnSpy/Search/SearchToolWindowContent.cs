@@ -43,7 +43,7 @@ namespace dnSpy.Search {
 	sealed class SearchToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<ISearchManager> searchManager;
 
-		public SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchManager));
+		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchManager));
 		SearchToolWindowContent searchToolWindowContent;
 
 		[ImportingConstructor]
@@ -63,8 +63,8 @@ namespace dnSpy.Search {
 	}
 
 	sealed class SearchToolWindowContent : IToolWindowContent, IFocusable {
-		public static readonly Guid THE_GUID = new Guid("91802684-9D1F-4491-90FD-AFE1DE7C4D46");
-		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Top;
+		public static readonly Guid THE_GUID = new Guid("8E359BE0-C8CD-4CA7-B228-8C836219AF85");
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => searchManager.Value.FocusedElement;
 		public FrameworkElement ScaleElement => searchManager.Value.ScaleElement;
