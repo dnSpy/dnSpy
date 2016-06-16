@@ -736,7 +736,7 @@ namespace dnSpy.Text.Classification {
 			Number() : base(ColorType.Number) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Comment, "Comment", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Comment, "Comment", Order = EditorFormatDefinitionPriority.AfterDefault + 1)]
 		sealed class Comment : ThemeClassificationFormatDefinition {
 			Comment() : base(ColorType.Comment) { }
 		}
@@ -906,7 +906,7 @@ namespace dnSpy.Text.Classification {
 			ILModule() : base(ColorType.ILModule) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ExcludedCode, "ExcludedCode", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ExcludedCode, "ExcludedCode", Order = EditorFormatDefinitionPriority.BeforeHigh)]
 		sealed class ExcludedCode : ThemeClassificationFormatDefinition {
 			ExcludedCode() : base(ColorType.ExcludedCode) { }
 		}
