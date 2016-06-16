@@ -43,9 +43,10 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly ScriptControl scriptControl;
 		readonly ScriptControlVM scriptControlVM;
 
-		protected ScriptContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, ReplEditorOptions replOpts, IServiceLocator serviceLocator) {
+		protected ScriptContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, ReplEditorOptions replOpts, IServiceLocator serviceLocator, string appearanceCategory) {
 			replOpts.Roles.Add(RoslynReplTextViewRoles.RoslynRepl);
 			this.replEditor = replEditorCreator.Create(replOpts);
+			replEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, appearanceCategory);
 			this.scriptControl = new ScriptControl();
 			this.scriptControl.SetTextEditorObject(this.replEditor.UIObject);
 			this.scriptControlVM = CreateScriptControlVM(this.replEditor, serviceLocator);

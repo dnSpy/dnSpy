@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+namespace dnSpy.Output {
+	static class Constants {
+		public const string Output = "B04014C0-CBBC-46AC-8B4F-F22CEBAD326A";
 	}
 }

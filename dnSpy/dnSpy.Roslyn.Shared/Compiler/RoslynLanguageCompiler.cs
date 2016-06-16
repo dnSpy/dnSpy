@@ -39,6 +39,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected abstract CompilationOptions CompilationOptions { get; }
 		protected abstract ParseOptions ParseOptions { get; }
 		protected abstract string FileExtension { get; }
+		protected abstract string AppearanceCategory { get; }
 		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
 		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
@@ -83,6 +84,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			var options = new RoslynCodeEditorOptions();
 			options.ContentTypeGuid = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
+			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !codeEditor.TextView.Options.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId));

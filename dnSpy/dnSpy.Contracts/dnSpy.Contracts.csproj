@@ -369,6 +369,8 @@
     <Compile Include="Text\Classification\IClassifierProvider.cs" />
     <Compile Include="Text\Classification\IViewClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationTypeNames.cs" />
+    <Compile Include="Text\Classification\TextEditorFormatDefinition.cs" />
+    <Compile Include="Text\Classification\TextFormatDefinition.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinition.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNames.cs" />
     <Compile Include="Text\Color.cs" />

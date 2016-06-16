@@ -17,10 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Properties;
+
+namespace dnSpy.Output {
+	[ExportTextEditorFormatDefinition(Constants.Output)]
+	sealed class OutputTextEditorFormatDefinition : TextEditorFormatDefinition {
+		public override string DisplayName => dnSpy_Resources.Window_Output;
 	}
 }

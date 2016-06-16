@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
@@ -60,6 +61,7 @@ namespace dnSpy.Text.Editor {
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
 			TextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
+			TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
 		}
 
 		public void Dispose() {

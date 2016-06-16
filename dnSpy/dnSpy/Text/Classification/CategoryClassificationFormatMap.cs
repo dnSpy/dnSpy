@@ -19,13 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Contracts.Themes;
 
@@ -35,7 +31,7 @@ namespace dnSpy.Text.Classification {
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
 
 		readonly IThemeManager themeManager;
-		readonly ITextEditorSettings textEditorSettings;
+		readonly ITextEditorFontSettings textEditorFontSettings;
 		readonly Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions;
 		readonly Dictionary<IClassificationType, ClassificationInfo> toClassificationInfo;
 		readonly Dictionary<IClassificationType, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>> toEditorFormatDefinition;
@@ -53,15 +49,15 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		public CategoryClassificationFormatMap(IThemeManager themeManager, ITextEditorSettings textEditorSettings, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		public CategoryClassificationFormatMap(IThemeManager themeManager, ITextEditorFontSettings textEditorFontSettings, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			if (themeManager == null)
 				throw new ArgumentNullException(nameof(themeManager));
-			if (textEditorSettings == null)
-				throw new ArgumentNullException(nameof(textEditorSettings));
+			if (textEditorFontSettings == null)
+				throw new ArgumentNullException(nameof(textEditorFontSettings));
 			if (editorFormatDefinitions == null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitions));
 			this.themeManager = themeManager;
-			this.textEditorSettings = textEditorSettings;
+			this.textEditorFontSettings = textEditorFontSettings;
 			this.editorFormatDefinitions = editorFormatDefinitions;
 			this.toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
 			this.toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>>(editorFormatDefinitions.Length);
@@ -81,47 +77,16 @@ namespace dnSpy.Text.Classification {
 			}
 
 			themeManager.ThemeChangedHighPriority += ThemeManager_ThemeChangedHighPriority;
-			textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
+			textEditorFontSettings.SettingsChanged += TextEditorFontSettings_SettingsChanged;
 			ReinitializeCache();
 		}
 
-		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(textEditorSettings.FontFamily))
-				ClearCacheAndNotifyListeners();
-			else if (e.PropertyName == nameof(textEditorSettings.FontSize))
-				ClearCacheAndNotifyListeners();
-		}
-
+		void TextEditorFontSettings_SettingsChanged(object sender, EventArgs e) => ClearCacheAndNotifyListeners();
 		void ThemeManager_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) => ClearCacheAndNotifyListeners();
 
 		void ReinitializeCache() {
 			toClassificationInfo.Clear();
-			DefaultTextProperties = CreateTextFormattingRunProperties(themeManager.Theme, textEditorSettings.FontFamily, textEditorSettings.FontSize);
-		}
-
-		sealed class DefaultEditorFormatDefinition : ThemeClassificationFormatDefinition {
-			readonly FontFamily fontFamily;
-			readonly double fontSize;
-
-			public DefaultEditorFormatDefinition(FontFamily fontFamily, double fontSize)
-				: base(ColorType.Text) {
-				if (fontFamily == null)
-					throw new ArgumentNullException(nameof(fontFamily));
-				this.fontFamily = fontFamily;
-				this.fontSize = fontSize;
-			}
-
-			public override Typeface GetTypeface(ITheme theme) {
-				var tc = theme.GetTextColor(ColorType.Text);
-				return new Typeface(fontFamily, tc.FontStyle ?? FontStyles.Normal, tc.FontWeight ?? FontWeights.Normal, FontStretches.Normal);
-			}
-
-			public override double? GetFontRenderingEmSize(ITheme theme) => fontSize;
-		}
-
-		TextFormattingRunProperties CreateTextFormattingRunProperties(ITheme theme, FontFamily fontFamily, double fontSize) {
-			var def = new DefaultEditorFormatDefinition(fontFamily, fontSize);
-			return def.CreateTextFormattingRunProperties(theme);
+			DefaultTextProperties = textEditorFontSettings.CreateTextFormattingRunProperties(themeManager.Theme);
 		}
 
 		void ClearCacheAndNotifyListeners() {
@@ -175,38 +140,7 @@ namespace dnSpy.Text.Classification {
 
 		TextFormattingRunProperties CreateInheritedTextProperties(TextFormattingRunProperties p, List<IClassificationType> types) {
 			for (int i = types.Count - 1; i >= 0; i--)
-				p = Merge(p, GetExplicitTextProperties(types[i]));
-			return p;
-		}
-
-		static TextFormattingRunProperties Merge(TextFormattingRunProperties lowPrio, TextFormattingRunProperties hiPrio) {
-			var p = hiPrio;
-
-			if (p.TypefaceEmpty && !lowPrio.TypefaceEmpty)
-				p = p.SetTypeface(lowPrio.Typeface);
-			if (p.BoldEmpty && !lowPrio.BoldEmpty)
-				p = p.SetBold(lowPrio.Bold);
-			if (p.ItalicEmpty && !lowPrio.ItalicEmpty)
-				p = p.SetItalic(lowPrio.Italic);
-			if (p.ForegroundBrushEmpty && !lowPrio.ForegroundBrushEmpty)
-				p = p.SetForegroundBrush(lowPrio.ForegroundBrush);
-			if (p.BackgroundBrushEmpty && !lowPrio.BackgroundBrushEmpty)
-				p = p.SetBackgroundBrush(lowPrio.BackgroundBrush);
-			if (p.ForegroundOpacityEmpty && !lowPrio.ForegroundOpacityEmpty)
-				p = p.SetForegroundOpacity(lowPrio.ForegroundOpacity);
-			if (p.BackgroundOpacityEmpty && !lowPrio.BackgroundOpacityEmpty)
-				p = p.SetBackgroundOpacity(lowPrio.BackgroundOpacity);
-			if (p.CultureInfoEmpty && !lowPrio.CultureInfoEmpty)
-				p = p.SetCultureInfo(lowPrio.CultureInfo);
-			if (p.FontHintingEmSizeEmpty && !lowPrio.FontHintingEmSizeEmpty)
-				p = p.SetFontHintingEmSize(lowPrio.FontHintingEmSize);
-			if (p.FontRenderingEmSizeEmpty && !lowPrio.FontRenderingEmSizeEmpty)
-				p = p.SetFontRenderingEmSize(lowPrio.FontRenderingEmSize);
-			if (p.TextDecorationsEmpty && !lowPrio.TextDecorationsEmpty)
-				p = p.SetTextDecorations(lowPrio.TextDecorations);
-			if (p.TextEffectsEmpty && !lowPrio.TextEffectsEmpty)
-				p = p.SetTextEffects(lowPrio.TextEffects);
-
+				p = TextFormattingRunPropertiesUtils.Merge(p, GetExplicitTextProperties(types[i]));
 			return p;
 		}
 

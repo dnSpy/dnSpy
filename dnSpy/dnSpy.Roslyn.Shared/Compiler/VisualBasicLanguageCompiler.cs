@@ -25,6 +25,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor.Roslyn;
+using dnSpy.Roslyn.Shared.Text.Editor;
 using dnSpy.Roslyn.Shared.VisualBasic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;
@@ -51,6 +52,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: VisualBasicConstants.LatestVersion);
 		protected override string FileExtension => ".vb";
+		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_VisualBasic;
 		public override IEnumerable<string> RequiredAssemblyReferences => requiredAssemblyReferences;
 		static readonly string[] requiredAssemblyReferences = new string[] {
 			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",

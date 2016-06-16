@@ -29,18 +29,18 @@ namespace dnSpy.Text.Classification {
 	[Export(typeof(IClassificationFormatMapService))]
 	sealed class ClassificationFormatMapService : IClassificationFormatMapService {
 		readonly IThemeManager themeManager;
-		readonly ITextEditorSettings textEditorSettings;
+		readonly ITextEditorFontSettingsService textEditorFontSettingsService;
 		readonly Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
-		readonly Dictionary<string, IClassificationFormatMap> toCategoryMap;
+		readonly Dictionary<ITextEditorFontSettings, IClassificationFormatMap> toCategoryMap;
 
 		[ImportingConstructor]
-		ClassificationFormatMapService(IThemeManager themeManager, ITextEditorSettings textEditorSettings, [ImportMany] IEnumerable<Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>> editorFormatDefinitions, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		ClassificationFormatMapService(IThemeManager themeManager, ITextEditorFontSettingsService textEditorFontSettingsService, [ImportMany] IEnumerable<Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>> editorFormatDefinitions, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.themeManager = themeManager;
-			this.textEditorSettings = textEditorSettings;
+			this.textEditorFontSettingsService = textEditorFontSettingsService;
 			this.editorFormatDefinitions = editorFormatDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.toCategoryMap = new Dictionary<string, IClassificationFormatMap>(StringComparer.OrdinalIgnoreCase);
+			this.toCategoryMap = new Dictionary<ITextEditorFontSettings, IClassificationFormatMap>();
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(ITextView textView) {
@@ -65,12 +65,12 @@ namespace dnSpy.Text.Classification {
 		public IClassificationFormatMap GetClassificationFormatMap(string category) {
 			if (category == null)
 				throw new ArgumentNullException(nameof(category));
+			var textEditorFontSettings = textEditorFontSettingsService.GetSettings(category);
 			IClassificationFormatMap map;
-			if (toCategoryMap.TryGetValue(category, out map))
+			if (toCategoryMap.TryGetValue(textEditorFontSettings, out map))
 				return map;
-			//TODO: There's only one category, the default one
-			map = new CategoryClassificationFormatMap(themeManager, textEditorSettings, editorFormatDefinitions, classificationTypeRegistryService);
-			toCategoryMap.Add(category, map);
+			map = new CategoryClassificationFormatMap(themeManager, textEditorFontSettings, editorFormatDefinitions, classificationTypeRegistryService);
+			toCategoryMap.Add(textEditorFontSettings, map);
 			return map;
 		}
 	}

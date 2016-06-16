@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text;
@@ -35,7 +34,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 	sealed class CSharpContent : ScriptContent, ICSharpContent {
 		[ImportingConstructor]
 		CSharpContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, IServiceLocator serviceLocator)
-			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), serviceLocator) {
+			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), serviceLocator, Constants.REPL_CSharp) {
 		}
 
 		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) =>

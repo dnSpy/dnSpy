@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+namespace dnSpy.Scripting.Roslyn.CSharp {
+	static class Constants {
+		public const string REPL_CSharp = "CC670CDC-B405-4B74-9798-7CC9A13546ED";
 	}
 }

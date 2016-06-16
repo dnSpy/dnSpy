@@ -17,10 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+using dnSpy.Contracts.Text.Classification;
+
+namespace dnSpy.Roslyn.Shared.Text.Editor {
+	[ExportTextEditorFormatDefinition(RoslynAppearanceCategoryConstants.CodeEditor_CSharp, AppearanceCategoryConstants.CodeEditor)]
+	sealed class CodeEditorCSharpTextEditorFormatDefinition : TextEditorFormatDefinition {
+		public override string DisplayName => "Code Editor (C#)";
+	}
+
+	[ExportTextEditorFormatDefinition(RoslynAppearanceCategoryConstants.CodeEditor_VisualBasic, AppearanceCategoryConstants.CodeEditor)]
+	sealed class CodeEditorVisualBasicTextEditorFormatDefinition : TextEditorFormatDefinition {
+		public override string DisplayName => "Code Editor (Visual Basic)";
 	}
 }

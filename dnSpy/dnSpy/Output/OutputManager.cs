@@ -174,6 +174,7 @@ namespace dnSpy.Output {
 			};
 			logEditorOptions.ExtraRoles.Add(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE);
 			var logEditor = logEditorCreator.Create(logEditorOptions);
+			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
 
 			vm = new OutputBufferVM(guid, name, logEditor);
 			int index = GetSortedInsertIndex(vm);

@@ -282,6 +282,7 @@
     <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="Output\CachedWriter.cs" />
     <Compile Include="Output\Commands.cs" />
+    <Compile Include="Output\Constants.cs" />
     <Compile Include="Output\NotPresentOutputWriter.cs" />
     <Compile Include="Output\NullOutputTextPane.cs" />
     <Compile Include="Output\OutputBufferVM.cs" />
@@ -292,6 +293,7 @@
     </Compile>
     <Compile Include="Output\OutputManager.cs" />
     <Compile Include="Output\OutputManagerSettings.cs" />
+    <Compile Include="Output\OutputTextEditorFormatDefinition.cs" />
     <Compile Include="Output\OutputToolWindowContent.cs" />
     <Compile Include="Plugin\LoadedPlugin.cs" />
     <Compile Include="Plugin\PluginConfig.cs" />
@@ -358,8 +360,16 @@
     <Compile Include="Text\Classification\ClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ClassifierTagger.cs" />
     <Compile Include="Text\Classification\ClassifierTaggerProvider.cs" />
+    <Compile Include="Text\Classification\DefaultTextEditorFormatDefinition.cs" />
+    <Compile Include="Text\Classification\ITextEditorFontSettings.cs" />
+    <Compile Include="Text\Classification\ITextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationFormatDefinitions.cs" />
+    <Compile Include="Text\Classification\TextEditorFontSettings.cs" />
+    <Compile Include="Text\Classification\TextEditorFontSettingsDictionaryCreator.cs" />
+    <Compile Include="Text\Classification\TextEditorFontSettingsService.cs" />
+    <Compile Include="Text\Classification\TextEditorFormatDefinitions.cs" />
+    <Compile Include="Text\Classification\TextFormattingRunPropertiesUtils.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
     <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />

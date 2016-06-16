@@ -42,8 +42,10 @@
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
     <Compile Include="CSharp\CSharpConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\Editor\RoslynAppearanceCategoryConstants.cs" />
     <Compile Include="Text\Editor\RoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\RoslynCodeEditorCreator.cs" />
+    <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
     <Compile Include="Text\RoslynTextSnapshotColorizer.cs" />
     <Compile Include="Text\RoslynTextSnapshotColorizerProvider.cs" />

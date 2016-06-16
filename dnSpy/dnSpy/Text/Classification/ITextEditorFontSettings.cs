@@ -17,10 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+using System;
+using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Contracts.Themes;
+
+namespace dnSpy.Text.Classification {
+	interface ITextEditorFontSettings {
+		/// <summary>
+		/// Raised when the settings have changed. It's not raised when the theme has changed.
+		/// </summary>
+		event EventHandler SettingsChanged;
+
+		/// <summary>
+		/// Gets the current settings
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		TextFormattingRunProperties CreateTextFormattingRunProperties(ITheme theme);
 	}
 }

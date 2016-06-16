@@ -17,10 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+using dnSpy.Contracts.Text.Classification;
+
+namespace dnSpy.Scripting.Roslyn.CSharp {
+	[ExportTextEditorFormatDefinition(Constants.REPL_CSharp, AppearanceCategoryConstants.REPL)]
+	sealed class REPLCSharpTextEditorFormatDefinition : TextEditorFormatDefinition {
+		public override string DisplayName => "REPL (C#)";
 	}
 }

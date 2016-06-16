@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
-	/// <summary>
-	/// Defines editor colors
-	/// </summary>
-	public abstract class EditorFormatDefinition : TextFormatDefinition {
+namespace dnSpy.Text.Classification {
+	interface ITextEditorFontSettingsService {
+		ITextEditorFontSettings GetSettings(string category);
 	}
 }
