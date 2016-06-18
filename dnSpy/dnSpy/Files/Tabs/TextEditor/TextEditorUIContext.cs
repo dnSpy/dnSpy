@@ -112,12 +112,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var button = textEditorControl.CancelButton;
 				if (button?.IsVisible == true)
 					return button;
-				return textEditorControl.WpfTextView.FocusedElement;
+				return textEditorControl.WpfTextView.VisualElement;
 			}
 		}
 
 		public object UIObject => textEditorControl;
-		public FrameworkElement ScaleElement => textEditorControl.WpfTextView.ScaleElement;
+		public FrameworkElement ScaleElement => textEditorControl.WpfTextView.VisualElement;
 		public bool HasSelectedText => !textEditorControl.WpfTextView.Selection.IsEmpty;
 
 		public TextEditorLocation Location {

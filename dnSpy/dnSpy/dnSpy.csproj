@@ -439,16 +439,17 @@
     <Compile Include="Text\Editor\ReplSubBuffer.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
+    <Compile Include="Text\Editor\TextCaretLayer.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\TextEditorSettings.cs" />
     <Compile Include="Text\Editor\TextSelection.cs" />
+    <Compile Include="Text\Editor\TextSelectionLayer.cs" />
     <Compile Include="Text\Editor\TextSnapshotLineExtensions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\TextViewLineExtensions.cs" />
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewMouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
-    <Compile Include="Text\Editor\Utils.cs" />
     <Compile Include="Text\Editor\ViewScroller.cs" />
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextViewHost.cs" />
@@ -549,7 +550,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <EmbeddedResource Include="Text\Editor\IL.xshd" />
     <None Include="Themes\blue.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

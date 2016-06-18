@@ -38,9 +38,9 @@ using dnSpy.Text.Editor.Operations;
 
 namespace dnSpy.Text.Editor {
 	sealed class ReplEditor : IReplEditor2 {
-		public object UIObject => wpfTextView.UIObject;
-		public IInputElement FocusedElement => wpfTextView.FocusedElement;
-		public FrameworkElement ScaleElement => wpfTextView.ScaleElement;
+		public object UIObject => wpfTextView.VisualElement;
+		public IInputElement FocusedElement => wpfTextView.VisualElement;
+		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
 		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;

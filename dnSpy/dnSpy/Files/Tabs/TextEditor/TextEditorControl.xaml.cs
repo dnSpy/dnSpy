@@ -129,7 +129,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfTextView = wpfTextView;
 			TextEditor = wpfTextView.DnSpyTextEditor;
 			this.toolTipHelper.Initialize(TextEditor);
-			dnSpyTextEditor.Content = wpfTextView.UIObject;
+			dnSpyTextEditor.Content = wpfTextView.VisualElement;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc

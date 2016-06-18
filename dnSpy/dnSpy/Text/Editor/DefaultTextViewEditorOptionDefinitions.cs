@@ -88,33 +88,8 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class ScrollBelowDocumentEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.ScrollBelowDocumentId;
-		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
 	sealed class AllowBoxSelectionIdEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.AllowBoxSelectionId;
 		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class HideCaretWhileTypingEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.HideCaretWhileTypingId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ShowColumnRulerEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.ShowColumnRulerId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ColumnRulerPositionEditorOptionDefinition : ViewOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultTextViewOptions.ColumnRulerPositionId;
-		public override int Default => 80;
-		public override bool IsValid(ref int proposedValue) => 0 < proposedValue && proposedValue <= 500;
 	}
 }

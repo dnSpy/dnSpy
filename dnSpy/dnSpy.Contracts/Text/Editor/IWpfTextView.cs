@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// WPF text view
 	/// </summary>
-	public interface IWpfTextView : ITextView, IUIObjectProvider2 {
+	public interface IWpfTextView : ITextView {
 		/// <summary>
 		/// Gets WPF text view's element
 		/// </summary>

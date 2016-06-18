@@ -25,7 +25,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
@@ -37,7 +36,6 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 
@@ -141,17 +139,6 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class DnSpyTextEditor : TextEditor, IDisposable {
-		static DnSpyTextEditor() {
-			HighlightingManager.Instance.RegisterHighlighting(
-				"IL", new string[] { ".il" }, () => {
-					using (var s = typeof(DnSpyTextEditor).Assembly.GetManifestResourceStream(typeof(DnSpyTextEditor), "IL.xshd")) {
-						using (var reader = new XmlTextReader(s))
-							return HighlightingLoader.Load(reader, HighlightingManager.Instance);
-					}
-				}
-			);
-		}
-
 		public FrameworkElement FocusedElement => this.TextArea;
 		public FrameworkElement ScaleElement => this.TextArea;
 		internal IThemeManager ThemeManager { get; }

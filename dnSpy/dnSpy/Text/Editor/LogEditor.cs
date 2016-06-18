@@ -32,9 +32,9 @@ using dnSpy.Shared.Text;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
-		public object UIObject => wpfTextView.UIObject;
-		public IInputElement FocusedElement => wpfTextView.FocusedElement;
-		public FrameworkElement ScaleElement => wpfTextView.ScaleElement;
+		public object UIObject => wpfTextView.VisualElement;
+		public IInputElement FocusedElement => wpfTextView.VisualElement;
+		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public ITextView TextView => wpfTextView;
 

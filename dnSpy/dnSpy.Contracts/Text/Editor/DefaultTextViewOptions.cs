@@ -34,11 +34,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> ViewProhibitUserInputId = new EditorOptionKey<bool>("ITextView/ProhibitUserInput");
 		public static readonly EditorOptionKey<bool> CanChangeWordWrapStyleId = new EditorOptionKey<bool>("ITextView/CanChangeWordWrapStyle");
 		public static readonly EditorOptionKey<WordWrapStyles> WordWrapStyleId = new EditorOptionKey<WordWrapStyles>("ITextView/WordWrapStyle");
-		public static readonly EditorOptionKey<bool> ScrollBelowDocumentId = new EditorOptionKey<bool>("ITextView/ScrollBelowDocument");
 		public static readonly EditorOptionKey<bool> AllowBoxSelectionId = new EditorOptionKey<bool>("ITextView/AllowBoxSelectionId");
-		public static readonly EditorOptionKey<bool> HideCaretWhileTypingId = new EditorOptionKey<bool>("ITextView/HideCaretWhileTyping");
-		public static readonly EditorOptionKey<bool> ShowColumnRulerId = new EditorOptionKey<bool>("ITextView/ShowColumnRuler");
-		public static readonly EditorOptionKey<int> ColumnRulerPositionId = new EditorOptionKey<int>("ITextView/ColumnRulerPosition");
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

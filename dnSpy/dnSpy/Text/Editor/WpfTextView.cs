@@ -18,12 +18,10 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
@@ -39,28 +37,23 @@ using ICSharpCode.AvalonEdit.Rendering;
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextView : Canvas, IWpfTextView {
 		public PropertyCollection Properties { get; }
-		public FrameworkElement VisualElement => DnSpyTextEditor.FocusedElement;
-		public object UIObject => DnSpyTextEditor;
-		public IInputElement FocusedElement => DnSpyTextEditor.FocusedElement;
-		public FrameworkElement ScaleElement => DnSpyTextEditor.ScaleElement;
-		public new object Tag { get; set; }
+		public FrameworkElement VisualElement => this;
 		public ITextViewRoleSet Roles { get; }
 		public IEditorOptions Options { get; }
 		public ICommandTargetCollection CommandTarget => RegisteredCommandElement.CommandTarget;
 		IRegisteredCommandElement RegisteredCommandElement { get; }
 		public ITextCaret Caret => TextCaret;
 		TextCaret TextCaret { get; }
-		public ITextSelection Selection { get; }
+		ITextSelection ITextView.Selection => Selection;
+		TextSelection Selection { get; }
 		public IEditorOperations2 EditorOperations { get; }
 		public IViewScroller ViewScroller { get; }
-		public bool HasAggregateFocus => DnSpyTextEditor.IsKeyboardFocusWithin;
-		public bool IsMouseOverViewOrAdornments => DnSpyTextEditor.IsMouseOver;
+		public bool HasAggregateFocus => this.IsKeyboardFocusWithin;
+		public bool IsMouseOverViewOrAdornments => this.IsMouseOver;
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
 		public DnSpyTextEditor DnSpyTextEditor { get; }
 		public IFormattedLineSource FormattedLineSource { get; private set; }
 
-		const int LEFT_MARGIN = 15;
-		readonly FrameworkElement paddingElement;
 		readonly IFormattedTextSourceFactoryService formattedTextSourceFactoryService;
 		readonly IClassifier aggregateClassifier;
 		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
@@ -105,33 +98,20 @@ namespace dnSpy.Text.Editor {
 			if (adornmentLayerDefinitionService == null)
 				throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
-			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			this.zoomLevel = ZoomConstants.DefaultZoom;
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
 			this.adornmentLayerCollection = new AdornmentLayerCollection(this);
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
 			TextViewLines = new WpfTextViewLineCollection();
-			DnSpyTextEditor.Options.AllowToggleOverstrikeMode = true;
 			TextViewModel = textViewModel;
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
 			Options.OptionChanged += EditorOptions_OptionChanged;
-			Selection = new TextSelection(this, dnSpyTextEditor);
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
-			TextCaret = new TextCaret(this, dnSpyTextEditor, smartIndentationService);
 			ViewScroller = new ViewScroller(this);
-			InitializeOptions();
-			DnSpyTextEditor.Loaded += DnSpyTextEditor_Loaded;
-			DnSpyTextEditor.IsKeyboardFocusWithinChanged += DnSpyTextEditor_IsKeyboardFocusWithinChanged;
-			hasKeyboardFocus = DnSpyTextEditor.IsKeyboardFocusWithin;
-			DnSpyTextEditor.TextArea.TextView.SizeChanged += AvalonEdit_TextView_SizeChanged;
-			DnSpyTextEditor.TextArea.TextView.ScrollOffsetChanged += AvalonEdit_TextView_ScrollOffsetChanged;
-			DnSpyTextEditor.TextArea.TextView.VisualLinesCreated += AvalonEdit_TextView_VisualLinesCreated;
-			DnSpyTextEditor.TextArea.TextView.VisualLineConstructionStarting += AvalonEdit_TextView_VisualLineConstructionStarting;
-			DnSpyTextEditor.TextArea.TextView.DefaultTextMetricsInvalidated += (s, e) => CreateFormattedLineSource();
-			oldViewportLeft = ViewportLeft;
+			hasKeyboardFocus = this.IsKeyboardFocusWithin;
 			oldViewState = new ViewState(this);
 			this.aggregateClassifier = viewClassifierAggregatorService.GetClassifier(this);
 			this.textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
@@ -141,13 +121,23 @@ namespace dnSpy.Text.Editor {
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
+			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection));
+			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService);
+
 			Children.Add(adornmentLayerCollection);
 			this.Cursor = Cursors.IBeam;
 			this.Focusable = true;
 			this.FocusVisualStyle = null;
+			InitializeOptions();
 		}
 
-		//TODO: Call this each time one of the values it uses gets updated
+		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
+			base.OnPropertyChanged(e);
+			if (e.Property == TextOptions.TextFormattingModeProperty)
+				CreateFormattedLineSource();
+		}
+
+		//TODO: Call this each time one of the values it uses gets updated or when default font/fg/bg/etc changes
 		void CreateFormattedLineSource() {
 			var wordWrapStyle = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
 			bool isWordWrap = (wordWrapStyle & WordWrapStyles.WordWrap) != 0;
@@ -174,12 +164,16 @@ namespace dnSpy.Text.Editor {
 				isWordWrap);
 		}
 
+		protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e) {
+			UpdateKeyboardFocus();
+			base.OnIsKeyboardFocusWithinChanged(e);
+		}
+
 		bool hasKeyboardFocus;
-		void DnSpyTextEditor_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e) => UpdateKeyboardFocus();
 		public event EventHandler GotAggregateFocus;
 		public event EventHandler LostAggregateFocus;
 		void UpdateKeyboardFocus() {
-			bool newValue = DnSpyTextEditor.IsKeyboardFocusWithin;
+			bool newValue = this.IsKeyboardFocusWithin;
 			if (hasKeyboardFocus != newValue) {
 				hasKeyboardFocus = newValue;
 				if (hasKeyboardFocus)
@@ -187,13 +181,6 @@ namespace dnSpy.Text.Editor {
 				else
 					LostAggregateFocus?.Invoke(this, EventArgs.Empty);
 			}
-		}
-
-		void DnSpyTextEditor_Loaded(object sender, RoutedEventArgs e) {
-			DnSpyTextEditor.Loaded -= DnSpyTextEditor_Loaded;
-			// Fix the highlighted line, it won't be shown correctly if this control is in
-			// a hidden tab that now got activated for the first time.
-			DnSpyTextEditor.UpdateCurrentLineColors();
 		}
 
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) => UpdateOption(e.OptionId);
@@ -207,10 +194,10 @@ namespace dnSpy.Text.Editor {
 		public bool IsClosed { get; set; }
 
 		public new Brush Background {
-			get { return DnSpyTextEditor.Background; }
+			get { return base.Background; }
 			set {
-				if (DnSpyTextEditor.Background != value) {
-					DnSpyTextEditor.Background = value;
+				if (base.Background != value) {
+					base.Background = value;
 					BackgroundBrushChanged?.Invoke(this, new BackgroundBrushChangedEventArgs(value));
 				}
 			}
@@ -238,23 +225,31 @@ namespace dnSpy.Text.Editor {
 		}
 		WpfTextViewLineCollection wpfTextViewLineCollection;
 
-		public double LineHeight => DnSpyTextEditor.TextArea.TextView.DefaultLineHeight;
-		public double ViewportTop => DnSpyTextEditor.TextArea.TextView.VerticalOffset;
+		public double LineHeight => this.FormattedLineSource.LineHeight;
+		public double ViewportTop => viewportTop;
 		public double ViewportBottom => ViewportTop + ViewportHeight;
 		public double ViewportRight => ViewportLeft + ViewportWidth;
-		public double ViewportWidth => ((IScrollInfo)DnSpyTextEditor.TextArea.TextView).ViewportWidth;
-		public double ViewportHeight => ((IScrollInfo)DnSpyTextEditor.TextArea.TextView).ViewportHeight;
+		public double ViewportWidth => ActualWidth;
+		public double ViewportHeight => ActualHeight;
 		public double ViewportLeft {
-			get { return DnSpyTextEditor.TextArea.TextView.HorizontalOffset; }
+			get { return viewportLeft; }
 			set {
 				if (double.IsNaN(value))
 					throw new ArgumentOutOfRangeException(nameof(value));
 				double left = value;
 				if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
 					left = 0;
-				((IScrollInfo)DnSpyTextEditor.TextArea.TextView).SetHorizontalOffset(left);
+				if (left < 0)
+					left = 0;
+				if (viewportLeft == left)
+					return;
+				viewportLeft = left;
+				SetLeft(adornmentLayerCollection, -viewportLeft);
+				//TODO: RaiseLayoutChanged(), update lines
+				ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
+		double viewportTop, viewportLeft;
 
 		public double MaxTextRightCoordinate {
 			get {
@@ -276,99 +271,9 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
 #pragma warning restore CS0067
 
-		void AvalonEdit_TextView_SizeChanged(object sender, SizeChangedEventArgs e) {
-			if (IsClosed)
-				return;
-			if (e.PreviousSize.Height != e.NewSize.Height)
-				ViewportHeightChanged?.Invoke(this, EventArgs.Empty);
-			if (e.PreviousSize.Width != e.NewSize.Width)
-				ViewportWidthChanged?.Invoke(this, EventArgs.Empty);
-			UpdateVisibleArea();
-		}
-
-		void AvalonEdit_TextView_ScrollOffsetChanged(object sender, EventArgs e) {
-			if (IsClosed)
-				return;
-			if (oldViewportLeft != ViewportLeft) {
-				oldViewportLeft = ViewportLeft;
-				RaiseLayoutChanged(ViewportWidth, ViewportHeight, Array.Empty<ITextViewLine>(), Array.Empty<ITextViewLine>());
-				ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
-			}
-			UpdateVisibleArea();
-		}
-		double oldViewportLeft;
-
-		void AvalonEdit_TextView_VisualLineConstructionStarting(object sender, VisualLineConstructionStartEventArgs e) {
-			Debug.Assert(!InLayout);
-			InLayout = true;
-		}
-
-		void AvalonEdit_TextView_VisualLinesCreated(object sender, VisualLinesCreatedEventArgs e) {
-			InLayout = false;
-
-			ITextViewLine[] newOrReformattedLines = null;
-			ITextViewLine[] translatedLines = null;
-			var wpfLines = InitializeTextViewLines(e, out newOrReformattedLines, out translatedLines);
-			TextViewLines.SetIsInvalid();
-			TextViewLines = new WpfTextViewLineCollection(TextSnapshot, wpfLines);
-
-			TextCaret.OnVisualLinesCreated();
-			RaiseLayoutChanged(ViewportWidth, ViewportHeight, newOrReformattedLines, translatedLines);
-		}
-
 		void UpdateVisibleArea() {
 			foreach (WpfTextViewLine line in TextViewLines)
 				line.VisibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
-		}
-
-		List<IWpfTextViewLine> InitializeTextViewLines(VisualLinesCreatedEventArgs e, out ITextViewLine[] newOrReformattedLines, out ITextViewLine[] translatedLines) {
-			var collLines = new List<IWpfTextViewLine>();
-			var reusedHash = new HashSet<VisualLine>(e.ReusedVisualLines);
-			var newList = new List<ITextViewLine>();
-			var translatedList = new List<ITextViewLine>();
-			var reusedLinesDict = new Dictionary<TextLine, WpfTextViewLine>();
-
-			foreach (WpfTextViewLine line in TextViewLines) {
-				if (!reusedHash.Contains(line.VisualLine))
-					line.SetIsInvalid();
-				else
-					reusedLinesDict.Add(line.TextLine, line);
-			}
-
-			Debug.Assert(DnSpyTextEditor.TextArea.TextView.VisualLinesValid);
-			if (DnSpyTextEditor.TextArea.TextView.VisualLinesValid) {
-				var visualLines = DnSpyTextEditor.TextArea.TextView.VisualLines;
-
-				var snapshot = TextSnapshot;
-				foreach (var line in visualLines) {
-					var top = line.VisualTop - DnSpyTextEditor.TextArea.TextView.VerticalOffset + ViewportTop;
-
-					foreach (var info in line.TextLineInfos) {
-						WpfTextViewLine oldWpfLine;
-						var change = TextViewLineChange.NewOrReformatted;
-						double deltaY = 0;
-						if (reusedLinesDict.TryGetValue(info.TextLine, out oldWpfLine)) {
-							deltaY = top - oldWpfLine.GetTop();
-							change = TextViewLineChange.Translated;
-						}
-
-						var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
-						double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-						var wpfLine = new WpfTextViewLine(this, snapshot, line, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
-						if (!reusedHash.Contains(line))
-							newList.Add(wpfLine);
-						else
-							translatedList.Add(wpfLine);
-						collLines.Add(wpfLine);
-
-						top += wpfLine.Height;
-					}
-				}
-			}
-
-			newOrReformattedLines = newList.ToArray();
-			translatedLines = translatedList.ToArray();
-			return collLines;
 		}
 
 		void RaiseLayoutChanged(double effectiveViewportWidth, double effectiveViewportHeight, ITextViewLine[] newOrReformattedLines, ITextViewLine[] translatedLines) {
@@ -389,146 +294,32 @@ namespace dnSpy.Text.Editor {
 			Closed?.Invoke(this, EventArgs.Empty);
 			DnSpyTextEditor.Dispose();
 			(aggregateClassifier as IDisposable)?.Dispose();
+			TextCaret.Dispose();
+			Selection.Dispose();
 		}
 
 		void InitializeOptions() {
 			UpdateOption(DefaultOptions.TabSizeOptionId.Name);
-			UpdateOption(DefaultOptions.IndentSizeOptionId.Name);
 			UpdateOption(DefaultOptions.IndentStyleOptionId.Name);
-			UpdateOption(DefaultOptions.NewLineCharacterOptionId.Name);
-			UpdateOption(DefaultOptions.ReplicateNewLineCharacterOptionId.Name);
-			UpdateOption(DefaultOptions.ConvertTabsToSpacesOptionId.Name);
-			UpdateOption(DefaultTextViewHostOptions.HorizontalScrollBarId.Name);
-			UpdateOption(DefaultTextViewHostOptions.VerticalScrollBarId.Name);
-			UpdateOption(DefaultTextViewHostOptions.LineNumberMarginId.Name);
-			UpdateOption(DefaultTextViewHostOptions.SelectionMarginId.Name);
-			UpdateOption(DefaultTextViewHostOptions.GlyphMarginId.Name);
-			UpdateOption(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId.Name);
-			UpdateOption(DefaultTextViewOptions.DisplayUrlsAsHyperlinksId.Name);
-			UpdateOption(DefaultTextViewOptions.DragDropEditingId.Name);
-			UpdateOption(DefaultTextViewOptions.CanChangeOverwriteModeId.Name);
-			UpdateOption(DefaultTextViewOptions.OverwriteModeId.Name);
-			UpdateOption(DefaultTextViewOptions.UseVirtualSpaceId.Name);
-			UpdateOption(DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId.Name);
-			UpdateOption(DefaultTextViewOptions.UseVisibleWhitespaceId.Name);
-			UpdateOption(DefaultTextViewOptions.ViewProhibitUserInputId.Name);
-			UpdateOption(DefaultTextViewOptions.CanChangeWordWrapStyleId.Name);
 			UpdateOption(DefaultTextViewOptions.WordWrapStyleId.Name);
-			UpdateOption(DefaultTextViewOptions.ScrollBelowDocumentId.Name);
-			UpdateOption(DefaultTextViewOptions.AllowBoxSelectionId.Name);
-			UpdateOption(DefaultTextViewOptions.HideCaretWhileTypingId.Name);
-			UpdateOption(DefaultTextViewOptions.ShowColumnRulerId.Name);
-			UpdateOption(DefaultTextViewOptions.ColumnRulerPositionId.Name);
-			UpdateOption(DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name);
-			UpdateOption(DefaultWpfViewOptions.EnableMouseWheelZoomId.Name);
 			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
-			UpdateOption(DefaultWpfViewOptions.AppearanceCategory.Name);
 		}
 
 		void UpdateOption(string optionId) {
 			if (IsClosed)
 				return;
-			if (optionId == DefaultOptions.TabSizeOptionId.Name)
-				DnSpyTextEditor.Options.IndentationSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
-			else if (optionId == DefaultOptions.IndentSizeOptionId.Name) {
-				// Nothing to do
+			if (optionId == DefaultOptions.TabSizeOptionId.Name) {
+				//TODO: Repaint
 			}
 			else if (optionId == DefaultOptions.IndentStyleOptionId.Name) {
-				// Nothing to do
-			}
-			else if (optionId == DefaultOptions.NewLineCharacterOptionId.Name)
-				DnSpyTextEditor.Options.NewLineCharacter = Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId);
-			else if (optionId == DefaultOptions.ReplicateNewLineCharacterOptionId.Name)
-				DnSpyTextEditor.Options.ReplicateNewLineCharacter = Options.GetOptionValue(DefaultOptions.ReplicateNewLineCharacterOptionId);
-			else if (optionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name)
-				DnSpyTextEditor.Options.ConvertTabsToSpaces = Options.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId);
-			else if (optionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name) {
-				var newValue = Options.GetOptionValue(DefaultTextViewHostOptions.HorizontalScrollBarId);
-				DnSpyTextEditor.HorizontalScrollBarVisibility = newValue ? ScrollBarVisibility.Visible : ScrollBarVisibility.Hidden;
-			}
-			else if (optionId == DefaultTextViewHostOptions.VerticalScrollBarId.Name) {
-				var newValue = Options.GetOptionValue(DefaultTextViewHostOptions.VerticalScrollBarId);
-				DnSpyTextEditor.VerticalScrollBarVisibility = newValue ? ScrollBarVisibility.Visible : ScrollBarVisibility.Hidden;
-			}
-			else if (optionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
-				DnSpyTextEditor.ShowLineNumbers = Options.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId);
-			else if (optionId == DefaultTextViewHostOptions.SelectionMarginId.Name) {
-				bool enable = Options.GetOptionValue(DefaultTextViewHostOptions.SelectionMarginId);
-				bool b = DnSpyTextEditor.TextArea.LeftMargins.Remove(paddingElement);
-				Debug.Assert(b == !enable);
-				if (enable)
-					DnSpyTextEditor.TextArea.LeftMargins.Add(paddingElement);
-			}
-			else if (optionId == DefaultTextViewHostOptions.GlyphMarginId.Name) {
-				//TODO:
-			}
-			else if (optionId == DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId.Name)
-				DnSpyTextEditor.Options.CutCopyWholeLine = Options.GetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId);
-			else if (optionId == DefaultTextViewOptions.DisplayUrlsAsHyperlinksId.Name) {
-				var newValue = Options.GetOptionValue(DefaultTextViewOptions.DisplayUrlsAsHyperlinksId);
-				DnSpyTextEditor.Options.EnableHyperlinks = newValue;
-				DnSpyTextEditor.Options.EnableEmailHyperlinks = newValue;
-				DnSpyTextEditor.Options.RequireControlModifierForHyperlinkClick = false;
-			}
-			else if (optionId == DefaultTextViewOptions.DragDropEditingId.Name) {
-				// DnSpyTextEditor.Options.EnableTextDragDrop also exists, but it's better to disable drag and drop
-				// to the text area. If EnableTextDragDrop is false, the user can't drag selected text to another
-				// window / application that supports drag and drop.
-				DnSpyTextEditor.TextArea.AllowDrop = Options.GetOptionValue(DefaultTextViewOptions.DragDropEditingId);
-			}
-			else if (optionId == DefaultTextViewOptions.CanChangeOverwriteModeId.Name) {
-				// Nothing to do
-			}
-			else if (optionId == DefaultTextViewOptions.OverwriteModeId.Name)
-				DnSpyTextEditor.TextArea.OverstrikeMode = Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
-			else if (optionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
-				var newValue = Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId);
-				DnSpyTextEditor.Options.EnableVirtualSpace = newValue;
-				// Move to a non-virtual location
-				if (!newValue && Caret.Position.VirtualSpaces > 0) {
-					var line = GetTextViewLineContainingBufferPosition(Caret.Position.BufferPosition);
-					Caret.MoveTo(line.End);
-				}
-			}
-			else if (optionId == DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId.Name) {
-				// Nothing to do
-			}
-			else if (optionId == DefaultTextViewOptions.UseVisibleWhitespaceId.Name) {
-				var newValue = Options.GetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId);
-				DnSpyTextEditor.Options.ShowSpaces = newValue;
-				DnSpyTextEditor.Options.ShowTabs = newValue;
-			}
-			else if (optionId == DefaultTextViewOptions.ViewProhibitUserInputId.Name)
-				DnSpyTextEditor.IsReadOnly = Options.GetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId);
-			else if (optionId == DefaultTextViewOptions.CanChangeWordWrapStyleId.Name) {
-				// Nothing to do
+				//TODO: Repaint
 			}
 			else if (optionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
-				var newValue = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
-				DnSpyTextEditor.WordWrap = (newValue & WordWrapStyles.WordWrap) != 0;
-				DnSpyTextEditor.Options.InheritWordWrapIndentation = (newValue & WordWrapStyles.AutoIndent) != 0;
-			}
-			else if (optionId == DefaultTextViewOptions.ScrollBelowDocumentId.Name)
-				DnSpyTextEditor.Options.AllowScrollBelowDocument = Options.GetOptionValue(DefaultTextViewOptions.ScrollBelowDocumentId);
-			else if (optionId == DefaultTextViewOptions.AllowBoxSelectionId.Name)
-				DnSpyTextEditor.Options.EnableRectangularSelection = Options.GetOptionValue(DefaultTextViewOptions.AllowBoxSelectionId);
-			else if (optionId == DefaultTextViewOptions.HideCaretWhileTypingId.Name)
-				DnSpyTextEditor.Options.HideCursorWhileTyping = Options.GetOptionValue(DefaultTextViewOptions.HideCaretWhileTypingId);
-			else if (optionId == DefaultTextViewOptions.ShowColumnRulerId.Name)
-				DnSpyTextEditor.Options.ShowColumnRuler = Options.GetOptionValue(DefaultTextViewOptions.ShowColumnRulerId);
-			else if (optionId == DefaultTextViewOptions.ColumnRulerPositionId.Name)
-				DnSpyTextEditor.Options.ColumnRulerPosition = Options.GetOptionValue(DefaultTextViewOptions.ColumnRulerPositionId);
-			else if (optionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
-				DnSpyTextEditor.HighlightCurrentLine = Options.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId);
-			else if (optionId == DefaultWpfViewOptions.EnableMouseWheelZoomId.Name) {
-				// Nothing to do
+				//TODO: Repaint
 			}
 			else if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
-			}
-			else if (optionId == DefaultWpfViewOptions.AppearanceCategory.Name) {
-				// Nothing to do
 			}
 		}
 
@@ -542,6 +333,7 @@ namespace dnSpy.Text.Editor {
 			return CreateWpfTextViewLine(bufferPosition);
 		}
 
+		//TODO: Cache the lines
 		IWpfTextViewLine CreateWpfTextViewLine(SnapshotPoint bufferPosition) {
 			if (bufferPosition.Snapshot != TextSnapshot)
 				throw new ArgumentException();
@@ -564,7 +356,7 @@ namespace dnSpy.Text.Editor {
 
 			var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
 			double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-			return new WpfTextViewLine(null, TextSnapshot, visualLine, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
+			return new WpfTextViewLine(TextSnapshot, visualLine, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
 		}
 
 		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>
@@ -575,25 +367,16 @@ namespace dnSpy.Text.Editor {
 
 			double viewportWidth = viewportWidthOverride ?? ViewportWidth;
 			double viewportHeight = viewportHeightOverride ?? ViewportHeight;
-			if (viewportWidth != ViewportWidth)
-				throw new NotSupportedException();
-			if (viewportHeight != ViewportHeight)
-				throw new NotSupportedException();
 
-			var textView = DnSpyTextEditor.TextArea.TextView;
 			var viewLine = GetTextViewLineContainingBufferPosition(bufferPosition);
 			double newTop;
-			Point point;
-			var textViewPosition = Utils.ToTextViewPosition(DnSpyTextEditor, new VirtualSnapshotPoint(bufferPosition), isAtEndOfLine: false);
 			switch (relativeTo) {
 			case ViewRelativePosition.Top:
-				point = textView.GetVisualPosition(textViewPosition, VisualYPosition.LineTop);
-				newTop = point.Y - verticalDistance;
+				newTop = viewLine.Top - verticalDistance;
 				break;
 
 			case ViewRelativePosition.Bottom:
-				point = textView.GetVisualPosition(textViewPosition, VisualYPosition.LineBottom);
-				newTop = point.Y - ViewportHeight + verticalDistance;
+				newTop = viewLine.Bottom - ViewportHeight + verticalDistance;
 				break;
 
 			default:
@@ -601,7 +384,8 @@ namespace dnSpy.Text.Editor {
 			}
 			if (newTop < 0)
 				newTop = 0;
-			((IScrollInfo)textView).SetVerticalOffset(newTop);
+			viewportTop = newTop;
+			//TODO: call RaiseLayoutChanged
 		}
 
 		public SnapshotSpan GetTextElementSpan(SnapshotPoint point) {
@@ -625,8 +409,28 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo) {
-			adornmentLayerCollection.OnParentSizeChanged(sizeInfo.NewSize);
+			if (!IsClosed) {
+				adornmentLayerCollection.OnParentSizeChanged(sizeInfo.NewSize);
+				if (sizeInfo.PreviousSize.Height != sizeInfo.NewSize.Height)
+					ViewportHeightChanged?.Invoke(this, EventArgs.Empty);
+				if (sizeInfo.PreviousSize.Width != sizeInfo.NewSize.Width)
+					ViewportWidthChanged?.Invoke(this, EventArgs.Empty);
+				UpdateVisibleArea();
+			}
 			base.OnRenderSizeChanged(sizeInfo);
 		}
+
+		protected override Size MeasureOverride(Size constraint) =>
+			new Size(FilterLength(constraint.Width, Width), FilterLength(constraint.Height, Height));
+
+		static double FilterLength(double length1, double length2) {
+			if (IsValidLength(length1))
+				return length1;
+			if (IsValidLength(length2))
+				return length2;
+			return 42;
+		}
+
+		static bool IsValidLength(double v) => v != double.PositiveInfinity && !double.IsNaN(v) && v >= 0;
 	}
 }

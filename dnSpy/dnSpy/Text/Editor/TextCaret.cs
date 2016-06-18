@@ -22,72 +22,52 @@ using System.Linq;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Editing;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextCaret : ITextCaret {
-		// These subtractions should equal 0 at the moment but could change in the future
-		public double Left => textView.ViewportLeft - dnSpyTextEditor.TextArea.TextView.HorizontalOffset + caret.CalculateCaretRectangle().Left;
-		public double Right => textView.ViewportLeft - dnSpyTextEditor.TextArea.TextView.HorizontalOffset + caret.CalculateCaretRectangle().Right;
-		public double Top => textView.ViewportTop - dnSpyTextEditor.TextArea.TextView.VerticalOffset + caret.CalculateCaretRectangle().Top;
-		public double Bottom => textView.ViewportTop - dnSpyTextEditor.TextArea.TextView.VerticalOffset + caret.CalculateCaretRectangle().Bottom;
-		public double Width => caret.CalculateCaretRectangle().Width;
-		public double Height => caret.CalculateCaretRectangle().Height;
+		public double Left => textCaretLayer.Left;
+		public double Right => textCaretLayer.Right;
+		public double Top => textCaretLayer.Top;
+		public double Bottom => textCaretLayer.Bottom;
+		public double Width => textCaretLayer.Width;
+		public double Height => textCaretLayer.Height;
 		public bool InVirtualSpace => Position.VirtualSpaces > 0;
-		public bool OverwriteMode => caret.OverstrikeMode;
+		public bool OverwriteMode => textCaretLayer.OverwriteMode;
 		public ITextViewLine ContainingTextViewLine => GetLine(Position.BufferPosition, Affinity);
 		PositionAffinity Affinity { get; set; }
 
 		public bool IsHidden {
-			get { return isHidden; }
-			set {
-				if (isHidden == value)
-					return;
-				isHidden = value;
-				if (isHidden)
-					caret.Hide();
-				else
-					caret.Show();
-			}
-		}
-		bool isHidden;
-
-		VirtualSnapshotPoint BufferPosition {
-			get {
-				int virtualSpaces = Utils.GetVirtualSpaces(dnSpyTextEditor, caret.Offset, caret.VisualColumn);
-				return new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, Math.Min(textView.TextSnapshot.Length, caret.Offset)), virtualSpaces);
-			}
+			get { return textCaretLayer.IsHidden; }
+			set { textCaretLayer.IsHidden = value; }
 		}
 
 		public event EventHandler<CaretPositionChangedEventArgs> PositionChanged;
-		public CaretPosition Position => cachedCaretPosition;
-		CaretPosition cachedCaretPosition;
+		public CaretPosition Position => currentPosition;
+		CaretPosition currentPosition;
 
 		readonly ITextView textView;
-		readonly DnSpyTextEditor dnSpyTextEditor;
 		readonly ISmartIndentationService smartIndentationService;
-		readonly Caret caret;
+		readonly TextCaretLayer textCaretLayer;
 		double preferredXCoordinate;
 
-		public TextCaret(ITextView textView, DnSpyTextEditor dnSpyTextEditor, ISmartIndentationService smartIndentationService) {
+		public TextCaret(ITextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			if (caretLayer == null)
+				throw new ArgumentNullException(nameof(caretLayer));
+			if (smartIndentationService == null)
+				throw new ArgumentNullException(nameof(smartIndentationService));
 			this.textView = textView;
-			this.dnSpyTextEditor = dnSpyTextEditor;
+			this.textCaretLayer = new TextCaretLayer(this, caretLayer);
 			this.smartIndentationService = smartIndentationService;
 			this.preferredXCoordinate = 0;
 			this.__preferredYCoordinate = 0;
-			this.caret = dnSpyTextEditor.TextArea.Caret;
 			Affinity = PositionAffinity.Successor;
-			caret.SetPosition(new TextViewPosition(1, 1, 0), true);
-			caret.DesiredXPos = double.NaN;
-			caret.PositionChanged += AvalonEdit_Caret_PositionChanged;
+			var bufferPos = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
+			this.currentPosition = new CaretPosition(bufferPos, new MappingPoint(bufferPos.Position, PointTrackingMode.Negative), Affinity);
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged += Options_OptionChanged;
-			dnSpyTextEditor.TextArea.TextView.VisualLinesChanged += AvalonEdit_TextView_VisualLinesChanged;
-
-			// Update cached pos
-			OnCaretPositionChanged();
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -95,20 +75,8 @@ namespace dnSpy.Text.Editor {
 				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
 					MoveTo(Position.BufferPosition);
 			}
-			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
-				ReInitializeAvalonEditPosition();
-		}
-
-		void AvalonEdit_TextView_VisualLinesChanged(object sender, EventArgs e) {
-			// Needed because VisualLengths could've changed, eg. when toggling show-whitespace option.
-			ReInitializeAvalonEditPosition();
-		}
-
-		void ReInitializeAvalonEditPosition() {
-			bool isWordWrap = (textView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0;
-			bool isAtEndOfLine = isWordWrap && cachedCaretPosition.Affinity == PositionAffinity.Predecessor;
-			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, cachedCaretPosition.VirtualBufferPosition, isAtEndOfLine), invalidateVisualColumn: false);
-			caret.DesiredXPos = double.NaN;
+			else if (e.OptionId == DefaultTextViewOptions.OverwriteModeId.Name)
+				textCaretLayer.OverwriteMode = textView.Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
 		}
 
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
@@ -121,23 +89,24 @@ namespace dnSpy.Text.Editor {
 			OnCaretPositionChanged();
 		}
 
+		void OnCaretPositionChanged() => SetPosition(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot));
+		void SetPosition(VirtualSnapshotPoint bufferPosition) {
+			var oldPos = currentPosition;
+			var bufPos = bufferPosition;
+			currentPosition = new CaretPosition(bufPos, new MappingPoint(bufPos.Position, PointTrackingMode.Negative), Affinity);
+			if (!CaretEquals(oldPos, currentPosition))
+				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
+		}
+
 		// Compares two caret positions, ignoring the snapshot
 		static bool CaretEquals(CaretPosition a, CaretPosition b) =>
 			a.Affinity == b.Affinity &&
 			a.VirtualSpaces == b.VirtualSpaces &&
 			a.BufferPosition.Position == b.BufferPosition.Position;
 
-		void AvalonEdit_Caret_PositionChanged(object sender, EventArgs e) => OnCaretPositionChanged();
-		void OnCaretPositionChanged() {
-			var oldPos = cachedCaretPosition;
-			var bufPos = BufferPosition;
-			cachedCaretPosition = new CaretPosition(bufPos, new MappingPoint(bufPos.Position, PointTrackingMode.Negative), Affinity);
-			if (!CaretEquals(oldPos, cachedCaretPosition))
-				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
+		public void EnsureVisible() {
+			//TODO:
 		}
-		internal void OnVisualLinesCreated() => OnCaretPositionChanged();
-
-		public void EnsureVisible() => caret.BringCaretToView();
 
 		bool CanAutoIndent(ITextViewLine line) {
 			if (line.Start != line.End)
@@ -185,8 +154,7 @@ namespace dnSpy.Text.Editor {
 			Affinity = textLine.IsLastTextViewLineForSnapshotLine || bufferPosition.Position != textLine.End ? PositionAffinity.Successor : PositionAffinity.Predecessor;
 			if (filterPos)
 				bufferPosition = FilterColumn(bufferPosition);
-			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, bufferPosition, Affinity == PositionAffinity.Predecessor), invalidateVisualColumn: false);
-			caret.DesiredXPos = double.NaN;
+			SetPosition(bufferPosition);
 			if (captureHorizontalPosition)
 				preferredXCoordinate = Left;
 			if (captureVerticalPosition)
@@ -212,8 +180,7 @@ namespace dnSpy.Text.Editor {
 			Affinity = caretAffinity;
 			// Don't call FilterColumn() or pressing END on an empty line won't indent it to a virtual column
 			//bufferPosition = FilterColumn(bufferPosition);
-			caret.SetPosition(Utils.ToTextViewPosition(dnSpyTextEditor, bufferPosition, Affinity == PositionAffinity.Predecessor), invalidateVisualColumn: false);
-			caret.DesiredXPos = double.NaN;
+			SetPosition(bufferPosition);
 			if (captureHorizontalPosition)
 				preferredXCoordinate = Left;
 			SavePreferredYCoordinate();
@@ -328,6 +295,13 @@ namespace dnSpy.Text.Editor {
 			if (bufferPosition.GetContainingLine().Start == bufferPosition)
 				return line;
 			return textView.GetTextViewLineContainingBufferPosition(bufferPosition - 1);
+		}
+
+		public void Dispose() {
+			textView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;
+			textView.TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
+			textView.Options.OptionChanged -= Options_OptionChanged;
+			textCaretLayer.Dispose();
 		}
 	}
 }

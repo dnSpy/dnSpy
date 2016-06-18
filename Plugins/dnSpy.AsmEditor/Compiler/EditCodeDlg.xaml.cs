@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			vm.SelectedDocument = doc;
 
 			if (diag.LineLocationSpan != null) {
-				UIUtils.Focus(doc.TextView.FocusedElement, () => {
+				UIUtils.Focus(doc.TextView.VisualElement, () => {
 					// The caret isn't always moved unless we wait a little
 					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 						if (doc == vm.SelectedDocument) {
@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var vm = (EditCodeVM)sender;
 			if (e.PropertyName == nameof(vm.SelectedDocument))
-				UIUtils.Focus(vm.SelectedDocument?.TextView?.FocusedElement);
+				UIUtils.Focus(vm.SelectedDocument?.TextView.VisualElement);
 		}
 
 		void CopyToClipboard(CompilerDiagnosticVM[] diags) {

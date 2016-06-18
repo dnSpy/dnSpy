@@ -25,8 +25,6 @@ using System.Text;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Editing;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelection : ITextSelection {
@@ -34,12 +32,14 @@ namespace dnSpy.Text.Editor {
 		public bool IsActive { get; set; }
 		public bool IsEmpty => AnchorPoint == ActivePoint;
 		public bool IsReversed => ActivePoint < AnchorPoint;
-		public VirtualSnapshotPoint AnchorPoint => ToVirtualSnapshotPoint(dnSpyTextEditor.TextArea.Selection.StartPosition);
-		public VirtualSnapshotPoint ActivePoint => ToVirtualSnapshotPoint(dnSpyTextEditor.TextArea.Selection.EndPosition);
+		public VirtualSnapshotPoint AnchorPoint => anchorPoint;
+		public VirtualSnapshotPoint ActivePoint => activePoint;
 		public VirtualSnapshotPoint Start => AnchorPoint < ActivePoint ? AnchorPoint : ActivePoint;
 		public VirtualSnapshotPoint End => AnchorPoint < ActivePoint ? ActivePoint : AnchorPoint;
 		public VirtualSnapshotSpan StreamSelectionSpan => new VirtualSnapshotSpan(Start, End);
 		public event EventHandler SelectionChanged;
+
+		VirtualSnapshotPoint anchorPoint, activePoint;
 
 		public bool ActivationTracksFocus {
 			get { return activationTracksFocus; }
@@ -59,14 +59,10 @@ namespace dnSpy.Text.Editor {
 		List<VirtualSnapshotSpan> GetSelectedSpans() {
 			var list = new List<VirtualSnapshotSpan>();
 
-			foreach (var s in dnSpyTextEditor.TextArea.Selection.Segments) {
-				int virtualSpacesStart = Utils.GetVirtualSpaces(dnSpyTextEditor, s.StartOffset, s.StartVisualColumn);
-				int virtualSpacesEnd = Utils.GetVirtualSpaces(dnSpyTextEditor, s.EndOffset, s.EndVisualColumn);
-
-				var start = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, s.StartOffset), virtualSpacesStart);
-				var end = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, s.EndOffset), virtualSpacesEnd);
-
-				list.Add(new VirtualSnapshotSpan(start, end));
+			if (Mode == TextSelectionMode.Stream)
+				list.Add(StreamSelectionSpan);
+			else {
+				//TODO:
 			}
 
 			// At least one span must be included, even if the span's empty
@@ -77,33 +73,39 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public TextSelectionMode Mode {
-			get { return dnSpyTextEditor.TextArea.Selection.GetType().ToString().Contains("RectangleSelection") ? TextSelectionMode.Box : TextSelectionMode.Stream; }
+			get { return mode; }
 			set {
-				switch (value) {
-				case TextSelectionMode.Stream:
-				case TextSelectionMode.Box:
-					break;//TODO:
-				default:
-					throw new ArgumentOutOfRangeException(nameof(value));
-				}
+				if (mode == value)
+					return;
+				if (mode != TextSelectionMode.Stream && mode != TextSelectionMode.Box)
+					throw new ArgumentOutOfRangeException(nameof(mode));
+				mode = value;
+				textSelectionLayer.OnModeUpdated();
 			}
 		}
+		TextSelectionMode mode;
 
-		readonly DnSpyTextEditor dnSpyTextEditor;
+		readonly TextSelectionLayer textSelectionLayer;
 
-		public TextSelection(ITextView textView, DnSpyTextEditor dnSpyTextEditor) {
-			this.dnSpyTextEditor = dnSpyTextEditor;
-			dnSpyTextEditor.TextArea.SelectionChanged += AvalonEdit_TextArea_SelectionChanged;
+		public TextSelection(ITextView textView, IAdornmentLayer selectionLayer) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			if (selectionLayer == null)
+				throw new ArgumentNullException(nameof(selectionLayer));
+			this.textSelectionLayer = new TextSelectionLayer(this, selectionLayer);
 			TextView = textView;
+			TextView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			Mode = TextSelectionMode.Stream;
 			ActivationTracksFocus = true;
-			dnSpyTextEditor.TextArea.Selection = Selection.Create(dnSpyTextEditor.TextArea, 0, 0);
 			TextView.Options.OptionChanged += TextView_Options_OptionChanged;
+			anchorPoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
+			activePoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
 		}
 
-		void AvalonEdit_TextArea_SelectionChanged(object sender, EventArgs e) {
-			ActivationTracksFocus = true;
-			SelectionChanged?.Invoke(this, EventArgs.Empty);
+		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
+			var newAnchorPoint = anchorPoint.TranslateTo(TextView.TextSnapshot);
+			var newActivePoint = activePoint.TranslateTo(TextView.TextSnapshot);
+			Select(newAnchorPoint, newActivePoint);
 		}
 
 		void TextView_Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -111,15 +113,6 @@ namespace dnSpy.Text.Editor {
 				if (Mode == TextSelectionMode.Stream && !TextView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
 					Select(new VirtualSnapshotPoint(AnchorPoint.Position), new VirtualSnapshotPoint(ActivePoint.Position));
 			}
-		}
-
-		VirtualSnapshotPoint ToVirtualSnapshotPoint(TextViewPosition textViewPosition) {
-			if (textViewPosition.Line == 0 && textViewPosition.Column == 0)
-				return new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
-
-			int offset = dnSpyTextEditor.TextArea.TextView.Document.GetOffset(textViewPosition.Location);
-			int virtualSpaces = Utils.GetVirtualSpaces(dnSpyTextEditor, offset, textViewPosition.VisualColumn);
-			return new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, offset), virtualSpaces);
 		}
 
 		public void Clear() {
@@ -130,7 +123,10 @@ namespace dnSpy.Text.Editor {
 		void ClearInternal() {
 			bool isEmpty = IsEmpty;
 			ActivationTracksFocus = true;
-			dnSpyTextEditor.TextArea.Selection = Selection.Create(dnSpyTextEditor.TextArea, ActivePoint.Position, ActivePoint.Position);
+			activePoint = activePoint.TranslateTo(TextView.TextSnapshot);
+			anchorPoint = activePoint;
+			if (!isEmpty)
+				SelectionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public VirtualSnapshotSpan? GetSelectionOnTextViewLine(ITextViewLine line) {
@@ -154,14 +150,26 @@ namespace dnSpy.Text.Editor {
 				return;
 			}
 			ActivationTracksFocus = true;
-			dnSpyTextEditor.TextArea.Selection = Selection.Create(dnSpyTextEditor.TextArea, Utils.ToTextViewPosition(dnSpyTextEditor, anchorPoint, false), Utils.ToTextViewPosition(dnSpyTextEditor, activePoint, false));
+
+			this.anchorPoint = this.anchorPoint.TranslateTo(TextView.TextSnapshot);
+			this.activePoint = this.activePoint.TranslateTo(TextView.TextSnapshot);
+
+			bool sameSelection = SamePoint(this.anchorPoint, anchorPoint) && SamePoint(this.activePoint, activePoint);
+			if (!sameSelection) {
+				this.anchorPoint = anchorPoint;
+				this.activePoint = activePoint;
+				SelectionChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
+		static bool SamePoint(VirtualSnapshotPoint a, VirtualSnapshotPoint b) =>
+			a.VirtualSpaces == b.VirtualSpaces && a.Position.Position == b.Position.Position;
+
 		public void Select(int startLine, int startColumn, int endLine, int endColumn) {
-			var l1 = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(startLine + 1);
-			var l2 = dnSpyTextEditor.TextArea.TextView.Document.GetLineByNumber(endLine + 1);
-			var vsp1 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l1.Offset + startColumn));
-			var vsp2 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l2.Offset + endColumn));
+			var l1 = TextView.TextSnapshot.GetLineFromLineNumber(startLine);
+			var l2 = TextView.TextSnapshot.GetLineFromLineNumber(endLine);
+			var vsp1 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l1.Start + startColumn));
+			var vsp2 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l2.Start + endColumn));
 			Select(vsp1, vsp2);
 		}
 
@@ -179,6 +187,12 @@ namespace dnSpy.Text.Editor {
 			if (i > 1)
 				sb.AppendLine();
 			return sb.ToString();
+		}
+
+		public void Dispose() {
+			TextView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;
+			TextView.Options.OptionChanged -= TextView_Options_OptionChanged;
+			textSelectionLayer.Dispose();
 		}
 	}
 }

@@ -30,8 +30,8 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler Closed;
 		public Control HostControl => contentControl;
 		public object UIObject => contentControl;
-		public IInputElement FocusedElement => TextView.FocusedElement;
-		public FrameworkElement ScaleElement => TextView.ScaleElement;
+		public IInputElement FocusedElement => TextView.VisualElement;
+		public FrameworkElement ScaleElement => TextView.VisualElement;
 		public object Tag { get; set; }
 
 		readonly ContentControl contentControl;
@@ -42,13 +42,13 @@ namespace dnSpy.Text.Editor {
 			TextView = wpfTextView;
 			this.contentControl = new ContentControl {
 				Focusable = false,
-				Content = TextView.UIObject,
+				Content = TextView.VisualElement,
 			};
 
 			if (setFocus) {
 				contentControl.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
 					if (!TextView.IsClosed)
-						TextView.FocusedElement?.Focus();
+						TextView.VisualElement.Focus();
 				}));
 			}
 		}
