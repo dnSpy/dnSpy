@@ -463,6 +463,7 @@
     <Compile Include="Text\Editor\ZoomConstants.cs" />
     <Compile Include="Text\Editor\ZoomLevelChangedEventArgs.cs" />
     <Compile Include="Text\ExportContentTypeDefinitionAttribute.cs" />
+    <Compile Include="Text\Formatting\BrushUtils.cs" />
     <Compile Include="Text\Formatting\IFormattedLine.cs" />
     <Compile Include="Text\Formatting\IFormattedLineSource.cs" />
     <Compile Include="Text\Formatting\IFormattedTextSourceFactoryService.cs" />

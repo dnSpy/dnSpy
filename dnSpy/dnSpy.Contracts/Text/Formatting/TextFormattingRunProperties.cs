@@ -249,14 +249,14 @@ namespace dnSpy.Contracts.Text.Formatting {
 		/// </summary>
 		/// <param name="brush">Brush</param>
 		/// <returns></returns>
-		public bool BackgroundBrushSame(Brush brush) => BrushEquals(brush, background);
+		public bool BackgroundBrushSame(Brush brush) => BrushUtils.Equals(brush, background);
 
 		/// <summary>
 		/// Checks whether foreground is the same as <paramref name="brush"/>
 		/// </summary>
 		/// <param name="brush">Brush</param>
 		/// <returns></returns>
-		public bool ForegroundBrushSame(Brush brush) => BrushEquals(brush, foreground);
+		public bool ForegroundBrushSame(Brush brush) => BrushUtils.Equals(brush, foreground);
 
 		/// <summary>
 		/// true if if rendering size is the same
@@ -444,8 +444,8 @@ namespace dnSpy.Contracts.Text.Formatting {
 			return TypefaceEquals(typeface, other.typeface) &&
 				isBold == other.isBold &&
 				isItalic == other.isItalic &&
-				BrushEquals(foreground, other.foreground) &&
-				BrushEquals(background, other.background) &&
+				BrushUtils.Equals(foreground, other.foreground) &&
+				BrushUtils.Equals(background, other.background) &&
 				foregroundOpacity == other.foregroundOpacity &&
 				backgroundOpacity == other.backgroundOpacity &&
 				cultureInfo == other.cultureInfo &&
@@ -470,8 +470,8 @@ namespace dnSpy.Contracts.Text.Formatting {
 			return GetHashCode(typeface) ^
 				(isBold == null ? 0 : isBold.Value ? int.MinValue : 0) ^
 				(isItalic == null ? 0 : isItalic.Value ? 0x40000000 : 0) ^
-				GetHashCode(foreground) ^
-				GetHashCode(background) ^
+				BrushUtils.GetHashCode(foreground) ^
+				BrushUtils.GetHashCode(background) ^
 				(foregroundOpacity == null ? 0 : foregroundOpacity.Value.GetHashCode()) ^
 				(backgroundOpacity == null ? 0 : backgroundOpacity.Value.GetHashCode()) ^
 				(cultureInfo?.GetHashCode() ?? 0) ^
@@ -488,44 +488,6 @@ namespace dnSpy.Contracts.Text.Formatting {
 			if (a == null || b == null)
 				return false;
 			return a.Equals(b);
-		}
-
-		static bool BrushEquals(Brush a, Brush b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
-				return false;
-			var sa = a as SolidColorBrush;
-			var sb = b as SolidColorBrush;
-			if (sa != null && sb != null)
-				return SolidColorBrushEquals(sa, sb);
-			return a.Equals(b);
-		}
-
-		static bool SolidColorBrushEquals(SolidColorBrush a, SolidColorBrush b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
-				return false;
-
-			if (a.Color.A == 0 && b.Color.A == 0)
-				return true;
-			return a.Color.Equals(b.Color);
-		}
-
-		int GetHashCode(Brush brush) {
-			var sb = brush as SolidColorBrush;
-			if (sb != null)
-				return GetHashCode(sb);
-			return int.MinValue;
-		}
-
-		int GetHashCode(SolidColorBrush brush) {
-			if (brush == null)
-				return 0;
-			if (brush.Color.A == 0)
-				return -1;
-			return brush.Color.GetHashCode();
 		}
 	}
 }
