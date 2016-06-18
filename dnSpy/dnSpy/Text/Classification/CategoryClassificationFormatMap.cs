@@ -56,6 +56,8 @@ namespace dnSpy.Text.Classification {
 				throw new ArgumentNullException(nameof(textEditorFontSettings));
 			if (editorFormatDefinitions == null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitions));
+			if (classificationTypeRegistryService == null)
+				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.themeManager = themeManager;
 			this.textEditorFontSettings = textEditorFontSettings;
 			this.editorFormatDefinitions = editorFormatDefinitions;

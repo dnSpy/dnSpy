@@ -382,6 +382,10 @@
     <Compile Include="Text\ContentTypeDefinition.cs" />
     <Compile Include="Text\ContentTypes.cs" />
     <Compile Include="Text\DisplayNameAttribute.cs" />
+    <Compile Include="Text\Editor\AdornmentLayerDefinition.cs" />
+    <Compile Include="Text\Editor\AdornmentLayerOrder.cs" />
+    <Compile Include="Text\Editor\AdornmentPositioningBehavior.cs" />
+    <Compile Include="Text\Editor\AdornmentRemovedCallback.cs" />
     <Compile Include="Text\Editor\BackgroundBrushChangedEventArgs.cs" />
     <Compile Include="Text\Editor\CaretPosition.cs" />
     <Compile Include="Text\Editor\CaretPositionChangedEventArgs.cs" />
@@ -397,6 +401,8 @@
     <Compile Include="Text\Editor\EditorOptionDefinition`1.cs" />
     <Compile Include="Text\Editor\EditorOptionKey.cs" />
     <Compile Include="Text\Editor\EnsureSpanVisibleOptions.cs" />
+    <Compile Include="Text\Editor\IAdornmentLayer.cs" />
+    <Compile Include="Text\Editor\IAdornmentLayerElement.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
     <Compile Include="Text\Editor\IEditorOptions.cs" />
@@ -443,6 +449,7 @@
     <Compile Include="Text\Editor\Operations\ITextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\TextExtent.cs" />
     <Compile Include="Text\Editor\OutputLogEditorTextViewRoles.cs" />
+    <Compile Include="Text\Editor\PredefinedAdornmentLayers.cs" />
     <Compile Include="Text\Editor\PredefinedTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />

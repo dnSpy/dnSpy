@@ -49,6 +49,13 @@ namespace dnSpy.Contracts.Text.Editor {
 		IFormattedLineSource FormattedLineSource { get; }
 
 		/// <summary>
+		/// Gets an adornment layer
+		/// </summary>
+		/// <param name="name">Adornment layer, eg. <see cref="PredefinedAdornmentLayers.BraceCompletion"/></param>
+		/// <returns></returns>
+		IAdornmentLayer GetAdornmentLayer(string name);
+
+		/// <summary>
 		/// Gets the text view lines
 		/// </summary>
 		new IWpfTextViewLineCollection TextViewLines { get; }

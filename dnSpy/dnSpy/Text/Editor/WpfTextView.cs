@@ -24,6 +24,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Command;
@@ -36,13 +37,13 @@ using dnSpy.Text.Formatting;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Text.Editor {
-	sealed class WpfTextView : IWpfTextView {
+	sealed class WpfTextView : Canvas, IWpfTextView {
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => DnSpyTextEditor.FocusedElement;
 		public object UIObject => DnSpyTextEditor;
 		public IInputElement FocusedElement => DnSpyTextEditor.FocusedElement;
 		public FrameworkElement ScaleElement => DnSpyTextEditor.ScaleElement;
-		public object Tag { get; set; }
+		public new object Tag { get; set; }
 		public ITextViewRoleSet Roles { get; }
 		public IEditorOptions Options { get; }
 		public ICommandTargetCollection CommandTarget => RegisteredCommandElement.CommandTarget;
@@ -64,8 +65,19 @@ namespace dnSpy.Text.Editor {
 		readonly IClassifier aggregateClassifier;
 		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
 		readonly IClassificationFormatMap classificationFormatMap;
+		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
+		readonly AdornmentLayerCollection adornmentLayerCollection;
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService) {
+#pragma warning disable CS0169
+		[ExportAdornmentLayerDefinition("Text", PredefinedAdornmentLayers.Text, AdornmentLayerOrder.Text)]
+		static readonly AdornmentLayerDefinition textAdornmentLayerDefinition;
+		[ExportAdornmentLayerDefinition("Caret", PredefinedAdornmentLayers.Caret, AdornmentLayerOrder.Caret)]
+		static readonly AdornmentLayerDefinition caretAdornmentLayerDefinition;
+		[ExportAdornmentLayerDefinition("Selection", PredefinedAdornmentLayers.Selection, AdornmentLayerOrder.Selection)]
+		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
+#pragma warning restore CS0169
+
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -74,9 +86,29 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(roles));
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
+			if (editorOptionsFactoryService == null)
+				throw new ArgumentNullException(nameof(editorOptionsFactoryService));
+			if (commandManager == null)
+				throw new ArgumentNullException(nameof(commandManager));
+			if (editorOperationsFactoryService == null)
+				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
+			if (smartIndentationService == null)
+				throw new ArgumentNullException(nameof(smartIndentationService));
+			if (formattedTextSourceFactoryService == null)
+				throw new ArgumentNullException(nameof(formattedTextSourceFactoryService));
+			if (viewClassifierAggregatorService == null)
+				throw new ArgumentNullException(nameof(viewClassifierAggregatorService));
+			if (textAndAdornmentSequencerFactoryService == null)
+				throw new ArgumentNullException(nameof(textAndAdornmentSequencerFactoryService));
+			if (classificationFormatMapService == null)
+				throw new ArgumentNullException(nameof(classificationFormatMapService));
+			if (adornmentLayerDefinitionService == null)
+				throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			this.zoomLevel = ZoomConstants.DefaultZoom;
+			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
+			this.adornmentLayerCollection = new AdornmentLayerCollection(this);
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
 			TextViewLines = new WpfTextViewLineCollection();
@@ -90,7 +122,7 @@ namespace dnSpy.Text.Editor {
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
 			TextCaret = new TextCaret(this, dnSpyTextEditor, smartIndentationService);
 			ViewScroller = new ViewScroller(this);
-			InitializeFrom(Options);
+			InitializeOptions();
 			DnSpyTextEditor.Loaded += DnSpyTextEditor_Loaded;
 			DnSpyTextEditor.IsKeyboardFocusWithinChanged += DnSpyTextEditor_IsKeyboardFocusWithinChanged;
 			hasKeyboardFocus = DnSpyTextEditor.IsKeyboardFocusWithin;
@@ -108,6 +140,11 @@ namespace dnSpy.Text.Editor {
 				RegisteredCommandElement = commandManager.Register(VisualElement, this);
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
+
+			Children.Add(adornmentLayerCollection);
+			this.Cursor = Cursors.IBeam;
+			this.Focusable = true;
+			this.FocusVisualStyle = null;
 		}
 
 		//TODO: Call this each time one of the values it uses gets updated
@@ -169,7 +206,7 @@ namespace dnSpy.Text.Editor {
 
 		public bool IsClosed { get; set; }
 
-		public Brush Background {
+		public new Brush Background {
 			get { return DnSpyTextEditor.Background; }
 			set {
 				if (DnSpyTextEditor.Background != value) {
@@ -354,7 +391,7 @@ namespace dnSpy.Text.Editor {
 			(aggregateClassifier as IDisposable)?.Dispose();
 		}
 
-		void InitializeFrom(IEditorOptions options) {
+		void InitializeOptions() {
 			UpdateOption(DefaultOptions.TabSizeOptionId.Name);
 			UpdateOption(DefaultOptions.IndentSizeOptionId.Name);
 			UpdateOption(DefaultOptions.IndentStyleOptionId.Name);
@@ -576,6 +613,20 @@ namespace dnSpy.Text.Editor {
 		internal Tuple<VisualLine, TextLine> HACK_GetVisualLine(WpfTextViewLine line) {
 			var line2 = (WpfTextViewLine)CreateWpfTextViewLine(line.Start);
 			return Tuple.Create(line2.VisualLine, line2.TextLine);
+		}
+
+		public IAdornmentLayer GetAdornmentLayer(string name) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			var mdLayer = adornmentLayerDefinitionService.GetLayerDefinition(Guid.Parse(name));
+			if (mdLayer == null)
+				throw new ArgumentException($"Adornment layer {name} doesn't exist");
+			return adornmentLayerCollection.GetAdornmentLayer(mdLayer);
+		}
+
+		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo) {
+			adornmentLayerCollection.OnParentSizeChanged(sizeInfo.NewSize);
+			base.OnRenderSizeChanged(sizeInfo);
 		}
 	}
 }
