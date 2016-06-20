@@ -29,11 +29,11 @@ namespace dnSpy.Text.Editor.Operations {
 	[Export(typeof(ITextStructureNavigatorSelectorService))]
 	sealed class TextStructureNavigatorSelectorService : ITextStructureNavigatorSelectorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly ITextStructureNavigatorProvider[] textStructureNavigatorProviders;
-		ProviderSelector<ITextStructureNavigatorProvider> providerSelector;
+		readonly Lazy<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata>[] textStructureNavigatorProviders;
+		ProviderSelector<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata> providerSelector;
 
 		[ImportingConstructor]
-		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<ITextStructureNavigatorProvider> textStructureNavigatorProviders) {
+		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata>> textStructureNavigatorProviders) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textStructureNavigatorProviders = textStructureNavigatorProviders.ToArray();
 		}
@@ -64,9 +64,9 @@ namespace dnSpy.Text.Editor.Operations {
 				throw new ArgumentNullException(nameof(contentType));
 
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ITextStructureNavigatorProvider>(textStructureNavigatorProviders, a => a.ContentTypes);
+				providerSelector = new ProviderSelector<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata>(contentTypeRegistryService, textStructureNavigatorProviders, a => a.Metadata.ContentTypes);
 			foreach (var p in providerSelector.GetProviders(contentType)) {
-				var nav = p.CreateTextStructureNavigator(textBuffer);
+				var nav = p.Value.CreateTextStructureNavigator(textBuffer);
 				if (nav != null)
 					return nav;
 			}

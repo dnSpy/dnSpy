@@ -138,6 +138,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		//TODO: Call this each time one of the values it uses gets updated or when default font/fg/bg/etc changes
+		//TODO: Also when the content type changes
 		void CreateFormattedLineSource() {
 			var wordWrapStyle = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
 			bool isWordWrap = (wordWrapStyle & WordWrapStyles.WordWrap) != 0;

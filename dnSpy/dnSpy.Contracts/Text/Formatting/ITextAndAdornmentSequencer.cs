@@ -17,10 +17,42 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Text.Formatting {
 	/// <summary>
-	/// Text and adornment sequencer
+	/// Creates a sequence of text and adornment elements to compose an <see cref="ITextSnapshotLine"/>
 	/// </summary>
 	public interface ITextAndAdornmentSequencer {
+		/// <summary>
+		/// Occurs when there has been a change in the data used by the sequencer
+		/// </summary>
+		event EventHandler<TextAndAdornmentSequenceChangedEventArgs> SequenceChanged;
+
+		/// <summary>
+		/// Gets the source buffer of the buffer graph
+		/// </summary>
+		ITextBuffer SourceBuffer { get; }
+
+		/// <summary>
+		/// Gets the top <see cref="ITextBuffer"/> in the buffer graph
+		/// </summary>
+		ITextBuffer TopBuffer { get; }
+
+		/// <summary>
+		/// Creates a sequence of text and adornment elements that compose the specified <see cref="ITextSnapshotLine"/>
+		/// </summary>
+		/// <param name="topLine">The <see cref="ITextSnapshotLine"/> to sequence</param>
+		/// <param name="sourceTextSnapshot">The <see cref="ITextSnapshot"/> of the <see cref="TopBuffer"/> that corresponds to <paramref name="topLine"/></param>
+		/// <returns></returns>
+		ITextAndAdornmentCollection CreateTextAndAdornmentCollection(ITextSnapshotLine topLine, ITextSnapshot sourceTextSnapshot);
+
+		/// <summary>
+		/// Creates a sequence of text and adornment elements that compose the specified <see cref="SnapshotSpan"/>
+		/// </summary>
+		/// <param name="topSpan">The <see cref="SnapshotSpan"/> in the <see cref="TopBuffer"/> to sequence</param>
+		/// <param name="sourceTextSnapshot">The <see cref="ITextSnapshot"/> of the <see cref="SourceBuffer"/> that corresponds to <paramref name="topSpan"/></param>
+		/// <returns></returns>
+		ITextAndAdornmentCollection CreateTextAndAdornmentCollection(SnapshotSpan topSpan, ITextSnapshot sourceTextSnapshot);
 	}
 }

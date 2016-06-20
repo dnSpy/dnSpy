@@ -17,21 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Operations;
+using System;
 
-namespace dnSpy.Text.Editor.Operations {
-	[ExportTextStructureNavigatorProvider(ContentTypes.ANY)]
-	sealed class AnyTextStructureNavigatorProvider : ITextStructureNavigatorProvider {
-		readonly IContentType contentType;
+namespace dnSpy.Contracts.Text.Formatting {
+	/// <summary>
+	/// Provides information for the <see cref="ITextAndAdornmentSequencer.SequenceChanged"/> event
+	/// </summary>
+	public sealed class TextAndAdornmentSequenceChangedEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the span over which tags have changed
+		/// </summary>
+		public IMappingSpan Span { get; }
 
-		[ImportingConstructor]
-		AnyTextStructureNavigatorProvider(IContentTypeRegistryService contentTypeRegistryService) {
-			this.contentType = contentTypeRegistryService.GetContentType(ContentTypes.ANY);
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Span</param>
+		public TextAndAdornmentSequenceChangedEventArgs(IMappingSpan span) {
+			if (span == null)
+				throw new ArgumentNullException(nameof(span));
+			Span = span;
 		}
-
-		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer) =>
-			new AnyTextStructureNavigator(textBuffer, contentType);
 	}
 }

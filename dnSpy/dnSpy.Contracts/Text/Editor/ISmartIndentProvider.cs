@@ -17,23 +17,47 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
+using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Smart indent provider
+	/// Smart indent provider. Use <see cref="ExportSmartIndentProviderAttribute"/>
+	/// to export an instance.
 	/// </summary>
 	public interface ISmartIndentProvider {
-		/// <summary>
-		/// Gets the supported content types
-		/// </summary>
-		IEnumerable<IContentType> ContentTypes { get; }
-
 		/// <summary>
 		/// Creates a <see cref="ISmartIndent"/> for the given <see cref="ITextView"/> or returns null
 		/// </summary>
 		/// <param name="textView">The <see cref="ITextView"/> on which the <see cref="ISmartIndent"/> will navigate</param>
 		/// <returns></returns>
 		ISmartIndent CreateSmartIndent(ITextView textView);
+	}
+
+	/// <summary>Metadata</summary>
+	public interface ISmartIndentProviderMetadata {
+		/// <summary>See <see cref="ExportSmartIndentProviderAttribute.ContentTypes"/></summary>
+		string[] ContentTypes { get; }
+	}
+
+	/// <summary>
+	/// Exports an <see cref="ISmartIndentProvider"/>
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportSmartIndentProviderAttribute : ExportAttribute, ISmartIndentProviderMetadata {
+		/// <summary>
+		/// Content types
+		/// </summary>
+		public string[] ContentTypes { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ExportSmartIndentProviderAttribute(params string[] contentTypes)
+			: base(typeof(ISmartIndentProvider)) {
+			if (contentTypes == null)
+				throw new ArgumentNullException(nameof(contentTypes));
+			ContentTypes = contentTypes;
+		}
 	}
 }

@@ -27,11 +27,13 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ISmartIndentationService))]
 	sealed class SmartIndentationService : ISmartIndentationService {
-		readonly Lazy<ISmartIndentProvider>[] smartIndentProviders;
-		ProviderSelector<ISmartIndentProvider> providerSelector;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly Lazy<ISmartIndentProvider, ISmartIndentProviderMetadata>[] smartIndentProviders;
+		ProviderSelector<ISmartIndentProvider, ISmartIndentProviderMetadata> providerSelector;
 
 		[ImportingConstructor]
-		SmartIndentationService([ImportMany] IEnumerable<Lazy<ISmartIndentProvider>> smartIndentProviders) {
+		SmartIndentationService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ISmartIndentProvider, ISmartIndentProviderMetadata>> smartIndentProviders) {
+			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.smartIndentProviders = smartIndentProviders.ToArray();
 		}
 
@@ -47,10 +49,10 @@ namespace dnSpy.Text.Editor {
 
 		ISmartIndent CreateSmartIndent(ITextView textView) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ISmartIndentProvider>(smartIndentProviders.Select(a => a.Value), a => a.ContentTypes);
+				providerSelector = new ProviderSelector<ISmartIndentProvider, ISmartIndentProviderMetadata>(contentTypeRegistryService, smartIndentProviders, a => a.Metadata.ContentTypes);
 			var contentType = textView.TextDataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
-				var smartIndent = p.CreateSmartIndent(textView);
+				var smartIndent = p.Value.CreateSmartIndent(textView);
 				if (smartIndent != null)
 					return smartIndent;
 			}

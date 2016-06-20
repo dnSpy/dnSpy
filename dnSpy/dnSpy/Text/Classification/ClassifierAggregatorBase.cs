@@ -155,7 +155,7 @@ namespace dnSpy.Text.Classification {
 
 		public void Dispose() {
 			tagAggregator.TagsChanged -= TagAggregator_TagsChanged;
-			(tagAggregator as IDisposable)?.Dispose();
+			tagAggregator.Dispose();
 		}
 	}
 }

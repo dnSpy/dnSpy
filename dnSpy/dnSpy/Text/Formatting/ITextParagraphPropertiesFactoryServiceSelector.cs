@@ -17,21 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Formatting;
 
-namespace dnSpy.Text.Editor.Operations {
-	[ExportTextStructureNavigatorProvider(ContentTypes.ANY)]
-	sealed class AnyTextStructureNavigatorProvider : ITextStructureNavigatorProvider {
-		readonly IContentType contentType;
-
-		[ImportingConstructor]
-		AnyTextStructureNavigatorProvider(IContentTypeRegistryService contentTypeRegistryService) {
-			this.contentType = contentTypeRegistryService.GetContentType(ContentTypes.ANY);
-		}
-
-		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer) =>
-			new AnyTextStructureNavigator(textBuffer, contentType);
+namespace dnSpy.Text.Formatting {
+	interface ITextParagraphPropertiesFactoryServiceSelector {
+		ITextParagraphPropertiesFactoryService Select(IContentType contentType);
 	}
 }

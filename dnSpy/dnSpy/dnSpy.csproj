@@ -428,7 +428,6 @@
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilter.cs" />
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilterCreator.cs" />
     <Compile Include="Text\Editor\OutputTextPaneUtils.cs" />
-    <Compile Include="Text\Editor\ProviderSelector.cs" />
     <Compile Include="Text\Editor\ReplBufferKind.cs" />
     <Compile Include="Text\Editor\ReplCommandInfoCreator.cs" />
     <Compile Include="Text\Editor\ReplCommands.cs" />
@@ -456,13 +455,16 @@
     <Compile Include="Text\Editor\WpfTextViewLineCollection.cs" />
     <Compile Include="Text\Formatting\FormattedLineSource.cs" />
     <Compile Include="Text\Formatting\FormattedTextSourceFactoryService.cs" />
+    <Compile Include="Text\Formatting\ITextParagraphPropertiesFactoryServiceSelector.cs" />
     <Compile Include="Text\Formatting\TextAndAdornmentSequencer.cs" />
     <Compile Include="Text\Formatting\TextAndAdornmentSequencerFactoryService.cs" />
+    <Compile Include="Text\Formatting\TextParagraphPropertiesFactoryServiceSelector.cs" />
     <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
     <Compile Include="Text\MappingPoint.cs" />
     <Compile Include="Text\MappingSpan.cs" />
     <Compile Include="Text\NormalizedTextChangeCollection.cs" />
     <Compile Include="Text\OffsetAndCachedColors.cs" />
+    <Compile Include="Text\ProviderSelector.cs" />
     <Compile Include="Text\Tagging\BufferTagAggregatorFactoryService.cs" />
     <Compile Include="Text\Tagging\ITaggerFactory.cs" />
     <Compile Include="Text\Tagging\TagAggregatorBase.cs" />

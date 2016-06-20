@@ -17,21 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Operations;
+namespace dnSpy.Contracts.Text.Formatting {
+	/// <summary>
+	/// Represents the basic element in a sequence of elements that compose an <see cref="ITextViewLine"/>
+	/// </summary>
+	public interface ISequenceElement {
+		/// <summary>
+		/// Determines whether the text in the span should be rendered in the <see cref="ITextViewLine"/>
+		/// </summary>
+		bool ShouldRenderText { get; }
 
-namespace dnSpy.Text.Editor.Operations {
-	[ExportTextStructureNavigatorProvider(ContentTypes.ANY)]
-	sealed class AnyTextStructureNavigatorProvider : ITextStructureNavigatorProvider {
-		readonly IContentType contentType;
-
-		[ImportingConstructor]
-		AnyTextStructureNavigatorProvider(IContentTypeRegistryService contentTypeRegistryService) {
-			this.contentType = contentTypeRegistryService.GetContentType(ContentTypes.ANY);
-		}
-
-		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer) =>
-			new AnyTextStructureNavigator(textBuffer, contentType);
+		/// <summary>
+		/// Gets the <see cref="IMappingSpan"/> of the element
+		/// </summary>
+		IMappingSpan Span { get; }
 	}
 }

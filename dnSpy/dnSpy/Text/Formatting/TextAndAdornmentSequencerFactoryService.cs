@@ -21,14 +21,22 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Contracts.Text.Tagging;
 
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(ITextAndAdornmentSequencerFactoryService))]
 	sealed class TextAndAdornmentSequencerFactoryService : ITextAndAdornmentSequencerFactoryService {
+		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
+
+		[ImportingConstructor]
+		TextAndAdornmentSequencerFactoryService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
+		}
+
 		public ITextAndAdornmentSequencer Create(ITextView view) {
 			if (view == null)
 				throw new ArgumentNullException(nameof(view));
-			return view.Properties.GetOrCreateSingletonProperty(typeof(ITextAndAdornmentSequencer), () => new TextAndAdornmentSequencer(view));
+			return view.Properties.GetOrCreateSingletonProperty(typeof(ITextAndAdornmentSequencer), () => new TextAndAdornmentSequencer(view, viewTagAggregatorFactoryService.CreateTagAggregator<SpaceNegotiatingAdornmentTag>(view)));
 		}
 	}
 }

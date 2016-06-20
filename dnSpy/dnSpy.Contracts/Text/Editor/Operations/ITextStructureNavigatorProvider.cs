@@ -17,23 +17,47 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
+using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
-	/// <see cref="ITextStructureNavigator"/> provider
+	/// <see cref="ITextStructureNavigator"/> provider. Use <see cref="ExportTextStructureNavigatorProviderAttribute"/>
+	/// to export an instance.
 	/// </summary>
 	public interface ITextStructureNavigatorProvider {
-		/// <summary>
-		/// Supported content types
-		/// </summary>
-		IEnumerable<IContentType> ContentTypes { get; }
-
 		/// <summary>
 		/// Creates a new <see cref="ITextStructureNavigator"/> for the specified ITextBuffer or returns null
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <returns></returns>
 		ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer);
+	}
+
+	/// <summary>Metadata</summary>
+	public interface ITextStructureNavigatorProviderMetadata {
+		/// <summary>See <see cref="ExportTextStructureNavigatorProviderAttribute.ContentTypes"/></summary>
+		string[] ContentTypes { get; }
+	}
+
+	/// <summary>
+	/// Exports an <see cref="ITextStructureNavigatorProvider"/>
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportTextStructureNavigatorProviderAttribute : ExportAttribute, ITextStructureNavigatorProviderMetadata {
+		/// <summary>
+		/// Content types
+		/// </summary>
+		public string[] ContentTypes { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ExportTextStructureNavigatorProviderAttribute(params string[] contentTypes)
+			: base(typeof(ITextStructureNavigatorProvider)) {
+			if (contentTypes == null)
+				throw new ArgumentNullException(nameof(contentTypes));
+			ContentTypes = contentTypes;
+		}
 	}
 }

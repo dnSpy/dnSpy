@@ -23,27 +23,31 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Text.Editor {
-	sealed class ProviderSelector<TProvider> {
-		readonly Dictionary<IContentType, List<TProvider>> dict;
+namespace dnSpy.Text {
+	sealed class ProviderSelector<TProvider, TProviderMetadata> {
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>> dict;
 
-		public ProviderSelector(IEnumerable<TProvider> providers, Func<TProvider, IEnumerable<IContentType>> getContentTypes) {
+		public ProviderSelector(IContentTypeRegistryService contentTypeRegistryService, IEnumerable<Lazy<TProvider, TProviderMetadata>> providers, Func<Lazy<TProvider, TProviderMetadata>, IEnumerable<string>> getContentTypes) {
+			if (contentTypeRegistryService == null)
+				throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			if (getContentTypes == null)
 				throw new ArgumentNullException(nameof(getContentTypes));
+			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.dict = CreateDictionary(providers, getContentTypes);
 		}
 
-		public IEnumerable<TProvider> GetProviders(IContentType contentType) {
+		public IEnumerable<Lazy<TProvider, TProviderMetadata>> GetProviders(IContentType contentType) {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 
 			var ctDict = GetContentTypes(contentType);
 			foreach (var c in ctDict.OrderBy(a => a.Value)) {
-				List<TProvider> list;
+				List<Lazy<TProvider, TProviderMetadata>> list;
 				if (dict.TryGetValue(c.Key, out list))
 					return list;
 			}
-			return Array.Empty<TProvider>();
+			return Array.Empty<Lazy<TProvider, TProviderMetadata>>();
 		}
 
 		static Dictionary<IContentType, int> GetContentTypes(IContentType contentType) {
@@ -60,12 +64,13 @@ namespace dnSpy.Text.Editor {
 				GetContentTypes(dict, c, depth + 1);
 		}
 
-		static Dictionary<IContentType, List<TProvider>> CreateDictionary(IEnumerable<TProvider> providers, Func<TProvider, IEnumerable<IContentType>> getContentTypes) {
-			var dict = new Dictionary<IContentType, List<TProvider>>();
+		Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>> CreateDictionary(IEnumerable<Lazy<TProvider, TProviderMetadata>> providers, Func<Lazy<TProvider, TProviderMetadata>, IEnumerable<string>> getContentTypes) {
+			var dict = new Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>>();
 			var hash = new HashSet<IContentType>();
 			var stack = new Stack<IContentType>();
 			foreach (var p in providers) {
-				foreach (var c in getContentTypes(p)) {
+				foreach (var cs in getContentTypes(p)) {
+					var c = contentTypeRegistryService.GetContentType(cs);
 					Debug.Assert(c != null);
 					if (c == null)
 						break;
@@ -98,14 +103,14 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		static void Add(Dictionary<IContentType, List<TProvider>> dict, TProvider textStructureNavigatorProvider, IContentType contentType, bool isDef) {
-			List<TProvider> list;
+		static void Add(Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>> dict, Lazy<TProvider, TProviderMetadata> provider, IContentType contentType, bool isDef) {
+			List<Lazy<TProvider, TProviderMetadata>> list;
 			if (!dict.TryGetValue(contentType, out list))
-				dict.Add(contentType, list = new List<TProvider>());
+				dict.Add(contentType, list = new List<Lazy<TProvider, TProviderMetadata>>());
 			if (isDef)
-				list.Insert(0, textStructureNavigatorProvider);
+				list.Insert(0, provider);
 			else
-				list.Add(textStructureNavigatorProvider);
+				list.Add(provider);
 		}
 	}
 }

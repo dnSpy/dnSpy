@@ -27,6 +27,13 @@ using dnSpy.Text.Classification;
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(IFormattedTextSourceFactoryService))]
 	sealed class FormattedTextSourceFactoryService : IFormattedTextSourceFactoryService {
+		readonly ITextParagraphPropertiesFactoryServiceSelector textParagraphPropertiesFactoryServiceSelector;
+
+		[ImportingConstructor]
+		FormattedTextSourceFactoryService(ITextParagraphPropertiesFactoryServiceSelector textParagraphPropertiesFactoryServiceSelector) {
+			this.textParagraphPropertiesFactoryServiceSelector = textParagraphPropertiesFactoryServiceSelector;
+		}
+
 		public IFormattedLineSource Create(ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
 			Create(sourceTextSnapshot, visualBufferSnapshot, tabSize, baseIndent, wordWrapWidth, maxAutoIndent, useDisplayMode, NullClassifier.Instance, sequencer, classificationFormatMap, false);
 
@@ -46,7 +53,8 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (tabSize <= 0)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
-			return new FormattedLineSource(sourceTextSnapshot, visualBufferSnapshot, tabSize, baseIndent, wordWrapWidth, maxAutoIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap, isViewWrapEnabled);
+			var textParagraphPropertiesFactoryService = textParagraphPropertiesFactoryServiceSelector.Select(sourceTextSnapshot.TextBuffer.ContentType);
+			return new FormattedLineSource(textParagraphPropertiesFactoryService, sourceTextSnapshot, visualBufferSnapshot, tabSize, baseIndent, wordWrapWidth, maxAutoIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap, isViewWrapEnabled);
 		}
 	}
 }

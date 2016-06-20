@@ -38,18 +38,14 @@ namespace dnSpy.Text.Formatting {
 		public double TextHeightAboveBaseline { get { throw new NotImplementedException();/*TODO:*/ } }
 		public double TextHeightBelowBaseline { get { throw new NotImplementedException();/*TODO:*/ } }
 		public ITextAndAdornmentSequencer TextAndAdornmentSequencer { get; }
+		public TextRunProperties DefaultTextProperties => classificationFormatMap.DefaultTextProperties;
 
-		public TextRunProperties DefaultTextProperties {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
+		readonly ITextParagraphPropertiesFactoryService textParagraphPropertiesFactoryService;
 		readonly IClassifier aggregateClassifier;
 		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
 		readonly IClassificationFormatMap classificationFormatMap;
 
-		public FormattedLineSource(ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, IClassifier aggregateClassifier, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap, bool isViewWrapEnabled) {
+		public FormattedLineSource(ITextParagraphPropertiesFactoryService textParagraphPropertiesFactoryService, ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, IClassifier aggregateClassifier, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap, bool isViewWrapEnabled) {
 			if (sourceTextSnapshot == null)
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
 			if (visualBufferSnapshot == null)
@@ -65,6 +61,7 @@ namespace dnSpy.Text.Formatting {
 			if (sourceTextSnapshot != visualBufferSnapshot)
 				throw new NotSupportedException("Text snapshot must be identical to visual snapshot");
 
+			this.textParagraphPropertiesFactoryService = textParagraphPropertiesFactoryService;
 			SourceTextSnapshot = sourceTextSnapshot;
 			TopTextSnapshot = visualBufferSnapshot;
 			UseDisplayMode = useDisplayMode;
