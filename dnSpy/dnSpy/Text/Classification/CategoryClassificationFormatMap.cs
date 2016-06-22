@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Contracts.Themes;
@@ -28,6 +29,7 @@ using dnSpy.Contracts.Themes;
 namespace dnSpy.Text.Classification {
 	sealed class CategoryClassificationFormatMap : IClassificationFormatMap {
 		public TextFormattingRunProperties DefaultTextProperties { get; private set; }
+		public Brush DefaultWindowBackground { get; private set; }
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
 
 		readonly IThemeManager themeManager;
@@ -89,6 +91,7 @@ namespace dnSpy.Text.Classification {
 		void ReinitializeCache() {
 			toClassificationInfo.Clear();
 			DefaultTextProperties = textEditorFontSettings.CreateTextFormattingRunProperties(themeManager.Theme);
+			DefaultWindowBackground = textEditorFontSettings.GetWindowBackground(themeManager.Theme);
 		}
 
 		void ClearCacheAndNotifyListeners() {

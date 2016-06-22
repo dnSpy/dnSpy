@@ -19,6 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Windows.Media;
+using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
@@ -30,6 +32,13 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Gets the name shown in the UI
 		/// </summary>
 		public abstract string DisplayName { get; }
+
+		/// <summary>
+		/// Gets the background brush of the window
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual Brush GetWindowBackground(ITheme theme) => null;
 	}
 
 	/// <summary>Metadata</summary>

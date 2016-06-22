@@ -166,6 +166,7 @@ namespace dnSpy.Text.Editor {
 			textAndAdornmentSequencer.SequenceChanged += TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 
+			Background = classificationFormatMap.DefaultWindowBackground;
 			CreateFormattedLineSource(ViewportWidth);
 		}
 
@@ -190,7 +191,10 @@ namespace dnSpy.Text.Editor {
 
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
 			// It uses the classification format map and must use the latest changes
-			Dispatcher.BeginInvoke(new Action(() => InvalidateFormattedLineSource(true)), DispatcherPriority.Normal);
+			Dispatcher.BeginInvoke(new Action(() => {
+				Background = classificationFormatMap.DefaultWindowBackground;
+				InvalidateFormattedLineSource(true);
+			}), DispatcherPriority.Normal);
 		}
 
 		void TextAndAdornmentSequencer_SequenceChanged(object sender, TextAndAdornmentSequenceChangedEventArgs e) =>

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
@@ -25,6 +26,7 @@ using dnSpy.Contracts.Text.Formatting;
 namespace dnSpy.Text.Classification {
 	sealed class ViewClassificationFormatMap : IClassificationFormatMap {
 		public TextFormattingRunProperties DefaultTextProperties => categoryMap.DefaultTextProperties;
+		public Brush DefaultWindowBackground => categoryMap.DefaultWindowBackground;
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly ITextView textView;

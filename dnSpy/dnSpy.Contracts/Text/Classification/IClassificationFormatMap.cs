@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows.Media;
 using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Contracts.Text.Classification {
@@ -34,6 +35,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Gets the default properties that are applied to all classification types
 		/// </summary>
 		TextFormattingRunProperties DefaultTextProperties { get; }
+
+		/// <summary>
+		/// Gets the default window background brush
+		/// </summary>
+		Brush DefaultWindowBackground { get; }
 
 		/// <summary>
 		/// Gets the explicit <see cref="TextFormattingRunProperties"/> for the specified classification type

@@ -38,7 +38,7 @@ namespace dnSpy.Text.Classification {
 		// Round to an integer so the IFormattedLine property sizes (Height etc) are integers
 		public override double? GetFontRenderingEmSize(ITheme theme) => Math.Round(textEditorSettings.FontSize);
 		public override Brush GetForeground(ITheme theme) => theme.GetColor(colorType).Foreground;
-		public override Brush GetBackground(ITheme theme) => theme.GetColor(colorType).Background;
+		public override Brush GetWindowBackground(ITheme theme) => theme.GetColor(colorType).Background;
 
 		public override Typeface GetTypeface(ITheme theme) {
 			var tc = theme.GetColor(ColorType.Text);

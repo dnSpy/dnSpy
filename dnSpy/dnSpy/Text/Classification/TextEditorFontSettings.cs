@@ -19,6 +19,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
@@ -29,6 +31,7 @@ namespace dnSpy.Text.Classification {
 		readonly Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata> textEditorFormatDefinition;
 		readonly TextEditorFontSettings baseType;
 		TextFormattingRunProperties textFormattingRunProperties;
+		Brush windowBackgroundBrush;
 
 		public TextEditorFontSettings(ITextEditorSettings textEditorSettings, Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata> textEditorFormatDefinition, TextEditorFontSettings baseType) {
 			this.textEditorFormatDefinition = textEditorFormatDefinition;
@@ -54,6 +57,7 @@ namespace dnSpy.Text.Classification {
 
 		void RaiseSettingsChanged(bool notifyBase) {
 			textFormattingRunProperties = null;
+			windowBackgroundBrush = null;
 			// Need to make sure base has cleared its cache too or we could use old data in CreateTextFormattingRunProperties()
 			if (notifyBase && baseType != null)
 				baseType.RaiseSettingsChanged(notifyBase);
@@ -69,6 +73,23 @@ namespace dnSpy.Text.Classification {
 					textFormattingRunProperties = TextFormattingRunPropertiesUtils.Merge(baseType.CreateTextFormattingRunProperties(theme), textFormattingRunProperties);
 			}
 			return textFormattingRunProperties;
+		}
+
+		public Brush GetWindowBackground(ITheme theme) {
+			if (windowBackgroundBrush == null) {
+				windowBackgroundBrush = textEditorFormatDefinition.Value.GetWindowBackground(theme);
+				if (windowBackgroundBrush == null && baseType != null)
+					windowBackgroundBrush = baseType.GetWindowBackground(theme);
+				// Default settings instance should've returned a color
+				Debug.Assert(windowBackgroundBrush != null);
+				if (windowBackgroundBrush == null) {
+					windowBackgroundBrush = theme.GetColor(ColorType.DefaultText).Background;
+					Debug.Assert(windowBackgroundBrush != null);
+					if (windowBackgroundBrush == null)
+						windowBackgroundBrush = Brushes.White;
+				}
+			}
+			return windowBackgroundBrush;
 		}
 	}
 }
