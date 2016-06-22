@@ -41,17 +41,22 @@ namespace dnSpy.Text.Classification {
 
 		void BaseType_SettingsChanged(object sender, EventArgs e) {
 			//TODO: Only raise the event if we inherit the changed settings
-			RaiseSettingsChanged();
+			RaiseSettingsChanged(false);
 		}
 
 		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var settings = (ITextEditorSettings)sender;
 			if (e.PropertyName == nameof(settings.FontFamily) || e.PropertyName == nameof(settings.FontSize))
-				RaiseSettingsChanged();
+				RaiseSettingsChanged(false);
 		}
 
-		void RaiseSettingsChanged() {
+		public void OnThemeChanged() => RaiseSettingsChanged(true);
+
+		void RaiseSettingsChanged(bool notifyBase) {
 			textFormattingRunProperties = null;
+			// Need to make sure base has cleared its cache too or we could use old data in CreateTextFormattingRunProperties()
+			if (notifyBase && baseType != null)
+				baseType.RaiseSettingsChanged(notifyBase);
 			SettingsChanged?.Invoke(this, EventArgs.Empty);
 		}
 

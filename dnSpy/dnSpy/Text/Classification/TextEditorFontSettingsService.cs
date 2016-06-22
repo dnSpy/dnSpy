@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(ITextEditorFontSettingsService))]
@@ -30,10 +31,16 @@ namespace dnSpy.Text.Classification {
 		readonly ITextEditorFontSettings defaultTextEditorFontSettings;
 
 		[ImportingConstructor]
-		TextEditorFontSettingsService(ITextEditorSettings textEditorSettings, [ImportMany] IEnumerable<Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>> textEditorFormatDefinitions) {
+		TextEditorFontSettingsService(IThemeManager themeManager, ITextEditorSettings textEditorSettings, [ImportMany] IEnumerable<Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>> textEditorFormatDefinitions) {
+			themeManager.ThemeChangedHighPriority += ThemeManager_ThemeChangedHighPriority;
 			var creator = new TextEditorFontSettingsDictionaryCreator(textEditorSettings, textEditorFormatDefinitions);
 			this.toTextEditorFontSettings = creator.Result;
 			this.defaultTextEditorFontSettings = creator.DefaultSettings;
+		}
+
+		void ThemeManager_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
+			foreach (var settings in toTextEditorFontSettings.Values)
+				settings.OnThemeChanged();
 		}
 
 		public ITextEditorFontSettings GetSettings(string category) {
