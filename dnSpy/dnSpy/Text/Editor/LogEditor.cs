@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 
 			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
-			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList);
+			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var rolesList = new List<string>(defaultRoles);
 			rolesList.AddRange(options.ExtraRoles);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(rolesList);

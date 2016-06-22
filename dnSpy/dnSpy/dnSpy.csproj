@@ -350,7 +350,7 @@
     <Compile Include="Tabs\TabManagerCreator.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
     <Compile Include="Text\CachedColorsList.cs" />
-    <Compile Include="Text\CachedColorsListColorizer.cs" />
+    <Compile Include="Text\CachedColorsListTagger.cs" />
     <Compile Include="Text\Classification\CategoryClassificationFormatMap.cs" />
     <Compile Include="Text\Classification\ClassificationFormatMapService.cs" />
     <Compile Include="Text\Classification\ClassificationType.cs" />

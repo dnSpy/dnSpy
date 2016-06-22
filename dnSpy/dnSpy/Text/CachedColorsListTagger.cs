@@ -27,17 +27,17 @@ using dnSpy.Contracts.Text.Tagging;
 
 namespace dnSpy.Text {
 	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ANY)]
-	sealed class CachedColorsListColorizerProvider : ITaggerProvider {
+	sealed class CachedColorsListTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypes themeClassificationTypes;
 
 		[ImportingConstructor]
-		CachedColorsListColorizerProvider(IThemeClassificationTypes themeClassificationTypes) {
+		CachedColorsListTaggerProvider(IThemeClassificationTypes themeClassificationTypes) {
 			this.themeClassificationTypes = themeClassificationTypes;
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
-			CachedColorsListColorizer colorizer;
-			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListColorizer), out colorizer)) {
+			CachedColorsListTagger colorizer;
+			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out colorizer)) {
 				colorizer.ThemeClassificationTypes = themeClassificationTypes;
 				return colorizer as ITagger<T>;
 			}
@@ -49,16 +49,16 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (cachedColorsList == null)
 				throw new ArgumentNullException(nameof(cachedColorsList));
-			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListColorizer), () => CachedColorsListColorizer.Create(cachedColorsList));
+			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListTagger), () => CachedColorsListTagger.Create(cachedColorsList));
 		}
 	}
 
-	sealed class CachedColorsListColorizer : ITagger<IClassificationTag> {
+	sealed class CachedColorsListTagger : ITagger<IClassificationTag> {
 		readonly CachedColorsList cachedColorsList;
 
 		public IThemeClassificationTypes ThemeClassificationTypes { get; internal set; }
 
-		CachedColorsListColorizer(CachedColorsList cachedColorsList) {
+		CachedColorsListTagger(CachedColorsList cachedColorsList) {
 			this.cachedColorsList = cachedColorsList;
 		}
 
@@ -67,8 +67,8 @@ namespace dnSpy.Text {
 			remove { }
 		}
 
-		internal static CachedColorsListColorizer Create(CachedColorsList cachedColorsList) =>
-			new CachedColorsListColorizer(cachedColorsList);
+		internal static CachedColorsListTagger Create(CachedColorsList cachedColorsList) =>
+			new CachedColorsListTagger(cachedColorsList);
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			Debug.Assert(ThemeClassificationTypes != null);

@@ -118,7 +118,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
-			CachedColorsListColorizerProvider.AddColorizer(textBuffer, cachedColorsList);
+			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
 			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
 			wpfTextView.Properties.AddProperty(typeof(TextEditorControl), this);
