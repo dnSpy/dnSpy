@@ -43,24 +43,22 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
 		readonly ITextEditorSettings textEditorSettings;
-		readonly ITextSnapshotColorizerCreator textBufferColorizerCreator;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 
 		[ImportingConstructor]
-		DnSpyTextEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService) {
+		DnSpyTextEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService) {
 			this.themeManager = themeManager;
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
 			this.textEditorSettings = textEditorSettings;
-			this.textBufferColorizerCreator = textBufferColorizerCreator;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
 		public DnSpyTextEditor Create(DnSpyTextEditorOptions options) {
 			var textBuffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
-			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, textBuffer);
+			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBuffer);
 
 			if (options.MenuGuid != null)
 				menuManager.InitializeContextMenu(textEditor, options.MenuGuid.Value, options.CreateGuidObjectsCreator?.Invoke(), new ContextMenuInitializer(textEditor, textEditor));

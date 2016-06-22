@@ -24,11 +24,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
+using dnSpy.Contracts.Themes;
 using dnSpy.Roslyn.Shared.Classification;
 using Microsoft.CodeAnalysis;
 
 namespace dnSpy.Roslyn.Shared.Text {
-	sealed class RoslynTextSnapshotColorizer : ITextSnapshotColorizer {
+	sealed class RoslynTagger : ITagger<IClassificationTag> {
 		struct RoslynState {
 			public SyntaxNode SyntaxRoot { get; }
 			public SemanticModel SemanticModel { get; }
@@ -42,36 +45,57 @@ namespace dnSpy.Roslyn.Shared.Text {
 			}
 		}
 
+		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
+			add { }
+			remove { }
+		}
+
+		readonly IThemeClassificationTypes themeClassificationTypes;
+
+		public RoslynTagger(IThemeClassificationTypes themeClassificationTypes) {
+			if (themeClassificationTypes == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypes));
+			this.themeClassificationTypes = themeClassificationTypes;
+		}
+
 		//TODO: Remove this and replace it with false when GetColorSpans() works async
 		const bool continueOnCapturedContext = true;
-		public IEnumerable<ColorSpan> GetColorSpans(SnapshotSpan snapshotSpan) {
+		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+			if (spans.Count == 0)
+				return Enumerable.Empty<ITagSpan<IClassificationTag>>();
+
 			//TODO: Use a one-key cache (key=snapshot) stored in a weak ref?
 
-			//TODO: Try to use async. Will need to notify caller when our async method has the result.
+			//TODO: Try to use async. Will need to raise TagsChanged when our async method has the result.
 			var cancellationToken = CancellationToken.None;
 			try {
-				return GetColorSpansAsync(snapshotSpan, cancellationToken).GetAwaiter().GetResult();
+				return GetColorSpansAsync(spans, cancellationToken).GetAwaiter().GetResult();
 			}
 			catch (OperationCanceledException) {
-				return Enumerable.Empty<ColorSpan>();
+				return Enumerable.Empty<ITagSpan<IClassificationTag>>();
 			}
 		}
 
-		async Task<IEnumerable<ColorSpan>> GetColorSpansAsync(SnapshotSpan snapshotSpan, CancellationToken cancellationToken) {
-			var state = await GetStateAsync(snapshotSpan.Snapshot, cancellationToken).ConfigureAwait(continueOnCapturedContext);
+		async Task<IEnumerable<ITagSpan<IClassificationTag>>> GetColorSpansAsync(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) {
+			Debug.Assert(spans.Count != 0);
+			var snapshot = spans[0].Snapshot;
+
+			var state = await GetStateAsync(snapshot, cancellationToken).ConfigureAwait(continueOnCapturedContext);
 			Debug.Assert(state.IsValid);
 			if (!state.IsValid)
-				return Enumerable.Empty<ColorSpan>();
+				return Enumerable.Empty<ITagSpan<IClassificationTag>>();
 
-			List<ColorSpan> colorSpans = null;
-			var classifier = new RoslynClassifier(state.SyntaxRoot, state.SemanticModel, state.Workspace, OutputColor.Error, cancellationToken);
-			foreach (var info in classifier.GetClassificationColors(snapshotSpan.Span.ToTextSpan())) {
-				if (colorSpans == null)
-					colorSpans = new List<ColorSpan>();
-				colorSpans.Add(new ColorSpan(info.Span, new Color(info.Color.ToColorType()), ColorPriority.Default));
+			List<ITagSpan<IClassificationTag>> result = null;
+			var classifier = new RoslynClassifier(state.SyntaxRoot, state.SemanticModel, state.Workspace, themeClassificationTypes, themeClassificationTypes.GetClassificationType(ColorType.Error), cancellationToken);
+			foreach (var span in spans) {
+				foreach (var info in classifier.GetClassificationColors(span.Span.ToTextSpan())) {
+					if (result == null)
+						result = new List<ITagSpan<IClassificationTag>>();
+					result.Add(new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag(info.Type)));
+				}
 			}
 
-			return colorSpans ?? Enumerable.Empty<ColorSpan>();
+			return result ?? Enumerable.Empty<ITagSpan<IClassificationTag>>();
 		}
 
 		async Task<RoslynState> GetStateAsync(ITextSnapshot snapshot, CancellationToken cancellationToken) {

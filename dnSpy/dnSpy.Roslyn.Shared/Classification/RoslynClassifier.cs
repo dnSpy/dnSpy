@@ -22,6 +22,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Themes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
@@ -29,11 +31,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace dnSpy.Roslyn.Shared.Classification {
 	public struct ClassifierResult {
 		public readonly Span Span;
-		public readonly OutputColor Color;
+		public readonly IClassificationType Type;
 
-		public ClassifierResult(Span span, OutputColor color) {
+		public ClassifierResult(Span span, IClassificationType type) {
 			this.Span = span;
-			this.Color = color;
+			this.Type = type;
 		}
 	}
 
@@ -41,37 +43,39 @@ namespace dnSpy.Roslyn.Shared.Classification {
 		readonly SyntaxNode syntaxRoot;
 		readonly SemanticModel semanticModel;
 		readonly Workspace workspace;
-		readonly OutputColor? defaultColor;
+		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IClassificationType defaultType;
 		/*readonly*/ CancellationToken cancellationToken;
 
-		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, OutputColor? defaultColor, CancellationToken cancellationToken) {
+		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, IThemeClassificationTypes themeClassificationTypes, IClassificationType defaultType, CancellationToken cancellationToken) {
 			this.syntaxRoot = syntaxRoot;
 			this.semanticModel = semanticModel;
 			this.workspace = workspace;
-			this.defaultColor = defaultColor;
+			this.themeClassificationTypes = themeClassificationTypes;
+			this.defaultType = defaultType;
 			this.cancellationToken = cancellationToken;
 		}
 
 		public IEnumerable<ClassifierResult> GetClassificationColors(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
-				var color = GetColor(cspan) ?? defaultColor;
+				var color = GetClassificationType(cspan) ?? defaultType;
 				if (color != null)
-					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color.Value);
+					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color);
 			}
 		}
 
 		struct SymbolResult {
 			public readonly ISymbol Symbol;
-			public readonly OutputColor? Color;
+			public readonly IClassificationType Type;
 
 			public SymbolResult(ISymbol symbol) {
 				Symbol = symbol;
-				Color = null;
+				Type = null;
 			}
 
-			public SymbolResult(OutputColor color) {
+			public SymbolResult(IClassificationType type) {
 				Symbol = null;
-				Color = color;
+				Type = type;
 			}
 		}
 
@@ -80,7 +84,7 @@ namespace dnSpy.Roslyn.Shared.Classification {
 
 			// Fix for: using DNS = System;
 			if (node.Parent?.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax)
-				return new SymbolResult(OutputColor.Namespace);
+				return new SymbolResult(themeClassificationTypes.GetClassificationType(ColorType.Namespace));
 
 			var symInfo = semanticModel.GetSymbolInfo(node, cancellationToken);
 			var symbol = symInfo.Symbol ?? symInfo.CandidateSymbols.FirstOrDefault() ??
@@ -89,17 +93,17 @@ namespace dnSpy.Roslyn.Shared.Classification {
 			return new SymbolResult(symbol);
 		}
 
-		OutputColor? GetColor2(ClassifiedSpan cspan) {
+		IClassificationType GetClassificationType2(ClassifiedSpan cspan) {
 			var symRes = GetSymbolResult(cspan.TextSpan);
-			if (symRes.Color != null)
-				return symRes.Color;
+			if (symRes.Type != null)
+				return symRes.Type;
 			var symbol = symRes.Symbol;
 			if (symbol == null)
 				return null;
 the_switch:
 			switch (symbol.Kind) {
 			case SymbolKind.Alias:
-				return OutputColor.Namespace;
+				return themeClassificationTypes.GetClassificationType(ColorType.Namespace);
 
 			case SymbolKind.ArrayType:
 			case SymbolKind.Assembly:
@@ -109,25 +113,25 @@ the_switch:
 
 			case SymbolKind.Event:
 				var evtSym = (IEventSymbol)symbol;
-				return evtSym.IsStatic ? OutputColor.StaticEvent : OutputColor.InstanceEvent;
+				return evtSym.IsStatic ? themeClassificationTypes.GetClassificationType(ColorType.StaticEvent) : themeClassificationTypes.GetClassificationType(ColorType.InstanceEvent);
 
 			case SymbolKind.Field:
 				var fldSym = (IFieldSymbol)symbol;
 				if (fldSym.ContainingType?.IsScriptClass == true)
-					return OutputColor.Local;
+					return themeClassificationTypes.GetClassificationType(ColorType.Local);
 				if (fldSym.ContainingType?.TypeKind == TypeKind.Enum)
-					return OutputColor.EnumField;
+					return themeClassificationTypes.GetClassificationType(ColorType.EnumField);
 				if (fldSym.IsConst)
-					return OutputColor.LiteralField;
+					return themeClassificationTypes.GetClassificationType(ColorType.LiteralField);
 				if (fldSym.IsStatic)
-					return OutputColor.StaticField;
-				return OutputColor.InstanceField;
+					return themeClassificationTypes.GetClassificationType(ColorType.StaticField);
+				return themeClassificationTypes.GetClassificationType(ColorType.InstanceField);
 
 			case SymbolKind.Label:
-				return OutputColor.Label;
+				return themeClassificationTypes.GetClassificationType(ColorType.Label);
 
 			case SymbolKind.Local:
-				return OutputColor.Local;
+				return themeClassificationTypes.GetClassificationType(ColorType.Local);
 
 			case SymbolKind.Method:
 				var methSym = (IMethodSymbol)symbol;
@@ -153,13 +157,13 @@ the_switch:
 				case MethodKind.DeclareMethod:
 				default:
 					if (methSym.IsExtensionMethod)
-						return OutputColor.ExtensionMethod;
+						return themeClassificationTypes.GetClassificationType(ColorType.ExtensionMethod);
 					if (methSym.IsStatic)
-						return OutputColor.StaticMethod;
-					return OutputColor.InstanceMethod;
+						return themeClassificationTypes.GetClassificationType(ColorType.StaticMethod);
+					return themeClassificationTypes.GetClassificationType(ColorType.InstanceMethod);
 
 				case MethodKind.ReducedExtension:
-					return OutputColor.ExtensionMethod;
+					return themeClassificationTypes.GetClassificationType(ColorType.ExtensionMethod);
 				}
 
 			case SymbolKind.NetModule:
@@ -170,27 +174,27 @@ the_switch:
 				switch (nts.TypeKind) {
 				case TypeKind.Class:
 					if (nts.IsStatic)
-						return OutputColor.StaticType;
+						return themeClassificationTypes.GetClassificationType(ColorType.StaticType);
 					if (nts.IsSealed)
-						return OutputColor.SealedType;
-					return OutputColor.Type;
+						return themeClassificationTypes.GetClassificationType(ColorType.SealedType);
+					return themeClassificationTypes.GetClassificationType(ColorType.Type);
 
 				case TypeKind.Delegate:
-					return OutputColor.Delegate;
+					return themeClassificationTypes.GetClassificationType(ColorType.Delegate);
 
 				case TypeKind.Enum:
-					return OutputColor.Enum;
+					return themeClassificationTypes.GetClassificationType(ColorType.Enum);
 
 				case TypeKind.Interface:
-					return OutputColor.Interface;
+					return themeClassificationTypes.GetClassificationType(ColorType.Interface);
 
 				case TypeKind.Struct:
-					return OutputColor.ValueType;
+					return themeClassificationTypes.GetClassificationType(ColorType.ValueType);
 
 				case TypeKind.TypeParameter:
 					if ((symbol as ITypeParameterSymbol)?.DeclaringMethod != null)
-						return OutputColor.MethodGenericParameter;
-					return OutputColor.TypeGenericParameter;
+						return themeClassificationTypes.GetClassificationType(ColorType.MethodGenericParameter);
+					return themeClassificationTypes.GetClassificationType(ColorType.TypeGenericParameter);
 
 				case TypeKind.Unknown:
 				case TypeKind.Array:
@@ -205,24 +209,24 @@ the_switch:
 				break;
 
 			case SymbolKind.Namespace:
-				return OutputColor.Namespace;
+				return themeClassificationTypes.GetClassificationType(ColorType.Namespace);
 
 			case SymbolKind.Parameter:
-				return OutputColor.Parameter;
+				return themeClassificationTypes.GetClassificationType(ColorType.Parameter);
 
 			case SymbolKind.PointerType:
 				break;
 
 			case SymbolKind.Property:
 				var propSym = (IPropertySymbol)symbol;
-				return propSym.IsStatic ? OutputColor.StaticProperty : OutputColor.InstanceProperty;
+				return propSym.IsStatic ? themeClassificationTypes.GetClassificationType(ColorType.StaticProperty) : themeClassificationTypes.GetClassificationType(ColorType.InstanceProperty);
 
 			case SymbolKind.RangeVariable:
-				return OutputColor.Local;
+				return themeClassificationTypes.GetClassificationType(ColorType.Local);
 
 			case SymbolKind.TypeParameter:
 				return (symbol as ITypeParameterSymbol)?.DeclaringMethod != null ?
-					OutputColor.MethodGenericParameter : OutputColor.TypeGenericParameter;
+					themeClassificationTypes.GetClassificationType(ColorType.MethodGenericParameter) : themeClassificationTypes.GetClassificationType(ColorType.TypeGenericParameter);
 
 			case SymbolKind.Preprocessing:
 				break;
@@ -235,142 +239,142 @@ the_switch:
 			return null;
 		}
 
-		OutputColor? GetColor(ClassifiedSpan cspan) {
-			OutputColor? color;
+		IClassificationType GetClassificationType(ClassifiedSpan cspan) {
+			IClassificationType classfiicationType;
 			SymbolResult symRes;
 			switch (cspan.ClassificationType) {
 			case ClassificationTypeNames.ClassName:
 				symRes = GetSymbolResult(cspan.TextSpan);
-				if (symRes.Color != null)
-					return symRes.Color;
+				if (symRes.Type != null)
+					return symRes.Type;
 				if (symRes.Symbol?.IsStatic == true)
-					return OutputColor.StaticType;
+					return themeClassificationTypes.GetClassificationType(ColorType.StaticType);
 				if (symRes.Symbol?.IsSealed == true)
-					return OutputColor.SealedType;
+					return themeClassificationTypes.GetClassificationType(ColorType.SealedType);
 				Debug.WriteLineIf(symRes.Symbol == null, "Couldn't get ClassName classification type");
-				return OutputColor.Type;
+				return themeClassificationTypes.GetClassificationType(ColorType.Type);
 
 			case ClassificationTypeNames.Comment:
-				return OutputColor.Comment;
+				return themeClassificationTypes.GetClassificationType(ColorType.Comment);
 
 			case ClassificationTypeNames.DelegateName:
-				return OutputColor.Delegate;
+				return themeClassificationTypes.GetClassificationType(ColorType.Delegate);
 
 			case ClassificationTypeNames.EnumName:
-				return OutputColor.Enum;
+				return themeClassificationTypes.GetClassificationType(ColorType.Enum);
 
 			case ClassificationTypeNames.ExcludedCode:
-				return OutputColor.ExcludedCode;
+				return themeClassificationTypes.GetClassificationType(ColorType.ExcludedCode);
 
 			case ClassificationTypeNames.Identifier:
-				return GetColor2(cspan);
+				return GetClassificationType2(cspan);
 
 			case ClassificationTypeNames.InterfaceName:
-				return OutputColor.Interface;
+				return themeClassificationTypes.GetClassificationType(ColorType.Interface);
 
 			case ClassificationTypeNames.Keyword:
-				return OutputColor.Keyword;
+				return themeClassificationTypes.GetClassificationType(ColorType.Keyword);
 
 			case ClassificationTypeNames.ModuleName:
-				return OutputColor.Module;
+				return themeClassificationTypes.GetClassificationType(ColorType.Module);
 
 			case ClassificationTypeNames.NumericLiteral:
-				return OutputColor.Number;
+				return themeClassificationTypes.GetClassificationType(ColorType.Number);
 
 			case ClassificationTypeNames.Operator:
-				return OutputColor.Operator;
+				return themeClassificationTypes.GetClassificationType(ColorType.Operator);
 
 			case ClassificationTypeNames.PreprocessorKeyword:
-				return OutputColor.PreprocessorKeyword;
+				return themeClassificationTypes.GetClassificationType(ColorType.PreprocessorKeyword);
 
 			case ClassificationTypeNames.PreprocessorText:
-				return OutputColor.PreprocessorText;
+				return themeClassificationTypes.GetClassificationType(ColorType.PreprocessorText);
 
 			case ClassificationTypeNames.Punctuation:
-				return OutputColor.Punctuation;
+				return themeClassificationTypes.GetClassificationType(ColorType.Punctuation);
 
 			case ClassificationTypeNames.StringLiteral:
-				return OutputColor.String;
+				return themeClassificationTypes.GetClassificationType(ColorType.String);
 
 			case ClassificationTypeNames.StructName:
-				return OutputColor.ValueType;
+				return themeClassificationTypes.GetClassificationType(ColorType.ValueType);
 
 			case ClassificationTypeNames.Text:
-				return OutputColor.Text;
+				return themeClassificationTypes.GetClassificationType(ColorType.Text);
 
 			case ClassificationTypeNames.TypeParameterName:
-				color = GetColor2(cspan);
-				Debug.WriteLineIf(color == null, "Couldn't get TypeParameterName classification type");
-				return color ?? OutputColor.TypeGenericParameter;
+				classfiicationType = GetClassificationType2(cspan);
+				Debug.WriteLineIf(classfiicationType == null, "Couldn't get TypeParameterName classification type");
+				return classfiicationType ?? themeClassificationTypes.GetClassificationType(ColorType.TypeGenericParameter);
 
 			case ClassificationTypeNames.VerbatimStringLiteral:
-				return OutputColor.VerbatimString;
+				return themeClassificationTypes.GetClassificationType(ColorType.VerbatimString);
 
 			case ClassificationTypeNames.WhiteSpace:
-				return OutputColor.Text;
+				return themeClassificationTypes.GetClassificationType(ColorType.Text);
 
 			case ClassificationTypeNames.XmlDocCommentAttributeName:
-				return OutputColor.XmlDocCommentAttributeName;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentAttributeName);
 
 			case ClassificationTypeNames.XmlDocCommentAttributeQuotes:
-				return OutputColor.XmlDocCommentAttributeQuotes;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentAttributeQuotes);
 
 			case ClassificationTypeNames.XmlDocCommentAttributeValue:
-				return OutputColor.XmlDocCommentAttributeValue;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentAttributeValue);
 
 			case ClassificationTypeNames.XmlDocCommentCDataSection:
-				return OutputColor.XmlDocCommentCDataSection;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentCDataSection);
 
 			case ClassificationTypeNames.XmlDocCommentComment:
-				return OutputColor.XmlDocCommentComment;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentComment);
 
 			case ClassificationTypeNames.XmlDocCommentDelimiter:
-				return OutputColor.XmlDocCommentDelimiter;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentDelimiter);
 
 			case ClassificationTypeNames.XmlDocCommentEntityReference:
-				return OutputColor.XmlDocCommentEntityReference;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentEntityReference);
 
 			case ClassificationTypeNames.XmlDocCommentName:
-				return OutputColor.XmlDocCommentName;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentName);
 
 			case ClassificationTypeNames.XmlDocCommentProcessingInstruction:
-				return OutputColor.XmlDocCommentProcessingInstruction;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentProcessingInstruction);
 
 			case ClassificationTypeNames.XmlDocCommentText:
-				return OutputColor.XmlDocCommentText;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlDocCommentText);
 
 			case ClassificationTypeNames.XmlLiteralAttributeName:
-				return OutputColor.XmlLiteralAttributeName;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralAttributeName);
 
 			case ClassificationTypeNames.XmlLiteralAttributeQuotes:
-				return OutputColor.XmlLiteralAttributeQuotes;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralAttributeQuotes);
 
 			case ClassificationTypeNames.XmlLiteralAttributeValue:
-				return OutputColor.XmlLiteralAttributeValue;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralAttributeValue);
 
 			case ClassificationTypeNames.XmlLiteralCDataSection:
-				return OutputColor.XmlLiteralCDataSection;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralCDataSection);
 
 			case ClassificationTypeNames.XmlLiteralComment:
-				return OutputColor.XmlLiteralComment;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralComment);
 
 			case ClassificationTypeNames.XmlLiteralDelimiter:
-				return OutputColor.XmlLiteralDelimiter;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralDelimiter);
 
 			case ClassificationTypeNames.XmlLiteralEmbeddedExpression:
-				return OutputColor.XmlLiteralEmbeddedExpression;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralEmbeddedExpression);
 
 			case ClassificationTypeNames.XmlLiteralEntityReference:
-				return OutputColor.XmlLiteralEntityReference;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralEntityReference);
 
 			case ClassificationTypeNames.XmlLiteralName:
-				return OutputColor.XmlLiteralName;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralName);
 
 			case ClassificationTypeNames.XmlLiteralProcessingInstruction:
-				return OutputColor.XmlLiteralProcessingInstruction;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralProcessingInstruction);
 
 			case ClassificationTypeNames.XmlLiteralText:
-				return OutputColor.XmlLiteralText;
+				return themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralText);
 
 			default:
 				Debug.WriteLine($"Unknown ClassificationType = '{cspan.ClassificationType}'");

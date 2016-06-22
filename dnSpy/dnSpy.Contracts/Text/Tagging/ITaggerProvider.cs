@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Text.Tagging {
 	/// </summary>
 	public interface ITaggerProvider {
 		/// <summary>
-		/// Creates a tag provider for the specified buffer
+		/// Creates a tag provider for the specified buffer or returns null
 		/// </summary>
 		/// <typeparam name="T">The type of the tag</typeparam>
 		/// <param name="buffer">The buffer</param>

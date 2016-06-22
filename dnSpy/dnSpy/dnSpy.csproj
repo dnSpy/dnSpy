@@ -371,6 +371,7 @@
     <Compile Include="Text\Classification\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Classification\TextFormattingRunPropertiesUtils.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
+    <Compile Include="Text\Classification\ThemeClassificationTypes.cs" />
     <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregatorService.cs" />
@@ -384,7 +385,6 @@
     <Compile Include="Text\Editor\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
-    <Compile Include="Text\Editor\ColorizerCollection.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultMouseProcessor.cs" />
@@ -397,7 +397,6 @@
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditor.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditorCreator.cs" />
-    <Compile Include="Text\Editor\DnSpyTextEditorHighlighter.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
@@ -491,7 +490,6 @@
     <Compile Include="Text\TextDataModel.cs" />
     <Compile Include="Text\TextEdit.cs" />
     <Compile Include="Text\TextSnapshot.cs" />
-    <Compile Include="Text\TextSnapshotColorizerCreator.cs" />
     <Compile Include="Text\TextSnapshotLine.cs" />
     <Compile Include="Text\TextVersion.cs" />
     <Compile Include="Text\TrackingPoint.cs" />

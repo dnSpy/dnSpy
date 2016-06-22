@@ -20,7 +20,6 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Contracts.Text.Editor {

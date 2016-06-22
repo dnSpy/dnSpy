@@ -17,29 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text {
+using dnSpy.Contracts.Themes;
+
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Color priority
+	/// Returns theme <see cref="IClassificationType"/>s
 	/// </summary>
-	public static class ColorPriority {
+	public interface IThemeClassificationTypes {
 		/// <summary>
-		/// Low priority
+		/// Gets a classification type or a default classification type if <paramref name="color"/> is invalid
 		/// </summary>
-		public const double Low = -1000000;
+		/// <param name="color">Color</param>
+		/// <returns></returns>
+		IClassificationType GetClassificationType(ColorType color);
 
 		/// <summary>
-		/// Default priority
+		/// Gets a classification type or a default classification type if <paramref name="color"/> is invalid
 		/// </summary>
-		public const double Default = 0;
-
-		/// <summary>
-		/// Normal priority
-		/// </summary>
-		public const double Normal = 100;
-
-		/// <summary>
-		/// High priority
-		/// </summary>
-		public const double High = 1000000;
+		/// <param name="color">Color</param>
+		/// <returns></returns>
+		IClassificationType GetClassificationTypeByColorObject(object color);
 	}
 }

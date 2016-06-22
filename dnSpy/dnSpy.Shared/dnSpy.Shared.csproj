@@ -196,8 +196,6 @@
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
     <Compile Include="Text\CachedTextTokenColors.cs" />
-    <Compile Include="Text\ColorAggregator.cs" />
-    <Compile Include="Text\ColorInfo.cs" />
     <Compile Include="Text\NameUtils.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
     <Compile Include="Text\TextColorOutputExtensionMethods.cs" />

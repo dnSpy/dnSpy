@@ -96,12 +96,20 @@ namespace dnSpy.Text.Classification {
 			ClassificationFormatMappingChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType) {
+		sealed class TransientClassificationFormatDefinition : ClassificationFormatDefinition {
+		}
+
+		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
 			ClassificationInfo info;
 			if (!toClassificationInfo.TryGetValue(classificationType, out info)) {
 				Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata> lazy;
-				if (!toEditorFormatDefinition.TryGetValue(classificationType, out lazy))
-					return null;
+				if (!toEditorFormatDefinition.TryGetValue(classificationType, out lazy)) {
+					if (!canCreate)
+						return null;
+					lazy = new Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>(() => new TransientClassificationFormatDefinition(), new ExportClassificationFormatDefinitionAttribute(classificationType.Classification.ToString(), classificationType.DisplayName));
+					var dummy = lazy.Value;
+					toEditorFormatDefinition.Add(classificationType, lazy);
+				}
 				toClassificationInfo.Add(classificationType, info = new ClassificationInfo(lazy, classificationType));
 			}
 			return info;
@@ -110,7 +118,7 @@ namespace dnSpy.Text.Classification {
 		public TextFormattingRunProperties GetExplicitTextProperties(IClassificationType classificationType) {
 			if (classificationType == null)
 				throw new ArgumentNullException(nameof(classificationType));
-			var info = TryGetClassificationInfo(classificationType);
+			var info = TryGetClassificationInfo(classificationType, canCreate: false);
 			if (info == null)
 				return TextFormattingRunProperties.CreateTextFormattingRunProperties();
 			if (info.ExplicitTextProperties == null)
@@ -122,9 +130,8 @@ namespace dnSpy.Text.Classification {
 		public TextFormattingRunProperties GetTextProperties(IClassificationType classificationType) {
 			if (classificationType == null)
 				throw new ArgumentNullException(nameof(classificationType));
-			var info = TryGetClassificationInfo(classificationType);
-			if (info == null)
-				return TextFormattingRunProperties.CreateTextFormattingRunProperties();
+			var info = TryGetClassificationInfo(classificationType, canCreate: true);
+			Debug.Assert(info != null);
 			if (info.InheritedTextProperties == null)
 				CreateInheritedTextProperties(info);
 			Debug.Assert(info.InheritedTextProperties != null);

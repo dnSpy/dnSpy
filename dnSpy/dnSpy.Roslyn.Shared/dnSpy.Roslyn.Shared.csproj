@@ -47,8 +47,8 @@
     <Compile Include="Text\Editor\RoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
-    <Compile Include="Text\RoslynTextSnapshotColorizer.cs" />
-    <Compile Include="Text\RoslynTextSnapshotColorizerProvider.cs" />
+    <Compile Include="Text\RoslynTagger.cs" />
+    <Compile Include="Text\RoslynTaggerProvider.cs" />
     <Compile Include="Text\TextBufferSourceTextContainer.cs" />
     <Compile Include="Text\TextSnapshotSourceText.cs" />
     <Compile Include="Text\TextSnapshotTextLineCollection.cs" />

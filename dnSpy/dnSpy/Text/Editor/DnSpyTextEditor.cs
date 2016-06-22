@@ -143,24 +143,16 @@ namespace dnSpy.Text.Editor {
 		public FrameworkElement ScaleElement => this.TextArea;
 		internal IThemeManager ThemeManager { get; }
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) => colorizerCollection.RecreateAutoColorizers();
-		public ITextBuffer TextBuffer => textBuffer;
-
 		readonly SearchPanel searchPanel;
-		readonly ColorizerCollection colorizerCollection;
-		readonly ITextBuffer textBuffer;
 
-		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, ITextBuffer textBuffer) {
+		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextBuffer textBuffer) {
 			this.ThemeManager = themeManager;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
 			this.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
 			Debug.Assert(textBuffer is TextBuffer, $"{nameof(ITextBuffer)} must currently be our implementation!");
-			this.textBuffer = textBuffer;
-			this.textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
-			this.Document = ((TextBuffer)this.textBuffer).Document;
+			this.Document = ((TextBuffer)textBuffer).Document;
 
-			this.colorizerCollection = new ColorizerCollection(this, textBufferColorizerCreator);
 			TextArea.TextView.DocumentChanged += TextView_DocumentChanged;
 			UpdateColors(false);
 
@@ -194,12 +186,8 @@ namespace dnSpy.Text.Editor {
 			throw new InvalidOperationException();
 		}
 
-		internal ITextSnapshotColorizer[] GetAllColorizers() => colorizerCollection.GetAllColorizers();
-
 		public void Dispose() {
 			ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
-			colorizerCollection.Dispose();
-			TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
 		}
 
 		protected override void OnDragOver(DragEventArgs e) {
@@ -336,7 +324,6 @@ namespace dnSpy.Text.Editor {
 				TextArea.TextView.Redraw();
 		}
 
-		internal void UpdateCurrentLineColors() => UpdateCurrentLineColors(HighlightCurrentLine);
 		void UpdateCurrentLineColors(bool redraw) {
 			var theme = ThemeManager.Theme;
 			bool hasFocus = this.IsKeyboardFocusWithin;
@@ -349,24 +336,6 @@ namespace dnSpy.Text.Editor {
 				TextArea.TextView.HighlightedLine = -1;
 				TextArea.TextView.HighlightedLine = oldLine;
 			}
-		}
-
-		protected override IVisualLineTransformer CreateColorizer(IHighlightingDefinition highlightingDefinition) {
-			if (highlightingDefinition.Name == "C#" || highlightingDefinition.Name == "VB" ||
-				highlightingDefinition.Name == "IL")
-				return new NewHighlightingColorizer(this);
-			return base.CreateColorizer(highlightingDefinition);
-		}
-
-		sealed class NewHighlightingColorizer : HighlightingColorizer {
-			readonly DnSpyTextEditor textEditor;
-
-			public NewHighlightingColorizer(DnSpyTextEditor textEditor) {
-				this.textEditor = textEditor;
-			}
-
-			protected override IHighlighter CreateHighlighter(TextView textView, TextDocument document) =>
-				new DnSpyTextEditorHighlighter(textEditor, document);
 		}
 
 		public IEnumerable<GuidObject> GetGuidObjects(bool openedFromKeyboard) {

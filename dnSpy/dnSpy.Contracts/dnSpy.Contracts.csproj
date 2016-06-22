@@ -367,6 +367,7 @@
     <Compile Include="Text\Classification\IClassifier.cs" />
     <Compile Include="Text\Classification\IClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\IClassifierProvider.cs" />
+    <Compile Include="Text\Classification\IThemeClassificationTypes.cs" />
     <Compile Include="Text\Classification\IViewClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationTypeNames.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinition.cs" />
@@ -376,8 +377,6 @@
     <Compile Include="Text\Color.cs" />
     <Compile Include="Text\ColorAndText.cs" />
     <Compile Include="Text\ColorOffsetInfo.cs" />
-    <Compile Include="Text\ColorPriority.cs" />
-    <Compile Include="Text\ColorSpan.cs" />
     <Compile Include="Text\ContentTypeChangedEventArgs.cs" />
     <Compile Include="Text\ContentTypeDefinition.cs" />
     <Compile Include="Text\ContentTypes.cs" />
@@ -503,8 +502,6 @@
     <Compile Include="Text\ITextDataModel.cs" />
     <Compile Include="Text\ITextEdit.cs" />
     <Compile Include="Text\ITextSnapshot.cs" />
-    <Compile Include="Text\ITextSnapshotColorizer.cs" />
-    <Compile Include="Text\ITextSnapshotColorizerProvider.cs" />
     <Compile Include="Text\ITextSnapshotLine.cs" />
     <Compile Include="Text\ITextVersion.cs" />
     <Compile Include="Text\ITrackingPoint.cs" />

@@ -17,18 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 
-namespace dnSpy.Contracts.Text {
-	/// <summary>
-	/// Creates <see cref="ITextSnapshotColorizer"/> instances
-	/// </summary>
-	public interface ITextSnapshotColorizerProvider {
-		/// <summary>
-		/// Creates new <see cref="ITextSnapshotColorizer"/> instances
-		/// </summary>
-		/// <param name="textBuffer">Text buffer</param>
-		/// <returns></returns>
-		IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer);
+namespace dnSpy.Roslyn.Shared.Text {
+	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ROSLYN_CODE)]
+	sealed class RoslynTaggerProvider : ITaggerProvider {
+		readonly IThemeClassificationTypes themeClassificationTypes;
+
+		[ImportingConstructor]
+		RoslynTaggerProvider(IThemeClassificationTypes themeClassificationTypes) {
+			this.themeClassificationTypes = themeClassificationTypes;
+		}
+
+		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+			new RoslynTagger(themeClassificationTypes) as ITagger<T>;
 	}
 }

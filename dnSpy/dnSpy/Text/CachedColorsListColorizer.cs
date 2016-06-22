@@ -17,56 +17,82 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Text;
-using dnSpy.Shared.Themes;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 
 namespace dnSpy.Text {
-	[Export(typeof(ITextSnapshotColorizerProvider))]
-	sealed class CachedColorsListColorizerProvider : ITextSnapshotColorizerProvider {
-		public IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer) {
-			CachedColorsListColorizer colorizer;
-			if (textBuffer.Properties.TryGetProperty(typeof(CachedColorsListColorizer), out colorizer))
-				yield return colorizer;
+	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ANY)]
+	sealed class CachedColorsListColorizerProvider : ITaggerProvider {
+		readonly IThemeClassificationTypes themeClassificationTypes;
+
+		[ImportingConstructor]
+		CachedColorsListColorizerProvider(IThemeClassificationTypes themeClassificationTypes) {
+			this.themeClassificationTypes = themeClassificationTypes;
 		}
 
-		public static void AddColorizer(ITextBuffer textBuffer, CachedColorsList cachedColorsList, double priority) {
+		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+			CachedColorsListColorizer colorizer;
+			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListColorizer), out colorizer)) {
+				colorizer.ThemeClassificationTypes = themeClassificationTypes;
+				return colorizer as ITagger<T>;
+			}
+			return null;
+		}
+
+		public static void AddColorizer(ITextBuffer textBuffer, CachedColorsList cachedColorsList) {
 			if (textBuffer == null)
-				throw new System.ArgumentNullException(nameof(textBuffer));
+				throw new ArgumentNullException(nameof(textBuffer));
 			if (cachedColorsList == null)
-				throw new System.ArgumentNullException(nameof(cachedColorsList));
-			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListColorizer), () => CachedColorsListColorizer.Create(cachedColorsList, priority));
+				throw new ArgumentNullException(nameof(cachedColorsList));
+			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListColorizer), () => CachedColorsListColorizer.Create(cachedColorsList));
 		}
 	}
 
-	sealed class CachedColorsListColorizer : ITextSnapshotColorizer {
+	sealed class CachedColorsListColorizer : ITagger<IClassificationTag> {
 		readonly CachedColorsList cachedColorsList;
-		readonly double priority;
 
-		CachedColorsListColorizer(CachedColorsList cachedColorsList, double priority) {
+		public IThemeClassificationTypes ThemeClassificationTypes { get; internal set; }
+
+		CachedColorsListColorizer(CachedColorsList cachedColorsList) {
 			this.cachedColorsList = cachedColorsList;
-			this.priority = priority;
 		}
 
-		internal static CachedColorsListColorizer Create(CachedColorsList cachedColorsList, double priority) =>
-			new CachedColorsListColorizer(cachedColorsList, priority);
+		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
+			add { }
+			remove { }
+		}
 
-		public IEnumerable<ColorSpan> GetColorSpans(SnapshotSpan snapshotSpan) {
-			int offs = snapshotSpan.Span.Start;
-			int end = snapshotSpan.Span.End;
+		internal static CachedColorsListColorizer Create(CachedColorsList cachedColorsList) =>
+			new CachedColorsListColorizer(cachedColorsList);
 
-			var infoPart = cachedColorsList.Find(offs);
-			while (offs < end) {
-				int defaultTextLength, tokenLength;
-				object color;
-				if (!infoPart.FindByDocOffset(offs, out defaultTextLength, out color, out tokenLength))
-					yield break;
+		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+			Debug.Assert(ThemeClassificationTypes != null);
+			if (ThemeClassificationTypes == null)
+				yield break;
 
-				if (tokenLength != 0)
-					yield return new ColorSpan(new Span(offs + defaultTextLength, tokenLength), ThemeUtils.GetColor(color), priority);
+			var snapshot = spans[0].Snapshot;
+			foreach (var span in spans) {
+				int offs = span.Span.Start;
+				int end = span.Span.End;
 
-				offs += defaultTextLength + tokenLength;
+				//TODO: You should verify that the snapshot is correct before calling Find()
+				var infoPart = cachedColorsList.Find(offs);
+				while (offs < end) {
+					int defaultTextLength, tokenLength;
+					object color;
+					if (!infoPart.FindByDocOffset(offs, out defaultTextLength, out color, out tokenLength))
+						yield break;
+
+					if (tokenLength != 0)
+						yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ThemeClassificationTypes.GetClassificationTypeByColorObject(color)));
+
+					offs += defaultTextLength + tokenLength;
+				}
 			}
 		}
 	}
