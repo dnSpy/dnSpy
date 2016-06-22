@@ -25,7 +25,7 @@ using System.Windows.Media;
 
 namespace dnSpy.Shared.Controls {
 	public static class FontUtils {
-		public static readonly double DEFAULT_FONT_SIZE = 10.0 * 4 / 3;
+		public static readonly double DEFAULT_FONT_SIZE = 10.0 * (96.0 / 72.0);
 		const double MIN_FONT_SIZE = 1;
 		const double MAX_FONT_SIZE = 200;
 

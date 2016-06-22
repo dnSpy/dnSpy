@@ -26,14 +26,14 @@ namespace dnSpy.Text.Editor {
 	sealed class TabSizeEditorOptionDefinition : EditorOptionDefinition<int> {
 		public override EditorOptionKey<int> Key => DefaultOptions.TabSizeOptionId;
 		public override int Default => 4;
-		public override bool IsValid(ref int proposedValue) => 0 < proposedValue && proposedValue < 100;
+		public override bool IsValid(ref int proposedValue) => 1 <= proposedValue && proposedValue <= 60;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class IndentSizeEditorOptionDefinition : EditorOptionDefinition<int> {
 		public override EditorOptionKey<int> Key => DefaultOptions.IndentSizeOptionId;
 		public override int Default => 4;
-		public override bool IsValid(ref int proposedValue) => 0 < proposedValue && proposedValue < 100;
+		public override bool IsValid(ref int proposedValue) => 1 <= proposedValue && proposedValue <= 60;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]

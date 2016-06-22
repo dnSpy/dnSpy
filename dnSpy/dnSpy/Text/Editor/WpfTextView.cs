@@ -18,13 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.TextFormatting;
+using System.Windows.Threading;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -32,10 +33,9 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Text.Formatting;
-using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Text.Editor {
-	sealed class WpfTextView : Canvas, IWpfTextView {
+	sealed partial class WpfTextView : Canvas, IWpfTextView {
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => this;
 		public ITextViewRoleSet Roles { get; }
@@ -50,9 +50,32 @@ namespace dnSpy.Text.Editor {
 		public IViewScroller ViewScroller { get; }
 		public bool HasAggregateFocus => this.IsKeyboardFocusWithin;
 		public bool IsMouseOverViewOrAdornments => this.IsMouseOver;
+		public ITextBuffer TextBuffer => TextViewModel.EditBuffer;
+		public ITextSnapshot TextSnapshot => TextBuffer.CurrentSnapshot;
+		public ITextSnapshot VisualSnapshot => TextViewModel.VisualBuffer.CurrentSnapshot;
+		public ITextDataModel TextDataModel => TextViewModel.DataModel;
+		public ITextViewModel TextViewModel { get; }
+		public bool IsClosed { get; set; }
+		public double MaxTextRightCoordinate { get { throw new NotImplementedException(); } }//TODO: Use this prop
+		public ITrackingSpan ProvisionalTextHighlight { get; set; }//TODO: Use this prop
+		public event EventHandler GotAggregateFocus;
+		public event EventHandler LostAggregateFocus;
+		public event EventHandler Closed;
+		public event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
+		public event EventHandler ViewportLeftChanged;
+		public event EventHandler ViewportHeightChanged;
+		public event EventHandler ViewportWidthChanged;
+		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
+		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;
+#pragma warning disable CS0067
+		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
+#pragma warning restore CS0067
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
 		public DnSpyTextEditor DnSpyTextEditor { get; }
 		public IFormattedLineSource FormattedLineSource { get; private set; }
+		public bool InLayout { get; private set; }
+		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
+		IWpfTextViewLineCollection IWpfTextView.TextViewLines => TextViewLines;
 
 		readonly IFormattedTextSourceFactoryService formattedTextSourceFactoryService;
 		readonly IClassifier aggregateClassifier;
@@ -60,6 +83,9 @@ namespace dnSpy.Text.Editor {
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly AdornmentLayerCollection adornmentLayerCollection;
+		readonly PhysicalLineCache physicalLineCache;
+		readonly List<PhysicalLine> visiblePhysicalLines;
+		readonly TextLayer textLayer;
 
 #pragma warning disable CS0169
 		[ExportAdornmentLayerDefinition("Text", PredefinedAdornmentLayers.Text, AdornmentLayerOrder.Text)]
@@ -97,6 +123,9 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
 			if (adornmentLayerDefinitionService == null)
 				throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
+			this.physicalLineCache = new PhysicalLineCache(32);
+			this.visiblePhysicalLines = new List<PhysicalLine>();
+			this.invalidatedRegions = new List<SnapshotSpan>();
 			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
 			this.zoomLevel = ZoomConstants.DefaultZoom;
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
@@ -108,7 +137,6 @@ namespace dnSpy.Text.Editor {
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
-			Options.OptionChanged += EditorOptions_OptionChanged;
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
 			ViewScroller = new ViewScroller(this);
 			hasKeyboardFocus = this.IsKeyboardFocusWithin;
@@ -121,6 +149,7 @@ namespace dnSpy.Text.Editor {
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
+			this.textLayer = new TextLayer(this, GetAdornmentLayer(PredefinedAdornmentLayers.Text));
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection));
 			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService);
 
@@ -129,32 +158,144 @@ namespace dnSpy.Text.Editor {
 			this.Focusable = true;
 			this.FocusVisualStyle = null;
 			InitializeOptions();
+
+			Options.OptionChanged += EditorOptions_OptionChanged;
+			TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
+			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
+			aggregateClassifier.ClassificationChanged += AggregateClassifier_ClassificationChanged;
+			textAndAdornmentSequencer.SequenceChanged += TextAndAdornmentSequencer_SequenceChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+
+			CreateFormattedLineSource(ViewportWidth);
+		}
+
+		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+			// Refresh all lines since IFormattedTextSourceFactoryService uses the content type to
+			// pick a ITextParagraphPropertiesFactoryService
+			InvalidateFormattedLineSource(true);
+		}
+
+		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
+			foreach (var c in e.Changes) {
+				if (c.OldSpan.Length > 0)
+					InvalidateSpan(new SnapshotSpan(e.Before, c.OldSpan));
+				if (c.NewSpan.Length > 0)
+					InvalidateSpan(new SnapshotSpan(e.After, c.NewSpan));
+			}
+			InvalidateFormattedLineSource(false);
+		}
+
+		void AggregateClassifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e) =>
+			Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.ChangeSpan)), DispatcherPriority.Normal);
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+			// It uses the classification format map and must use the latest changes
+			Dispatcher.BeginInvoke(new Action(() => InvalidateFormattedLineSource(true)), DispatcherPriority.Normal);
+		}
+
+		void TextAndAdornmentSequencer_SequenceChanged(object sender, TextAndAdornmentSequenceChangedEventArgs e) =>
+			Dispatcher.BeginInvoke(new Action(() => InvalidateSpans(e.Span.GetSpans(TextBuffer))), DispatcherPriority.Normal);
+
+		void InvalidateSpans(IEnumerable<SnapshotSpan> spans) {
+			Dispatcher.VerifyAccess();
+			int count = invalidatedRegions.Count;
+			invalidatedRegions.AddRange(spans);
+			if (invalidatedRegions.Count != count)
+				DelayLayoutLines();
+		}
+
+		void InvalidateSpan(SnapshotSpan span) {
+			Dispatcher.VerifyAccess();
+			invalidatedRegions.Add(span);
+			DelayLayoutLines();
+		}
+
+		void DelayLayoutLines(bool refreshAllLines = false) {
+			Dispatcher.VerifyAccess();
+			if (IsClosed)
+				return;
+			if (delayLayoutLinesInProgress)
+				return;
+			delayLayoutLinesInProgress = true;
+			if (refreshAllLines) {
+				invalidatedRegions.Clear();
+				invalidatedRegions.Add(new SnapshotSpan(TextSnapshot, 0, TextSnapshot.Length));
+			}
+			Dispatcher.BeginInvoke(new Action(DelayLayoutLinesHandler), DispatcherPriority.DataBind);
+		}
+		bool delayLayoutLinesInProgress;
+		readonly List<SnapshotSpan> invalidatedRegions;
+		bool formattedLineSourceIsInvalidated;
+
+		void DelayLayoutLinesHandler() {
+			Dispatcher.VerifyAccess();
+			if (IsClosed)
+				return;
+			if (!delayLayoutLinesInProgress)
+				return;
+			delayLayoutLinesInProgress = false;
+
+			SnapshotPoint bufferPosition;
+			double verticalDistance;
+			if (TextViewLines.Count == 0) {
+				verticalDistance = 0;
+				bufferPosition = new SnapshotPoint(TextSnapshot, 0);
+			}
+			else {
+				var line = TextViewLines.FirstVisibleLine;
+				verticalDistance = line.Top - ViewportTop;
+				bufferPosition = line.Start.TranslateTo(TextSnapshot, PointTrackingMode.Negative);
+			}
+
+			DisplayLines(bufferPosition, verticalDistance, ViewRelativePosition.Top, ViewportWidth, ViewportHeight);
+		}
+
+		void InvalidateFormattedLineSource(bool refreshAllLines) {
+			Dispatcher.VerifyAccess();
+			formattedLineSourceIsInvalidated = true;
+			DelayLayoutLines(refreshAllLines);
 		}
 
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
 			base.OnPropertyChanged(e);
 			if (e.Property == TextOptions.TextFormattingModeProperty)
-				CreateFormattedLineSource();
+				InvalidateFormattedLineSource(true);
 		}
 
-		//TODO: Call this each time one of the values it uses gets updated or when default font/fg/bg/etc changes
-		//TODO: Also when the content type changes
-		void CreateFormattedLineSource() {
+		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			UpdateOption(e.OptionId);
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
+				if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+					ViewportLeft = 0;
+				InvalidateFormattedLineSource(true);
+			}
+			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name)
+				InvalidateFormattedLineSource(true);
+		}
+
+		double lastFormattedLineSourceViewportWidth = double.NaN;
+		void CreateFormattedLineSource(double viewportWidthOverride) {
+			lastFormattedLineSourceViewportWidth = viewportWidthOverride;
 			var wordWrapStyle = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
 			bool isWordWrap = (wordWrapStyle & WordWrapStyles.WordWrap) != 0;
 			bool isAutoIndent = isWordWrap && (wordWrapStyle & WordWrapStyles.AutoIndent) != 0;
-			double wordWrapWidth = isWordWrap ? ViewportWidth : 0;
-			var maxAutoIndent = isAutoIndent ? ViewportWidth / 4 : 0;
-			bool useDisplayMode = false;//TODO:
+			double wordWrapWidth = isWordWrap ? viewportWidthOverride : 0;
+			var maxAutoIndent = isAutoIndent ? viewportWidthOverride / 4 : 0;
+			bool useDisplayMode = zoomLevel != 100 || TextOptions.GetTextFormattingMode(this) == TextFormattingMode.Display;
+
+			int tabSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
+			tabSize = Math.Max(1, tabSize);
+			tabSize = Math.Min(60, tabSize);
 
 			// This value is what VS uses, see: https://msdn.microsoft.com/en-us/library/microsoft.visualstudio.text.formatting.iformattedlinesource.baseindentation.aspx
 			//	"This is generally a small value like 2.0, so that some characters (such as an italic
 			//	 slash) will not be clipped by the left edge of the view."
 			const double baseIndent = 2.0;
+			(FormattedLineSource as IDisposable)?.Dispose();
 			FormattedLineSource = formattedTextSourceFactoryService.Create(
 				TextSnapshot,
 				VisualSnapshot,
-				Options.GetOptionValue(DefaultOptions.TabSizeOptionId),
+				tabSize,
 				baseIndent,
 				wordWrapWidth,
 				maxAutoIndent,
@@ -171,8 +312,6 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool hasKeyboardFocus;
-		public event EventHandler GotAggregateFocus;
-		public event EventHandler LostAggregateFocus;
 		void UpdateKeyboardFocus() {
 			bool newValue = this.IsKeyboardFocusWithin;
 			if (hasKeyboardFocus != newValue) {
@@ -183,16 +322,6 @@ namespace dnSpy.Text.Editor {
 					LostAggregateFocus?.Invoke(this, EventArgs.Empty);
 			}
 		}
-
-		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) => UpdateOption(e.OptionId);
-
-		public ITextBuffer TextBuffer => TextViewModel.EditBuffer;
-		public ITextSnapshot TextSnapshot => TextBuffer.CurrentSnapshot;
-		public ITextSnapshot VisualSnapshot => TextViewModel.VisualBuffer.CurrentSnapshot;
-		public ITextDataModel TextDataModel => TextViewModel.DataModel;
-		public ITextViewModel TextViewModel { get; }
-
-		public bool IsClosed { get; set; }
 
 		public new Brush Background {
 			get { return base.Background; }
@@ -207,26 +336,45 @@ namespace dnSpy.Text.Editor {
 		public double ZoomLevel {
 			get { return zoomLevel; }
 			set {
-				//TODO:
+				double newValue = value;
+				newValue = Math.Min(ZoomConstants.MaxZoom, newValue);
+				newValue = Math.Max(ZoomConstants.MinZoom, newValue);
+				if (double.IsNaN(newValue) || Math.Abs(newValue - ZoomConstants.DefaultZoom) < 0.01)
+					newValue = ZoomConstants.DefaultZoom;
+				if (newValue == zoomLevel)
+					return;
+
+				//TODO: Use TabElementScaler since it works correctly when in high dpi mode
+				if (newValue == 100)
+					LayoutTransform = Transform.Identity;
+				else {
+					double scale = newValue / 100;
+					var st = new ScaleTransform(scale, scale);
+					st.Freeze();
+					LayoutTransform = st;
+				}
+				// If display/ideal mode changed
+				if (newValue == 100 || zoomLevel == 100)
+					InvalidateFormattedLineSource(true);
+
+				zoomLevel = newValue;
+				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(newValue, LayoutTransform));
 			}
 		}
 		double zoomLevel;
 
-		public bool InLayout { get; private set; }
-		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
-		IWpfTextViewLineCollection IWpfTextView.TextViewLines => TextViewLines;
 		public WpfTextViewLineCollection TextViewLines {
 			get {
+				if (InLayout)
+					throw new InvalidOperationException();
 				Debug.Assert(wpfTextViewLineCollection != null);
 				return wpfTextViewLineCollection;
 			}
-			private set {
-				wpfTextViewLineCollection = value;
-			}
+			private set { wpfTextViewLineCollection = value; }
 		}
 		WpfTextViewLineCollection wpfTextViewLineCollection;
 
-		public double LineHeight => this.FormattedLineSource.LineHeight;
+		public double LineHeight => FormattedLineSource.LineHeight;
 		public double ViewportTop => viewportTop;
 		public double ViewportBottom => ViewportTop + ViewportHeight;
 		public double ViewportRight => ViewportLeft + ViewportWidth;
@@ -245,38 +393,15 @@ namespace dnSpy.Text.Editor {
 				if (viewportLeft == left)
 					return;
 				viewportLeft = left;
+				UpdateVisibleLines();
 				SetLeft(adornmentLayerCollection, -viewportLeft);
-				//TODO: RaiseLayoutChanged(), update lines
+				RaiseLayoutChanged();
 				ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 		double viewportTop, viewportLeft;
 
-		public double MaxTextRightCoordinate {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		//TODO: Use this prop
-		public ITrackingSpan ProvisionalTextHighlight { get; set; }
-
-		public event EventHandler Closed;
-		public event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
-		public event EventHandler ViewportLeftChanged;
-		public event EventHandler ViewportHeightChanged;
-		public event EventHandler ViewportWidthChanged;
-		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
-#pragma warning disable CS0067
-		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;//TODO: Use this event
-		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
-#pragma warning restore CS0067
-
-		void UpdateVisibleArea() {
-			foreach (WpfTextViewLine line in TextViewLines)
-				line.VisibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
-		}
-
+		void RaiseLayoutChanged() => RaiseLayoutChanged(ViewportWidth, ViewportHeight, Array.Empty<ITextViewLine>(), Array.Empty<ITextViewLine>());
 		void RaiseLayoutChanged(double effectiveViewportWidth, double effectiveViewportHeight, ITextViewLine[] newOrReformattedLines, ITextViewLine[] translatedLines) {
 			if (IsClosed)
 				return;
@@ -297,28 +422,28 @@ namespace dnSpy.Text.Editor {
 			(aggregateClassifier as IDisposable)?.Dispose();
 			TextCaret.Dispose();
 			Selection.Dispose();
+			(FormattedLineSource as IDisposable)?.Dispose();
+			physicalLineCache.Dispose();
+			textLayer.Dispose();
+			foreach (var physLine in visiblePhysicalLines)
+				physLine.Dispose();
+			visiblePhysicalLines.Clear();
+
+			Options.OptionChanged -= EditorOptions_OptionChanged;
+			TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
+			TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
+			aggregateClassifier.ClassificationChanged -= AggregateClassifier_ClassificationChanged;
+			textAndAdornmentSequencer.SequenceChanged -= TextAndAdornmentSequencer_SequenceChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 		}
 
-		void InitializeOptions() {
-			UpdateOption(DefaultOptions.TabSizeOptionId.Name);
-			UpdateOption(DefaultOptions.IndentStyleOptionId.Name);
-			UpdateOption(DefaultTextViewOptions.WordWrapStyleId.Name);
+		void InitializeOptions() =>
 			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
-		}
 
 		void UpdateOption(string optionId) {
 			if (IsClosed)
 				return;
-			if (optionId == DefaultOptions.TabSizeOptionId.Name) {
-				//TODO: Repaint
-			}
-			else if (optionId == DefaultOptions.IndentStyleOptionId.Name) {
-				//TODO: Repaint
-			}
-			else if (optionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
-				//TODO: Repaint
-			}
-			else if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
+			if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
 			}
@@ -326,78 +451,157 @@ namespace dnSpy.Text.Editor {
 
 		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
 		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
-			if (TextViewLines.IsValidSnapshot(bufferPosition.Snapshot)) {
-				var line = TextViewLines.GetTextViewLineContainingBufferPosition(bufferPosition);
-				if (line != null)
-					return line;
-			}
-			return CreateWpfTextViewLine(bufferPosition);
-		}
-
-		//TODO: Cache the lines
-		IWpfTextViewLine CreateWpfTextViewLine(SnapshotPoint bufferPosition) {
+			if (IsClosed)
+				throw new InvalidOperationException();
 			if (bufferPosition.Snapshot != TextSnapshot)
 				throw new ArgumentException();
-			var docLine = DnSpyTextEditor.TextArea.TextView.Document.GetLineByOffset(bufferPosition.Position);
-			var visualLine = DnSpyTextEditor.TextArea.TextView.GetOrConstructVisualLine(docLine);
 
-			var lineStart = docLine.Offset;
-			var info = visualLine.TextLineInfos.FirstOrDefault(a => lineStart + a.StartOffset <= bufferPosition.Position && bufferPosition.Position < lineStart + a.EndOffset);
-			if (info == null)
-				info = visualLine.TextLineInfos[visualLine.TextLineInfos.Count - 1];
-			var top = visualLine.VisualTop - DnSpyTextEditor.TextArea.TextView.VerticalOffset + ViewportTop;
-			foreach (var x in visualLine.TextLineInfos) {
-				if (x == info)
-					break;
-				top += x.TextLine.Height;
+			if (visiblePhysicalLines.Count != 0 && visiblePhysicalLines[0].BufferSpan.Snapshot == bufferPosition.Snapshot) {
+				foreach (var pline in visiblePhysicalLines) {
+					var lline = pline.FindFormattedLineByBufferPosition(bufferPosition);
+					if (lline != null)
+						return lline;
+				}
 			}
 
-			var change = TextViewLineChange.None;
-			double deltaY = 0;
+			var cachedLine = physicalLineCache.FindFormattedLineByBufferPosition(bufferPosition);
+			if (cachedLine != null)
+				return cachedLine;
 
-			var visibleArea = new Rect(ViewportLeft, ViewportTop, ViewportWidth, ViewportHeight);
-			double virtualSpaceWidth = DnSpyTextEditor.TextArea.TextView.WideSpaceWidth;
-			return new WpfTextViewLine(TextSnapshot, visualLine, info, top, deltaY, change, visibleArea, virtualSpaceWidth);
+			var physLine = CreatePhysicalLineNoCache(bufferPosition, ViewportWidth);
+			physicalLineCache.Add(physLine);
+			var line = physLine.FindFormattedLineByBufferPosition(bufferPosition);
+			if (line == null)
+				throw new InvalidOperationException();
+			return line;
+		}
+
+		PhysicalLine CreatePhysicalLineNoCache(SnapshotPoint bufferPosition, double viewportWidthOverride) {
+			if (bufferPosition.Snapshot != TextSnapshot)
+				throw new ArgumentException();
+			if (formattedLineSourceIsInvalidated || FormattedLineSource.SourceTextSnapshot != TextSnapshot)
+				CreateFormattedLineSource(viewportWidthOverride);
+			return CreatePhysicalLineNoCache(FormattedLineSource, TextViewModel, VisualSnapshot, bufferPosition);
+		}
+
+		static PhysicalLine CreatePhysicalLineNoCache(IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, SnapshotPoint bufferPosition) {
+			var visualPoint = textViewModel.GetNearestPointInVisualSnapshot(bufferPosition, visualSnapshot, PointTrackingMode.Positive);
+			var lines = formattedLineSource.FormatLineInVisualBuffer(visualPoint.GetContainingLine());
+			Debug.Assert(lines.Count > 0);
+			return new PhysicalLine(bufferPosition.GetContainingLine(), lines);
 		}
 
 		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>
 			DisplayTextLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
-		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
+		public void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) =>
+			DisplayLines(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride ?? ViewportWidth, viewportHeightOverride ?? ViewportHeight);
+
+		double lastViewportWidth = double.NaN;
+		void DisplayLines(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride) {
+			if (IsClosed)
+				throw new InvalidOperationException();
+			Dispatcher.VerifyAccess();
 			if (bufferPosition.Snapshot != TextSnapshot)
 				throw new ArgumentException();
-
-			double viewportWidth = viewportWidthOverride ?? ViewportWidth;
-			double viewportHeight = viewportHeightOverride ?? ViewportHeight;
-
-			var viewLine = GetTextViewLineContainingBufferPosition(bufferPosition);
-			double newTop;
-			switch (relativeTo) {
-			case ViewRelativePosition.Top:
-				newTop = viewLine.Top - verticalDistance;
-				break;
-
-			case ViewRelativePosition.Bottom:
-				newTop = viewLine.Bottom - ViewportHeight + verticalDistance;
-				break;
-
-			default:
+			if (relativeTo != ViewRelativePosition.Top && relativeTo != ViewRelativePosition.Bottom)
 				throw new ArgumentOutOfRangeException(nameof(relativeTo));
+			if (viewportHeightOverride < 0 || double.IsNaN(viewportHeightOverride))
+				throw new ArgumentOutOfRangeException(nameof(viewportHeightOverride));
+			if (viewportWidthOverride < 0 || double.IsNaN(viewportWidthOverride))
+				throw new ArgumentOutOfRangeException(nameof(viewportWidthOverride));
+
+			// Don't allow too big distances since we have to format all lines until we find the viewport
+			double maxDist = viewportHeightOverride * 2;
+			if (verticalDistance < -maxDist)
+				verticalDistance = -maxDist;
+			else if (verticalDistance > maxDist)
+				verticalDistance = maxDist;
+
+			bool invalidateAllLines = false;
+			if (viewportWidthOverride != lastViewportWidth || viewportWidthOverride != lastFormattedLineSourceViewportWidth) {
+				invalidateAllLines = true;
+				lastViewportWidth = viewportWidthOverride;
 			}
-			if (newTop < 0)
-				newTop = 0;
-			viewportTop = newTop;
-			//TODO: call RaiseLayoutChanged
+
+			// Make sure the scheduled method doesn't try to call this method
+			delayLayoutLinesInProgress = false;
+
+			if (invalidateAllLines) {
+				invalidatedRegions.Clear();
+				invalidatedRegions.Add(new SnapshotSpan(TextSnapshot, 0, TextSnapshot.Length));
+			}
+			var regionsToInvalidate = new NormalizedSnapshotSpanCollection(invalidatedRegions.Select(a => a.TranslateTo(TextSnapshot, SpanTrackingMode.EdgeInclusive)));
+			invalidatedRegions.Clear();
+			if (invalidatedRegions.Capacity > 100)
+				invalidatedRegions.TrimExcess();
+
+			if (invalidateAllLines || formattedLineSourceIsInvalidated) {
+				CreateFormattedLineSource(viewportWidthOverride);
+				formattedLineSourceIsInvalidated = false;
+			}
+			Debug.Assert(FormattedLineSource.SourceTextSnapshot == TextSnapshot && FormattedLineSource.TopTextSnapshot == VisualSnapshot);
+
+			if (InLayout)
+				throw new InvalidOperationException();
+			InLayout = true;
+			wpfTextViewLineCollection.Invalidate();
+
+			var layoutHelper = new LayoutHelper(GetValidCachedLines(regionsToInvalidate), FormattedLineSource, TextViewModel, VisualSnapshot, TextSnapshot);
+			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
+
+			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
+			TextViewLines = new WpfTextViewLineCollection(TextSnapshot, layoutHelper.AllVisibleLines);
+
+			if (!InLayout)
+				throw new InvalidOperationException();
+			InLayout = false;
+
+			textLayer.AddVisibleLines(layoutHelper.AllVisibleLines);
+			var newOrReformattedLines = layoutHelper.NewOrReformattedLines.ToArray();
+			var translatedLines = layoutHelper.TranslatedLines.ToArray();
+
+			viewportTop = layoutHelper.NewViewportTop;
+			SetTop(adornmentLayerCollection, -viewportTop);
+			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
+		}
+
+		List<PhysicalLine> GetValidCachedLines(NormalizedSnapshotSpanCollection regionsToInvalidate) {
+			var lines = new List<PhysicalLine>(visiblePhysicalLines);
+			lines.AddRange(physicalLineCache.TakeOwnership());
+			visiblePhysicalLines.Clear();
+
+			// Common enough that it's worth checking
+			bool invalidateAll = false;
+			if (regionsToInvalidate.Count == 1) {
+				var r = regionsToInvalidate[0];
+				if (r.Start.Position == 0 && r.End.Position == r.Snapshot.Length)
+					invalidateAll = true;
+			}
+			if (invalidateAll) {
+				foreach (var line in lines)
+					line.Dispose();
+				lines.Clear();
+				return lines;
+			}
+
+			for (int i = lines.Count - 1; i >= 0; i--) {
+				var line = lines[i];
+				bool remove = line.TranslateTo(VisualSnapshot, TextSnapshot) || line.OverlapsWith(regionsToInvalidate);
+				if (remove) {
+					line.Dispose();
+					lines.RemoveAt(i);
+				}
+				else
+					line.UpdateIsLastLine();
+			}
+
+			return lines;
 		}
 
 		public SnapshotSpan GetTextElementSpan(SnapshotPoint point) {
 			if (point.Snapshot != TextSnapshot)
 				throw new ArgumentException();
 			return GetTextViewLineContainingBufferPosition(point).GetTextElementSpan(point);
-		}
-
-		internal Tuple<VisualLine, TextLine> HACK_GetVisualLine(WpfTextViewLine line) {
-			var line2 = (WpfTextViewLine)CreateWpfTextViewLine(line.Start);
-			return Tuple.Create(line2.VisualLine, line2.TextLine);
 		}
 
 		public IAdornmentLayer GetAdornmentLayer(string name) {
@@ -414,11 +618,22 @@ namespace dnSpy.Text.Editor {
 				adornmentLayerCollection.OnParentSizeChanged(sizeInfo.NewSize);
 				if (sizeInfo.PreviousSize.Height != sizeInfo.NewSize.Height)
 					ViewportHeightChanged?.Invoke(this, EventArgs.Empty);
-				if (sizeInfo.PreviousSize.Width != sizeInfo.NewSize.Width)
+				if (sizeInfo.PreviousSize.Width != sizeInfo.NewSize.Width) {
 					ViewportWidthChanged?.Invoke(this, EventArgs.Empty);
-				UpdateVisibleArea();
+					if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+						InvalidateFormattedLineSource(true);
+				}
+				UpdateVisibleLines();
+				RaiseLayoutChanged();
+				InvalidateFormattedLineSource(false);
 			}
 			base.OnRenderSizeChanged(sizeInfo);
+		}
+
+		void UpdateVisibleLines() => UpdateVisibleLines(ViewportWidth, ViewportHeight);
+		void UpdateVisibleLines(double viewportWidthOverride, double ViewportHeightOverride) {
+			foreach (IFormattedLine line in TextViewLines)
+				line.SetVisibleArea(new Rect(ViewportLeft, ViewportTop, viewportWidthOverride, ViewportHeightOverride));
 		}
 
 		protected override Size MeasureOverride(Size constraint) =>

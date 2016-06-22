@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
@@ -57,7 +59,10 @@ namespace dnSpy.Text.Formatting {
 				throw new InvalidOperationException();
 			if (sourceTextSnapshot.TextBuffer != SourceBuffer)
 				throw new InvalidOperationException();
-			throw new NotImplementedException();//TODO:
+
+			if (SourceBuffer != TopBuffer)
+				throw new NotSupportedException();
+			return CreateTextAndAdornmentCollection(topLine.ExtentIncludingLineBreak, sourceTextSnapshot);
 		}
 
 		public ITextAndAdornmentCollection CreateTextAndAdornmentCollection(SnapshotSpan topSpan, ITextSnapshot sourceTextSnapshot) {
@@ -69,7 +74,17 @@ namespace dnSpy.Text.Formatting {
 				throw new InvalidOperationException();
 			if (sourceTextSnapshot.TextBuffer != SourceBuffer)
 				throw new InvalidOperationException();
-			throw new NotImplementedException();//TODO:
+
+			if (SourceBuffer != TopBuffer)
+				throw new NotSupportedException();
+
+			var list = new List<ISequenceElement>();
+			var spaceTags = tagAggregator.GetTags(topSpan).ToArray();
+			if (spaceTags.Length != 0)
+				throw new NotImplementedException();//TODO: Use SpaceNegotiatingAdornmentTag, IAdornmentElement
+			list.Add(new TextSequenceElement(new MappingSpan(topSpan, SpanTrackingMode.EdgeExclusive)));
+			Debug.Assert(list.Count == 1);// If it fails, make sure list is normalized
+			return new TextAndAdornmentCollection(this, list);
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {

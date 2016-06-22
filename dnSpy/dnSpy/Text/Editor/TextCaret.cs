@@ -270,7 +270,7 @@ namespace dnSpy.Text.Editor {
 		void SavePreferredYCoordinate() {
 			var line = GetVisibleCaretLine();
 			if (line != null)
-				__preferredYCoordinate = line.Top + (line.Bottom - line.Top) / 2 - textView.ViewportTop;
+				__preferredYCoordinate = (line.Top + line.Bottom) / 2 - textView.ViewportTop;
 			else
 				__preferredYCoordinate = 0;
 		}

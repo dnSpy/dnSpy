@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
@@ -34,7 +35,8 @@ namespace dnSpy.Text.Classification {
 			this.textEditorSettings = textEditorSettings;
 		}
 
-		public override double? GetFontRenderingEmSize(ITheme theme) => textEditorSettings.FontSize;
+		// Round to an integer so the IFormattedLine property sizes (Height etc) are integers
+		public override double? GetFontRenderingEmSize(ITheme theme) => Math.Round(textEditorSettings.FontSize);
 		public override Brush GetForeground(ITheme theme) => theme.GetColor(colorType).Foreground;
 		public override Brush GetBackground(ITheme theme) => theme.GetColor(colorType).Background;
 

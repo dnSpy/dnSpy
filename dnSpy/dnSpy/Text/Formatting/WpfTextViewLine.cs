@@ -21,32 +21,34 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Formatting;
-using ICSharpCode.AvalonEdit.Rendering;
+using CF = dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
-	sealed class WpfTextViewLine : IWpfTextViewLine {
+	sealed class WpfTextViewLine : IFormattedLine {
 		readonly double height;
-		readonly double top;
+		double top;
 		readonly double width;
 		readonly double textHeight;
 		readonly double textLeft;
 		readonly double textWidth;
 		readonly double virtualSpaceWidth;
-		readonly double deltaY;
+		double deltaY;
 		readonly double endOfLineWidth;
-		readonly TextViewLineChange change;
+		TextViewLineChange change;
 		Rect visibleArea;
-		readonly SnapshotSpan extentIncludingLineBreak;
+		SnapshotSpan extentIncludingLineBreak;
+		ITextSnapshot visualSnapshot;
 		readonly int lineBreakLength;
 		VisibilityState visibilityState;
 		readonly bool isFirstTextViewLineForSnapshotLine;
 		readonly bool isLastTextViewLineForSnapshotLine;
-		readonly LineTransform lineTransform;
-		readonly int lineStartOffset;
-		bool isValid;
+		LineTransform lineTransform;
+		ReadOnlyCollection<TextLine> textLines;
+		readonly LinePartsCollection linePartsCollection;
 
 		public double Bottom {
 			get {
@@ -87,7 +89,6 @@ namespace dnSpy.Text.Formatting {
 				return top;
 			}
 		}
-		internal double GetTop() => top;
 
 		public double Width {
 			get {
@@ -188,7 +189,7 @@ namespace dnSpy.Text.Formatting {
 		public object IdentityTag => this;
 		public bool IsFirstTextViewLineForSnapshotLine => isFirstTextViewLineForSnapshotLine;
 		public bool IsLastTextViewLineForSnapshotLine => isLastTextViewLineForSnapshotLine;
-		public bool IsValid => isValid;
+		public bool IsValid { get; private set; }
 
 		public int Length {
 			get {
@@ -258,7 +259,9 @@ namespace dnSpy.Text.Formatting {
 
 		public IMappingSpan ExtentAsMappingSpan {
 			get {
-				throw new NotImplementedException();//TODO:
+				if (Snapshot != visualSnapshot)
+					throw new NotSupportedException();
+				return new MappingSpan(Extent, SpanTrackingMode.EdgeInclusive);
 			}
 		}
 
@@ -272,7 +275,9 @@ namespace dnSpy.Text.Formatting {
 
 		public IMappingSpan ExtentIncludingLineBreakAsMappingSpan {
 			get {
-				throw new NotImplementedException();//TODO:
+				if (Snapshot != visualSnapshot)
+					throw new NotSupportedException();
+				return new MappingSpan(ExtentIncludingLineBreak, SpanTrackingMode.EdgeInclusive);
 			}
 		}
 
@@ -280,7 +285,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return new LineTransform(0, 1, 1, Right);
+				return new LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, 1, Right);
 			}
 		}
 
@@ -291,7 +296,6 @@ namespace dnSpy.Text.Formatting {
 				return textLines;
 			}
 		}
-		ReadOnlyCollection<TextLine> textLines;
 
 		public VisibilityState VisibilityState {
 			get {
@@ -307,75 +311,51 @@ namespace dnSpy.Text.Formatting {
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
 				return visibleArea;
 			}
-			internal set {
-				visibleArea = value;
-				visibilityState = CalculateVisibilityState();
-			}
-		}
-
-		internal void SetIsInvalid() {
-			isValid = false;
-			VisualLine = null;
-			textLines = null;
 		}
 
 		bool IsLastVisualLine { get; }
-		internal VisualLine VisualLine { get; private set; }
 
-		internal TextLine TextLine {
+		TextLine TextLine {
 			get {
 				Debug.Assert(textLines.Count == 1);
 				return textLines[0];
 			}
 		}
 
-		public WpfTextViewLine(ITextSnapshot snapshot, VisualLine visualLine, TextLineInfo info, double top, double deltaY, TextViewLineChange change, Rect visibleArea, double virtualSpaceWidth) {
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
-			if (visualLine == null)
-				throw new ArgumentNullException(nameof(visualLine));
-			if (info == null)
-				throw new ArgumentNullException(nameof(info));
-
-			this.lineStartOffset = visualLine.FirstDocumentLine.Offset;
-			var startOffset = lineStartOffset + info.StartOffset;
-			var endOffset = lineStartOffset + info.EndOffset;
-			if (startOffset < visualLine.FirstDocumentLine.Offset)
+		public WpfTextViewLine(LinePartsCollection linePartsCollection, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
+			if (linePartsCollection == null)
+				throw new ArgumentNullException(nameof(linePartsCollection));
+			if (bufferLine == null)
+				throw new ArgumentNullException(nameof(bufferLine));
+			if (span.Snapshot != bufferLine.Snapshot)
 				throw new ArgumentException();
-			if (endOffset > visualLine.FirstDocumentLine.EndOffset + visualLine.FirstDocumentLine.DelimiterLength)
-				throw new ArgumentException();
-			if (endOffset > snapshot.Length)
-				throw new ArgumentException();
-			isValid = true;
-			VisualLine = visualLine;
-			IsLastVisualLine = VisualLine.TextLines.IndexOf(info.TextLine) == VisualLine.TextLines.Count - 1 &&
-						VisualLine.LastDocumentLine.LineNumber == VisualLine.Document.LineCount;
+			if (visualSnapshot == null)
+				throw new ArgumentNullException(nameof(visualSnapshot));
+			if (textLine == null)
+				throw new ArgumentNullException(nameof(textLine));
 
-			// Only one line must be used
-			Debug.Assert(visualLine.FirstDocumentLine == visualLine.LastDocumentLine);
-			if (visualLine.FirstDocumentLine != visualLine.LastDocumentLine)
-				throw new InvalidOperationException();
-			this.isFirstTextViewLineForSnapshotLine = startOffset == visualLine.FirstDocumentLine.Offset;
-			this.isLastTextViewLineForSnapshotLine = endOffset == visualLine.FirstDocumentLine.EndOffset + visualLine.FirstDocumentLine.DelimiterLength;
-
-			this.lineBreakLength = info.LineBreakLength;
-			this.extentIncludingLineBreak = new SnapshotSpan(snapshot, Span.FromBounds(startOffset, endOffset));
-			this.textLines = new ReadOnlyCollection<TextLine>(new TextLine[] { info.TextLine });
-			this.height = info.TextLine.Height;
-			this.textHeight = info.TextLine.TextHeight;
-			this.textLeft = info.Indentation;
+			this.IsValid = true;
+			this.linePartsCollection = linePartsCollection;
+			this.visualSnapshot = visualSnapshot;
+			this.textLines = new ReadOnlyCollection<TextLine>(new[] { textLine });
+			Debug.Assert(textLines.Count == 1);// Assumed by all code accessing TextLine prop
+			this.isFirstTextViewLineForSnapshotLine = span.Start == bufferLine.Start;
+			this.isLastTextViewLineForSnapshotLine = span.End == bufferLine.EndIncludingLineBreak;
+			IsLastVisualLine = bufferLine.LineNumber + 1 == bufferLine.Snapshot.LineCount && IsLastTextViewLineForSnapshotLine;
+			this.lineBreakLength = isLastTextViewLineForSnapshotLine ? bufferLine.LineBreakLength : 0;
 			this.virtualSpaceWidth = virtualSpaceWidth;
-			this.top = top;
-			this.deltaY = deltaY;
-			this.change = change;
-			this.visibleArea = visibleArea;
-			this.textWidth = info.TextLine.WidthIncludingTrailingWhitespace - info.Indentation;
+			this.textLeft = indentation;
+			this.textWidth = Math.Max(0, textLine.WidthIncludingTrailingWhitespace - indentation);
+			this.extentIncludingLineBreak = span;
 			this.endOfLineWidth = Math.Floor(this.textHeight * 0.58333333333333337);// Same as VS
-			this.width = this.textWidth + (info.TextLine.NewlineLength == 0 ? 0 : this.endOfLineWidth);
-			this.lineTransform = new LineTransform(0, 0, 1, Right);
-
-			this.visibilityState = CalculateVisibilityState();
+			this.width = this.textWidth + (this.lineBreakLength == 0 ? 0 : this.endOfLineWidth);
+			this.lineTransform = new LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, 1, Right);
+			this.height = textLine.Height + lineTransform.BottomSpace;
+			this.textHeight = textLine.TextHeight;
+			this.change = TextViewLineChange.NewOrReformatted;
 		}
+		public const double DEFAULT_TOP_SPACE = 0.0;
+		public const double DEFAULT_BOTTOM_SPACE = 1.0;
 
 		VisibilityState CalculateVisibilityState() {
 			const double eps = 0.01;
@@ -410,7 +390,7 @@ namespace dnSpy.Text.Formatting {
 			return ExtentIncludingLineBreak.OverlapsWith(bufferSpan);
 		}
 
-		public Contracts.Text.Formatting.TextBounds? GetAdornmentBounds(object identityTag) {
+		public CF.TextBounds? GetAdornmentBounds(object identityTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			throw new NotImplementedException();//TODO:
@@ -435,7 +415,7 @@ namespace dnSpy.Text.Formatting {
 			//TODO: Use textOnly
 
 			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate);
-			return new SnapshotPoint(Snapshot, lineStartOffset + VisualLine.GetRelativeOffset(charHit.FirstCharacterIndex + charHit.TrailingLength));
+			return linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex + charHit.TrailingLength);
 		}
 
 		public VirtualSnapshotPoint GetVirtualBufferPositionFromXCoordinate(double xCoordinate) {
@@ -470,32 +450,32 @@ namespace dnSpy.Text.Formatting {
 			return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength);
 		}
 
-		public Contracts.Text.Formatting.TextBounds GetExtendedCharacterBounds(SnapshotPoint bufferPosition) =>
+		public CF.TextBounds GetExtendedCharacterBounds(SnapshotPoint bufferPosition) =>
 			GetExtendedCharacterBounds(new VirtualSnapshotPoint(bufferPosition));
-		public Contracts.Text.Formatting.TextBounds GetExtendedCharacterBounds(VirtualSnapshotPoint bufferPosition) {
+		public CF.TextBounds GetExtendedCharacterBounds(VirtualSnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferPosition.Position.Snapshot != Snapshot)
 				throw new ArgumentException();
 			if (bufferPosition.VirtualSpaces > 0) {
 				if (IsLastTextViewLineForSnapshotLine)
-					return new Contracts.Text.Formatting.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
-				return new Contracts.Text.Formatting.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
+					return new CF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
+				return new CF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
 			throw new NotImplementedException();//TODO:
 		}
 
-		public Contracts.Text.Formatting.TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) =>
+		public CF.TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) =>
 			GetCharacterBounds(new VirtualSnapshotPoint(bufferPosition));
-		public Contracts.Text.Formatting.TextBounds GetCharacterBounds(VirtualSnapshotPoint bufferPosition) {
+		public CF.TextBounds GetCharacterBounds(VirtualSnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferPosition.Position.Snapshot != Snapshot)
 				throw new ArgumentException();
 			if (bufferPosition.VirtualSpaces > 0) {
 				if (IsLastTextViewLineForSnapshotLine)
-					return new Contracts.Text.Formatting.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
-				return new Contracts.Text.Formatting.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
+					return new CF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
+				return new CF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
 			throw new NotImplementedException();//TODO:
 		}
@@ -521,7 +501,7 @@ namespace dnSpy.Text.Formatting {
 			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
 		}
 
-		public Collection<Contracts.Text.Formatting.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
+		public Collection<CF.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			throw new NotImplementedException();//TODO:
@@ -537,11 +517,101 @@ namespace dnSpy.Text.Formatting {
 			if (bufferPosition >= ExtentIncludingLineBreak.End - LineBreakLength)
 				return new SnapshotSpan(ExtentIncludingLineBreak.End - LineBreakLength, LineBreakLength);
 
-			int visualColumn = VisualLine.GetVisualColumn(bufferPosition.Position - lineStartOffset);
-			Debug.Assert(visualColumn >= 0);
+			int column = linePartsCollection.ConvertBufferPositionToColumn(bufferPosition);
+			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(column, 0));
+			return new SnapshotSpan(linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex), charHit.TrailingLength);
+		}
 
-			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(visualColumn, 0));
-			return new SnapshotSpan(Snapshot, lineStartOffset + VisualLine.GetRelativeOffset(charHit.FirstCharacterIndex), charHit.TrailingLength);
+		public Visual GetOrCreateVisual() {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			if (drawingVisual == null) {
+				drawingVisual = new DrawingVisual();
+				double x = Left;
+				var dc = drawingVisual.RenderOpen();
+				foreach (var line in textLines) {
+					line.Draw(dc, new Point(x, Baseline - line.Baseline), InvertAxes.None);
+					x += line.WidthIncludingTrailingWhitespace;
+				}
+				dc.Close();
+				UpdateVisualTransform();
+			}
+			return drawingVisual;
+		}
+		DrawingVisual drawingVisual;
+
+		public void RemoveVisual() {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			drawingVisual = null;
+		}
+
+		public void SetChange(TextViewLineChange change) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			this.change = change;
+		}
+
+		void UpdateVisualTransform() {
+			if (drawingVisual == null)
+				return;
+			var t = new TranslateTransform(0, TextTop);
+			t.Freeze();
+			drawingVisual.Transform = t;
+		}
+
+		public void SetDeltaY(double deltaY) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			this.deltaY = deltaY;
+		}
+
+		public void SetLineTransform(LineTransform transform) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			lineTransform = transform;
+			UpdateVisualTransform();
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void SetSnapshot(ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			if (visualSnapshot == null)
+				throw new ArgumentNullException(nameof(visualSnapshot));
+			if (editSnapshot == null)
+				throw new ArgumentNullException(nameof(editSnapshot));
+			if (visualSnapshot != editSnapshot)
+				throw new NotSupportedException();
+			int oldLength = extentIncludingLineBreak.Length;
+			extentIncludingLineBreak = extentIncludingLineBreak.TranslateTo(editSnapshot, SpanTrackingMode.EdgeNegative);
+			// This line should've been invalidated if there were any changes to it
+			if (oldLength != extentIncludingLineBreak.Length)
+				throw new InvalidOperationException();
+			linePartsCollection.SetSnapshot(visualSnapshot, editSnapshot);
+			this.visualSnapshot = visualSnapshot;
+		}
+
+		public void SetTop(double top) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			this.top = top;
+			UpdateVisualTransform();
+		}
+
+		public void SetVisibleArea(Rect visibleArea) {
+			if (!IsValid)
+				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			this.visibleArea = visibleArea;
+			this.visibilityState = CalculateVisibilityState();
+		}
+
+		public void Dispose() {
+			IsValid = false;
+			foreach (var t in textLines)
+				t.Dispose();
+			textLines = null;
+			drawingVisual = null;
 		}
 	}
 }

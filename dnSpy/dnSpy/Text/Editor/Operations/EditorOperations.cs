@@ -1277,7 +1277,7 @@ namespace dnSpy.Text.Editor.Operations {
 			if (!firstViewLineIsFullyVisible) {
 				ViewScroller.ScrollViewportVerticallyByPage(ScrollDirection.Up);
 				var newFirstLine = TextView.GetFirstFullyVisibleLineOrGetNew();
-				if (newFirstLine.IsFirstDocumentLine() && caretLine.IsVisible() == caretLineIsVisible)
+				if (newFirstLine.IsFirstDocumentLine() && Caret.ContainingTextViewLine.IsVisible() == caretLineIsVisible)
 					Caret.MoveTo(newFirstLine);
 				else
 					Caret.MoveToPreferredCoordinates();
@@ -1319,14 +1319,14 @@ namespace dnSpy.Text.Editor.Operations {
 		}
 
 		public void ScrollDownAndMoveCaretIfNecessary() {
-			TextView.ViewScroller.ScrollViewportVerticallyByLine(ScrollDirection.Down);
+			ViewScroller.ScrollViewportVerticallyByLine(ScrollDirection.Down);
 			var line = Caret.ContainingTextViewLine;
 			if (line.VisibilityState != VisibilityState.FullyVisible)
 				Caret.MoveTo(line.Top < TextView.ViewportTop ? TextView.GetFirstFullyVisibleLineOrGetNew() : TextView.GetLastFullyVisibleLineOrGetNew());
 		}
 
 		public void ScrollUpAndMoveCaretIfNecessary() {
-			TextView.ViewScroller.ScrollViewportVerticallyByLine(ScrollDirection.Up);
+			ViewScroller.ScrollViewportVerticallyByLine(ScrollDirection.Up);
 			var line = Caret.ContainingTextViewLine;
 			if (line.VisibilityState != VisibilityState.FullyVisible)
 				Caret.MoveTo(line.Top < TextView.ViewportTop ? TextView.GetFirstFullyVisibleLineOrGetNew() : TextView.GetLastFullyVisibleLineOrGetNew());

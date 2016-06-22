@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(Array.Empty<IWpfTextViewLine>());
 			this.snapshot = null;
 			this.formattedSpan = default(SnapshotSpan);
-			this.isValid = true;
+			this.IsValid = true;
 		}
 
 		public WpfTextViewLineCollection(ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(lines));
 			this.snapshot = snapshot;
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(lines);
-			this.isValid = true;
+			this.IsValid = true;
 			if (lines.Count == 0)
 				this.formattedSpan = new SnapshotSpan(snapshot, new Span(0, 0));
 			else
@@ -110,14 +110,7 @@ namespace dnSpy.Text.Editor {
 		}
 		readonly SnapshotSpan formattedSpan;
 
-		public bool IsValid => isValid;
-		bool isValid;
-
-		internal void SetIsInvalid() {
-			isValid = false;
-		}
-
-		internal bool IsValidSnapshot(ITextSnapshot snapshot) => this.snapshot == snapshot;
+		public bool IsValid { get; private set; }
 
 		public bool ContainsBufferPosition(SnapshotPoint bufferPosition) {
 			if (!IsValid)
@@ -290,5 +283,9 @@ namespace dnSpy.Text.Editor {
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<ITextViewLine> GetEnumerator() => lines.GetEnumerator();
+
+		public void Invalidate() {
+			IsValid = false;
+		}
 	}
 }

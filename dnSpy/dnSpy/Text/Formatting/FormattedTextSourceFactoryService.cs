@@ -27,10 +27,12 @@ using dnSpy.Text.Classification;
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(IFormattedTextSourceFactoryService))]
 	sealed class FormattedTextSourceFactoryService : IFormattedTextSourceFactoryService {
+		readonly ITextFormatterProvider textFormatterProvider;
 		readonly ITextParagraphPropertiesFactoryServiceSelector textParagraphPropertiesFactoryServiceSelector;
 
 		[ImportingConstructor]
-		FormattedTextSourceFactoryService(ITextParagraphPropertiesFactoryServiceSelector textParagraphPropertiesFactoryServiceSelector) {
+		FormattedTextSourceFactoryService(ITextFormatterProvider textFormatterProvider, ITextParagraphPropertiesFactoryServiceSelector textParagraphPropertiesFactoryServiceSelector) {
+			this.textFormatterProvider = textFormatterProvider;
 			this.textParagraphPropertiesFactoryServiceSelector = textParagraphPropertiesFactoryServiceSelector;
 		}
 
@@ -54,7 +56,7 @@ namespace dnSpy.Text.Formatting {
 			if (tabSize <= 0)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
 			var textParagraphPropertiesFactoryService = textParagraphPropertiesFactoryServiceSelector.Select(sourceTextSnapshot.TextBuffer.ContentType);
-			return new FormattedLineSource(textParagraphPropertiesFactoryService, sourceTextSnapshot, visualBufferSnapshot, tabSize, baseIndent, wordWrapWidth, maxAutoIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap, isViewWrapEnabled);
+			return new FormattedLineSource(textFormatterProvider, textParagraphPropertiesFactoryService, sourceTextSnapshot, visualBufferSnapshot, tabSize, baseIndent, wordWrapWidth, maxAutoIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap, isViewWrapEnabled);
 		}
 	}
 }

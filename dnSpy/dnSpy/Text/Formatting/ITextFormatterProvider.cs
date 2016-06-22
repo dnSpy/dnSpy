@@ -17,21 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using dnSpy.Shared.Controls;
+using System.Windows.Media.TextFormatting;
 
-namespace dnSpy.Shared.MVVM.Converters {
-	public sealed class FontSizeConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => Math.Round((double)value / (96.0 / 72.0));
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-			var s = (string)value;
-			double v;
-			if (double.TryParse(s, out v))
-				return v * (96.0 / 72.0);
-			return FontUtils.DEFAULT_FONT_SIZE;
-		}
+namespace dnSpy.Text.Formatting {
+	interface ITextFormatterProvider {
+		TextFormatter Create(bool useDisplayMode);
 	}
 }

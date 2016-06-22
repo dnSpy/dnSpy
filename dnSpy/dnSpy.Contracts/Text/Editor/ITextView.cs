@@ -206,7 +206,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Formats and displays the contents of the text buffer so that the <see cref="ITextViewLine"/> containing the buffer position is displayed at the desired position
 		/// </summary>
 		/// <param name="bufferPosition">Buffer position</param>
-		/// <param name="verticalDistance">The distance (in pixels) between the ITextViewLine and the edge of the view</param>
+		/// <param name="verticalDistance">The distance (in pixels) between the <see cref="ITextViewLine"/> and the edge of the view. If <paramref name="relativeTo"/> is equal to <see cref="ViewRelativePosition.Top"/>, then the distance is from the top of the view to the top of the <see cref="ITextViewLine"/>. Otherwise, it is the distance from the bottom of the <see cref="ITextViewLine"/> to the bottom on the view.</param>
 		/// <param name="relativeTo">Relative to top or bottom</param>
 		void DisplayTextLineContainingBufferPosition(SnapshotPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo);
 
@@ -214,7 +214,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Formats and displays the contents of the text buffer so that the <see cref="ITextViewLine"/> containing the specified buffer position is displayed at the desired position
 		/// </summary>
 		/// <param name="bufferPosition">Buffer position</param>
-		/// <param name="verticalDistance">The distance (in pixels) between the ITextViewLine and the edge of the view</param>
+		/// <param name="verticalDistance">The distance (in pixels) between the <see cref="ITextViewLine"/> and the edge of the view. If <paramref name="relativeTo"/> is equal to <see cref="ViewRelativePosition.Top"/>, then the distance is from the top of the view to the top of the <see cref="ITextViewLine"/>. Otherwise, it is the distance from the bottom of the <see cref="ITextViewLine"/> to the bottom on the view.</param>
 		/// <param name="relativeTo">Relative to top or bottom</param>
 		/// <param name="viewportWidthOverride">If specified, the text is formatted as if the viewport had the specified width</param>
 		/// <param name="viewportHeightOverride">If specified, the text is formatted as if the viewport had the specified height</param>

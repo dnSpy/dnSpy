@@ -18,20 +18,19 @@
 */
 
 using System;
-using System.Globalization;
-using System.Windows.Data;
-using dnSpy.Shared.Controls;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using dnSpy.Contracts.Text.Formatting;
 
-namespace dnSpy.Shared.MVVM.Converters {
-	public sealed class FontSizeConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => Math.Round((double)value / (96.0 / 72.0));
+namespace dnSpy.Text.Formatting {
+	sealed class TextAndAdornmentCollection : ReadOnlyCollection<ISequenceElement>, ITextAndAdornmentCollection {
+		public ITextAndAdornmentSequencer Sequencer { get; }
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-			var s = (string)value;
-			double v;
-			if (double.TryParse(s, out v))
-				return v * (96.0 / 72.0);
-			return FontUtils.DEFAULT_FONT_SIZE;
+		public TextAndAdornmentCollection(ITextAndAdornmentSequencer textAndAdornmentSequencer, List<ISequenceElement> list)
+			: base(list) {
+			if (textAndAdornmentSequencer == null)
+				throw new ArgumentNullException(nameof(textAndAdornmentSequencer));
+			Sequencer = textAndAdornmentSequencer;
 		}
 	}
 }
