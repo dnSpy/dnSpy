@@ -22,7 +22,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Tagging;
 
-namespace dnSpy.Roslyn.Shared.Text {
+namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ROSLYN_CODE)]
 	sealed class RoslynTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypes themeClassificationTypes;

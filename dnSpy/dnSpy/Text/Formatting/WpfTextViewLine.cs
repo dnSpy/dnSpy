@@ -584,7 +584,7 @@ namespace dnSpy.Text.Formatting {
 			if (visualSnapshot != editSnapshot)
 				throw new NotSupportedException();
 			int oldLength = extentIncludingLineBreak.Length;
-			extentIncludingLineBreak = extentIncludingLineBreak.TranslateTo(editSnapshot, SpanTrackingMode.EdgeNegative);
+			extentIncludingLineBreak = extentIncludingLineBreak.TranslateTo(editSnapshot, SpanTrackingMode.EdgeExclusive);
 			// This line should've been invalidated if there were any changes to it
 			if (oldLength != extentIncludingLineBreak.Length)
 				throw new InvalidOperationException();

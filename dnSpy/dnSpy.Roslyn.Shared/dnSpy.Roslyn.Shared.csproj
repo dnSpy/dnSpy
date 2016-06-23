@@ -47,8 +47,10 @@
     <Compile Include="Text\Editor\RoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
-    <Compile Include="Text\RoslynTagger.cs" />
-    <Compile Include="Text\RoslynTaggerProvider.cs" />
+    <Compile Include="Text\Tagging\AsyncTagger.cs" />
+    <Compile Include="Text\Tagging\RoslynTagger.cs" />
+    <Compile Include="Text\Tagging\RoslynTaggerAsyncState.cs" />
+    <Compile Include="Text\Tagging\RoslynTaggerProvider.cs" />
     <Compile Include="Text\TextBufferSourceTextContainer.cs" />
     <Compile Include="Text\TextSnapshotSourceText.cs" />
     <Compile Include="Text\TextSnapshotTextLineCollection.cs" />

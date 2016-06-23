@@ -106,7 +106,7 @@ namespace dnSpy.Text.Formatting {
 			var newVer = newSnapshot.Version;
 			while (oldVer != newVer) {
 				foreach (var c in oldVer.Changes) {
-					bool change = IsLastLine ? span.IntersectsWith(c.OldSpan) : span.OverlapsWith(c.OldSpan);
+					bool change = span.IntersectsWith(c.OldSpan);
 					if (change)
 						return true;
 				}
