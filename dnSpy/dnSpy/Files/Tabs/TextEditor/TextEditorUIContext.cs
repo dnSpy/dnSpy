@@ -45,13 +45,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 	interface ITextEditorUIContextImpl : ITextEditorUIContext {
 		/// <summary>
-		/// Called when 'use new renderer' option has been changed. <see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>
+		/// Called when 'use new renderer' option has been changed. <see cref="ITextEditorUIContext.SetOutput(ITextOutput, IHighlightingDefinition, IContentType)"/>
 		/// will be called after this method has been called.
 		/// </summary>
 		void OnUseNewRendererChanged();
 
 		/// <summary>
-		/// Raised after the text editor has gotten new text (<see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>)
+		/// Raised after the text editor has gotten new text (<see cref="ITextEditorUIContext.SetOutput(ITextOutput, IHighlightingDefinition, IContentType)"/>)
 		/// </summary>
 		event EventHandler<EventArgs> NewTextContent;
 	}

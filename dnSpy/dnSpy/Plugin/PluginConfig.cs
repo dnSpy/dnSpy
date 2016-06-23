@@ -22,7 +22,7 @@ using System;
 namespace dnSpy.Plugin {
 	sealed class PluginConfig {
 		/// <summary>
-		/// Minimum OS version (<see cref="Environment.OSVersion.Version"/>) or null if any version
+		/// Minimum OS version (<see cref="Environment.OSVersion"/>'s <see cref="OperatingSystem.Version"/> property) or null if any version
 		/// </summary>
 		public Version OSVersion { get; set; }
 
