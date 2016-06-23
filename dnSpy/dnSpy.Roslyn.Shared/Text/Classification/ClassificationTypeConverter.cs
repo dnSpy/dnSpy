@@ -27,7 +27,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
 
-namespace dnSpy.Roslyn.Shared.Classification {
+namespace dnSpy.Roslyn.Shared.Text.Classification {
 	public struct ClassificationTypeConverter {
 		readonly SemanticModel semanticModel;
 		/*readonly*/ CancellationToken cancellationToken;

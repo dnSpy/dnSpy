@@ -32,8 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classification\ClassificationTypeConverter.cs" />
-    <Compile Include="Classification\RoslynClassifier.cs" />
     <Compile Include="Compiler\CSharpLanguageCompiler.cs" />
     <Compile Include="Compiler\DiagnosticExtensions.cs" />
     <Compile Include="Compiler\Extensions.cs" />
@@ -42,6 +40,8 @@
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
     <Compile Include="CSharp\CSharpConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\Classification\ClassificationTypeConverter.cs" />
+    <Compile Include="Text\Classification\RoslynClassifier.cs" />
     <Compile Include="Text\Editor\RoslynAppearanceCategoryConstants.cs" />
     <Compile Include="Text\Editor\RoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\RoslynCodeEditorCreator.cs" />

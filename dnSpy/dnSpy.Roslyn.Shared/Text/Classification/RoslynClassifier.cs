@@ -28,7 +28,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
 
-namespace dnSpy.Roslyn.Shared.Classification {
+namespace dnSpy.Roslyn.Shared.Text.Classification {
 	public struct ClassifierResult {
 		public readonly Span Span;
 		public readonly IClassificationType Type;
@@ -240,7 +240,7 @@ the_switch:
 		}
 
 		IClassificationType GetClassificationType(ClassifiedSpan cspan) {
-			IClassificationType classfiicationType;
+			IClassificationType classificationType;
 			SymbolResult symRes;
 			switch (cspan.ClassificationType) {
 			case ClassificationTypeNames.ClassName:
@@ -303,9 +303,9 @@ the_switch:
 				return themeClassificationTypes.GetClassificationType(ColorType.Text);
 
 			case ClassificationTypeNames.TypeParameterName:
-				classfiicationType = GetClassificationType2(cspan);
-				Debug.WriteLineIf(classfiicationType == null, "Couldn't get TypeParameterName classification type");
-				return classfiicationType ?? themeClassificationTypes.GetClassificationType(ColorType.TypeGenericParameter);
+				classificationType = GetClassificationType2(cspan);
+				Debug.WriteLineIf(classificationType == null, "Couldn't get TypeParameterName classification type");
+				return classificationType ?? themeClassificationTypes.GetClassificationType(ColorType.TypeGenericParameter);
 
 			case ClassificationTypeNames.VerbatimStringLiteral:
 				return themeClassificationTypes.GetClassificationType(ColorType.VerbatimString);

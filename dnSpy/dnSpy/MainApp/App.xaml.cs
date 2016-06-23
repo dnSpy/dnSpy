@@ -40,7 +40,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
 using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Plugin;
-using dnSpy.Roslyn.Shared.Classification;
+using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
 using dnSpy.Shared.Controls;

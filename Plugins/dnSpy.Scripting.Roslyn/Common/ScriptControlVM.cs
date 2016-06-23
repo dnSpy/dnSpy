@@ -38,8 +38,8 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
 using dnSpy.Contracts.Scripting.Roslyn;
-using dnSpy.Roslyn.Shared.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Roslyn.Shared.Text.Classification;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {
