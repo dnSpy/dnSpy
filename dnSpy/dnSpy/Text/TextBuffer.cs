@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Text;
-using ICSharpCode.AvalonEdit.Document;
+using dnSpy.Text.AvalonEdit;
 
 namespace dnSpy.Text {
 	sealed class TextBuffer : ITextBuffer {
@@ -62,9 +62,9 @@ namespace dnSpy.Text {
 		public event EventHandler<TextContentChangingEventArgs> Changing;
 		public event EventHandler PostChanged;
 
-		public TextDocument Document {
+		TextDocument Document {
 			get { return document; }
-			private set {
+			set {
 				if (document != null)
 					throw new InvalidOperationException();
 				document = value;
@@ -170,11 +170,11 @@ namespace dnSpy.Text {
 				if (__new_changes != null)
 					throw new InvalidOperationException("Recursive edit");
 				__new_changes = changes;
-				using (Document.RunUpdate()) {
-					// changes is sorted in reverse order by OldPosition
-					foreach (var change in changes)
-						Document.Replace(change.OldPosition, change.OldLength, change.NewText);
-				}
+				Document.BeginUpdate();
+				// changes is sorted in reverse order by OldPosition
+				foreach (var change in changes)
+					Document.Replace(change.OldPosition, change.OldLength, change.NewText);
+				Document.EndUpdate();
 				Debug.Assert(__new_changes == null);
 				if (__new_changes != null)
 					throw new InvalidOperationException("TextChanged handler wasn't called");

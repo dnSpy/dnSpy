@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using dnSpy.Contracts.Text;
-using ICSharpCode.AvalonEdit.Document;
+using dnSpy.Text.AvalonEdit;
 
 namespace dnSpy.Text {
 	sealed class TextSnapshot : ITextSnapshot {
@@ -61,15 +61,6 @@ namespace dnSpy.Text {
 		public char[] ToCharArray(int startIndex, int length) => textSource.ToCharArray(startIndex, length);
 		public void Write(TextWriter writer) => textSource.WriteTextTo(writer);
 		public void Write(TextWriter writer, Span span) => textSource.WriteTextTo(writer, span.Start, span.Length);
-
-		public static ITextChange[] GetTextChangesFromTo(ITextSource source, ITextSource target) {
-			var list = new List<ITextChange>();
-			Debug.Assert(source.Version != null);
-			Debug.Assert(target.Version != null);
-			foreach (var tca in source.Version.GetChangesTo(target.Version))
-				list.Add(new TextChange(tca.Offset, tca.RemovedText, tca.InsertedText));
-			return list.ToArray();
-		}
 
 		public int LineCount {
 			get {

@@ -57,8 +57,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public DnSpyTextEditor Create(DnSpyTextEditorOptions options) {
-			var textBuffer = options.TextBuffer ?? textBufferFactoryService.CreateTextBuffer(contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType);
-			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBuffer);
+			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings);
 
 			if (options.MenuGuid != null)
 				menuManager.InitializeContextMenu(textEditor, options.MenuGuid.Value, options.CreateGuidObjectsCreator?.Invoke(), new ContextMenuInitializer(textEditor, textEditor));

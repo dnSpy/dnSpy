@@ -54,7 +54,6 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.Shared.AvalonEdit;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.Text;
 using dnSpy.Text;
@@ -77,7 +76,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		DefinitionLookup definitionLookup;
 		TextSegmentCollection<ReferenceSegment> references;
-		readonly TextMarkerService textMarkerService;
+		//readonly TextMarkerService textMarkerService;
 		readonly List<ITextMarker> markedReferences = new List<ITextMarker>();
 
 		readonly ReferenceElementGenerator referenceElementGenerator;
@@ -142,9 +141,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
 			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconBarMargin.InvalidateVisual();
 
-			textMarkerService = new TextMarkerService(this, uiContext, textLineObjectManager);
-			TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
-			TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
+			//textMarkerService = new TextMarkerService(this, uiContext, textLineObjectManager);
+			//TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
+			//TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 
 			wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
 
@@ -265,7 +264,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			wpfTextView.TextBuffer.Replace(new Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), newText);
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, 0));
 			TextEditor.TextArea.TextView.Document.UndoStack.ClearAll();
-			textMarkerService.OnTextChanged();
+			//textMarkerService.OnTextChanged();
 		}
 
 		public void Clear() {
@@ -591,27 +590,28 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return false;
 			ClearMarkedReferences();
 			previousReferenceSegment = referenceSegment;
-			foreach (var tmp in references) {
-				var r = tmp;
-				if (RefSegEquals(referenceSegment, r)) {
-					var mark = textMarkerService.Create(r.StartOffset, r.Length);
-					mark.ZOrder = TextEditorConstants.ZORDER_SEARCHRESULT;
-					mark.HighlightingColor = () => {
-						return r.IsLocalTarget ?
-							themeManager.Theme.GetTextColor(ColorType.LocalDefinition).ToHighlightingColor() :
-							themeManager.Theme.GetTextColor(ColorType.LocalReference).ToHighlightingColor();
-					};
-					markedReferences.Add(mark);
-				}
-			}
+			//foreach (var tmp in references) {
+			//	var r = tmp;
+			//	if (RefSegEquals(referenceSegment, r)) {
+			//		var mark = textMarkerService.Create(r.StartOffset, r.Length);
+			//		mark.ZOrder = TextEditorConstants.ZORDER_SEARCHRESULT;
+			//		mark.HighlightingColor = () => {
+			//			return r.IsLocalTarget ?
+			//				themeManager.Theme.GetTextColor(ColorType.LocalDefinition).ToHighlightingColor() :
+			//				themeManager.Theme.GetTextColor(ColorType.LocalReference).ToHighlightingColor();
+			//		};
+			//		markedReferences.Add(mark);
+			//	}
+			//}
 			return true;
 		}
 		ReferenceSegment previousReferenceSegment = null;
 
 		void ClearMarkedReferences() {
-			foreach (var mark in markedReferences) {
-				textMarkerService.Remove(mark);
-			}
+			//if (textMarkerService == null) return;
+			//foreach (var mark in markedReferences) {
+			//	textMarkerService.Remove(mark);
+			//}
 			markedReferences.Clear();
 			previousReferenceSegment = null;
 		}
@@ -665,7 +665,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.themeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
-			textMarkerService.Dispose();
+			//textMarkerService.Dispose();
 			if (!wpfTextView.IsClosed)
 				wpfTextView.Close();
 		}

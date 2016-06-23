@@ -1,0 +1,225 @@
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+
+using System.Collections.Generic;
+using System.Diagnostics;
+
+namespace dnSpy.Text.AvalonEdit {
+	/// <summary>
+	/// Creates/Deletes lines when text is inserted/removed.
+	/// </summary>
+	sealed class LineManager {
+		#region Constructor
+		readonly TextDocument document;
+		readonly DocumentLineTree documentLineTree;
+
+		public LineManager(DocumentLineTree documentLineTree, TextDocument document) {
+			this.document = document;
+			this.documentLineTree = documentLineTree;
+
+			Rebuild();
+		}
+		#endregion
+
+		#region Rebuild
+		public void Rebuild() {
+			// keep the first document line
+			DocumentLine ls = documentLineTree.GetByNumber(1);
+			// but mark all other lines as deleted, and detach them from the other nodes
+			for (DocumentLine line = ls.NextLine; line != null; line = line.NextLine) {
+				line.isDeleted = true;
+				line.parent = line.left = line.right = null;
+			}
+			// Reset the first line to detach it from the deleted lines
+			ls.ResetLine();
+			SimpleSegment ds = NewLineFinder.NextNewLine(document, 0);
+			List<DocumentLine> lines = new List<DocumentLine>();
+			int lastDelimiterEnd = 0;
+			while (ds != SimpleSegment.Invalid) {
+				ls.TotalLength = ds.Offset + ds.Length - lastDelimiterEnd;
+				ls.DelimiterLength = ds.Length;
+				lastDelimiterEnd = ds.Offset + ds.Length;
+				lines.Add(ls);
+
+				ls = new DocumentLine(document);
+				ds = NewLineFinder.NextNewLine(document, lastDelimiterEnd);
+			}
+			ls.TotalLength = document.TextLength - lastDelimiterEnd;
+			lines.Add(ls);
+			documentLineTree.RebuildTree(lines);
+		}
+		#endregion
+
+		#region Remove
+		public void Remove(int offset, int length) {
+			Debug.Assert(length >= 0);
+			if (length == 0)
+				return;
+			DocumentLine startLine = documentLineTree.GetByOffset(offset);
+			int startLineOffset = startLine.Offset;
+
+			Debug.Assert(offset < startLineOffset + startLine.TotalLength);
+			if (offset > startLineOffset + startLine.Length) {
+				Debug.Assert(startLine.DelimiterLength == 2);
+				// we are deleting starting in the middle of a delimiter
+
+				// remove last delimiter part
+				SetLineLength(startLine, startLine.TotalLength - 1);
+				// remove remaining text
+				Remove(offset, length - 1);
+				return;
+			}
+
+			if (offset + length < startLineOffset + startLine.TotalLength) {
+				// just removing a part of this line
+				SetLineLength(startLine, startLine.TotalLength - length);
+				return;
+			}
+			// merge startLine with another line because startLine's delimiter was deleted
+			// possibly remove lines in between if multiple delimiters were deleted
+			int charactersRemovedInStartLine = startLineOffset + startLine.TotalLength - offset;
+			Debug.Assert(charactersRemovedInStartLine > 0);
+
+
+			DocumentLine endLine = documentLineTree.GetByOffset(offset + length);
+			if (endLine == startLine) {
+				// special case: we are removing a part of the last line up to the
+				// end of the document
+				SetLineLength(startLine, startLine.TotalLength - length);
+				return;
+			}
+			int endLineOffset = endLine.Offset;
+			int charactersLeftInEndLine = endLineOffset + endLine.TotalLength - (offset + length);
+
+			// remove all lines between startLine (excl.) and endLine (incl.)
+			DocumentLine tmp = startLine.NextLine;
+			DocumentLine lineToRemove;
+			do {
+				lineToRemove = tmp;
+				tmp = tmp.NextLine;
+				RemoveLine(lineToRemove);
+			} while (lineToRemove != endLine);
+
+			SetLineLength(startLine, startLine.TotalLength - charactersRemovedInStartLine + charactersLeftInEndLine);
+		}
+
+		void RemoveLine(DocumentLine lineToRemove) {
+			documentLineTree.RemoveLine(lineToRemove);
+		}
+
+		#endregion
+
+		#region Insert
+		public void Insert(int offset, ITextSource text) {
+			DocumentLine line = documentLineTree.GetByOffset(offset);
+			int lineOffset = line.Offset;
+
+			Debug.Assert(offset <= lineOffset + line.TotalLength);
+			if (offset > lineOffset + line.Length) {
+				Debug.Assert(line.DelimiterLength == 2);
+				// we are inserting in the middle of a delimiter
+
+				// shorten line
+				SetLineLength(line, line.TotalLength - 1);
+				// add new line
+				line = InsertLineAfter(line, 1);
+				line = SetLineLength(line, 1);
+			}
+
+			SimpleSegment ds = NewLineFinder.NextNewLine(text, 0);
+			if (ds == SimpleSegment.Invalid) {
+				// no newline is being inserted, all text is inserted in a single line
+				//line.InsertedLinePart(offset - line.Offset, text.Length);
+				SetLineLength(line, line.TotalLength + text.TextLength);
+				return;
+			}
+			int lastDelimiterEnd = 0;
+			while (ds != SimpleSegment.Invalid) {
+				// split line segment at line delimiter
+				int lineBreakOffset = offset + ds.Offset + ds.Length;
+				lineOffset = line.Offset;
+				int lengthAfterInsertionPos = lineOffset + line.TotalLength - (offset + lastDelimiterEnd);
+				line = SetLineLength(line, lineBreakOffset - lineOffset);
+				DocumentLine newLine = InsertLineAfter(line, lengthAfterInsertionPos);
+				newLine = SetLineLength(newLine, lengthAfterInsertionPos);
+
+				line = newLine;
+				lastDelimiterEnd = ds.Offset + ds.Length;
+
+				ds = NewLineFinder.NextNewLine(text, lastDelimiterEnd);
+			}
+			// insert rest after last delimiter
+			if (lastDelimiterEnd != text.TextLength) {
+				//line.InsertedLinePart(0, text.Length - lastDelimiterEnd);
+				SetLineLength(line, line.TotalLength + text.TextLength - lastDelimiterEnd);
+			}
+		}
+
+		DocumentLine InsertLineAfter(DocumentLine line, int length) {
+			DocumentLine newLine = documentLineTree.InsertLineAfter(line, length);
+			return newLine;
+		}
+		#endregion
+
+		#region SetLineLength
+		/// <summary>
+		/// Sets the total line length and checks the delimiter.
+		/// This method can cause line to be deleted when it contains a single '\n' character
+		/// and the previous line ends with '\r'.
+		/// </summary>
+		/// <returns>Usually returns <paramref name="line"/>, but if line was deleted due to
+		/// the "\r\n" merge, returns the previous line.</returns>
+		DocumentLine SetLineLength(DocumentLine line, int newTotalLength) {
+			int delta = newTotalLength - line.TotalLength;
+			if (delta != 0) {
+				line.TotalLength = newTotalLength;
+				DocumentLineTree.UpdateAfterChildrenChange(line);
+			}
+			// determine new DelimiterLength
+			if (newTotalLength == 0) {
+				line.DelimiterLength = 0;
+			}
+			else {
+				int lineOffset = line.Offset;
+				char lastChar = document.GetCharAt(lineOffset + newTotalLength - 1);
+				if (lastChar == '\r' || lastChar == '\u0085' || lastChar == '\u2028' || lastChar == '\u2029') {
+					line.DelimiterLength = 1;
+				}
+				else if (lastChar == '\n') {
+					if (newTotalLength >= 2 && document.GetCharAt(lineOffset + newTotalLength - 2) == '\r') {
+						line.DelimiterLength = 2;
+					}
+					else if (newTotalLength == 1 && lineOffset > 0 && document.GetCharAt(lineOffset - 1) == '\r') {
+						// we need to join this line with the previous line
+						DocumentLine previousLine = line.PreviousLine;
+						RemoveLine(line);
+						return SetLineLength(previousLine, previousLine.TotalLength + 1);
+					}
+					else {
+						line.DelimiterLength = 1;
+					}
+				}
+				else {
+					line.DelimiterLength = 0;
+				}
+			}
+			return line;
+		}
+		#endregion
+	}
+}

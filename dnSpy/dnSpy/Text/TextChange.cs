@@ -19,7 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Text;
-using ICSharpCode.AvalonEdit.Document;
+using dnSpy.Text.AvalonEdit;
 
 namespace dnSpy.Text {
 	sealed class TextChange : ITextChange {

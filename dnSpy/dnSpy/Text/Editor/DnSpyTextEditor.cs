@@ -145,13 +145,10 @@ namespace dnSpy.Text.Editor {
 
 		readonly SearchPanel searchPanel;
 
-		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextBuffer textBuffer) {
+		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings) {
 			this.ThemeManager = themeManager;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
 			this.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-
-			Debug.Assert(textBuffer is TextBuffer, $"{nameof(ITextBuffer)} must currently be our implementation!");
-			this.Document = ((TextBuffer)textBuffer).Document;
 
 			TextArea.TextView.DocumentChanged += TextView_DocumentChanged;
 			UpdateColors(false);
