@@ -32,6 +32,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Shared.Controls;
 using dnSpy.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
@@ -168,6 +169,7 @@ namespace dnSpy.Text.Editor {
 
 			Background = classificationFormatMap.DefaultWindowBackground;
 			CreateFormattedLineSource(ViewportWidth);
+			InitializeZoom();
 		}
 
 		public void InvalidateClassifications(SnapshotSpan span) {
@@ -322,7 +324,7 @@ namespace dnSpy.Text.Editor {
 			bool isAutoIndent = isWordWrap && (wordWrapStyle & WordWrapStyles.AutoIndent) != 0;
 			double wordWrapWidth = isWordWrap ? viewportWidthOverride : 0;
 			var maxAutoIndent = isAutoIndent ? viewportWidthOverride / 4 : 0;
-			bool useDisplayMode = zoomLevel != 100 || TextOptions.GetTextFormattingMode(this) == TextFormattingMode.Display;
+			bool useDisplayMode = TextOptions.GetTextFormattingMode(this) == TextFormattingMode.Display;
 
 			int tabSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
 			tabSize = Math.Max(1, tabSize);
@@ -385,20 +387,8 @@ namespace dnSpy.Text.Editor {
 				if (newValue == zoomLevel)
 					return;
 
-				//TODO: Use TabElementScaler since it works correctly when in high dpi mode
-				if (newValue == 100)
-					LayoutTransform = Transform.Identity;
-				else {
-					double scale = newValue / 100;
-					var st = new ScaleTransform(scale, scale);
-					st.Freeze();
-					LayoutTransform = st;
-				}
-				// If display/ideal mode changed
-				if (newValue == 100 || zoomLevel == 100)
-					InvalidateFormattedLineSource(true);
-
 				zoomLevel = newValue;
+				metroWindow?.SetScaleTransform(this, zoomLevel / 100);
 				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(newValue, LayoutTransform));
 			}
 		}
@@ -477,6 +467,8 @@ namespace dnSpy.Text.Editor {
 			aggregateClassifier.ClassificationChanged -= AggregateClassifier_ClassificationChanged;
 			textAndAdornmentSequencer.SequenceChanged -= TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
+			if (metroWindow != null)
+				metroWindow.WindowDPIChanged -= MetroWindow_WindowDPIChanged;
 		}
 
 		void InitializeOptions() =>
@@ -676,6 +668,38 @@ namespace dnSpy.Text.Editor {
 		void UpdateVisibleLines(double viewportWidthOverride, double ViewportHeightOverride) {
 			foreach (IFormattedLine line in TextViewLines)
 				line.SetVisibleArea(new Rect(ViewportLeft, ViewportTop, viewportWidthOverride, ViewportHeightOverride));
+		}
+
+		void InitializeZoom() {
+			var window = Window.GetWindow(this);
+			metroWindow = window as MetroWindow;
+			if (window != null && metroWindow == null)
+				return;
+			if (metroWindow != null) {
+				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
+				MetroWindow_WindowDPIChanged(metroWindow, EventArgs.Empty);
+				return;
+			}
+
+			this.Loaded += WpfTextView_Loaded;
+		}
+		MetroWindow metroWindow;
+
+		void WpfTextView_Loaded(object sender, RoutedEventArgs e) {
+			this.Loaded -= WpfTextView_Loaded;
+			var window = Window.GetWindow(this);
+			metroWindow = window as MetroWindow;
+			Debug.Assert(window != null);
+			if (metroWindow != null) {
+				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
+				MetroWindow_WindowDPIChanged(metroWindow, EventArgs.Empty);
+				return;
+			}
+		}
+
+		void MetroWindow_WindowDPIChanged(object sender, EventArgs e) {
+			Debug.Assert(sender != null && sender == metroWindow);
+			((MetroWindow)sender).SetScaleTransform(this, ZoomLevel / 100);
 		}
 	}
 }
