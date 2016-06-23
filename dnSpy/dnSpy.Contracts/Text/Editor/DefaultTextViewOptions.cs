@@ -35,6 +35,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> CanChangeWordWrapStyleId = new EditorOptionKey<bool>("ITextView/CanChangeWordWrapStyle");
 		public static readonly EditorOptionKey<WordWrapStyles> WordWrapStyleId = new EditorOptionKey<WordWrapStyles>("ITextView/WordWrapStyle");
 		public static readonly EditorOptionKey<bool> AllowBoxSelectionId = new EditorOptionKey<bool>("ITextView/AllowBoxSelectionId");
+		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>("ITextView/RefreshScreenOnChange");
+		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecsId = new EditorOptionKey<int>("ITextView/RefreshScreenOnChangeWaitMilliSecsId");
+		public const int DefaultRefreshScreenOnChangeWaitMilliSecs = 150;
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

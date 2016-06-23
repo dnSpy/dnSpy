@@ -392,6 +392,7 @@
     <Compile Include="Text\Editor\CodeEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
     <Compile Include="Text\Editor\DefaultOptions.cs" />
+    <Compile Include="Text\Editor\DefaultReplEditorOptions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewHostOptions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewOptions.cs" />

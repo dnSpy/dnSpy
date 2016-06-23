@@ -88,6 +88,9 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 			//TODO: Support box selection
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AllowBoxSelectionId, false);
+			wpfTextView.Options.OptionChanged += Options_OptionChanged;
+			wpfTextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
+			wpfTextView.Closed += WpfTextView_Closed;
 			this.wpfTextView = wpfTextView;
 			this.wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
@@ -95,6 +98,75 @@ namespace dnSpy.Text.Editor {
 			WriteOffsetOfPrompt(null, true);
 			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView);
 			wpfTextView.VisualElement.Loaded += WpfTextView_Loaded;
+			UpdateRefreshScreenOnChange();
+		}
+
+		void WpfTextView_Closed(object sender, EventArgs e) {
+			StopRefreshTimer();
+			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
+			wpfTextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
+			wpfTextView.Closed -= WpfTextView_Closed;
+			this.wpfTextView.TextBuffer.Changed -= TextBuffer_Changed;
+			wpfTextView.VisualElement.Loaded -= WpfTextView_Loaded;
+		}
+
+		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (e.OptionId == DefaultReplEditorOptions.RefreshScreenOnChangeId.Name)
+				UpdateRefreshScreenOnChange();
+		}
+
+		void UpdateRefreshScreenOnChange() {
+			bool refresh = wpfTextView.Options.GetOptionValue(DefaultReplEditorOptions.RefreshScreenOnChangeId);
+			if (!refresh)
+				StopRefreshTimer();
+		}
+
+		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
+			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
+			if (ChangedUserInput(e))
+				DelayScreenRefresh();
+		}
+
+		bool ChangedUserInput(TextContentChangedEventArgs e) {
+			if (OffsetOfPrompt == null)
+				return false;
+			int offs = OffsetOfPrompt.Value;
+			foreach (var c in e.Changes) {
+				if (c.OldEnd > offs)
+					return true;
+			}
+			return false;
+		}
+
+		void StopRefreshTimer() {
+			screenRefreshTimer?.Stop();
+			screenRefreshTimer = null;
+		}
+
+		void DelayScreenRefresh() {
+			if (wpfTextView.IsClosed)
+				return;
+			if (screenRefreshTimer != null)
+				return;
+			int ms = wpfTextView.Options.GetOptionValue(DefaultReplEditorOptions.RefreshScreenOnChangeWaitMilliSecsId);
+			if (ms > 0)
+				screenRefreshTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(ms), DispatcherPriority.Normal, RefreshScreenHandler, wpfTextView.VisualElement.Dispatcher);
+			else
+				RefreshScreen();
+		}
+		DispatcherTimer screenRefreshTimer;
+
+		void RefreshScreen() {
+			if (OffsetOfPrompt == null)
+				return;
+			int offs = OffsetOfPrompt.Value;
+			var snapshot = wpfTextView.TextSnapshot;
+			wpfTextView.InvalidateClassifications(new SnapshotSpan(snapshot, Span.FromBounds(offs, snapshot.Length)));
+		}
+
+		void RefreshScreenHandler(object sender, EventArgs e) {
+			StopRefreshTimer();
+			RefreshScreen();
 		}
 
 		void MoveToEnd() => MoveTo(wpfTextView.TextSnapshot.Length);

@@ -88,8 +88,21 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class AllowBoxSelectionIdEditorOptionDefinition : ViewOptionDefinition<bool> {
+	sealed class AllowBoxSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.AllowBoxSelectionId;
 		public override bool Default => true;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class RefreshScreenOnChangeEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.RefreshScreenOnChangeId;
+		public override bool Default => false;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class RefreshScreenOnChangeWaitMilliSecsEditorOptionDefinition : ViewOptionDefinition<int> {
+		public override EditorOptionKey<int> Key => DefaultTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId;
+		public override int Default => DefaultTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
+		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
 	}
 }

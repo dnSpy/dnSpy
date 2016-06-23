@@ -62,6 +62,7 @@ namespace dnSpy.Text.Editor {
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
 			TextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
 			TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
+			TextView.Options.SetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeId, true);
 		}
 
 		public void Dispose() {

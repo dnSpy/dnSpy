@@ -170,6 +170,37 @@ namespace dnSpy.Text.Editor {
 			CreateFormattedLineSource(ViewportWidth);
 		}
 
+		public void InvalidateClassifications(SnapshotSpan span) {
+			Dispatcher.VerifyAccess();
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			InvalidateSpans(new[] { span });
+		}
+
+		void DelayScreenRefresh() {
+			if (IsClosed)
+				return;
+			if (screenRefreshTimer != null)
+				return;
+			int ms = Options.GetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId);
+			if (ms > 0)
+				screenRefreshTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(ms), DispatcherPriority.Normal, RefreshScreenHandler, Dispatcher);
+			else
+				RefreshScreen();
+		}
+		DispatcherTimer screenRefreshTimer;
+
+		void RefreshScreen() => DelayLayoutLines(true);
+		void RefreshScreenHandler(object sender, EventArgs e) {
+			StopRefreshTimer();
+			RefreshScreen();
+		}
+
+		void StopRefreshTimer() {
+			screenRefreshTimer?.Stop();
+			screenRefreshTimer = null;
+		}
+
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
 			// Refresh all lines since IFormattedTextSourceFactoryService uses the content type to
 			// pick a ITextParagraphPropertiesFactoryService
@@ -184,6 +215,8 @@ namespace dnSpy.Text.Editor {
 					InvalidateSpan(new SnapshotSpan(e.After, c.NewSpan));
 			}
 			InvalidateFormattedLineSource(false);
+			if (Options.GetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeId))
+				DelayScreenRefresh();
 		}
 
 		void AggregateClassifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e) =>
@@ -218,13 +251,13 @@ namespace dnSpy.Text.Editor {
 			Dispatcher.VerifyAccess();
 			if (IsClosed)
 				return;
-			if (delayLayoutLinesInProgress)
-				return;
-			delayLayoutLinesInProgress = true;
 			if (refreshAllLines) {
 				invalidatedRegions.Clear();
 				invalidatedRegions.Add(new SnapshotSpan(TextSnapshot, 0, TextSnapshot.Length));
 			}
+			if (delayLayoutLinesInProgress)
+				return;
+			delayLayoutLinesInProgress = true;
 			Dispatcher.BeginInvoke(new Action(DelayLayoutLinesHandler), DispatcherPriority.DataBind);
 		}
 		bool delayLayoutLinesInProgress;
@@ -275,6 +308,10 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name)
 				InvalidateFormattedLineSource(true);
+			else if (e.OptionId == DefaultTextViewOptions.RefreshScreenOnChangeId.Name) {
+				if (!Options.GetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeId))
+					StopRefreshTimer();
+			}
 		}
 
 		double lastFormattedLineSourceViewportWidth = double.NaN;
@@ -418,6 +455,7 @@ namespace dnSpy.Text.Editor {
 		public void Close() {
 			if (IsClosed)
 				throw new InvalidOperationException();
+			StopRefreshTimer();
 			RegisteredCommandElement.Unregister();
 			TextViewModel.Dispose();
 			IsClosed = true;

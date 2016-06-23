@@ -67,6 +67,12 @@ namespace dnSpy.Contracts.Text.Editor {
 		new IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition);
 
 		/// <summary>
+		/// Invalidates all classifications
+		/// </summary>
+		/// <param name="span">Span</param>
+		void InvalidateClassifications(SnapshotSpan span);
+
+		/// <summary>
 		/// Raised when <see cref="Background"/> has changed
 		/// </summary>
 		event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;

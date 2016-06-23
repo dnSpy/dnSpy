@@ -388,6 +388,7 @@
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultMouseProcessor.cs" />
+    <Compile Include="Text\Editor\DefaultReplEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultSmartIndent.cs" />
     <Compile Include="Text\Editor\DefaultTextEditorCommandInfoCreator.cs" />
     <Compile Include="Text\Editor\DefaultTextViewCommandTarget.cs" />
