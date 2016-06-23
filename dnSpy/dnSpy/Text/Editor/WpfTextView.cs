@@ -677,18 +677,5 @@ namespace dnSpy.Text.Editor {
 			foreach (IFormattedLine line in TextViewLines)
 				line.SetVisibleArea(new Rect(ViewportLeft, ViewportTop, viewportWidthOverride, ViewportHeightOverride));
 		}
-
-		protected override Size MeasureOverride(Size constraint) =>
-			new Size(FilterLength(constraint.Width, Width), FilterLength(constraint.Height, Height));
-
-		static double FilterLength(double length1, double length2) {
-			if (IsValidLength(length1))
-				return length1;
-			if (IsValidLength(length2))
-				return length2;
-			return 42;
-		}
-
-		static bool IsValidLength(double v) => v != double.PositiveInfinity && !double.IsNaN(v) && v >= 0;
 	}
 }
