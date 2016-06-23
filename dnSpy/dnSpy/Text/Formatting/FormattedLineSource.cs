@@ -148,6 +148,7 @@ namespace dnSpy.Text.Formatting {
 					var firstCharColumn = textSource.GetColumnOfFirstNonWhitespace();
 					if (firstCharColumn < column)
 						autoIndent += textLine.GetDistanceFromCharacterHit(new CharacterHit(firstCharColumn, 0));
+					autoIndent += TabSize / 2 * ColumnWidth;
 					if (autoIndent > MaxAutoIndent)
 						autoIndent = MaxAutoIndent;
 					// Base indentation should always be included
