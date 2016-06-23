@@ -150,11 +150,6 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 		}
 
-		/// <summary>
-		/// This event is called after a group of changes is completed.
-		/// </summary>
-		public event EventHandler TextChanged;
-
 		/// <inheritdoc/>
 		public int TextLength {
 			get {
@@ -246,8 +241,6 @@ namespace dnSpy.Text.AvalonEdit {
 			// from inside the event handlers
 			while (fireTextChanged) {
 				fireTextChanged = false;
-				if (TextChanged != null)
-					TextChanged(this, EventArgs.Empty);
 
 				int textLength = rope.Length;
 				if (textLength != oldTextLength)
