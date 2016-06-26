@@ -258,7 +258,7 @@ namespace dnSpy.Text.Editor {
 		double __preferredYCoordinate;
 
 		ITextViewLine GetVisibleCaretLine() {
-			if (textView.TextViewLines.Count == 0)
+			if (textView.TextViewLines == null)
 				return null;
 			var line = ContainingTextViewLine;
 			if (line.IsVisible())

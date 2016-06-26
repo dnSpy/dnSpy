@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,8 +51,6 @@ namespace dnSpy.Text.Editor {
 			int index = GetInsertIndex(mdLayer);
 			adornmentLayers.Insert(index, layer);
 			Children.Insert(index, layer);
-			layer.Width = ActualWidth;
-			layer.Height = ActualHeight;
 			return layer;
 		}
 
@@ -66,7 +65,14 @@ namespace dnSpy.Text.Editor {
 		public void OnParentSizeChanged(Size newSize) {
 			Width = newSize.Width;
 			Height = newSize.Height;
+			// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
+			// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
+			// It's ignored if HW acceleration is enabled.
+			// This will reduce the number of bytes sent over the network and should speed up the display
+			// if it's a slow connection.
 			VisualScrollableAreaClip = new Rect(0, 0, newSize.Width, newSize.Height);
+			// This should be enabled since the clipped region will be <= than requested
+			Debug.Assert(UseLayoutRounding);
 		}
 	}
 }

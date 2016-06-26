@@ -22,7 +22,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text;
@@ -33,13 +32,6 @@ namespace dnSpy.Text.Editor {
 	sealed class WpfTextViewLineCollection : IWpfTextViewLineCollection {
 		readonly ReadOnlyCollection<IWpfTextViewLine> lines;
 		readonly ITextSnapshot snapshot;
-
-		public WpfTextViewLineCollection() {
-			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(Array.Empty<IWpfTextViewLine>());
-			this.snapshot = null;
-			this.formattedSpan = default(SnapshotSpan);
-			this.IsValid = true;
-		}
 
 		public WpfTextViewLineCollection(ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
 			if (snapshot == null)
@@ -84,7 +76,7 @@ namespace dnSpy.Text.Editor {
 					if (l.IsVisible())
 						return l;
 				}
-				return lines.FirstOrDefault(a => a.IsValid) ?? lines.First();
+				return lines[0];
 			}
 		}
 
@@ -97,7 +89,7 @@ namespace dnSpy.Text.Editor {
 					if (l.IsVisible())
 						return l;
 				}
-				return lines.LastOrDefault(a => a.IsValid) ?? lines.Last();
+				return lines[lines.Count - 1];
 			}
 		}
 

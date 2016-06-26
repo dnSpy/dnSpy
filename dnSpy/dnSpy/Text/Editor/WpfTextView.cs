@@ -133,7 +133,6 @@ namespace dnSpy.Text.Editor {
 			this.adornmentLayerCollection = new AdornmentLayerCollection(this);
 			Properties = new PropertyCollection();
 			DnSpyTextEditor = dnSpyTextEditor;
-			TextViewLines = new WpfTextViewLineCollection();
 			TextViewModel = textViewModel;
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
@@ -276,7 +275,7 @@ namespace dnSpy.Text.Editor {
 
 			SnapshotPoint bufferPosition;
 			double verticalDistance;
-			if (TextViewLines.Count == 0) {
+			if (TextViewLines == null) {
 				verticalDistance = 0;
 				bufferPosition = new SnapshotPoint(TextSnapshot, 0);
 			}
@@ -398,10 +397,8 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (InLayout)
 					throw new InvalidOperationException();
-				Debug.Assert(wpfTextViewLineCollection != null);
 				return wpfTextViewLineCollection;
 			}
-			private set { wpfTextViewLineCollection = value; }
 		}
 		WpfTextViewLineCollection wpfTextViewLineCollection;
 
@@ -439,6 +436,12 @@ namespace dnSpy.Text.Editor {
 			var newViewState = new ViewState(this, effectiveViewportWidth, effectiveViewportHeight);
 			LayoutChanged?.Invoke(this, new TextViewLayoutChangedEventArgs(oldViewState, newViewState, newOrReformattedLines, translatedLines));
 			oldViewState = newViewState;
+			foreach (var p in visiblePhysicalLines) {
+				foreach (var l in p.Lines) {
+					l.SetChange(TextViewLineChange.None);
+					l.SetDeltaY(0);
+				}
+			}
 		}
 		ViewState oldViewState;
 
@@ -578,13 +581,13 @@ namespace dnSpy.Text.Editor {
 			if (InLayout)
 				throw new InvalidOperationException();
 			InLayout = true;
-			wpfTextViewLineCollection.Invalidate();
+			wpfTextViewLineCollection?.Invalidate();
 
 			var layoutHelper = new LayoutHelper(GetValidCachedLines(regionsToInvalidate), FormattedLineSource, TextViewModel, VisualSnapshot, TextSnapshot);
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
-			TextViewLines = new WpfTextViewLineCollection(TextSnapshot, layoutHelper.AllVisibleLines);
+			wpfTextViewLineCollection = new WpfTextViewLineCollection(TextSnapshot, layoutHelper.AllVisibleLines);
 
 			if (!InLayout)
 				throw new InvalidOperationException();
@@ -594,8 +597,10 @@ namespace dnSpy.Text.Editor {
 			var newOrReformattedLines = layoutHelper.NewOrReformattedLines.ToArray();
 			var translatedLines = layoutHelper.TranslatedLines.ToArray();
 
-			viewportTop = layoutHelper.NewViewportTop;
-			SetTop(adornmentLayerCollection, -viewportTop);
+			if (layoutHelper.NewViewportTop != viewportTop) {
+				viewportTop = layoutHelper.NewViewportTop;
+				SetTop(adornmentLayerCollection, -viewportTop);
+			}
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 		}
 
@@ -666,6 +671,8 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibleLines() => UpdateVisibleLines(ViewportWidth, ViewportHeight);
 		void UpdateVisibleLines(double viewportWidthOverride, double ViewportHeightOverride) {
+			if (TextViewLines == null)
+				return;
 			foreach (IFormattedLine line in TextViewLines)
 				line.SetVisibleArea(new Rect(ViewportLeft, ViewportTop, viewportWidthOverride, ViewportHeightOverride));
 		}

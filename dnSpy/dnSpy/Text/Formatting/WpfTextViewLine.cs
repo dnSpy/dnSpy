@@ -595,8 +595,10 @@ namespace dnSpy.Text.Formatting {
 		public void SetTop(double top) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			bool topChanged = this.top != top;
 			this.top = top;
-			UpdateVisualTransform();
+			if (topChanged || drawingVisual?.Transform == null)
+				UpdateVisualTransform();
 		}
 
 		public void SetVisibleArea(Rect visibleArea) {

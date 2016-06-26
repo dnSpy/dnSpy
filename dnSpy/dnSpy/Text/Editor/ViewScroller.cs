@@ -46,7 +46,7 @@ namespace dnSpy.Text.Editor {
 
 		public void ScrollViewportVerticallyByPixels(double distanceToScroll) {
 			var lines = textView.TextViewLines;
-			if (lines.Count == 0)
+			if (lines == null)
 				return;
 			var line = distanceToScroll >= 0 ? lines.FirstVisibleLine : lines.LastVisibleLine;
 			textView.DisplayTextLineContainingBufferPosition(line.Start, line.Top - textView.ViewportTop + distanceToScroll, ViewRelativePosition.Top);

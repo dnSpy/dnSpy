@@ -73,12 +73,16 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			double GetNewViewportTop() {
-				// So the code doesn't get used to a constant viewport top...
-				viewportTop = -viewportTop;
-				return viewportTop;
+			// Try to cause as little changes to the lines' Top property as possible.
+			// Existing lines should have a delta == 0 if possible.
+			double GetNewViewportTop(List<LineInfo> infos, double tempViewportTop) {
+				foreach (var info in infos) {
+					if (info.Line.VisibilityState == VisibilityState.Unattached)
+						continue;
+					return tempViewportTop - info.Y + info.Line.Top;
+				}
+				return tempViewportTop;
 			}
-			double viewportTop = 4242;
 
 			public void LayoutLines(SnapshotPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportLeft, double viewportWidthOverride, double viewportHeightOverride) {
 				NewViewportTop = 0;
@@ -90,6 +94,17 @@ namespace dnSpy.Text.Editor {
 					Debug.Assert(infos[0].Y == NewViewportTop);
 				}
 
+				// Include a hidden line before the first line and one after the last line,
+				// just like in VS' IWpfTextViewLine collection.
+				var firstInfo = infos[0];
+				var prevLine = GetLineBefore(firstInfo.Line);
+				if (prevLine != null)
+					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
+				var lastInfo = infos[infos.Count - 1];
+				var nextLine = GetLineAfter(lastInfo.Line);
+				if (nextLine != null)
+					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
+
 				var keptLines = new HashSet<PhysicalLine>();
 				foreach (var info in infos)
 					keptLines.Add(toPhysicalLine[info.Line]);
@@ -98,8 +113,9 @@ namespace dnSpy.Text.Editor {
 						physLine.Dispose();
 				}
 
-				var delta = GetNewViewportTop();
-				NewViewportTop += delta;
+				var newTop = GetNewViewportTop(infos, NewViewportTop);
+				var delta = -NewViewportTop + newTop;
+				NewViewportTop = newTop;
 				var visibleLines = new HashSet<IWpfTextViewLine>();
 				var visibleArea = new Rect(viewportLeft, NewViewportTop, viewportWidthOverride, viewportHeightOverride);
 				NewOrReformattedLines = new List<IWpfTextViewLine>();
@@ -115,9 +131,16 @@ namespace dnSpy.Text.Editor {
 						NewOrReformattedLines.Add(line);
 					}
 					else {
-						line.SetChange(TextViewLineChange.Translated);
-						line.SetDeltaY(info.Y - line.Top);
-						TranslatedLines.Add(line);
+						var deltaY = info.Y - line.Top;
+						if (deltaY == 0) {
+							line.SetChange(TextViewLineChange.None);
+							line.SetDeltaY(deltaY);
+						}
+						else {
+							line.SetChange(TextViewLineChange.Translated);
+							line.SetDeltaY(deltaY);
+							TranslatedLines.Add(line);
+						}
 					}
 					line.SetTop(delta + info.Y);
 					line.SetVisibleArea(visibleArea);
@@ -133,7 +156,7 @@ namespace dnSpy.Text.Editor {
 					info.Line.SetTop(foundVisibleLine ? double.PositiveInfinity : double.NegativeInfinity);
 					info.Line.SetVisibleArea(visibleArea);
 				}
-				Debug.Assert(NewOrReformattedLines.Count + TranslatedLines.Count == AllVisibleLines.Count);
+				Debug.Assert(NewOrReformattedLines.Count + TranslatedLines.Count <= AllVisibleLines.Count);
 				Debug.Assert(AllVisibleLines.Count >= 1);
 				if (AllVisibleLines.Count == 0)
 					throw new InvalidOperationException();
