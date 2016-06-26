@@ -349,8 +349,6 @@
 		<color name="gridviewlistitemselectedinactivefill" bg="#FF800080" />
 		<color name="gridviewlistviewitemfocusvisualstroke" bg="#FF800080" />
 		<color name="decompilertextviewwaitadorner" fg="#FFFFFFFF" bg="#A0000000" />
-		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#FFFFFFFF" />
-		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#FF000000" />
 		<color name="listarrowbackground" bg="#FFFFFFFF" />
 		<color name="treeviewitemmouseover" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="treeviewitemselected" fg="#FFFFFFFF" bg="#FF800080" />

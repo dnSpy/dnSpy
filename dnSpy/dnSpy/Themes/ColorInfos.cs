@@ -1449,14 +1449,6 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#C0FFFFFF",
 				BackgroundResourceKey = "DecompilerTextViewWaitAdornerBackground",
 			},
-			new BrushColorInfo(ColorType.AvalonEditSearchDropDownButtonActiveBorder, "AvalonEdit search drop down button active border") {
-				DefaultBackground = "#FF0A246A",
-				BackgroundResourceKey = "AvalonEditSearchDropDownButtonActiveBorder",
-			},
-			new BrushColorInfo(ColorType.AvalonEditSearchDropDownButtonActiveBackground, "AvalonEdit search drop down button active Background") {
-				DefaultBackground = "#FFB6BDD2",
-				BackgroundResourceKey = "AvalonEditSearchDropDownButtonActiveBackground",
-			},
 			new BrushColorInfo(ColorType.ListArrowBackground, "List arrow background") {
 				DefaultBackground = "Black",
 				BackgroundResourceKey = "ListArrowBackground",

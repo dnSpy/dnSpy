@@ -155,7 +155,6 @@ namespace dnSpy.Text.Editor {
 
 			searchPanel = SearchPanel.Install(TextArea);
 			searchPanel.RegisterCommands(this.CommandBindings);
-			searchPanel.Localization = new AvalonEditSearchPanelLocalization();
 
 			TextArea.SelectionCornerRadius = 0;
 			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);

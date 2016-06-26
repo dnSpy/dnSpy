@@ -395,7 +395,6 @@
     <Compile Include="Text\Editor\AdornmentLayerCollection.cs" />
     <Compile Include="Text\Editor\AdornmentLayerDefinitionService.cs" />
     <Compile Include="Text\Editor\AdornmentLayerElement.cs" />
-    <Compile Include="Text\Editor\AvalonEditSearchPanelLocalization.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />

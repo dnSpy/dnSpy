@@ -531,8 +531,6 @@ namespace dnSpy.Contracts.Themes {
 		GridViewListItemSelectedInactiveFill,
 		GridViewListViewItemFocusVisualStroke,
 		DecompilerTextViewWaitAdorner,
-		AvalonEditSearchDropDownButtonActiveBorder,
-		AvalonEditSearchDropDownButtonActiveBackground,
 		ListArrowBackground,
 		TreeViewItemMouseOver,
 		TreeViewItemSelected,
