@@ -20,6 +20,7 @@
 using System;
 using System.Linq;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Formatting;
 
@@ -50,7 +51,7 @@ namespace dnSpy.Text.Editor {
 		readonly TextCaretLayer textCaretLayer;
 		double preferredXCoordinate;
 
-		public TextCaret(ITextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService) {
+		public TextCaret(ITextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService, IClassificationFormatMap classificationFormatMap) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (caretLayer == null)
@@ -58,7 +59,6 @@ namespace dnSpy.Text.Editor {
 			if (smartIndentationService == null)
 				throw new ArgumentNullException(nameof(smartIndentationService));
 			this.textView = textView;
-			this.textCaretLayer = new TextCaretLayer(this, caretLayer);
 			this.smartIndentationService = smartIndentationService;
 			this.preferredXCoordinate = 0;
 			this.__preferredYCoordinate = 0;
@@ -68,6 +68,7 @@ namespace dnSpy.Text.Editor {
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged += Options_OptionChanged;
+			this.textCaretLayer = new TextCaretLayer(this, caretLayer, classificationFormatMap);
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -105,7 +106,33 @@ namespace dnSpy.Text.Editor {
 			a.BufferPosition.Position == b.BufferPosition.Position;
 
 		public void EnsureVisible() {
-			//TODO:
+			var line = this.ContainingTextViewLine;
+			if (line.VisibilityState != VisibilityState.FullyVisible) {
+				ViewRelativePosition relativeTo;
+				var firstVisibleLine = textView.TextViewLines?.FirstVisibleLine;
+				if (firstVisibleLine == null || !firstVisibleLine.IsVisible())
+					relativeTo = ViewRelativePosition.Top;
+				else if (line.Start.Position <= firstVisibleLine.Start.Position)
+					relativeTo = ViewRelativePosition.Top;
+				else
+					relativeTo = ViewRelativePosition.Bottom;
+				textView.DisplayTextLineContainingBufferPosition(line.Start, 0, relativeTo);
+			}
+
+			double left = textCaretLayer.Left;
+			double right = textCaretLayer.Right;
+
+			const double EXTRA_SCROLL_WIDTH = 200;
+			double availWidth = Math.Max(0, textView.ViewportWidth - textCaretLayer.Width);
+			double extraScroll;
+			if (availWidth >= EXTRA_SCROLL_WIDTH)
+				extraScroll = EXTRA_SCROLL_WIDTH;
+			else
+				extraScroll = availWidth / 2;
+			if (left < textView.ViewportLeft)
+				textView.ViewportLeft = left - extraScroll;
+			else if (right > textView.ViewportRight)
+				textView.ViewportLeft = right + extraScroll - textView.ViewportWidth;
 		}
 
 		bool CanAutoIndent(ITextViewLine line) {
@@ -145,7 +172,8 @@ namespace dnSpy.Text.Editor {
 				var wpfView = textView as IWpfTextView;
 				if (wpfView != null) {
 					int indentation = IndentHelper.GetDesiredIndentation(textView, smartIndentationService, textLine.Start.GetContainingLine()) ?? 0;
-					xCoordinate = indentation * wpfView.FormattedLineSource.ColumnWidth;
+					var textBounds = textLine.GetExtendedCharacterBounds(new VirtualSnapshotPoint(textLine.Start, indentation));
+					xCoordinate = textBounds.Leading;
 					filterPos = false;
 				}
 			}

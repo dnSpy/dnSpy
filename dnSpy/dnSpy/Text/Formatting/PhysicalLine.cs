@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Text.Editor;
 
 namespace dnSpy.Text.Formatting {
 	/// <summary>
@@ -45,6 +46,20 @@ namespace dnSpy.Text.Formatting {
 			IsLastLine = snapshotLine.LineNumber + 1 == snapshotLine.Snapshot.LineCount;
 		}
 
+		public bool Contains(SnapshotPoint point) {
+			if (disposed)
+				throw new ObjectDisposedException(nameof(PhysicalLine));
+			if (point.Snapshot == null)
+				throw new ArgumentException();
+			if (point.Snapshot != BufferSpan.Snapshot)
+				return false;
+			if (point < BufferSpan.Start)
+				return false;
+			if (IsLastLine)
+				return point <= BufferSpan.End;
+			return point < BufferSpan.End;
+		}
+
 		public IFormattedLine FindFormattedLineByBufferPosition(SnapshotPoint point) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(PhysicalLine));
@@ -52,11 +67,13 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			if (point.Snapshot != BufferSpan.Snapshot)
 				return null;
+			if (!Contains(point))
+				return null;
 			foreach (var line in Lines) {
-				if (line.ContainsBufferPosition(point))
+				if (point <= line.Start || line.ContainsBufferPosition(point))
 					return line;
 			}
-			return null;
+			return Lines[Lines.Count - 1];
 		}
 
 		public bool OverlapsWith(NormalizedSnapshotSpanCollection regions) {

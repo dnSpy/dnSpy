@@ -88,8 +88,11 @@ namespace dnSpy.Text {
 					if (!infoPart.FindByDocOffset(offs, out defaultTextLength, out color, out tokenLength))
 						yield break;
 
-					if (tokenLength != 0)
-						yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ThemeClassificationTypes.GetClassificationTypeByColorObject(color)));
+					if (tokenLength != 0) {
+						//TODO: Remove this check once the snapshot has been verified, see above TODO
+						if (offs + defaultTextLength + tokenLength <= snapshot.Length)
+							yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ThemeClassificationTypes.GetClassificationTypeByColorObject(color)));
+					}
 
 					offs += defaultTextLength + tokenLength;
 				}

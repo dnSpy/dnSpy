@@ -18,18 +18,55 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
-	sealed class TextCaretLayer {
-		public bool OverwriteMode { get; set; }
+	sealed class TextCaretLayer : UIElement {
 		public double Left => left;
 		public double Right => Left + Width;
-		public double Top => top;
 		public double Bottom => Top + Height;
 		public double Width => width;
-		public double Height => height;
 		double left, top, width, height;
+		bool drawCaretShape;
+		bool overwriteMode;
+		DispatcherTimer dispatcherTimer;
+		readonly CaretGeometry caretGeometry;
+		Brush caretBrush;
+		Brush overwriteCaretBrush;
+
+		public bool OverwriteMode {
+			get { return overwriteMode; }
+			set {
+				if (overwriteMode != value) {
+					overwriteMode = value;
+					UpdateCaretProperties();
+				}
+			}
+		}
+
+		public double Top {
+			get {
+				if (!drawCaretShape)
+					throw new InvalidOperationException();
+				return top;
+			}
+		}
+
+		public double Height {
+			get {
+				if (!drawCaretShape)
+					throw new InvalidOperationException();
+				return height;
+			}
+		}
 
 		public bool IsHidden {
 			get { return isHidden; }
@@ -38,9 +75,10 @@ namespace dnSpy.Text.Editor {
 					return;
 				isHidden = value;
 				if (isHidden)
-					layer.RemoveAllAdornments();
+					RemoveAdornment();
 				else {
-					//TODO: Add it back
+					AddAdornment();
+					UpdateCaretProperties();
 				}
 			}
 		}
@@ -48,18 +86,197 @@ namespace dnSpy.Text.Editor {
 
 		readonly TextCaret textCaret;
 		readonly IAdornmentLayer layer;
+		readonly IClassificationFormatMap classificationFormatMap;
 
-		public TextCaretLayer(TextCaret textCaret, IAdornmentLayer layer) {
+		public TextCaretLayer(TextCaret textCaret, IAdornmentLayer layer, IClassificationFormatMap classificationFormatMap) {
 			if (textCaret == null)
 				throw new ArgumentNullException(nameof(textCaret));
 			if (layer == null)
 				throw new ArgumentNullException(nameof(layer));
 			this.textCaret = textCaret;
 			this.layer = layer;
-			left = top = width = height = 0;
+			this.classificationFormatMap = classificationFormatMap;
+			this.caretGeometry = new CaretGeometry();
+			textCaret.PositionChanged += TextCaret_PositionChanged;
+			layer.TextView.LayoutChanged += TextView_LayoutChanged;
+			layer.TextView.Selection.SelectionChanged += Selection_SelectionChanged;
+			layer.TextView.VisualElement.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_GotKeyboardFocus), true);
+			layer.TextView.VisualElement.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_LostKeyboardFocus), true);
+			layer.TextView.VisualElement.IsVisibleChanged += VisualElement_IsVisibleChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+			AddAdornment();
+		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+			caretBrush = null;
+			overwriteCaretBrush = null;
+			InvalidateVisual();
+		}
+
+		void VisualElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			if (!layer.TextView.VisualElement.IsVisible)
+				StopTimer();
+			else
+				UpdateCaretProperties();
+		}
+
+		void VisualElement_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			if (!IsHidden)
+				UpdateCaretProperties();
+		}
+
+		void VisualElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			layer.Opacity = 0;
+			StopTimer();
+		}
+
+		void RemoveAdornment() => layer.RemoveAllAdornments();
+		void AddAdornment() => layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
+
+		struct SelectionState {
+			byte state;
+
+			public SelectionState(ITextSelection selection) {
+				this.state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
+			}
+
+			public bool Equals(SelectionState other) => state == other.state;
+		}
+
+		void Selection_SelectionChanged(object sender, EventArgs e) {
+			if (!new SelectionState(layer.TextView.Selection).Equals(oldSelectionState)) {
+				// Delay this because the caret's position hasn't been updated yet.
+				layer.TextView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(UpdateCaretProperties));
+			}
+		}
+		SelectionState oldSelectionState;
+
+		void TextCaret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => UpdateCaretProperties();
+		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateCaretProperties();
+
+		void UpdateCaretProperties() {
+			StopTimer();
+			oldSelectionState = new SelectionState(layer.TextView.Selection);
+			var line = textCaret.ContainingTextViewLine;
+			bool oldDrawCaretShape = drawCaretShape;
+			drawCaretShape = line.VisibilityState != VisibilityState.Unattached;
+			bool drawOverwriteMode = OverwriteMode && textCaret.Position.BufferPosition < line.End && layer.TextView.Selection.IsEmpty;
+
+			var vpos = textCaret.Position.VirtualBufferPosition;
+			if (drawOverwriteMode) {
+				var textBounds = line.GetExtendedCharacterBounds(vpos);
+				left = textBounds.Left;
+				width = textBounds.Width;
+			}
+			else {
+				if (vpos.Position != line.Start && !vpos.IsInVirtualSpace)
+					left = line.GetExtendedCharacterBounds(vpos.Position - 1).Trailing;
+				else
+					left = line.GetExtendedCharacterBounds(vpos).Leading;
+				width = SystemParameters.CaretWidth;
+			}
+
+			height = line.TextHeight;
+			if (drawCaretShape) {
+				if (layer.TextView.VisualElement.IsKeyboardFocused && layer.TextView.VisualElement.IsVisible)
+					StartTimer();
+				top = line.TextTop;
+				Canvas.SetLeft(this, left);
+				Canvas.SetTop(this, top);
+			}
+			else {
+				layer.Opacity = 0;
+				top = double.NaN;
+			}
+
+			var invalidateVisual = caretGeometry.SetProperties(width, height, drawOverwriteMode);
+			invalidateVisual |= oldDrawCaretShape != drawCaretShape;
+			if (invalidateVisual)
+				InvalidateVisual();
+		}
+
+		void StopTimer() {
+			dispatcherTimer?.Stop();
+			dispatcherTimer = null;
+		}
+
+		void StartTimer() {
+			if (dispatcherTimer != null)
+				throw new InvalidOperationException();
+			// Make sure the caret doesn't blink when it's moved
+			layer.Opacity = 1;
+			var blinkTimeMs = SystemTextCaret.BlinkTimeMilliSeconds;
+			if (blinkTimeMs > 0)
+				dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(blinkTimeMs), DispatcherPriority.Background, OnToggleBlink, layer.TextView.VisualElement.Dispatcher);
+		}
+
+		void OnToggleBlink(object sender, EventArgs e) =>
+			layer.Opacity = layer.Opacity == 0 ? 1 : 0;
+
+		protected override void OnRender(DrawingContext drawingContext) {
+			base.OnRender(drawingContext);
+			Debug.Assert((overwriteCaretBrush == null) == (caretBrush == null));
+			if (caretBrush == null) {
+				caretBrush = classificationFormatMap.DefaultTextProperties.ForegroundBrush;
+				Debug.Assert(!classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty);
+				if (classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty)
+					caretBrush = Brushes.Black;
+				caretBrush = caretBrush.Clone();
+				overwriteCaretBrush = caretBrush.Clone();
+				overwriteCaretBrush.Opacity = 0.5;
+				if (caretBrush.CanFreeze)
+					caretBrush.Freeze();
+				if (overwriteCaretBrush.CanFreeze)
+					overwriteCaretBrush.Freeze();
+			}
+			drawingContext.DrawGeometry(caretGeometry.IsOverwriteMode ? overwriteCaretBrush : caretBrush, null, caretGeometry.Geometry);
+		}
+
+		sealed class CaretGeometry {
+			public bool IsOverwriteMode { get; private set; }
+
+			public Geometry Geometry {
+				get {
+					if (geometry == null) {
+						var geo = new RectangleGeometry(new Rect(0, 0, width, height));
+						geo.Freeze();
+						geometry = geo;
+					}
+					return geometry;
+				}
+			}
+			Geometry geometry;
+			double width, height;
+
+			public CaretGeometry() {
+				width = double.NaN;
+				height = double.NaN;
+				IsOverwriteMode = false;
+			}
+
+			public bool SetProperties(double width, double height, bool overwriteMode) {
+				var sameWidthHeight = this.width == width && this.height == height;
+				if (sameWidthHeight && IsOverwriteMode == overwriteMode)
+					return false;
+
+				if (!sameWidthHeight)
+					geometry = null;
+				this.width = width;
+				this.height = height;
+				IsOverwriteMode = overwriteMode;
+				return true;
+			}
 		}
 
 		public void Dispose() {
+			StopTimer();
+			textCaret.PositionChanged -= TextCaret_PositionChanged;
+			layer.TextView.LayoutChanged -= TextView_LayoutChanged;
+			layer.TextView.Selection.SelectionChanged -= Selection_SelectionChanged;
+			layer.TextView.VisualElement.GotKeyboardFocus -= VisualElement_GotKeyboardFocus;
+			layer.TextView.VisualElement.LostKeyboardFocus -= VisualElement_LostKeyboardFocus;
+			layer.TextView.VisualElement.IsVisibleChanged -= VisualElement_IsVisibleChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 		}
 	}
 }

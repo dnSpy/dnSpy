@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor {
 			readonly ITextSnapshot visualSnapshot;
 			readonly ITextSnapshot editSnapshot;
 			readonly Dictionary<IFormattedLine, PhysicalLine> toPhysicalLine;
-			readonly HashSet<IFormattedLine> oldVisibleLines;
+			readonly HashSet<ITextViewLine> oldVisibleLines;
 
 			public double NewViewportTop { get; private set; }
 			public List<PhysicalLine> AllVisiblePhysicalLines { get; private set; }
@@ -44,23 +44,20 @@ namespace dnSpy.Text.Editor {
 			public List<IWpfTextViewLine> NewOrReformattedLines { get; private set; }
 			public List<IWpfTextViewLine> TranslatedLines { get; private set; }
 
-			public LayoutHelper(List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
+			public LayoutHelper(HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
 				this.oldLines = oldLines;
 				this.formattedLineSource = formattedLineSource;
 				this.textViewModel = textViewModel;
 				this.visualSnapshot = visualSnapshot;
 				this.editSnapshot = editSnapshot;
 				this.toPhysicalLine = new Dictionary<IFormattedLine, PhysicalLine>();
-				this.oldVisibleLines = new HashSet<IFormattedLine>();
+				this.oldVisibleLines = oldVisibleLines;
 
 				Debug.Assert(oldLines.All(a => a.BufferSpan.Snapshot == editSnapshot));
 				foreach (var physLine in oldLines) {
 					physLine.TranslateLinesTo(visualSnapshot, editSnapshot);
-					foreach (var line in physLine.Lines) {
-						if (line.IsVisible())
-							oldVisibleLines.Add(line);
+					foreach (var line in physLine.Lines)
 						toPhysicalLine[line] = physLine;
-					}
 				}
 			}
 
@@ -125,13 +122,14 @@ namespace dnSpy.Text.Editor {
 					var line = info.Line;
 					visibleLines.Add(line);
 					AllVisibleLines.Add(line);
+					double newLineTop = delta + info.Y;
 					if (!oldVisibleLines.Contains(line)) {
 						line.SetChange(TextViewLineChange.NewOrReformatted);
 						line.SetDeltaY(0);
 						NewOrReformattedLines.Add(line);
 					}
 					else {
-						var deltaY = info.Y - line.Top;
+						var deltaY = newLineTop - line.Top;
 						if (deltaY == 0) {
 							line.SetChange(TextViewLineChange.None);
 							line.SetDeltaY(deltaY);
@@ -142,7 +140,7 @@ namespace dnSpy.Text.Editor {
 							TranslatedLines.Add(line);
 						}
 					}
-					line.SetTop(delta + info.Y);
+					line.SetTop(newLineTop);
 					line.SetVisibleArea(visibleArea);
 				}
 				bool foundVisibleLine = false;
@@ -216,12 +214,7 @@ namespace dnSpy.Text.Editor {
 				return lineInfos;
 			}
 
-			IFormattedLine GetLine(SnapshotPoint point) {
-				var physLine = GetPhysicalLine(point);
-				if (point <= physLine.Lines[0].Start)
-					return physLine.Lines[0];
-				return physLine.Lines[physLine.Lines.Count - 1];
-			}
+			IFormattedLine GetLine(SnapshotPoint point) => GetPhysicalLine(point).FindFormattedLineByBufferPosition(point);
 
 			IFormattedLine GetLineBefore(IFormattedLine line) {
 				var physLine = GetPhysicalLine(line);
@@ -253,7 +246,7 @@ namespace dnSpy.Text.Editor {
 
 			PhysicalLine GetPhysicalLine(SnapshotPoint point) {
 				foreach (var line in oldLines) {
-					if (line.BufferSpan.Contains(point.Position))
+					if (line.Contains(point))
 						return line;
 				}
 

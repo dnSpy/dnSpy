@@ -449,6 +449,7 @@
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplSubBuffer.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
+    <Compile Include="Text\Editor\SystemTextCaret.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
     <Compile Include="Text\Editor\TextCaretLayer.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />

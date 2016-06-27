@@ -151,7 +151,7 @@ namespace dnSpy.Text.Editor {
 
 			this.textLayer = new TextLayer(this, GetAdornmentLayer(PredefinedAdornmentLayers.Text));
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection));
-			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService);
+			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService, classificationFormatMap);
 
 			Children.Add(adornmentLayerCollection);
 			this.Cursor = Cursors.IBeam;
@@ -581,9 +581,10 @@ namespace dnSpy.Text.Editor {
 			if (InLayout)
 				throw new InvalidOperationException();
 			InLayout = true;
+			var oldVisibleLines = new HashSet<ITextViewLine>(wpfTextViewLineCollection == null ? (IList<ITextViewLine>)Array.Empty<ITextViewLine>() : wpfTextViewLineCollection);
 			wpfTextViewLineCollection?.Invalidate();
 
-			var layoutHelper = new LayoutHelper(GetValidCachedLines(regionsToInvalidate), FormattedLineSource, TextViewModel, VisualSnapshot, TextSnapshot);
+			var layoutHelper = new LayoutHelper(oldVisibleLines, GetValidCachedLines(regionsToInvalidate), FormattedLineSource, TextViewModel, VisualSnapshot, TextSnapshot);
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);

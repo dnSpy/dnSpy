@@ -345,7 +345,7 @@ namespace dnSpy.Text.Formatting {
 			this.lineBreakLength = isLastTextViewLineForSnapshotLine ? bufferLine.LineBreakLength : 0;
 			this.virtualSpaceWidth = virtualSpaceWidth;
 			this.textLeft = indentation;
-			this.textWidth = Math.Max(0, textLine.WidthIncludingTrailingWhitespace - indentation);
+			this.textWidth = textLine.WidthIncludingTrailingWhitespace;
 			this.extentIncludingLineBreak = span;
 			this.endOfLineWidth = Math.Floor(this.textHeight * 0.58333333333333337);// Same as VS
 			this.width = this.textWidth + (this.lineBreakLength == 0 ? 0 : this.endOfLineWidth);
@@ -414,8 +414,10 @@ namespace dnSpy.Text.Formatting {
 
 			//TODO: Use textOnly
 
-			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate);
-			return linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex + charHit.TrailingLength);
+			Debug.Assert(TextLines.Count == 1);
+			double extra = TextLeft;
+			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate - extra);
+			return linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex);
 		}
 
 		public VirtualSnapshotPoint GetVirtualBufferPositionFromXCoordinate(double xCoordinate) {
@@ -462,7 +464,15 @@ namespace dnSpy.Text.Formatting {
 					return new CF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
 				return new CF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
-			throw new NotImplementedException();//TODO:
+
+			var span = GetTextElementSpan(bufferPosition.Position);
+			var part = linePartsCollection.GetLinePartFromBufferPosition(span.Start);
+			if (part == null)
+				return GetCharacterBounds(bufferPosition);
+			var elem = part.Value.AdornmentElement;
+			if (elem == null)
+				return GetCharacterBounds(bufferPosition);
+			throw new NotImplementedException();
 		}
 
 		public CF.TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) =>
@@ -477,7 +487,18 @@ namespace dnSpy.Text.Formatting {
 					return new CF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
 				return new CF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
-			throw new NotImplementedException();//TODO:
+			return GetTextBounds(GetTextElementSpan(bufferPosition.Position).Start);
+		}
+
+		CF.TextBounds GetTextBounds(SnapshotPoint point) {
+			if (point.Snapshot != Snapshot)
+				throw new ArgumentException();
+			int col = linePartsCollection.ConvertBufferPositionToColumn(point);
+			double start = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 0));
+			double end = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 1));
+			double extra = TextLeft;
+			Debug.Assert(textLines.Count == 1);
+			return new CF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
 		}
 
 		public TextRunProperties GetCharacterFormatting(SnapshotPoint bufferPosition) {
