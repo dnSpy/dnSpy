@@ -99,6 +99,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.DefaultDisabled);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			SetNewDocument();
@@ -175,7 +176,6 @@ namespace dnSpy.Text.Editor {
 			dispatcher.VerifyAccess();
 
 			var currentLine = wpfTextView.Caret.Position.BufferPosition.GetContainingLine();
-			bool canMoveCaret = currentLine.Start == LastLine.Start;
 
 			ColorAndText[] newPendingOutput;
 			var sb = new StringBuilder();
@@ -194,11 +194,6 @@ namespace dnSpy.Text.Editor {
 
 			cachedTextTokenColors.Flush();
 			RawAppend(sb.ToString());
-
-			if (canMoveCaret) {
-				wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, wpfTextView.TextSnapshot.Length));
-				wpfTextView.Caret.EnsureVisible();
-			}
 		}
 
 		void FlushOutput() {

@@ -19,6 +19,7 @@
 
 using System;
 using System.Linq;
+using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -46,12 +47,12 @@ namespace dnSpy.Text.Editor {
 		public CaretPosition Position => currentPosition;
 		CaretPosition currentPosition;
 
-		readonly ITextView textView;
+		readonly IWpfTextView textView;
 		readonly ISmartIndentationService smartIndentationService;
 		readonly TextCaretLayer textCaretLayer;
 		double preferredXCoordinate;
 
-		public TextCaret(ITextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService, IClassificationFormatMap classificationFormatMap) {
+		public TextCaret(IWpfTextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService, IClassificationFormatMap classificationFormatMap) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (caretLayer == null)
@@ -88,9 +89,25 @@ namespace dnSpy.Text.Editor {
 		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
 			OnCaretPositionChanged();
+			if (textView.Options.GetOptionValue(DefaultTextViewOptions.AutoScrollId)) {
+				// Delay this so we don't cause extra events to be raised inside the Changed event
+				textView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(AutoScrollCaret));
+			}
 		}
 
-		void OnCaretPositionChanged() => SetPosition(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot));
+		void AutoScrollCaret() {
+			if (textView.IsClosed)
+				return;
+			if (!textView.Options.GetOptionValue(DefaultTextViewOptions.AutoScrollId))
+				return;
+			var line = ContainingTextViewLine;
+			if (line.IsLastDocumentLine()) {
+				MoveTo(line.End);
+				EnsureVisible();
+			}
+		}
+
+		void OnCaretPositionChanged() => SetPosition(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot, Affinity == PositionAffinity.Predecessor ? PointTrackingMode.Negative : PointTrackingMode.Positive));
 		void SetPosition(VirtualSnapshotPoint bufferPosition) {
 			var oldPos = currentPosition;
 			var bufPos = bufferPosition;

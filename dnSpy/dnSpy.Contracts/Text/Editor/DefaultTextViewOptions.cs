@@ -23,6 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class DefaultTextViewOptions {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public static readonly EditorOptionKey<bool> AutoScrollId = new EditorOptionKey<bool>("ITextView/AutoScroll");
 		public static readonly EditorOptionKey<bool> CutOrCopyBlankLineIfNoSelectionId = new EditorOptionKey<bool>("ITextView/CutOrCopyBlankLineIfNoSelection");
 		public static readonly EditorOptionKey<bool> DisplayUrlsAsHyperlinksId = new EditorOptionKey<bool>("ITextView/DisplayUrlsAsHyperlinks");
 		public static readonly EditorOptionKey<bool> DragDropEditingId = new EditorOptionKey<bool>("ITextView/DragDrop");
@@ -34,9 +35,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> ViewProhibitUserInputId = new EditorOptionKey<bool>("ITextView/ProhibitUserInput");
 		public static readonly EditorOptionKey<bool> CanChangeWordWrapStyleId = new EditorOptionKey<bool>("ITextView/CanChangeWordWrapStyle");
 		public static readonly EditorOptionKey<WordWrapStyles> WordWrapStyleId = new EditorOptionKey<WordWrapStyles>("ITextView/WordWrapStyle");
-		public static readonly EditorOptionKey<bool> AllowBoxSelectionId = new EditorOptionKey<bool>("ITextView/AllowBoxSelectionId");
+		public static readonly EditorOptionKey<bool> AllowBoxSelectionId = new EditorOptionKey<bool>("ITextView/AllowBoxSelection");
 		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>("ITextView/RefreshScreenOnChange");
-		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecsId = new EditorOptionKey<int>("ITextView/RefreshScreenOnChangeWaitMilliSecsId");
+		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecsId = new EditorOptionKey<int>("ITextView/RefreshScreenOnChangeWaitMilliSecs");
 		public const int DefaultRefreshScreenOnChangeWaitMilliSecs = 150;
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}

@@ -22,6 +22,12 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
+	sealed class AutoScrollEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.AutoScrollId;
+		public override bool Default => false;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
 	sealed class CutOrCopyBlankLineIfNoSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId;
 		public override bool Default => true;
