@@ -18,7 +18,13 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -49,7 +55,9 @@ namespace dnSpy.Text.Editor {
 
 		readonly IWpfTextView textView;
 		readonly ISmartIndentationService smartIndentationService;
+		readonly IClassificationFormatMap classificationFormatMap;
 		readonly TextCaretLayer textCaretLayer;
+		readonly ImeState imeState;
 		double preferredXCoordinate;
 
 		public TextCaret(IWpfTextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService, IClassificationFormatMap classificationFormatMap) {
@@ -60,7 +68,9 @@ namespace dnSpy.Text.Editor {
 			if (smartIndentationService == null)
 				throw new ArgumentNullException(nameof(smartIndentationService));
 			this.textView = textView;
+			this.imeState = new ImeState();
 			this.smartIndentationService = smartIndentationService;
+			this.classificationFormatMap = classificationFormatMap;
 			this.preferredXCoordinate = 0;
 			this.__preferredYCoordinate = 0;
 			Affinity = PositionAffinity.Successor;
@@ -69,7 +79,210 @@ namespace dnSpy.Text.Editor {
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged += Options_OptionChanged;
+			textView.VisualElement.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_GotKeyboardFocus), true);
+			textView.VisualElement.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_LostKeyboardFocus), true);
+			textView.LayoutChanged += TextView_LayoutChanged;
 			this.textCaretLayer = new TextCaretLayer(this, caretLayer, classificationFormatMap);
+			InputMethod.SetIsInputMethodSuspended(textView.VisualElement, true);
+		}
+
+		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (imeState.CompositionStarted)
+				MoveImeCompositionWindow();
+		}
+
+		void VisualElement_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => InitializeIME();
+		void VisualElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => StopIME(true);
+
+		void CancelCompositionString() {
+			if (imeState.Context == IntPtr.Zero)
+				return;
+			const int NI_COMPOSITIONSTR = 0x0015;
+			const int CPS_CANCEL = 0x0004;
+			ImeState.ImmNotifyIME(imeState.Context, NI_COMPOSITIONSTR, CPS_CANCEL, 0);
+		}
+
+		void InitializeIME() {
+			Debug.Assert(imeState.HwndSource == null);
+			imeState.HwndSource = PresentationSource.FromVisual(textView.VisualElement) as HwndSource;
+			if (imeState.HwndSource == null)
+				return;
+
+			Debug.Assert(imeState.Context == IntPtr.Zero);
+			Debug.Assert(imeState.HWND == IntPtr.Zero);
+			Debug.Assert(imeState.OldContext == IntPtr.Zero);
+			if (textView.Options.GetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId)) {
+				imeState.Context = IntPtr.Zero;
+				imeState.HWND = IntPtr.Zero;
+			}
+			else {
+				imeState.HWND = ImeState.ImmGetDefaultIMEWnd(IntPtr.Zero);
+				imeState.Context = ImeState.ImmGetContext(imeState.HWND);
+			}
+			imeState.OldContext = ImeState.ImmAssociateContext(imeState.HwndSource.Handle, imeState.Context);
+			imeState.HwndSource.AddHook(WndProc);
+			TfThreadMgrHelper.SetFocus();
+		}
+
+		void StopIME(bool cancelCompositionString) {
+			if (imeState.HwndSource == null)
+				return;
+			if (cancelCompositionString)
+				CancelCompositionString();
+			ImeState.ImmAssociateContext(imeState.HwndSource.Handle, imeState.OldContext);
+			ImeState.ImmReleaseContext(imeState.HWND, imeState.Context);
+			imeState.HwndSource.RemoveHook(WndProc);
+			imeState.Clear();
+			textCaretLayer.SetImeStarted(false);
+		}
+
+		static class TfThreadMgrHelper {
+			static bool initd;
+			static ITfThreadMgr tfThreadMgr;
+
+			[DllImport("msctf")]
+			static extern int TF_CreateThreadMgr(out ITfThreadMgr pptim);
+
+			[ComImport, Guid("AA80E801-2021-11D2-93E0-0060B067B86E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+			interface ITfThreadMgr {
+				void _VtblGap0_5();
+				[PreserveSig]
+				int SetFocus(IntPtr pdimFocus);
+			}
+
+			public static void SetFocus() {
+				if (!initd) {
+					initd = true;
+					TF_CreateThreadMgr(out tfThreadMgr);
+				}
+				tfThreadMgr?.SetFocus(IntPtr.Zero);
+			}
+		}
+
+		sealed class ImeState {
+			[DllImport("imm32")]
+			public static extern IntPtr ImmGetDefaultIMEWnd(IntPtr hWnd);
+			[DllImport("imm32")]
+			public static extern IntPtr ImmGetContext(IntPtr hWnd);
+			[DllImport("imm32")]
+			public static extern IntPtr ImmAssociateContext(IntPtr hWnd, IntPtr hIMC);
+			[DllImport("imm32")]
+			public static extern bool ImmReleaseContext(IntPtr hWnd, IntPtr hIMC);
+			[DllImport("imm32")]
+			public static extern bool ImmNotifyIME(IntPtr hIMC, uint dwAction, uint dwIndex, uint dwValue);
+			[DllImport("imm32")]
+			public static extern bool ImmSetCompositionWindow(IntPtr hIMC, ref COMPOSITIONFORM lpCompForm);
+
+			[StructLayout(LayoutKind.Sequential)]
+			public struct COMPOSITIONFORM {
+				public int dwStyle;
+				public POINT ptCurrentPos;
+				public RECT rcArea;
+			}
+
+			[StructLayout(LayoutKind.Sequential)]
+			public class POINT {
+				public int x;
+				public int y;
+
+				public POINT(int x, int y) {
+					this.x = x;
+					this.y = y;
+				}
+			}
+
+			[StructLayout(LayoutKind.Sequential)]
+			public struct RECT {
+				public int left;
+				public int top;
+				public int right;
+				public int bottom;
+
+				public RECT(int left, int top, int right, int bottom) {
+					this.left = left;
+					this.top = top;
+					this.right = right;
+					this.bottom = bottom;
+				}
+			}
+
+			public HwndSource HwndSource;
+			public IntPtr Context;
+			public IntPtr HWND;
+			public IntPtr OldContext;
+			public bool CompositionStarted;
+
+			public void Clear() {
+				HwndSource = null;
+				Context = IntPtr.Zero;
+				HWND = IntPtr.Zero;
+				OldContext = IntPtr.Zero;
+				CompositionStarted = false;
+			}
+		}
+
+		IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
+			if (textView.IsClosed)
+				return IntPtr.Zero;
+			const int WM_IME_STARTCOMPOSITION = 0x010D;
+			const int WM_IME_ENDCOMPOSITION = 0x010E;
+			const int WM_IME_COMPOSITION = 0x010F;
+			if (msg == WM_IME_COMPOSITION) {
+				MoveImeCompositionWindow();
+				return IntPtr.Zero;
+			}
+			else if (msg == WM_IME_STARTCOMPOSITION) {
+				Debug.Assert(!imeState.CompositionStarted);
+				imeState.CompositionStarted = true;
+				EnsureVisible();
+				textCaretLayer.SetImeStarted(true);
+				MoveImeCompositionWindow();
+				return IntPtr.Zero;
+			}
+			else if (msg == WM_IME_ENDCOMPOSITION) {
+				Debug.Assert(imeState.CompositionStarted);
+				imeState.CompositionStarted = false;
+				textCaretLayer.SetImeStarted(false);
+				return IntPtr.Zero;
+			}
+			return IntPtr.Zero;
+		}
+
+		void MoveImeCompositionWindow() {
+			if (imeState.Context == IntPtr.Zero)
+				return;
+			var line = ContainingTextViewLine;
+			if (line.VisibilityState == VisibilityState.Unattached)
+				return;
+			var charBounds = line.GetExtendedCharacterBounds(Position.VirtualBufferPosition);
+
+			const int CFS_DEFAULT = 0x0000;
+			const int CFS_FORCE_POSITION = 0x0020;
+
+			var compForm = new ImeState.COMPOSITIONFORM();
+			compForm.dwStyle = CFS_DEFAULT;
+
+			var rootVisual = imeState.HwndSource.RootVisual;
+			GeneralTransform generalTransform = null;
+			if (rootVisual != null && rootVisual.IsAncestorOf(textView.VisualElement))
+				generalTransform = textView.VisualElement.TransformToAncestor(rootVisual);
+
+			var compTarget = imeState.HwndSource.CompositionTarget;
+			if (generalTransform != null && compTarget != null) {
+				var transform = compTarget.TransformToDevice;
+				compForm.dwStyle = CFS_FORCE_POSITION;
+
+				var caretPoint = transform.Transform(generalTransform.Transform(new Point(charBounds.Left - textView.ViewportLeft, charBounds.TextTop - textView.ViewportTop)));
+				var viewPointTop = transform.Transform(generalTransform.Transform(new Point(0, 0)));
+				var viewPointBottom = transform.Transform(generalTransform.Transform(new Point(textView.ViewportWidth, textView.ViewportHeight)));
+
+				compForm.ptCurrentPos = new ImeState.POINT(Math.Max(0, (int)caretPoint.X), Math.Max(0, (int)caretPoint.Y));
+				compForm.rcArea = new ImeState.RECT(
+					Math.Max(0, (int)viewPointTop.X), Math.Max(0, (int)viewPointTop.Y),
+					Math.Max(0, (int)viewPointBottom.X), Math.Max(0, (int)viewPointBottom.Y));
+			}
+
+			ImeState.ImmSetCompositionWindow(imeState.Context, ref compForm);
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -79,6 +292,10 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (e.OptionId == DefaultTextViewOptions.OverwriteModeId.Name)
 				textCaretLayer.OverwriteMode = textView.Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
+			else if (e.OptionId == DefaultTextViewOptions.ViewProhibitUserInputId.Name) {
+				StopIME(false);
+				InitializeIME();
+			}
 		}
 
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
@@ -112,8 +329,11 @@ namespace dnSpy.Text.Editor {
 			var oldPos = currentPosition;
 			var bufPos = bufferPosition;
 			currentPosition = new CaretPosition(bufPos, new MappingPoint(bufPos.Position, PointTrackingMode.Negative), Affinity);
-			if (!CaretEquals(oldPos, currentPosition))
+			if (!CaretEquals(oldPos, currentPosition)) {
+				if (imeState.CompositionStarted)
+					MoveImeCompositionWindow();
 				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
+			}
 		}
 
 		// Compares two caret positions, ignoring the snapshot
@@ -343,9 +563,13 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Dispose() {
+			StopIME(true);
 			textView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged -= Options_OptionChanged;
+			textView.VisualElement.GotKeyboardFocus -= VisualElement_GotKeyboardFocus;
+			textView.VisualElement.LostKeyboardFocus -= VisualElement_LostKeyboardFocus;
+			textView.LayoutChanged -= TextView_LayoutChanged;
 			textCaretLayer.Dispose();
 		}
 	}

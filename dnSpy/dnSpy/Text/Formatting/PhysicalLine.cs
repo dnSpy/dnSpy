@@ -22,7 +22,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Formatting;
-using dnSpy.Text.Editor;
 
 namespace dnSpy.Text.Formatting {
 	/// <summary>

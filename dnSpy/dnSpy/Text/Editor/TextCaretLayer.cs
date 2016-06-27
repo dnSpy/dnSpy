@@ -154,7 +154,16 @@ namespace dnSpy.Text.Editor {
 		void TextCaret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => UpdateCaretProperties();
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateCaretProperties();
 
-		void UpdateCaretProperties() {
+		public void SetImeStarted(bool started) {
+			if (imeStarted == started)
+				return;
+			imeStarted = started;
+			UpdateCaretProperties(true);
+		}
+		bool imeStarted;
+
+		void UpdateCaretProperties() => UpdateCaretProperties(false);
+		void UpdateCaretProperties(bool forceInvalidateVisual) {
 			StopTimer();
 			oldSelectionState = new SelectionState(layer.TextView.Selection);
 			var line = textCaret.ContainingTextViewLine;
@@ -178,7 +187,7 @@ namespace dnSpy.Text.Editor {
 
 			height = line.TextHeight;
 			if (drawCaretShape) {
-				if (layer.TextView.VisualElement.IsKeyboardFocused && layer.TextView.VisualElement.IsVisible)
+				if (!imeStarted && layer.TextView.VisualElement.IsKeyboardFocused && layer.TextView.VisualElement.IsVisible)
 					StartTimer();
 				top = line.TextTop;
 				Canvas.SetLeft(this, left);
@@ -190,7 +199,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			var invalidateVisual = caretGeometry.SetProperties(width, height, drawOverwriteMode);
-			invalidateVisual |= oldDrawCaretShape != drawCaretShape;
+			invalidateVisual |= forceInvalidateVisual || oldDrawCaretShape != drawCaretShape;
 			if (invalidateVisual)
 				InvalidateVisual();
 		}
