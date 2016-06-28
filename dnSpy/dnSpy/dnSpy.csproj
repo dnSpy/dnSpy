@@ -39,6 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>dnSpy.MainApp.StartUpClass</StartupObject>
