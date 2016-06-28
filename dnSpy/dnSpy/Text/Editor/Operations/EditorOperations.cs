@@ -1318,18 +1318,20 @@ namespace dnSpy.Text.Editor.Operations {
 				wpfView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfView.FormattedLineSource.ColumnWidth);
 		}
 
-		public void ScrollDownAndMoveCaretIfNecessary() {
-			ViewScroller.ScrollViewportVerticallyByLine(ScrollDirection.Down);
+		public void ScrollDownAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(ScrollDirection.Down);
+		public void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(ScrollDirection.Up);
+		void ScrollAndMoveCaretIfNecessary(ScrollDirection scrollDirection) {
+			ViewScroller.ScrollViewportVerticallyByLine(scrollDirection);
 			var line = Caret.ContainingTextViewLine;
-			if (line.VisibilityState != VisibilityState.FullyVisible)
-				Caret.MoveTo(line.Top < TextView.ViewportTop ? TextView.GetFirstFullyVisibleLineOrGetNew() : TextView.GetLastFullyVisibleLineOrGetNew());
-		}
-
-		public void ScrollUpAndMoveCaretIfNecessary() {
-			ViewScroller.ScrollViewportVerticallyByLine(ScrollDirection.Up);
-			var line = Caret.ContainingTextViewLine;
-			if (line.VisibilityState != VisibilityState.FullyVisible)
-				Caret.MoveTo(line.Top < TextView.ViewportTop ? TextView.GetFirstFullyVisibleLineOrGetNew() : TextView.GetLastFullyVisibleLineOrGetNew());
+			var firstVisLine = TextView.TextViewLines.FirstVisibleLine;
+			var lastVisLine = TextView.TextViewLines.LastVisibleLine;
+			if (scrollDirection == ScrollDirection.Up && firstVisLine.IsFirstDocumentLine())
+				lastVisLine = TextView.GetLastFullyVisibleLineOrGetNew();
+			if (line.VisibilityState == VisibilityState.Unattached)
+				Caret.MoveTo(line.Start <= firstVisLine.Start ? firstVisLine : lastVisLine);
+			else if (line.VisibilityState != VisibilityState.FullyVisible)
+				Caret.MoveTo(line.Top < TextView.ViewportTop ? firstVisLine : lastVisLine);
+			Caret.EnsureVisible();
 		}
 
 		public void ScrollLineBottom() {

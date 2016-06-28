@@ -70,7 +70,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public static ITextViewLine GetFirstFullyVisibleLineOrGetNew(this ITextView textView) {
-			var line = textView.TextViewLines.FirstOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.First();
+			var line = textView.TextViewLines.FirstOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.FirstVisibleLine;
 			for (;;) {
 				if (line.Start.Position == 0)
 					return line;
@@ -82,7 +82,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public static ITextViewLine GetLastFullyVisibleLineOrGetNew(this ITextView textView) {
-			var line = textView.TextViewLines.LastOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.Last();
+			var line = textView.TextViewLines.LastOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.LastVisibleLine;
 			for (;;) {
 				if (line.IsLastDocumentLine())
 					return line;
