@@ -23,28 +23,10 @@ using dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	static class TextViewExtensions {
-		public static ITextViewLine GetFirstFullyVisibleLineOrGetNew(this ITextView textView) {
-			var line = textView.TextViewLines.FirstOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.FirstVisibleLine;
-			for (;;) {
-				if (line.Start.Position == 0)
-					return line;
-				var prev = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
-				if (prev.VisibilityState != VisibilityState.FullyVisible)
-					return line;
-				line = prev;
-			}
-		}
+		public static ITextViewLine GetFirstFullyVisibleLine(this ITextView textView) =>
+			textView.TextViewLines.FirstOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.FirstVisibleLine;
 
-		public static ITextViewLine GetLastFullyVisibleLineOrGetNew(this ITextView textView) {
-			var line = textView.TextViewLines.LastOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.LastVisibleLine;
-			for (;;) {
-				if (line.IsLastDocumentLine())
-					return line;
-				var next = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
-				if (next.VisibilityState != VisibilityState.FullyVisible)
-					return line;
-				line = next;
-			}
-		}
+		public static ITextViewLine GetLastFullyVisibleLine(this ITextView textView) =>
+			textView.TextViewLines.LastOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ?? textView.TextViewLines.LastVisibleLine;
 	}
 }
