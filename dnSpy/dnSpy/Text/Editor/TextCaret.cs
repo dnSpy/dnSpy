@@ -528,8 +528,11 @@ namespace dnSpy.Text.Editor {
 			var line = ContainingTextViewLine;
 			if (line.IsVisible())
 				return line;
-			// Don't use FirstVisibleLine since it will return a hidden line if it fails to find a visible line
-			return textView.TextViewLines.FirstOrDefault(a => a.IsVisible());
+			var firstVisLine = textView.TextViewLines.FirstVisibleLine;
+			// Don't return FirstVisibleLine/LastVisibleLine since they will return a hidden line if it fails to find a visible line
+			if (line.Start.TranslateTo(textView.TextSnapshot, PointTrackingMode.Negative) <= firstVisLine.Start.TranslateTo(textView.TextSnapshot, PointTrackingMode.Negative))
+				return textView.TextViewLines.FirstOrDefault(a => a.IsVisible());
+			return textView.TextViewLines.LastOrDefault(a => a.IsVisible());
 		}
 
 		void SavePreferredYCoordinate() {
