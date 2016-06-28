@@ -47,4 +47,10 @@ namespace dnSpy.Text.Editor {
 		public override string Default => AppearanceCategoryConstants.TextEditor;
 		public override bool IsValid(ref string proposedValue) => !string.IsNullOrEmpty(proposedValue);
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class ForceClearTypeIfNeededEditorOptionDefinition : WpfViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultWpfViewOptions.ForceClearTypeIfNeededId;
+		public override bool Default => true;
+	}
 }

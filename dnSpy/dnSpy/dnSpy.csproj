@@ -482,6 +482,7 @@
     <Compile Include="Text\Formatting\TextAndAdornmentSequencer.cs" />
     <Compile Include="Text\Formatting\TextAndAdornmentSequencerFactoryService.cs" />
     <Compile Include="Text\Formatting\TextFormatterProvider.cs" />
+    <Compile Include="Text\Formatting\TextFormattingRunPropertiesExtensions.cs" />
     <Compile Include="Text\Formatting\TextLineExtensions.cs" />
     <Compile Include="Text\Formatting\TextParagraphPropertiesFactoryServiceSelector.cs" />
     <Compile Include="Text\Formatting\TextSequenceElement.cs" />

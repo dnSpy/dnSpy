@@ -226,6 +226,7 @@ namespace dnSpy.Text.Editor {
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
 			// It uses the classification format map and must use the latest changes
 			Dispatcher.BeginInvoke(new Action(() => {
+				UpdateForceClearTypeIfNeeded();
 				Background = classificationFormatMap.DefaultWindowBackground;
 				InvalidateFormattedLineSource(true);
 			}), DispatcherPriority.Normal);
@@ -296,7 +297,7 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
 			base.OnPropertyChanged(e);
-			if (e.Property == TextOptions.TextFormattingModeProperty)
+			if (e.Property == TextOptions.TextFormattingModeProperty || e.Property == TextOptions.TextRenderingModeProperty)
 				InvalidateFormattedLineSource(true);
 		}
 
@@ -474,8 +475,10 @@ namespace dnSpy.Text.Editor {
 				metroWindow.WindowDPIChanged -= MetroWindow_WindowDPIChanged;
 		}
 
-		void InitializeOptions() =>
+		void InitializeOptions() {
 			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
+			UpdateOption(DefaultWpfViewOptions.ForceClearTypeIfNeededId.Name);
+		}
 
 		void UpdateOption(string optionId) {
 			if (IsClosed)
@@ -484,7 +487,24 @@ namespace dnSpy.Text.Editor {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
 			}
+			else if (optionId == DefaultWpfViewOptions.ForceClearTypeIfNeededId.Name)
+				UpdateForceClearTypeIfNeeded();
 		}
+
+		void UpdateForceClearTypeIfNeeded() {
+			// Remote Desktop seems to force disable-ClearType so to prevent Consolas from looking
+			// really ugly and to prevent the colors (eg. keyword color) to look like different
+			// colors, force ClearType if the font is Consolas. VS also does this.
+			bool forceIfNeeded = Options.GetOptionValue(DefaultWpfViewOptions.ForceClearTypeIfNeededId);
+			var fontName = classificationFormatMap.DefaultTextProperties.GetFontName();
+			bool forceClearType = forceIfNeeded && IsForceClearTypeFontName(fontName);
+			if (forceClearType)
+				SetValue(TextOptions.TextRenderingModeProperty, TextRenderingMode.ClearType);
+			else
+				SetValue(TextOptions.TextRenderingModeProperty, TextRenderingMode.Auto);
+		}
+
+		static bool IsForceClearTypeFontName(string name) => StringComparer.OrdinalIgnoreCase.Equals("Consolas", name);
 
 		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
 		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {

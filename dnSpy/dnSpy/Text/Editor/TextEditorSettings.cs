@@ -89,6 +89,18 @@ namespace dnSpy.Text.Editor {
 		}
 		bool highlightCurrentLine = true;
 
+		public bool ForceClearTypeIfNeeded {
+			get { return forceClearTypeIfNeeded; }
+			set {
+				if (forceClearTypeIfNeeded != value) {
+					forceClearTypeIfNeeded = value;
+					OnPropertyChanged(nameof(ForceClearTypeIfNeeded));
+					OnModified();
+				}
+			}
+		}
+		bool forceClearTypeIfNeeded = true;
+
 		public WordWrapStyles WordWrap {
 			get { return wordWrap; }
 			set {
@@ -131,6 +143,7 @@ namespace dnSpy.Text.Editor {
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
 			this.AutoHighlightRefs = sect.Attribute<bool?>(nameof(AutoHighlightRefs)) ?? this.AutoHighlightRefs;
 			this.HighlightCurrentLine = sect.Attribute<bool?>(nameof(HighlightCurrentLine)) ?? this.HighlightCurrentLine;
+			this.ForceClearTypeIfNeeded = sect.Attribute<bool?>(nameof(ForceClearTypeIfNeeded)) ?? this.ForceClearTypeIfNeeded;
 			this.WordWrap = sect.Attribute<WordWrapStyles?>(nameof(WordWrap)) ?? this.WordWrap;
 			this.ConvertTabsToSpaces = sect.Attribute<bool?>(nameof(ConvertTabsToSpaces)) ?? this.ConvertTabsToSpaces;
 			this.disableSave = false;
@@ -146,6 +159,7 @@ namespace dnSpy.Text.Editor {
 			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
 			sect.Attribute(nameof(AutoHighlightRefs), AutoHighlightRefs);
 			sect.Attribute(nameof(HighlightCurrentLine), HighlightCurrentLine);
+			sect.Attribute(nameof(ForceClearTypeIfNeeded), ForceClearTypeIfNeeded);
 			sect.Attribute(nameof(WordWrap), WordWrap);
 			sect.Attribute(nameof(ConvertTabsToSpaces), ConvertTabsToSpaces);
 		}
