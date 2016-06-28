@@ -19,7 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
@@ -87,6 +89,9 @@ namespace dnSpy.Text.Editor {
 		bool GetLineColumn(out int chosenLine, out int chosenColumn) {
 			var viewLine = textView.Caret.ContainingTextViewLine;
 			var snapshotLine = viewLine.Start.GetContainingLine();
+			var wpfTextView = textView as IWpfTextView;
+			Debug.Assert(wpfTextView != null);
+			var ownerWindow = wpfTextView == null ? null : Window.GetWindow(wpfTextView.VisualElement);
 
 			var res = messageBoxManager.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				int? line, column;
@@ -95,7 +100,7 @@ namespace dnSpy.Text.Editor {
 			}, s => {
 				int? line, column;
 				return TryGetRowCol(s, snapshotLine.LineNumber, out line, out column);
-			});
+			}, ownerWindow);
 			if (res == null) {
 				chosenLine = 0;
 				chosenColumn = 0;
