@@ -278,13 +278,14 @@ namespace dnSpy.Text.Editor.Operations {
 		public bool CutSelection() => CutOrCopySelection(true);
 		bool CutOrCopySelection(bool cut) {
 			if (Selection.IsEmpty) {
-				var line = Caret.Position.BufferPosition.GetContainingLine();
+				var line = Caret.ContainingTextViewLine;
 				bool cutEmptyLines = Options.GetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId);
-				if (!cutEmptyLines && string.IsNullOrWhiteSpace(line.GetText()))
+				string lineText = line.ExtentIncludingLineBreak.GetText();
+				if (!cutEmptyLines && string.IsNullOrWhiteSpace(lineText))
 					return true;
 				if (cut)
 					TextBuffer.Delete(line.ExtentIncludingLineBreak);
-				return CopyToClipboard(line.GetTextIncludingLineBreak(), true, false);
+				return CopyToClipboard(lineText, true, false);
 			}
 			var text = Selection.GetText();
 			bool isBox = Selection.Mode == TextSelectionMode.Box;
