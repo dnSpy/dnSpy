@@ -441,7 +441,11 @@ namespace dnSpy.Text.Formatting {
 			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
 			if (pos != null) {
 				if (pos.Value < End) {
-					//TODO: Handle RTL text
+					var bounds = GetExtendedCharacterBounds(pos.Value);
+					// Get closest buffer position
+					bool isOnLeftSide = xCoordinate < (bounds.Left + bounds.Right) / 2;
+					if (isOnLeftSide == bounds.IsRightToLeft)
+						pos = GetTextElementSpan(pos.Value).End;
 				}
 				return new VirtualSnapshotPoint(pos.Value);
 			}
