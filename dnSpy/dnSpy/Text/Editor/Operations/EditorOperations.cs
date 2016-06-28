@@ -991,12 +991,12 @@ namespace dnSpy.Text.Editor.Operations {
 				break;
 
 			case VisibilityState.PartiallyVisible:
+			case VisibilityState.Hidden:
 				TextView.DisplayTextLineContainingBufferPosition(newPoint, 0,
 					line.Top - 0.01 >= TextView.ViewportTop || line.Height + 0.01 >= TextView.ViewportHeight ?
-					ViewRelativePosition.Top : ViewRelativePosition.Bottom);
+					ViewRelativePosition.Bottom : ViewRelativePosition.Top);
 				break;
 
-			case VisibilityState.Hidden:
 			case VisibilityState.Unattached:
 			default:
 				TextView.DisplayTextLineContainingBufferPosition(newPoint, 0, ViewRelativePosition.Bottom);
