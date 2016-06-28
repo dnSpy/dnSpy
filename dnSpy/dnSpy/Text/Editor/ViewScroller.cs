@@ -57,33 +57,49 @@ namespace dnSpy.Text.Editor {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
 			if (direction == ScrollDirection.Up) {
+				double pixels = 0;
+				var line = textView.TextViewLines.FirstVisibleLine;
 				for (int i = 0; i < count; i++) {
-					double pixels = 0;
-					var line = textView.TextViewLines.FirstVisibleLine;
-					if (line.VisibilityState == VisibilityState.PartiallyVisible)
-						pixels += textView.ViewportTop - line.Top;
-					if (line.Start.Position != 0) {
-						var prevLine = textView.GetTextViewLineContainingBufferPosition(new SnapshotPoint(line.Snapshot, line.Start.Position - 1));
-						pixels += prevLine?.Height ?? 0;
+					if (i == 0) {
+						if (line.VisibilityState == VisibilityState.PartiallyVisible)
+							pixels += textView.ViewportTop - line.Top;
+						if (line.Start.Position != 0) {
+							line = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+							pixels += line.Height;
+						}
 					}
-					ScrollViewportVerticallyByPixels(pixels);
+					else
+						pixels += line.Height;
+					if (line.Start.Position == 0)
+						break;
+					line = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
 				}
+				if (pixels != 0)
+					ScrollViewportVerticallyByPixels(pixels);
 			}
 			else {
+				double pixels = 0;
+				var line = textView.TextViewLines.FirstVisibleLine;
 				for (int i = 0; i < count; i++) {
-					double pixels = 0;
-					var line = textView.TextViewLines.FirstVisibleLine;
 					if (line.IsLastDocumentLine())
 						break;
-					if (line.VisibilityState == VisibilityState.FullyVisible)
-						pixels += line.Height;
-					else {
-						pixels += line.Bottom - textView.ViewportTop;
-						var nextLine = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
-						pixels += nextLine?.Height ?? 0;
+					if (i == 0) {
+						if (line.VisibilityState == VisibilityState.FullyVisible)
+							pixels += line.Height;
+						else {
+							pixels += line.Bottom - textView.ViewportTop;
+							line = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+							pixels += line.Height;
+						}
 					}
-					ScrollViewportVerticallyByPixels(-pixels);
+					else
+						pixels += line.Height;
+					if (line.IsLastDocumentLine())
+						break;
+					line = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
 				}
+				if (pixels != 0)
+					ScrollViewportVerticallyByPixels(-pixels);
 			}
 		}
 
@@ -99,14 +115,17 @@ namespace dnSpy.Text.Editor {
 					top = firstVisibleLine.Top;
 				}
 				else
-					top = textView.GetTextViewLineContainingBufferPosition(firstVisibleLine.EndIncludingLineBreak).Top;
+					top = firstVisibleLine.Bottom; // Top of next line, which is possibly not in TextViewLines so we can't use its Top prop
 				var line = firstVisibleLine;
+				// Top is only valid if the line is in TextViewLines, so use this variable to track the correct line top value
+				double lineTop = line.Top;
 				var prevLine = line;
-				while (line.Top + textView.ViewportHeight > top) {
+				while (lineTop + textView.ViewportHeight > top) {
 					prevLine = line;
 					if (line.IsFirstDocumentLine())
 						break;
 					line = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+					lineTop -= line.Height;
 				}
 				textView.DisplayTextLineContainingBufferPosition(prevLine.Start, 0, ViewRelativePosition.Top);
 			}

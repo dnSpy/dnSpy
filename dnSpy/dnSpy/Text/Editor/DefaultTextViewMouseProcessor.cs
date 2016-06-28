@@ -283,7 +283,7 @@ namespace dnSpy.Text.Editor {
 			case ScrollDirection.Down:
 				line = wpfTextView.TextViewLines.LastVisibleLine;
 				if (line.VisibilityState == VisibilityState.FullyVisible && !line.IsLastDocumentLine())
-					line = wpfTextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak.Position < line.Snapshot.Length ? line.EndIncludingLineBreak + 1 : line.EndIncludingLineBreak);
+					line = wpfTextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
 				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Bottom);
 				if (line.IsLastDocumentLine())
 					StopScrolling();
