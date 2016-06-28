@@ -65,10 +65,11 @@ namespace dnSpy.Text.Editor {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
 			if (group == CommandConstants.TextEditorGroup && (TextEditorIds)cmdId == TextEditorIds.GOTOLINE) {
-				int lineNumber, columnNumber;
+				int lineNumber;
+				int? columnNumber;
 				if (args is int) {
 					lineNumber = (int)args;
-					columnNumber = 0;
+					columnNumber = null;
 				}
 				else {
 					if (!GetLineColumn(out lineNumber, out columnNumber))
@@ -77,16 +78,27 @@ namespace dnSpy.Text.Editor {
 				if ((uint)lineNumber >= textView.TextSnapshot.LineCount)
 					lineNumber = textView.TextSnapshot.LineCount - 1;
 				var line = textView.TextSnapshot.GetLineFromLineNumber(lineNumber);
-				if ((uint)columnNumber > line.Length)
-					columnNumber = line.Length;
-				textView.Caret.MoveTo(line.Start + columnNumber);
+				int col;
+				if (columnNumber == null) {
+					col = 0;
+					var snapshot = line.Snapshot;
+					for (; col < line.Length; col++) {
+						if (!char.IsWhiteSpace(snapshot[line.Start.Position + col]))
+							break;
+					}
+				}
+				else
+					col = columnNumber.Value;
+				if ((uint)col > line.Length)
+					col = line.Length;
+				textView.Caret.MoveTo(line.Start + col);
 				textView.Caret.EnsureVisible();
 				return CommandTargetStatus.Handled;
 			}
 			return CommandTargetStatus.NotHandled;
 		}
 
-		bool GetLineColumn(out int chosenLine, out int chosenColumn) {
+		bool GetLineColumn(out int chosenLine, out int? chosenColumn) {
 			var viewLine = textView.Caret.ContainingTextViewLine;
 			var snapshotLine = viewLine.Start.GetContainingLine();
 			var wpfTextView = textView as IWpfTextView;
@@ -96,14 +108,14 @@ namespace dnSpy.Text.Editor {
 			var res = messageBoxManager.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				int? line, column;
 				TryGetRowCol(s, snapshotLine.LineNumber, out line, out column);
-				return Tuple.Create(line.Value, column.Value);
+				return Tuple.Create<int, int?>(line.Value, column);
 			}, s => {
 				int? line, column;
 				return TryGetRowCol(s, snapshotLine.LineNumber, out line, out column);
 			}, ownerWindow);
 			if (res == null) {
 				chosenLine = 0;
-				chosenColumn = 0;
+				chosenColumn = null;
 				return false;
 			}
 
@@ -115,16 +127,18 @@ namespace dnSpy.Text.Editor {
 		string TryGetRowCol(string s, int currentLine, out int? line, out int? column) {
 			line = null;
 			column = null;
+			bool columnError = false;
 			Match match;
 			if ((match = goToLineRegex1.Match(s)) != null && match.Groups.Count == 4) {
-				line = TryParseOneBasedToZeroBased(match.Groups[1].Value);
-				column = match.Groups[3].Value != string.Empty ? TryParseOneBasedToZeroBased(match.Groups[3].Value) : 0;
+				TryParseOneBasedToZeroBased(match.Groups[1].Value, out line);
+				if (match.Groups[3].Value != string.Empty)
+					columnError = !TryParseOneBasedToZeroBased(match.Groups[3].Value, out column);
 			}
 			else if ((match = goToLineRegex2.Match(s)) != null && match.Groups.Count == 2) {
 				line = currentLine;
-				column = TryParseOneBasedToZeroBased(match.Groups[1].Value);
+				columnError = !TryParseOneBasedToZeroBased(match.Groups[1].Value, out column);
 			}
-			if (line == null || column == null) {
+			if (line == null || columnError) {
 				if (string.IsNullOrWhiteSpace(s))
 					return dnSpy_Resources.GoToLine_EnterLineNum;
 				return string.Format(dnSpy_Resources.GoToLine_InvalidLine, s);
@@ -134,9 +148,14 @@ namespace dnSpy.Text.Editor {
 		static readonly Regex goToLineRegex1 = new Regex(@"^\s*(\d+)\s*(,\s*(\d+))?\s*$");
 		static readonly Regex goToLineRegex2 = new Regex(@"^\s*,\s*(\d+)\s*$");
 
-		static int? TryParseOneBasedToZeroBased(string valText) {
+		static bool TryParseOneBasedToZeroBased(string valText, out int? res) {
 			int val;
-			return int.TryParse(valText, out val) && val > 0 ? (int?)(val - 1) : null;
+			if (int.TryParse(valText, out val) && val > 0) {
+				res = val - 1;
+				return true;
+			}
+			res = null;
+			return false;
 		}
 
 		public void SetNextCommandTarget(ICommandTarget commandTarget) { }
