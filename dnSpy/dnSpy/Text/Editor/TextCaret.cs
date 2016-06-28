@@ -541,11 +541,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CaretPosition MoveToPreferredCoordinates() {
-			var textLine = textView.GetVisibleTextViewLineContainingYCoordinate(PreferredYCoordinate);
-			if (textLine == null)
-				textLine = textView.GetVisibleTextViewLineContainingYCoordinate(textView.ViewportBottom - 0.01);
-			if (textLine == null)
-				textLine = textView.TextViewLines.LastVisibleLine;
+			var textLine = textView.TextViewLines.GetTextViewLineContainingYCoordinate(PreferredYCoordinate);
+			if (textLine == null || !textLine.IsVisible())
+				textLine = PreferredYCoordinate <= textView.ViewportTop ? textView.TextViewLines.FirstVisibleLine : textView.TextViewLines.LastVisibleLine;
 			return MoveTo(textLine, preferredXCoordinate, false, false, true);
 		}
 
