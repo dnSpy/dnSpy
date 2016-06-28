@@ -175,8 +175,6 @@ namespace dnSpy.Text.Editor {
 		void FlushOutputUIThread() {
 			dispatcher.VerifyAccess();
 
-			var currentLine = wpfTextView.Caret.Position.BufferPosition.GetContainingLine();
-
 			ColorAndText[] newPendingOutput;
 			var sb = new StringBuilder();
 			lock (pendingOutputLock) {
