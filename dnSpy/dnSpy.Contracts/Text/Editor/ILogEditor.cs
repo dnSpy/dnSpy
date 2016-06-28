@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Enables/disables word wrapping
 		/// </summary>
-		bool WordWrap { get; set; }
+		WordWrapStyles WordWrapStyle { get; set; }
 
 		/// <summary>
 		/// Writes text

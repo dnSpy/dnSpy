@@ -101,17 +101,17 @@ namespace dnSpy.Text.Editor {
 		}
 		bool forceClearTypeIfNeeded = true;
 
-		public WordWrapStyles WordWrap {
-			get { return wordWrap; }
+		public WordWrapStyles WordWrapStyle {
+			get { return wordWrapStyle; }
 			set {
-				if (wordWrap != value) {
-					wordWrap = value;
-					OnPropertyChanged(nameof(WordWrap));
+				if (wordWrapStyle != value) {
+					wordWrapStyle = value;
+					OnPropertyChanged(nameof(WordWrapStyle));
 					OnModified();
 				}
 			}
 		}
-		WordWrapStyles wordWrap = WordWrapStyles.DefaultDisabled;
+		WordWrapStyles wordWrapStyle = WordWrapStyles.DefaultDisabled;
 
 		public bool ConvertTabsToSpaces {
 			get { return convertTabsToSpaces; }
@@ -144,7 +144,7 @@ namespace dnSpy.Text.Editor {
 			this.AutoHighlightRefs = sect.Attribute<bool?>(nameof(AutoHighlightRefs)) ?? this.AutoHighlightRefs;
 			this.HighlightCurrentLine = sect.Attribute<bool?>(nameof(HighlightCurrentLine)) ?? this.HighlightCurrentLine;
 			this.ForceClearTypeIfNeeded = sect.Attribute<bool?>(nameof(ForceClearTypeIfNeeded)) ?? this.ForceClearTypeIfNeeded;
-			this.WordWrap = sect.Attribute<WordWrapStyles?>(nameof(WordWrap)) ?? this.WordWrap;
+			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
 			this.ConvertTabsToSpaces = sect.Attribute<bool?>(nameof(ConvertTabsToSpaces)) ?? this.ConvertTabsToSpaces;
 			this.disableSave = false;
 		}
@@ -160,7 +160,7 @@ namespace dnSpy.Text.Editor {
 			sect.Attribute(nameof(AutoHighlightRefs), AutoHighlightRefs);
 			sect.Attribute(nameof(HighlightCurrentLine), HighlightCurrentLine);
 			sect.Attribute(nameof(ForceClearTypeIfNeeded), ForceClearTypeIfNeeded);
-			sect.Attribute(nameof(WordWrap), WordWrap);
+			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
 			sect.Attribute(nameof(ConvertTabsToSpaces), ConvertTabsToSpaces);
 		}
 	}

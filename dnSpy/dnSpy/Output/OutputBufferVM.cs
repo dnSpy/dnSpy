@@ -56,9 +56,9 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public bool WordWrap {
-			get { return logEditor.WordWrap; }
-			set { logEditor.WordWrap = value; }
+		public WordWrapStyles WordWrapStyle {
+			get { return logEditor.WordWrapStyle; }
+			set { logEditor.WordWrapStyle = value; }
 		}
 
 		public bool ShowLineNumbers {

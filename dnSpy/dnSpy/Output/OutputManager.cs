@@ -59,13 +59,16 @@ namespace dnSpy.Output {
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
 
 		public bool WordWrap {
-			get { return outputManagerSettingsImpl.WordWrap; }
+			get { return (outputManagerSettingsImpl.WordWrapStyle & WordWrapStyles.WordWrap) != 0; }
 			set {
-				if (outputManagerSettingsImpl.WordWrap != value) {
-					outputManagerSettingsImpl.WordWrap = value;
+				if (WordWrap != value) {
+					if (value)
+						outputManagerSettingsImpl.WordWrapStyle |= WordWrapStyles.WordWrap;
+					else
+						outputManagerSettingsImpl.WordWrapStyle &= ~WordWrapStyles.WordWrap;
 					OnPropertyChanged(nameof(WordWrap));
 					foreach (var vm in OutputBuffers)
-						vm.WordWrap = outputManagerSettingsImpl.WordWrap;
+						vm.WordWrapStyle = outputManagerSettingsImpl.WordWrapStyle;
 				}
 			}
 		}
@@ -140,7 +143,7 @@ namespace dnSpy.Output {
 
 			if (e.NewItems != null) {
 				foreach (OutputBufferVM vm in e.NewItems) {
-					vm.WordWrap = outputManagerSettingsImpl.WordWrap;
+					vm.WordWrapStyle = outputManagerSettingsImpl.WordWrapStyle;
 					vm.ShowLineNumbers = outputManagerSettingsImpl.ShowLineNumbers;
 					vm.ShowTimestamps = outputManagerSettingsImpl.ShowTimestamps;
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {

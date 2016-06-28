@@ -38,14 +38,9 @@ namespace dnSpy.Text.Editor {
 		public object Tag { get; set; }
 		public ITextView TextView => wpfTextView;
 
-		public bool WordWrap {
-			get { return (wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0; }
-			set {
-				if (value)
-					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) | WordWrapStyles.WordWrap);
-				else
-					wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & ~WordWrapStyles.WordWrap);
-			}
+		public WordWrapStyles WordWrapStyle {
+			get { return wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId); }
+			set { wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value); }
 		}
 
 		public bool ShowLineNumbers {

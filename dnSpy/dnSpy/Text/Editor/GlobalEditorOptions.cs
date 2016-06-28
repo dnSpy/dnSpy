@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor {
 			globalOptions.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, textEditorSettings.HighlightCurrentLine);
 			globalOptions.SetOptionValue(DefaultWpfViewOptions.ForceClearTypeIfNeededId, textEditorSettings.ForceClearTypeIfNeeded);
 			globalOptions.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, textEditorSettings.ShowLineNumbers);
-			globalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, textEditorSettings.WordWrap);
+			globalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, textEditorSettings.WordWrapStyle);
 			globalOptions.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, textEditorSettings.ConvertTabsToSpaces);
 		}
 
@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
 				textEditorSettings.ShowLineNumbers = globalOptions.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId);
 			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
-				textEditorSettings.WordWrap = globalOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
+				textEditorSettings.WordWrapStyle = globalOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
 			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name)
 				textEditorSettings.ConvertTabsToSpaces = globalOptions.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId);
 		}
