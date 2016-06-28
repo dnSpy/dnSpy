@@ -146,14 +146,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (state == null)
 				return;
 
-			// It can't scroll until it's gotten its scrollviewer
-			if (textEditorControl.TextEditor.Template == null) {
+			var textView = textEditorControl.WpfTextView;
+			if (!textView.VisualElement.IsLoaded) {
 				bool start = cachedEditorPositionState == null;
 				cachedEditorPositionState = state;
-				if (start) {
-					textEditorControl.TextEditor.IsVisibleChanged -= TextEditor_IsVisibleChanged;
-					textEditorControl.TextEditor.IsVisibleChanged += TextEditor_IsVisibleChanged;
-				}
+				if (start)
+					textView.VisualElement.Loaded += VisualElement_Loaded;
 			}
 			else
 				InitializeState(state);
@@ -163,22 +161,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void InitializeState(EditorPositionState state) {
 			var textView = textEditorControl.WpfTextView;
 
-			var topPos = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
 			if (IsValid(state)) {
-				textView.Caret.MoveTo(topPos);
 				textView.ViewportLeft = state.ViewportLeft;
 				textView.DisplayTextLineContainingBufferPosition(new SnapshotPoint(textView.TextSnapshot, state.TopLinePosition), state.TopLineVerticalDistance, ViewRelativePosition.Top);
-
-				// Needed because AvalonEdit knows about the word wrap state at some later time due to some WPF feature.
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					if (topPos == textView.Caret.Position.VirtualBufferPosition) {
-						var newPos = new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, state.CaretPosition), state.CaretVirtualSpaces);
-						textView.Caret.MoveTo(newPos, state.CaretAffinity, true);
-					}
-				}));
+				var newPos = new VirtualSnapshotPoint(new SnapshotPoint(textView.TextSnapshot, state.CaretPosition), state.CaretVirtualSpaces);
+				textView.Caret.MoveTo(newPos, state.CaretAffinity, true);
 			}
 			else
-				textView.Caret.MoveTo(topPos);
+				textView.Caret.MoveTo(new VirtualSnapshotPoint(textView.TextSnapshot, 0));
 		}
 
 		bool IsValid(EditorPositionState state) {
@@ -199,8 +189,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return true;
 		}
 
-		void TextEditor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-			textEditorControl.TextEditor.IsVisibleChanged -= TextEditor_IsVisibleChanged;
+		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
+			textEditorControl.WpfTextView.VisualElement.Loaded -= VisualElement_Loaded;
 			if (cachedEditorPositionState == null)
 				return;
 			InitializeState(cachedEditorPositionState);
@@ -280,6 +270,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public object GetReferenceSegmentAt(MouseEventArgs e) => textEditorControl.GetReferenceSegmentAt(e);
 
 		public void Dispose() {
+			this.textEditorControl.WpfTextView.VisualElement.Loaded -= VisualElement_Loaded;
 			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			textEditorControl.Dispose();

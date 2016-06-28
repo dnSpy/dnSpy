@@ -547,13 +547,6 @@ namespace dnSpy.Text.Editor {
 			if (viewportWidthOverride < 0 || double.IsNaN(viewportWidthOverride))
 				throw new ArgumentOutOfRangeException(nameof(viewportWidthOverride));
 
-			// Don't allow too big distances since we have to format all lines until we find the viewport
-			double maxDist = viewportHeightOverride * 2;
-			if (verticalDistance < -maxDist)
-				verticalDistance = -maxDist;
-			else if (verticalDistance > maxDist)
-				verticalDistance = maxDist;
-
 			bool invalidateAllLines = false;
 			if (viewportWidthOverride != lastViewportWidth || viewportWidthOverride != lastFormattedLineSourceViewportWidth) {
 				invalidateAllLines = true;
