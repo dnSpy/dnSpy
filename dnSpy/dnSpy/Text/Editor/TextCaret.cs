@@ -347,7 +347,7 @@ namespace dnSpy.Text.Editor {
 			if (line.VisibilityState != VisibilityState.FullyVisible) {
 				ViewRelativePosition relativeTo;
 				var firstVisibleLine = textView.TextViewLines?.FirstVisibleLine;
-				if (firstVisibleLine == null || !firstVisibleLine.IsVisible())
+				if (firstVisibleLine == null)
 					relativeTo = ViewRelativePosition.Top;
 				else if (line.Start.Position <= firstVisibleLine.Start.Position)
 					relativeTo = ViewRelativePosition.Top;

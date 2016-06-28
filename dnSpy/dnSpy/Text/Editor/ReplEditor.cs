@@ -459,6 +459,8 @@ namespace dnSpy.Text.Editor {
 
 		void FlushScriptOutputUIThread() {
 			dispatcher.VerifyAccess();
+			if (wpfTextView.IsClosed)
+				return;
 
 			var caretPos = wpfTextView.Caret.Position;
 			bool caretIsInEditingArea = OffsetOfPrompt != null && CaretOffset >= OffsetOfPrompt.Value;

@@ -164,6 +164,8 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateCaretProperties() => UpdateCaretProperties(false);
 		void UpdateCaretProperties(bool forceInvalidateVisual) {
+			if (layer.TextView.IsClosed)
+				return;
 			StopTimer();
 			oldSelectionState = new SelectionState(layer.TextView.Selection);
 			var line = textCaret.ContainingTextViewLine;

@@ -174,6 +174,8 @@ namespace dnSpy.Text.Editor {
 
 		void FlushOutputUIThread() {
 			dispatcher.VerifyAccess();
+			if (wpfTextView.IsClosed)
+				return;
 
 			ColorAndText[] newPendingOutput;
 			var sb = new StringBuilder();
