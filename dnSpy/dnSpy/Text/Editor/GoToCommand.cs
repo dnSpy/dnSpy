@@ -104,14 +104,15 @@ namespace dnSpy.Text.Editor {
 			var wpfTextView = textView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
 			var ownerWindow = wpfTextView == null ? null : Window.GetWindow(wpfTextView.VisualElement);
+			int maxLines = snapshotLine.Snapshot.LineCount;
 
 			var res = messageBoxManager.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				int? line, column;
-				TryGetRowCol(s, snapshotLine.LineNumber, out line, out column);
+				TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out line, out column);
 				return Tuple.Create<int, int?>(line.Value, column);
 			}, s => {
 				int? line, column;
-				return TryGetRowCol(s, snapshotLine.LineNumber, out line, out column);
+				return TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out line, out column);
 			}, ownerWindow);
 			if (res == null) {
 				chosenLine = 0;
@@ -124,13 +125,15 @@ namespace dnSpy.Text.Editor {
 			return true;
 		}
 
-		string TryGetRowCol(string s, int currentLine, out int? line, out int? column) {
+		string TryGetRowCol(string s, int currentLine, int maxLines, out int? line, out int? column) {
 			line = null;
 			column = null;
 			bool columnError = false;
 			Match match;
 			if ((match = goToLineRegex1.Match(s)) != null && match.Groups.Count == 4) {
 				TryParseOneBasedToZeroBased(match.Groups[1].Value, out line);
+				if (line != null && line.Value >= maxLines)
+					line = null;
 				if (match.Groups[3].Value != string.Empty)
 					columnError = !TryParseOneBasedToZeroBased(match.Groups[3].Value, out column);
 			}
