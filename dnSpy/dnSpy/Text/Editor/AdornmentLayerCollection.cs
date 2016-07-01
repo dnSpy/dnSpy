@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,6 +34,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
 			this.adornmentLayers = new List<AdornmentLayer>();
+			wpfTextView.Closed += WpfTextView_Closed;
+			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
 
 		public IAdornmentLayer GetAdornmentLayer(IAdornmentLayerDefinitionMetadata mdLayer) {
@@ -62,17 +63,25 @@ namespace dnSpy.Text.Editor {
 			return adornmentLayers.Count;
 		}
 
-		public void OnParentSizeChanged(Size newSize) {
-			Width = newSize.Width;
-			Height = newSize.Height;
-			// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
-			// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
-			// It's ignored if HW acceleration is enabled.
-			// This will reduce the number of bytes sent over the network and should speed up the display
-			// if it's a slow connection.
-			VisualScrollableAreaClip = new Rect(0, 0, newSize.Width, newSize.Height);
-			// This should be enabled since the clipped region will be <= than requested
-			Debug.Assert(UseLayoutRounding);
+		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (Width != wpfTextView.VisualElement.ActualWidth || Height != wpfTextView.VisualElement.ActualHeight) {
+				Width = wpfTextView.VisualElement.ActualWidth;
+				Height = wpfTextView.VisualElement.ActualHeight;
+				// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
+				// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
+				// It's ignored if HW acceleration is enabled.
+				// This will reduce the number of bytes sent over the network and should speed up the display
+				// if it's a slow connection.
+				VisualScrollableAreaClip = new Rect(0, 0, Width, Height);
+			}
+
+			foreach (var layer in adornmentLayers)
+				layer.OnLayoutChanged(e);
+		}
+
+		void WpfTextView_Closed(object sender, EventArgs e) {
+			wpfTextView.Closed -= WpfTextView_Closed;
+			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
 		}
 	}
 }

@@ -226,6 +226,8 @@ namespace dnSpy.Text.Editor {
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
 			// It uses the classification format map and must use the latest changes
 			Dispatcher.BeginInvoke(new Action(() => {
+				if (IsClosed)
+					return;
 				UpdateForceClearTypeIfNeeded();
 				Background = classificationFormatMap.DefaultWindowBackground;
 				InvalidateFormattedLineSource(true);
@@ -356,6 +358,8 @@ namespace dnSpy.Text.Editor {
 
 		bool hasKeyboardFocus;
 		void UpdateKeyboardFocus() {
+			if (IsClosed)
+				return;
 			bool newValue = this.IsKeyboardFocusWithin;
 			if (hasKeyboardFocus != newValue) {
 				hasKeyboardFocus = newValue;
@@ -371,7 +375,8 @@ namespace dnSpy.Text.Editor {
 			set {
 				if (base.Background != value) {
 					base.Background = value;
-					BackgroundBrushChanged?.Invoke(this, new BackgroundBrushChangedEventArgs(value));
+					if (!IsClosed)
+						BackgroundBrushChanged?.Invoke(this, new BackgroundBrushChangedEventArgs(value));
 				}
 			}
 		}
@@ -389,7 +394,8 @@ namespace dnSpy.Text.Editor {
 
 				zoomLevel = newValue;
 				metroWindow?.SetScaleTransform(this, zoomLevel / 100);
-				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(newValue, LayoutTransform));
+				if (!IsClosed)
+					ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(newValue, LayoutTransform));
 			}
 		}
 		double zoomLevel;
@@ -425,7 +431,8 @@ namespace dnSpy.Text.Editor {
 				UpdateVisibleLines();
 				SetLeft(adornmentLayerCollection, -viewportLeft);
 				RaiseLayoutChanged();
-				ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
+				if (!IsClosed)
+					ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 		double viewportTop, viewportLeft;
@@ -668,7 +675,6 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo) {
 			if (!IsClosed) {
-				adornmentLayerCollection.OnParentSizeChanged(sizeInfo.NewSize);
 				if (sizeInfo.PreviousSize.Height != sizeInfo.NewSize.Height)
 					ViewportHeightChanged?.Invoke(this, EventArgs.Empty);
 				if (sizeInfo.PreviousSize.Width != sizeInfo.NewSize.Width) {

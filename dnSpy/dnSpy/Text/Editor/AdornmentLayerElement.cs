@@ -27,7 +27,7 @@ namespace dnSpy.Text.Editor {
 		public AdornmentPositioningBehavior Behavior { get; }
 		public AdornmentRemovedCallback RemovedCallback { get; }
 		public object Tag { get; }
-		public SnapshotSpan? VisualSpan { get; }
+		public SnapshotSpan? VisualSpan { get; private set; }
 
 		public AdornmentLayerElement(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
 			Adornment = adornment;
@@ -35,6 +35,12 @@ namespace dnSpy.Text.Editor {
 			RemovedCallback = removedCallback;
 			Tag = tag;
 			VisualSpan = visualSpan;
+		}
+
+		public void OnLayoutChanged(ITextSnapshot textSnapshot) {
+			if (VisualSpan == null)
+				return;
+			VisualSpan = VisualSpan.Value.TranslateTo(textSnapshot, SpanTrackingMode.EdgeInclusive);
 		}
 	}
 }

@@ -87,8 +87,8 @@ namespace dnSpy.Contracts.Text.Editor {
 			ViewportBottom = view.ViewportBottom;
 			ViewportLeft = view.ViewportLeft;
 			ViewportRight = view.ViewportRight;
-			ViewportWidth = view.ViewportWidth;
-			ViewportHeight = view.ViewportHeight;
+			ViewportWidth = effectiveViewportWidth;
+			ViewportHeight = effectiveViewportHeight;
 		}
 	}
 }
