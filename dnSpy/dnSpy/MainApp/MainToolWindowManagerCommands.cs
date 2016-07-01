@@ -61,7 +61,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HideToolWindowCommand", Icon = "tableviewnameonly", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:HideToolWindowCommand", InputGestureText = "res:ShortCutKeyShiftEsc", Icon = "tableviewnameonly", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 10)]
 	sealed class HideTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		HideTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)

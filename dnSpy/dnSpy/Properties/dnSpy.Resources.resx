@@ -980,4 +980,7 @@
   <data name="ShortCutKeyCtrlF4" xml:space="preserve">
     <value>Ctrl+F4</value>
   </data>
+  <data name="ShortCutKeyShiftEsc" xml:space="preserve">
+    <value>Shift+Esc</value>
+  </data>
 </root>

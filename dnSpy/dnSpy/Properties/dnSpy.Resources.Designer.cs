@@ -2367,6 +2367,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shift+Esc.
+        /// </summary>
+        public static string ShortCutKeyShiftEsc {
+            get {
+                return ResourceManager.GetString("ShortCutKeyShiftEsc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Code.
         /// </summary>
         public static string ShowCodeCommand {
