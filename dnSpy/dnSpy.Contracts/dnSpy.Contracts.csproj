@@ -475,6 +475,8 @@
     <Compile Include="Text\Formatting\IFormattedLine.cs" />
     <Compile Include="Text\Formatting\IFormattedLineSource.cs" />
     <Compile Include="Text\Formatting\IFormattedTextSourceFactoryService.cs" />
+    <Compile Include="Text\Formatting\ILineTransformSource.cs" />
+    <Compile Include="Text\Formatting\ILineTransformSourceProvider.cs" />
     <Compile Include="Text\Formatting\ISequenceElement.cs" />
     <Compile Include="Text\Formatting\ITextAndAdornmentCollection.cs" />
     <Compile Include="Text\Formatting\ITextAndAdornmentSequencer.cs" />

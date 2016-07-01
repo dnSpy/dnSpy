@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Formatting {
 	/// <summary>
 	/// Line transform
 	/// </summary>
-	public struct LineTransform {
+	public struct LineTransform : IEquatable<LineTransform> {
 		/// <summary>
 		/// Gets the amount of space required above the text of the line before applying the <see cref="VerticalScale"/> factor.
 		/// </summary>
@@ -97,5 +97,60 @@ namespace dnSpy.Contracts.Text.Formatting {
 			Right = right;
 			VerticalScale = verticalScale;
 		}
+
+		/// <summary>
+		/// Combines two line transforms
+		/// </summary>
+		/// <param name="transform1">Line transform #1</param>
+		/// <param name="transform2">Line transform #2</param>
+		/// <returns></returns>
+		public static LineTransform Combine(LineTransform transform1, LineTransform transform2) =>
+			new LineTransform(
+				Math.Max(transform1.TopSpace, transform2.TopSpace),
+				Math.Max(transform1.BottomSpace, transform2.BottomSpace),
+				transform1.VerticalScale * transform2.VerticalScale,
+				Math.Max(transform1.Right, transform2.Right));
+
+		/// <summary>
+		/// operator ==()
+		/// </summary>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static bool operator ==(LineTransform left, LineTransform right) => left.Equals(right);
+
+		/// <summary>
+		/// operator !=()
+		/// </summary>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static bool operator !=(LineTransform left, LineTransform right) => !left.Equals(right);
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(LineTransform other) => TopSpace == other.TopSpace && BottomSpace == other.BottomSpace && Right == other.Right && VerticalScale == other.VerticalScale;
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => obj is LineTransform && Equals((LineTransform)obj);
+
+		/// <summary>
+		/// GetHashCode()
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode() => TopSpace.GetHashCode() ^ BottomSpace.GetHashCode() ^ Right.GetHashCode() ^ VerticalScale.GetHashCode();
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() => $"T={TopSpace} B={BottomSpace} R={Right} V={VerticalScale}";
 	}
 }

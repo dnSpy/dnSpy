@@ -53,6 +53,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="contentTypes">Content types, eg. <see cref="Text.ContentTypes.TEXT"/></param>
 		public ExportSmartIndentProviderAttribute(params string[] contentTypes)
 			: base(typeof(ISmartIndentProvider)) {
 			if (contentTypes == null)

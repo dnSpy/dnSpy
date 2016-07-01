@@ -53,6 +53,7 @@ namespace dnSpy.Contracts.Text.Editor.Operations {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="contentTypes">Content types, eg. <see cref="Text.ContentTypes.TEXT"/></param>
 		public ExportTextStructureNavigatorProviderAttribute(params string[] contentTypes)
 			: base(typeof(ITextStructureNavigatorProvider)) {
 			if (contentTypes == null)

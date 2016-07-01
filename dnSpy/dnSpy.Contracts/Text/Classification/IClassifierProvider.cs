@@ -53,6 +53,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="contentTypes">Content types, eg. <see cref="Text.ContentTypes.TEXT"/></param>
 		public ExportClassifierProviderAttribute(params string[] contentTypes)
 			: base(typeof(IClassifierProvider)) {
 			if (contentTypes == null)

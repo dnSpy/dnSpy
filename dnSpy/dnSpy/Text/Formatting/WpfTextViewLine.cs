@@ -29,10 +29,8 @@ using CF = dnSpy.Contracts.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class WpfTextViewLine : IFormattedLine {
-		readonly double height;
 		double top;
 		readonly double width;
-		readonly double textHeight;
 		readonly double textLeft;
 		readonly double textWidth;
 		readonly double virtualSpaceWidth;
@@ -49,6 +47,11 @@ namespace dnSpy.Text.Formatting {
 		LineTransform lineTransform;
 		ReadOnlyCollection<TextLine> textLines;
 		readonly LinePartsCollection linePartsCollection;
+		double realTopSpace, scaledTopSpace;
+		double realBottomSpace;
+		double realTextHeight, scaledTextHeight;
+		double realHeight, scaledHeight;
+		double realBaseline;
 
 		public double Bottom {
 			get {
@@ -62,7 +65,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return height;
+				return scaledHeight;
 			}
 		}
 
@@ -102,7 +105,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return Top + lineTransform.TopSpace + TextHeight;
+				return Top + scaledTopSpace + TextHeight;
 			}
 		}
 
@@ -110,7 +113,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return Top + lineTransform.TopSpace;
+				return Top + scaledTopSpace;
 			}
 		}
 
@@ -118,7 +121,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return textHeight;
+				return scaledTextHeight;
 			}
 		}
 
@@ -158,7 +161,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return TextLine.Baseline;
+				return realBaseline * lineTransform.VerticalScale;
 			}
 		}
 
@@ -285,7 +288,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
-				return new LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, 1, Right);
+				return new LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, DEFAULT_VERTICAL_SCALE, Right);
 			}
 		}
 
@@ -339,6 +342,9 @@ namespace dnSpy.Text.Formatting {
 			this.visualSnapshot = visualSnapshot;
 			this.textLines = new ReadOnlyCollection<TextLine>(new[] { textLine });
 			Debug.Assert(textLines.Count == 1);// Assumed by all code accessing TextLine prop
+			this.realTopSpace = 0;
+			this.realBottomSpace = 0;
+			this.realBaseline = TextLine.Baseline;
 			this.isFirstTextViewLineForSnapshotLine = span.Start == bufferLine.Start;
 			this.isLastTextViewLineForSnapshotLine = span.End == bufferLine.EndIncludingLineBreak;
 			IsLastVisualLine = bufferLine.LineNumber + 1 == bufferLine.Snapshot.LineCount && IsLastTextViewLineForSnapshotLine;
@@ -347,15 +353,16 @@ namespace dnSpy.Text.Formatting {
 			this.textLeft = indentation;
 			this.textWidth = textLine.WidthIncludingTrailingWhitespace;
 			this.extentIncludingLineBreak = span;
-			this.endOfLineWidth = Math.Floor(this.textHeight * 0.58333333333333337);// Same as VS
+			this.realHeight = textLine.Height + DEFAULT_TOP_SPACE + DEFAULT_BOTTOM_SPACE;
+			this.realTextHeight = textLine.TextHeight;
+			this.endOfLineWidth = Math.Floor(this.realTextHeight * 0.58333333333333337);// Same as VS
 			this.width = this.textWidth + (this.lineBreakLength == 0 ? 0 : this.endOfLineWidth);
-			this.lineTransform = new LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, 1, Right);
-			this.height = textLine.Height + lineTransform.BottomSpace;
-			this.textHeight = textLine.TextHeight;
 			this.change = TextViewLineChange.NewOrReformatted;
+			SetLineTransform(DefaultLineTransform);
 		}
 		public const double DEFAULT_TOP_SPACE = 0.0;
 		public const double DEFAULT_BOTTOM_SPACE = 1.0;
+		public const double DEFAULT_VERTICAL_SCALE = 1.0;
 
 		VisibilityState CalculateVisibilityState() {
 			const double eps = 0.01;
@@ -555,7 +562,7 @@ namespace dnSpy.Text.Formatting {
 				double x = Left;
 				var dc = drawingVisual.RenderOpen();
 				foreach (var line in textLines) {
-					line.Draw(dc, new Point(x, Baseline - line.Baseline), InvertAxes.None);
+					line.Draw(dc, new Point(x, realBaseline - line.Baseline), InvertAxes.None);
 					x += line.WidthIncludingTrailingWhitespace;
 				}
 				dc.Close();
@@ -580,7 +587,7 @@ namespace dnSpy.Text.Formatting {
 		void UpdateVisualTransform() {
 			if (drawingVisual == null)
 				return;
-			var t = new TranslateTransform(0, TextTop);
+			var t = new MatrixTransform(1, 0, 0, lineTransform.VerticalScale, 0, TextTop);
 			t.Freeze();
 			drawingVisual.Transform = t;
 		}
@@ -594,9 +601,14 @@ namespace dnSpy.Text.Formatting {
 		public void SetLineTransform(LineTransform transform) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
+			var oldScaledTopSpace = scaledTopSpace;
+			bool resetTransform = lineTransform.VerticalScale != transform.VerticalScale;
 			lineTransform = transform;
-			UpdateVisualTransform();
-			throw new NotImplementedException();//TODO:
+			scaledTopSpace = Math.Ceiling(Math.Max(transform.TopSpace, realTopSpace) * transform.VerticalScale);
+			scaledTextHeight = Math.Ceiling(realTextHeight * transform.VerticalScale);
+			scaledHeight = scaledTextHeight + scaledTopSpace + Math.Ceiling(Math.Max(transform.BottomSpace, realBottomSpace) * transform.VerticalScale);
+			if (resetTransform || scaledTopSpace != oldScaledTopSpace)
+				UpdateVisualTransform();
 		}
 
 		public void SetSnapshot(ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
@@ -620,10 +632,10 @@ namespace dnSpy.Text.Formatting {
 		public void SetTop(double top) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			bool topChanged = this.top != top;
-			this.top = top;
-			if (topChanged || drawingVisual?.Transform == null)
+			if (this.top != top) {
+				this.top = top;
 				UpdateVisualTransform();
+			}
 		}
 
 		public void SetVisibleArea(Rect visibleArea) {

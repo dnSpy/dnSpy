@@ -478,6 +478,7 @@
     <Compile Include="Text\Formatting\LinePart.cs" />
     <Compile Include="Text\Formatting\LinePartsCollection.cs" />
     <Compile Include="Text\Formatting\LinePartsTextSource.cs" />
+    <Compile Include="Text\Formatting\LineTransformCreatorService.cs" />
     <Compile Include="Text\Formatting\PhysicalLine.cs" />
     <Compile Include="Text\Formatting\PhysicalLineCache.cs" />
     <Compile Include="Text\Formatting\TextAndAdornmentCollection.cs" />

@@ -30,6 +30,7 @@ using dnSpy.Text.Formatting;
 namespace dnSpy.Text.Editor {
 	sealed partial class WpfTextView {
 		sealed class LayoutHelper {
+			readonly ILineTransformCreator lineTransformCreator;
 			readonly List<PhysicalLine> oldLines;
 			readonly IFormattedLineSource formattedLineSource;
 			readonly ITextViewModel textViewModel;
@@ -43,8 +44,11 @@ namespace dnSpy.Text.Editor {
 			public List<IWpfTextViewLine> AllVisibleLines { get; private set; }
 			public List<IWpfTextViewLine> NewOrReformattedLines { get; private set; }
 			public List<IWpfTextViewLine> TranslatedLines { get; private set; }
+			readonly double requestedViewportTop;
 
-			public LayoutHelper(HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
+			public LayoutHelper(ILineTransformCreator lineTransformCreator, double newViewportTop, HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
+				this.lineTransformCreator = lineTransformCreator;
+				this.requestedViewportTop = newViewportTop;
 				this.oldLines = oldLines;
 				this.formattedLineSource = formattedLineSource;
 				this.textViewModel = textViewModel;
@@ -82,7 +86,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			public void LayoutLines(SnapshotPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportLeft, double viewportWidthOverride, double viewportHeightOverride) {
-				NewViewportTop = 0;
+				NewViewportTop = requestedViewportTop;
 				var infos = CreateLineInfos(bufferPosition, relativeTo, verticalDistance, viewportHeightOverride);
 
 				// The first line of the file must always be shown at the top of the view
@@ -94,11 +98,11 @@ namespace dnSpy.Text.Editor {
 				// Include a hidden line before the first line and one after the last line,
 				// just like in VS' IWpfTextViewLine collection.
 				var firstInfo = infos[0];
-				var prevLine = GetLineBefore(firstInfo.Line);
+				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, ViewRelativePosition.Bottom);
 				if (prevLine != null)
 					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
 				var lastInfo = infos[infos.Count - 1];
-				var nextLine = GetLineAfter(lastInfo.Line);
+				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, ViewRelativePosition.Top);
 				if (nextLine != null)
 					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
 
@@ -126,22 +130,21 @@ namespace dnSpy.Text.Editor {
 					if (!oldVisibleLines.Contains(line)) {
 						line.SetChange(TextViewLineChange.NewOrReformatted);
 						line.SetDeltaY(0);
-						NewOrReformattedLines.Add(line);
 					}
 					else {
 						var deltaY = newLineTop - line.Top;
-						if (deltaY == 0) {
-							line.SetChange(TextViewLineChange.None);
-							line.SetDeltaY(deltaY);
-						}
-						else {
+						line.SetDeltaY(deltaY);
+						// If it got a new line transform, it will have Change == NewOrReformatted,
+						// and that change has priority over Translated.
+						if (deltaY != 0 && line.Change == TextViewLineChange.None)
 							line.SetChange(TextViewLineChange.Translated);
-							line.SetDeltaY(deltaY);
-							TranslatedLines.Add(line);
-						}
 					}
 					line.SetTop(newLineTop);
 					line.SetVisibleArea(visibleArea);
+					if (line.Change == TextViewLineChange.Translated)
+						TranslatedLines.Add(line);
+					else if (line.Change == TextViewLineChange.NewOrReformatted)
+						NewOrReformattedLines.Add(line);
 				}
 				bool foundVisibleLine = false;
 				foreach (var info in infos) {
@@ -167,11 +170,15 @@ namespace dnSpy.Text.Editor {
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
-				if (relativeTo == ViewRelativePosition.Top)
+				if (relativeTo == ViewRelativePosition.Top) {
 					lineStartY = NewViewportTop + verticalDistance;
+					AddLineTransform(startLine, lineStartY, ViewRelativePosition.Top);
+				}
 				else {
 					Debug.Assert(relativeTo == ViewRelativePosition.Bottom);
-					lineStartY = NewViewportTop + viewportHeightOverride - verticalDistance - startLine.Height;
+					lineStartY = NewViewportTop + viewportHeightOverride - verticalDistance;
+					AddLineTransform(startLine, lineStartY, ViewRelativePosition.Bottom);
+					lineStartY -= startLine.Height;
 				}
 
 				var currentLine = startLine;
@@ -181,7 +188,7 @@ namespace dnSpy.Text.Editor {
 						lineInfos.Add(new LineInfo(currentLine, y));
 						if (y <= NewViewportTop)
 							break;
-						currentLine = GetLineBefore(currentLine);
+						currentLine = AddLineTransform(GetLineBefore(currentLine), y, ViewRelativePosition.Bottom);
 						if (currentLine == null)
 							break;
 						y -= currentLine.Height;
@@ -191,7 +198,7 @@ namespace dnSpy.Text.Editor {
 
 				currentLine = startLine;
 				for (y = lineStartY + currentLine.Height; y < newViewportBottom;) {
-					currentLine = GetLineAfter(currentLine);
+					currentLine = AddLineTransform(GetLineAfter(currentLine), y, ViewRelativePosition.Top);
 					if (currentLine == null)
 						break;
 					lineInfos.Add(new LineInfo(currentLine, y));
@@ -212,6 +219,17 @@ namespace dnSpy.Text.Editor {
 					NewViewportTop = first.Y;
 
 				return lineInfos;
+			}
+
+			IFormattedLine AddLineTransform(IFormattedLine line, double yPosition, ViewRelativePosition placement) {
+				if (line != null) {
+					var lineTransform = lineTransformCreator.GetLineTransform(line, yPosition, placement);
+					if (lineTransform != line.LineTransform) {
+						line.SetLineTransform(lineTransform);
+						line.SetChange(TextViewLineChange.NewOrReformatted);
+					}
+				}
+				return line;
 			}
 
 			IFormattedLine GetLine(SnapshotPoint point) => GetPhysicalLine(point).FindFormattedLineByBufferPosition(point);

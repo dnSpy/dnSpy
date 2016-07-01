@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -68,8 +69,19 @@ namespace dnSpy.Text.Editor {
 							pixels += line.Height;
 						}
 					}
-					else
-						pixels += line.Height;
+					else {
+						if (line.VisibilityState == VisibilityState.Unattached) {
+							// Height is only fully initialized once it's been shown on the screen
+							// (its LineTransform property is used to calculate Height)
+							var lineStart = line.Start;
+							textView.DisplayTextLineContainingBufferPosition(lineStart, 0, ViewRelativePosition.Top);
+							line = textView.GetTextViewLineContainingBufferPosition(lineStart);
+							Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
+							pixels = 0;
+						}
+						else
+							pixels += line.Height;
+					}
 					if (line.Start.Position == 0)
 						break;
 					line = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
@@ -78,6 +90,7 @@ namespace dnSpy.Text.Editor {
 					ScrollViewportVerticallyByPixels(pixels);
 			}
 			else {
+				Debug.Assert(direction == ScrollDirection.Down);
 				double pixels = 0;
 				var line = textView.TextViewLines.FirstVisibleLine;
 				for (int i = 0; i < count; i++) {
@@ -92,8 +105,19 @@ namespace dnSpy.Text.Editor {
 							pixels += line.Height;
 						}
 					}
-					else
-						pixels += line.Height;
+					else {
+						if (line.VisibilityState == VisibilityState.Unattached) {
+							// Height is only fully initialized once it's been shown on the screen
+							// (its LineTransform property is used to calculate Height)
+							var lineStart = line.Start;
+							textView.DisplayTextLineContainingBufferPosition(lineStart, 0, ViewRelativePosition.Top);
+							line = textView.GetTextViewLineContainingBufferPosition(lineStart);
+							Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
+							pixels = 0;
+						}
+						else
+							pixels += line.Height;
+					}
 					if (line.IsLastDocumentLine())
 						break;
 					line = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
@@ -108,6 +132,10 @@ namespace dnSpy.Text.Editor {
 
 			if (direction == ScrollDirection.Up) {
 				var firstVisibleLine = textView.TextViewLines.FirstVisibleLine;
+				if (firstVisibleLine.Height > textView.ViewportHeight) {
+					ScrollViewportVerticallyByPixels(textView.ViewportHeight);
+					return hasFullyVisibleLines;
+				}
 				double top;
 				if (firstVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
 					if (firstVisibleLine.IsFirstDocumentLine())
@@ -128,14 +156,26 @@ namespace dnSpy.Text.Editor {
 					if (line.IsFirstDocumentLine())
 						break;
 					line = textView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+					if (line.VisibilityState == VisibilityState.Unattached) {
+						// Height is only fully initialized once it's been shown on the screen
+						// (its LineTransform property is used to calculate Height)
+						var lineStart = line.Start;
+						textView.DisplayTextLineContainingBufferPosition(lineStart, 0, ViewRelativePosition.Bottom);
+						line = textView.GetTextViewLineContainingBufferPosition(lineStart);
+						Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
+					}
 					lineTop -= line.Height;
 				}
 				textView.DisplayTextLineContainingBufferPosition(prevLineStart, 0, ViewRelativePosition.Top);
 			}
 			else {
+				Debug.Assert(direction == ScrollDirection.Down);
 				double pixels = textView.ViewportHeight;
 				var lastVisibleLine = textView.TextViewLines.LastVisibleLine;
-				if (lastVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
+				if (lastVisibleLine.Height > textView.ViewportHeight) {
+					// This line intentionally left blank
+				}
+				else if (lastVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
 					if (lastVisibleLine.IsLastDocumentLine())
 						return hasFullyVisibleLines;
 				}

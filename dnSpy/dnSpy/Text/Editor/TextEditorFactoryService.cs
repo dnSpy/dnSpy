@@ -29,6 +29,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	//TODO: This iface should be removed. The users shouldn't depend on the text editor impl
@@ -52,6 +53,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService;
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
+		readonly ILineTransformCreatorService lineTransformCreatorService;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -106,7 +108,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
@@ -119,6 +121,7 @@ namespace dnSpy.Text.Editor {
 			this.textAndAdornmentSequencerFactoryService = textAndAdornmentSequencerFactoryService;
 			this.classificationFormatMapService = classificationFormatMapService;
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
+			this.lineTransformCreatorService = lineTransformCreatorService;
 		}
 
 		public IWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
@@ -176,7 +179,7 @@ namespace dnSpy.Text.Editor {
 			var guidObjectsCreator = new GuidObjectsCreator(options?.CreateGuidObjects, createGuidObjectsCreator?.Invoke());
 			var dnSpyTextEditorOptions = new DnSpyTextEditorOptions(commonTextEditorOptions, textViewModel.EditBuffer, () => guidObjectsCreator);
 			var dnSpyTextEditor = dnSpyTextEditorCreator.Create(dnSpyTextEditorOptions);
-			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, editorOperationsFactoryService, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, adornmentLayerDefinitionService);
+			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, editorOperationsFactoryService, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService);
 			guidObjectsCreator.WpfTextView = wpfTextView;
 
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));

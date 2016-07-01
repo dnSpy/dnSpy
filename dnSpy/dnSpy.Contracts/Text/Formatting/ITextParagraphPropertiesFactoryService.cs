@@ -58,6 +58,7 @@ namespace dnSpy.Contracts.Text.Formatting {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="contentTypes">Content types, eg. <see cref="Text.ContentTypes.TEXT"/></param>
 		public ExportTextParagraphPropertiesFactoryServiceAttribute(params string[] contentTypes)
 			: base(typeof(ITextParagraphPropertiesFactoryService)) {
 			if (contentTypes == null)
