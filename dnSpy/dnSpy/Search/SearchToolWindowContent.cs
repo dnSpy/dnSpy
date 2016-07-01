@@ -21,24 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows;
-using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
-	[ExportAutoLoaded]
-	sealed class SearchToolCommandLoader : IAutoLoaded {
-		[ImportingConstructor]
-		SearchToolCommandLoader(IMainToolWindowManager mainToolWindowManager, IWpfCommandManager wpfCommandManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_SEARCH_CONTROL);
-			cmds.Add(new RelayCommand(a => mainToolWindowManager.Close(SearchToolWindowContent.THE_GUID)), ModifierKeys.None, Key.Escape);
-		}
-	}
-
 	[Export(typeof(IMainToolWindowContentCreator))]
 	sealed class SearchToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<ISearchManager> searchManager;
