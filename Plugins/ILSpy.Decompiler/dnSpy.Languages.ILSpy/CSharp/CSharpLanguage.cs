@@ -114,7 +114,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		}
 #endif
 
-		public override Guid ContentTypeGuid => new Guid(ContentTypes.CSHARP_ILSPY);
+		public override string ContentTypeString => ContentTypes.CSHARP_ILSPY;
 		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_CSHARP;
 		public override string UniqueNameUI => uniqueNameUI;
 		public override double OrderUI { get; }

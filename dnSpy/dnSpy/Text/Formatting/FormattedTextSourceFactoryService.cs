@@ -19,10 +19,10 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Text.Classification;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(IFormattedTextSourceFactoryService))]

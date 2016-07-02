@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text;
+
 namespace dnSpy.Contracts.Text.Editor.Roslyn {
 	/// <summary>
 	/// <see cref="IRoslynCodeEditor"/> options

@@ -21,18 +21,21 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ISmartIndentationService))]
 	sealed class SmartIndentationService : ISmartIndentationService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly Lazy<ISmartIndentProvider, ISmartIndentProviderMetadata>[] smartIndentProviders;
-		ProviderSelector<ISmartIndentProvider, ISmartIndentProviderMetadata> providerSelector;
+		readonly Lazy<ISmartIndentProvider, IContentTypeMetadata>[] smartIndentProviders;
+		ProviderSelector<ISmartIndentProvider, IContentTypeMetadata> providerSelector;
 
 		[ImportingConstructor]
-		SmartIndentationService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ISmartIndentProvider, ISmartIndentProviderMetadata>> smartIndentProviders) {
+		SmartIndentationService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ISmartIndentProvider, IContentTypeMetadata>> smartIndentProviders) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.smartIndentProviders = smartIndentProviders.ToArray();
 		}
@@ -49,7 +52,7 @@ namespace dnSpy.Text.Editor {
 
 		ISmartIndent CreateSmartIndent(ITextView textView) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ISmartIndentProvider, ISmartIndentProviderMetadata>(contentTypeRegistryService, smartIndentProviders, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>(contentTypeRegistryService, smartIndentProviders, a => a.Metadata.ContentTypes);
 			var contentType = textView.TextDataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var smartIndent = p.Value.CreateSmartIndent(textView);
@@ -75,7 +78,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-				if (e.OptionId == DefaultOptions.IndentStyleOptionId.Name)
+				if (e.OptionId == DefaultDnSpyOptions.IndentStyleOptionId.Name)
 					CleanUp();
 			}
 

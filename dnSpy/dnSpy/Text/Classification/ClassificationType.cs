@@ -17,10 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
 	sealed class ClassificationType : IClassificationType {
@@ -32,17 +31,14 @@ namespace dnSpy.Text.Classification {
 		}
 		readonly IClassificationType[] baseTypes;
 
-		public Guid Classification { get; }
-		public string DisplayName { get; }
+		public string Classification { get; }
 
-		public ClassificationType(Guid type, string displayName, IEnumerable<IClassificationType> baseTypes) {
+		public ClassificationType(string type, IEnumerable<IClassificationType> baseTypes) {
 			Classification = type;
-			DisplayName = displayName;
 			this.baseTypes = baseTypes.ToArray();
 		}
 
-		public bool IsOfType(string type) => IsOfType(Guid.Parse(type));
-		public bool IsOfType(Guid type) {
+		public bool IsOfType(string type) {
 			if (Classification == type)
 				return true;
 
@@ -54,6 +50,6 @@ namespace dnSpy.Text.Classification {
 			return false;
 		}
 
-		public override string ToString() => DisplayName;
+		public override string ToString() => Classification;
 	}
 }

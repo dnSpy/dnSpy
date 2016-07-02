@@ -3,7 +3,8 @@
 		"Microsoft.CodeAnalysis.CSharp": "1.3.0",
 		"Microsoft.CodeAnalysis.CSharp.Workspaces": "1.3.0",
 		"Microsoft.CodeAnalysis.VisualBasic": "1.3.0",
-		"Microsoft.CodeAnalysis.VisualBasic.Workspaces": "1.3.0"
+		"Microsoft.CodeAnalysis.VisualBasic.Workspaces": "1.3.0",
+		"Microsoft.VisualStudio.Text.UI.Wpf": "14.3.25407"
 	},
 	"frameworks": {
 		"net46": { }

@@ -19,8 +19,8 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	[ExportCommandInfoCreator(RoslynReplCommandConstants.CMDINFO_ORDER_ROSLYN_REPL)]

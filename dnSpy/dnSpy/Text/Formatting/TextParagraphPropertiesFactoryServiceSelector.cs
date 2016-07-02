@@ -21,25 +21,26 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(ITextParagraphPropertiesFactoryServiceSelector))]
 	sealed class TextParagraphPropertiesFactoryServiceSelector : ITextParagraphPropertiesFactoryServiceSelector {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly Lazy<ITextParagraphPropertiesFactoryService, ITextParagraphPropertiesFactoryServiceMetadata>[] textParagraphPropertiesFactoryServices;
-		ProviderSelector<ITextParagraphPropertiesFactoryService, ITextParagraphPropertiesFactoryServiceMetadata> providerSelector;
+		readonly Lazy<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>[] textParagraphPropertiesFactoryServices;
+		ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata> providerSelector;
 
 		[ImportingConstructor]
-		TextParagraphPropertiesFactoryServiceSelector(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextParagraphPropertiesFactoryService, ITextParagraphPropertiesFactoryServiceMetadata>> textParagraphPropertiesFactoryServices) {
+		TextParagraphPropertiesFactoryServiceSelector(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>> textParagraphPropertiesFactoryServices) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textParagraphPropertiesFactoryServices = textParagraphPropertiesFactoryServices.ToArray();
 		}
 
 		public ITextParagraphPropertiesFactoryService Select(IContentType contentType) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, ITextParagraphPropertiesFactoryServiceMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices, a => a.Metadata.ContentTypes);
 			return providerSelector.GetProviders(contentType).FirstOrDefault()?.Value;
 		}
 	}

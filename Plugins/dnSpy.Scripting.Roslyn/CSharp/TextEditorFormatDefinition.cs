@@ -17,11 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Scripting.Roslyn.CSharp {
-	[ExportTextEditorFormatDefinition(Constants.REPL_CSharp, AppearanceCategoryConstants.REPL)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(Constants.REPL_CSharp)]
+	[BaseDefinition(AppearanceCategoryConstants.REPL)]
 	sealed class REPLCSharpTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => "REPL (C#)";
 	}
 }

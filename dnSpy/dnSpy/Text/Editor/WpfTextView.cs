@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -27,16 +28,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Operations;
-using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Shared.Controls;
 using dnSpy.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Text.Projection;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
-	sealed partial class WpfTextView : Canvas, IWpfTextView {
+	sealed partial class WpfTextView : Canvas, IWpfTextView, ILineTransformSource {
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => this;
 		public ITextViewRoleSet Roles { get; }
@@ -47,7 +52,7 @@ namespace dnSpy.Text.Editor {
 		TextCaret TextCaret { get; }
 		ITextSelection ITextView.Selection => Selection;
 		TextSelection Selection { get; }
-		public IEditorOperations2 EditorOperations { get; }
+		public IEditorOperations EditorOperations { get; }
 		public IViewScroller ViewScroller { get; }
 		public bool HasAggregateFocus => this.IsKeyboardFocusWithin;
 		public bool IsMouseOverViewOrAdornments => this.IsMouseOver;
@@ -78,29 +83,42 @@ namespace dnSpy.Text.Editor {
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
 		IWpfTextViewLineCollection IWpfTextView.TextViewLines => TextViewLines;
 
+		public IBufferGraph BufferGraph {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
 		readonly IFormattedTextSourceFactoryService formattedTextSourceFactoryService;
 		readonly IClassifier aggregateClassifier;
 		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
 		readonly IClassificationFormatMap classificationFormatMap;
+		readonly IEditorFormatMap editorFormatMap;
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformCreatorService lineTransformCreatorService;
 		readonly AdornmentLayerCollection adornmentLayerCollection;
 		readonly PhysicalLineCache physicalLineCache;
 		readonly List<PhysicalLine> visiblePhysicalLines;
 		readonly TextLayer textLayer;
-		ILineTransformCreator lineTransformCreator;
-		bool recreateLineTransformCreator;
 
 #pragma warning disable CS0169
-		[ExportAdornmentLayerDefinition("Text", PredefinedAdornmentLayers.Text, AdornmentLayerOrder.Text)]
+		[Export(typeof(AdornmentLayerDefinition))]
+		[Name(PredefinedAdornmentLayers.Text)]
+		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Caret)]
 		static readonly AdornmentLayerDefinition textAdornmentLayerDefinition;
-		[ExportAdornmentLayerDefinition("Caret", PredefinedAdornmentLayers.Caret, AdornmentLayerOrder.Caret)]
+
+		[Export(typeof(AdornmentLayerDefinition))]
+		[Name(PredefinedAdornmentLayers.Caret)]
+		[Order(After = PredefinedAdornmentLayers.Text)]
 		static readonly AdornmentLayerDefinition caretAdornmentLayerDefinition;
-		[ExportAdornmentLayerDefinition("Selection", PredefinedAdornmentLayers.Selection, AdornmentLayerOrder.Selection)]
+
+		[Export(typeof(AdornmentLayerDefinition))]
+		[Name(PredefinedAdornmentLayers.Selection)]
+		[Order(Before = PredefinedAdornmentLayers.Text)]
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -125,6 +143,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(textAndAdornmentSequencerFactoryService));
 			if (classificationFormatMapService == null)
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
+			if (editorFormatMapService == null)
+				throw new ArgumentNullException(nameof(editorFormatMapService));
 			if (adornmentLayerDefinitionService == null)
 				throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			if (lineTransformCreatorService == null)
@@ -151,6 +171,7 @@ namespace dnSpy.Text.Editor {
 			this.aggregateClassifier = viewClassifierAggregatorService.GetClassifier(this);
 			this.textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
 			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(this);
+			this.editorFormatMap = editorFormatMapService.GetEditorFormatMap(this);
 			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
 				RegisteredCommandElement = commandManager.Register(VisualElement, this);
 			else
@@ -172,8 +193,9 @@ namespace dnSpy.Text.Editor {
 			aggregateClassifier.ClassificationChanged += AggregateClassifier_ClassificationChanged;
 			textAndAdornmentSequencer.SequenceChanged += TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 
-			Background = classificationFormatMap.DefaultWindowBackground;
+			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
 			InitializeZoom();
 		}
@@ -190,7 +212,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			if (screenRefreshTimer != null)
 				return;
-			int ms = Options.GetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId);
+			int ms = Options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId);
 			if (ms > 0)
 				screenRefreshTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(ms), DispatcherPriority.Normal, RefreshScreenHandler, Dispatcher);
 			else
@@ -225,7 +247,7 @@ namespace dnSpy.Text.Editor {
 					InvalidateSpan(new SnapshotSpan(e.After, c.NewSpan));
 			}
 			InvalidateFormattedLineSource(false);
-			if (Options.GetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeId))
+			if (Options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId))
 				DelayScreenRefresh();
 		}
 
@@ -233,14 +255,25 @@ namespace dnSpy.Text.Editor {
 			Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.ChangeSpan)), DispatcherPriority.Normal);
 
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
-			// It uses the classification format map and must use the latest changes
 			Dispatcher.BeginInvoke(new Action(() => {
 				if (IsClosed)
 					return;
 				UpdateForceClearTypeIfNeeded();
-				Background = classificationFormatMap.DefaultWindowBackground;
 				InvalidateFormattedLineSource(true);
 			}), DispatcherPriority.Normal);
+		}
+
+		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+			if (e.ChangedItems.Contains(EditorFormatMapConstants.TextViewBackgroundId))
+				UpdateBackground();
+		}
+
+		void UpdateBackground() {
+			var bgProps = editorFormatMap.GetProperties(EditorFormatMapConstants.TextViewBackgroundId);
+			var bg = bgProps[EditorFormatDefinition.BackgroundBrushId] as Brush ?? SystemColors.WindowBrush;
+			if (bg.CanFreeze)
+				bg.Freeze();
+			Background = bg;
 		}
 
 		void TextAndAdornmentSequencer_SequenceChanged(object sender, TextAndAdornmentSequenceChangedEventArgs e) =>
@@ -321,8 +354,8 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name)
 				InvalidateFormattedLineSource(true);
-			else if (e.OptionId == DefaultTextViewOptions.RefreshScreenOnChangeId.Name) {
-				if (!Options.GetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeId))
+			else if (e.OptionId == DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId.Name) {
+				if (!Options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId))
 					StopRefreshTimer();
 			}
 		}
@@ -480,7 +513,7 @@ namespace dnSpy.Text.Editor {
 			foreach (var physLine in visiblePhysicalLines)
 				physLine.Dispose();
 			visiblePhysicalLines.Clear();
-			(lineTransformCreator as IDisposable)?.Dispose();
+			(__lineTransformCreator as IDisposable)?.Dispose();
 
 			Options.OptionChanged -= EditorOptions_OptionChanged;
 			TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
@@ -488,13 +521,14 @@ namespace dnSpy.Text.Editor {
 			aggregateClassifier.ClassificationChanged -= AggregateClassifier_ClassificationChanged;
 			textAndAdornmentSequencer.SequenceChanged -= TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
+			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 			if (metroWindow != null)
 				metroWindow.WindowDPIChanged -= MetroWindow_WindowDPIChanged;
 		}
 
 		void InitializeOptions() {
 			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
-			UpdateOption(DefaultWpfViewOptions.ForceClearTypeIfNeededId.Name);
+			UpdateOption(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name);
 		}
 
 		void UpdateOption(string optionId) {
@@ -504,7 +538,7 @@ namespace dnSpy.Text.Editor {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
 			}
-			else if (optionId == DefaultWpfViewOptions.ForceClearTypeIfNeededId.Name)
+			else if (optionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name)
 				UpdateForceClearTypeIfNeeded();
 		}
 
@@ -512,7 +546,7 @@ namespace dnSpy.Text.Editor {
 			// Remote Desktop seems to force disable-ClearType so to prevent Consolas from looking
 			// really ugly and to prevent the colors (eg. keyword color) to look like different
 			// colors, force ClearType if the font is Consolas. VS also does this.
-			bool forceIfNeeded = Options.GetOptionValue(DefaultWpfViewOptions.ForceClearTypeIfNeededId);
+			bool forceIfNeeded = Options.GetOptionValue(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId);
 			var fontName = classificationFormatMap.DefaultTextProperties.GetFontName();
 			bool forceClearType = forceIfNeeded && IsForceClearTypeFontName(fontName);
 			if (forceClearType)
@@ -608,10 +642,7 @@ namespace dnSpy.Text.Editor {
 			}
 			Debug.Assert(FormattedLineSource.SourceTextSnapshot == TextSnapshot && FormattedLineSource.TopTextSnapshot == VisualSnapshot);
 
-			if (recreateLineTransformCreator) {
-				lineTransformCreator = lineTransformCreatorService.Create(this);
-				recreateLineTransformCreator = false;
-			}
+			var lineTransformCreator = LineTransformCreator;
 
 			if (InLayout)
 				throw new InvalidOperationException();
@@ -682,10 +713,10 @@ namespace dnSpy.Text.Editor {
 		public IAdornmentLayer GetAdornmentLayer(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			var mdLayer = adornmentLayerDefinitionService.GetLayerDefinition(Guid.Parse(name));
-			if (mdLayer == null)
+			var info = adornmentLayerDefinitionService.GetLayerDefinition(name);
+			if (info == null)
 				throw new ArgumentException($"Adornment layer {name} doesn't exist");
-			return adornmentLayerCollection.GetAdornmentLayer(mdLayer);
+			return adornmentLayerCollection.GetAdornmentLayer(info.Value);
 		}
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo) {
@@ -742,6 +773,30 @@ namespace dnSpy.Text.Editor {
 		void MetroWindow_WindowDPIChanged(object sender, EventArgs e) {
 			Debug.Assert(sender != null && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(this, ZoomLevel / 100);
+		}
+
+		ILineTransformCreator LineTransformCreator {
+			get {
+				if (recreateLineTransformCreator) {
+					__lineTransformCreator = lineTransformCreatorService.Create(this);
+					recreateLineTransformCreator = false;
+				}
+				return __lineTransformCreator;
+			}
+		}
+		ILineTransformCreator __lineTransformCreator;
+		bool recreateLineTransformCreator;
+
+		public ILineTransformSource LineTransformSource => this;
+		LineTransform ILineTransformSource.GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement) =>
+			LineTransformCreator.GetLineTransform(line, yPosition, placement);
+
+		public ISpaceReservationManager GetSpaceReservationManager(string name) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void QueueSpaceReservationStackRefresh() {
+			//TODO:
 		}
 	}
 }

@@ -34,6 +34,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[Export, ExportFileTabContentFactory(Order = TabConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
@@ -212,10 +213,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var contentType = decompileContext.DecompileNodeContext.ContentType;
 			if (contentType == null) {
-				var contentTypeGuid = decompileContext.DecompileNodeContext.ContentTypeGuid;
-				if (contentTypeGuid == Guid.Empty)
-					contentTypeGuid = ContentTypes.TryGetContentTypeGuidByExtension(decompileContext.DecompileNodeContext.Language.FileExtension) ?? new Guid(ContentTypes.PLAIN_TEXT);
-				contentType = decompileFileTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeGuid);
+				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
+				if (contentTypeString == null)
+					contentTypeString = ContentTypes.TryGetContentTypeStringByExtension(decompileContext.DecompileNodeContext.Language.FileExtension) ?? ContentTypes.PLAIN_TEXT;
+				contentType = decompileFileTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeString);
 				Debug.Assert(contentType != null);
 			}
 

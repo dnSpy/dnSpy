@@ -18,8 +18,8 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor.Operations {
 	static class EditorOptionsExtensions {

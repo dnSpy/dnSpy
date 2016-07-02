@@ -35,6 +35,10 @@ using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
 using dnSpy.Text.Editor.Operations;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class ReplEditor : IReplEditor2 {
@@ -52,7 +56,7 @@ namespace dnSpy.Text.Editor {
 		readonly DnSpyTextEditor textEditor;
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
-		readonly IWpfTextView wpfTextView;
+		readonly WpfTextView wpfTextView;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ReplEditor replEditorUI;
@@ -66,7 +70,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
+		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options ?? new ReplEditorOptions();
 			this.PrimaryPrompt = options.PrimaryPrompt;
@@ -74,7 +78,7 @@ namespace dnSpy.Text.Editor {
 			this.subBuffers = new List<ReplSubBuffer>();
 			this.cachedColorsList = new CachedColorsList();
 
-			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
+			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(options.Roles);
@@ -87,7 +91,7 @@ namespace dnSpy.Text.Editor {
 			//TODO: ReplEditorOperations doesn't support virtual space
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 			//TODO: Support box selection
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AllowBoxSelectionId, false);
+			wpfTextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.AllowBoxSelectionId, false);
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -96,7 +100,7 @@ namespace dnSpy.Text.Editor {
 			this.textEditor = wpfTextView.DnSpyTextEditor;
 			AddNewDocument();
 			WriteOffsetOfPrompt(null, true);
-			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView);
+			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView, editorOperationsFactoryService);
 			wpfTextView.VisualElement.Loaded += WpfTextView_Loaded;
 			UpdateRefreshScreenOnChange();
 		}
@@ -450,7 +454,7 @@ namespace dnSpy.Text.Editor {
 			if (currentInput.Equals(command))
 				return;
 
-			wpfTextView.Selection.Clear();
+			((IWpfTextView)wpfTextView).Selection.Clear();
 			ReplEditorOperations.AddUserInput(Span.FromBounds(FilterOffset(OffsetOfPrompt.Value), wpfTextView.TextSnapshot.Length), command, clearSearchText);
 		}
 
@@ -641,13 +645,13 @@ namespace dnSpy.Text.Editor {
 		/// </summary>
 		bool IsExecMode => OffsetOfPrompt == null;
 
-		public bool CanCopyCode => !wpfTextView.Selection.IsEmpty;
+		public bool CanCopyCode => !((IWpfTextView)wpfTextView).Selection.IsEmpty;
 		public void CopyCode() {
 			if (!CanCopyCode)
 				return;
 
-			int startOffset = wpfTextView.Selection.Start.Position;
-			int endOffset = wpfTextView.Selection.End.Position;
+			int startOffset = ((IWpfTextView)wpfTextView).Selection.Start.Position;
+			int endOffset = ((IWpfTextView)wpfTextView).Selection.End.Position;
 			Debug.Assert(endOffset > startOffset);
 			if (endOffset <= startOffset)
 				return;

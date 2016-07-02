@@ -23,65 +23,60 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(IClassificationTypeRegistryService))]
 	sealed class ClassificationTypeRegistryService : IClassificationTypeRegistryService {
-		readonly Dictionary<Guid, IClassificationType> toClassificationType;
+		readonly Dictionary<string, IClassificationType> toClassificationType;
 		readonly Dictionary<string, IClassificationType> transientNameToType;
 		readonly IClassificationType transientClassificationType;
 
 		// From ContentTypeRegistryService
 		sealed class ClassificationTypeCreator {
 			readonly ClassificationTypeRegistryService owner;
-			readonly Dictionary<Guid, RawClassificationType> rawClassificationTypes;
+			readonly Dictionary<string, RawClassificationType> rawClassificationTypes;
 
 			sealed class RawClassificationType {
-				public Guid Guid { get; }
-				public string DisplayName { get; }
-				public Guid[] BaseGuids { get; }
+				public string Type { get; }
+				public string[] BaseTypes { get; }
 
-				public RawClassificationType(Guid guid, string displayName, Guid[] baseGuids) {
-					Guid = guid;
-					DisplayName = displayName;
-					BaseGuids = baseGuids;
+				public RawClassificationType(string guid, string[] baseGuids) {
+					Type = guid;
+					BaseTypes = baseGuids;
 				}
 			}
 
-			public ClassificationTypeCreator(ClassificationTypeRegistryService owner, IEnumerable<Lazy<ClassificationTypeDefinition, IDictionary<string, object>>> classificationTypeDefinitions) {
+			public ClassificationTypeCreator(ClassificationTypeRegistryService owner, IEnumerable<Lazy<ClassificationTypeDefinition, IClassificationTypeDefinitionMetadata>> classificationTypeDefinitions) {
 				this.owner = owner;
-				this.rawClassificationTypes = new Dictionary<Guid, RawClassificationType>();
+				this.rawClassificationTypes = new Dictionary<string, RawClassificationType>();
 				foreach (var md in classificationTypeDefinitions.Select(a => a.Metadata)) {
-					var guid = GetGuid(md);
-					Debug.Assert(guid != null);
-					if (guid == null)
+					var type = md.Name;
+					Debug.Assert(type != null);
+					if (type == null)
 						continue;
-					Debug.Assert(!rawClassificationTypes.ContainsKey(guid.Value));
-					if (rawClassificationTypes.ContainsKey(guid.Value))
+					Debug.Assert(!rawClassificationTypes.ContainsKey(type));
+					if (rawClassificationTypes.ContainsKey(type))
 						continue;
-					var baseGuids = GetBaseGuids(md);
-					Debug.Assert(baseGuids != null);
-					if (baseGuids == null)
-						continue;
-					var displayName = GetDisplayName(md);
-					var rawCt = new RawClassificationType(guid.Value, displayName, baseGuids);
-					rawClassificationTypes.Add(rawCt.Guid, rawCt);
+					var baseTypes = (md.BaseDefinition ?? Array.Empty<string>()).ToArray();
+					var rawCt = new RawClassificationType(type, baseTypes);
+					rawClassificationTypes.Add(rawCt.Type, rawCt);
 				}
-				var list = rawClassificationTypes.Values.Select(a => a.Guid).ToArray();
-				foreach (var guid in list)
-					TryCreate(guid, 0);
+				var list = rawClassificationTypes.Values.Select(a => a.Type).ToArray();
+				foreach (var type in list)
+					TryCreate(type, 0);
 			}
 
-			IClassificationType TryGet(Guid guid) {
+			IClassificationType TryGet(string type) {
 				IClassificationType classificationType;
-				owner.toClassificationType.TryGetValue(guid, out classificationType);
+				owner.toClassificationType.TryGetValue(type, out classificationType);
 				return classificationType;
 			}
 
-			IClassificationType TryCreate(Guid guid, int recurse) {
-				var ct = TryGet(guid);
+			IClassificationType TryCreate(string type, int recurse) {
+				var ct = TryGet(type);
 				if (ct != null)
 					return ct;
 
@@ -91,92 +86,49 @@ namespace dnSpy.Text.Classification {
 					return null;
 
 				RawClassificationType rawCt;
-				bool b = rawClassificationTypes.TryGetValue(guid, out rawCt);
+				bool b = rawClassificationTypes.TryGetValue(type, out rawCt);
 				Debug.Assert(b);
 				if (!b)
 					return null;
-				b = rawClassificationTypes.Remove(rawCt.Guid);
+				b = rawClassificationTypes.Remove(rawCt.Type);
 				Debug.Assert(b);
 
-				var baseTypes = new IClassificationType[rawCt.BaseGuids.Length];
+				var baseTypes = new IClassificationType[rawCt.BaseTypes.Length];
 				for (int i = 0; i < baseTypes.Length; i++) {
-					var btClassificationType = TryCreate(rawCt.BaseGuids[i], recurse + 1);
+					var btClassificationType = TryCreate(rawCt.BaseTypes[i], recurse + 1);
 					if (btClassificationType == null)
 						return null;
 					baseTypes[i] = btClassificationType;
 				}
 
-				ct = new ClassificationType(rawCt.Guid, GetDisplayNameInternal(rawCt.Guid, rawCt.DisplayName), baseTypes);
+				ct = new ClassificationType(rawCt.Type, baseTypes);
 				owner.toClassificationType.Add(ct.Classification, ct);
 				return ct;
-			}
-
-			Guid? GetGuid(IDictionary<string, object> md) {
-				object obj;
-				if (!md.TryGetValue("Guid", out obj))
-					return null;
-				string s = obj as string;
-				if (s == null)
-					return null;
-				Guid guid;
-				if (!Guid.TryParse(s, out guid))
-					return null;
-
-				return guid;
-			}
-
-			Guid[] GetBaseGuids(IDictionary<string, object> md) {
-				object obj;
-				if (!md.TryGetValue("BaseDefinition", out obj))
-					return Array.Empty<Guid>();
-				var guidStrings = obj as string[];
-				if (guidStrings == null)
-					return Array.Empty<Guid>();
-				var guids = new Guid[guidStrings.Length];
-				for (int i = 0; i < guidStrings.Length; i++) {
-					Guid guid;
-					if (!Guid.TryParse(guidStrings[i], out guid))
-						return null;
-					guids[i] = guid;
-				}
-				return guids;
-			}
-
-			string GetDisplayName(IDictionary<string, object> md) {
-				object obj;
-				md.TryGetValue("DisplayName", out obj);
-				return obj as string;
 			}
 		}
 
 		[ImportingConstructor]
-		ClassificationTypeRegistryService([ImportMany] IEnumerable<Lazy<ClassificationTypeDefinition, IDictionary<string, object>>> classificationTypeDefinitions) {
-			this.toClassificationType = new Dictionary<Guid, IClassificationType>();
+		ClassificationTypeRegistryService([ImportMany] IEnumerable<Lazy<ClassificationTypeDefinition, IClassificationTypeDefinitionMetadata>> classificationTypeDefinitions) {
+			this.toClassificationType = new Dictionary<string, IClassificationType>();
 			this.transientNameToType = new Dictionary<string, IClassificationType>();
 			new ClassificationTypeCreator(this, classificationTypeDefinitions);
-			this.transientClassificationType = GetClassificationType(TRANSIENT_GUID);
+			this.transientClassificationType = GetClassificationType(TRANSIENT_NAME);
 			if (this.transientClassificationType == null)
 				throw new InvalidOperationException();
 		}
 
-		const string TRANSIENT_GUID = "7CF31DEF-0A08-49E0-994B-2B7B542DA21A";
-		[ExportClassificationTypeDefinition(TRANSIENT_GUID)]
-		[DisplayName("transient")]
+		const string TRANSIENT_NAME = "(TRANSIENT)";
 #pragma warning disable CS0169
-		static ClassificationTypeDefinition _transientClassificationType;
+		[Export, Name(TRANSIENT_NAME)]
+		static ClassificationTypeDefinition _transientClassificationTypeDefinition;
 #pragma warning restore CS0169
 
-		static string GetDisplayNameInternal(Guid guid, string displayName) => displayName ?? guid.ToString();
-
-		public IClassificationType CreateClassificationType(string type, IEnumerable<IClassificationType> baseTypes) =>
-			CreateClassificationType(Guid.Parse(type), baseTypes);
-		public IClassificationType CreateClassificationType(Guid type, IEnumerable<IClassificationType> baseTypes) {
+		public IClassificationType CreateClassificationType(string type, IEnumerable<IClassificationType> baseTypes) {
 			if (baseTypes == null)
 				throw new ArgumentNullException(nameof(baseTypes));
 			if (toClassificationType.ContainsKey(type))
 				throw new InvalidOperationException();
-			string displayName = null;
-			var ct = new ClassificationType(type, GetDisplayNameInternal(type, displayName), baseTypes);
+			var ct = new ClassificationType(type, baseTypes);
 			toClassificationType.Add(type, ct);
 			return ct;
 		}
@@ -191,29 +143,27 @@ namespace dnSpy.Text.Classification {
 				throw new InvalidOperationException();
 
 			Array.Sort(bts, (a, b) => a.Classification.CompareTo(b.Classification));
-			var name = GetTransientDisplayName(bts);
+			var name = GetTransientName(bts);
 			IClassificationType ct;
 			if (transientNameToType.TryGetValue(name, out ct))
 				return ct;
 
-			ct = new ClassificationType(Guid.NewGuid(), name, baseTypes);
+			ct = new ClassificationType(name, baseTypes);
 			transientNameToType.Add(name, ct);
 			return ct;
 		}
 
-		string GetTransientDisplayName(IEnumerable<IClassificationType> baseTypes) {
+		string GetTransientName(IEnumerable<IClassificationType> baseTypes) {
 			var sb = new StringBuilder();
 			foreach (var bt in baseTypes) {
-				sb.Append(bt.Classification.ToString());
+				sb.Append(bt.Classification);
 				sb.Append(" - ");
 			}
-			sb.Append(transientClassificationType.Classification.ToString());
+			sb.Append(TRANSIENT_NAME);
 			return sb.ToString();
 		}
 
-		public IClassificationType GetClassificationType(string type) =>
-			GetClassificationType(Guid.Parse(type));
-		public IClassificationType GetClassificationType(Guid type) {
+		public IClassificationType GetClassificationType(string type) {
 			IClassificationType ct;
 			toClassificationType.TryGetValue(type, out ct);
 			return ct;

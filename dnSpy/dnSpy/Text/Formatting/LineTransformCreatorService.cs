@@ -21,13 +21,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Formatting {
-	interface ILineTransformCreator {
-		LineTransform GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement);
+	interface ILineTransformCreator : ILineTransformSource {
 	}
 
 	interface ILineTransformCreatorService {
@@ -37,18 +37,18 @@ namespace dnSpy.Text.Formatting {
 	[Export(typeof(ILineTransformCreatorService))]
 	sealed class LineTransformCreatorService : ILineTransformCreatorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly Lazy<ILineTransformSourceProvider, ILineTransformSourceProviderMetadata>[] lineTransformSourceProviders;
-		ProviderSelector<ILineTransformSourceProvider, ILineTransformSourceProviderMetadata> providerSelector;
+		readonly Lazy<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>[] lineTransformSourceProviders;
+		ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata> providerSelector;
 
 		[ImportingConstructor]
-		LineTransformCreatorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ILineTransformSourceProvider, ILineTransformSourceProviderMetadata>> lineTransformSourceProviders) {
+		LineTransformCreatorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>> lineTransformSourceProviders) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.lineTransformSourceProviders = lineTransformSourceProviders.ToArray();
 		}
 
 		public ILineTransformCreator Create(IWpfTextView textView) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ILineTransformSourceProvider, ILineTransformSourceProviderMetadata>(contentTypeRegistryService, lineTransformSourceProviders, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>(contentTypeRegistryService, lineTransformSourceProviders, a => a.Metadata.ContentTypes);
 			var contentType = textView.TextDataModel.ContentType;
 			var list = new List<ILineTransformSource>();
 			foreach (var p in providerSelector.GetProviders(contentType)) {

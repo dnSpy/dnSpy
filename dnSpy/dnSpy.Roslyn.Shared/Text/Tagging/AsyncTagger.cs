@@ -23,8 +23,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	/// <summary>

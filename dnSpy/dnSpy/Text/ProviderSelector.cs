@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	sealed class ProviderSelector<TProvider, TProviderMetadata> {

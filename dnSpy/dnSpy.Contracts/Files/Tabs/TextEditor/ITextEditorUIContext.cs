@@ -23,6 +23,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>

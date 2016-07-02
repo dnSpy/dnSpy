@@ -17,14 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.BamlDecompiler {
 	static class ContentTypeDefinitions {
 #pragma warning disable CS0169
-		[ExportContentTypeDefinition(ContentTypes.BAML_DNSPY)]
-		[DisplayName("BAML - dnSpy")]
-		[BaseContentType(ContentTypes.BAML)]
+		[Export]
+		[Name(ContentTypes.BAML_DNSPY)]
+		[BaseDefinition(ContentTypes.BAML)]
 		static readonly ContentTypeDefinition BAMLDnSpyContentTypeDefinition;
 #pragma warning restore CS0169
 	}

@@ -23,10 +23,14 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
-	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ANY)]
+	[Export(typeof(ITaggerProvider))]
+	[TagType(typeof(IClassificationTag))]
+	[ContentType(ContentTypes.ANY)]
 	sealed class CachedColorsListTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypes themeClassificationTypes;
 

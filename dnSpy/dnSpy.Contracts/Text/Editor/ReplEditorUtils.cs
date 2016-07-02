@@ -18,6 +18,7 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

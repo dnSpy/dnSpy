@@ -19,97 +19,144 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Media;
+using System.Windows;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Contracts.Themes;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Classification {
 	sealed class CategoryClassificationFormatMap : IClassificationFormatMap {
-		public TextFormattingRunProperties DefaultTextProperties { get; private set; }
-		public Brush DefaultWindowBackground { get; private set; }
+		public TextFormattingRunProperties DefaultTextProperties {
+			get {
+				Debug.Assert(defaultTextFormattingRunProperties != null);
+				return defaultTextFormattingRunProperties;
+			}
+			set {
+				if (value == null)
+					return;
+				if (value == defaultTextFormattingRunProperties)
+					return;
+				defaultTextFormattingRunProperties = value;
+				ClassificationFontUtils.CopyTo(defaultResourceDictionary, defaultTextFormattingRunProperties);
+				defaultTextFormattingRunProperties = ClassificationFontUtils.Create(defaultResourceDictionary);
+				ClassificationFormatMappingChanged?.Invoke(this, EventArgs.Empty);
+			}
+		}
+
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
 
+		public ReadOnlyCollection<IClassificationType> CurrentPriorityOrder {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public bool IsInBatchUpdate {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
 		readonly IThemeManager themeManager;
-		readonly ITextEditorFontSettings textEditorFontSettings;
-		readonly Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions;
+		readonly IEditorFormatMap editorFormatMap;
 		readonly Dictionary<IClassificationType, ClassificationInfo> toClassificationInfo;
-		readonly Dictionary<IClassificationType, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>> toEditorFormatDefinition;
+		readonly Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>> toEditorFormatDefinition;
 		readonly Dictionary<IClassificationType, int> toClassificationTypeOrder;
+		readonly Dictionary<string, string> classificationToEditorFormatMapKey;
+		readonly ResourceDictionary defaultResourceDictionary;
+		TextFormattingRunProperties defaultTextFormattingRunProperties;
 
 		sealed class ClassificationInfo {
+			public ResourceDictionary ExplicitResourceDictionary { get; set; }
+			public ResourceDictionary InheritedResourceDictionary { get; set; }
 			public TextFormattingRunProperties ExplicitTextProperties { get; set; }
 			public TextFormattingRunProperties InheritedTextProperties { get; set; }
-			public Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata> Lazy { get; }
+			public Lazy<EditorFormatDefinition, IClassificationFormatMetadata> Lazy { get; }
 			public IClassificationType ClassificationType { get; }
 
-			public ClassificationInfo(Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata> lazy, IClassificationType classificationType) {
+			public ClassificationInfo(Lazy<EditorFormatDefinition, IClassificationFormatMetadata> lazy, IClassificationType classificationType) {
 				Lazy = lazy;
 				ClassificationType = classificationType;
 			}
 		}
 
-		public CategoryClassificationFormatMap(IThemeManager themeManager, ITextEditorFontSettings textEditorFontSettings, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		public CategoryClassificationFormatMap(IThemeManager themeManager, IEditorFormatMap editorFormatMap, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			if (themeManager == null)
 				throw new ArgumentNullException(nameof(themeManager));
-			if (textEditorFontSettings == null)
-				throw new ArgumentNullException(nameof(textEditorFontSettings));
-			if (editorFormatDefinitions == null)
-				throw new ArgumentNullException(nameof(editorFormatDefinitions));
+			if (editorFormatMap == null)
+				throw new ArgumentNullException(nameof(editorFormatMap));
+			if (editorFormatDefinitionService == null)
+				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.themeManager = themeManager;
-			this.textEditorFontSettings = textEditorFontSettings;
-			this.editorFormatDefinitions = editorFormatDefinitions;
+			this.editorFormatMap = editorFormatMap;
 			this.toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
-			this.toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>>(editorFormatDefinitions.Length);
+			this.toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
 			this.toClassificationTypeOrder = new Dictionary<IClassificationType, int>();
+			this.classificationToEditorFormatMapKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			this.defaultResourceDictionary = new ResourceDictionary();
 
-			for (int i = 0; i < editorFormatDefinitions.Length; i++) {
-				var e = editorFormatDefinitions[i];
-				var classificationType = classificationTypeRegistryService.GetClassificationType(e.Metadata.ClassificationTypeName);
-				Debug.Assert(classificationType != null);
-				if (classificationType == null)
-					continue;
-				Debug.Assert(!toEditorFormatDefinition.ContainsKey(classificationType));
-				if (!toEditorFormatDefinition.ContainsKey(classificationType)) {
-					toClassificationTypeOrder.Add(classificationType, i);
-					toEditorFormatDefinition.Add(classificationType, e);
+			for (int i = 0; i < editorFormatDefinitionService.ClassificationFormatDefinitions.Length; i++) {
+				var e = editorFormatDefinitionService.ClassificationFormatDefinitions[i];
+				foreach (var ctString in e.Metadata.ClassificationTypeNames) {
+					var classificationType = classificationTypeRegistryService.GetClassificationType(ctString);
+					Debug.Assert(classificationType != null);
+					if (classificationType == null)
+						continue;
+					Debug.Assert(!toEditorFormatDefinition.ContainsKey(classificationType));
+					if (!toEditorFormatDefinition.ContainsKey(classificationType)) {
+						toClassificationTypeOrder.Add(classificationType, toClassificationTypeOrder.Count);
+						toEditorFormatDefinition.Add(classificationType, e);
+						classificationToEditorFormatMapKey.Add(classificationType.Classification, ((IEditorFormatMetadata)e.Metadata).Name);
+					}
 				}
 			}
 
-			themeManager.ThemeChangedHighPriority += ThemeManager_ThemeChangedHighPriority;
-			textEditorFontSettings.SettingsChanged += TextEditorFontSettings_SettingsChanged;
+			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
+
 			ReinitializeCache();
 		}
 
-		void TextEditorFontSettings_SettingsChanged(object sender, EventArgs e) => ClearCacheAndNotifyListeners();
-		void ThemeManager_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) => ClearCacheAndNotifyListeners();
+		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+			ReinitializeCache();
+			ClassificationFormatMappingChanged?.Invoke(this, EventArgs.Empty);
+		}
 
 		void ReinitializeCache() {
 			toClassificationInfo.Clear();
-			DefaultTextProperties = textEditorFontSettings.CreateTextFormattingRunProperties(themeManager.Theme);
-			DefaultWindowBackground = textEditorFontSettings.GetWindowBackground(themeManager.Theme);
-		}
-
-		void ClearCacheAndNotifyListeners() {
-			ReinitializeCache();
-			ClassificationFormatMappingChanged?.Invoke(this, EventArgs.Empty);
+			ClassificationFontUtils.CopyTo(defaultResourceDictionary, editorFormatMap.GetProperties(EditorFormatMapConstants.PlainText));
+			defaultTextFormattingRunProperties = ClassificationFontUtils.Create(defaultResourceDictionary);
 		}
 
 		sealed class TransientClassificationFormatDefinition : ClassificationFormatDefinition {
 		}
 
+		sealed class ClassificationFormatMetadata : IClassificationFormatMetadata {
+			public IEnumerable<string> After { get; }
+			public IEnumerable<string> Before { get; }
+			public IEnumerable<string> ClassificationTypeNames { get; }
+			public string Name { get; }
+			public bool UserVisible { get; }
+			public ClassificationFormatMetadata(string classification) {
+				Name = classification;
+				ClassificationTypeNames = new string[] { classification };
+			}
+		}
+
 		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
 			ClassificationInfo info;
 			if (!toClassificationInfo.TryGetValue(classificationType, out info)) {
-				Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata> lazy;
+				Lazy<EditorFormatDefinition, IClassificationFormatMetadata> lazy;
 				if (!toEditorFormatDefinition.TryGetValue(classificationType, out lazy)) {
 					if (!canCreate)
 						return null;
-					lazy = new Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>(() => new TransientClassificationFormatDefinition(), new ExportClassificationFormatDefinitionAttribute(classificationType.Classification.ToString(), classificationType.DisplayName));
+					lazy = new Lazy<EditorFormatDefinition, IClassificationFormatMetadata>(() => new TransientClassificationFormatDefinition(), new ClassificationFormatMetadata(classificationType.Classification));
 					var dummy = lazy.Value;
 					toEditorFormatDefinition.Add(classificationType, lazy);
 				}
@@ -141,19 +188,31 @@ namespace dnSpy.Text.Classification {
 			return info.InheritedTextProperties;
 		}
 
-		void CreateExplicitTextProperties(ClassificationInfo info) =>
-			info.ExplicitTextProperties = info.Lazy.Value.CreateTextFormattingRunProperties(themeManager.Theme);
+		void CreateExplicitTextProperties(ClassificationInfo info) {
+			var props = info.Lazy.Value.CreateThemeResourceDictionary(themeManager.Theme);
+			info.ExplicitResourceDictionary = props;
+			info.ExplicitTextProperties = ClassificationFontUtils.Create(info.ExplicitResourceDictionary);
+		}
 
 		void CreateInheritedTextProperties(ClassificationInfo info) {
 			var list = new List<IClassificationType>();
 			AddBaseTypes(list, info.ClassificationType);
-			info.InheritedTextProperties = CreateInheritedTextProperties(DefaultTextProperties, list);
+			info.InheritedResourceDictionary = CreateInheritedResourceDictionary(defaultResourceDictionary, list);
+			info.InheritedTextProperties = ClassificationFontUtils.Create(info.InheritedResourceDictionary);
 		}
 
-		TextFormattingRunProperties CreateInheritedTextProperties(TextFormattingRunProperties p, List<IClassificationType> types) {
-			for (int i = types.Count - 1; i >= 0; i--)
-				p = TextFormattingRunPropertiesUtils.Merge(p, GetExplicitTextProperties(types[i]));
-			return p;
+		ResourceDictionary CreateInheritedResourceDictionary(ResourceDictionary r, List<IClassificationType> types) {
+			var res = new ResourceDictionary();
+			res.MergedDictionaries.Add(r);
+			for (int i = types.Count - 1; i >= 0; i--) {
+				var info = TryGetClassificationInfo(types[i], canCreate: false);
+				if (info == null)
+					continue;
+				if (info.ExplicitTextProperties == null)
+					CreateExplicitTextProperties(info);
+				res.MergedDictionaries.Add(info.ExplicitResourceDictionary);
+			}
+			return res;
 		}
 
 		void AddBaseTypes(List<IClassificationType> list, IClassificationType classificationType) {
@@ -167,6 +226,43 @@ namespace dnSpy.Text.Classification {
 				AddBaseTypes(list, bt);
 		}
 		ClassificationTypeComparer classificationTypeComparer;
+
+		public string GetEditorFormatMapKey(IClassificationType classificationType) {
+			if (classificationType == null)
+				throw new ArgumentNullException(nameof(classificationType));
+			string key;
+			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out key))
+				key = classificationType.Classification;
+			return key;
+		}
+
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void BeginBatchUpdate() {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public void EndBatchUpdate() {
+			throw new NotImplementedException();//TODO:
+		}
 
 		sealed class ClassificationTypeComparer : IComparer<IClassificationType> {
 			readonly CategoryClassificationFormatMap owner;

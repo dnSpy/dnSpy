@@ -27,166 +27,166 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Any content
 		/// </summary>
-		public const string ANY = "D53EB38F-3D22-42AE-A0A7-6794A005E265";
+		public const string ANY = "any";
 
 		/// <summary>
 		/// Inert content
 		/// </summary>
-		public const string INERT = "FAD13E9E-058B-45EA-9E1E-365B7C3C2A20";
+		public const string INERT = "inert";
 
 		/// <summary>
 		/// Text
 		/// </summary>
-		public const string TEXT = "C73BA084-F0A4-451F-87A1-B95A5662397A";
+		public const string TEXT = "text";
 
 		/// <summary>
 		/// Plain text
 		/// </summary>
-		public const string PLAIN_TEXT = "A41C5B09-A9D2-4AF9-AF33-199432ABE82D";
+		public const string PLAIN_TEXT = "plaintext";
 
 		/// <summary>
 		/// XML
 		/// </summary>
-		public const string XML = "70D9332A-CDF9-403C-973C-A32CF0A26230";
+		public const string XML = "xml";
 
 		/// <summary>
 		/// XAML
 		/// </summary>
-		public const string XAML = "5092146B-D610-4544-921D-839E7B72BD19";
+		public const string XAML = "XAML";
 
 		/// <summary>
 		/// Disassembled BAML
 		/// </summary>
-		public const string BAML = "3397E321-C6E7-4283-9AD0-F5A352AFA9D2";
+		public const string BAML = "BAML";
 
 		/// <summary>
 		/// Disassembled BAML (dnSpy BAML plugin)
 		/// </summary>
-		public const string BAML_DNSPY = "A95E34C1-006F-4F54-B4C5-04A4EC77774F";
+		public const string BAML_DNSPY = "BAML-dnSpy";
 
 		/// <summary>
 		/// Code
 		/// </summary>
-		public const string CODE = "CF24BA26-CB1C-41EC-ADC5-2F45741CD3B1";
+		public const string CODE = "code";
 
 		/// <summary>
 		/// C# code
 		/// </summary>
-		public const string CSHARP = "5DD3CA47-12DE-4A34-A9DD-294E58CD28FF";
+		public const string CSHARP = "C#-code";
 
 		/// <summary>
 		/// Visual Basic code
 		/// </summary>
-		public const string VISUALBASIC = "5C223730-12A2-4053-A409-3E15BF2714C6";
+		public const string VISUALBASIC = "VB-code";
 
 		/// <summary>
 		/// IL code
 		/// </summary>
-		public const string IL = "ECD2654F-E252-44FC-9698-22714C8448D8";
+		public const string IL = "MSIL";
 
 		/// <summary>
 		/// Roslyn (C# / Visual Basic) code
 		/// </summary>
-		public const string ROSLYN_CODE = "A3028D64-E968-461D-BEA6-2DB8FEE37F1F";
+		public const string ROSLYN_CODE = "Roslyn Languages";
 
 		/// <summary>
 		/// C# (Roslyn)
 		/// </summary>
-		public const string CSHARP_ROSLYN = "0111D4FA-C4A3-4424-A92B-04C58D2D61F4";
+		public const string CSHARP_ROSLYN = "CSharp";
 
 		/// <summary>
 		/// Visual Basic (Roslyn)
 		/// </summary>
-		public const string VISUALBASIC_ROSLYN = "0DE41AF4-32CC-4898-9514-2DA468F57216";
+		public const string VISUALBASIC_ROSLYN = "Basic";
 
 		/// <summary>
 		/// Decompiled code
 		/// </summary>
-		public const string DECOMPILED_CODE = "30B9980F-CCE4-401B-B164-CE80CAE64165";
+		public const string DECOMPILED_CODE = "Decompiled Code";
 
 		/// <summary>
 		/// ILSpy decompiler output
 		/// </summary>
-		public const string DECOMPILER_ILSPY = "2E61CB2D-D553-4690-9BF7-45AD402101A3";
+		public const string DECOMPILER_ILSPY = "Decompiler ILSpy";
 
 		/// <summary>
 		/// C# (ILSpy decompiler)
 		/// </summary>
-		public const string CSHARP_ILSPY = "7A15270E-76F5-42E7-A3A6-5116D0E23EC4";
+		public const string CSHARP_ILSPY = "C# ILSpy";
 
 		/// <summary>
 		/// Visual Basic (ILSpy decompiler)
 		/// </summary>
-		public const string VISUALBASIC_ILSPY = "B6ECF0A3-91B9-4E4E-BA9D-E7988B63129F";
+		public const string VISUALBASIC_ILSPY = "VB ILSpy";
 
 		/// <summary>
 		/// IL (ILSpy decompiler)
 		/// </summary>
-		public const string IL_ILSPY = "2438781E-BDF5-45B1-9601-D7C253D45EE1";
+		public const string IL_ILSPY = "IL ILSpy";
 
 		/// <summary>
 		/// ILAst (ILSpy decompiler)
 		/// </summary>
-		public const string ILAST_ILSPY = "E5ADC71D-45F4-4B69-A55A-D67C12293876";
+		public const string ILAST_ILSPY = "ILAst ILSpy";
 
 		/// <summary>
 		/// REPL
 		/// </summary>
-		public const string REPL = "884E6207-212C-43BD-A9DF-26B766054224";
+		public const string REPL = "REPL";
 
 		/// <summary>
 		/// REPL (Roslyn)
 		/// </summary>
-		public const string REPL_ROSLYN = "3BBAB541-1D77-47CB-8671-E4BD4DA7DAE0";
+		public const string REPL_ROSLYN = "REPL Roslyn";
 
 		/// <summary>
 		/// REPL C# (Roslyn)
 		/// </summary>
-		public const string REPL_CSHARP_ROSLYN = "BE367973-778C-49F0-95A0-CA1AC038E9F8";
+		public const string REPL_CSHARP_ROSLYN = "REPL C# Roslyn";
 
 		/// <summary>
 		/// REPL Visual Basic (Roslyn)
 		/// </summary>
-		public const string REPL_VISUALBASIC_ROSLYN = "E601A530-7F6D-4B81-B0DE-FC6D26B16D0C";
+		public const string REPL_VISUALBASIC_ROSLYN = "REPL VB Roslyn";
 
 		/// <summary>
 		/// Output window
 		/// </summary>
-		public const string OUTPUT = "EAD38A71-11D5-4BB6-B12F-5287A1EABD51";
+		public const string OUTPUT = "Output";
 
 		/// <summary>
 		/// Output window: Debug
 		/// </summary>
-		public const string OUTPUT_DEBUG = "A240342E-28B0-4117-BD63-65A8F6D6CA1D";
+		public const string OUTPUT_DEBUG = "DebugOutput";
 
 		/// <summary>
 		/// About dnSpy
 		/// </summary>
-		public const string ABOUT_DNSPY = "EB4D03E3-E57E-48E4-9863-DB5703D5B2CE";
+		public const string ABOUT_DNSPY = "About dnSpy";
 
 		/// <summary>
 		/// Returns a content type or null if it's unknown
 		/// </summary>
 		/// <param name="extension">File extension, with or without the period</param>
 		/// <returns></returns>
-		public static Guid? TryGetContentTypeGuidByExtension(string extension) {
+		public static string TryGetContentTypeStringByExtension(string extension) {
 			var comparer = StringComparer.InvariantCultureIgnoreCase;
 			if (comparer.Equals(extension, ".txt") || comparer.Equals(extension, "txt"))
-				return new Guid(PLAIN_TEXT);
+				return PLAIN_TEXT;
 			if (comparer.Equals(extension, ".xml") || comparer.Equals(extension, "xml"))
-				return new Guid(XML);
+				return XML;
 			if (comparer.Equals(extension, ".xaml") || comparer.Equals(extension, "xaml"))
-				return new Guid(XAML);
+				return XAML;
 			if (comparer.Equals(extension, ".cs") || comparer.Equals(extension, "cs"))
-				return new Guid(CSHARP);
+				return CSHARP;
 			if (comparer.Equals(extension, ".csx") || comparer.Equals(extension, "csx"))
-				return new Guid(CSHARP);
+				return CSHARP;
 			if (comparer.Equals(extension, ".vb") || comparer.Equals(extension, "vb"))
-				return new Guid(VISUALBASIC);
+				return VISUALBASIC;
 			if (comparer.Equals(extension, ".vbx") || comparer.Equals(extension, "vbx"))
-				return new Guid(VISUALBASIC);
+				return VISUALBASIC;
 			if (comparer.Equals(extension, ".il") || comparer.Equals(extension, "il"))
-				return new Guid(IL);
+				return IL;
 
 			return null;
 		}

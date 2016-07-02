@@ -19,6 +19,8 @@
 
 using System;
 using dnSpy.Contracts.Controls;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

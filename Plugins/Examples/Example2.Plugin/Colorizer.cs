@@ -4,8 +4,10 @@ using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
-using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 // Colorizes all text files.
 // All "if" words use the Yellow color (default: no background, yellow foreground color)
@@ -16,41 +18,55 @@ using dnSpy.Contracts.Themes;
 namespace Example2.Plugin {
 	// Define our classification types. A classification type is converted to a color
 	static class Constants {
-		//TODO: use your own GUIDs
-		public const string Color1 = "34A18F9B-6789-4A83-86E2-1E8DF81EB64C";
-		public const string Color2 = "4854F0DE-E51B-4544-9FA3-01F1A2576FAD";
+		// Use unique names
+		public const string Color1_ClassificationTypeName = "Example2.Plugin.Color1";
+		public const string Color2_ClassificationTypeName = "Example2.Plugin.Color2";
 
 		// Disable compiler warnings. The fields aren't referenced, just exported so
 		// the metadata can be added to some table. The fields will always be null.
 #pragma warning disable CS0169
 		// Export the classes that define the name, and base types
-		[ExportClassificationTypeDefinition(Color1)]
-		[DisplayName("Color1")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(Color1_ClassificationTypeName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition Color1ClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(Color2)]
-		[DisplayName("Color2")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(Color2_ClassificationTypeName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition Color2ClassificationTypeDefinition;
 #pragma warning restore CS0169
 
 		// Export the classes that define the colors and order
-		[ExportClassificationFormatDefinition(Color1, "Color1", Order = EditorFormatDefinitionPriority.BeforeHigh)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = Color1_ClassificationTypeName)]
+		[Name("My Color #1")]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
 		sealed class Color1ClassificationFormatDefinition : ClassificationFormatDefinition {
-			public override Brush GetBackground(ITheme theme) => Brushes.Green;
+			Color1ClassificationFormatDefinition() {
+				BackgroundBrush = Brushes.Green;
+			}
 		}
 
-		[ExportClassificationFormatDefinition(Color2, "Color2", Order = EditorFormatDefinitionPriority.BeforeHigh)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = Color2_ClassificationTypeName)]
+		[Name("My Color #2")]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
 		sealed class Color2ClassificationFormatDefinition : ClassificationFormatDefinition {
-			public override Brush GetForeground(ITheme theme) => Brushes.White;
-			public override Brush GetBackground(ITheme theme) => Brushes.Red;
+			Color2ClassificationFormatDefinition() {
+				ForegroundBrush = Brushes.White;
+				BackgroundBrush = Brushes.Red;
+			}
 		}
 	}
 
 	// Export our tagger provider. Each time a new text editor is created with our supported
 	// content type (TEXT), this class gets called to create the tagger.
-	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.TEXT)]
+	[Export(typeof(ITaggerProvider))]
+	[TagType(typeof(IClassificationTag))]
+	[ContentType(ContentTypes.TEXT)]
 	sealed class TextTaggerProvider : ITaggerProvider {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
@@ -69,7 +85,10 @@ namespace Example2.Plugin {
 
 	// This class gets called to colorize supported files
 	sealed class TextTagger : ITagger<IClassificationTag> {
-		// We don't raise it, so add empty add/remove methods to prevent compiler warnings
+		// We don't raise it, so add empty add/remove methods to prevent compiler warnings.
+		// This event must be raised when you detect changes to spans in the document. If
+		// your GetTags() method does async work, you should raise it when the async work
+		// is completed.
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
 			add { }
 			remove { }
@@ -82,8 +101,8 @@ namespace Example2.Plugin {
 
 		public TextTagger(IClassificationTypeRegistryService classificationTypeRegistryService) {
 			// Get the classification types we need
-			this.color1 = classificationTypeRegistryService.GetClassificationType(Constants.Color1);
-			this.color2 = classificationTypeRegistryService.GetClassificationType(Constants.Color2);
+			this.color1 = classificationTypeRegistryService.GetClassificationType(Constants.Color1_ClassificationTypeName);
+			this.color2 = classificationTypeRegistryService.GetClassificationType(Constants.Color2_ClassificationTypeName);
 			// Get some classification types created by some other code
 			this.color3 = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Yellow);
 			this.color4 = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Error);

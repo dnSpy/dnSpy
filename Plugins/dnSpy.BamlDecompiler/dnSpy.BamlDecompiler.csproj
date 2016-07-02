@@ -124,6 +124,7 @@
     <Compile Include="Xaml\NamespaceMap.cs" />
     <Compile Include="Xaml\XamlType.cs" />
     <Compile Include="XmlnsDictionary.cs" />
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">

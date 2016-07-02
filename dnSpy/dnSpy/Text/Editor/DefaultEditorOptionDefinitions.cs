@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
@@ -38,7 +39,7 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class IndentStyleEditorOptionDefinition : EditorOptionDefinition<IndentStyle> {
-		public override EditorOptionKey<IndentStyle> Key => DefaultOptions.IndentStyleOptionId;
+		public override EditorOptionKey<IndentStyle> Key => DefaultDnSpyOptions.IndentStyleOptionId;
 		public override IndentStyle Default => IndentStyle.Smart;
 	}
 

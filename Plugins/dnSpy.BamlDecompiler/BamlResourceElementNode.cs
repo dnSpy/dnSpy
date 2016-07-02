@@ -95,29 +95,29 @@ namespace dnSpy.BamlDecompiler {
 
 		Stream GetDecompiledStream(CancellationToken token) {
 			var output = new PlainTextOutput();
-			Guid contentTypeGuid;
-			Decompile(output, token, out contentTypeGuid);
+			string contentTypeString;
+			Decompile(output, token, out contentTypeString);
 			return ResourceUtils.StringToStream(output.ToString());
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			Guid contentTypeGuid;
-			context.HighlightingExtension = Decompile(context.Output, context.DecompilationContext.CancellationToken, out contentTypeGuid);
-			context.ContentTypeGuid = contentTypeGuid;
+			string contentTypeString;
+			context.HighlightingExtension = Decompile(context.Output, context.DecompilationContext.CancellationToken, out contentTypeString);
+			context.ContentTypeString = contentTypeString;
 			return true;
 		}
 
-		public string Decompile(ITextOutput output, CancellationToken token, out Guid contentTypeGuid) {
+		public string Decompile(ITextOutput output, CancellationToken token, out string contentTypeString) {
 			string ext = null;
 			var lang = Context.Language;
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
 			if (bamlSettings.DisassembleBaml) {
 				Disassemble(module, document, lang, output, out ext, token);
-				contentTypeGuid = new Guid(ContentTypes.BAML_DNSPY);
+				contentTypeString = ContentTypes.BAML_DNSPY;
 			}
 			else {
 				Decompile(module, document, lang, output, out ext, token);
-				contentTypeGuid = new Guid(ContentTypes.XAML);
+				contentTypeString = ContentTypes.XAML;
 			}
 			return ext;
 		}
@@ -126,8 +126,8 @@ namespace dnSpy.BamlDecompiler {
 			if (!canDecompile)
 				return null;
 			var output = new PlainTextOutput();
-			Guid contentTypeGuid;
-			Decompile(output, token, out contentTypeGuid);
+			string contentTypeString;
+			Decompile(output, token, out contentTypeString);
 			return output.ToString();
 		}
 	}

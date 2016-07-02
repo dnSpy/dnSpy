@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_TEXT_EDITOR)]

@@ -19,17 +19,24 @@
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Classification type names
+	/// Predefined classification type names
 	/// </summary>
 	public static class PredefinedClassificationTypeNames {
-		/// <summary>
-		/// Formal language
-		/// </summary>
-		public const string FormalLanguage = "463A658F-3354-4CB3-A7C2-E3AA690EDE07";
-
-		/// <summary>
-		/// Natural language
-		/// </summary>
-		public const string NaturalLanguage = "A821E70F-93C1-44BC-9A53-8B18631A1F32";
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public const string Character = "character";
+		public const string Comment = "comment";
+		public const string ExcludedCode = "excluded code";
+		public const string FormalLanguage = "formal language";
+		public const string Identifier = "identifier";
+		public const string Keyword = "keyword";
+		public const string Literal = "literal";
+		public const string NaturalLanguage = "natural language";
+		public const string Number = "number";
+		public const string Operator = "operator";
+		public const string Other = "other";
+		public const string PreprocessorKeyword = "preprocessor keyword";
+		public const string String = "string";
+		public const string WhiteSpace = "whitespace";
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

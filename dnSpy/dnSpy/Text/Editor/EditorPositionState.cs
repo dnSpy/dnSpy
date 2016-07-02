@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class EditorPositionState {

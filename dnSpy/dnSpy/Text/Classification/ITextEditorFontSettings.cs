@@ -18,8 +18,7 @@
 */
 
 using System;
-using System.Windows.Media;
-using dnSpy.Contracts.Text.Formatting;
+using System.Windows;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Text.Classification {
@@ -34,13 +33,6 @@ namespace dnSpy.Text.Classification {
 		/// </summary>
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
-		TextFormattingRunProperties CreateTextFormattingRunProperties(ITheme theme);
-
-		/// <summary>
-		/// Gets the background brush of the window
-		/// </summary>
-		/// <param name="theme">Theme</param>
-		/// <returns></returns>
-		Brush GetWindowBackground(ITheme theme);
+		ResourceDictionary CreateResourceDictionary(ITheme theme);
 	}
 }

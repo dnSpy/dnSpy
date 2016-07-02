@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
 	[Export(typeof(IBufferTagAggregatorFactoryService))]

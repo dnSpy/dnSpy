@@ -22,8 +22,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using dnSpy.Contracts.Text;
 using dnSpy.Text.AvalonEdit;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	sealed class TextSnapshot : ITextSnapshot {

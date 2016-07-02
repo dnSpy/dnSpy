@@ -136,8 +136,8 @@ namespace dnSpy.BamlDecompiler {
 				ctx.Token = cs.Token;
 				uiContext.ShowCancelButton(() => cs.Cancel(), dnSpy_BamlDecompiler_Resources.Saving);
 			}, () => {
-				Guid contentTypeGuid;
-				bamlNode.Decompile(ctx.Output, ctx.Token, out contentTypeGuid);
+				string contentTypeString;
+				bamlNode.Decompile(ctx.Output, ctx.Token, out contentTypeString);
 			}, result => {
 				ctx.Dispose();
 				uiContext.HideCancelButton();

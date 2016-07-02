@@ -29,6 +29,9 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
@@ -82,7 +85,7 @@ namespace dnSpy.Text.Editor {
 			this.cachedColorsList = new CachedColorsList();
 			options = options ?? new LogEditorOptions();
 
-			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
+			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var rolesList = new List<string>(defaultRoles);
@@ -93,7 +96,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStyles.DefaultDisabled);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultDisabled);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
 			this.wpfTextView = wpfTextView;
 			this.textEditor = wpfTextView.DnSpyTextEditor;

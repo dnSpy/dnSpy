@@ -27,9 +27,9 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.Text;
 using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs {
 	[ExportFileListListener]

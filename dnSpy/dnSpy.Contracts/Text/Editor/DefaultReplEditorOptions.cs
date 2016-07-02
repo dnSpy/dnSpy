@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text.Editor;
+
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Default <see cref="IReplEditor"/> options
@@ -25,7 +27,7 @@ namespace dnSpy.Contracts.Text.Editor {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>("IReplEditor/RefreshScreenOnChange");
 		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecsId = new EditorOptionKey<int>("IReplEditor/RefreshScreenOnChangeWaitMilliSecsId");
-		public const int DefaultRefreshScreenOnChangeWaitMilliSecs = DefaultTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
+		public const int DefaultRefreshScreenOnChangeWaitMilliSecs = DefaultDnSpyTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

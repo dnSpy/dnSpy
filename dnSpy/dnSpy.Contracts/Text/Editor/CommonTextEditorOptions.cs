@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -30,9 +30,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		public IContentType ContentType { get; set; }
 
 		/// <summary>
-		/// Content type guid or null
+		/// Content type string or null
 		/// </summary>
-		public Guid? ContentTypeGuid { get; set; }
+		public string ContentTypeString { get; set; }
 
 		/// <summary>
 		/// Clones this
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public CommonTextEditorOptions CopyTo(CommonTextEditorOptions other) {
 			base.CopyTo(other);
 			other.ContentType = ContentType;
-			other.ContentTypeGuid = ContentTypeGuid;
+			other.ContentTypeString = ContentTypeString;
 			return other;
 		}
 	}

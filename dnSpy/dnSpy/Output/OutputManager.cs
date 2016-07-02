@@ -29,11 +29,13 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Output;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
 using dnSpy.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Output {
 	interface IOutputManagerInternal : IOutputManager {
@@ -126,9 +128,11 @@ namespace dnSpy.Output {
 		readonly OutputManagerSettingsImpl outputManagerSettingsImpl;
 		readonly IPickSaveFilename pickSaveFilename;
 		Guid prevSelectedGuid;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		OutputManager(ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename) {
+		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename) {
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorCreator = logEditorCreator;
 			this.outputManagerSettingsImpl = outputManagerSettingsImpl;
 			this.prevSelectedGuid = outputManagerSettingsImpl.SelectedGuid;
@@ -154,7 +158,7 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public IOutputTextPane Create(Guid guid, string name, Guid contentType) =>
+		public IOutputTextPane Create(Guid guid, string name, string contentType) =>
 			Create(guid, name, (object)contentType);
 
 		public IOutputTextPane Create(Guid guid, string name, IContentType contentType) =>
@@ -172,14 +176,14 @@ namespace dnSpy.Output {
 			var logEditorOptions = new LogEditorOptions {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
 				ContentType = contentTypeObj as IContentType,
-				ContentTypeGuid = contentTypeObj as Guid?,
+				ContentTypeString = contentTypeObj as string,
 				CreateGuidObjects = args => CreateGuidObjects(args),
 			};
 			logEditorOptions.ExtraRoles.Add(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE);
 			var logEditor = logEditorCreator.Create(logEditorOptions);
 			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
 
-			vm = new OutputBufferVM(guid, name, logEditor);
+			vm = new OutputBufferVM(editorOperationsFactoryService, guid, name, logEditor);
 			int index = GetSortedInsertIndex(vm);
 			OutputBuffers.Insert(index, vm);
 			while (index < OutputBuffers.Count)

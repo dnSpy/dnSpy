@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	sealed class ContentType : IContentType {
@@ -32,22 +32,20 @@ namespace dnSpy.Text {
 		}
 		readonly IContentType[] baseTypes;
 
-		public Guid Guid { get; }
-		public string DisplayName { get; }
+		public string TypeName { get; }
+		public string DisplayName => TypeName;
 
-		public ContentType(Guid guid, string displayName, IEnumerable<IContentType> baseTypes) {
-			Guid = guid;
-			DisplayName = displayName;
+		public ContentType(string typeName, IEnumerable<IContentType> baseTypes) {
+			TypeName = typeName;
 			this.baseTypes = baseTypes.ToArray();
 		}
 
-		public bool IsOfType(string guid) => IsOfType(Guid.Parse(guid));
-		public bool IsOfType(Guid guid) {
-			if (Guid == guid)
+		public bool IsOfType(string type) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(TypeName, type))
 				return true;
 
 			foreach (var bt in baseTypes) {
-				if (bt.IsOfType(guid))
+				if (bt.IsOfType(type))
 					return true;
 			}
 

@@ -18,9 +18,10 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Tagging {
 	interface ITaggerFactory {

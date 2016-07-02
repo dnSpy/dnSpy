@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
 	sealed class TextSnapshotLine : ITextSnapshotLine {

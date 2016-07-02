@@ -18,9 +18,9 @@
 */
 
 using dnSpy.Contracts.AsmEditor.Compiler;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	sealed class RoslynCodeDocument : ICodeDocument {

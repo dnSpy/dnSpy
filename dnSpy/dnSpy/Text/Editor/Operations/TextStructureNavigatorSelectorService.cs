@@ -22,18 +22,20 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor.Operations {
 	[Export(typeof(ITextStructureNavigatorSelectorService))]
 	sealed class TextStructureNavigatorSelectorService : ITextStructureNavigatorSelectorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly Lazy<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata>[] textStructureNavigatorProviders;
-		ProviderSelector<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata> providerSelector;
+		readonly Lazy<ITextStructureNavigatorProvider, IContentTypeMetadata>[] textStructureNavigatorProviders;
+		ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata> providerSelector;
 
 		[ImportingConstructor]
-		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata>> textStructureNavigatorProviders) {
+		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextStructureNavigatorProvider, IContentTypeMetadata>> textStructureNavigatorProviders) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textStructureNavigatorProviders = textStructureNavigatorProviders.ToArray();
 		}
@@ -55,8 +57,6 @@ namespace dnSpy.Text.Editor.Operations {
 			Debug.Assert(b);
 		}
 
-		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer, Guid contentType) =>
-			CreateTextStructureNavigator(textBuffer, contentTypeRegistryService.GetContentType(contentType) ?? contentTypeRegistryService.UnknownContentType);
 		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer, IContentType contentType) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
@@ -64,7 +64,7 @@ namespace dnSpy.Text.Editor.Operations {
 				throw new ArgumentNullException(nameof(contentType));
 
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ITextStructureNavigatorProvider, ITextStructureNavigatorProviderMetadata>(contentTypeRegistryService, textStructureNavigatorProviders, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata>(contentTypeRegistryService, textStructureNavigatorProviders, a => a.Metadata.ContentTypes);
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var nav = p.Value.CreateTextStructureNavigator(textBuffer);
 				if (nav != null)

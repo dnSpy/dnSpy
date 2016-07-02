@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text.Formatting {
 	sealed class LinePartsCollection {

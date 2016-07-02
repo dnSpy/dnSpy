@@ -17,11 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
 
 namespace dnSpy.Text.Editor {
 	interface IAdornmentLayerDefinitionService {
-		IAdornmentLayerDefinitionMetadata GetLayerDefinition(Guid guid);
+		MetadataAndOrder<IAdornmentLayersMetadata>? GetLayerDefinition(string name);
 	}
 }

@@ -18,20 +18,76 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Base class of all default text editor format definitions. Use <see cref="ExportTextEditorFormatDefinitionAttribute"/>
-	/// to export an instance.
+	/// Text editor format definition
 	/// </summary>
-	public abstract class TextEditorFormatDefinition : TextFormatDefinition {
+	public abstract class TextEditorFormatDefinition : EditorFormatDefinition, IThemeFormatDefinition {
 		/// <summary>
-		/// Gets the name shown in the UI
+		/// This method isn't implemented, call <see cref="CreateResourceDictionary(ITheme)"/> instead
 		/// </summary>
-		public abstract string DisplayName { get; }
+		/// <returns></returns>
+		protected override ResourceDictionary CreateResourceDictionaryFromDefinition() {
+			throw new InvalidOperationException($"You must call {nameof(IThemeFormatDefinition)}.{nameof(IThemeFormatDefinition.CreateResourceDictionary)}");
+		}
+
+		/// <summary>
+		/// Creates a new <see cref="ResourceDictionary"/>
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public ResourceDictionary CreateResourceDictionary(ITheme theme) {
+			var res = new ResourceDictionary();
+
+			var bg = GetWindowBackground(theme) ?? SystemColors.WindowBrush;
+			res[EditorFormatMapConstants.TextViewBackgroundId] = bg;
+
+			var typeface = GetTypeface(theme);
+			var foreground = GetForeground(theme);
+			var background = GetBackground(theme);
+			var cultureInfo = GetCultureInfo(theme);
+			var hintingSize = GetFontHintingEmSize(theme);
+			var renderingSize = GetFontRenderingEmSize(theme);
+			var textDecorations = GetTextDecorations(theme);
+			var textEffects = GetTextEffects(theme);
+			var isBold = GetIsBold(theme);
+			var isItalic = GetIsItalic(theme);
+			var fgOpacity = GetForegroundOpacity(theme);
+			var bgOpacity = GetBackgroundOpacity(theme);
+
+			if (typeface != null)
+				res[ClassificationFormatDefinition.TypefaceId] = typeface;
+			if (foreground != null)
+				res[EditorFormatDefinition.ForegroundBrushId] = foreground;
+			if (background != null)
+				res[EditorFormatDefinition.BackgroundBrushId] = background;
+			if (cultureInfo != null)
+				res[ClassificationFormatDefinition.CultureInfoId] = cultureInfo;
+			if (hintingSize != null)
+				res[ClassificationFormatDefinition.FontHintingSizeId] = hintingSize;
+			if (renderingSize != null)
+				res[ClassificationFormatDefinition.FontRenderingSizeId] = renderingSize;
+			if (textDecorations != null)
+				res[ClassificationFormatDefinition.TextDecorationsId] = textDecorations;
+			if (textEffects != null)
+				res[ClassificationFormatDefinition.TextEffectsId] = textEffects;
+			if (isBold != null)
+				res[ClassificationFormatDefinition.IsBoldId] = isBold;
+			if (isItalic != null)
+				res[ClassificationFormatDefinition.IsItalicId] = isItalic;
+			if (fgOpacity != null)
+				res[ClassificationFormatDefinition.ForegroundOpacityId] = fgOpacity;
+			if (bgOpacity != null)
+				res[ClassificationFormatDefinition.BackgroundOpacityId] = bgOpacity;
+
+			return res;
+		}
 
 		/// <summary>
 		/// Gets the background brush of the window
@@ -39,42 +95,89 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
 		public virtual Brush GetWindowBackground(ITheme theme) => null;
-	}
-
-	/// <summary>Metadata</summary>
-	public interface ITextEditorFormatDefinitionMetadata {
-		/// <summary>See <see cref="ExportTextEditorFormatDefinitionAttribute.Category"/></summary>
-		string Category { get; }
-		/// <summary>See <see cref="ExportTextEditorFormatDefinitionAttribute.BaseType"/></summary>
-		string BaseType { get; }
-	}
-
-	/// <summary>
-	/// Exports an <see cref="TextEditorFormatDefinition"/>
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportTextEditorFormatDefinitionAttribute : ExportAttribute, ITextEditorFormatDefinitionMetadata {
-		/// <summary>
-		/// Gets the category, eg. <see cref="AppearanceCategoryConstants.TextEditor"/>
-		/// </summary>
-		public string Category { get; }
 
 		/// <summary>
-		/// Gets the base type category or null
+		/// Gets the <see cref="Typeface"/> or null
 		/// </summary>
-		public string BaseType { get; }
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual Typeface GetTypeface(ITheme theme) => null;
 
 		/// <summary>
-		/// Constructor
+		/// Gets the bold value or null
 		/// </summary>
-		/// <param name="category">Category, eg. <see cref="AppearanceCategoryConstants.Viewer"/></param>
-		/// <param name="baseType">Base type (eg. <see cref="AppearanceCategoryConstants.TextEditor"/>) or null</param>
-		public ExportTextEditorFormatDefinitionAttribute(string category, string baseType = null)
-			: base(typeof(TextEditorFormatDefinition)) {
-			if (string.IsNullOrEmpty(category))
-				throw new ArgumentOutOfRangeException(nameof(category));
-			Category = category;
-			BaseType = baseType;
-		}
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual bool? GetIsBold(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the italic value or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual bool? GetIsItalic(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the foreground brush or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual Brush GetForeground(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the background brush or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual Brush GetBackground(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the foreground opacity or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual double? GetForegroundOpacity(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the background opacity or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual double? GetBackgroundOpacity(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the <see cref="CultureInfo"/> or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual CultureInfo GetCultureInfo(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the font hinting em size or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual double? GetFontHintingEmSize(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the font rendering em size or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual double? GetFontRenderingEmSize(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the text decorations or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual TextDecorationCollection GetTextDecorations(ITheme theme) => null;
+
+		/// <summary>
+		/// Gets the text effects or null
+		/// </summary>
+		/// <param name="theme">Theme</param>
+		/// <returns></returns>
+		public virtual TextEffectCollection GetTextEffects(ITheme theme) => null;
 	}
 }

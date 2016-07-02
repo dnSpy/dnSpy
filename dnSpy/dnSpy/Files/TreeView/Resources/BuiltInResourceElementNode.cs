@@ -75,7 +75,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.String) {
 				context.Output.Write((string)((BuiltInResourceData)ResourceElement.ResourceData).Data, BoxedOutputColor.Text);
 				context.HighlightingExtension = ".txt";
-				context.ContentTypeGuid = new Guid(ContentTypes.PLAIN_TEXT);
+				context.ContentTypeString = ContentTypes.PLAIN_TEXT;
 				return true;
 			}
 

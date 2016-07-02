@@ -20,9 +20,11 @@
 using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class CodeEditor : ICodeEditor {
@@ -55,14 +57,14 @@ namespace dnSpy.Text.Editor {
 
 		public CodeEditor(CodeEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
 			options = options ?? new CodeEditorOptions();
-			var contentType = contentTypeRegistryService.GetContentType((object)options.ContentType ?? options.ContentTypeGuid) ?? textBufferFactoryService.TextContentType;
+			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = options.TextBuffer;
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
 			TextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
 			TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
-			TextView.Options.SetOptionValue(DefaultTextViewOptions.RefreshScreenOnChangeId, true);
+			TextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId, true);
 		}
 
 		public void Dispose() {

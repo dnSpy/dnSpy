@@ -87,7 +87,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 		}
 
 		public override double OrderUI => LanguageConstants.IL_ILSPY_ORDERUI;
-		public override Guid ContentTypeGuid => new Guid(ContentTypes.IL_ILSPY);
+		public override string ContentTypeString => ContentTypes.IL_ILSPY;
 		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_IL;
 		public override string UniqueNameUI => "IL";
 		public override Guid GenericGuid => LanguageConstants.LANGUAGE_IL;

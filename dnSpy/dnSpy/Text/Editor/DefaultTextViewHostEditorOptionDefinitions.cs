@@ -18,7 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]

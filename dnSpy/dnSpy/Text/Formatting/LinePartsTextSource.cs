@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text.Formatting {
 	sealed class LinePartsTextSource : TextSource {

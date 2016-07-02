@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
 	sealed class NullClassifier : IClassifier {

@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_OUTPUT_TEXTPANE)]

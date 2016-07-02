@@ -19,8 +19,9 @@
 
 using System;
 using System.Diagnostics;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	static class IndentHelper {
@@ -39,7 +40,7 @@ namespace dnSpy.Text.Editor {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 
-			var indentStyle = textView.Options.GetOptionValue(DefaultOptions.IndentStyleOptionId);
+			var indentStyle = textView.Options.GetOptionValue(DefaultDnSpyOptions.IndentStyleOptionId);
 			switch (indentStyle) {
 			case IndentStyle.None:
 				return 0;

@@ -23,9 +23,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class FormattedLineSource : IFormattedLineSource {

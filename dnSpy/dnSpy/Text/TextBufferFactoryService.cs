@@ -24,6 +24,8 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	[Export(typeof(ITextBufferFactoryService))]
@@ -47,10 +49,7 @@ namespace dnSpy.Text {
 		}
 
 		public ITextBuffer CreateTextBuffer() => CreateTextBuffer(TextContentType);
-		public ITextBuffer CreateTextBuffer(Guid contentType) => CreateTextBuffer(contentTypeRegistryService.GetContentType(contentType));
 		public ITextBuffer CreateTextBuffer(IContentType contentType) => CreateTextBuffer(string.Empty, contentType);
-		public ITextBuffer CreateTextBuffer(string text, Guid contentType) => CreateTextBuffer(text, contentTypeRegistryService.GetContentType(contentType));
-		public ITextBuffer CreateTextBuffer(TextReader reader, Guid contentType) => CreateTextBuffer(reader, contentTypeRegistryService.GetContentType(contentType));
 		public ITextBuffer CreateTextBuffer(TextReader reader, IContentType contentType) => CreateTextBuffer(ToString(reader), contentType);
 		public ITextBuffer CreateTextBuffer(string text, IContentType contentType) {
 			if (text == null)

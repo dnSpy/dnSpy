@@ -17,1393 +17,2046 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Classification {
 	static class ThemeClassificationFormatDefinitions {
 #pragma warning disable CS0169
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Text)]
-		[DisplayName("Text")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(PredefinedClassificationTypeNames.NaturalLanguage)]
+		static ClassificationTypeDefinition NaturalLanguageClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition FormalLanguageClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Literal)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition LiteralClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Identifier)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition IdentifierClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(PredefinedClassificationTypeNames.Other)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition OtherClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(PredefinedClassificationTypeNames.WhiteSpace)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition WhiteSpaceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Text)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition TextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Operator)]
-		[DisplayName("Operator")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Operator)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition OperatorClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Punctuation)]
-		[DisplayName("Punctuation")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Punctuation)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition PunctuationClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Number)]
-		[DisplayName("Number")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Number)]
+		[BaseDefinition(PredefinedClassificationTypeNames.Literal)]
 		static ClassificationTypeDefinition NumberClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Comment)]
-		[DisplayName("Comment")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Comment)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CommentClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Keyword)]
-		[DisplayName("Keyword")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Keyword)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition KeywordClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.String)]
-		[DisplayName("String")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.String)]
+		[BaseDefinition(PredefinedClassificationTypeNames.Literal)]
 		static ClassificationTypeDefinition StringClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.VerbatimString)]
-		[DisplayName("VerbatimString")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.VerbatimString)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition VerbatimStringClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Char)]
-		[DisplayName("Char")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Char)]
+		[BaseDefinition(PredefinedClassificationTypeNames.Literal)]
 		static ClassificationTypeDefinition CharClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Namespace)]
-		[DisplayName("Namespace")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Namespace)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition NamespaceClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Type)]
-		[DisplayName("Type")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Type)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition TypeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.SealedType)]
-		[DisplayName("SealedType")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SealedType)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition SealedTypeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.StaticType)]
-		[DisplayName("StaticType")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StaticType)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StaticTypeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Delegate)]
-		[DisplayName("Delegate")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Delegate)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DelegateClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Enum)]
-		[DisplayName("Enum")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Enum)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition EnumClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Interface)]
-		[DisplayName("Interface")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Interface)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InterfaceClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ValueType)]
-		[DisplayName("ValueType")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ValueType)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ValueTypeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.TypeGenericParameter)]
-		[DisplayName("TypeGenericParameter")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TypeGenericParameter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition TypeGenericParameterClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.MethodGenericParameter)]
-		[DisplayName("MethodGenericParameter")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.MethodGenericParameter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition MethodGenericParameterClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InstanceMethod)]
-		[DisplayName("InstanceMethod")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InstanceMethod)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InstanceMethodClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.StaticMethod)]
-		[DisplayName("StaticMethod")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StaticMethod)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StaticMethodClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ExtensionMethod)]
-		[DisplayName("ExtensionMethod")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ExtensionMethod)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ExtensionMethodClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InstanceField)]
-		[DisplayName("InstanceField")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InstanceField)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InstanceFieldClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.EnumField)]
-		[DisplayName("EnumField")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.EnumField)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition EnumFieldClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.LiteralField)]
-		[DisplayName("LiteralField")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.LiteralField)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LiteralFieldClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.StaticField)]
-		[DisplayName("StaticField")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StaticField)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StaticFieldClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InstanceEvent)]
-		[DisplayName("InstanceEvent")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InstanceEvent)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InstanceEventClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.StaticEvent)]
-		[DisplayName("StaticEvent")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StaticEvent)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StaticEventClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InstanceProperty)]
-		[DisplayName("InstanceProperty")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InstanceProperty)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InstancePropertyClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.StaticProperty)]
-		[DisplayName("StaticProperty")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StaticProperty)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StaticPropertyClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Local)]
-		[DisplayName("Local")]
-
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Local)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LocalClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Parameter)]
-		[DisplayName("Parameter")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Parameter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ParameterClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.PreprocessorKeyword)]
-		[DisplayName("PreprocessorKeyword")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.PreprocessorKeyword)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition PreprocessorKeywordClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.PreprocessorText)]
-		[DisplayName("PreprocessorText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.PreprocessorText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition PreprocessorTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Label)]
-		[DisplayName("Label")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Label)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LabelClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.OpCode)]
-		[DisplayName("OpCode")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.OpCode)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition OpCodeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ILDirective)]
-		[DisplayName("ILDirective")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ILDirective)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ILDirectiveClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ILModule)]
-		[DisplayName("ILModule")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ILModule)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ILModuleClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ExcludedCode)]
-		[DisplayName("ExcludedCode")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ExcludedCode)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ExcludedCodeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentAttributeName)]
-		[DisplayName("XmlDocCommentAttributeName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentAttributeName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentAttributeNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentAttributeQuotes)]
-		[DisplayName("XmlDocCommentAttributeQuotes")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentAttributeQuotes)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentAttributeQuotesClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentAttributeValue)]
-		[DisplayName("XmlDocCommentAttributeValue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentAttributeValue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentAttributeValueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentCDataSection)]
-		[DisplayName("XmlDocCommentCDataSection")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentCDataSection)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentCDataSectionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentComment)]
-		[DisplayName("XmlDocCommentComment")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentComment)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentCommentClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentDelimiter)]
-		[DisplayName("XmlDocCommentDelimiter")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentDelimiter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentDelimiterClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentEntityReference)]
-		[DisplayName("XmlDocCommentEntityReference")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentEntityReference)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentEntityReferenceClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentName)]
-		[DisplayName("XmlDocCommentName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentProcessingInstruction)]
-		[DisplayName("XmlDocCommentProcessingInstruction")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentProcessingInstruction)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentProcessingInstructionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocCommentText)]
-		[DisplayName("XmlDocCommentText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocCommentText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocCommentTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralAttributeName)]
-		[DisplayName("XmlLiteralAttributeName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralAttributeName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralAttributeNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralAttributeQuotes)]
-		[DisplayName("XmlLiteralAttributeQuotes")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralAttributeQuotes)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralAttributeQuotesClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralAttributeValue)]
-		[DisplayName("XmlLiteralAttributeValue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralAttributeValue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralAttributeValueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralCDataSection)]
-		[DisplayName("XmlLiteralCDataSection")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralCDataSection)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralCDataSectionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralComment)]
-		[DisplayName("XmlLiteralComment")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralComment)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralCommentClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralDelimiter)]
-		[DisplayName("XmlLiteralDelimiter")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralDelimiter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralDelimiterClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralEmbeddedExpression)]
-		[DisplayName("XmlLiteralEmbeddedExpression")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralEmbeddedExpression)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralEmbeddedExpressionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralEntityReference)]
-		[DisplayName("XmlLiteralEntityReference")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralEntityReference)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralEntityReferenceClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralName)]
-		[DisplayName("XmlLiteralName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralProcessingInstruction)]
-		[DisplayName("XmlLiteralProcessingInstruction")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralProcessingInstruction)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralProcessingInstructionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlLiteralText)]
-		[DisplayName("XmlLiteralText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlLiteralText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlLiteralTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlAttributeName)]
-		[DisplayName("XmlAttributeName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlAttributeName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlAttributeNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlAttributeQuotes)]
-		[DisplayName("XmlAttributeQuotes")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlAttributeQuotes)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlAttributeQuotesClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlAttributeValue)]
-		[DisplayName("XmlAttributeValue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlAttributeValue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlAttributeValueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlCDataSection)]
-		[DisplayName("XmlCDataSection")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlCDataSection)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlCDataSectionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlComment)]
-		[DisplayName("XmlComment")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlComment)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlCommentClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDelimiter)]
-		[DisplayName("XmlDelimiter")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDelimiter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDelimiterClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlKeyword)]
-		[DisplayName("XmlKeyword")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlKeyword)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlKeywordClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlName)]
-		[DisplayName("XmlName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlProcessingInstruction)]
-		[DisplayName("XmlProcessingInstruction")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlProcessingInstruction)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlProcessingInstructionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlText)]
-		[DisplayName("XmlText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipColon)]
-		[DisplayName("XmlDocToolTipColon")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipColon)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipColonClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipExample)]
-		[DisplayName("XmlDocToolTipExample")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipExample)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipExampleClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipExceptionCref)]
-		[DisplayName("XmlDocToolTipExceptionCref")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipExceptionCref)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipExceptionCrefClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipReturns)]
-		[DisplayName("XmlDocToolTipReturns")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipReturns)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipReturnsClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeCref)]
-		[DisplayName("XmlDocToolTipSeeCref")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeCref)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipSeeCrefClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeLangword)]
-		[DisplayName("XmlDocToolTipSeeLangword")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeLangword)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipSeeLangwordClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeAlso)]
-		[DisplayName("XmlDocToolTipSeeAlso")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeAlso)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipSeeAlsoClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeAlsoCref)]
-		[DisplayName("XmlDocToolTipSeeAlsoCref")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeAlsoCref)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipSeeAlsoCrefClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipParamRefName)]
-		[DisplayName("XmlDocToolTipParamRefName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipParamRefName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipParamRefNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipParamName)]
-		[DisplayName("XmlDocToolTipParamName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipParamName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipParamNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipTypeParamName)]
-		[DisplayName("XmlDocToolTipTypeParamName")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipTypeParamName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipTypeParamNameClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipValue)]
-		[DisplayName("XmlDocToolTipValue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipValue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipValueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipSummary)]
-		[DisplayName("XmlDocToolTipSummary")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipSummary)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipSummaryClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.XmlDocToolTipText)]
-		[DisplayName("XmlDocToolTipText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlDocToolTipTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Assembly)]
-		[DisplayName("Assembly")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Assembly)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition AssemblyClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.AssemblyExe)]
-		[DisplayName("AssemblyExe")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AssemblyExe)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition AssemblyExeClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Module)]
-		[DisplayName("Module")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Module)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ModuleClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DirectoryPart)]
-		[DisplayName("DirectoryPart")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DirectoryPart)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DirectoryPartClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.FileNameNoExtension)]
-		[DisplayName("FileNameNoExtension")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.FileNameNoExtension)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition FileNameNoExtensionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.FileExtension)]
-		[DisplayName("FileExtension")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.FileExtension)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition FileExtensionClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Error)]
-		[DisplayName("Error")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Error)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ErrorClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ToStringEval)]
-		[DisplayName("ToStringEval")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ToStringEval)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ToStringEvalClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ReplPrompt1)]
-		[DisplayName("ReplPrompt1")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplPrompt1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ReplPrompt1ClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ReplPrompt2)]
-		[DisplayName("ReplPrompt2")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplPrompt2)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ReplPrompt2ClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ReplOutputText)]
-		[DisplayName("ReplOutputText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplOutputText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ReplOutputTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.ReplScriptOutputText)]
-		[DisplayName("ReplScriptOutputText")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplScriptOutputText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ReplScriptOutputTextClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Black)]
-		[DisplayName("Black")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Black)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition BlackClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Blue)]
-		[DisplayName("Blue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Blue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition BlueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Cyan)]
-		[DisplayName("Cyan")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Cyan)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CyanClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkBlue)]
-		[DisplayName("DarkBlue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkBlue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkBlueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkCyan)]
-		[DisplayName("DarkCyan")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkCyan)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkCyanClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkGray)]
-		[DisplayName("DarkGray")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkGray)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkGrayClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkGreen)]
-		[DisplayName("DarkGreen")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkGreen)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkGreenClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkMagenta)]
-		[DisplayName("DarkMagenta")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkMagenta)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkMagentaClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkRed)]
-		[DisplayName("DarkRed")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkRed)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkRedClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DarkYellow)]
-		[DisplayName("DarkYellow")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DarkYellow)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DarkYellowClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Gray)]
-		[DisplayName("Gray")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Gray)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition GrayClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Green)]
-		[DisplayName("Green")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Green)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition GreenClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Magenta)]
-		[DisplayName("Magenta")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Magenta)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition MagentaClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Red)]
-		[DisplayName("Red")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Red)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition RedClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.White)]
-		[DisplayName("White")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.White)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition WhiteClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.Yellow)]
-		[DisplayName("Yellow")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Yellow)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition YellowClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvBlack)]
-		[DisplayName("InvBlack")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvBlack)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvBlackClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvBlue)]
-		[DisplayName("InvBlue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvBlue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvBlueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvCyan)]
-		[DisplayName("InvCyan")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvCyan)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvCyanClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkBlue)]
-		[DisplayName("InvDarkBlue")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkBlue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkBlueClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkCyan)]
-		[DisplayName("InvDarkCyan")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkCyan)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkCyanClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkGray)]
-		[DisplayName("InvDarkGray")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkGray)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkGrayClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkGreen)]
-		[DisplayName("InvDarkGreen")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkGreen)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkGreenClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkMagenta)]
-		[DisplayName("InvDarkMagenta")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkMagenta)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkMagentaClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkRed)]
-		[DisplayName("InvDarkRed")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkRed)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkRedClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvDarkYellow)]
-		[DisplayName("InvDarkYellow")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvDarkYellow)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvDarkYellowClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvGray)]
-		[DisplayName("InvGray")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvGray)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvGrayClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvGreen)]
-		[DisplayName("InvGreen")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvGreen)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvGreenClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvMagenta)]
-		[DisplayName("InvMagenta")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvMagenta)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvMagentaClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvRed)]
-		[DisplayName("InvRed")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvRed)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvRedClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvWhite)]
-		[DisplayName("InvWhite")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvWhite)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvWhiteClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.InvYellow)]
-		[DisplayName("InvYellow")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InvYellow)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition InvYellowClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogExceptionHandled)]
-		[DisplayName("DebugLogExceptionHandled")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogExceptionHandled)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogExceptionHandledClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogExceptionUnhandled)]
-		[DisplayName("DebugLogExceptionUnhandled")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogExceptionUnhandled)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogExceptionUnhandledClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogStepFiltering)]
-		[DisplayName("DebugLogStepFiltering")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogStepFiltering)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogStepFilteringClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogLoadModule)]
-		[DisplayName("DebugLogLoadModule")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogLoadModule)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogLoadModuleClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogUnloadModule)]
-		[DisplayName("DebugLogUnloadModule")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogUnloadModule)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogUnloadModuleClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogExitProcess)]
-		[DisplayName("DebugLogExitProcess")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogExitProcess)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogExitProcessClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogExitThread)]
-		[DisplayName("DebugLogExitThread")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogExitThread)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogExitThreadClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogProgramOutput)]
-		[DisplayName("DebugLogProgramOutput")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogProgramOutput)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogProgramOutputClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogMDA)]
-		[DisplayName("DebugLogMDA")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogMDA)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogMDAClassificationTypeDefinition;
 
-		[ExportClassificationTypeDefinition(ThemeClassificationTypeNames.DebugLogTimestamp)]
-		[DisplayName("DebugLogTimestamp")]
-		[BaseClassificationType(PredefinedClassificationTypeNames.FormalLanguage)]
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogTimestamp)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogTimestampClassificationTypeDefinition;
 #pragma warning restore CS0169
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Text, "Text", Order = EditorFormatDefinitionPriority.Low)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Text)]
+		[Name(ThemeClassificationTypeNameKeys.Text)]
+		[UserVisible(true)]
+		[Order(After = Priority.Low)]
 		sealed class Text : ThemeClassificationFormatDefinition {
 			Text() : base(ColorType.Text) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Operator, "Operator", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Operator)]
+		[Name(ThemeClassificationTypeNameKeys.Operator)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.PreprocessorKeyword)]
 		sealed class Operator : ThemeClassificationFormatDefinition {
 			Operator() : base(ColorType.Operator) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Punctuation, "Punctuation", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Punctuation)]
+		[Name(ThemeClassificationTypeNameKeys.Punctuation)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class Punctuation : ThemeClassificationFormatDefinition {
 			Punctuation() : base(ColorType.Punctuation) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Number, "Number", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Number)]
+		[Name(ThemeClassificationTypeNameKeys.Number)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Operator)]
 		sealed class Number : ThemeClassificationFormatDefinition {
 			Number() : base(ColorType.Number) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Comment, "Comment", Order = EditorFormatDefinitionPriority.AfterDefault + 1)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Comment)]
+		[Name(ThemeClassificationTypeNameKeys.Comment)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.ExcludedCode)]
 		sealed class Comment : ThemeClassificationFormatDefinition {
 			Comment() : base(ColorType.Comment) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Keyword, "Keyword", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Keyword)]
+		[Name(ThemeClassificationTypeNameKeys.Keyword)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Literal)]
 		sealed class Keyword : ThemeClassificationFormatDefinition {
 			Keyword() : base(ColorType.Keyword) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.String, "String", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.String)]
+		[Name(ThemeClassificationTypeNameKeys.String)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage)]
 		sealed class String : ThemeClassificationFormatDefinition {
 			String() : base(ColorType.String) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.VerbatimString, "VerbatimString", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.VerbatimString)]
+		[Name(ThemeClassificationTypeNameKeys.VerbatimString)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class VerbatimString : ThemeClassificationFormatDefinition {
 			VerbatimString() : base(ColorType.VerbatimString) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Char, "Char", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Char)]
+		[Name(ThemeClassificationTypeNameKeys.Char)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class Char : ThemeClassificationFormatDefinition {
 			Char() : base(ColorType.Char) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Namespace, "Namespace", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Namespace)]
+		[Name(ThemeClassificationTypeNameKeys.Namespace)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Namespace : ThemeClassificationFormatDefinition {
 			Namespace() : base(ColorType.Namespace) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Type, "Type", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Type)]
+		[Name(ThemeClassificationTypeNameKeys.Type)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Type : ThemeClassificationFormatDefinition {
 			Type() : base(ColorType.Type) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.SealedType, "SealedType", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SealedType)]
+		[Name(ThemeClassificationTypeNameKeys.SealedType)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class SealedType : ThemeClassificationFormatDefinition {
 			SealedType() : base(ColorType.SealedType) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.StaticType, "StaticType", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StaticType)]
+		[Name(ThemeClassificationTypeNameKeys.StaticType)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticType : ThemeClassificationFormatDefinition {
 			StaticType() : base(ColorType.StaticType) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Delegate, "Delegate", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Delegate)]
+		[Name(ThemeClassificationTypeNameKeys.Delegate)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Delegate : ThemeClassificationFormatDefinition {
 			Delegate() : base(ColorType.Delegate) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Enum, "Enum", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Enum)]
+		[Name(ThemeClassificationTypeNameKeys.Enum)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Enum : ThemeClassificationFormatDefinition {
 			Enum() : base(ColorType.Enum) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Interface, "Interface", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Interface)]
+		[Name(ThemeClassificationTypeNameKeys.Interface)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Interface : ThemeClassificationFormatDefinition {
 			Interface() : base(ColorType.Interface) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ValueType, "ValueType", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ValueType)]
+		[Name(ThemeClassificationTypeNameKeys.ValueType)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ValueType : ThemeClassificationFormatDefinition {
 			ValueType() : base(ColorType.ValueType) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.TypeGenericParameter, "TypeGenericParameter", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TypeGenericParameter)]
+		[Name(ThemeClassificationTypeNameKeys.TypeGenericParameter)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class TypeGenericParameter : ThemeClassificationFormatDefinition {
 			TypeGenericParameter() : base(ColorType.TypeGenericParameter) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.MethodGenericParameter, "MethodGenericParameter", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.MethodGenericParameter)]
+		[Name(ThemeClassificationTypeNameKeys.MethodGenericParameter)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class MethodGenericParameter : ThemeClassificationFormatDefinition {
 			MethodGenericParameter() : base(ColorType.MethodGenericParameter) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InstanceMethod, "InstanceMethod", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InstanceMethod)]
+		[Name(ThemeClassificationTypeNameKeys.InstanceMethod)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceMethod : ThemeClassificationFormatDefinition {
 			InstanceMethod() : base(ColorType.InstanceMethod) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.StaticMethod, "StaticMethod", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StaticMethod)]
+		[Name(ThemeClassificationTypeNameKeys.StaticMethod)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticMethod : ThemeClassificationFormatDefinition {
 			StaticMethod() : base(ColorType.StaticMethod) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ExtensionMethod, "ExtensionMethod", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ExtensionMethod)]
+		[Name(ThemeClassificationTypeNameKeys.ExtensionMethod)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ExtensionMethod : ThemeClassificationFormatDefinition {
 			ExtensionMethod() : base(ColorType.ExtensionMethod) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InstanceField, "InstanceField", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InstanceField)]
+		[Name(ThemeClassificationTypeNameKeys.InstanceField)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceField : ThemeClassificationFormatDefinition {
 			InstanceField() : base(ColorType.InstanceField) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.EnumField, "EnumField", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.EnumField)]
+		[Name(ThemeClassificationTypeNameKeys.EnumField)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class EnumField : ThemeClassificationFormatDefinition {
 			EnumField() : base(ColorType.EnumField) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.LiteralField, "LiteralField", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LiteralField)]
+		[Name(ThemeClassificationTypeNameKeys.LiteralField)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class LiteralField : ThemeClassificationFormatDefinition {
 			LiteralField() : base(ColorType.LiteralField) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.StaticField, "StaticField", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StaticField)]
+		[Name(ThemeClassificationTypeNameKeys.StaticField)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticField : ThemeClassificationFormatDefinition {
 			StaticField() : base(ColorType.StaticField) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InstanceEvent, "InstanceEvent", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InstanceEvent)]
+		[Name(ThemeClassificationTypeNameKeys.InstanceEvent)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceEvent : ThemeClassificationFormatDefinition {
 			InstanceEvent() : base(ColorType.InstanceEvent) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.StaticEvent, "StaticEvent", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StaticEvent)]
+		[Name(ThemeClassificationTypeNameKeys.StaticEvent)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticEvent : ThemeClassificationFormatDefinition {
 			StaticEvent() : base(ColorType.StaticEvent) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InstanceProperty, "InstanceProperty", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InstanceProperty)]
+		[Name(ThemeClassificationTypeNameKeys.InstanceProperty)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceProperty : ThemeClassificationFormatDefinition {
 			InstanceProperty() : base(ColorType.InstanceProperty) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.StaticProperty, "StaticProperty", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StaticProperty)]
+		[Name(ThemeClassificationTypeNameKeys.StaticProperty)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticProperty : ThemeClassificationFormatDefinition {
 			StaticProperty() : base(ColorType.StaticProperty) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Local, "Local", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Local)]
+		[Name(ThemeClassificationTypeNameKeys.Local)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Local : ThemeClassificationFormatDefinition {
 			Local() : base(ColorType.Local) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Parameter, "Parameter", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Parameter)]
+		[Name(ThemeClassificationTypeNameKeys.Parameter)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Parameter : ThemeClassificationFormatDefinition {
 			Parameter() : base(ColorType.Parameter) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.PreprocessorKeyword, "PreprocessorKeyword", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.PreprocessorKeyword)]
+		[Name(ThemeClassificationTypeNameKeys.PreprocessorKeyword)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.String)]
 		sealed class PreprocessorKeyword : ThemeClassificationFormatDefinition {
 			PreprocessorKeyword() : base(ColorType.PreprocessorKeyword) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.PreprocessorText, "PreprocessorText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.PreprocessorText)]
+		[Name(ThemeClassificationTypeNameKeys.PreprocessorText)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class PreprocessorText : ThemeClassificationFormatDefinition {
 			PreprocessorText() : base(ColorType.PreprocessorText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Label, "Label", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Label)]
+		[Name(ThemeClassificationTypeNameKeys.Label)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Label : ThemeClassificationFormatDefinition {
 			Label() : base(ColorType.Label) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.OpCode, "OpCode", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.OpCode)]
+		[Name(ThemeClassificationTypeNameKeys.OpCode)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class OpCode : ThemeClassificationFormatDefinition {
 			OpCode() : base(ColorType.OpCode) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ILDirective, "ILDirective", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ILDirective)]
+		[Name(ThemeClassificationTypeNameKeys.ILDirective)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ILDirective : ThemeClassificationFormatDefinition {
 			ILDirective() : base(ColorType.ILDirective) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ILModule, "ILModule", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ILModule)]
+		[Name(ThemeClassificationTypeNameKeys.ILModule)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ILModule : ThemeClassificationFormatDefinition {
 			ILModule() : base(ColorType.ILModule) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ExcludedCode, "ExcludedCode", Order = EditorFormatDefinitionPriority.BeforeHigh)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ExcludedCode)]
+		[Name(ThemeClassificationTypeNameKeys.ExcludedCode)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Identifier)]
 		sealed class ExcludedCode : ThemeClassificationFormatDefinition {
 			ExcludedCode() : base(ColorType.ExcludedCode) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentAttributeName, "XmlDocCommentAttributeName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentAttributeName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentAttributeName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentAttributeName : ThemeClassificationFormatDefinition {
 			XmlDocCommentAttributeName() : base(ColorType.XmlDocCommentAttributeName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentAttributeQuotes, "XmlDocCommentAttributeQuotes", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentAttributeQuotes)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentAttributeQuotes)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentAttributeQuotes : ThemeClassificationFormatDefinition {
 			XmlDocCommentAttributeQuotes() : base(ColorType.XmlDocCommentAttributeQuotes) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentAttributeValue, "XmlDocCommentAttributeValue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentAttributeValue)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentAttributeValue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentAttributeValue : ThemeClassificationFormatDefinition {
 			XmlDocCommentAttributeValue() : base(ColorType.XmlDocCommentAttributeValue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentCDataSection, "XmlDocCommentCDataSection", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentCDataSection)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentCDataSection)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentCDataSection : ThemeClassificationFormatDefinition {
 			XmlDocCommentCDataSection() : base(ColorType.XmlDocCommentCDataSection) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentComment, "XmlDocCommentComment", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentComment)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentComment)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentComment : ThemeClassificationFormatDefinition {
 			XmlDocCommentComment() : base(ColorType.XmlDocCommentComment) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentDelimiter, "XmlDocCommentDelimiter", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentDelimiter)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentDelimiter)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentDelimiter : ThemeClassificationFormatDefinition {
 			XmlDocCommentDelimiter() : base(ColorType.XmlDocCommentDelimiter) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentEntityReference, "XmlDocCommentEntityReference", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentEntityReference)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentEntityReference)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentEntityReference : ThemeClassificationFormatDefinition {
 			XmlDocCommentEntityReference() : base(ColorType.XmlDocCommentEntityReference) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentName, "XmlDocCommentName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentName)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentName : ThemeClassificationFormatDefinition {
 			XmlDocCommentName() : base(ColorType.XmlDocCommentName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentProcessingInstruction, "XmlDocCommentProcessingInstruction", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentProcessingInstruction)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentProcessingInstruction)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentProcessingInstruction : ThemeClassificationFormatDefinition {
 			XmlDocCommentProcessingInstruction() : base(ColorType.XmlDocCommentProcessingInstruction) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocCommentText, "XmlDocCommentText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocCommentText)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocCommentText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentText : ThemeClassificationFormatDefinition {
 			XmlDocCommentText() : base(ColorType.XmlDocCommentText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralAttributeName, "XmlLiteralAttributeName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralAttributeName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralAttributeName)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralAttributeName : ThemeClassificationFormatDefinition {
 			XmlLiteralAttributeName() : base(ColorType.XmlLiteralAttributeName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralAttributeQuotes, "XmlLiteralAttributeQuotes", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralAttributeQuotes)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralAttributeQuotes)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralAttributeQuotes : ThemeClassificationFormatDefinition {
 			XmlLiteralAttributeQuotes() : base(ColorType.XmlLiteralAttributeQuotes) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralAttributeValue, "XmlLiteralAttributeValue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralAttributeValue)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralAttributeValue)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralAttributeValue : ThemeClassificationFormatDefinition {
 			XmlLiteralAttributeValue() : base(ColorType.XmlLiteralAttributeValue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralCDataSection, "XmlLiteralCDataSection", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralCDataSection)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralCDataSection)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralCDataSection : ThemeClassificationFormatDefinition {
 			XmlLiteralCDataSection() : base(ColorType.XmlLiteralCDataSection) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralComment, "XmlLiteralComment", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralComment)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralComment)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralComment : ThemeClassificationFormatDefinition {
 			XmlLiteralComment() : base(ColorType.XmlLiteralComment) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralDelimiter, "XmlLiteralDelimiter", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralDelimiter)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralDelimiter)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralDelimiter : ThemeClassificationFormatDefinition {
 			XmlLiteralDelimiter() : base(ColorType.XmlLiteralDelimiter) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralEmbeddedExpression, "XmlLiteralEmbeddedExpression", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralEmbeddedExpression)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralEmbeddedExpression)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralEmbeddedExpression : ThemeClassificationFormatDefinition {
 			XmlLiteralEmbeddedExpression() : base(ColorType.XmlLiteralEmbeddedExpression) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralEntityReference, "XmlLiteralEntityReference", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralEntityReference)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralEntityReference)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralEntityReference : ThemeClassificationFormatDefinition {
 			XmlLiteralEntityReference() : base(ColorType.XmlLiteralEntityReference) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralName, "XmlLiteralName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralName)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralName : ThemeClassificationFormatDefinition {
 			XmlLiteralName() : base(ColorType.XmlLiteralName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralProcessingInstruction, "XmlLiteralProcessingInstruction", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralProcessingInstruction)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralProcessingInstruction)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralProcessingInstruction : ThemeClassificationFormatDefinition {
 			XmlLiteralProcessingInstruction() : base(ColorType.XmlLiteralProcessingInstruction) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlLiteralText, "XmlLiteralText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlLiteralText)]
+		[Name(ThemeClassificationTypeNameKeys.XmlLiteralText)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralText : ThemeClassificationFormatDefinition {
 			XmlLiteralText() : base(ColorType.XmlLiteralText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlAttributeName, "XmlAttributeName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlAttributeName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlAttributeName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlAttributeName : ThemeClassificationFormatDefinition {
 			XmlAttributeName() : base(ColorType.XmlAttributeName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlAttributeQuotes, "XmlAttributeQuotes", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlAttributeQuotes)]
+		[Name(ThemeClassificationTypeNameKeys.XmlAttributeQuotes)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlAttributeQuotes : ThemeClassificationFormatDefinition {
 			XmlAttributeQuotes() : base(ColorType.XmlAttributeQuotes) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlAttributeValue, "XmlAttributeValue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlAttributeValue)]
+		[Name(ThemeClassificationTypeNameKeys.XmlAttributeValue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlAttributeValue : ThemeClassificationFormatDefinition {
 			XmlAttributeValue() : base(ColorType.XmlAttributeValue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlCDataSection, "XmlCDataSection", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlCDataSection)]
+		[Name(ThemeClassificationTypeNameKeys.XmlCDataSection)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlCDataSection : ThemeClassificationFormatDefinition {
 			XmlCDataSection() : base(ColorType.XmlCDataSection) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlComment, "XmlComment", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlComment)]
+		[Name(ThemeClassificationTypeNameKeys.XmlComment)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlComment : ThemeClassificationFormatDefinition {
 			XmlComment() : base(ColorType.XmlComment) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDelimiter, "XmlDelimiter", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDelimiter)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDelimiter)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDelimiter : ThemeClassificationFormatDefinition {
 			XmlDelimiter() : base(ColorType.XmlDelimiter) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlKeyword, "XmlKeyword", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlKeyword)]
+		[Name(ThemeClassificationTypeNameKeys.XmlKeyword)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlKeyword : ThemeClassificationFormatDefinition {
 			XmlKeyword() : base(ColorType.XmlKeyword) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlName, "XmlName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlName : ThemeClassificationFormatDefinition {
 			XmlName() : base(ColorType.XmlName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlProcessingInstruction, "XmlProcessingInstruction", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlProcessingInstruction)]
+		[Name(ThemeClassificationTypeNameKeys.XmlProcessingInstruction)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlProcessingInstruction : ThemeClassificationFormatDefinition {
 			XmlProcessingInstruction() : base(ColorType.XmlProcessingInstruction) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlText, "XmlText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlText)]
+		[Name(ThemeClassificationTypeNameKeys.XmlText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlText : ThemeClassificationFormatDefinition {
 			XmlText() : base(ColorType.XmlText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipColon, "XmlDocToolTipColon", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipColon)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipColon)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipColon : ThemeClassificationFormatDefinition {
 			XmlDocToolTipColon() : base(ColorType.XmlDocToolTipColon) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipExample, "XmlDocToolTipExample", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipExample)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipExample)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipExample : ThemeClassificationFormatDefinition {
 			XmlDocToolTipExample() : base(ColorType.XmlDocToolTipExample) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipExceptionCref, "XmlDocToolTipExceptionCref", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipExceptionCref)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipExceptionCref)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipExceptionCref : ThemeClassificationFormatDefinition {
 			XmlDocToolTipExceptionCref() : base(ColorType.XmlDocToolTipExceptionCref) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipReturns, "XmlDocToolTipReturns", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipReturns)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipReturns)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipReturns : ThemeClassificationFormatDefinition {
 			XmlDocToolTipReturns() : base(ColorType.XmlDocToolTipReturns) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeCref, "XmlDocToolTipSeeCref", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeCref)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeCref)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeCref : ThemeClassificationFormatDefinition {
 			XmlDocToolTipSeeCref() : base(ColorType.XmlDocToolTipSeeCref) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeLangword, "XmlDocToolTipSeeLangword", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeLangword)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeLangword)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeLangword : ThemeClassificationFormatDefinition {
 			XmlDocToolTipSeeLangword() : base(ColorType.XmlDocToolTipSeeLangword) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeAlso, "XmlDocToolTipSeeAlso", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeAlso)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeAlso)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeAlso : ThemeClassificationFormatDefinition {
 			XmlDocToolTipSeeAlso() : base(ColorType.XmlDocToolTipSeeAlso) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipSeeAlsoCref, "XmlDocToolTipSeeAlsoCref", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeAlsoCref)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeAlsoCref)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeAlsoCref : ThemeClassificationFormatDefinition {
 			XmlDocToolTipSeeAlsoCref() : base(ColorType.XmlDocToolTipSeeAlsoCref) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipParamRefName, "XmlDocToolTipParamRefName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipParamRefName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipParamRefName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipParamRefName : ThemeClassificationFormatDefinition {
 			XmlDocToolTipParamRefName() : base(ColorType.XmlDocToolTipParamRefName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipParamName, "XmlDocToolTipParamName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipParamName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipParamName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipParamName : ThemeClassificationFormatDefinition {
 			XmlDocToolTipParamName() : base(ColorType.XmlDocToolTipParamName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipTypeParamName, "XmlDocToolTipTypeParamName", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipTypeParamName)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipTypeParamName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipTypeParamName : ThemeClassificationFormatDefinition {
 			XmlDocToolTipTypeParamName() : base(ColorType.XmlDocToolTipTypeParamName) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipValue, "XmlDocToolTipValue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipValue)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipValue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipValue : ThemeClassificationFormatDefinition {
 			XmlDocToolTipValue() : base(ColorType.XmlDocToolTipValue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipSummary, "XmlDocToolTipSummary", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSummary)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSummary)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSummary : ThemeClassificationFormatDefinition {
 			XmlDocToolTipSummary() : base(ColorType.XmlDocToolTipSummary) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.XmlDocToolTipText, "XmlDocToolTipText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipText)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipText : ThemeClassificationFormatDefinition {
 			XmlDocToolTipText() : base(ColorType.XmlDocToolTipText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Assembly, "Assembly", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Assembly)]
+		[Name(ThemeClassificationTypeNameKeys.Assembly)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Assembly : ThemeClassificationFormatDefinition {
 			Assembly() : base(ColorType.Assembly) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.AssemblyExe, "AssemblyExe", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AssemblyExe)]
+		[Name(ThemeClassificationTypeNameKeys.AssemblyExe)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class AssemblyExe : ThemeClassificationFormatDefinition {
 			AssemblyExe() : base(ColorType.AssemblyExe) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Module, "Module", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Module)]
+		[Name(ThemeClassificationTypeNameKeys.Module)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Module : ThemeClassificationFormatDefinition {
 			Module() : base(ColorType.Module) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DirectoryPart, "DirectoryPart", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DirectoryPart)]
+		[Name(ThemeClassificationTypeNameKeys.DirectoryPart)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class DirectoryPart : ThemeClassificationFormatDefinition {
 			DirectoryPart() : base(ColorType.DirectoryPart) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.FileNameNoExtension, "FileNameNoExtension", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.FileNameNoExtension)]
+		[Name(ThemeClassificationTypeNameKeys.FileNameNoExtension)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class FileNameNoExtension : ThemeClassificationFormatDefinition {
 			FileNameNoExtension() : base(ColorType.FileNameNoExtension) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.FileExtension, "FileExtension", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.FileExtension)]
+		[Name(ThemeClassificationTypeNameKeys.FileExtension)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class FileExtension : ThemeClassificationFormatDefinition {
 			FileExtension() : base(ColorType.FileExtension) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Error, "Error", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Error)]
+		[Name(ThemeClassificationTypeNameKeys.Error)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
 		sealed class Error : ThemeClassificationFormatDefinition {
 			Error() : base(ColorType.Error) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ToStringEval, "ToStringEval", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ToStringEval)]
+		[Name(ThemeClassificationTypeNameKeys.ToStringEval)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class ToStringEval : ThemeClassificationFormatDefinition {
 			ToStringEval() : base(ColorType.ToStringEval) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ReplPrompt1, "ReplPrompt1", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplPrompt1)]
+		[Name(ThemeClassificationTypeNameKeys.ReplPrompt1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class ReplPrompt1 : ThemeClassificationFormatDefinition {
 			ReplPrompt1() : base(ColorType.ReplPrompt1) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ReplPrompt2, "ReplPrompt2", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplPrompt2)]
+		[Name(ThemeClassificationTypeNameKeys.ReplPrompt2)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class ReplPrompt2 : ThemeClassificationFormatDefinition {
 			ReplPrompt2() : base(ColorType.ReplPrompt2) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ReplOutputText, "ReplOutputText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplOutputText)]
+		[Name(ThemeClassificationTypeNameKeys.ReplOutputText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class ReplOutputText : ThemeClassificationFormatDefinition {
 			ReplOutputText() : base(ColorType.ReplOutputText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.ReplScriptOutputText, "ReplScriptOutputText", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplScriptOutputText)]
+		[Name(ThemeClassificationTypeNameKeys.ReplScriptOutputText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class ReplScriptOutputText : ThemeClassificationFormatDefinition {
 			ReplScriptOutputText() : base(ColorType.ReplScriptOutputText) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Black, "Black", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Black)]
+		[Name(ThemeClassificationTypeNameKeys.Black)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Black : ThemeClassificationFormatDefinition {
 			Black() : base(ColorType.Black) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Blue, "Blue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Blue)]
+		[Name(ThemeClassificationTypeNameKeys.Blue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Blue : ThemeClassificationFormatDefinition {
 			Blue() : base(ColorType.Blue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Cyan, "Cyan", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Cyan)]
+		[Name(ThemeClassificationTypeNameKeys.Cyan)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Cyan : ThemeClassificationFormatDefinition {
 			Cyan() : base(ColorType.Cyan) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkBlue, "DarkBlue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkBlue)]
+		[Name(ThemeClassificationTypeNameKeys.DarkBlue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkBlue : ThemeClassificationFormatDefinition {
 			DarkBlue() : base(ColorType.DarkBlue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkCyan, "DarkCyan", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkCyan)]
+		[Name(ThemeClassificationTypeNameKeys.DarkCyan)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkCyan : ThemeClassificationFormatDefinition {
 			DarkCyan() : base(ColorType.DarkCyan) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkGray, "DarkGray", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkGray)]
+		[Name(ThemeClassificationTypeNameKeys.DarkGray)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkGray : ThemeClassificationFormatDefinition {
 			DarkGray() : base(ColorType.DarkGray) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkGreen, "DarkGreen", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkGreen)]
+		[Name(ThemeClassificationTypeNameKeys.DarkGreen)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkGreen : ThemeClassificationFormatDefinition {
 			DarkGreen() : base(ColorType.DarkGreen) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkMagenta, "DarkMagenta", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkMagenta)]
+		[Name(ThemeClassificationTypeNameKeys.DarkMagenta)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkMagenta : ThemeClassificationFormatDefinition {
 			DarkMagenta() : base(ColorType.DarkMagenta) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkRed, "DarkRed", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkRed)]
+		[Name(ThemeClassificationTypeNameKeys.DarkRed)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkRed : ThemeClassificationFormatDefinition {
 			DarkRed() : base(ColorType.DarkRed) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DarkYellow, "DarkYellow", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DarkYellow)]
+		[Name(ThemeClassificationTypeNameKeys.DarkYellow)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DarkYellow : ThemeClassificationFormatDefinition {
 			DarkYellow() : base(ColorType.DarkYellow) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Gray, "Gray", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Gray)]
+		[Name(ThemeClassificationTypeNameKeys.Gray)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Gray : ThemeClassificationFormatDefinition {
 			Gray() : base(ColorType.Gray) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Green, "Green", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Green)]
+		[Name(ThemeClassificationTypeNameKeys.Green)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Green : ThemeClassificationFormatDefinition {
 			Green() : base(ColorType.Green) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Magenta, "Magenta", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Magenta)]
+		[Name(ThemeClassificationTypeNameKeys.Magenta)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Magenta : ThemeClassificationFormatDefinition {
 			Magenta() : base(ColorType.Magenta) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Red, "Red", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Red)]
+		[Name(ThemeClassificationTypeNameKeys.Red)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Red : ThemeClassificationFormatDefinition {
 			Red() : base(ColorType.Red) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.White, "White", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.White)]
+		[Name(ThemeClassificationTypeNameKeys.White)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class White : ThemeClassificationFormatDefinition {
 			White() : base(ColorType.White) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.Yellow, "Yellow", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Yellow)]
+		[Name(ThemeClassificationTypeNameKeys.Yellow)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class Yellow : ThemeClassificationFormatDefinition {
 			Yellow() : base(ColorType.Yellow) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvBlack, "InvBlack", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvBlack)]
+		[Name(ThemeClassificationTypeNameKeys.InvBlack)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvBlack : ThemeClassificationFormatDefinition {
 			InvBlack() : base(ColorType.InvBlack) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvBlue, "InvBlue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvBlue)]
+		[Name(ThemeClassificationTypeNameKeys.InvBlue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvBlue : ThemeClassificationFormatDefinition {
 			InvBlue() : base(ColorType.InvBlue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvCyan, "InvCyan", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvCyan)]
+		[Name(ThemeClassificationTypeNameKeys.InvCyan)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvCyan : ThemeClassificationFormatDefinition {
 			InvCyan() : base(ColorType.InvCyan) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkBlue, "InvDarkBlue", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkBlue)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkBlue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkBlue : ThemeClassificationFormatDefinition {
 			InvDarkBlue() : base(ColorType.InvDarkBlue) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkCyan, "InvDarkCyan", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkCyan)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkCyan)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkCyan : ThemeClassificationFormatDefinition {
 			InvDarkCyan() : base(ColorType.InvDarkCyan) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkGray, "InvDarkGray", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkGray)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkGray)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkGray : ThemeClassificationFormatDefinition {
 			InvDarkGray() : base(ColorType.InvDarkGray) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkGreen, "InvDarkGreen", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkGreen)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkGreen)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkGreen : ThemeClassificationFormatDefinition {
 			InvDarkGreen() : base(ColorType.InvDarkGreen) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkMagenta, "InvDarkMagenta", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkMagenta)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkMagenta)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkMagenta : ThemeClassificationFormatDefinition {
 			InvDarkMagenta() : base(ColorType.InvDarkMagenta) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkRed, "InvDarkRed", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkRed)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkRed)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkRed : ThemeClassificationFormatDefinition {
 			InvDarkRed() : base(ColorType.InvDarkRed) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvDarkYellow, "InvDarkYellow", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvDarkYellow)]
+		[Name(ThemeClassificationTypeNameKeys.InvDarkYellow)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvDarkYellow : ThemeClassificationFormatDefinition {
 			InvDarkYellow() : base(ColorType.InvDarkYellow) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvGray, "InvGray", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvGray)]
+		[Name(ThemeClassificationTypeNameKeys.InvGray)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvGray : ThemeClassificationFormatDefinition {
 			InvGray() : base(ColorType.InvGray) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvGreen, "InvGreen", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvGreen)]
+		[Name(ThemeClassificationTypeNameKeys.InvGreen)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvGreen : ThemeClassificationFormatDefinition {
 			InvGreen() : base(ColorType.InvGreen) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvMagenta, "InvMagenta", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvMagenta)]
+		[Name(ThemeClassificationTypeNameKeys.InvMagenta)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvMagenta : ThemeClassificationFormatDefinition {
 			InvMagenta() : base(ColorType.InvMagenta) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvRed, "InvRed", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvRed)]
+		[Name(ThemeClassificationTypeNameKeys.InvRed)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvRed : ThemeClassificationFormatDefinition {
 			InvRed() : base(ColorType.InvRed) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvWhite, "InvWhite", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvWhite)]
+		[Name(ThemeClassificationTypeNameKeys.InvWhite)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvWhite : ThemeClassificationFormatDefinition {
 			InvWhite() : base(ColorType.InvWhite) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.InvYellow, "InvYellow", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InvYellow)]
+		[Name(ThemeClassificationTypeNameKeys.InvYellow)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class InvYellow : ThemeClassificationFormatDefinition {
 			InvYellow() : base(ColorType.InvYellow) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogExceptionHandled, "DebugLogExceptionHandled", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogExceptionHandled)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogExceptionHandled)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogExceptionHandled : ThemeClassificationFormatDefinition {
 			DebugLogExceptionHandled() : base(ColorType.DebugLogExceptionHandled) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogExceptionUnhandled, "DebugLogExceptionUnhandled", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogExceptionUnhandled)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogExceptionUnhandled)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogExceptionUnhandled : ThemeClassificationFormatDefinition {
 			DebugLogExceptionUnhandled() : base(ColorType.DebugLogExceptionUnhandled) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogStepFiltering, "DebugLogStepFiltering", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogStepFiltering)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogStepFiltering)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogStepFiltering : ThemeClassificationFormatDefinition {
 			DebugLogStepFiltering() : base(ColorType.DebugLogStepFiltering) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogLoadModule, "DebugLogLoadModule", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogLoadModule)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogLoadModule)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogLoadModule : ThemeClassificationFormatDefinition {
 			DebugLogLoadModule() : base(ColorType.DebugLogLoadModule) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogUnloadModule, "DebugLogUnloadModule", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogUnloadModule)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogUnloadModule)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogUnloadModule : ThemeClassificationFormatDefinition {
 			DebugLogUnloadModule() : base(ColorType.DebugLogUnloadModule) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogExitProcess, "DebugLogExitProcess", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogExitProcess)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogExitProcess)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogExitProcess : ThemeClassificationFormatDefinition {
 			DebugLogExitProcess() : base(ColorType.DebugLogExitProcess) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogExitThread, "DebugLogExitThread", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogExitThread)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogExitThread)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogExitThread : ThemeClassificationFormatDefinition {
 			DebugLogExitThread() : base(ColorType.DebugLogExitThread) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogProgramOutput, "DebugLogProgramOutput", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogProgramOutput)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogProgramOutput)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogProgramOutput : ThemeClassificationFormatDefinition {
 			DebugLogProgramOutput() : base(ColorType.DebugLogProgramOutput) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogMDA, "DebugLogMDA", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogMDA)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogMDA)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogMDA : ThemeClassificationFormatDefinition {
 			DebugLogMDA() : base(ColorType.DebugLogMDA) { }
 		}
 
-		[ExportClassificationFormatDefinition(ThemeClassificationTypeNames.DebugLogTimestamp, "DebugLogTimestamp", Order = EditorFormatDefinitionPriority.AfterDefault)]
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogTimestamp)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogTimestamp)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
 		sealed class DebugLogTimestamp : ThemeClassificationFormatDefinition {
 			DebugLogTimestamp() : base(ColorType.DebugLogTimestamp) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = "----------------")]
+		[Name(Priority.Default)]
+		[UserVisible(false)]
+		[Order(After = Priority.Low, Before = Priority.High)]
+		sealed class PriorityDefault : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = "----------------")]
+		[Name(Priority.High)]
+		[UserVisible(false)]
+		[Order(After = Priority.Default)]
+		sealed class PriorityHigh : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = "----------------")]
+		[Name(Priority.Low)]
+		[UserVisible(false)]
+		[Order(Before = Priority.Default)]
+		sealed class PriorityLow : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = PredefinedClassificationTypeNames.FormalLanguage)]
+		[Name(LanguagePriority.FormalLanguage)]
+		[UserVisible(false)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = Priority.High)]
+		sealed class FormalLanguage : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = PredefinedClassificationTypeNames.NaturalLanguage)]
+		[Name(LanguagePriority.NaturalLanguage)]
+		[UserVisible(false)]
+		[Order(After = Priority.Default, Before = LanguagePriority.FormalLanguage)]
+		sealed class NaturalLanguage : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Identifier)]
+		[Name(ThemeClassificationTypeNameKeys.Identifier)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class Identifier : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Literal)]
+		[Name(ThemeClassificationTypeNameKeys.Literal)]
+		[UserVisible(true)]
+		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Number)]
+		sealed class Literal : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = PredefinedClassificationTypeNames.Other)]
+		[Name(PredefinedClassificationTypeNames.Other)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class Other : ClassificationFormatDefinition {
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = PredefinedClassificationTypeNames.WhiteSpace)]
+		[Name(PredefinedClassificationTypeNames.WhiteSpace)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class WhiteSpace : ClassificationFormatDefinition {
 		}
 	}
 }

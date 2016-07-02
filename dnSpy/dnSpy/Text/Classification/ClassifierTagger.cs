@@ -19,12 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
-	sealed class ClassifierTagger : ITagger<IClassificationTag>, IDisposable {
+	sealed class ClassifierTagger : ITagger<ClassificationTag>, IDisposable {
 		IClassifier[] classifiers;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -37,12 +37,12 @@ namespace dnSpy.Text.Classification {
 				c.ClassificationChanged += Classifier_ClassificationChanged;
 		}
 
-		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+		public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			foreach (var classifier in classifiers) {
 				foreach (var span in spans) {
 					var cspans = classifier.GetClassificationSpans(span);
 					foreach (var cspan in cspans)
-						yield return new TagSpan<IClassificationTag>(cspan.Span, new ClassificationTag(cspan.ClassificationType));
+						yield return new TagSpan<ClassificationTag>(cspan.Span, new ClassificationTag(cspan.ClassificationType));
 				}
 			}
 		}

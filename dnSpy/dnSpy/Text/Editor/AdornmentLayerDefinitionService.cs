@@ -21,25 +21,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IAdornmentLayerDefinitionService))]
 	sealed class AdornmentLayerDefinitionService : IAdornmentLayerDefinitionService {
-		readonly Lazy<AdornmentLayerDefinition, IAdornmentLayerDefinitionMetadata>[] adornmentLayerDefinitions;
+		readonly Lazy<AdornmentLayerDefinition, IAdornmentLayersMetadata>[] adornmentLayerDefinitions;
 
 		[ImportingConstructor]
-		AdornmentLayerDefinitionService([ImportMany] IEnumerable<Lazy<AdornmentLayerDefinition, IAdornmentLayerDefinitionMetadata>> adornmentLayerDefinitions) {
-			this.adornmentLayerDefinitions = adornmentLayerDefinitions.ToArray();
+		AdornmentLayerDefinitionService([ImportMany] IEnumerable<Lazy<AdornmentLayerDefinition, IAdornmentLayersMetadata>> adornmentLayerDefinitions) {
+			this.adornmentLayerDefinitions = Orderer.Order(adornmentLayerDefinitions).ToArray();
 		}
 
-		public IAdornmentLayerDefinitionMetadata GetLayerDefinition(Guid guid) {
-			foreach (var def in adornmentLayerDefinitions) {
-				Guid defGuid;
-				if (!Guid.TryParse(def.Metadata.Guid, out defGuid))
-					continue;
-				if (guid == defGuid)
-					return def.Metadata;
+		public MetadataAndOrder<IAdornmentLayersMetadata>? GetLayerDefinition(string name) {
+			for (int i = 0; i < adornmentLayerDefinitions.Length; i++) {
+				var def = adornmentLayerDefinitions[i];
+				if (StringComparer.Ordinal.Equals(name, def.Metadata.Name))
+					return new MetadataAndOrder<IAdornmentLayersMetadata>(def.Metadata, i);
 			}
 			return null;
 		}

@@ -25,16 +25,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {
-		protected abstract Guid ContentType { get; }
+		protected abstract string ContentType { get; }
 		protected abstract string LanguageName { get; }
 		protected abstract CompilationOptions CompilationOptions { get; }
 		protected abstract ParseOptions ParseOptions { get; }
@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension, string code) {
 			var options = new RoslynCodeEditorOptions();
-			options.ContentTypeGuid = ContentType;
+			options.ContentTypeString = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);

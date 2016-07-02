@@ -21,10 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelection : ITextSelection {
@@ -164,30 +163,6 @@ namespace dnSpy.Text.Editor {
 
 		static bool SamePoint(VirtualSnapshotPoint a, VirtualSnapshotPoint b) =>
 			a.VirtualSpaces == b.VirtualSpaces && a.Position.Position == b.Position.Position;
-
-		public void Select(int startLine, int startColumn, int endLine, int endColumn) {
-			var l1 = TextView.TextSnapshot.GetLineFromLineNumber(startLine);
-			var l2 = TextView.TextSnapshot.GetLineFromLineNumber(endLine);
-			var vsp1 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l1.Start + startColumn));
-			var vsp2 = new VirtualSnapshotPoint(new SnapshotPoint(TextView.TextSnapshot, l2.Start + endColumn));
-			Select(vsp1, vsp2);
-		}
-
-		public string GetText() {
-			if (Mode == TextSelectionMode.Stream)
-				return StreamSelectionSpan.GetText();
-			var sb = new StringBuilder();
-			var snapshot = TextView.TextSnapshot;
-			int i = 0;
-			foreach (var s in SelectedSpans) {
-				if (i++ > 0)
-					sb.AppendLine();
-				sb.Append(snapshot.GetText(s));
-			}
-			if (i > 1)
-				sb.AppendLine();
-			return sb.ToString();
-		}
 
 		public void Dispose() {
 			TextView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;

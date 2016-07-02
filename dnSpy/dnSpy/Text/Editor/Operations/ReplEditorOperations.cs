@@ -24,16 +24,20 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor.Operations {
 	sealed class ReplEditorOperations : IReplEditorOperations {
 		public IReplEditor ReplEditor => replEditor;
 		readonly IWpfTextView wpfTextView;
 		readonly IReplEditor2 replEditor;
+
+		IEditorOperations EditorOperations { get; }
 
 		public bool CanCut {
 			get {
@@ -54,9 +58,10 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 		}
 
-		public ReplEditorOperations(IReplEditor2 replEditor, IWpfTextView wpfTextView) {
+		public ReplEditorOperations(IReplEditor2 replEditor, IWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.replEditor = replEditor;
 			this.wpfTextView = wpfTextView;
+			EditorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 		}
 
 		void MoveToEnd() => wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, wpfTextView.TextSnapshot.Length));
@@ -409,11 +414,11 @@ namespace dnSpy.Text.Editor.Operations {
 		public void SelectNextCommand() => replEditor.SelectNextCommand();
 		public bool CanSelectPreviousCommand => replEditor.CanSelectPreviousCommand;
 		public bool CanSelectNextCommand => replEditor.CanSelectNextCommand;
-		public bool CanDelete => replEditor.IsAtEditingPosition && wpfTextView.EditorOperations.CanDelete;
-		public IEditorOptions Options => wpfTextView.EditorOperations.Options;
-		public ITrackingSpan ProvisionalCompositionSpan => wpfTextView.EditorOperations.ProvisionalCompositionSpan;
-		public string SelectedText => wpfTextView.EditorOperations.SelectedText;
-		public ITextView TextView => wpfTextView.EditorOperations.TextView;
+		public bool CanDelete => replEditor.IsAtEditingPosition && EditorOperations.CanDelete;
+		public IEditorOptions Options => EditorOperations.Options;
+		public ITrackingSpan ProvisionalCompositionSpan => EditorOperations.ProvisionalCompositionSpan;
+		public string SelectedText => EditorOperations.SelectedText;
+		public ITextView TextView => EditorOperations.TextView;
 		public void SelectSameTextPreviousCommand() => replEditor.SelectSameTextPreviousCommand();
 		public void SelectSameTextNextCommand() => replEditor.SelectSameTextNextCommand();
 
@@ -463,107 +468,106 @@ namespace dnSpy.Text.Editor.Operations {
 
 		public void MoveToHome(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToHome(extendSelection);
+			EditorOperations.MoveToHome(extendSelection);
 		}
 
 		public void MoveToLastNonWhiteSpaceCharacter(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToLastNonWhiteSpaceCharacter(extendSelection);
+			EditorOperations.MoveToLastNonWhiteSpaceCharacter(extendSelection);
 		}
 
 		public void MoveToNextCharacter(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToNextCharacter(extendSelection);
+			EditorOperations.MoveToNextCharacter(extendSelection);
 		}
 
 		public void MoveToNextWord(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToNextWord(extendSelection);
+			EditorOperations.MoveToNextWord(extendSelection);
 		}
 
 		public void MoveToPreviousCharacter(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToPreviousCharacter(extendSelection);
+			EditorOperations.MoveToPreviousCharacter(extendSelection);
 		}
 
 		public void MoveToPreviousWord(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToPreviousWord(extendSelection);
+			EditorOperations.MoveToPreviousWord(extendSelection);
 		}
 
 		public void MoveToStartOfDocument(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToStartOfDocument(extendSelection);
+			EditorOperations.MoveToStartOfDocument(extendSelection);
 		}
 
 		public void MoveToStartOfLine(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToStartOfLine(extendSelection);
+			EditorOperations.MoveToStartOfLine(extendSelection);
 		}
 
 		public void MoveToStartOfLineAfterWhiteSpace(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToStartOfLineAfterWhiteSpace(extendSelection);
+			EditorOperations.MoveToStartOfLineAfterWhiteSpace(extendSelection);
 		}
 
 		public void MoveToStartOfNextLineAfterWhiteSpace(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToStartOfNextLineAfterWhiteSpace(extendSelection);
+			EditorOperations.MoveToStartOfNextLineAfterWhiteSpace(extendSelection);
 		}
 
 		public void MoveToStartOfPreviousLineAfterWhiteSpace(bool extendSelection) {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(extendSelection);
+			EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(extendSelection);
 		}
 
 		public void SelectCurrentWord() {
 			//TODO: Ignore the prompt
-			wpfTextView.EditorOperations.SelectCurrentWord();
+			EditorOperations.SelectCurrentWord();
 		}
 
 		public void SelectLine(ITextViewLine viewLine, bool extendSelection) {
 			//TODO: If in a code buffer, don't select the prompt
-			wpfTextView.EditorOperations.SelectLine(viewLine, extendSelection);
+			EditorOperations.SelectLine(viewLine, extendSelection);
 		}
 
-		public void AddAfterTextBufferChangePrimitive() => wpfTextView.EditorOperations.AddAfterTextBufferChangePrimitive();
-		public void AddBeforeTextBufferChangePrimitive() => wpfTextView.EditorOperations.AddBeforeTextBufferChangePrimitive();
-		public bool CopySelection() => wpfTextView.EditorOperations.CopySelection();
-		public void ExtendSelection(int newEnd) => wpfTextView.EditorOperations.ExtendSelection(newEnd);
-		public string GetWhitespaceForVirtualSpace(VirtualSnapshotPoint point) => wpfTextView.EditorOperations.GetWhitespaceForVirtualSpace(point);
-		public void GotoLine(int lineNumber) => wpfTextView.EditorOperations.GotoLine(lineNumber);
-		public void GotoLine(int lineNumber, int column) => wpfTextView.EditorOperations.GotoLine(lineNumber, column);
-		public void MoveCaret(ITextViewLine textLine, double horizontalOffset, bool extendSelection) => wpfTextView.EditorOperations.MoveCaret(textLine, horizontalOffset, extendSelection);
-		public void MoveCurrentLineToBottom() => wpfTextView.EditorOperations.MoveCurrentLineToBottom();
-		public void MoveCurrentLineToTop() => wpfTextView.EditorOperations.MoveCurrentLineToTop();
-		public void MoveLineDown(bool extendSelection) => wpfTextView.EditorOperations.MoveLineDown(extendSelection);
-		public void MoveLineUp(bool extendSelection) => wpfTextView.EditorOperations.MoveLineUp(extendSelection);
-		public void MoveToBottomOfView(bool extendSelection) => wpfTextView.EditorOperations.MoveToBottomOfView(extendSelection);
-		public void MoveToEndOfDocument(bool extendSelection) => wpfTextView.EditorOperations.MoveToEndOfDocument(extendSelection);
-		public void MoveToEndOfLine(bool extendSelection) => wpfTextView.EditorOperations.MoveToEndOfLine(extendSelection);
-		public void MoveToTopOfView(bool extendSelection) => wpfTextView.EditorOperations.MoveToTopOfView(extendSelection);
-		public void PageDown(bool extendSelection) => wpfTextView.EditorOperations.PageDown(extendSelection);
-		public void PageUp(bool extendSelection) => wpfTextView.EditorOperations.PageUp(extendSelection);
-		public void ResetSelection() => wpfTextView.EditorOperations.ResetSelection();
-		public void ScrollColumnLeft() => wpfTextView.EditorOperations.ScrollColumnLeft();
-		public void ScrollColumnRight() => wpfTextView.EditorOperations.ScrollColumnRight();
-		public void ScrollDownAndMoveCaretIfNecessary() => wpfTextView.EditorOperations.ScrollDownAndMoveCaretIfNecessary();
-		public void ScrollLineBottom() => wpfTextView.EditorOperations.ScrollLineBottom();
-		public void ScrollLineCenter() => wpfTextView.EditorOperations.ScrollLineCenter();
-		public void ScrollLineTop() => wpfTextView.EditorOperations.ScrollLineTop();
-		public void ScrollPageDown() => wpfTextView.EditorOperations.ScrollPageDown();
-		public void ScrollPageUp() => wpfTextView.EditorOperations.ScrollPageUp();
-		public void ScrollUpAndMoveCaretIfNecessary() => wpfTextView.EditorOperations.ScrollUpAndMoveCaretIfNecessary();
-		public void SelectAndMoveCaret(VirtualSnapshotPoint anchorPoint, VirtualSnapshotPoint activePoint) => wpfTextView.EditorOperations.SelectAndMoveCaret(anchorPoint, activePoint);
-		public void SelectAndMoveCaret(VirtualSnapshotPoint anchorPoint, VirtualSnapshotPoint activePoint, TextSelectionMode selectionMode) => wpfTextView.EditorOperations.SelectAndMoveCaret(anchorPoint, activePoint, selectionMode);
-		public void SelectAndMoveCaret(VirtualSnapshotPoint anchorPoint, VirtualSnapshotPoint activePoint, TextSelectionMode selectionMode, EnsureSpanVisibleOptions? scrollOptions) => wpfTextView.EditorOperations.SelectAndMoveCaret(anchorPoint, activePoint, selectionMode, scrollOptions);
-		public void SelectEnclosing() => wpfTextView.EditorOperations.SelectEnclosing();
-		public void SelectFirstChild() => wpfTextView.EditorOperations.SelectFirstChild();
-		public void SelectNextSibling(bool extendSelection) => wpfTextView.EditorOperations.SelectNextSibling(extendSelection);
-		public void SelectPreviousSibling(bool extendSelection) => wpfTextView.EditorOperations.SelectPreviousSibling(extendSelection);
-		public void SwapCaretAndAnchor() => wpfTextView.EditorOperations.SwapCaretAndAnchor();
-		public void ZoomIn() => wpfTextView.EditorOperations.ZoomIn();
-		public void ZoomOut() => wpfTextView.EditorOperations.ZoomOut();
-		public void ZoomTo(double zoomLevel) => wpfTextView.EditorOperations.ZoomTo(zoomLevel);
+		public void AddAfterTextBufferChangePrimitive() => EditorOperations.AddAfterTextBufferChangePrimitive();
+		public void AddBeforeTextBufferChangePrimitive() => EditorOperations.AddBeforeTextBufferChangePrimitive();
+		public bool CopySelection() => EditorOperations.CopySelection();
+		public void ExtendSelection(int newEnd) => EditorOperations.ExtendSelection(newEnd);
+		public string GetWhitespaceForVirtualSpace(VirtualSnapshotPoint point) => EditorOperations.GetWhitespaceForVirtualSpace(point);
+		public void GotoLine(int lineNumber) => EditorOperations.GotoLine(lineNumber);
+		public void MoveCaret(ITextViewLine textLine, double horizontalOffset, bool extendSelection) => EditorOperations.MoveCaret(textLine, horizontalOffset, extendSelection);
+		public void MoveCurrentLineToBottom() => EditorOperations.MoveCurrentLineToBottom();
+		public void MoveCurrentLineToTop() => EditorOperations.MoveCurrentLineToTop();
+		public void MoveLineDown(bool extendSelection) => EditorOperations.MoveLineDown(extendSelection);
+		public void MoveLineUp(bool extendSelection) => EditorOperations.MoveLineUp(extendSelection);
+		public void MoveToBottomOfView(bool extendSelection) => EditorOperations.MoveToBottomOfView(extendSelection);
+		public void MoveToEndOfDocument(bool extendSelection) => EditorOperations.MoveToEndOfDocument(extendSelection);
+		public void MoveToEndOfLine(bool extendSelection) => EditorOperations.MoveToEndOfLine(extendSelection);
+		public void MoveToTopOfView(bool extendSelection) => EditorOperations.MoveToTopOfView(extendSelection);
+		public void PageDown(bool extendSelection) => EditorOperations.PageDown(extendSelection);
+		public void PageUp(bool extendSelection) => EditorOperations.PageUp(extendSelection);
+		public void ResetSelection() => EditorOperations.ResetSelection();
+		public void ScrollColumnLeft() => EditorOperations.ScrollColumnLeft();
+		public void ScrollColumnRight() => EditorOperations.ScrollColumnRight();
+		public void ScrollDownAndMoveCaretIfNecessary() => EditorOperations.ScrollDownAndMoveCaretIfNecessary();
+		public void ScrollLineBottom() => EditorOperations.ScrollLineBottom();
+		public void ScrollLineCenter() => EditorOperations.ScrollLineCenter();
+		public void ScrollLineTop() => EditorOperations.ScrollLineTop();
+		public void ScrollPageDown() => EditorOperations.ScrollPageDown();
+		public void ScrollPageUp() => EditorOperations.ScrollPageUp();
+		public void ScrollUpAndMoveCaretIfNecessary() => EditorOperations.ScrollUpAndMoveCaretIfNecessary();
+		public void SelectAndMoveCaret(VirtualSnapshotPoint anchorPoint, VirtualSnapshotPoint activePoint) => EditorOperations.SelectAndMoveCaret(anchorPoint, activePoint);
+		public void SelectAndMoveCaret(VirtualSnapshotPoint anchorPoint, VirtualSnapshotPoint activePoint, TextSelectionMode selectionMode) => EditorOperations.SelectAndMoveCaret(anchorPoint, activePoint, selectionMode);
+		public void SelectAndMoveCaret(VirtualSnapshotPoint anchorPoint, VirtualSnapshotPoint activePoint, TextSelectionMode selectionMode, EnsureSpanVisibleOptions? scrollOptions) => EditorOperations.SelectAndMoveCaret(anchorPoint, activePoint, selectionMode, scrollOptions);
+		public void SelectEnclosing() => EditorOperations.SelectEnclosing();
+		public void SelectFirstChild() => EditorOperations.SelectFirstChild();
+		public void SelectNextSibling(bool extendSelection) => EditorOperations.SelectNextSibling(extendSelection);
+		public void SelectPreviousSibling(bool extendSelection) => EditorOperations.SelectPreviousSibling(extendSelection);
+		public void SwapCaretAndAnchor() => EditorOperations.SwapCaretAndAnchor();
+		public void ZoomIn() => EditorOperations.ZoomIn();
+		public void ZoomOut() => EditorOperations.ZoomOut();
+		public void ZoomTo(double zoomLevel) => EditorOperations.ZoomTo(zoomLevel);
 	}
 }

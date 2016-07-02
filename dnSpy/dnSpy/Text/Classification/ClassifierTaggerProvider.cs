@@ -22,17 +22,22 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Classification {
-	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ANY)]
+	[Export(typeof(ITaggerProvider))]
+	[TagType(typeof(ClassificationTag))]
+	[ContentType(ContentTypes.ANY)]
 	sealed class ClassifierTaggerProvider : ITaggerProvider {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly Lazy<IClassifierProvider, IClassifierProviderMetadata>[] classifierProviders;
+		readonly Lazy<IClassifierProvider, INamedContentTypeMetadata>[] classifierProviders;
 
 		[ImportingConstructor]
-		ClassifierTaggerProvider(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<IClassifierProvider, IClassifierProviderMetadata>> classifierProviders) {
+		ClassifierTaggerProvider(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<IClassifierProvider, INamedContentTypeMetadata>> classifierProviders) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.classifierProviders = classifierProviders.ToArray();
 		}

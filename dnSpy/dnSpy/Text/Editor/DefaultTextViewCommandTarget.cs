@@ -18,17 +18,27 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
 	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR)]
 	sealed class DefaultTextViewCommandTargetFilterCreator : ICommandTargetFilterCreator {
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+
+		[ImportingConstructor]
+		DefaultTextViewCommandTargetFilterCreator(IEditorOperationsFactoryService editorOperationsFactoryService) {
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
+		}
+
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
 			if (textView != null)
-				return new DefaultTextViewCommandTarget(textView);
+				return new DefaultTextViewCommandTarget(textView, editorOperationsFactoryService);
 			return null;
 		}
 	}
@@ -36,10 +46,14 @@ namespace dnSpy.Text.Editor {
 	sealed class DefaultTextViewCommandTarget : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public DefaultTextViewCommandTarget(ITextView textView) {
+		IEditorOperations EditorOperations { get; }
+		IEditorOperations2 EditorOperations2 => EditorOperations as IEditorOperations2;
+
+		public DefaultTextViewCommandTarget(ITextView textView, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
+			EditorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
 		}
 
 		static bool IsEditCommand(Guid group, int cmdId) {
@@ -308,15 +322,15 @@ namespace dnSpy.Text.Editor {
 			if (group == CommandConstants.DefaultGroup) {
 				switch ((DefaultIds)cmdId) {
 				case DefaultIds.Copy:
-					textView.EditorOperations.CopySelection();
+					EditorOperations.CopySelection();
 					return CommandTargetStatus.Handled;
 
 				case DefaultIds.Cut:
-					textView.EditorOperations.CutSelection();
+					EditorOperations.CutSelection();
 					return CommandTargetStatus.Handled;
 
 				case DefaultIds.Paste:
-					textView.EditorOperations.Paste();
+					EditorOperations.Paste();
 					return CommandTargetStatus.Handled;
 
 				case DefaultIds.Redo:
@@ -332,141 +346,141 @@ namespace dnSpy.Text.Editor {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.BACKSPACE:
-					if (textView.EditorOperations.ProvisionalCompositionSpan != null)
-						textView.EditorOperations.InsertText(string.Empty);
+					if (EditorOperations.ProvisionalCompositionSpan != null)
+						EditorOperations.InsertText(string.Empty);
 					else
-						textView.EditorOperations.Backspace();
+						EditorOperations.Backspace();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BACKTAB:
-					textView.EditorOperations.Unindent();
+					EditorOperations.Unindent();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOL:
-					textView.EditorOperations.MoveToHome(false);
+					EditorOperations.MoveToHome(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOL_EXT:
-					textView.EditorOperations.MoveToHome(true);
+					EditorOperations.MoveToHome(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOL_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveToHome(true);
+					EditorOperations.MoveToHome(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOTTOMLINE:
-					textView.EditorOperations.MoveToBottomOfView(false);
+					EditorOperations.MoveToBottomOfView(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.BOTTOMLINE_EXT:
-					textView.EditorOperations.MoveToBottomOfView(true);
+					EditorOperations.MoveToBottomOfView(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.CANCEL:
-					textView.EditorOperations.ResetSelection();
+					EditorOperations.ResetSelection();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.CUTLINE:
-					textView.EditorOperations.CutFullLine();
+					EditorOperations.CutFullLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETE:
-					textView.EditorOperations.Delete();
+					EditorOperations.Delete();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEBLANKLINES:
-					textView.EditorOperations.DeleteBlankLines();
+					EditorOperations.DeleteBlankLines();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETELINE:
-					textView.EditorOperations.DeleteFullLine();
+					EditorOperations.DeleteFullLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETETOBOL:
-					textView.EditorOperations.DeleteToBeginningOfLine();
+					EditorOperations.DeleteToBeginningOfLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETETOEOL:
-					textView.EditorOperations.DeleteToEndOfLine();
+					EditorOperations.DeleteToEndOfLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEWHITESPACE:
-					textView.EditorOperations.DeleteHorizontalWhiteSpace();
+					EditorOperations.DeleteHorizontalWhiteSpace();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEWORDLEFT:
-					textView.EditorOperations.DeleteWordToLeft();
+					EditorOperations.DeleteWordToLeft();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DELETEWORDRIGHT:
-					textView.EditorOperations.DeleteWordToRight();
+					EditorOperations.DeleteWordToRight();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DOWN:
-					textView.EditorOperations.MoveLineDown(false);
+					EditorOperations.MoveLineDown(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DOWN_EXT:
-					textView.EditorOperations.MoveLineDown(true);
+					EditorOperations.MoveLineDown(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.DOWN_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveLineDown(true);
+					EditorOperations.MoveLineDown(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.ECMD_CONVERTSPACESTOTABS:
-					textView.EditorOperations.ConvertSpacesToTabs();
+					EditorOperations.ConvertSpacesToTabs();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.ECMD_CONVERTTABSTOSPACES:
-					textView.EditorOperations.ConvertTabsToSpaces();
+					EditorOperations.ConvertTabsToSpaces();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EditorLineFirstColumn:
-					textView.EditorOperations.MoveToStartOfLine(false);
+					EditorOperations.MoveToStartOfLine(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EditorLineFirstColumnExtend:
-					textView.EditorOperations.MoveToStartOfLine(true);
+					EditorOperations.MoveToStartOfLine(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.END:
-					textView.EditorOperations.MoveToEndOfDocument(false);
+					EditorOperations.MoveToEndOfDocument(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.END_EXT:
-					textView.EditorOperations.MoveToEndOfDocument(true);
+					EditorOperations.MoveToEndOfDocument(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EOL:
-					textView.EditorOperations.MoveToEndOfLine(false);
+					EditorOperations.MoveToEndOfLine(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EOL_EXT:
-					textView.EditorOperations.MoveToEndOfLine(true);
+					EditorOperations.MoveToEndOfLine(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.EOL_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveToEndOfLine(true);
+					EditorOperations.MoveToEndOfLine(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTCHAR:
-					textView.EditorOperations.MoveToStartOfLineAfterWhiteSpace(false);
+					EditorOperations.MoveToStartOfLineAfterWhiteSpace(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTCHAR_EXT:
-					textView.EditorOperations.MoveToStartOfLineAfterWhiteSpace(true);
+					EditorOperations.MoveToStartOfLineAfterWhiteSpace(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTNONWHITENEXT:
-					textView.EditorOperations.MoveToStartOfNextLineAfterWhiteSpace(false);
+					EditorOperations.MoveToStartOfNextLineAfterWhiteSpace(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.FIRSTNONWHITEPREV:
-					textView.EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(false);
+					EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.GOTOBRACE:
@@ -477,183 +491,183 @@ namespace dnSpy.Text.Editor {
 
 				case TextEditorIds.GOTOLINE:
 					if (args is int)
-						textView.EditorOperations.GotoLine((int)args);
+						EditorOperations.GotoLine((int)args);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.HOME:
-					textView.EditorOperations.MoveToStartOfDocument(false);
+					EditorOperations.MoveToStartOfDocument(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.HOME_EXT:
-					textView.EditorOperations.MoveToStartOfDocument(true);
+					EditorOperations.MoveToStartOfDocument(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.INDENT:
-					textView.EditorOperations.IncreaseLineIndent();
+					EditorOperations.IncreaseLineIndent();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LASTCHAR:
-					textView.EditorOperations.MoveToLastNonWhiteSpaceCharacter(false);
+					EditorOperations.MoveToLastNonWhiteSpaceCharacter(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LASTCHAR_EXT:
-					textView.EditorOperations.MoveToLastNonWhiteSpaceCharacter(true);
+					EditorOperations.MoveToLastNonWhiteSpaceCharacter(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LEFT:
-					textView.EditorOperations.MoveToPreviousCharacter(false);
+					EditorOperations.MoveToPreviousCharacter(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LEFT_EXT:
-					textView.EditorOperations.MoveToPreviousCharacter(true);
+					EditorOperations.MoveToPreviousCharacter(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.LEFT_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveToPreviousCharacter(true);
+					EditorOperations.MoveToPreviousCharacter(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.MoveSelLinesDown:
-					textView.EditorOperations.MoveSelectedLinesDown();
+					EditorOperations2?.MoveSelectedLinesDown();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.MoveSelLinesUp:
-					textView.EditorOperations.MoveSelectedLinesUp();
+					EditorOperations2?.MoveSelectedLinesUp();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.OPENLINEABOVE:
-					textView.EditorOperations.OpenLineAbove();
+					EditorOperations.OpenLineAbove();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.OPENLINEBELOW:
-					textView.EditorOperations.OpenLineBelow();
+					EditorOperations.OpenLineBelow();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEDN:
-					textView.EditorOperations.PageDown(false);
+					EditorOperations.PageDown(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEDN_EXT:
-					textView.EditorOperations.PageDown(true);
+					EditorOperations.PageDown(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEUP:
-					textView.EditorOperations.PageUp(false);
+					EditorOperations.PageUp(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PAGEUP_EXT:
-					textView.EditorOperations.PageUp(true);
+					EditorOperations.PageUp(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RETURN:
-					textView.EditorOperations.InsertNewLine();
+					EditorOperations.InsertNewLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RIGHT:
-					textView.EditorOperations.MoveToNextCharacter(false);
+					EditorOperations.MoveToNextCharacter(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RIGHT_EXT:
-					textView.EditorOperations.MoveToNextCharacter(true);
+					EditorOperations.MoveToNextCharacter(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.RIGHT_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveToNextCharacter(true);
+					EditorOperations.MoveToNextCharacter(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLBOTTOM:
-					textView.EditorOperations.ScrollLineBottom();
+					EditorOperations.ScrollLineBottom();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLCENTER:
-					textView.EditorOperations.ScrollLineCenter();
+					EditorOperations.ScrollLineCenter();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLDN:
-					textView.EditorOperations.ScrollDownAndMoveCaretIfNecessary();
+					EditorOperations.ScrollDownAndMoveCaretIfNecessary();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLLEFT:
-					textView.EditorOperations.ScrollColumnLeft();
+					EditorOperations.ScrollColumnLeft();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLPAGEDN:
-					textView.EditorOperations.ScrollPageDown();
+					EditorOperations.ScrollPageDown();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLPAGEUP:
-					textView.EditorOperations.ScrollPageUp();
+					EditorOperations.ScrollPageUp();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLRIGHT:
-					textView.EditorOperations.ScrollColumnRight();
+					EditorOperations.ScrollColumnRight();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLTOP:
-					textView.EditorOperations.ScrollLineTop();
+					EditorOperations.ScrollLineTop();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SCROLLUP:
-					textView.EditorOperations.ScrollUpAndMoveCaretIfNecessary();
+					EditorOperations.ScrollUpAndMoveCaretIfNecessary();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELECTALL:
-					textView.EditorOperations.SelectAll();
+					EditorOperations.SelectAll();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELECTCURRENTWORD:
-					textView.EditorOperations.SelectCurrentWord();
+					EditorOperations.SelectCurrentWord();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELLOWCASE:
-					textView.EditorOperations.MakeLowercase();
+					EditorOperations.MakeLowercase();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELSWAPANCHOR:
-					textView.EditorOperations.SwapCaretAndAnchor();
+					EditorOperations.SwapCaretAndAnchor();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELTABIFY:
-					textView.EditorOperations.Tabify();
+					EditorOperations.Tabify();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELTITLECASE:
-					textView.EditorOperations.Capitalize();
+					EditorOperations.Capitalize();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELTOGGLECASE:
-					textView.EditorOperations.ToggleCase();
+					EditorOperations.ToggleCase();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELUNTABIFY:
-					textView.EditorOperations.Untabify();
+					EditorOperations.Untabify();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SELUPCASE:
-					textView.EditorOperations.MakeUppercase();
+					EditorOperations.MakeUppercase();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.SmartBreakLine:
-					textView.EditorOperations.InsertNewLine();
+					EditorOperations.InsertNewLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TAB:
-					textView.EditorOperations.Indent();
+					EditorOperations.Indent();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
-					if (textView.Options.GetOptionValue(DefaultTextViewOptions.CanChangeOverwriteModeId))
+					if (textView.Options.GetOptionValue(DefaultDnSpyTextViewOptions.CanChangeOverwriteModeId))
 						textView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, !textView.Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId));
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEVISSPACE:
-					if (textView.Options.GlobalOptions.GetOptionValue(DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId))
+					if (textView.Options.GlobalOptions.GetOptionValue(DefaultDnSpyTextViewOptions.CanChangeUseVisibleWhitespaceId))
 						textView.Options.GlobalOptions.SetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId, !textView.Options.GlobalOptions.GetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId));
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEWORDWRAP:
-					if (textView.Options.GlobalOptions.GetOptionValue(DefaultTextViewOptions.CanChangeWordWrapStyleId)) {
+					if (textView.Options.GlobalOptions.GetOptionValue(DefaultDnSpyTextViewOptions.CanChangeWordWrapStyleId)) {
 						var newWordwrapStyle = textView.Options.GlobalOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) ^ WordWrapStyles.WordWrap;
 						textView.Options.GlobalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, newWordwrapStyle);
 						if ((newWordwrapStyle & WordWrapStyles.WordWrap) != 0 && textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
@@ -662,79 +676,79 @@ namespace dnSpy.Text.Editor {
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOPLINE:
-					textView.EditorOperations.MoveToTopOfView(false);
+					EditorOperations.MoveToTopOfView(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOPLINE_EXT:
-					textView.EditorOperations.MoveToTopOfView(true);
+					EditorOperations.MoveToTopOfView(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TRANSPOSECHAR:
-					textView.EditorOperations.TransposeCharacter();
+					EditorOperations.TransposeCharacter();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TRANSPOSELINE:
-					textView.EditorOperations.TransposeLine();
+					EditorOperations.TransposeLine();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TRANSPOSEWORD:
-					textView.EditorOperations.TransposeWord();
+					EditorOperations.TransposeWord();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TYPECHAR:
 					if (args is string)
-						textView.EditorOperations.InsertText((string)args);
+						EditorOperations.InsertText((string)args);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UNINDENT:
-					textView.EditorOperations.DecreaseLineIndent();
+					EditorOperations.DecreaseLineIndent();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UP:
-					textView.EditorOperations.MoveLineUp(false);
+					EditorOperations.MoveLineUp(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UP_EXT:
-					textView.EditorOperations.MoveLineUp(true);
+					EditorOperations.MoveLineUp(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.UP_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveLineUp(true);
+					EditorOperations.MoveLineUp(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.WORDNEXT:
-					textView.EditorOperations.MoveToNextWord(false);
+					EditorOperations.MoveToNextWord(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.WORDNEXT_EXT:
-					textView.EditorOperations.MoveToNextWord(true);
+					EditorOperations.MoveToNextWord(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.WORDNEXT_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveToNextWord(true);
+					EditorOperations.MoveToNextWord(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.WORDPREV:
-					textView.EditorOperations.MoveToPreviousWord(false);
+					EditorOperations.MoveToPreviousWord(false);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.WORDPREV_EXT:
-					textView.EditorOperations.MoveToPreviousWord(true);
+					EditorOperations.MoveToPreviousWord(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.WORDPREV_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
-					textView.EditorOperations.MoveToPreviousWord(true);
+					EditorOperations.MoveToPreviousWord(true);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.ZoomIn:
-					textView.EditorOperations.ZoomIn();
+					EditorOperations.ZoomIn();
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.ZoomOut:
-					textView.EditorOperations.ZoomOut();
+					EditorOperations.ZoomOut();
 					return CommandTargetStatus.Handled;
 
 				default:

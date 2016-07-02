@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using dnSpy.Roslyn.Shared.VisualBasic;
@@ -47,7 +46,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	}
 
 	sealed class VisualBasicLanguageCompiler : RoslynLanguageCompiler {
-		protected override Guid ContentType => new Guid(ContentTypes.VISUALBASIC_ROSLYN);
+		protected override string ContentType => ContentTypeNames.VisualBasicContentType;
 		protected override string LanguageName => LanguageNames.VisualBasic;
 		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: VisualBasicConstants.LatestVersion);

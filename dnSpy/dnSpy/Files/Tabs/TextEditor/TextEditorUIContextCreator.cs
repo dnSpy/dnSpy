@@ -25,11 +25,12 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
@@ -45,9 +46,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IIconBarCommandManager iconBarCommandManager;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly ITextEditorFactoryService2 textEditorFactoryService2;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
 			this.wpfCommandManager = wpfCommandManager;
@@ -59,13 +61,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.iconBarCommandManager = iconBarCommandManager;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.textEditorFactoryService2 = textEditorFactoryService2;
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var ttRefFinder = new ToolTipReferenceFinder();
 				var uiContext = new TextEditorUIContext(wpfCommandManager, textEditorUIContextManagerImpl);
-				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager, iconBarCommandManager, textBufferFactoryService, textEditorFactoryService2);
+				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager, iconBarCommandManager, textBufferFactoryService, textEditorFactoryService2, editorOperationsFactoryService);
 				uiContext.Initialize(menuManager, tec);
 				ttRefFinder.UIContext = uiContext;
 				textEditorUIContextManagerImpl.RaiseAddedEvent(uiContext);

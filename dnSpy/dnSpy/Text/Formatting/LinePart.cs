@@ -18,8 +18,8 @@
 */
 
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	struct LinePart {

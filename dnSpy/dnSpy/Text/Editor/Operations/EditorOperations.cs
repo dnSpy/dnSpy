@@ -26,10 +26,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Operations;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor.Operations {
 	sealed class EditorOperations : IEditorOperations2 {
@@ -734,16 +734,13 @@ namespace dnSpy.Text.Editor.Operations {
 			return sb.ToString();
 		}
 
-		public void GotoLine(int lineNumber) => GotoLine(lineNumber, 0);
-		public void GotoLine(int lineNumber, int column) {
-			if (lineNumber < 0 || column < 0)
+		public void GotoLine(int lineNumber) {
+			if (lineNumber < 0)
 				return;
 			if (lineNumber >= Snapshot.LineCount)
 				lineNumber = Snapshot.LineCount - 1;
 			var line = Snapshot.GetLineFromLineNumber(lineNumber);
-			if (column > line.Length)
-				column = line.Length;
-			var point = line.Start + column;
+			var point = line.Start;
 			var span = TextView.GetTextElementSpan(point);
 			Selection.Clear();
 			Caret.MoveTo(span.Start);

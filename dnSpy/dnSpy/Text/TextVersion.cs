@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
 	sealed class TextVersion : ITextVersion {
@@ -74,6 +74,10 @@ namespace dnSpy.Text {
 			if (trackingFidelity == TrackingFidelityMode.UndoRedo)
 				throw new NotSupportedException();
 			return new TrackingSpan(this, span, trackingMode, trackingFidelity);
+		}
+
+		public ITrackingSpan CreateCustomTrackingSpan(Span span, TrackingFidelityMode trackingFidelity, object customState, CustomTrackToVersion behavior) {
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override string ToString() => $"V{VersionNumber} (r{ReiteratedVersionNumber})";

@@ -28,6 +28,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
@@ -108,7 +109,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					// The caret isn't always moved unless we wait a little
 					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 						if (doc == vm.SelectedDocument) {
-							doc.TextView.Caret.MoveTo(diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
+							doc.TextView.MoveCaretTo(diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
 							doc.TextView.Caret.EnsureVisible();
 						}
 					}));

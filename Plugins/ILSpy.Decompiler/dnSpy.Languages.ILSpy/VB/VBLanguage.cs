@@ -82,7 +82,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			this.langSettings = langSettings;
 		}
 
-		public override Guid ContentTypeGuid => new Guid(ContentTypes.VISUALBASIC_ILSPY);
+		public override string ContentTypeString => ContentTypes.VISUALBASIC_ILSPY;
 		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_VISUALBASIC;
 		public override string UniqueNameUI => "Visual Basic";
 		public override Guid GenericGuid => LanguageConstants.LANGUAGE_VISUALBASIC;

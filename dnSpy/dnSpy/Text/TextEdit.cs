@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
 	sealed class TextEdit : ITextEdit {
@@ -27,17 +27,31 @@ namespace dnSpy.Text {
 		ITextSnapshot ITextBufferEdit.Snapshot => TextSnapshot;
 		public TextSnapshot TextSnapshot { get; }
 
+		public bool HasEffectiveChanges {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public bool HasFailedChanges {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
 		readonly TextBuffer textBuffer;
 		readonly List<ITextChange> changes;
+		readonly EditOptions options;
 		readonly int? reiteratedVersionNumber;
 		readonly object editTag;
 
-		public TextEdit(TextBuffer textBuffer, int? reiteratedVersionNumber, object editTag) {
+		public TextEdit(TextBuffer textBuffer, EditOptions options, int? reiteratedVersionNumber, object editTag) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			this.textBuffer = textBuffer;
 			TextSnapshot = textBuffer.CurrentSnapshot;
 			this.changes = new List<ITextChange>();
+			this.options = options;
 			this.reiteratedVersionNumber = reiteratedVersionNumber;
 			this.editTag = editTag;
 		}
@@ -47,7 +61,7 @@ namespace dnSpy.Text {
 			if (Canceled || hasApplied)
 				throw new InvalidOperationException();
 			hasApplied = true;
-			textBuffer.ApplyChanges(this, changes, reiteratedVersionNumber, editTag);
+			textBuffer.ApplyChanges(this, changes, options, reiteratedVersionNumber, editTag);
 			return textBuffer.CurrentSnapshot;
 		}
 

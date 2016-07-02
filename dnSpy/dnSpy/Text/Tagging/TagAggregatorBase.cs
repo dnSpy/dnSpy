@@ -21,8 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Threading;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Projection;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
 	abstract class TagAggregatorBase<T> : ITagAggregator<T> where T : ITag {
@@ -31,6 +32,12 @@ namespace dnSpy.Text.Tagging {
 		readonly object lockObj;
 		protected ITextBuffer TextBuffer { get; }
 		ITagger<T>[] taggers;
+
+		public IBufferGraph BufferGraph {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
 
 		protected TagAggregatorBase(ITextBuffer textBuffer, TagAggregatorOptions options) {
 			if (textBuffer == null)

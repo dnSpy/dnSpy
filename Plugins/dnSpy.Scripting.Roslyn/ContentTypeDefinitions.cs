@@ -17,24 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Scripting.Roslyn {
 	static class ContentTypeDefinitions {
 #pragma warning disable CS0169
-		[ExportContentTypeDefinition(ContentTypes.REPL_ROSLYN)]
-		[DisplayName("REPL Roslyn")]
-		[BaseContentType(ContentTypes.REPL)]
+		[Export]
+		[Name(ContentTypes.REPL_ROSLYN)]
+		[BaseDefinition(ContentTypes.REPL)]
 		static readonly ContentTypeDefinition ReplRoslynContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.REPL_CSHARP_ROSLYN)]
-		[DisplayName("REPL C# Roslyn")]
-		[BaseContentType(ContentTypes.REPL_ROSLYN)]
+		[Export]
+		[Name(ContentTypes.REPL_CSHARP_ROSLYN)]
+		[BaseDefinition(ContentTypes.REPL_ROSLYN)]
 		static readonly ContentTypeDefinition ReplCSharpRoslynContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.REPL_VISUALBASIC_ROSLYN)]
-		[DisplayName("REPL Visual Basic Roslyn")]
-		[BaseContentType(ContentTypes.REPL_ROSLYN)]
+		[Export]
+		[Name(ContentTypes.REPL_VISUALBASIC_ROSLYN)]
+		[BaseDefinition(ContentTypes.REPL_ROSLYN)]
 		static readonly ContentTypeDefinition ReplVisualBasicRoslynContentTypeDefinition;
 #pragma warning restore CS0169
 	}

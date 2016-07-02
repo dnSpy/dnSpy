@@ -20,7 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class MouseProcessorCollection : IDisposable {

@@ -20,8 +20,8 @@
 using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class RoslynReplCommandTargetFilter : ICommandTargetFilter {

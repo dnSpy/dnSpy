@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	sealed class ViewClassifierAggregator : ClassifierAggregatorBase {

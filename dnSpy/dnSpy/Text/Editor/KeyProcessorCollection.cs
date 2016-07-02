@@ -21,16 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class KeyProcessorCollection {
 		readonly IWpfTextView wpfTextView;
-		readonly Lazy<IKeyProcessorProvider, IKeyProcessorProviderMetadata>[] keyProcessorProviders;
+		readonly Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders;
 		KeyProcessor[] keyProcessors;
 
-		public KeyProcessorCollection(IWpfTextView wpfTextView, Lazy<IKeyProcessorProvider, IKeyProcessorProviderMetadata>[] keyProcessorProviders) {
+		public KeyProcessorCollection(IWpfTextView wpfTextView, Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders) {
 			this.wpfTextView = wpfTextView;
 			this.keyProcessorProviders = keyProcessorProviders;
 			this.keyProcessors = Array.Empty<KeyProcessor>();

@@ -29,11 +29,13 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Events;
 using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit.Highlighting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorHelper {

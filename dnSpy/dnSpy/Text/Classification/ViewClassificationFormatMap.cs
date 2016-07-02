@@ -18,15 +18,21 @@
 */
 
 using System;
-using System.Windows.Media;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using System.Collections.ObjectModel;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Classification {
 	sealed class ViewClassificationFormatMap : IClassificationFormatMap {
-		public TextFormattingRunProperties DefaultTextProperties => categoryMap.DefaultTextProperties;
-		public Brush DefaultWindowBackground => categoryMap.DefaultWindowBackground;
+		public ReadOnlyCollection<IClassificationType> CurrentPriorityOrder => categoryMap.CurrentPriorityOrder;
+		public bool IsInBatchUpdate => categoryMap.IsInBatchUpdate;
+
+		public TextFormattingRunProperties DefaultTextProperties {
+			get { return categoryMap.DefaultTextProperties; }
+			set { categoryMap.DefaultTextProperties = value; }
+		}
+
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly ITextView textView;
@@ -68,6 +74,27 @@ namespace dnSpy.Text.Classification {
 
 		public TextFormattingRunProperties GetTextProperties(IClassificationType classificationType) =>
 			categoryMap.GetTextProperties(classificationType);
+
+		public string GetEditorFormatMapKey(IClassificationType classificationType) =>
+			categoryMap.GetEditorFormatMapKey(classificationType);
+
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) =>
+			categoryMap.AddExplicitTextProperties(classificationType, properties);
+
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) =>
+			categoryMap.AddExplicitTextProperties(classificationType, properties, priority);
+
+		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) =>
+			categoryMap.SetTextProperties(classificationType, properties);
+
+		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) =>
+			categoryMap.SetExplicitTextProperties(classificationType, properties);
+
+		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) =>
+			categoryMap.SwapPriorities(firstType, secondType);
+
+		public void BeginBatchUpdate() => categoryMap.BeginBatchUpdate();
+		public void EndBatchUpdate() => categoryMap.EndBatchUpdate();
 
 		public void Dispose() {
 			if (categoryMap != null)

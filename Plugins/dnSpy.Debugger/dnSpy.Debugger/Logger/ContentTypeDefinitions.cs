@@ -17,14 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Logger {
 	static class ContentTypeDefinitions {
 #pragma warning disable CS0169
-		[ExportContentTypeDefinition(ContentTypes.OUTPUT_DEBUG)]
-		[DisplayName("DebugOutput")]
-		[BaseContentType(ContentTypes.OUTPUT)]
+		[Export]
+		[Name(ContentTypes.OUTPUT_DEBUG)]
+		[BaseDefinition(ContentTypes.OUTPUT)]
 		static readonly ContentTypeDefinition OutputDebugContentTypeDefinition;
 #pragma warning restore CS0169
 	}

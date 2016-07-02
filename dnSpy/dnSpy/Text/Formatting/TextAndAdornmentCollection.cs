@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class TextAndAdornmentCollection : ReadOnlyCollection<ISequenceElement>, ITextAndAdornmentCollection {

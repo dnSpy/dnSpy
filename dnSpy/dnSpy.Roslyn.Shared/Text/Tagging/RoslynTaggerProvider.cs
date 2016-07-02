@@ -20,10 +20,14 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
-	[ExportTaggerProvider(typeof(IClassificationTag), ContentTypes.ROSLYN_CODE)]
+	[Export(typeof(ITaggerProvider))]
+	[TagType(typeof(IClassificationTag))]
+	[ContentType(ContentTypes.ROSLYN_CODE)]
 	sealed class RoslynTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypes themeClassificationTypes;
 

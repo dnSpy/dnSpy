@@ -22,15 +22,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Text;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	[Export(typeof(IContentTypeRegistryService))]
 	sealed class ContentTypeRegistryService : IContentTypeRegistryService {
-		static readonly Guid UnknownContentTypeGuid = new Guid("CAC55A72-3AD1-4CB3-87BB-B3B607682C0B");
+		const string UnknownContentTypeName = "UNKNOWN";
 
 		readonly object lockObj = new object();
-		Dictionary<Guid, ContentType> contentTypes;
+		Dictionary<string, ContentType> contentTypes;
 
 		public IEnumerable<IContentType> ContentTypes {
 			get {
@@ -42,58 +43,55 @@ namespace dnSpy.Text {
 		public IContentType UnknownContentType {
 			get {
 				lock (lockObj)
-					return contentTypes[UnknownContentTypeGuid];
+					return contentTypes[UnknownContentTypeName];
 			}
 		}
 
 		sealed class ContentTypeCreator {
 			readonly ContentTypeRegistryService owner;
-			readonly Dictionary<Guid, RawContentType> rawContentTypes;
+			readonly Dictionary<string, RawContentType> rawContentTypes;
 
 			sealed class RawContentType {
-				public Guid Guid { get; }
-				public string DisplayName { get; }
-				public Guid[] BaseGuids { get; }
+				public string Typename { get; }
+				public string[] BaseTypes { get; }
 
-				public RawContentType(Guid guid, string displayName, Guid[] baseGuids) {
-					Guid = guid;
-					DisplayName = displayName;
-					BaseGuids = baseGuids;
+				public RawContentType(string guid, string[] baseGuids) {
+					Typename = guid;
+					BaseTypes = baseGuids;
 				}
 			}
 
-			public ContentTypeCreator(ContentTypeRegistryService owner, IEnumerable<Lazy<ContentTypeDefinition, IDictionary<string, object>>> contentTypeDefinitions) {
+			public ContentTypeCreator(ContentTypeRegistryService owner, IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
 				this.owner = owner;
-				this.rawContentTypes = new Dictionary<Guid, RawContentType>();
+				this.rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
 				foreach (var md in contentTypeDefinitions.Select(a => a.Metadata)) {
-					var guid = GetGuid(md);
-					Debug.Assert(guid != null);
-					if (guid == null)
+					var typeName = md.Name;
+					Debug.Assert(typeName != null);
+					if (typeName == null)
 						continue;
-					Debug.Assert(!rawContentTypes.ContainsKey(guid.Value));
-					if (rawContentTypes.ContainsKey(guid.Value))
+					Debug.Assert(!rawContentTypes.ContainsKey(typeName));
+					if (rawContentTypes.ContainsKey(typeName))
 						continue;
-					var baseGuids = GetBaseGuids(md);
-					Debug.Assert(baseGuids != null);
-					if (baseGuids == null)
+					var baseTypes = (md.BaseDefinition ?? Array.Empty<string>()).ToArray();
+					Debug.Assert(baseTypes != null);
+					if (baseTypes == null)
 						continue;
-					var displayName = GetDisplayName(md);
-					var rawCt = new RawContentType(guid.Value, displayName, baseGuids);
-					rawContentTypes.Add(rawCt.Guid, rawCt);
+					var rawCt = new RawContentType(typeName, baseTypes);
+					rawContentTypes.Add(rawCt.Typename, rawCt);
 				}
-				var list = rawContentTypes.Values.Select(a => a.Guid).ToArray();
-				foreach (var guid in list)
-					TryCreate(guid, 0);
+				var list = rawContentTypes.Values.Select(a => a.Typename).ToArray();
+				foreach (var typeName in list)
+					TryCreate(typeName, 0);
 			}
 
-			ContentType TryGet(Guid guid) {
+			ContentType TryGet(string typeName) {
 				ContentType contentType;
-				owner.contentTypes.TryGetValue(guid, out contentType);
+				owner.contentTypes.TryGetValue(typeName, out contentType);
 				return contentType;
 			}
 
-			ContentType TryCreate(Guid guid, int recurse) {
-				var ct = TryGet(guid);
+			ContentType TryCreate(string typeName, int recurse) {
+				var ct = TryGet(typeName);
 				if (ct != null)
 					return ct;
 
@@ -103,119 +101,66 @@ namespace dnSpy.Text {
 					return null;
 
 				RawContentType rawCt;
-				bool b = rawContentTypes.TryGetValue(guid, out rawCt);
+				bool b = rawContentTypes.TryGetValue(typeName, out rawCt);
 				Debug.Assert(b);
 				if (!b)
 					return null;
-				b = rawContentTypes.Remove(rawCt.Guid);
+				b = rawContentTypes.Remove(rawCt.Typename);
 				Debug.Assert(b);
 
-				var baseTypes = new ContentType[rawCt.BaseGuids.Length];
+				var baseTypes = new ContentType[rawCt.BaseTypes.Length];
 				for (int i = 0; i < baseTypes.Length; i++) {
-					var btContentType = TryCreate(rawCt.BaseGuids[i], recurse + 1);
+					var btContentType = TryCreate(rawCt.BaseTypes[i], recurse + 1);
 					if (btContentType == null)
 						return null;
 					baseTypes[i] = btContentType;
 				}
 
-				ct = new ContentType(rawCt.Guid, GetDisplayNameInternal(rawCt.Guid, rawCt.DisplayName), baseTypes);
-				owner.contentTypes.Add(ct.Guid, ct);
+				ct = new ContentType(rawCt.Typename, baseTypes);
+				owner.contentTypes.Add(ct.TypeName, ct);
 				return ct;
-			}
-
-			Guid? GetGuid(IDictionary<string, object> md) {
-				object obj;
-				if (!md.TryGetValue("Guid", out obj))
-					return null;
-				string s = obj as string;
-				if (s == null)
-					return null;
-				Guid guid;
-				if (!Guid.TryParse(s, out guid))
-					return null;
-
-				return guid;
-			}
-
-			Guid[] GetBaseGuids(IDictionary<string, object> md) {
-				object obj;
-				if (!md.TryGetValue("BaseDefinition", out obj))
-					return Array.Empty<Guid>();
-				var guidStrings = obj as string[];
-				if (guidStrings == null)
-					return Array.Empty<Guid>();
-				var guids = new Guid[guidStrings.Length];
-				for (int i = 0; i < guidStrings.Length; i++) {
-					Guid guid;
-					if (!Guid.TryParse(guidStrings[i], out guid))
-						return null;
-					guids[i] = guid;
-				}
-				return guids;
-			}
-
-			string GetDisplayName(IDictionary<string, object> md) {
-				object obj;
-				md.TryGetValue("DisplayName", out obj);
-				return obj as string;
 			}
 		}
 
 		[ImportingConstructor]
-		ContentTypeRegistryService([ImportMany] IEnumerable<Lazy<ContentTypeDefinition, IDictionary<string, object>>> contentTypeDefinitions) {
-			this.contentTypes = new Dictionary<Guid, ContentType>();
-			AddContentTypeInternal_NoLock(UnknownContentTypeGuid, "Unknown", Enumerable.Empty<Guid>());
+		ContentTypeRegistryService([ImportMany] IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
+			this.contentTypes = new Dictionary<string, ContentType>(StringComparer.OrdinalIgnoreCase);
+			AddContentTypeInternal_NoLock(UnknownContentTypeName, Array.Empty<string>());
 			new ContentTypeCreator(this, contentTypeDefinitions);
 		}
 
-		public IContentType AddContentType(Guid guid, IEnumerable<Guid> baseTypeGuids) {
-			if (guid == UnknownContentTypeGuid)
-				throw new ArgumentException("Guid is reserved", nameof(guid));
+		public IContentType AddContentType(string typeName, IEnumerable<string> baseTypes) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(typeName, UnknownContentTypeName))
+				throw new ArgumentException("Guid is reserved", nameof(typeName));
 			lock (lockObj)
-				return AddContentTypeInternal_NoLock(guid, null, baseTypeGuids);
+				return AddContentTypeInternal_NoLock(typeName, baseTypes);
 		}
 
-		static string GetDisplayNameInternal(Guid guid, string displayName) => displayName ?? guid.ToString();
-
-		IContentType AddContentTypeInternal_NoLock(Guid guid, string displayName, IEnumerable<Guid> baseTypeGuids) {
-			displayName = GetDisplayNameInternal(guid, displayName);
-			if (contentTypes.ContainsKey(guid))
-				throw new ArgumentException("Content type already exists", nameof(guid));
-			var btGuids = baseTypeGuids.ToArray();
-			if (btGuids.Any(a => a == UnknownContentTypeGuid))
-				throw new ArgumentException("Can't derive from the unknown content type", nameof(baseTypeGuids));
-			var baseTypes = baseTypeGuids.Select(a => GetContentType(a)).ToArray();
-			var ct = new ContentType(guid, displayName, baseTypes);
-			contentTypes.Add(ct.Guid, ct);
+		IContentType AddContentTypeInternal_NoLock(string typeName, IEnumerable<string> baseTypesEnumerable) {
+			if (contentTypes.ContainsKey(typeName))
+				throw new ArgumentException("Content type already exists", nameof(typeName));
+			var btGuids = baseTypesEnumerable.ToArray();
+			if (btGuids.Any(a => a == UnknownContentTypeName))
+				throw new ArgumentException("Can't derive from the unknown content type", nameof(baseTypesEnumerable));
+			var baseTypes = baseTypesEnumerable.Select(a => GetContentType(a)).ToArray();
+			var ct = new ContentType(typeName, baseTypes);
+			contentTypes.Add(ct.TypeName, ct);
 			return ct;
 		}
 
-		public IContentType GetContentType(Guid guid) {
+		public IContentType GetContentType(string typeName) {
 			ContentType contentType;
 			lock (lockObj)
-				contentTypes.TryGetValue(guid, out contentType);
+				contentTypes.TryGetValue(typeName, out contentType);
 			Debug.Assert(contentType != null);
 			return contentType;
 		}
 
-		public IContentType AddContentType(string guid, IEnumerable<string> baseTypeGuids) =>
-			AddContentType(Guid.Parse(guid), baseTypeGuids.Select(a => Guid.Parse(a)));
-		public IContentType GetContentType(string guid) => GetContentType(Guid.Parse(guid));
-
-		public IContentType GetContentType(object contentType) {
-			var ct = contentType as IContentType;
-			if (ct != null)
-				return ct;
-
-			var contentTypeGuid = contentType as Guid?;
-			if (contentTypeGuid != null)
-				return GetContentType(contentTypeGuid.Value);
-
-			var contentTypeString = contentType as string;
-			if (contentTypeString != null)
-				return GetContentType(contentTypeString);
-
-			return null;
+		public void RemoveContentType(string typeName) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(typeName, UnknownContentTypeName))
+				throw new ArgumentException("Guid is reserved", nameof(typeName));
+			lock (lockObj)
+				contentTypes.Remove(typeName);
 		}
 	}
 }

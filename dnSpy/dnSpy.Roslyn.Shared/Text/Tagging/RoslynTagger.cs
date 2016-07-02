@@ -21,11 +21,11 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
 using dnSpy.Contracts.Themes;
 using dnSpy.Roslyn.Shared.Text.Classification;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState> {

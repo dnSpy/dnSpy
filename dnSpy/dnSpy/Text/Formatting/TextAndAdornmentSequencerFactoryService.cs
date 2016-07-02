@@ -19,9 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(ITextAndAdornmentSequencerFactoryService))]

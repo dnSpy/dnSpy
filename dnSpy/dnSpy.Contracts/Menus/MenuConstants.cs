@@ -27,6 +27,7 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Menus {
 	/// <summary>

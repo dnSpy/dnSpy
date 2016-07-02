@@ -18,15 +18,23 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
 using dnSpy.Text.AvalonEdit;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
-	sealed class TextChange : ITextChange {
+	sealed class TextChange : ITextChange2 {
 		readonly int oldOffset;
 		readonly int newOffset;
 		readonly ITextSource oldText;
 		readonly ITextSource newText;
+
+		public int LineCountDelta {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public bool IsOpaque => false;//TODO:
 
 		public int Delta => newText.TextLength - oldText.TextLength;
 		public int NewEnd => newOffset + newText.TextLength;

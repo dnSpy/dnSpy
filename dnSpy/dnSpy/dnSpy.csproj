@@ -367,6 +367,9 @@
     <Compile Include="Text\CachedColorsList.cs" />
     <Compile Include="Text\CachedColorsListTagger.cs" />
     <Compile Include="Text\Classification\CategoryClassificationFormatMap.cs" />
+    <Compile Include="Text\Classification\CategoryEditorFormatMap.cs" />
+    <Compile Include="Text\Classification\CategoryEditorFormatMapUpdater.cs" />
+    <Compile Include="Text\Classification\ClassificationFontUtils.cs" />
     <Compile Include="Text\Classification\ClassificationFormatMapService.cs" />
     <Compile Include="Text\Classification\ClassificationType.cs" />
     <Compile Include="Text\Classification\ClassificationTypeRegistryService.cs" />
@@ -376,23 +379,26 @@
     <Compile Include="Text\Classification\ClassifierTagger.cs" />
     <Compile Include="Text\Classification\ClassifierTaggerProvider.cs" />
     <Compile Include="Text\Classification\DefaultTextEditorFormatDefinition.cs" />
+    <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
+    <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
+    <Compile Include="Text\Classification\EditorFormatMapService.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettings.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />
-    <Compile Include="Text\Classification\PredefinedClassificationFormatDefinitions.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettings.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettingsDictionaryCreator.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinitions.cs" />
-    <Compile Include="Text\Classification\TextFormattingRunPropertiesUtils.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypes.cs" />
     <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregatorService.cs" />
+    <Compile Include="Text\Classification\ViewEditorFormatMap.cs" />
     <Compile Include="Text\ContentType.cs" />
     <Compile Include="Text\ContentTypeDefinitions.cs" />
     <Compile Include="Text\ContentTypeRegistryService.cs" />
+    <Compile Include="Text\ContentTypeRegistryServiceExtensions.cs" />
     <Compile Include="Text\Editor\AdornmentLayer.cs" />
     <Compile Include="Text\Editor\AdornmentLayerCollection.cs" />
     <Compile Include="Text\Editor\AdornmentLayerDefinitionService.cs" />
@@ -425,6 +431,7 @@
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
+    <Compile Include="Text\Editor\MetadataAndOrder.cs" />
     <Compile Include="Text\Editor\MouseLocation.cs" />
     <Compile Include="Text\Editor\MouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\MouseWpfTextViewCreationListener.cs" />
@@ -458,6 +465,7 @@
     <Compile Include="Text\Editor\TextEditorSettings.cs" />
     <Compile Include="Text\Editor\TextLayer.cs" />
     <Compile Include="Text\Editor\TextSelection.cs" />
+    <Compile Include="Text\Editor\TextSelectionExtensions.cs" />
     <Compile Include="Text\Editor\TextSelectionLayer.cs" />
     <Compile Include="Text\Editor\TextSnapshotLineExtensions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
@@ -492,6 +500,7 @@
     <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
     <Compile Include="Text\MappingPoint.cs" />
     <Compile Include="Text\MappingSpan.cs" />
+    <Compile Include="Text\MEF\Metadata.cs" />
     <Compile Include="Text\NormalizedTextChangeCollection.cs" />
     <Compile Include="Text\OffsetAndCachedColors.cs" />
     <Compile Include="Text\ProviderSelector.cs" />
@@ -581,6 +590,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <None Include="project.json" />
     <None Include="Themes\blue.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

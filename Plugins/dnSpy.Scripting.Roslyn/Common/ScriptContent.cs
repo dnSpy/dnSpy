@@ -24,6 +24,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	interface IScriptContent : IUIObjectProvider {

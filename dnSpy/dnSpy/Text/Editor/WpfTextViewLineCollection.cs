@@ -24,9 +24,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextViewLineCollection : IWpfTextViewLineCollection {

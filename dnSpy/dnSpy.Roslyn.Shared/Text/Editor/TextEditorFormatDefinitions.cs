@@ -17,16 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Editor {
-	[ExportTextEditorFormatDefinition(RoslynAppearanceCategoryConstants.CodeEditor_CSharp, AppearanceCategoryConstants.CodeEditor)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(RoslynAppearanceCategoryConstants.CodeEditor_CSharp)]
+	[BaseDefinition(AppearanceCategoryConstants.CodeEditor)]
 	sealed class CodeEditorCSharpTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => "Code Editor (C#)";
 	}
 
-	[ExportTextEditorFormatDefinition(RoslynAppearanceCategoryConstants.CodeEditor_VisualBasic, AppearanceCategoryConstants.CodeEditor)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(RoslynAppearanceCategoryConstants.CodeEditor_VisualBasic)]
+	[BaseDefinition(AppearanceCategoryConstants.CodeEditor)]
 	sealed class CodeEditorVisualBasicTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => "Code Editor (Visual Basic)";
 	}
 }

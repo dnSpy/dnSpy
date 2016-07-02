@@ -18,7 +18,8 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Projection;
 
 namespace dnSpy.Text {
 	sealed class MappingSpan : IMappingSpan {
@@ -30,6 +31,12 @@ namespace dnSpy.Text {
 		public IMappingPoint Start => start ?? (start = new MappingPoint(snapshotSpan.Start, PointTrackingMode));
 		public IMappingPoint End => end ?? (end = new MappingPoint(snapshotSpan.End, PointTrackingMode));
 		PointTrackingMode PointTrackingMode => spanTrackingMode == SpanTrackingMode.EdgeExclusive || spanTrackingMode == SpanTrackingMode.EdgeNegative ? PointTrackingMode.Negative : PointTrackingMode.Positive;
+
+		public IBufferGraph BufferGraph {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
 
 		public MappingSpan(SnapshotSpan snapshotSpan, SpanTrackingMode trackingMode) {
 			if (snapshotSpan.Snapshot == null)

@@ -19,8 +19,8 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Contracts.Text.Tagging;
 using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	sealed class RoslynTaggerAsyncState {

@@ -126,7 +126,7 @@ namespace Example2.Plugin {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			context.ContentTypeGuid = new Guid(ContentTypes.PLAIN_TEXT);
+			context.ContentTypeString = ContentTypes.PLAIN_TEXT;
 			context.Output.Write(file.Text, BoxedOutputColor.Text);
 			return true;
 		}

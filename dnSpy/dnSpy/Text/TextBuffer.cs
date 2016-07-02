@@ -20,8 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using dnSpy.Contracts.Text;
 using dnSpy.Text.AvalonEdit;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	sealed class TextBuffer : ITextBuffer {
@@ -60,6 +61,9 @@ namespace dnSpy.Text {
 		public event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;
 		public event EventHandler<TextContentChangingEventArgs> Changing;
 		public event EventHandler PostChanged;
+#pragma warning disable CS0067
+		public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;//TODO: Use this event
+#pragma warning restore CS0067
 
 		TextDocument Document {
 			get { return document; }
@@ -88,12 +92,12 @@ namespace dnSpy.Text {
 		public bool CheckEditAccess() => CheckAccess();
 		TextEdit textEditInProgress;
 
-		public ITextEdit CreateEdit() => CreateEdit(null, null);
-		public ITextEdit CreateEdit(int? reiteratedVersionNumber, object editTag) {
+		public ITextEdit CreateEdit() => CreateEdit(EditOptions.None,  null, null);
+		public ITextEdit CreateEdit(EditOptions options, int? reiteratedVersionNumber, object editTag) {
 			VerifyAccess();
 			if (EditInProgress)
 				throw new InvalidOperationException("An edit operation is in progress");
-			return textEditInProgress = new TextEdit(this, reiteratedVersionNumber, editTag);
+			return textEditInProgress = new TextEdit(this, options, reiteratedVersionNumber, editTag);
 		}
 
 		internal void Cancel(TextEdit textEdit) {
@@ -140,7 +144,7 @@ namespace dnSpy.Text {
 			return args.Canceled;
 		}
 
-		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, int? reiteratedVersionNumber, object editTag) {
+		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, EditOptions options, int? reiteratedVersionNumber, object editTag) {
 			VerifyAccess();
 			if (textEdit != textEditInProgress)
 				throw new InvalidOperationException();
@@ -171,9 +175,9 @@ namespace dnSpy.Text {
 				TextContentChangedEventArgs args = null;
 				//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 				//		raised after all of these three events have been raised.
-				ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, editTag)));
-				Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, editTag)));
-				ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, editTag)));
+				ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
+				Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
+				ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
 			}
 			//TODO: Use reiteratedVersionNumber
 			PostChanged?.Invoke(this, EventArgs.Empty);
@@ -191,6 +195,30 @@ namespace dnSpy.Text {
 		void VerifyAccess() {
 			if (!CheckAccess())
 				throw new InvalidOperationException();
+		}
+
+		public IReadOnlyRegionEdit CreateReadOnlyRegionEdit() {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public bool IsReadOnly(int position) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public bool IsReadOnly(int position, bool isEdit) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public bool IsReadOnly(Span span) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public bool IsReadOnly(Span span, bool isEdit) {
+			throw new NotImplementedException();//TODO:
+		}
+
+		public NormalizedSpanCollection GetReadOnlyExtents(Span span) {
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }

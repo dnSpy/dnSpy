@@ -20,27 +20,26 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(IClassificationFormatMapService))]
 	sealed class ClassificationFormatMapService : IClassificationFormatMapService {
 		readonly IThemeManager themeManager;
-		readonly ITextEditorFontSettingsService textEditorFontSettingsService;
-		readonly Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>[] editorFormatDefinitions;
+		readonly IEditorFormatMapService editorFormatMapService;
+		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
-		readonly Dictionary<ITextEditorFontSettings, IClassificationFormatMap> toCategoryMap;
+		readonly Dictionary<IEditorFormatMap, IClassificationFormatMap> toCategoryMap;
 
 		[ImportingConstructor]
-		ClassificationFormatMapService(IThemeManager themeManager, ITextEditorFontSettingsService textEditorFontSettingsService, [ImportMany] IEnumerable<Lazy<ClassificationFormatDefinition, IClassificationFormatDefinitionMetadata>> editorFormatDefinitions, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		ClassificationFormatMapService(IThemeManager themeManager, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.themeManager = themeManager;
-			this.textEditorFontSettingsService = textEditorFontSettingsService;
-			this.editorFormatDefinitions = editorFormatDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
+			this.editorFormatMapService = editorFormatMapService;
+			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.toCategoryMap = new Dictionary<ITextEditorFontSettings, IClassificationFormatMap>();
+			this.toCategoryMap = new Dictionary<IEditorFormatMap, IClassificationFormatMap>();
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(ITextView textView) {
@@ -65,12 +64,12 @@ namespace dnSpy.Text.Classification {
 		public IClassificationFormatMap GetClassificationFormatMap(string category) {
 			if (category == null)
 				throw new ArgumentNullException(nameof(category));
-			var textEditorFontSettings = textEditorFontSettingsService.GetSettings(category);
+			var editorFormatMap = editorFormatMapService.GetEditorFormatMap(category);
 			IClassificationFormatMap map;
-			if (toCategoryMap.TryGetValue(textEditorFontSettings, out map))
+			if (toCategoryMap.TryGetValue(editorFormatMap, out map))
 				return map;
-			map = new CategoryClassificationFormatMap(themeManager, textEditorFontSettings, editorFormatDefinitions, classificationTypeRegistryService);
-			toCategoryMap.Add(textEditorFontSettings, map);
+			map = new CategoryClassificationFormatMap(themeManager, editorFormatMap, editorFormatDefinitionService, classificationTypeRegistryService);
+			toCategoryMap.Add(editorFormatMap, map);
 			return map;
 		}
 	}

@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IEditorOptionsFactoryService))]

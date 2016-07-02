@@ -18,10 +18,9 @@
 */
 
 using System;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextViewHost : IWpfTextViewHost {
@@ -29,10 +28,6 @@ namespace dnSpy.Text.Editor {
 		public IWpfTextView TextView { get; }
 		public event EventHandler Closed;
 		public Control HostControl => contentControl;
-		public object UIObject => contentControl;
-		public IInputElement FocusedElement => TextView.VisualElement;
-		public FrameworkElement ScaleElement => TextView.VisualElement;
-		public object Tag { get; set; }
 
 		readonly ContentControl contentControl;
 
@@ -59,6 +54,10 @@ namespace dnSpy.Text.Editor {
 			TextView.Close();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
+		}
+
+		public IWpfTextViewMargin GetTextViewMargin(string marginName) {
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }

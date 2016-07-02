@@ -30,6 +30,7 @@ using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Logger {
 	[ExportAutoLoaded]

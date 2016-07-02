@@ -21,13 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Projection;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Formatting {
 	sealed class TextAndAdornmentSequencer : ITextAndAdornmentSequencer {
+		public IBufferGraph BufferGraph => textView.BufferGraph;
 		public ITextBuffer SourceBuffer => textView.TextViewModel.EditBuffer;
 		public ITextBuffer TopBuffer => textView.TextViewModel.VisualBuffer;
 

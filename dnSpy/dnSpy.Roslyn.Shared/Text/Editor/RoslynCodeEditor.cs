@@ -18,9 +18,10 @@
 */
 
 using System.Windows;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Roslyn;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Text.Editor {
 	sealed class RoslynCodeEditor : IRoslynCodeEditor {

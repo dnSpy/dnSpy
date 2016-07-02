@@ -24,6 +24,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	class TextEditorSettings : ViewModelBase, ITextEditorSettings {
@@ -111,7 +112,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		WordWrapStyles wordWrapStyle = WordWrapStyles.DefaultDisabled;
+		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultDisabled;
 
 		public bool ConvertTabsToSpaces {
 			get { return convertTabsToSpaces; }

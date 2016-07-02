@@ -22,7 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class AdornmentLayerCollection : Canvas {
@@ -38,26 +39,24 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
 
-		public IAdornmentLayer GetAdornmentLayer(IAdornmentLayerDefinitionMetadata mdLayer) {
-			if (mdLayer == null)
-				throw new ArgumentNullException(nameof(mdLayer));
-			var layer = adornmentLayers.FirstOrDefault(a => a.LayerMetadata == mdLayer);
+		public IAdornmentLayer GetAdornmentLayer(MetadataAndOrder<IAdornmentLayersMetadata> info) {
+			var layer = adornmentLayers.FirstOrDefault(a => a.Info.Metadata == info.Metadata);
 			if (layer == null)
-				layer = Create(mdLayer);
+				layer = Create(info);
 			return layer;
 		}
 
-		AdornmentLayer Create(IAdornmentLayerDefinitionMetadata mdLayer) {
-			var layer = new AdornmentLayer(wpfTextView, mdLayer);
-			int index = GetInsertIndex(mdLayer);
+		AdornmentLayer Create(MetadataAndOrder<IAdornmentLayersMetadata> info) {
+			var layer = new AdornmentLayer(wpfTextView, info);
+			int index = GetInsertIndex(info);
 			adornmentLayers.Insert(index, layer);
 			Children.Insert(index, layer);
 			return layer;
 		}
 
-		int GetInsertIndex(IAdornmentLayerDefinitionMetadata mdLayer) {
+		int GetInsertIndex(MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			for (int i = 0; i < adornmentLayers.Count; i++) {
-				if (mdLayer.Order < adornmentLayers[i].LayerMetadata.Order)
+				if (info.Order < adornmentLayers[i].Info.Order)
 					return i;
 			}
 			return adornmentLayers.Count;

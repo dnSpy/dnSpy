@@ -33,6 +33,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.MVVM;
 
@@ -178,7 +179,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Documents.AddRange(codeDocs);
 			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
 			foreach (var doc in Documents)
-				doc.TextView.Caret.MoveTo(0, 0);
+				doc.TextView.MoveCaretTo(0, 0);
 
 			CanCompile = canCompile;
 			HasDecompiled = true;

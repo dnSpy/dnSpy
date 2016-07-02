@@ -20,17 +20,18 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Contracts.Themes;
+using dnSpy.Text.MEF;
 
 namespace dnSpy.Text.Classification {
 	sealed class TextEditorFontSettings : ITextEditorFontSettings {
 		readonly Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata> textEditorFormatDefinition;
 		readonly TextEditorFontSettings baseType;
-		TextFormattingRunProperties textFormattingRunProperties;
+		ResourceDictionary resourceDictionary;
 		Brush windowBackgroundBrush;
 
 		public TextEditorFontSettings(ITextEditorSettings textEditorSettings, Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata> textEditorFormatDefinition, TextEditorFontSettings baseType) {
@@ -56,7 +57,7 @@ namespace dnSpy.Text.Classification {
 		public void OnThemeChanged() => RaiseSettingsChanged(true);
 
 		void RaiseSettingsChanged(bool notifyBase) {
-			textFormattingRunProperties = null;
+			resourceDictionary = null;
 			windowBackgroundBrush = null;
 			// Need to make sure base has cleared its cache too or we could use old data in CreateTextFormattingRunProperties()
 			if (notifyBase && baseType != null)
@@ -66,16 +67,21 @@ namespace dnSpy.Text.Classification {
 
 		public event EventHandler SettingsChanged;
 
-		public TextFormattingRunProperties CreateTextFormattingRunProperties(ITheme theme) {
-			if (textFormattingRunProperties == null) {
-				textFormattingRunProperties = textEditorFormatDefinition.Value.CreateTextFormattingRunProperties(theme);
+		public ResourceDictionary CreateResourceDictionary(ITheme theme) {
+			if (resourceDictionary == null) {
+				resourceDictionary = textEditorFormatDefinition.Value.CreateResourceDictionary(theme);
 				if (baseType != null)
-					textFormattingRunProperties = TextFormattingRunPropertiesUtils.Merge(baseType.CreateTextFormattingRunProperties(theme), textFormattingRunProperties);
+					ClassificationFontUtils.Merge(baseType.CreateResourceDictionary(theme), resourceDictionary);
 			}
-			return textFormattingRunProperties;
+
+			var bg = GetWindowBackground(theme);
+			Debug.Assert(bg != null);
+			resourceDictionary[EditorFormatMapConstants.TextViewBackgroundId] = bg;
+
+			return resourceDictionary;
 		}
 
-		public Brush GetWindowBackground(ITheme theme) {
+		Brush GetWindowBackground(ITheme theme) {
 			if (windowBackgroundBrush == null) {
 				windowBackgroundBrush = textEditorFormatDefinition.Value.GetWindowBackground(theme);
 				if (windowBackgroundBrush == null && baseType != null)

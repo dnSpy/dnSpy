@@ -19,9 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(IViewClassifierAggregatorService))]

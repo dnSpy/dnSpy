@@ -17,21 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Classification {
-	[ExportTextEditorFormatDefinition(AppearanceCategoryConstants.Viewer)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(AppearanceCategoryConstants.Viewer)]
 	sealed class ViewerTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => "Viewer";
 	}
 
-	[ExportTextEditorFormatDefinition(AppearanceCategoryConstants.REPL)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(AppearanceCategoryConstants.REPL)]
 	sealed class REPLTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => "REPL";
 	}
 
-	[ExportTextEditorFormatDefinition(AppearanceCategoryConstants.CodeEditor)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(AppearanceCategoryConstants.CodeEditor)]
 	sealed class CodeEditorTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => "Code Editor";
 	}
 }

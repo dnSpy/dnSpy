@@ -17,12 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Properties;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Output {
-	[ExportTextEditorFormatDefinition(Constants.Output)]
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(Constants.Output)]
 	sealed class OutputTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public override string DisplayName => dnSpy_Resources.Window_Output;
 	}
 }

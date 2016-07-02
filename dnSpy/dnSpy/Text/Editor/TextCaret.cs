@@ -26,10 +26,10 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextCaret : ITextCaret {
@@ -450,24 +450,6 @@ namespace dnSpy.Text.Editor {
 				preferredXCoordinate = Left;
 			SavePreferredYCoordinate();
 			return Position;
-		}
-
-		public CaretPosition MoveTo(int line) => MoveTo(line, 0);
-		public CaretPosition MoveTo(int line, int column) =>
-			MoveTo(line, column, PositionAffinity.Successor);
-		public CaretPosition MoveTo(int line, int column, PositionAffinity caretAffinity) =>
-			MoveTo(line, column, caretAffinity, true);
-		public CaretPosition MoveTo(int line, int column, PositionAffinity caretAffinity, bool captureHorizontalPosition) {
-			if (line < 0)
-				throw new ArgumentOutOfRangeException(nameof(line));
-			if (column < 0)
-				throw new ArgumentOutOfRangeException(nameof(column));
-			if (line >= textView.TextSnapshot.LineCount)
-				line = textView.TextSnapshot.LineCount - 1;
-			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
-			if (column >= snapshotLine.Length)
-				column = snapshotLine.Length;
-			return MoveTo(snapshotLine.Start + column, caretAffinity, captureHorizontalPosition);
 		}
 
 		public CaretPosition MoveToNextCaretPosition() {

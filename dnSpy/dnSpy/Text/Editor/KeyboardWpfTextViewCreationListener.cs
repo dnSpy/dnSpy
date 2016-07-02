@@ -21,16 +21,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
 	sealed class KeyboardWpfTextViewCreationListener : IWpfTextViewCreationListener {
-		readonly Lazy<IKeyProcessorProvider, IKeyProcessorProviderMetadata>[] keyProcessorProviders;
+		readonly Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders;
 
 		[ImportingConstructor]
-		KeyboardWpfTextViewCreationListener([ImportMany] IEnumerable<Lazy<IKeyProcessorProvider, IKeyProcessorProviderMetadata>> keyProcessorProviders) {
-			this.keyProcessorProviders = keyProcessorProviders.OrderBy(a => a.Metadata.Order).ToArray();
+		KeyboardWpfTextViewCreationListener([ImportMany] IEnumerable<Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>> keyProcessorProviders) {
+			this.keyProcessorProviders = Orderer.Order(keyProcessorProviders).ToArray();
 		}
 
 		public void TextViewCreated(IWpfTextView textView) {

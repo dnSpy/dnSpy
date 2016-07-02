@@ -24,8 +24,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1)]

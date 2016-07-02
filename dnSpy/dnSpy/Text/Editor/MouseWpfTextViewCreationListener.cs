@@ -21,23 +21,28 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
 	sealed class MouseWpfTextViewCreationListener : IWpfTextViewCreationListener {
-		readonly Lazy<IMouseProcessorProvider, IMouseProcessorProviderMetadata>[] mouseProcessorProviders;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders;
 
 		[ImportingConstructor]
-		MouseWpfTextViewCreationListener([ImportMany] IEnumerable<Lazy<IMouseProcessorProvider, IMouseProcessorProviderMetadata>> mouseProcessorProviders) {
-			this.mouseProcessorProviders = mouseProcessorProviders.OrderBy(a => a.Metadata.Order).ToArray();
+		MouseWpfTextViewCreationListener(IEditorOperationsFactoryService editorOperationsFactoryService, [ImportMany] IEnumerable<Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>> mouseProcessorProviders) {
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
+			this.mouseProcessorProviders = Orderer.Order(mouseProcessorProviders).ToArray();
 		}
 
 		public void TextViewCreated(IWpfTextView textView) {
 			if (!textView.Roles.Contains(PredefinedTextViewRoles.Interactive))
 				return;
 
-			new TextViewMouseProcessorCollection(textView, mouseProcessorProviders);
+			new TextViewMouseProcessorCollection(textView, mouseProcessorProviders, editorOperationsFactoryService);
 		}
 	}
 }

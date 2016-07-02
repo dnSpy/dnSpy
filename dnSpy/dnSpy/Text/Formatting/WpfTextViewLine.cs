@@ -23,9 +23,9 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Formatting;
-using CF = dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Formatting;
+using TF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class WpfTextViewLine : IFormattedLine {
@@ -397,7 +397,7 @@ namespace dnSpy.Text.Formatting {
 			return ExtentIncludingLineBreak.OverlapsWith(bufferSpan);
 		}
 
-		public CF.TextBounds? GetAdornmentBounds(object identityTag) {
+		public TF.TextBounds? GetAdornmentBounds(object identityTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			throw new NotImplementedException();//TODO:
@@ -463,17 +463,17 @@ namespace dnSpy.Text.Formatting {
 			return new VirtualSnapshotPoint(ExtentIncludingLineBreak.End - LineBreakLength);
 		}
 
-		public CF.TextBounds GetExtendedCharacterBounds(SnapshotPoint bufferPosition) =>
+		public TF.TextBounds GetExtendedCharacterBounds(SnapshotPoint bufferPosition) =>
 			GetExtendedCharacterBounds(new VirtualSnapshotPoint(bufferPosition));
-		public CF.TextBounds GetExtendedCharacterBounds(VirtualSnapshotPoint bufferPosition) {
+		public TF.TextBounds GetExtendedCharacterBounds(VirtualSnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferPosition.Position.Snapshot != Snapshot)
 				throw new ArgumentException();
 			if (bufferPosition.VirtualSpaces > 0) {
 				if (IsLastTextViewLineForSnapshotLine)
-					return new CF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
-				return new CF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
+					return new TF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
+				return new TF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
 
 			var span = GetTextElementSpan(bufferPosition.Position);
@@ -486,22 +486,22 @@ namespace dnSpy.Text.Formatting {
 			throw new NotImplementedException();
 		}
 
-		public CF.TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) =>
+		public TF.TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) =>
 			GetCharacterBounds(new VirtualSnapshotPoint(bufferPosition));
-		public CF.TextBounds GetCharacterBounds(VirtualSnapshotPoint bufferPosition) {
+		public TF.TextBounds GetCharacterBounds(VirtualSnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferPosition.Position.Snapshot != Snapshot)
 				throw new ArgumentException();
 			if (bufferPosition.VirtualSpaces > 0) {
 				if (IsLastTextViewLineForSnapshotLine)
-					return new CF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
-				return new CF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
+					return new TF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
+				return new TF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
 			return GetTextBounds(GetTextElementSpan(bufferPosition.Position).Start);
 		}
 
-		CF.TextBounds GetTextBounds(SnapshotPoint point) {
+		TF.TextBounds GetTextBounds(SnapshotPoint point) {
 			if (point.Snapshot != Snapshot)
 				throw new ArgumentException();
 			int col = linePartsCollection.ConvertBufferPositionToColumn(point);
@@ -509,7 +509,7 @@ namespace dnSpy.Text.Formatting {
 			double end = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 1));
 			double extra = TextLeft;
 			Debug.Assert(textLines.Count == 1);
-			return new CF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
+			return new TF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
 		}
 
 		public TextRunProperties GetCharacterFormatting(SnapshotPoint bufferPosition) {
@@ -533,7 +533,7 @@ namespace dnSpy.Text.Formatting {
 			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
 		}
 
-		public Collection<CF.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
+		public Collection<TF.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			throw new NotImplementedException();//TODO:

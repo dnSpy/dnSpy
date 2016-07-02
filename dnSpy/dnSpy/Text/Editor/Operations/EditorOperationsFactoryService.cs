@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Operations;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor.Operations {
 	[Export(typeof(IEditorOperationsFactoryService))]
@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor.Operations {
 			this.smartIndentationService = smartIndentationService;
 		}
 
-		public IEditorOperations2 GetEditorOperations(ITextView textView) {
+		public IEditorOperations GetEditorOperations(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(IEditorOperations),

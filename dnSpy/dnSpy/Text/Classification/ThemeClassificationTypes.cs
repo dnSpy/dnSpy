@@ -23,6 +23,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Themes;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(IThemeClassificationTypes))]

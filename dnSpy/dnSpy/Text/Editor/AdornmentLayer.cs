@@ -23,25 +23,24 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class AdornmentLayer : Canvas, IAdornmentLayer {
 		public IWpfTextView TextView { get; }
-		public IAdornmentLayerDefinitionMetadata LayerMetadata { get; }
+		public MetadataAndOrder<IAdornmentLayersMetadata> Info { get; }
 		public bool IsEmpty => adornmentLayerElements.Count == 0;
 		public ReadOnlyCollection<IAdornmentLayerElement> Elements => new ReadOnlyCollection<IAdornmentLayerElement>(adornmentLayerElements.ToArray());
 		readonly List<AdornmentLayerElement> adornmentLayerElements;
 
-		public AdornmentLayer(IWpfTextView textView, IAdornmentLayerDefinitionMetadata mdLayer) {
+		public AdornmentLayer(IWpfTextView textView, MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			if (mdLayer == null)
-				throw new ArgumentNullException(nameof(mdLayer));
 			TextView = textView;
-			LayerMetadata = mdLayer;
+			Info = info;
 			this.adornmentLayerElements = new List<AdornmentLayerElement>();
 		}
 
@@ -200,6 +199,6 @@ namespace dnSpy.Text.Editor {
 			return null;
 		}
 
-		public override string ToString() => $"Layer {LayerMetadata.DisplayName} {LayerMetadata.Guid}";
+		public override string ToString() => $"Layer {Info.Metadata.Name}";
 	}
 }

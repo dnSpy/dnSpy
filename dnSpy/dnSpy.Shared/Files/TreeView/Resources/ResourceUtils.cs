@@ -133,7 +133,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				}
 			}
 			context.HighlightingExtension = ext;
-			context.ContentTypeGuid = ContentTypes.TryGetContentTypeGuidByExtension(ext) ?? new Guid(ContentTypes.PLAIN_TEXT);
+			context.ContentTypeString = ContentTypes.TryGetContentTypeStringByExtension(ext) ?? ContentTypes.PLAIN_TEXT;
 			return true;
 		}
 	}

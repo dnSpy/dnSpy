@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Controls;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

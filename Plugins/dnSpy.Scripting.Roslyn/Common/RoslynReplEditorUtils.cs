@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	static class RoslynReplEditorUtils {

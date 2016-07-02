@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class FormattedTextCache {

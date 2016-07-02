@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportCommandTargetFilterCreator(FileTabCommandConstants.CMDTARGETFILTER_ORDER_FILETAB)]

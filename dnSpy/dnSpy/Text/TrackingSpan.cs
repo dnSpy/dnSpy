@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
 	sealed class TrackingSpan : ITrackingSpan {

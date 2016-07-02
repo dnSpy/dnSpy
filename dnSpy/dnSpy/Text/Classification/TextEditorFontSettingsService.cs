@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
+using dnSpy.Text.MEF;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(ITextEditorFontSettingsService))]

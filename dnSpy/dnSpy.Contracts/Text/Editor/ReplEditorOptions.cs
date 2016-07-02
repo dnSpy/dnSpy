@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

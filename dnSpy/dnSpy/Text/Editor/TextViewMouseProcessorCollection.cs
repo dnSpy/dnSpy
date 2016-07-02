@@ -20,18 +20,22 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
 		readonly IWpfTextView wpfTextView;
-		readonly Lazy<IMouseProcessorProvider, IMouseProcessorProviderMetadata>[] mouseProcessorProviders;
+		readonly Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		MouseProcessorCollection mouseProcessorCollection;
 
-		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IMouseProcessorProviderMetadata>[] mouseProcessorProviders) {
+		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
 			this.mouseProcessorProviders = mouseProcessorProviders;
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			Reinitialize();
@@ -46,7 +50,7 @@ namespace dnSpy.Text.Editor {
 					list.Add(mouseProcessor);
 			}
 			UIElement manipulationElem = null;//TODO:
-			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView), list.ToArray());
+			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView, editorOperationsFactoryService), list.ToArray());
 		}
 
 		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) => Reinitialize();

@@ -22,7 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
 	sealed class NormalizedTextChangeCollection : INormalizedTextChangeCollection {
@@ -33,6 +33,17 @@ namespace dnSpy.Text {
 
 		public int Count => changes.Length;
 		public bool IsReadOnly => true;
+
+		public bool IncludesLineChanges {
+			get {
+				foreach (var c in changes) {
+					if (c.LineCountDelta != 0)
+						return true;
+				}
+				return false;
+			}
+		}
+
 		readonly ITextChange[] changes;
 
 		NormalizedTextChangeCollection(ITextChange[] changes) {

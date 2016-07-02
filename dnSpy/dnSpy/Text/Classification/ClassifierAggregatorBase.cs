@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	abstract class ClassifierAggregatorBase : IClassifier, IDisposable {

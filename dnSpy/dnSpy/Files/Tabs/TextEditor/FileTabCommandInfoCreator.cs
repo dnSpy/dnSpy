@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportCommandInfoCreator(FileTabCommandConstants.CMDINFO_ORDER_FILETAB)]

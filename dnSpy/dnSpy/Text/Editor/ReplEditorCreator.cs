@@ -18,8 +18,10 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IReplEditorCreator))]
@@ -27,14 +29,16 @@ namespace dnSpy.Text.Editor {
 		readonly ITextEditorFactoryService2 textEditorFactoryService2;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		ReplEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
+		ReplEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService);
 	}
 }

@@ -18,8 +18,8 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Tagging;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
 	sealed class TextBufferTagAggregator<T> : TagAggregatorBase<T> where T : ITag {

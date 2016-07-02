@@ -18,8 +18,8 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Shared.Text {
 	sealed class TextBufferSourceTextContainer : SourceTextContainer {

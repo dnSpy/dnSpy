@@ -18,11 +18,18 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Projection;
 
 namespace dnSpy.Text {
 	sealed class MappingPoint : IMappingPoint {
 		public ITextBuffer AnchorBuffer => snapshotPoint.Snapshot.TextBuffer;
+
+		public IBufferGraph BufferGraph {
+			get {
+				throw new NotImplementedException();//TODO:
+			}
+		}
 
 		/*readonly*/ SnapshotPoint snapshotPoint;
 		readonly PointTrackingMode trackingMode;
@@ -52,6 +59,10 @@ namespace dnSpy.Text {
 			if (targetBuffer == null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 			return GetPoint(targetBuffer.CurrentSnapshot, affinity);
+		}
+
+		public SnapshotPoint? GetInsertionPoint(Predicate<ITextBuffer> match) {
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override string ToString() => nameof(IMappingPoint) + "@" + snapshotPoint.ToString();

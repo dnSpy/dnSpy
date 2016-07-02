@@ -19,9 +19,9 @@
 
 using System.Runtime.CompilerServices;
 using System.Text;
-using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Shared.Text {
 	/// <summary>

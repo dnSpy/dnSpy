@@ -17,15 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Theme classification definition
 	/// </summary>
-	public abstract class ThemeClassificationFormatDefinition : ClassificationFormatDefinition {
+	public abstract class ThemeClassificationFormatDefinition : ClassificationFormatDefinition, IThemeFormatDefinition {
 		readonly ColorType colorType;
 
 		/// <summary>
@@ -37,37 +39,52 @@ namespace dnSpy.Contracts.Text.Classification {
 		}
 
 		/// <summary>
-		/// Gets the foreground brush or null
+		/// Creates a new <see cref="ResourceDictionary"/>
 		/// </summary>
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
-		public override Brush GetForeground(ITheme theme) => theme.GetExplicitColor(colorType).Foreground;
+		public ResourceDictionary CreateResourceDictionary(ITheme theme) {
+			if (theme == null)
+				throw new ArgumentNullException(nameof(theme));
 
-		/// <summary>
-		/// Gets the background brush or null
-		/// </summary>
-		/// <param name="theme">Theme</param>
-		/// <returns></returns>
-		public override Brush GetBackground(ITheme theme) => theme.GetExplicitColor(colorType).Background;
+			var res = CreateResourceDictionary();
 
-		/// <summary>
-		/// Gets the bold value or null
-		/// </summary>
-		/// <param name="theme">Theme</param>
-		/// <returns></returns>
-		public override bool? GetIsBold(ITheme theme) {
+			var isBold = GetIsBold(theme);
+			if (IsBold != null)
+				res.Add(IsBoldId, IsBold.Value);
+
+			var isItalic = GetIsItalic(theme);
+			if (IsItalic != null)
+				res.Add(IsItalicId, IsItalic.Value);
+
+			var fg = GetForeground(theme);
+			if (fg != null) {
+				res[ForegroundBrushId] = fg;
+				if (fg.Opacity != 1)
+					res[ForegroundOpacityId] = fg.Opacity;
+			}
+
+			var bg = GetBackground(theme);
+			if (bg != null) {
+				res[BackgroundBrushId] = bg;
+				if (bg.Opacity != 1)
+					res[BackgroundOpacityId] = bg.Opacity;
+			}
+
+			return res;
+		}
+
+		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(colorType).Foreground;
+		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(colorType).Background;
+
+		bool? GetIsBold(ITheme theme) {
 			var tc = theme.GetExplicitColor(colorType);
 			if (tc.FontWeight == null)
 				return null;
 			return tc.FontWeight.Value == FontWeights.Bold;
 		}
 
-		/// <summary>
-		/// Gets the italic value or null
-		/// </summary>
-		/// <param name="theme">Theme</param>
-		/// <returns></returns>
-		public override bool? GetIsItalic(ITheme theme) {
+		bool? GetIsItalic(ITheme theme) {
 			var tc = theme.GetExplicitColor(colorType);
 			if (tc.FontStyle == null)
 				return null;

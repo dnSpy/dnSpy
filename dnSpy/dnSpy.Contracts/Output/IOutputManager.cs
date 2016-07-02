@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Output {
 	/// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Output {
 		/// <param name="name">Name shown in the UI</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		IOutputTextPane Create(Guid guid, string name, Guid contentType);
+		IOutputTextPane Create(Guid guid, string name, string contentType);
 
 		/// <summary>
 		/// Returns a <see cref="IOutputTextPane"/>

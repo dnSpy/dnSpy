@@ -17,100 +17,102 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	static class ContentTypeDefinitions {
 #pragma warning disable CS0169
-		[ExportContentTypeDefinition(ContentTypes.ANY)]
-		[DisplayName("any")]
+		[Export]
+		[Name(ContentTypes.ANY)]
 		static readonly ContentTypeDefinition AnyContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.INERT)]
-		[DisplayName("inert")]
-		[BaseContentType(ContentTypes.ANY)]
+		[Export]
+		[Name(ContentTypes.INERT)]
+		[BaseDefinition(ContentTypes.ANY)]
 		static readonly ContentTypeDefinition InertContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.TEXT)]
-		[DisplayName("text")]
-		[BaseContentType(ContentTypes.ANY)]
+		[Export]
+		[Name(ContentTypes.TEXT)]
+		[BaseDefinition(ContentTypes.ANY)]
 		static readonly ContentTypeDefinition TextContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.PLAIN_TEXT)]
-		[DisplayName("plaintext")]
-		[BaseContentType(ContentTypes.TEXT)]
+		[Export]
+		[Name(ContentTypes.PLAIN_TEXT)]
+		[BaseDefinition(ContentTypes.TEXT)]
 		static readonly ContentTypeDefinition PlainTextContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.XML)]
-		[DisplayName("xml")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.XML)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition XMLContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.XAML)]
-		[DisplayName("XAML")]
-		[BaseContentType(ContentTypes.CODE)]// It doesn't derive from XML in VS
+		[Export]
+		[Name(ContentTypes.XAML)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition XAMLContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.BAML)]
-		[DisplayName("BAML")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.BAML)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition BAMLContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.CODE)]
-		[DisplayName("Code")]
-		[BaseContentType(ContentTypes.TEXT)]
+		[Export]
+		[Name(ContentTypes.CODE)]
+		[BaseDefinition(ContentTypes.TEXT)]
 		static readonly ContentTypeDefinition CodeContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.CSHARP)]
-		[DisplayName("C#")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.CSHARP)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition CSharpContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.VISUALBASIC)]
-		[DisplayName("Visual Basic")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.VISUALBASIC)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition VisualBasicContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.IL)]
-		[DisplayName("IL")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.IL)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition ILContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.ROSLYN_CODE)]
-		[DisplayName("Roslyn Code")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.ROSLYN_CODE)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition RoslynCodeContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.CSHARP_ROSLYN)]
-		[DisplayName("C# Roslyn")]
-		[BaseContentType(ContentTypes.CSHARP)]
-		[BaseContentType(ContentTypes.ROSLYN_CODE)]
+		[Export]
+		[Name(ContentTypes.CSHARP_ROSLYN)]
+		[BaseDefinition(ContentTypes.CSHARP)]
+		[BaseDefinition(ContentTypes.ROSLYN_CODE)]
 		static readonly ContentTypeDefinition CSharpRoslynContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.VISUALBASIC_ROSLYN)]
-		[DisplayName("Visual Basic Roslyn")]
-		[BaseContentType(ContentTypes.VISUALBASIC)]
-		[BaseContentType(ContentTypes.ROSLYN_CODE)]
+		[Export]
+		[Name(ContentTypes.VISUALBASIC_ROSLYN)]
+		[BaseDefinition(ContentTypes.VISUALBASIC)]
+		[BaseDefinition(ContentTypes.ROSLYN_CODE)]
 		static readonly ContentTypeDefinition VisualBasicRoslynContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.DECOMPILED_CODE)]
-		[DisplayName("Decompiled Code")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.DECOMPILED_CODE)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition DecompiledCodeContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.REPL)]
-		[DisplayName("REPL")]
-		[BaseContentType(ContentTypes.CODE)]
+		[Export]
+		[Name(ContentTypes.REPL)]
+		[BaseDefinition(ContentTypes.CODE)]
 		static readonly ContentTypeDefinition ReplContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.OUTPUT)]
-		[DisplayName("Output")]
-		[BaseContentType(ContentTypes.TEXT)]
+		[Export]
+		[Name(ContentTypes.OUTPUT)]
+		[BaseDefinition(ContentTypes.TEXT)]
 		static readonly ContentTypeDefinition OutputContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.ABOUT_DNSPY)]
-		[DisplayName("About - dnSpy")]
-		[BaseContentType(ContentTypes.TEXT)]
+		[Export]
+		[Name(ContentTypes.ABOUT_DNSPY)]
+		[BaseDefinition(ContentTypes.TEXT)]
 		static readonly ContentTypeDefinition AboutDnSpyContentTypeDefinition;
 #pragma warning restore CS0169
 	}

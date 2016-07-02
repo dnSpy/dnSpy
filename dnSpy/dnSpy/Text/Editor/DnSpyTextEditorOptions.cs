@@ -20,14 +20,15 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class DnSpyTextEditorOptions {
 		public Guid? MenuGuid { get; }
 		public IContentType ContentType { get; }
-		public Guid? ContentTypeGuid { get; }
+		public string ContentTypeString { get; }
 		public Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; }
 		public ITextBuffer TextBuffer { get; }
 		public Func<IGuidObjectsCreator> CreateGuidObjectsCreator { get; }
@@ -35,7 +36,7 @@ namespace dnSpy.Text.Editor {
 		public DnSpyTextEditorOptions(CommonTextEditorOptions options, ITextBuffer textBuffer, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
 			MenuGuid = options.MenuGuid;
 			ContentType = options.ContentType;
-			ContentTypeGuid = options.ContentTypeGuid;
+			ContentTypeString = options.ContentTypeString;
 			CreateGuidObjects = options.CreateGuidObjects;
 			TextBuffer = textBuffer;
 			CreateGuidObjectsCreator = createGuidObjectsCreator;

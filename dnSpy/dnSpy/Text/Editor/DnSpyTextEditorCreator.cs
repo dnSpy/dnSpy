@@ -20,9 +20,10 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	/// <summary>

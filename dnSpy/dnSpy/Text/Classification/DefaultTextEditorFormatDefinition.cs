@@ -29,8 +29,6 @@ namespace dnSpy.Text.Classification {
 		const ColorType colorType = ColorType.DefaultText;
 		readonly ITextEditorSettings textEditorSettings;
 
-		public override string DisplayName => "Text Editor";
-
 		public DefaultTextEditorFormatDefinition(ITextEditorSettings textEditorSettings) {
 			this.textEditorSettings = textEditorSettings;
 		}
@@ -42,7 +40,7 @@ namespace dnSpy.Text.Classification {
 
 		public override Typeface GetTypeface(ITheme theme) {
 			var tc = theme.GetColor(ColorType.Text);
-			return new Typeface(textEditorSettings.FontFamily, tc.FontStyle ?? FontStyles.Normal, tc.FontWeight ?? FontWeights.Normal, FontStretches.Normal);
+			return new Typeface(textEditorSettings.FontFamily, tc.FontStyle ?? FontStyles.Normal, tc.FontWeight ?? FontWeights.Normal, FontStretches.Normal, ClassificationFontUtils.DefaultFallbackFontFamily);
 		}
 
 		public override bool? GetIsBold(ITheme theme) {

@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
@@ -47,7 +48,7 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeOverwriteModeEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CanChangeOverwriteModeId;
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeOverwriteModeId;
 		public override bool Default => true;
 	}
 
@@ -65,7 +66,7 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeUseVisibleWhitespaceEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CanChangeUseVisibleWhitespaceId;
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeUseVisibleWhitespaceId;
 		public override bool Default => true;
 	}
 
@@ -83,7 +84,7 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeWordWrapStyleEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CanChangeWordWrapStyleId;
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeWordWrapStyleId;
 		public override bool Default => true;
 	}
 
@@ -95,20 +96,20 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class AllowBoxSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.AllowBoxSelectionId;
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.AllowBoxSelectionId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class RefreshScreenOnChangeEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.RefreshScreenOnChangeId;
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId;
 		public override bool Default => false;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class RefreshScreenOnChangeWaitMilliSecsEditorOptionDefinition : ViewOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId;
-		public override int Default => DefaultTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
+		public override EditorOptionKey<int> Key => DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId;
+		public override int Default => DefaultDnSpyTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
 		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
 	}
 }

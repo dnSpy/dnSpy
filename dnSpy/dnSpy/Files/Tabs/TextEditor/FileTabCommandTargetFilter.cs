@@ -20,7 +20,7 @@
 using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed class FileTabCommandTargetFilter : ICommandTargetFilter {

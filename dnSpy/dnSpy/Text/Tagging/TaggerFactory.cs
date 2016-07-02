@@ -21,18 +21,20 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Tagging;
+using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Tagging {
 	[Export(typeof(ITaggerFactory))]
 	sealed class TaggerFactory : ITaggerFactory {
-		readonly Lazy<ITaggerProvider, ITaggerProviderMetadata>[] textBufferTaggerProviders;
-		readonly Lazy<IViewTaggerProvider, IViewTaggerProviderMetadata>[] textViewTaggerProviders;
+		readonly Lazy<ITaggerProvider, INamedTaggerMetadata>[] textBufferTaggerProviders;
+		readonly Lazy<IViewTaggerProvider, IViewTaggerMetadata>[] textViewTaggerProviders;
 
 		[ImportingConstructor]
-		TaggerFactory([ImportMany] IEnumerable<Lazy<ITaggerProvider, ITaggerProviderMetadata>> textBufferTaggerProviders, [ImportMany] IEnumerable<Lazy<IViewTaggerProvider, IViewTaggerProviderMetadata>> textViewTaggerProviders) {
+		TaggerFactory([ImportMany] IEnumerable<Lazy<ITaggerProvider, INamedTaggerMetadata>> textBufferTaggerProviders, [ImportMany] IEnumerable<Lazy<IViewTaggerProvider, IViewTaggerMetadata>> textViewTaggerProviders) {
 			this.textBufferTaggerProviders = textBufferTaggerProviders.ToArray();
 			this.textViewTaggerProviders = textViewTaggerProviders.ToArray();
 		}
@@ -43,9 +45,9 @@ namespace dnSpy.Text.Tagging {
 
 			var type = typeof(T);
 			foreach (var info in textViewTaggerProviders) {
-				if (info.Metadata.Roles != null && !textView.Roles.ContainsAny(info.Metadata.Roles))
+				if (info.Metadata.TextViewRoles != null && !textView.Roles.ContainsAny(info.Metadata.TextViewRoles))
 					continue;
-				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.Types)) {
+				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(textView, textBuffer);
 					if (tagger != null)
 						yield return tagger;
@@ -56,7 +58,7 @@ namespace dnSpy.Text.Tagging {
 		public IEnumerable<ITagger<T>> Create<T>(ITextBuffer textBuffer, IContentType contentType) where T : ITag {
 			var type = typeof(T);
 			foreach (var info in textBufferTaggerProviders) {
-				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.Types)) {
+				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(textBuffer);
 					if (tagger != null)
 						yield return tagger;
@@ -64,7 +66,7 @@ namespace dnSpy.Text.Tagging {
 			}
 		}
 
-		static bool CanCreateTagger(IContentType contentType, Type type, string[] contentTypes, Type[] types) {
+		static bool CanCreateTagger(IContentType contentType, Type type, IEnumerable<string> contentTypes, IEnumerable<Type> types) {
 			foreach (var ct in contentTypes) {
 				if (contentType.IsOfType(ct)) {
 					foreach (var t in types) {

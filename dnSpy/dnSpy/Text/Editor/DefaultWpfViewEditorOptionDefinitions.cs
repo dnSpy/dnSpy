@@ -20,6 +20,7 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
@@ -50,7 +51,7 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class ForceClearTypeIfNeededEditorOptionDefinition : WpfViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultWpfViewOptions.ForceClearTypeIfNeededId;
+		public override EditorOptionKey<bool> Key => DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId;
 		public override bool Default => true;
 	}
 }

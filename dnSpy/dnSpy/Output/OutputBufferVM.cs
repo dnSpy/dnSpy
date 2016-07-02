@@ -25,6 +25,8 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Output {
 	sealed class OutputBufferVM : ViewModelBase, IOutputTextPane {
@@ -69,8 +71,10 @@ namespace dnSpy.Output {
 		public bool ShowTimestamps { get; set; }
 
 		readonly ILogEditor logEditor;
+		readonly IEditorOperations editorOperations;
 
-		public OutputBufferVM(Guid guid, string name, ILogEditor logEditor) {
+		public OutputBufferVM(IEditorOperationsFactoryService editorOperationsFactoryService, Guid guid, string name, ILogEditor logEditor) {
+			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(logEditor.TextView);
 			Guid = guid;
 			Name = name;
 			this.logEditor = logEditor;
@@ -89,7 +93,7 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public void Copy() => logEditor.TextView.EditorOperations.CopySelection();
+		public void Copy() => editorOperations.CopySelection();
 
 		public void Clear() {
 			logEditor.Clear();

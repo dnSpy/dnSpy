@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>

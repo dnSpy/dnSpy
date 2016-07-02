@@ -62,6 +62,10 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed partial class TextEditorControl : UserControl, IDisposable {
@@ -87,6 +91,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextEditorSettings textEditorSettings;
 		readonly IContentType defaultContentType;
 		readonly IWpfTextView wpfTextView;
+		readonly IEditorOperations editorOperations;
 
 		static readonly string[] defaultRoles = new string[] {
 			PredefinedTextViewRoles.Analyzable,
@@ -104,7 +109,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return instance;
 		}
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -120,6 +125,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
 			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
+			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 			wpfTextView.Properties.AddProperty(typeof(TextEditorControl), this);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
@@ -230,7 +236,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Debug.Assert(avOutput != null, "output should be an AvalonEditTextOutput instance");
 
 			ClearMarkedReferences();
-			wpfTextView.EditorOperations.MoveToStartOfDocument(false);
+			editorOperations.MoveToStartOfDocument(false);
 			TextEditor.SyntaxHighlighting = highlighting;
 			ClearCustomElementGenerators();
 
@@ -270,7 +276,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void Clear() {
 			ClearMarkedReferences();
 			ClearCustomElementGenerators();
-			wpfTextView.TextBuffer.Replace(new Contracts.Text.Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
+			wpfTextView.TextBuffer.Replace(new Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
 			TextEditor.TextArea.TextView.Document.UndoStack.ClearAll();
 			definitionLookup = null;
 			uiElementGenerator.UIElements = null;
@@ -567,7 +573,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line + 1, column + 1);
-			wpfTextView.Caret.MoveTo(line, column);
+			wpfTextView.MoveCaretTo(line, column);
 			if (focus)
 				textEditorHelper.SetFocus();
 		}

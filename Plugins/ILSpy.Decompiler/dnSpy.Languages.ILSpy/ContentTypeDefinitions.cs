@@ -17,37 +17,39 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Languages.ILSpy {
 	static class ContentTypeDefinitions {
 #pragma warning disable CS0169
-		[ExportContentTypeDefinition(ContentTypes.DECOMPILER_ILSPY)]
-		[DisplayName("Decompiler - ILSpy")]
-		[BaseContentType(ContentTypes.DECOMPILED_CODE)]
+		[Export]
+		[Name(ContentTypes.DECOMPILER_ILSPY)]
+		[BaseDefinition(ContentTypes.DECOMPILED_CODE)]
 		static readonly ContentTypeDefinition DecompilerILSpyContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.CSHARP_ILSPY)]
-		[DisplayName("C# - ILSpy")]
-		[BaseContentType(ContentTypes.DECOMPILER_ILSPY)]
-		[BaseContentType(ContentTypes.CSHARP)]
+		[Export]
+		[Name(ContentTypes.CSHARP_ILSPY)]
+		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[BaseDefinition(ContentTypes.CSHARP)]
 		static readonly ContentTypeDefinition CSharpILSpyContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.VISUALBASIC_ILSPY)]
-		[DisplayName("Visual Basic - ILSpy")]
-		[BaseContentType(ContentTypes.DECOMPILER_ILSPY)]
-		[BaseContentType(ContentTypes.VISUALBASIC)]
+		[Export]
+		[Name(ContentTypes.VISUALBASIC_ILSPY)]
+		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[BaseDefinition(ContentTypes.VISUALBASIC)]
 		static readonly ContentTypeDefinition VisualBasicILSpyContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.IL_ILSPY)]
-		[DisplayName("IL - ILSpy")]
-		[BaseContentType(ContentTypes.DECOMPILER_ILSPY)]
-		[BaseContentType(ContentTypes.IL)]
+		[Export]
+		[Name(ContentTypes.IL_ILSPY)]
+		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[BaseDefinition(ContentTypes.IL)]
 		static readonly ContentTypeDefinition ILILSpyContentTypeDefinition;
 
-		[ExportContentTypeDefinition(ContentTypes.ILAST_ILSPY)]
-		[DisplayName("ILAst - ILSpy")]
-		[BaseContentType(ContentTypes.DECOMPILER_ILSPY)]
+		[Export]
+		[Name(ContentTypes.ILAST_ILSPY)]
+		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
 		static readonly ContentTypeDefinition ILAstILSpyContentTypeDefinition;
 #pragma warning restore CS0169
 	}

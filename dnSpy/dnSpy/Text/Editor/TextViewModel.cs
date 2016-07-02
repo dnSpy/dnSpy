@@ -18,8 +18,9 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextViewModel : ITextViewModel {

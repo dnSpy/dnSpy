@@ -22,18 +22,21 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Formatting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
 	sealed class DefaultTextViewMouseProcessor : DefaultMouseProcessor {
 		readonly IWpfTextView wpfTextView;
+		readonly IEditorOperations editorOperations;
 
-		public DefaultTextViewMouseProcessor(IWpfTextView wpfTextView) {
+		public DefaultTextViewMouseProcessor(IWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
+			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 		}
 
 		MouseLocation GetLocation(MouseEventArgs e) => MouseLocation.Create(wpfTextView, e);
@@ -41,7 +44,7 @@ namespace dnSpy.Text.Editor {
 		public override void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
-			wpfTextView.EditorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, false);
+			editorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, false);
 			wpfTextView.Caret.EnsureVisible();
 		}
 
@@ -56,7 +59,7 @@ namespace dnSpy.Text.Editor {
 			SelectToMousePosition(GetLocation(e), extendSelection);
 		void SelectToMousePosition(MouseLocation mouseLoc, bool extendSelection) {
 			UpdateSelectionMode();
-			wpfTextView.EditorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, extendSelection);
+			editorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, extendSelection);
 		}
 
 		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
@@ -69,11 +72,11 @@ namespace dnSpy.Text.Editor {
 				break;
 
 			case 2:
-				wpfTextView.EditorOperations.SelectCurrentWord();
+				editorOperations.SelectCurrentWord();
 				break;
 
 			case 3:
-				wpfTextView.EditorOperations.SelectLine(mouseLoc.TextViewLine, false);
+				editorOperations.SelectLine(mouseLoc.TextViewLine, false);
 				// Seems to match VS behavior
 				var end = mouseLoc.TextViewLine.TextRight;
 				if (mouseLoc.TextViewLine.IsLastTextViewLineForSnapshotLine)
@@ -154,9 +157,9 @@ namespace dnSpy.Text.Editor {
 
 						wpfTextView.Selection.Mode = TextSelectionMode.Stream;
 						if (mouseLeftDownInfo.Value.Clicks == 2)
-							wpfTextView.EditorOperations.SelectCurrentWord();
+							editorOperations.SelectCurrentWord();
 						else
-							wpfTextView.EditorOperations.SelectLine(wpfTextView.Caret.ContainingTextViewLine, false);
+							editorOperations.SelectLine(wpfTextView.Caret.ContainingTextViewLine, false);
 						VirtualSnapshotPoint selStart, selEnd;
 						GetSelectionOrCaretIfNoSelection(out selStart, out selEnd);
 
@@ -251,7 +254,7 @@ namespace dnSpy.Text.Editor {
 				if (line.TextLeft >= wpfTextView.ViewportLeft)
 					StopScrolling();
 				else if (wpfTextView.Caret.InVirtualSpace || wpfTextView.Caret.Position.BufferPosition != line.Start)
-					wpfTextView.EditorOperations.MoveToPreviousCharacter(true);
+					editorOperations.MoveToPreviousCharacter(true);
 				else {
 					wpfTextView.ViewportLeft = line.TextLeft;
 					StopScrolling();
@@ -263,7 +266,7 @@ namespace dnSpy.Text.Editor {
 				if (line.TextRight <= wpfTextView.ViewportRight)
 					StopScrolling();
 				else if (wpfTextView.Caret.InVirtualSpace || wpfTextView.Caret.Position.BufferPosition < line.End)
-					wpfTextView.EditorOperations.MoveToNextCharacter(true);
+					editorOperations.MoveToNextCharacter(true);
 				else {
 					wpfTextView.ViewportLeft = Math.Max(0, line.TextRight - wpfTextView.ViewportWidth);
 					StopScrolling();
@@ -277,7 +280,7 @@ namespace dnSpy.Text.Editor {
 				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Top);
 				if (line.IsFirstDocumentLine())
 					StopScrolling();
-				wpfTextView.EditorOperations.MoveCaret(line, xCoordinate, true);
+				editorOperations.MoveCaret(line, xCoordinate, true);
 				break;
 
 			case ScrollDirection.Down:
@@ -287,7 +290,7 @@ namespace dnSpy.Text.Editor {
 				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Bottom);
 				if (line.IsLastDocumentLine())
 					StopScrolling();
-				wpfTextView.EditorOperations.MoveCaret(line, xCoordinate, true);
+				editorOperations.MoveCaret(line, xCoordinate, true);
 				break;
 
 			default:

@@ -18,7 +18,7 @@
 */
 
 using System.Diagnostics;
-using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text.Editor.Operations {
 	struct WordParser {

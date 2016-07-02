@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.MEF;
 
 namespace dnSpy.Text.Classification {
 	sealed class TextEditorFontSettingsDictionaryCreator {
@@ -39,15 +40,23 @@ namespace dnSpy.Text.Classification {
 			this.toDef = new Dictionary<string, Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>>(StringComparer.Ordinal);
 			var allDefs = textEditorFormatDefinitions.ToArray();
 			foreach (var def in allDefs) {
-				Debug.Assert(!toDef.ContainsKey(def.Metadata.Category));
-				toDef[def.Metadata.Category] = def;
+				Debug.Assert(!toDef.ContainsKey(def.Metadata.Name));
+				toDef[def.Metadata.Name] = def;
 			}
 			foreach (var def in allDefs)
-				Create(def.Metadata.Category);
+				Create(def.Metadata.Name);
+		}
+
+		sealed class TextEditorFormatDefinitionMetadata : ITextEditorFormatDefinitionMetadata {
+			public string BaseDefinition { get; }
+			public string Name { get; }
+			public TextEditorFormatDefinitionMetadata(string name) {
+				Name = name;
+			}
 		}
 
 		TextEditorFontSettings CreateDefaultTextEditorFontSettings(ITextEditorSettings textEditorSettings) {
-			var md = new ExportTextEditorFormatDefinitionAttribute(AppearanceCategoryConstants.TextEditor);
+			var md = new TextEditorFormatDefinitionMetadata(AppearanceCategoryConstants.TextEditor);
 			var def = new DefaultTextEditorFormatDefinition(textEditorSettings);
 			var lazy = new Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>(() => def, md);
 			var dummyInitValue = lazy.Value;
@@ -65,7 +74,7 @@ namespace dnSpy.Text.Classification {
 			if (!toDef.TryGetValue(category, out def))
 				return null;
 
-			var baseType = Create(def.Metadata.BaseType) ?? DefaultSettings;
+			var baseType = Create(def.Metadata.BaseDefinition) ?? DefaultSettings;
 			settings = new TextEditorFontSettings(textEditorSettings, def, baseType);
 			Result.Add(category, settings);
 			return settings;

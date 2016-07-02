@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Shared.MVVM;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Output {
 	interface IOutputManagerSettings : INotifyPropertyChanged {
@@ -45,7 +46,7 @@ namespace dnSpy.Output {
 				}
 			}
 		}
-		WordWrapStyles wordWrapStyle = WordWrapStyles.DefaultDisabled;
+		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultDisabled;
 
 		public bool ShowLineNumbers {
 			get { return showLineNumbers; }
