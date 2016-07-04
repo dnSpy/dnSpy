@@ -20,8 +20,10 @@
 using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor {
 	static class IndentHelper {
@@ -40,7 +42,7 @@ namespace dnSpy.Text.Editor {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 
-			var indentStyle = textView.Options.GetOptionValue(DefaultDnSpyOptions.IndentStyleOptionId);
+			var indentStyle = textView.Options.GetIndentStyle();
 			switch (indentStyle) {
 			case IndentStyle.None:
 				return 0;
@@ -74,7 +76,7 @@ namespace dnSpy.Text.Editor {
 			while (line.LineNumber != 0) {
 				line = line.Snapshot.GetLineFromLineNumber(line.LineNumber - 1);
 				if (line.Length != 0)
-					return GetDesiredBlockIndentation(line, textView.Options.GetOptionValue(DefaultOptions.TabSizeOptionId));
+					return GetDesiredBlockIndentation(line, textView.Options.GetTabSize());
 			}
 			return null;
 		}

@@ -21,6 +21,7 @@ using System;
 using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Classification {
@@ -55,7 +56,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		void UpdateAppearanceMap() {
-			var newMap = classificationFormatMapService.GetClassificationFormatMap(textView.Options.GetOptionValue(DefaultWpfViewOptions.AppearanceCategory));
+			var newMap = classificationFormatMapService.GetClassificationFormatMap(textView.Options.AppearanceCategory());
 			if (categoryMap == newMap)
 				return;
 

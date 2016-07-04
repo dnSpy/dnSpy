@@ -24,6 +24,7 @@ using System.Linq;
 using System.Windows;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Classification {
 	sealed class ViewEditorFormatMap : IEditorFormatMap {
@@ -53,7 +54,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		void UpdateAppearanceMap() {
-			var newMap = editorFormatMapService.GetEditorFormatMap(textView.Options.GetOptionValue(DefaultWpfViewOptions.AppearanceCategory));
+			var newMap = editorFormatMapService.GetEditorFormatMap(textView.Options.AppearanceCategory());
 			if (categoryMap == newMap)
 				return;
 

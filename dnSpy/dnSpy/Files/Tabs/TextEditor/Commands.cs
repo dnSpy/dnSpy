@@ -28,6 +28,7 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Properties;
 using dnSpy.Shared.Menus;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportAutoLoaded]
@@ -64,8 +65,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		bool waitingForSecondKey;
 
 		void ToggleWordWrap() {
-			editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) ^ WordWrapStyles.WordWrap);
-			if ((editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0 && appSettings.UseNewRenderer_TextEditor)
+			editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap);
+			if ((editorOptions.WordWrapStyle() & WordWrapStyles.WordWrap) != 0 && appSettings.UseNewRenderer_TextEditor)
 				messageBoxManager.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
 		}
 	}
@@ -80,7 +81,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) => (editorOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0;
+		public override bool IsChecked(IMenuItemContext context) => (editorOptions.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:HighlightLine", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]

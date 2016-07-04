@@ -20,7 +20,9 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor {
 	interface IGlobalEditorOptions {
@@ -51,15 +53,15 @@ namespace dnSpy.Text.Editor {
 
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
-				textEditorSettings.HighlightCurrentLine = globalOptions.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId);
+				textEditorSettings.HighlightCurrentLine = globalOptions.IsHighlightCurrentLineEnabled();
 			else if (e.OptionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name)
-				textEditorSettings.ForceClearTypeIfNeeded = globalOptions.GetOptionValue(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId);
+				textEditorSettings.ForceClearTypeIfNeeded = globalOptions.IsForceClearTypeIfNeededEnabled();
 			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
-				textEditorSettings.ShowLineNumbers = globalOptions.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId);
+				textEditorSettings.ShowLineNumbers = globalOptions.IsLineNumberMarginEnabled();
 			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
-				textEditorSettings.WordWrapStyle = globalOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
+				textEditorSettings.WordWrapStyle = globalOptions.WordWrapStyle();
 			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name)
-				textEditorSettings.ConvertTabsToSpaces = globalOptions.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId);
+				textEditorSettings.ConvertTabsToSpaces = globalOptions.IsConvertTabsToSpacesEnabled();
 		}
 	}
 }

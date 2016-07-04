@@ -20,11 +20,12 @@
 using System;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor.Operations {
 	static class EditorOptionsExtensions {
 		public static string GetLineBreak(this IEditorOptions editorOptions, SnapshotPoint pos) {
-			if (editorOptions.GetOptionValue(DefaultOptions.ReplicateNewLineCharacterOptionId)) {
+			if (editorOptions.GetReplicateNewLineCharacter()) {
 				var line = pos.GetContainingLine();
 				if (line.LineBreakLength != 0)
 					return pos.Snapshot.GetText(line.Extent.End.Position, line.LineBreakLength);
@@ -33,7 +34,7 @@ namespace dnSpy.Text.Editor.Operations {
 					return pos.Snapshot.GetText(line.Extent.End.Position, line.LineBreakLength);
 				}
 			}
-			var linebreak = editorOptions.GetOptionValue(DefaultOptions.NewLineCharacterOptionId);
+			var linebreak = editorOptions.GetNewLineCharacter();
 			return linebreak.Length != 0 ? linebreak : Environment.NewLine;
 		}
 	}

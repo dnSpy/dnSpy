@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
@@ -109,7 +110,7 @@ namespace dnSpy.Text.Editor {
 
 		void TextView_Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
-				if (Mode == TextSelectionMode.Stream && !TextView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+				if (Mode == TextSelectionMode.Stream && !TextView.Options.IsVirtualSpaceEnabled())
 					Select(new VirtualSnapshotPoint(AnchorPoint.Position), new VirtualSnapshotPoint(ActivePoint.Position));
 			}
 		}

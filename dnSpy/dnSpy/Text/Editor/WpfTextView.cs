@@ -30,11 +30,13 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Shared.Controls;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Utilities;
@@ -207,7 +209,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			if (screenRefreshTimer != null)
 				return;
-			int ms = Options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId);
+			int ms = Options.GetRefreshScreenOnChangeWaitMilliSeconds();
 			if (ms > 0)
 				screenRefreshTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(ms), DispatcherPriority.Normal, RefreshScreenHandler, Dispatcher);
 			else
@@ -242,7 +244,7 @@ namespace dnSpy.Text.Editor {
 					InvalidateSpan(new SnapshotSpan(e.After, c.NewSpan));
 			}
 			InvalidateFormattedLineSource(false);
-			if (Options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId))
+			if (Options.IsRefreshScreenOnChangeEnabled())
 				DelayScreenRefresh();
 		}
 
@@ -343,14 +345,14 @@ namespace dnSpy.Text.Editor {
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			UpdateOption(e.OptionId);
 			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
-				if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+				if ((Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0)
 					ViewportLeft = 0;
 				InvalidateFormattedLineSource(true);
 			}
 			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name)
 				InvalidateFormattedLineSource(true);
 			else if (e.OptionId == DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId.Name) {
-				if (!Options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId))
+				if (!Options.IsRefreshScreenOnChangeEnabled())
 					StopRefreshTimer();
 			}
 		}
@@ -358,14 +360,14 @@ namespace dnSpy.Text.Editor {
 		double lastFormattedLineSourceViewportWidth = double.NaN;
 		void CreateFormattedLineSource(double viewportWidthOverride) {
 			lastFormattedLineSourceViewportWidth = viewportWidthOverride;
-			var wordWrapStyle = Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId);
+			var wordWrapStyle = Options.WordWrapStyle();
 			bool isWordWrap = (wordWrapStyle & WordWrapStyles.WordWrap) != 0;
 			bool isAutoIndent = isWordWrap && (wordWrapStyle & WordWrapStyles.AutoIndent) != 0;
 			double wordWrapWidth = isWordWrap ? viewportWidthOverride : 0;
 			var maxAutoIndent = isAutoIndent ? viewportWidthOverride / 4 : 0;
 			bool useDisplayMode = TextOptions.GetTextFormattingMode(this) == TextFormattingMode.Display;
 
-			int tabSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
+			int tabSize = Options.GetTabSize();
 			tabSize = Math.Max(1, tabSize);
 			tabSize = Math.Min(60, tabSize);
 
@@ -458,7 +460,7 @@ namespace dnSpy.Text.Editor {
 				if (double.IsNaN(value))
 					throw new ArgumentOutOfRangeException(nameof(value));
 				double left = value;
-				if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+				if ((Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0)
 					left = 0;
 				if (left < 0)
 					left = 0;
@@ -531,7 +533,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
-					ZoomLevel = Options.GetOptionValue(DefaultWpfViewOptions.ZoomLevelId);
+					ZoomLevel = Options.ZoomLevel();
 			}
 			else if (optionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name)
 				UpdateForceClearTypeIfNeeded();
@@ -541,7 +543,7 @@ namespace dnSpy.Text.Editor {
 			// Remote Desktop seems to force disable-ClearType so to prevent Consolas from looking
 			// really ugly and to prevent the colors (eg. keyword color) to look like different
 			// colors, force ClearType if the font is Consolas. VS also does this.
-			bool forceIfNeeded = Options.GetOptionValue(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId);
+			bool forceIfNeeded = Options.IsForceClearTypeIfNeededEnabled();
 			var fontName = classificationFormatMap.DefaultTextProperties.GetFontName();
 			bool forceClearType = forceIfNeeded && IsForceClearTypeFontName(fontName);
 			if (forceClearType)
@@ -720,7 +722,7 @@ namespace dnSpy.Text.Editor {
 					ViewportHeightChanged?.Invoke(this, EventArgs.Empty);
 				if (sizeInfo.PreviousSize.Width != sizeInfo.NewSize.Width) {
 					ViewportWidthChanged?.Invoke(this, EventArgs.Empty);
-					if ((Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) & WordWrapStyles.WordWrap) != 0)
+					if ((Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0)
 						InvalidateFormattedLineSource(true);
 				}
 				UpdateVisibleLines();

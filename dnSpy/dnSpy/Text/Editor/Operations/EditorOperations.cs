@@ -28,6 +28,7 @@ using System.Text;
 using System.Windows;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 
@@ -680,7 +681,7 @@ namespace dnSpy.Text.Editor.Operations {
 			if (point.VirtualSpaces == 0)
 				return string.Empty;
 
-			if (Options.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId))
+			if (Options.IsConvertTabsToSpacesEnabled())
 				return new string(' ', point.VirtualSpaces);
 
 			var line = point.Position.GetContainingLine();
@@ -694,10 +695,10 @@ namespace dnSpy.Text.Editor.Operations {
 		}
 
 		string GetWhitespaceForVirtualSpace(int lineLengthNoTabs, int virtualSpaces) {
-			if (Options.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId))
+			if (Options.IsConvertTabsToSpacesEnabled())
 				return new string(' ', virtualSpaces);
 
-			int tabSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
+			int tabSize = Options.GetTabSize();
 			int newEndColumn = lineLengthNoTabs + virtualSpaces;
 
 			var firstTabCol = (lineLengthNoTabs + tabSize - 1) / tabSize * tabSize;
@@ -718,7 +719,7 @@ namespace dnSpy.Text.Editor.Operations {
 			if (line.IndexOf('\t') < 0)
 				return line;
 
-			int tabSize = Options.GetOptionValue(DefaultOptions.TabSizeOptionId);
+			int tabSize = Options.GetTabSize();
 			var sb = new StringBuilder();
 			for (int i = 0; i < line.Length; i++) {
 				var c = line[i];
@@ -794,7 +795,7 @@ namespace dnSpy.Text.Editor.Operations {
 		public bool InsertProvisionalText(string text) => InsertText(text, true);
 		public bool InsertText(string text) => InsertText(text, false);
 		bool InsertText(string text, bool isProvisional) {
-			bool overwriteMode = Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
+			bool overwriteMode = Options.IsOverwriteModeEnabled();
 			if (!Selection.IsEmpty)
 				overwriteMode = false;
 			if (Caret.InVirtualSpace)
@@ -1090,7 +1091,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-			if (!Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+			if (!Options.IsVirtualSpaceEnabled())
 				Caret.MoveToNextCaretPosition();
 			else {
 				var line = Snapshot.GetLineFromPosition(Caret.Position.BufferPosition.Position);
@@ -1133,7 +1134,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-			if (!Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+			if (!Options.IsVirtualSpaceEnabled())
 				Caret.MoveToPreviousCaretPosition();
 			else {
 				if (Caret.InVirtualSpace)

@@ -37,6 +37,7 @@ using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Files.Tabs.Settings {
 	[Export(typeof(IAppSettingsTabCreator))]
@@ -137,7 +138,7 @@ namespace dnSpy.Files.Tabs.Settings {
 		public TextEditorSettingsVM(TextEditorSettingsImpl textEditorSettings, IEditorOptions editorOptions) {
 			FontFamily = textEditorSettings.FontFamily;
 			FontSize = textEditorSettings.FontSize;
-			ShowLineNumbers = editorOptions.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId);
+			ShowLineNumbers = editorOptions.IsLineNumberMarginEnabled();
 			AutoHighlightRefs = textEditorSettings.AutoHighlightRefs;
 		}
 

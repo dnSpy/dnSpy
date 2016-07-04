@@ -31,6 +31,7 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
@@ -42,12 +43,12 @@ namespace dnSpy.Text.Editor {
 		public ITextView TextView => wpfTextView;
 
 		public WordWrapStyles WordWrapStyle {
-			get { return wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId); }
+			get { return wpfTextView.Options.WordWrapStyle(); }
 			set { wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value); }
 		}
 
 		public bool ShowLineNumbers {
-			get { return wpfTextView.Options.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId); }
+			get { return wpfTextView.Options.IsLineNumberMarginEnabled(); }
 			set {
 				wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value);
 				UpdatePaddingElement();

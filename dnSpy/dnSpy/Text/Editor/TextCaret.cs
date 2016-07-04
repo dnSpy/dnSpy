@@ -29,6 +29,7 @@ using System.Windows.Threading;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
@@ -111,7 +112,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(imeState.Context == IntPtr.Zero);
 			Debug.Assert(imeState.HWND == IntPtr.Zero);
 			Debug.Assert(imeState.OldContext == IntPtr.Zero);
-			if (textView.Options.GetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId)) {
+			if (textView.Options.DoesViewProhibitUserInput()) {
 				imeState.Context = IntPtr.Zero;
 				imeState.HWND = IntPtr.Zero;
 			}
@@ -287,11 +288,11 @@ namespace dnSpy.Text.Editor {
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
-				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.IsVirtualSpaceEnabled())
 					MoveTo(Position.BufferPosition);
 			}
 			else if (e.OptionId == DefaultTextViewOptions.OverwriteModeId.Name)
-				textCaretLayer.OverwriteMode = textView.Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId);
+				textCaretLayer.OverwriteMode = textView.Options.IsOverwriteModeEnabled();
 			else if (e.OptionId == DefaultTextViewOptions.ViewProhibitUserInputId.Name) {
 				StopIME(false);
 				InitializeIME();
@@ -306,7 +307,7 @@ namespace dnSpy.Text.Editor {
 		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
 			OnCaretPositionChanged();
-			if (textView.Options.GetOptionValue(DefaultTextViewOptions.AutoScrollId)) {
+			if (textView.Options.IsAutoScrollEnabled()) {
 				// Delay this so we don't cause extra events to be raised inside the Changed event
 				textView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(AutoScrollCaret));
 			}
@@ -315,7 +316,7 @@ namespace dnSpy.Text.Editor {
 		void AutoScrollCaret() {
 			if (textView.IsClosed)
 				return;
-			if (!textView.Options.GetOptionValue(DefaultTextViewOptions.AutoScrollId))
+			if (!textView.Options.IsAutoScrollEnabled())
 				return;
 			var line = ContainingTextViewLine;
 			if (line.IsLastDocumentLine()) {
@@ -375,7 +376,7 @@ namespace dnSpy.Text.Editor {
 		bool CanAutoIndent(ITextViewLine line) {
 			if (line.Start != line.End)
 				return false;
-			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+			if (textView.Options.IsVirtualSpaceEnabled())
 				return false;
 			if (textView.Selection.Mode != TextSelectionMode.Stream)
 				return false;
@@ -386,7 +387,7 @@ namespace dnSpy.Text.Editor {
 		VirtualSnapshotPoint FilterColumn(VirtualSnapshotPoint pos) {
 			if (!pos.IsInVirtualSpace)
 				return pos;
-			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+			if (textView.Options.IsVirtualSpaceEnabled())
 				return pos;
 			if (textView.Selection.Mode != TextSelectionMode.Stream)
 				return pos;
@@ -453,7 +454,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CaretPosition MoveToNextCaretPosition() {
-			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId)) {
+			if (textView.Options.IsVirtualSpaceEnabled()) {
 				bool useVirtSpaces;
 				if (Position.VirtualSpaces > 0)
 					useVirtSpaces = true;
@@ -476,7 +477,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CaretPosition MoveToPreviousCaretPosition() {
-			if (Position.VirtualSpaces > 0 && textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+			if (Position.VirtualSpaces > 0 && textView.Options.IsVirtualSpaceEnabled())
 				return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces - 1));
 			if (Position.BufferPosition.Position == 0)
 				return Position;
@@ -491,7 +492,7 @@ namespace dnSpy.Text.Editor {
 					newPos = line.End;
 				newPos = line.GetTextElementSpan(newPos).Start;
 			}
-			if (textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId)) {
+			if (textView.Options.IsVirtualSpaceEnabled()) {
 				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
 				if (line.ExtentIncludingLineBreak != currentLine.ExtentIncludingLineBreak)
 					newPos = currentLine.Start;

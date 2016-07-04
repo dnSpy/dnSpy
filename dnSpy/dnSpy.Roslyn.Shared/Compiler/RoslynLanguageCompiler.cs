@@ -31,6 +31,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {
@@ -87,7 +88,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
-			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !codeEditor.TextView.Options.GetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId));
+			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !codeEditor.TextView.Options.IsLineNumberMarginEnabled());
 
 			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), nameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
 			return new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);

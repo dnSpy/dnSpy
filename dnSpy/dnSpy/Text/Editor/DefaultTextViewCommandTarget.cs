@@ -22,7 +22,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
@@ -185,7 +187,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		bool IsReadOnly => textView.Options.GetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId);
+		bool IsReadOnly => textView.Options.DoesViewProhibitUserInput();
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (IsReadOnly && IsEditCommand(group, cmdId))
@@ -657,20 +659,20 @@ namespace dnSpy.Text.Editor {
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
-					if (textView.Options.GetOptionValue(DefaultDnSpyTextViewOptions.CanChangeOverwriteModeId))
-						textView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, !textView.Options.GetOptionValue(DefaultTextViewOptions.OverwriteModeId));
+					if (textView.Options.IsCanChangeOverwriteModeEnabled())
+						textView.Options.SetOptionValue(DefaultTextViewOptions.OverwriteModeId, !textView.Options.IsOverwriteModeEnabled());
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEVISSPACE:
-					if (textView.Options.GlobalOptions.GetOptionValue(DefaultDnSpyTextViewOptions.CanChangeUseVisibleWhitespaceId))
-						textView.Options.GlobalOptions.SetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId, !textView.Options.GlobalOptions.GetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId));
+					if (textView.Options.GlobalOptions.IsCanChangeUseVisibleWhitespaceEnabled())
+						textView.Options.GlobalOptions.SetOptionValue(DefaultTextViewOptions.UseVisibleWhitespaceId, !textView.Options.GlobalOptions.IsVisibleWhitespaceEnabled());
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEWORDWRAP:
-					if (textView.Options.GlobalOptions.GetOptionValue(DefaultDnSpyTextViewOptions.CanChangeWordWrapStyleId)) {
-						var newWordwrapStyle = textView.Options.GlobalOptions.GetOptionValue(DefaultTextViewOptions.WordWrapStyleId) ^ WordWrapStyles.WordWrap;
+					if (textView.Options.GlobalOptions.IsCanChangeWordWrapStyleEnabled()) {
+						var newWordwrapStyle = textView.Options.GlobalOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap;
 						textView.Options.GlobalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, newWordwrapStyle);
-						if ((newWordwrapStyle & WordWrapStyles.WordWrap) != 0 && textView.Options.GetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId))
+						if ((newWordwrapStyle & WordWrapStyles.WordWrap) != 0 && textView.Options.IsVirtualSpaceEnabled())
 							textView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 					}
 					return CommandTargetStatus.Handled;
