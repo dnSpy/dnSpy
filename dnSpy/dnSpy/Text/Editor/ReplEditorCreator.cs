@@ -30,15 +30,17 @@ namespace dnSpy.Text.Editor {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly IInvalidateClassificationsService invalidateClassificationsService;
 
 		[ImportingConstructor]
-		ReplEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		ReplEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService) {
 			this.textEditorFactoryService2 = textEditorFactoryService2;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
+			this.invalidateClassificationsService = invalidateClassificationsService;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, invalidateClassificationsService);
 	}
 }
