@@ -388,6 +388,7 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyTextViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyWpfViewOptionsExtensions.cs" />
+    <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OutputLogEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />

@@ -32,6 +32,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Text;
 using dnSpy.Text.Editor.Operations;
@@ -120,7 +121,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateRefreshScreenOnChange() {
-			bool refresh = wpfTextView.Options.GetOptionValue(DefaultReplEditorOptions.RefreshScreenOnChangeId);
+			bool refresh = wpfTextView.Options.IsReplRefreshScreenOnChangeEnabled();
 			if (!refresh)
 				StopRefreshTimer();
 		}
@@ -152,7 +153,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			if (screenRefreshTimer != null)
 				return;
-			int ms = wpfTextView.Options.GetOptionValue(DefaultReplEditorOptions.RefreshScreenOnChangeWaitMilliSecondsId);
+			int ms = wpfTextView.Options.GetReplRefreshScreenOnChangeWaitMilliSeconds();
 			if (ms > 0)
 				screenRefreshTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(ms), DispatcherPriority.Normal, RefreshScreenHandler, wpfTextView.VisualElement.Dispatcher);
 			else
