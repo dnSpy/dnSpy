@@ -177,7 +177,7 @@ namespace dnSpy.Text.Editor {
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
-			this.textLayer = new TextLayer(this, GetAdornmentLayer(PredefinedAdornmentLayers.Text));
+			this.textLayer = new TextLayer(GetAdornmentLayer(PredefinedAdornmentLayers.Text));
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection));
 			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService, classificationFormatMap);
 

@@ -27,7 +27,6 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextLayer : UIElement {
-		readonly WpfTextView wpfTextView;
 		readonly IAdornmentLayer adornmentLayer;
 		readonly List<LineInfo> lines;
 
@@ -40,12 +39,9 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public TextLayer(WpfTextView wpfTextView, IAdornmentLayer adornmentLayer) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
+		public TextLayer(IAdornmentLayer adornmentLayer) {
 			if (adornmentLayer == null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
-			this.wpfTextView = wpfTextView;
 			this.adornmentLayer = adornmentLayer;
 			this.lines = new List<LineInfo>();
 			this.adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
