@@ -107,9 +107,9 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class RefreshScreenOnChangeWaitMilliSecsEditorOptionDefinition : ViewOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId;
-		public override int Default => DefaultDnSpyTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
+	sealed class RefreshScreenOnChangeWaitMilliSecondsEditorOptionDefinition : ViewOptionDefinition<int> {
+		public override EditorOptionKey<int> Key => DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecondsId;
+		public override int Default => DefaultDnSpyTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
 		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
 	}
 }

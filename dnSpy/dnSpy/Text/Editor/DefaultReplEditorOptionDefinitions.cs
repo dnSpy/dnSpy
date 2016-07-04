@@ -30,8 +30,8 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class RefreshScreenOnChangeWaitMilliSecsReplEditorOptionDefinition : ViewOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultReplEditorOptions.RefreshScreenOnChangeWaitMilliSecsId;
-		public override int Default => DefaultReplEditorOptions.DefaultRefreshScreenOnChangeWaitMilliSecs;
+		public override EditorOptionKey<int> Key => DefaultReplEditorOptions.RefreshScreenOnChangeWaitMilliSecondsId;
+		public override int Default => DefaultReplEditorOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
 		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
 	}
 }

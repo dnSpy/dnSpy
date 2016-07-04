@@ -152,7 +152,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			if (screenRefreshTimer != null)
 				return;
-			int ms = wpfTextView.Options.GetOptionValue(DefaultReplEditorOptions.RefreshScreenOnChangeWaitMilliSecsId);
+			int ms = wpfTextView.Options.GetOptionValue(DefaultReplEditorOptions.RefreshScreenOnChangeWaitMilliSecondsId);
 			if (ms > 0)
 				screenRefreshTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(ms), DispatcherPriority.Normal, RefreshScreenHandler, wpfTextView.VisualElement.Dispatcher);
 			else

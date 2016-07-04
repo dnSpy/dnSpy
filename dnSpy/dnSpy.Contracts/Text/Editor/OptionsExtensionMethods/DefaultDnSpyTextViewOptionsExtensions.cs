@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		public static int GetRefreshScreenOnChangeWaitMilliSeconds(this IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			return options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecsId);
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecondsId);
 		}
 	}
 }
