@@ -53,7 +53,6 @@ namespace dnSpy.Text.Editor {
 		public string PrimaryPrompt { get; }
 		public string SecondaryPrompt { get; }
 
-		readonly DnSpyTextEditor textEditor;
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
 		readonly IWpfTextView wpfTextView;
@@ -99,7 +98,6 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Closed += WpfTextView_Closed;
 			this.wpfTextView = wpfTextView;
 			this.wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
-			this.textEditor = wpfTextView.DnSpyTextEditor;
 			AddNewDocument();
 			WriteOffsetOfPrompt(null, true);
 			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView, editorOperationsFactoryService);
@@ -603,7 +601,9 @@ namespace dnSpy.Text.Editor {
 		}
 		IReplCommandHandler replCommandHandler;
 
-		void ClearUndoRedoHistory() => this.textEditor.TextArea.TextView.Document.UndoStack.ClearAll();
+		void ClearUndoRedoHistory() {
+			//TODO:
+		}
 
 		ITextSnapshotLine LastLine {
 			get {

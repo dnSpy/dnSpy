@@ -57,7 +57,6 @@ namespace dnSpy.Text.Editor {
 		void UpdatePaddingElement() => wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !ShowLineNumbers);
 
 		readonly IWpfTextView wpfTextView;
-		readonly DnSpyTextEditor textEditor;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
 		CachedTextTokenColors cachedTextTokenColors;
@@ -99,7 +98,6 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultDisabled);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
 			this.wpfTextView = wpfTextView;
-			this.textEditor = wpfTextView.DnSpyTextEditor;
 			SetNewDocument();
 			UpdatePaddingElement();
 		}
@@ -107,9 +105,13 @@ namespace dnSpy.Text.Editor {
 		void SetNewDocument() {
 			cachedTextTokenColors = new CachedTextTokenColors();
 			wpfTextView.TextBuffer.Replace(new Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
-			textEditor.TextArea.TextView.Document.UndoStack.ClearAll();
+			ClearUndoRedoHistory();
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, cachedTextTokenColors);
+		}
+
+		void ClearUndoRedoHistory() {
+			//TODO:
 		}
 
 		public void Clear() {
