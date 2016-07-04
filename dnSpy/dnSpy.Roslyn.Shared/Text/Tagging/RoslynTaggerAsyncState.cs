@@ -18,7 +18,6 @@
 */
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Text.Tagging;
 
@@ -34,14 +33,13 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 		public List<ITagSpan<IClassificationTag>> TagsList { get; } = new List<ITagSpan<IClassificationTag>>();
 
 		public void Initialize(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace) {
-			Debug.Assert(!IsInitialized);
 			if (IsInitialized)
 				return;
-			IsInitialized = true;
 
 			SyntaxRoot = syntaxRoot;
 			SemanticModel = semanticModel;
 			Workspace = workspace;
+			IsInitialized = true;
 		}
 	}
 }
