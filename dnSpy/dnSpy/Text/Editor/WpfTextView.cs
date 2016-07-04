@@ -52,7 +52,6 @@ namespace dnSpy.Text.Editor {
 		TextCaret TextCaret { get; }
 		ITextSelection ITextView.Selection => Selection;
 		TextSelection Selection { get; }
-		public IEditorOperations EditorOperations { get; }
 		public IViewScroller ViewScroller { get; }
 		public bool HasAggregateFocus => this.IsKeyboardFocusWithin;
 		public bool IsMouseOverViewOrAdornments => this.IsMouseOver;
@@ -118,7 +117,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -131,8 +130,6 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(editorOptionsFactoryService));
 			if (commandManager == null)
 				throw new ArgumentNullException(nameof(commandManager));
-			if (editorOperationsFactoryService == null)
-				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			if (smartIndentationService == null)
 				throw new ArgumentNullException(nameof(smartIndentationService));
 			if (formattedTextSourceFactoryService == null)
@@ -164,7 +161,6 @@ namespace dnSpy.Text.Editor {
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
-			EditorOperations = editorOperationsFactoryService.GetEditorOperations(this);
 			ViewScroller = new ViewScroller(this);
 			hasKeyboardFocus = this.IsKeyboardFocusWithin;
 			oldViewState = new ViewState(this);

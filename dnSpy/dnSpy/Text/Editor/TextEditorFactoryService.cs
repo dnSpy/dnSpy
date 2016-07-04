@@ -46,7 +46,6 @@ namespace dnSpy.Text.Editor {
 		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 		readonly ICommandManager commandManager;
-		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly ISmartIndentationService smartIndentationService;
 		readonly IWpfTextViewCreationListener[] wpfTextViewCreationListeners;
 		readonly IFormattedTextSourceFactoryService formattedTextSourceFactoryService;
@@ -110,12 +109,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandManager = commandManager;
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.smartIndentationService = smartIndentationService;
 			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.ToArray();
 			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
@@ -193,7 +191,7 @@ namespace dnSpy.Text.Editor {
 			var guidObjectsCreator = new GuidObjectsCreator(options?.CreateGuidObjects, createGuidObjectsCreator?.Invoke());
 			var dnSpyTextEditorOptions = new DnSpyTextEditorOptions(commonTextEditorOptions, textViewModel.EditBuffer, () => guidObjectsCreator);
 			var dnSpyTextEditor = dnSpyTextEditorCreator.Create(dnSpyTextEditorOptions);
-			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, editorOperationsFactoryService, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService);
+			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager,  smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService);
 			guidObjectsCreator.WpfTextView = wpfTextView;
 
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));
