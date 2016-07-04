@@ -17,16 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Created by <see cref="ICommandManager.Register(UIElement, object)"/>
+	/// <see cref="ICommandTargetCollection"/> provider
 	/// </summary>
-	public interface IRegisteredCommandElement : ICommandTargetCollectionProvider {
+	public interface ICommandTargetCollectionProvider {
 		/// <summary>
-		/// Unregisters it from <see cref="ICommandManager"/>
+		/// Gets the <see cref="ICommandTargetCollection"/> instance
 		/// </summary>
-		void Unregister();
+		ICommandTargetCollection CommandTarget { get; }
 	}
 }

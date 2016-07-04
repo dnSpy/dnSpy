@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// A REPL (Read, Eval, Print, Loop) editor
 	/// </summary>
-	public interface IReplEditor : IUIObjectProvider2, IDisposable {
+	public interface IReplEditor : ICommandTargetCollectionProvider, IUIObjectProvider2, IDisposable {
 		/// <summary>
 		/// true if <see cref="ClearScreen"/> can be called
 		/// </summary>
@@ -126,11 +126,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Gets the REPL editor operations
 		/// </summary>
 		IReplEditorOperations ReplEditorOperations { get; }
-
-		/// <summary>
-		/// Gets the command target
-		/// </summary>
-		ICommandTargetCollection CommandTarget { get; }
 
 		/// <summary>
 		/// Gets the text view

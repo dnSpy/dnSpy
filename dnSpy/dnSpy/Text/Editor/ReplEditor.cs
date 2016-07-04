@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
-		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;
+		public ICommandTargetCollection CommandTarget => (wpfTextView as ICommandTargetCollectionProvider)?.CommandTarget;
 		public ITextView TextView => wpfTextView;
 
 		public string PrimaryPrompt { get; }
@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 		readonly DnSpyTextEditor textEditor;
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
-		readonly WpfTextView wpfTextView;
+		readonly IWpfTextView wpfTextView;
 		readonly IInvalidateClassificationsService invalidateClassificationsService;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
@@ -456,7 +456,7 @@ namespace dnSpy.Text.Editor {
 			if (currentInput.Equals(command))
 				return;
 
-			((IWpfTextView)wpfTextView).Selection.Clear();
+			wpfTextView.Selection.Clear();
 			ReplEditorOperations.AddUserInput(Span.FromBounds(FilterOffset(OffsetOfPrompt.Value), wpfTextView.TextSnapshot.Length), command, clearSearchText);
 		}
 
@@ -647,13 +647,13 @@ namespace dnSpy.Text.Editor {
 		/// </summary>
 		bool IsExecMode => OffsetOfPrompt == null;
 
-		public bool CanCopyCode => !((IWpfTextView)wpfTextView).Selection.IsEmpty;
+		public bool CanCopyCode => !wpfTextView.Selection.IsEmpty;
 		public void CopyCode() {
 			if (!CanCopyCode)
 				return;
 
-			int startOffset = ((IWpfTextView)wpfTextView).Selection.Start.Position;
-			int endOffset = ((IWpfTextView)wpfTextView).Selection.End.Position;
+			int startOffset = wpfTextView.Selection.Start.Position;
+			int endOffset = wpfTextView.Selection.End.Position;
 			Debug.Assert(endOffset > startOffset);
 			if (endOffset <= startOffset)
 				return;

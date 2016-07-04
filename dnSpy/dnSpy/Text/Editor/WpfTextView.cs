@@ -41,7 +41,7 @@ using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
-	sealed partial class WpfTextView : Canvas, IWpfTextView, ILineTransformSource {
+	sealed partial class WpfTextView : Canvas, IWpfTextView, ILineTransformSource, ICommandTargetCollectionProvider {
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => this;
 		public ITextViewRoleSet Roles { get; }
