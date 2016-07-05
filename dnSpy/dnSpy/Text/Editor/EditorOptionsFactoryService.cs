@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		readonly Dictionary<string, EditorOptionDefinition> editorOptionDefinitions;
 
 		[ImportingConstructor]
-		EditorOptionsFactoryService(IGlobalEditorOptions globalEditorOptions,[ImportMany] IEnumerable<EditorOptionDefinition> editorOptionDefinitions) {
+		EditorOptionsFactoryService(IGlobalEditorOptions globalEditorOptions, [ImportMany] IEnumerable<EditorOptionDefinition> editorOptionDefinitions) {
 			this.editorOptionDefinitions = new Dictionary<string, EditorOptionDefinition>();
 			foreach (var o in editorOptionDefinitions) {
 				Debug.Assert(!this.editorOptionDefinitions.ContainsKey(o.Name));

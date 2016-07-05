@@ -1,7 +1,8 @@
 <theme guid="D0EA082A-BF0D-439F-B396-547C29D97E37" name="hc" menu-name="_High Contrast" order="100000" is-dark="true" is-high-contrast="true">
 	<colors>
 		<color name="defaulttext" fg="#FFFFFFFF" bg="#FF000000" />
-		<color name="selection" bg="#33FFFFFF" />
+		<color name="selectedtext" bg="#33FFFFFF" />
+		<color name="inactiveselectedtext" bg="#33FFFFFF" />
 		<color name="currentline" fg="#FFEEEEEE" bg="#FF000000" />
 		<color name="currentlinenofocus" fg="#FFEEEEEE" bg="#FF000000" />
 		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />

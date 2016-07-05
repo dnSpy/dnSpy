@@ -23,8 +23,11 @@ using dnSpy.Contracts.Themes;
 namespace dnSpy.Themes {
 	static class ColorInfos {
 		internal static readonly ColorInfo[] RootColorInfos = new ColorInfo[] {
-			new BrushColorInfo(ColorType.Selection, "Selected text") {
-				DefaultBackground = "#663399FF",
+			new BrushColorInfo(ColorType.SelectedText, "Selected text") {
+				DefaultBackground = "#FF3399FF",
+			},
+			new BrushColorInfo(ColorType.InactiveSelectedText, "Inactive Selected text") {
+				DefaultBackground = "#FFBFCDDB",
 			},
 			new BrushColorInfo(ColorType.HexSelection, "Selected text in hex editor") {
 				DefaultBackground = "#663399FF",

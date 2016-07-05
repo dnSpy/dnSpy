@@ -108,8 +108,10 @@ namespace dnSpy.Text.Editor {
 		public void RemoveAllAdornments() {
 			foreach (var elem in adornmentLayerElements)
 				elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
-			adornmentLayerElements.Clear();
-			Children.Clear();
+			if (adornmentLayerElements.Count != 0) {
+				adornmentLayerElements.Clear();
+				Children.Clear();
+			}
 		}
 
 		public void RemoveMatchingAdornments(Predicate<IAdornmentLayerElement> match) {

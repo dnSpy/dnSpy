@@ -21,7 +21,6 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;

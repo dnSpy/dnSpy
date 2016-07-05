@@ -309,7 +309,7 @@ namespace dnSpy.Text.Editor {
 			var visWsColor = theme.GetTextColor(ColorType.VisibleWhitespace);
 			TextArea.TextView.NonPrintableCharacterBrush = visWsColor.Foreground ?? textColor.Foreground;
 
-			var sel = theme.GetColor(ColorType.Selection);
+			var sel = theme.GetColor(ColorType.SelectedText);
 			TextArea.SelectionBorder = null;
 			TextArea.SelectionBrush = sel.Background;
 			TextArea.SelectionForeground = sel.Foreground;

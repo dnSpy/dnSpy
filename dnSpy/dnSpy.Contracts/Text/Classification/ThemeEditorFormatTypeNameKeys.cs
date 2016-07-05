@@ -17,14 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
+using dnSpy.Contracts.Themes;
 
-namespace dnSpy.Text.Editor {
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ForceClearTypeIfNeededEditorOptionDefinition : WpfViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId;
-		public override bool Default => true;
+namespace dnSpy.Contracts.Text.Classification {
+	/// <summary>
+	/// <see cref="ThemeEditorFormatDefinition"/> names
+	/// </summary>
+	public static class ThemeEditorFormatTypeNameKeys {
+		/// <summary>
+		/// <see cref="ColorType.SelectedText"/>
+		/// </summary>
+		public const string SelectedText = "Selected Text";
+
+		/// <summary>
+		/// <see cref="ColorType.InactiveSelectedText"/>
+		/// </summary>
+		public const string InactiveSelectedText = "Inactive Selected Text";
 	}
 }

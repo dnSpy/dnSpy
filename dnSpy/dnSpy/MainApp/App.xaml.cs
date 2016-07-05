@@ -137,6 +137,12 @@ namespace dnSpy.MainApp {
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(EnumVM).Assembly));
 			// dnSpy.Roslyn.Shared
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynClassifier).Assembly));
+			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly));
+			// Microsoft.VisualStudio.Text.UI (needed for the editor option definitions)
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly));
+			// Microsoft.VisualStudio.Text.UI.Wpf (needed for the editor option definitions)
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly));
 			AddPluginFiles(aggregateCatalog);
 			return new CompositionContainer(aggregateCatalog);
 		}

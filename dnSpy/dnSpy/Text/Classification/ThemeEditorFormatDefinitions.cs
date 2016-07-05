@@ -18,13 +18,25 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.Editor {
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ForceClearTypeIfNeededEditorOptionDefinition : WpfViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId;
-		public override bool Default => true;
+namespace dnSpy.Text.Classification {
+	static class ThemeEditorFormatDefinitions {
+		[Export(typeof(EditorFormatDefinition))]
+		[Name(ThemeEditorFormatTypeNameKeys.SelectedText)]
+		[UserVisible(true)]
+		sealed class SelectedText : ThemeEditorFormatDefinition {
+			SelectedText() : base(ColorType.SelectedText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[Name(ThemeEditorFormatTypeNameKeys.InactiveSelectedText)]
+		[UserVisible(true)]
+		sealed class InactiveSelectedText : ThemeEditorFormatDefinition {
+			InactiveSelectedText() : base(ColorType.InactiveSelectedText) { }
+		}
 	}
 }

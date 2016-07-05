@@ -56,7 +56,6 @@ namespace dnSpy.Text.Editor {
 
 		readonly IWpfTextView textView;
 		readonly ISmartIndentationService smartIndentationService;
-		readonly IClassificationFormatMap classificationFormatMap;
 		readonly TextCaretLayer textCaretLayer;
 		readonly ImeState imeState;
 		double preferredXCoordinate;
@@ -71,7 +70,6 @@ namespace dnSpy.Text.Editor {
 			this.textView = textView;
 			this.imeState = new ImeState();
 			this.smartIndentationService = smartIndentationService;
-			this.classificationFormatMap = classificationFormatMap;
 			this.preferredXCoordinate = 0;
 			this.__preferredYCoordinate = 0;
 			Affinity = PositionAffinity.Successor;

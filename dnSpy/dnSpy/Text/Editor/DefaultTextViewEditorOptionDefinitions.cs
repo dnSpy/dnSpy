@@ -23,45 +23,9 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class AutoScrollEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.AutoScrollId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class CutOrCopyBlankLineIfNoSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId;
-		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class DisplayUrlsAsHyperlinksEditorOptionDefinition : EditorOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.DisplayUrlsAsHyperlinksId;
-		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class DragDropEditingEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.DragDropEditingId;
-		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeOverwriteModeEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeOverwriteModeId;
 		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class OverwriteModeEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.OverwriteModeId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class UseVirtualSpaceEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.UseVirtualSpaceId;
-		public override bool Default => false;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
@@ -71,27 +35,9 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class UseVisibleWhitespaceEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.UseVisibleWhitespaceId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ViewProhibitUserInputEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultTextViewOptions.ViewProhibitUserInputId;
-		public override bool Default => false;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeWordWrapStyleEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeWordWrapStyleId;
 		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class WordWrapStyleEditorOptionDefinition : ViewOptionDefinition<WordWrapStyles> {
-		public override EditorOptionKey<WordWrapStyles> Key => DefaultTextViewOptions.WordWrapStyleId;
-		public override WordWrapStyles Default => WordWrapStyles.None;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]

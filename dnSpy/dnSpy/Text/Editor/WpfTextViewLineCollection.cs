@@ -30,14 +30,18 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextViewLineCollection : IWpfTextViewLineCollection {
+		readonly IWpfTextView textView;
 		readonly ReadOnlyCollection<IWpfTextViewLine> lines;
 		readonly ITextSnapshot snapshot;
 
-		public WpfTextViewLineCollection(ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
+		public WpfTextViewLineCollection(IWpfTextView textView, ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
 			if (lines == null)
 				throw new ArgumentNullException(nameof(lines));
+			this.textView = textView;
 			this.snapshot = snapshot;
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(lines);
 			this.IsValid = true;
@@ -151,26 +155,48 @@ namespace dnSpy.Text.Editor {
 			return -1;
 		}
 
-		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan) {
-			throw new NotImplementedException();//TODO:
-		}
+		internal static readonly Thickness LineMarkerPadding = new Thickness();
+		internal static readonly Thickness TextMarkerPadding = new Thickness(0, 0, 0, 1);
 
-		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
+		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan) =>
+			GetMarkerGeometry(bufferSpan, false, LineMarkerPadding, true);
+		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
+			GetMarkerGeometry(bufferSpan, clipToViewport, padding, true);
+
+		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan) =>
+			GetMarkerGeometry(bufferSpan, false, TextMarkerPadding, false);
+		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
+			GetMarkerGeometry(bufferSpan, clipToViewport, padding, false);
+	
+		Geometry GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding, bool isLineGeometry) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
+
+			bool createOutlinedPath = false;
+			PathGeometry geo = null;
+			var textBounds = GetNormalizedTextBounds(bufferSpan);
+			SelectionMarkerHelper.AddGeometries(textView, textBounds, isLineGeometry, clipToViewport, padding, ref geo, ref createOutlinedPath);
+			if (createOutlinedPath)
+				geo = geo.GetOutlinedPathGeometry();
+			if (geo != null && geo.CanFreeze)
+				geo.Freeze();
+			return geo;
 		}
 
 		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
+			if (SelectionMarkerHelper.IsMultiLineSpan(textView, bufferSpan))
+				return GetLineMarkerGeometry(bufferSpan);
+			return GetTextMarkerGeometry(bufferSpan);
 		}
 
 		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
+			if (SelectionMarkerHelper.IsMultiLineSpan(textView, bufferSpan))
+				return GetLineMarkerGeometry(bufferSpan, clipToViewport, padding);
+			return GetTextMarkerGeometry(bufferSpan, clipToViewport, padding);
 		}
 
 		public Collection<TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
@@ -178,7 +204,26 @@ namespace dnSpy.Text.Editor {
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
+			var span = FormattedSpan.Overlap(bufferSpan);
+			var list = new List<TextBounds>();
+			if (span == null)
+				return new Collection<TextBounds>(list);
+
+			bool found = false;
+			for (int i = 0; i < lines.Count; i++) {
+				var line = lines[i];
+				if (line.IntersectsBufferSpan(span.Value)) {
+					found = true;
+					if (line.Start >= span.Value.Start && line.EndIncludingLineBreak <= span.Value.End)
+						list.Add(new TextBounds(line.Left, line.Top, line.Width, line.Height, line.TextTop, line.TextHeight));
+					else
+						list.AddRange(line.GetNormalizedTextBounds(span.Value));
+				}
+				else if (found)
+					break;
+			}
+
+			return new Collection<TextBounds>(list);
 		}
 
 		public SnapshotSpan GetTextElementSpan(SnapshotPoint bufferPosition) {
@@ -190,18 +235,6 @@ namespace dnSpy.Text.Editor {
 			if (line == null)
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 			return line.GetTextElementSpan(bufferPosition);
-		}
-
-		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan) {
-			if (bufferSpan.Snapshot != snapshot)
-				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
-		}
-
-		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
-			if (bufferSpan.Snapshot != snapshot)
-				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
 		}
 
 		ITextViewLine ITextViewLineCollection.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) =>

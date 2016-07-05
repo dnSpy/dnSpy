@@ -83,7 +83,8 @@
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="link" fg="Blue" />
 		<color name="visiblewhitespace" fg="#FF2B91AF" />
-		<color name="selection" bg="#663399FF" />
+		<color name="selectedtext" bg="#FF3399FF" />
+		<color name="inactiveselectedtext" bg="#FFBFCDDB" />
 		<color name="localdefinition" bg="#DBE0CC" />
 		<color name="localreference" bg="#DBE0CC" />
 		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />

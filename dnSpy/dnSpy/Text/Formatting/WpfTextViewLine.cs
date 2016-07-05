@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -498,6 +499,8 @@ namespace dnSpy.Text.Formatting {
 					return new TF.TextBounds(TextRight + bufferPosition.VirtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
 				return new TF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			}
+			if (bufferPosition.Position >= End)
+				return new TF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			return GetTextBounds(GetTextElementSpan(bufferPosition.Position).Start);
 		}
 
@@ -519,9 +522,8 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			if (!ContainsBufferPosition(bufferPosition))
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
-			int column = bufferPosition - ExtentIncludingLineBreak.Start;
-			Debug.Assert(column >= 0);
 
+			int column = linePartsCollection.ConvertBufferPositionToColumn(bufferPosition);
 			TextSpan<TextRun> lastTextSpan = null;
 			foreach (var textSpan in TextLine.GetTextRunSpans()) {
 				lastTextSpan = textSpan;
@@ -536,7 +538,30 @@ namespace dnSpy.Text.Formatting {
 		public Collection<TF.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			throw new NotImplementedException();//TODO:
+			if (bufferSpan.Snapshot != Snapshot)
+				throw new ArgumentException();
+			var span = ExtentIncludingLineBreak.Overlap(bufferSpan);
+			var list = new List<TF.TextBounds>();
+			if (span == null)
+				return new Collection<TF.TextBounds>(list);
+
+			//TODO: Handle RTL text and adornments
+
+			var startBounds = GetTextBounds(span.Value.Start);
+			var endBounds = GetTextBounds(span.Value.End);
+			if (span.Value.End > End) {
+				endBounds = new TF.TextBounds(
+					endBounds.Trailing + EndOfLineWidth,
+					endBounds.Top,
+					0,
+					endBounds.Height,
+					endBounds.TextTop,
+					endBounds.TextHeight);
+			}
+
+			list.Add(new TF.TextBounds(startBounds.Left, Math.Max(startBounds.Top, endBounds.Top), endBounds.Left - startBounds.Left, Math.Max(startBounds.Height, endBounds.Height), Math.Max(startBounds.TextTop, endBounds.TextTop), Math.Max(startBounds.TextHeight, endBounds.TextHeight)));
+
+			return new Collection<TF.TextBounds>(list);
 		}
 
 		public SnapshotSpan GetTextElementSpan(SnapshotPoint bufferPosition) {

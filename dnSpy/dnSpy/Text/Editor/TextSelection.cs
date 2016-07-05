@@ -22,14 +22,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelection : ITextSelection {
-		public ITextView TextView { get; }
-		public bool IsActive { get; set; }
+		ITextView ITextSelection.TextView { get; }
+		public IWpfTextView TextView { get; }
 		public bool IsEmpty => AnchorPoint == ActivePoint;
 		public bool IsReversed => ActivePoint < AnchorPoint;
 		public VirtualSnapshotPoint AnchorPoint => anchorPoint;
@@ -39,7 +40,10 @@ namespace dnSpy.Text.Editor {
 		public VirtualSnapshotSpan StreamSelectionSpan => new VirtualSnapshotSpan(Start, End);
 		public event EventHandler SelectionChanged;
 
-		VirtualSnapshotPoint anchorPoint, activePoint;
+		public bool IsActive {
+			get { return textSelectionLayer.IsActive; }
+			set { textSelectionLayer.IsActive = value; }
+		}
 
 		public bool ActivationTracksFocus {
 			get { return activationTracksFocus; }
@@ -86,20 +90,24 @@ namespace dnSpy.Text.Editor {
 		TextSelectionMode mode;
 
 		readonly TextSelectionLayer textSelectionLayer;
+		VirtualSnapshotPoint anchorPoint, activePoint;
 
-		public TextSelection(ITextView textView, IAdornmentLayer selectionLayer) {
+		public TextSelection(IWpfTextView textView, IAdornmentLayer selectionLayer, IEditorFormatMap editorFormatMap) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (selectionLayer == null)
 				throw new ArgumentNullException(nameof(selectionLayer));
-			this.textSelectionLayer = new TextSelectionLayer(this, selectionLayer);
+			if (editorFormatMap == null)
+				throw new ArgumentNullException(nameof(editorFormatMap));
 			TextView = textView;
-			TextView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			Mode = TextSelectionMode.Stream;
+			activePoint = anchorPoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
+			TextView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
+			TextView.Options.OptionChanged += Options_OptionChanged;
+			TextView.GotAggregateFocus += TextView_GotAggregateFocus;
+			TextView.LostAggregateFocus += TextView_LostAggregateFocus;
+			this.textSelectionLayer = new TextSelectionLayer(this, selectionLayer, editorFormatMap);
 			ActivationTracksFocus = true;
-			TextView.Options.OptionChanged += TextView_Options_OptionChanged;
-			anchorPoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
-			activePoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
 		}
 
 		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
@@ -108,11 +116,21 @@ namespace dnSpy.Text.Editor {
 			Select(newAnchorPoint, newActivePoint);
 		}
 
-		void TextView_Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
 				if (Mode == TextSelectionMode.Stream && !TextView.Options.IsVirtualSpaceEnabled())
 					Select(new VirtualSnapshotPoint(AnchorPoint.Position), new VirtualSnapshotPoint(ActivePoint.Position));
 			}
+		}
+
+		void TextView_GotAggregateFocus(object sender, EventArgs e) {
+			if (ActivationTracksFocus)
+				IsActive = true;
+		}
+
+		void TextView_LostAggregateFocus(object sender, EventArgs e) {
+			if (ActivationTracksFocus)
+				IsActive = false;
 		}
 
 		public void Clear() {
@@ -167,7 +185,9 @@ namespace dnSpy.Text.Editor {
 
 		public void Dispose() {
 			TextView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;
-			TextView.Options.OptionChanged -= TextView_Options_OptionChanged;
+			TextView.Options.OptionChanged -= Options_OptionChanged;
+			TextView.GotAggregateFocus -= TextView_GotAggregateFocus;
+			TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
 			textSelectionLayer.Dispose();
 		}
 	}

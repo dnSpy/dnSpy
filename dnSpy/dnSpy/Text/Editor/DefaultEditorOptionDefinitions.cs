@@ -17,48 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class TabSizeEditorOptionDefinition : EditorOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultOptions.TabSizeOptionId;
-		public override int Default => 4;
-		public override bool IsValid(ref int proposedValue) => 1 <= proposedValue && proposedValue <= 60;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class IndentSizeEditorOptionDefinition : EditorOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultOptions.IndentSizeOptionId;
-		public override int Default => 4;
-		public override bool IsValid(ref int proposedValue) => 1 <= proposedValue && proposedValue <= 60;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
 	sealed class IndentStyleEditorOptionDefinition : EditorOptionDefinition<IndentStyle> {
 		public override EditorOptionKey<IndentStyle> Key => DefaultDnSpyOptions.IndentStyleOptionId;
 		public override IndentStyle Default => IndentStyle.Smart;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class NewLineCharacterEditorOptionDefinition : EditorOptionDefinition<string> {
-		public override EditorOptionKey<string> Key => DefaultOptions.NewLineCharacterOptionId;
-		public override string Default => Environment.NewLine;
-		public override bool IsValid(ref string proposedValue) => proposedValue != null && 0 < proposedValue.Length && proposedValue.Length < 10;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ReplicateNewLineCharacterEditorOptionDefinition : EditorOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultOptions.ReplicateNewLineCharacterOptionId;
-		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
-	sealed class ConvertTabsToSpacesEditorOptionDefinition : EditorOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultOptions.ConvertTabsToSpacesOptionId;
-		public override bool Default => true;
 	}
 }
