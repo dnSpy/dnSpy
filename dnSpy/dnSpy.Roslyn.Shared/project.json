@@ -1,8 +1,6 @@
 {
 	"dependencies": {
-		"Microsoft.CodeAnalysis.CSharp": "1.3.2",
 		"Microsoft.CodeAnalysis.CSharp.Workspaces": "1.3.2",
-		"Microsoft.CodeAnalysis.VisualBasic": "1.3.2",
 		"Microsoft.CodeAnalysis.VisualBasic.Workspaces": "1.3.2",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "14.3.25407"
 	},
