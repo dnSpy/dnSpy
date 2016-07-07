@@ -40,6 +40,7 @@ using Microsoft.CodeAnalysis.Text;
 using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text.Classification;
+using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {
@@ -255,7 +256,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				return Task.CompletedTask;
 
 			ClassifiedSpan[] classifiers;
-			using (var workspace = new AdhocWorkspace())
+			using (var workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices))
 				classifiers = Classifier.GetClassifiedSpans(sem, new TextSpan(0, command.Input.Length), workspace, cancellationToken).ToArray();
 			if (cancellationToken.IsCancellationRequested)
 				return Task.CompletedTask;

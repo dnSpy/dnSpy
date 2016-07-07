@@ -29,6 +29,7 @@ using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -55,7 +56,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
 			Debug.Assert(workspace == null);
 
-			workspace = new AdhocWorkspace();
+			workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices);
 			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
