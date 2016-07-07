@@ -140,7 +140,7 @@ namespace dnSpy.Search {
 				return;
 			CheckCustomAttributes(asmNode.DnSpyFile, asm, null);
 
-			if (res.IsMatch && IsMatch(asm.FullName, asmNode.DnSpyFile)) {
+			if (res.IsMatch && (IsMatch(asm.FullName, asmNode.DnSpyFile) || IsMatch(asm.Name, null))) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = asm,
@@ -213,7 +213,7 @@ namespace dnSpy.Search {
 				if (res.FilterType == FilterType.Hide)
 					continue;
 
-				if (res.IsMatch && IsMatch(asmRef.FullName, asmRef)) {
+				if (res.IsMatch && (IsMatch(asmRef.FullName, asmRef) || IsMatch(asmRef.Name, null))) {
 					options.OnMatch(new SearchResult {
 						Context = options.Context,
 						Object = asmRef,
