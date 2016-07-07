@@ -912,10 +912,12 @@ namespace dnSpy.Text.Editor.Operations {
 			else
 				line = TextView.GetTextViewLineContainingBufferPosition(Selection.End.Position);
 			if (line.IsLastDocumentLine())
-				return;
-			var nextLine = TextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+				Caret.MoveTo(line);
+			else {
+				var nextLine = TextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+				Caret.MoveTo(nextLine);
+			}
 
-			Caret.MoveTo(nextLine);
 			Caret.EnsureVisible();
 			if (extendSelection)
 				Selection.Select(anchorPoint, Caret.Position.VirtualBufferPosition);
@@ -932,10 +934,12 @@ namespace dnSpy.Text.Editor.Operations {
 			else
 				line = TextView.GetTextViewLineContainingBufferPosition(Selection.Start.Position);
 			if (line.Start.Position == 0)
-				return;
-			var prevLine = TextView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+				Caret.MoveTo(line);
+			else {
+				var prevLine = TextView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+				Caret.MoveTo(prevLine);
+			}
 
-			Caret.MoveTo(prevLine);
 			Caret.EnsureVisible();
 			if (extendSelection)
 				Selection.Select(anchorPoint, Caret.Position.VirtualBufferPosition);
