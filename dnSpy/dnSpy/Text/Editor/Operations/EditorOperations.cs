@@ -830,7 +830,7 @@ namespace dnSpy.Text.Editor.Operations {
 			if (!overwriteMode) {
 				var spaces = GetWhitespaceForVirtualSpace(newPos);
 				TextBuffer.Insert(newPos.Position, spaces + text);
-				newPos = newPos.TranslateTo(Snapshot);
+				newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
 			}
 			else {
 				Debug.Assert(!newPos.IsInVirtualSpace);
@@ -839,7 +839,7 @@ namespace dnSpy.Text.Editor.Operations {
 				int columnsLeft = line.Length - column;
 				int replaceLength = Math.Min(columnsLeft, text.Length);
 				TextBuffer.Replace(new Span(newPos.Position.Position, replaceLength), text);
-				newPos = newPos.TranslateTo(Snapshot);
+				newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
 			}
 
 			Caret.MoveTo(newPos);
