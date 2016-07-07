@@ -254,6 +254,7 @@ namespace dnSpy.Text.Editor {
 				wpfTextView.Caret.EnsureVisible();
 				SearchText = null;
 			}
+			wpfTextView.Selection.Clear();
 		}
 
 		public bool TrySubmit(bool force) {
