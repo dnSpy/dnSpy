@@ -1325,6 +1325,8 @@ namespace dnSpy.Text.Editor.Operations {
 		public void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(ScrollDirection.Up);
 		void ScrollAndMoveCaretIfNecessary(ScrollDirection scrollDirection) {
 			ViewScroller.ScrollViewportVerticallyByLine(scrollDirection);
+
+			var pos = Caret.Position.VirtualBufferPosition;
 			var line = Caret.ContainingTextViewLine;
 			var firstVisLine = TextView.TextViewLines.FirstVisibleLine;
 			var lastVisLine = TextView.TextViewLines.LastVisibleLine;
@@ -1335,6 +1337,10 @@ namespace dnSpy.Text.Editor.Operations {
 			else if (line.VisibilityState != VisibilityState.FullyVisible)
 				Caret.MoveTo(line.Top < TextView.ViewportTop ? firstVisLine : lastVisLine);
 			Caret.EnsureVisible();
+
+			var newPos = Caret.Position.VirtualBufferPosition;
+			if (!Selection.IsEmpty && newPos != pos)
+				Selection.Clear();
 		}
 
 		public void ScrollLineBottom() {
