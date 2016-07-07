@@ -45,6 +45,7 @@ namespace dnSpy.Text.Editor {
 			this.globalOptions = globalOptions;
 			globalOptions.OptionChanged += EditorOptions_OptionChanged;
 			globalOptions.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, textEditorSettings.HighlightCurrentLine);
+			globalOptions.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, textEditorSettings.TextViewZoomLevel);
 			globalOptions.SetOptionValue(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId, textEditorSettings.ForceClearTypeIfNeeded);
 			globalOptions.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, textEditorSettings.ShowLineNumbers);
 			globalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, textEditorSettings.WordWrapStyle);
@@ -54,6 +55,8 @@ namespace dnSpy.Text.Editor {
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
 				textEditorSettings.HighlightCurrentLine = globalOptions.IsHighlightCurrentLineEnabled();
+			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelId.Name)
+				textEditorSettings.TextViewZoomLevel = globalOptions.ZoomLevel();
 			else if (e.OptionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name)
 				textEditorSettings.ForceClearTypeIfNeeded = globalOptions.IsForceClearTypeIfNeededEnabled();
 			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)

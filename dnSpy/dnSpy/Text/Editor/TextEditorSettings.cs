@@ -125,6 +125,18 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 		bool convertTabsToSpaces = false;
+
+		public double TextViewZoomLevel {
+			get { return textViewZoomLevel; }
+			set {
+				if (textViewZoomLevel != value) {
+					textViewZoomLevel = value;
+					OnPropertyChanged(nameof(TextViewZoomLevel));
+					OnModified();
+				}
+			}
+		}
+		double textViewZoomLevel = ZoomConstants.DefaultZoom;
 	}
 
 	[Export, Export(typeof(ITextEditorSettings))]
@@ -147,6 +159,7 @@ namespace dnSpy.Text.Editor {
 			this.ForceClearTypeIfNeeded = sect.Attribute<bool?>(nameof(ForceClearTypeIfNeeded)) ?? this.ForceClearTypeIfNeeded;
 			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
 			this.ConvertTabsToSpaces = sect.Attribute<bool?>(nameof(ConvertTabsToSpaces)) ?? this.ConvertTabsToSpaces;
+			this.TextViewZoomLevel = sect.Attribute<double?>(nameof(TextViewZoomLevel)) ?? this.TextViewZoomLevel;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -163,6 +176,7 @@ namespace dnSpy.Text.Editor {
 			sect.Attribute(nameof(ForceClearTypeIfNeeded), ForceClearTypeIfNeeded);
 			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
 			sect.Attribute(nameof(ConvertTabsToSpaces), ConvertTabsToSpaces);
+			sect.Attribute(nameof(TextViewZoomLevel), TextViewZoomLevel);
 		}
 	}
 }
