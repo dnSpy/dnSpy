@@ -125,11 +125,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions)null);
-		public IWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
+		public IDnSpyWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
 
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer) =>
 			CreateTextView(textBuffer, (TextViewCreatorOptions)null);
-		public IWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options) {
+		public IDnSpyWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return CreateTextView(new TextDataModel(textBuffer), DefaultRoles, editorOptionsFactoryService.GlobalOptions, options);
@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles) =>
 			CreateTextView(textBuffer, roles, (TextViewCreatorOptions)null);
-		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options) {
+		public IDnSpyWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (roles == null)
@@ -147,7 +147,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
 			CreateTextView(textBuffer, roles, parentOptions, null);
-		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		public IDnSpyWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (roles == null)
@@ -159,7 +159,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
 			CreateTextView(dataModel, roles, parentOptions, null);
-		public IWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		public IDnSpyWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
 			if (dataModel == null)
 				throw new ArgumentNullException(nameof(dataModel));
 			if (roles == null)
@@ -171,7 +171,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
 			CreateTextView(viewModel, roles, parentOptions, null);
-		public IWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		public IDnSpyWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
 			if (viewModel == null)
 				throw new ArgumentNullException(nameof(viewModel));
 			if (roles == null)

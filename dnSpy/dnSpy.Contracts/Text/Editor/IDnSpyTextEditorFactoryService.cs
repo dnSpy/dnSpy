@@ -26,57 +26,57 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface IDnSpyTextEditorFactoryService : ITextEditorFactoryService {
 		/// <summary>
-		/// Creates a new <see cref="IWpfTextView"/> instance with content type text
+		/// Creates a new <see cref="IDnSpyWpfTextView"/> instance with content type text
 		/// </summary>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IWpfTextView CreateTextView(TextViewCreatorOptions options);
+		IDnSpyWpfTextView CreateTextView(TextViewCreatorOptions options);
 
 		/// <summary>
-		/// Creates a new <see cref="IWpfTextView"/> instance using <paramref name="textBuffer"/>
+		/// Creates a new <see cref="IDnSpyWpfTextView"/> instance using <paramref name="textBuffer"/>
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options);
+		IDnSpyWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options);
 
 		/// <summary>
-		/// Creates a new <see cref="IWpfTextView"/> instance using <paramref name="textBuffer"/>
+		/// Creates a new <see cref="IDnSpyWpfTextView"/> instance using <paramref name="textBuffer"/>
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <param name="roles">Roles</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options);
+		IDnSpyWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options);
 
 		/// <summary>
-		/// Creates a new <see cref="IWpfTextView"/> instance using <paramref name="textBuffer"/>
+		/// Creates a new <see cref="IDnSpyWpfTextView"/> instance using <paramref name="textBuffer"/>
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <param name="roles">Roles</param>
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+		IDnSpyWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
 
 		/// <summary>
-		/// Creates a new <see cref="IWpfTextView"/> instance using <paramref name="dataModel"/>
+		/// Creates a new <see cref="IDnSpyWpfTextView"/> instance using <paramref name="dataModel"/>
 		/// </summary>
 		/// <param name="dataModel">Data model</param>
 		/// <param name="roles">Roles</param>
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+		IDnSpyWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
 
 		/// <summary>
-		/// Creates a new <see cref="IWpfTextView"/> instance using <paramref name="viewModel"/>
+		/// Creates a new <see cref="IDnSpyWpfTextView"/> instance using <paramref name="viewModel"/>
 		/// </summary>
 		/// <param name="viewModel">View model</param>
 		/// <param name="roles">Roles</param>
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+		IDnSpyWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
 	}
 }

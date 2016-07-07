@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
-		public ICommandTargetCollection CommandTarget => (wpfTextView as ICommandTargetCollectionProvider)?.CommandTarget;
+		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;
 		public ITextView TextView => wpfTextView;
 
 		public string PrimaryPrompt { get; }
@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
-		readonly IWpfTextView wpfTextView;
+		readonly IDnSpyWpfTextView wpfTextView;
 		readonly IInvalidateClassificationsService invalidateClassificationsService;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
