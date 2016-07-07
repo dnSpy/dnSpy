@@ -98,6 +98,24 @@ namespace dnSpy.Tabs {
 			AddEvents();
 		}
 
+		public override void OnApplyTemplate() {
+			base.OnApplyTemplate();
+			if (part_Header != null)
+				part_Header.MouseDown -= PART_Header_MouseDown;
+			part_Header = GetTemplateChild("PART_Header") as UIElement;
+			if (part_Header != null)
+				part_Header.MouseDown += PART_Header_MouseDown;
+		}
+		UIElement part_Header;
+
+		void PART_Header_MouseDown(object sender, MouseButtonEventArgs e) {
+			if (e.ClickCount == 1 && e.MiddleButton == MouseButtonState.Pressed) {
+				e.Handled = true;
+				Close();
+				return;
+			}
+		}
+
 		protected override void OnMouseDown(MouseButtonEventArgs e) {
 			base.OnMouseDown(e);
 			if (!e.Handled) {

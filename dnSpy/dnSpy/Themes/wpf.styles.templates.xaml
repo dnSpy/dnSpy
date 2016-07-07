@@ -5141,7 +5141,7 @@
 									BorderBrush="{DynamicResource EnvironmentFileTabBorder}"
 									BorderThickness="0 2 0 0"
 									Padding="0 1 0 3">
-								<DockPanel Name="DockPanel" TextBlock.Foreground="{DynamicResource EnvironmentFileTabText}">
+								<DockPanel Name="PART_Header" TextBlock.Foreground="{DynamicResource EnvironmentFileTabText}">
 									<ctrls:TabButton x:Name="CloseButton"
 													 mvvm:IsDraggableAP.IsDraggable="False"
 													 DockPanel.Dock="Right"
@@ -5178,7 +5178,7 @@
 						<DataTrigger Value="True" Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}">
 							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentFileTabHotGradient}" />
 							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentFileTabHotBorder}" />
-							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabHotText}" />
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabHotText}" />
 							<Setter TargetName="CloseButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentFileTabHotGlyph}" />
 						</DataTrigger>
 						<DataTrigger Value="True" Binding="{Binding IsSelected}">
@@ -5192,7 +5192,7 @@
 							</MultiDataTrigger.Conditions>
 							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentFileTabSelectedGradient}" />
 							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentFileTabSelectedBorder}" />
-							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabSelectedText}" />
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabSelectedText}" />
 							<Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedActive}" />
 							<Setter TargetName="CloseButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveBorder}" />
 							<Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveGlyph}" />
@@ -5208,7 +5208,7 @@
 							</MultiDataTrigger.Conditions>
 							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentFileTabInactiveGradient}" />
 							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentFileTabInactiveBorder}" />
-							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabInactiveText}" />
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabInactiveText}" />
 							<Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedInactive}" />
 							<Setter TargetName="CloseButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedInactiveBorder}" />
 							<Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedInactiveGlyph}" />
@@ -5310,7 +5310,7 @@
 								BorderBrush="{DynamicResource EnvironmentToolWindowTabBorder}"
 								BorderThickness="0 0 0 2"
 								Padding="0 0 0 1">
-							<DockPanel Name="DockPanel" TextBlock.Foreground="{DynamicResource EnvironmentToolWindowTabText}">
+							<DockPanel Name="PART_Header" TextBlock.Foreground="{DynamicResource EnvironmentToolWindowTabText}">
 								<TextBlock HorizontalAlignment="Stretch"
 										   Margin="5 2 5 0"
 										   VerticalAlignment="Stretch"
@@ -5325,7 +5325,7 @@
 						<DataTrigger Value="True" Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}">
 							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentToolWindowTabMouseOverBackgroundGradient}" />
 							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentToolWindowTabMouseOverBorder}" />
-							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabMouseOverText}" />
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabMouseOverText}" />
 						</DataTrigger>
 						<DataTrigger Value="True" Binding="{Binding IsSelected}">
 							<Setter Property="Panel.ZIndex" Value="-1" />
@@ -5339,14 +5339,14 @@
 								<Condition Value="False" Binding="{Binding IsActive}" />
 								<Condition Value="True" Binding="{Binding IsSelected}" />
 							</MultiDataTrigger.Conditions>
-							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabSelectedText}" />
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabSelectedText}" />
 						</MultiDataTrigger>
 						<MultiDataTrigger>
 							<MultiDataTrigger.Conditions>
 								<Condition Value="True" Binding="{Binding Path=IsSelected}" />
 								<Condition Value="True" Binding="{Binding Path=IsActive}" />
 							</MultiDataTrigger.Conditions>
-							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabSelectedActiveText}" />
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabSelectedActiveText}" />
 						</MultiDataTrigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
