@@ -84,7 +84,6 @@ namespace dnSpy.Text {
 				int offs = span.Span.Start;
 				int end = span.Span.End;
 
-				//TODO: You should verify that the snapshot is correct before calling Find()
 				var infoPart = cachedColorsList.Find(offs);
 				while (offs < end) {
 					int defaultTextLength, tokenLength;
@@ -93,7 +92,6 @@ namespace dnSpy.Text {
 						yield break;
 
 					if (tokenLength != 0) {
-						//TODO: Remove this check once the snapshot has been verified, see above TODO
 						if (offs + defaultTextLength + tokenLength <= snapshot.Length)
 							yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ThemeClassificationTypes.GetClassificationTypeByColorObject(color)));
 					}
