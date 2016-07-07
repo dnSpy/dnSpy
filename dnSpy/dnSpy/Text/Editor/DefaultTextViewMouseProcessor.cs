@@ -59,7 +59,12 @@ namespace dnSpy.Text.Editor {
 			SelectToMousePosition(GetLocation(e), extendSelection);
 		void SelectToMousePosition(MouseLocation mouseLoc, bool extendSelection) {
 			UpdateSelectionMode();
+			var snapshotLine = mouseLoc.TextViewLine.Start.GetContainingLine();
 			editorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, extendSelection);
+			// The caret can move to an auto-indented location if the line is empty. Move to
+			// the first character if the user clicked somewhere before the auto-indented location.
+			if (snapshotLine.Length == 0 && mouseLoc.Point.X < wpfTextView.Caret.Left)
+				editorOperations.MoveCaret(mouseLoc.TextViewLine, 0, extendSelection);
 		}
 
 		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
