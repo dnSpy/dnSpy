@@ -30,6 +30,7 @@ using TF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class WpfTextViewLine : IFormattedLine {
+		readonly int endColumn;
 		double top;
 		readonly double width;
 		readonly double textLeft;
@@ -326,7 +327,7 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		public WpfTextViewLine(LinePartsCollection linePartsCollection, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
+		public WpfTextViewLine(LinePartsCollection linePartsCollection, int startColumn, int endColumn, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
 			if (linePartsCollection == null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			if (bufferLine == null)
@@ -340,6 +341,7 @@ namespace dnSpy.Text.Formatting {
 
 			this.IsValid = true;
 			this.linePartsCollection = linePartsCollection;
+			this.endColumn = endColumn;
 			this.visualSnapshot = visualSnapshot;
 			this.textLines = new ReadOnlyCollection<TextLine>(new[] { textLine });
 			Debug.Assert(textLines.Count == 1);// Assumed by all code accessing TextLine prop
@@ -508,6 +510,8 @@ namespace dnSpy.Text.Formatting {
 			if (point.Snapshot != Snapshot)
 				throw new ArgumentException();
 			int col = linePartsCollection.ConvertBufferPositionToColumn(point);
+			if (col == endColumn)
+				return new TF.TextBounds(TextRight, Top, 0, Height, TextTop, TextHeight);
 			double start = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 0));
 			double end = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 1));
 			double extra = TextLeft;
@@ -559,7 +563,7 @@ namespace dnSpy.Text.Formatting {
 					endBounds.TextHeight);
 			}
 
-			list.Add(new TF.TextBounds(startBounds.Left, Math.Max(startBounds.Top, endBounds.Top), endBounds.Left - startBounds.Left, Math.Max(startBounds.Height, endBounds.Height), Math.Max(startBounds.TextTop, endBounds.TextTop), Math.Max(startBounds.TextHeight, endBounds.TextHeight)));
+			list.Add(new TF.TextBounds(startBounds.Left, startBounds.Top, endBounds.Left - startBounds.Left, startBounds.Height, startBounds.TextTop, startBounds.TextHeight));
 
 			return new Collection<TF.TextBounds>(list);
 		}

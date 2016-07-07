@@ -133,7 +133,7 @@ namespace dnSpy.Text.Formatting {
 					endPos = bufferLine.ExtentIncludingLineBreak.End;
 
 				var lineSpan = new SnapshotSpan(startPos, endPos);
-				var wpfLine = new WpfTextViewLine(linePartsCollection, bufferLine, lineSpan, visualLine.Snapshot, textLine, autoIndent, ColumnWidth);
+				var wpfLine = new WpfTextViewLine(linePartsCollection, startColumn, column, bufferLine, lineSpan, visualLine.Snapshot, textLine, autoIndent, ColumnWidth);
 				lines.Add(wpfLine);
 
 				if (column >= textSource.Length) {
