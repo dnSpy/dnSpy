@@ -395,9 +395,11 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferSpan.Snapshot != Snapshot)
 				throw new ArgumentException();
-			if (IsLastVisualLine)
-				return ExtentIncludingLineBreak.IntersectsWith(bufferSpan);
-			return ExtentIncludingLineBreak.OverlapsWith(bufferSpan);
+			if (Start > bufferSpan.End)
+				return false;
+			if (bufferSpan.Start < EndIncludingLineBreak)
+				return true;
+			return LineBreakLength == 0 && bufferSpan.Start == EndIncludingLineBreak && bufferSpan.Start == Snapshot.Length;
 		}
 
 		public TF.TextBounds? GetAdornmentBounds(object identityTag) {
@@ -544,7 +546,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferSpan.Snapshot != Snapshot)
 				throw new ArgumentException();
-			var span = ExtentIncludingLineBreak.Overlap(bufferSpan);
+			var span = ExtentIncludingLineBreak.Intersection(bufferSpan);
 			var list = new List<TF.TextBounds>();
 			if (span == null)
 				return new Collection<TF.TextBounds>(list);

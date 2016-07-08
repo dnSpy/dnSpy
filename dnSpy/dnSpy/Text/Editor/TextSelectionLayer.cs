@@ -18,23 +18,21 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	sealed class TextSelectionLayer : UIElement {
+	sealed class TextSelectionLayer {
 		public bool IsActive {
 			get { return isActive; }
 			set {
 				if (isActive != value) {
 					isActive = value;
-					Repaint();
+					UpdateBackgroundBrush();
 				}
 			}
 		}
@@ -43,6 +41,7 @@ namespace dnSpy.Text.Editor {
 		readonly TextSelection textSelection;
 		readonly IAdornmentLayer layer;
 		readonly IEditorFormatMap editorFormatMap;
+		readonly Marker marker;
 
 		public TextSelectionLayer(TextSelection textSelection, IAdornmentLayer layer, IEditorFormatMap editorFormatMap) {
 			if (textSelection == null)
@@ -53,12 +52,27 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(editorFormatMap));
 			this.textSelection = textSelection;
 			this.layer = layer;
+			this.marker = new Marker(textSelection.TextView, layer);
 			this.editorFormatMap = editorFormatMap;
 			textSelection.TextView.Options.OptionChanged += Options_OptionChanged;
 			textSelection.SelectionChanged += TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged += TextView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 			UpdateUseReducedOpacityForHighContrastOption();
+			UpdateBackgroundBrush();
+		}
+
+		void UpdateBackgroundBrush() => marker.BackgroundBrush = GetBackgroundBrush();
+
+		Brush GetBackgroundBrush() {
+			var props = editorFormatMap.GetProperties(IsActive ? ThemeEditorFormatTypeNameKeys.SelectedText : ThemeEditorFormatTypeNameKeys.InactiveSelectedText);
+			var bg = props[EditorFormatDefinition.BackgroundBrushId] as Brush;
+			Debug.Assert(bg != null);
+			if (bg == null)
+				bg = IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush;
+			if (bg.CanFreeze)
+				bg.Freeze();
+			return bg;
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -74,66 +88,33 @@ namespace dnSpy.Text.Editor {
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
 			if ((IsActive && e.ChangedItems.Contains(ThemeEditorFormatTypeNameKeys.SelectedText)) ||
 				(!IsActive && e.ChangedItems.Contains(ThemeEditorFormatTypeNameKeys.InactiveSelectedText))) {
-				Repaint();
+				UpdateBackgroundBrush();
 			}
 		}
 
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
 			if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
-				Repaint();
+				marker.OnLayoutChanged(e.NewOrReformattedLines);
 		}
 
-		public void OnModeUpdated() => Repaint();
-		void TextSelection_SelectionChanged(object sender, EventArgs e) => Repaint();
-
-		List<VirtualSnapshotSpan> GetVisibleSelectedSpans() {
-			__selectedSpans.Clear();
-			var spans = textSelection.VirtualSelectedSpans;
-			// If nothing is selected, an empty span is returned. Don't use it.
-			if (spans.Count == 1 && spans[0].Length == 0)
-				return __selectedSpans;
-			foreach (var span in spans) {
-				var visSpan = span.Intersection(new VirtualSnapshotSpan(textSelection.TextView.TextViewLines.FormattedSpan));
-				if (visSpan != null)
-					__selectedSpans.Add(visSpan.Value);
+		void SetNewSelection() {
+			if (textSelection.IsEmpty)
+				marker.SetSpans(NullMarkerSpanCollection.Instance);
+			else if (textSelection.Mode == TextSelectionMode.Stream) {
+				Debug.Assert(textSelection.StreamSelectionSpan.Length != 0);
+				marker.SetSpans(new StreamMarkerSpanCollection(textSelection.TextView, textSelection.StreamSelectionSpan));
 			}
-			return __selectedSpans;
-		}
-		readonly List<VirtualSnapshotSpan> __selectedSpans = new List<VirtualSnapshotSpan>();
-
-		void Repaint() {
-			if (GetVisibleSelectedSpans().Count == 0)
-				layer.RemoveAllAdornments();
 			else {
-				if (layer.IsEmpty)
-					layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
-				InvalidateVisual();
+				Debug.Assert(textSelection.Mode == TextSelectionMode.Box);
+				marker.SetSpans(new BoxMarkerSpanCollection(textSelection));
 			}
 		}
 
-		protected override void OnRender(DrawingContext drawingContext) {
-			base.OnRender(drawingContext);
-
-			//TODO: Optimize it to only redraw those lines that changed. Will speed up Remote Desktop.
-
-			const bool clipToViewport = false;
-			bool isBoxMode = textSelection.Mode == TextSelectionMode.Box;
-			foreach (var span in GetVisibleSelectedSpans()) {
-				var geo = SelectionMarkerHelper.CreateGeometry(textSelection.TextView, span, isBoxMode, clipToViewport);
-				if (geo != null) {
-					var props = editorFormatMap.GetProperties(IsActive ? ThemeEditorFormatTypeNameKeys.SelectedText : ThemeEditorFormatTypeNameKeys.InactiveSelectedText);
-					var bg = props[EditorFormatDefinition.BackgroundBrushId] as Brush;
-					Debug.Assert(bg != null);
-					if (bg == null)
-						bg = IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush;
-					if (bg.CanFreeze)
-						bg.Freeze();
-					drawingContext.DrawGeometry(bg, null, geo);
-				}
-			}
-		}
+		public void OnModeUpdated() => SetNewSelection();
+		void TextSelection_SelectionChanged(object sender, EventArgs e) => SetNewSelection();
 
 		public void Dispose() {
+			marker.Dispose();
 			textSelection.TextView.Options.OptionChanged -= Options_OptionChanged;
 			textSelection.SelectionChanged -= TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged -= TextView_LayoutChanged;

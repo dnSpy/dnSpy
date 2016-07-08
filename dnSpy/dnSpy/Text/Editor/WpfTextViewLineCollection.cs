@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 			if (lines.Count == 0)
 				this.formattedSpan = new SnapshotSpan(snapshot, new Span(0, 0));
 			else
-				this.formattedSpan = new SnapshotSpan(snapshot, lines[0].Start.Position, lines[lines.Count - 1].EndIncludingLineBreak.Position - lines[0].Start.Position);
+				this.formattedSpan = new SnapshotSpan(lines[0].Start, lines[lines.Count - 1].EndIncludingLineBreak);
 			Debug.Assert(this.lines.Count > 0);
 		}
 
@@ -155,16 +155,13 @@ namespace dnSpy.Text.Editor {
 			return -1;
 		}
 
-		internal static readonly Thickness LineMarkerPadding = new Thickness();
-		internal static readonly Thickness TextMarkerPadding = new Thickness(0, 0, 0, 1);
-
 		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan) =>
-			GetMarkerGeometry(bufferSpan, false, LineMarkerPadding, true);
+			GetMarkerGeometry(bufferSpan, false, MarkerHelper.LineMarkerPadding, true);
 		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
 			GetMarkerGeometry(bufferSpan, clipToViewport, padding, true);
 
 		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan) =>
-			GetMarkerGeometry(bufferSpan, false, TextMarkerPadding, false);
+			GetMarkerGeometry(bufferSpan, false, MarkerHelper.TextMarkerPadding, false);
 		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
 			GetMarkerGeometry(bufferSpan, clipToViewport, padding, false);
 	
@@ -175,7 +172,7 @@ namespace dnSpy.Text.Editor {
 			bool createOutlinedPath = false;
 			PathGeometry geo = null;
 			var textBounds = GetNormalizedTextBounds(bufferSpan);
-			SelectionMarkerHelper.AddGeometries(textView, textBounds, isLineGeometry, clipToViewport, padding, ref geo, ref createOutlinedPath);
+			MarkerHelper.AddGeometries(textView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
 				geo = geo.GetOutlinedPathGeometry();
 			if (geo != null && geo.CanFreeze)
@@ -186,7 +183,7 @@ namespace dnSpy.Text.Editor {
 		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
-			if (SelectionMarkerHelper.IsMultiLineSpan(textView, bufferSpan))
+			if (MarkerHelper.IsMultiLineSpan(textView, bufferSpan))
 				return GetLineMarkerGeometry(bufferSpan);
 			return GetTextMarkerGeometry(bufferSpan);
 		}
@@ -194,7 +191,7 @@ namespace dnSpy.Text.Editor {
 		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
-			if (SelectionMarkerHelper.IsMultiLineSpan(textView, bufferSpan))
+			if (MarkerHelper.IsMultiLineSpan(textView, bufferSpan))
 				return GetLineMarkerGeometry(bufferSpan, clipToViewport, padding);
 			return GetTextMarkerGeometry(bufferSpan, clipToViewport, padding);
 		}
@@ -270,8 +267,11 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentException();
 			var coll = new Collection<ITextViewLine>();
 			for (int i = 0; i < lines.Count; i++) {
-				if (lines[i].IntersectsBufferSpan(bufferSpan))
-					coll.Add(lines[i]);
+				var line = lines[i];
+				if (line.IntersectsBufferSpan(bufferSpan))
+					coll.Add(line);
+				else if (coll.Count > 0)
+					break;
 			}
 			return coll;
 		}

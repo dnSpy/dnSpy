@@ -404,6 +404,7 @@
     <Compile Include="Text\Editor\AdornmentLayerCollection.cs" />
     <Compile Include="Text\Editor\AdornmentLayerDefinitionService.cs" />
     <Compile Include="Text\Editor\AdornmentLayerElement.cs" />
+    <Compile Include="Text\Editor\BoxSelectionHelper.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
@@ -425,6 +426,7 @@
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\GoToCommand.cs" />
     <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
+    <Compile Include="Text\Editor\IMarkerSpanCollection.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
     <Compile Include="Text\Editor\InvalidateClassificationsService.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />
@@ -432,6 +434,8 @@
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
     <Compile Include="Text\Editor\LogEditor.cs" />
     <Compile Include="Text\Editor\LogEditorCreator.cs" />
+    <Compile Include="Text\Editor\Marker.cs" />
+    <Compile Include="Text\Editor\MarkerHelper.cs" />
     <Compile Include="Text\Editor\MetadataAndOrder.cs" />
     <Compile Include="Text\Editor\MouseLocation.cs" />
     <Compile Include="Text\Editor\MouseProcessorCollection.cs" />
@@ -458,7 +462,6 @@
     <Compile Include="Text\Editor\ReplEditor.cs" />
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplSubBuffer.cs" />
-    <Compile Include="Text\Editor\SelectionMarkerHelper.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\SystemTextCaret.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
@@ -523,6 +526,7 @@
     <Compile Include="Text\TextVersion.cs" />
     <Compile Include="Text\TrackingPoint.cs" />
     <Compile Include="Text\TrackingSpan.cs" />
+    <Compile Include="Text\WPF\BrushComparer.cs" />
     <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />

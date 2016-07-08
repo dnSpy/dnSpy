@@ -60,8 +60,6 @@ namespace dnSpy.Text.Editor {
 				Children.Add(layerElem.Adornment);
 				adornmentLayerElements.Add(layerElem);
 			}
-			else
-				removedCallback?.Invoke(tag, adornment);
 			return canAdd;
 		}
 

@@ -55,8 +55,6 @@ namespace dnSpy.Text.Editor {
 				wpfTextView.Selection.Mode = TextSelectionMode.Box;
 			else if (isAlt && isShift)
 				wpfTextView.Selection.Mode = TextSelectionMode.Box;
-			else if (!isShift)
-				wpfTextView.Selection.Mode = TextSelectionMode.Stream;
 		}
 
 		void SelectToMousePosition(MouseEventArgs e, bool extendSelection) =>
@@ -65,6 +63,8 @@ namespace dnSpy.Text.Editor {
 			UpdateSelectionMode();
 			var snapshotLine = mouseLoc.TextViewLine.Start.GetContainingLine();
 			editorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, extendSelection);
+			if (wpfTextView.Selection.Mode == TextSelectionMode.Box)
+				allowVirtualSpace = true;
 			// The caret can move to an auto-indented location if the line is empty. Move to
 			// the first character if the user clicked somewhere before the auto-indented location.
 			if (!allowVirtualSpace && snapshotLine.Length == 0 && mouseLoc.Point.X < wpfTextView.Caret.Left)
@@ -77,7 +77,11 @@ namespace dnSpy.Text.Editor {
 			switch (e.ClickCount) {
 			default:
 			case 1:
-				SelectToMousePosition(mouseLoc, (Keyboard.Modifiers & ModifierKeys.Shift) != 0, (Keyboard.Modifiers & ModifierKeys.Alt) != 0);
+				bool isShift = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+				bool isAlt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
+				if (!isShift && !isAlt)
+					wpfTextView.Selection.Mode = TextSelectionMode.Stream;
+				SelectToMousePosition(mouseLoc, isShift, isAlt);
 				break;
 
 			case 2:

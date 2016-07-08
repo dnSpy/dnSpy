@@ -20,7 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -29,7 +31,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelection : ITextSelection {
-		ITextView ITextSelection.TextView { get; }
+		ITextView ITextSelection.TextView => TextView;
 		public IWpfTextView TextView { get; }
 		public bool IsEmpty => AnchorPoint == ActivePoint;
 		public bool IsReversed => ActivePoint < AnchorPoint;
@@ -66,7 +68,15 @@ namespace dnSpy.Text.Editor {
 			if (Mode == TextSelectionMode.Stream)
 				list.Add(StreamSelectionSpan);
 			else {
-				//TODO:
+				var helper = new BoxSelectionHelper(this);
+				var start = Start;
+				while (start <= End) {
+					var line = TextView.GetTextViewLineContainingBufferPosition(start.Position);
+					list.Add(helper.GetSpan(line));
+					if (line.IsLastDocumentLine())
+						break;
+					start = new VirtualSnapshotPoint(line.EndIncludingLineBreak);
+				}
 			}
 
 			// At least one span must be included, even if the span's empty
@@ -76,6 +86,20 @@ namespace dnSpy.Text.Editor {
 			return list;
 		}
 
+		internal IEnumerable<VirtualSnapshotSpan> VisibleSpans {
+			get {
+				if (IsEmpty)
+					yield break;
+				if (Mode == TextSelectionMode.Stream)
+					yield return StreamSelectionSpan;
+
+				var helper = new BoxSelectionHelper(this);
+				var lines = TextView.TextViewLines.GetTextViewLinesIntersectingSpan(StreamSelectionSpan.SnapshotSpan);
+				for (int i = 0; i < lines.Count; i++)
+					yield return helper.GetSpan(lines[i]);
+			}
+		}
+
 		public TextSelectionMode Mode {
 			get { return mode; }
 			set {
@@ -83,6 +107,8 @@ namespace dnSpy.Text.Editor {
 					return;
 				if (mode != TextSelectionMode.Stream && mode != TextSelectionMode.Box)
 					throw new ArgumentOutOfRangeException(nameof(mode));
+				if (!TextView.Options.IsAllowBoxSelectionEnabled())
+					return;
 				mode = value;
 				textSelectionLayer.OnModeUpdated();
 			}
@@ -148,7 +174,33 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public VirtualSnapshotSpan? GetSelectionOnTextViewLine(ITextViewLine line) {
-			throw new NotImplementedException();//TODO:
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			if (line.Snapshot != TextView.TextSnapshot)
+				throw new ArgumentException();
+			if (IsEmpty) {
+				if (line.ContainsBufferPosition(ActivePoint.Position))
+					return new VirtualSnapshotSpan(ActivePoint, ActivePoint);
+				return null;
+			}
+			if (Mode == TextSelectionMode.Stream) {
+				var spanTmp = line.ExtentIncludingLineBreak.Intersection(StreamSelectionSpan.SnapshotSpan);
+				if (spanTmp == null)
+					return null;
+				var span = spanTmp.Value;
+				if (End > new VirtualSnapshotPoint(line.End))
+					span = new SnapshotSpan(span.Start, line.EndIncludingLineBreak);
+				if (span.Length == 0)
+					return null;
+				return new VirtualSnapshotSpan(span);
+			}
+			else {
+				Debug.Assert(Mode == TextSelectionMode.Box);
+				if (!line.IntersectsBufferSpan(StreamSelectionSpan.SnapshotSpan))
+					return null;
+				var helper = new BoxSelectionHelper(this);
+				return helper.GetSpan(line);
+			}
 		}
 
 		public void Select(SnapshotSpan selectionSpan, bool isReversed) {

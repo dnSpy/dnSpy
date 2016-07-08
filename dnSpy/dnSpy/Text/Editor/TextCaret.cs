@@ -452,7 +452,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CaretPosition MoveToNextCaretPosition() {
-			if (textView.Options.IsVirtualSpaceEnabled()) {
+			if (textView.Options.IsVirtualSpaceEnabled() || textView.Selection.Mode == TextSelectionMode.Box) {
 				bool useVirtSpaces;
 				if (Position.VirtualSpaces > 0)
 					useVirtSpaces = true;
@@ -475,7 +475,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CaretPosition MoveToPreviousCaretPosition() {
-			if (Position.VirtualSpaces > 0 && textView.Options.IsVirtualSpaceEnabled())
+			if (Position.VirtualSpaces > 0 && (textView.Options.IsVirtualSpaceEnabled() || textView.Selection.Mode == TextSelectionMode.Box))
 				return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces - 1));
 			if (Position.BufferPosition.Position == 0)
 				return Position;
@@ -490,7 +490,7 @@ namespace dnSpy.Text.Editor {
 					newPos = line.End;
 				newPos = line.GetTextElementSpan(newPos).Start;
 			}
-			if (textView.Options.IsVirtualSpaceEnabled()) {
+			if (textView.Options.IsVirtualSpaceEnabled() || textView.Selection.Mode == TextSelectionMode.Box) {
 				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
 				if (line.ExtentIncludingLineBreak != currentLine.ExtentIncludingLineBreak)
 					newPos = currentLine.Start;

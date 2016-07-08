@@ -58,6 +58,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 		}
 
+		bool MoveInVirtualSpace => Options.IsVirtualSpaceEnabled() || Selection.Mode == TextSelectionMode.Box;
 		public ITrackingSpan ProvisionalCompositionSpan => null;//TODO:
 		public IEditorOptions Options => TextView.Options;
 		public string SelectedText => TextView.Selection.GetText();
@@ -1095,7 +1096,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-			if (!Options.IsVirtualSpaceEnabled())
+			if (!MoveInVirtualSpace)
 				Caret.MoveToNextCaretPosition();
 			else {
 				var line = Snapshot.GetLineFromPosition(Caret.Position.BufferPosition.Position);
@@ -1138,7 +1139,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-			if (!Options.IsVirtualSpaceEnabled())
+			if (!MoveInVirtualSpace)
 				Caret.MoveToPreviousCaretPosition();
 			else {
 				if (Caret.InVirtualSpace)
@@ -1339,7 +1340,7 @@ namespace dnSpy.Text.Editor.Operations {
 			Caret.EnsureVisible();
 
 			var newPos = Caret.Position.VirtualBufferPosition;
-			if (!Selection.IsEmpty && newPos != pos)
+			if (newPos != pos)
 				Selection.Clear();
 		}
 
@@ -1363,8 +1364,10 @@ namespace dnSpy.Text.Editor.Operations {
 			return;//TODO:
 		}
 
-		public void SelectAll() =>
+		public void SelectAll() {
+			Selection.Mode = TextSelectionMode.Stream;
 			SelectAndMove(new SnapshotSpan(new SnapshotPoint(Snapshot, 0), Snapshot.Length));
+		}
 
 		void SelectAndMove(SnapshotSpan span) {
 			Selection.Select(span, false);
