@@ -22,15 +22,16 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
 using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
@@ -92,15 +93,15 @@ namespace dnSpy.Files.Tabs {
 			tab.FollowReference(member, false);
 		}
 
-		static object AskForDef(string title, ITokenResolver resolver) => Shared.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
+		static object AskForDef(string title, ITokenResolver resolver) => MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
 			string error;
-			uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 			var memberRef = resolver.ResolveToken(token);
 			var member = ResolveDef(memberRef);
 			return member;
 		}, s => {
 			string error;
-			uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 			if (!string.IsNullOrEmpty(error))
 				return error;
 			var memberRef = resolver.ResolveToken(token);

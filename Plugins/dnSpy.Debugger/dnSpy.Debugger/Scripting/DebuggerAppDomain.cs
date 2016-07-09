@@ -24,8 +24,8 @@ using System.Linq;
 using System.Reflection;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
-using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerAppDomain : IAppDomain {

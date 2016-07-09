@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
@@ -46,13 +47,13 @@ namespace Example1.Plugin {
 
 	[ExportMenuItem(Header = "Command #1", Group = Constants.GROUP_TREEVIEW, Order = 0)]
 	sealed class TVCommand1 : TVCtxMenuCommand {
-		public override void Execute(TVContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
+		public override void Execute(TVContext context) => MsgBox.Instance.Show("Command #1");
 		public override bool IsEnabled(TVContext context) => context.Nodes.Length > 1;
 	}
 
 	[ExportMenuItem(Header = "Command #2", Group = Constants.GROUP_TREEVIEW, Order = 10)]
 	sealed class TVCommand2 : TVCtxMenuCommand {
-		public override void Execute(TVContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #2");
+		public override void Execute(TVContext context) => MsgBox.Instance.Show("Command #2");
 		public override bool IsVisible(TVContext context) => context.Nodes.Length > 0;
 	}
 
@@ -60,7 +61,7 @@ namespace Example1.Plugin {
 	sealed class TVCommand3 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			int secretNum = new Random().Next() % 10;
-			dnSpy.Shared.App.MsgBox.Instance.Ask<int?>("Number", null, "Guess a number", null, s => {
+			MsgBox.Instance.Ask<int?>("Number", null, "Guess a number", null, s => {
 				int num;
 				if (string.IsNullOrWhiteSpace(s))
 					return "Enter a number";
@@ -77,7 +78,7 @@ namespace Example1.Plugin {
 
 	[ExportMenuItem(Header = "Command #4", Group = Constants.GROUP_TREEVIEW, Order = 30)]
 	sealed class TVCommand4 : TVCtxMenuCommand {
-		public override void Execute(TVContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #4");
+		public override void Execute(TVContext context) => MsgBox.Instance.Show("Command #4");
 		public override bool IsEnabled(TVContext context) => context.Nodes.Length == 1 && context.Nodes[0] is IModuleFileNode;
 	}
 

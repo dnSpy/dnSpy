@@ -29,9 +29,9 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {

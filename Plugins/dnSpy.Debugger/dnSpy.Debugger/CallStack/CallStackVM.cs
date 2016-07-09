@@ -25,8 +25,8 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackVM {

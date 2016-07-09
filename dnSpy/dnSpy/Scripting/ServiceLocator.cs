@@ -23,7 +23,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Windows.Threading;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Scripting {
 	[Export, Export(typeof(IServiceLocator))]

@@ -20,7 +20,7 @@
 using System.IO;
 using dndbg.Engine;
 using dnlib.PE;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessVM : ViewModelBase {

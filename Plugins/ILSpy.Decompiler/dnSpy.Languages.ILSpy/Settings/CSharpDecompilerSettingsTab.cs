@@ -22,9 +22,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Languages.ILSpy.Properties;
-using dnSpy.Shared.MVVM;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.Settings {

@@ -20,8 +20,8 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Locals {
 	interface ILocalsSettings : INotifyPropertyChanged {

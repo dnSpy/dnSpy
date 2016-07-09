@@ -73,9 +73,9 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler ViewportWidthChanged;
 		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
 		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;
-#pragma warning disable CS0067
+#pragma warning disable 0067
 		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
-#pragma warning restore CS0067
+#pragma warning restore 0067
 		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
 		public DnSpyTextEditor DnSpyTextEditor { get; }
 		public IFormattedLineSource FormattedLineSource { get; private set; }
@@ -101,7 +101,7 @@ namespace dnSpy.Text.Editor {
 		readonly List<PhysicalLine> visiblePhysicalLines;
 		readonly TextLayer textLayer;
 
-#pragma warning disable CS0169
+#pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.Text)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Caret)]
@@ -116,7 +116,7 @@ namespace dnSpy.Text.Editor {
 		[Name(PredefinedAdornmentLayers.Selection)]
 		[Order(Before = PredefinedAdornmentLayers.Text)]
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
-#pragma warning restore CS0169
+#pragma warning restore 0169
 
 		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
 			if (dnSpyTextEditor == null)

@@ -14,7 +14,8 @@
 /u:System.Threading.Tasks
 
 # Add extra stuff
-/r:dnSpy.Contracts.dll
+/r:dnSpy.Contracts.Logic.dll
+/r:dnSpy.Contracts.DnSpy.dll
 /r:dnSpy.Shared.dll
 /r:dnlib.dll
 /u:dnSpy.Contracts.Scripting

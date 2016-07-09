@@ -24,6 +24,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {

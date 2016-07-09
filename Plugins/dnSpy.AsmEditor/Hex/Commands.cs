@@ -29,6 +29,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Hex.Nodes;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
@@ -39,6 +40,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
 using dnSpy.Shared.Menus;
@@ -1360,7 +1362,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			var tokRef = new TokenReference(module, token.Value);
 			if (HexFileTreeNodeDataFinder.FindNode(fileTabManager.FileTreeView, tokRef) == null) {
-				Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_TokenDoesNotExist, token.Value));
+				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_TokenDoesNotExist, token.Value));
 				return;
 			}
 
@@ -1371,13 +1373,13 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static uint? AskForDef(string title, ITokenResolver resolver) {
-			return Shared.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
+			return MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
 				string error;
-				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 				return string.IsNullOrEmpty(error) ? token : (uint?)null;
 			}, s => {
 				string error;
-				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				var memberRef = resolver.ResolveToken(token);

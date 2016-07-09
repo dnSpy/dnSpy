@@ -31,7 +31,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class BamlResourceProjectFile : ProjectFile {
-		public override string Description => Languages_Resources.MSBuild_DecompileBaml;
+		public override string Description => dnSpy_Languages_Resources.MSBuild_DecompileBaml;
 		public bool IsAppDef { get; set; }
 		public override BuildAction BuildAction => IsAppDef ? BuildAction.ApplicationDefinition : BuildAction.Page;
 		public override string Filename { get; }
@@ -68,7 +68,7 @@ namespace dnSpy.Languages.MSBuild {
 
 	// App.xaml isn't always created, so we must recreate it from the info found in the class.
 	sealed class AppBamlResourceProjectFile : ProjectFile {
-		public override string Description => Languages_Resources.MSBuild_CreateAppXaml;
+		public override string Description => dnSpy_Languages_Resources.MSBuild_CreateAppXaml;
 		public override BuildAction BuildAction { get; }
 		public override string Filename { get; }
 

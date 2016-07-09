@@ -562,7 +562,7 @@ namespace dnSpy.AsmEditor.Module {
 			var fm = appWindow.FileTreeView.FileManager;
 			var file = DnSpyFile.CreateDnSpyFileFromFile(DnSpyFileInfo.CreateFile(dialog.FileName), dialog.FileName, fm.Settings.UseMemoryMappedIO, fm.Settings.LoadPDBFiles, fm.AssemblyResolver, true);
 			if (file.ModuleDef == null || file.AssemblyDef != null || !(file is IDnSpyDotNetFile)) {
-				Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotNetModule, file.Filename), MsgBoxButton.OK);
+				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotNetModule, file.Filename), MsgBoxButton.OK);
 				var id = file as IDisposable;
 				if (id != null)
 					id.Dispose();

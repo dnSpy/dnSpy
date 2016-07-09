@@ -21,8 +21,8 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.TreeView {
 	class FileTreeViewSettings : ViewModelBase, IFileTreeViewSettings {

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Properties;
 using dnSpy.Shared.Menus;
@@ -80,7 +81,7 @@ namespace dnSpy.Culture {
 		public override void Execute(IMenuItemContext context) {
 			if (!cultureManager.Language.Equals(langInfo)) {
 				cultureManager.Language = langInfo;
-				Shared.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("778A97E0-E7F8-4965-B2A0-BB6E0281B9F9"), dnSpy_Resources.LanguageSwitchMessage);
+				MsgBox.Instance.ShowIgnorableMessage(new Guid("778A97E0-E7F8-4965-B2A0-BB6E0281B9F9"), dnSpy_Resources.LanguageSwitchMessage);
 			}
 		}
 	}

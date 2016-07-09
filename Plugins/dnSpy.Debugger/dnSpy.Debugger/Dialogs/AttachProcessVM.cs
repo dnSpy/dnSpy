@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
 using dnSpy.Shared.MVVM;
 

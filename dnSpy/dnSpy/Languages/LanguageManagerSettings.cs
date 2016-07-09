@@ -21,8 +21,8 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Languages {
 	interface ILanguageManagerSettings : INotifyPropertyChanged {

@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Classification {
 	static class ThemeClassificationFormatDefinitions {
-#pragma warning disable CS0169
+#pragma warning disable 0169
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(PredefinedClassificationTypeNames.NaturalLanguage)]
 		static ClassificationTypeDefinition NaturalLanguageClassificationTypeDefinition;
@@ -743,7 +743,7 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.DebugLogTimestamp)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogTimestampClassificationTypeDefinition;
-#pragma warning restore CS0169
+#pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Text)]

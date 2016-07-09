@@ -118,10 +118,10 @@ namespace dnSpy.Text.Classification {
 		}
 
 		const string TRANSIENT_NAME = "(TRANSIENT)";
-#pragma warning disable CS0169
+#pragma warning disable 0169
 		[Export, Name(TRANSIENT_NAME)]
 		static ClassificationTypeDefinition _transientClassificationTypeDefinition;
-#pragma warning restore CS0169
+#pragma warning restore 0169
 
 		public IClassificationType CreateClassificationType(string type, IEnumerable<IClassificationType> baseTypes) {
 			if (baseTypes == null)

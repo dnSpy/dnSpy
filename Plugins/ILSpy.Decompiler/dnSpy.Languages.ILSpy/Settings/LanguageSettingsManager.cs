@@ -18,39 +18,14 @@
 */
 
 using System.ComponentModel.Composition;
-using System.Threading;
 
 namespace dnSpy.Languages.ILSpy.Settings {
-	[Export]
-	sealed class LanguageSettingsManager {
-		/// <summary>
-		/// Should only be used indirectly by dnSpy.Console.exe
-		/// </summary>
-		public static LanguageSettingsManager __Instance_DONT_USE {
-			get {
-				if (__instance_DONT_USE == null)
-					Interlocked.CompareExchange(ref __instance_DONT_USE, new LanguageSettingsManager(), null);
-				return __instance_DONT_USE;
-			}
-		}
-		static LanguageSettingsManager __instance_DONT_USE;
-
-		LanguageSettingsManager() {
-			this.LanguageDecompilerSettings = new LanguageDecompilerSettings();
-			this.ILLanguageDecompilerSettings = new ILLanguageDecompilerSettings();
-		}
-
+	[Export(typeof(LanguageSettingsManager))]
+	sealed class LanguageSettingsManagerImpl : LanguageSettingsManager {
 		[ImportingConstructor]
-		LanguageSettingsManager(DecompilerSettingsImpl decompilerSettings, ILSettingsImpl ilSettings) {
+		LanguageSettingsManagerImpl(DecompilerSettingsImpl decompilerSettings, ILSettingsImpl ilSettings) {
 			this.LanguageDecompilerSettings = new LanguageDecompilerSettings(decompilerSettings);
 			this.ILLanguageDecompilerSettings = new ILLanguageDecompilerSettings(ilSettings);
 		}
-
-		public LanguageDecompilerSettings LanguageDecompilerSettings { get; }
-		public ILLanguageDecompilerSettings ILLanguageDecompilerSettings { get; }
-
-#if DEBUG
-		public ILAstLanguageDecompilerSettings ILAstLanguageDecompilerSettings { get; } = new ILAstLanguageDecompilerSettings();
-#endif
 	}
 }

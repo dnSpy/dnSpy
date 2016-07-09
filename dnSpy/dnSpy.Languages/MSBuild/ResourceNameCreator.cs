@@ -163,7 +163,6 @@ namespace dnSpy.Languages.MSBuild {
 			Debug.Assert(resourceName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase));
 			var name = resourceName.Substring(0, resourceName.Length - ".baml".Length);
 			var nameNoExt = name;
-			var ns = GetNamespace(name);
 			name = name.Replace('/', '.');
 			typeFullName = GetFullName(name);
 			if (!string.IsNullOrEmpty(typeFullName))
@@ -233,7 +232,6 @@ namespace dnSpy.Languages.MSBuild {
 			}
 
 			// XAML resources only include the last part of types, eg. BaseNS.NS1.Type1 => ns1/type1
-			var pmap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			var pmap2 = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			var pmap3 = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			var pnsmap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
@@ -249,7 +247,6 @@ namespace dnSpy.Languages.MSBuild {
 				pmap3[fullName] = fullName;
 				var name = fullName;
 				while (name.Length > 0) {
-					pmap[name] = name;
 					pmap2[name] = fullName;
 					int index = name.IndexOf('.');
 					if (index < 0)
@@ -273,7 +270,6 @@ namespace dnSpy.Languages.MSBuild {
 			}
 
 			partialNamespaceMap = pnsmap;
-			partialTypeNameMap = pmap;
 			partialTypeToFullNameMap = pmap2;
 			typeToFullNameMap = pmap3;
 			lowerCaseNsToReal = dict;
@@ -282,7 +278,6 @@ namespace dnSpy.Languages.MSBuild {
 		HashSet<string> namespaces;
 		Dictionary<string, string> lowerCaseNsToReal;
 		Dictionary<string, string> partialNamespaceMap;
-		Dictionary<string, string> partialTypeNameMap;
 		Dictionary<string, string> partialTypeToFullNameMap;
 		Dictionary<string, string> typeToFullNameMap;
 	}

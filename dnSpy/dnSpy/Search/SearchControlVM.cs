@@ -28,10 +28,11 @@ using System.Windows.Data;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
-using dnSpy.Shared.Files;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;
 

@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Decompiler {
 	sealed class DecompilerAppSettingsTabSettings {

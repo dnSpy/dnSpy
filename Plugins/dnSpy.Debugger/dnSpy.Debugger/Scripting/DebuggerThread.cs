@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dndbg.COM.CorDebug;
+using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
-using dnSpy.Shared.Scripting;
 using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {

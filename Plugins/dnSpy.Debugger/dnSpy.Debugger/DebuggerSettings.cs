@@ -22,8 +22,8 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger {
 	interface IDebuggerSettings : INotifyPropertyChanged {

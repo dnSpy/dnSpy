@@ -30,9 +30,9 @@ using System.Security;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.MSBuild;
-using dnSpy.Shared.MVVM;
 using dnSpy_Console.Properties;
 
 namespace dnSpy_Console {
@@ -118,7 +118,7 @@ namespace dnSpy_Console {
 
 		static IEnumerable<ILanguage> GetAllLanguages() {
 			var asmNames = new string[] {
-				"Languages.ILSpy.Plugin",
+				"dnSpy.Languages.ILSpy.Core",
 			};
 			foreach (var asmName in asmNames) {
 				foreach (var l in GetLanguagesInAssembly(asmName))
@@ -370,7 +370,7 @@ namespace dnSpy_Console {
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingNumberOfThreads);
 						i++;
-						numThreads = NumberVMUtils.ParseInt32(next, int.MinValue, int.MaxValue, out error);
+						numThreads = SimpleTypeConverter.ParseInt32(next, int.MinValue, int.MaxValue, out error);
 						if (!string.IsNullOrEmpty(error))
 							throw new ErrorException(error);
 						break;
@@ -380,7 +380,7 @@ namespace dnSpy_Console {
 							throw new ErrorException(dnSpy_Console_Resources.MissingVSVersion);
 						i++;
 						int vsVer;
-						vsVer = NumberVMUtils.ParseInt32(next, int.MinValue, int.MaxValue, out error);
+						vsVer = SimpleTypeConverter.ParseInt32(next, int.MinValue, int.MaxValue, out error);
 						if (!string.IsNullOrEmpty(error))
 							throw new ErrorException(error);
 						switch (vsVer) {
@@ -418,7 +418,7 @@ namespace dnSpy_Console {
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingMDToken);
 						i++;
-						mdToken = NumberVMUtils.ParseInt32(next, int.MinValue, int.MaxValue, out error);
+						mdToken = SimpleTypeConverter.ParseInt32(next, int.MinValue, int.MaxValue, out error);
 						if (!string.IsNullOrEmpty(error))
 							throw new ErrorException(error);
 						break;
@@ -458,7 +458,7 @@ namespace dnSpy_Console {
 
 		static int ParseInt32(string s) {
 			string error;
-			var v = NumberVMUtils.ParseInt32(s, int.MinValue, int.MaxValue, out error);
+			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out error);
 			if (!string.IsNullOrEmpty(error))
 				throw new ErrorException(error);
 			return v;
@@ -639,12 +639,17 @@ namespace dnSpy_Console {
 				}
 			}
 
+			// Don't use exact matching here so the user can tell us to load eg. "mscorlib, Version=4.0.0.0" which
+			// is easier to type than the full assembly name
+			var oldFindExactMatch = assemblyResolver.FindExactMatch;
+			assemblyResolver.FindExactMatch = false;
 			foreach (var asmName in gacFiles) {
 				var asm = this.assemblyResolver.Resolve(new AssemblyNameInfo(asmName), null);
 				if (asm == null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.CouldNotResolveGacFileX, asmName));
 				yield return CreateProjectModuleOptions(asm.ManifestModule);
 			}
+			assemblyResolver.FindExactMatch = oldFindExactMatch;
 		}
 
 		IEnumerable<ProjectModuleOptions> DumpDir(string path, string pattern) {

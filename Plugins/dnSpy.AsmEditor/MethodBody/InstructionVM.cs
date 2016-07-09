@@ -25,6 +25,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {

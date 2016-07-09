@@ -28,6 +28,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Controls;
 using dnSpy.Events;

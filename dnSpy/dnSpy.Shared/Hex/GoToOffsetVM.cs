@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Shared.Hex {

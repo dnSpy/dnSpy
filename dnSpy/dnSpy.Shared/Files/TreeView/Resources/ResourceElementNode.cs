@@ -30,8 +30,8 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
 using dnSpy.Shared.Text;
 
@@ -118,43 +118,43 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 					return "null";
 
 				case ResourceTypeCode.String:
-					return NumberVMUtils.ToString((string)((BuiltInResourceData)resourceElement.ResourceData).Data, false);
+					return SimpleTypeConverter.ToString((string)((BuiltInResourceData)resourceElement.ResourceData).Data, false);
 
 				case ResourceTypeCode.Boolean:
-					return NumberVMUtils.ToString((bool)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((bool)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Char:
-					return NumberVMUtils.ToString((char)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((char)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Byte:
-					return NumberVMUtils.ToString((byte)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((byte)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.SByte:
-					return NumberVMUtils.ToString((sbyte)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((sbyte)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Int16:
-					return NumberVMUtils.ToString((short)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((short)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.UInt16:
-					return NumberVMUtils.ToString((ushort)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((ushort)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Int32:
-					return NumberVMUtils.ToString((int)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((int)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.UInt32:
-					return NumberVMUtils.ToString((uint)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((uint)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Int64:
-					return NumberVMUtils.ToString((long)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((long)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.UInt64:
-					return NumberVMUtils.ToString((ulong)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((ulong)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Single:
-					return NumberVMUtils.ToString((float)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((float)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Double:
-					return NumberVMUtils.ToString((double)((BuiltInResourceData)resourceElement.ResourceData).Data);
+					return SimpleTypeConverter.ToString((double)((BuiltInResourceData)resourceElement.ResourceData).Data);
 
 				case ResourceTypeCode.Decimal:
 					return ((decimal)((BuiltInResourceData)resourceElement.ResourceData).Data).ToString();

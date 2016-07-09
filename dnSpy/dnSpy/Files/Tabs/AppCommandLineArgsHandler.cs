@@ -24,8 +24,8 @@ using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Shared.Languages.XmlDoc;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Languages.XmlDoc;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Files.Tabs {
 	[Export(typeof(IAppCommandLineArgsHandler))]
@@ -62,7 +62,7 @@ namespace dnSpy.Files.Tabs {
 				return false;
 
 			string error;
-			uint token = NumberVMUtils.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out error);
+			uint token = SimpleTypeConverter.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out error);
 			if (string.IsNullOrEmpty(error)) {
 				var mod = GetLoadedFiles(args).FirstOrDefault();
 				var member = mod?.ResolveToken(token);

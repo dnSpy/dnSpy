@@ -25,9 +25,9 @@ using System.Reflection;
 using System.Threading;
 using dndbg.Engine;
 using dnlib.PE;
+using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Debugger.Modules;
-using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerModule : IDebuggerModule {

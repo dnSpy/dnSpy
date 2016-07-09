@@ -19,13 +19,49 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Resources;
 using dnlib.DotNet;
 using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class ResXProjectFile : ProjectFile {
-		public override string Description => Languages_Resources.MSBuild_CreateResXFile;
+		static ResXProjectFile() {
+			// Mono doesn't support the constructors that we need
+
+			Type[] paramTypes;
+			ConstructorInfo ctorInfo;
+
+			paramTypes = new Type[] { typeof(string), typeof(Func<Type, string>) };
+			ctorInfo = typeof(ResXResourceWriter).GetConstructor(paramTypes);
+			if (ctorInfo != null) {
+				var dynMethod = new DynamicMethod("ResXResourceWriter-ctor", typeof(ResXResourceWriter), paramTypes);
+				var ilg = dynMethod.GetILGenerator();
+				ilg.Emit(OpCodes.Ldarg_0);
+				ilg.Emit(OpCodes.Ldarg_1);
+				ilg.Emit(OpCodes.Newobj, ctorInfo);
+				ilg.Emit(OpCodes.Ret);
+				delegateResXResourceWriterConstructor = (Func<string, Func<Type, string>, ResXResourceWriter>)dynMethod.CreateDelegate(typeof(Func<string, Func<Type, string>, ResXResourceWriter>));
+			}
+
+			paramTypes = new Type[] { typeof(string), typeof(object), typeof(Func<Type, string>) };
+			ctorInfo = typeof(ResXDataNode).GetConstructor(paramTypes);
+			if (ctorInfo != null) {
+				var dynMethod = new DynamicMethod("ResXDataNode-ctor", typeof(ResXDataNode), paramTypes);
+				var ilg = dynMethod.GetILGenerator();
+				ilg.Emit(OpCodes.Ldarg_0);
+				ilg.Emit(OpCodes.Ldarg_1);
+				ilg.Emit(OpCodes.Ldarg_2);
+				ilg.Emit(OpCodes.Newobj, ctorInfo);
+				ilg.Emit(OpCodes.Ret);
+				delegateResXDataNodeConstructor = (Func<string, object, Func<Type, string>, ResXDataNode>)dynMethod.CreateDelegate(typeof(Func<string, object, Func<Type, string>, ResXDataNode>));
+			}
+		}
+		static readonly Func<string, Func<Type, string>, ResXResourceWriter> delegateResXResourceWriterConstructor;
+		static readonly Func<string, object, Func<Type, string>, ResXDataNode> delegateResXDataNodeConstructor;
+
+		public override string Description => dnSpy_Languages_Resources.MSBuild_CreateResXFile;
 		public override BuildAction BuildAction => BuildAction.EmbeddedResource;
 		public override string Filename => filename;
 		readonly string filename;
@@ -34,11 +70,9 @@ namespace dnSpy.Languages.MSBuild {
 		public bool IsSatelliteFile { get; set; }
 
 		readonly EmbeddedResource embeddedResource;
-		readonly ModuleDef module;
 		readonly Dictionary<IAssembly, IAssembly> newToOldAsm;
 
 		public ResXProjectFile(ModuleDef module, string filename, string typeFullName, EmbeddedResource er) {
-			this.module = module;
 			this.filename = filename;
 			this.TypeFullName = typeFullName;
 			this.embeddedResource = er;
@@ -51,7 +85,7 @@ namespace dnSpy.Languages.MSBuild {
 		public override void Create(DecompileContext ctx) {
 			var list = ReadResourceEntries(ctx);
 
-			using (var writer = new ResXResourceWriter(Filename, TypeNameConverter)) {
+			using (var writer = delegateResXResourceWriterConstructor?.Invoke(Filename, TypeNameConverter) ?? new ResXResourceWriter(Filename)) {
 				foreach (var t in list) {
 					ctx.CancellationToken.ThrowIfCancellationRequested();
 					writer.AddResource(t);
@@ -86,7 +120,7 @@ namespace dnSpy.Languages.MSBuild {
 								continue;
 							//TODO: Some resources, like images, should be saved as separate files. Use ResXFileRef.
 							//		Don't do it if it's a satellite assembly.
-							list.Add(new ResXDataNode(key, iter.Value, TypeNameConverter));
+							list.Add(delegateResXDataNodeConstructor?.Invoke(key, iter.Value, TypeNameConverter) ?? new ResXDataNode(key, iter.Value));
 						}
 						catch (Exception ex) {
 							if (errors++ < 30)

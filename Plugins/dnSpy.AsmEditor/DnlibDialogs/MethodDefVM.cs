@@ -19,7 +19,7 @@
 
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefVM : ViewModelBase {

@@ -35,6 +35,7 @@ namespace dnSpy.Languages.ILSpy {
 
 		public PluginInfo PluginInfo => new PluginInfo {
 			ShortDescription = dnSpy_Languages_ILSpy_Resources.Plugin_ShortDescription,
+			Copyright = "Copyright 2011-2014 AlphaSierraPapa for the SharpDevelop Team",
 		};
 
 		public void OnEvent(PluginEvent @event, object obj) {

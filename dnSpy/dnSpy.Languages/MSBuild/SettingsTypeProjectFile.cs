@@ -28,7 +28,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class SettingsTypeProjectFile : TypeProjectFile {
-		public override string Description => Languages_Resources.MSBuild_CreateSettingsTypeFile;
+		public override string Description => dnSpy_Languages_Resources.MSBuild_CreateSettingsTypeFile;
 		public ILanguage Language => language;
 		public DecompilationContext DecompilationContext => decompilationContext;
 		public override BuildAction BuildAction => isEmpty ? BuildAction.DontIncludeInProjectFile : base.BuildAction;
@@ -120,7 +120,7 @@ namespace dnSpy.Languages.MSBuild {
 	}
 
 	sealed class SettingsDesignerTypeProjectFile : ProjectFile {
-		public override string Description => Languages_Resources.MSBuild_CreateSettingsDesignerTypeFile;
+		public override string Description => dnSpy_Languages_Resources.MSBuild_CreateSettingsDesignerTypeFile;
 		public override BuildAction BuildAction => BuildAction.Compile;
 		public override string Filename => filename;
 		readonly string filename;

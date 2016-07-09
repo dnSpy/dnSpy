@@ -4,8 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 // This file adds custom file tab content when the user clicks on our new AssemblyChildNode tree node.
 // This node is created by TreeNodeDataCreator.cs.

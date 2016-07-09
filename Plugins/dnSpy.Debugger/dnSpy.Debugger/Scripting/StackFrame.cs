@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 using dndbg.Engine;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
-using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class StackFrame : IStackFrame {

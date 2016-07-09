@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Locals {
@@ -148,7 +149,7 @@ namespace dnSpy.Debugger.Locals {
 						error = string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteNewValue, ex.Message);
 					}
 					if (!string.IsNullOrEmpty(error))
-						Shared.App.MsgBox.Instance.Show(error);
+						MsgBox.Instance.Show(error);
 				}
 			}
 

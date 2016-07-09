@@ -22,7 +22,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class ResourceProjectFile : ProjectFile {
-		public override string Description => string.Format(Languages_Resources.MSBuild_CreateResource, rsrcName);
+		public override string Description => string.Format(dnSpy_Languages_Resources.MSBuild_CreateResource, rsrcName);
 		public override BuildAction BuildAction => BuildAction.Resource;
 		public override string Filename => filename;
 		readonly string filename;

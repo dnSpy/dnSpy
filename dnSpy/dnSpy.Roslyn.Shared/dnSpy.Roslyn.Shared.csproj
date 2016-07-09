@@ -65,9 +65,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
-      <Project>{9B234472-0E22-428C-9345-C8D9EE5E06AF}</Project>
-      <Name>dnSpy.Contracts</Name>
+    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
+      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
+      <Name>dnSpy.Contracts.DnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -26,7 +26,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Properties;
-using dnSpy.Shared.App;
 
 namespace dnSpy.MainApp {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins, Order = double.MinValue)]

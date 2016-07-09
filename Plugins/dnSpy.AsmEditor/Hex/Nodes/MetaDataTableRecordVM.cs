@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected string ReadStringsHeap(HexField field) {
-			var s = NumberVMUtils.ToString(mdVM.ReadStringsHeap(ReadFieldValue(field)), false);
+			var s = SimpleTypeConverter.ToString(mdVM.ReadStringsHeap(ReadFieldValue(field)), false);
 			Debug.Assert(s.Length >= 2);
 			if (s.Length < 2)
 				return s;

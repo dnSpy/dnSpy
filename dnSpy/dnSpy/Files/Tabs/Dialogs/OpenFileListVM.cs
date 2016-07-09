@@ -27,6 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
 

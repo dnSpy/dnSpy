@@ -24,9 +24,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text;
-using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ScriptGlobals : IScriptGlobals {
@@ -99,27 +99,27 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) =>
-			dispatcher.UI(() => Shared.App.MsgBox.Instance.Show(message, buttons, ownerWindow));
+			dispatcher.UI(() => MsgBox.Instance.Show(message, buttons, ownerWindow));
 
 		public MsgBoxButton ShowOKCancel(string message, Window ownerWindow = null) =>
-			dispatcher.UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.OK | MsgBoxButton.Cancel, ownerWindow));
+			dispatcher.UI(() => MsgBox.Instance.Show(message, MsgBoxButton.OK | MsgBoxButton.Cancel, ownerWindow));
 
 		public MsgBoxButton ShowOC(string message, Window ownerWindow = null) => ShowOKCancel(message, ownerWindow);
 
 		public MsgBoxButton ShowYesNo(string message, Window ownerWindow = null) =>
-			dispatcher.UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No, ownerWindow));
+			dispatcher.UI(() => MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No, ownerWindow));
 
 		public MsgBoxButton ShowYN(string message, Window ownerWindow = null) => ShowYesNo(message, ownerWindow);
 
 		public MsgBoxButton ShowYesNoCancel(string message, Window ownerWindow = null) =>
-			dispatcher.UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No | MsgBoxButton.Cancel, ownerWindow));
+			dispatcher.UI(() => MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No | MsgBoxButton.Cancel, ownerWindow));
 
 		public MsgBoxButton ShowYNC(string message, Window ownerWindow = null) => ShowYesNoCancel(message, ownerWindow);
 
 		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) =>
-			dispatcher.UI(() => Shared.App.MsgBox.Instance.Ask(labelMessage, defaultText, title, converter, verifier, ownerWindow));
+			dispatcher.UI(() => MsgBox.Instance.Ask(labelMessage, defaultText, title, converter, verifier, ownerWindow));
 
 		public void Show(Exception exception, string msg = null, Window ownerWindow = null) =>
-			dispatcher.UI(() => Shared.App.MsgBox.Instance.Show(exception, msg, ownerWindow));
+			dispatcher.UI(() => MsgBox.Instance.Show(exception, msg, ownerWindow));
 	}
 }

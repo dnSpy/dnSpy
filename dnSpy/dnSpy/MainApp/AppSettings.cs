@@ -20,8 +20,8 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	class AppSettings : ViewModelBase, IAppSettings {

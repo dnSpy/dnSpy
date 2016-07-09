@@ -25,11 +25,11 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Languages.IL;
-using dnSpy.Shared.Languages.XmlDoc;
 using dnSpy.Decompiler.Shared;
 using System.Text;
 using dnSpy.Shared.Text;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Languages.XmlDoc;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	[ExportToolTipContentCreator(Order = TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]

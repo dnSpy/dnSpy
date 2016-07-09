@@ -21,10 +21,10 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Shared.Hex {
 	public interface IHexEditorSettings : INotifyPropertyChanged {

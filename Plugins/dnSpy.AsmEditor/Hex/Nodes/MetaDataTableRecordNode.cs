@@ -23,9 +23,9 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -130,7 +130,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		string ReadStringsHeap(int index) {
 			var mdt = (MetaDataTableNode)TreeNode.Parent.Data;
 			var tableInfo = mdt.TableInfo;
-			var s = NumberVMUtils.ToString(mdt.MetaDataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Document, tableInfo.Columns[index])), false);
+			var s = SimpleTypeConverter.ToString(mdt.MetaDataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Document, tableInfo.Columns[index])), false);
 			Debug.Assert(s.Length >= 2);
 			if (s.Length < 2)
 				return s;

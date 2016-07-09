@@ -54,7 +54,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			if (refreshCSharp)
 				RefreshCode<CSharp.CSharpLanguage>();
 			if (refreshVB)
-				RefreshCode<VB.VBLanguage>();
+				RefreshCode<VisualBasic.VBLanguage>();
 		}
 
 		IEnumerable<Tuple<IFileTab, ILanguage>> LanguageTabs {

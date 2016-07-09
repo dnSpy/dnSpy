@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Windows.Input;
 using dndbg.Engine;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
 using dnSpy.Shared.MVVM;
 

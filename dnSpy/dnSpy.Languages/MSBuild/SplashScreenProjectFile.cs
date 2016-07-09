@@ -22,7 +22,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class SplashScreenProjectFile : ProjectFile {
-		public override string Description => string.Format(Languages_Resources.MSBuild_CreateSplashScreenResource, rsrcName);
+		public override string Description => string.Format(dnSpy_Languages_Resources.MSBuild_CreateSplashScreenResource, rsrcName);
 		public override BuildAction BuildAction => BuildAction.SplashScreen;
 		public override string Filename => filename;
 		readonly string filename;

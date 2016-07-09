@@ -27,6 +27,7 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {

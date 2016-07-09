@@ -22,10 +22,10 @@ using System.IO;
 using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Controls;
-using dnSpy.Shared.Languages.XmlDoc;
 using dnSpy.Shared.Text;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {

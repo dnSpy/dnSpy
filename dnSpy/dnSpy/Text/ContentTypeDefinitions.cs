@@ -23,7 +23,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	static class ContentTypeDefinitions {
-#pragma warning disable CS0169
+#pragma warning disable 0169
 		[Export]
 		[Name(ContentTypes.ANY)]
 		static readonly ContentTypeDefinition AnyContentTypeDefinition;
@@ -114,6 +114,6 @@ namespace dnSpy.Text {
 		[Name(ContentTypes.ABOUT_DNSPY)]
 		[BaseDefinition(ContentTypes.TEXT)]
 		static readonly ContentTypeDefinition AboutDnSpyContentTypeDefinition;
-#pragma warning restore CS0169
+#pragma warning restore 0169
 	}
 }

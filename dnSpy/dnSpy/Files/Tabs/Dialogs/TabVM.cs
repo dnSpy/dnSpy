@@ -21,7 +21,7 @@ using System.Linq;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabVM : ViewModelBase {

@@ -28,8 +28,8 @@ using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.BamlDecompiler {
 	internal class BamlDisassembler {
@@ -102,7 +102,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void WriteString(string value) {
-			string str = NumberVMUtils.ToString(value, true);
+			string str = SimpleTypeConverter.ToString(value, true);
 			output.Write(str, BoxedOutputColor.String);
 		}
 
@@ -196,12 +196,12 @@ namespace dnSpy.BamlDecompiler {
 				str = null;
 			string reference = null;
 			if (str != null)
-				reference = NumberVMUtils.ToString(str, true);
+				reference = SimpleTypeConverter.ToString(str, true);
 			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedOutputColor.Number, true);
 		}
 
 		void WriteDefinition(string value, string def = null) {
-			string str = NumberVMUtils.ToString(value, true);
+			string str = SimpleTypeConverter.ToString(value, true);
 			output.WriteDefinition(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), BoxedOutputColor.String, true);
 		}
 

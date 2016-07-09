@@ -29,6 +29,7 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.MVVM;
 

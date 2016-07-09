@@ -19,7 +19,7 @@
 
 using System.Windows.Media;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {

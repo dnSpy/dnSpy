@@ -29,8 +29,8 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
 using dnSpy.Shared.Text;
 
@@ -122,7 +122,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				break;
 			case ResourceType.Linked:
 				var file = ((LinkedResource)Resource).File;
-				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", NumberVMUtils.ByteArrayToString(file.HashValue));
+				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", SimpleTypeConverter.ByteArrayToString(file.HashValue));
 				break;
 			case ResourceType.Embedded:
 				extra = string.Format(dnSpy_Shared_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);

@@ -25,8 +25,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.CallStack;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Threads {
 	interface IThreadsVM {

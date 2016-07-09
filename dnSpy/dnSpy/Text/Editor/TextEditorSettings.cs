@@ -20,10 +20,10 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Shared.Controls;
-using dnSpy.Shared.MVVM;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {

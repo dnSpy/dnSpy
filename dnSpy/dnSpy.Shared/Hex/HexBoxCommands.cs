@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Shared.HexEditor;
 using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
@@ -217,7 +218,7 @@ namespace dnSpy.Shared.Hex {
 				return;
 			if (!data.WasError)
 				return;
-			App.MsgBox.Instance.Show(string.Format(dnSpy_Shared_Resources.AnErrorOccurred, data.ErrorMessage));
+			MsgBox.Instance.Show(string.Format(dnSpy_Shared_Resources.AnErrorOccurred, data.ErrorMessage));
 		}
 
 		internal static bool CanExecute(DnHexBox dnHexBox) => dnHexBox.Document != null && dnHexBox.Selection != null;
@@ -294,11 +295,11 @@ namespace dnSpy.Shared.Hex {
 
 			var res = messageBoxManager.Ask<byte?>(dnSpy_Shared_Resources.FillSelection_Label, "0xFF", dnSpy_Shared_Resources.FillSelection_Title, s => {
 				string error;
-				byte b = NumberVMUtils.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
+				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
 				return string.IsNullOrEmpty(error) ? b : (byte?)null;
 			}, s => {
 				string error;
-				byte b = NumberVMUtils.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
+				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
 				return error;
 			});
 			if (res == null)

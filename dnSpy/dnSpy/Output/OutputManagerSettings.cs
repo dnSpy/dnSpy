@@ -20,9 +20,9 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Shared.MVVM;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Output {

@@ -39,13 +39,13 @@ namespace dnSpy.Languages {
 				case 0: // no special meaning, MachineType and ILONLY flag determine image requirements
 					if (!module.IsILOnly)
 						return "x86";
-					return Languages_Resources.Decompile_AnyCPU64BitPreferred;
+					return dnSpy_Languages_Resources.Decompile_AnyCPU64BitPreferred;
 				case 1: // illegal, reserved for future use
 					return "???";
 				case 2: // image is x86-specific
 					return "x86";
 				case 3: // image is platform neutral and prefers to be loaded 32-bit when possible
-					return Languages_Resources.Decompile_AnyCPU32BitPreferred;
+					return dnSpy_Languages_Resources.Decompile_AnyCPU32BitPreferred;
 				}
 			}
 

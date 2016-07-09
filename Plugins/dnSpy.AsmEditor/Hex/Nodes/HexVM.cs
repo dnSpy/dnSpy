@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class HexVM : ViewModelBase {

@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Languages.MSBuild;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;

@@ -26,7 +26,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	class TypeProjectFile : ProjectFile {
-		public override string Description => string.Format(Languages_Resources.MSBuild_DecompileType, Type.FullName);
+		public override string Description => string.Format(dnSpy_Languages_Resources.MSBuild_DecompileType, Type.FullName);
 		public override BuildAction BuildAction => BuildAction.Compile;
 		public override string Filename => filename;
 		readonly string filename;

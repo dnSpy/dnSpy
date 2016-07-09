@@ -15,7 +15,8 @@
 /Imports:System.Xml.Linq
 
 # Add extra stuff
-/R:dnSpy.Contracts.dll
+/R:dnSpy.Contracts.Logic.dll
+/R:dnSpy.Contracts.DnSpy.dll
 /R:dnSpy.Shared.dll
 /R:dnlib.dll
 /Imports:dnSpy.Contracts.Scripting

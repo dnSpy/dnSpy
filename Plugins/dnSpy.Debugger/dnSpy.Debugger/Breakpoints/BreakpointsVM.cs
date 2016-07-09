@@ -26,9 +26,9 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Themes;
 using dnSpy.Debugger.IMModules;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointsVM {

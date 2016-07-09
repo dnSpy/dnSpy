@@ -26,10 +26,10 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.BamlDecompiler {
 	class BamlSettings : ViewModelBase {

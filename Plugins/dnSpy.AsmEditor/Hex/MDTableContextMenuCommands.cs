@@ -28,9 +28,11 @@ using System.Windows.Input;
 using dnSpy.AsmEditor.Hex.Nodes;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
 using dnSpy.Shared.Menus;
@@ -272,15 +274,15 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static MetaDataTableRecordVM Ask(string title, MDTableContext context) {
-			return Shared.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
+			return MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
 				string error;
-				uint rid = NumberVMUtils.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
+				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
 				if (!string.IsNullOrEmpty(error))
 					return null;
 				return context.MetaDataTableVM.Get((int)(rid - 1));
 			}, s => {
 				string error;
-				uint rid = NumberVMUtils.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
+				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (rid == 0 || rid > context.MetaDataTableVM.Rows)
@@ -385,7 +387,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var doc = context.MetaDataTableVM.Document;
 			ulong totalSize = (ulong)context.MetaDataTableVM.TableInfo.RowSize * (ulong)context.Records.Length * 2;
 			if (totalSize > int.MaxValue) {
-				Shared.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.TooManyBytesSelected);
+				MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.TooManyBytesSelected);
 				return;
 			}
 			var sb = new StringBuilder((int)totalSize);

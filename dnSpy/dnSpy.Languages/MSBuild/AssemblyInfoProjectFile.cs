@@ -26,7 +26,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class AssemblyInfoProjectFile : ProjectFile {
-		public override string Description => string.Format(Languages_Resources.MSBuild_DecompileAssemblyInfoAndFileExtension, language.FileExtension);
+		public override string Description => string.Format(dnSpy_Languages_Resources.MSBuild_DecompileAssemblyInfoAndFileExtension, language.FileExtension);
 		public override BuildAction BuildAction => BuildAction.Compile;
 		public override string Filename { get; }
 

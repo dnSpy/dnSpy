@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			catch (Exception ex) {
 				if (imgStream != null)
 					imgStream.Dispose();
-				Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenImage, ex.Message), MsgBoxButton.OK, ownerWindow);
+				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenImage, ex.Message), MsgBoxButton.OK, ownerWindow);
 				return null;
 			}
 		}

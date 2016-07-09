@@ -24,7 +24,7 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.Threading;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CAArgumentVM : ViewModelBase {

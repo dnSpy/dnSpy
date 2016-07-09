@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Shared.MVVM.Dialogs;
 using dnSpy.Shared.Properties;
@@ -54,7 +55,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				files = GetFiles(GetResourceData(nodes, resourceDataType), useSubDirs).ToArray();
 			}
 			catch (Exception ex) {
-				App.MsgBox.Instance.Show(ex);
+				MsgBox.Instance.Show(ex);
 				return;
 			}
 			if (files.Length == 0)
@@ -70,7 +71,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				return;
 			if (!data.WasError)
 				return;
-			App.MsgBox.Instance.Show(string.Format(dnSpy_Shared_Resources.AnErrorOccurred, data.ErrorMessage));
+			MsgBox.Instance.Show(string.Format(dnSpy_Shared_Resources.AnErrorOccurred, data.ErrorMessage));
 		}
 
 		static IEnumerable<Tuple<ResourceData, string>> GetFiles(ResourceData[] infos, bool useSubDirs) {

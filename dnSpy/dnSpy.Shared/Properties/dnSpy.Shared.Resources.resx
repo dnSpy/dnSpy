@@ -354,80 +354,8 @@
   <data name="HexEditor_Default2" xml:space="preserve">
     <value>Default</value>
   </data>
-  <data name="InvalidBoolean" xml:space="preserve">
-    <value>Value must be a boolean value (True or False)</value>
-  </data>
-  <data name="InvalidChar" xml:space="preserve">
-    <value>A character must be enclosed in single quotes (')</value>
-  </data>
-  <data name="InvalidDateTime" xml:space="preserve">
-    <value>Value must be a DateTime</value>
-  </data>
-  <data name="InvalidDecimal" xml:space="preserve">
-    <value>Value must be a Decimal</value>
-  </data>
-  <data name="InvalidDouble" xml:space="preserve">
-    <value>Value must be a 64-bit floating point number</value>
-  </data>
-  <data name="InvalidEscapeSequence" xml:space="preserve">
-    <value>Unknown character escape sequence: \{0}</value>
-  </data>
-  <data name="InvalidEscapeSequence2" xml:space="preserve">
-    <value>Unknown string escape sequence: \{0}</value>
-  </data>
   <data name="InvalidGuid" xml:space="preserve">
     <value>Invalid GUID</value>
-  </data>
-  <data name="InvalidHexCharacter" xml:space="preserve">
-    <value>A hex string must contain only hex digits: 0-9 and A-F</value>
-  </data>
-  <data name="InvalidHexStringSize" xml:space="preserve">
-    <value>A hex string must contain an even number of hex digits</value>
-  </data>
-  <data name="InvalidInteger1" xml:space="preserve">
-    <value>The value is not a hexadecimal or decimal integer</value>
-  </data>
-  <data name="InvalidInteger2" xml:space="preserve">
-    <value>The value is too small</value>
-  </data>
-  <data name="InvalidInteger3" xml:space="preserve">
-    <value>The value is too big</value>
-  </data>
-  <data name="InvalidInteger4" xml:space="preserve">
-    <value>Value must be between {0} and {1} (0x{1:X}) inclusive</value>
-  </data>
-  <data name="InvalidInteger5" xml:space="preserve">
-    <value>Value must be between {0} ({2}0x{0:X}) and {1} (0x{1:X}) inclusive</value>
-  </data>
-  <data name="InvalidListValue" xml:space="preserve">
-    <value>Value in list can't be empty</value>
-  </data>
-  <data name="InvalidListValue2" xml:space="preserve">
-    <value>List elements must be separated with commas</value>
-  </data>
-  <data name="InvalidSingle" xml:space="preserve">
-    <value>Value must be a 32-bit floating point number</value>
-  </data>
-  <data name="InvalidString1" xml:space="preserve">
-    <value>A string must contain the value 'null' or must be enclosed in double quotes (")</value>
-  </data>
-  <data name="InvalidString2" xml:space="preserve">
-    <value>A string must be enclosed in double quotes (")</value>
-  </data>
-  <data name="InvalidTimeSpan" xml:space="preserve">
-    <value>Value must be a TimeSpan</value>
-  </data>
-  <data name="InvalidUnsignedInteger1" xml:space="preserve">
-    <value>Only non-negative integers are allowed</value>
-  </data>
-  <data name="InvalidUnsignedInteger2" xml:space="preserve">
-    <value>The value is not an unsigned hexadecimal or decimal integer</value>
-  </data>
-  <data name="InvalidUnsignedInteger3" xml:space="preserve">
-    <value>Value must be between {0} and {1} (0x{1:X}) inclusive</value>
-  </data>
-  <data name="InvalidUnsignedInteger4" xml:space="preserve">
-    <value>Value must be between {0} (0x{0:X}) and {1} (0x{1:X}) inclusive</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
     <value>_Base Offset</value>

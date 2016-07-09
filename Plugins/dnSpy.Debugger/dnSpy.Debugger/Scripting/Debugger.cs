@@ -28,9 +28,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Debugger.CallStack;
-using dnSpy.Shared.Scripting;
 using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {

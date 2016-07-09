@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BB748E78-376F-429A-8D83-9A8946EC179F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dnSpy.Contracts</RootNamespace>
+    <AssemblyName>dnSpy.Contracts.Logic</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;USE_STABLE_VERSION</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\dnSpy.Contracts.Logic.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;USE_STABLE_VERSION</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\dnSpy.Contracts.Logic.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Languages\BamlDecompilerOptions.cs" />
+    <Compile Include="Languages\DecompilationContext.cs" />
+    <Compile Include="Languages\DecompilationType.cs" />
+    <Compile Include="Languages\DecompileAssemblyInfo.cs" />
+    <Compile Include="Languages\DecompilePartialType.cs" />
+    <Compile Include="Languages\DecompilerOptionConstants.cs" />
+    <Compile Include="Languages\DecompileTypeBase.cs" />
+    <Compile Include="Languages\DecompileTypeMethods.cs" />
+    <Compile Include="Languages\IBamlDecompiler.cs" />
+    <Compile Include="Languages\IDecompilerOption.cs" />
+    <Compile Include="Languages\IDecompilerSettings.cs" />
+    <Compile Include="Languages\ILanguage.cs" />
+    <Compile Include="Languages\ILanguageCreator.cs" />
+    <Compile Include="Languages\ILanguageProvider.cs" />
+    <Compile Include="Languages\ISimpleILPrinter.cs" />
+    <Compile Include="Languages\LanguageConstants.cs" />
+    <Compile Include="Languages\SimplePrinterFlags.cs" />
+    <Compile Include="Languages\StringBuilderExtensions.cs" />
+    <Compile Include="Languages\TextColorOutputToTextOutput.cs" />
+    <Compile Include="Languages\XmlDoc\XmlDocKeyProvider.cs" />
+    <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
+    <Compile Include="Languages\XmlDoc\XmlDocRenderer.cs" />
+    <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
+    <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="Properties\dnSpy.Contracts.Logic.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Contracts.Logic.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\ResourceHelper.cs" />
+    <Compile Include="Text\ColorAndText.cs" />
+    <Compile Include="Text\ColorOffsetInfo.cs" />
+    <Compile Include="Text\IOutputColorWriter.cs" />
+    <Compile Include="Text\OutputColor.cs" />
+    <Compile Include="Utilities\GacInfo.cs" />
+    <Compile Include="Utilities\SimpleTypeConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
+      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
+      <Name>dnSpy.Decompiler.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Contracts.Logic.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

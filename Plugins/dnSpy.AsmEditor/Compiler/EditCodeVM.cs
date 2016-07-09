@@ -33,6 +33,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.MVVM;
@@ -398,10 +399,10 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			try {
 				if (!languageCompiler.AddMetadataReferences(mdRefs.ToArray()))
-					Shared.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_CouldNotAddAssemblyReferences);
+					MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_CouldNotAddAssemblyReferences);
 			}
 			catch (Exception ex) {
-				Shared.App.MsgBox.Instance.Show(ex);
+				MsgBox.Instance.Show(ex);
 			}
 		}
 

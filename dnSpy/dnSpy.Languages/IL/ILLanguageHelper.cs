@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet.Emit;
-using dnSpy.Shared.Languages.XmlDoc;
+using dnSpy.Contracts.Languages.XmlDoc;
 
 namespace dnSpy.Languages.IL {
 	public static class ILLanguageHelper {

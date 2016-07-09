@@ -64,7 +64,7 @@ namespace dnSpy.Languages {
 		public virtual void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, string.IsNullOrEmpty(@namespace) ? string.Empty : IdentifierEscaper.Escape(@namespace));
 			this.WriteCommentLine(output, string.Empty);
-			this.WriteCommentLine(output, Languages_Resources.Decompile_Namespace_Types);
+			this.WriteCommentLine(output, dnSpy_Languages_Resources.Decompile_Namespace_Types);
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
 				this.WriteCommentBegin(output, true);
@@ -89,7 +89,7 @@ namespace dnSpy.Languages {
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
+				output.Write(string.Format(dnSpy_Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -101,18 +101,18 @@ namespace dnSpy.Languages {
 			output.WriteLine();
 			if (mod.Types.Count > 0) {
 				this.WriteCommentBegin(output, true);
-				output.Write(Languages_Resources.Decompile_GlobalType + " ", BoxedTextTokenKind.Comment);
+				output.Write(dnSpy_Languages_Resources.Decompile_GlobalType + " ", BoxedTextTokenKind.Comment);
 				output.WriteReference(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, BoxedTextTokenKind.Comment);
 				output.WriteLine();
 			}
 			this.PrintEntryPoint(mod, output);
-			this.WriteCommentLine(output, Languages_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mod));
+			this.WriteCommentLine(output, dnSpy_Languages_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mod));
 			if (!mod.IsILOnly) {
-				this.WriteCommentLine(output, Languages_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
+				this.WriteCommentLine(output, dnSpy_Languages_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
 			}
 			string runtimeName = GetRuntimeDisplayName(mod);
 			if (runtimeName != null) {
-				this.WriteCommentLine(output, Languages_Resources.Decompile_Runtime + " " + runtimeName);
+				this.WriteCommentLine(output, dnSpy_Languages_Resources.Decompile_Runtime + " " + runtimeName);
 			}
 			var peImage = TryGetPEImage(mod);
 			if (peImage != null) {
@@ -120,7 +120,7 @@ namespace dnSpy.Languages {
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
+				output.Write(string.Format(dnSpy_Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -146,11 +146,11 @@ namespace dnSpy.Languages {
 		protected void PrintEntryPoint(ModuleDef mod, ITextOutput output) {
 			var ep = GetEntryPoint(mod);
 			if (ep is uint)
-				this.WriteCommentLine(output, string.Format(Languages_Resources.Decompile_NativeEntryPoint, (uint)ep));
+				this.WriteCommentLine(output, string.Format(dnSpy_Languages_Resources.Decompile_NativeEntryPoint, (uint)ep));
 			else if (ep is MethodDef) {
 				var epMethod = (MethodDef)ep;
 				WriteCommentBegin(output, true);
-				output.Write(Languages_Resources.Decompile_EntryPoint + " ", BoxedTextTokenKind.Comment);
+				output.Write(dnSpy_Languages_Resources.Decompile_EntryPoint + " ", BoxedTextTokenKind.Comment);
 				if (epMethod.DeclaringType != null) {
 					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, BoxedTextTokenKind.Comment);
 					output.Write(".", BoxedTextTokenKind.Comment);

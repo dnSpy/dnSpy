@@ -30,9 +30,9 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Resources;
 
 namespace dnSpy.ToolBars {
 	abstract class ToolBarItemMD {

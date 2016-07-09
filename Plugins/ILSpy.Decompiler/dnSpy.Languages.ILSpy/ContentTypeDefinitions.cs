@@ -19,38 +19,39 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
+using dnSpy.Languages.ILSpy.Core.Text;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Languages.ILSpy {
 	static class ContentTypeDefinitions {
-#pragma warning disable CS0169
+#pragma warning disable 0169
 		[Export]
-		[Name(ContentTypes.DECOMPILER_ILSPY)]
+		[Name(ContentTypesInternal.DECOMPILER_ILSPY)]
 		[BaseDefinition(ContentTypes.DECOMPILED_CODE)]
 		static readonly ContentTypeDefinition DecompilerILSpyContentTypeDefinition;
 
 		[Export]
-		[Name(ContentTypes.CSHARP_ILSPY)]
-		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[Name(ContentTypesInternal.CSHARP_ILSPY)]
+		[BaseDefinition(ContentTypesInternal.DECOMPILER_ILSPY)]
 		[BaseDefinition(ContentTypes.CSHARP)]
 		static readonly ContentTypeDefinition CSharpILSpyContentTypeDefinition;
 
 		[Export]
-		[Name(ContentTypes.VISUALBASIC_ILSPY)]
-		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[Name(ContentTypesInternal.VISUALBASIC_ILSPY)]
+		[BaseDefinition(ContentTypesInternal.DECOMPILER_ILSPY)]
 		[BaseDefinition(ContentTypes.VISUALBASIC)]
 		static readonly ContentTypeDefinition VisualBasicILSpyContentTypeDefinition;
 
 		[Export]
-		[Name(ContentTypes.IL_ILSPY)]
-		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[Name(ContentTypesInternal.IL_ILSPY)]
+		[BaseDefinition(ContentTypesInternal.DECOMPILER_ILSPY)]
 		[BaseDefinition(ContentTypes.IL)]
 		static readonly ContentTypeDefinition ILILSpyContentTypeDefinition;
 
 		[Export]
-		[Name(ContentTypes.ILAST_ILSPY)]
-		[BaseDefinition(ContentTypes.DECOMPILER_ILSPY)]
+		[Name(ContentTypesInternal.ILAST_ILSPY)]
+		[BaseDefinition(ContentTypesInternal.DECOMPILER_ILSPY)]
 		static readonly ContentTypeDefinition ILAstILSpyContentTypeDefinition;
-#pragma warning restore CS0169
+#pragma warning restore 0169
 	}
 }

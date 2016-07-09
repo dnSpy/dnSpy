@@ -150,7 +150,7 @@ namespace dnSpy.Languages.MSBuild {
 				}
 				catch (Exception ex) {
 					if (errors++ < 20)
-						ctx.Logger.Error(string.Format(Languages_Resources.MSBuild_CouldNotCreateDirectory2, dir, ex.Message));
+						ctx.Logger.Error(string.Format(dnSpy_Languages_Resources.MSBuild_CouldNotCreateDirectory2, dir, ex.Message));
 				}
 			}
 		}

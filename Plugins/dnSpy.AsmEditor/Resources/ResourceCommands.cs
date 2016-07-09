@@ -621,7 +621,7 @@ namespace dnSpy.AsmEditor.Resources {
 					newNodes[i] = (IResourceNode)treeView.Create(resourceNodeFactory.Create(module, rsrc, treeNodeGroup)).Data;
 				}
 				catch (Exception ex) {
-					Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_ReadingFiles, ex.Message));
+					MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_ReadingFiles, ex.Message));
 					return;
 				}
 			}
@@ -1277,7 +1277,7 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 			if (error != null)
-				Shared.App.MsgBox.Instance.Show(error);
+				MsgBox.Instance.Show(error);
 			if (newNodes.Count == 0)
 				return;
 
@@ -1373,7 +1373,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			if (data.ImageListStreamerVM.Collection.Count == 0) {
-				Shared.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_EmptyImageList);
+				MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_EmptyImageList);
 				return;
 			}
 
@@ -1388,7 +1388,7 @@ namespace dnSpy.AsmEditor.Resources {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotSerializeImages, ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
-				Shared.App.MsgBox.Instance.Show(error);
+				MsgBox.Instance.Show(error);
 				return;
 			}
 
@@ -1505,7 +1505,7 @@ namespace dnSpy.AsmEditor.Resources {
 					newNodes[i] = (IResourceElementNode)treeView.Create(resourceNodeFactory.Create(module, rsrcElem, treeNodeGroup)).Data;
 				}
 				catch (Exception ex) {
-					Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_ReadingFiles, ex.Message));
+					MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_ReadingFiles, ex.Message));
 					return;
 				}
 			}
@@ -1871,7 +1871,7 @@ namespace dnSpy.AsmEditor.Resources {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_InvalidResourceData, ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
-				Shared.App.MsgBox.Instance.Show(error);
+				MsgBox.Instance.Show(error);
 				return;
 			}
 
@@ -1960,7 +1960,7 @@ namespace dnSpy.AsmEditor.Resources {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_NewResourceDataMustBeImage, ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
-				Shared.App.MsgBox.Instance.Show(error);
+				MsgBox.Instance.Show(error);
 				return;
 			}
 
@@ -2048,7 +2048,7 @@ namespace dnSpy.AsmEditor.Resources {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_NewResourceDataMustBeImage, ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
-				Shared.App.MsgBox.Instance.Show(error);
+				MsgBox.Instance.Show(error);
 				return;
 			}
 
@@ -2130,7 +2130,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var listOpts = data.CreateImageListOptions();
 
 			if (listOpts.ImageSources.Count == 0) {
-				Shared.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_EmptyImageList);
+				MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_EmptyImageList);
 				return;
 			}
 
@@ -2144,7 +2144,7 @@ namespace dnSpy.AsmEditor.Resources {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotSerializeImages, ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
-				Shared.App.MsgBox.Instance.Show(error);
+				MsgBox.Instance.Show(error);
 				return;
 			}
 

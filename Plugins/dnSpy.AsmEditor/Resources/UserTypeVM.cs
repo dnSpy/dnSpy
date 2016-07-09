@@ -22,6 +22,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.Files.TreeView.Resources;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;

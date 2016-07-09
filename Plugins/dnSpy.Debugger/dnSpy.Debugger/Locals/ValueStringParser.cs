@@ -26,8 +26,8 @@ using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class ValueStringParser {
@@ -196,11 +196,11 @@ namespace dnSpy.Debugger.Locals {
 			default:
 				return null;
 			}
-			ulong v = NumberVMUtils.ParseUInt64(c, 0, max, out error);
+			ulong v = SimpleTypeConverter.ParseUInt64(c, 0, max, out error);
 			if (string.IsNullOrEmpty(error))
 				return v;
 
-			v = (ulong)NumberVMUtils.ParseInt64(c, smin, smax, out error);
+			v = (ulong)SimpleTypeConverter.ParseInt64(c, smin, smax, out error);
 			if (string.IsNullOrEmpty(error))
 				return v;
 
@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.Locals {
 			switch (etype) {
 			case CorElementType.Boolean:
 				{
-					var value = NumberVMUtils.ParseBoolean(text, out error);
+					var value = SimpleTypeConverter.ParseBoolean(text, out error);
 					if (!string.IsNullOrEmpty(error))
 						return error;
 					bytes = BitConverter.GetBytes(value);
@@ -319,7 +319,7 @@ namespace dnSpy.Debugger.Locals {
 
 			case CorElementType.Char:
 				{
-					var value = NumberVMUtils.ParseChar(text, out error);
+					var value = SimpleTypeConverter.ParseChar(text, out error);
 					if (!string.IsNullOrEmpty(error))
 						return error;
 					bytes = BitConverter.GetBytes(value);
@@ -328,7 +328,7 @@ namespace dnSpy.Debugger.Locals {
 
 			case CorElementType.R4:
 				{
-					var value = NumberVMUtils.ParseSingle(text, out error);
+					var value = SimpleTypeConverter.ParseSingle(text, out error);
 					if (!string.IsNullOrEmpty(error))
 						return error;
 					bytes = BitConverter.GetBytes(value);
@@ -337,7 +337,7 @@ namespace dnSpy.Debugger.Locals {
 
 			case CorElementType.R8:
 				{
-					var value = NumberVMUtils.ParseDouble(text, out error);
+					var value = SimpleTypeConverter.ParseDouble(text, out error);
 					if (!string.IsNullOrEmpty(error))
 						return error;
 					bytes = BitConverter.GetBytes(value);
@@ -347,7 +347,7 @@ namespace dnSpy.Debugger.Locals {
 			case CorElementType.Class:
 			case CorElementType.ValueType:
 				if (type.IsSystemDecimal) {
-					var value = NumberVMUtils.ParseDecimal(text, out error);
+					var value = SimpleTypeConverter.ParseDecimal(text, out error);
 					if (!string.IsNullOrEmpty(error))
 						return error;
 					bytes = GetBytes(value);
@@ -434,7 +434,7 @@ namespace dnSpy.Debugger.Locals {
 
 		public string GetString(out string s) {
 			string error;
-			s = NumberVMUtils.ParseString(text, true, out error);
+			s = SimpleTypeConverter.ParseString(text, true, out error);
 			return error;
 		}
 	}

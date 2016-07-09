@@ -24,7 +24,7 @@ namespace Example2.Plugin {
 
 		// Disable compiler warnings. The fields aren't referenced, just exported so
 		// the metadata can be added to some table. The fields will always be null.
-#pragma warning disable CS0169
+#pragma warning disable 0169
 		// Export the classes that define the name, and base types
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(Color1_ClassificationTypeName)]
@@ -35,7 +35,7 @@ namespace Example2.Plugin {
 		[Name(Color2_ClassificationTypeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition Color2ClassificationTypeDefinition;
-#pragma warning restore CS0169
+#pragma warning restore 0169
 
 		// Export the classes that define the colors and order
 		[Export(typeof(EditorFormatDefinition))]

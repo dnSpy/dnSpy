@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.Languages.ILSpy</RootNamespace>
-    <AssemblyName>Languages.ILSpy.Plugin</AssemblyName>
+    <AssemblyName>dnSpy.Languages.ILSpy.Plugin</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
@@ -23,7 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
-    <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Debug\Languages.ILSpy.Plugin.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Debug\dnSpy.Languages.ILSpy.Plugin.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,89 +33,66 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
-    <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Release\Languages.ILSpy.Plugin.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Release\dnSpy.Languages.ILSpy.Plugin.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.XML" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentTypeDefinitions.cs" />
-    <Compile Include="CSharp\AssemblyInfoTransform.cs" />
-    <Compile Include="CSharp\BuilderCache.cs" />
-    <Compile Include="CSharp\BuilderState.cs" />
-    <Compile Include="CSharp\CSharpLanguage.cs" />
-    <Compile Include="CSharp\DecompilePartialTransform.cs" />
-    <Compile Include="CSharp\DecompileTypeMethodsTransform.cs" />
-    <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
+    <Compile Include="CSharp\LanguageCreator.cs" />
+    <Compile Include="ILAst\LanguageCreator.cs" />
+    <Compile Include="IL\LanguageCreator.cs" />
+    <Compile Include="IL\SimpleILPrinter.cs" />
     <Compile Include="Properties\dnSpy.Languages.ILSpy.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Languages.ILSpy.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ILAst\ILAstLanguage.cs" />
-    <Compile Include="IL\ILLanguage.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CSharpDecompilerSettingsTab.cs" />
     <Compile Include="Settings\DecompilerAppSettingsModifiedListener.cs" />
     <Compile Include="Settings\DecompilerSettingsImpl.cs" />
     <Compile Include="Settings\DecompilerSettingsTabCreator.cs" />
-    <Compile Include="Settings\ILAstLanguageDecompilerSettings.cs" />
     <Compile Include="Settings\ILDecompilerSettingsTab.cs" />
-    <Compile Include="Settings\ILLanguageDecompilerSettings.cs" />
-    <Compile Include="Settings\ILSettings.cs" />
-    <Compile Include="Settings\LanguageDecompilerSettings.cs" />
+    <Compile Include="Settings\ILSettingsImpl.cs" />
     <Compile Include="Settings\LanguageSettingsManager.cs" />
     <Compile Include="Settings\SettingsConstants.cs" />
-    <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
-    <Compile Include="VB\VBLanguage.cs" />
-    <Compile Include="VB\VBTextOutputFormatter.cs" />
-    <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
-    <Compile Include="XmlDoc\StringLineIterator.cs" />
-    <Compile Include="XmlDoc\SubString.cs" />
-    <Compile Include="XmlDoc\XmlDocLine.cs" />
+    <Compile Include="VisualBasic\LanguageCreator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
+      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
+      <Name>dnSpy.Contracts.DnSpy</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts\dnSpy.Contracts.csproj">
-      <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
-      <Name>dnSpy.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
-      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
-      <Name>dnSpy.Decompiler.Shared</Name>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Shared\dnSpy.Shared.csproj">
       <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
       <Name>dnSpy.Shared</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
+      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
+      <Name>dnSpy.Decompiler.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Languages.ILSpy.Core\dnSpy.Languages.ILSpy.Core.csproj">
+      <Project>{ce9ec29d-8a2a-41d4-8f82-bf8b536abc31}</Project>
+      <Name>dnSpy.Languages.ILSpy.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Languages\dnSpy.Languages.csproj">
-      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>dnSpy.Languages</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
-      <Project>{53dca265-3c3c-42f9-b647-f72ba678122b}</Project>
-      <Name>ICSharpCode.NRefactory.CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
-      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
-      <Name>ICSharpCode.NRefactory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj">
-      <Project>{7b82b671-419f-45f4-b778-d9286f996efa}</Project>
-      <Name>ICSharpCode.NRefactory.VB</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

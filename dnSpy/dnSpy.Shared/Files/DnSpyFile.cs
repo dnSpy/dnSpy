@@ -24,6 +24,7 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Shared.Files {
 	public abstract class DnSpyFile : IDnSpyFile {

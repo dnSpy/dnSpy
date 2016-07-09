@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.Modules {
 			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Paused) {
 				if (inMemoryModuleManager.Value.LoadFile(module, false) == null) {
 					if (canShowDlgBox)
-						Shared.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
+						MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
 					return false;
 				}
 			}

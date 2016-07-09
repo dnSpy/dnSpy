@@ -89,7 +89,7 @@ namespace dnSpy.MainApp {
 
 		public App(bool readSettings) {
 			this.args = new AppCommandLineArgs();
-			AppDirectories.__SetSettingsFilename(this.args.SettingsFilename);
+			AppDirectories.SetSettingsFilename(this.args.SettingsFilename);
 			if (args.SingleInstance)
 				SwitchToOtherInstance();
 
@@ -217,7 +217,9 @@ namespace dnSpy.MainApp {
 
 		bool CanLoadPlugin(Assembly asm) {
 			var ourPublicKeyToken = GetType().Assembly.GetName().GetPublicKeyToken();
+#pragma warning disable 0436
 			var ourStableVersion = new Version(DnSpyAssemblyConstants.STABLE_ASSEMBLY_VERSION);
+#pragma warning restore 0436
 			foreach (var a in asm.GetReferencedAssemblies()) {
 				if (!Equals(ourPublicKeyToken, a.GetPublicKeyToken()))
 					continue;

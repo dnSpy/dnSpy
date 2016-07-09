@@ -101,9 +101,9 @@ namespace dnSpy.Languages.MSBuild {
 					catch (Exception ex) {
 						var fjob = job as IFileJob;
 						if (fjob != null)
-							logger.Error(string.Format(Languages_Resources.MSBuild_FileCreationFailed3, fjob.Filename, job.Description, ex.Message));
+							logger.Error(string.Format(dnSpy_Languages_Resources.MSBuild_FileCreationFailed3, fjob.Filename, job.Description, ex.Message));
 						else
-							logger.Error(string.Format(Languages_Resources.MSBuild_FileCreationFailed2, job.Description, ex.Message));
+							logger.Error(string.Format(dnSpy_Languages_Resources.MSBuild_FileCreationFailed2, job.Description, ex.Message));
 					}
 					progressListener.SetProgress(Interlocked.Increment(ref totalProgress));
 				});
@@ -117,7 +117,7 @@ namespace dnSpy.Languages.MSBuild {
 						throw;
 					}
 					catch (Exception ex) {
-						logger.Error(string.Format(Languages_Resources.MSBuild_FailedToCreateProjectFile, p.Filename, ex.Message));
+						logger.Error(string.Format(dnSpy_Languages_Resources.MSBuild_FailedToCreateProjectFile, p.Filename, ex.Message));
 					}
 					progressListener.SetProgress(Interlocked.Increment(ref totalProgress));
 				});
@@ -131,7 +131,7 @@ namespace dnSpy.Languages.MSBuild {
 						throw;
 					}
 					catch (Exception ex) {
-						logger.Error(string.Format(Languages_Resources.MSBuild_FailedToCreateSolutionFile, SolutionFilename, ex.Message));
+						logger.Error(string.Format(dnSpy_Languages_Resources.MSBuild_FailedToCreateSolutionFile, SolutionFilename, ex.Message));
 					}
 					progressListener.SetProgress(Interlocked.Increment(ref totalProgress));
 				}

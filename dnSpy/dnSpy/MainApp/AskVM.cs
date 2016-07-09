@@ -18,8 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	sealed class AskVM : ViewModelBase {

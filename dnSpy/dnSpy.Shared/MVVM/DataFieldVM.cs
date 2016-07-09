@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Shared.Properties;
 
 namespace dnSpy.Shared.MVVM {
@@ -267,11 +269,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<byte> value) => NumberVMUtils.ByteArrayToString(value, UpperCaseHex);
+		protected override string OnNewValue(IList<byte> value) => SimpleTypeConverter.ByteArrayToString(value, UpperCaseHex);
 
 		protected override string ConvertToValue(out IList<byte> value) {
 			string error;
-			value = NumberVMUtils.ParseByteArray(StringValue, out error);
+			value = SimpleTypeConverter.ParseByteArray(StringValue, out error);
 			return error;
 		}
 	}
@@ -286,14 +288,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(bool? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
+		protected override string OnNewValue(bool? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value);
 
 		protected override string ConvertToValue(out bool? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseBoolean(StringValue, out error);
+				value = SimpleTypeConverter.ParseBoolean(StringValue, out error);
 			return error;
 		}
 	}
@@ -308,14 +310,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(sbyte? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(sbyte? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out sbyte? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseSByte(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseSByte(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -330,14 +332,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(byte? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(byte? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out byte? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseByte(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseByte(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -352,14 +354,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(short? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(short? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out short? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseInt16(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseInt16(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -374,14 +376,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ushort? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(ushort? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ushort? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseUInt16(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseUInt16(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -396,14 +398,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(int? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(int? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out int? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseInt32(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseInt32(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -418,14 +420,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(uint? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(uint? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out uint? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseUInt32(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -440,14 +442,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(long? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(long? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out long? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseInt64(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseInt64(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -462,14 +464,14 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ulong? value) => value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(ulong? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ulong? value) {
 			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseUInt64(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseUInt64(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -484,11 +486,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(bool value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(bool value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out bool value) {
 			string error;
-			value = NumberVMUtils.ParseBoolean(StringValue, out error);
+			value = SimpleTypeConverter.ParseBoolean(StringValue, out error);
 			return error;
 		}
 	}
@@ -503,11 +505,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(char value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(char value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out char value) {
 			string error;
-			value = NumberVMUtils.ParseChar(StringValue, out error);
+			value = SimpleTypeConverter.ParseChar(StringValue, out error);
 			return error;
 		}
 	}
@@ -522,11 +524,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(byte value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(byte value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out byte value) {
 			string error;
-			value = NumberVMUtils.ParseByte(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseByte(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -541,11 +543,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ushort value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(ushort value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ushort value) {
 			string error;
-			value = NumberVMUtils.ParseUInt16(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt16(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -560,11 +562,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(uint value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(uint value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out uint value) {
 			string error;
-			value = NumberVMUtils.ParseUInt32(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -579,11 +581,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(ulong value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(ulong value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out ulong value) {
 			string error;
-			value = NumberVMUtils.ParseUInt64(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt64(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -598,11 +600,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(sbyte value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(sbyte value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out sbyte value) {
 			string error;
-			value = NumberVMUtils.ParseSByte(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseSByte(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -617,11 +619,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(short value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(short value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out short value) {
 			string error;
-			value = NumberVMUtils.ParseInt16(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt16(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -636,11 +638,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(int value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(int value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out int value) {
 			string error;
-			value = NumberVMUtils.ParseInt32(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt32(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -655,11 +657,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(long value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(long value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out long value) {
 			string error;
-			value = NumberVMUtils.ParseInt64(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt64(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -674,11 +676,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(float value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(float value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out float value) {
 			string error;
-			value = NumberVMUtils.ParseSingle(StringValue, out error);
+			value = SimpleTypeConverter.ParseSingle(StringValue, out error);
 			return error;
 		}
 	}
@@ -693,11 +695,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(double value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(double value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out double value) {
 			string error;
-			value = NumberVMUtils.ParseDouble(StringValue, out error);
+			value = SimpleTypeConverter.ParseDouble(StringValue, out error);
 			return error;
 		}
 	}
@@ -715,11 +717,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(string value) => NumberVMUtils.ToString(value, allowNullString);
+		protected override string OnNewValue(string value) => SimpleTypeConverter.ToString(value, allowNullString);
 
 		protected override string ConvertToValue(out string value) {
 			string error;
-			value = NumberVMUtils.ParseString(StringValue, allowNullString, out error);
+			value = SimpleTypeConverter.ParseString(StringValue, allowNullString, out error);
 			return error;
 		}
 	}
@@ -734,11 +736,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(decimal value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(decimal value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out decimal value) {
 			string error;
-			value = NumberVMUtils.ParseDecimal(StringValue, out error);
+			value = SimpleTypeConverter.ParseDecimal(StringValue, out error);
 			return error;
 		}
 	}
@@ -753,11 +755,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(DateTime value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(DateTime value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out DateTime value) {
 			string error;
-			value = NumberVMUtils.ParseDateTime(StringValue, out error);
+			value = SimpleTypeConverter.ParseDateTime(StringValue, out error);
 			return error;
 		}
 	}
@@ -772,11 +774,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(TimeSpan value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(TimeSpan value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out TimeSpan value) {
 			string error;
-			value = NumberVMUtils.ParseTimeSpan(StringValue, out error);
+			value = SimpleTypeConverter.ParseTimeSpan(StringValue, out error);
 			return error;
 		}
 	}
@@ -810,11 +812,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<bool> value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(IList<bool> value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out IList<bool> value) {
 			string error;
-			value = NumberVMUtils.ParseBooleanList(StringValue, out error);
+			value = SimpleTypeConverter.ParseBooleanList(StringValue, out error);
 			return error;
 		}
 	}
@@ -829,11 +831,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<char> value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(IList<char> value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out IList<char> value) {
 			string error;
-			value = NumberVMUtils.ParseCharList(StringValue, out error);
+			value = SimpleTypeConverter.ParseCharList(StringValue, out error);
 			return error;
 		}
 	}
@@ -848,11 +850,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<byte> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<byte> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<byte> value) {
 			string error;
-			value = NumberVMUtils.ParseByteList(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseByteList(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -867,11 +869,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<ushort> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<ushort> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<ushort> value) {
 			string error;
-			value = NumberVMUtils.ParseUInt16List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt16List(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -886,11 +888,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<uint> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<uint> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<uint> value) {
 			string error;
-			value = NumberVMUtils.ParseUInt32List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt32List(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -905,11 +907,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<ulong> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<ulong> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<ulong> value) {
 			string error;
-			value = NumberVMUtils.ParseUInt64List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt64List(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -924,11 +926,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<sbyte> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<sbyte> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<sbyte> value) {
 			string error;
-			value = NumberVMUtils.ParseSByteList(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseSByteList(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -943,11 +945,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<short> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<short> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<short> value) {
 			string error;
-			value = NumberVMUtils.ParseInt16List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt16List(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -962,11 +964,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<int> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<int> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<int> value) {
 			string error;
-			value = NumberVMUtils.ParseInt32List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt32List(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -981,11 +983,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<long> value) => NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+		protected override string OnNewValue(IList<long> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 		protected override string ConvertToValue(out IList<long> value) {
 			string error;
-			value = NumberVMUtils.ParseInt64List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt64List(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -1000,11 +1002,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<float> value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(IList<float> value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out IList<float> value) {
 			string error;
-			value = NumberVMUtils.ParseSingleList(StringValue, out error);
+			value = SimpleTypeConverter.ParseSingleList(StringValue, out error);
 			return error;
 		}
 	}
@@ -1019,11 +1021,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<double> value) => NumberVMUtils.ToString(value);
+		protected override string OnNewValue(IList<double> value) => SimpleTypeConverter.ToString(value);
 
 		protected override string ConvertToValue(out IList<double> value) {
 			string error;
-			value = NumberVMUtils.ParseDoubleList(StringValue, out error);
+			value = SimpleTypeConverter.ParseDoubleList(StringValue, out error);
 			return error;
 		}
 	}
@@ -1041,11 +1043,11 @@ namespace dnSpy.Shared.MVVM {
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<string> value) => NumberVMUtils.ToString(value, allowNullString);
+		protected override string OnNewValue(IList<string> value) => SimpleTypeConverter.ToString(value, allowNullString);
 
 		protected override string ConvertToValue(out IList<string> value) {
 			string error;
-			value = NumberVMUtils.ParseStringList(StringValue, allowNullString, out error);
+			value = SimpleTypeConverter.ParseStringList(StringValue, allowNullString, out error);
 			return error;
 		}
 	}

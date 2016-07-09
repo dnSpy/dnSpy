@@ -19,6 +19,7 @@
 
 using System;
 using System.Windows.Input;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {

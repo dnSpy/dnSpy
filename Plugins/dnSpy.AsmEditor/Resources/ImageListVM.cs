@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using dnSpy.Shared.MVVM;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageListVM : ViewModelBase {

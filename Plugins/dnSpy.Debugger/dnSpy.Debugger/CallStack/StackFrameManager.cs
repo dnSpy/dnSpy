@@ -26,8 +26,8 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class StackFramesUpdatedEventArgs : EventArgs {

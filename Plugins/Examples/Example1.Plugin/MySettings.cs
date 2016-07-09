@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.MVVM;
 
 // Reads and writes the plugin settings
 

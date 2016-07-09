@@ -19,6 +19,7 @@
 
 using System.Reflection;
 
+#pragma warning disable 0436
 #if USE_STABLE_VERSION
 [assembly: AssemblyVersion(DnSpyAssemblyConstants.STABLE_ASSEMBLY_VERSION)]
 #else
@@ -34,3 +35,4 @@ static class DnSpyAssemblyConstants {
 	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "3.0.0.0-beta";
 	public const string ASSEMBLY_FILE_VERSION						= NONSTABLE_ASSEMBLY_VERSION;
 }
+#pragma warning restore 0436

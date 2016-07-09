@@ -27,9 +27,9 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
-using dnSpy.Shared.MVVM;
 using dnSpy.Tabs;
 
 namespace dnSpy.Files.Tabs {

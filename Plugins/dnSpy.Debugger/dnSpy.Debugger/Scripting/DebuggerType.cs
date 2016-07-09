@@ -25,7 +25,6 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
-using dnSpy.Shared.Scripting;
 using SR = System.Reflection;
 
 namespace dnSpy.Debugger.Scripting {

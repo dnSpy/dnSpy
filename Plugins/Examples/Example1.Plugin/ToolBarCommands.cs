@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Shared.ToolBars;
 
@@ -16,7 +17,7 @@ namespace Example1.Plugin {
 
 	[ExportToolBarButton(Icon = "Assembly", ToolTip = "Click Me", Group = TBConstants.GROUP_APP_TB_PLUGIN, Order = 0)]
 	sealed class TBCommand1 : ToolBarButtonBase {
-		public override void Execute(IToolBarItemContext context) => dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
+		public override void Execute(IToolBarItemContext context) => MsgBox.Instance.Show("Command #1");
 	}
 
 	[ExportToolBarObject(Group = TBConstants.GROUP_APP_TB_PLUGIN, Order = 10)]

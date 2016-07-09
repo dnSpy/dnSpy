@@ -22,7 +22,7 @@ using System.IO;
 using System.Text;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.AsmEditor.Compiler;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class CompilerDiagnosticVM : ViewModelBase {

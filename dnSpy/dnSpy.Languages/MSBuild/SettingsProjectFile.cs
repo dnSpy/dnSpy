@@ -31,7 +31,7 @@ using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class SettingsProjectFile : ProjectFile {
-		public override string Description => string.Format(Languages_Resources.MSBuild_CreateSettingsFile, Path.GetFileName(filename));
+		public override string Description => string.Format(dnSpy_Languages_Resources.MSBuild_CreateSettingsFile, Path.GetFileName(filename));
 		public override BuildAction BuildAction => BuildAction.None;
 		public override string Filename => filename;
 		readonly string filename;

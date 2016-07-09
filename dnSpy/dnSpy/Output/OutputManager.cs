@@ -27,7 +27,9 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
@@ -248,7 +250,7 @@ namespace dnSpy.Output {
 				File.WriteAllText(filename, vm.GetText());
 			}
 			catch (Exception ex) {
-				Shared.App.MsgBox.Instance.Show(ex);
+				MsgBox.Instance.Show(ex);
 			}
 		}
 		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Resources.AllFiles, dnSpy_Resources.TextFiles);

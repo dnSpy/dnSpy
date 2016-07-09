@@ -111,7 +111,7 @@ namespace dnSpy.AsmEditor.Method {
 		}
 
 		internal static bool AskDeleteDef(string msg) {
-			var res = Shared.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("DA7D935C-F5ED-44A4-BFA8-CC794AD0F105"), msg, MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = MsgBox.Instance.ShowIgnorableMessage(new Guid("DA7D935C-F5ED-44A4-BFA8-CC794AD0F105"), msg, MsgBoxButton.Yes | MsgBoxButton.No);
 			return res == null || res == MsgBoxButton.Yes;
 		}
 

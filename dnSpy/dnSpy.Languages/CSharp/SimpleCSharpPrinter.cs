@@ -26,9 +26,9 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Languages.CSharp {
 	public struct SimpleCSharpPrinter {
@@ -325,9 +325,9 @@ namespace dnSpy.Languages.CSharp {
 			if (td != null) {
 				int overloads = GetNumberOfOverloads(td, method.Name);
 				if (overloads == 1)
-					OutputWrite(string.Format(" (+ {0})", Languages_Resources.ToolTip_OneMethodOverload), BoxedOutputColor.Text);
+					OutputWrite(string.Format(" (+ {0})", dnSpy_Languages_Resources.ToolTip_OneMethodOverload), BoxedOutputColor.Text);
 				else if (overloads > 1)
-					OutputWrite(string.Format(" (+ {0})", string.Format(Languages_Resources.ToolTip_NMethodOverloads, overloads)), BoxedOutputColor.Text);
+					OutputWrite(string.Format(" (+ {0})", string.Format(dnSpy_Languages_Resources.ToolTip_NMethodOverloads, overloads)), BoxedOutputColor.Text);
 			}
 		}
 
@@ -360,8 +360,6 @@ namespace dnSpy.Languages.CSharp {
 				this.flags = oldFlags;
 				return;
 			}
-
-			var typeSig = type.ToTypeSig();
 
 			int numGenParams = td.GenericParameters.Count;
 			if (type.DeclaringType != null) {
@@ -464,7 +462,7 @@ namespace dnSpy.Languages.CSharp {
 			var fd = field.ResolveFieldDef();
 			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
 				if (isToolTip)
-					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? Languages_Resources.ToolTip_Constant : Languages_Resources.ToolTip_Field), BoxedOutputColor.Text);
+					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? dnSpy_Languages_Resources.ToolTip_Constant : dnSpy_Languages_Resources.ToolTip_Field), BoxedOutputColor.Text);
 				WriteSpace();
 				Write(sig.Type, null, null, null);
 				WriteSpace();
@@ -495,51 +493,51 @@ namespace dnSpy.Languages.CSharp {
 				break;
 
 			case TypeCode.Char:
-				OutputWrite(NumberVMUtils.ToString((char)obj), BoxedOutputColor.Char);
+				OutputWrite(SimpleTypeConverter.ToString((char)obj), BoxedOutputColor.Char);
 				break;
 
 			case TypeCode.SByte:
-				OutputWrite(NumberVMUtils.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.Byte:
-				OutputWrite(NumberVMUtils.ToString((byte)obj, byte.MinValue, byte.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((byte)obj, byte.MinValue, byte.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.Int16:
-				OutputWrite(NumberVMUtils.ToString((short)obj, short.MinValue, short.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((short)obj, short.MinValue, short.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.UInt16:
-				OutputWrite(NumberVMUtils.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.Int32:
-				OutputWrite(NumberVMUtils.ToString((int)obj, int.MinValue, int.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((int)obj, int.MinValue, int.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.UInt32:
-				OutputWrite(NumberVMUtils.ToString((uint)obj, uint.MinValue, uint.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((uint)obj, uint.MinValue, uint.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.Int64:
-				OutputWrite(NumberVMUtils.ToString((long)obj, long.MinValue, long.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((long)obj, long.MinValue, long.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.UInt64:
-				OutputWrite(NumberVMUtils.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, UseDecimal), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.Single:
-				OutputWrite(NumberVMUtils.ToString((float)obj), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((float)obj), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.Double:
-				OutputWrite(NumberVMUtils.ToString((double)obj), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((double)obj), BoxedOutputColor.Number);
 				break;
 
 			case TypeCode.String:
-				OutputWrite(NumberVMUtils.ToString((string)obj, true), BoxedOutputColor.String);
+				OutputWrite(SimpleTypeConverter.ToString((string)obj, true), BoxedOutputColor.String);
 				break;
 
 			default:
@@ -642,7 +640,7 @@ namespace dnSpy.Languages.CSharp {
 
 			Write(gp);
 			WriteSpace();
-			OutputWrite(Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedOutputColor.Text);
+			OutputWrite(dnSpy_Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedOutputColor.Text);
 			WriteSpace();
 
 			var td = gp.Owner as TypeDef;
@@ -955,7 +953,7 @@ namespace dnSpy.Languages.CSharp {
 			}
 
 			var isLocal = variable is Local;
-			OutputWrite(string.Format("({0}) ", isLocal ? Languages_Resources.ToolTip_Local : Languages_Resources.ToolTip_Parameter), BoxedOutputColor.Text);
+			OutputWrite(string.Format("({0}) ", isLocal ? dnSpy_Languages_Resources.ToolTip_Local : dnSpy_Languages_Resources.ToolTip_Parameter), BoxedOutputColor.Text);
 			Write(variable.Type, !isLocal ? ((Parameter)variable).ParamDef : null, null, null);
 			WriteSpace();
 			WriteIdentifier(GetName(variable, name), isLocal ? BoxedOutputColor.Local : BoxedOutputColor.Parameter);
@@ -1148,7 +1146,7 @@ namespace dnSpy.Languages.CSharp {
 					WriteSpace();
 				}
 				else if (gp.IsContravariant) {
-					OutputWrite(Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedOutputColor.Keyword);
+					OutputWrite(dnSpy_Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedOutputColor.Keyword);
 					WriteSpace();
 				}
 				WriteIdentifier(gp.Name, gpTokenType);

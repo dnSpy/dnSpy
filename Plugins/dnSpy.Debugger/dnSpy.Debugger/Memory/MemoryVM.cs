@@ -21,8 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Memory {
 	interface IMemoryVM {

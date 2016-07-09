@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return File.ReadAllBytes(dialog.FileName);
 			}
 			catch (Exception ex) {
-				Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenFile, ex.Message), MsgBoxButton.OK, ownerWindow);
+				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenFile, ex.Message), MsgBoxButton.OK, ownerWindow);
 			}
 
 			return null;

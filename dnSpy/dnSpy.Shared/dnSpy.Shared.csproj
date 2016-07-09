@@ -54,9 +54,13 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
-      <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
-      <Name>dnSpy.Contracts</Name>
+    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
+      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
+      <Name>dnSpy.Contracts.DnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
       <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
@@ -68,7 +72,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App\MsgBox.cs" />
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
     <Compile Include="Controls\ColorizedTextElementCreator.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
@@ -81,8 +84,6 @@
     <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
     <Compile Include="Decompiler\ISmartTextOutput.cs" />
-    <Compile Include="Languages\StringBuilderExtensions.cs" />
-    <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\dnSpy.Shared.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -90,7 +91,6 @@
     </Compile>
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
-    <Compile Include="Files\GacInfo.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
     <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
@@ -152,9 +152,6 @@
     </Compile>
     <Compile Include="Hex\SelectVM.cs" />
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
-    <Compile Include="Languages\XmlDoc\XmlDocKeyProvider.cs" />
-    <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
-    <Compile Include="Languages\XmlDoc\XmlDocRenderer.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />
     <Compile Include="Menus\MenuItemCommand.cs" />
     <Compile Include="MVVM\Converters\BooleanToThicknessConverter.cs" />
@@ -170,17 +167,13 @@
     <Compile Include="MVVM\InitDataTemplateAP.cs" />
     <Compile Include="MVVM\IsDraggableAP.cs" />
     <Compile Include="MVVM\ListVM.cs" />
-    <Compile Include="MVVM\NumberVMUtils.cs" />
     <Compile Include="MVVM\PickDirectory.cs" />
     <Compile Include="MVVM\PickFilename.cs" />
     <Compile Include="MVVM\PickSaveFilename.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="MVVM\UIUtils.cs" />
-    <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\ResourceHelper.cs" />
-    <Compile Include="Scripting\UIUtils.cs" />
     <Compile Include="Search\ChainFileTreeNodeFilter.cs" />
     <Compile Include="Search\DelayedAction.cs" />
     <Compile Include="Search\EntryPointFileTreeNodeFilter.cs" />

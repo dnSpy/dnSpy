@@ -41,6 +41,7 @@ using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis.Host.Mef;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {

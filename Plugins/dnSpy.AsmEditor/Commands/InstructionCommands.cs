@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.Commands {
 				}
 				catch (ExternalException) { }
 				if (copier.FoundUnknownBytes) {
-					Shared.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
+					MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
 						dnSpy_AsmEditor_Resources.UnknownBytesMsg,
 						MsgBoxButton.OK);
 				}

@@ -18,7 +18,7 @@
 */
 
 using System.Windows.Media;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageVM : ViewModelBase {

@@ -30,7 +30,7 @@ namespace dnSpy.Languages.MSBuild {
 		const int RT_ICON = 3;
 		const int RT_GROUP_ICON = 14;
 
-		public string Description => Languages_Resources.MSBuild_CreateApplicationIcon;
+		public string Description => dnSpy_Languages_Resources.MSBuild_CreateApplicationIcon;
 		public string Filename { get; }
 
 		readonly byte[] data;
