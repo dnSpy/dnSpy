@@ -117,103 +117,148 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Анали_зировать</value>
+  <data name="CompilationAdditionalError" xml:space="preserve">
+    <value>+ {0} erro adicional</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Анализатор</value>
-  </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Применяется к</value>
-  </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Кем назначено</value>
+  <data name="CompilationAdditionalErrors" xml:space="preserve">
+    <value>+ {0} erros adicionais</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Коп_ировать</value>
+    <value>Cop_y</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Dbl Click</value>
+  <data name="CutCommand" xml:space="preserve">
+    <value>Cu_t</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>add</value>
+  <data name="HelpAltDown" xml:space="preserve">
+    <value>Mostrar próximo comando</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>remove</value>
+  <data name="HelpAltUp" xml:space="preserve">
+    <value>Mostrar comando anterior</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Представлено в</value>
+  <data name="HelpCtrlA" xml:space="preserve">
+    <value>Selecione texto de entrada. Pressione novamente para selecionar todo o texto</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Методы-расширения</value>
+  <data name="HelpCtrlAltDown" xml:space="preserve">
+    <value>Mostrar próximo comando que corresponde ao texto de entrada atual</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Перейти по ссылке</value>
+  <data name="HelpCtrlAltUp" xml:space="preserve">
+    <value>Mostrar comando anterior que corresponde ao texto de entrada atual</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Показать ссылку на метод</value>
+  <data name="HelpCtrlEnter" xml:space="preserve">
+    <value>Executar o comando</value>
   </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Показать ссылку в методе (новая _вкладка)</value>
+  <data name="HelpEnter" xml:space="preserve">
+    <value>Executar o comando</value>
   </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Перейти к ссылке (New Ta_b)</value>
+  <data name="HelpEscape" xml:space="preserve">
+    <value>Limpar entrada atual</value>
   </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>hides</value>
+  <data name="HelpKeyboardShortcuts" xml:space="preserve">
+    <value>Atalhos de teclado:</value>
   </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Реализовано в</value>
+  <data name="HelpReplCommands" xml:space="preserve">
+    <value>Comandos REPL:</value>
   </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Вызвано в</value>
+  <data name="HelpScriptDirectives" xml:space="preserve">
+    <value>Directivas do Script:</value>
   </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Перегружен в</value>
+  <data name="HelpScriptDirective_load" xml:space="preserve">
+    <value>Carregar e executar um script, #load "myscript.csx"</value>
+  </data>
+  <data name="HelpScriptDirective_r" xml:space="preserve">
+    <value>Adicionar uma referência, seja esta um assembly ou um caminho para um ficheiro no disco ou um caminho relativo para o dnSpy ou o diretório de utilizador, #r "MyFile. dll"</value>
+  </data>
+  <data name="HelpShiftEnter" xml:space="preserve">
+    <value>Inserir uma nova linha</value>
+  </data>
+  <data name="HelpString" xml:space="preserve">
+    <value>Digite "#help" para obter mais informações.</value>
+  </data>
+  <data name="LoadingContextFromFile" xml:space="preserve">
+    <value>Carregando contexto de '{0}'.</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Paste</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Анализирует сборки</value>
+    <value>Scripting</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>get</value>
+  <data name="ResettingExecutionEngine" xml:space="preserve">
+    <value>Redefinindo o motor de execução.</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>set</value>
+  <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
+    <value>Limpar tela (Ctrl + L)</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Кем вызвано</value>
+  <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
+    <value>História seguinte (Alt + seta para baixo)</value>
   </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Кем читается</value>
+  <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
+    <value>História anterior (Alt + seta para cima)</value>
   </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Убрать</value>
+  <data name="Script_ToolTip_Reset" xml:space="preserve">
+    <value>Reset</value>
   </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Поиск...</value>
+  <data name="ShortCutKeyAltDown" xml:space="preserve">
+    <value>Alt + seta para baixo</value>
   </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Shift+Dbl Click</value>
+  <data name="ShortCutKeyAltUp" xml:space="preserve">
+    <value>Alt + seta para cima</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>CTRL + A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
+    <value>Ctrl + Alt + seta para baixo</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
+    <value>Ctrl + Alt + N</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
+    <value>Ctrl + Alt + seta acima</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Ctrl+C</value>
+    <value>CTRL + C</value>
   </data>
-  <data name="ShortCutKeyCtrlR" xml:space="preserve">
-    <value>Ctrl+R</value>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl + Enter</value>
   </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Del</value>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl + V</value>
   </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Показать токены</value>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>CTRL + X</value>
   </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Подсветка синтаксиса</value>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
   </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Используется в</value>
+  <data name="ShortCutKeyEscape" xml:space="preserve">
+    <value>ESC</value>
   </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Использует</value>
+  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
+    <value>Shift+Enter</value>
+  </data>
+  <data name="Window_CSharp" xml:space="preserve">
+    <value>C# interativo</value>
+  </data>
+  <data name="HelpClearDescription" xml:space="preserve">
+    <value>Limpar o editor de scripts</value>
+  </data>
+  <data name="HelpHelpDescription" xml:space="preserve">
+    <value>Exibir ajuda</value>
+  </data>
+  <data name="HelpResetDescription" xml:space="preserve">
+    <value>Redefinir o ambiente de execução</value>
+  </data>
+  <data name="ClearScreenCommand" xml:space="preserve">
+    <value>Limpar tela</value>
+  </data>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>CTRL + L</value>
+  </data>
+  <data name="Window_VisualBasic" xml:space="preserve">
+    <value>Visual Basic interativo</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
+    <value>Ctrl + Alt + I</value>
   </data>
 </root>

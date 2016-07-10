@@ -30,5 +30,6 @@ Russian
 	Igor Besedin
 	Konctantin
 
+Portuguese
 
-If your name should be on this list but isn't, contact me or send a PR.
+	Raphael Aquiles

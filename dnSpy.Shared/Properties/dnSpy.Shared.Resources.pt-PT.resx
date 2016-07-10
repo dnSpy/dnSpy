@@ -118,193 +118,193 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AllFiles" xml:space="preserve">
-    <value>Все файлы</value>
+    <value>Todos os Ficheiros</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Произошла ошибка:
+    <value>Ocorreu um erro:
 
 {0}</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>_Отмена</value>
+    <value>_Cancel</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>_Настройки по умолчанию</value>
+    <value>_Default Settings</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
     <value>_OK</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Сброс</value>
+    <value>Reset</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Байтов на линию</value>
+    <value>Bytes por linha</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Стереть байт</value>
+    <value>Limpar Byte</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Стереть выбранные байты</value>
+    <value>Limpar Bytes Selecionados</value>
   </data>
   <data name="ClearSelectionKey" xml:space="preserve">
     <value>Del</value>
     <comment>the delete key</comment>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Коп_ировать</value>
+    <value>Cop_y</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Копировать массив C#</value>
+    <value>Copiar array c#</value>
   </data>
   <data name="CopyCSharpArrayKey" xml:space="preserve">
-    <value>Ctrl+Shift+P</value>
+    <value>Ctrl + Shift + P</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
-    <value>Ctrl+C</value>
+    <value>CTRL + C</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Копирование смещение</value>
+    <value>Copiar offset</value>
   </data>
   <data name="CopyOffsetKey" xml:space="preserve">
-    <value>Ctrl+Alt+O</value>
+    <value>Ctrl + Alt + O</value>
   </data>
   <data name="CopyUIContentsCommand" xml:space="preserve">
-    <value>Скопировать содержимое UI</value>
+    <value>Copiar conteúdo da UI</value>
   </data>
   <data name="CopyUIContentsKey" xml:space="preserve">
-    <value>Ctrl+Shift+C</value>
+    <value>Ctrl + Shift + C</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Копировать строку unicode</value>
+    <value>Copiar String Unicode</value>
   </data>
   <data name="CopyUnicodeStringKey" xml:space="preserve">
-    <value>Ctrl+Shift+U</value>
+    <value>Ctrl + Shift + U</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Копировать строку UTF-8</value>
+    <value>Copiar String UTF-8</value>
   </data>
   <data name="CopyUTF8StringKey" xml:space="preserve">
-    <value>Ctrl+Shift+8</value>
+    <value>Ctrl + Shift + 8</value>
   </data>
   <data name="CopyVBArrayCommand" xml:space="preserve">
-    <value>Копировать массив VB</value>
+    <value>Copiar array VB</value>
   </data>
   <data name="CopyVBArrayKey" xml:space="preserve">
-    <value>Ctrl+Shift+B</value>
+    <value>Ctrl + Shift + B</value>
   </data>
   <data name="CouldNotConvert" xml:space="preserve">
-    <value>Не могу преобразовать '{0}'</value>
+    <value>Não foi possível converter '{0}'</value>
   </data>
   <data name="CouldNotConvertFromString" xml:space="preserve">
-    <value>Не могу преобразовать из строки: {0}</value>
+    <value>Não foi possível convertê-lo de uma string '{0}'</value>
   </data>
   <data name="CouldNotDeserializeData" xml:space="preserve">
-    <value>Не могу десериализовать данные: {0}</value>
+    <value>Não foi possível desserializar dados: {0}</value>
   </data>
   <data name="Files_DotNetExecutables" xml:space="preserve">
-    <value>Исполняемые файлы .NET</value>
+    <value>Executáveis .NET</value>
   </data>
   <data name="Files_DotNetNetModules" xml:space="preserve">
-    <value>Файлы .NET NetModule</value>
+    <value>NetModules .NET</value>
   </data>
   <data name="Files_Executables" xml:space="preserve">
-    <value>Исполняемые файлы</value>
+    <value>Executáveis</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Картинки</value>
+    <value>Imagens</value>
   </data>
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
-    <value>Файлы ключей строгого имени</value>
+    <value>Ficheiros de Chave de Nome Forte</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Заполнить выделенное байтом...</value>
+    <value>Preencher Seleção com Byte...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>_Байт</value>
+    <value>_Byte</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Введите значение</value>
+    <value>Inserir Valor</value>
   </data>
   <data name="Font" xml:space="preserve">
-    <value>Шрифт</value>
+    <value>Fonte</value>
   </data>
   <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Перейти к адресу...</value>
+    <value>Ir para Endereço...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Перейти к смещению...</value>
+    <value>Ir para Offset...</value>
   </data>
   <data name="GoToOffsetKey" xml:space="preserve">
-    <value>Ctrl+G</value>
+    <value>CTRL + G</value>
   </data>
   <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>_Адрес</value>
+    <value>_Address</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
-    <value>С_мещение</value>
+    <value>O_ffset</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Перейти к смещению</value>
+    <value>Ir para Offset</value>
   </data>
   <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Перейти к адресу</value>
+    <value>Ir para endereço</value>
   </data>
   <data name="HexEditorAppDlgTitle" xml:space="preserve">
-    <value>Hex-редактор</value>
+    <value>Hex Editor</value>
   </data>
   <data name="HexEditorCharacterEncodingCommand" xml:space="preserve">
-    <value>Кодировка</value>
+    <value>Codificação</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Сохранить вы_деленное...</value>
+    <value>Save Se_lection...</value>
   </data>
   <data name="HexEditorSaveSelectionKey" xml:space="preserve">
-    <value>Ctrl+Alt+S</value>
+    <value>Ctrl + Alt + S</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Сохранить выделенное 0x{0:X}-0x{1:X}</value>
+    <value>Guardar seleção 0x{0:X}-0x{1:X}</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Выбрать...</value>
+    <value>Selecionar...</value>
   </data>
   <data name="HexEditorSelectKey" xml:space="preserve">
-    <value>Ctrl+L</value>
+    <value>CTRL + L</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>Конец</value>
+    <value>_End</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
-    <value>Начало</value>
+    <value>_Start</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Выбор</value>
+    <value>Selecionar</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Параметры...</value>
+    <value>Configurações...</value>
   </data>
   <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
-    <value>Остальные настройки</value>
+    <value>Outras opções</value>
   </data>
   <data name="HexEditorShowAsciiCommand" xml:space="preserve">
-    <value>Показать ASCII</value>
+    <value>Mostrar ASCII</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 байт</value>
+    <value>_16 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 байта</value>
+    <value>_32 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 байт</value>
+    <value>_48 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 байта</value>
+    <value>_64 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 байт</value>
+    <value>_8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Растянуть по ширине</value>
+    <value>_Fit to Width</value>
   </data>
   <data name="HexEditor_CharacterEncoding_ANSI" xml:space="preserve">
     <value>_ANSI</value>
@@ -328,7 +328,7 @@
     <value>_Unicode</value>
   </data>
   <data name="HexEditor_CharacterEncoding_UNICODE_2" xml:space="preserve">
-    <value>Юникод</value>
+    <value>Unicode</value>
   </data>
   <data name="HexEditor_CharacterEncoding_UTF32" xml:space="preserve">
     <value>UTF_32</value>
@@ -349,226 +349,226 @@
     <value>UTF-8</value>
   </data>
   <data name="HexEditor_Default" xml:space="preserve">
-    <value>_По умолчанию</value>
+    <value>_Default</value>
   </data>
   <data name="HexEditor_Default2" xml:space="preserve">
-    <value>По умолчанию</value>
+    <value>Padrão</value>
   </data>
   <data name="InvalidBoolean" xml:space="preserve">
-    <value>Значение должно быть логическое значение (True или False)</value>
+    <value>Valor deve ser um valor booleano (True ou False)</value>
   </data>
   <data name="InvalidChar" xml:space="preserve">
-    <value>Символ должен быть заключен в одинарные кавычки (')</value>
+    <value>Um caratere deve ser colocado entre aspas simples (')</value>
   </data>
   <data name="InvalidDateTime" xml:space="preserve">
-    <value>Значение должно быть DateTime</value>
+    <value>Valor deve ser um DateTime</value>
   </data>
   <data name="InvalidDecimal" xml:space="preserve">
-    <value>Значение должно быть Decimal</value>
+    <value>Valor deve ser um número Decimal</value>
   </data>
   <data name="InvalidDouble" xml:space="preserve">
-    <value>Значение должно быть 64-битным с плавающей точкой</value>
+    <value>Valor deve ser um número de ponto flutuante de 64 bits</value>
   </data>
   <data name="InvalidEscapeSequence" xml:space="preserve">
-    <value>Неизвестный символ escape-последовательность: \{0}</value>
+    <value>Sequência de escape de caratere desconhecido: \{0}</value>
   </data>
   <data name="InvalidEscapeSequence2" xml:space="preserve">
-    <value>Неизвестная строка escape-последовательность: \{0}</value>
+    <value>Sequência de escape de carateres desconhecidos: \{0}</value>
   </data>
   <data name="InvalidGuid" xml:space="preserve">
-    <value>Недопустимый GUID</value>
+    <value>GUID Inválido</value>
   </data>
   <data name="InvalidHexCharacter" xml:space="preserve">
-    <value>Шестнадцатеричная строка должна содержать только шестнадцатеричные цифры: 0-9 и A-F</value>
+    <value>Uma string hexadecimal deve conter somente os dígitos hexadecimais: 0-9 e A-F</value>
   </data>
   <data name="InvalidHexStringSize" xml:space="preserve">
-    <value>Шестнадцатеричная строка должна содержать четное число шестнадцатеричных цифр</value>
+    <value>Uma string hexadecimal deve conter um número par de dígitos hexadecimais</value>
   </data>
   <data name="InvalidInteger1" xml:space="preserve">
-    <value>Значение не является шестнадцатеричным или десятичным целым</value>
+    <value>O valor não é um inteiro hexadecimal ou decimal</value>
   </data>
   <data name="InvalidInteger2" xml:space="preserve">
-    <value>Значение слишком маленькое</value>
+    <value>O valor é muito pequeno</value>
   </data>
   <data name="InvalidInteger3" xml:space="preserve">
-    <value>Значение слишком большое</value>
+    <value>O valor é muito grande</value>
   </data>
   <data name="InvalidInteger4" xml:space="preserve">
-    <value>Значение должно быть между {0} и {1} (0x{1:X}) включительно</value>
+    <value>Valor deve estar entre {0} e {1} (0x{1:X}) inclusive</value>
   </data>
   <data name="InvalidInteger5" xml:space="preserve">
-    <value>Значение должно быть между {0} ({2}0x{0:X}) и {1} (0x{1:X}) включительно</value>
+    <value>Valor deve estar entre {0} ({2}0x{0:X}) e {1} (0x{1:X}) inclusive</value>
   </data>
   <data name="InvalidListValue" xml:space="preserve">
-    <value>Значение в списке не может быть пустым</value>
+    <value>Valor na lista não pode ser vazio</value>
   </data>
   <data name="InvalidListValue2" xml:space="preserve">
-    <value>Элементы списка должны быть разделены запятыми</value>
+    <value>Lista de elementos deve ser separadas por vírgulas</value>
   </data>
   <data name="InvalidSingle" xml:space="preserve">
-    <value>Значение должно быть 32-битным с плавающей точкой</value>
+    <value>Valor deve ser um número de ponto flutuante de 32 bits</value>
   </data>
   <data name="InvalidString1" xml:space="preserve">
-    <value>Строка должна содержать значение «null» или должна быть заключена в двойные кавычки (")</value>
+    <value>Uma string deve conter o valor 'null' ou deve estar entre aspas duplas (')</value>
   </data>
   <data name="InvalidString2" xml:space="preserve">
-    <value>Строка должна быть заключена в двойные кавычки (")</value>
+    <value>Uma string deve estar entre aspas duplas (')</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
-    <value>Значением должно быть TimeSpan</value>
+    <value>Valor deve ser um TimeSpan</value>
   </data>
   <data name="InvalidUnsignedInteger1" xml:space="preserve">
-    <value>Разрешены только неотрицательные целые</value>
+    <value>São permitidos apenas números inteiros não negativos</value>
   </data>
   <data name="InvalidUnsignedInteger2" xml:space="preserve">
-    <value>Значение не является беззнаковым шестнадцатеричным или десятичным целым</value>
+    <value>O valor não é um inteiro não-assinado de hexadecimal ou decimal</value>
   </data>
   <data name="InvalidUnsignedInteger3" xml:space="preserve">
-    <value>Значение должно быть между {0} и {1} (0x{1:X}) включительно</value>
+    <value>Valor deve estar entre {0} e {1} (0x{1:X}) inclusive</value>
   </data>
   <data name="InvalidUnsignedInteger4" xml:space="preserve">
-    <value>Значение должно быть между {0} (0x{0:X}) и {1} (0x{1:X}) включительно</value>
+    <value>Valor deve estar entre {0} (0x{0:X}) e {1} (0x{1:X}) inclusive</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Базовое смещение</value>
+    <value>_Base Offset</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>Это значение добавляется в начальное смещения, прежде чем оно отображается на экране</value>
+    <value>Esse valor é adicionado para o offset de início antes dele ser mostrado na tela</value>
   </data>
   <data name="LocalHexSettings_ByteGroupSize" xml:space="preserve">
-    <value>Размер _группы байтов</value>
+    <value>Byte _Group Size</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>Б_айтов в строке</value>
+    <value>B_ytes per Line</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>Смещение _конца</value>
+    <value>_End Offset</value>
   </data>
   <data name="LocalHexSettings_LowerCaseHex" xml:space="preserve">
-    <value>Hex в _нижнем регистре</value>
+    <value>_Lower Case Hex</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Количество би_тов смещения</value>
+    <value>Offset Bi_t Size</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>П_оказать ASCII</value>
+    <value>Sho_w ASCII</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>Смещение _начала</value>
+    <value>_Start Offset</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Настройки локального Hex-редактора</value>
+    <value>Configurações de Hex Editor local</value>
   </data>
   <data name="LocalHexSettings_UseHexPrefix" xml:space="preserve">
-    <value>_Использовать префикс Hex (смещение)</value>
+    <value>_Use Hex Prefix (offset)</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Использовать _относительные смещения</value>
+    <value>Use _Relative Offsets</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>Все смещения относительно начального смещения</value>
+    <value>Todos os offsets são relativos para o offset de início</value>
   </data>
   <data name="LowerCaseHexCommand" xml:space="preserve">
-    <value>Hex в нижнем регистре</value>
+    <value>Lower Case Hex</value>
   </data>
   <data name="NewDataNotImageList" xml:space="preserve">
-    <value>Новые данные не являются списком изображений.</value>
+    <value>Os novos dados não são uma lista de imagem.</value>
   </data>
   <data name="NoTypeConverter" xml:space="preserve">
-    <value>Для {0} нет TypeConverter и он не может быть преобразован из строки.</value>
+    <value>{0} não tem um TypeConverter e não pode ser convertido de uma string.</value>
   </data>
   <data name="NumberOfBytes" xml:space="preserve">
-    <value>{0} байт</value>
+    <value>{0} bytes</value>
   </data>
   <data name="NumberOfBytesAndType" xml:space="preserve">
-    <value>{0} байт, Тип = {1}</value>
+    <value>{0} bytes, Tipo = {1}</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Вставить</value>
+    <value>_Paste</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>_Вставить (#Blob Data)</value>
+    <value>_Paste (#Blob Data)</value>
   </data>
   <data name="PasteDotNetMetaDataBlobKey" xml:space="preserve">
-    <value>Ctrl+B</value>
+    <value>CTRL + B</value>
   </data>
   <data name="PasteKey" xml:space="preserve">
-    <value>Ctrl+V</value>
+    <value>Ctrl + V</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>_Вставить (Unicode)</value>
+    <value>_Paste (Unicode)</value>
   </data>
   <data name="PasteUnicodeKey" xml:space="preserve">
-    <value>Ctrl+U</value>
+    <value>CTRL + U</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>_Вставить (UTF-8)</value>
+    <value>_Paste (UTF-8)</value>
   </data>
   <data name="PasteUTF8Key" xml:space="preserve">
-    <value>Ctrl+8</value>
+    <value>CTRL + 8</value>
   </data>
   <data name="ResourceTypeCantBeChanged" xml:space="preserve">
-    <value>Тип ресурса не может быть изменен</value>
+    <value>Tipo de recurso não pode ser alterado</value>
   </data>
   <data name="SaveResource" xml:space="preserve">
-    <value>Сохранить ресурс</value>
+    <value>Guardar Recurso</value>
   </data>
   <data name="SaveResources" xml:space="preserve">
-    <value>Сохранить ресурсы</value>
+    <value>Guardar Recursos</value>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Показать все байты</value>
+    <value>Mostrar Todos os Bytes</value>
   </data>
   <data name="ShowAllBytesKey" xml:space="preserve">
-    <value>Ctrl+Shift+D</value>
+    <value>Ctrl + Shift + D</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Отображать только выделенные байты</value>
+    <value>Mostrar Apenas Bytes Selecionados</value>
   </data>
   <data name="ShowOnlySelectedBytesKey" xml:space="preserve">
-    <value>Ctrl+D</value>
+    <value>CTRL + D</value>
   </data>
   <data name="UseHexPrefixCommand" xml:space="preserve">
-    <value>Использовать префикс 0x (смещение)</value>
+    <value>Usar prefixo 0x (offset)</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
-    <value>Значение должно быть типа {0}.
-Ошибка: {1}</value>
+    <value>Valor deve ser de tipo {0}.
+Erro: {1}</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
-    <value>Закрыть</value>
+    <value>Fechar</value>
   </data>
   <data name="Window_Maximize" xml:space="preserve">
-    <value>Развернуть</value>
+    <value>Maximizar</value>
   </data>
   <data name="Window_Minimize" xml:space="preserve">
-    <value>Свернуть</value>
+    <value>Minimizar</value>
   </data>
   <data name="Window_Restore" xml:space="preserve">
-    <value>Восстановить</value>
+    <value>Restaurar para baixo</value>
   </data>
   <data name="LocalHexSettings_Encoding" xml:space="preserve">
-    <value>_Кодировка</value>
+    <value>E_ncoding</value>
   </data>
   <data name="SearchPanel_ErrorText" xml:space="preserve">
-    <value>Ошибка:</value>
+    <value>Erro:</value>
   </data>
   <data name="SearchPanel_FindNextText" xml:space="preserve">
-    <value>Искать следующее (F3)</value>
+    <value>Localizar próxima (F3)</value>
   </data>
   <data name="SearchPanel_FindPreviousText" xml:space="preserve">
-    <value>Искать предыдущее (Shift+F3)</value>
+    <value>Localizar anterior (Shift + F3)</value>
   </data>
   <data name="SearchPanel_MatchCaseText" xml:space="preserve">
-    <value>Совпадение регистра</value>
+    <value>Coincidir maiúsculas/minúsculas</value>
   </data>
   <data name="SearchPanel_MatchWholeWordsText" xml:space="preserve">
-    <value>Совпадение полного слова</value>
+    <value>Correspondem a palavras inteiras</value>
   </data>
   <data name="SearchPanel_NoMatchesFoundText" xml:space="preserve">
-    <value>Совпадений не найдено!</value>
+    <value>Nenhuma correspondência encontrada!</value>
   </data>
   <data name="SearchPanel_UseRegexText" xml:space="preserve">
-    <value>Использовать регулярные выражения</value>
+    <value>Usar expressões regulares</value>
   </data>
 </root>

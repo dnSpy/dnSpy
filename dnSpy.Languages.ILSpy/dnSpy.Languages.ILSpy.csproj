@@ -123,6 +123,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.pt-PT.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\wpf.styles.templates.xaml">

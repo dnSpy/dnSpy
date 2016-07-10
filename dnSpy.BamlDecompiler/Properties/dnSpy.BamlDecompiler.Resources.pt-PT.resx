@@ -117,103 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Анали_зировать</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Todos os Ficheiros</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Анализатор</value>
+  <data name="BAMLFile" xml:space="preserve">
+    <value>Ficheiro BAML</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Применяется к</value>
+  <data name="BamlOptionDlgTab" xml:space="preserve">
+    <value>BAML</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Кем назначено</value>
+  <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
+    <value>Desmontar BAML</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>Коп_ировать</value>
+  <data name="BamlSettings_DisassembleBAML_ToolTip" xml:space="preserve">
+    <value>Desmonta registos BAML em vez de os descompilar para XAML.</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Dbl Click</value>
+  <data name="DisassembleBAMLCommand" xml:space="preserve">
+    <value>Desmontar BAML</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>add</value>
+  <data name="Error_AttachedEvent" xml:space="preserve">
+    <value>Evento Anexado '{0}'.</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>remove</value>
+  <data name="Error_IComponentConnectorConnetCannotBeParsed" xml:space="preserve">
+    <value>Classe '{0}' tem método IComponentConnector.Connect mas não pode ser analisado.</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Представлено в</value>
+  <data name="Error_UnknownConnectionId" xml:space="preserve">
+    <value>ID de Conexão Desconhecido: {0}</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Методы-расширения</value>
-  </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Перейти по ссылке</value>
-  </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Показать ссылку на метод</value>
-  </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Показать ссылку в методе (новая _вкладка)</value>
-  </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Перейти к ссылке (New Ta_b)</value>
-  </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>hides</value>
-  </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Реализовано в</value>
-  </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Вызвано в</value>
-  </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Перегружен в</value>
+  <data name="Msg_GlobalNamespace" xml:space="preserve">
+    <value>'{0}' é o prefixo do namespace global.</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Анализирует сборки</value>
+    <value>Descompilador BAML</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>get</value>
+  <data name="SaveBAML" xml:space="preserve">
+    <value>_Save BAML...</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>set</value>
+  <data name="SaveXAML" xml:space="preserve">
+    <value>_Save XAML...</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Кем вызвано</value>
+  <data name="Saving" xml:space="preserve">
+    <value>Salvando...</value>
   </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Кем читается</value>
-  </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Убрать</value>
-  </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Поиск...</value>
-  </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Shift+Dbl Click</value>
-  </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Ctrl+C</value>
-  </data>
-  <data name="ShortCutKeyCtrlR" xml:space="preserve">
-    <value>Ctrl+R</value>
-  </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Del</value>
-  </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Показать токены</value>
-  </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Подсветка синтаксиса</value>
-  </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Используется в</value>
-  </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Использует</value>
+  <data name="XAMLFile" xml:space="preserve">
+    <value>Ficheiro XAML</value>
   </data>
 </root>

@@ -118,61 +118,61 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Анали_зировать</value>
+    <value>Analy_ze</value>
   </data>
   <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Анализатор</value>
+    <value>Analyzer</value>
   </data>
   <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Применяется к</value>
+    <value>Aplicado a</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Кем назначено</value>
+    <value>Atribuído por</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Коп_ировать</value>
+    <value>Cop_y</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
-    <value>Dbl Click</value>
+    <value>Duplo Clique</value>
   </data>
   <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>add</value>
+    <value>adicionar</value>
   </data>
   <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>remove</value>
+    <value>remover</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Представлено в</value>
+    <value>Exposto por</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Методы-расширения</value>
+    <value>Métodos de extenção</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Перейти по ссылке</value>
+    <value>Ir para referência</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Показать ссылку на метод</value>
+    <value>Mostrar referência em método</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Показать ссылку в методе (новая _вкладка)</value>
+    <value>Mostrar referência em método (Nova_Aba)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Перейти к ссылке (New Ta_b)</value>
+    <value>Ir para Referência (Nova Aba)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>hides</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Реализовано в</value>
+    <value>Implementado por</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Вызвано в</value>
+    <value>Instanciado por</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Перегружен в</value>
+    <value>Overridden por</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Анализирует сборки</value>
+    <value>Analisa os assemblies</value>
   </data>
   <data name="PropertyGetterTreeNode" xml:space="preserve">
     <value>get</value>
@@ -181,39 +181,39 @@
     <value>set</value>
   </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Кем вызвано</value>
+    <value>Raised por</value>
   </data>
   <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Кем читается</value>
+    <value>Lido por</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>_Убрать</value>
+    <value>_Remove</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Поиск...</value>
+    <value>Procurando...</value>
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Shift+Dbl Click</value>
+    <value>Shift + Duplo Clique</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Ctrl+C</value>
+    <value>CTRL + C</value>
   </data>
   <data name="ShortCutKeyCtrlR" xml:space="preserve">
-    <value>Ctrl+R</value>
+    <value>CTRL + R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
     <value>Del</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Показать токены</value>
+    <value>Mostrar Tokens</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Подсветка синтаксиса</value>
+    <value>Realce de sintaxe</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Используется в</value>
+    <value>Usado por</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
-    <value>Использует</value>
+    <value>Utiliza</value>
   </data>
 </root>
