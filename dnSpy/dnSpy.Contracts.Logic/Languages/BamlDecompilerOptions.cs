@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <returns></returns>
 		public static BamlDecompilerOptions Create(ILanguage language) {
 			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
-				return CreateVB();
+				return CreateVisualBasic();
 			return CreateCSharp();
 		}
 
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Languages {
 		/// Creates a new instance with VB values
 		/// </summary>
 		/// <returns></returns>
-		public static BamlDecompilerOptions CreateVB() {
+		public static BamlDecompilerOptions CreateVisualBasic() {
 			return new BamlDecompilerOptions {
 				InternalClassModifier = "Friend",
 			};
