@@ -173,5 +173,10 @@ namespace dnSpy.Contracts.Languages {
 		public static readonly Guid SortCustomAttributes_GUID = new Guid("8E3E8009-AC00-436E-B476-08B2E697AD32");
 		/// <summary />
 		public static readonly string SortCustomAttributes_NAME = "sort-custom-attrs";
+
+		/// <summary />
+		public static readonly Guid UseSourceCodeOrder_GUID = new Guid("11B1D294-1D85-4A5B-B9E9-B2A8AB889F51");
+		/// <summary />
+		public static readonly string UseSourceCodeOrder_NAME = "src-order";
 	}
 }

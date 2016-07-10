@@ -207,4 +207,7 @@
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>Use variable names from debug symbols, if available</value>
   </data>
+  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
+    <value>Order members in source code order</value>
+  </data>
 </root>

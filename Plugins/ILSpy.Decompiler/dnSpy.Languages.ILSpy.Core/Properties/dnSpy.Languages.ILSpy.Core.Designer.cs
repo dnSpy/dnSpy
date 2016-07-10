@@ -330,5 +330,14 @@ namespace dnSpy.Languages.ILSpy.Core.Properties {
                 return ResourceManager.GetString("DecompilerSettings_UseLocalNameFromSyms", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order members in source code order.
+        /// </summary>
+        public static string DecompilerSettings_UseSourceCodeOrder {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_UseSourceCodeOrder", resourceCulture);
+            }
+        }
     }
 }

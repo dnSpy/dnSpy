@@ -68,6 +68,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			this.SortSystemUsingStatementsFirst = sect.Attribute<bool?>(nameof(SortSystemUsingStatementsFirst)) ?? this.SortSystemUsingStatementsFirst;
 			//this.MaxArrayElements = sect.Attribute<int?>(nameof(MaxArrayElements)) ?? this.MaxArrayElements;
 			this.SortCustomAttributes = sect.Attribute<bool?>(nameof(SortCustomAttributes)) ?? this.SortCustomAttributes;
+			this.UseSourceCodeOrder = sect.Attribute<bool?>(nameof(UseSourceCodeOrder)) ?? this.UseSourceCodeOrder;
 			//TODO: CSharpFormattingOptions
 			this.disableSave = false;
 		}
@@ -111,6 +112,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			sect.Attribute(nameof(SortSystemUsingStatementsFirst), SortSystemUsingStatementsFirst);
 			//sect.Attribute(nameof(MaxArrayElements), MaxArrayElements);
 			sect.Attribute(nameof(SortCustomAttributes), SortCustomAttributes);
+			sect.Attribute(nameof(UseSourceCodeOrder), UseSourceCodeOrder);
 			//TODO: CSharpFormattingOptions
 		}
 	}
