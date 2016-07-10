@@ -146,10 +146,10 @@ namespace dnSpy.Languages.ILSpy.Settings {
 				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_MakeAssignmentExpressions,
 				Name = DecompilerOptionConstants.MakeAssignmentExpressions_NAME,
 			};
-			yield return new DecompilerOption<bool>(DecompilerOptionConstants.AlwaysGenerateExceptionVariableForCatchBlocks_GUID,
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject_GUID,
 						() => decompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject, a => decompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject = a) {
-				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocks,
-				Name = DecompilerOptionConstants.AlwaysGenerateExceptionVariableForCatchBlocks_NAME,
+				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject,
+				Name = DecompilerOptionConstants.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID,
 						() => decompilerSettings.ShowTokenAndRvaComments, a => decompilerSettings.ShowTokenAndRvaComments = a) {
@@ -178,11 +178,12 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			};
 		}
 
-		string GetMemberOrder() => GetMemberOrderString(decompilerSettings.DecompilationObject0) +
-		GetMemberOrderString(decompilerSettings.DecompilationObject1) +
-		GetMemberOrderString(decompilerSettings.DecompilationObject2) +
-		GetMemberOrderString(decompilerSettings.DecompilationObject3) +
-		GetMemberOrderString(decompilerSettings.DecompilationObject4);
+		string GetMemberOrder() =>
+			GetMemberOrderString(decompilerSettings.DecompilationObject0) +
+			GetMemberOrderString(decompilerSettings.DecompilationObject1) +
+			GetMemberOrderString(decompilerSettings.DecompilationObject2) +
+			GetMemberOrderString(decompilerSettings.DecompilationObject3) +
+			GetMemberOrderString(decompilerSettings.DecompilationObject4);
 
 		static string GetMemberOrderString(DecompilationObject d) {
 			switch (d) {

@@ -150,9 +150,9 @@ namespace dnSpy.Contracts.Languages {
 		public static readonly string MakeAssignmentExpressions_NAME = "make-assign-expr";
 
 		/// <summary />
-		public static readonly Guid AlwaysGenerateExceptionVariableForCatchBlocks_GUID = new Guid("D863C28E-68E8-46BE-A879-CC6345A8260B");
+		public static readonly Guid AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject_GUID = new Guid("5303AAB5-CAFF-469A-B19C-CE4FBAC88CC3");
 		/// <summary />
-		public static readonly string AlwaysGenerateExceptionVariableForCatchBlocks_NAME = "always-create-ex-var";
+		public static readonly string AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject_NAME = "always-create-ex-var";
 
 		/// <summary />
 		public static readonly Guid ForceShowAllMembers_GUID = new Guid("237BFCDA-07A5-493C-9ACF-8698EBF395FA");

@@ -120,8 +120,8 @@
   <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
     <value>Add using declarations</value>
   </data>
-  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocks" xml:space="preserve">
-    <value>Always generate exception variables in catch blocks</value>
+  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
+    <value>Always generate exception variables in catch blocks unless type is Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>Decompilation order</value>

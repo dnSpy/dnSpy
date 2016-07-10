@@ -70,11 +70,12 @@ namespace dnSpy.Languages.ILSpy.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Always generate exception variables in catch blocks.
+        ///   Looks up a localized string similar to Always generate exception variables in catch blocks unless type is Object.
         /// </summary>
-        public static string DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocks {
+        public static string DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject {
             get {
-                return ResourceManager.GetString("DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocks", resourceCulture);
+                return ResourceManager.GetString("DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObjec" +
+                        "t", resourceCulture);
             }
         }
         
