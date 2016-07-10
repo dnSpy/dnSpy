@@ -29,3 +29,7 @@ Chinese Simplified
 Russian
 	Igor Besedin
 	Konctantin
+
+Portuguese
+
+	Raphael Aquiles
