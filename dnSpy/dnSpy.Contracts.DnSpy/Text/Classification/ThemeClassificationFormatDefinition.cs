@@ -50,12 +50,12 @@ namespace dnSpy.Contracts.Text.Classification {
 			var res = CreateResourceDictionary();
 
 			var isBold = GetIsBold(theme);
-			if (IsBold != null)
-				res.Add(IsBoldId, IsBold.Value);
+			if (isBold != null)
+				res.Add(IsBoldId, isBold.Value);
 
 			var isItalic = GetIsItalic(theme);
-			if (IsItalic != null)
-				res.Add(IsItalicId, IsItalic.Value);
+			if (isItalic != null)
+				res.Add(IsItalicId, isItalic.Value);
 
 			var fg = GetForeground(theme);
 			if (fg != null) {
