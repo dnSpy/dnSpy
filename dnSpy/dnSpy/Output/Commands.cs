@@ -21,7 +21,6 @@ using System;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Output;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Output {
 	sealed class LogEditorCtxMenuContext {

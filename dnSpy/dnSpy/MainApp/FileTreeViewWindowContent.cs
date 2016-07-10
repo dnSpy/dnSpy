@@ -32,7 +32,6 @@ using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.MainApp {
 	[Export(typeof(IMainToolWindowContentCreator))]

@@ -20,7 +20,7 @@
 using System.Windows.Media;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.Search;
+using dnSpy.Contracts.Search;
 
 namespace dnSpy.Search {
 	sealed class SearchTypeVM : ViewModelBase {

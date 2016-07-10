@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.Settings.Dialog;
 
 // This adds an option to the "Misc" tab. If you don't have enough options to warrant a new tab,
 // this can be used to add a few of them to the Misc tab.

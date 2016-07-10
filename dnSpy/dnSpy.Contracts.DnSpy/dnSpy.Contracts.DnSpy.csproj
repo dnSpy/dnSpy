@@ -88,14 +88,52 @@
     <Compile Include="Command\ReplIdsExtensions.cs" />
     <Compile Include="Command\TextEditorIds.cs" />
     <Compile Include="Command\TextEditorIdsExtensions.cs" />
+    <Compile Include="Controls\ColorizedTextElementCreator.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
+    <Compile Include="Controls\FastTextBlock.cs" />
+    <Compile Include="Controls\FontUtilities.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IUIObjectProvider.cs" />
     <Compile Include="Controls\IWpfCommandManager.cs" />
     <Compile Include="Controls\IWpfCommands.cs" />
     <Compile Include="Controls\IWpfFocusChecker.cs" />
     <Compile Include="Controls\IWpfFocusManager.cs" />
+    <Compile Include="Controls\MetroWindow.cs" />
+    <Compile Include="Controls\TextBlockColorOutput.cs" />
+    <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Decompiler\ICodeMappings.cs" />
+    <Compile Include="Files\AnnotationsImpl.cs" />
+    <Compile Include="Files\DnSpyFile.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
+    <Compile Include="Files\TreeView\NodePrinter.cs" />
+    <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
+    <Compile Include="Files\TreeView\Resources\GuessFileType.cs" />
+    <Compile Include="Files\TreeView\Resources\ImageResourceUtilities.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceUtilities.cs" />
+    <Compile Include="Files\TreeView\Resources\SaveResources.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializationUtilities.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerUtilities.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageUtilities.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedResourceElementNode.cs" />
+    <Compile Include="Menus\MenuItemBase.cs" />
+    <Compile Include="Menus\MenuItemCommand.cs" />
+    <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">
+      <DependentUpon>ProgressDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MVVM\Dialogs\ProgressVM.cs" />
+    <Compile Include="MVVM\IInitializeDataTemplate.cs" />
+    <Compile Include="MVVM\InitDataTemplateAP.cs" />
+    <Compile Include="MVVM\PickDirectory.cs" />
+    <Compile Include="MVVM\PickFilename.cs" />
+    <Compile Include="MVVM\PickFilenameConstants.cs" />
+    <Compile Include="MVVM\PickSaveFilename.cs" />
+    <Compile Include="Properties\dnSpy.Contracts.DnSpy.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Contracts.DnSpy.resx</DependentUpon>
+    </Compile>
     <Compile Include="Files\DnSpyFileInfo.cs" />
     <Compile Include="Files\FileConstants.cs" />
     <Compile Include="Files\FilenameKey.cs" />
@@ -237,6 +275,14 @@
     <Compile Include="Menus\IMenuManager.cs" />
     <Compile Include="Menus\IMenuMetadata.cs" />
     <Compile Include="Menus\MenuConstants.cs" />
+    <Compile Include="MVVM\Converters\BooleanToThicknessConverter.cs" />
+    <Compile Include="MVVM\Converters\FontSizeConverter.cs" />
+    <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
+    <Compile Include="MVVM\DataFieldVM.cs" />
+    <Compile Include="MVVM\EnumVM.cs" />
+    <Compile Include="MVVM\IsDraggableAP.cs" />
+    <Compile Include="MVVM\ListVM.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Output\ICachedWriter.cs" />
     <Compile Include="Output\IOutputManager.cs" />
     <Compile Include="Output\IOutputTextPane.cs" />
@@ -305,13 +351,25 @@
     <Compile Include="Scripting\ScriptException.cs" />
     <Compile Include="Scripting\UIUtils.cs" />
     <Compile Include="Search\BodyResult.cs" />
+    <Compile Include="Search\ChainFileTreeNodeFilter.cs" />
+    <Compile Include="Search\EntryPointFileTreeNodeFilter.cs" />
     <Compile Include="Search\FileSearcherOptions.cs" />
+    <Compile Include="Search\FileTreeNodeFilterBase.cs" />
+    <Compile Include="Search\FilterNothingFileTreeNodeFilter.cs" />
+    <Compile Include="Search\FlagsFileTreeNodeFilter.cs" />
     <Compile Include="Search\IFileSearcher.cs" />
     <Compile Include="Search\IFileSearcherCreator.cs" />
     <Compile Include="Search\ISearchComparer.cs" />
     <Compile Include="Search\ISearchResult.cs" />
+    <Compile Include="Search\NamespaceRef.cs" />
+    <Compile Include="Search\NamespaceSearchResult.cs" />
+    <Compile Include="Search\SameAssemblyFileTreeNodeFilter.cs" />
+    <Compile Include="Search\SameModuleFileTreeNodeFilter.cs" />
+    <Compile Include="Search\SearchComparers.cs" />
     <Compile Include="Search\SearchResultEventArgs.cs" />
     <Compile Include="Search\SearchTypeInfo.cs" />
+    <Compile Include="Search\ShowNothingFileTreeNodeFilterBase.cs" />
+    <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
     <Compile Include="Settings\Dialog\IAppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />
@@ -320,6 +378,7 @@
     <Compile Include="Settings\Dialog\IDynamicAppSettingsTab.cs" />
     <Compile Include="Settings\Dialog\ISimpleAppOption.cs" />
     <Compile Include="Settings\Dialog\ISimpleAppOptionCreator.cs" />
+    <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\ISettingsSection.cs" />
     <Compile Include="Settings\ISettingsSectionCreator.cs" />
@@ -334,6 +393,7 @@
     <Compile Include="Tabs\TabGroupManagerOptions.cs" />
     <Compile Include="Tabs\TabGroupSelectedEventArgs.cs" />
     <Compile Include="Tabs\TabSelectedEventArgs.cs" />
+    <Compile Include="Text\CachedTextTokenColors.cs" />
     <Compile Include="Text\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Classification\EditorFormatMapConstants.cs" />
     <Compile Include="Text\Classification\IThemeClassificationTypes.cs" />
@@ -388,8 +448,10 @@
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
     <Compile Include="Text\OutputColorExtensions.cs" />
+    <Compile Include="Text\StringBuilderTextColorOutput.cs" />
     <Compile Include="Text\TextEditorLocation.cs" />
     <Compile Include="Themes\ColorType.cs" />
+    <Compile Include="Themes\ExtensionMethods.cs" />
     <Compile Include="Themes\ITextColor.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />
@@ -397,6 +459,7 @@
     <Compile Include="Themes\TextColor.cs" />
     <Compile Include="Themes\ThemeChangedEventArgs.cs" />
     <Compile Include="Themes\ThemeConstants.cs" />
+    <Compile Include="Themes\ThemeUtils.cs" />
     <Compile Include="ToolBars\ExportToolBarButtonAttribute.cs" />
     <Compile Include="ToolBars\ExportToolBarItemAttribute.cs" />
     <Compile Include="ToolBars\ExportToolBarObjectAttribute.cs" />
@@ -409,7 +472,10 @@
     <Compile Include="ToolBars\IToolBarObject.cs" />
     <Compile Include="ToolBars\IToolBarObjectMetadata.cs" />
     <Compile Include="ToolBars\IToolBarToggleButton.cs" />
+    <Compile Include="ToolBars\ToolBarButtonBase.cs" />
+    <Compile Include="ToolBars\ToolBarButtonCommand.cs" />
     <Compile Include="ToolBars\ToolBarConstants.cs" />
+    <Compile Include="ToolBars\ToolBarObjectBase.cs" />
     <Compile Include="ToolWindows\App\AppToolWindowConstants.cs" />
     <Compile Include="ToolWindows\App\AppToolWindowLocation.cs" />
     <Compile Include="ToolWindows\App\IMainToolWindowContentCreator.cs" />
@@ -425,6 +491,7 @@
     <Compile Include="ToolWindows\ToolWindowGroupManagerOptions.cs" />
     <Compile Include="ToolWindows\ToolWindowGroupSelectedEventArgs.cs" />
     <Compile Include="ToolWindows\ToolWindowSelectedEventArgs.cs" />
+    <Compile Include="TreeView\AsyncNodeCreator.cs" />
     <Compile Include="TreeView\IMDTokenNode.cs" />
     <Compile Include="TreeView\ITreeNode.cs" />
     <Compile Include="TreeView\ITreeNodeData.cs" />
@@ -433,6 +500,7 @@
     <Compile Include="TreeView\ITreeView.cs" />
     <Compile Include="TreeView\ITreeViewListener.cs" />
     <Compile Include="TreeView\ITreeViewManager.cs" />
+    <Compile Include="TreeView\TreeNodeData.cs" />
     <Compile Include="TreeView\TreeNodeDataCreatorContext.cs" />
     <Compile Include="TreeView\TreeViewListenerEvent.cs" />
     <Compile Include="TreeView\TreeViewListenerEventArgs.cs" />
@@ -440,6 +508,7 @@
     <Compile Include="TreeView\TVConstants.cs" />
     <Compile Include="TreeView\TVNodeRemovedEventArgs.cs" />
     <Compile Include="TreeView\TVSelectionChangedEventArgs.cs" />
+    <Compile Include="Utilities\DelayedAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
@@ -475,7 +544,20 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Contracts.DnSpy.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

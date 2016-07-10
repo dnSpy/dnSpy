@@ -18,7 +18,6 @@
 */
 
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Shared.Hex {
 	sealed class SelectVM : ViewModelBase {

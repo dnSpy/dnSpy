@@ -27,7 +27,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Scripting.Roslyn.CSharp {
 	[Export(typeof(IMainToolWindowContentCreator))]

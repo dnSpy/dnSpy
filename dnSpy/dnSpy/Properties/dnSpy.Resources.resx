@@ -983,4 +983,16 @@
   <data name="ShortCutKeyShiftEsc" xml:space="preserve">
     <value>Shift+Esc</value>
   </data>
+  <data name="Window_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Window_Maximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Window_Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="Window_Restore" xml:space="preserve">
+    <value>Restore Down</value>
+  </data>
 </root>

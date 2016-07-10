@@ -19,7 +19,7 @@
 
 using System;
 using System.Windows.Input;
-using dnSpy.Shared.Menus;
+using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Debugger {
 	abstract class MenuItemCommandProxy<TContext> : ICommand where TContext : class {

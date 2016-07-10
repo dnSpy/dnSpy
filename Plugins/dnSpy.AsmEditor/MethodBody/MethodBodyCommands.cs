@@ -34,7 +34,6 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[ExportAutoLoaded]

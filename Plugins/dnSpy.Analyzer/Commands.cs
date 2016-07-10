@@ -28,7 +28,6 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Analyzer {
 	abstract class OpenReferenceCtxMenuCommandBase : MenuItemBase {

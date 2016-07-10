@@ -35,8 +35,6 @@ using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.ToolBars;
 using Microsoft.Win32;
 
 namespace dnSpy.Files.Tabs {

@@ -25,8 +25,7 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Search;
+using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.Resources {
 	enum ResourceVisibility {

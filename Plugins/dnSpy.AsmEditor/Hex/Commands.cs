@@ -43,7 +43,6 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex {

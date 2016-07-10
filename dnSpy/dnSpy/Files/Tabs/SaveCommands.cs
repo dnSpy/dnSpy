@@ -35,13 +35,12 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Languages.MSBuild;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]

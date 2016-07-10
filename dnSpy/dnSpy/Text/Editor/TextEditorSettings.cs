@@ -20,10 +20,10 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Shared.Controls;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
@@ -40,19 +40,19 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		FontFamily fontFamily = new FontFamily(FontUtils.GetDefaultMonospacedFont());
+		FontFamily fontFamily = new FontFamily(FontUtilities.GetDefaultMonospacedFont());
 
 		public double FontSize {
 			get { return fontSize; }
 			set {
 				if (fontSize != value) {
-					fontSize = FontUtils.FilterFontSize(value);
+					fontSize = FontUtilities.FilterFontSize(value);
 					OnPropertyChanged(nameof(FontSize));
 					OnModified();
 				}
 			}
 		}
-		double fontSize = FontUtils.DEFAULT_FONT_SIZE;
+		double fontSize = FontUtilities.DEFAULT_FONT_SIZE;
 
 		public bool ShowLineNumbers {
 			get { return showLineNumbers; }
@@ -151,7 +151,7 @@ namespace dnSpy.Text.Editor {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtils.GetDefaultMonospacedFont());
+			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultMonospacedFont());
 			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
 			this.AutoHighlightRefs = sect.Attribute<bool?>(nameof(AutoHighlightRefs)) ?? this.AutoHighlightRefs;

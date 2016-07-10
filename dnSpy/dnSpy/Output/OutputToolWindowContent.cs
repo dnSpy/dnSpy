@@ -28,7 +28,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Output {
 	[Export(typeof(IMainToolWindowContentCreator))]

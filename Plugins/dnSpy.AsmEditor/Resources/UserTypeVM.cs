@@ -22,10 +22,9 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.Files.TreeView.Resources;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Search;
+using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class UserTypeVM : ViewModelBase {
@@ -84,7 +83,7 @@ namespace dnSpy.AsmEditor.Resources {
 			object obj;
 			if (!string.IsNullOrEmpty(GetSerializedData(out obj)))
 				return null;
-			return SerializationUtils.Serialize(obj);
+			return SerializationUtilities.Serialize(obj);
 		}
 
 		string GetString(byte[] data) {
@@ -95,10 +94,10 @@ namespace dnSpy.AsmEditor.Resources {
 				return string.Empty;
 
 			object obj;
-			if (!string.IsNullOrEmpty(SerializationUtils.Deserialize(data, out obj)))
+			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out obj)))
 				return string.Empty;
 
-			return SerializationUtils.ConvertObjectToString(obj);
+			return SerializationUtilities.ConvertObjectToString(obj);
 		}
 
 		string GetSerializedData(out object obj) {
@@ -108,7 +107,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (!string.IsNullOrEmpty(error))
 				return error;
 
-			return SerializationUtils.CreateObjectFromString(type, StringValue, out obj);
+			return SerializationUtilities.CreateObjectFromString(type, StringValue, out obj);
 		}
 
 		string LoadType(out Type type) {

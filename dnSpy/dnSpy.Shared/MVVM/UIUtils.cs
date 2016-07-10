@@ -27,7 +27,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using dnSpy.Shared.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Shared.MVVM {
 	public static class UIUtils {
@@ -60,7 +60,7 @@ namespace dnSpy.Shared.MVVM {
 			return GetItem<T>(view, e.OriginalSource) != null;
 		}
 
-		public static string EscapeMenuItemHeader(string s) => NameUtils.CleanName(s).Replace("_", "__");
+		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s).Replace("_", "__");
 
 		public static bool HasSelectedChildrenFocus(ListBox listBox) {
 			if (listBox == null)

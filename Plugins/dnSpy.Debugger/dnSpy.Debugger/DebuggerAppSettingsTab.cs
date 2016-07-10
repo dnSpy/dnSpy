@@ -25,7 +25,6 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger {
 	[Export(typeof(IAppSettingsTabCreator))]
@@ -33,7 +32,7 @@ namespace dnSpy.Debugger {
 		readonly DebuggerSettingsImpl debuggerSettingsImpl;
 
 		[ImportingConstructor]
-		DebuggerAppSettingsTabCreator(DebuggerSettingsImpl debuggerSettingsImpl) {
+		DebuggerAppSettingsTabCreator(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
 			this.debuggerSettingsImpl = debuggerSettingsImpl;
 		}
 

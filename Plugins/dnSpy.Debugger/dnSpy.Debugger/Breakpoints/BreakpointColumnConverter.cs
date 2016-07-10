@@ -20,8 +20,8 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointColumnConverter : IValueConverter {

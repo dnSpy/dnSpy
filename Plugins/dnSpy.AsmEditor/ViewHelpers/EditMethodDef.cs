@@ -21,7 +21,7 @@ using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Shared.Search;
+using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditMethodDef : IEdit<MethodDefVM> {

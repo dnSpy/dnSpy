@@ -37,7 +37,6 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Plugin;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Menus;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.MainApp {

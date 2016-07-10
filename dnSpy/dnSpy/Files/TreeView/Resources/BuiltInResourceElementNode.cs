@@ -28,7 +28,6 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class BuiltInResourceElementNode : ResourceElementNode, IBuiltInResourceElementNode, IDecompileSelf {
@@ -40,7 +39,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				return new ImageReference(asm, "Strings");
 			else if (ResourceElement.ResourceData.Code >= ResourceTypeCode.UserTypes)
 				return new ImageReference(asm, "UserDefinedDataType");
-			return ResourceUtils.TryGetImageReference(asm, ResourceElement.Name) ?? new ImageReference(asm, "Binary");
+			return ResourceUtilities.TryGetImageReference(asm, ResourceElement.Name) ?? new ImageReference(asm, "Binary");
 		}
 
 		public BuiltInResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
@@ -50,7 +49,7 @@ namespace dnSpy.Files.TreeView.Resources {
 		public override string ToString(CancellationToken token, bool canDecompile) {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.ByteArray || ResourceElement.ResourceData.Code == ResourceTypeCode.Stream) {
 				var data = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-				return ResourceUtils.TryGetString(new MemoryStream(data));
+				return ResourceUtilities.TryGetString(new MemoryStream(data));
 			}
 			return null;
 		}
@@ -60,14 +59,14 @@ namespace dnSpy.Files.TreeView.Resources {
 			if (re.ResourceData.Code == ResourceTypeCode.Null)
 				yield return new ResourceData(re.Name, token => new MemoryStream());
 			else if (re.ResourceData.Code == ResourceTypeCode.String)
-				yield return new ResourceData(re.Name, token => ResourceUtils.StringToStream((string)((BuiltInResourceData)re.ResourceData).Data));
+				yield return new ResourceData(re.Name, token => ResourceUtilities.StringToStream((string)((BuiltInResourceData)re.ResourceData).Data));
 			else if (re.ResourceData.Code == ResourceTypeCode.ByteArray || re.ResourceData.Code == ResourceTypeCode.Stream)
 				yield return new ResourceData(re.Name, token => new MemoryStream((byte[])((BuiltInResourceData)re.ResourceData).Data));
 			else if (re.ResourceData.Code >= ResourceTypeCode.UserTypes)
 				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
 			else {
 				var vs = this.ValueString;
-				yield return new ResourceData(re.Name, token => ResourceUtils.StringToStream(vs));
+				yield return new ResourceData(re.Name, token => ResourceUtilities.StringToStream(vs));
 			}
 		}
 
@@ -81,7 +80,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.ByteArray || ResourceElement.ResourceData.Code == ResourceTypeCode.Stream) {
 				var data = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-				return ResourceUtils.Decompile(context, new MemoryStream(data), Name);
+				return ResourceUtilities.Decompile(context, new MemoryStream(data), Name);
 			}
 
 			return false;

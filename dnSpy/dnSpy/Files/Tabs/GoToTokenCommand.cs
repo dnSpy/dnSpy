@@ -31,7 +31,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]

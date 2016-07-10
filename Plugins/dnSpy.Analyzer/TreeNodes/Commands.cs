@@ -33,7 +33,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	[ExportAutoLoaded]

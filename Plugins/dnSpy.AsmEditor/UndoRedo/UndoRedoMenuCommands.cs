@@ -18,7 +18,6 @@
 */
 
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:UndoCommand", InputGestureText = "res:ShortCutKeyCtrlZ", Icon = "Undo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 0)]

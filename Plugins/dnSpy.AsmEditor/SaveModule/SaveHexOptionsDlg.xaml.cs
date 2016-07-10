@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed partial class SaveHexOptionsDlg : WindowBase {

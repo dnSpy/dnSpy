@@ -25,7 +25,6 @@ using dndbg.Engine;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger {
 	static class DebugOutputUtils {

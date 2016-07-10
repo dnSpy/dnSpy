@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Tabs {
 	sealed class TabElementScaler : IDisposable {

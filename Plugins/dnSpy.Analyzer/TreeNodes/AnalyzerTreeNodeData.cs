@@ -20,14 +20,12 @@
 using System;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.Text;
-using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData, IAnalyzerTreeNodeData {

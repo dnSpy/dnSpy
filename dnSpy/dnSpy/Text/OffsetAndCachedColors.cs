@@ -18,7 +18,7 @@
 */
 
 using System.Diagnostics;
-using dnSpy.Shared.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
 	struct OffsetAndCachedColors {

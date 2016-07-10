@@ -31,7 +31,6 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_RSRCELEMSET)]

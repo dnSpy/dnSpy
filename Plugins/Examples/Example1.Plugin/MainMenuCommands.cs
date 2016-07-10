@@ -1,6 +1,5 @@
 ﻿using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.Menus;
 
 // Adds a new "_Plugin" menu and several commands.
 // Adds a command to the View menu

@@ -25,7 +25,6 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefVM : ViewModelBase {

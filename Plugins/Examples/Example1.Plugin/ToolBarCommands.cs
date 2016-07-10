@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.ToolBars;
 
 // Adds a toolbar button and combobox between the asm editor and debugger toolbar items
 

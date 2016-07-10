@@ -19,7 +19,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tnhex="clr-namespace:dnSpy.AsmEditor.Hex.Nodes"
-                    xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
+                    xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties">
 
     <Style x:Key="MDTableIndexTextBlockStyle"

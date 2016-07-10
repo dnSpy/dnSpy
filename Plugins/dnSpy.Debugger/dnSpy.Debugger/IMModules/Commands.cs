@@ -23,7 +23,6 @@ using dndbg.Engine;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Debugger.IMModules {
 	static class ReloadAllMethodBodiesCommand {

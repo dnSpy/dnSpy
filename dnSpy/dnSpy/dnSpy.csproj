@@ -70,9 +70,13 @@
     <Compile Include="Commands\DefaultCommandInfoCreator.cs" />
     <Compile Include="Commands\KeyShortcutCollection.cs" />
     <Compile Include="Commands\RegisteredCommandElement.cs" />
+    <Compile Include="Controls\FastTreeNodeView.cs" />
     <Compile Include="Controls\IStackedContentChild.cs" />
     <Compile Include="Controls\StackedContent.cs" />
     <Compile Include="Controls\StackedContentState.cs" />
+    <Compile Include="Controls\SysMenuButton.cs" />
+    <Compile Include="Controls\TabButton.cs" />
+    <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Controls\WpfCommandManager.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfFocusManager.cs" />
@@ -709,6 +713,7 @@
     <Resource Include="Images\DelegateProtectedInternal.png" />
     <Resource Include="Images\DerivedTypesClosed.png" />
     <Resource Include="Images\DerivedTypesOpened.png" />
+    <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
     <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />

@@ -22,7 +22,6 @@ using System.ComponentModel.Composition;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.ToolBars;
 
 namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Undo", ToolTip = "res:UndoToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 0)]

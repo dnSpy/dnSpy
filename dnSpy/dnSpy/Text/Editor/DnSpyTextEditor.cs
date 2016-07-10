@@ -31,7 +31,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Shared.AvalonEdit;
-using dnSpy.Shared.Themes;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;

@@ -35,6 +35,8 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.MVVM.Dialogs;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
@@ -42,10 +44,6 @@ using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.MVVM.Dialogs;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Modules {
 	[ExportAutoLoaded]

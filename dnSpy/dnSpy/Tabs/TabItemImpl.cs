@@ -23,7 +23,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Tabs {
 	sealed class TabItemImpl : TabItem {

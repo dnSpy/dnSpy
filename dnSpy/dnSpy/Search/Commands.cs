@@ -26,8 +26,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.ToolBars;
 
 namespace dnSpy.Search {
 	[ExportAutoLoaded]

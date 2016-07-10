@@ -23,7 +23,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:dnSpy.MainApp"
-        xmlns:ctrls="clr-namespace:dnSpy.Shared.Controls;assembly=dnSpy.Shared"
+        xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
         Style="{StaticResource MainWindowStyle}"
         Title="dnSpy"
         MinWidth="250"

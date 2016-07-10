@@ -23,7 +23,6 @@ using System.Linq;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	abstract class FilesContextMenuHandler : MenuItemBase<AsmEditorContext> {

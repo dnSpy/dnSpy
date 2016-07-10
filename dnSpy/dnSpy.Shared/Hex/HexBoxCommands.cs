@@ -26,11 +26,10 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.MVVM.Dialogs;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.MVVM.Dialogs;
 using dnSpy.Shared.Properties;
 using WF = System.Windows.Forms;
 

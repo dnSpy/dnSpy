@@ -20,7 +20,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class MyObservableCollection<T> : ObservableCollection<T> {

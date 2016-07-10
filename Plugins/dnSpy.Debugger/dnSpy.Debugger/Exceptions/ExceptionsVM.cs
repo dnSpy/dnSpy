@@ -27,7 +27,6 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionsVM {

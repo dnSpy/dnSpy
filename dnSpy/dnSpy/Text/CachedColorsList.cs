@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Shared.Text;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
 	sealed class CachedColorsList {

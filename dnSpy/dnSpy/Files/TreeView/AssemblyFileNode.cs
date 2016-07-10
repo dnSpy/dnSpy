@@ -30,8 +30,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages;
-using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Files.TreeView {
 	sealed class AssemblyFileNode : DnSpyFileNode, IAssemblyFileNode {

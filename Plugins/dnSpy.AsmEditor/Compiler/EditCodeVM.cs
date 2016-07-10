@@ -36,7 +36,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeVM : ViewModelBase, IDisposable {

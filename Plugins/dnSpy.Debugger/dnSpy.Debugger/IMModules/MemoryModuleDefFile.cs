@@ -25,7 +25,6 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Shared.Files;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>

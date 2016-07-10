@@ -8,7 +8,6 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Shared.Menus;
 
 // Adds menu items to the text editor context menu
 // If you have many similar commands, it's better to create a base class and derive from

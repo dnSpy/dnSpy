@@ -26,7 +26,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class TypeNode : FileTreeNodeData, ITypeNode {

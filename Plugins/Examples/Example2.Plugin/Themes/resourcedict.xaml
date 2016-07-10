@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:local="clr-namespace:Example2.Plugin"
-                    xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
+                    xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DataTemplate DataType="{x:Type local:AssemblyChildNodeVM}">

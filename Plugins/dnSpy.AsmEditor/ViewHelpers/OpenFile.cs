@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Forms;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenFile : IOpenFile {

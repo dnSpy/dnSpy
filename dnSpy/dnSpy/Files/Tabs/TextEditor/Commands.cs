@@ -26,7 +26,6 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 

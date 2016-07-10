@@ -72,6 +72,8 @@
     <Compile Include="Text\ColorAndText.cs" />
     <Compile Include="Text\ColorOffsetInfo.cs" />
     <Compile Include="Text\IOutputColorWriter.cs" />
+    <Compile Include="Text\IOutputColorWriterExtensions.cs" />
+    <Compile Include="Text\NameUtilities.cs" />
     <Compile Include="Text\OutputColor.cs" />
     <Compile Include="Utilities\GacInfo.cs" />
     <Compile Include="Utilities\SimpleTypeConverter.cs" />

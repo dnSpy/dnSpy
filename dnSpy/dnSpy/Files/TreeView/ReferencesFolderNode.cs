@@ -27,7 +27,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
-using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class ReferencesFolderNode : FileTreeNodeData, IReferencesFolderNode {

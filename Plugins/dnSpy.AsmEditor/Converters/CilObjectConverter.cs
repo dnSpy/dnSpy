@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.AsmEditor.MethodBody;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Converters {
 	sealed class CilObjectConverter : IValueConverter {

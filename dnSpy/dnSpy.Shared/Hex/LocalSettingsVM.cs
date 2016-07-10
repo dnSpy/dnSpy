@@ -20,7 +20,6 @@
 using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
 
 namespace dnSpy.Shared.Hex {

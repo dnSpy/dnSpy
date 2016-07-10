@@ -22,7 +22,6 @@ using dndbg.Engine;
 using dnlib.PE;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessPrinter {

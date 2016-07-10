@@ -23,9 +23,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.ToolWindows;
-using dnSpy.Shared.MVVM;
 using dnSpy.Tabs;
 
 namespace dnSpy.ToolWindows {

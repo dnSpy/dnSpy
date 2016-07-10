@@ -24,7 +24,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ObjectListDataFieldVM : DataFieldVM<IList<object>> {

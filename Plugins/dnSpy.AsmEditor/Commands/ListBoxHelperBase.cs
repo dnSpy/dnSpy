@@ -26,10 +26,10 @@ using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Resources;
 using dnSpy.Shared.Images;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]

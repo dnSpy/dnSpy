@@ -31,7 +31,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text;
 using dnSpy.Scripting.Roslyn.Properties;
-using dnSpy.Shared.MVVM;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Scripting;

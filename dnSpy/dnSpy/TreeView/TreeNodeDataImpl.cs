@@ -19,7 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.TreeView;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class TreeNodeDataImpl : TreeNodeData {

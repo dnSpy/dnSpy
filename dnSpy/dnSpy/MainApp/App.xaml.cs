@@ -34,6 +34,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
@@ -43,8 +44,7 @@ using dnSpy.Plugin;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Hex;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
@@ -134,7 +134,9 @@ namespace dnSpy.MainApp {
 			var aggregateCatalog = new AggregateCatalog();
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(GetType().Assembly));
 			// dnSpy.Shared
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(EnumVM).Assembly));
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(DnHexBox).Assembly));
+			// dnSpy.Contracts.DnSpy
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(MetroWindow).Assembly));
 			// dnSpy.Roslyn.Shared
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynClassifier).Assembly));
 			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)

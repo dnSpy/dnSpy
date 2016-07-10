@@ -23,7 +23,6 @@ using dnlib.DotNet.Resources;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_UNKNOWNSERIALIZEDRSRCELEM)]

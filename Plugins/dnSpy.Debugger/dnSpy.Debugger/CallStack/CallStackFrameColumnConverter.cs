@@ -20,9 +20,9 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
-using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackFrameColumnConverter : IValueConverter {

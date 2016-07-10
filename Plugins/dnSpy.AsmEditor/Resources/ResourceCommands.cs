@@ -35,10 +35,9 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Files.TreeView.Resources;
-using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
 using WF = System.Windows.Forms;
 
@@ -1269,7 +1268,7 @@ namespace dnSpy.AsmEditor.Resources {
 			for (int i = 0; i < fnames.Length; i++) {
 				var fn = fnames[i];
 				try {
-					newNodes.Add((IResourceElementNode)treeView.Create(resourceNodeFactory.Create(module, SerializationUtils.CreateSerializedImage(fn), treeNodeGroup)).Data);
+					newNodes.Add((IResourceElementNode)treeView.Create(resourceNodeFactory.Create(module, SerializationUtilities.CreateSerializedImage(fn), treeNodeGroup)).Data);
 				}
 				catch (Exception ex) {
 					if (error == null)
@@ -1381,8 +1380,8 @@ namespace dnSpy.AsmEditor.Resources {
 			ResourceElementOptions opts = null;
 			string error;
 			try {
-				opts = new ResourceElementOptions(SerializedImageListStreamerUtils.Serialize(listOpts));
-				error = SerializedImageListStreamerUtils.CheckCanUpdateData(module, opts.Create());
+				opts = new ResourceElementOptions(SerializedImageListStreamerUtilities.Serialize(listOpts));
+				error = SerializedImageListStreamerUtilities.CheckCanUpdateData(module, opts.Create());
 			}
 			catch (Exception ex) {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotSerializeImages, ex.Message);
@@ -2041,7 +2040,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var opts = data.CreateResourceElementOptions();
 			string error;
 			try {
-				opts = new ResourceElementOptions(SerializedImageUtils.Serialize(opts.Create()));
+				opts = new ResourceElementOptions(SerializedImageUtilities.Serialize(opts.Create()));
 				error = imgRsrcElNode.CheckCanUpdateData(opts.Create());
 			}
 			catch (Exception ex) {
@@ -2137,7 +2136,7 @@ namespace dnSpy.AsmEditor.Resources {
 			ResourceElementOptions opts = null;
 			string error;
 			try {
-				opts = new ResourceElementOptions(SerializedImageListStreamerUtils.Serialize(listOpts));
+				opts = new ResourceElementOptions(SerializedImageListStreamerUtilities.Serialize(listOpts));
 				error = imgNode.CheckCanUpdateData(opts.Create());
 			}
 			catch (Exception ex) {

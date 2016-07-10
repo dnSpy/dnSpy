@@ -20,7 +20,6 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.Files;
 
 namespace dnSpy.Files {
 	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_FILEMANAGER)]

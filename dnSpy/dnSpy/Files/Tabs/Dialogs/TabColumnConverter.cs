@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabColumnConverter : IValueConverter {

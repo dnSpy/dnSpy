@@ -32,8 +32,6 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.ToolBars;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	[ExportAutoLoaded]

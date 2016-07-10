@@ -36,10 +36,9 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Files;
-using dnSpy.Shared.Search;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView))]

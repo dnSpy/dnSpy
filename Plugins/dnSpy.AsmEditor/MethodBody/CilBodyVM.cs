@@ -31,7 +31,6 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class CilBodyVM : ViewModelBase {

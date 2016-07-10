@@ -24,10 +24,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MemberPickerDlg : WindowBase {

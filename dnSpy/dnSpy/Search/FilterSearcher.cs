@@ -30,7 +30,6 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
-using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {
 	/// <summary>

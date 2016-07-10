@@ -21,7 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {

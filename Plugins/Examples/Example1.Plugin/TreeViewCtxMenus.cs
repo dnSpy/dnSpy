@@ -8,7 +8,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Menus;
 
 // Adds a couple of commands to the file treeview context menu.
 // Since there are several commands using the same state, MenuItemBase<TContext> is used

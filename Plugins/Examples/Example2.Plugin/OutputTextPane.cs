@@ -5,7 +5,6 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
-using dnSpy.Shared.Menus;
 
 // Creates an Output window text pane where our log messages will go.
 // Adds context menu commands.

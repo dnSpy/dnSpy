@@ -28,14 +28,12 @@ using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Threads {
 	[ExportAutoLoaded]

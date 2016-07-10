@@ -22,7 +22,6 @@ using System.Diagnostics;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.MainApp {
 	static class AboutHelpers {

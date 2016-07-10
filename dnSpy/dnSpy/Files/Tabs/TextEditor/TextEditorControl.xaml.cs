@@ -55,7 +55,6 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Text;
 using dnSpy.Text;
 using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit;

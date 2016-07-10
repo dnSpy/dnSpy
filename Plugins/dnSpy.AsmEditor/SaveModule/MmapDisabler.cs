@@ -24,7 +24,6 @@ using dnlib.PE;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Shared.Files;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	interface IMmapDisabler {

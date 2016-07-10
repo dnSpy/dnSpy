@@ -32,12 +32,12 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IInitializeDataTemplate))]

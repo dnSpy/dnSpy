@@ -33,8 +33,6 @@ using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {
 	enum SearchLocation {

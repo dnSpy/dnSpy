@@ -20,11 +20,10 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.MainApp {
 	[ExportAutoLoaded]

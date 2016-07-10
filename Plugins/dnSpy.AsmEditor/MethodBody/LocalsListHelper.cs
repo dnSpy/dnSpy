@@ -28,7 +28,6 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {

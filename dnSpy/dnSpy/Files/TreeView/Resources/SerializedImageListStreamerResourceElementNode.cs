@@ -29,7 +29,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE)]
@@ -42,7 +41,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				return null;
 
 			byte[] imageData;
-			if (SerializedImageListStreamerUtils.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
+			if (SerializedImageListStreamerUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
 				return new SerializedImageListStreamerResourceElementNode(treeNodeGroup, resourceElement, imageData);
 
 			return null;
@@ -63,7 +62,7 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		void InitializeImageData(byte[] imageData) {
-			this.imageListOptions = SerializedImageListStreamerUtils.ReadImageData(imageData);
+			this.imageListOptions = SerializedImageListStreamerUtilities.ReadImageData(imageData);
 			this.imageData = imageData;
 		}
 
@@ -94,7 +93,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;
-			return SerializedImageListStreamerUtils.CheckCanUpdateData(this.GetModule(), newResElem);
+			return SerializedImageListStreamerUtilities.CheckCanUpdateData(this.GetModule(), newResElem);
 		}
 
 		public override void UpdateData(ResourceElement newResElem) {
@@ -102,7 +101,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
-			SerializedImageListStreamerUtils.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
+			SerializedImageListStreamerUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
 			InitializeImageData(imageData);
 		}
 	}

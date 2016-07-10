@@ -18,7 +18,6 @@
 */
 
 using dnSpy.Contracts.Text;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabPrinter {

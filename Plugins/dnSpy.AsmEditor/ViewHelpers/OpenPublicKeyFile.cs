@@ -22,7 +22,7 @@ using System.Windows.Forms;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenPublicKeyFile : IOpenPublicKeyFile {

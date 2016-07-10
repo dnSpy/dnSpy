@@ -61,15 +61,6 @@ namespace dnSpy.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All files.
-        /// </summary>
-        public static string AllFiles {
-            get {
-                return ResourceManager.GetString("AllFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error occurred:
         ///
         ///{0}.
@@ -275,78 +266,6 @@ namespace dnSpy.Shared.Properties {
         public static string CopyVBArrayKey {
             get {
                 return ResourceManager.GetString("CopyVBArrayKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not convert &apos;{0}&apos;.
-        /// </summary>
-        public static string CouldNotConvert {
-            get {
-                return ResourceManager.GetString("CouldNotConvert", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not convert it from a string: {0}.
-        /// </summary>
-        public static string CouldNotConvertFromString {
-            get {
-                return ResourceManager.GetString("CouldNotConvertFromString", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not deserialize data: {0}.
-        /// </summary>
-        public static string CouldNotDeserializeData {
-            get {
-                return ResourceManager.GetString("CouldNotDeserializeData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .NET Executables.
-        /// </summary>
-        public static string Files_DotNetExecutables {
-            get {
-                return ResourceManager.GetString("Files_DotNetExecutables", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .NET NetModules.
-        /// </summary>
-        public static string Files_DotNetNetModules {
-            get {
-                return ResourceManager.GetString("Files_DotNetNetModules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Executables.
-        /// </summary>
-        public static string Files_Executables {
-            get {
-                return ResourceManager.GetString("Files_Executables", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Images.
-        /// </summary>
-        public static string Files_Images {
-            get {
-                return ResourceManager.GetString("Files_Images", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Strong Name Key Files.
-        /// </summary>
-        public static string Files_StrongNameKeyFiles {
-            get {
-                return ResourceManager.GetString("Files_StrongNameKeyFiles", resourceCulture);
             }
         }
         
@@ -765,15 +684,6 @@ namespace dnSpy.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid GUID.
-        /// </summary>
-        public static string InvalidGuid {
-            get {
-                return ResourceManager.GetString("InvalidGuid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Base Offset.
         /// </summary>
         public static string LocalHexSettings_BaseOffset {
@@ -909,42 +819,6 @@ namespace dnSpy.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The new data is not an image list..
-        /// </summary>
-        public static string NewDataNotImageList {
-            get {
-                return ResourceManager.GetString("NewDataNotImageList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not have a TypeConverter and can&apos;t be converted from a string..
-        /// </summary>
-        public static string NoTypeConverter {
-            get {
-                return ResourceManager.GetString("NoTypeConverter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} bytes.
-        /// </summary>
-        public static string NumberOfBytes {
-            get {
-                return ResourceManager.GetString("NumberOfBytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} bytes, Type = {1}.
-        /// </summary>
-        public static string NumberOfBytesAndType {
-            get {
-                return ResourceManager.GetString("NumberOfBytesAndType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Paste.
         /// </summary>
         public static string PasteCommand {
@@ -1017,33 +891,6 @@ namespace dnSpy.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Resource type can&apos;t be changed.
-        /// </summary>
-        public static string ResourceTypeCantBeChanged {
-            get {
-                return ResourceManager.GetString("ResourceTypeCantBeChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save Resource.
-        /// </summary>
-        public static string SaveResource {
-            get {
-                return ResourceManager.GetString("SaveResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save Resources.
-        /// </summary>
-        public static string SaveResources {
-            get {
-                return ResourceManager.GetString("SaveResources", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Show All Bytes.
         /// </summary>
         public static string ShowAllBytesCommand {
@@ -1085,52 +932,6 @@ namespace dnSpy.Shared.Properties {
         public static string UseHexPrefixCommand {
             get {
                 return ResourceManager.GetString("UseHexPrefixCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Value must be type {0}.
-        ///Error: {1}.
-        /// </summary>
-        public static string ValueMustBeType {
-            get {
-                return ResourceManager.GetString("ValueMustBeType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Close.
-        /// </summary>
-        public static string Window_Close {
-            get {
-                return ResourceManager.GetString("Window_Close", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Maximize.
-        /// </summary>
-        public static string Window_Maximize {
-            get {
-                return ResourceManager.GetString("Window_Maximize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Minimize.
-        /// </summary>
-        public static string Window_Minimize {
-            get {
-                return ResourceManager.GetString("Window_Minimize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restore Down.
-        /// </summary>
-        public static string Window_Restore {
-            get {
-                return ResourceManager.GetString("Window_Restore", resourceCulture);
             }
         }
     }

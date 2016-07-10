@@ -23,10 +23,9 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.ToolBars;
 
 namespace dnSpy.Files.Tabs {
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateBackCommand", Icon = "Backward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]

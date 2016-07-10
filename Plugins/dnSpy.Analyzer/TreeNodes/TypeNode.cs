@@ -19,11 +19,11 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeNode : EntityNode {

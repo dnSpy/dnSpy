@@ -20,13 +20,12 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventNode : EntityNode {

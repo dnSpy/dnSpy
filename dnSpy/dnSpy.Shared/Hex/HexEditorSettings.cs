@@ -21,9 +21,9 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.Controls;
 using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Shared.Hex {
@@ -113,19 +113,19 @@ namespace dnSpy.Shared.Hex {
 				}
 			}
 		}
-		FontFamily fontFamily = new FontFamily(FontUtils.GetDefaultMonospacedFont());
+		FontFamily fontFamily = new FontFamily(FontUtilities.GetDefaultMonospacedFont());
 
 		public double FontSize {
 			get { return fontSize; }
 			set {
 				if (fontSize != value) {
-					fontSize = FontUtils.FilterFontSize(value);
+					fontSize = FontUtilities.FilterFontSize(value);
 					OnPropertyChanged(nameof(FontSize));
 					OnModified();
 				}
 			}
 		}
-		double fontSize = FontUtils.DEFAULT_FONT_SIZE;
+		double fontSize = FontUtilities.DEFAULT_FONT_SIZE;
 
 		public AsciiEncoding AsciiEncoding {
 			get { return asciiEncoding; }
@@ -171,7 +171,7 @@ namespace dnSpy.Shared.Hex {
 			UseHexPrefix = sect.Attribute<bool?>(nameof(UseHexPrefix)) ?? UseHexPrefix;
 			ShowAscii = sect.Attribute<bool?>(nameof(ShowAscii)) ?? ShowAscii;
 			LowerCaseHex = sect.Attribute<bool?>(nameof(LowerCaseHex)) ?? LowerCaseHex;
-			FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtils.GetDefaultMonospacedFont());
+			FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultMonospacedFont());
 			FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? FontSize;
 			AsciiEncoding = sect.Attribute<AsciiEncoding?>(nameof(AsciiEncoding)) ?? AsciiEncoding;
 			this.disableSave = false;

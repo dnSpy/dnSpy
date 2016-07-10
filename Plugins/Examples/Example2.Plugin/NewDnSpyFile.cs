@@ -7,9 +7,6 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Shared.Files;
-using dnSpy.Shared.Files.TreeView;
-using dnSpy.Shared.Text;
 
 // Adds a new IDnSpyFile that can be loaded into the file treeview. It gets its own IDnSpyFileNode.
 // Open a .txt/.xml/.cs/.vb (see supportedExtensions) file to trigger this code.

@@ -34,11 +34,10 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Search;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {

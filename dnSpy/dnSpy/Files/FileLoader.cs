@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.MVVM.Dialogs;
+using dnSpy.Contracts.MVVM.Dialogs;
 
 namespace dnSpy.Files {
 	sealed class FileLoader : IProgressTask, IDnSpyFileLoader {

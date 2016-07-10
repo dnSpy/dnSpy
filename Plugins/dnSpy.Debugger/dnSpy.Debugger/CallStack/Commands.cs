@@ -29,10 +29,9 @@ using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	[ExportAutoLoaded]

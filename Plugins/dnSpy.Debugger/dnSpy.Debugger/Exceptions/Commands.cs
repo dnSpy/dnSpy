@@ -29,12 +29,11 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Exceptions {
 	[ExportAutoLoaded]

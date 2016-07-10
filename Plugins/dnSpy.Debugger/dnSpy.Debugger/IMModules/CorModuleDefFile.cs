@@ -22,7 +22,6 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.Files;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>

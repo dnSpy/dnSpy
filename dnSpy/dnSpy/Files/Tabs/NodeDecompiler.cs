@@ -25,8 +25,8 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Files.Tabs {
 	enum NodeType {
@@ -189,25 +189,25 @@ namespace dnSpy.Files.Tabs {
 				if (decompileSelf.Decompile(decompileNodeContext))
 					return;
 			}
-			language.WriteCommentLine(output, NameUtils.CleanName(node.ToString(language)));
+			language.WriteCommentLine(output, NameUtilities.CleanName(node.ToString(language)));
 		}
 
-		void Decompile(IAssemblyReferenceNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.AssemblyRef.ToString()));
+		void Decompile(IAssemblyReferenceNode node) => language.WriteCommentLine(output, NameUtilities.CleanName(node.AssemblyRef.ToString()));
 
 		void Decompile(IBaseTypeFolderNode node) {
 			foreach (var child in GetChildren(node).OfType<IBaseTypeNode>())
 				Decompile(child);
 		}
 
-		void Decompile(IBaseTypeNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDefOrRef.ReflectionFullName));
-		void Decompile(IDerivedTypeNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDef.ReflectionFullName));
+		void Decompile(IBaseTypeNode node) => language.WriteCommentLine(output, NameUtilities.CleanName(node.TypeDefOrRef.ReflectionFullName));
+		void Decompile(IDerivedTypeNode node) => language.WriteCommentLine(output, NameUtilities.CleanName(node.TypeDef.ReflectionFullName));
 
 		void Decompile(IDerivedTypesFolderNode node) {
 			foreach (var child in GetChildren(node).OfType<IDerivedTypeNode>())
 				Decompile(child);
 		}
 
-		void Decompile(IModuleReferenceNode node) => language.WriteCommentLine(output, NameUtils.CleanName(node.ModuleRef.ToString()));
+		void Decompile(IModuleReferenceNode node) => language.WriteCommentLine(output, NameUtilities.CleanName(node.ModuleRef.ToString()));
 
 		void Decompile(INamespaceNode node) {
 			var children = GetChildren(node).OfType<ITypeNode>().Select(a => a.TypeDef).ToArray();

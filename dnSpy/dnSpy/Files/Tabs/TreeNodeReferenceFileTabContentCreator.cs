@@ -25,7 +25,6 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Files.Tabs.TextEditor;
-using dnSpy.Shared.Files;
 
 namespace dnSpy.Files.Tabs {
 	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_CODEREF)]

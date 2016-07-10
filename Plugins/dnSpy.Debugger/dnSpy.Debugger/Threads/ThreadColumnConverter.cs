@@ -21,8 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadColumnConverter : IValueConverter {

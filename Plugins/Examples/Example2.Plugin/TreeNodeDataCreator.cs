@@ -9,7 +9,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Files.TreeView;
 
 // This file contains classes that create new child nodes of IAssemblyFileNode and IModuleFileNode
 

@@ -19,8 +19,8 @@
 
 using System.Diagnostics;
 using System.Windows;
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed partial class DebugProcessDlg : WindowBase {

@@ -19,7 +19,6 @@
 
 using dnlib.DotNet;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum CharSet {

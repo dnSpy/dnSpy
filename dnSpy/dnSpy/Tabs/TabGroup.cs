@@ -32,7 +32,6 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Controls;
 using dnSpy.Events;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Tabs {
 	enum TabGroupState {

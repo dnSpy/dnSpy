@@ -2619,6 +2619,33 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string Window_Close {
+            get {
+                return ResourceManager.GetString("Window_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximize.
+        /// </summary>
+        public static string Window_Maximize {
+            get {
+                return ResourceManager.GetString("Window_Maximize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimize.
+        /// </summary>
+        public static string Window_Minimize {
+            get {
+                return ResourceManager.GetString("Window_Minimize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Output.
         /// </summary>
         public static string Window_Output {
@@ -2633,6 +2660,15 @@ namespace dnSpy.Properties {
         public static string Window_Output2 {
             get {
                 return ResourceManager.GetString("Window_Output2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore Down.
+        /// </summary>
+        public static string Window_Restore {
+            get {
+                return ResourceManager.GetString("Window_Restore", resourceCulture);
             }
         }
         

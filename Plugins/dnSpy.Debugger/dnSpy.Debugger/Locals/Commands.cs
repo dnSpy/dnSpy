@@ -33,15 +33,13 @@ using dndbg.Engine;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Menus;
-using dnSpy.Shared.MVVM;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Locals {
 	[ExportAutoLoaded]

@@ -33,8 +33,6 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Files.TreeView.Resources;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_IMAGE_RESOURCE_NODE)]
@@ -132,7 +130,7 @@ namespace dnSpy.Files.TreeView.Resources {
 		public ImageResourceNode(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
 			this.imageData = resource.GetResourceData();
-			this.imageSource = ImageResourceUtils.CreateImageSource(this.imageData);
+			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
@@ -173,7 +171,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		void InitializeImageData() {
 			this.imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-			this.imageSource = ImageResourceUtils.CreateImageSource(this.imageData);
+			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
@@ -188,7 +186,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				});
 				output.Write(" = ", BoxedOutputColor.Comment);
 				const string LTR = "\u200E";
-				output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
+				output.WriteDefinition(NameUtilities.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;
@@ -208,7 +206,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				return res;
 
 			try {
-				ImageResourceUtils.CreateImageSource((byte[])((BuiltInResourceData)newResElem.ResourceData).Data);
+				ImageResourceUtilities.CreateImageSource((byte[])((BuiltInResourceData)newResElem.ResourceData).Data);
 			}
 			catch {
 				return dnSpy_Resources.NewDataIsNotAnImage;

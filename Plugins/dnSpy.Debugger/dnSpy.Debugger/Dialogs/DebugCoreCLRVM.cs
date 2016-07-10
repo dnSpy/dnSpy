@@ -23,7 +23,6 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class DebugCoreCLRVM : ViewModelBase {

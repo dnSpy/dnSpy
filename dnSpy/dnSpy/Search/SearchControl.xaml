@@ -24,7 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:p="clr-namespace:dnSpy.Properties"
              xmlns:local="clr-namespace:dnSpy.Search"
-             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.MVVM.Converters;assembly=dnSpy.Shared"
+             xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>

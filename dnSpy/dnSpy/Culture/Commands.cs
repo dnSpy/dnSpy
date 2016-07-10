@@ -25,7 +25,6 @@ using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Properties;
-using dnSpy.Shared.Menus;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Culture {

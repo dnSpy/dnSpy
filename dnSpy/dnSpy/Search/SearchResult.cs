@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
@@ -30,9 +31,6 @@ using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Controls;
-using dnSpy.Shared.Search;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Search {
 	class SearchResult : ViewModelBase, ISearchResult, IMDTokenNode, IComparable<ISearchResult> {

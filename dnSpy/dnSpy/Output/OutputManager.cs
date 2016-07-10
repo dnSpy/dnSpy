@@ -33,7 +33,6 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;

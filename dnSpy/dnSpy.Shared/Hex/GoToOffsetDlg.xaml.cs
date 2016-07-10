@@ -18,7 +18,7 @@
 */
 
 using System.Windows;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Shared.Hex {
 	sealed partial class GoToOffsetDlg : WindowBase {

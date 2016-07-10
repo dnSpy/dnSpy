@@ -22,7 +22,6 @@ using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AsyncFetchChildrenHelper : AsyncNodeCreator {

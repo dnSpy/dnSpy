@@ -73,15 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
-    <Compile Include="Controls\ColorizedTextElementCreator.cs" />
-    <Compile Include="Controls\FastTextBlock.cs" />
-    <Compile Include="Controls\FastTreeNodeView.cs" />
-    <Compile Include="Controls\FontUtils.cs" />
-    <Compile Include="Controls\MetroWindow.cs" />
-    <Compile Include="Controls\SysMenuButton.cs" />
-    <Compile Include="Controls\TabButton.cs" />
-    <Compile Include="Controls\TextBlockColorOutput.cs" />
-    <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
     <Compile Include="Decompiler\ISmartTextOutput.cs" />
     <Compile Include="Properties\dnSpy.Shared.Resources.Designer.cs">
@@ -89,21 +80,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Shared.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Files\AnnotationsImpl.cs" />
-    <Compile Include="Files\DnSpyFile.cs" />
-    <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
-    <Compile Include="Files\TreeView\NodePrinter.cs" />
-    <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
-    <Compile Include="Files\TreeView\Resources\GuessFileType.cs" />
-    <Compile Include="Files\TreeView\Resources\ImageResourceUtils.cs" />
-    <Compile Include="Files\TreeView\Resources\ResourceElementNode.cs" />
-    <Compile Include="Files\TreeView\Resources\ResourceNode.cs" />
-    <Compile Include="Files\TreeView\Resources\ResourceUtils.cs" />
-    <Compile Include="Files\TreeView\Resources\SaveResources.cs" />
-    <Compile Include="Files\TreeView\Resources\SerializationUtils.cs" />
-    <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerUtils.cs" />
-    <Compile Include="Files\TreeView\Resources\SerializedImageUtils.cs" />
-    <Compile Include="Files\TreeView\Resources\SerializedResourceElementNode.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
     <Compile Include="HexEditor\CachedHexStream.cs" />
@@ -152,53 +128,8 @@
     </Compile>
     <Compile Include="Hex\SelectVM.cs" />
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
-    <Compile Include="Menus\MenuItemBase.cs" />
-    <Compile Include="Menus\MenuItemCommand.cs" />
-    <Compile Include="MVVM\Converters\BooleanToThicknessConverter.cs" />
-    <Compile Include="MVVM\Converters\FontSizeConverter.cs" />
-    <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
-    <Compile Include="MVVM\DataFieldVM.cs" />
-    <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">
-      <DependentUpon>ProgressDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MVVM\Dialogs\ProgressVM.cs" />
-    <Compile Include="MVVM\EnumVM.cs" />
-    <Compile Include="MVVM\IInitializeDataTemplate.cs" />
-    <Compile Include="MVVM\InitDataTemplateAP.cs" />
-    <Compile Include="MVVM\IsDraggableAP.cs" />
-    <Compile Include="MVVM\ListVM.cs" />
-    <Compile Include="MVVM\PickDirectory.cs" />
-    <Compile Include="MVVM\PickFilename.cs" />
-    <Compile Include="MVVM\PickSaveFilename.cs" />
-    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="MVVM\UIUtils.cs" />
-    <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search\ChainFileTreeNodeFilter.cs" />
-    <Compile Include="Search\DelayedAction.cs" />
-    <Compile Include="Search\EntryPointFileTreeNodeFilter.cs" />
-    <Compile Include="Search\FilterNothingFileTreeNodeFilter.cs" />
-    <Compile Include="Search\FlagsFileTreeNodeFilter.cs" />
-    <Compile Include="Search\NamespaceRef.cs" />
-    <Compile Include="Search\NamespaceSearchResult.cs" />
-    <Compile Include="Search\SameAssemblyFileTreeNodeFilter.cs" />
-    <Compile Include="Search\SameModuleFileTreeNodeFilter.cs" />
-    <Compile Include="Search\SearchComparers.cs" />
-    <Compile Include="Search\ShowNothingFileTreeNodeFilterBase.cs" />
-    <Compile Include="Search\FileTreeNodeFilterBase.cs" />
-    <Compile Include="Search\VisibleMembersFlags.cs" />
-    <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
-    <Compile Include="Text\CachedTextTokenColors.cs" />
-    <Compile Include="Text\NameUtils.cs" />
-    <Compile Include="Text\StringBuilderTextColorOutput.cs" />
-    <Compile Include="Text\TextColorOutputExtensionMethods.cs" />
-    <Compile Include="Themes\ExtensionMethods.cs" />
-    <Compile Include="Themes\ThemeUtils.cs" />
-    <Compile Include="ToolBars\ToolBarButtonBase.cs" />
-    <Compile Include="ToolBars\ToolBarButtonCommand.cs" />
-    <Compile Include="ToolBars\ToolBarObjectBase.cs" />
-    <Compile Include="TreeView\AsyncNodeCreator.cs" />
-    <Compile Include="TreeView\TreeNodeData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Hex\GoToOffsetDlg.xaml">
@@ -213,10 +144,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -224,7 +151,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\Fill.png" />
     <Resource Include="Images\Paste.png" />
   </ItemGroup>

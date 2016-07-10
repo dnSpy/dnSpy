@@ -35,9 +35,9 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
 	interface ISearchManager : IUIObjectProvider {

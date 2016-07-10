@@ -22,7 +22,6 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ReplEditorCtxMenuContext {

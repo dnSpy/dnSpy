@@ -22,11 +22,10 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.Controls;
 using dnSpy.Shared.HexEditor;
-using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Properties;
 
 namespace dnSpy.Shared.Hex {
@@ -116,7 +115,7 @@ namespace dnSpy.Shared.Hex {
 			BytesGroupCountVM.Value = hexEditorSettings.BytesGroupCount;
 			BytesPerLineVM.Value = hexEditorSettings.BytesPerLine;
 			FontFamily = hexEditorSettings.FontFamily;
-			Task.Factory.StartNew(() => FontUtils.GetMonospacedFonts())
+			Task.Factory.StartNew(() => FontUtilities.GetMonospacedFonts())
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				if (!t.IsCanceled && !t.IsFaulted)

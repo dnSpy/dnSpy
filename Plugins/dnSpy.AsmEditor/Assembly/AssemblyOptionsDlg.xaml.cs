@@ -18,7 +18,7 @@
 */
 
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Assembly {
 	sealed partial class AssemblyOptionsDlg : WindowBase {

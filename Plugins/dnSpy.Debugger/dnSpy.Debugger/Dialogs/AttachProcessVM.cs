@@ -25,7 +25,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class AttachProcessVM : ViewModelBase, IDisposable {

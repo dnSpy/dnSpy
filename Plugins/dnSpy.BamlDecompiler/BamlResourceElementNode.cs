@@ -35,7 +35,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.BamlDecompiler {
 	sealed class BamlResourceElementNode : ResourceElementNode, IDecompileSelf {
@@ -97,7 +96,7 @@ namespace dnSpy.BamlDecompiler {
 			var output = new PlainTextOutput();
 			string contentTypeString;
 			Decompile(output, token, out contentTypeString);
-			return ResourceUtils.StringToStream(output.ToString());
+			return ResourceUtilities.StringToStream(output.ToString());
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {

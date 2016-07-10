@@ -22,7 +22,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows.Input;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Commands {
 	class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem {

@@ -22,7 +22,6 @@ using System.Globalization;
 using dndbg.Engine;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModulePrinter {

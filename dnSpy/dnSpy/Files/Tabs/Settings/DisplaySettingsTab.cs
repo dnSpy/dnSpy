@@ -29,12 +29,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.TreeView;
 using dnSpy.Properties;
-using dnSpy.Shared.Controls;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -106,12 +106,12 @@ namespace dnSpy.Files.Tabs.Settings {
 			get { return fontSize; }
 			set {
 				if (fontSize != value) {
-					fontSize = FontUtils.FilterFontSize(value);
+					fontSize = FontUtilities.FilterFontSize(value);
 					OnPropertyChanged(nameof(FontSize));
 				}
 			}
 		}
-		double fontSize = FontUtils.DEFAULT_FONT_SIZE;
+		double fontSize = FontUtilities.DEFAULT_FONT_SIZE;
 
 		public bool ShowLineNumbers {
 			get { return showLineNumbers; }
@@ -156,7 +156,7 @@ namespace dnSpy.Files.Tabs.Settings {
 
 		public FontFamilyVM(FontFamily ff) {
 			this.FontFamily = ff;
-			this.IsMonospaced = FontUtils.IsMonospacedFont(ff);
+			this.IsMonospaced = FontUtilities.IsMonospacedFont(ff);
 		}
 
 		public override bool Equals(object obj) {
@@ -250,7 +250,7 @@ namespace dnSpy.Files.Tabs.Settings {
 			this.fontFamilies = null;
 			this.fontFamilyVM = new FontFamilyVM(textEditorSettingsVM.FontFamily);
 			Task.Factory.StartNew(() =>
-				Fonts.SystemFontFamilies.Where(a => !FontUtils.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray()
+				Fonts.SystemFontFamilies.Where(a => !FontUtilities.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray()
 			)
 			.ContinueWith(t => {
 				var ex = t.Exception;

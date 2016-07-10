@@ -23,7 +23,6 @@ using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabsVM : ViewModelBase {

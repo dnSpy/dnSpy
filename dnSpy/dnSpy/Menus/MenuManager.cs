@@ -29,9 +29,9 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Resources;
 using dnSpy.Shared.Images;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemMD {

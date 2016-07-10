@@ -29,7 +29,6 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
-using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class UnknownResourceNode : ResourceNode, IUnknownResourceNode, IDecompileSelf {
@@ -52,14 +51,14 @@ namespace dnSpy.Files.TreeView.Resources {
 		public override string ToString(CancellationToken token, bool canDecompile) {
 			var er = Resource as EmbeddedResource;
 			if (er != null)
-				return ResourceUtils.TryGetString(new MemoryStream(er.GetResourceData()));
+				return ResourceUtilities.TryGetString(new MemoryStream(er.GetResourceData()));
 			return null;
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			var er = Resource as EmbeddedResource;
 			if (er != null)
-				return ResourceUtils.Decompile(context, new MemoryStream(er.GetResourceData()), er.Name);
+				return ResourceUtilities.Decompile(context, new MemoryStream(er.GetResourceData()), er.Name);
 			return false;
 		}
 	}

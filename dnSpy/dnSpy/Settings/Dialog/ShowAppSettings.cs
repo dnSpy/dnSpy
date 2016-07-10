@@ -24,7 +24,6 @@ using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Settings.Dialog {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:OptionsCommand", Icon = "Settings", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]

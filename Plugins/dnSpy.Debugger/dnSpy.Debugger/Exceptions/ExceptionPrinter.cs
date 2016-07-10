@@ -19,7 +19,6 @@
 
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Text;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionPrinter {

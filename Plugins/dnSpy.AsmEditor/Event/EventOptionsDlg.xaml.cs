@@ -19,7 +19,7 @@
 
 using System.Windows;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Shared.Controls;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Event {
 	sealed partial class EventOptionsDlg : WindowBase {
