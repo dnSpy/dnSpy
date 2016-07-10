@@ -96,9 +96,9 @@ namespace dnSpy.Files.Tabs {
 		struct Key : IEquatable<Key> {
 			public readonly ILanguage ILanguage;
 			public readonly IFileTreeNodeData[] Nodes;
-			public readonly IDecompilerSettings Settings;
+			public readonly DecompilerSettingsBase Settings;
 
-			public Key(ILanguage language, IFileTreeNodeData[] nodes, IDecompilerSettings settings) {
+			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilerSettingsBase settings) {
 				this.ILanguage = language;
 				this.Nodes = new List<IFileTreeNodeData>(nodes).ToArray();
 				this.Settings = settings.Clone();

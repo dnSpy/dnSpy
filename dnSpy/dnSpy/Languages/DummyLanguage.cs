@@ -31,17 +31,17 @@ namespace dnSpy.Languages {
 		public override double OrderUI => double.MaxValue;
 		public override Guid UniqueGuid => new Guid("E4E6F1AA-FF88-48BC-B44C-49585E66DCF0");
 		public override string UniqueNameUI => "---";
-		public override IDecompilerSettings Settings { get; }
+		public override DecompilerSettingsBase Settings { get; }
 
-		sealed class DummySettings : IDecompilerSettings {
-			public IDecompilerSettings Clone() => new DummySettings();
+		sealed class DummySettings : DecompilerSettingsBase {
+			public override DecompilerSettingsBase Clone() => new DummySettings();
 
-			public IEnumerable<IDecompilerOption> Options {
+			public override IEnumerable<IDecompilerOption> Options {
 				get { yield break; }
 			}
 
-			public override bool Equals(object obj) => obj is DummySettings;
-			public override int GetHashCode() => 0;
+			protected override bool EqualsCore(object obj) => obj is DummySettings;
+			protected override int GetHashCodeCore() => 0;
 		}
 
 		public DummyLanguage() {

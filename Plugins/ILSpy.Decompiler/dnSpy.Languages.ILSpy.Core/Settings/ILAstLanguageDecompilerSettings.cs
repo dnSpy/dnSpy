@@ -22,21 +22,21 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Languages.ILSpy.Settings {
-	sealed class ILAstLanguageDecompilerSettings : IDecompilerSettings {
+	sealed class ILAstLanguageDecompilerSettings : DecompilerSettingsBase {
 		public ILAstLanguageDecompilerSettings() {
 		}
 
 		ILAstLanguageDecompilerSettings(ILAstLanguageDecompilerSettings other) {
 		}
 
-		public IDecompilerSettings Clone() => new ILAstLanguageDecompilerSettings(this);
+		public override DecompilerSettingsBase Clone() => new ILAstLanguageDecompilerSettings(this);
 
-		public IEnumerable<IDecompilerOption> Options {
+		public override IEnumerable<IDecompilerOption> Options {
 			get { yield break; }
 		}
 
-		public override bool Equals(object obj) => obj is ILAstLanguageDecompilerSettings;
-		public override int GetHashCode() => 0;
+		protected override bool EqualsCore(object obj) => obj is ILAstLanguageDecompilerSettings;
+		protected override int GetHashCodeCore() => 0;
 	}
 }
 #endif

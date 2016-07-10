@@ -23,56 +23,72 @@ using System.Linq;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
-	/// Decompiler settings. The class must override <see cref="object.GetHashCode()"/> and
-	/// <see cref="object.Equals(object)"/>.
+	/// Decompiler settings
 	/// </summary>
-	public interface IDecompilerSettings {
+	public abstract class DecompilerSettingsBase {
 		/// <summary>
 		/// Clones the settings
 		/// </summary>
 		/// <returns></returns>
-		IDecompilerSettings Clone();
+		public abstract DecompilerSettingsBase Clone();
 
 		/// <summary>
 		/// Gets all options
 		/// </summary>
-		IEnumerable<IDecompilerOption> Options { get; }
-	}
-
-	/// <summary>
-	/// Extension methods
-	/// </summary>
-	public static class DecomplierSettingsExtensions {
-		/// <summary>
-		/// Returns an option or null
-		/// </summary>
-		/// <param name="self">This</param>
-		/// <param name="guid">Guid</param>
-		/// <returns></returns>
-		public static IDecompilerOption TryGetOption(this IDecompilerSettings self, Guid guid) => self.Options.FirstOrDefault(a => a.Guid == guid);
+		public abstract IEnumerable<IDecompilerOption> Options { get; }
 
 		/// <summary>
 		/// Returns an option or null
 		/// </summary>
-		/// <param name="self">This</param>
-		/// <param name="name">Name</param>
-		/// <returns></returns>
-		public static IDecompilerOption TryGetOption(this IDecompilerSettings self, string name) => self.Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
-
-		/// <summary>
-		/// Returns a boolean or false if the option doesn't exist
-		/// </summary>
-		/// <param name="self">This</param>
 		/// <param name="guid">Guid</param>
 		/// <returns></returns>
-		public static bool GetBoolean(this IDecompilerSettings self, Guid guid) => self.TryGetOption(guid)?.Value as bool? ?? false;
+		public IDecompilerOption TryGetOption(Guid guid) => Options.FirstOrDefault(a => a.Guid == guid);
+
+		/// <summary>
+		/// Returns an option or null
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <returns></returns>
+		public IDecompilerOption TryGetOption(string name) => Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
 
 		/// <summary>
 		/// Returns a boolean or false if the option doesn't exist
 		/// </summary>
-		/// <param name="self">This</param>
+		/// <param name="guid">Guid</param>
+		/// <returns></returns>
+		public bool GetBoolean(Guid guid) => TryGetOption(guid)?.Value as bool? ?? false;
+
+		/// <summary>
+		/// Returns a boolean or false if the option doesn't exist
+		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public static bool GetBoolean(this IDecompilerSettings self, string name) => self.TryGetOption(name)?.Value as bool? ?? false;
+		public bool GetBoolean(string name) => TryGetOption(name)?.Value as bool? ?? false;
+
+		/// <summary>
+		/// Returns true if this instance equals <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Other object, may be null</param>
+		/// <returns></returns>
+		protected abstract bool EqualsCore(object obj);
+
+		/// <summary>
+		/// Gets the hash code of this instance
+		/// </summary>
+		/// <returns></returns>
+		protected abstract int GetHashCodeCore();
+
+		/// <summary>
+		/// Returns true if this instance equals <paramref name="obj"/>
+		/// </summary>
+		/// <param name="obj">Other object, may be null</param>
+		/// <returns></returns>
+		public sealed override bool Equals(object obj) => EqualsCore(obj);
+
+		/// <summary>
+		/// Gets the hash code of this instance
+		/// </summary>
+		/// <returns></returns>
+		public sealed override int GetHashCode() => GetHashCodeCore();
 	}
 }

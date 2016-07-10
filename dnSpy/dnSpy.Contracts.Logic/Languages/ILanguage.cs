@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Gets the settings
 		/// </summary>
-		IDecompilerSettings Settings { get; }
+		DecompilerSettingsBase Settings { get; }
 
 		/// <summary>
 		/// Gets the content type string

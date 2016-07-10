@@ -69,7 +69,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
 
-		public override IDecompilerSettings Settings => langSettings;
+		public override DecompilerSettingsBase Settings => langSettings;
 		readonly LanguageDecompilerSettings langSettings;
 
 		public CSharpLanguage(LanguageDecompilerSettings langSettings, double orderUI) {

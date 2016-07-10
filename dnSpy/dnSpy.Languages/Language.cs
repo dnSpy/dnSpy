@@ -40,7 +40,7 @@ namespace dnSpy.Languages {
 		public abstract double OrderUI { get; }
 		public abstract Guid GenericGuid { get; }
 		public abstract Guid UniqueGuid { get; }
-		public abstract IDecompilerSettings Settings { get; }
+		public abstract DecompilerSettingsBase Settings { get; }
 		public abstract string FileExtension { get; }
 		public virtual string ProjectFileExtension => null;
 

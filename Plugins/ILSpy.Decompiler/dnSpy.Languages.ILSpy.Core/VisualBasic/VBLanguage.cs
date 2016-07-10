@@ -60,7 +60,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 		readonly Predicate<IAstTransform> transformAbortCondition = null;
 		readonly bool showAllMembers = false;
 
-		public override IDecompilerSettings Settings => langSettings;
+		public override DecompilerSettingsBase Settings => langSettings;
 		readonly LanguageDecompilerSettings langSettings;
 
 		public override double OrderUI => LanguageConstants.VISUALBASIC_ILSPY_ORDERUI;

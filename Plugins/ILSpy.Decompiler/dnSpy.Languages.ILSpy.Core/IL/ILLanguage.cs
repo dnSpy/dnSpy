@@ -63,7 +63,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 	sealed class ILLanguage : Language {
 		readonly bool detectControlStructure;
 
-		public override IDecompilerSettings Settings => langSettings;
+		public override DecompilerSettingsBase Settings => langSettings;
 		readonly ILLanguageDecompilerSettings langSettings;
 
 		public ILLanguage(ILLanguageDecompilerSettings langSettings)

@@ -24,7 +24,7 @@ using dnSpy.Languages.ILSpy.Core.Properties;
 using dnSpy.Languages.Settings;
 
 namespace dnSpy.Languages.ILSpy.Settings {
-	sealed class ILLanguageDecompilerSettings : IDecompilerSettings {
+	sealed class ILLanguageDecompilerSettings : DecompilerSettingsBase {
 		public ILSettings Settings => ilSettings;
 		readonly ILSettings ilSettings;
 
@@ -33,9 +33,9 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			this.options = CreateOptions().ToArray();
 		}
 
-		public IDecompilerSettings Clone() => new ILLanguageDecompilerSettings(this.ilSettings.Clone());
+		public override DecompilerSettingsBase Clone() => new ILLanguageDecompilerSettings(this.ilSettings.Clone());
 
-		public IEnumerable<IDecompilerOption> Options => options;
+		public override IEnumerable<IDecompilerOption> Options => options;
 		readonly IDecompilerOption[] options;
 
 		IEnumerable<IDecompilerOption> CreateOptions() {
@@ -66,8 +66,8 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			};
 		}
 
-		public override bool Equals(object obj) =>
+		protected override bool EqualsCore(object obj) =>
 			obj is ILLanguageDecompilerSettings && ilSettings.Equals(((ILLanguageDecompilerSettings)obj).ilSettings);
-		public override int GetHashCode() => ilSettings.GetHashCode();
+		protected override int GetHashCodeCore() => ilSettings.GetHashCode();
 	}
 }

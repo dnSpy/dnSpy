@@ -67,7 +67,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
 
-		public override IDecompilerSettings Settings { get; }
+		public override DecompilerSettingsBase Settings { get; }
 
 		ILAstLanguage(ILAstLanguageDecompilerSettings langSettings, double orderUI) {
 			this.Settings = langSettings;
