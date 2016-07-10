@@ -164,11 +164,26 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateCaretProperties() => UpdateCaretProperties(false);
 		void UpdateCaretProperties(bool forceInvalidateVisual) {
+			if (inUpdateCaretPropertiesCore)
+				Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => UpdateCaretProperties(forceInvalidateVisual)));
+			else {
+				inUpdateCaretPropertiesCore = true;
+				try {
+					UpdateCaretPropertiesCore(forceInvalidateVisual);
+				}
+				finally {
+					inUpdateCaretPropertiesCore = false;
+				}
+			}
+		}
+		bool inUpdateCaretPropertiesCore = false;
+
+		void UpdateCaretPropertiesCore(bool forceInvalidateVisual) {
 			if (layer.TextView.IsClosed)
 				return;
 			StopTimer();
-			oldSelectionState = new SelectionState(layer.TextView.Selection);
 			var line = textCaret.ContainingTextViewLine;
+			oldSelectionState = new SelectionState(layer.TextView.Selection);
 			bool oldDrawCaretShape = drawCaretShape;
 			drawCaretShape = line.VisibilityState != VisibilityState.Unattached;
 			bool drawOverwriteMode = OverwriteMode && textCaret.Position.BufferPosition < line.End && layer.TextView.Selection.IsEmpty;

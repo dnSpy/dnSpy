@@ -307,7 +307,8 @@ namespace dnSpy.Text.Editor {
 		readonly List<SnapshotSpan> invalidatedRegions;
 		bool formattedLineSourceIsInvalidated;
 
-		void DelayLayoutLinesHandler() {
+		void DelayLayoutLinesHandler() => DoDelayDisplayLines();
+		void DoDelayDisplayLines() {
 			Dispatcher.VerifyAccess();
 			if (IsClosed)
 				return;
@@ -554,6 +555,8 @@ namespace dnSpy.Text.Editor {
 
 		static bool IsForceClearTypeFontName(string name) => StringComparer.OrdinalIgnoreCase.Equals("Consolas", name);
 
+		bool IsVisiblePhysicalLinesSnapshot(ITextSnapshot snapshot) =>
+			visiblePhysicalLines.Count != 0 && visiblePhysicalLines[0].BufferSpan.Snapshot == snapshot;
 		ITextViewLine ITextView.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) => GetTextViewLineContainingBufferPosition(bufferPosition);
 		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
 			if (IsClosed)
@@ -561,7 +564,10 @@ namespace dnSpy.Text.Editor {
 			if (bufferPosition.Snapshot != TextSnapshot)
 				throw new ArgumentException();
 
-			if (visiblePhysicalLines.Count != 0 && visiblePhysicalLines[0].BufferSpan.Snapshot == bufferPosition.Snapshot) {
+			if (delayLayoutLinesInProgress && !IsVisiblePhysicalLinesSnapshot(bufferPosition.Snapshot))
+				DoDelayDisplayLines();
+
+			if (IsVisiblePhysicalLinesSnapshot(bufferPosition.Snapshot)) {
 				foreach (var pline in visiblePhysicalLines) {
 					var lline = pline.FindFormattedLineByBufferPosition(bufferPosition);
 					if (lline != null)
