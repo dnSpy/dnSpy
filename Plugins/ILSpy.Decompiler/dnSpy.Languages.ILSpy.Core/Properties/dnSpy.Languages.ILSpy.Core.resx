@@ -195,6 +195,9 @@
   <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
     <value>Show XML documentation in decompiled code</value>
   </data>
+  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
+    <value>Sort custom attributes</value>
+  </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Sort methods, fields, properties, events and types</value>
   </data>

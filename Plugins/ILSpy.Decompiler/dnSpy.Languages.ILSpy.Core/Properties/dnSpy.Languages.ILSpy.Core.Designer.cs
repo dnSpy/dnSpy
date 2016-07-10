@@ -296,6 +296,15 @@ namespace dnSpy.Languages.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sort custom attributes.
+        /// </summary>
+        public static string DecompilerSettings_SortCustomAttributes {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_SortCustomAttributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sort methods, fields, properties, events and types.
         /// </summary>
         public static string DecompilerSettings_SortMethods {

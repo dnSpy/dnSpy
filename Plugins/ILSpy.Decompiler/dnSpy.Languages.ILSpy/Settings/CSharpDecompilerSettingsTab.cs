@@ -118,12 +118,12 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		}
 
 		[Flags]
-		public enum RefreshFlags {
+		enum RefreshFlags {
 			ShowMember			= 0x00000001,
 			ILAst				= 0x00000002,
 			CSharp				= 0x00000004,
 			VB					= 0x00000008,
-			DecompileAll = ILAst | CSharp | VB,
+			DecompileAll		= ILAst | CSharp | VB,
 		}
 
 		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
@@ -171,6 +171,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			if (g.ForceShowAllMembers != d.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.ShowMember;
 			if (g.SortSystemUsingStatementsFirst != d.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
 			if (g.MaxArrayElements != d.MaxArrayElements) flags |= RefreshFlags.CSharp;
+			if (g.SortCustomAttributes != d.SortCustomAttributes) flags |= RefreshFlags.CSharp;
 
 			if ((flags & RefreshFlags.ShowMember) != 0)
 				appRefreshSettings.Add(AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER);

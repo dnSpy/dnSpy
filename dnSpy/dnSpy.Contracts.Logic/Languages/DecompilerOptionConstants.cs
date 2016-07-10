@@ -168,5 +168,10 @@ namespace dnSpy.Contracts.Languages {
 		public static readonly Guid MaxArrayElements_GUID = new Guid("E0DEC360-EE40-4F61-9106-D9F142F4CC9A");
 		/// <summary />
 		public static readonly string MaxArrayElements_NAME = "max-array-elems";
+
+		/// <summary />
+		public static readonly Guid SortCustomAttributes_GUID = new Guid("8E3E8009-AC00-436E-B476-08B2E697AD32");
+		/// <summary />
+		public static readonly string SortCustomAttributes_NAME = "sort-custom-attrs";
 	}
 }
