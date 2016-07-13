@@ -58,4 +58,10 @@ namespace dnSpy.Text.Editor {
 		public override int Default => DefaultDnSpyTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
 		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class EnableColorizationEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.EnableColorizationId;
+		public override bool Default => true;
+	}
 }

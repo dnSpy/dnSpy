@@ -32,6 +32,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>("ITextView/RefreshScreenOnChange");
 		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecondsId = new EditorOptionKey<int>("ITextView/RefreshScreenOnChangeWaitMilliSeconds");
 		public const int DefaultRefreshScreenOnChangeWaitMilliSeconds = 150;
+		public static readonly EditorOptionKey<bool> EnableColorizationId = new EditorOptionKey<bool>("ITextView/EnableColorization");
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

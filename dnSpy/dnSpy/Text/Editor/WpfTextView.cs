@@ -32,6 +32,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
+using dnSpy.Text.Classification;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -356,6 +357,8 @@ namespace dnSpy.Text.Editor {
 				if (!Options.IsRefreshScreenOnChangeEnabled())
 					StopRefreshTimer();
 			}
+			else if (e.OptionId == DefaultDnSpyTextViewOptions.EnableColorizationId.Name)
+				InvalidateFormattedLineSource(true);
 		}
 
 		double lastFormattedLineSourceViewportWidth = double.NaN;
@@ -367,6 +370,7 @@ namespace dnSpy.Text.Editor {
 			double wordWrapWidth = isWordWrap ? viewportWidthOverride : 0;
 			var maxAutoIndent = isAutoIndent ? viewportWidthOverride / 4 : 0;
 			bool useDisplayMode = TextOptions.GetTextFormattingMode(this) == TextFormattingMode.Display;
+			var classifier = Options.IsColorizationEnabled() ? aggregateClassifier : NullClassifier.Instance;
 
 			int tabSize = Options.GetTabSize();
 			tabSize = Math.Max(1, tabSize);
@@ -385,7 +389,7 @@ namespace dnSpy.Text.Editor {
 				wordWrapWidth,
 				maxAutoIndent,
 				useDisplayMode,
-				aggregateClassifier,
+				classifier,
 				textAndAdornmentSequencer,
 				classificationFormatMap,
 				isWordWrap);
