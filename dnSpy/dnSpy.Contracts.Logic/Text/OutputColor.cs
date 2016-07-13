@@ -165,6 +165,31 @@ namespace dnSpy.Contracts.Text {
 		DebugLogProgramOutput,
 		DebugLogMDA,
 		DebugLogTimestamp,
+		LineNumber,
+		Link,
+		VisibleWhitespace,
+		SelectedText,
+		InactiveSelectedText,
+		LocalDefinition,
+		LocalReference,
+		CurrentStatement,
+		ReturnStatement,
+		SelectedReturnStatement,
+		BreakpointStatement,
+		DisabledBreakpointStatement,
+		SpecialCharacterBox,
+		SearchResultMarker,
+		CurrentLine,
+		CurrentLineNoFocus,
+		HexText,
+		HexOffset,
+		HexByte0,
+		HexByte1,
+		HexByteError,
+		HexAscii,
+		HexCaret,
+		HexInactiveCaret,
+		HexSelection,
 
 		/// <summary>
 		/// Must be last
@@ -316,6 +341,31 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebugLogProgramOutput = OutputColor.DebugLogProgramOutput;
 		public static readonly object DebugLogMDA = OutputColor.DebugLogMDA;
 		public static readonly object DebugLogTimestamp = OutputColor.DebugLogTimestamp;
+		public static readonly object LineNumber = OutputColor.LineNumber;
+		public static readonly object Link = OutputColor.Link;
+		public static readonly object VisibleWhitespace = OutputColor.VisibleWhitespace;
+		public static readonly object SelectedText = OutputColor.SelectedText;
+		public static readonly object InactiveSelectedText = OutputColor.InactiveSelectedText;
+		public static readonly object LocalDefinition = OutputColor.LocalDefinition;
+		public static readonly object LocalReference = OutputColor.LocalReference;
+		public static readonly object CurrentStatement = OutputColor.CurrentStatement;
+		public static readonly object ReturnStatement = OutputColor.ReturnStatement;
+		public static readonly object SelectedReturnStatement = OutputColor.SelectedReturnStatement;
+		public static readonly object BreakpointStatement = OutputColor.BreakpointStatement;
+		public static readonly object DisabledBreakpointStatement = OutputColor.DisabledBreakpointStatement;
+		public static readonly object SpecialCharacterBox = OutputColor.SpecialCharacterBox;
+		public static readonly object SearchResultMarker = OutputColor.SearchResultMarker;
+		public static readonly object CurrentLine = OutputColor.CurrentLine;
+		public static readonly object CurrentLineNoFocus = OutputColor.CurrentLineNoFocus;
+		public static readonly object HexText = OutputColor.HexText;
+		public static readonly object HexOffset = OutputColor.HexOffset;
+		public static readonly object HexByte0 = OutputColor.HexByte0;
+		public static readonly object HexByte1 = OutputColor.HexByte1;
+		public static readonly object HexByteError = OutputColor.HexByteError;
+		public static readonly object HexAscii = OutputColor.HexAscii;
+		public static readonly object HexCaret = OutputColor.HexCaret;
+		public static readonly object HexInactiveCaret = OutputColor.HexInactiveCaret;
+		public static readonly object HexSelection = OutputColor.HexSelection;
 
 		public static object Box(this OutputColor OutputColor) {
 			Debug.Assert(0 <= OutputColor && OutputColor < OutputColor.Last);
@@ -464,6 +514,31 @@ namespace dnSpy.Contracts.Text {
 			DebugLogProgramOutput,
 			DebugLogMDA,
 			DebugLogTimestamp,
+			LineNumber,
+			Link,
+			VisibleWhitespace,
+			SelectedText,
+			InactiveSelectedText,
+			LocalDefinition,
+			LocalReference,
+			CurrentStatement,
+			ReturnStatement,
+			SelectedReturnStatement,
+			BreakpointStatement,
+			DisabledBreakpointStatement,
+			SpecialCharacterBox,
+			SearchResultMarker,
+			CurrentLine,
+			CurrentLineNoFocus,
+			HexText,
+			HexOffset,
+			HexByte0,
+			HexByte1,
+			HexByteError,
+			HexAscii,
+			HexCaret,
+			HexInactiveCaret,
+			HexSelection,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

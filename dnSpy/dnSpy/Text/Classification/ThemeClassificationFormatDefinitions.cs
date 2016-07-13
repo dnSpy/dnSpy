@@ -743,6 +743,131 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.DebugLogTimestamp)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebugLogTimestampClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.LineNumber)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition LineNumberClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Link)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition LinkClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.VisibleWhitespace)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition VisibleWhitespaceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.InactiveSelectedText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition InactiveSelectedTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.LocalDefinition)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition LocalDefinitionClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.LocalReference)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition LocalReferenceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.CurrentStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition CurrentStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReturnStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ReturnStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedReturnStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedReturnStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledBreakpointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledBreakpointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SpecialCharacterBox)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SpecialCharacterBoxClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SearchResultMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SearchResultMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.CurrentLine)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition CurrentLineClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.CurrentLineNoFocus)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition CurrentLineNoFocusClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexOffset)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexOffsetClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexByte0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexByte0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexByte1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexByte1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexByteError)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexByteErrorClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexAscii)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexAsciiClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCaret)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCaretClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexInactiveCaret)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexInactiveCaretClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexSelection)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexSelectionClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1985,6 +2110,231 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class DebugLogTimestamp : ThemeClassificationFormatDefinition {
 			DebugLogTimestamp() : base(ColorType.DebugLogTimestamp) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LineNumber)]
+		[Name(ThemeClassificationTypeNameKeys.LineNumber)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class LineNumber : ThemeClassificationFormatDefinition {
+			LineNumber() : base(ColorType.LineNumber) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Link)]
+		[Name(ThemeClassificationTypeNameKeys.Link)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class Link : ThemeClassificationFormatDefinition {
+			Link() : base(ColorType.Link) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.VisibleWhitespace)]
+		[Name(ThemeClassificationTypeNameKeys.VisibleWhitespace)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class VisibleWhitespace : ThemeClassificationFormatDefinition {
+			VisibleWhitespace() : base(ColorType.VisibleWhitespace) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedText)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedText : ThemeClassificationFormatDefinition {
+			SelectedText() : base(ColorType.SelectedText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.InactiveSelectedText)]
+		[Name(ThemeClassificationTypeNameKeys.InactiveSelectedText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class InactiveSelectedText : ThemeClassificationFormatDefinition {
+			InactiveSelectedText() : base(ColorType.InactiveSelectedText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LocalDefinition)]
+		[Name(ThemeClassificationTypeNameKeys.LocalDefinition)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class LocalDefinition : ThemeClassificationFormatDefinition {
+			LocalDefinition() : base(ColorType.LocalDefinition) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LocalReference)]
+		[Name(ThemeClassificationTypeNameKeys.LocalReference)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class LocalReference : ThemeClassificationFormatDefinition {
+			LocalReference() : base(ColorType.LocalReference) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentStatement)]
+		[Name(ThemeClassificationTypeNameKeys.CurrentStatement)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class CurrentStatement : ThemeClassificationFormatDefinition {
+			CurrentStatement() : base(ColorType.CurrentStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReturnStatement)]
+		[Name(ThemeClassificationTypeNameKeys.ReturnStatement)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ReturnStatement : ThemeClassificationFormatDefinition {
+			ReturnStatement() : base(ColorType.ReturnStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedReturnStatement)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedReturnStatement)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedReturnStatement : ThemeClassificationFormatDefinition {
+			SelectedReturnStatement() : base(ColorType.SelectedReturnStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointStatement)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BreakpointStatement : ThemeClassificationFormatDefinition {
+			BreakpointStatement() : base(ColorType.BreakpointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledBreakpointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledBreakpointStatement)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledBreakpointStatement : ThemeClassificationFormatDefinition {
+			DisabledBreakpointStatement() : base(ColorType.DisabledBreakpointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SpecialCharacterBox)]
+		[Name(ThemeClassificationTypeNameKeys.SpecialCharacterBox)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SpecialCharacterBox : ThemeClassificationFormatDefinition {
+			SpecialCharacterBox() : base(ColorType.SpecialCharacterBox) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SearchResultMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SearchResultMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SearchResultMarker : ThemeClassificationFormatDefinition {
+			SearchResultMarker() : base(ColorType.SearchResultMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentLine)]
+		[Name(ThemeClassificationTypeNameKeys.CurrentLine)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class CurrentLine : ThemeClassificationFormatDefinition {
+			CurrentLine() : base(ColorType.CurrentLine) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentLineNoFocus)]
+		[Name(ThemeClassificationTypeNameKeys.CurrentLineNoFocus)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class CurrentLineNoFocus : ThemeClassificationFormatDefinition {
+			CurrentLineNoFocus() : base(ColorType.CurrentLineNoFocus) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexText)]
+		[Name(ThemeClassificationTypeNameKeys.HexText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexText : ThemeClassificationFormatDefinition {
+			HexText() : base(ColorType.HexText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexOffset)]
+		[Name(ThemeClassificationTypeNameKeys.HexOffset)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexOffset : ThemeClassificationFormatDefinition {
+			HexOffset() : base(ColorType.HexOffset) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexByte0)]
+		[Name(ThemeClassificationTypeNameKeys.HexByte0)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexByte0 : ThemeClassificationFormatDefinition {
+			HexByte0() : base(ColorType.HexByte0) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexByte1)]
+		[Name(ThemeClassificationTypeNameKeys.HexByte1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexByte1 : ThemeClassificationFormatDefinition {
+			HexByte1() : base(ColorType.HexByte1) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexByteError)]
+		[Name(ThemeClassificationTypeNameKeys.HexByteError)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexByteError : ThemeClassificationFormatDefinition {
+			HexByteError() : base(ColorType.HexByteError) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexAscii)]
+		[Name(ThemeClassificationTypeNameKeys.HexAscii)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexAscii : ThemeClassificationFormatDefinition {
+			HexAscii() : base(ColorType.HexAscii) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCaret)]
+		[Name(ThemeClassificationTypeNameKeys.HexCaret)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexCaret : ThemeClassificationFormatDefinition {
+			HexCaret() : base(ColorType.HexCaret) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexInactiveCaret)]
+		[Name(ThemeClassificationTypeNameKeys.HexInactiveCaret)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexInactiveCaret : ThemeClassificationFormatDefinition {
+			HexInactiveCaret() : base(ColorType.HexInactiveCaret) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexSelection)]
+		[Name(ThemeClassificationTypeNameKeys.HexSelection)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexSelection : ThemeClassificationFormatDefinition {
+			HexSelection() : base(ColorType.HexSelection) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

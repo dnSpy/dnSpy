@@ -161,6 +161,31 @@ namespace dnSpy.Decompiler.Shared {
 		DebugLogProgramOutput,
 		DebugLogMDA,
 		DebugLogTimestamp,
+		LineNumber,
+		Link,
+		VisibleWhitespace,
+		SelectedText,
+		InactiveSelectedText,
+		LocalDefinition,
+		LocalReference,
+		CurrentStatement,
+		ReturnStatement,
+		SelectedReturnStatement,
+		BreakpointStatement,
+		DisabledBreakpointStatement,
+		SpecialCharacterBox,
+		SearchResultMarker,
+		CurrentLine,
+		CurrentLineNoFocus,
+		HexText,
+		HexOffset,
+		HexByte0,
+		HexByte1,
+		HexByteError,
+		HexAscii,
+		HexCaret,
+		HexInactiveCaret,
+		HexSelection,
 
 		// If you add a new one, also update ColorType
 
@@ -309,6 +334,31 @@ namespace dnSpy.Decompiler.Shared {
 		public static readonly object DebugLogProgramOutput = TextTokenKind.DebugLogProgramOutput;
 		public static readonly object DebugLogMDA = TextTokenKind.DebugLogMDA;
 		public static readonly object DebugLogTimestamp = TextTokenKind.DebugLogTimestamp;
+		public static readonly object LineNumber = TextTokenKind.LineNumber;
+		public static readonly object Link = TextTokenKind.Link;
+		public static readonly object VisibleWhitespace = TextTokenKind.VisibleWhitespace;
+		public static readonly object SelectedText = TextTokenKind.SelectedText;
+		public static readonly object InactiveSelectedText = TextTokenKind.InactiveSelectedText;
+		public static readonly object LocalDefinition = TextTokenKind.LocalDefinition;
+		public static readonly object LocalReference = TextTokenKind.LocalReference;
+		public static readonly object CurrentStatement = TextTokenKind.CurrentStatement;
+		public static readonly object ReturnStatement = TextTokenKind.ReturnStatement;
+		public static readonly object SelectedReturnStatement = TextTokenKind.SelectedReturnStatement;
+		public static readonly object BreakpointStatement = TextTokenKind.BreakpointStatement;
+		public static readonly object DisabledBreakpointStatement = TextTokenKind.DisabledBreakpointStatement;
+		public static readonly object SpecialCharacterBox = TextTokenKind.SpecialCharacterBox;
+		public static readonly object SearchResultMarker = TextTokenKind.SearchResultMarker;
+		public static readonly object CurrentLine = TextTokenKind.CurrentLine;
+		public static readonly object CurrentLineNoFocus = TextTokenKind.CurrentLineNoFocus;
+		public static readonly object HexText = TextTokenKind.HexText;
+		public static readonly object HexOffset = TextTokenKind.HexOffset;
+		public static readonly object HexByte0 = TextTokenKind.HexByte0;
+		public static readonly object HexByte1 = TextTokenKind.HexByte1;
+		public static readonly object HexByteError = TextTokenKind.HexByteError;
+		public static readonly object HexAscii = TextTokenKind.HexAscii;
+		public static readonly object HexCaret = TextTokenKind.HexCaret;
+		public static readonly object HexInactiveCaret = TextTokenKind.HexInactiveCaret;
+		public static readonly object HexSelection = TextTokenKind.HexSelection;
 
 		public static object Box(this TextTokenKind textTokenKind) {
 			Debug.Assert(0 <= textTokenKind && textTokenKind < TextTokenKind.Last);
@@ -457,6 +507,31 @@ namespace dnSpy.Decompiler.Shared {
 			DebugLogProgramOutput,
 			DebugLogMDA,
 			DebugLogTimestamp,
+			LineNumber,
+			Link,
+			VisibleWhitespace,
+			SelectedText,
+			InactiveSelectedText,
+			LocalDefinition,
+			LocalReference,
+			CurrentStatement,
+			ReturnStatement,
+			SelectedReturnStatement,
+			BreakpointStatement,
+			DisabledBreakpointStatement,
+			SpecialCharacterBox,
+			SearchResultMarker,
+			CurrentLine,
+			CurrentLineNoFocus,
+			HexText,
+			HexOffset,
+			HexByte0,
+			HexByte1,
+			HexByteError,
+			HexAscii,
+			HexCaret,
+			HexInactiveCaret,
+			HexSelection,
 		};
 	}
 

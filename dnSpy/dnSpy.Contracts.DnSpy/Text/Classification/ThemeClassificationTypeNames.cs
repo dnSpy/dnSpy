@@ -723,5 +723,130 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="ColorType.DebugLogTimestamp"/>
 		/// </summary>
 		public const string DebugLogTimestamp = "Theme-DebugLogTimestamp";
+
+		/// <summary>
+		/// <see cref="ColorType.LineNumber"/>
+		/// </summary>
+		public const string LineNumber = "line number";
+
+		/// <summary>
+		/// <see cref="ColorType.Link"/>
+		/// </summary>
+		public const string Link = "Theme-Link";
+
+		/// <summary>
+		/// <see cref="ColorType.VisibleWhitespace"/>
+		/// </summary>
+		public const string VisibleWhitespace = "Theme-VisibleWhitespace";
+
+		/// <summary>
+		/// <see cref="ColorType.SelectedText"/>
+		/// </summary>
+		public const string SelectedText = "Theme-SelectedText";
+
+		/// <summary>
+		/// <see cref="ColorType.InactiveSelectedText"/>
+		/// </summary>
+		public const string InactiveSelectedText = "Theme-InactiveSelectedText";
+
+		/// <summary>
+		/// <see cref="ColorType.LocalDefinition"/>
+		/// </summary>
+		public const string LocalDefinition = "Theme-LocalDefinition";
+
+		/// <summary>
+		/// <see cref="ColorType.LocalReference"/>
+		/// </summary>
+		public const string LocalReference = "Theme-LocalReference";
+
+		/// <summary>
+		/// <see cref="ColorType.CurrentStatement"/>
+		/// </summary>
+		public const string CurrentStatement = "Theme-CurrentStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.ReturnStatement"/>
+		/// </summary>
+		public const string ReturnStatement = "Theme-ReturnStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.SelectedReturnStatement"/>
+		/// </summary>
+		public const string SelectedReturnStatement = "Theme-SelectedReturnStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.BreakpointStatement"/>
+		/// </summary>
+		public const string BreakpointStatement = "Theme-BreakpointStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.DisabledBreakpointStatement"/>
+		/// </summary>
+		public const string DisabledBreakpointStatement = "Theme-DisabledBreakpointStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.SpecialCharacterBox"/>
+		/// </summary>
+		public const string SpecialCharacterBox = "Theme-SpecialCharacterBox";
+
+		/// <summary>
+		/// <see cref="ColorType.SearchResultMarker"/>
+		/// </summary>
+		public const string SearchResultMarker = "Theme-SearchResultMarker";
+
+		/// <summary>
+		/// <see cref="ColorType.CurrentLine"/>
+		/// </summary>
+		public const string CurrentLine = "Theme-CurrentLine";
+
+		/// <summary>
+		/// <see cref="ColorType.CurrentLineNoFocus"/>
+		/// </summary>
+		public const string CurrentLineNoFocus = "Theme-CurrentLineNoFocus";
+
+		/// <summary>
+		/// <see cref="ColorType.HexText"/>
+		/// </summary>
+		public const string HexText = "Theme-HexText";
+
+		/// <summary>
+		/// <see cref="ColorType.HexOffset"/>
+		/// </summary>
+		public const string HexOffset = "Theme-HexOffset";
+
+		/// <summary>
+		/// <see cref="ColorType.HexByte0"/>
+		/// </summary>
+		public const string HexByte0 = "Theme-HexByte0";
+
+		/// <summary>
+		/// <see cref="ColorType.HexByte1"/>
+		/// </summary>
+		public const string HexByte1 = "Theme-HexByte1";
+
+		/// <summary>
+		/// <see cref="ColorType.HexByteError"/>
+		/// </summary>
+		public const string HexByteError = "Theme-HexByteError";
+
+		/// <summary>
+		/// <see cref="ColorType.HexAscii"/>
+		/// </summary>
+		public const string HexAscii = "Theme-HexAscii";
+
+		/// <summary>
+		/// <see cref="ColorType.HexCaret"/>
+		/// </summary>
+		public const string HexCaret = "Theme-HexCaret";
+
+		/// <summary>
+		/// <see cref="ColorType.HexInactiveCaret"/>
+		/// </summary>
+		public const string HexInactiveCaret = "Theme-HexInactiveCaret";
+
+		/// <summary>
+		/// <see cref="ColorType.HexSelection"/>
+		/// </summary>
+		public const string HexSelection = "Theme-HexSelection";
 	}
 }

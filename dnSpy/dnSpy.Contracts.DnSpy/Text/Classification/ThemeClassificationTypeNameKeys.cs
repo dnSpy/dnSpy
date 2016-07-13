@@ -723,5 +723,130 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="ColorType.DebugLogTimestamp"/>
 		/// </summary>
 		public const string DebugLogTimestamp = "DebugLogTimestamp";
+
+		/// <summary>
+		/// <see cref="ColorType.LineNumber"/>
+		/// </summary>
+		public const string LineNumber = "Line Number";
+
+		/// <summary>
+		/// <see cref="ColorType.Link"/>
+		/// </summary>
+		public const string Link = "Link";
+
+		/// <summary>
+		/// <see cref="ColorType.VisibleWhitespace"/>
+		/// </summary>
+		public const string VisibleWhitespace = "VisibleWhitespace";
+
+		/// <summary>
+		/// <see cref="ColorType.SelectedText"/>
+		/// </summary>
+		public const string SelectedText = "SelectedText";
+
+		/// <summary>
+		/// <see cref="ColorType.InactiveSelectedText"/>
+		/// </summary>
+		public const string InactiveSelectedText = "InactiveSelectedText";
+
+		/// <summary>
+		/// <see cref="ColorType.LocalDefinition"/>
+		/// </summary>
+		public const string LocalDefinition = "LocalDefinition";
+
+		/// <summary>
+		/// <see cref="ColorType.LocalReference"/>
+		/// </summary>
+		public const string LocalReference = "LocalReference";
+
+		/// <summary>
+		/// <see cref="ColorType.CurrentStatement"/>
+		/// </summary>
+		public const string CurrentStatement = "CurrentStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.ReturnStatement"/>
+		/// </summary>
+		public const string ReturnStatement = "ReturnStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.SelectedReturnStatement"/>
+		/// </summary>
+		public const string SelectedReturnStatement = "SelectedReturnStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.BreakpointStatement"/>
+		/// </summary>
+		public const string BreakpointStatement = "BreakpointStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.DisabledBreakpointStatement"/>
+		/// </summary>
+		public const string DisabledBreakpointStatement = "DisabledBreakpointStatement";
+
+		/// <summary>
+		/// <see cref="ColorType.SpecialCharacterBox"/>
+		/// </summary>
+		public const string SpecialCharacterBox = "SpecialCharacterBox";
+
+		/// <summary>
+		/// <see cref="ColorType.SearchResultMarker"/>
+		/// </summary>
+		public const string SearchResultMarker = "SearchResultMarker";
+
+		/// <summary>
+		/// <see cref="ColorType.CurrentLine"/>
+		/// </summary>
+		public const string CurrentLine = "CurrentLine";
+
+		/// <summary>
+		/// <see cref="ColorType.CurrentLineNoFocus"/>
+		/// </summary>
+		public const string CurrentLineNoFocus = "CurrentLineNoFocus";
+
+		/// <summary>
+		/// <see cref="ColorType.HexText"/>
+		/// </summary>
+		public const string HexText = "HexText";
+
+		/// <summary>
+		/// <see cref="ColorType.HexOffset"/>
+		/// </summary>
+		public const string HexOffset = "HexOffset";
+
+		/// <summary>
+		/// <see cref="ColorType.HexByte0"/>
+		/// </summary>
+		public const string HexByte0 = "HexByte0";
+
+		/// <summary>
+		/// <see cref="ColorType.HexByte1"/>
+		/// </summary>
+		public const string HexByte1 = "HexByte1";
+
+		/// <summary>
+		/// <see cref="ColorType.HexByteError"/>
+		/// </summary>
+		public const string HexByteError = "HexByteError";
+
+		/// <summary>
+		/// <see cref="ColorType.HexAscii"/>
+		/// </summary>
+		public const string HexAscii = "HexAscii";
+
+		/// <summary>
+		/// <see cref="ColorType.HexCaret"/>
+		/// </summary>
+		public const string HexCaret = "HexCaret";
+
+		/// <summary>
+		/// <see cref="ColorType.HexInactiveCaret"/>
+		/// </summary>
+		public const string HexInactiveCaret = "HexInactiveCaret";
+
+		/// <summary>
+		/// <see cref="ColorType.HexSelection"/>
+		/// </summary>
+		public const string HexSelection = "HexSelection";
 	}
 }

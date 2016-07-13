@@ -163,20 +163,6 @@ namespace dnSpy.Contracts.Themes {
 		DebugLogProgramOutput,
 		DebugLogMDA,
 		DebugLogTimestamp,
-		// Must be last in this group
-		LastNR,
-
-
-
-
-
-
-		// ********************************************************************************
-		// ONLY APPEND VALUES. DON'T REMOVE SORT OR RENAME ANYTHING. (unless you can recompile
-		// EVERYTHING that depend on these values)
-		// ********************************************************************************
-		DefaultText = 0x00100000,
-		FirstUI = DefaultText,
 		LineNumber,
 		Link,
 		VisibleWhitespace,
@@ -193,7 +179,6 @@ namespace dnSpy.Contracts.Themes {
 		SearchResultMarker,
 		CurrentLine,
 		CurrentLineNoFocus,
-
 		HexText,
 		HexOffset,
 		HexByte0,
@@ -203,6 +188,21 @@ namespace dnSpy.Contracts.Themes {
 		HexCaret,
 		HexInactiveCaret,
 		HexSelection,
+
+		// Must be last in this group
+		LastNR,
+
+
+
+
+
+
+		// ********************************************************************************
+		// ONLY APPEND VALUES. DON'T REMOVE SORT OR RENAME ANYTHING. (unless you can recompile
+		// EVERYTHING that depend on these values)
+		// ********************************************************************************
+		DefaultText = 0x00100000,
+		FirstUI = DefaultText,
 
 		SystemColorsControl,
 		SystemColorsControlDark,
