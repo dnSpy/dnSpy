@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Shared.HexEditor;
+using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageOptionalHeader32VM : ImageOptionalHeaderVM {

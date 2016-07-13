@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	static class HexBoxUIStateSerializer {

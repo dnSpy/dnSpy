@@ -117,6 +117,54 @@
     <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerUtilities.cs" />
     <Compile Include="Files\TreeView\Resources\SerializedImageUtilities.cs" />
     <Compile Include="Files\TreeView\Resources\SerializedResourceElementNode.cs" />
+    <Compile Include="HexEditor\AsciiEncoding.cs" />
+    <Compile Include="HexEditor\ByteArrayHexStream.cs" />
+    <Compile Include="HexEditor\CachedHexStream.cs" />
+    <Compile Include="HexEditor\ClipboardUtils.cs" />
+    <Compile Include="HexEditor\DataFormatter.cs" />
+    <Compile Include="HexEditor\HexBox.cs" />
+    <Compile Include="HexEditor\HexBoxPosition.cs" />
+    <Compile Include="HexEditor\HexBoxPositionKind.cs" />
+    <Compile Include="HexEditor\HexBoxState.cs" />
+    <Compile Include="HexEditor\HexBoxWriteEventArgs.cs" />
+    <Compile Include="HexEditor\HexCaret.cs" />
+    <Compile Include="HexEditor\HexDocument.cs" />
+    <Compile Include="HexEditor\HexDocumentModifiedEventArgs.cs" />
+    <Compile Include="HexEditor\HexLine.cs" />
+    <Compile Include="HexEditor\HexLineLayer.cs" />
+    <Compile Include="HexEditor\HexLinePart.cs" />
+    <Compile Include="HexEditor\HexLineTextSource.cs" />
+    <Compile Include="HexEditor\HexPositionUI.cs" />
+    <Compile Include="HexEditor\HexSelection.cs" />
+    <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
+    <Compile Include="HexEditor\HexTextRunProperties.cs" />
+    <Compile Include="HexEditor\HexWriteType.cs" />
+    <Compile Include="HexEditor\HtmlClipboardFormatWriter.cs" />
+    <Compile Include="HexEditor\IHexLayer.cs" />
+    <Compile Include="HexEditor\IHexStream.cs" />
+    <Compile Include="HexEditor\ISimpleHexStream.cs" />
+    <Compile Include="HexEditor\NumberUtils.cs" />
+    <Compile Include="HexEditor\SelectionLayer.cs" />
+    <Compile Include="Hex\DnHexBox.cs" />
+    <Compile Include="Hex\GoToOffsetDlg.xaml.cs">
+      <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\GoToOffsetVM.cs" />
+    <Compile Include="Hex\HexBoxCommands.cs" />
+    <Compile Include="Hex\HexBoxThemeHelper.cs" />
+    <Compile Include="Hex\HexEditorAppSettingsTab.cs" />
+    <Compile Include="Hex\HexEditorSettings.cs" />
+    <Compile Include="Hex\LocalHexSettings.cs" />
+    <Compile Include="Hex\LocalSettingsDlg.xaml.cs">
+      <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\LocalSettingsVM.cs" />
+    <Compile Include="Hex\MDUtils.cs" />
+    <Compile Include="Hex\SelectDlg.xaml.cs">
+      <DependentUpon>SelectDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\SelectVM.cs" />
+    <Compile Include="Images\ImageManagerExtensionMethods.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />
     <Compile Include="Menus\MenuItemCommand.cs" />
     <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">
@@ -550,15 +598,40 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Contracts.DnSpy.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Hex\GoToOffsetDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Hex\LocalSettingsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Hex\SelectDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Fill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Paste.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

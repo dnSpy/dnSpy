@@ -29,7 +29,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Resources;
-using dnSpy.Shared.Images;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]

@@ -31,7 +31,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Resources;
-using dnSpy.Shared.Images;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemMD {

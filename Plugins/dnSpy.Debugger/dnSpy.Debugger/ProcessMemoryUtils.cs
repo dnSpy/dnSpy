@@ -19,8 +19,8 @@
 
 using System;
 using dndbg.Engine;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Debugger.Memory;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger {
 	static class ProcessMemoryUtils {

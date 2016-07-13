@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableRecordNode : HexNode {

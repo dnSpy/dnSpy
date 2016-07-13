@@ -27,10 +27,10 @@ using System.Windows.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.Hex;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportFileTabContentFactory(Order = TabConstants.ORDER_HEXBOXFILETABCONTENTFACTORY)]

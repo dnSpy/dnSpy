@@ -23,9 +23,9 @@ using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class TablesStreamNode : HexNode {

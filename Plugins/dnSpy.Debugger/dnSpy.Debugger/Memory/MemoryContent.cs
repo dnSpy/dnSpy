@@ -22,10 +22,10 @@ using System.ComponentModel;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.Hex;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger.Memory {
 	interface IMemoryContent : IUIObjectProvider {

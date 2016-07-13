@@ -27,11 +27,11 @@ using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PENode : FileTreeNodeData, IDecompileSelf {

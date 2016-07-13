@@ -25,8 +25,8 @@ using dnlib.PE;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Hex;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_HEXADDRREF)]

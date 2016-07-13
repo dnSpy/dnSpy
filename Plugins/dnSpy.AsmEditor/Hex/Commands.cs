@@ -36,13 +36,13 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.HexEditor;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex {

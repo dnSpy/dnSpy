@@ -23,8 +23,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.HexEditor;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {

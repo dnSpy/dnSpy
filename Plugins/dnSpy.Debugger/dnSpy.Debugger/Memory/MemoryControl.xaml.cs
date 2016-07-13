@@ -18,7 +18,7 @@
 */
 
 using System.Windows.Controls;
-using dnSpy.Shared.Hex;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Debugger.Memory {
 	sealed partial class MemoryControl : UserControl {

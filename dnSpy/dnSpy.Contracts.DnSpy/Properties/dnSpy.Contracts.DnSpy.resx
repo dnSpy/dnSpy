@@ -128,6 +128,70 @@
   <data name="Button_Cancel" xml:space="preserve">
     <value>_Cancel</value>
   </data>
+  <data name="Button_DefaultSettings" xml:space="preserve">
+    <value>_Default Settings</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="BytesPerLineCommand" xml:space="preserve">
+    <value>Bytes per Line</value>
+  </data>
+  <data name="ClearByteCommand" xml:space="preserve">
+    <value>Clear Byte</value>
+  </data>
+  <data name="ClearSelectedBytesCommand" xml:space="preserve">
+    <value>Clear Selected Bytes</value>
+  </data>
+  <data name="ClearSelectionKey" xml:space="preserve">
+    <value>Del</value>
+    <comment>the delete key</comment>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Cop_y</value>
+  </data>
+  <data name="CopyCSharpArrayCommand" xml:space="preserve">
+    <value>Copy C# Array</value>
+  </data>
+  <data name="CopyCSharpArrayKey" xml:space="preserve">
+    <value>Ctrl+Shift+P</value>
+  </data>
+  <data name="CopyKey" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="CopyOffsetCommand" xml:space="preserve">
+    <value>Copy Offset</value>
+  </data>
+  <data name="CopyOffsetKey" xml:space="preserve">
+    <value>Ctrl+Alt+O</value>
+  </data>
+  <data name="CopyUIContentsCommand" xml:space="preserve">
+    <value>Copy UI Contents</value>
+  </data>
+  <data name="CopyUIContentsKey" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="CopyUnicodeStringCommand" xml:space="preserve">
+    <value>Copy Unicode String</value>
+  </data>
+  <data name="CopyUnicodeStringKey" xml:space="preserve">
+    <value>Ctrl+Shift+U</value>
+  </data>
+  <data name="CopyUTF8StringCommand" xml:space="preserve">
+    <value>Copy UTF-8 String</value>
+  </data>
+  <data name="CopyUTF8StringKey" xml:space="preserve">
+    <value>Ctrl+Shift+8</value>
+  </data>
+  <data name="CopyVBArrayCommand" xml:space="preserve">
+    <value>Copy VB Array</value>
+  </data>
+  <data name="CopyVBArrayKey" xml:space="preserve">
+    <value>Ctrl+Shift+B</value>
+  </data>
   <data name="CouldNotConvert" xml:space="preserve">
     <value>Could not convert '{0}'</value>
   </data>
@@ -152,8 +216,191 @@
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
     <value>Strong Name Key Files</value>
   </data>
+  <data name="FillSelectionCommand" xml:space="preserve">
+    <value>Fill Selection with Byte...</value>
+  </data>
+  <data name="FillSelection_Label" xml:space="preserve">
+    <value>_Byte</value>
+  </data>
+  <data name="FillSelection_Title" xml:space="preserve">
+    <value>Enter Value</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="GoToAddressCommand" xml:space="preserve">
+    <value>Go to Address...</value>
+  </data>
+  <data name="GoToOffsetCommand" xml:space="preserve">
+    <value>Go to Offset...</value>
+  </data>
+  <data name="GoToOffsetKey" xml:space="preserve">
+    <value>Ctrl+G</value>
+  </data>
+  <data name="GoToOffset_Address_Label" xml:space="preserve">
+    <value>_Address</value>
+  </data>
+  <data name="GoToOffset_Offset_Label" xml:space="preserve">
+    <value>O_ffset</value>
+  </data>
+  <data name="GoToOffset_Title" xml:space="preserve">
+    <value>Go to Offset</value>
+  </data>
+  <data name="GoToOffset_Title_Address" xml:space="preserve">
+    <value>Go to Address</value>
+  </data>
+  <data name="HexEditorAppDlgTitle" xml:space="preserve">
+    <value>Hex Editor</value>
+  </data>
+  <data name="HexEditorCharacterEncodingCommand" xml:space="preserve">
+    <value>Encoding</value>
+  </data>
+  <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
+    <value>Save Se_lection...</value>
+  </data>
+  <data name="HexEditorSaveSelectionKey" xml:space="preserve">
+    <value>Ctrl+Alt+S</value>
+  </data>
+  <data name="HexEditorSaveSelection_Title" xml:space="preserve">
+    <value>Save Selection 0x{0:X}-0x{1:X}</value>
+  </data>
+  <data name="HexEditorSelectCommand" xml:space="preserve">
+    <value>Select...</value>
+  </data>
+  <data name="HexEditorSelectKey" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="HexEditorSelect_End" xml:space="preserve">
+    <value>_End</value>
+  </data>
+  <data name="HexEditorSelect_Start" xml:space="preserve">
+    <value>_Start</value>
+  </data>
+  <data name="HexEditorSelect_Title" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="HexEditorSettingsCommand" xml:space="preserve">
+    <value>Settings...</value>
+  </data>
+  <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
+    <value>Other Options</value>
+  </data>
+  <data name="HexEditorShowAsciiCommand" xml:space="preserve">
+    <value>Show ASCII</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
+    <value>_16 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
+    <value>_32 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
+    <value>_48 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
+    <value>_64 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
+    <value>_8 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
+    <value>_Fit to Width</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ANSI" xml:space="preserve">
+    <value>_ANSI</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ANSI_2" xml:space="preserve">
+    <value>ANSI</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ASCII" xml:space="preserve">
+    <value>A_SCII</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ASCII_2" xml:space="preserve">
+    <value>ASCII</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE" xml:space="preserve">
+    <value>_BE Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2" xml:space="preserve">
+    <value>BE Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UNICODE" xml:space="preserve">
+    <value>_Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UNICODE_2" xml:space="preserve">
+    <value>Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF32" xml:space="preserve">
+    <value>UTF_32</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF32_2" xml:space="preserve">
+    <value>UTF-32</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF7" xml:space="preserve">
+    <value>UTF_7</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF7_2" xml:space="preserve">
+    <value>UTF-7</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF8" xml:space="preserve">
+    <value>UTF_8</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF8_2" xml:space="preserve">
+    <value>UTF-8</value>
+  </data>
+  <data name="HexEditor_Default" xml:space="preserve">
+    <value>_Default</value>
+  </data>
+  <data name="HexEditor_Default2" xml:space="preserve">
+    <value>Default</value>
+  </data>
   <data name="InvalidGuid" xml:space="preserve">
     <value>Invalid GUID</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
+    <value>_Base Offset</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
+    <value>This value is added to start offset before it's shown on the screen</value>
+  </data>
+  <data name="LocalHexSettings_ByteGroupSize" xml:space="preserve">
+    <value>Byte _Group Size</value>
+  </data>
+  <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
+    <value>B_ytes per Line</value>
+  </data>
+  <data name="LocalHexSettings_Encoding" xml:space="preserve">
+    <value>E_ncoding</value>
+  </data>
+  <data name="LocalHexSettings_EndOffset" xml:space="preserve">
+    <value>_End Offset</value>
+  </data>
+  <data name="LocalHexSettings_LowerCaseHex" xml:space="preserve">
+    <value>_Lower Case Hex</value>
+  </data>
+  <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
+    <value>Offset Bi_t Size</value>
+  </data>
+  <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
+    <value>Sho_w ASCII</value>
+  </data>
+  <data name="LocalHexSettings_StartOffset" xml:space="preserve">
+    <value>_Start Offset</value>
+  </data>
+  <data name="LocalHexSettings_Title" xml:space="preserve">
+    <value>Local Hex Editor Settings</value>
+  </data>
+  <data name="LocalHexSettings_UseHexPrefix" xml:space="preserve">
+    <value>_Use Hex Prefix (offset)</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
+    <value>Use _Relative Offsets</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
+    <value>All offsets are relative to the start offset</value>
+  </data>
+  <data name="LowerCaseHexCommand" xml:space="preserve">
+    <value>Lower Case Hex</value>
   </data>
   <data name="NewDataNotImageList" xml:space="preserve">
     <value>The new data is not an image list.</value>
@@ -167,6 +414,30 @@
   <data name="NumberOfBytesAndType" xml:space="preserve">
     <value>{0} bytes, Type = {1}</value>
   </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Paste</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
+    <value>_Paste (#Blob Data)</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobKey" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="PasteKey" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="PasteUnicodeCommand" xml:space="preserve">
+    <value>_Paste (Unicode)</value>
+  </data>
+  <data name="PasteUnicodeKey" xml:space="preserve">
+    <value>Ctrl+U</value>
+  </data>
+  <data name="PasteUTF8Command" xml:space="preserve">
+    <value>_Paste (UTF-8)</value>
+  </data>
+  <data name="PasteUTF8Key" xml:space="preserve">
+    <value>Ctrl+8</value>
+  </data>
   <data name="ResourceTypeCantBeChanged" xml:space="preserve">
     <value>Resource type can't be changed</value>
   </data>
@@ -175,6 +446,21 @@
   </data>
   <data name="SaveResources" xml:space="preserve">
     <value>Save Resources</value>
+  </data>
+  <data name="ShowAllBytesCommand" xml:space="preserve">
+    <value>Show All Bytes</value>
+  </data>
+  <data name="ShowAllBytesKey" xml:space="preserve">
+    <value>Ctrl+Shift+D</value>
+  </data>
+  <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
+    <value>Show Only Selected Bytes</value>
+  </data>
+  <data name="ShowOnlySelectedBytesKey" xml:space="preserve">
+    <value>Ctrl+D</value>
+  </data>
+  <data name="UseHexPrefixCommand" xml:space="preserve">
+    <value>Use 0x Prefix (offset)</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Value must be type {0}.

@@ -24,12 +24,12 @@ using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.Hex;
 
 namespace dnSpy.Debugger.Memory {
 	[Export, Export(typeof(IMainToolWindowContentCreator))]

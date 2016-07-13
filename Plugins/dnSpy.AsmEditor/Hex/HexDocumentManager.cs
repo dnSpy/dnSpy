@@ -27,7 +27,7 @@ using System.Security;
 using dnlib.IO;
 using dnlib.PE;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Shared.HexEditor;
+using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	interface IHexDocumentManager {

@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Shared.HexEditor;
+using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.Debugger.Memory {
 	sealed class ProcessHexStream : ISimpleHexStream {

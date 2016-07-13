@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageSectionHeaderNode : HexNode {

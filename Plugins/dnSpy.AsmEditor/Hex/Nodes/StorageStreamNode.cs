@@ -23,10 +23,10 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	enum StorageStreamType {

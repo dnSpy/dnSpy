@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Shared.HexEditor;
+using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	interface IHexBoxUndoManager {

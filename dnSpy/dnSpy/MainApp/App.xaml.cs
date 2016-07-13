@@ -44,7 +44,6 @@ using dnSpy.Plugin;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
-using dnSpy.Shared.Hex;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
@@ -133,8 +132,6 @@ namespace dnSpy.MainApp {
 		CompositionContainer InitializeCompositionContainer() {
 			var aggregateCatalog = new AggregateCatalog();
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(GetType().Assembly));
-			// dnSpy.Shared
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(DnHexBox).Assembly));
 			// dnSpy.Contracts.DnSpy
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(MetroWindow).Assembly));
 			// dnSpy.Roslyn.Shared
