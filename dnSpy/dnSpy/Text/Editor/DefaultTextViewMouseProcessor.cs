@@ -261,6 +261,7 @@ namespace dnSpy.Text.Editor {
 
 		void OnScroll(ScrollDirection value, double xCoordinate) {
 			ITextViewLine line;
+			SnapshotPoint lineStart;
 			switch (value) {
 			case ScrollDirection.Left:
 				line = wpfTextView.Caret.ContainingTextViewLine;
@@ -290,7 +291,10 @@ namespace dnSpy.Text.Editor {
 				line = wpfTextView.TextViewLines.FirstVisibleLine;
 				if (line.VisibilityState == VisibilityState.FullyVisible && !line.IsFirstDocumentLine())
 					line = wpfTextView.GetTextViewLineContainingBufferPosition(line.Start - 1);
+				lineStart = line.Start;
 				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Top);
+				if (!line.IsValid)
+					line = wpfTextView.GetTextViewLineContainingBufferPosition(lineStart);
 				if (line.IsFirstDocumentLine())
 					StopScrolling();
 				editorOperations.MoveCaret(line, xCoordinate, true);
@@ -300,7 +304,10 @@ namespace dnSpy.Text.Editor {
 				line = wpfTextView.TextViewLines.LastVisibleLine;
 				if (line.VisibilityState == VisibilityState.FullyVisible && !line.IsLastDocumentLine())
 					line = wpfTextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+				lineStart = line.Start;
 				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Bottom);
+				if (!line.IsValid)
+					line = wpfTextView.GetTextViewLineContainingBufferPosition(lineStart);
 				if (line.IsLastDocumentLine())
 					StopScrolling();
 				editorOperations.MoveCaret(line, xCoordinate, true);
