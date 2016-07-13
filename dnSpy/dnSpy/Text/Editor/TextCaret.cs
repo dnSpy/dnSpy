@@ -365,7 +365,11 @@ namespace dnSpy.Text.Editor {
 				extraScroll = EXTRA_SCROLL_WIDTH;
 			else
 				extraScroll = availWidth / 2;
-			if (left < textView.ViewportLeft)
+			if (textView.ViewportWidth == 0) {
+				// Don't do anything if there's zero width. This can happen during
+				// startup when code accesses the caret before the window is shown.
+			}
+			else if (left < textView.ViewportLeft)
 				textView.ViewportLeft = left - extraScroll;
 			else if (right > textView.ViewportRight)
 				textView.ViewportLeft = right + extraScroll - textView.ViewportWidth;
