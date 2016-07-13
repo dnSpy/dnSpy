@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Locals {
 	interface ILocalsContent : IUIObjectProvider {
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();
-		public void Focus() => UIUtils.FocusSelector(localsControl.ListView);
+		public void Focus() => UIUtilities.FocusSelector(localsControl.ListView);
 		public void OnClose() => vmLocals.IsEnabled = false;
 		public void OnShow() => vmLocals.IsEnabled = true;
 		public void OnHidden() => vmLocals.IsVisible = false;

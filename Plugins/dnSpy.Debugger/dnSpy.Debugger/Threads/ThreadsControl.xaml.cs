@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Threads {
 	sealed partial class ThreadsControl : UserControl {
@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ThreadsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}

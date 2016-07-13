@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Search {
 	sealed partial class SearchControl : UserControl {
@@ -32,7 +32,7 @@ namespace dnSpy.Search {
 		}
 
 		void searchListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(searchListBox, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(searchListBox, e))
 				return;
 			e.Handled = true;
 			SearchListBoxDoubleClick?.Invoke(this, EventArgs.Empty);

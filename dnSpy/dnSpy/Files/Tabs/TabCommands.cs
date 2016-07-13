@@ -29,9 +29,9 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
@@ -609,7 +609,7 @@ namespace dnSpy.Files.Tabs {
 			const int MAX_LEN = 40;
 			if (s.Length > MAX_LEN)
 				s = s.Substring(0, MAX_LEN) + "...";
-			return UIUtils.EscapeMenuItemHeader(s);
+			return UIUtilities.EscapeMenuItemHeader(s);
 		}
 
 		static string GetHeader(int i, IFileTab tab) {

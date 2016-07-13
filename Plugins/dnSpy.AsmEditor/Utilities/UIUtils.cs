@@ -23,14 +23,11 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using dnSpy.Contracts.Text;
 
-namespace dnSpy.Shared.MVVM {
-	public static class UIUtils {
+namespace dnSpy.AsmEditor.Utilities {
+	static class UIUtils {
 		public static IEnumerable<DependencyObject> GetChildren(DependencyObject depo) {
 			if (depo == null)
 				yield break;
@@ -38,29 +35,6 @@ namespace dnSpy.Shared.MVVM {
 			for (int i = 0; i < count; i++)
 				yield return VisualTreeHelper.GetChild(depo, i);
 		}
-
-		public static DependencyObject GetParent(DependencyObject depo) {
-			if (depo is Visual || depo is Visual3D)
-				return VisualTreeHelper.GetParent(depo);
-			else if (depo is FrameworkContentElement)
-				return ((FrameworkContentElement)depo).Parent;
-			return null;
-		}
-
-		public static T GetItem<T>(DependencyObject view, object o) where T : class {
-			var depo = o as DependencyObject;
-			while (depo != null && !(depo is T) && depo != view)
-				depo = GetParent(depo);
-			return depo as T;
-		}
-
-		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class {
-			if (MouseButton.Left != e.ChangedButton)
-				return false;
-			return GetItem<T>(view, e.OriginalSource) != null;
-		}
-
-		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s).Replace("_", "__");
 
 		public static bool HasSelectedChildrenFocus(ListBox listBox) {
 			if (listBox == null)
@@ -84,7 +58,7 @@ namespace dnSpy.Shared.MVVM {
 			SetFocus(listBox, obj, DispatcherPriority.Normal);
 		}
 
-		public static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
+		static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
 			selector.Dispatcher.BeginInvoke(prio, new Action(() => {
 				if (selector.SelectedItem == obj) {
 					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as IInputElement;
@@ -120,30 +94,6 @@ namespace dnSpy.Shared.MVVM {
 				elem.Focus();
 				calledAfterFocus?.Invoke();
 			}
-		}
-
-		public static void FocusSelector(Selector selector) {
-			if (!selector.IsVisible)
-				selector.IsVisibleChanged += selector_IsVisibleChanged;
-			else
-				FocusSelectorInternal(selector);
-		}
-
-		static void selector_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-			var selector = (Selector)sender;
-			selector.IsVisibleChanged -= selector_IsVisibleChanged;
-			FocusSelectorInternal(selector);
-		}
-
-		static void FocusSelectorInternal(Selector selector) {
-			bool focused = false;
-			var item = selector.SelectedItem as IInputElement;
-			if (item == null && selector.SelectedItem != null)
-				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as IInputElement;
-			if (item != null)
-				focused = item.Focus();
-			if (!focused)
-				selector.Focus();
 		}
 	}
 }

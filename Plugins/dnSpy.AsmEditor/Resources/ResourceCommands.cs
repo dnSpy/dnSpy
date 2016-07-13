@@ -38,7 +38,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.Resources {
@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
-				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
@@ -258,7 +258,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		static string GetHeader(IFileTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
-				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
@@ -418,7 +418,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		static string GetHeaderInternal(ResourceData[] infos) {
 			if (infos.Length == 1)
-				return string.Format(dnSpy_AsmEditor_Resources.SaveResourceCommand, UIUtils.EscapeMenuItemHeader(infos[0].Name));
+				return string.Format(dnSpy_AsmEditor_Resources.SaveResourceCommand, UIUtilities.EscapeMenuItemHeader(infos[0].Name));
 			return string.Format(dnSpy_AsmEditor_Resources.SaveResourcesCommand, infos.Length);
 		}
 	}
@@ -473,7 +473,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		static string GetHeaderInternal(ResourceData[] infos) {
 			if (infos.Length == 1)
-				return string.Format(dnSpy_AsmEditor_Resources.RawSaveResourceCommand, UIUtils.EscapeMenuItemHeader(infos[0].Name));
+				return string.Format(dnSpy_AsmEditor_Resources.RawSaveResourceCommand, UIUtilities.EscapeMenuItemHeader(infos[0].Name));
 			return string.Format(dnSpy_AsmEditor_Resources.RawSaveResourcesCommand, infos.Length);
 		}
 	}

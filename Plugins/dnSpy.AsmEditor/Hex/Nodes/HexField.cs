@@ -25,7 +25,7 @@ using System.Text;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]
@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected readonly HexDocument doc;
 		readonly string parentName;
 
-		public string NameUI => UIUtils.EscapeMenuItemHeader(Name);
+		public string NameUI => UIUtilities.EscapeMenuItemHeader(Name);
 		public string Name { get; }
 		public string OffsetString => string.Format("0x{0:X8}", StartOffset);
 		public ulong StartOffset { get; }
@@ -484,7 +484,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	abstract class HexBitField : ViewModelBase {
-		public string NameUI => UIUtils.EscapeMenuItemHeader(Name);
+		public string NameUI => UIUtilities.EscapeMenuItemHeader(Name);
 		public string Name { get; }
 		public int Bit { get; }
 		public ulong Mask => Count == 64 ? ulong.MaxValue : (1UL << Count) - 1;

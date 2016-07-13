@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed partial class CallStackControl : UserControl {
@@ -30,10 +30,10 @@ namespace dnSpy.Debugger.CallStack {
 			InitializeComponent();
 		}
 
-		public void FocusPane() => UIUtils.FocusSelector(listView);
+		public void FocusPane() => UIUtilities.FocusSelector(listView);
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			CallStackListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}

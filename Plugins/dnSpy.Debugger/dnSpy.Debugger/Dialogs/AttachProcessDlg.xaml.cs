@@ -24,7 +24,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed partial class AttachProcessDlg : WindowBase {
@@ -73,7 +74,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 
 			var vm = DataContext as AttachProcessVM;

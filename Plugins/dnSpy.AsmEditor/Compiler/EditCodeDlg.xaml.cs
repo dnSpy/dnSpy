@@ -28,9 +28,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using dnSpy.AsmEditor.Utilities;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Compiler {
 	partial class EditCodeDlg : WindowBase {
@@ -82,7 +83,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void diagnosticsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(diagnosticsListView, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(diagnosticsListView, e))
 				return;
 
 			var vm = DataContext as EditCodeVM;

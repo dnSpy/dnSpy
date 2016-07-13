@@ -22,14 +22,14 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	partial class TabsDlg : WindowBase {
 		public TabsDlg() {
 			InitializeComponent();
 			this.listView.SelectionChanged += ListView_SelectionChanged;
-			UIUtils.FocusSelector(listView);
+			UIUtilities.FocusSelector(listView);
 			this.InputBindings.Add(new KeyBinding(new RelayCommand(a => this.ClickCancel()), Key.Escape, ModifierKeys.None));
 		}
 
@@ -40,7 +40,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ExitDialog();
 		}

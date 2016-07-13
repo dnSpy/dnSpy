@@ -226,6 +226,7 @@
     <Compile Include="Threads\ThreadsToolWindowContent.cs" />
     <Compile Include="Threads\ThreadsVM.cs" />
     <Compile Include="Threads\ThreadVM.cs" />
+    <Compile Include="Utilities\UIUtils.cs" />
     <Compile Include="WpfDebugMessageDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>

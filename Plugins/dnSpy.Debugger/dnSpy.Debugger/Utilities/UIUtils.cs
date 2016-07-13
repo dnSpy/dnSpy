@@ -17,22 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
-using System.Windows.Input;
-using dnSpy.Contracts.Utilities;
+using System;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
-namespace dnSpy.AsmEditor.DnlibDialogs {
-	sealed partial class ListVMControl : UserControl {
-		public ListVMControl() {
-			InitializeComponent();
-		}
-
-		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(listBox, e))
-				return;
-			var data = DataContext as ListVM;
-			if (data != null)
-				data.EditItem();
+namespace dnSpy.Debugger.Utilities {
+	static class UIUtils {
+		public static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
+			selector.Dispatcher.BeginInvoke(prio, new Action(() => {
+				if (selector.SelectedItem == obj) {
+					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as IInputElement;
+					if (item != null)
+						item.Focus();
+				}
+			}));
 		}
 	}
 }

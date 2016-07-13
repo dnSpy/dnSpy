@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionsContent : IUIObjectProvider {
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmExceptions.Value.RefreshThemeFields();
-		public void Focus() => UIUtils.FocusSelector(ExceptionsControl.ListBox);
+		public void Focus() => UIUtilities.FocusSelector(ExceptionsControl.ListBox);
 
 		public void FocusSearchTextBox() {
 			ExceptionsControl.SearchTextBox.Focus();

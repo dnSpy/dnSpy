@@ -24,8 +24,8 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Culture {
 	static class Constants {
@@ -58,7 +58,7 @@ namespace dnSpy.Culture {
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var langs = cultureManager.AllLanguages.OrderBy(a => a, LanguageInfoComparer.Instance);
 			foreach (var lang in langs) {
-				var attr = new ExportMenuItemAttribute { Header = UIUtils.EscapeMenuItemHeader(lang.UIName) };
+				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(lang.UIName) };
 				yield return new CreatedMenuItem(attr, new SwitchLanguageCommand(cultureManager, lang));
 			}
 		}

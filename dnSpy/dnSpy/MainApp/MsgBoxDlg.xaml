@@ -24,7 +24,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:dnSpy.MainApp"
         xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
-        xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
         xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

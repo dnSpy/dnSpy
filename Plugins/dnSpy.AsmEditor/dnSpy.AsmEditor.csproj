@@ -509,6 +509,7 @@
     <Compile Include="UndoRedo\UndoObject.cs" />
     <Compile Include="UndoRedo\UndoRedoIFileListListener.cs" />
     <Compile Include="UndoRedo\UndoRedoMenuCommands.cs" />
+    <Compile Include="Utilities\UIUtils.cs" />
     <Compile Include="ViewHelpers\CreateConstantType.cs" />
     <Compile Include="ViewHelpers\CreateMethodPropertySig.cs" />
     <Compile Include="ViewHelpers\CreateTypeSigArray.cs" />

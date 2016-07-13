@@ -25,7 +25,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			GoToSourceBreakpointCtxMenuCommand.GoTo(fileTabManager, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
 		}
 
-		public void Focus() => UIUtils.FocusSelector(BreakpointsControl.ListView);
+		public void Focus() => UIUtilities.FocusSelector(BreakpointsControl.ListView);
 		public void OnClose() { }
 		public void OnShow() { }
 	}

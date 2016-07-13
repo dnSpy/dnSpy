@@ -29,10 +29,10 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Breakpoints;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger {
 	[ExportAutoLoaded]
@@ -180,7 +180,7 @@ namespace dnSpy.Debugger {
 			var asm = debugManager.Value.GetCurrentExecutableAssembly(context);
 			if (asm == null)
 				return null;
-			return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtils.EscapeMenuItemHeader(asm.GetShortName()));
+			return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtilities.EscapeMenuItemHeader(asm.GetShortName()));
 		}
 
 		protected override bool IsValidElement(GuidObject element) =>

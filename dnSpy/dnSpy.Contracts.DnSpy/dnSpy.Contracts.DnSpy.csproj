@@ -558,6 +558,7 @@
     <Compile Include="TreeView\TVNodeRemovedEventArgs.cs" />
     <Compile Include="TreeView\TVSelectionChangedEventArgs.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
+    <Compile Include="Utilities\UIUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Menus {
 	sealed class ContextMenuCreator : IContextMenuCreator {
@@ -56,7 +56,7 @@ namespace dnSpy.Menus {
 				if (o is ScrollBar)
 					return true;	// Don't set e.Handled
 
-				o = UIUtils.GetParent(o);
+				o = UIUtilities.GetParent(o);
 			}
 
 			e.Handled = true;

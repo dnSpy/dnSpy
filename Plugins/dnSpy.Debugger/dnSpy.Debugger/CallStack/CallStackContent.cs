@@ -25,7 +25,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackContent : IUIObjectProvider {
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmCallStack.RefreshThemeFields();
-		public void Focus() => UIUtils.FocusSelector(callStackControl.ListView);
+		public void Focus() => UIUtilities.FocusSelector(callStackControl.ListView);
 		public void OnClose() => vmCallStack.IsEnabled = false;
 		public void OnShow() => vmCallStack.IsEnabled = true;
 		public void OnHidden() => vmCallStack.IsVisible = false;

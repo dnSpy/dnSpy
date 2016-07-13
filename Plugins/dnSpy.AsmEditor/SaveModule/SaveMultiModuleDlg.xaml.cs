@@ -19,7 +19,7 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed partial class SaveMultiModuleDlg : SaveModuleWindow {
@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			ShowOptions((SaveOptionsVM)e.Parameter);
 
 		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			ShowOptions((SaveOptionsVM)listBox.SelectedItem);
 		}

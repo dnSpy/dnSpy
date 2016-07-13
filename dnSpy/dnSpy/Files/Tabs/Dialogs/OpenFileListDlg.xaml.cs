@@ -24,7 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Shared.MVVM;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed partial class OpenFileListDlg : WindowBase {
@@ -66,7 +66,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			this.ClickOK();
 		}

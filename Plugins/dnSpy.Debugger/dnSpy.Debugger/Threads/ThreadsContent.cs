@@ -25,8 +25,8 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.CallStack;
-using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Threads {
 	interface IThreadsContent : IUIObjectProvider {
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
-		public void Focus() => UIUtils.FocusSelector(threadsControl.ListView);
+		public void Focus() => UIUtilities.FocusSelector(threadsControl.ListView);
 		public void OnClose() => vmThreads.IsEnabled = false;
 		public void OnShow() => vmThreads.IsEnabled = true;
 		public void OnHidden() => vmThreads.IsVisible = false;
