@@ -50,8 +50,12 @@ namespace dnSpy.Text.Editor {
 
 		static readonly string[] defaultRoles = new string[] {
 			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Debuggable,
+			PredefinedTextViewRoles.Document,
 			PredefinedTextViewRoles.Editable,
 			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.PrimaryDocument,
+			PredefinedTextViewRoles.Structured,
 			PredefinedTextViewRoles.Zoomable,
 			CodeEditorTextViewRoles.CODE,
 		};
