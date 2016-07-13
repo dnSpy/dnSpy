@@ -61,7 +61,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			var projectId = ProjectId.CreateNewId();
 
 			foreach (var doc in decompiledCodeResult.Documents)
-				documents.Add(CreateDocument(projectId, doc.NameNoExtension, doc.Code));
+				documents.Add(CreateDocument(projectId, doc.NameNoExtension));
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
 				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(GetPlatform(decompiledCodeResult.Platform)),
@@ -72,6 +72,15 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			workspace.AddProject(projectInfo);
 			foreach (var doc in documents)
 				workspace.OpenDocument(doc.Info.Id);
+
+			// Initialize the code after Roslyn has initialized so colorization works. The caret
+			// will force creation of lines and they won't be colorized if Roslyn hasn't init'd yet.
+			for (int i = 0; i < documents.Count; i++) {
+				var doc = decompiledCodeResult.Documents[i];
+				var textBuffer = documents[i].TextView.TextBuffer;
+				textBuffer.Replace(new Span(0, textBuffer.CurrentSnapshot.Length), doc.Code);
+			}
+
 			return documents.ToArray();
 		}
 
@@ -82,12 +91,11 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			return platform.ToPlatform();
 		}
 
-		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension, string code) {
+		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension) {
 			var options = new RoslynCodeEditorOptions();
 			options.ContentTypeString = ContentType;
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
-			codeEditor.TextBuffer.Replace(new Span(0, codeEditor.TextBuffer.CurrentSnapshot.Length), code);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !codeEditor.TextView.Options.IsLineNumberMarginEnabled());
 
