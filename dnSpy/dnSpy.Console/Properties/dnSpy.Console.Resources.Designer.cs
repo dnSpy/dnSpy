@@ -61,6 +61,222 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to assembly.
+        /// </summary>
+        internal static string CmdLineAssembly {
+            get {
+                return ResourceManager.GetString("CmdLineAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to assembly search path. Paths can be separated with &apos;{0}&apos; or you can use multiple --asm-path&apos;s.
+        /// </summary>
+        internal static string CmdLineDescription_AsmPath {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_AsmPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to decompile an assembly from the GAC. Use full assembly name to use an exact version..
+        /// </summary>
+        internal static string CmdLineDescription_GACFile {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_GACFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to set language, default is C#. Guids can be used..
+        /// </summary>
+        internal static string CmdLineDescription_Language {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to decompile the member with metadata token N to stdout.
+        /// </summary>
+        internal static string CmdLineDescription_MDToken {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_MDToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to don&apos;t decompile baml to xaml.
+        /// </summary>
+        internal static string CmdLineDescription_NoBAML {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoBAML", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to don&apos;t use the GAC to look up assemblies. Useful with --no-stdlib.
+        /// </summary>
+        internal static string CmdLineDescription_NoGAC {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoGAC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to don&apos;t unpack resources.
+        /// </summary>
+        internal static string CmdLineDescription_NoResources {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to don&apos;t create .resx files.
+        /// </summary>
+        internal static string CmdLineDescription_NoResX {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoResX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to don&apos;t create a .sln file.
+        /// </summary>
+        internal static string CmdLineDescription_NoSLN {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoSLN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to projects don&apos;t reference mscorlib.
+        /// </summary>
+        internal static string CmdLineDescription_NoStdLib {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoStdLib", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to number of worker threads. Default is to use one thread per CPU core.
+        /// </summary>
+        internal static string CmdLineDescription_NumberOfThreads {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NumberOfThreads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to output directory.
+        /// </summary>
+        internal static string CmdLineDescription_OutputDirectory {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_OutputDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to project guid.
+        /// </summary>
+        internal static string CmdLineDescription_ProjectGUID {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_ProjectGUID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to recursive search for .NET files to decompile.
+        /// </summary>
+        internal static string CmdLineDescription_RecursiveSearch {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_RecursiveSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to name of the .sln file.
+        /// </summary>
+        internal static string CmdLineDescription_SlnName {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_SlnName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to decompile the type with the specified name to stdout. Either Namespace.Name or Name, case insensitive.
+        /// </summary>
+        internal static string CmdLineDescription_Type1 {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_Type1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to same as -t.
+        /// </summary>
+        internal static string CmdLineDescription_Type2 {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_Type2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to user GAC path. Paths can be separated with &apos;{0}&apos; or you can use multiple --user-gac&apos;s.
+        /// </summary>
+        internal static string CmdLineDescription_UserGAC {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_UserGAC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visual Studio version, 2005, 2008, ..., {0}.
+        /// </summary>
+        internal static string CmdLineDescription_VSVersion {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_VSVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to lang.
+        /// </summary>
+        internal static string CmdLineLanguage {
+            get {
+                return ResourceManager.GetString("CmdLineLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to name.
+        /// </summary>
+        internal static string CmdLineName {
+            get {
+                return ResourceManager.GetString("CmdLineName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to outdir.
+        /// </summary>
+        internal static string CmdLineOutputDir {
+            get {
+                return ResourceManager.GetString("CmdLineOutputDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to path.
+        /// </summary>
+        internal static string CmdLinePath {
+            get {
+                return ResourceManager.GetString("CmdLinePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type {0} couldn&apos;t be found.
         /// </summary>
         internal static string CouldNotFindTypeX {
@@ -88,20 +304,56 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Examples:
-        ///  {0} -o c:\out\path C:\some\path
-        ///      Decompiles all .NET files in the above directory and saves files to C:\out\path
-        ///  {0} -o c:\out\path -r C:\some\path
-        ///      Decompiles all .NET files in the above directory and all sub directories
-        ///  {0} -o C:\out\path C:\some\path\*.dll
-        ///      Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path
-        ///  {0} --md 0x06000123 file.dll
-        ///      Decompiles the member with token 0x06000123
-        ///  {0} -t system.int32 --gac-file &quot;mscorlib,  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Decompiles all .NET files in the above directory and saves files to C:\out\path.
         /// </summary>
-        internal static string Examples {
+        internal static string ExampleDescription1 {
             get {
-                return ResourceManager.GetString("Examples", resourceCulture);
+                return ResourceManager.GetString("ExampleDescription1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decompiles all .NET files in the above directory and all sub directories.
+        /// </summary>
+        internal static string ExampleDescription2 {
+            get {
+                return ResourceManager.GetString("ExampleDescription2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path.
+        /// </summary>
+        internal static string ExampleDescription3 {
+            get {
+                return ResourceManager.GetString("ExampleDescription3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decompiles the member with token 0x06000123.
+        /// </summary>
+        internal static string ExampleDescription4 {
+            get {
+                return ResourceManager.GetString("ExampleDescription4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decompiles System.Int32 from mscorlib.
+        /// </summary>
+        internal static string ExampleDescription5 {
+            get {
+                return ResourceManager.GetString("ExampleDescription5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Examples:.
+        /// </summary>
+        internal static string ExamplesHeader {
+            get {
+                return ResourceManager.GetString("ExamplesHeader", resourceCulture);
             }
         }
         
@@ -367,19 +619,11 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} [options] [fileOrDir1] [fileOrDir2] [...]
-        ///
-        ///  --asm-path path    assembly search path. Paths can be separated with &apos;{1}&apos; or you can use multiple --asm-path&apos;s
-        ///  --user-gac path    user GAC path. Paths can be separated with &apos;{1}&apos; or you can use multiple --user-gac&apos;s
-        ///  --no-gac     don&apos;t use the GAC to look up assemblies. Useful with --no-stdlib
-        ///  --no-stdlib  projects don&apos;t reference mscorlib
-        ///  --no-sln     don&apos;t create a .sln file
-        ///  --sln-name name   name of the .sln file
-        ///  --threads N  number of  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to [options] [fileOrDir1] [fileOrDir2] [...].
         /// </summary>
-        internal static string Usage {
+        internal static string UsageHeader {
             get {
-                return ResourceManager.GetString("Usage", resourceCulture);
+                return ResourceManager.GetString("UsageHeader", resourceCulture);
             }
         }
     }

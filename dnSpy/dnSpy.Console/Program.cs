@@ -180,7 +180,14 @@ namespace dnSpy_Console {
 
 		void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine(dnSpy_Console_Resources.Usage, progName, PATHS_SEP);
+			Console.WriteLine(progName + " " + dnSpy_Console_Resources.UsageHeader, progName);
+			Console.WriteLine();
+			foreach (var info in usageInfos) {
+				var arg = info.Option;
+				if (info.OptionArgument != null)
+					arg = arg + " " + info.OptionArgument;
+				Console.WriteLine("  {0,-12}   {1}", arg, string.Format(info.Description, PATHS_SEP));
+			}
 			Console.WriteLine();
 			Console.WriteLine(dnSpy_Console_Resources.Languages);
 			foreach (var lang in AllLanguages)
@@ -200,8 +207,60 @@ namespace dnSpy_Console {
 				}
 			}
 			Console.WriteLine();
-			Console.WriteLine(dnSpy_Console_Resources.Examples, progName);
+			Console.WriteLine(dnSpy_Console_Resources.ExamplesHeader);
+			foreach (var info in helpInfos) {
+				Console.WriteLine("  " + progName + " " + info.CommandLine);
+				Console.WriteLine("      " + info.Description);
+			}
 		}
+
+		struct UsageInfo {
+			public string Option { get; }
+			public string OptionArgument { get; }
+			public string Description { get; }
+			public UsageInfo(string option, string optionArgument, string description) {
+				Option = option;
+				OptionArgument = optionArgument;
+				Description = description;
+			}
+		}
+		static readonly UsageInfo[] usageInfos = new UsageInfo[] {
+			new UsageInfo("--asm-path", dnSpy_Console_Resources.CmdLinePath, dnSpy_Console_Resources.CmdLineDescription_AsmPath),
+			new UsageInfo("--user-gac", dnSpy_Console_Resources.CmdLinePath, dnSpy_Console_Resources.CmdLineDescription_UserGAC),
+			new UsageInfo("--no-gac", null, dnSpy_Console_Resources.CmdLineDescription_NoGAC),
+			new UsageInfo("--no-stdlib", null, dnSpy_Console_Resources.CmdLineDescription_NoStdLib),
+			new UsageInfo("--no-sln", null, dnSpy_Console_Resources.CmdLineDescription_NoSLN),
+			new UsageInfo("--sln-name", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_SlnName),
+			new UsageInfo("--threads", "N", dnSpy_Console_Resources.CmdLineDescription_NumberOfThreads),
+			new UsageInfo("--no-resources", null, dnSpy_Console_Resources.CmdLineDescription_NoResources),
+			new UsageInfo("--no-resx", null, dnSpy_Console_Resources.CmdLineDescription_NoResX),
+			new UsageInfo("--no-baml", null, dnSpy_Console_Resources.CmdLineDescription_NoBAML),
+			new UsageInfo("--vs", "N", string.Format(dnSpy_Console_Resources.CmdLineDescription_VSVersion, 2015)),
+			new UsageInfo("--project-guid", "N", dnSpy_Console_Resources.CmdLineDescription_ProjectGUID),
+			new UsageInfo("-t", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_Type1),
+			new UsageInfo("--type", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_Type2),
+			new UsageInfo("--md", "N", dnSpy_Console_Resources.CmdLineDescription_MDToken),
+			new UsageInfo("--gac-file", dnSpy_Console_Resources.CmdLineAssembly, dnSpy_Console_Resources.CmdLineDescription_GACFile),
+			new UsageInfo("-r", null, dnSpy_Console_Resources.CmdLineDescription_RecursiveSearch),
+			new UsageInfo("-o", dnSpy_Console_Resources.CmdLineOutputDir, dnSpy_Console_Resources.CmdLineDescription_OutputDirectory),
+			new UsageInfo("-l", dnSpy_Console_Resources.CmdLineLanguage, dnSpy_Console_Resources.CmdLineDescription_Language),
+		};
+
+		struct HelpInfo {
+			public string CommandLine { get; }
+			public string Description { get; }
+			public HelpInfo(string description, string commandLine) {
+				CommandLine = commandLine;
+				Description = description;
+			}
+		}
+		static readonly HelpInfo[] helpInfos = new HelpInfo[] {
+			new HelpInfo(dnSpy_Console_Resources.ExampleDescription1, @"-o C:\out\path C:\some\path"),
+			new HelpInfo(dnSpy_Console_Resources.ExampleDescription2, @"-o C:\out\path -r C:\some\path"),
+			new HelpInfo(dnSpy_Console_Resources.ExampleDescription3, @"-o C:\out\path C:\some\path\*.dll"),
+			new HelpInfo(dnSpy_Console_Resources.ExampleDescription4, @"--md 0x06000123 file.dll"),
+			new HelpInfo(dnSpy_Console_Resources.ExampleDescription5, @"-t system.int32 --gac-file ""mscorlib, Version=4.0.0.0"""),
+		};
 
 		string GetOptionName(IDecompilerOption opt, string extraPrefix = null) {
 			var prefix = "--" + extraPrefix;
