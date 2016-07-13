@@ -1008,6 +1008,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 
 			Caret.MoveTo(newPoint);
+			Caret.EnsureVisible();
 			if (extendSelection)
 				Selection.Select(anchorPoint, Caret.Position.VirtualBufferPosition);
 			else
@@ -1180,6 +1181,7 @@ namespace dnSpy.Text.Editor.Operations {
 			var newPoint = new SnapshotPoint(Snapshot, 0);
 			TextView.DisplayTextLineContainingBufferPosition(newPoint, 0, ViewRelativePosition.Top);
 			Caret.MoveTo(newPoint);
+			Caret.EnsureVisible();
 
 			if (extendSelection)
 				Selection.Select(anchorPoint, Caret.Position.VirtualBufferPosition);
