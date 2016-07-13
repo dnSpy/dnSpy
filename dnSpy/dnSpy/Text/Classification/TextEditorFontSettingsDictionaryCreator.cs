@@ -48,7 +48,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		sealed class TextEditorFormatDefinitionMetadata : ITextEditorFormatDefinitionMetadata {
-			public string BaseDefinition { get; }
+			public IEnumerable<string> BaseDefinition { get; }
 			public string Name { get; }
 			public TextEditorFormatDefinitionMetadata(string name) {
 				Name = name;
@@ -74,7 +74,8 @@ namespace dnSpy.Text.Classification {
 			if (!toDef.TryGetValue(category, out def))
 				return null;
 
-			var baseType = Create(def.Metadata.BaseDefinition) ?? DefaultSettings;
+			Debug.Assert(def.Metadata.BaseDefinition == null || def.Metadata.BaseDefinition.Count() == 1);
+			var baseType = Create(def.Metadata.BaseDefinition?.FirstOrDefault()) ?? DefaultSettings;
 			settings = new TextEditorFontSettings(textEditorSettings, def, baseType);
 			Result.Add(category, settings);
 			return settings;

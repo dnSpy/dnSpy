@@ -96,7 +96,7 @@ namespace dnSpy.Text.MEF {
 
 	public interface ITextEditorFormatDefinitionMetadata {
 		[DefaultValue(null)]
-		string BaseDefinition { get; }
+		IEnumerable<string> BaseDefinition { get; }
 
 		string Name { get; }
 	}
