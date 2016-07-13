@@ -216,7 +216,6 @@ namespace dnSpy.Text.Formatting {
 			var props = classificationFormatMap.GetTextProperties(cspan.ClassificationType);
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
-				// The classification format map caches the props, so we can use ref equality when comparing them
 				if (last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
 					list[list.Count - 1] = new LinePart(last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
 					return;
