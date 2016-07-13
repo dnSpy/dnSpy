@@ -46,7 +46,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ContentPresenter Grid.Row="0" Content="{Binding SelectedDocument.TextView.VisualElement}" />
+            <ContentPresenter Grid.Row="0" Content="{Binding SelectedDocument.TextViewHost.HostControl}" />
             <Border Grid.Row="0"
                     Name="decompilingControl"
                     Background="{DynamicResource DecompilerTextViewWaitAdornerBackground}"

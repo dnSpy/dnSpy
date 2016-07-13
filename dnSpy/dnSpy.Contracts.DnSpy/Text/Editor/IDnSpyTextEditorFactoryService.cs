@@ -78,5 +78,13 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
 		IDnSpyWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+
+		/// <summary>
+		/// Creates a new <see cref="IDnSpyWpfTextViewHost"/> instance
+		/// </summary>
+		/// <param name="wpfTextView">Text view</param>
+		/// <param name="setFocus">true to set focus</param>
+		/// <returns></returns>
+		IDnSpyWpfTextViewHost CreateTextViewHost(IDnSpyWpfTextView wpfTextView, bool setFocus);
 	}
 }

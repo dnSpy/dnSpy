@@ -17,32 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Contracts.AsmEditor.Compiler {
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Code document
+	/// dnSpy <see cref="IWpfTextViewHost"/>
 	/// </summary>
-	public interface ICodeDocument : IDisposable {
-		/// <summary>
-		/// Name of document
-		/// </summary>
-		string Name { get; }
-
-		/// <summary>
-		/// Name of document without the extension. Identical to <see cref="IDecompiledDocument.NameNoExtension"/>
-		/// </summary>
-		string NameNoExtension { get; }
-
+	public interface IDnSpyWpfTextViewHost : IWpfTextViewHost {
 		/// <summary>
 		/// Gets the text view
 		/// </summary>
-		IDnSpyWpfTextView TextView { get; }
-
-		/// <summary>
-		/// Gets the text view host
-		/// </summary>
-		IDnSpyWpfTextViewHost TextViewHost { get; }
+		new IDnSpyWpfTextView TextView { get; }
 	}
 }

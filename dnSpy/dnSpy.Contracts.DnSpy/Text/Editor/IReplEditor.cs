@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text.Editor.Operations;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -130,6 +129,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the text view
 		/// </summary>
-		ITextView TextView { get; }
+		IDnSpyWpfTextView TextView { get; }
+
+		/// <summary>
+		/// Gets the text view host
+		/// </summary>
+		IDnSpyWpfTextViewHost TextViewHost { get; }
 	}
 }

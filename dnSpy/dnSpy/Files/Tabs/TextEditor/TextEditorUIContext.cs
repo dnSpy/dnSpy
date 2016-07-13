@@ -113,18 +113,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var button = textEditorControl.CancelButton;
 				if (button?.IsVisible == true)
 					return button;
-				return textEditorControl.WpfTextView.VisualElement;
+				return textEditorControl.TextView.VisualElement;
 			}
 		}
 
 		public object UIObject => textEditorControl;
-		public FrameworkElement ScaleElement => textEditorControl.WpfTextView.VisualElement;
-		public bool HasSelectedText => !textEditorControl.WpfTextView.Selection.IsEmpty;
+		public FrameworkElement ScaleElement => textEditorControl.TextView.VisualElement;
+		public bool HasSelectedText => !textEditorControl.TextView.Selection.IsEmpty;
 
 		public TextEditorLocation Location {
 			get {
-				int caretPos = textEditorControl.WpfTextView.Caret.Position.BufferPosition.Position;
-				var line = textEditorControl.WpfTextView.TextSnapshot.GetLineFromPosition(caretPos);
+				int caretPos = textEditorControl.TextView.Caret.Position.BufferPosition.Position;
+				var line = textEditorControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
 				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position);
 			}
 		}
@@ -139,7 +139,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public object Serialize() {
 			if (cachedEditorPositionState != null)
 				return cachedEditorPositionState;
-			return new EditorPositionState(textEditorControl.WpfTextView);
+			return new EditorPositionState(textEditorControl.TextView);
 		}
 
 		public void Deserialize(object obj) {
@@ -147,7 +147,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (state == null)
 				return;
 
-			var textView = textEditorControl.WpfTextView;
+			var textView = textEditorControl.TextView;
 			if (!textView.VisualElement.IsLoaded) {
 				bool start = cachedEditorPositionState == null;
 				cachedEditorPositionState = state;
@@ -160,7 +160,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		EditorPositionState cachedEditorPositionState;
 
 		void InitializeState(EditorPositionState state) {
-			var textView = textEditorControl.WpfTextView;
+			var textView = textEditorControl.TextView;
 
 			if (IsValid(state)) {
 				textView.ViewportLeft = state.ViewportLeft;
@@ -173,7 +173,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		bool IsValid(EditorPositionState state) {
-			var textView = textEditorControl.WpfTextView;
+			var textView = textEditorControl.TextView;
 			if (state.CaretAffinity != PositionAffinity.Successor && state.CaretAffinity != PositionAffinity.Predecessor)
 				return false;
 			if (state.CaretVirtualSpaces < 0)
@@ -191,7 +191,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
-			textEditorControl.WpfTextView.VisualElement.Loaded -= VisualElement_Loaded;
+			textEditorControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			if (cachedEditorPositionState == null)
 				return;
 			InitializeState(cachedEditorPositionState);
@@ -271,7 +271,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public object GetReferenceSegmentAt(MouseEventArgs e) => textEditorControl.GetReferenceSegmentAt(e);
 
 		public void Dispose() {
-			this.textEditorControl.WpfTextView.VisualElement.Loaded -= VisualElement_Loaded;
+			this.textEditorControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			textEditorControl.Dispose();

@@ -83,8 +83,13 @@ namespace dnSpy.Contracts.Text.Editor {
 		string GetText();
 
 		/// <summary>
-		/// Gets the underlying text view. It's not thread safe.
+		/// Gets the text view. It's not thread safe.
 		/// </summary>
-		ITextView TextView { get; }
+		IDnSpyWpfTextView TextView { get; }
+
+		/// <summary>
+		/// Gets the text view host. It's not thread safe.
+		/// </summary>
+		IDnSpyWpfTextViewHost TextViewHost { get; }
 	}
 }

@@ -17,28 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.AsmEditor.Compiler;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Roslyn;
-using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Roslyn.Shared.Compiler {
-	sealed class RoslynCodeDocument : ICodeDocument {
-		public string Name => Info.Name;
-		public string NameNoExtension { get; }
-		public IDnSpyWpfTextView TextView => codeEditor.TextView;
-		public IDnSpyWpfTextViewHost TextViewHost => codeEditor.TextViewHost;
-		public DocumentInfo Info { get; }
-
-		readonly IRoslynCodeEditor codeEditor;
-
-		public RoslynCodeDocument(IRoslynCodeEditor codeEditor, DocumentInfo documentInfo, string nameNoExtension) {
-			this.codeEditor = codeEditor;
-			Info = documentInfo;
-			NameNoExtension = nameNoExtension;
+namespace dnSpy.Text.Editor {
+	[Export(typeof(IWpfTextViewMarginProvider))]
+	[MarginContainer(PredefinedMarginNames.LeftSelection)]
+	[Name(PredefinedMarginNames.LineNumber)]
+	[ContentType(ContentTypes.TEXT)]
+	[TextViewRole(PredefinedTextViewRoles.Document)]
+	[TextViewRole(LogEditorTextViewRoles.LOG)]
+	[Order(Before = PredefinedMarginNames.Spacer)]
+	sealed class LineNumberMarginProvider : IWpfTextViewMarginProvider {
+		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
+			return null;//TODO:
 		}
-
-		public void Dispose() => codeEditor.Dispose();
 	}
 }

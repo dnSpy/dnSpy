@@ -17,32 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Text.Editor;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Contracts.AsmEditor.Compiler {
-	/// <summary>
-	/// Code document
-	/// </summary>
-	public interface ICodeDocument : IDisposable {
-		/// <summary>
-		/// Name of document
-		/// </summary>
-		string Name { get; }
-
-		/// <summary>
-		/// Name of document without the extension. Identical to <see cref="IDecompiledDocument.NameNoExtension"/>
-		/// </summary>
-		string NameNoExtension { get; }
-
-		/// <summary>
-		/// Gets the text view
-		/// </summary>
-		IDnSpyWpfTextView TextView { get; }
-
-		/// <summary>
-		/// Gets the text view host
-		/// </summary>
-		IDnSpyWpfTextViewHost TextViewHost { get; }
+namespace dnSpy.Text.Editor {
+	[Export(typeof(IWpfTextViewMarginProvider))]
+	[MarginContainer(PredefinedMarginNames.BottomControl)]
+	[Name(PredefinedMarginNames.ZoomControl)]
+	[ContentType(ContentTypes.TEXT)]
+	[TextViewRole(PredefinedTextViewRoles.Zoomable)]
+	[Order(Before = PredefinedMarginNames.HorizontalScrollBarContainer)]
+	sealed class ZoomControlMarginProvider : IWpfTextViewMarginProvider {
+		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
+			return null;//TODO:
+		}
 	}
 }

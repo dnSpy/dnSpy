@@ -20,7 +20,6 @@
 using System;
 using dnSpy.Contracts.Controls;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -28,13 +27,18 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface ICodeEditor : IUIObjectProvider2, IDisposable {
 		/// <summary>
-		/// Gets the text view
-		/// </summary>
-		IWpfTextView TextView { get; }
-
-		/// <summary>
 		/// Gets the <see cref="ITextBuffer"/> instance
 		/// </summary>
 		ITextBuffer TextBuffer { get; }
+
+		/// <summary>
+		/// Gets the text view
+		/// </summary>
+		IDnSpyWpfTextView TextView { get; }
+
+		/// <summary>
+		/// Gets the text view host
+		/// </summary>
+		IDnSpyWpfTextViewHost TextViewHost { get; }
 	}
 }

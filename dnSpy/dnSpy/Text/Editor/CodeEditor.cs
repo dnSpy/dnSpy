@@ -28,11 +28,12 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class CodeEditor : ICodeEditor {
-		public IWpfTextView TextView { get; }
-		public ITextBuffer TextBuffer => TextView.TextBuffer;
-		public object UIObject => TextView.VisualElement;
-		public IInputElement FocusedElement => TextView.VisualElement;
-		public FrameworkElement ScaleElement => TextView.VisualElement;
+		public IDnSpyWpfTextView TextView => TextViewHost.TextView;
+		public IDnSpyWpfTextViewHost TextViewHost { get; }
+		public ITextBuffer TextBuffer => TextViewHost.TextView.TextBuffer;
+		public object UIObject => TextViewHost.HostControl;
+		public IInputElement FocusedElement => TextViewHost.TextView.VisualElement;
+		public FrameworkElement ScaleElement => TextViewHost.TextView.VisualElement;
 		public object Tag { get; set; }
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
@@ -62,14 +63,15 @@ namespace dnSpy.Text.Editor {
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
-			TextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
-			TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
-			TextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId, true);
+			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
+			TextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
+			TextViewHost.TextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId, true);
 		}
 
 		public void Dispose() {
-			if (!TextView.IsClosed)
-				TextView.Close();
+			if (!TextViewHost.IsClosed)
+				TextViewHost.Close();
 		}
 	}
 }

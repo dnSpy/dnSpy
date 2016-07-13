@@ -18,34 +18,86 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	sealed class WpfTextViewHost : IWpfTextViewHost {
+	sealed class WpfTextViewHost : ContentControl, IDnSpyWpfTextViewHost {
 		public bool IsClosed { get; set; }
-		public IWpfTextView TextView { get; }
+		IWpfTextView IWpfTextViewHost.TextView => TextView;
+		public IDnSpyWpfTextView TextView { get; }
 		public event EventHandler Closed;
-		public Control HostControl => contentControl;
+		public Control HostControl => this;
 
-		readonly ContentControl contentControl;
+		readonly IWpfTextViewMargin[] containerMargins;
+		readonly Grid grid;
 
-		public WpfTextViewHost(IWpfTextView wpfTextView, bool setFocus) {
+		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IDnSpyWpfTextView wpfTextView, bool setFocus) {
+			if (wpfTextViewMarginProviderCollectionCreator == null)
+				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionCreator));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
+			this.grid = CreateGrid();
 			TextView = wpfTextView;
-			this.contentControl = new ContentControl {
-				Focusable = false,
-				Content = TextView.VisualElement,
-			};
+			Focusable = false;
+			Content = this.grid;
+
+			UpdateBackground();
+			TextView.BackgroundBrushChanged += TextView_BackgroundBrushChanged;
+
+			this.containerMargins = new IWpfTextViewMargin[5];
+			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Top, true, 0, 0, 3);
+			containerMargins[1] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Bottom, true, 0, 0, 2);
+			containerMargins[2] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.BottomRightCorner, true, 0, 2, 1);
+			containerMargins[3] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Left, false, 1, 0, 1);
+			containerMargins[4] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Right, false, 1, 2, 1);
+			Add(TextView.VisualElement, 1, 1, 1);
+			Debug.Assert(!containerMargins.Any(a => a == null));
 
 			if (setFocus) {
-				contentControl.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
+				Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
 					if (!TextView.IsClosed)
 						TextView.VisualElement.Focus();
 				}));
 			}
+		}
+
+		IWpfTextViewMargin CreateContainerMargin(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, string name, bool isHorizontal, int row, int column, int columnSpan) {
+			var margin = new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionCreator, this, name, isHorizontal);
+			Add(margin.VisualElement, row, column, columnSpan);
+			return margin;
+		}
+
+		void Add(UIElement elem, int row, int column, int columnSpan) {
+			grid.Children.Add(elem);
+			if (row != 0)
+				Grid.SetRow(elem, row);
+			if (column != 0)
+				Grid.SetColumn(elem, column);
+			if (columnSpan != 1)
+				Grid.SetColumnSpan(elem, columnSpan);
+		}
+
+		void TextView_BackgroundBrushChanged(object sender, BackgroundBrushChangedEventArgs e) => UpdateBackground();
+		void UpdateBackground() => grid.Background = TextView.Background;
+
+		static Grid CreateGrid() {
+			var grid = new Grid();
+
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength() });
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength() });
+
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength() });
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength() });
+
+			return grid;
 		}
 
 		public void Close() {
@@ -54,10 +106,18 @@ namespace dnSpy.Text.Editor {
 			TextView.Close();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
+			TextView.BackgroundBrushChanged -= TextView_BackgroundBrushChanged;
+			foreach (var margin in containerMargins)
+				margin.Dispose();
 		}
 
 		public IWpfTextViewMargin GetTextViewMargin(string marginName) {
-			throw new NotImplementedException();//TODO:
+			foreach (var margin in containerMargins) {
+				var result = margin.GetTextViewMargin(marginName) as IWpfTextViewMargin;
+				if (result != null)
+					return result;
+			}
+			return null;
 		}
 	}
 }

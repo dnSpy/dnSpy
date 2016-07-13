@@ -42,19 +42,21 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class ReplEditor : IReplEditor2 {
-		public object UIObject => wpfTextView.VisualElement;
+		public object UIObject => wpfTextViewHost.HostControl;
 		public IInputElement FocusedElement => wpfTextView.VisualElement;
 		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
 		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;
-		public ITextView TextView => wpfTextView;
+		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
+		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
 
 		public string PrimaryPrompt { get; }
 		public string SecondaryPrompt { get; }
 
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
+		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
 		readonly IDnSpyWpfTextView wpfTextView;
 		readonly IInvalidateClassificationsService invalidateClassificationsService;
 
@@ -83,7 +85,10 @@ namespace dnSpy.Text.Editor {
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(options.Roles);
-			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
+			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
+			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextView = wpfTextViewHost.TextView;
 			ReplEditorUtils.AddInstance(this, wpfTextView);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.REPL);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
@@ -96,7 +101,6 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			wpfTextView.Closed += WpfTextView_Closed;
-			this.wpfTextView = wpfTextView;
 			this.wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
 			AddNewDocument();
 			WriteOffsetOfPrompt(null, true);
@@ -148,7 +152,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void DelayScreenRefresh() {
-			if (wpfTextView.IsClosed)
+			if (wpfTextViewHost.IsClosed)
 				return;
 			if (screenRefreshTimer != null)
 				return;
@@ -464,7 +468,7 @@ namespace dnSpy.Text.Editor {
 
 		void FlushScriptOutputUIThread() {
 			dispatcher.VerifyAccess();
-			if (wpfTextView.IsClosed)
+			if (wpfTextViewHost.IsClosed)
 				return;
 
 			var caretPos = wpfTextView.Caret.Position;
@@ -720,8 +724,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Dispose() {
-			if (!wpfTextView.IsClosed)
-				wpfTextView.Close();
+			if (!wpfTextViewHost.IsClosed)
+				wpfTextViewHost.Close();
 		}
 
 		/// <summary>

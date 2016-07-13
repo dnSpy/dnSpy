@@ -35,11 +35,12 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
-		public object UIObject => wpfTextView.VisualElement;
+		public object UIObject => wpfTextViewHost.HostControl;
 		public IInputElement FocusedElement => wpfTextView.VisualElement;
 		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
-		public ITextView TextView => wpfTextView;
+		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
+		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
 
 		public WordWrapStyles WordWrapStyle {
 			get { return wpfTextView.Options.WordWrapStyle(); }
@@ -56,7 +57,8 @@ namespace dnSpy.Text.Editor {
 
 		void UpdatePaddingElement() => wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !ShowLineNumbers);
 
-		readonly IWpfTextView wpfTextView;
+		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
+		readonly IDnSpyWpfTextView wpfTextView;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
 		CachedTextTokenColors cachedTextTokenColors;
@@ -90,14 +92,16 @@ namespace dnSpy.Text.Editor {
 			var rolesList = new List<string>(defaultRoles);
 			rolesList.AddRange(options.ExtraRoles);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(rolesList);
-			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
+			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
+			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextView = wpfTextViewHost.TextView;
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultDisabled);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
-			this.wpfTextView = wpfTextView;
 			SetNewDocument();
 			UpdatePaddingElement();
 		}
@@ -174,7 +178,7 @@ namespace dnSpy.Text.Editor {
 
 		void FlushOutputUIThread() {
 			dispatcher.VerifyAccess();
-			if (wpfTextView.IsClosed)
+			if (wpfTextViewHost.IsClosed)
 				return;
 
 			ColorAndText[] newPendingOutput;
@@ -226,8 +230,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Dispose() {
-			if (!wpfTextView.IsClosed)
-				wpfTextView.Close();
+			if (!wpfTextViewHost.IsClosed)
+				wpfTextViewHost.Close();
 		}
 	}
 }

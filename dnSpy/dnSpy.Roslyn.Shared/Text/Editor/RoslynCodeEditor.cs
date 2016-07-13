@@ -25,7 +25,8 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Text.Editor {
 	sealed class RoslynCodeEditor : IRoslynCodeEditor {
-		public IWpfTextView TextView => codeEditor.TextView;
+		public IDnSpyWpfTextView TextView => codeEditor.TextView;
+		public IDnSpyWpfTextViewHost TextViewHost => codeEditor.TextViewHost;
 		public ITextBuffer TextBuffer => codeEditor.TextBuffer;
 		public object UIObject => codeEditor.UIObject;
 		public IInputElement FocusedElement => codeEditor.FocusedElement;

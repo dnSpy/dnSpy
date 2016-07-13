@@ -73,7 +73,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IThemeManager themeManager;
 		readonly IconBarMargin iconBarMargin;
 
-		public IWpfTextView WpfTextView => wpfTextView;
+		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
+		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
 		public DnSpyTextEditor TextEditor { get; }
 		public IEnumerable<object> AllReferences => references.Select(a => a.Reference);
 
@@ -89,7 +90,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
 		readonly IContentType defaultContentType;
-		readonly IWpfTextView wpfTextView;
+		readonly IDnSpyWpfTextView wpfTextView;
+		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
 		readonly IEditorOperations editorOperations;
 
 		static readonly string[] defaultRoles = new string[] {
@@ -123,17 +125,19 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
-			var wpfTextView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
+			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
+			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextView = wpfTextViewHost.TextView;
 			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 			wpfTextView.Properties.AddProperty(typeof(TextEditorControl), this);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
-			this.wpfTextView = wpfTextView;
-			TextEditor = wpfTextView.DnSpyTextEditor;
+			TextEditor = textView.DnSpyTextEditor;
 			this.toolTipHelper.Initialize(TextEditor);
-			dnSpyTextEditor.Content = wpfTextView.VisualElement;
+			dnSpyTextEditor.Content = wpfTextViewHost.HostControl;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
@@ -671,8 +675,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
 			//textMarkerService.Dispose();
-			if (!wpfTextView.IsClosed)
-				wpfTextView.Close();
+			if (!wpfTextViewHost.IsClosed)
+				wpfTextViewHost.Close();
 		}
 
 		public object SaveReferencePosition(ICodeMappings cms) => GetRefPos(cms);

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.MEF {
@@ -98,5 +99,21 @@ namespace dnSpy.Text.MEF {
 		string BaseDefinition { get; }
 
 		string Name { get; }
+	}
+
+	public interface IWpfTextViewMarginMetadata : IOrderableContentTypeAndTextViewRoleMetadata {
+		string MarginContainer { get; }
+
+		[DefaultValue(1.0)]
+		double GridCellLength { get; }
+
+		[DefaultValue(GridUnitType.Auto)]
+		GridUnitType GridUnitType { get; }
+
+		[DefaultValue(null)]
+		string OptionName { get; }
+
+		[DefaultValue(null)]
+		IEnumerable<string> Replaces { get; }
 	}
 }
