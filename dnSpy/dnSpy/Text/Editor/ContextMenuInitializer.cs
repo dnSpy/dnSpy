@@ -17,41 +17,52 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using dnSpy.Contracts.Menus;
-using ICSharpCode.AvalonEdit.Rendering;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	sealed class ContextMenuInitializer : IContextMenuInitializer {
-		readonly Control ctrl;
-		readonly DnSpyTextEditor textEditor;
+		readonly IWpfTextView textView;
+		readonly FrameworkElement ctrl;
 
-		public ContextMenuInitializer(Control ctrl, DnSpyTextEditor textEditor) {
+		public ContextMenuInitializer(IWpfTextView textView)
+			: this(textView, textView.VisualElement) {
+		}
+
+		public ContextMenuInitializer(IWpfTextView textView, FrameworkElement ctrl) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			if (ctrl == null)
+				throw new ArgumentNullException(nameof(ctrl));
+			this.textView = textView;
 			this.ctrl = ctrl;
-			this.textEditor = textEditor;
 		}
 
 		public void Initialize(IMenuItemContext context, ContextMenu menu) {
-			if (context.OpenedFromKeyboard) {
-				IScrollInfo scrollInfo = textEditor.TextArea.TextView;
-				var pos = textEditor.TextArea.TextView.GetVisualPosition(textEditor.TextArea.Caret.Position, VisualYPosition.TextBottom);
-				pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
+			if (!TrySetPlacement(context, menu))
+				ClearPlacementProperties();
+		}
 
-				menu.HorizontalOffset = pos.X;
-				menu.VerticalOffset = pos.Y;
-				ContextMenuService.SetPlacement(ctrl, PlacementMode.Relative);
-				ContextMenuService.SetPlacementTarget(ctrl, textEditor.TextArea.TextView);
-				menu.Closed += (s, e2) => {
-					ctrl.ClearValue(ContextMenuService.PlacementProperty);
-					ctrl.ClearValue(ContextMenuService.PlacementTargetProperty);
-				};
-			}
-			else {
-				ctrl.ClearValue(ContextMenuService.PlacementProperty);
-				ctrl.ClearValue(ContextMenuService.PlacementTargetProperty);
-			}
+		bool TrySetPlacement(IMenuItemContext context, ContextMenu menu) {
+			if (!context.OpenedFromKeyboard)
+				return false;
+
+			var line = textView.Caret.ContainingTextViewLine;
+			menu.HorizontalOffset = Math.Min(Math.Max(0, textView.Caret.Right - textView.ViewportLeft), textView.ViewportWidth);
+			menu.VerticalOffset = Math.Min(Math.Max(0, line.TextBottom - textView.ViewportTop), textView.ViewportHeight);
+			ContextMenuService.SetPlacement(ctrl, PlacementMode.Relative);
+			ContextMenuService.SetPlacementTarget(ctrl, textView.VisualElement);
+			menu.Closed += (s, e2) => ClearPlacementProperties();
+			return true;
+		}
+
+		void ClearPlacementProperties() {
+			ctrl.ClearValue(ContextMenuService.PlacementProperty);
+			ctrl.ClearValue(ContextMenuService.PlacementTargetProperty);
 		}
 	}
 }

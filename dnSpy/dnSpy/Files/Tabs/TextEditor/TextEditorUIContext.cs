@@ -92,7 +92,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void Initialize(IMenuManager menuManager, TextEditorControl textEditorControl) {
 			this.textEditorControl = textEditorControl;
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
-			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorControl, textEditorControl.TextEditor));
+			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorControl.TextView, textEditorControl));
 		}
 
 		public IFileTab FileTab {

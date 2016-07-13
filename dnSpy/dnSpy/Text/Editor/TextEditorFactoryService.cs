@@ -55,6 +55,7 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformCreatorService lineTransformCreatorService;
 		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
+		readonly IMenuManager menuManager;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -109,7 +110,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<IWpfTextViewCreationListener> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IMenuManager menuManager) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
@@ -124,6 +125,7 @@ namespace dnSpy.Text.Editor {
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
 			this.lineTransformCreatorService = lineTransformCreatorService;
 			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
+			this.menuManager = menuManager;
 		}
 
 		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions)null);
@@ -194,6 +196,9 @@ namespace dnSpy.Text.Editor {
 			var dnSpyTextEditor = dnSpyTextEditorCreator.Create(dnSpyTextEditorOptions);
 			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager,  smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService);
 			guidObjectsCreator.WpfTextView = wpfTextView;
+
+			if (options.MenuGuid != null)
+				menuManager.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsCreator, new ContextMenuInitializer(wpfTextView));
 
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));
 			foreach (var listener in wpfTextViewCreationListeners)

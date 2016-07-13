@@ -18,12 +18,8 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	/// <summary>
@@ -41,29 +37,15 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IDnSpyTextEditorCreator))]
 	sealed class DnSpyTextEditorCreator : IDnSpyTextEditorCreator {
 		readonly IThemeManager themeManager;
-		readonly IWpfCommandManager wpfCommandManager;
-		readonly IMenuManager menuManager;
 		readonly ITextEditorSettings textEditorSettings;
-		readonly ITextBufferFactoryService textBufferFactoryService;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
 
 		[ImportingConstructor]
-		DnSpyTextEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService) {
+		DnSpyTextEditorCreator(IThemeManager themeManager, ITextEditorSettings textEditorSettings) {
 			this.themeManager = themeManager;
-			this.wpfCommandManager = wpfCommandManager;
-			this.menuManager = menuManager;
 			this.textEditorSettings = textEditorSettings;
-			this.textBufferFactoryService = textBufferFactoryService;
-			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
-		public DnSpyTextEditor Create(DnSpyTextEditorOptions options) {
-			var textEditor = new DnSpyTextEditor(themeManager, textEditorSettings);
-
-			if (options.MenuGuid != null)
-				menuManager.InitializeContextMenu(textEditor, options.MenuGuid.Value, options.CreateGuidObjectsCreator?.Invoke(), new ContextMenuInitializer(textEditor, textEditor));
-
-			return textEditor;
-		}
+		public DnSpyTextEditor Create(DnSpyTextEditorOptions options) =>
+			new DnSpyTextEditor(themeManager, textEditorSettings);
 	}
 }
