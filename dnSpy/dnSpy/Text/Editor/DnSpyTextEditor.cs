@@ -170,7 +170,7 @@ namespace dnSpy.Text.Editor {
 				Mode = BindingMode.OneWay,
 			});
 
-			this.lineNumberMargin = new LineNumberMargin { Visibility = Visibility.Collapsed };
+			this.lineNumberMargin = new ICSharpCode.AvalonEdit.Editing.LineNumberMargin { Visibility = Visibility.Collapsed };
 			this.lineNumberMargin.SetBinding(ForegroundProperty, new Binding(nameof(LineNumbersForeground)) { Source = this });
 			TextArea.LeftMargins.Insert(0, this.lineNumberMargin);
 			OnHighlightCurrentLineChanged();
@@ -212,7 +212,7 @@ namespace dnSpy.Text.Editor {
 					lineNumberMargin.Visibility = Visibility.Collapsed;
 			}
 		}
-		readonly LineNumberMargin lineNumberMargin;
+		readonly ICSharpCode.AvalonEdit.Editing.LineNumberMargin lineNumberMargin;
 
 		public bool HighlightCurrentLine {
 			get { return highlightCurrentLine; }

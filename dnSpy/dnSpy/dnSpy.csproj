@@ -479,6 +479,7 @@
     <Compile Include="Text\Editor\TextCaretLayer.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\TextEditorSettings.cs" />
+    <Compile Include="Text\Editor\TextFormattingUtilities.cs" />
     <Compile Include="Text\Editor\TextLayer.cs" />
     <Compile Include="Text\Editor\TextSelection.cs" />
     <Compile Include="Text\Editor\TextSelectionExtensions.cs" />

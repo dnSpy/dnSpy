@@ -544,20 +544,7 @@ namespace dnSpy.Text.Editor {
 				UpdateForceClearTypeIfNeeded();
 		}
 
-		void UpdateForceClearTypeIfNeeded() {
-			// Remote Desktop seems to force disable-ClearType so to prevent Consolas from looking
-			// really ugly and to prevent the colors (eg. keyword color) to look like different
-			// colors, force ClearType if the font is Consolas. VS also does this.
-			bool forceIfNeeded = Options.IsForceClearTypeIfNeededEnabled();
-			var fontName = classificationFormatMap.DefaultTextProperties.GetFontName();
-			bool forceClearType = forceIfNeeded && IsForceClearTypeFontName(fontName);
-			if (forceClearType)
-				SetValue(TextOptions.TextRenderingModeProperty, TextRenderingMode.ClearType);
-			else
-				SetValue(TextOptions.TextRenderingModeProperty, TextRenderingMode.Auto);
-		}
-
-		static bool IsForceClearTypeFontName(string name) => StringComparer.OrdinalIgnoreCase.Equals("Consolas", name);
+		void UpdateForceClearTypeIfNeeded() => TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, Options, classificationFormatMap);
 
 		bool IsVisiblePhysicalLinesSnapshot(ITextSnapshot snapshot) =>
 			visiblePhysicalLines.Count != 0 && visiblePhysicalLines[0].BufferSpan.Snapshot == snapshot;

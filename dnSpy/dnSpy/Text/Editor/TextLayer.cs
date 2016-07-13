@@ -27,7 +27,6 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextLayer : UIElement {
-		readonly IAdornmentLayer adornmentLayer;
 		readonly List<LineInfo> lines;
 
 		struct LineInfo {
@@ -42,16 +41,17 @@ namespace dnSpy.Text.Editor {
 		public TextLayer(IAdornmentLayer adornmentLayer) {
 			if (adornmentLayer == null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
-			this.adornmentLayer = adornmentLayer;
 			this.lines = new List<LineInfo>();
-			this.adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
+			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
 		}
 
 		protected override int VisualChildrenCount => lines.Count;
 		protected override Visual GetVisualChild(int index) => lines[index].Visual;
 
 		public void AddVisibleLines(List<IWpfTextViewLine> allVisibleLines) {
-			var currentLinesHash = new HashSet<IFormattedLine>(lines.Select(a => a.Line));
+			var currentLinesHash = new HashSet<IFormattedLine>();
+			foreach (var info in lines)
+				currentLinesHash.Add(info.Line);
 			var newLinesHash = new HashSet<IFormattedLine>(allVisibleLines.Cast<IFormattedLine>());
 			foreach (var info in lines) {
 				if (!newLinesHash.Contains(info.Line)) {
