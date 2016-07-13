@@ -893,7 +893,7 @@
     <Resource Include="Images\XsltFile.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\Licenses\CREDITS.txt">
+    <EmbeddedResource Include="..\..\LicenseInfo\CREDITS.txt">
       <Link>CREDITS.txt</Link>
     </EmbeddedResource>
   </ItemGroup>
@@ -901,8 +901,8 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(TargetDir)FileLists" 2&gt; NUL
 copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"
-mkdir "$(TargetDir)Licenses" 2&gt; NUL
-copy "$(SolutionDir)Licenses\*" "$(TargetDir)Licenses"</PostBuildEvent>
+mkdir "$(TargetDir)LicenseInfo" 2&gt; NUL
+copy "$(SolutionDir)LicenseInfo\*" "$(TargetDir)LicenseInfo"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

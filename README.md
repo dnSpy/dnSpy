@@ -5,7 +5,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 
 License
 -------
-[GPLv3](https://github.com/0xd4d/dnSpy/blob/master/Licenses/GPLv3.txt)
+[GPLv3](https://github.com/0xd4d/dnSpy/blob/master/LicenseInfo/GPLv3.txt)
 
 [Credits](https://github.com/0xd4d/dnSpy/blob/master/Licenses)
 --------------------------------------------------------------
