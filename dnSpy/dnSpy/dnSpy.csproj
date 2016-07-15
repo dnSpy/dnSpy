@@ -414,6 +414,7 @@
     <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
+    <Compile Include="Text\Editor\CurrentLineHighlighter.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultMouseProcessor.cs" />
     <Compile Include="Text\Editor\DefaultReplEditorOptionDefinitions.cs" />

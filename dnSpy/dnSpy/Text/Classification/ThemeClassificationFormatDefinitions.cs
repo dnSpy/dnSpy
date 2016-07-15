@@ -2242,7 +2242,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentLine)]
 		[Name(ThemeClassificationTypeNameKeys.CurrentLine)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(Before = Priority.Default)]
 		sealed class CurrentLine : ThemeClassificationFormatDefinition {
 			CurrentLine() : base(ColorType.CurrentLine) { }
 		}
@@ -2251,7 +2251,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentLineNoFocus)]
 		[Name(ThemeClassificationTypeNameKeys.CurrentLineNoFocus)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(Before = Priority.Default)]
 		sealed class CurrentLineNoFocus : ThemeClassificationFormatDefinition {
 			CurrentLineNoFocus() : base(ColorType.CurrentLineNoFocus) { }
 		}

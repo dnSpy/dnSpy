@@ -797,12 +797,12 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="ColorType.CurrentLine"/>
 		/// </summary>
-		public const string CurrentLine = "CurrentLine";
+		public const string CurrentLine = "CurrentLineActiveFormat";
 
 		/// <summary>
 		/// <see cref="ColorType.CurrentLineNoFocus"/>
 		/// </summary>
-		public const string CurrentLineNoFocus = "CurrentLineNoFocus";
+		public const string CurrentLineNoFocus = "CurrentLineInactiveFormat";
 
 		/// <summary>
 		/// <see cref="ColorType.HexText"/>
