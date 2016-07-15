@@ -1059,7 +1059,9 @@ namespace dnSpy.Contracts.HexEditor {
 		int GetScrollWheelLines() {
 			if (!SystemParameters.IsMouseWheelPresent)
 				return 1;
-			return SystemParameters.WheelScrollLines;
+			// SystemParameters.WheelScrollLines can be -1 if we should scroll by a page
+			int lines = SystemParameters.WheelScrollLines;
+			return lines < 0 ? 3 : lines;
 		}
 
 		public void MouseWheelUp() => AddVertical(-GetScrollWheelLines());

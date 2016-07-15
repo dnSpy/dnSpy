@@ -22,9 +22,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
 	sealed class WpfTextViewHost : ContentControl, IDnSpyWpfTextViewHost {
@@ -36,12 +40,16 @@ namespace dnSpy.Text.Editor {
 
 		readonly IWpfTextViewMargin[] containerMargins;
 		readonly Grid grid;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
-		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IDnSpyWpfTextView wpfTextView, bool setFocus) {
+		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IDnSpyWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
 			if (wpfTextViewMarginProviderCollectionCreator == null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionCreator));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
+			if (editorOperationsFactoryService == null)
+				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.grid = CreateGrid();
 			TextView = wpfTextView;
 			Focusable = false;
@@ -119,5 +127,42 @@ namespace dnSpy.Text.Editor {
 			}
 			return null;
 		}
+
+		static int GetScrollWheelLines() {
+			if (!SystemParameters.IsMouseWheelPresent)
+				return 1;
+			return SystemParameters.WheelScrollLines;
+		}
+
+		protected override void OnMouseWheel(MouseWheelEventArgs e) {
+			if (!IsClosed) {
+				e.Handled = true;
+				if (e.Delta == 0)
+					return;
+
+				if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 && CanMouseWheelZoom) {
+					var editorOperations = editorOperationsFactoryService.GetEditorOperations(TextView);
+					if (e.Delta > 0)
+						editorOperations.ZoomIn();
+					else
+						editorOperations.ZoomOut();
+				}
+				else {
+					int lines = GetScrollWheelLines();
+					var direction = e.Delta < 0 ? ScrollDirection.Down : ScrollDirection.Up;
+					if (lines >= 0)
+						TextView.ViewScroller.ScrollViewportVerticallyByLines(direction, lines);
+					else
+						TextView.ViewScroller.ScrollViewportVerticallyByPage(direction);
+				}
+			}
+			else
+				base.OnMouseWheel(e);
+		}
+
+		bool CanMouseWheelZoom =>
+			TextView.Options.IsMouseWheelZoomEnabled() &&
+			TextView.Roles.Contains(PredefinedTextViewRoles.Zoomable) &&
+			TextView.TextDataModel.ContentType.IsOfType(ContentTypes.TEXT);
 	}
 }

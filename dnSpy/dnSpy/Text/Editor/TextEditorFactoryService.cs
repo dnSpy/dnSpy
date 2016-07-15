@@ -31,6 +31,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
 	//TODO: This iface should be removed. The users shouldn't depend on the text editor impl
@@ -57,6 +58,7 @@ namespace dnSpy.Text.Editor {
 		readonly ILineTransformCreatorService lineTransformCreatorService;
 		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
 		readonly IMenuManager menuManager;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -111,7 +113,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IMenuManager menuManager) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
@@ -127,6 +129,7 @@ namespace dnSpy.Text.Editor {
 			this.lineTransformCreatorService = lineTransformCreatorService;
 			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
 			this.menuManager = menuManager;
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
 		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions)null);
@@ -226,7 +229,7 @@ namespace dnSpy.Text.Editor {
 		public IDnSpyWpfTextViewHost CreateTextViewHost(IDnSpyWpfTextView wpfTextView, bool setFocus) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			return new WpfTextViewHost(wpfTextViewMarginProviderCollectionCreator, wpfTextView, setFocus);
+			return new WpfTextViewHost(wpfTextViewMarginProviderCollectionCreator, wpfTextView, editorOperationsFactoryService, setFocus);
 		}
 
 		public ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new TextViewRoleSet(roles);
