@@ -19,11 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
@@ -34,7 +36,7 @@ namespace dnSpy.Text.Editor {
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
-			this.mouseProcessorProviders = mouseProcessorProviders;
+			this.mouseProcessorProviders = Orderer.Order(mouseProcessorProviders).ToArray();
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
@@ -45,6 +47,10 @@ namespace dnSpy.Text.Editor {
 			mouseProcessorCollection?.Dispose();
 			var list = new List<IMouseProcessor>();
 			foreach (var provider in mouseProcessorProviders) {
+				if (!wpfTextView.Roles.ContainsAny(provider.Metadata.TextViewRoles))
+					continue;
+				if (!wpfTextView.TextDataModel.ContentType.ContainsAny(provider.Metadata.ContentTypes))
+					continue;
 				var mouseProcessor = provider.Value.GetAssociatedProcessor(wpfTextView);
 				if (mouseProcessor != null)
 					list.Add(mouseProcessor);

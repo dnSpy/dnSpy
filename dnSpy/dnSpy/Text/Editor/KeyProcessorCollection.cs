@@ -19,11 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class KeyProcessorCollection {
@@ -33,7 +35,7 @@ namespace dnSpy.Text.Editor {
 
 		public KeyProcessorCollection(IWpfTextView wpfTextView, Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders) {
 			this.wpfTextView = wpfTextView;
-			this.keyProcessorProviders = keyProcessorProviders;
+			this.keyProcessorProviders = Orderer.Order(keyProcessorProviders).ToArray();
 			this.keyProcessors = Array.Empty<KeyProcessor>();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
@@ -143,6 +145,10 @@ namespace dnSpy.Text.Editor {
 			CleanUp();
 			var list = new List<KeyProcessor>();
 			foreach (var provider in keyProcessorProviders) {
+				if (!wpfTextView.Roles.ContainsAny(provider.Metadata.TextViewRoles))
+					continue;
+				if (!wpfTextView.TextDataModel.ContentType.ContainsAny(provider.Metadata.ContentTypes))
+					continue;
 				var keyProcessor = provider.Value.GetAssociatedProcessor(wpfTextView);
 				if (keyProcessor != null)
 					list.Add(keyProcessor);
