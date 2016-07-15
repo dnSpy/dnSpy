@@ -410,6 +410,7 @@
     <Compile Include="Text\Editor\AdornmentLayerDefinitionService.cs" />
     <Compile Include="Text\Editor\AdornmentLayerElement.cs" />
     <Compile Include="Text\Editor\BottomControlMargin.cs" />
+    <Compile Include="Text\Editor\BottomRightCornerMargin.cs" />
     <Compile Include="Text\Editor\BoxSelectionHelper.cs" />
     <Compile Include="Text\Editor\CodeEditor.cs" />
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
