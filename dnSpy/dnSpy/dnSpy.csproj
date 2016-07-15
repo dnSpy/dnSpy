@@ -424,6 +424,7 @@
     <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewMouseProcessor.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
+    <Compile Include="Text\Editor\DnSpyScrollBar.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditor.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditorCreator.cs" />
     <Compile Include="Text\Editor\DnSpyTextEditorOptions.cs" />
@@ -475,6 +476,8 @@
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ReplSubBuffer.cs" />
     <Compile Include="Text\Editor\RightControlMargin.cs" />
+    <Compile Include="Text\Editor\ScrollMap.cs" />
+    <Compile Include="Text\Editor\ScrollMapFactoryService.cs" />
     <Compile Include="Text\Editor\SelectionUtilities.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\SystemTextCaret.cs" />
@@ -498,6 +501,7 @@
     <Compile Include="Text\Editor\ViewScroller.cs" />
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextView.LayoutHelper.cs" />
+    <Compile Include="Text\Editor\WpfTextViewConstants.cs" />
     <Compile Include="Text\Editor\WpfTextViewContainerMargin.cs" />
     <Compile Include="Text\Editor\WpfTextViewHost.cs" />
     <Compile Include="Text\Editor\WpfTextViewLineCollection.cs" />

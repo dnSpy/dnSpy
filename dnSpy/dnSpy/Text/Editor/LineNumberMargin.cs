@@ -98,6 +98,7 @@ namespace dnSpy.Text.Editor {
 			this.textFormatterProvider = textFormatterProvider;
 			this.Children.Add(textLayer);
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
+			ClipToBounds = true;
 			UpdateLineNumberMarginVisible();
 		}
 

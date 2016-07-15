@@ -31,8 +31,21 @@ namespace dnSpy.Text.Editor {
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[GridCellLength(1.0), GridUnitType(GridUnitType.Star)]
 	sealed class HorizontalScrollBarContainerMarginProvider : IWpfTextViewMarginProvider {
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
-			return null;//TODO:
+		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
+
+		[ImportingConstructor]
+		HorizontalScrollBarContainerMarginProvider(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator) {
+			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
+		}
+
+		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+			new HorizontalScrollBarContainerMargin(wpfTextViewMarginProviderCollectionCreator, wpfTextViewHost);
+	}
+
+	sealed class HorizontalScrollBarContainerMargin : WpfTextViewContainerMargin {
+		public HorizontalScrollBarContainerMargin(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IWpfTextViewHost wpfTextViewHost)
+			: base(wpfTextViewMarginProviderCollectionCreator, wpfTextViewHost, PredefinedMarginNames.HorizontalScrollBarContainer, true) {
+			VerticalAlignment = VerticalAlignment.Bottom;
 		}
 	}
 }

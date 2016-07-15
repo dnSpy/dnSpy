@@ -358,11 +358,10 @@ namespace dnSpy.Text.Editor {
 			double left = textCaretLayer.Left;
 			double right = textCaretLayer.Right;
 
-			const double EXTRA_SCROLL_WIDTH = 200;
 			double availWidth = Math.Max(0, textView.ViewportWidth - textCaretLayer.Width);
 			double extraScroll;
-			if (availWidth >= EXTRA_SCROLL_WIDTH)
-				extraScroll = EXTRA_SCROLL_WIDTH;
+			if (availWidth >= WpfTextViewConstants.EXTRA_HORIZONTAL_WIDTH)
+				extraScroll = WpfTextViewConstants.EXTRA_HORIZONTAL_WIDTH;
 			else
 				extraScroll = availWidth / 2;
 			if (textView.ViewportWidth == 0) {

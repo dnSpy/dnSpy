@@ -60,8 +60,8 @@ namespace dnSpy.Text.Editor {
 
 			this.containerMargins = new IWpfTextViewMargin[5];
 			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Top, true, 0, 0, 3);
-			containerMargins[1] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Bottom, true, 0, 0, 2);
-			containerMargins[2] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.BottomRightCorner, true, 0, 2, 1);
+			containerMargins[1] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Bottom, true, 2, 0, 2);
+			containerMargins[2] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.BottomRightCorner, true, 2, 2, 1);
 			containerMargins[3] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Left, false, 1, 0, 1);
 			containerMargins[4] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Right, false, 1, 2, 1);
 			Add(TextView.VisualElement, 1, 1, 1);

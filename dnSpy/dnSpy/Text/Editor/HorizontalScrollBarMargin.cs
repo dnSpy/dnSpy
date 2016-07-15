@@ -17,9 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
@@ -29,8 +33,93 @@ namespace dnSpy.Text.Editor {
 	[ContentType(ContentTypes.TEXT)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class HorizontalScrollBarMarginProvider : IWpfTextViewMarginProvider {
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
-			return null;//TODO:
+		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+			new HorizontalScrollBarMargin(wpfTextViewHost);
+	}
+
+	sealed class HorizontalScrollBarMargin : DnSpyScrollBar, IWpfTextViewMargin {
+		public bool Enabled => wpfTextViewHost.TextView.Options.IsHorizontalScrollBarEnabled();
+		public double MarginSize => ActualHeight;
+		public FrameworkElement VisualElement => this;
+		bool IsWordWrap => (wpfTextViewHost.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
+
+		readonly IWpfTextViewHost wpfTextViewHost;
+
+		public HorizontalScrollBarMargin(IWpfTextViewHost wpfTextViewHost) {
+			if (wpfTextViewHost == null)
+				throw new ArgumentNullException(nameof(wpfTextViewHost));
+			this.wpfTextViewHost = wpfTextViewHost;
+			IsVisibleChanged += HorizontalScrollBarMargin_IsVisibleChanged;
+			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
+			SetResourceReference(StyleProperty, typeof(ScrollBar));
+			VerticalAlignment = VerticalAlignment.Top;
+			Orientation = System.Windows.Controls.Orientation.Horizontal;
+			SmallChange = 12.0;
+			Minimum = 0;
+		}
+
+		public ITextViewMargin GetTextViewMargin(string marginName) =>
+			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.HorizontalScrollBar, marginName) ? this : null;
+
+		protected override void OnScroll(ScrollEventArgs e) {
+			if (!Enabled)
+				return;
+			wpfTextViewHost.TextView.ViewportLeft = Value;
+		}
+
+		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
+				Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+			else if (!Enabled) {
+				// Ignore any other options
+			}
+			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
+				IsEnabled = !IsWordWrap;
+				UpdateMaximum();
+			}
+		}
+
+		void HorizontalScrollBarMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			if (Visibility == Visibility.Visible) {
+				RegisterEvents();
+				IsEnabled = !IsWordWrap;
+				LargeChange = wpfTextViewHost.TextView.ViewportWidth;
+				ViewportSize = wpfTextViewHost.TextView.ViewportWidth;
+				UpdateMaximum();
+				Value = wpfTextViewHost.TextView.ViewportLeft;
+			}
+			else
+				UnregisterEvents();
+		}
+
+		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			LargeChange = wpfTextViewHost.TextView.ViewportWidth;
+			ViewportSize = wpfTextViewHost.TextView.ViewportWidth;
+			UpdateMaximum();
+			Value = wpfTextViewHost.TextView.ViewportLeft;
+		}
+
+		void UpdateMaximum() => Maximum = IsWordWrap ? 0 : Math.Max(wpfTextViewHost.TextView.ViewportLeft, wpfTextViewHost.TextView.MaxTextRightCoordinate - wpfTextViewHost.TextView.ViewportWidth + WpfTextViewConstants.EXTRA_HORIZONTAL_WIDTH);
+
+		bool hasRegisteredEvents;
+		void RegisterEvents() {
+			if (hasRegisteredEvents)
+				return;
+			if (wpfTextViewHost.IsClosed)
+				return;
+			hasRegisteredEvents = true;
+			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
+		}
+
+		void UnregisterEvents() {
+			hasRegisteredEvents = false;
+			wpfTextViewHost.TextView.LayoutChanged -= TextView_LayoutChanged;
+		}
+
+		public void Dispose() {
+			IsVisibleChanged -= HorizontalScrollBarMargin_IsVisibleChanged;
+			wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
+			UnregisterEvents();
 		}
 	}
 }

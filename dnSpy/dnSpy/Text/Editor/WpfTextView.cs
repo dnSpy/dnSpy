@@ -64,7 +64,6 @@ namespace dnSpy.Text.Editor {
 		public ITextDataModel TextDataModel => TextViewModel.DataModel;
 		public ITextViewModel TextViewModel { get; }
 		public bool IsClosed { get; set; }
-		public double MaxTextRightCoordinate { get { throw new NotImplementedException(); } }//TODO: Use this prop
 		public ITrackingSpan ProvisionalTextHighlight { get; set; }//TODO: Use this prop
 		public event EventHandler GotAggregateFocus;
 		public event EventHandler LostAggregateFocus;
@@ -88,6 +87,20 @@ namespace dnSpy.Text.Editor {
 		public IBufferGraph BufferGraph {
 			get {
 				throw new NotImplementedException();//TODO:
+			}
+		}
+
+		public double MaxTextRightCoordinate {
+			get {
+				double max = 0;
+				var snapshot = TextSnapshot;
+				foreach (var p in visiblePhysicalLines) {
+					if (p.BufferSpan.Snapshot == snapshot) {
+						foreach (var l in p.Lines)
+							max = Math.Max(max, l.Right);
+					}
+				}
+				return max;
 			}
 		}
 
