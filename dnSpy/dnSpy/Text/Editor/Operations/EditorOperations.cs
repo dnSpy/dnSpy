@@ -82,7 +82,7 @@ namespace dnSpy.Text.Editor.Operations {
 		}
 		ITextStructureNavigator textStructureNavigator;
 
-		void OnContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+		void OnContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) {
 			// The TextStructureNavigator prop checks it for null and re-initializes it. The reason that we
 			// don't just call GetTextStructureNavigator() now is that the ITextStructureNavigatorSelectorService
 			// instance will remove the cached navigator instance from its ContentTypeChanged handler. If this
@@ -97,9 +97,16 @@ namespace dnSpy.Text.Editor.Operations {
 			if (textStructureNavigatorSelectorService == null)
 				throw new ArgumentNullException(nameof(textStructureNavigatorSelectorService));
 			TextView = textView;
-			TextView.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
+			TextView.Closed += TextView_Closed;
+			TextView.TextViewModel.DataModel.ContentTypeChanged += OnContentTypeChanged;
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
 			this.smartIndentationService = smartIndentationService;
+		}
+
+		void TextView_Closed(object sender, EventArgs e) {
+			TextView.Closed -= TextView_Closed;
+			TextView.TextViewModel.DataModel.ContentTypeChanged -= OnContentTypeChanged;
+			EditorOperationsFactoryService.RemoveFromProperties(this);
 		}
 
 		struct SavedCaretSelection {

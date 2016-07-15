@@ -116,4 +116,9 @@ namespace dnSpy.Text.MEF {
 		[DefaultValue(null)]
 		IEnumerable<string> Replaces { get; }
 	}
+
+	public interface IDeferrableContentTypeAndTextViewRoleMetadata : IContentTypeAndTextViewRoleMetadata {
+		[DefaultValue(null)]
+		string OptionName { get; }
+	}
 }

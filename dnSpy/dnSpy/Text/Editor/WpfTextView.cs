@@ -34,6 +34,7 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Text.Classification;
 using dnSpy.Text.Formatting;
+using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -97,6 +98,7 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMap editorFormatMap;
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformCreatorService lineTransformCreatorService;
+		readonly Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners;
 		readonly AdornmentLayerCollection adornmentLayerCollection;
 		readonly PhysicalLineCache physicalLineCache;
 		readonly List<PhysicalLine> visiblePhysicalLines;
@@ -119,7 +121,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService) {
+		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
 			if (dnSpyTextEditor == null)
 				throw new ArgumentNullException(nameof(dnSpyTextEditor));
 			if (textViewModel == null)
@@ -148,6 +150,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			if (lineTransformCreatorService == null)
 				throw new ArgumentNullException(nameof(lineTransformCreatorService));
+			if (wpfTextViewCreationListeners == null)
+				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
 			this.physicalLineCache = new PhysicalLineCache(32);
 			this.visiblePhysicalLines = new List<PhysicalLine>();
 			this.invalidatedRegions = new List<SnapshotSpan>();
@@ -155,6 +159,7 @@ namespace dnSpy.Text.Editor {
 			this.zoomLevel = ZoomConstants.DefaultZoom;
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
 			this.lineTransformCreatorService = lineTransformCreatorService;
+			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
 			this.recreateLineTransformCreator = true;
 			this.adornmentLayerCollection = new AdornmentLayerCollection(this);
 			Properties = new PropertyCollection();
@@ -187,7 +192,7 @@ namespace dnSpy.Text.Editor {
 
 			Options.OptionChanged += EditorOptions_OptionChanged;
 			TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
-			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
+			TextViewModel.DataModel.ContentTypeChanged += DataModel_ContentTypeChanged;
 			aggregateClassifier.ClassificationChanged += AggregateClassifier_ClassificationChanged;
 			textAndAdornmentSequencer.SequenceChanged += TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -196,6 +201,18 @@ namespace dnSpy.Text.Editor {
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
 			InitializeZoom();
+
+			NotifyTextViewCreated(TextViewModel.DataModel.ContentType, null);
+		}
+
+		void NotifyTextViewCreated(IContentType newContentType, IContentType oldContentType) {
+			foreach (var lazy in wpfTextViewCreationListeners) {
+				if (oldContentType != null && oldContentType.ContainsAny(lazy.Metadata.ContentTypes))
+					continue;
+				if (!TextDataModel.ContentType.ContainsAny(lazy.Metadata.ContentTypes))
+					continue;
+				lazy.Value.TextViewCreated(this);
+			}
 		}
 
 		public void InvalidateClassifications(SnapshotSpan span) {
@@ -229,12 +246,14 @@ namespace dnSpy.Text.Editor {
 			screenRefreshTimer = null;
 		}
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+		void DataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) {
 			recreateLineTransformCreator = true;
 
 			// Refresh all lines since IFormattedTextSourceFactoryService uses the content type to
 			// pick a ITextParagraphPropertiesFactoryService
 			InvalidateFormattedLineSource(true);
+
+			NotifyTextViewCreated(e.AfterContentType, e.BeforeContentType);
 		}
 
 		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
@@ -519,7 +538,7 @@ namespace dnSpy.Text.Editor {
 
 			Options.OptionChanged -= EditorOptions_OptionChanged;
 			TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
-			TextBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
+			TextViewModel.DataModel.ContentTypeChanged -= DataModel_ContentTypeChanged;
 			aggregateClassifier.ClassificationChanged -= AggregateClassifier_ClassificationChanged;
 			textAndAdornmentSequencer.SequenceChanged -= TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;

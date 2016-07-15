@@ -21,12 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using dnSpy.Contracts.Text;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
+	[TextViewRole(PredefinedTextViewRoles.Interactive)]
+	[ContentType(ContentTypes.ANY)]
 	sealed class KeyboardWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders;
 

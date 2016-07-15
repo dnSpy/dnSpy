@@ -402,6 +402,7 @@
     <Compile Include="Text\Classification\ViewEditorFormatMap.cs" />
     <Compile Include="Text\ContentType.cs" />
     <Compile Include="Text\ContentTypeDefinitions.cs" />
+    <Compile Include="Text\ContentTypeExtensions.cs" />
     <Compile Include="Text\ContentTypeRegistryService.cs" />
     <Compile Include="Text\ContentTypeRegistryServiceExtensions.cs" />
     <Compile Include="Text\Editor\AdornmentLayer.cs" />

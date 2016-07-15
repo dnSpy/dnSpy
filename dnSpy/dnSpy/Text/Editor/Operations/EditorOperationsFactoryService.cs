@@ -40,5 +40,8 @@ namespace dnSpy.Text.Editor.Operations {
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(IEditorOperations),
 				() => new EditorOperations(textView, textStructureNavigatorSelectorService, smartIndentationService));
 		}
+
+		public static void RemoveFromProperties(EditorOperations editorOperations) =>
+			editorOperations.TextView.Properties.RemoveProperty(typeof(IEditorOperations));
 	}
 }
