@@ -197,8 +197,13 @@ namespace dnSpy.Text.Editor {
 			if (textViewLines == null)
 				return;
 
-			foreach (var line in newOrReformattedLines)
-				identityTagToLine.Remove(line.IdentityTag);
+			foreach (var viewLine in newOrReformattedLines) {
+				Line line;
+				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
+					identityTagToLine.Remove(viewLine.IdentityTag);
+					line.Dispose();
+				}
+			}
 			var newDict = new Dictionary<object, Line>();
 			ITextSnapshotLine snapshotLine = null;
 			foreach (var viewLine in textViewLines) {
