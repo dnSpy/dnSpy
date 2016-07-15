@@ -1353,25 +1353,21 @@ namespace dnSpy.Text.Editor.Operations {
 				Selection.Clear();
 		}
 
-		public void ScrollLineBottom() {
-			return;//TODO:
-		}
+		public void ScrollLineBottom() =>
+			TextView.DisplayTextLineContainingBufferPosition(Caret.ContainingTextViewLine.Start, 0, ViewRelativePosition.Bottom);
 
 		public void ScrollLineCenter() {
-			return;//TODO:
+			// line.Height depends on the line transform and it's set when the line is visible
+			Caret.EnsureVisible();
+			var line = Caret.ContainingTextViewLine;
+			TextView.DisplayTextLineContainingBufferPosition(line.Start, Math.Max(0, (TextView.ViewportHeight - line.Height) / 2), ViewRelativePosition.Top);
 		}
 
-		public void ScrollLineTop() {
-			return;//TODO:
-		}
+		public void ScrollLineTop() =>
+			TextView.DisplayTextLineContainingBufferPosition(Caret.ContainingTextViewLine.Start, 0, ViewRelativePosition.Top);
 
-		public void ScrollPageDown() {
-			return;//TODO:
-		}
-
-		public void ScrollPageUp() {
-			return;//TODO:
-		}
+		public void ScrollPageDown() => TextView.ViewScroller.ScrollViewportVerticallyByPage(ScrollDirection.Down);
+		public void ScrollPageUp() => TextView.ViewScroller.ScrollViewportVerticallyByPage(ScrollDirection.Up);
 
 		public void SelectAll() {
 			Selection.Mode = TextSelectionMode.Stream;
