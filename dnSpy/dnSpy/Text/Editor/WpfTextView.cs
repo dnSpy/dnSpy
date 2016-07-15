@@ -764,6 +764,7 @@ namespace dnSpy.Text.Editor {
 			if (metroWindow != null) {
 				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
 				MetroWindow_WindowDPIChanged(metroWindow, EventArgs.Empty);
+				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(ZoomLevel, LayoutTransform));
 				return;
 			}
 
@@ -779,6 +780,7 @@ namespace dnSpy.Text.Editor {
 			if (metroWindow != null) {
 				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
 				MetroWindow_WindowDPIChanged(metroWindow, EventArgs.Empty);
+				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(ZoomLevel, LayoutTransform));
 				return;
 			}
 		}
