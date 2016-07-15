@@ -176,8 +176,10 @@ namespace dnSpy.Text.Editor {
 					// This line intentionally left blank
 				}
 				else if (lastVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
-					if (lastVisibleLine.IsLastDocumentLine())
+					if (lastVisibleLine.IsLastDocumentLine()) {
+						textView.DisplayTextLineContainingBufferPosition(lastVisibleLine.Start, 0, ViewRelativePosition.Top);
 						return hasFullyVisibleLines;
+					}
 				}
 				else
 					pixels -= textView.ViewportBottom - lastVisibleLine.Top;
