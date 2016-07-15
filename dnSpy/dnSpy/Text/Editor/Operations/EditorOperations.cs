@@ -1454,25 +1454,14 @@ namespace dnSpy.Text.Editor.Operations {
 				activePoint = lineEnd;
 			}
 			else {
-				if (Selection.ActivePoint <= Selection.AnchorPoint) {
-					if (lineStart <= Selection.ActivePoint) {
-						anchorPoint = Selection.AnchorPoint;
-						activePoint = lineStart;
-					}
-					else {
-						anchorPoint = Selection.AnchorPoint;
-						activePoint = lineEnd;
-					}
+				var anchorSpan = SelectionUtilities.GetLineAnchorSpan(Selection);
+				if (anchorSpan.Start <= viewLine.Start) {
+					anchorPoint = new VirtualSnapshotPoint(anchorSpan.Start);
+					activePoint = lineEnd;
 				}
 				else {
-					if (Selection.ActivePoint <= lineEnd) {
-						anchorPoint = Selection.AnchorPoint;
-						activePoint = lineEnd;
-					}
-					else {
-						anchorPoint = Selection.AnchorPoint;
-						activePoint = lineStart;
-					}
+					anchorPoint = new VirtualSnapshotPoint(anchorSpan.End);
+					activePoint = lineStart;
 				}
 			}
 			Selection.Select(anchorPoint, activePoint);
