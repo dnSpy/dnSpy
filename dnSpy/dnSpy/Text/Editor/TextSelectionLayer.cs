@@ -93,6 +93,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (e.OldSnapshot != e.NewSnapshot)
+				SetNewSelection();
 			if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
 				marker.OnLayoutChanged(e.NewOrReformattedLines);
 		}

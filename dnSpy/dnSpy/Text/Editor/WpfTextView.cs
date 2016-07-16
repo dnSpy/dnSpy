@@ -662,6 +662,8 @@ namespace dnSpy.Text.Editor {
 			if (invalidatedRegions.Capacity > 100)
 				invalidatedRegions.TrimExcess();
 
+			if (!(FormattedLineSource.SourceTextSnapshot == TextSnapshot && FormattedLineSource.TopTextSnapshot == VisualSnapshot))
+				invalidateAllLines = true;
 			if (invalidateAllLines || formattedLineSourceIsInvalidated) {
 				CreateFormattedLineSource(viewportWidthOverride);
 				formattedLineSourceIsInvalidated = false;

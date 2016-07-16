@@ -323,7 +323,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void OnCaretPositionChanged() => SetPosition(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot, Affinity == PositionAffinity.Predecessor ? PointTrackingMode.Negative : PointTrackingMode.Positive));
+		void OnCaretPositionChanged() => SetPosition(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot, GetPointTrackingMode(Affinity)));
 		void SetPosition(VirtualSnapshotPoint bufferPosition) {
 			var oldPos = currentPosition;
 			var bufPos = bufferPosition;
@@ -535,6 +535,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		ITextViewLine GetLine(SnapshotPoint bufferPosition, PositionAffinity affinity) {
+			bufferPosition = bufferPosition.TranslateTo(textView.TextSnapshot, GetPointTrackingMode(affinity));
 			var line = textView.GetTextViewLineContainingBufferPosition(bufferPosition);
 			if (line == null)
 				return null;
@@ -546,6 +547,8 @@ namespace dnSpy.Text.Editor {
 				return line;
 			return textView.GetTextViewLineContainingBufferPosition(bufferPosition - 1);
 		}
+
+		static PointTrackingMode GetPointTrackingMode(PositionAffinity affinity) => affinity == PositionAffinity.Predecessor ? PointTrackingMode.Negative : PointTrackingMode.Positive;
 
 		public void Dispose() {
 			StopIME(true);
