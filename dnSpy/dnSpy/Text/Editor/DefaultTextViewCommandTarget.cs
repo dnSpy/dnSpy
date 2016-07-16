@@ -213,7 +213,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.BOL_EXT_COL:
 				case TextEditorIds.BOTTOMLINE:
 				case TextEditorIds.BOTTOMLINE_EXT:
-				case TextEditorIds.CANCEL:
 				case TextEditorIds.CUTLINE:
 				case TextEditorIds.DELETE:
 				case TextEditorIds.DELETEBLANKLINES:
@@ -304,6 +303,10 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.ZoomIn:
 				case TextEditorIds.ZoomOut:
 					return CommandTargetStatus.Handled;
+				case TextEditorIds.CANCEL:
+					// Seems to match VS behavior. If we handle ESC when there's no selection, we can't press
+					// ESC in the log editor and move back to the document tab.
+					return textView.Selection.IsEmpty ? CommandTargetStatus.NotHandled : CommandTargetStatus.Handled;
 				default:
 					return CommandTargetStatus.NotHandled;
 				}

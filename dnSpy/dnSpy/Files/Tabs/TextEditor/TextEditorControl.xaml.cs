@@ -298,6 +298,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		internal void ClearMarkedReferencesAndToolTip() {
 			ClearMarkedReferences();
 			toolTipHelper.Close();
+			wpfTextView.Selection.Clear();
 		}
 
 		public object GetReferenceSegmentAt(MouseEventArgs e) {
