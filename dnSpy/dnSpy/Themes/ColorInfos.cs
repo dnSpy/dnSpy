@@ -32,6 +32,9 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexSelection, "Selected text in hex editor") {
 				DefaultBackground = "#663399FF",
 			},
+			new BrushColorInfo(ColorType.GlyphMargin, "Indicator Margin") {
+				DefaultBackground = "#FFE6E7E8",
+			},
 			new BrushColorInfo(ColorType.SpecialCharacterBox, "Special character box") {
 				DefaultForeground = "#FFFFFFFF",
 				DefaultBackground = "#C8808080",
@@ -1487,12 +1490,6 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.TVItemAlternationBackground, "TreeViewItem alternation background") {
 				DefaultBackground = "WhiteSmoke",
 				BackgroundResourceKey = "TVItemAlternationBackground",
-			},
-			new BrushColorInfo(ColorType.IconBar, "IconBar") {
-				DefaultBackground = "#E6E7E8",
-			},
-			new BrushColorInfo(ColorType.IconBarBorder, "IconBar") {
-				DefaultBackground = "#CFD0D1",
 			},
 			new BrushColorInfo(ColorType.EnvironmentFileTabBackground, "FileTab background") {
 				DefaultBackground = "#FFEEEEF2",

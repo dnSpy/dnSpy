@@ -42,6 +42,7 @@ namespace dnSpy.Contracts.Images {
 		TitleAreaActive,
 		TitleAreaInactive,
 		CommandBar,
+		GlyphMargin,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

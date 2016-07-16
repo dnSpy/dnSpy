@@ -848,5 +848,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="ColorType.HexSelection"/>
 		/// </summary>
 		public const string HexSelection = "Theme-HexSelection";
+
+		/// <summary>
+		/// <see cref="ColorType.GlyphMargin"/>
+		/// </summary>
+		public const string GlyphMargin = "Theme-GlyphMargin";
 	}
 }

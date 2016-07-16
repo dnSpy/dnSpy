@@ -195,6 +195,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCaret),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexInactiveCaret),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexSelection),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.GlyphMargin),
 			};
 		}
 

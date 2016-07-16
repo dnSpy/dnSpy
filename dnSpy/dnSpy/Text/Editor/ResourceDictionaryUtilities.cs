@@ -17,26 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Themes;
+using System.Windows;
+using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.Classification {
-	static class ThemeEditorFormatDefinitions {
-		[Export(typeof(EditorFormatDefinition))]
-		[Name(ThemeEditorFormatTypeNameKeys.SelectedText)]
-		[UserVisible(true)]
-		sealed class SelectedText : ThemeEditorFormatDefinition {
-			SelectedText() : base(ColorType.SelectedText) { }
-		}
+namespace dnSpy.Text.Editor {
+	static class ResourceDictionaryUtilities {
+		public static Brush GetForegroundBrush(ResourceDictionary dict, Brush defaultBrush = null) => GetBrush(dict, EditorFormatDefinition.ForegroundBrushId, defaultBrush);
+		public static Brush GetBackgroundBrush(ResourceDictionary dict, Brush defaultBrush = null) => GetBrush(dict, EditorFormatDefinition.BackgroundBrushId, defaultBrush);
 
-		[Export(typeof(EditorFormatDefinition))]
-		[Name(ThemeEditorFormatTypeNameKeys.InactiveSelectedText)]
-		[UserVisible(true)]
-		sealed class InactiveSelectedText : ThemeEditorFormatDefinition {
-			InactiveSelectedText() : base(ColorType.InactiveSelectedText) { }
+		public static Brush GetBrush(ResourceDictionary dict, string prop, Brush defaultBrush = null) {
+			var brush = dict[prop] as Brush ?? defaultBrush;
+			if (brush != null && brush.CanFreeze)
+				brush.Freeze();
+			return brush;
 		}
 	}
 }

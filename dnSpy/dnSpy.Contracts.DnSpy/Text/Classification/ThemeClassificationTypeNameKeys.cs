@@ -742,12 +742,12 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="ColorType.SelectedText"/>
 		/// </summary>
-		public const string SelectedText = "SelectedText";
+		public const string SelectedText = "Selected Text";
 
 		/// <summary>
 		/// <see cref="ColorType.InactiveSelectedText"/>
 		/// </summary>
-		public const string InactiveSelectedText = "InactiveSelectedText";
+		public const string InactiveSelectedText = "Inactive Selected Text";
 
 		/// <summary>
 		/// <see cref="ColorType.LocalDefinition"/>
@@ -848,5 +848,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="ColorType.HexSelection"/>
 		/// </summary>
 		public const string HexSelection = "HexSelection";
+
+		/// <summary>
+		/// <see cref="ColorType.GlyphMargin"/>
+		/// </summary>
+		public const string GlyphMargin = "Indicator Margin";
 	}
 }

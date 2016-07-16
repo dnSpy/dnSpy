@@ -49,10 +49,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		protected override void OnRender(DrawingContext drawingContext) {
 			Size renderSize = this.RenderSize;
 			var theme = themeManager.Theme;
-			var bgColor = (theme.GetColor(ColorType.IconBar).Background as SolidColorBrush).Color;
-			drawingContext.DrawRectangle(theme.GetColor(ColorType.IconBar).Background, null,
+			var bgColor = (theme.GetColor(ColorType.Text/*ColorType.IconBar*/).Background as SolidColorBrush).Color;
+			drawingContext.DrawRectangle(theme.GetColor(ColorType.Text/*ColorType.IconBar*/).Background, null,
 										 new Rect(0, 0, renderSize.Width, renderSize.Height));
-			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.IconBarBorder).Background, 1),
+			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.Text/*ColorType.IconBarBorder*/).Background, 1),
 									new Point(renderSize.Width - 0.5, 0),
 									new Point(renderSize.Width - 0.5, renderSize.Height));
 

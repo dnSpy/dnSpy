@@ -65,14 +65,8 @@ namespace dnSpy.Text.Editor {
 		void UpdateBackgroundBrush() => marker.BackgroundBrush = GetBackgroundBrush();
 
 		Brush GetBackgroundBrush() {
-			var props = editorFormatMap.GetProperties(IsActive ? ThemeEditorFormatTypeNameKeys.SelectedText : ThemeEditorFormatTypeNameKeys.InactiveSelectedText);
-			var bg = props[EditorFormatDefinition.BackgroundBrushId] as Brush;
-			Debug.Assert(bg != null);
-			if (bg == null)
-				bg = IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush;
-			if (bg.CanFreeze)
-				bg.Freeze();
-			return bg;
+			var props = editorFormatMap.GetProperties(IsActive ? ThemeClassificationTypeNameKeys.SelectedText : ThemeClassificationTypeNameKeys.InactiveSelectedText);
+			return ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -86,8 +80,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
-			if ((IsActive && e.ChangedItems.Contains(ThemeEditorFormatTypeNameKeys.SelectedText)) ||
-				(!IsActive && e.ChangedItems.Contains(ThemeEditorFormatTypeNameKeys.InactiveSelectedText))) {
+			if ((IsActive && e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.SelectedText)) ||
+				(!IsActive && e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.InactiveSelectedText))) {
 				UpdateBackgroundBrush();
 			}
 		}

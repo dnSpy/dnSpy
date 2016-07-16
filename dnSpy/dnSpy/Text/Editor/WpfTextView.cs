@@ -300,10 +300,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateBackground() {
 			var bgProps = editorFormatMap.GetProperties(EditorFormatMapConstants.TextViewBackgroundId);
-			var bg = bgProps[EditorFormatDefinition.BackgroundBrushId] as Brush ?? SystemColors.WindowBrush;
-			if (bg.CanFreeze)
-				bg.Freeze();
-			Background = bg;
+			Background = ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
 		}
 
 		void TextAndAdornmentSequencer_SequenceChanged(object sender, TextAndAdornmentSequenceChangedEventArgs e) =>

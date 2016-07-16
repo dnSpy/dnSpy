@@ -21,8 +21,7 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace dnSpy.Text.Editor {
-	abstract class DefaultMouseProcessor {
-		protected DefaultMouseProcessor() { }
+	class DefaultMouseProcessor {
 		public virtual void OnDragEnter(object sender, DragEventArgs e) { }
 		public virtual void OnDragLeave(object sender, DragEventArgs e) { }
 		public virtual void OnDragOver(object sender, DragEventArgs e) { }

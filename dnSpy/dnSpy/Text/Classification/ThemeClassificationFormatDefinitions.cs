@@ -868,6 +868,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexSelection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexSelectionClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.GlyphMargin)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition GlyphMarginClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2335,6 +2340,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class HexSelection : ThemeClassificationFormatDefinition {
 			HexSelection() : base(ColorType.HexSelection) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.GlyphMargin)]
+		[Name(ThemeClassificationTypeNameKeys.GlyphMargin)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class GlyphMargin : ThemeClassificationFormatDefinition {
+			GlyphMargin() : base(ColorType.GlyphMargin) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

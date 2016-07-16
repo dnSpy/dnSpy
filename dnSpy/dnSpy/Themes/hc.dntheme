@@ -21,6 +21,7 @@
 		<color name="hexcaret" bg="#C0FFFFFF" />
 		<color name="hexinactivecaret" bg="#FFFFFFFF" />
 		<color name="hexselection" bg="#33FFFFFF" />
+		<color name="glyphmargin" bg="#FFE6E7E8" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />
@@ -358,8 +359,6 @@
 		<color name="treeviewglyph" bg="#FFFFFFFF" />
 		<color name="treeviewglyphmouseover" bg="#FF800080" />
 		<color name="tvitemalternationbackground" bg="#FF808080" />
-		<color name="iconbar" bg="#E6E7E8" />
-		<color name="iconbarborder" bg="#FFFFFFFF" />
 		<color name="environmentfiletabbackground" bg="#FF000000" />
 		<color name="environmentfiletabborder" bg="#FF000000" />
 		<color name="environmentfiletabbuttondowninactiveborder" bg="#FFFFFFFF" />

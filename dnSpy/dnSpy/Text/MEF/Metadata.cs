@@ -121,4 +121,18 @@ namespace dnSpy.Text.MEF {
 		[DefaultValue(null)]
 		string OptionName { get; }
 	}
+
+	public interface IOrderableContentTypeMetadata : IContentTypeMetadata, IOrderable {
+	}
+
+	public interface IGlyphMarginMetadata {
+		[DefaultValue(null)]
+		IEnumerable<string> GlyphMargins { get; }
+	}
+
+	public interface IGlyphMouseProcessorProviderMetadata : IGlyphMarginMetadata, IOrderableContentTypeMetadata {
+	}
+
+	public interface IGlyphMetadata : ITaggerMetadata, IOrderable {
+	}
 }

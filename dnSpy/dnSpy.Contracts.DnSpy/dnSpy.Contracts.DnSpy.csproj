@@ -454,7 +454,6 @@
     <Compile Include="Text\Classification\ThemeClassificationTypeNameKeys.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNames.cs" />
     <Compile Include="Text\Classification\ThemeEditorFormatDefinition.cs" />
-    <Compile Include="Text\Classification\ThemeEditorFormatTypeNameKeys.cs" />
     <Compile Include="Text\Color.cs" />
     <Compile Include="Text\ContentTypes.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />

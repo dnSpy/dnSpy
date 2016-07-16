@@ -186,6 +186,7 @@ namespace dnSpy.Decompiler.Shared {
 		HexCaret,
 		HexInactiveCaret,
 		HexSelection,
+		GlyphMargin,
 
 		// If you add a new one, also update ColorType
 
@@ -359,6 +360,7 @@ namespace dnSpy.Decompiler.Shared {
 		public static readonly object HexCaret = TextTokenKind.HexCaret;
 		public static readonly object HexInactiveCaret = TextTokenKind.HexInactiveCaret;
 		public static readonly object HexSelection = TextTokenKind.HexSelection;
+		public static readonly object GlyphMargin = TextTokenKind.GlyphMargin;
 
 		public static object Box(this TextTokenKind textTokenKind) {
 			Debug.Assert(0 <= textTokenKind && textTokenKind < TextTokenKind.Last);
@@ -532,6 +534,7 @@ namespace dnSpy.Decompiler.Shared {
 			HexCaret,
 			HexInactiveCaret,
 			HexSelection,
+			GlyphMargin,
 		};
 	}
 

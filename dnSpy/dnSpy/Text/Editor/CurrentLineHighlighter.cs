@@ -178,15 +178,8 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateLineElementBrushes() {
 			var props = editorFormatMap.GetProperties(isActive ? ThemeClassificationTypeNameKeys.CurrentLine : ThemeClassificationTypeNameKeys.CurrentLineNoFocus);
-			currentLineHighlighterElement.ForegroundBrush = GetBrush(props, EditorFormatDefinition.ForegroundBrushId);
-			currentLineHighlighterElement.BackgroundBrush = GetBrush(props, EditorFormatDefinition.BackgroundBrushId);
-		}
-
-		static Brush GetBrush(ResourceDictionary dict, string prop) {
-			var brush = dict[prop] as Brush;
-			if (brush != null && brush.CanFreeze)
-				brush.Freeze();
-			return brush;
+			currentLineHighlighterElement.ForegroundBrush = ResourceDictionaryUtilities.GetForegroundBrush(props);
+			currentLineHighlighterElement.BackgroundBrush = ResourceDictionaryUtilities.GetBackgroundBrush(props);
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {

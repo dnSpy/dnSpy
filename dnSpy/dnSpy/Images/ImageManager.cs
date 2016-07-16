@@ -61,6 +61,7 @@ namespace dnSpy.Images {
 			case BackgroundType.TitleAreaActive:	return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
 			case BackgroundType.TitleAreaInactive:	return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
 			case BackgroundType.CommandBar:			return GetColorBackground(ColorType.EnvironmentCommandBarIcon);
+			case BackgroundType.GlyphMargin:		return GetColorBackground(ColorType.GlyphMargin);
 			default:
 				Debug.Fail("Invalid bg type");
 				return GetColorBackground(ColorType.SystemColorsWindow);

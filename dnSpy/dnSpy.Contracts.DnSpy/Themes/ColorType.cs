@@ -188,6 +188,7 @@ namespace dnSpy.Contracts.Themes {
 		HexCaret,
 		HexInactiveCaret,
 		HexSelection,
+		GlyphMargin,
 
 		// Must be last in this group
 		LastNR,
@@ -540,8 +541,6 @@ namespace dnSpy.Contracts.Themes {
 		TreeViewGlyph,
 		TreeViewGlyphMouseOver,
 		TVItemAlternationBackground,
-		IconBar,
-		IconBarBorder,
 		EnvironmentFileTabBackground,
 		EnvironmentFileTabBorder,
 		EnvironmentFileTabButtonDownInactiveBorder,

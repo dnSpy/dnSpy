@@ -190,6 +190,7 @@ namespace dnSpy.Contracts.Text {
 		HexCaret,
 		HexInactiveCaret,
 		HexSelection,
+		GlyphMargin,
 
 		/// <summary>
 		/// Must be last
@@ -366,6 +367,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexCaret = OutputColor.HexCaret;
 		public static readonly object HexInactiveCaret = OutputColor.HexInactiveCaret;
 		public static readonly object HexSelection = OutputColor.HexSelection;
+		public static readonly object GlyphMargin = OutputColor.GlyphMargin;
 
 		public static object Box(this OutputColor OutputColor) {
 			Debug.Assert(0 <= OutputColor && OutputColor < OutputColor.Last);
@@ -539,6 +541,7 @@ namespace dnSpy.Contracts.Text {
 			HexCaret,
 			HexInactiveCaret,
 			HexSelection,
+			GlyphMargin,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

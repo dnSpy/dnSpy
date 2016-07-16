@@ -151,6 +151,7 @@
 		<color name="debuglogprogramoutput" fg="#FF996600" />
 		<color name="debuglogmda" fg="#FFFF0000" />
 		<color name="debuglogtimestamp" fg="#FF6600CC" />
+		<color name="glyphmargin" bg="#FFE6E7E8" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />
@@ -488,8 +489,6 @@
 		<color name="treeviewglyph" bg="#FF1E1E1E" />
 		<color name="treeviewglyphmouseover" bg="#FF007ACC" />
 		<color name="tvitemalternationbackground" bg="WhiteSmoke" />
-		<color name="iconbar" bg="#E6E7E8" />
-		<color name="iconbarborder" bg="#CFD0D1" />
 		<color name="environmentfiletabbackground" bg="#FF364E6F" />
 		<color name="environmentfiletabborder" bg="#FF364E6F" />
 		<color name="environmentfiletabbuttondowninactiveborder" bg="#FFE5C365" />
