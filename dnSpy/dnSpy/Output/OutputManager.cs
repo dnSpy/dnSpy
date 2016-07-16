@@ -130,14 +130,16 @@ namespace dnSpy.Output {
 		readonly IPickSaveFilename pickSaveFilename;
 		Guid prevSelectedGuid;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly IMenuManager menuManager;
 
 		[ImportingConstructor]
-		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename) {
+		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuManager menuManager) {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorCreator = logEditorCreator;
 			this.outputManagerSettingsImpl = outputManagerSettingsImpl;
 			this.prevSelectedGuid = outputManagerSettingsImpl.SelectedGuid;
 			this.pickSaveFilename = pickSaveFilename;
+			this.menuManager = menuManager;
 			this.outputBuffers = new ObservableCollection<OutputBufferVM>();
 			this.outputBuffers.CollectionChanged += OutputBuffers_CollectionChanged;
 		}
@@ -183,6 +185,9 @@ namespace dnSpy.Output {
 			logEditorOptions.ExtraRoles.Add(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE);
 			var logEditor = logEditorCreator.Create(logEditorOptions);
 			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
+
+			// Prevent toolwindow's ctx menu from showing up when right-clicking in the left margin
+			menuManager.InitializeContextMenu(logEditor.TextViewHost.HostControl, Guid.NewGuid());
 
 			vm = new OutputBufferVM(editorOperationsFactoryService, guid, name, logEditor);
 			int index = GetSortedInsertIndex(vm);
