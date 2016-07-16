@@ -209,17 +209,24 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateScrolling(MouseEventArgs e) {
-			StopScrolling();
-			wpfTextView.Caret.EnsureVisible();
-
 			var mouseLoc = GetLocation(e);
 			TimeSpan interval;
 			var scrollDir = GetScrollDirection(mouseLoc, out interval);
-			if (scrollDir == null)
+			if (scrollDir == null) {
+				StopScrolling();
+				wpfTextView.Caret.EnsureVisible();
 				return;
+			}
 
-			dispatcherTimer = new DispatcherTimer(interval, DispatcherPriority.Normal, (s, e2) => OnScroll(scrollDir.Value, mouseLoc.Point.X), wpfTextView.VisualElement.Dispatcher);
-			OnScroll(scrollDir.Value, mouseLoc.Point.X);
+			if (dispatcherTimer != null) {
+				// It resets the timer if we write a new value, even if it's identical to the original value
+				if (dispatcherTimer.Interval != interval)
+					dispatcherTimer.Interval = interval;
+			}
+			else {
+				dispatcherTimer = new DispatcherTimer(interval, DispatcherPriority.Normal, (s, e2) => OnScroll(scrollDir.Value, mouseLoc.Point.X), wpfTextView.VisualElement.Dispatcher);
+				OnScroll(scrollDir.Value, mouseLoc.Point.X);
+			}
 		}
 
 		ScrollDirection? GetScrollDirection(MouseLocation mouseLoc, out TimeSpan interval) {
