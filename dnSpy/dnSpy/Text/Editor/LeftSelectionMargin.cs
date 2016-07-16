@@ -24,6 +24,7 @@ using System.Windows.Media;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
@@ -87,8 +88,11 @@ namespace dnSpy.Text.Editor {
 				// Needed or the scrolling will stop
 				if (mouseLoc.Point.Y <= wpfTextViewHost.TextView.ViewportTop)
 					editorOperations.ScrollUpAndMoveCaretIfNecessary();
-				else if (mouseLoc.Point.Y >= wpfTextViewHost.TextView.ViewportBottom)
-					editorOperations.ScrollDownAndMoveCaretIfNecessary();
+				else if (mouseLoc.Point.Y >= wpfTextViewHost.TextView.ViewportBottom) {
+					var lastVisLine = wpfTextViewHost.TextView.TextViewLines.LastVisibleLine;
+					if (!lastVisLine.IsLastDocumentLine() || lastVisLine.VisibilityState != VisibilityState.FullyVisible)
+						editorOperations.ScrollDownAndMoveCaretIfNecessary();
+				}
 				e.Handled = true;
 				return;
 			}
