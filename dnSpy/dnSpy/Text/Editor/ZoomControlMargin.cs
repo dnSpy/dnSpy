@@ -70,11 +70,21 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.ZoomControlId.Name || e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
 				Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+			else if (!Enabled) {
+				// Ignore all other options
+			}
+			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelId.Name)
+				UpdateTextWithZoomLevel();
+		}
+
+		double TextViewZoomLevel {
+			get { return wpfTextViewHost.TextView.Options.GlobalOptions.ZoomLevel(); }
+			set { wpfTextViewHost.TextView.Options.GlobalOptions.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, value); }
 		}
 
 		protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e) {
 			base.OnGotKeyboardFocus(e);
-			originalZoomLevel = wpfTextViewHost.TextView.ZoomLevel;
+			originalZoomLevel = TextViewZoomLevel;
 		}
 		double? originalZoomLevel;
 
@@ -95,7 +105,7 @@ namespace dnSpy.Text.Editor {
 				if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 					Debug.Assert(originalZoomLevel != null);
 					if (originalZoomLevel != null)
-						wpfTextViewHost.TextView.ZoomLevel = originalZoomLevel.Value;
+						TextViewZoomLevel = originalZoomLevel.Value;
 					UpdateTextWithZoomLevel();
 					wpfTextViewHost.TextView.VisualElement.Focus();
 					e.Handled = true;
@@ -114,7 +124,6 @@ namespace dnSpy.Text.Editor {
 
 		void ZoomControlMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible) {
-				RegisterEvents();
 				originalZoomLevel = null;
 				UpdateTextWithZoomLevel();
 
@@ -128,46 +137,23 @@ namespace dnSpy.Text.Editor {
 				if (horizontalScrollBarMargin != null)
 					Height = horizontalScrollBarMargin.VisualElement.Height;
 			}
-			else
-				UnregisterEvents();
 		}
 		IWpfTextViewMargin horizontalScrollBarMargin;
 
 		void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) =>
 			Height = e.NewSize.Height;
 
-		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) {
-			if (wpfTextViewHost.IsClosed)
-				return;
-			UpdateTextWithZoomLevel();
-		}
-
 		void UpdateTextWithZoomLevel() {
-			var s = zoomLevelConverter.Convert(wpfTextViewHost.TextView.ZoomLevel, typeof(string), null, CultureInfo.CurrentUICulture) as string;
-			Text = s ?? wpfTextViewHost.TextView.ZoomLevel.ToString("F0");
+			var s = zoomLevelConverter.Convert(TextViewZoomLevel, typeof(string), null, CultureInfo.CurrentUICulture) as string;
+			Text = s ?? TextViewZoomLevel.ToString("F0");
 		}
 
 		bool TryUpdateZoomLevel() {
 			double? newValue = zoomLevelConverter.ConvertBack(Text, typeof(double), null, CultureInfo.CurrentUICulture) as double?;
 			if (newValue == null || newValue.Value < ZoomConstants.MinZoom || newValue.Value > ZoomConstants.MaxZoom)
 				return false;
-			wpfTextViewHost.TextView.ZoomLevel = newValue.Value;
+			TextViewZoomLevel = newValue.Value;
 			return true;
-		}
-
-		bool hasRegisteredEvents;
-		void RegisterEvents() {
-			if (hasRegisteredEvents)
-				return;
-			if (wpfTextViewHost.IsClosed)
-				return;
-			hasRegisteredEvents = true;
-			wpfTextViewHost.TextView.ZoomLevelChanged += TextView_ZoomLevelChanged;
-		}
-
-		void UnregisterEvents() {
-			hasRegisteredEvents = false;
-			wpfTextViewHost.TextView.ZoomLevelChanged -= TextView_ZoomLevelChanged;
 		}
 
 		public void Dispose() {
@@ -175,7 +161,6 @@ namespace dnSpy.Text.Editor {
 			wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
 			if (horizontalScrollBarMargin != null)
 				horizontalScrollBarMargin.VisualElement.SizeChanged -= VisualElement_SizeChanged;
-			UnregisterEvents();
 		}
 	}
 }
