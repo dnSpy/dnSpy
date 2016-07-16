@@ -78,7 +78,13 @@ namespace dnSpy.Text.Editor {
 		IWpfTextViewMargin CreateContainerMargin(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, string name, bool isHorizontal, int row, int column, int columnSpan) {
 			var margin = new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionCreator, this, name, isHorizontal);
 			Add(margin.VisualElement, row, column, columnSpan);
+			margin.VisualElement.AddHandler(MouseDownEvent, new MouseButtonEventHandler(Margin_VisualElement_MouseDown), true);
 			return margin;
+		}
+
+		void Margin_VisualElement_MouseDown(object sender, MouseButtonEventArgs e) {
+			if (!IsKeyboardFocusWithin)
+				TextView.VisualElement.Focus();
 		}
 
 		void Add(UIElement elem, int row, int column, int columnSpan) {
@@ -115,8 +121,10 @@ namespace dnSpy.Text.Editor {
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
 			TextView.BackgroundBrushChanged -= TextView_BackgroundBrushChanged;
-			foreach (var margin in containerMargins)
+			foreach (var margin in containerMargins) {
+				margin.VisualElement.MouseDown -= Margin_VisualElement_MouseDown;
 				margin.Dispose();
+			}
 		}
 
 		public IWpfTextViewMargin GetTextViewMargin(string marginName) {

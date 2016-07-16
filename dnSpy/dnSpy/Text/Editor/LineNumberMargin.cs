@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -98,16 +97,20 @@ namespace dnSpy.Text.Editor {
 			this.textFormatterProvider = textFormatterProvider;
 			this.Children.Add(textLayer);
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
+			IsVisibleChanged += LineNumberMargin_IsVisibleChanged;
 			ClipToBounds = true;
-			UpdateLineNumberMarginVisible();
+			IsHitTestVisible = false;
+			UpdateVisibility();
 		}
+
+		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
 		public ITextViewMargin GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.LineNumber) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
-				UpdateLineNumberMarginVisible();
+				UpdateVisibility();
 			else if (!Enabled) {
 				// Ignore all other options when it's disabled
 			}
@@ -120,12 +123,10 @@ namespace dnSpy.Text.Editor {
 		void UpdateForceClearTypeIfNeeded() =>
 			TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, wpfTextViewHost.TextView.Options, classificationFormatMap);
 
-		bool hasHookedEvents;
-		void UpdateLineNumberMarginVisible() {
-			if (Enabled) {
-				Visibility = Visibility.Visible;
-				if (!hasHookedEvents) {
-					RegisterVisibleMarginEvents();
+		void LineNumberMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			if (Visibility == Visibility.Visible) {
+				if (!hasRegisteredEvents) {
+					RegisterEvents();
 					SetTop(textLayer, -wpfTextViewHost.TextView.ViewportTop);
 					UpdateMaxLineDigits();
 					UpdateLineNumberLayerSize();
@@ -135,31 +136,13 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 			else {
-				Visibility = Visibility.Collapsed;
-				if (hasHookedEvents)
-					UnregisterVisibleMarginEvents();
+				if (hasRegisteredEvents)
+					UnregisterEvents();
 				ClearLines();
 				defaultTextParagraphProperties = null;
 				textFormatter = null;
 				lineNumberTextFormattingRunProperties = null;
 			}
-		}
-
-		void RegisterVisibleMarginEvents() {
-			Debug.Assert(!hasHookedEvents);
-			if (hasHookedEvents)
-				return;
-			hasHookedEvents = true;
-			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
-			wpfTextViewHost.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
-			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
-		}
-
-		void UnregisterVisibleMarginEvents() {
-			hasHookedEvents = false;
-			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
-			wpfTextViewHost.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
-			wpfTextViewHost.TextView.LayoutChanged -= TextView_LayoutChanged;
 		}
 
 		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) => UpdateMaxLineDigits();
@@ -278,9 +261,29 @@ namespace dnSpy.Text.Editor {
 			textLayer.Clear();
 		}
 
+		bool hasRegisteredEvents;
+		void RegisterEvents() {
+			if (hasRegisteredEvents)
+				return;
+			if (wpfTextViewHost.IsClosed)
+				return;
+			hasRegisteredEvents = true;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+			wpfTextViewHost.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
+			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
+		}
+
+		void UnregisterEvents() {
+			hasRegisteredEvents = false;
+			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
+			wpfTextViewHost.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
+			wpfTextViewHost.TextView.LayoutChanged -= TextView_LayoutChanged;
+		}
+
 		public void Dispose() {
 			wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
-			UnregisterVisibleMarginEvents();
+			IsVisibleChanged -= LineNumberMargin_IsVisibleChanged;
+			UnregisterEvents();
 			ClearLines();
 			textLayer.Dispose();
 		}

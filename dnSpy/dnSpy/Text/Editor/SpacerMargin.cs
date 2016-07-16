@@ -67,14 +67,17 @@ namespace dnSpy.Text.Editor {
 			Width = SELECTION_MARGIN_WIDTH;
 			ClipToBounds = true;
 			IsHitTestVisible = false;
+			UpdateVisibility();
 		}
+
+		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
 		public ITextViewMargin GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Spacer) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.SelectionMarginId.Name)
-				Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+				UpdateVisibility();
 		}
 
 		public void Dispose() =>

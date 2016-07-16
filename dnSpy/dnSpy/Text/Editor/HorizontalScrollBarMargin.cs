@@ -56,7 +56,10 @@ namespace dnSpy.Text.Editor {
 			Orientation = System.Windows.Controls.Orientation.Horizontal;
 			SmallChange = 12.0;
 			Minimum = 0;
+			UpdateVisibility();
 		}
+
+		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
 		public ITextViewMargin GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.HorizontalScrollBar, marginName) ? this : null;
@@ -69,7 +72,7 @@ namespace dnSpy.Text.Editor {
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
-				Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+				UpdateVisibility();
 			else if (!Enabled) {
 				// Ignore any other options
 			}

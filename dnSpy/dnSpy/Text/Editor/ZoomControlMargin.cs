@@ -62,14 +62,17 @@ namespace dnSpy.Text.Editor {
 			MinHeight = 0;
 			Margin = new Thickness(0);
 			Width = 60;
+			UpdateVisibility();
 		}
+
+		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
 		public ITextViewMargin GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.ZoomControl, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.ZoomControlId.Name || e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
-				Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+				UpdateVisibility();
 			else if (!Enabled) {
 				// Ignore all other options
 			}

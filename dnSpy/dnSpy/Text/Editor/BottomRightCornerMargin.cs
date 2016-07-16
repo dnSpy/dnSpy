@@ -45,9 +45,6 @@ namespace dnSpy.Text.Editor {
 		public double MarginSize => ActualHeight;
 		public FrameworkElement VisualElement => this;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
-			StringComparer.OrdinalIgnoreCase.Equals(NAME, marginName) ? this : null;
-
 		readonly IWpfTextViewHost wpfTextViewHost;
 
 		public BottomRightCornerMargin(IWpfTextViewHost wpfTextViewHost) {
@@ -56,11 +53,17 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextViewHost = wpfTextViewHost;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			SetResourceReference(BackgroundProperty, "EnvironmentScrollBarBackground");
+			UpdateVisibility();
 		}
+
+		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+
+		public ITextViewMargin GetTextViewMargin(string marginName) =>
+			StringComparer.OrdinalIgnoreCase.Equals(NAME, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
-				Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
+				UpdateVisibility();
 		}
 
 		public void Dispose() => wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
