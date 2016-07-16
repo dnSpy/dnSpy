@@ -278,6 +278,8 @@ namespace dnSpy.Tabs {
 		void AddEvents(TabItemImpl impl) {
 			impl.MouseRightButtonDown += tabItem_MouseRightButtonDown;
 			impl.PreviewMouseDown += tabItem_PreviewMouseDown;
+			impl.PreviewMouseUp += tabItem_PreviewMouseUp;
+			impl.PreviewMouseMove += tabItem_PreviewMouseMove;
 			impl.DragOver += tabItem_DragOver;
 			impl.Drop += tabItem_Drop;
 			impl.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_GotKeyboardFocus), true);
@@ -287,6 +289,8 @@ namespace dnSpy.Tabs {
 		void RemoveEvents(TabItemImpl impl) {
 			impl.MouseRightButtonDown -= tabItem_MouseRightButtonDown;
 			impl.PreviewMouseDown -= tabItem_PreviewMouseDown;
+			impl.PreviewMouseUp -= tabItem_PreviewMouseUp;
+			impl.PreviewMouseMove -= tabItem_PreviewMouseMove;
 			impl.DragOver -= tabItem_DragOver;
 			impl.Drop -= tabItem_Drop;
 			impl.RemoveHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_GotKeyboardFocus));
@@ -324,18 +328,30 @@ namespace dnSpy.Tabs {
 			tabControl.SelectedItem = tabItem;
 		}
 
-		bool IsDragArea(object sender, MouseButtonEventArgs e, TabItem tabItem) => IsDraggableAP.GetIsDraggable(e.OriginalSource as FrameworkElement);
+		bool IsDragArea(object sender, MouseEventArgs e, TabItem tabItem) => IsDraggableAP.GetIsDraggable(e.OriginalSource as FrameworkElement);
 
-		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
-			var tabItem = GetTabItemImpl(sender);
+		bool GetTabItem(object sender, MouseEventArgs e, out TabItemImpl tabItem, out TabControl tabControl) {
+			tabItem = null;
+			tabControl = null;
+
+			tabItem = GetTabItemImpl(sender);
 			if (tabItem == null)
-				return;
+				return false;
 
-			var tabControl = tabItem.Parent as TabControl;
+			tabControl = tabItem.Parent as TabControl;
 			if (tabControl == null)
-				return;
+				return false;
 
 			if (!IsDragArea(sender, e, tabItem))
+				return false;
+
+			return true;
+		}
+
+		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
+			TabItemImpl tabItem;
+			TabControl tabControl;
+			if (!GetTabItem(sender, e, out tabItem, out tabControl))
 				return;
 
 			if (tabControl.SelectedItem == tabItem)
@@ -346,21 +362,32 @@ namespace dnSpy.Tabs {
 				tabControl.SelectedItem = tabItem;
 			}
 
-			if (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed) {
-				// Don't call DoDragDrop() immediately because it takes ownership of the mouse and
-				// prevents the pressed TabItem from becoming selected. When we don't want to drag
-				// a tab, the TabItem gets selected first when we release the mouse pointer instead
-				// of instantly when we press it. It makes the program feel slow.
-				tabControl.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					// Make sure it's still the active TabItem
-					if (tabControl.SelectedItem == tabItem) {
-						try {
-							DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
-						}
-						catch (COMException) { // Rarely happens
-						}
-					}
-				}));
+			possibleDrag = true;
+		}
+		bool possibleDrag;
+
+		void tabItem_PreviewMouseUp(object sender, MouseButtonEventArgs e) => possibleDrag = false;
+
+		void tabItem_PreviewMouseMove(object sender, MouseEventArgs e) {
+			bool oldPossibleDrag = possibleDrag;
+			possibleDrag = false;
+			if (!oldPossibleDrag)
+				return;
+
+			if (!(Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed))
+				return;
+
+			TabItemImpl tabItem;
+			TabControl tabControl;
+			if (!GetTabItem(sender, e, out tabItem, out tabControl))
+				return;
+
+			if (tabControl.SelectedItem == tabItem) {
+				try {
+					DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+				}
+				catch (COMException) { // Rarely happens
+				}
 			}
 		}
 
