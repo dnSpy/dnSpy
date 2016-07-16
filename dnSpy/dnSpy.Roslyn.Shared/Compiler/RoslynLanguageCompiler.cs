@@ -97,7 +97,6 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			var codeEditor = roslynCodeEditorCreator.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
-			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !codeEditor.TextView.Options.IsLineNumberMarginEnabled());
 
 			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), nameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
 			return new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);

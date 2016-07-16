@@ -133,7 +133,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			wpfTextView.Properties.AddProperty(typeof(TextEditorControl), this);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			TextEditor = textView.DnSpyTextEditor;
 			this.toolTipHelper.Initialize(TextEditor);

@@ -49,13 +49,8 @@ namespace dnSpy.Text.Editor {
 
 		public bool ShowLineNumbers {
 			get { return wpfTextView.Options.IsLineNumberMarginEnabled(); }
-			set {
-				wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value);
-				UpdatePaddingElement();
-			}
+			set { wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value); }
 		}
-
-		void UpdatePaddingElement() => wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.SelectionMarginId, !ShowLineNumbers);
 
 		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
 		readonly IDnSpyWpfTextView wpfTextView;
@@ -103,7 +98,6 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultDisabled);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
 			SetNewDocument();
-			UpdatePaddingElement();
 		}
 
 		void SetNewDocument() {
