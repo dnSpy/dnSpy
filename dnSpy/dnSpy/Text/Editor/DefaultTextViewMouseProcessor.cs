@@ -166,6 +166,9 @@ namespace dnSpy.Text.Editor {
 						StopScrolling();
 
 						var mouseLoc = GetLocation(e);
+						// Same behavior as in VS: don't scroll if it's word or line selection
+						if (!mouseLoc.TextViewLine.IsVisible())
+							return;
 						wpfTextView.Caret.MoveTo(mouseLoc.Position);
 
 						wpfTextView.Selection.Mode = TextSelectionMode.Stream;
