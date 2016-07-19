@@ -1392,9 +1392,12 @@ namespace dnSpy.Text.Editor.Operations {
 			else
 				Selection.Select(anchorPoint, activePoint);
 			Selection.Mode = selectionMode;
+			activePoint = activePoint.TranslateTo(Snapshot);
 			Caret.MoveTo(activePoint);
 			if (scrollOptions == null)
 				return;
+			anchorPoint = anchorPoint.TranslateTo(Snapshot);
+			activePoint = activePoint.TranslateTo(Snapshot);
 			if (activePoint > anchorPoint)
 				ViewScroller.EnsureSpanVisible(new SnapshotSpan(anchorPoint.Position, activePoint.Position), scrollOptions.Value & ~EnsureSpanVisibleOptions.ShowStart);
 			else
