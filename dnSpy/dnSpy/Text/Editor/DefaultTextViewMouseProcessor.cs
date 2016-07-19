@@ -302,7 +302,8 @@ namespace dnSpy.Text.Editor {
 				if (line.VisibilityState == VisibilityState.FullyVisible && !line.IsFirstDocumentLine())
 					line = wpfTextView.GetTextViewLineContainingBufferPosition(line.Start - 1);
 				lineStart = line.Start;
-				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Top);
+				if (line.VisibilityState != VisibilityState.FullyVisible)
+					wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Top);
 				if (!line.IsValid)
 					line = wpfTextView.GetTextViewLineContainingBufferPosition(lineStart);
 				if (line.IsFirstDocumentLine())
@@ -315,7 +316,8 @@ namespace dnSpy.Text.Editor {
 				if (line.VisibilityState == VisibilityState.FullyVisible && !line.IsLastDocumentLine())
 					line = wpfTextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
 				lineStart = line.Start;
-				wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Bottom);
+				if (line.VisibilityState != VisibilityState.FullyVisible)
+					wpfTextView.DisplayTextLineContainingBufferPosition(line.Start, 0, ViewRelativePosition.Bottom);
 				if (!line.IsValid)
 					line = wpfTextView.GetTextViewLineContainingBufferPosition(lineStart);
 				if (line.IsLastDocumentLine())
