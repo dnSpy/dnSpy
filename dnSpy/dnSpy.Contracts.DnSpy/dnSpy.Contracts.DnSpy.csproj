@@ -455,6 +455,7 @@
     <Compile Include="Text\Classification\ThemeClassificationTypeNameKeys.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNames.cs" />
     <Compile Include="Text\Classification\ThemeEditorFormatDefinition.cs" />
+    <Compile Include="Text\Classification\ThemeMarkerFormatDefinition.cs" />
     <Compile Include="Text\Color.cs" />
     <Compile Include="Text\ContentTypes.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />
@@ -464,6 +465,7 @@
     <Compile Include="Text\Editor\DefaultDnSpyTextViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultDnSpyWpfViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultReplEditorOptions.cs" />
+    <Compile Include="Text\Editor\DnSpyAdornmentLayers.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
     <Compile Include="Text\Editor\IDnSpyTextEditorFactoryService.cs" />

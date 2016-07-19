@@ -62,6 +62,7 @@ namespace dnSpy.Text.Editor {
 		[Order(Before = PredefinedAdornmentLayers.Selection)]
 		[Order(Before = PredefinedAdornmentLayers.Text)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
+		[Order(Before = DnSpyAdornmentLayers.DnSpyTextMarker)]
 		[Order(After = PredefinedAdornmentLayers.Outlining)]
 		static AdornmentLayerDefinition theAdornmentLayerDefinition;
 #pragma warning restore 0169

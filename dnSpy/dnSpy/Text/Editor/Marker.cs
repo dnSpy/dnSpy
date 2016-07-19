@@ -177,7 +177,7 @@ namespace dnSpy.Text.Editor {
 				foreach (var info in GetMarkedLineInfos(infos, markedSpan)) {
 					if (toMarkedLine.ContainsKey(info.Line.IdentityTag))
 						continue;
-					var geo = MarkerHelper.CreateGeometry(textView, info.Span, markedSpans.IsBoxMode, info.IsMultiLineSpan);
+					var geo = MarkerHelper.CreateGeometry(textView, info.Span, markedSpans.IsBoxMode, info.IsMultiLineSpan, true);
 					if (geo == null)
 						continue;
 					var markedLine = new MarkedLine(info.Span, geo, info.Line.IdentityTag, BackgroundBrush, Pen);

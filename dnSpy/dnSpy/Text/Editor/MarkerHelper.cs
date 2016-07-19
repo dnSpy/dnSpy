@@ -37,7 +37,7 @@ namespace dnSpy.Text.Editor {
 			return line1.ExtentIncludingLineBreak != line2.ExtentIncludingLineBreak;
 		}
 
-		public static Geometry CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isBoxMode, bool isMultiLine, bool clipToViewport = false, int maxLines = 1) {
+		public static Geometry CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isBoxMode, bool isMultiLine, bool extraPixelsHack, bool clipToViewport = false, int maxLines = 1) {
 			// Force multiline mode if it's box selection or there'll be 1px-sized non-selected lines
 			// between the lines if you zoom in (eg. 110% zoom level)
 			if (isBoxMode)
@@ -74,7 +74,7 @@ namespace dnSpy.Text.Editor {
 					}
 					else
 						textBounds = line.GetNormalizedTextBounds(extent.SnapshotSpan);
-					AddGeometries(textView, textBounds, isMultiLine, clipToViewport, padding, SystemParameters.CaretWidth, ref geo, ref createOutlinedPath);
+					AddGeometries(textView, textBounds, isMultiLine, clipToViewport, padding, SystemParameters.CaretWidth, ref geo, ref createOutlinedPath, extraPixelsHack);
 				}
 
 				if (line.IsLastDocumentLine())
@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 			return geo;
 		}
 
-		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath) {
+		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath, bool extraPixelsHack) {
 			foreach (var bounds in textBounds) {
 				double left = bounds.Left - padding.Left;
 				double right = bounds.Right + padding.Right;
@@ -97,9 +97,17 @@ namespace dnSpy.Text.Editor {
 				if (isLineGeometry) {
 					top = bounds.Top - padding.Top;
 					bottom = bounds.Bottom + padding.Bottom;
-					// This is needed to prevent a 1px-sized non-selected line between the selected
-					// text lines when you've zoomed in to a certain zoom level (eg. 110%).
-					bottom += 0.5;
+					if (extraPixelsHack) {
+						// This is needed to prevent a 1px-sized non-selected line between the selected
+						// text lines when you've zoomed in to a certain zoom level (eg. 110%).
+						// It's only needed if GetOutlinedPathGeometry() isn't called, eg. it's used by
+						// the selection layer to only add new selected lines that have changed instead
+						// of updating the whole selection each time the selection changes (optimization
+						// for remote desktop and virtual machines).
+						// For most other normal layers (eg. text marker layer), this shouldn't be needed
+						// since the user can't change the size of the text marker.
+						bottom += 0.5;
+					}
 				}
 				else {
 					top = bounds.TextTop - padding.Top;

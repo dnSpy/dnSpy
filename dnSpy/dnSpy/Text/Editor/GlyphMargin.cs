@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Text.MEF;
@@ -296,7 +297,7 @@ namespace dnSpy.Text.Editor {
 
 		List<IconInfo> CreateIconInfos(IWpfTextViewLine line) {
 			var icons = new List<IconInfo>();
-			foreach (var mappingSpan in tagAggregator.GetTags(line.ExtentIncludingLineBreakAsMappingSpan)) {
+			foreach (var mappingSpan in tagAggregator.GetTags(line.ExtentAsMappingSpan)) {
 				var tag = mappingSpan.Tag;
 				Debug.Assert(tag != null);
 				if (tag == null)
@@ -380,7 +381,7 @@ namespace dnSpy.Text.Editor {
 				Background = newBackground;
 				// The images could depend on the background color, so recreate every icon
 				if (iconCanvas.Children.Count > 0)
-					RefreshEverything();
+					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(RefreshEverything));
 			}
 		}
 
