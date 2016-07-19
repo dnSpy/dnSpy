@@ -59,7 +59,7 @@ namespace dnSpy.Files.Tabs {
 					newValue = new NullFileTabUIContext();
 				if (uiContext != newValue) {
 					uiContext.OnHide();
-					elementScaler.InstallScale(newValue.ScaleElement);
+					elementScaler.InstallScale(newValue, newValue.ScaleElement);
 					newValue.OnShow();
 					uiContext = newValue;
 					UIObject = uiContext.UIObject;

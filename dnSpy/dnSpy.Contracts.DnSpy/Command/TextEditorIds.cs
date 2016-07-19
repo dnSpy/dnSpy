@@ -399,6 +399,10 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		ZoomOut,
 		/// <summary>
+		/// Resets the zoom level to the default zoom level
+		/// </summary>
+		ZoomReset,
+		/// <summary>
 		/// Move selected lines up
 		/// </summary>
 		MoveSelLinesUp,

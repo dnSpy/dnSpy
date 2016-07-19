@@ -176,6 +176,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.WORDPREV_EXT_COL:
 				case TextEditorIds.ZoomIn:
 				case TextEditorIds.ZoomOut:
+				case TextEditorIds.ZoomReset:
 					return false;
 
 				default:
@@ -302,6 +303,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.WORDPREV_EXT_COL:
 				case TextEditorIds.ZoomIn:
 				case TextEditorIds.ZoomOut:
+				case TextEditorIds.ZoomReset:
 					return CommandTargetStatus.Handled;
 				case TextEditorIds.CANCEL:
 					// Seems to match VS behavior. If we handle ESC when there's no selection, we can't press
@@ -753,6 +755,10 @@ namespace dnSpy.Text.Editor {
 
 				case TextEditorIds.ZoomOut:
 					EditorOperations.ZoomOut();
+					return CommandTargetStatus.Handled;
+
+				case TextEditorIds.ZoomReset:
+					EditorOperations.ZoomTo(ZoomConstants.DefaultZoom);
 					return CommandTargetStatus.Handled;
 
 				default:

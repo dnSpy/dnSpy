@@ -32,6 +32,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		void OnClose();
 		void OnVisible();
 		void OnHidden();
+		double ZoomLevel { get; }
 	}
 
 	abstract class ScriptContent : IScriptContent {
@@ -39,6 +40,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public IInputElement FocusedElement => replEditor.FocusedElement;
 		public FrameworkElement ScaleElement => replEditor.ScaleElement;
 		public ScriptControlVM ScriptControlVM => scriptControlVM;
+		public double ZoomLevel => replEditor.TextView.ZoomLevel;
 
 		readonly IReplEditor replEditor;
 		readonly ScriptControl scriptControl;

@@ -28,6 +28,7 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Output {
 	interface IOutputContent : IUIObjectProvider {
+		double ZoomLevel { get; }
 	}
 
 	[Export(typeof(IOutputContent))]
@@ -35,6 +36,7 @@ namespace dnSpy.Output {
 		public object UIObject => OutputControl;
 		public IInputElement FocusedElement => OutputManager.FocusedElement;
 		public FrameworkElement ScaleElement => OutputControl;
+		public double ZoomLevel => vmOutput.Value.ZoomLevel;
 		IOutputManagerInternal OutputManager => vmOutput.Value;
 
 		OutputControl OutputControl {

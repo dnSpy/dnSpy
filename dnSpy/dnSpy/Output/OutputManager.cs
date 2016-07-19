@@ -54,6 +54,7 @@ namespace dnSpy.Output {
 		bool ShowTimestamps { get; set; }
 		void RefreshThemeFields();
 		OutputBufferVM SelectedOutputBufferVM { get; }
+		double ZoomLevel { get; }
 	}
 
 	[Export(typeof(IOutputManagerInternal)), Export(typeof(IOutputManager))]
@@ -103,6 +104,7 @@ namespace dnSpy.Output {
 		public object TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
 		public IInputElement FocusedElement => SelectedOutputBufferVM?.FocusedElement;
 		public bool HasOutputWindows => SelectedOutputBufferVM != null;
+		public double ZoomLevel => SelectedOutputBufferVM?.ZoomLevel ?? 100;
 
 		public OutputBufferVM SelectedOutputBufferVM {
 			get { return selectedOutputBufferVM; }

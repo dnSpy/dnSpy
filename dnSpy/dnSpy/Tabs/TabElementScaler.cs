@@ -29,6 +29,7 @@ namespace dnSpy.Tabs {
 		readonly List<CommandBinding> commandBindings;
 		readonly List<KeyBinding> keyBindings;
 		FrameworkElement scaleElement;
+		IZoomable zoomable;
 
 		public TabElementScaler() {
 			this.commandBindings = new List<CommandBinding>();
@@ -45,7 +46,23 @@ namespace dnSpy.Tabs {
 			keyBindings.Add(new KeyBinding(cmd, Key.NumPad0, ModifierKeys.Control));
 		}
 
-		public void InstallScale(FrameworkElement elem) {
+		public void InstallScale(object obj, FrameworkElement elem) {
+			var zoomable = (obj as IZoomableProvider)?.Zoomable ?? obj as IZoomable;
+			if (zoomable != null)
+				InstallScale(zoomable);
+			else
+				InstallScale(elem);
+		}
+
+		void InstallScale(IZoomable zoomable) {
+			UninstallScale();
+			if (zoomable == null)
+				return;
+			this.zoomable = zoomable;
+			ScaleValue = zoomable.ScaleValue;
+		}
+
+		void InstallScale(FrameworkElement elem) {
 			UninstallScale();
 			scaleElement = elem;
 			if (scaleElement == null)
@@ -58,6 +75,8 @@ namespace dnSpy.Tabs {
 		}
 
 		void UninstallScale() {
+			currentScaleValue = 1;
+			zoomable = null;
 			if (scaleElement == null)
 				return;
 			if (metroWindow != null)
@@ -104,7 +123,7 @@ namespace dnSpy.Tabs {
 		void ZoomReset() => ScaleValue = 1;
 
 		public double ScaleValue {
-			get { return currentScaleValue; }
+			get { return zoomable?.ScaleValue ?? currentScaleValue; }
 			set {
 				var scale = value;
 				if (double.IsNaN(scale) || Math.Abs(scale - 1.0) < 0.05)

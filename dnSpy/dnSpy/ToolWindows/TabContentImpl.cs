@@ -85,7 +85,7 @@ namespace dnSpy.ToolWindows {
 		}
 		ContentPresenter contentPresenter;
 
-		void UpdateScaleElement() => elementScaler.InstallScale(Content.ScaleElement);
+		void UpdateScaleElement() => elementScaler.InstallScale(Content, Content.ScaleElement);
 
 		void ContentPresenter_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var cp = (ContentPresenter)sender;

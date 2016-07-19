@@ -57,10 +57,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		event EventHandler<EventArgs> NewTextContent;
 	}
 
-	sealed class TextEditorUIContext : ITextEditorUIContextImpl, ITextEditorHelper, IDisposable {
+	sealed class TextEditorUIContext : ITextEditorUIContextImpl, ITextEditorHelper, IZoomable, IDisposable {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
 		TextEditorControl textEditorControl;
+
+		double IZoomable.ScaleValue => textEditorControl.TextView.ZoomLevel / 100.0;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TextEditorUIContext uiContext;

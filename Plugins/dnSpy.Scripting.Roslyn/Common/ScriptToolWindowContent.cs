@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
@@ -39,7 +40,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public IToolWindowContent GetOrCreate(Guid guid) => guid == contentGuid ? ScriptToolWindowContent : null;
 	}
 
-	abstract class ScriptToolWindowContent : IToolWindowContent {
+	abstract class ScriptToolWindowContent : IToolWindowContent, IZoomable {
 		protected abstract IScriptContent ScriptContent { get; }
 		public IInputElement FocusedElement => ScriptContent.FocusedElement;
 		public FrameworkElement ScaleElement => ScriptContent.ScaleElement;
@@ -47,6 +48,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public abstract string Title { get; }
 		public object ToolTip => null;
 		public object UIObject => ScriptContent.UIObject;
+		double IZoomable.ScaleValue => ScriptContent.ZoomLevel / 100.0;
 
 		public ScriptToolWindowContent(Guid contentGuid) {
 			this.Guid = contentGuid;

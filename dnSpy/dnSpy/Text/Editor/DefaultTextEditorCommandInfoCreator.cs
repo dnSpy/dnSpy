@@ -135,7 +135,13 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.CtrlShift(Key.Left, TextEditorIds.WORDPREV_EXT.ToCommandInfo());
 			yield return CommandShortcut.CtrlShiftAlt(Key.Left, TextEditorIds.WORDPREV_EXT_COL.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.OemPeriod, TextEditorIds.ZoomIn.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.OemPlus, TextEditorIds.ZoomIn.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Add, TextEditorIds.ZoomIn.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.OemComma, TextEditorIds.ZoomOut.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.OemMinus, TextEditorIds.ZoomOut.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Subtract, TextEditorIds.ZoomOut.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.D0, TextEditorIds.ZoomReset.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.NumPad0, TextEditorIds.ZoomReset.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) => TextEditorIds.TYPECHAR.ToCommandInfo(text);

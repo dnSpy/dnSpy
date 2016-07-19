@@ -32,6 +32,7 @@ namespace dnSpy.Output {
 	sealed class OutputBufferVM : ViewModelBase, IOutputTextPane {
 		public IInputElement FocusedElement => logEditor.FocusedElement;
 		public object TextEditorUIObject => logEditor.UIObject;
+		public double ZoomLevel => logEditor.TextView.ZoomLevel;
 
 		public Guid Guid { get; }
 		public string Name { get; }

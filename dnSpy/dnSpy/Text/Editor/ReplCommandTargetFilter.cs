@@ -159,6 +159,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.WORDPREV_EXT_COL:
 				case TextEditorIds.ZoomIn:
 				case TextEditorIds.ZoomOut:
+				case TextEditorIds.ZoomReset:
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.GOTOLINE:
@@ -617,6 +618,10 @@ namespace dnSpy.Text.Editor {
 
 				case TextEditorIds.ZoomOut:
 					replEditor.ReplEditorOperations.ZoomOut();
+					return CommandTargetStatus.Handled;
+
+				case TextEditorIds.ZoomReset:
+					replEditor.ReplEditorOperations.ZoomTo(ZoomConstants.DefaultZoom);
 					return CommandTargetStatus.Handled;
 
 				default:

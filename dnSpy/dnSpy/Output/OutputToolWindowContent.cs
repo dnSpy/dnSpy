@@ -49,7 +49,7 @@ namespace dnSpy.Output {
 		public IToolWindowContent GetOrCreate(Guid guid) => guid == OutputToolWindowContent.THE_GUID ? OutputToolWindowContent : null;
 	}
 
-	sealed class OutputToolWindowContent : IToolWindowContent {
+	sealed class OutputToolWindowContent : IToolWindowContent, IZoomable {
 		public static readonly Guid THE_GUID = new Guid("90A45E97-727E-4F31-8692-06E19218D99A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
@@ -59,6 +59,7 @@ namespace dnSpy.Output {
 		public string Title => dnSpy_Resources.Window_Output;
 		public object ToolTip => null;
 		public object UIObject => outputContent.Value.UIObject;
+		double IZoomable.ScaleValue => outputContent.Value.ZoomLevel / 100.0;
 
 		readonly Lazy<IOutputContent> outputContent;
 
