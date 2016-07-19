@@ -231,8 +231,8 @@ namespace dnSpy.Text.Editor {
 			}
 			else {
 				UnregisterEvents();
-				lineInfos.Clear();
-				iconCanvas.Children.Clear();
+				lineInfos?.Clear();
+				iconCanvas?.Children.Clear();
 			}
 		}
 
