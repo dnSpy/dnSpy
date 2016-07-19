@@ -52,9 +52,10 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void UpdateTypeDefTable() {
 			var table = md.TablesStream.TypeDefTable;
-			int offset = (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
-			for (uint row = 0; row < table.Rows; row++, offset += rowSize) {
+			// Don't make the global type public so start from 2nd row
+			int offset = (int)table.StartOffset + rowSize;
+			for (uint row = 1; row < table.Rows; row++, offset += rowSize) {
 				var b = data[offset];
 				if ((b & 7) <= 1)
 					data[offset] = (byte)((b & ~7) | 1);	// Public

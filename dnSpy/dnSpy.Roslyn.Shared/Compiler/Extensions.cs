@@ -38,8 +38,12 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			}
 		}
 
-		public static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef) =>
-			MetadataReference.CreateFromImage(mdRef.Data, mdRef.IsAssemblyReference ? MetadataReferenceProperties.Assembly : MetadataReferenceProperties.Module);
+		public static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef) {
+			if (mdRef.IsAssemblyReference)
+				return MetadataReference.CreateFromImage(mdRef.Data, MetadataReferenceProperties.Assembly);
+			var moduleMetadata = ModuleMetadata.CreateFromImage(mdRef.Data);
+			return moduleMetadata.GetReference();
+		}
 
 		public static DebugFileFormat ToDebugFileFormat(this DebugInformationFormat format) {
 			switch (format) {
