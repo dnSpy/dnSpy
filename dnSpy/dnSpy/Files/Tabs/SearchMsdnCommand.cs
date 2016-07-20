@@ -39,7 +39,7 @@ namespace dnSpy.Files.Tabs {
 			internal static IMemberRef GetMemberRef(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
-				var @ref = context.Find<CodeReference>();
+				var @ref = context.Find<TextReference>();
 				return @ref == null ? null : @ref.Reference as IMemberRef;
 			}
 		}

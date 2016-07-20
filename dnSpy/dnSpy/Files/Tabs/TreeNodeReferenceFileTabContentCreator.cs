@@ -27,7 +27,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs {
-	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_CODEREF)]
+	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_TEXTREF)]
 	sealed class TreeNodeReferenceFileTabContentCreator : IReferenceFileTabContentCreator {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTabManagerSettings fileTabManagerSettings;
@@ -84,26 +84,26 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
-			var codeRef = @ref as CodeReference;
-			if (codeRef != null) {
-				var result = CreateMemberRefResult(fileTabManager, codeRef.Reference);
+			var textRef = @ref as TextReference;
+			if (textRef != null) {
+				var result = CreateMemberRefResult(fileTabManager, textRef.Reference);
 				if (result != null)
 					return result;
 
-				return CreateLocalRefResult(sourceContent, codeRef);
+				return CreateLocalRefResult(sourceContent, textRef);
 			}
 
 			return CreateMemberRefResult(fileTabManager, @ref);
 		}
 
-		FileTabReferenceResult CreateLocalRefResult(IFileTabContent sourceContent, CodeReference codeRef) {
-			Debug.Assert(IsSupportedReference(codeRef));
+		FileTabReferenceResult CreateLocalRefResult(IFileTabContent sourceContent, TextReference textRef) {
+			Debug.Assert(IsSupportedReference(textRef));
 			if (sourceContent == null)
 				return null;
 			var content = sourceContent.Clone();
 			return new FileTabReferenceResult(content, null, a => {
 				if (a.Success && !a.HasMovedCaret) {
-					GoToReference(content, codeRef);
+					GoToReference(content, textRef);
 					a.HasMovedCaret = true;
 				}
 			});
@@ -147,7 +147,7 @@ namespace dnSpy.Files.Tabs {
 			});
 		}
 
-		static bool IsSupportedReference(object @ref) => @ref is CodeReference || @ref is IMemberDef || @ref is ParamDef;
+		static bool IsSupportedReference(object @ref) => @ref is TextReference || @ref is IMemberDef || @ref is ParamDef;
 
 		void GoToReference(IFileTabContent content, object @ref) {
 			Debug.Assert(IsSupportedReference(@ref));

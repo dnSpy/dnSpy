@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
 			var addrRef = @ref as AddressReference;
 			if (addrRef == null)
-				addrRef = (@ref as CodeReference)?.Reference as AddressReference;
+				addrRef = (@ref as TextReference)?.Reference as AddressReference;
 			if (addrRef != null)
 				return Create(addrRef, fileTabManager.FileTreeView);
 			return null;

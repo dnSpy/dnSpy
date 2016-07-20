@@ -45,7 +45,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		sealed class TextEditorHelper : ITextEditorHelper {
 			public ITextEditorHelper RealInstance { get; set; }
-			public void FollowReference(CodeReference refSeg, bool newTab) => RealInstance?.FollowReference(refSeg, newTab);
+			public void FollowReference(TextReference textRef, bool newTab) => RealInstance?.FollowReference(textRef, newTab);
 			public void SetActive() => RealInstance?.SetActive();
 			public void SetFocus() => RealInstance?.SetFocus();
 		}

@@ -18,6 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
@@ -52,10 +54,17 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		}
 
 		/// <summary>
-		/// Creates a <see cref="CodeReference"/> instance
+		/// Creates a <see cref="TextReference"/> instance
 		/// </summary>
 		/// <returns></returns>
-		public CodeReference ToCodeReference() => new CodeReference(Reference, IsLocal, IsDefinition);
+		public TextReference ToTextReference() => new TextReference(Reference, IsLocal, IsDefinition);
+
+		/// <summary>
+		/// Creates a <see cref="TextReference"/> instance
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public TextReference ToTextReference(Span span) => new TextReference(Reference, IsLocal, IsDefinition, span);
 
 		/// <summary>
 		/// operator ==()
@@ -92,5 +101,17 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// </summary>
 		/// <returns></returns>
 		public override int GetHashCode() => (Reference?.GetHashCode() ?? int.MinValue) ^ (IsLocal ? 0x40000000 : 0) ^ (IsDefinition ? 0x20000000 : 0);
+	}
+
+	/// <summary>
+	/// <see cref="SpanData{TData}"/> extensions
+	/// </summary>
+	public static class SpanDataReferenceInfoExtensions {
+		/// <summary>
+		/// Creates a <see cref="TextReference"/>
+		/// </summary>
+		/// <param name="spanData">Instance</param>
+		/// <returns></returns>
+		public static TextReference ToTextReference(this SpanData<ReferenceInfo> spanData) => spanData.Data.ToTextReference(spanData.Span);
 	}
 }

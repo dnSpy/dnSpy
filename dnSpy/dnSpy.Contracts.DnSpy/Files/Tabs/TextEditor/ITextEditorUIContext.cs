@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		void HideCancelButton();
 
 		/// <summary>
-		/// Moves the caret to a reference, this can be a <see cref="CodeReference"/>,
+		/// Moves the caret to a reference, this can be a <see cref="TextReference"/>,
 		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
 		/// </summary>
 		/// <param name="ref">Reference</param>
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// Gets all references intersecting with the selection
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<SpanData<ReferenceInfo>> GetSelectedCodeReferences();
+		IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences();
 
 		/// <summary>
 		/// Saves current location relative to some reference in the code. Return value can be

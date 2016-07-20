@@ -113,7 +113,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteResourceCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteResourceCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
@@ -251,7 +251,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteResourceElementCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteResourceElementCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
@@ -364,7 +364,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
 
-			var @ref = context.Find<CodeReference>();
+			var @ref = context.Find<TextReference>();
 			if (@ref == null)
 				return null;
 			var rsrcNode = @ref.Reference as IResourceDataProvider;
@@ -583,7 +583,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateFileResourceCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateFileResourceCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -754,7 +754,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateMultiFileResourceCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateMultiFileResourceCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -852,7 +852,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -947,7 +947,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -1228,7 +1228,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateImageResourceElementCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateImageResourceElementCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -1341,7 +1341,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateImageListResourceElementCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateImageListResourceElementCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -1455,7 +1455,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -1570,7 +1570,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateStreamResourceElementCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateStreamResourceElementCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
@@ -1647,7 +1647,7 @@ namespace dnSpy.AsmEditor.Resources {
 				this.fileTreeViewSettings = fileTreeViewSettings;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && CreateResourceElementCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateResourceElementCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
 		}
 

@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text;
+
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
-	/// A reference in code
+	/// A reference in the text
 	/// </summary>
-	public sealed class CodeReference {
+	public sealed class TextReference {
 		/// <summary>
 		/// Gets the reference or null
 		/// </summary>
@@ -38,15 +40,52 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		public bool IsDefinition { get; }
 
 		/// <summary>
+		/// Gets the span or null if it's unknown
+		/// </summary>
+		public Span? Span { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="reference">Reference or null</param>
+		public TextReference(object reference)
+			: this(reference, false, false) {
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="reference">Reference or null</param>
+		/// <param name="span">Span</param>
+		public TextReference(object reference, Span span)
+			: this(reference, false, false, span) {
+		}
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference or null</param>
 		/// <param name="isLocal">true if it's a local, parameter, or label</param>
 		/// <param name="isDefinition">true if it's a definition</param>
-		public CodeReference(object reference, bool isLocal = false, bool isDefinition = false) {
+		public TextReference(object reference, bool isLocal, bool isDefinition) {
 			this.Reference = reference;
 			this.IsLocal = isLocal;
 			this.IsDefinition = isDefinition;
+			this.Span = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="reference">Reference or null</param>
+		/// <param name="isLocal">true if it's a local, parameter, or label</param>
+		/// <param name="isDefinition">true if it's a definition</param>
+		/// <param name="span">Span</param>
+		public TextReference(object reference, bool isLocal, bool isDefinition, Span span) {
+			this.Reference = reference;
+			this.IsLocal = isLocal;
+			this.IsDefinition = isDefinition;
+			this.Span = span;
 		}
 	}
 }

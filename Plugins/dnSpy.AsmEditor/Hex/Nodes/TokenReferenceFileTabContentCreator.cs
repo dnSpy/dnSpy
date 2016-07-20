@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
 			var tokRef = @ref as TokenReference;
 			if (tokRef == null)
-				tokRef = (@ref as CodeReference)?.Reference as TokenReference;
+				tokRef = (@ref as TextReference)?.Reference as TokenReference;
 			if (tokRef != null)
 				return Create(tokRef, fileTabManager);
 			return null;

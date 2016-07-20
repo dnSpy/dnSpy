@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="ISearchResult"/></summary>
 		public static readonly string GUIDOBJ_SEARCHRESULT_GUID = "50CD0058-6406-4ACA-A386-1A4E07561C62";
 
-		/// <summary><see cref="CodeReference"/></summary>
+		/// <summary><see cref="TextReference"/></summary>
 		public static readonly string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";
 
 		/// <summary>Files <see cref="TabControl"/></summary>

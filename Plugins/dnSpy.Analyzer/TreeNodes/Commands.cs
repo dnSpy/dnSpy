@@ -187,7 +187,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
 
-				var @ref = context.Find<CodeReference>();
+				var @ref = context.Find<TextReference>();
 				if (@ref != null) {
 					var mr = @ref.Reference as IMemberRef;
 					if (mr != null)

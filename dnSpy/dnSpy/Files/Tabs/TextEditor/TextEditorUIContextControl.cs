@@ -182,9 +182,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return GoToTarget(spanData, false, false);
 			}
 
-			var codeRef = reference as CodeReference;
-			if (codeRef != null) {
-				var spanData = referenceCollection.FirstOrNull(a => a.Data.IsLocal == codeRef.IsLocal && a.Data.IsDefinition == codeRef.IsDefinition && a.Data.Reference == codeRef.Reference);
+			var textRef = reference as TextReference;
+			if (textRef != null) {
+				var spanData = referenceCollection.FirstOrNull(a => a.Data.IsLocal == textRef.IsLocal && a.Data.IsDefinition == textRef.IsDefinition && a.Data.Reference == textRef.Reference);
 				return GoToTarget(spanData, false, false);
 			}
 
@@ -243,7 +243,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Debug.Assert(canJumpToReference);
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(spanData.Data.ToCodeReference(), newTab);
+				textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 				return true;
 			}
 
@@ -251,7 +251,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				if (!IsOwnerOf(spanData)) {
 					if (!canJumpToReference)
 						return false;
-					textEditorHelper.FollowReference(spanData.Data.ToCodeReference(), newTab);
+					textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					return true;
 				}
 
@@ -263,7 +263,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					if (canRecordHistory) {
 						if (!canJumpToReference)
 							return false;
-						textEditorHelper.FollowReference(spanData.Data.ToCodeReference(), newTab);
+						textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					}
 					else {
 						var line = wpfTextViewHost.TextView.TextSnapshot.GetLineFromPosition(spanData.Span.Start);
@@ -277,7 +277,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					return false;
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(spanData.Data.ToCodeReference(), newTab);
+				textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 				return true;
 			}
 			else {
@@ -294,7 +294,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					if (canRecordHistory) {
 						if (!canJumpToReference)
 							return false;
-						textEditorHelper.FollowReference(spanData.Data.ToCodeReference(), newTab);
+						textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					}
 					else {
 						textEditorHelper.SetFocus();
@@ -311,7 +311,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				textEditorHelper.SetFocus();
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(spanData.Data.ToCodeReference(), newTab);
+				textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 				return true;
 			}
 		}
@@ -365,12 +365,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var pos = wpfTextViewHost.TextView.Caret.Position.VirtualBufferPosition;
 			if (pos.VirtualSpaces > 0)
 				return null;
-			return GetCodeReferenceAt(pos.Position.Position);
+			return GetTextReferenceAt(pos.Position.Position);
 		}
 
-		public SpanData<ReferenceInfo>? GetCodeReferenceAt(int position) => referenceCollection.Find(position);
+		public SpanData<ReferenceInfo>? GetTextReferenceAt(int position) => referenceCollection.Find(position);
 
-		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedCodeReferences() {
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() {
 			var selection = wpfTextViewHost.TextView.Selection;
 			if (selection.IsEmpty)
 				yield break;

@@ -292,7 +292,7 @@ namespace dnSpy.Debugger.Exceptions {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 
-				var @ref = context.Find<CodeReference>();
+				var @ref = context.Find<TextReference>();
 				if (@ref == null || @ref.Reference == null)
 					return null;
 

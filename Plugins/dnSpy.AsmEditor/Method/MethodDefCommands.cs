@@ -86,7 +86,7 @@ namespace dnSpy.AsmEditor.Method {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteMethodDefCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteMethodDefCommand.Execute(undoCommandManager, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
 		}
@@ -339,7 +339,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 
 			public override bool IsEnabled(CodeContext context) =>
-				context.IsLocalTarget &&
+				context.IsDefinition &&
 				context.Nodes.Length == 1 &&
 				context.Nodes[0] is ITypeNode;
 

@@ -87,15 +87,15 @@ namespace dnSpy.AsmEditor.Hex {
 
 		protected sealed override HexContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID)) {
-				var refSeg = context.Find<CodeReference>();
-				bool isLocalTarget = false;
+				var textRef = context.Find<TextReference>();
+				bool isDefinition = false;
 				object @ref = null;
-				if (refSeg != null) {
-					@ref = refSeg.Reference;
-					isLocalTarget = refSeg.IsDefinition;
+				if (textRef != null) {
+					@ref = textRef.Reference;
+					isDefinition = textRef.IsDefinition;
 				}
 				var pos = context.Find<TextEditorLocation?>();
-				return new HexContext(context.Find<ITextEditorUIContext>(), pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isLocalTarget);
+				return new HexContext(context.Find<ITextEditorUIContext>(), pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isDefinition);
 			}
 
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {

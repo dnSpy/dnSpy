@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		static IEnumerable<SpanData<ReferenceInfo>> FindInstructions(ITextEditorUIContext uiContext) {
-			foreach (var refInfo in uiContext.GetSelectedCodeReferences()) {
+			foreach (var refInfo in uiContext.GetSelectedTextReferences()) {
 				if (refInfo.Data.IsDefinition && refInfo.Data.Reference is InstructionReference)
 					yield return refInfo;
 			}

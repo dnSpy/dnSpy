@@ -108,6 +108,7 @@
     <Compile Include="Files\Tabs\TextEditor\DnSpyTextOutputResult.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDnSpyTextOutput.cs" />
     <Compile Include="Files\Tabs\TextEditor\ReferenceInfo.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextReference.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
     <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
@@ -223,7 +224,6 @@
     <Compile Include="Files\Tabs\ITabSaverCreator.cs" />
     <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />
     <Compile Include="Files\Tabs\TabConstants.cs" />
-    <Compile Include="Files\Tabs\TextEditor\CodeReference.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeCollection.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />

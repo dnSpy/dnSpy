@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Order of default <see cref="IReferenceFileTabContentCreator"/> instance
 		/// </summary>
-		public const double ORDER_CONTENTCREATOR_CODEREF = 10000;
+		public const double ORDER_CONTENTCREATOR_TEXTREF = 10000;
 
 		/// <summary>
 		/// Order of <see cref="IReferenceFileTabContentCreator"/> instance that creates content

@@ -46,7 +46,7 @@ namespace dnSpy.Files.Tabs {
 			internal static uint? GetReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
-				var @ref = context.Find<CodeReference>();
+				var @ref = context.Find<TextReference>();
 				var realRef = @ref?.Reference;
 				if (realRef is Parameter)
 					realRef = ((Parameter)realRef).ParamDef;

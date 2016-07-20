@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.Field {
 				this.undoCommandManager = undoCommandManager;
 			}
 
-			public override bool IsEnabled(CodeContext context) => context.IsLocalTarget && DeleteFieldDefCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteFieldDefCommand.Execute(undoCommandManager, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
@@ -227,7 +227,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 
 			public override bool IsEnabled(CodeContext context) {
-				return context.IsLocalTarget &&
+				return context.IsDefinition &&
 					context.Nodes.Length == 1 &&
 					context.Nodes[0] is ITypeNode;
 			}

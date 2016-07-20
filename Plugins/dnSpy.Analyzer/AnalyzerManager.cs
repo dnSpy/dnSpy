@@ -289,7 +289,7 @@ namespace dnSpy.Analyzer {
 				return false;
 
 			var location = mapping.StartPosition;
-			var loc = FindLocation(GetCodeReferences(uiContext, location.Line, location.Column), mapping.EndPosition, @ref);
+			var loc = FindLocation(GetTextReferences(uiContext, location.Line, location.Column), mapping.EndPosition, @ref);
 			if (loc == null)
 				loc = new TextEditorLocation(location.Line, location.Column);
 
@@ -297,7 +297,7 @@ namespace dnSpy.Analyzer {
 			return true;
 		}
 
-		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetCodeReferences(ITextEditorUIContext uiContext, int lineNumber, int columnNumber) {
+		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetTextReferences(ITextEditorUIContext uiContext, int lineNumber, int columnNumber) {
 			int position = uiContext.TextViewHost.TextView.LineColumnToPosition(lineNumber, columnNumber);
 			var snapshot = uiContext.TextViewHost.TextView.TextSnapshot;
 			foreach (var spanData in uiContext.OutputResult.ReferenceCollection.FindFrom(position)) {

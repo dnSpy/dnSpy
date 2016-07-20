@@ -166,7 +166,7 @@ namespace dnSpy.Files.Tabs {
 
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(fileTabManager, TryCreate(context));
 
-			static ResourceRef TryCreate(CodeReference @ref) {
+			static ResourceRef TryCreate(TextReference @ref) {
 				if (@ref == null)
 					return null;
 				return ResourceRef.TryCreate(@ref.Reference);
@@ -175,7 +175,7 @@ namespace dnSpy.Files.Tabs {
 			static ResourceRef TryCreate(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 					return null;
-				return TryCreate(context.Find<CodeReference>());
+				return TryCreate(context.Find<TextReference>());
 			}
 
 			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));

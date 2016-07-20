@@ -37,14 +37,14 @@ namespace dnSpy.Shared.Decompiler {
 		public bool IsLocal;
 		public bool IsLocalTarget;
 
-		public bool Equals(CodeReference codeRef) {
-			return codeRef != null &&
-				Reference == codeRef.Reference &&
-				IsLocal == codeRef.IsLocal &&
-				IsLocalTarget == codeRef.IsDefinition;
+		public bool Equals(TextReference textRef) {
+			return textRef != null &&
+				Reference == textRef.Reference &&
+				IsLocal == textRef.IsLocal &&
+				IsLocalTarget == textRef.IsDefinition;
 		}
 
-		public CodeReference ToCodeReference() => new CodeReference(Reference, IsLocal, IsLocalTarget);
+		public TextReference ToTextReference() => new TextReference(Reference, IsLocal, IsLocalTarget);
 	}
 
 	/// <summary>

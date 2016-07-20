@@ -103,7 +103,7 @@ namespace dnSpy.Search {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);
 					var @ref = searchResult.Reference;
 					if (@ref != null)
-						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReference(@ref));
+						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new TextReference(@ref));
 				}
 			}
 		}

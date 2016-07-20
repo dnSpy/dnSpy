@@ -25,12 +25,12 @@ using dnSpy.Contracts.Menus;
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
 		public IFileTreeNodeData[] Nodes { get; }
-		public bool IsLocalTarget { get; }
+		public bool IsDefinition { get; }
 		public IMenuItemContext MenuItemContextOrNull { get; }
 
-		public CodeContext(IFileTreeNodeData[] nodes, bool isLocalTarget, IMenuItemContext menuItemContext) {
+		public CodeContext(IFileTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
 			this.Nodes = nodes ?? Array.Empty<IFileTreeNodeData>();
-			this.IsLocalTarget = isLocalTarget;
+			this.IsDefinition = isDefinition;
 			this.MenuItemContextOrNull = menuItemContext;
 		}
 	}
@@ -50,12 +50,12 @@ namespace dnSpy.AsmEditor.Commands {
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
-			var refSeg = context.Find<CodeReference>();
-			if (refSeg == null)
+			var textRef = context.Find<TextReference>();
+			if (textRef == null)
 				return null;
-			var node = fileTreeView.FindNode(refSeg.Reference);
+			var node = fileTreeView.FindNode(textRef.Reference);
 			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
-			return new CodeContext(nodes, refSeg.IsDefinition, context);
+			return new CodeContext(nodes, textRef.IsDefinition, context);
 		}
 	}
 }

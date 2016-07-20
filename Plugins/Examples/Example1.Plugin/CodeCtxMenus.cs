@@ -94,12 +94,12 @@ namespace Example1.Plugin {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
 
-			// All references in the text editor are stored in CodeReferences
-			var codeRef = context.Find<CodeReference>();
-			if (codeRef == null)
+			// All references in the text editor are stored in TextReferences
+			var textRef = context.Find<TextReference>();
+			if (textRef == null)
 				return null;
 
-			return codeRef.Reference as IMDTokenProvider;
+			return textRef.Reference as IMDTokenProvider;
 		}
 
 		// Only show this in the text editor

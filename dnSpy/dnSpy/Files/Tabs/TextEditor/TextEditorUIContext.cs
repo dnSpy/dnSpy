@@ -36,7 +36,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorHelper {
-		void FollowReference(CodeReference refSeg, bool newTab);
+		void FollowReference(TextReference textRef, bool newTab);
 		void SetFocus();
 		void SetActive();
 	}
@@ -69,9 +69,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
 
 					int pos = teCtrl.TextView.LineColumnToPosition(loc.Value.Line, loc.Value.Column);
-					var @ref = teCtrl.GetCodeReferenceAt(pos);
+					var @ref = teCtrl.GetTextReferenceAt(pos);
 					if (@ref != null)
-						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.Data.ToCodeReference());
+						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.ToTextReference());
 				}
 			}
 		}
@@ -251,11 +251,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();
 
-		void ITextEditorHelper.FollowReference(CodeReference codeRef, bool newTab) {
+		void ITextEditorHelper.FollowReference(TextReference textRef, bool newTab) {
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
 				return;
-			FileTab.FollowReference(codeRef, newTab);
+			FileTab.FollowReference(textRef, newTab);
 		}
 
 		void ITextEditorHelper.SetFocus() => FileTab.TrySetFocus();
@@ -286,7 +286,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public SpanData<ReferenceInfo>? SelectedReferenceInfo => textEditorUIContextControl.GetCurrentReferenceInfo();
-		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedCodeReferences() => textEditorUIContextControl.GetSelectedCodeReferences();
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() => textEditorUIContextControl.GetSelectedTextReferences();
 		public object SaveReferencePosition() => textEditorUIContextControl.SaveReferencePosition(this.GetCodeMappings());
 		public bool RestoreReferencePosition(object obj) => textEditorUIContextControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 	}

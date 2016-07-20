@@ -319,7 +319,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public ReferenceSegment GetCurrentReferenceSegment() => GetReferenceSegmentAt(wpfTextView.Caret.Position.BufferPosition.Position);
 
-		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
+		public IEnumerable<TextReference> GetSelectedTextReferences() {
 			if (wpfTextView.Selection.IsEmpty)
 				yield break;
 			int start = wpfTextView.Selection.Start.Position.Position;
@@ -332,18 +332,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			while (r != null) {
 				if (r.StartOffset >= end)
 					break;
-				yield return r.ToCodeReference();
+				yield return r.ToTextReference();
 
 				r = refs.GetNextSegment(r);
 			}
 		}
 
-		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
+		public IEnumerable<Tuple<TextReference, TextEditorLocation>> GetTextReferences(int line, int column) {
 			int offset = LineColumnToOffset(line, column);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 
 			while (refSeg != null) {
-				yield return Tuple.Create(refSeg.ToCodeReference(), GetLocation(refSeg));
+				yield return Tuple.Create(refSeg.ToTextReference(), GetLocation(refSeg));
 				refSeg = references.GetNextSegment(refSeg);
 			}
 		}
@@ -378,7 +378,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Debug.Assert(canJumpToReference);
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
+				textEditorHelper.FollowReference(refSeg.ToTextReference(), newTab);
 				return true;
 			}
 
@@ -386,7 +386,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				if (!IsOwnerOf(refSeg)) {
 					if (!canJumpToReference)
 						return false;
-					textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
+					textEditorHelper.FollowReference(refSeg.ToTextReference(), newTab);
 					return true;
 				}
 
@@ -398,7 +398,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					if (canRecordHistory) {
 						if (!canJumpToReference)
 							return false;
-						textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
+						textEditorHelper.FollowReference(refSeg.ToTextReference(), newTab);
 					}
 					else {
 						var line = wpfTextView.TextSnapshot.GetLineFromPosition(refSeg.StartOffset);
@@ -412,7 +412,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					return false;
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
+				textEditorHelper.FollowReference(refSeg.ToTextReference(), newTab);
 				return true;
 			}
 			else {
@@ -431,7 +431,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					if (canRecordHistory) {
 						if (!canJumpToReference)
 							return false;
-						textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
+						textEditorHelper.FollowReference(refSeg.ToTextReference(), newTab);
 					}
 					else {
 						MarkReferences(refSeg);
@@ -449,7 +449,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				textEditorHelper.SetFocus();
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
+				textEditorHelper.FollowReference(refSeg.ToTextReference(), newTab);
 				return true;
 			}
 		}
@@ -640,9 +640,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return GoToTarget(refSeg, false, false);
 			}
 
-			var codeRef = @ref as CodeReference;
-			if (codeRef != null) {
-				var refSeg = references.FirstOrDefault(a => a.Equals(codeRef));
+			var textRef = @ref as TextReference;
+			if (textRef != null) {
+				var refSeg = references.FirstOrDefault(a => a.Equals(textRef));
 				return GoToTarget(refSeg, false, false);
 			}
 
