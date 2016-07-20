@@ -104,8 +104,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public IEnumerable<object> AllReferences { get; internal set; }
 
-		public void ShowCancelButton(Action onCancel, string msg) {
-			var newWaitAdorner = new WaitAdorner(onCancel, msg);
+		public void ShowCancelButton(Action onCancel, string message) {
+			var newWaitAdorner = new WaitAdorner(onCancel, message);
 			CurrentWaitAdorner = newWaitAdorner;
 
 			// Prevents flickering when decompiling small classes

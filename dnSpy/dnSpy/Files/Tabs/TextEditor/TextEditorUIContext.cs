@@ -190,6 +190,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public object CreateSerialized(ISettingsSection section) {
+			if (section == null)
+				throw new ArgumentNullException(nameof(section));
 			var caretAffinity = section.Attribute<PositionAffinity?>("CaretAffinity");
 			var caretVirtualSpaces = section.Attribute<int?>("CaretVirtualSpaces");
 			var caretPosition = section.Attribute<int?>("CaretPosition");
@@ -205,6 +207,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public void SaveSerialized(ISettingsSection section, object obj) {
+			if (section == null)
+				throw new ArgumentNullException(nameof(section));
 			var state = obj as EditorPositionState;
 			Debug.Assert(state != null);
 			if (state == null)
@@ -219,6 +223,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public void SetOutput(DnSpyTextOutputResult result, IContentType contentType) {
+			if (result == null)
+				throw new ArgumentNullException(nameof(result));
 			outputData.Clear();
 			textEditorUIContextControl.SetOutput(result, contentType);
 			textEditorUIContextManagerImpl.RaiseNewContentEvent(this, result);
@@ -226,13 +232,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public void AddOutputData(object key, object data) {
 			if (key == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(key));
 			outputData.Add(key, data);
 		}
 
 		public object GetOutputData(object key) {
 			if (key == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(key));
 			object data;
 			outputData.TryGetValue(key, out data);
 			return data;
@@ -248,9 +254,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void ITextEditorHelper.SetFocus() => FileTab.TrySetFocus();
 		public void SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
-		public void ShowCancelButton(Action onCancel, string msg) => textEditorUIContextControl.ShowCancelButton(onCancel, msg);
 		public void HideCancelButton() => textEditorUIContextControl.HideCancelButton();
 		public void MoveCaretTo(object @ref) => textEditorUIContextControl.GoToLocation(@ref);
+
+		public void ShowCancelButton(Action onCancel, string message) {
+			if (onCancel == null)
+				throw new ArgumentNullException(nameof(onCancel));
+			textEditorUIContextControl.ShowCancelButton(onCancel, message);
+		}
 
 		public void Dispose() {
 			textEditorUIContextControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
@@ -260,13 +271,26 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			outputData.Clear();
 		}
 
-		public void ScrollAndMoveCaretTo(int line, int column) => textEditorUIContextControl.ScrollAndMoveCaretTo(line, column);
+		public void ScrollAndMoveCaretTo(int line, int column) {
+			if (line < 0)
+				throw new ArgumentOutOfRangeException(nameof(line));
+			if (column < 0)
+				throw new ArgumentOutOfRangeException(nameof(column));
+			textEditorUIContextControl.ScrollAndMoveCaretTo(line, column);
+		}
+
+		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
+			if (line < 0)
+				throw new ArgumentOutOfRangeException(nameof(line));
+			if (column < 0)
+				throw new ArgumentOutOfRangeException(nameof(column));
+			return textEditorUIContextControl.GetCodeReferences(line, column);
+		}
+
 		public object SelectedReference => textEditorUIContextControl.GetCurrentReferenceInfo()?.Data.Reference;
 		public CodeReference SelectedCodeReference => textEditorUIContextControl.GetCurrentReferenceInfo()?.Data.ToCodeReference();
 		public IEnumerable<CodeReference> GetSelectedCodeReferences() => textEditorUIContextControl.GetSelectedCodeReferences();
 		public IEnumerable<object> References => textEditorUIContextControl.AllReferences;
-		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) =>
-			textEditorUIContextControl.GetCodeReferences(line, column);
 		public object SaveReferencePosition() => textEditorUIContextControl.SaveReferencePosition(this.GetCodeMappings());
 		public bool RestoreReferencePosition(object obj) => textEditorUIContextControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 	}

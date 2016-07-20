@@ -25,10 +25,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 	sealed partial class WaitAdorner : UserControl {
 		readonly Action onCancel;
 
-		public WaitAdorner(Action onCancel, string msg) {
+		public WaitAdorner(Action onCancel, string message) {
 			this.onCancel = onCancel;
 			InitializeComponent();
-			this.textBlock.Text = msg;
+			this.textBlock.Text = message;
 		}
 
 		void button_Click(object sender, RoutedEventArgs e) {

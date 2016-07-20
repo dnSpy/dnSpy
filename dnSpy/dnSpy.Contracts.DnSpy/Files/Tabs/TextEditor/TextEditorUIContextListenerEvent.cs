@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Decompiler.Shared;
-
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
 	/// <see cref="TextEditorUIContextListener"/> event

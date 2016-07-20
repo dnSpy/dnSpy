@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
@@ -55,8 +54,8 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// Shows a cancel button. Can be used when decompiling in another thread
 		/// </summary>
 		/// <param name="onCancel">Called if the user clicks the cancel button</param>
-		/// <param name="msg">Message to show to the user</param>
-		void ShowCancelButton(Action onCancel, string msg);
+		/// <param name="message">Message to show to the user or null</param>
+		void ShowCancelButton(Action onCancel, string message);
 
 		/// <summary>
 		/// Hides the cancel button shown by <see cref="ShowCancelButton(Action, string)"/>
