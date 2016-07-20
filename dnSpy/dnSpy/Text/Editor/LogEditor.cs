@@ -115,6 +115,8 @@ namespace dnSpy.Text.Editor {
 		public void Clear() {
 			ClearPendingOutput();
 			SetNewDocument();
+			wpfTextView.Selection.Clear();
+			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, 0));
 		}
 
 		public string GetText() => wpfTextView.TextSnapshot.GetText();
