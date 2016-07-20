@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.IMModules {
 			public override void Execute(Context context) => ExecuteInternal(context);
 
 			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
-				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 					return fileTreeView.TreeView.SelectedItem as IFileTreeNodeData;
 				return null;
 			}

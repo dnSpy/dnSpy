@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
@@ -29,10 +28,8 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Events;
 using dnSpy.Text.Editor;
-using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -44,25 +41,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void SetActive();
 	}
 
-	interface ITextEditorUIContextImpl : ITextEditorUIContext {
-		/// <summary>
-		/// Called when 'use new renderer' option has been changed. <see cref="ITextEditorUIContext.SetOutput(ITextOutput, IHighlightingDefinition, IContentType)"/>
-		/// will be called after this method has been called.
-		/// </summary>
-		void OnUseNewRendererChanged();
-
-		/// <summary>
-		/// Raised after the text editor has gotten new text (<see cref="ITextEditorUIContext.SetOutput(ITextOutput, IHighlightingDefinition, IContentType)"/>)
-		/// </summary>
-		event EventHandler<EventArgs> NewTextContent;
-	}
-
-	sealed class TextEditorUIContext : ITextEditorUIContextImpl, ITextEditorHelper, IZoomable, IDisposable {
+	sealed class TextEditorUIContext : ITextEditorUIContext, ITextEditorHelper, IZoomable, IDisposable {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
-		TextEditorControl textEditorControl;
+		readonly TextEditorUIContextControl textEditorUIContextControl;
 
-		double IZoomable.ScaleValue => textEditorControl.TextView.ZoomLevel / 100.0;
+		double IZoomable.ScaleValue => textEditorUIContextControl.TextView.ZoomLevel / 100.0;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TextEditorUIContext uiContext;
@@ -74,27 +58,33 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, uiContext);
 
-				var teCtrl = (TextEditorControl)args.CreatorObject.Object;
-				foreach (var go in teCtrl.TextEditor.GetGuidObjects(args.OpenedFromKeyboard))
-					yield return go;
+				var teCtrl = (TextEditorUIContextControl)args.CreatorObject.Object;
+				var loc = teCtrl.TextView.GetTextEditorLocation(args.OpenedFromKeyboard);
+				if (loc != null) {
+					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
 
-				var position = args.OpenedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
-				var @ref = teCtrl.GetReferenceSegmentAt(position);
-				if (@ref != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.ToCodeReference());
+					int pos = teCtrl.TextView.LineColumnToPosition(loc.Value.Line, loc.Value.Column);
+					var @ref = teCtrl.GetCodeReferenceAt(pos);
+					if (@ref != null)
+						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.Data.ToCodeReference());
+				}
 			}
 		}
 
-		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl) {
+		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IMenuManager menuManager, TextEditorUIContextControl textEditorUIContextControl) {
+			if (wpfCommandManager == null)
+				throw new ArgumentNullException(nameof(wpfCommandManager));
+			if (textEditorUIContextManagerImpl == null)
+				throw new ArgumentNullException(nameof(textEditorUIContextManagerImpl));
+			if (menuManager == null)
+				throw new ArgumentNullException(nameof(menuManager));
+			if (textEditorUIContextControl == null)
+				throw new ArgumentNullException(nameof(textEditorUIContextControl));
 			this.wpfCommandManager = wpfCommandManager;
 			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
-			this.newTextContentEvent = new WeakEventList<EventArgs>();
-		}
-
-		public void Initialize(IMenuManager menuManager, TextEditorControl textEditorControl) {
-			this.textEditorControl = textEditorControl;
-			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
-			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorControl.TextView, textEditorControl));
+			this.textEditorUIContextControl = textEditorUIContextControl;
+			menuManager.InitializeContextMenu(textEditorUIContextControl, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorUIContextControl.TextView, textEditorUIContextControl));
+			wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorUIContextControl);
 		}
 
 		public IFileTab FileTab {
@@ -112,21 +102,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public IInputElement FocusedElement {
 			get {
-				var button = textEditorControl.CancelButton;
+				var button = textEditorUIContextControl.CancelButton;
 				if (button?.IsVisible == true)
 					return button;
-				return textEditorControl.TextView.VisualElement;
+				return textEditorUIContextControl.TextView.VisualElement;
 			}
 		}
 
-		public object UIObject => textEditorControl;
-		public FrameworkElement ScaleElement => textEditorControl.TextView.VisualElement;
-		public bool HasSelectedText => !textEditorControl.TextView.Selection.IsEmpty;
+		public object UIObject => textEditorUIContextControl;
+		public FrameworkElement ScaleElement => textEditorUIContextControl.TextView.VisualElement;
+		public bool HasSelectedText => !textEditorUIContextControl.TextView.Selection.IsEmpty;
 
 		public TextEditorLocation Location {
 			get {
-				int caretPos = textEditorControl.TextView.Caret.Position.BufferPosition.Position;
-				var line = textEditorControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
+				int caretPos = textEditorUIContextControl.TextView.Caret.Position.BufferPosition.Position;
+				var line = textEditorUIContextControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
 				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position);
 			}
 		}
@@ -134,14 +124,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void OnShow() { }
 
 		public void OnHide() {
-			textEditorControl.Clear();
+			textEditorUIContextControl.Clear();
 			outputData.Clear();
 		}
 
 		public object Serialize() {
 			if (cachedEditorPositionState != null)
 				return cachedEditorPositionState;
-			return new EditorPositionState(textEditorControl.TextView);
+			return new EditorPositionState(textEditorUIContextControl.TextView);
 		}
 
 		public void Deserialize(object obj) {
@@ -149,7 +139,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (state == null)
 				return;
 
-			var textView = textEditorControl.TextView;
+			var textView = textEditorUIContextControl.TextView;
 			if (!textView.VisualElement.IsLoaded) {
 				bool start = cachedEditorPositionState == null;
 				cachedEditorPositionState = state;
@@ -162,7 +152,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		EditorPositionState cachedEditorPositionState;
 
 		void InitializeState(EditorPositionState state) {
-			var textView = textEditorControl.TextView;
+			var textView = textEditorUIContextControl.TextView;
 
 			if (IsValid(state)) {
 				textView.ViewportLeft = state.ViewportLeft;
@@ -175,7 +165,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		bool IsValid(EditorPositionState state) {
-			var textView = textEditorControl.TextView;
+			var textView = textEditorUIContextControl.TextView;
 			if (state.CaretAffinity != PositionAffinity.Successor && state.CaretAffinity != PositionAffinity.Predecessor)
 				return false;
 			if (state.CaretVirtualSpaces < 0)
@@ -193,7 +183,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
-			textEditorControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
+			textEditorUIContextControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			if (cachedEditorPositionState == null)
 				return;
 			InitializeState(cachedEditorPositionState);
@@ -229,10 +219,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			section.Attribute("TopLineVerticalDistance", state.TopLineVerticalDistance);
 		}
 
-		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
+		public void SetOutput(DnSpyTextOutputResult result, IContentType contentType) {
 			outputData.Clear();
-			textEditorControl.SetOutput(output, highlighting, contentType);
-			this.textEditorUIContextManagerImpl.RaiseNewContentEvent(this, output, (a, b, c) => newTextContentEvent.Raise(this, EventArgs.Empty), TextEditorUIContextManagerConstants.ORDER_TEXTMARKERSERVICE);
+			textEditorUIContextControl.SetOutput(result, contentType);
+			textEditorUIContextManagerImpl.RaiseNewContentEvent(this, result);
 		}
 
 		public void AddOutputData(object key, object data) {
@@ -250,14 +240,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();
 
-		public event EventHandler<EventArgs> NewTextContent {
-			add { newTextContentEvent.Add(value); }
-			remove { newTextContentEvent.Remove(value); }
-		}
-		readonly WeakEventList<EventArgs> newTextContentEvent;
-
-		public void OnUseNewRendererChanged() => textEditorControl.OnUseNewRendererChanged();
-
 		void ITextEditorHelper.FollowReference(CodeReference codeRef, bool newTab) {
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
@@ -267,27 +249,26 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void ITextEditorHelper.SetFocus() => FileTab.TrySetFocus();
 		public void SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
-		public void ShowCancelButton(Action onCancel, string msg) => textEditorControl.ShowCancelButton(onCancel, msg);
-		public void HideCancelButton() => textEditorControl.HideCancelButton();
-		public void MoveCaretTo(object @ref) => textEditorControl.GoToLocation(@ref);
-		public object GetReferenceSegmentAt(MouseEventArgs e) => textEditorControl.GetReferenceSegmentAt(e);
+		public void ShowCancelButton(Action onCancel, string msg) => textEditorUIContextControl.ShowCancelButton(onCancel, msg);
+		public void HideCancelButton() => textEditorUIContextControl.HideCancelButton();
+		public void MoveCaretTo(object @ref) => textEditorUIContextControl.GoToLocation(@ref);
 
 		public void Dispose() {
-			this.textEditorControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
+			textEditorUIContextControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
-			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
-			textEditorControl.Dispose();
+			wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorUIContextControl);
+			textEditorUIContextControl.Dispose();
 			outputData.Clear();
 		}
 
-		public void ScrollAndMoveCaretTo(int line, int column) => textEditorControl.ScrollAndMoveCaretTo(line, column);
-		public object SelectedReference => textEditorControl.GetCurrentReferenceSegment()?.Reference;
-		public CodeReference SelectedCodeReference => textEditorControl.GetCurrentReferenceSegment()?.ToCodeReference();
-		public IEnumerable<CodeReference> GetSelectedCodeReferences() => textEditorControl.GetSelectedCodeReferences();
-		public IEnumerable<object> References => textEditorControl.AllReferences;
+		public void ScrollAndMoveCaretTo(int line, int column) => textEditorUIContextControl.ScrollAndMoveCaretTo(line, column);
+		public object SelectedReference => textEditorUIContextControl.GetCurrentReferenceInfo()?.Data.Reference;
+		public CodeReference SelectedCodeReference => textEditorUIContextControl.GetCurrentReferenceInfo()?.Data.ToCodeReference();
+		public IEnumerable<CodeReference> GetSelectedCodeReferences() => textEditorUIContextControl.GetSelectedCodeReferences();
+		public IEnumerable<object> References => textEditorUIContextControl.AllReferences;
 		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) =>
-			textEditorControl.GetCodeReferences(line, column);
-		public object SaveReferencePosition() => textEditorControl.SaveReferencePosition(this.GetCodeMappings());
-		public bool RestoreReferencePosition(object obj) => textEditorControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
+			textEditorUIContextControl.GetCodeReferences(line, column);
+		public object SaveReferencePosition() => textEditorUIContextControl.SaveReferencePosition(this.GetCodeMappings());
+		public bool RestoreReferencePosition(object obj) => textEditorUIContextControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 	}
 }

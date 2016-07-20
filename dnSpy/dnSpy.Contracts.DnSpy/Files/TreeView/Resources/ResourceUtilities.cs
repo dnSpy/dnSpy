@@ -166,7 +166,6 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 					ext = ".txt";
 				}
 			}
-			context.HighlightingExtension = ext;
 			context.ContentTypeString = ContentTypes.TryGetContentTypeStringByExtension(ext) ?? ContentTypes.PLAIN_TEXT;
 			return true;
 		}

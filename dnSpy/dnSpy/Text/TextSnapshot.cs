@@ -103,7 +103,7 @@ namespace dnSpy.Text {
 				return lineOffsets.Length - 1;
 
 			int lo = 0, hi = lineOffsets.Length - 1;
-			while (lo <= hi && hi != -1) {
+			while (lo <= hi) {
 				int lineNo = (lo + hi) / 2;
 
 				int start = (int)(lineOffsets[lineNo] & OFFSET_MASK);

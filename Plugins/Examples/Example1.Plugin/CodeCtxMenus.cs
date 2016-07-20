@@ -51,7 +51,7 @@ namespace Example1.Plugin {
 		public override void Execute(IMenuItemContext context) => mySettings.BoolOption1 = !mySettings.BoolOption1;
 
 		// Only show this in the text editor
-		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 	}
 
 	[ExportMenuItem(Header = "Option 2", Group = Constants.GROUP_TEXTEDITOR, Order = 10)]
@@ -67,7 +67,7 @@ namespace Example1.Plugin {
 		public override void Execute(IMenuItemContext context) => mySettings.BoolOption2 = !mySettings.BoolOption2;
 
 		// Only show this in the text editor
-		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TEXTEDITOR, Order = 20)]
@@ -91,7 +91,7 @@ namespace Example1.Plugin {
 
 		IMDTokenProvider GetTokenObj(IMenuItemContext context) {
 			// Only show this in the text editor
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
 
 			// All references in the text editor are stored in CodeReferences
@@ -103,7 +103,7 @@ namespace Example1.Plugin {
 		}
 
 		// Only show this in the text editor
-		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => GetTokenObj(context) != null;
 	}
 
@@ -128,14 +128,14 @@ namespace Example1.Plugin {
 
 		ITextEditorUIContext GetUIContext(IMenuItemContext context) {
 			// Only show this in the text editor
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
 
 			return context.Find<ITextEditorUIContext>();
 		}
 
 		// Only show this in the text editor
-		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => GetUIContext(context) != null;
 	}
 }

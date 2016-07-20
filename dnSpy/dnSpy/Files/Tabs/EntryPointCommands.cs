@@ -47,7 +47,7 @@ namespace dnSpy.Files.Tabs {
 			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(fileTabManager, context) != null;
 
 			static MethodDef GetEntryPoint(IFileTabManager fileTabManager, IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 					return null;
 				var module = GetCurrentModule(fileTabManager);
 				return module == null ? null : module.EntryPoint as MethodDef;
@@ -101,7 +101,7 @@ namespace dnSpy.Files.Tabs {
 			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(fileTabManager, context) != null;
 
 			static MethodDef GetModuleCctor(IFileTabManager fileTabManager, IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 					return null;
 				var module = GoToEntryPointCommand.GetCurrentModule(fileTabManager);
 				if (module == null)

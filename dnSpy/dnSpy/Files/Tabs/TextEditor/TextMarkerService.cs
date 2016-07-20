@@ -32,18 +32,18 @@ using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService, IDisposable {
 		TextSegmentCollection<TextMarker> markers;
-		readonly ITextEditorUIContextImpl uiContext;
+		readonly ITextEditorUIContext uiContext;
 		readonly TextEditorControl textEditorControl;
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly Dictionary<ITextMarkerObject, ITextMarker> objToMarker = new Dictionary<ITextMarkerObject, ITextMarker>();
 
 		public TextView TextView => textEditorControl.TextEditor.TextArea.TextView;
 
-		public TextMarkerService(TextEditorControl textView, ITextEditorUIContextImpl uiContext, ITextLineObjectManager textLineObjectManager) {
+		public TextMarkerService(TextEditorControl textView, ITextEditorUIContext uiContext, ITextLineObjectManager textLineObjectManager) {
 			this.textEditorControl = textView;
 			this.uiContext = uiContext;
 			this.textLineObjectManager = textLineObjectManager;
-			uiContext.NewTextContent += TextEditorUIContext_NewTextContent;
+			//uiContext.NewTextContent += TextEditorUIContext_NewTextContent;
 			textLineObjectManager.OnListModified += TextLineObjectManager_OnListModified;
 			OnTextChanged();
 		}
@@ -51,7 +51,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void TextEditorUIContext_NewTextContent(object sender, EventArgs e) => RecreateMarkers();
 
 		public void Dispose() {
-			uiContext.NewTextContent -= TextEditorUIContext_NewTextContent;
+			//uiContext.NewTextContent -= TextEditorUIContext_NewTextContent;
 			textLineObjectManager.OnListModified -= TextLineObjectManager_OnListModified;
 			ClearMarkers();
 		}

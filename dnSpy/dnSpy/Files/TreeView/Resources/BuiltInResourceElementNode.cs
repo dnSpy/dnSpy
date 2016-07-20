@@ -73,7 +73,6 @@ namespace dnSpy.Files.TreeView.Resources {
 		public bool Decompile(IDecompileNodeContext context) {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.String) {
 				context.Output.Write((string)((BuiltInResourceData)ResourceElement.ResourceData).Data, BoxedOutputColor.Text);
-				context.HighlightingExtension = ".txt";
 				context.ContentTypeString = ContentTypes.PLAIN_TEXT;
 				return true;
 			}

@@ -22,13 +22,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorUIContextManagerImpl : ITextEditorUIContextManager {
 		void RaiseAddedEvent(ITextEditorUIContext uiContext);
 		void RaiseRemovedEvent(ITextEditorUIContext uiContext);
-		void RaiseNewContentEvent(ITextEditorUIContext uiContext, ITextOutput output, TextEditorUIContextListener listener, double order);
+		void RaiseNewContentEvent(ITextEditorUIContext uiContext, DnSpyTextOutputResult result);
 	}
 
 	[Export(typeof(ITextEditorUIContextManager)), Export(typeof(ITextEditorUIContextManagerImpl))]
@@ -90,16 +89,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				info.Execute(TextEditorUIContextListenerEvent.Removed, uiContext, null);
 		}
 
-		public void RaiseNewContentEvent(ITextEditorUIContext uiContext, ITextOutput output, TextEditorUIContextListener listener, double order) {
+		public void RaiseNewContentEvent(ITextEditorUIContext uiContext, DnSpyTextOutputResult result) {
 			if (uiContext == null)
-				throw new ArgumentNullException();
-			if (output == null)
-				throw new ArgumentNullException();
-			var infos = new List<ListenerInfo>(listeners);
-			infos.Add(new ListenerInfo(listener, order));
-			Sort(infos);
-			foreach (var info in infos)
-				info.Execute(TextEditorUIContextListenerEvent.NewContent, uiContext, output);
+				throw new ArgumentNullException(nameof(uiContext));
+			if (result == null)
+				throw new ArgumentNullException(nameof(result));
+			foreach (var info in listeners.ToArray())
+				info.Execute(TextEditorUIContextListenerEvent.NewContent, uiContext, result);
 		}
 	}
 }

@@ -36,8 +36,5 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 
 		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
 		public static readonly double ORDER_DEBUGGER_METHODLOCALPROVIDER = 3000;
-
-		/// <summary>Text marker serivce</summary>
-		public static readonly double ORDER_TEXTMARKERSERVICE = 1000000;
 	}
 }

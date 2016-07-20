@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
@@ -30,7 +31,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_RSRCELEMSET)]
@@ -81,11 +81,11 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
 			base.WriteShort(output, language, showOffset);
-			var so = output as ISmartTextOutput;
-			if (so != null) {
-				so.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
-				so.WriteLine();
-				so.WriteLine();
+			var dnSpyTextOutput = output as IDnSpyTextOutput;
+			if (dnSpyTextOutput != null) {
+				dnSpyTextOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
+				dnSpyTextOutput.WriteLine();
+				dnSpyTextOutput.WriteLine();
 			}
 		}
 

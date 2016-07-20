@@ -26,7 +26,6 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Decompiler {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
@@ -38,34 +37,36 @@ namespace dnSpy.Decompiler {
 
 		void OnTextEditorEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
 			if (@event == TextEditorUIContextListenerEvent.NewContent)
-				AddCodeMappings(uiContext, data as AvalonEditTextOutput);
+				AddCodeMappings(uiContext, data as DnSpyTextOutputResult);
 		}
 
-		void AddCodeMappings(ITextEditorUIContext uiContext, AvalonEditTextOutput output) {
-			if (output == null)
+		void AddCodeMappings(ITextEditorUIContext uiContext, DnSpyTextOutputResult result) {
+			if (result == null)
 				return;
-			var cm = new CodeMappings(output.DebuggerMemberMappings);
+			var cm = new CodeMappings(result.MemberMappings);
 			uiContext.AddOutputData(CodeMappingsConstants.CodeMappingsKey, cm);
 		}
 	}
 
 	sealed class CodeMappings : ICodeMappings {
-		readonly List<MemberMapping> memberMappings;
+		readonly MemberMapping[] memberMappings;
 
-		public int Count => memberMappings.Count;
+		public int Count => memberMappings.Length;
 
 		public CodeMappings() {
-			this.memberMappings = new List<MemberMapping>();
+			this.memberMappings = Array.Empty<MemberMapping>();
 		}
 
-		public CodeMappings(IList<MemberMapping> mappings) {
-			this.memberMappings = new List<MemberMapping>(mappings);
+		public CodeMappings(MemberMapping[] mappings) {
+			if (mappings == null)
+				throw new ArgumentNullException(nameof(mappings));
+			this.memberMappings = mappings;
 		}
 
 		public IList<SourceCodeMapping> Find(int line, int column) {
 			if (line < 0)
 				return Array.Empty<SourceCodeMapping>();
-			if (memberMappings.Count == 0)
+			if (memberMappings.Length == 0)
 				return Array.Empty<SourceCodeMapping>();
 
 			var bp = FindByLineColumn(line, column);

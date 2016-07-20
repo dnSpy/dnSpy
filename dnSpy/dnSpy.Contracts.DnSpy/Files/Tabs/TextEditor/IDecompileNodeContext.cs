@@ -55,18 +55,6 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		T ExecuteInUIThread<T>(Func<T> func);
 
 		/// <summary>
-		/// Sets the <see cref="IHighlightingDefinition"/> to use or null to use the default one.
-		/// See also <see cref="HighlightingExtension"/>
-		/// </summary>
-		IHighlightingDefinition HighlightingDefinition { get; set; }
-
-		/// <summary>
-		/// Sets the file extension (including the period) to use or null to use the default one.
-		/// See also <see cref="HighlightingDefinition"/>
-		/// </summary>
-		string HighlightingExtension { get; set; }
-
-		/// <summary>
 		/// Sets the content type. See also <see cref="ContentTypeString"/>
 		/// </summary>
 		IContentType ContentType { get; set; }

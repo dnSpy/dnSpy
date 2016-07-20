@@ -33,7 +33,7 @@ namespace dnSpy.Files.Tabs {
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
-			static IMemberRef GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+			static IMemberRef GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 
 			internal static IMemberRef GetMemberRef(IMenuItemContext context, string guid) {

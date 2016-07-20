@@ -22,7 +22,6 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
-using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
@@ -30,8 +29,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public DecompilationContext DecompilationContext { get; }
 		public ILanguage Language { get; }
 		public ITextOutput Output { get; }
-		public IHighlightingDefinition HighlightingDefinition { get; set; }
-		public string HighlightingExtension { get; set; }
+		public string FileExtension { get; set; }
 		public IContentType ContentType { get; set; }
 		public string ContentTypeString { get; set; }
 

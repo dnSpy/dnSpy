@@ -77,8 +77,6 @@ namespace dnSpy.Text.Editor {
 #pragma warning disable 0067
 		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
 #pragma warning restore 0067
-		//TODO: Remove public from this property once all refs to it from REPL and LOG editors have been removed
-		public DnSpyTextEditor DnSpyTextEditor { get; }
 		public IFormattedLineSource FormattedLineSource { get; private set; }
 		public bool InLayout { get; private set; }
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
@@ -134,9 +132,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(DnSpyTextEditor dnSpyTextEditor, ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
-			if (dnSpyTextEditor == null)
-				throw new ArgumentNullException(nameof(dnSpyTextEditor));
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
 			if (textViewModel == null)
 				throw new ArgumentNullException(nameof(textViewModel));
 			if (roles == null)
@@ -176,7 +172,6 @@ namespace dnSpy.Text.Editor {
 			this.recreateLineTransformCreator = true;
 			this.adornmentLayerCollection = new AdornmentLayerCollection(this);
 			Properties = new PropertyCollection();
-			DnSpyTextEditor = dnSpyTextEditor;
 			TextViewModel = textViewModel;
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
@@ -348,12 +343,12 @@ namespace dnSpy.Text.Editor {
 
 			SnapshotPoint bufferPosition;
 			double verticalDistance;
-			if (TextViewLines == null) {
+			if (wpfTextViewLineCollection == null) {
 				verticalDistance = 0;
 				bufferPosition = new SnapshotPoint(TextSnapshot, 0);
 			}
 			else {
-				var line = TextViewLines.FirstVisibleLine;
+				var line = wpfTextViewLineCollection.FirstVisibleLine;
 				verticalDistance = line.Top - ViewportTop;
 				bufferPosition = line.Start.TranslateTo(TextSnapshot, PointTrackingMode.Negative);
 			}
@@ -477,6 +472,8 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (InLayout)
 					throw new InvalidOperationException();
+				if (delayLayoutLinesInProgress)
+					DoDelayDisplayLines();
 				return wpfTextViewLineCollection;
 			}
 		}
@@ -534,7 +531,6 @@ namespace dnSpy.Text.Editor {
 			TextViewModel.Dispose();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
-			DnSpyTextEditor.Dispose();
 			(aggregateClassifier as IDisposable)?.Dispose();
 			TextCaret.Dispose();
 			Selection.Dispose();
@@ -762,9 +758,9 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibleLines() => UpdateVisibleLines(ViewportWidth, ViewportHeight);
 		void UpdateVisibleLines(double viewportWidthOverride, double ViewportHeightOverride) {
-			if (TextViewLines == null)
+			if (wpfTextViewLineCollection == null)
 				return;
-			foreach (IFormattedLine line in TextViewLines)
+			foreach (IFormattedLine line in wpfTextViewLineCollection)
 				line.SetVisibleArea(new Rect(ViewportLeft, ViewportTop, viewportWidthOverride, ViewportHeightOverride));
 		}
 

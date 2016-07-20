@@ -103,7 +103,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<ITextEditorUIContext>();
 			return uiContext?.HasSelectedText == true;
@@ -133,6 +133,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) =>
-			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 	}
 }

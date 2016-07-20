@@ -23,6 +23,7 @@ using System.IO;
 using System.Windows.Media;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
@@ -30,7 +31,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE)]
@@ -69,9 +69,9 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var smartOutput = output as ISmartTextOutput;
-			if (smartOutput != null) {
-				smartOutput.AddUIElement(() => {
+			var dnSpyTextOutput = output as IDnSpyTextOutput;
+			if (dnSpyTextOutput != null) {
+				dnSpyTextOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = ImageSource,
 					};

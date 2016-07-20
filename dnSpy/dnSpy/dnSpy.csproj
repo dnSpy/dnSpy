@@ -173,6 +173,7 @@
     <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\DnSpyTextOutput.cs" />
     <Compile Include="Files\Tabs\TextEditor\FileTabCommandConstants.cs" />
     <Compile Include="Files\Tabs\TextEditor\FileTabCommandInfoCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\FileTabCommandTargetFilter.cs" />
@@ -187,6 +188,7 @@
       <DependentUpon>TextEditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextControl.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerImpl.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
@@ -425,9 +427,6 @@
     <Compile Include="Text\Editor\DefaultTextViewMouseProcessor.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DnSpyScrollBar.cs" />
-    <Compile Include="Text\Editor\DnSpyTextEditor.cs" />
-    <Compile Include="Text\Editor\DnSpyTextEditorCreator.cs" />
-    <Compile Include="Text\Editor\DnSpyTextEditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
     <Compile Include="Text\Editor\EditorPositionState.cs" />
@@ -506,6 +505,7 @@
     <Compile Include="Text\Editor\WpfTextView.LayoutHelper.cs" />
     <Compile Include="Text\Editor\WpfTextViewConstants.cs" />
     <Compile Include="Text\Editor\WpfTextViewContainerMargin.cs" />
+    <Compile Include="Text\Editor\WpfTextViewExtensions.cs" />
     <Compile Include="Text\Editor\WpfTextViewHost.cs" />
     <Compile Include="Text\Editor\WpfTextViewLineCollection.cs" />
     <Compile Include="Text\Editor\WpfTextViewMarginProviderCollection.cs" />

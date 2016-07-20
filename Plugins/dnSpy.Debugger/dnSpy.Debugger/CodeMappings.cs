@@ -40,13 +40,13 @@ namespace dnSpy.Debugger {
 
 		void OnTextEditorEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
 			if (@event == TextEditorUIContextListenerEvent.NewContent)
-				AddCodeMappings(uiContext, data as AvalonEditTextOutput);
+				AddCodeMappings(uiContext, data as DnSpyTextOutputResult);
 		}
 
-		void AddCodeMappings(ITextEditorUIContext uiContext, AvalonEditTextOutput output) {
-			if (output == null)
+		void AddCodeMappings(ITextEditorUIContext uiContext, DnSpyTextOutputResult result) {
+			if (result == null)
 				return;
-			var cm = new CodeMappings(output.DebuggerMemberMappings, serializedDnModuleCreator);
+			var cm = new CodeMappings(result.MemberMappings, serializedDnModuleCreator);
 			uiContext.AddOutputData(CodeMappingsKey, cm);
 		}
 		internal static readonly object CodeMappingsKey = new object();

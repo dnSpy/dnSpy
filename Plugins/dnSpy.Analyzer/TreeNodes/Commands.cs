@@ -181,7 +181,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
 			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
-				GetMemberRefs(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+				GetMemberRefs(context, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 
 			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))

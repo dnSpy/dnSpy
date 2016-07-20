@@ -100,24 +100,23 @@ namespace Example2.Plugin {
 		}
 
 		// Gets called by dnSpy if there's only one node to decompile. This method gets called in a
-		// worker thread. The output is also cached unless you call AvalonEditTextOutput.DontCacheOutput().
+		// worker thread. The output is also cached unless you call IDnSpyTextOutput.SetCanNotBeCached().
 		public bool Decompile(IDecompileNodeContext context) {
 			// Pretend we actually do something...
 			Thread.Sleep(2000);
 
-			// If you don't want the output to be cached, call DontCacheOutput()
+			// If you don't want the output to be cached, call SetCanNotBeCached()
 			bool cacheOutput = true;
 			if (!cacheOutput) {
-				var avOutput = context.Output as AvalonEditTextOutput;
-				if (avOutput != null)
-					avOutput.DontCacheOutput();
+				var dnSpyTextOutput = context.Output as IDnSpyTextOutput;
+				if (dnSpyTextOutput != null)
+					dnSpyTextOutput.SetCanNotBeCached();
 			}
 
 			// Create the output and a few references that other code in this plugin will use, eg.
 			// to show a tooltip when hovering over the reference.
-			context.HighlightingExtension = ".cs";
 			context.ContentTypeString = ContentTypes.CSHARP;
-			context.Language.WriteCommentLine(context.Output, "Initialize it to the secret key");
+			context.Output.WriteLine("// Initialize it to the secret key", BoxedOutputColor.Comment);
 			context.Output.WriteReference("int", new StringInfoReference("This is a reference added by the code"), BoxedOutputColor.Keyword);
 			context.Output.WriteSpace();
 			context.Output.WriteReference("secret", new StringInfoReference("The real secret is actually 42 not 1234"), BoxedOutputColor.Local);

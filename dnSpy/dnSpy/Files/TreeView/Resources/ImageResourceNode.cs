@@ -24,6 +24,7 @@ using System.Windows.Media;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
@@ -32,7 +33,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_IMAGE_RESOURCE_NODE)]
@@ -134,9 +134,9 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var so = output as ISmartTextOutput;
-			if (so != null) {
-				so.AddUIElement(() => {
+			var dnSpyTextOutput = output as IDnSpyTextOutput;
+			if (dnSpyTextOutput != null) {
+				dnSpyTextOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
 					};
@@ -144,10 +144,10 @@ namespace dnSpy.Files.TreeView.Resources {
 			}
 
 			base.WriteShort(output, language, showOffset);
-			if (so != null) {
-				so.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
-				so.WriteLine();
-				so.WriteLine();
+			if (dnSpyTextOutput != null) {
+				dnSpyTextOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
+				dnSpyTextOutput.WriteLine();
+				dnSpyTextOutput.WriteLine();
 			}
 		}
 
@@ -175,11 +175,11 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var smartOutput = output as ISmartTextOutput;
-			if (smartOutput != null) {
+			var dnSpyTextOutput = output as IDnSpyTextOutput;
+			if (dnSpyTextOutput != null) {
 				language.WriteCommentBegin(output, true);
 				output.WriteOffsetComment(this, showOffset);
-				smartOutput.AddUIElement(() => {
+				dnSpyTextOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
 					};

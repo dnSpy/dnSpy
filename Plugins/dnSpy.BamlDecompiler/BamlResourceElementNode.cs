@@ -54,19 +54,17 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void Disassemble(ModuleDef module, BamlDocument document, ILanguage lang,
-			ITextOutput output, out string ext, CancellationToken token) {
+			ITextOutput output, CancellationToken token) {
 			var disassembler = new BamlDisassembler(lang, output, token);
 			disassembler.Disassemble(module, document);
-			ext = ".cs";
 		}
 
 		void Decompile(ModuleDef module, BamlDocument document, ILanguage lang,
-			ITextOutput output, out string ext, CancellationToken token) {
+			ITextOutput output, CancellationToken token) {
 			var decompiler = new XamlDecompiler();
 			var xaml = decompiler.Decompile(module, document, token, BamlDecompilerOptions.Create(lang), null);
 
 			output.Write(xaml.ToString(), BoxedOutputColor.Text);
-			ext = ".xml";
 		}
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
@@ -94,39 +92,33 @@ namespace dnSpy.BamlDecompiler {
 
 		Stream GetDecompiledStream(CancellationToken token) {
 			var output = new PlainTextOutput();
-			string contentTypeString;
-			Decompile(output, token, out contentTypeString);
+			Decompile(output, token);
 			return ResourceUtilities.StringToStream(output.ToString());
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			string contentTypeString;
-			context.HighlightingExtension = Decompile(context.Output, context.DecompilationContext.CancellationToken, out contentTypeString);
-			context.ContentTypeString = contentTypeString;
+			context.ContentTypeString = Decompile(context.Output, context.DecompilationContext.CancellationToken);
 			return true;
 		}
 
-		public string Decompile(ITextOutput output, CancellationToken token, out string contentTypeString) {
-			string ext = null;
+		public string Decompile(ITextOutput output, CancellationToken token) {
 			var lang = Context.Language;
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
 			if (bamlSettings.DisassembleBaml) {
-				Disassemble(module, document, lang, output, out ext, token);
-				contentTypeString = ContentTypes.BAML_DNSPY;
+				Disassemble(module, document, lang, output, token);
+				return ContentTypes.BAML_DNSPY;
 			}
 			else {
-				Decompile(module, document, lang, output, out ext, token);
-				contentTypeString = ContentTypes.XAML;
+				Decompile(module, document, lang, output, token);
+				return ContentTypes.XAML;
 			}
-			return ext;
 		}
 
 		public override string ToString(CancellationToken token, bool canDecompile) {
 			if (!canDecompile)
 				return null;
 			var output = new PlainTextOutput();
-			string contentTypeString;
-			Decompile(output, token, out contentTypeString);
+			Decompile(output, token);
 			return output.ToString();
 		}
 	}

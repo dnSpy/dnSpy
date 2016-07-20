@@ -167,7 +167,7 @@ namespace dnSpy.TreeView {
 			}
 
 			int lo = 0, hi = children.Count - 1;
-			while (lo <= hi && hi != -1) {
+			while (lo <= hi) {
 				int i = (lo + hi) / 2;
 
 				var otherData = children[i].Data;

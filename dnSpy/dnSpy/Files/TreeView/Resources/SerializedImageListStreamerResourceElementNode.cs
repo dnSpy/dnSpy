@@ -22,13 +22,13 @@ using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE)]
@@ -67,13 +67,13 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var smartOutput = output as ISmartTextOutput;
-			if (smartOutput != null) {
+			var dnSpyTextOutput = output as IDnSpyTextOutput;
+			if (dnSpyTextOutput != null) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
 						output.WriteSpace();
 					var imageSource = imageListOptions.ImageSources[i];
-					smartOutput.AddUIElement(() => {
+					dnSpyTextOutput.AddUIElement(() => {
 						return new System.Windows.Controls.Image {
 							Source = imageSource,
 						};

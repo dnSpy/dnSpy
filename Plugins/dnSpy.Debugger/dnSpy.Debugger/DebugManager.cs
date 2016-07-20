@@ -570,7 +570,7 @@ namespace dnSpy.Debugger {
 				return null;
 
 			IFileTreeNodeData node;
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID)) {
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID)) {
 				var uiContext = context.Find<ITextEditorUIContext>();
 				if (uiContext == null)
 					return null;
@@ -1167,7 +1167,7 @@ namespace dnSpy.Debugger {
 			var ctx = parameter as IMenuItemContext;
 			if (ctx == null)
 				return null;
-			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID)) {
+			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID)) {
 				var tab = ctx.CreatorObject.Object as IFileTab;
 				return tab == null ? null : tab.UIContext as ITextEditorUIContext;
 			}

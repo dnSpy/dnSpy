@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
-using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
@@ -31,16 +30,14 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// </summary>
 	public interface ITextEditorUIContext : IFileTabUIContext {
 		/// <summary>
-		/// Sets document to <paramref name="output"/>, which should be an <c>AvalonEditTextOutput</c>
-		/// instance
+		/// Sets document to <paramref name="result"/>
 		/// </summary>
-		/// <param name="output">New document</param>
-		/// <param name="highlighting">Highlighting to use or null</param>
+		/// <param name="result">New document data</param>
 		/// <param name="contentType">Content type or null</param>
-		void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType);
+		void SetOutput(DnSpyTextOutputResult result, IContentType contentType);
 
 		/// <summary>
-		/// Adds data that is cleared each time <see cref="SetOutput(ITextOutput, IHighlightingDefinition, IContentType)"/>
+		/// Adds data that is cleared each time <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/>
 		/// gets called.
 		/// </summary>
 		/// <param name="key">Key</param>

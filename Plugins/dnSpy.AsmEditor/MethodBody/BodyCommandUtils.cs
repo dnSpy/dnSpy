@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
 			if (context == null)
 				return null;
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
 			var uiContext = context.Find<ITextEditorUIContext>();
 			if (uiContext == null)

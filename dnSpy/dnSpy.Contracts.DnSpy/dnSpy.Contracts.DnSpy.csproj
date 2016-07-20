@@ -105,6 +105,9 @@
     <Compile Include="Decompiler\ICodeMappings.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
+    <Compile Include="Files\Tabs\TextEditor\DnSpyTextOutputResult.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IDnSpyTextOutput.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ReferenceInfo.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
     <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
@@ -304,7 +307,6 @@
     <Compile Include="Images\IDotNetImageManager.cs" />
     <Compile Include="Images\IImageManager.cs" />
     <Compile Include="Images\ImageReference.cs" />
-    <Compile Include="Languages\AvalonEditExtensions.cs" />
     <Compile Include="Languages\IDecompilerSettingsTab.cs" />
     <Compile Include="Languages\IDecompilerSettingsTabCreator.cs" />
     <Compile Include="Languages\ILanguageManager.cs" />
@@ -499,6 +501,7 @@
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
     <Compile Include="Text\OutputColorExtensions.cs" />
+    <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
     <Compile Include="Text\TextEditorLocation.cs" />
     <Compile Include="Themes\ColorType.cs" />

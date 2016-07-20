@@ -17,18 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.AvalonEdit.Highlighting;
+using System;
+using System.Windows;
+using dnSpy.Decompiler.Shared;
 
-namespace dnSpy.Contracts.Languages {
+namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
-	/// Extension methods
+	/// dnSpy text output
 	/// </summary>
-	public static class AvalonEditExtensions {
+	public interface IDnSpyTextOutput : ITextOutput {
 		/// <summary>
-		/// Gets the <see cref="IHighlightingDefinition"/> instance to use for this language
+		/// Called to disable caching of the result
 		/// </summary>
-		/// <param name="self">This</param>
-		/// <returns></returns>
-		public static IHighlightingDefinition GetHighlightingDefinition(this ILanguage self) => HighlightingManager.Instance.GetDefinitionByExtension(self.FileExtension);
+		void SetCanNotBeCached();
+
+		/// <summary>
+		/// Adds a UI element
+		/// </summary>
+		/// <param name="createElement">Creates the UI element. Only called on the UI thread</param>
+		void AddUIElement(Func<UIElement> createElement);
+
+		/// <summary>
+		/// Adds a button
+		/// </summary>
+		/// <param name="buttonText">Button text</param>
+		/// <param name="clickHandler">Button click handler</param>
+		void AddButton(string buttonText, RoutedEventHandler clickHandler);
 	}
 }

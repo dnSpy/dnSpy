@@ -44,7 +44,6 @@ namespace dnSpy.Text.Editor {
 	sealed class TextEditorFactoryService : ITextEditorFactoryService2 {
 		public event EventHandler<TextViewCreatedEventArgs> TextViewCreated;
 		readonly ITextBufferFactoryService textBufferFactoryService;
-		readonly IDnSpyTextEditorCreator dnSpyTextEditorCreator;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 		readonly ICommandManager commandManager;
 		readonly ISmartIndentationService smartIndentationService;
@@ -85,7 +84,7 @@ namespace dnSpy.Text.Editor {
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
 			readonly IGuidObjectsCreator guidObjectsCreator;
-			internal WpfTextView WpfTextView { get; set; }
+			internal IWpfTextView WpfTextView { get; set; }
 
 			public GuidObjectsCreator(Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects, IGuidObjectsCreator guidObjectsCreator) {
 				this.createGuidObjects = createGuidObjects;
@@ -96,8 +95,9 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(WpfTextView != null);
 				if (WpfTextView != null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID, WpfTextView);
-					foreach (var go in WpfTextView.DnSpyTextEditor.GetGuidObjects(args.OpenedFromKeyboard))
-						yield return go;
+					var loc = WpfTextView.GetTextEditorLocation(args.OpenedFromKeyboard);
+					if (loc != null)
+						yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
 				}
 
 				if (createGuidObjects != null) {
@@ -113,9 +113,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorCreator dnSpyTextEditorCreator, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.textBufferFactoryService = textBufferFactoryService;
-			this.dnSpyTextEditorCreator = dnSpyTextEditorCreator;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandManager = commandManager;
 			this.smartIndentationService = smartIndentationService;
@@ -190,15 +189,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		WpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
-			var commonTextEditorOptions = new CommonTextEditorOptions {
-				MenuGuid = options?.MenuGuid,
-				ContentType = textViewModel.DataModel.ContentType,
-				CreateGuidObjects = options?.CreateGuidObjects,
-			};
 			var guidObjectsCreator = new GuidObjectsCreator(options?.CreateGuidObjects, createGuidObjectsCreator?.Invoke());
-			var dnSpyTextEditorOptions = new DnSpyTextEditorOptions(commonTextEditorOptions, textViewModel.EditBuffer, () => guidObjectsCreator);
-			var dnSpyTextEditor = dnSpyTextEditorCreator.Create(dnSpyTextEditorOptions);
-			var wpfTextView = new WpfTextView(dnSpyTextEditor, textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager,  smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService, wpfTextViewCreationListeners);
+			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager,  smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService, wpfTextViewCreationListeners);
 			guidObjectsCreator.WpfTextView = wpfTextView;
 
 			if (options.MenuGuid != null)

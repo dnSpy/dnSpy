@@ -164,6 +164,7 @@
     </Compile>
     <Compile Include="SaveModule\DocumentSaver.cs" />
     <Compile Include="SaveModule\MmapDisabler.cs" />
+    <Compile Include="Themes\TextEditorResourceColorInitializer.cs" />
     <Compile Include="UndoRedo\DnSpyFileUndoableDocumentsProvider.cs" />
     <Compile Include="UndoRedo\IUndoableDocumentsProvider.cs" />
     <Compile Include="UndoRedo\UndoCommandManagerEventArgs.cs" />

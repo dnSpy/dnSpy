@@ -75,7 +75,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
 		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
-		public DnSpyTextEditor TextEditor { get; }
+		public ICSharpCode.AvalonEdit.TextEditor TextEditor { get; }
 		public IEnumerable<object> AllReferences => references.Select(a => a.Reference);
 
 		DefinitionLookup definitionLookup;
@@ -110,7 +110,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return instance;
 		}
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContext uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -134,7 +134,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
-			TextEditor = textView.DnSpyTextEditor;
+			//TextEditor = textView.DnSpyTextEditor;
 			this.toolTipHelper.Initialize(TextEditor);
 			dnSpyTextEditor.Content = wpfTextViewHost.HostControl;
 
@@ -587,7 +587,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control;
 			textEditorHelper.SetActive();
 			textEditorHelper.SetFocus();
-			TextEditor.GoToMousePosition();
+			//TextEditor.GoToMousePosition();
 			e.Handled = GoTo(referenceSegment, newTab, false, true, true);
 		}
 

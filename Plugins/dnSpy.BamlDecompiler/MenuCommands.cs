@@ -41,7 +41,7 @@ namespace dnSpy.BamlDecompiler {
 		public override bool IsChecked(IMenuItemContext context) => bamlSettings.DisassembleBaml;
 
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<ITextEditorUIContext>();
 			if (uiContext == null)

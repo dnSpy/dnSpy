@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// </summary>
 	public sealed class CodeReference {
 		/// <summary>
-		/// The reference or null
+		/// Gets the reference or null
 		/// </summary>
 		public object Reference { get; }
 
@@ -33,20 +33,20 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		public bool IsLocal { get; }
 
 		/// <summary>
-		/// true if it's the target of a click, eg. the definition of a type, method, etc
+		/// true if it's a definition
 		/// </summary>
-		public bool IsLocalTarget { get; }
+		public bool IsDefinition { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="ref">Referece</param>
-		/// <param name="isLocal">See <see cref="IsLocal"/></param>
-		/// <param name="isLocalTarget"><see cref="IsLocalTarget"/></param>
-		public CodeReference(object @ref, bool isLocal = false, bool isLocalTarget = false) {
-			this.Reference = @ref;
+		/// <param name="reference">Reference or null</param>
+		/// <param name="isLocal">true if it's a local, parameter, or label</param>
+		/// <param name="isDefinition">true if it's a definition</param>
+		public CodeReference(object reference, bool isLocal = false, bool isDefinition = false) {
+			this.Reference = reference;
 			this.IsLocal = isLocal;
-			this.IsLocalTarget = isLocalTarget;
+			this.IsDefinition = isDefinition;
 		}
 	}
 }

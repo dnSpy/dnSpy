@@ -68,13 +68,13 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return false;
 			return CanExecute(context.Find<ITextEditorUIContext>());
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				Execute(context.Find<ITextEditorUIContext>(), methodAnnotations);
 		}
 
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		static IEnumerable<CodeReference> FindInstructions(ITextEditorUIContext uiContext) {
 			foreach (var r in uiContext.GetSelectedCodeReferences()) {
-				if (r.IsLocalTarget && r.Reference is InstructionReference)
+				if (r.IsDefinition && r.Reference is InstructionReference)
 					yield return r;
 			}
 		}

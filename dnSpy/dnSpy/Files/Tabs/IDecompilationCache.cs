@@ -19,10 +19,9 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.Decompiler;
-using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs {
@@ -35,20 +34,18 @@ namespace dnSpy.Files.Tabs {
 		/// </summary>
 		/// <param name="language">Language</param>
 		/// <param name="nodes">Nodes</param>
-		/// <param name="highlighting">Highlighting</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IHighlightingDefinition highlighting, out IContentType contentType);
+		DnSpyTextOutputResult Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType);
 
 		/// <summary>
 		/// Cache decompiled output
 		/// </summary>
 		/// <param name="language">Language</param>
 		/// <param name="nodes">Nodes</param>
-		/// <param name="textOutput">Output</param>
-		/// <param name="highlighting">Highlighting</param>
+		/// <param name="result">Result</param>
 		/// <param name="contentType">Content type</param>
-		void Cache(ILanguage language, IFileTreeNodeData[] nodes, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting, IContentType contentType);
+		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DnSpyTextOutputResult result, IContentType contentType);
 
 		/// <summary>
 		/// Clear the cache

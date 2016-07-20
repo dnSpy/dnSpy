@@ -28,7 +28,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class UnknownResourceNode : ResourceNode, IUnknownResourceNode, IDecompileSelf {
@@ -40,11 +39,11 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
 			base.WriteShort(output, language, showOffset);
-			var so = output as ISmartTextOutput;
-			if (so != null) {
-				so.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
-				so.WriteLine();
-				so.WriteLine();
+			var dnSpyTextOutput = output as IDnSpyTextOutput;
+			if (dnSpyTextOutput != null) {
+				dnSpyTextOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
+				dnSpyTextOutput.WriteLine();
+				dnSpyTextOutput.WriteLine();
 			}
 		}
 

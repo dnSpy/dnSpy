@@ -86,6 +86,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (e.OldSnapshot != e.NewSnapshot)
+				OnCaretPositionChanged();
 			if (imeState.CompositionStarted)
 				MoveImeCompositionWindow();
 		}
@@ -346,7 +348,7 @@ namespace dnSpy.Text.Editor {
 			if (line.VisibilityState != VisibilityState.FullyVisible) {
 				ViewRelativePosition relativeTo;
 				var firstVisibleLine = textView.TextViewLines?.FirstVisibleLine;
-				if (firstVisibleLine == null)
+				if (firstVisibleLine == null || !firstVisibleLine.IsVisible())
 					relativeTo = ViewRelativePosition.Top;
 				else if (line.Start.Position <= firstVisibleLine.Start.Position)
 					relativeTo = ViewRelativePosition.Top;

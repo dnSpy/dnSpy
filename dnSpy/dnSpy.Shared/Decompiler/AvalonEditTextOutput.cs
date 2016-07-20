@@ -41,7 +41,7 @@ namespace dnSpy.Shared.Decompiler {
 			return codeRef != null &&
 				Reference == codeRef.Reference &&
 				IsLocal == codeRef.IsLocal &&
-				IsLocalTarget == codeRef.IsLocalTarget;
+				IsLocalTarget == codeRef.IsDefinition;
 		}
 
 		public CodeReference ToCodeReference() => new CodeReference(Reference, IsLocal, IsLocalTarget);

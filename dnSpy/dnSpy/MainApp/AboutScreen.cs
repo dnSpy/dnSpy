@@ -34,9 +34,9 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
+using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Plugin;
 using dnSpy.Properties;
-using dnSpy.Shared.Decompiler;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.MainApp {
@@ -120,9 +120,9 @@ namespace dnSpy.MainApp {
 
 		public void OnShow(IShowContext ctx) {
 			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
-			var output = new AvalonEditTextOutput();
+			var output = new DnSpyTextOutput();
 			Write(output);
-			uiCtx.SetOutput(output, null, aboutContentType);
+			uiCtx.SetOutput(output.CreateResult(), aboutContentType);
 		}
 
 		sealed class Info {
@@ -194,7 +194,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		void Write(AvalonEditTextOutput output) {
+		void Write(ITextOutput output) {
 			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), BoxedOutputColor.Text);
 			output.WriteLine();
 			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedOutputColor.Text);
@@ -210,21 +210,21 @@ namespace dnSpy.MainApp {
 			WriteResourceFile(output, "dnSpy.CREDITS.txt");
 		}
 
-		void WriteResourceFile(AvalonEditTextOutput output, string name, bool addNewLine = true) {
+		void WriteResourceFile(ITextOutput dnSpyOutput, string name, bool addNewLine = true) {
 			if (addNewLine)
-				output.WriteLine();
+				dnSpyOutput.WriteLine();
 			using (var stream = GetType().Assembly.GetManifestResourceStream(name))
 			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
 				for (;;) {
 					var line = streamReader.ReadLine();
 					if (line == null)
 						break;
-					output.WriteLine(line, BoxedOutputColor.Text);
+					dnSpyOutput.WriteLine(line, BoxedOutputColor.Text);
 				}
 			}
 		}
 
-		void WriteShortInfo(AvalonEditTextOutput output, string s) {
+		void WriteShortInfo(ITextOutput output, string s) {
 			if (string.IsNullOrEmpty(s))
 				return;
 			const int MAX_SHORT_LEN = 128;

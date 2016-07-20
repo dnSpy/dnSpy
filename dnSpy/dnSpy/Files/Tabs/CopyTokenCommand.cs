@@ -41,7 +41,7 @@ namespace dnSpy.Files.Tabs {
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
-			static uint? GetReference(IMenuItemContext context) => GetReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+			static uint? GetReference(IMenuItemContext context) => GetReference(context, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
 
 			internal static uint? GetReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))

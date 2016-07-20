@@ -25,10 +25,9 @@ using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.Decompiler;
-using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs {
@@ -60,8 +59,7 @@ namespace dnSpy.Files.Tabs {
 		readonly Dictionary<Key, Item> cachedItems = new Dictionary<Key, Item>();
 
 		sealed class Item {
-			public AvalonEditTextOutput TextOutput;
-			public IHighlightingDefinition Highlighting;
+			public DnSpyTextOutputResult OutputResult;
 			public IContentType ContentType;
 			public WeakReference WeakTextOutput;
 			DateTime LastHitUTC;
@@ -71,9 +69,8 @@ namespace dnSpy.Files.Tabs {
 			/// </summary>
 			public TimeSpan Age => DateTime.UtcNow - LastHitUTC;
 
-			public Item(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting, IContentType contentType) {
-				this.TextOutput = textOutput;
-				this.Highlighting = highlighting;
+			public Item(DnSpyTextOutputResult result, IContentType contentType) {
+				this.OutputResult = result;
 				this.ContentType = contentType;
 				this.LastHitUTC = DateTime.UtcNow;
 			}
@@ -81,13 +78,13 @@ namespace dnSpy.Files.Tabs {
 			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
 				if (WeakTextOutput != null) {
-					TextOutput = (AvalonEditTextOutput)WeakTextOutput.Target;
+					OutputResult = (DnSpyTextOutputResult)WeakTextOutput.Target;
 					WeakTextOutput = null;
 				}
 			}
 
 			public void MakeWeakReference() {
-				var textOutput = Interlocked.CompareExchange(ref this.TextOutput, null, this.TextOutput);
+				var textOutput = Interlocked.CompareExchange(ref this.OutputResult, null, this.OutputResult);
 				if (textOutput != null)
 					this.WeakTextOutput = new WeakReference(textOutput);
 			}
@@ -158,34 +155,30 @@ namespace dnSpy.Files.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IHighlightingDefinition highlighting, out IContentType contentType) {
+		public DnSpyTextOutputResult Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType) {
 			var settings = language.Settings;
 			lock (lockObj) {
 				var key = new Key(language, nodes, settings);
 
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
-					highlighting = item.Highlighting;
 					contentType = item.ContentType;
 					item.Hit();
-					var to = item.TextOutput;
-					if (to == null)
+					var outputResult = item.OutputResult;
+					if (outputResult == null)
 						cachedItems.Remove(key);
-					return to;
+					return outputResult;
 				}
 			}
-			highlighting = null;
 			contentType = null;
 			return null;
 		}
 
-		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting, IContentType contentType) {
-			if (!textOutput.CanBeCached)
-				return;
+		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DnSpyTextOutputResult outputResult, IContentType contentType) {
 			var settings = language.Settings;
 			lock (lockObj) {
 				var key = new Key(language, nodes, settings);
-				cachedItems[key] = new Item(textOutput, highlighting, contentType);
+				cachedItems[key] = new Item(outputResult, contentType);
 			}
 		}
 
@@ -219,13 +212,13 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, Item item) {
-			var textOutput = item.TextOutput;
-			if (textOutput == null && item.WeakTextOutput != null)
-				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
-			var refs = textOutput?.References;
+			var result = item.OutputResult;
+			if (result == null && item.WeakTextOutput != null)
+				result = (DnSpyTextOutputResult)item.WeakTextOutput.Target;
+			var refs = result?.ReferenceCollection;
 			if (refs == null)
 				return false;
-			return InModifiedModuleHelper.IsInModifiedModule(fileManager, modules, refs.Select(a => a.Reference));
+			return InModifiedModuleHelper.IsInModifiedModule(fileManager, modules, refs.Select(a => a.Data.Reference));
 		}
 	}
 

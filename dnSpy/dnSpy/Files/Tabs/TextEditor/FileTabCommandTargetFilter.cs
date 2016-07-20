@@ -30,9 +30,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textView = textView;
 		}
 
-		TextEditorControl TryGetInstance() =>
-			__textEditorControl ?? (__textEditorControl = TextEditorControl.TryGetInstance(textView));
-		TextEditorControl __textEditorControl;
+		TextEditorUIContextControl TryGetInstance() =>
+			__textEditorUIContextControl ?? (__textEditorUIContextControl = TextEditorUIContextControl.TryGetInstance(textView));
+		TextEditorUIContextControl __textEditorUIContextControl;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (TryGetInstance() == null)
@@ -63,38 +63,38 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-			var tabControl = TryGetInstance();
-			if (tabControl == null)
+			var textCtrl = TryGetInstance();
+			if (textCtrl == null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == FileTabCommandConstants.FileTabGroup) {
 				switch ((FileTabIds)cmdId) {
 				case FileTabIds.MoveToNextReference:
-					tabControl.MoveReference(true);
+					textCtrl.MoveReference(true);
 					return CommandTargetStatus.Handled;
 
 				case FileTabIds.MoveToPreviousReference:
-					tabControl.MoveReference(false);
+					textCtrl.MoveReference(false);
 					return CommandTargetStatus.Handled;
 
 				case FileTabIds.MoveToNextDefinition:
-					tabControl.MoveToNextDefinition(true);
+					textCtrl.MoveToNextDefinition(true);
 					return CommandTargetStatus.Handled;
 
 				case FileTabIds.MoveToPreviousDefinition:
-					tabControl.MoveToNextDefinition(false);
+					textCtrl.MoveToNextDefinition(false);
 					return CommandTargetStatus.Handled;
 
 				case FileTabIds.FollowReference:
-					tabControl.FollowReference();
+					textCtrl.FollowReference();
 					return CommandTargetStatus.Handled;
 
 				case FileTabIds.FollowReferenceNewTab:
-					tabControl.FollowReferenceNewTab();
+					textCtrl.FollowReferenceNewTab();
 					return CommandTargetStatus.Handled;
 
 				case FileTabIds.ClearMarkedReferencesAndToolTip:
-					tabControl.ClearMarkedReferencesAndToolTip();
+					//TODO:textCtrl.ClearMarkedReferencesAndToolTip();
 					return CommandTargetStatus.Handled;
 
 				default:

@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 
 		/// <summary>
 		/// New content has been added to the text editor. The <c>data</c> argument is a
-		/// <see cref="ITextOutput"/>, most likely an <c>AvalonEditTextOutput</c>
+		/// <see cref="DnSpyTextOutputResult"/>
 		/// </summary>
 		NewContent,
 	}

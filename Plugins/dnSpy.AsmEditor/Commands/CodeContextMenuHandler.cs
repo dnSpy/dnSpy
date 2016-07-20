@@ -48,14 +48,14 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return null;
 			var refSeg = context.Find<CodeReference>();
 			if (refSeg == null)
 				return null;
 			var node = fileTreeView.FindNode(refSeg.Reference);
 			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
-			return new CodeContext(nodes, refSeg.IsLocalTarget, context);
+			return new CodeContext(nodes, refSeg.IsDefinition, context);
 		}
 	}
 }

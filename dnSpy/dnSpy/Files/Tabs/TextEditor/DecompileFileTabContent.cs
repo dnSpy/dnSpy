@@ -32,8 +32,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Properties;
-using dnSpy.Shared.Decompiler;
-using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
@@ -141,7 +139,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		sealed class DecompileContext {
 			public DecompileNodeContext DecompileNodeContext;
-			public AvalonEditTextOutput CachedOutput;
+			public DnSpyTextOutputResult CachedOutputResult;
 			public CancellationTokenSource CancellationTokenSource;
 			public object SavedRefPos;
 		}
@@ -152,7 +150,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			decompilationContext.CalculateILRanges = true;
 			decompilationContext.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
 			decompilationContext.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
-			var output = new AvalonEditTextOutput();
+			var output = new DnSpyTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Language, output, dispatcher);
 			if (ctx.IsRefresh) {
@@ -184,10 +182,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void OnShow(IShowContext ctx) {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
-			IHighlightingDefinition highlighting;
 			IContentType contentType;
-			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out highlighting, out contentType);
-			decompileContext.DecompileNodeContext.HighlightingDefinition = highlighting;
+			decompileContext.CachedOutputResult = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out contentType);
 			decompileContext.DecompileNodeContext.ContentType = contentType;
 			ctx.UserData = decompileContext;
 		}
@@ -203,14 +199,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var decompileContext = (DecompileContext)ctx.UserData;
 			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
 
-			IHighlightingDefinition highlighting;
-			if (decompileContext.DecompileNodeContext.HighlightingDefinition != null)
-				highlighting = decompileContext.DecompileNodeContext.HighlightingDefinition;
-			else if (decompileContext.DecompileNodeContext.HighlightingExtension != null)
-				highlighting = HighlightingManager.Instance.GetDefinitionByExtension(decompileContext.DecompileNodeContext.HighlightingExtension);
-			else
-				highlighting = decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition();
-
 			var contentType = decompileContext.DecompileNodeContext.ContentType;
 			if (contentType == null) {
 				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
@@ -220,32 +208,36 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Debug.Assert(contentType != null);
 			}
 
-			AvalonEditTextOutput output;
+			DnSpyTextOutputResult outputResult;
 			if (result.IsCanceled) {
-				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationCanceled, BoxedOutputColor.Error);
+				var dnSpyOutput = new DnSpyTextOutput();
+				dnSpyOutput.Write(dnSpy_Resources.DecompilationCanceled, BoxedOutputColor.Error);
+				outputResult = dnSpyOutput.CreateResult();
 			}
 			else if (result.Exception != null) {
-				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationException, BoxedOutputColor.Error);
-				output.WriteLine();
-				output.Write(result.Exception.ToString(), BoxedOutputColor.Text);
+				var dnSpyOutput = new DnSpyTextOutput();
+				dnSpyOutput.Write(dnSpy_Resources.DecompilationException, BoxedOutputColor.Error);
+				dnSpyOutput.WriteLine();
+				dnSpyOutput.Write(result.Exception.ToString(), BoxedOutputColor.Text);
+				outputResult = dnSpyOutput.CreateResult();
 			}
 			else {
-				output = decompileContext.CachedOutput;
-				if (output == null) {
-					output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
-					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, output, highlighting, contentType);
+				outputResult = decompileContext.CachedOutputResult;
+				if (outputResult == null) {
+					var dnSpyOutput = (DnSpyTextOutput)decompileContext.DecompileNodeContext.Output;
+					outputResult = dnSpyOutput.CreateResult();
+					if (dnSpyOutput.CanBeCached)
+						decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, outputResult, contentType);
 				}
 			}
 
 			if (result.CanShowOutput)
-				uiCtx.SetOutput(output, highlighting, contentType);
+				uiCtx.SetOutput(outputResult, contentType);
 		}
 
 		public bool CanStartAsyncWorker(IShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.UserData;
-			if (decompileContext.CachedOutput != null)
+			if (decompileContext.CachedOutputResult != null)
 				return false;
 
 			var uiCtx = (ITextEditorUIContext)ctx.UIContext;

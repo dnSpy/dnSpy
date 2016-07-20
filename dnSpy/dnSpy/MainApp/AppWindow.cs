@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -37,8 +36,6 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Controls;
 using dnSpy.Events;
-using dnSpy.Files.Tabs.TextEditor;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow))]
@@ -127,8 +124,6 @@ namespace dnSpy.MainApp {
 			this.mainWindowCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
-			this.appSettings.PropertyChanged += AppSettings_PropertyChanged;
-			InitializeTextFormatterProvider();
 		}
 
 		static string CalculateAssemblyInformationalVersion(Assembly asm) {
@@ -138,20 +133,6 @@ namespace dnSpy.MainApp {
 			if (attr != null)
 				return attr.InformationalVersion;
 			return asm.GetName().Version.ToString();
-		}
-
-		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(IAppSettings.UseNewRenderer_TextEditor))
-				InitializeTextFormatterProvider();
-		}
-
-		void InitializeTextFormatterProvider() {
-			var newValue = appSettings.UseNewRenderer_TextEditor ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
-			TextFormatterFactory.DefaultTextFormatterProvider = newValue;
-			var tabs = fileTabManager.VisibleFirstTabs.Where(a => a.UIContext is ITextEditorUIContextImpl).ToArray();
-			foreach (var tab in tabs)
-				((ITextEditorUIContextImpl)tab.UIContext).OnUseNewRendererChanged();
-			fileTabManager.Refresh(tabs);
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshToolBar();
