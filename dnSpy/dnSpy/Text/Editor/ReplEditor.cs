@@ -58,7 +58,6 @@ namespace dnSpy.Text.Editor {
 		readonly CachedColorsList cachedColorsList;
 		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
 		readonly IDnSpyWpfTextView wpfTextView;
-		readonly IInvalidateClassificationsService invalidateClassificationsService;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ReplEditor replEditorUI;
@@ -72,9 +71,8 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.invalidateClassificationsService = invalidateClassificationsService;
 			options = options?.Clone() ?? new ReplEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
 			this.PrimaryPrompt = options.PrimaryPrompt;
@@ -170,7 +168,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			int offs = OffsetOfPrompt.Value;
 			var snapshot = wpfTextView.TextSnapshot;
-			invalidateClassificationsService.InvalidateClassifications(wpfTextView, new SnapshotSpan(snapshot, Span.FromBounds(offs, snapshot.Length)));
+			wpfTextView.InvalidateClassifications(new SnapshotSpan(snapshot, Span.FromBounds(offs, snapshot.Length)));
 		}
 
 		void RefreshScreenHandler(object sender, EventArgs e) {

@@ -31,19 +31,17 @@ namespace dnSpy.Text.Editor {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
-		readonly IInvalidateClassificationsService invalidateClassificationsService;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 
 		[ImportingConstructor]
-		ReplEditorCreator(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		ReplEditorCreator(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
-			this.invalidateClassificationsService = invalidateClassificationsService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, invalidateClassificationsService, editorOptionsFactoryService);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService);
 	}
 }

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
@@ -24,5 +25,10 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// dnSpy <see cref="IWpfTextView"/>
 	/// </summary>
 	public interface IDnSpyWpfTextView : IWpfTextView, IDnSpyTextView {
+		/// <summary>
+		/// Invalidates classifications
+		/// </summary>
+		/// <param name="span">Span to invalidate</param>
+		void InvalidateClassifications(SnapshotSpan span);
 	}
 }

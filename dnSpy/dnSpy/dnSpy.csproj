@@ -439,7 +439,6 @@
     <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
     <Compile Include="Text\Editor\IMarkerSpanCollection.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
-    <Compile Include="Text\Editor\InvalidateClassificationsService.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />
     <Compile Include="Text\Editor\KeyboardWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
