@@ -20,22 +20,25 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ICodeEditorCreator))]
 	sealed class CodeEditorCreator : ICodeEditorCreator {
-		readonly ITextEditorFactoryService2 textEditorFactoryService2;
+		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
+		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 
 		[ImportingConstructor]
-		CodeEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
-			this.textEditorFactoryService2 = textEditorFactoryService2;
+		CodeEditorCreator(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
+			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
-		public ICodeEditor Create(CodeEditorOptions options) => new CodeEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService);
+		public ICodeEditor Create(CodeEditorOptions options) => new CodeEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOptionsFactoryService);
 	}
 }

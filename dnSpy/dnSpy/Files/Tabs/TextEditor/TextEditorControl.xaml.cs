@@ -56,7 +56,6 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Text;
-using dnSpy.Text.Editor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -110,7 +109,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return instance;
 		}
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContext uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContext uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -124,9 +123,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
-			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
-			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
-			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(defaultRoles);
+			IDnSpyWpfTextView textView = null;//textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
+			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
 			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);

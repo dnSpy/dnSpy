@@ -72,10 +72,11 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService) {
+		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.invalidateClassificationsService = invalidateClassificationsService;
-			options = options ?? new ReplEditorOptions();
+			options = options?.Clone() ?? new ReplEditorOptions();
+			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
 			this.PrimaryPrompt = options.PrimaryPrompt;
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<ReplSubBuffer>();
@@ -84,9 +85,9 @@ namespace dnSpy.Text.Editor {
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
-			var roles = textEditorFactoryService2.CreateTextViewRoleSet(options.Roles);
-			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
-			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
+			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
+			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
 			ReplEditorUtils.AddInstance(this, wpfTextView);

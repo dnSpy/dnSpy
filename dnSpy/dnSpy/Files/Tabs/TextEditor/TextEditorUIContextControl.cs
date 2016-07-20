@@ -57,11 +57,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			FileTabTextViewRoles.FileTab,
 		};
 
-		public TextEditorUIContextControl(ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2, ITextEditorHelper textEditorHelper) {
+		public TextEditorUIContextControl(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, ITextEditorHelper textEditorHelper) {
 			if (textBufferFactoryService == null)
 				throw new ArgumentNullException(nameof(textBufferFactoryService));
-			if (textEditorFactoryService2 == null)
-				throw new ArgumentNullException(nameof(textEditorFactoryService2));
+			if (dnSpyTextEditorFactoryService == null)
+				throw new ArgumentNullException(nameof(dnSpyTextEditorFactoryService));
 			if (textEditorHelper == null)
 				throw new ArgumentNullException(nameof(textEditorHelper));
 			this.textEditorHelper = textEditorHelper;
@@ -71,9 +71,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
-			var roles = textEditorFactoryService2.CreateTextViewRoleSet(defaultRoles);
-			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, new TextViewCreatorOptions(), null);
-			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(defaultRoles);
+			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, (TextViewCreatorOptions)null);
+			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			wpfTextViewHost.TextView.Properties.AddProperty(typeof(TextEditorUIContextControl), this);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);

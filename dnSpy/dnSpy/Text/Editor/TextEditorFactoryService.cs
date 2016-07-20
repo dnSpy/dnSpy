@@ -34,14 +34,9 @@ using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
-	//TODO: This iface should be removed. The users shouldn't depend on the text editor impl
-	interface ITextEditorFactoryService2 : IDnSpyTextEditorFactoryService {
-		WpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator);
-	}
-
 	[Export(typeof(ITextEditorFactoryService))]
-	[Export(typeof(ITextEditorFactoryService2))]
-	sealed class TextEditorFactoryService : ITextEditorFactoryService2 {
+	[Export(typeof(IDnSpyTextEditorFactoryService))]
+	sealed class TextEditorFactoryService : IDnSpyTextEditorFactoryService {
 		public event EventHandler<TextViewCreatedEventArgs> TextViewCreated;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
@@ -188,25 +183,17 @@ namespace dnSpy.Text.Editor {
 			return CreateTextViewImpl(viewModel, roles, parentOptions, options);
 		}
 
-		WpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
+		IDnSpyWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
 			var guidObjectsCreator = new GuidObjectsCreator(options?.CreateGuidObjects, createGuidObjectsCreator?.Invoke());
-			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager,  smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService, wpfTextViewCreationListeners);
+			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService, wpfTextViewCreationListeners);
 			guidObjectsCreator.WpfTextView = wpfTextView;
 
-			if (options.MenuGuid != null)
+			if (options?.MenuGuid != null)
 				menuManager.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsCreator, new ContextMenuInitializer(wpfTextView));
 
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));
 
 			return wpfTextView;
-		}
-
-		WpfTextView ITextEditorFactoryService2.CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			if (roles == null)
-				throw new ArgumentNullException(nameof(roles));
-			return CreateTextViewImpl(new TextViewModel(new TextDataModel(textBuffer)), roles, editorOptionsFactoryService.GlobalOptions, options, createGuidObjectsCreator);
 		}
 
 		public IWpfTextViewHost CreateTextViewHost(IWpfTextView wpfTextView, bool setFocus) {

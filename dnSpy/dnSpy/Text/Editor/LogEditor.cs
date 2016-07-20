@@ -76,19 +76,20 @@ namespace dnSpy.Text.Editor {
 			LogEditorTextViewRoles.LOG,
 		};
 
-		public LogEditor(LogEditorOptions options, ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService) {
+		public LogEditor(LogEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.cachedColorsList = new CachedColorsList();
-			options = options ?? new LogEditorOptions();
+			options = options?.Clone() ?? new LogEditorOptions();
+			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
 
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var rolesList = new List<string>(defaultRoles);
 			rolesList.AddRange(options.ExtraRoles);
-			var roles = textEditorFactoryService2.CreateTextViewRoleSet(rolesList);
-			var textView = textEditorFactoryService2.CreateTextView(textBuffer, roles, options, () => new GuidObjectsCreator(this));
-			var wpfTextViewHost = textEditorFactoryService2.CreateTextViewHost(textView, false);
+			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(rolesList);
+			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
+			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);

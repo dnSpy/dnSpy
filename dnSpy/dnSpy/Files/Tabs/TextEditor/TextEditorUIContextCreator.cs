@@ -22,7 +22,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
-using dnSpy.Text.Editor;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.TextEditor {
@@ -32,15 +32,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IMenuManager menuManager;
 		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
 		readonly ITextBufferFactoryService textBufferFactoryService;
-		readonly ITextEditorFactoryService2 textEditorFactoryService2;
+		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, ITextBufferFactoryService textBufferFactoryService, ITextEditorFactoryService2 textEditorFactoryService2) {
+		TextEditorUIContextCreator(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService) {
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
 			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
 			this.textBufferFactoryService = textBufferFactoryService;
-			this.textEditorFactoryService2 = textEditorFactoryService2;
+			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 		}
 
 		sealed class TextEditorHelper : ITextEditorHelper {
@@ -53,7 +53,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var helper = new TextEditorHelper();
-				var uiCtxCtrl = new TextEditorUIContextControl(textBufferFactoryService, textEditorFactoryService2, helper);
+				var uiCtxCtrl = new TextEditorUIContextControl(textBufferFactoryService, dnSpyTextEditorFactoryService, helper);
 				var uiContext = new TextEditorUIContext(wpfCommandManager, textEditorUIContextManagerImpl, menuManager, uiCtxCtrl);
 				helper.RealInstance = uiContext;
 				textEditorUIContextManagerImpl.RaiseAddedEvent(uiContext);

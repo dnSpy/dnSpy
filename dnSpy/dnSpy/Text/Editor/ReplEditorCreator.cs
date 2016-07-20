@@ -20,27 +20,30 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IReplEditorCreator))]
 	sealed class ReplEditorCreator : IReplEditorCreator {
-		readonly ITextEditorFactoryService2 textEditorFactoryService2;
+		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly IInvalidateClassificationsService invalidateClassificationsService;
+		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 
 		[ImportingConstructor]
-		ReplEditorCreator(ITextEditorFactoryService2 textEditorFactoryService2, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService) {
-			this.textEditorFactoryService2 = textEditorFactoryService2;
+		ReplEditorCreator(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IInvalidateClassificationsService invalidateClassificationsService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.invalidateClassificationsService = invalidateClassificationsService;
+			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, textEditorFactoryService2, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, invalidateClassificationsService);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, invalidateClassificationsService, editorOptionsFactoryService);
 	}
 }
