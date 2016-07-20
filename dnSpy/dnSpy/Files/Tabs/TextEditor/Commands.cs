@@ -106,7 +106,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<ITextEditorUIContext>();
-			return uiContext?.HasSelectedText == true;
+			return uiContext != null && !uiContext.Selection.IsEmpty;
 		}
 	}
 

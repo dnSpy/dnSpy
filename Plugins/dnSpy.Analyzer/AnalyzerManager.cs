@@ -37,6 +37,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
@@ -288,7 +289,7 @@ namespace dnSpy.Analyzer {
 				return false;
 
 			var location = mapping.StartPosition;
-			var loc = FindLocation(uiContext.GetCodeReferences(location.Line, location.Column), mapping.EndPosition, @ref);
+			var loc = FindLocation(GetCodeReferences(uiContext, location.Line, location.Column), mapping.EndPosition, @ref);
 			if (loc == null)
 				loc = new TextEditorLocation(location.Line, location.Column);
 
@@ -296,12 +297,23 @@ namespace dnSpy.Analyzer {
 			return true;
 		}
 
-		TextEditorLocation? FindLocation(IEnumerable<Tuple<CodeReference, TextEditorLocation>> infos, TextPosition endLoc, object @ref) {
+		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetCodeReferences(ITextEditorUIContext uiContext, int lineNumber, int columnNumber) {
+			int position = uiContext.TextViewHost.TextView.LineColumnToPosition(lineNumber, columnNumber);
+			var snapshot = uiContext.TextViewHost.TextView.TextSnapshot;
+			foreach (var spanData in uiContext.OutputResult.ReferenceCollection.FindFrom(position)) {
+				var line = snapshot.GetLineFromPosition(spanData.Span.Start);
+				int currentLineNumber = line.LineNumber;
+				int currentColumnNumber = spanData.Span.Start - line.Start.Position;
+				yield return Tuple.Create(spanData, new TextEditorLocation(currentLineNumber, currentColumnNumber));
+			}
+		}
+
+		TextEditorLocation? FindLocation(IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> infos, TextPosition endLoc, object @ref) {
 			foreach (var info in infos) {
 				int c = Compare(info.Item2, endLoc);
 				if (c > 0)
 					break;
-				if (RefEquals(@ref, info.Item1.Reference))
+				if (RefEquals(@ref, info.Item1.Data.Reference))
 					return info.Item2;
 			}
 			return null;

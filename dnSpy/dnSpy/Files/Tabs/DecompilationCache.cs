@@ -235,7 +235,7 @@ namespace dnSpy.Files.Tabs {
 
 		public static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, IEnumerable<object> references) {
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
-			foreach (var r in references) {
+			foreach (var r in references.Distinct()) {
 				IAssembly asmRef = null;
 				if (r is IType)
 					asmRef = (r as IType).DefinitionAssembly;

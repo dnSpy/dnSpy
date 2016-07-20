@@ -572,7 +572,7 @@ namespace dnSpy.Files.Tabs {
 			if (InModifiedModuleHelper.IsInModifiedModule(modules, tab.Content.Nodes))
 				return true;
 			var uiContext = tab.TryGetTextEditorUIContext();
-			if (uiContext != null && InModifiedModuleHelper.IsInModifiedModule(FileTreeView.FileManager, modules, uiContext.References))
+			if (uiContext != null && InModifiedModuleHelper.IsInModifiedModule(FileTreeView.FileManager, modules, uiContext.OutputResult.ReferenceCollection.Select(a => a.Data.Reference)))
 				return true;
 
 			return false;

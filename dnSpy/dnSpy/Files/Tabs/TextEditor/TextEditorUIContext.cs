@@ -28,6 +28,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -46,6 +47,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly TextEditorUIContextControl textEditorUIContextControl;
 
 		double IZoomable.ScaleValue => textEditorUIContextControl.TextView.ZoomLevel / 100.0;
+		IDnSpyWpfTextViewHost ITextEditorUIContext.TextViewHost => textEditorUIContextControl.TextViewHost;
+		IDnSpyTextView ITextEditorUIContext.TextView => textEditorUIContextControl.TextView;
+		ITextCaret ITextEditorUIContext.Caret => textEditorUIContextControl.TextView.Caret;
+		ITextSelection ITextEditorUIContext.Selection => textEditorUIContextControl.TextView.Selection;
+		DnSpyTextOutputResult ITextEditorUIContext.OutputResult => textEditorUIContextControl.OutputResult;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TextEditorUIContext uiContext;
@@ -110,13 +116,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public object UIObject => textEditorUIContextControl;
 		public FrameworkElement ScaleElement => textEditorUIContextControl.TextView.VisualElement;
-		public bool HasSelectedText => !textEditorUIContextControl.TextView.Selection.IsEmpty;
 
 		public TextEditorLocation Location {
 			get {
-				int caretPos = textEditorUIContextControl.TextView.Caret.Position.BufferPosition.Position;
+				var pos = textEditorUIContextControl.TextView.Caret.Position;
+				int caretPos = pos.BufferPosition.Position;
 				var line = textEditorUIContextControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
-				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position);
+				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position + pos.VirtualSpaces);
 			}
 		}
 
@@ -279,18 +285,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			textEditorUIContextControl.ScrollAndMoveCaretTo(line, column);
 		}
 
-		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
-			if (line < 0)
-				throw new ArgumentOutOfRangeException(nameof(line));
-			if (column < 0)
-				throw new ArgumentOutOfRangeException(nameof(column));
-			return textEditorUIContextControl.GetCodeReferences(line, column);
-		}
-
-		public object SelectedReference => textEditorUIContextControl.GetCurrentReferenceInfo()?.Data.Reference;
-		public CodeReference SelectedCodeReference => textEditorUIContextControl.GetCurrentReferenceInfo()?.Data.ToCodeReference();
-		public IEnumerable<CodeReference> GetSelectedCodeReferences() => textEditorUIContextControl.GetSelectedCodeReferences();
-		public IEnumerable<object> References => textEditorUIContextControl.AllReferences;
+		public SpanData<ReferenceInfo>? SelectedReferenceInfo => textEditorUIContextControl.GetCurrentReferenceInfo();
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedCodeReferences() => textEditorUIContextControl.GetSelectedCodeReferences();
 		public object SaveReferencePosition() => textEditorUIContextControl.SaveReferencePosition(this.GetCodeMappings());
 		public bool RestoreReferencePosition(object obj) => textEditorUIContextControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 	}

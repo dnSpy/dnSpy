@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 	sealed class HexContext {
 		public ITreeNodeData[] Nodes { get; }
-		public bool IsLocalTarget { get; }
+		public bool IsDefinition { get; }
 		public object Reference { get; }
 		public int? Line { get; }
 		public int? Column { get; }
@@ -72,9 +72,9 @@ namespace dnSpy.AsmEditor.Hex {
 			this.CreatorObject = creatorObject;
 		}
 
-		public HexContext(ITextEditorUIContext uiContext, int? line, int? col, object @ref, bool isLocalTarget) {
+		public HexContext(ITextEditorUIContext uiContext, int? line, int? col, object @ref, bool isDefinition) {
 			this.Reference = @ref;
-			this.IsLocalTarget = isLocalTarget;
+			this.IsDefinition = isDefinition;
 			this.Line = line;
 			this.Column = col;
 			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID, uiContext);
@@ -147,15 +147,15 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static HexContext CreateContext(ITextEditorUIContext uiContext) {
-			var codeRef = uiContext.SelectedCodeReference;
-			bool isLocalTarget = false;
+			var refInfo = uiContext.SelectedReferenceInfo;
+			bool isDefinition = false;
 			object @ref = null;
-			if (codeRef != null) {
-				@ref = codeRef.Reference;
-				isLocalTarget = codeRef.IsDefinition;
+			if (refInfo != null) {
+				@ref = refInfo.Value.Data.Reference;
+				isDefinition = refInfo.Value.Data.IsDefinition;
 			}
 			var pos = uiContext.Location;
-			return new HexContext(uiContext, pos.Line, pos.Column, @ref, isLocalTarget);
+			return new HexContext(uiContext, pos.Line, pos.Column, @ref, isDefinition);
 		}
 
 		static HexContext CreateContext(IFileTreeView fileTreeView) => new HexContext(new GuidObject(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, fileTreeView), fileTreeView.TreeView.TopLevelSelection);
@@ -593,7 +593,7 @@ namespace dnSpy.AsmEditor.Hex {
 			else {
 				// Only allow declarations of the defs, i.e., right-clicking a method call with a method
 				// def as reference should return null, not the method def.
-				if (context.Reference != null && context.IsLocalTarget && context.Reference is IMemberRef) {
+				if (context.Reference != null && context.IsDefinition && context.Reference is IMemberRef) {
 					// Don't resolve it. It's confusing if we show the method body of a called method
 					// instead of the current method.
 					def = context.Reference as IMemberDef;

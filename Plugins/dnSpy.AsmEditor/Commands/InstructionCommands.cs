@@ -34,6 +34,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.IL;
 
@@ -100,10 +101,10 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		static IEnumerable<CodeReference> FindInstructions(ITextEditorUIContext uiContext) {
-			foreach (var r in uiContext.GetSelectedCodeReferences()) {
-				if (r.IsDefinition && r.Reference is InstructionReference)
-					yield return r;
+		static IEnumerable<SpanData<ReferenceInfo>> FindInstructions(ITextEditorUIContext uiContext) {
+			foreach (var refInfo in uiContext.GetSelectedCodeReferences()) {
+				if (refInfo.Data.IsDefinition && refInfo.Data.Reference is InstructionReference)
+					yield return refInfo;
 			}
 		}
 	}
@@ -111,7 +112,7 @@ namespace dnSpy.AsmEditor.Commands {
 	struct InstructionILBytesCopier {
 		public bool FoundUnknownBytes { get; private set; }
 
-		public string Copy(IEnumerable<CodeReference> refs, Lazy<IMethodAnnotations> methodAnnotations) {
+		public string Copy(IEnumerable<SpanData<ReferenceInfo>> refs, Lazy<IMethodAnnotations> methodAnnotations) {
 			var sb = new StringBuilder();
 
 			IInstructionBytesReader reader = null;
@@ -119,7 +120,7 @@ namespace dnSpy.AsmEditor.Commands {
 				MethodDef method = null;
 				int index = 0;
 				foreach (var r in refs) {
-					var ir = (InstructionReference)r.Reference;
+					var ir = (InstructionReference)r.Data.Reference;
 					var instr = ir.Instruction;
 					if (ir.Method != method) {
 						if (reader != null)

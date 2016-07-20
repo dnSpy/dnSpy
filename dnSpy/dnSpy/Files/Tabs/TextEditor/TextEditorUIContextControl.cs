@@ -32,14 +32,15 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Text;
-using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed class TextEditorUIContextControl : Grid {
-		public IWpfTextView TextView => wpfTextViewHost.TextView;
+		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
+		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
+		public DnSpyTextOutputResult OutputResult => lastDnSpyTextOutputResult.OutputResult;
 
 		readonly CachedColorsList cachedColorsList;
 		readonly IContentType defaultContentType;
@@ -102,8 +103,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public Button CancelButton => CurrentWaitAdorner?.button;
 
-		public IEnumerable<object> AllReferences { get; internal set; }
-
 		public void ShowCancelButton(Action onCancel, string message) {
 			var newWaitAdorner = new WaitAdorner(onCancel, message);
 			CurrentWaitAdorner = newWaitAdorner;
@@ -133,15 +132,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		struct LastDnSpyTextOutputResult : IEquatable<LastDnSpyTextOutputResult> {
-			readonly DnSpyTextOutputResult result;
+			public DnSpyTextOutputResult OutputResult { get; }
 			readonly IContentType contentType;
 
 			public LastDnSpyTextOutputResult(DnSpyTextOutputResult result, IContentType contentType) {
-				this.result = result;
+				this.OutputResult = result;
 				this.contentType = contentType;
 			}
 
-			public bool Equals(LastDnSpyTextOutputResult other) => result == other.result && contentType == other.contentType;
+			public bool Equals(LastDnSpyTextOutputResult other) => OutputResult == other.OutputResult && contentType == other.contentType;
 		}
 
 		LastDnSpyTextOutputResult lastDnSpyTextOutputResult;
@@ -161,7 +160,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextView.TextBuffer.ChangeContentType(contentType, null);
 			referenceCollection = result.ReferenceCollection;
 			cachedColorsList.Clear();
-			cachedColorsList.Add(0, result.CachedTextTokenColors);
+			cachedColorsList.Add(0, result.ColorCollection);
 			TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), result.Text);
 			TextView.Selection.Clear();
 			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
@@ -371,25 +370,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public SpanData<ReferenceInfo>? GetCodeReferenceAt(int position) => referenceCollection.Find(position);
 
-		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedCodeReferences() {
 			var selection = wpfTextViewHost.TextView.Selection;
 			if (selection.IsEmpty)
 				yield break;
 			foreach (var vspan in selection.VirtualSelectedSpans) {
 				var span = vspan.SnapshotSpan;
 				foreach (var spanData in referenceCollection.Find(span.Span))
-					yield return spanData.Data.ToCodeReference();
-			}
-		}
-
-		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int lineNumber, int columnNumber) {
-			int position = wpfTextViewHost.TextView.LineColumnToPosition(lineNumber, columnNumber);
-			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
-			foreach (var spanData in referenceCollection.FindFrom(position)) {
-				var line = snapshot.GetLineFromPosition(spanData.Span.Start);
-				int currentLineNumber = line.LineNumber;
-				int currentColumnNumber = spanData.Span.Start - line.Start.Position;
-				yield return Tuple.Create(spanData.Data.ToCodeReference(), new TextEditorLocation(currentLineNumber, currentColumnNumber));
+					yield return spanData;
 			}
 		}
 

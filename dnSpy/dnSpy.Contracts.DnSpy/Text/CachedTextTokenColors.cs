@@ -46,6 +46,7 @@ namespace dnSpy.Contracts.Text {
 		object currentTokenData = noColor;
 		bool isAppendingDefaultText = true;
 		Dictionary<int, TokenInfo> offsetToTokenInfo = new Dictionary<int, TokenInfo>();
+		bool isFrozen;
 
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
@@ -96,6 +97,16 @@ namespace dnSpy.Contracts.Text {
 		/// Call this method when there's nothing more to write
 		/// </summary>
 		public void Finish() => Flush();
+
+		/// <summary>
+		/// Freezes the instance so no new text can be added
+		/// </summary>
+		public void Freeze() {
+			if (isFrozen)
+				return;
+			Finish();
+			isFrozen = true;
+		}
 
 		/// <summary>
 		/// Appends data and text
@@ -149,6 +160,8 @@ namespace dnSpy.Contracts.Text {
 
 		// Gets called to add one token. No newlines are allowed
 		void AppendInternal(object data, int length) {
+			if (isFrozen)
+				throw new InvalidOperationException("Can't append more data after the instance has been frozen");
 			Debug.Assert(length >= 0);
 			if (length == 0)
 				return;

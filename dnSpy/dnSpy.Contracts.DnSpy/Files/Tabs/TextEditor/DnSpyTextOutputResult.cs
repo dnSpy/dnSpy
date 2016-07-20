@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 
@@ -34,7 +35,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Gets the colors
 		/// </summary>
-		public CachedTextTokenColors CachedTextTokenColors { get; }
+		public CachedTextTokenColors ColorCollection { get; }
 
 		/// <summary>
 		/// Gets the references
@@ -44,29 +45,29 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Gets the IL code mappings
 		/// </summary>
-		public MemberMapping[] MemberMappings { get; }
+		public ReadOnlyCollection<MemberMapping> MemberMappings { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="text">Text</param>
-		/// <param name="cachedTextTokenColors">Colors</param>
+		/// <param name="colorCollection">Colors</param>
 		/// <param name="referenceCollection">References</param>
 		/// <param name="memberMappings">Debug info</param>
-		public DnSpyTextOutputResult(string text, CachedTextTokenColors cachedTextTokenColors, SpanDataCollection<ReferenceInfo> referenceCollection, MemberMapping[] memberMappings) {
+		public DnSpyTextOutputResult(string text, CachedTextTokenColors colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MemberMapping[] memberMappings) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
-			if (cachedTextTokenColors == null)
-				throw new ArgumentNullException(nameof(cachedTextTokenColors));
+			if (colorCollection == null)
+				throw new ArgumentNullException(nameof(colorCollection));
 			if (referenceCollection == null)
 				throw new ArgumentNullException(nameof(referenceCollection));
 			if (memberMappings == null)
 				throw new ArgumentNullException(nameof(memberMappings));
-			cachedTextTokenColors.Finish();
+			colorCollection.Freeze();
 			Text = text;
-			CachedTextTokenColors = cachedTextTokenColors;
+			ColorCollection = colorCollection;
 			ReferenceCollection = referenceCollection;
-			MemberMappings = memberMappings;
+			MemberMappings = new ReadOnlyCollection<MemberMapping>(memberMappings);
 		}
 	}
 }

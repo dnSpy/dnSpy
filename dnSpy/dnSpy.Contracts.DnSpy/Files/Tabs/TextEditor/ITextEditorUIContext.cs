@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
@@ -70,12 +72,34 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		void MoveCaretTo(object @ref);
 
 		/// <summary>
-		/// true if there's selected text
+		/// Gets the text view host. Don't write to the text buffer directly, use
+		/// <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/> to write new text.
 		/// </summary>
-		bool HasSelectedText { get; }
+		IDnSpyWpfTextViewHost TextViewHost { get; }
 
 		/// <summary>
-		/// Gets the current location
+		/// Gets the text view. Don't write to the text buffer directly, use
+		/// <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/> to write new text.
+		/// </summary>
+		IDnSpyTextView TextView { get; }
+
+		/// <summary>
+		/// Gets the caret
+		/// </summary>
+		ITextCaret Caret { get; }
+
+		/// <summary>
+		/// Gets the selection
+		/// </summary>
+		ITextSelection Selection { get; }
+
+		/// <summary>
+		/// Gets the latest output (set by <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/>)
+		/// </summary>
+		DnSpyTextOutputResult OutputResult { get; }
+
+		/// <summary>
+		/// Gets the current caret position
 		/// </summary>
 		TextEditorLocation Location { get; }
 
@@ -87,33 +111,15 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		void ScrollAndMoveCaretTo(int line, int column);
 
 		/// <summary>
-		/// Gets the selected reference or null
+		/// Gets the reference at the caret or null if none
 		/// </summary>
-		object SelectedReference { get; }
+		SpanData<ReferenceInfo>? SelectedReferenceInfo { get; }
 
 		/// <summary>
-		/// Gets the selected reference or null
-		/// </summary>
-		CodeReference SelectedCodeReference { get; }
-
-		/// <summary>
-		/// Returns all selected <see cref="CodeReference"/>s
+		/// Gets all references intersecting with the selection
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<CodeReference> GetSelectedCodeReferences();
-
-		/// <summary>
-		/// Gets the references in the document
-		/// </summary>
-		IEnumerable<object> References { get; }
-
-		/// <summary>
-		/// Gets all code references starting from a certain location
-		/// </summary>
-		/// <param name="line">Line, 0-based</param>
-		/// <param name="column">Column, 0-based</param>
-		/// <returns></returns>
-		IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column);
+		IEnumerable<SpanData<ReferenceInfo>> GetSelectedCodeReferences();
 
 		/// <summary>
 		/// Saves current location relative to some reference in the code. Return value can be

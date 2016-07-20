@@ -41,13 +41,13 @@ namespace dnSpy.AsmEditor.Commands {
 			if (!((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)
 				return null;
 
-			var refSeg = uiContext.SelectedCodeReference;
-			if (refSeg == null)
+			var refInfo = uiContext.SelectedReferenceInfo;
+			if (refInfo == null)
 				return null;
 
-			var node = fileTabManager.FileTreeView.FindNode(refSeg.Reference);
+			var node = fileTabManager.FileTreeView.FindNode(refInfo.Value.Data.Reference);
 			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
-			return new CodeContext(nodes, refSeg.IsDefinition, null);
+			return new CodeContext(nodes, refInfo.Value.Data.IsDefinition, null);
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {

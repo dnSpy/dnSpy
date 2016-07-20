@@ -49,15 +49,15 @@ namespace dnSpy.Decompiler {
 	}
 
 	sealed class CodeMappings : ICodeMappings {
-		readonly MemberMapping[] memberMappings;
+		readonly IList<MemberMapping> memberMappings;
 
-		public int Count => memberMappings.Length;
+		public int Count => memberMappings.Count;
 
 		public CodeMappings() {
 			this.memberMappings = Array.Empty<MemberMapping>();
 		}
 
-		public CodeMappings(MemberMapping[] mappings) {
+		public CodeMappings(IList<MemberMapping> mappings) {
 			if (mappings == null)
 				throw new ArgumentNullException(nameof(mappings));
 			this.memberMappings = mappings;
@@ -66,7 +66,7 @@ namespace dnSpy.Decompiler {
 		public IList<SourceCodeMapping> Find(int line, int column) {
 			if (line < 0)
 				return Array.Empty<SourceCodeMapping>();
-			if (memberMappings.Length == 0)
+			if (memberMappings.Count == 0)
 				return Array.Empty<SourceCodeMapping>();
 
 			var bp = FindByLineColumn(line, column);
