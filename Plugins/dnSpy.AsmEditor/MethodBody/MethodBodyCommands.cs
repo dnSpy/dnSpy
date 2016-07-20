@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			cmds.Add(EditILInstructionsCommand,
 				(s, e) => editILCmd2.Execute(null),
 				(s, e) => e.CanExecute = editILCmd2.CanExecute(null),
-				ModifierKeys.Control, Key.E);
+				ModifierKeys.Control | ModifierKeys.Shift, Key.E);
 		}
 	}
 
@@ -165,7 +165,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = "ILEditor", InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
+	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = "ILEditor", InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
 	sealed class EditILInstructionsCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
