@@ -170,38 +170,38 @@
     <Compile Include="Files\Tabs\TabCommands.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
     <Compile Include="Files\Tabs\TabHistory.cs" />
-    <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
-    <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
-    <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
-    <Compile Include="Files\Tabs\TextEditor\DnSpyTextOutput.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabCommandConstants.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabCommandInfoCreator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabCommandTargetFilter.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabCommandTargetFilterCreator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabIds.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabIdsExtensions.cs" />
-    <Compile Include="Files\Tabs\TextEditor\FileTabTextViewRoles.cs" />
-    <Compile Include="Files\Tabs\TextEditor\IconBarCommandManager.cs" />
-    <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextEditorControl.xaml.cs">
+    <Compile Include="Files\Tabs\DocViewer\Commands.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DecompileFileTabContent.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DnSpyTextOutput.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabCommandConstants.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabCommandInfoCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabCommandTargetFilter.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabCommandTargetFilterCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabIds.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabIdsExtensions.cs" />
+    <Compile Include="Files\Tabs\DocViewer\FileTabTextViewRoles.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IconBarCommandManager.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IconBarMargin.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ReferenceElementGenerator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\TextEditorControl.xaml.cs">
       <DependentUpon>TextEditorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextControl.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerImpl.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipCreator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipManager.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipSettings.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipWriter.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\DnlibReferenceToolTipContentCreator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\ToolTipContentCreatorContext.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ToolTips\ToolTipHelper.cs" />
-    <Compile Include="Files\Tabs\TextEditor\UIElementGenerator.cs" />
-    <Compile Include="Files\Tabs\TextEditor\WaitAdorner.xaml.cs">
+    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextControl.cs" />
+    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextManagerImpl.cs" />
+    <Compile Include="Files\Tabs\DocViewer\TextLineObjectManager.cs" />
+    <Compile Include="Files\Tabs\DocViewer\TextMarkerService.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipManager.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\DnlibReferenceToolTipContentCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\ToolTipContentCreatorContext.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\ToolTipHelper.cs" />
+    <Compile Include="Files\Tabs\DocViewer\UIElementGenerator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\WaitAdorner.xaml.cs">
       <DependentUpon>WaitAdorner.xaml</DependentUpon>
     </Compile>
     <Compile Include="Files\Tabs\TreeNodeReferenceFileTabContentCreator.cs" />
@@ -662,11 +662,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Files\Tabs\TextEditor\TextEditorControl.xaml">
+    <Page Include="Files\Tabs\DocViewer\TextEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Files\Tabs\TextEditor\WaitAdorner.xaml">
+    <Page Include="Files\Tabs\DocViewer\WaitAdorner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

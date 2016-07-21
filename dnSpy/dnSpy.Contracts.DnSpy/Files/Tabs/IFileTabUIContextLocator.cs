@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>

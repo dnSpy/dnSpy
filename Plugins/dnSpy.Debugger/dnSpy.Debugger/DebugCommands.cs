@@ -24,7 +24,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;

@@ -21,7 +21,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;

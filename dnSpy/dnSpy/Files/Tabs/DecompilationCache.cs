@@ -25,7 +25,7 @@ using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using Microsoft.VisualStudio.Utilities;

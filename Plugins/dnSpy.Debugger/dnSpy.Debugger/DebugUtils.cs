@@ -24,7 +24,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {

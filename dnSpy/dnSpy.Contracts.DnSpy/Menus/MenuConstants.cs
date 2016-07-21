@@ -18,7 +18,7 @@
 */
 
 using System.Windows.Controls;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;

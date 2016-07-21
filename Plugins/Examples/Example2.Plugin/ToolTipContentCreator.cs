@@ -1,4 +1,4 @@
-﻿using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+﻿using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Text;
 
 namespace Example2.Plugin {

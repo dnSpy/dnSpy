@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Decompiler;

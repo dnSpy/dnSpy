@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.CallStack {

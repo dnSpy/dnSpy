@@ -19,7 +19,7 @@
 
 using System;
 using System.Windows.Controls;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Controls {

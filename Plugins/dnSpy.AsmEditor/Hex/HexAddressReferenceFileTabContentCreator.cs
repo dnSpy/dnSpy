@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.PE;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Hex;
 using dnSpy.Decompiler.Shared;

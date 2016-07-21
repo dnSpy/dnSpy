@@ -22,7 +22,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using dnlib.DotNet.Resources;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;

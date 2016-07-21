@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.BamlDecompiler {

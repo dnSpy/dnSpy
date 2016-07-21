@@ -19,7 +19,7 @@
 
 using System;
 using System.Threading;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Files.Tabs {

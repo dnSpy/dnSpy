@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using dnlib.DotNet.Resources;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;

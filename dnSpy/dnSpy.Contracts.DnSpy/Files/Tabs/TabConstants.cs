@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Decompiler.Shared;
 
