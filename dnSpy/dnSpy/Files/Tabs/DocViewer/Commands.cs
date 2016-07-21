@@ -32,8 +32,6 @@ using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 namespace dnSpy.Files.Tabs.DocViewer {
 	[ExportAutoLoaded]
 	sealed class WordWrapInit : IAutoLoaded {
-		public static readonly RoutedCommand WordWrap = new RoutedCommand("WordWrap", typeof(WordWrapInit));
-
 		readonly IEditorOptions editorOptions;
 		readonly IAppSettings appSettings;
 		readonly IMessageBoxManager messageBoxManager;
@@ -71,15 +69,15 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
-	sealed class WordWrapCommand : MenuItemCommand {
+	sealed class WordWrapCommand : MenuItemBase {
 		readonly IEditorOptions editorOptions;
 
 		[ImportingConstructor]
-		WordWrapCommand(IEditorOptionsFactoryService editorOptionsFactoryService)
-			: base(WordWrapInit.WordWrap) {
+		WordWrapCommand(IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 		}
 
+		public override void Execute(IMenuItemContext context) => editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap);
 		public override bool IsChecked(IMenuItemContext context) => (editorOptions.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 	}
 
