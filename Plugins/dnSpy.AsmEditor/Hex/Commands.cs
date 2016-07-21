@@ -129,7 +129,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static HexContext CreateContext(IFileTabManager fileTabManager) {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
-			if (documentViewer != null && ((UIElement)documentViewer.UIObject).IsKeyboardFocusWithin)
+			if (documentViewer != null && documentViewer.UIObject.IsKeyboardFocusWithin)
 				return CreateContext(documentViewer);
 
 			if (((UIElement)fileTabManager.FileTreeView.TreeView.UIObject).IsKeyboardFocusWithin)

@@ -46,6 +46,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly DocumentViewerControl documentViewerControl;
 
+		FrameworkElement IDocumentViewer.UIObject => documentViewerControl;
 		double IZoomable.ScaleValue => documentViewerControl.TextView.ZoomLevel / 100.0;
 		IDnSpyWpfTextViewHost IDocumentViewer.TextViewHost => documentViewerControl.TextViewHost;
 		IDnSpyTextView IDocumentViewer.TextView => documentViewerControl.TextView;

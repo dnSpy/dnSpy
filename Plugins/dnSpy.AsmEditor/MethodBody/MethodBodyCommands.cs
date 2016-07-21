@@ -213,7 +213,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
-			if (!((UIElement)documentViewer.UIObject).IsKeyboardFocusWithin)
+			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
 			var pos = documentViewer.Location;

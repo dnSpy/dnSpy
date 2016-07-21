@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -30,6 +31,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// Document viewer
 	/// </summary>
 	public interface IDocumentViewer : IFileTabUIContext {
+		/// <summary>
+		/// Gets the document viewer control
+		/// </summary>
+		new FrameworkElement UIObject { get; }
+
 		/// <summary>
 		/// Sets new content
 		/// </summary>
