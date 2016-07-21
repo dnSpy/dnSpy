@@ -75,12 +75,12 @@ namespace dnSpy.Debugger.CallStack {
 		readonly Lazy<IModuleLoader> moduleLoader;
 
 		[ImportingConstructor]
-		StackFrameManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, ITextLineObjectManager textLineObjectManager, Lazy<IModuleLoader> moduleLoader, IDocumentViewerManager documentViewerManager) {
+		StackFrameManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, ITextLineObjectManager textLineObjectManager, Lazy<IModuleLoader> moduleLoader, IDocumentViewerService documentViewerService) {
 			this.theDebugger = theDebugger;
 			this.fileTabManager = fileTabManager;
 			this.textLineObjectManager = textLineObjectManager;
 			this.moduleLoader = moduleLoader;
-			documentViewerManager.Add(OnDocumentViewerEvent, DocumentViewerManagerConstants.ORDER_DEBUGGER_CALLSTACK);
+			documentViewerService.NewContent += DocumentViewerService_NewContent;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
@@ -154,11 +154,9 @@ namespace dnSpy.Debugger.CallStack {
 				Remove(tab.UIContext as IDocumentViewer);
 		}
 
-		void OnDocumentViewerEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) {
-			if (@event == DocumentViewerEvent.NewContent) {
-				Remove(documentViewer);
-				UpdateStackFrameLines(documentViewer, false);
-			}
+		void DocumentViewerService_NewContent(object sender, DocumentViewerNewContentEventArgs e) {
+			Remove(e.DocumentViewer);
+			UpdateStackFrameLines(e.DocumentViewer, false);
 		}
 
 		CorFrame GetFrameByNumber(int number) {

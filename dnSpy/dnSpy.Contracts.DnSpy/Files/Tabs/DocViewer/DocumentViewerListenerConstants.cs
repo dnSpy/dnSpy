@@ -19,24 +19,19 @@
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// <see cref="DocumentViewerListener"/> event
+	/// <see cref="IDocumentViewerListener"/> constants
 	/// </summary>
-	public enum DocumentViewerEvent {
-		/// <summary>
-		/// A <see cref="IDocumentViewer"/> has been created
-		/// </summary>
-		Added,
+	public static class DocumentViewerListenerConstants {
+		/// <summary>Default order</summary>
+		public const double ORDER_DEFAULT = double.MaxValue;
 
-		/// <summary>
-		/// A <see cref="IDocumentViewer"/> has been removed (eg. tab was closed). This event
-		/// isn't raised if the <see cref="IDocumentViewer"/> instance has already been GC'd.
-		/// </summary>
-		Removed,
+		/// <summary>Debugger: create code mappings</summary>
+		public const double ORDER_DEBUGGER_CODEMAPPINGSCREATOR = 1000;
 
-		/// <summary>
-		/// New content has been added to the text editor. The <c>data</c> argument is a
-		/// <see cref="DnSpyTextOutputResult"/>
-		/// </summary>
-		NewContent,
+		/// <summary>create code mappings</summary>
+		public const double ORDER_CODEMAPPINGSCREATOR = 2000;
+
+		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
+		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = 3000;
 	}
 }

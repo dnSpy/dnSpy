@@ -33,19 +33,21 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	[Export(typeof(IMethodLocalProvider))]
-	sealed class MethodLocalProvider : IMethodLocalProvider {
+	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER)]
+	sealed class MethodLocalProvider : IMethodLocalProvider, IDocumentViewerListener {
 		public event EventHandler NewMethodInfoAvailable;
 
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		MethodLocalProvider(IFileTabManager fileTabManager, IDocumentViewerManager documentViewerManager) {
+		MethodLocalProvider(IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
-			documentViewerManager.Add(OnDocumentViewerEvent, DocumentViewerManagerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER);
 		}
 
-		void OnDocumentViewerEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) =>
-			NewMethodInfoAvailable?.Invoke(this, EventArgs.Empty);
+		public void OnEvent(DocumentViewerEventArgs e) {
+			if (e.EventType == DocumentViewerEvent.NewContent)
+				NewMethodInfoAvailable?.Invoke(this, EventArgs.Empty);
+		}
 
 		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals) {
 			parameters = null;

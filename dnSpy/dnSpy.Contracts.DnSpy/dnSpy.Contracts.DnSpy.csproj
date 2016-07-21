@@ -106,11 +106,10 @@
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\Tabs\DocViewer\DnSpyTextOutputResult.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerEvent.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerManagerConstants.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerListenerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDnSpyTextOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewer.cs" />
-    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerManager.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />

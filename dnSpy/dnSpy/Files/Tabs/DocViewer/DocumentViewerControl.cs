@@ -145,7 +145,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		LastDnSpyTextOutputResult lastDnSpyTextOutputResult;
-		public void SetOutput(DnSpyTextOutputResult result, IContentType contentType) {
+		public bool SetOutput(DnSpyTextOutputResult result, IContentType contentType) {
 			if (result == null)
 				throw new ArgumentNullException(nameof(result));
 			if (contentType == null)
@@ -155,7 +155,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 			var newLastOutput = new LastDnSpyTextOutputResult(result, contentType);
 			if (lastDnSpyTextOutputResult.Equals(newLastOutput))
-				return;
+				return false;
 			lastDnSpyTextOutputResult = newLastOutput;
 
 			TextView.TextBuffer.ChangeContentType(contentType, null);
@@ -164,6 +164,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), result.Text);
 			TextView.Selection.Clear();
 			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
+			return true;
 		}
 
 		public bool GoToLocation(object reference) {

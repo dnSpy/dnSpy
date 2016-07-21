@@ -140,7 +140,7 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewer.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerControl.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerCreator.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerManagerImpl.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
     <Compile Include="Files\Tabs\FileListLoader.cs" />

@@ -30,15 +30,15 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DocumentViewerCreator : IFileTabUIContextCreator {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
-		readonly IDocumentViewerManagerImpl documentViewerManagerImpl;
+		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
 
 		[ImportingConstructor]
-		DocumentViewerCreator(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, IDocumentViewerManagerImpl documentViewerManagerImpl, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService) {
+		DocumentViewerCreator(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, IDocumentViewerServiceImpl documentViewerServiceImpl, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService) {
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
-			this.documentViewerManagerImpl = documentViewerManagerImpl;
+			this.documentViewerServiceImpl = documentViewerServiceImpl;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 		}
@@ -54,9 +54,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (typeof(T) == typeof(IDocumentViewer)) {
 				var helper = new DocumentViewerHelper();
 				var uiCtxCtrl = new DocumentViewerControl(textBufferFactoryService, dnSpyTextEditorFactoryService, helper);
-				var uiContext = new DocumentViewer(wpfCommandManager, documentViewerManagerImpl, menuManager, uiCtxCtrl);
+				var uiContext = new DocumentViewer(wpfCommandManager, documentViewerServiceImpl, menuManager, uiCtxCtrl);
 				helper.RealInstance = uiContext;
-				documentViewerManagerImpl.RaiseAddedEvent(uiContext);
+				documentViewerServiceImpl.RaiseAddedEvent(uiContext);
 				return uiContext;
 			}
 			return null;

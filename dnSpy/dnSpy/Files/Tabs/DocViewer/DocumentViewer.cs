@@ -43,7 +43,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 	sealed class DocumentViewer : IDocumentViewer, IDocumentViewerHelper, IZoomable, IDisposable {
 		readonly IWpfCommandManager wpfCommandManager;
-		readonly IDocumentViewerManagerImpl documentViewerManagerImpl;
+		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly DocumentViewerControl documentViewerControl;
 
 		double IZoomable.ScaleValue => documentViewerControl.TextView.ZoomLevel / 100.0;
@@ -76,17 +76,17 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public DocumentViewer(IWpfCommandManager wpfCommandManager, IDocumentViewerManagerImpl documentViewerManagerImpl, IMenuManager menuManager, DocumentViewerControl documentViewerControl) {
+		public DocumentViewer(IWpfCommandManager wpfCommandManager, IDocumentViewerServiceImpl documentViewerServiceImpl, IMenuManager menuManager, DocumentViewerControl documentViewerControl) {
 			if (wpfCommandManager == null)
 				throw new ArgumentNullException(nameof(wpfCommandManager));
-			if (documentViewerManagerImpl == null)
-				throw new ArgumentNullException(nameof(documentViewerManagerImpl));
+			if (documentViewerServiceImpl == null)
+				throw new ArgumentNullException(nameof(documentViewerServiceImpl));
 			if (menuManager == null)
 				throw new ArgumentNullException(nameof(menuManager));
 			if (documentViewerControl == null)
 				throw new ArgumentNullException(nameof(documentViewerControl));
 			this.wpfCommandManager = wpfCommandManager;
-			this.documentViewerManagerImpl = documentViewerManagerImpl;
+			this.documentViewerServiceImpl = documentViewerServiceImpl;
 			this.documentViewerControl = documentViewerControl;
 			menuManager.InitializeContextMenu(documentViewerControl, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView, documentViewerControl));
 			wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, documentViewerControl);
@@ -231,9 +231,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void SetOutput(DnSpyTextOutputResult result, IContentType contentType) {
 			if (result == null)
 				throw new ArgumentNullException(nameof(result));
-			outputData.Clear();
-			documentViewerControl.SetOutput(result, contentType);
-			documentViewerManagerImpl.RaiseNewContentEvent(this, result);
+			if (documentViewerControl.SetOutput(result, contentType)) {
+				outputData.Clear();
+				documentViewerServiceImpl.RaiseNewContentEvent(this, result, documentViewerControl.TextView.TextBuffer.ContentType);
+			}
 		}
 
 		public void AddOutputData(object key, object data) {
@@ -271,7 +272,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public void Dispose() {
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
-			documentViewerManagerImpl.RaiseRemovedEvent(this);
+			documentViewerServiceImpl.RaiseRemovedEvent(this);
 			wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, documentViewerControl);
 			documentViewerControl.Dispose();
 			outputData.Clear();

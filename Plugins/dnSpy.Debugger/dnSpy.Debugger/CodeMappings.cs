@@ -23,30 +23,27 @@ using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Debugger {
-	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
-	sealed class CodeMappingsLoader : IAutoLoaded {
+	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_DEBUGGER_CODEMAPPINGSCREATOR)]
+	sealed class CodeMappingsLoader : IDocumentViewerListener {
 		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
 
 		[ImportingConstructor]
-		CodeMappingsLoader(IDocumentViewerManager documentViewerManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
+		CodeMappingsLoader(IDocumentViewerService documentViewerService, ISerializedDnModuleCreator serializedDnModuleCreator) {
 			this.serializedDnModuleCreator = serializedDnModuleCreator;
-			documentViewerManager.Add(OnTextEditorEvent, DocumentViewerManagerConstants.ORDER_DEBUGGER_CODEMAPPINGSCREATOR);
 		}
 
-		void OnTextEditorEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) {
-			if (@event == DocumentViewerEvent.NewContent)
-				AddCodeMappings(documentViewer, data as DnSpyTextOutputResult);
+		public void OnEvent(DocumentViewerEventArgs e) {
+			if (e.EventType == DocumentViewerEvent.NewContent)
+				AddCodeMappings(e.DocumentViewer, ((DocumentViewerNewContentEventArgs)e).OutputResult);
 		}
 
-		void AddCodeMappings(IDocumentViewer documentViewer, DnSpyTextOutputResult result) {
-			if (result == null)
+		void AddCodeMappings(IDocumentViewer documentViewer, DnSpyTextOutputResult outputResult) {
+			if (outputResult == null)
 				return;
-			var cm = new CodeMappings(result.MemberMappings, serializedDnModuleCreator);
+			var cm = new CodeMappings(outputResult.MemberMappings, serializedDnModuleCreator);
 			documentViewer.AddOutputData(CodeMappingsKey, cm);
 		}
 		internal static readonly object CodeMappingsKey = new object();
