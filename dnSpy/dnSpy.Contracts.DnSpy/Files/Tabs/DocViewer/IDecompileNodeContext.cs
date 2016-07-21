@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <typeparam name="T">Return type</typeparam>
 		/// <param name="func">Delegate to execute</param>
 		/// <returns></returns>
-		T ExecuteInUIThread<T>(Func<T> func);
+		T UIThread<T>(Func<T> func);
 
 		/// <summary>
 		/// Sets the content type. See also <see cref="ContentTypeString"/>

@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	enum FileTabIds {
+	enum DocumentViewerIds {
 		MoveToNextReference,
 		MoveToPreviousReference,
 		MoveToNextDefinition,

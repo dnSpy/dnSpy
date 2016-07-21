@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	static class FileTabTextViewRoles {
-		public const string FileTab = "45F0F34C-8C24-469D-B0F4-F1B136B36753";
+	static class DocumentViewerTextViewRoles {
+		public const string DocumentViewer = "45F0F34C-8C24-469D-B0F4-F1B136B36753";
 	}
 }

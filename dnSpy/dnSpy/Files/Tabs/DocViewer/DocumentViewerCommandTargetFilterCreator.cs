@@ -18,25 +18,17 @@
 */
 
 using dnSpy.Contracts.Command;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	/// <summary>
-	/// Extension methods
-	/// </summary>
-	static class FileTabIdsExtensions {
-		/// <summary>
-		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
-		/// </summary>
-		/// <param name="id">ID</param>
-		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this FileTabIds id) => new CommandInfo(FileTabCommandConstants.FileTabGroup, (int)id);
+	[ExportCommandTargetFilterCreator(DocumentViewerCommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER)]
+	sealed class DocumentViewerCommandTargetFilterCreator : ICommandTargetFilterCreator {
+		public ICommandTargetFilter Create(object target) {
+			var textView = target as ITextView;
+			if (textView?.Roles.Contains(DocumentViewerTextViewRoles.DocumentViewer) != true)
+				return null;
 
-		/// <summary>
-		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
-		/// </summary>
-		/// <param name="id">ID</param>
-		/// <param name="arguments">Arguments or null</param>
-		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this FileTabIds id, object arguments) => new CommandInfo(FileTabCommandConstants.FileTabGroup, (int)id, arguments);
+			return new DocumentViewerCommandTargetFilter(textView);
+		}
 	}
 }

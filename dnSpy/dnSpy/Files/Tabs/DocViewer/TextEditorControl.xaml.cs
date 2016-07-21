@@ -100,7 +100,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Structured,
 			PredefinedTextViewRoles.Zoomable,
-			FileTabTextViewRoles.FileTab,
+			DocumentViewerTextViewRoles.DocumentViewer,
 		};
 
 		internal static TextEditorControl TryGetInstance(ITextView textView) {

@@ -55,7 +55,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Structured,
 			PredefinedTextViewRoles.Zoomable,
-			FileTabTextViewRoles.FileTab,
+			DocumentViewerTextViewRoles.DocumentViewer,
 		};
 
 		public DocumentViewerControl(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IDocumentViewerHelper textEditorHelper) {

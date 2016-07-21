@@ -17,18 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Command;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	[ExportCommandTargetFilterCreator(FileTabCommandConstants.CMDTARGETFILTER_ORDER_FILETAB)]
-	sealed class FileTabCommandTargetFilterCreator : ICommandTargetFilterCreator {
-		public ICommandTargetFilter Create(object target) {
-			var textView = target as ITextView;
-			if (textView?.Roles.Contains(FileTabTextViewRoles.FileTab) != true)
-				return null;
-
-			return new FileTabCommandTargetFilter(textView);
-		}
+	static class DocumentViewerCommandConstants {
+		public static readonly Guid DocumentViewerGroup = new Guid("76CB650C-61E4-49E7-B820-5DE5476CE29D");
+		public const double CMDINFO_ORDER_DOCUMENTVIEWER = CommandConstants.CMDINFO_ORDER_TEXT_EDITOR - 100;
+		public const double CMDTARGETFILTER_ORDER_DOCUMENTVIEWER = CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 100;
 	}
 }

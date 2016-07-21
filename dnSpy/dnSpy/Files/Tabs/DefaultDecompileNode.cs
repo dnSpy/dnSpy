@@ -25,7 +25,7 @@ namespace dnSpy.Files.Tabs {
 	[ExportDecompileNode(Order = TabConstants.ORDER_DEFAULTDECOMPILENODE)]
 	sealed class DefaultDecompileNode : IDecompileNode {
 		public bool Decompile(IDecompileNodeContext context, IFileTreeNodeData node) {
-			new NodeDecompiler(a => context.ExecuteInUIThread(() => a()), context.Output, context.Language, context.DecompilationContext, context).Decompile(node);
+			new NodeDecompiler(a => context.UIThread(() => a()), context.Output, context.Language, context.DecompilationContext, context).Decompile(node);
 			return true;
 		}
 	}

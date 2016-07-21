@@ -23,10 +23,10 @@ using dnSpy.Contracts.Command;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	sealed class FileTabCommandTargetFilter : ICommandTargetFilter {
+	sealed class DocumentViewerCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public FileTabCommandTargetFilter(ITextView textView) {
+		public DocumentViewerCommandTargetFilter(ITextView textView) {
 			this.textView = textView;
 		}
 
@@ -38,19 +38,19 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (TryGetInstance() == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == FileTabCommandConstants.FileTabGroup) {
-				switch ((FileTabIds)cmdId) {
-				case FileTabIds.MoveToNextReference:
-				case FileTabIds.MoveToPreviousReference:
-				case FileTabIds.MoveToNextDefinition:
-				case FileTabIds.MoveToPreviousDefinition:
-				case FileTabIds.FollowReference:
-				case FileTabIds.FollowReferenceNewTab:
-				case FileTabIds.ClearMarkedReferencesAndToolTip:
+			if (group == DocumentViewerCommandConstants.DocumentViewerGroup) {
+				switch ((DocumentViewerIds)cmdId) {
+				case DocumentViewerIds.MoveToNextReference:
+				case DocumentViewerIds.MoveToPreviousReference:
+				case DocumentViewerIds.MoveToNextDefinition:
+				case DocumentViewerIds.MoveToPreviousDefinition:
+				case DocumentViewerIds.FollowReference:
+				case DocumentViewerIds.FollowReferenceNewTab:
+				case DocumentViewerIds.ClearMarkedReferencesAndToolTip:
 					return CommandTargetStatus.Handled;
 
 				default:
-					Debug.Fail($"Unknown {nameof(FileTabIds)} id: {(FileTabIds)cmdId}");
+					Debug.Fail($"Unknown {nameof(DocumentViewerIds)} id: {(DocumentViewerIds)cmdId}");
 					return CommandTargetStatus.NotHandled;
 				}
 			}
@@ -67,38 +67,38 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (textCtrl == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == FileTabCommandConstants.FileTabGroup) {
-				switch ((FileTabIds)cmdId) {
-				case FileTabIds.MoveToNextReference:
+			if (group == DocumentViewerCommandConstants.DocumentViewerGroup) {
+				switch ((DocumentViewerIds)cmdId) {
+				case DocumentViewerIds.MoveToNextReference:
 					textCtrl.MoveReference(true);
 					return CommandTargetStatus.Handled;
 
-				case FileTabIds.MoveToPreviousReference:
+				case DocumentViewerIds.MoveToPreviousReference:
 					textCtrl.MoveReference(false);
 					return CommandTargetStatus.Handled;
 
-				case FileTabIds.MoveToNextDefinition:
+				case DocumentViewerIds.MoveToNextDefinition:
 					textCtrl.MoveToNextDefinition(true);
 					return CommandTargetStatus.Handled;
 
-				case FileTabIds.MoveToPreviousDefinition:
+				case DocumentViewerIds.MoveToPreviousDefinition:
 					textCtrl.MoveToNextDefinition(false);
 					return CommandTargetStatus.Handled;
 
-				case FileTabIds.FollowReference:
+				case DocumentViewerIds.FollowReference:
 					textCtrl.FollowReference();
 					return CommandTargetStatus.Handled;
 
-				case FileTabIds.FollowReferenceNewTab:
+				case DocumentViewerIds.FollowReferenceNewTab:
 					textCtrl.FollowReferenceNewTab();
 					return CommandTargetStatus.Handled;
 
-				case FileTabIds.ClearMarkedReferencesAndToolTip:
+				case DocumentViewerIds.ClearMarkedReferencesAndToolTip:
 					//TODO:textCtrl.ClearMarkedReferencesAndToolTip();
 					return CommandTargetStatus.Handled;
 
 				default:
-					Debug.Fail($"Unknown {nameof(FileTabIds)} id: {(FileTabIds)cmdId}");
+					Debug.Fail($"Unknown {nameof(DocumentViewerIds)} id: {(DocumentViewerIds)cmdId}");
 					return CommandTargetStatus.NotHandled;
 				}
 			}

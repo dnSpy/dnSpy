@@ -37,20 +37,22 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public DecompileNodeContext(DecompilationContext decompilationContext, ILanguage language, ITextOutput output, Dispatcher dispatcher) {
 			if (decompilationContext == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(decompilationContext));
 			if (language == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(language));
 			if (output == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(output));
 			if (dispatcher == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(dispatcher));
 			this.DecompilationContext = decompilationContext;
 			this.Language = language;
 			this.Output = output;
 			this.dispatcher = dispatcher;
 		}
 
-		public T ExecuteInUIThread<T>(Func<T> func) {
+		public T UIThread<T>(Func<T> func) {
+			if (func == null)
+				throw new ArgumentNullException(nameof(func));
 			if (dispatcher.CheckAccess())
 				return func();
 
