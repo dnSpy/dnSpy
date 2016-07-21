@@ -75,7 +75,7 @@ namespace Example2.Plugin {
 			// var key = node;	// uncomment to not share it
 
 			// If the UI object has already been created, use it, else create it. The object is
-			// stored in a weak reference.
+			// stored in a weak reference unless you use the other method override.
 			return locator.Get(key, () => new AssemblyChildNodeUIContext());
 		}
 

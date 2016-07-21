@@ -28,9 +28,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 	public interface IFileTabUIContextLocator {
 		/// <summary>
 		/// Creates or returns an existing cached instance of a certain type. This instance is
-		/// cached per tab and is stored in a <see cref="WeakReference"/>.
+		/// cached per tab and is stored in either a <see cref="WeakReference"/> or a strong
+		/// reference (see <see cref="ExportFileTabUIContextCreatorAttribute.UseStrongReference"/>)
 		/// </summary>
-		/// <typeparam name="T">Type, eg. <see cref="IDocumentViewer"/></typeparam>
+		/// <typeparam name="T">Type, eg. <see cref="IDocumentViewer"/>. There must be an exported
+		/// <see cref="IFileTabUIContextCreator"/> that can create the type.</typeparam>
 		/// <returns></returns>
 		T Get<T>() where T : class, IFileTabUIContext;
 
@@ -43,5 +45,17 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="creator">Called if the value hasn't been cached or if it has been GC'd</param>
 		/// <returns></returns>
 		T Get<T>(object key, Func<T> creator) where T : class, IFileTabUIContext;
+
+		/// <summary>
+		/// Creates or returns an existing cached instance of a certain type. This instance is
+		/// cached per tab and is stored in a <see cref="WeakReference"/> or a strong reference
+		/// depending on the value of <paramref name="useStrongReference"/>.
+		/// </summary>
+		/// <typeparam name="T">Type</typeparam>
+		/// <param name="key">Key</param>
+		/// <param name="useStrongReference">true to store the result in a strong reference instead of a weak reference</param>
+		/// <param name="creator">Called if the value hasn't been cached or if it has been GC'd</param>
+		/// <returns></returns>
+		T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class, IFileTabUIContext;
 	}
 }

@@ -33,9 +33,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		event EventHandler<DocumentViewerAddedEventArgs> Added;
 
 		/// <summary>
-		/// Raised when a <see cref="IDocumentViewer"/> instance has been closed. It's not
-		/// raised if the <see cref="IDocumentViewer"/> instance was GC'd (they're stored in
-		/// weak references)
+		/// Raised when a <see cref="IDocumentViewer"/> instance has been closed
 		/// </summary>
 		event EventHandler<DocumentViewerRemovedEventArgs> Removed;
 
@@ -100,9 +98,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		Added,
 
 		/// <summary>
-		/// Raised when a <see cref="IDocumentViewer"/> instance has been closed. It's not
-		/// raised if the <see cref="IDocumentViewer"/> instance was GC'd (they're stored in
-		/// weak references)
+		/// Raised when a <see cref="IDocumentViewer"/> instance has been closed
 		/// </summary>
 		Removed,
 

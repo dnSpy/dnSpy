@@ -23,45 +23,64 @@ using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Files.Tabs {
 	sealed class FileTabUIContextLocator : IFileTabUIContextLocator, IDisposable {
-		readonly IFileTabUIContextCreator[] creators;
-		readonly Dictionary<object, WeakReference> cachedInstances;
+		readonly Lazy<IFileTabUIContextCreator, IFileTabUIContextCreatorMetadata>[] creators;
+		readonly Dictionary<object, WeakReference> weakCachedInstances;
+		readonly Dictionary<object, object> strongCachedInstances;
 
-		public FileTabUIContextLocator(IFileTabUIContextCreator[] creators) {
+		public FileTabUIContextLocator(Lazy<IFileTabUIContextCreator, IFileTabUIContextCreatorMetadata>[] creators) {
 			this.creators = creators;
-			this.cachedInstances = new Dictionary<object, WeakReference>();
+			this.weakCachedInstances = new Dictionary<object, WeakReference>();
+			this.strongCachedInstances = new Dictionary<object, object>();
 		}
 
-		T GetOrCreate<T>(object key, Func<T> creator) where T : class, IFileTabUIContext {
+		struct ReferenceResult<T> where T : class, IFileTabUIContext {
+			public T Reference { get; }
+			public bool UseStrongReference { get; }
+			public ReferenceResult(T reference, bool useStrongReference) {
+				Reference = reference;
+				UseStrongReference = useStrongReference;
+			}
+		}
+
+		T GetOrCreate<T>(object key, Func<ReferenceResult<T>> creator) where T : class, IFileTabUIContext {
+			object obj;
+			if (strongCachedInstances.TryGetValue(key, out obj))
+				return (T)obj;
 			WeakReference weakRef;
-			if (cachedInstances.TryGetValue(key, out weakRef)) {
-				var obj = weakRef.Target;
+			if (weakCachedInstances.TryGetValue(key, out weakRef)) {
+				obj = weakRef.Target;
 				if (obj != null)
 					return (T)obj;
 			}
 
 			var res = creator();
-			if (res == null)
+			if (res.Reference == null)
 				throw new InvalidOperationException();
-			cachedInstances[key] = new WeakReference(res);
-			return res;
+			if (res.UseStrongReference)
+				strongCachedInstances[key] = res.Reference;
+			else
+				weakCachedInstances[key] = new WeakReference(res.Reference);
+			return res.Reference;
 		}
 
-		IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
+		ReferenceResult<T> Create<T>() where T : class, IFileTabUIContext {
 			foreach (var c in creators) {
-				var t = c.Create<T>();
+				var t = c.Value.Create<T>() as T;
 				if (t != null)
-					return t;
+					return new ReferenceResult<T>(t, c.Metadata.UseStrongReference);
 			}
 			throw new InvalidOperationException();
 		}
 
-		public T Get<T>() where T : class, IFileTabUIContext => (T)GetOrCreate(typeof(T), () => Create<T>());
-
-		public T Get<T>(object key, Func<T> creator) where T : class, IFileTabUIContext {
-			if (key == null || creator == null)
-				throw new ArgumentNullException();
+		public T Get<T>() where T : class, IFileTabUIContext => GetOrCreate(typeof(T), () => Create<T>());
+		public T Get<T>(object key, Func<T> creator) where T : class, IFileTabUIContext => Get(key, false, creator);
+		public T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class, IFileTabUIContext {
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			if (creator == null)
+				throw new ArgumentNullException(nameof(creator));
 			// System.Type keys are reserved by us so use a new Key instance instead of directly using key
-			return GetOrCreate(new Key(key), () => creator());
+			return GetOrCreate(new Key(key), () => new ReferenceResult<T>(creator(), useStrongReference));
 		}
 
 		sealed class Key : IEquatable<Key> {
@@ -79,12 +98,12 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public void Dispose() {
-			foreach (var v in cachedInstances.Values) {
-				var id = v.Target as IDisposable;
-				if (id != null)
-					id.Dispose();
-			}
-			cachedInstances.Clear();
+			foreach (var v in weakCachedInstances.Values)
+				(v.Target as IDisposable)?.Dispose();
+			foreach (var v in strongCachedInstances.Values)
+				(v as IDisposable)?.Dispose();
+			weakCachedInstances.Clear();
+			strongCachedInstances.Clear();
 		}
 	}
 }

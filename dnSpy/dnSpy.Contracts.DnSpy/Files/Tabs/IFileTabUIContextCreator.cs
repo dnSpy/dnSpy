@@ -39,6 +39,8 @@ namespace dnSpy.Contracts.Files.Tabs {
 	public interface IFileTabUIContextCreatorMetadata {
 		/// <summary>See <see cref="ExportFileTabUIContextCreatorAttribute.Order"/></summary>
 		double Order { get; }
+		/// <summary>See <see cref="ExportFileTabUIContextCreatorAttribute.UseStrongReference"/></summary>
+		bool UseStrongReference { get; }
 	}
 
 	/// <summary>
@@ -55,5 +57,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Order of this instance
 		/// </summary>
 		public double Order { get; set; }
+
+		/// <summary>
+		/// true to store the created instance in a strong reference
+		/// </summary>
+		public bool UseStrongReference { get; set; }
 	}
 }

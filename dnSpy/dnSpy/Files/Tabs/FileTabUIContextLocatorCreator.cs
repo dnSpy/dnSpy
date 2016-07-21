@@ -26,11 +26,11 @@ using dnSpy.Contracts.Files.Tabs;
 namespace dnSpy.Files.Tabs {
 	[Export(typeof(IFileTabUIContextLocatorCreator))]
 	sealed class FileTabUIContextLocatorCreator : IFileTabUIContextLocatorCreator {
-		readonly IFileTabUIContextCreator[] creators;
+		readonly Lazy<IFileTabUIContextCreator, IFileTabUIContextCreatorMetadata>[] creators;
 
 		[ImportingConstructor]
 		FileTabUIContextLocatorCreator([ImportMany] IEnumerable<Lazy<IFileTabUIContextCreator, IFileTabUIContextCreatorMetadata>> mefCreators) {
-			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
+			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public IFileTabUIContextLocator Create() => new FileTabUIContextLocator(creators);

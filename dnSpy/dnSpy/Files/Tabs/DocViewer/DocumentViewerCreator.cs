@@ -26,7 +26,9 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_DOCUMENTVIEWERCREATOR)]
+	// Store DocumentViewer in a strong reference because it contains a IWpfTextViewHost that must
+	// clean up after itself whenever the DocumentViewer instance gets closed
+	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_DOCUMENTVIEWERCREATOR, UseStrongReference = true)]
 	sealed class DocumentViewerCreator : IFileTabUIContextCreator {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
