@@ -48,9 +48,9 @@ namespace dnSpy.Debugger {
 			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;
 			if (found) {
 				fileTabManager.FollowReference(method, newTab, true, e => {
-					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
+					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
+						MoveCaretTo(e.Tab.UIContext as IDocumentViewer, key, ilOffset);
 						e.HasMovedCaret = true;
 					}
 				});
@@ -59,9 +59,9 @@ namespace dnSpy.Debugger {
 
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				fileTabManager.FollowReference(method, newTab, true, e => {
-					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
+					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
+						MoveCaretTo(e.Tab.UIContext as IDocumentViewer, key, ilOffset);
 						e.HasMovedCaret = true;
 					}
 				});
@@ -69,24 +69,24 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static bool MoveCaretTo(ITextEditorUIContext uiContext, SerializedDnToken key, uint ilOffset) {
-			if (uiContext == null)
+		public static bool MoveCaretTo(IDocumentViewer documentViewer, SerializedDnToken key, uint ilOffset) {
+			if (documentViewer == null)
 				return false;
 
 			CodeMappings cm;
-			if (!VerifyAndGetCurrentDebuggedMethod(uiContext, key, out cm))
+			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, key, out cm))
 				return false;
 
 			TextPosition location, endLocation;
 			if (!cm.TryGetMapping(key).GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation))
 				return false;
 
-			uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
+			documentViewer.ScrollAndMoveCaretTo(location.Line, location.Column);
 			return true;
 		}
 
-		public static bool VerifyAndGetCurrentDebuggedMethod(ITextEditorUIContext uiContext, SerializedDnToken serToken, out CodeMappings codeMappings) {
-			codeMappings = uiContext.GetCodeMappings();
+		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, SerializedDnToken serToken, out CodeMappings codeMappings) {
+			codeMappings = documentViewer.GetCodeMappings();
 			return codeMappings.TryGetMapping(serToken) != null;
 		}
 	}

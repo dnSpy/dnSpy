@@ -32,9 +32,9 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Returns true if it's visible
 		/// </summary>
-		/// <param name="uiContext">Text editor</param>
+		/// <param name="documentViewer">Document viewer</param>
 		/// <returns></returns>
-		bool IsVisible(ITextEditorUIContext uiContext);
+		bool IsVisible(IDocumentViewer documentViewer);
 
 		/// <summary>
 		/// Raised when a property has changed, eg. if it must be redrawn

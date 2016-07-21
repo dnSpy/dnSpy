@@ -75,12 +75,12 @@ namespace dnSpy.Debugger.CallStack {
 		readonly Lazy<IModuleLoader> moduleLoader;
 
 		[ImportingConstructor]
-		StackFrameManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, ITextLineObjectManager textLineObjectManager, Lazy<IModuleLoader> moduleLoader, ITextEditorUIContextManager textEditorUIContextManager) {
+		StackFrameManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, ITextLineObjectManager textLineObjectManager, Lazy<IModuleLoader> moduleLoader, IDocumentViewerManager documentViewerManager) {
 			this.theDebugger = theDebugger;
 			this.fileTabManager = fileTabManager;
 			this.textLineObjectManager = textLineObjectManager;
 			this.moduleLoader = moduleLoader;
-			textEditorUIContextManager.Add(OnTextEditorUIContextEvent, TextEditorUIContextManagerConstants.ORDER_DEBUGGER_CALLSTACK);
+			documentViewerManager.Add(OnDocumentViewerEvent, DocumentViewerManagerConstants.ORDER_DEBUGGER_CALLSTACK);
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.CallStack {
 				savedEvalState = null;
 
 				foreach (var tab in fileTabManager.VisibleFirstTabs)
-					UpdateStackFrameLines(tab.UIContext as ITextEditorUIContext, false);
+					UpdateStackFrameLines(tab.UIContext as IDocumentViewer, false);
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -151,13 +151,13 @@ namespace dnSpy.Debugger.CallStack {
 
 		void ClearStackFrameLines() {
 			foreach (var tab in fileTabManager.VisibleFirstTabs)
-				Remove(tab.UIContext as ITextEditorUIContext);
+				Remove(tab.UIContext as IDocumentViewer);
 		}
 
-		void OnTextEditorUIContextEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
-			if (@event == TextEditorUIContextListenerEvent.NewContent) {
-				Remove(uiContext);
-				UpdateStackFrameLines(uiContext, false);
+		void OnDocumentViewerEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) {
+			if (@event == DocumentViewerEvent.NewContent) {
+				Remove(documentViewer);
+				UpdateStackFrameLines(documentViewer, false);
 			}
 		}
 
@@ -223,14 +223,14 @@ namespace dnSpy.Debugger.CallStack {
 
 		void UpdateStackFrameLinesInTextViews() {
 			foreach (var tab in fileTabManager.VisibleFirstTabs)
-				UpdateStackFrameLines(tab.UIContext as ITextEditorUIContext);
+				UpdateStackFrameLines(tab.UIContext as IDocumentViewer);
 		}
 
-		void Remove(ITextEditorUIContext uiContext) {
-			if (uiContext == null)
+		void Remove(IDocumentViewer documentViewer) {
+			if (documentViewer == null)
 				return;
 			for (int i = stackFrameLines.Count - 1; i >= 0; i--) {
-				if (stackFrameLines[i].TextView == uiContext) {
+				if (stackFrameLines[i].DocumentViewer == documentViewer) {
 					textLineObjectManager.Remove(stackFrameLines[i]);
 					stackFrameLines.RemoveAt(i);
 				}
@@ -240,12 +240,12 @@ namespace dnSpy.Debugger.CallStack {
 		/// <summary>
 		/// Should be called each time the IL offset has been updated
 		/// </summary>
-		bool UpdateStackFrameLines(ITextEditorUIContext uiContext, bool moveCaret = false) {
-			if (uiContext == null)
+		bool UpdateStackFrameLines(IDocumentViewer documentViewer, bool moveCaret = false) {
+			if (documentViewer == null)
 				return false;
-			Remove(uiContext);
+			Remove(documentViewer);
 			bool movedCaret = false;
-			var cm = uiContext.TryGetCodeMappings();
+			var cm = documentViewer.TryGetCodeMappings();
 			bool updateReturnStatements = cm != null && theDebugger.ProcessState == DebuggerProcessState.Paused;
 			if (updateReturnStatements) {
 				int frameNo = -1;
@@ -275,12 +275,12 @@ namespace dnSpy.Debugger.CallStack {
 					TextPosition location, endLocation;
 					var mm = cm.TryGetMapping(key);
 					if (mm != null && mm.GetInstructionByTokenAndOffset(offset, out methodDef, out location, out endLocation)) {
-						var rs = new StackFrameLine(type, uiContext, key, offset);
+						var rs = new StackFrameLine(type, documentViewer, key, offset);
 						stackFrameLines.Add(rs);
 						textLineObjectManager.Add(rs);
 
 						if (moveCaret && frameNo == currentState.FrameNumber) {
-							uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
+							documentViewer.ScrollAndMoveCaretTo(location.Line, location.Column);
 							movedCaret = true;
 						}
 					}

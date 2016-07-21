@@ -39,12 +39,12 @@ namespace dnSpy.Debugger.Locals {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		MethodLocalProvider(IFileTabManager fileTabManager, ITextEditorUIContextManager textEditorUIContextManager) {
+		MethodLocalProvider(IFileTabManager fileTabManager, IDocumentViewerManager documentViewerManager) {
 			this.fileTabManager = fileTabManager;
-			textEditorUIContextManager.Add(OnTextEditorUIContextEvent, TextEditorUIContextManagerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER);
+			documentViewerManager.Add(OnDocumentViewerEvent, DocumentViewerManagerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER);
 		}
 
-		void OnTextEditorUIContextEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) =>
+		void OnDocumentViewerEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) =>
 			NewMethodInfoAvailable?.Invoke(this, EventArgs.Empty);
 
 		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals) {
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Locals {
 				if (parameters != null && decLocals != null)
 					break;
 
-				var uiContext = tab.UIContext as ITextEditorUIContext;
+				var uiContext = tab.UIContext as IDocumentViewer;
 				var cm = uiContext.TryGetCodeMappings();
 				if (cm == null)
 					continue;

@@ -27,9 +27,9 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the line number, 0-based
 		/// </summary>
-		/// <param name="uiContext">Text editor</param>
+		/// <param name="documentViewer">Document viewer</param>
 		/// <returns></returns>
-		int GetLineNumber(ITextEditorUIContext uiContext);
+		int GetLineNumber(IDocumentViewer documentViewer);
 
 		/// <summary>
 		/// Gets the image or null if none

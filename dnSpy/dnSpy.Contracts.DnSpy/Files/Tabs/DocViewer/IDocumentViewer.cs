@@ -27,9 +27,9 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// Text editor UI context
+	/// Document viewer
 	/// </summary>
-	public interface ITextEditorUIContext : IFileTabUIContext {
+	public interface IDocumentViewer : IFileTabUIContext {
 		/// <summary>
 		/// Sets document to <paramref name="result"/>
 		/// </summary>

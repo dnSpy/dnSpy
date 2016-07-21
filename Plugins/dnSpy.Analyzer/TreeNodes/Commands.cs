@@ -76,7 +76,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, TextEditor_GetMemberRef());
 		IMemberRef TextEditor_GetMemberRef() =>
-			(fileTabManager.ActiveTab?.UIContext as ITextEditorUIContext)?.SelectedReferenceInfo?.Data.Reference as IMemberRef;
+			(fileTabManager.ActiveTab?.UIContext as IDocumentViewer)?.SelectedReferenceInfo?.Data.Reference as IMemberRef;
 		void FileTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(FileTreeView_GetMemberRef(), languageManager.Language);
 		void FileTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
@@ -181,7 +181,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
 			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
-				GetMemberRefs(context, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
+				GetMemberRefs(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 
 			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))

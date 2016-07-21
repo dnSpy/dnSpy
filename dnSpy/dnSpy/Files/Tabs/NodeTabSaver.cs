@@ -54,12 +54,12 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 		readonly ILanguage language;
 		readonly IFileTreeNodeData[] nodes;
-		readonly ITextEditorUIContext uiContext;
+		readonly IDocumentViewer documentViewer;
 
 		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, IMessageBoxManager messageBoxManager) {
 			if (tab.IsAsyncExecInProgress)
 				return null;
-			var uiContext = tab.UIContext as ITextEditorUIContext;
+			var uiContext = tab.UIContext as IDocumentViewer;
 			if (uiContext == null)
 				return null;
 			var langContent = tab.Content as ILanguageTabContent;
@@ -72,12 +72,12 @@ namespace dnSpy.Files.Tabs {
 			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, lang, uiContext, nodes);
 		}
 
-		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, ITextEditorUIContext uiContext, IFileTreeNodeData[] nodes) {
+		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, IDocumentViewer documentViewer, IFileTreeNodeData[] nodes) {
 			this.messageBoxManager = messageBoxManager;
 			this.tab = tab;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.language = language;
-			this.uiContext = uiContext;
+			this.documentViewer = documentViewer;
 			this.nodes = nodes;
 		}
 
@@ -127,12 +127,12 @@ namespace dnSpy.Files.Tabs {
 
 			tab.AsyncExec(cs => {
 				ctx.DecompileNodeContext.DecompilationContext.CancellationToken = cs.Token;
-				uiContext.ShowCancelButton(() => cs.Cancel(), dnSpy_Resources.SavingCode);
+				documentViewer.ShowCancelButton(() => cs.Cancel(), dnSpy_Resources.SavingCode);
 			}, () => {
 				fileTreeNodeDecompiler.Decompile(ctx.DecompileNodeContext, nodes);
 			}, result => {
 				ctx.Dispose();
-				uiContext.HideCancelButton();
+				documentViewer.HideCancelButton();
 				if (result.Exception != null)
 					messageBoxManager.Show(result.Exception);
 			});

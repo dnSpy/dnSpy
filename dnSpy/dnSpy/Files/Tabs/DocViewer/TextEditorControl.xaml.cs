@@ -67,7 +67,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	sealed partial class TextEditorControl : UserControl, IDisposable {
-		readonly ITextEditorHelper textEditorHelper;
+		readonly IDocumentViewerHelper textEditorHelper;
 		readonly CachedColorsList cachedColorsList;
 		readonly IThemeManager themeManager;
 		readonly IconBarMargin iconBarMargin;
@@ -109,7 +109,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			return instance;
 		}
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContext uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, IDocumentViewer documentViewer, IDocumentViewerHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -143,7 +143,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.uiElementGenerator = new UIElementGenerator();
 			TextEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 
-			iconBarMargin = new IconBarMargin(uiContext, textLineObjectManager, imageManager, themeManager);
+			iconBarMargin = new IconBarMargin(documentViewer, textLineObjectManager, imageManager, themeManager);
 			iconBarCommandManager.Initialize(iconBarMargin);
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
 			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconBarMargin.InvalidateVisual();

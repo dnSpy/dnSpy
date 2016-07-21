@@ -32,12 +32,12 @@ namespace dnSpy.Debugger.Breakpoints {
 				this.ilbp = ilbp;
 			}
 
-			protected override void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker) =>
+			protected override void Initialize(IDocumentViewer documentViewer, ITextMarkerService markerService, ITextMarker marker) =>
 				marker.HighlightingColor = () => ilbp.IsEnabled ? DebuggerColors.CodeBreakpointHighlightingColor : DebuggerColors.CodeBreakpointDisabledHighlightingColor;
 
-			public override bool IsVisible(ITextEditorUIContext uiContext) {
+			public override bool IsVisible(IDocumentViewer documentViewer) {
 				TextPosition location, endLocation;
-				var cm = uiContext.GetCodeMappings();
+				var cm = documentViewer.GetCodeMappings();
 				var mm = cm.TryGetMapping(SerializedDnToken);
 				if (mm == null)
 					return false;
@@ -79,12 +79,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.myMarkedTextLine = new MyMarkedTextLine(this, methodKey, ilOffset);
 		}
 
-		public int GetLineNumber(ITextEditorUIContext uiContext) => myMarkedTextLine.GetLineNumber(uiContext);
-		public bool GetLocation(ITextEditorUIContext uiContext, out TextPosition location, out TextPosition endLocation) =>
-			myMarkedTextLine.GetLocation(uiContext, out location, out endLocation);
-		ITextMarker ITextMarkerObject.CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService) =>
-			myMarkedTextLine.CreateMarker(uiContext, markerService);
-		bool ITextLineObject.IsVisible(ITextEditorUIContext uiContext) => myMarkedTextLine.IsVisible(uiContext);
+		public int GetLineNumber(IDocumentViewer documentViewer) => myMarkedTextLine.GetLineNumber(documentViewer);
+		public bool GetLocation(IDocumentViewer documentViewer, out TextPosition location, out TextPosition endLocation) =>
+			myMarkedTextLine.GetLocation(documentViewer, out location, out endLocation);
+		ITextMarker ITextMarkerObject.CreateMarker(IDocumentViewer documentViewer, ITextMarkerService markerService) =>
+			myMarkedTextLine.CreateMarker(documentViewer, markerService);
+		bool ITextLineObject.IsVisible(IDocumentViewer documentViewer) => myMarkedTextLine.IsVisible(documentViewer);
 
 		protected override void OnIsEnabledChanged() {
 			OnPropertyChanged("Image");

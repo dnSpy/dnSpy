@@ -15,7 +15,7 @@ using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	interface IIconBarMargin {
-		ITextEditorUIContext UIContext { get; }
+		IDocumentViewer DocumentViewer { get; }
 		FrameworkElement FrameworkElement { get; }
 		int? GetLineFromMousePosition();
 	}
@@ -24,16 +24,16 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		// 16px wide icon + 1px each side padding + 1px right-side border
 		public const int WIDTH = 1 + 16 + 1 + 1;
 
-		ITextEditorUIContext IIconBarMargin.UIContext => uiContext;
+		IDocumentViewer IIconBarMargin.DocumentViewer => documentViewer;
 		FrameworkElement IIconBarMargin.FrameworkElement => this;
 
-		readonly ITextEditorUIContext uiContext;
+		readonly IDocumentViewer documentViewer;
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly IImageManager imageManager;
 		readonly IThemeManager themeManager;
 
-		public IconBarMargin(ITextEditorUIContext uiContext, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IThemeManager themeManager) {
-			this.uiContext = uiContext;
+		public IconBarMargin(IDocumentViewer documentViewer, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IThemeManager themeManager) {
+			this.documentViewer = documentViewer;
 			this.textLineObjectManager = textLineObjectManager;
 			this.imageManager = imageManager;
 			this.themeManager = themeManager;
@@ -61,9 +61,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				// create a dictionary line number => first bookmark
 				Dictionary<int, List<IIconBarObject>> bookmarkDict = new Dictionary<int, List<IIconBarObject>>();
 				foreach (var obj in textLineObjectManager.GetObjectsOfType<IIconBarObject>()) {
-					if (!obj.IsVisible(uiContext))
+					if (!obj.IsVisible(documentViewer))
 						continue;
-					int line = obj.GetLineNumber(uiContext);
+					int line = obj.GetLineNumber(documentViewer);
 					List<IIconBarObject> list;
 					if (!bookmarkDict.TryGetValue(line, out list))
 						bookmarkDict[line] = list = new List<IIconBarObject>();

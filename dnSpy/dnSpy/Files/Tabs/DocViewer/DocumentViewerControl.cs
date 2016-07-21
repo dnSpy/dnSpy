@@ -37,7 +37,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	sealed class TextEditorUIContextControl : Grid {
+	sealed class DocumentViewerControl : Grid {
 		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
 		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
 		public DnSpyTextOutputResult OutputResult => lastDnSpyTextOutputResult.OutputResult;
@@ -46,7 +46,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		readonly CachedColorsList cachedColorsList;
 		readonly IContentType defaultContentType;
 		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
-		readonly ITextEditorHelper textEditorHelper;
+		readonly IDocumentViewerHelper textEditorHelper;
 
 		static readonly string[] defaultRoles = new string[] {
 			PredefinedTextViewRoles.Analyzable,
@@ -58,7 +58,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			FileTabTextViewRoles.FileTab,
 		};
 
-		public TextEditorUIContextControl(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, ITextEditorHelper textEditorHelper) {
+		public DocumentViewerControl(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IDocumentViewerHelper textEditorHelper) {
 			if (textBufferFactoryService == null)
 				throw new ArgumentNullException(nameof(textBufferFactoryService));
 			if (dnSpyTextEditorFactoryService == null)
@@ -77,16 +77,16 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, (TextViewCreatorOptions)null);
 			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
-			wpfTextViewHost.TextView.Properties.AddProperty(typeof(TextEditorUIContextControl), this);
+			wpfTextViewHost.TextView.Properties.AddProperty(typeof(DocumentViewerControl), this);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			Children.Add(wpfTextViewHost.HostControl);
 		}
 
-		internal static TextEditorUIContextControl TryGetInstance(ITextView textView) {
-			TextEditorUIContextControl teCtrlInstance;
-			textView.Properties.TryGetProperty(typeof(TextEditorUIContextControl), out teCtrlInstance);
+		internal static DocumentViewerControl TryGetInstance(ITextView textView) {
+			DocumentViewerControl teCtrlInstance;
+			textView.Properties.TryGetProperty(typeof(DocumentViewerControl), out teCtrlInstance);
 			return teCtrlInstance;
 		}
 
@@ -196,14 +196,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			GoTo(spanData, false, true, canRecordHistory, canJumpToReference);
 
 		sealed class GoToHelper {
-			readonly TextEditorUIContextControl owner;
+			readonly DocumentViewerControl owner;
 			readonly SpanData<ReferenceInfo> spanData;
 			readonly bool newTab;
 			readonly bool followLocalRefs;
 			readonly bool canRecordHistory;
 			readonly bool canJumpToReference;
 
-			public GoToHelper(TextEditorUIContextControl owner, SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+			public GoToHelper(DocumentViewerControl owner, SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
 				this.owner = owner;
 				this.spanData = spanData;
 				this.newTab = newTab;

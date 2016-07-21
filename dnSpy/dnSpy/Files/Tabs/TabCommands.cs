@@ -323,23 +323,23 @@ namespace dnSpy.Files.Tabs {
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_CODE_TABS, Order = 0)]
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
-			ITextEditorUIContext uiContext;
-			var @ref = GetReference(context, out uiContext);
+			IDocumentViewer documentViewer;
+			var @ref = GetReference(context, out documentViewer);
 			if (@ref != null)
-				uiContext.FileTab.FollowReferenceNewTab(@ref);
+				documentViewer.FileTab.FollowReferenceNewTab(@ref);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			ITextEditorUIContext uiContext;
-			return GetReference(context, out uiContext) != null;
+			IDocumentViewer documentViewer;
+			return GetReference(context, out documentViewer) != null;
 		}
 
-		static object GetReference(IMenuItemContext context, out ITextEditorUIContext uiContext) {
-			uiContext = null;
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+		static object GetReference(IMenuItemContext context, out IDocumentViewer documentViewer) {
+			documentViewer = null;
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
-			uiContext = context.Find<ITextEditorUIContext>();
-			if (uiContext == null)
+			documentViewer = context.Find<IDocumentViewer>();
+			if (documentViewer == null)
 				return null;
 			return context.Find<TextReference>();
 		}

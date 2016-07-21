@@ -69,14 +69,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ICodeMappings GetCodeMappings(this ITextEditorUIContext self) => self.TryGetCodeMappings() ?? EmptyCodeMappings.Instance;
+		public static ICodeMappings GetCodeMappings(this IDocumentViewer self) => self.TryGetCodeMappings() ?? EmptyCodeMappings.Instance;
 
 		/// <summary>
 		/// Gets a <see cref="ICodeMappings"/> or null if none exists
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ICodeMappings TryGetCodeMappings(this ITextEditorUIContext self) {
+		public static ICodeMappings TryGetCodeMappings(this IDocumentViewer self) {
 			if (self == null)
 				return null;
 			return (ICodeMappings)self.GetOutputData(CodeMappingsConstants.CodeMappingsKey);

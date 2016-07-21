@@ -151,7 +151,7 @@ namespace dnSpy.Files.Tabs {
 
 		void GoToReference(IFileTabContent content, object @ref) {
 			Debug.Assert(IsSupportedReference(@ref));
-			var uiCtx = content.FileTab.UIContext as ITextEditorUIContext;
+			var uiCtx = content.FileTab.UIContext as IDocumentViewer;
 			if (uiCtx == null)
 				return;
 

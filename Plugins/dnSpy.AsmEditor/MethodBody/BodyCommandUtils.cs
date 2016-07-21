@@ -32,9 +32,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
 			if (context == null)
 				return null;
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
-			var uiContext = context.Find<ITextEditorUIContext>();
+			var uiContext = context.Find<IDocumentViewer>();
 			if (uiContext == null)
 				return null;
 			var pos = context.Find<TextEditorLocation?>();
@@ -43,10 +43,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return GetMappings(uiContext, pos.Value.Line, pos.Value.Column);
 		}
 
-		public static IList<SourceCodeMapping> GetMappings(ITextEditorUIContext uiContext, int line, int col) {
-			if (uiContext == null)
+		public static IList<SourceCodeMapping> GetMappings(IDocumentViewer documentViewer, int line, int col) {
+			if (documentViewer == null)
 				return null;
-			var cm = uiContext.GetCodeMappings();
+			var cm = documentViewer.GetCodeMappings();
 			var list = cm.Find(line, col);
 			if (list.Count == 0)
 				return null;

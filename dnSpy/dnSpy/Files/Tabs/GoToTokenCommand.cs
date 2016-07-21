@@ -122,7 +122,7 @@ namespace dnSpy.Files.Tabs {
 			}
 
 			public override bool IsVisible(IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return false;
 				if (!CanExecuteInternal(fileTabManager))
 					return false;

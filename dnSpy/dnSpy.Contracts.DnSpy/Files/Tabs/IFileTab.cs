@@ -140,10 +140,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 	/// </summary>
 	public static class FileTabExtensions {
 		/// <summary>
-		/// Returns the tab's <see cref="ITextEditorUIContext"/> or null if it's not visible
+		/// Returns the tab's <see cref="IDocumentViewer"/> or null if it's not visible
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <returns></returns>
-		public static ITextEditorUIContext TryGetTextEditorUIContext(this IFileTab tab) => tab?.UIContext as ITextEditorUIContext;
+		public static IDocumentViewer TryGetDocumentViewer(this IFileTab tab) => tab?.UIContext as IDocumentViewer;
 	}
 }

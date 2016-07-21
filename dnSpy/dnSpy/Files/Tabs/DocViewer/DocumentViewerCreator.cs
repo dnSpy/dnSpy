@@ -26,37 +26,37 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
-	sealed class TextEditorUIContextCreator : IFileTabUIContextCreator {
+	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_DOCUMENTVIEWERCREATOR)]
+	sealed class DocumentViewerCreator : IFileTabUIContextCreator {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
-		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
+		readonly IDocumentViewerManagerImpl documentViewerManagerImpl;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService) {
+		DocumentViewerCreator(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, IDocumentViewerManagerImpl documentViewerManagerImpl, ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService) {
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
-			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
+			this.documentViewerManagerImpl = documentViewerManagerImpl;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 		}
 
-		sealed class TextEditorHelper : ITextEditorHelper {
-			public ITextEditorHelper RealInstance { get; set; }
+		sealed class DocumentViewerHelper : IDocumentViewerHelper {
+			public IDocumentViewerHelper RealInstance { get; set; }
 			public void FollowReference(TextReference textRef, bool newTab) => RealInstance?.FollowReference(textRef, newTab);
 			public void SetActive() => RealInstance?.SetActive();
 			public void SetFocus() => RealInstance?.SetFocus();
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
-			if (typeof(T) == typeof(ITextEditorUIContext)) {
-				var helper = new TextEditorHelper();
-				var uiCtxCtrl = new TextEditorUIContextControl(textBufferFactoryService, dnSpyTextEditorFactoryService, helper);
-				var uiContext = new TextEditorUIContext(wpfCommandManager, textEditorUIContextManagerImpl, menuManager, uiCtxCtrl);
+			if (typeof(T) == typeof(IDocumentViewer)) {
+				var helper = new DocumentViewerHelper();
+				var uiCtxCtrl = new DocumentViewerControl(textBufferFactoryService, dnSpyTextEditorFactoryService, helper);
+				var uiContext = new DocumentViewer(wpfCommandManager, documentViewerManagerImpl, menuManager, uiCtxCtrl);
 				helper.RealInstance = uiContext;
-				textEditorUIContextManagerImpl.RaiseAddedEvent(uiContext);
+				documentViewerManagerImpl.RaiseAddedEvent(uiContext);
 				return uiContext;
 			}
 			return null;

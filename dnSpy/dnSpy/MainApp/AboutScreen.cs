@@ -113,13 +113,13 @@ namespace dnSpy.MainApp {
 		}
 
 		public IFileTabContent Clone() => new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) => locator.Get<ITextEditorUIContext>();
+		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
 		public void OnHide() { }
 		public void OnSelected() { }
 		public void OnUnselected() { }
 
 		public void OnShow(IShowContext ctx) {
-			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
+			var uiCtx = (IDocumentViewer)ctx.UIContext;
 			var output = new DnSpyTextOutput();
 			Write(output);
 			uiCtx.SetOutput(output.CreateResult(), aboutContentType);

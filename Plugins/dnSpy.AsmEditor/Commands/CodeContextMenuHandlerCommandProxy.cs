@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		CodeContext CreateContext() {
-			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			var uiContext = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (uiContext == null)
 				return null;
 			if (!((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)

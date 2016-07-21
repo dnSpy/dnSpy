@@ -48,7 +48,7 @@ namespace dnSpy.BamlDecompiler {
 		public string MenuHeader => bamlNode.DisassembleBaml ? dnSpy_BamlDecompiler_Resources.SaveBAML : dnSpy_BamlDecompiler_Resources.SaveXAML;
 
 		public static BamlTabSaver TryCreate(IFileTab tab, IMessageBoxManager messageBoxManager) {
-			var uiContext = tab.UIContext as ITextEditorUIContext;
+			var uiContext = tab.UIContext as IDocumentViewer;
 			if (uiContext == null)
 				return null;
 			var nodes = tab.Content.Nodes.ToArray();
@@ -63,13 +63,13 @@ namespace dnSpy.BamlDecompiler {
 
 		readonly IFileTab tab;
 		readonly BamlResourceElementNode bamlNode;
-		readonly ITextEditorUIContext uiContext;
+		readonly IDocumentViewer documentViewer;
 		readonly IMessageBoxManager messageBoxManager;
 
-		BamlTabSaver(IFileTab tab, BamlResourceElementNode bamlNode, ITextEditorUIContext uiContext, IMessageBoxManager messageBoxManager) {
+		BamlTabSaver(IFileTab tab, BamlResourceElementNode bamlNode, IDocumentViewer documentViewer, IMessageBoxManager messageBoxManager) {
 			this.tab = tab;
 			this.bamlNode = bamlNode;
-			this.uiContext = uiContext;
+			this.documentViewer = documentViewer;
 			this.messageBoxManager = messageBoxManager;
 		}
 
@@ -134,12 +134,12 @@ namespace dnSpy.BamlDecompiler {
 
 			tab.AsyncExec(cs => {
 				ctx.Token = cs.Token;
-				uiContext.ShowCancelButton(() => cs.Cancel(), dnSpy_BamlDecompiler_Resources.Saving);
+				documentViewer.ShowCancelButton(() => cs.Cancel(), dnSpy_BamlDecompiler_Resources.Saving);
 			}, () => {
 				bamlNode.Decompile(ctx.Output, ctx.Token);
 			}, result => {
 				ctx.Dispose();
-				uiContext.HideCancelButton();
+				documentViewer.HideCancelButton();
 				if (result.Exception != null)
 					messageBoxManager.Show(result.Exception);
 			});

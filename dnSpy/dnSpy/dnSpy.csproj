@@ -137,6 +137,10 @@
     <Compile Include="Files\Tabs\Dialogs\TabsVMSettings.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
     <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewer.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerControl.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerManagerImpl.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
     <Compile Include="Files\Tabs\FileListLoader.cs" />
@@ -187,10 +191,6 @@
     <Compile Include="Files\Tabs\DocViewer\TextEditorControl.xaml.cs">
       <DependentUpon>TextEditorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContext.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextControl.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextCreator.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextManagerImpl.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextMarkerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipCreator.cs" />

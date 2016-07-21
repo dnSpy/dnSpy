@@ -39,15 +39,15 @@ namespace dnSpy.Debugger {
 		public event EventHandler<TextLineObjectEventArgs> ObjPropertyChanged;
 		protected void OnObjPropertyChanged(string propName) => ObjPropertyChanged?.Invoke(senderObj, new TextLineObjectEventArgs(propName));
 
-		public int GetLineNumber(ITextEditorUIContext uiContext) {
+		public int GetLineNumber(IDocumentViewer documentViewer) {
 			TextPosition location, endLocation;
-			if (GetLocation(uiContext, out location, out endLocation))
+			if (GetLocation(documentViewer, out location, out endLocation))
 				return location.Line;
 			return -1;
 		}
 
-		public bool GetLocation(ITextEditorUIContext uiContext, out TextPosition location, out TextPosition endLocation) {
-			var cm = uiContext.GetCodeMappings();
+		public bool GetLocation(IDocumentViewer documentViewer, out TextPosition location, out TextPosition endLocation) {
+			var cm = documentViewer.GetCodeMappings();
 			var mapping = cm.TryGetMapping(methodKey);
 			if (mapping == null) {
 				location = endLocation = new TextPosition();
@@ -66,22 +66,22 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public abstract bool IsVisible(ITextEditorUIContext uiContext);
-		protected abstract void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker);
+		public abstract bool IsVisible(IDocumentViewer documentViewer);
+		protected abstract void Initialize(IDocumentViewer documentViewer, ITextMarkerService markerService, ITextMarker marker);
 
-		public ITextMarker CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService) {
-			var marker = CreateMarkerInternal(markerService, uiContext);
-			var cm = uiContext.GetCodeMappings();
+		public ITextMarker CreateMarker(IDocumentViewer documentViewer, ITextMarkerService markerService) {
+			var marker = CreateMarkerInternal(markerService, documentViewer);
+			var cm = documentViewer.GetCodeMappings();
 			marker.ZOrder = ZOrder;
 			marker.IsVisible = b => cm.TryGetMapping(SerializedDnToken) != null;
 			marker.TextMarkerObject = this;
-			Initialize(uiContext, markerService, marker);
+			Initialize(documentViewer, markerService, marker);
 			return marker;
 		}
 
-		ITextMarker CreateMarkerInternal(ITextMarkerService markerService, ITextEditorUIContext uiContext) {
+		ITextMarker CreateMarkerInternal(ITextMarkerService markerService, IDocumentViewer documentViewer) {
 			TextPosition location, endLocation;
-			if (!GetLocation(uiContext, out location, out endLocation))
+			if (!GetLocation(documentViewer, out location, out endLocation))
 				throw new InvalidOperationException();
 
 			var line = markerService.TextView.Document.GetLineByNumber(location.Line + 1);

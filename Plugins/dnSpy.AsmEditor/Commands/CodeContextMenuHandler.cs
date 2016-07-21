@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			var textRef = context.Find<TextReference>();
 			if (textRef == null)

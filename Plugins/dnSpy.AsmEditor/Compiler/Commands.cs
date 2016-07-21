@@ -215,7 +215,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		IList<SourceCodeMapping> GetMappings() {
-			var uiContext = appWindow.FileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			var uiContext = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (uiContext == null)
 				return null;
 			if (!((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)

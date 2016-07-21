@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.Exceptions {
 				: base(exceptionsContent) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
+			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 		}
 	}
 }

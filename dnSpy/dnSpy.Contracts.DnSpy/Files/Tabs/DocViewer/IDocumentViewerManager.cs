@@ -22,25 +22,25 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// Called at various times
 	/// </summary>
 	/// <param name="event">Event</param>
-	/// <param name="uiContext">Instance</param>
-	/// <param name="data">Data, see <see cref="TextEditorUIContextListenerEvent"/></param>
-	public delegate void TextEditorUIContextListener(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data);
+	/// <param name="documentViewer">Document viewer</param>
+	/// <param name="data">Data, see <see cref="DocumentViewerEvent"/></param>
+	public delegate void DocumentViewerListener(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data);
 
 	/// <summary>
-	/// Notifies listeners of <see cref="ITextEditorUIContext"/> events
+	/// Notifies listeners of <see cref="IDocumentViewer"/> events
 	/// </summary>
-	public interface ITextEditorUIContextManager {
+	public interface IDocumentViewerManager {
 		/// <summary>
 		/// Adds a listener
 		/// </summary>
 		/// <param name="listener">Listener</param>
-		/// <param name="order">Order, see constants in <see cref="TextEditorUIContextManagerConstants"/></param>
-		void Add(TextEditorUIContextListener listener, double order = TextEditorUIContextManagerConstants.ORDER_DEFAULT);
+		/// <param name="order">Order, see constants in <see cref="DocumentViewerManagerConstants"/></param>
+		void Add(DocumentViewerListener listener, double order = DocumentViewerManagerConstants.ORDER_DEFAULT);
 
 		/// <summary>
 		/// Removes a listener
 		/// </summary>
 		/// <param name="listener">Listener</param>
-		void Remove(TextEditorUIContextListener listener);
+		void Remove(DocumentViewerListener listener);
 	}
 }

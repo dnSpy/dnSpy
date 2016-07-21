@@ -48,9 +48,9 @@ namespace dnSpy.Contracts.Files.Tabs {
 		public const double ORDER_DEFAULTDECOMPILENODE = double.MaxValue;
 
 		/// <summary>
-		/// Order of <see cref="IFileTabUIContextCreator"/> instance that creates <see cref="ITextEditorUIContext"/> instances
+		/// Order of <see cref="IFileTabUIContextCreator"/> instance that creates <see cref="IDocumentViewer"/> instances
 		/// </summary>
-		public const double ORDER_TEXTEDITORUICONTEXTCREATOR = double.MaxValue;
+		public const double ORDER_DOCUMENTVIEWERCREATOR = double.MaxValue;
 
 		/// <summary>
 		/// Order of dnlib reference <see cref="IToolTipContentCreator"/> instance

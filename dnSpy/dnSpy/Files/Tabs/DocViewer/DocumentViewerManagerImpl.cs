@@ -24,23 +24,23 @@ using System.Diagnostics;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	interface ITextEditorUIContextManagerImpl : ITextEditorUIContextManager {
-		void RaiseAddedEvent(ITextEditorUIContext uiContext);
-		void RaiseRemovedEvent(ITextEditorUIContext uiContext);
-		void RaiseNewContentEvent(ITextEditorUIContext uiContext, DnSpyTextOutputResult result);
+	interface IDocumentViewerManagerImpl : IDocumentViewerManager {
+		void RaiseAddedEvent(IDocumentViewer documentViewer);
+		void RaiseRemovedEvent(IDocumentViewer documentViewer);
+		void RaiseNewContentEvent(IDocumentViewer documentViewer, DnSpyTextOutputResult result);
 	}
 
-	[Export(typeof(ITextEditorUIContextManager)), Export(typeof(ITextEditorUIContextManagerImpl))]
-	sealed class TextEditorUIContextManagerImpl : ITextEditorUIContextManagerImpl {
+	[Export(typeof(IDocumentViewerManager)), Export(typeof(IDocumentViewerManagerImpl))]
+	sealed class DocumentViewerManagerImpl : IDocumentViewerManagerImpl {
 		sealed class ListenerInfo {
-			public readonly TextEditorUIContextListener Listener;
+			public readonly DocumentViewerListener Listener;
 
 			public double Order { get; }
 
-			public void Execute(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) =>
-				Listener(@event, uiContext, data);
+			public void Execute(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) =>
+				Listener(@event, documentViewer, data);
 
-			public ListenerInfo(TextEditorUIContextListener listener, double order) {
+			public ListenerInfo(DocumentViewerListener listener, double order) {
 				this.Listener = listener;
 				this.Order = order;
 			}
@@ -48,21 +48,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		readonly List<ListenerInfo> listeners;
 
-		TextEditorUIContextManagerImpl() {
+		DocumentViewerManagerImpl() {
 			this.listeners = new List<ListenerInfo>();
 		}
 
 		static void Sort(List<ListenerInfo> listeners) =>
 			listeners.Sort((a, b) => a.Order.CompareTo(b.Order));
 
-		public void Add(TextEditorUIContextListener listener, double order = double.MaxValue) {
+		public void Add(DocumentViewerListener listener, double order = double.MaxValue) {
 			if (listener == null)
 				throw new ArgumentNullException();
 			listeners.Add(new ListenerInfo(listener, order));
 			Sort(listeners);
 		}
 
-		public void Remove(TextEditorUIContextListener listener) {
+		public void Remove(DocumentViewerListener listener) {
 			if (listener == null)
 				throw new ArgumentNullException();
 			for (int i = 0; i < listeners.Count; i++) {
@@ -75,27 +75,27 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			Debug.Fail(string.Format("Couldn't remove a listener: {0}", listener));
 		}
 
-		public void RaiseAddedEvent(ITextEditorUIContext uiContext) {
-			if (uiContext == null)
-				throw new ArgumentNullException();
+		public void RaiseAddedEvent(IDocumentViewer documentViewer) {
+			if (documentViewer == null)
+				throw new ArgumentNullException(nameof(documentViewer));
 			foreach (var info in listeners.ToArray())
-				info.Execute(TextEditorUIContextListenerEvent.Added, uiContext, null);
+				info.Execute(DocumentViewerEvent.Added, documentViewer, null);
 		}
 
-		public void RaiseRemovedEvent(ITextEditorUIContext uiContext) {
-			if (uiContext == null)
-				throw new ArgumentNullException();
+		public void RaiseRemovedEvent(IDocumentViewer documentViewer) {
+			if (documentViewer == null)
+				throw new ArgumentNullException(nameof(documentViewer));
 			foreach (var info in listeners.ToArray())
-				info.Execute(TextEditorUIContextListenerEvent.Removed, uiContext, null);
+				info.Execute(DocumentViewerEvent.Removed, documentViewer, null);
 		}
 
-		public void RaiseNewContentEvent(ITextEditorUIContext uiContext, DnSpyTextOutputResult result) {
-			if (uiContext == null)
-				throw new ArgumentNullException(nameof(uiContext));
+		public void RaiseNewContentEvent(IDocumentViewer documentViewer, DnSpyTextOutputResult result) {
+			if (documentViewer == null)
+				throw new ArgumentNullException(nameof(documentViewer));
 			if (result == null)
 				throw new ArgumentNullException(nameof(result));
 			foreach (var info in listeners.ToArray())
-				info.Execute(TextEditorUIContextListenerEvent.NewContent, uiContext, result);
+				info.Execute(DocumentViewerEvent.NewContent, documentViewer, result);
 		}
 	}
 }

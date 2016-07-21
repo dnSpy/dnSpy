@@ -30,9 +30,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.textView = textView;
 		}
 
-		TextEditorUIContextControl TryGetInstance() =>
-			__textEditorUIContextControl ?? (__textEditorUIContextControl = TextEditorUIContextControl.TryGetInstance(textView));
-		TextEditorUIContextControl __textEditorUIContextControl;
+		DocumentViewerControl TryGetInstance() =>
+			__documentViewerControl ?? (__documentViewerControl = DocumentViewerControl.TryGetInstance(textView));
+		DocumentViewerControl __documentViewerControl;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (TryGetInstance() == null)

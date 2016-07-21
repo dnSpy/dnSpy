@@ -31,10 +31,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 	sealed class IconBarCommandContext : IIconBarCommandContext {
 		public int Line { get; }
-		public ITextEditorUIContext UIContext { get; }
+		public IDocumentViewer DocumentViewer { get; }
 
-		public IconBarCommandContext(ITextEditorUIContext uiContext, int line) {
-			this.UIContext = uiContext;
+		public IconBarCommandContext(IDocumentViewer documentViewer, int line) {
+			this.DocumentViewer = documentViewer;
 			this.Line = line;
 		}
 	}
@@ -64,7 +64,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			var line = iconBarMargin.GetLineFromMousePosition();
 			if (line == null)
 				return;
-			var ctx = new IconBarCommandContext(iconBarMargin.UIContext, line.Value);
+			var ctx = new IconBarCommandContext(iconBarMargin.DocumentViewer, line.Value);
 			foreach (var cmd in iconBarCommands) {
 				if (cmd.Value.IsEnabled(ctx))
 					cmd.Value.Execute(ctx);
@@ -80,21 +80,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
 				var iconBarMargin = (IIconBarMargin)args.CreatorObject.Object;
-				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, iconBarMargin.UIContext);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, iconBarMargin.DocumentViewer);
 
 				var line = iconBarMargin.GetLineFromMousePosition();
 				if (line != null) {
 					var objects = new List<IIconBarObject>(textLineObjectManager.GetObjectsOfType<IIconBarObject>());
-					var filteredObjects = GetIconBarObjects(objects, iconBarMargin.UIContext, line.Value);
+					var filteredObjects = GetIconBarObjects(objects, iconBarMargin.DocumentViewer, line.Value);
 					foreach (var o in filteredObjects)
 						yield return new GuidObject(MenuConstants.GUIDOBJ_IICONBAROBJECT_GUID, o);
 				}
 			}
 
-			static List<IIconBarObject> GetIconBarObjects(IList<IIconBarObject> objects, ITextEditorUIContext uiContext, int line) {
+			static List<IIconBarObject> GetIconBarObjects(IList<IIconBarObject> objects, IDocumentViewer documentViewer, int line) {
 				var list = new List<IIconBarObject>();
 				foreach (var obj in objects) {
-					if (obj.GetLineNumber(uiContext) != line)
+					if (obj.GetLineNumber(documentViewer) != line)
 						continue;
 					if (obj.ImageReference == null)
 						continue;

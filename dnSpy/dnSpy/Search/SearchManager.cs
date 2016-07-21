@@ -257,7 +257,7 @@ namespace dnSpy.Search {
 		}
 
 		bool GoTo(IFileTab tab, MethodDef method, uint ilOffset) {
-			var uiContext = tab.TryGetTextEditorUIContext();
+			var uiContext = tab.TryGetDocumentViewer();
 			if (uiContext == null || method == null)
 				return false;
 			var cm = uiContext.GetCodeMappings();

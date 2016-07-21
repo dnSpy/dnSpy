@@ -58,16 +58,16 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		readonly StackFrameLineType type;
-		internal ITextEditorUIContext TextView => uiContext;
-		readonly ITextEditorUIContext uiContext;
+		internal IDocumentViewer DocumentViewer => documentViewer;
+		readonly IDocumentViewer documentViewer;
 
-		public StackFrameLine(StackFrameLineType type, ITextEditorUIContext uiContext, SerializedDnToken methodKey, uint ilOffset)
+		public StackFrameLine(StackFrameLineType type, IDocumentViewer documentViewer, SerializedDnToken methodKey, uint ilOffset)
 			: base(methodKey, ilOffset) {
 			this.type = type;
-			this.uiContext = uiContext;
+			this.documentViewer = documentViewer;
 		}
 
-		protected override void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker) {
+		protected override void Initialize(IDocumentViewer documentViewer, ITextMarkerService markerService, ITextMarker marker) {
 			marker.HighlightingColor = () => {
 				switch (type) {
 				case StackFrameLineType.CurrentStatement:
@@ -104,6 +104,6 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override bool IsVisible(ITextEditorUIContext uiContext) => this.uiContext == uiContext;
+		public override bool IsVisible(IDocumentViewer documentViewer) => this.documentViewer == documentViewer;
 	}
 }

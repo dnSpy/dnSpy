@@ -96,7 +96,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public IFileTabContent Clone() =>
 			new DecompileFileTabContent(decompileFileTabContentFactory, nodes, Language);
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) =>
-			locator.Get<ITextEditorUIContext>();
+			locator.Get<IDocumentViewer>();
 
 		public string Title {
 			get {
@@ -154,13 +154,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Language, output, dispatcher);
 			if (ctx.IsRefresh) {
-				decompileContext.SavedRefPos = ((ITextEditorUIContext)ctx.UIContext).SaveReferencePosition();
+				decompileContext.SavedRefPos = ((IDocumentViewer)ctx.UIContext).SaveReferencePosition();
 				if (decompileContext.SavedRefPos != null) {
 					ctx.OnShown = e => {
 						if (e.Success && !e.HasMovedCaret) {
-							e.HasMovedCaret = ((ITextEditorUIContext)ctx.UIContext).RestoreReferencePosition(decompileContext.SavedRefPos);
+							e.HasMovedCaret = ((IDocumentViewer)ctx.UIContext).RestoreReferencePosition(decompileContext.SavedRefPos);
 							if (!e.HasMovedCaret) {
-								((ITextEditorUIContext)ctx.UIContext).ScrollAndMoveCaretTo(0, 0);
+								((IDocumentViewer)ctx.UIContext).ScrollAndMoveCaretTo(0, 0);
 								e.HasMovedCaret = true;
 							}
 						}
@@ -197,7 +197,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public void EndAsyncShow(IShowContext ctx, IAsyncShowResult result) {
 			var decompileContext = (DecompileContext)ctx.UserData;
-			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
+			var uiCtx = (IDocumentViewer)ctx.UIContext;
 
 			var contentType = decompileContext.DecompileNodeContext.ContentType;
 			if (contentType == null) {
@@ -240,7 +240,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (decompileContext.CachedOutputResult != null)
 				return false;
 
-			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
+			var uiCtx = (IDocumentViewer)ctx.UIContext;
 			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), dnSpy_Resources.Decompiling);
 			return true;
 		}

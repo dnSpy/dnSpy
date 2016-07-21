@@ -163,7 +163,7 @@ namespace dnSpy.Debugger {
 		public override void Execute(IMenuItemContext context) => realCmd.Execute(context);
 		public override bool IsVisible(IMenuItemContext context) => IsValidElement(context.CreatorObject) && realCmd.CanExecute(context);
 		public override bool IsEnabled(IMenuItemContext context) => true;
-		protected virtual bool IsValidElement(GuidObject element) => element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
+		protected virtual bool IsValidElement(GuidObject element) => element.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 	}
 
 	[ExportMenuItem(Header = "res:DebugAssemblyCommand", Icon = "StartDebugging", InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 0)]
@@ -184,7 +184,7 @@ namespace dnSpy.Debugger {
 		}
 
 		protected override bool IsValidElement(GuidObject element) =>
-			element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID) ||
+			element.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) ||
 			element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 	}
 
@@ -531,7 +531,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool IsEnabled(IIconBarCommandContext context) => true;
-		public void Execute(IIconBarCommandContext context) => breakpointManager.Value.Toggle(context.UIContext, context.Line);
+		public void Execute(IIconBarCommandContext context) => breakpointManager.Value.Toggle(context.DocumentViewer, context.Line);
 	}
 
 	abstract class IconBarCommand : MenuItemBase<ILCodeBreakpoint> {

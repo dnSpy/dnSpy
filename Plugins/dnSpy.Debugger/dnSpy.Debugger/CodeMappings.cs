@@ -33,29 +33,29 @@ namespace dnSpy.Debugger {
 		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
 
 		[ImportingConstructor]
-		CodeMappingsLoader(ITextEditorUIContextManager textEditorUIContextManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
+		CodeMappingsLoader(IDocumentViewerManager documentViewerManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
 			this.serializedDnModuleCreator = serializedDnModuleCreator;
-			textEditorUIContextManager.Add(OnTextEditorEvent, TextEditorUIContextManagerConstants.ORDER_DEBUGGER_CODEMAPPINGSCREATOR);
+			documentViewerManager.Add(OnTextEditorEvent, DocumentViewerManagerConstants.ORDER_DEBUGGER_CODEMAPPINGSCREATOR);
 		}
 
-		void OnTextEditorEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
-			if (@event == TextEditorUIContextListenerEvent.NewContent)
-				AddCodeMappings(uiContext, data as DnSpyTextOutputResult);
+		void OnTextEditorEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) {
+			if (@event == DocumentViewerEvent.NewContent)
+				AddCodeMappings(documentViewer, data as DnSpyTextOutputResult);
 		}
 
-		void AddCodeMappings(ITextEditorUIContext uiContext, DnSpyTextOutputResult result) {
+		void AddCodeMappings(IDocumentViewer documentViewer, DnSpyTextOutputResult result) {
 			if (result == null)
 				return;
 			var cm = new CodeMappings(result.MemberMappings, serializedDnModuleCreator);
-			uiContext.AddOutputData(CodeMappingsKey, cm);
+			documentViewer.AddOutputData(CodeMappingsKey, cm);
 		}
 		internal static readonly object CodeMappingsKey = new object();
 	}
 
 	static class CodeMappingsExtensions {
-		public static CodeMappings GetCodeMappings(this ITextEditorUIContext self) => self.TryGetCodeMappings() ?? new CodeMappings();
+		public static CodeMappings GetCodeMappings(this IDocumentViewer self) => self.TryGetCodeMappings() ?? new CodeMappings();
 
-		public static CodeMappings TryGetCodeMappings(this ITextEditorUIContext self) {
+		public static CodeMappings TryGetCodeMappings(this IDocumentViewer self) {
 			if (self == null)
 				return null;
 			return (CodeMappings)self.GetOutputData(CodeMappingsLoader.CodeMappingsKey);

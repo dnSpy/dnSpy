@@ -103,9 +103,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return false;
-			var uiContext = context.Find<ITextEditorUIContext>();
+			var uiContext = context.Find<IDocumentViewer>();
 			return uiContext != null && !uiContext.Selection.IsEmpty;
 		}
 	}
@@ -133,6 +133,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) =>
-			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID);
+			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 	}
 }

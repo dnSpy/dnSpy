@@ -570,8 +570,8 @@ namespace dnSpy.Debugger {
 				return null;
 
 			IFileTreeNodeData node;
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID)) {
-				var uiContext = context.Find<ITextEditorUIContext>();
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID)) {
+				var uiContext = context.Find<IDocumentViewer>();
 				if (uiContext == null)
 					return null;
 				var nodes = uiContext.FileTab.Content.Nodes.ToArray();
@@ -867,36 +867,36 @@ namespace dnSpy.Debugger {
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				tab.FollowReference(currentMethod, false, e => {
 					Debug.Assert(e.Tab == tab);
-					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
+					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretToCurrentStatement(e.Tab.UIContext as ITextEditorUIContext, canRefreshMethods);
+						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, canRefreshMethods);
 						e.HasMovedCaret = true;
 					}
 				});
 			}));
 		}
 
-		bool MoveCaretToCurrentStatement(ITextEditorUIContext uiContext, bool canRefreshMethods) {
-			if (uiContext == null)
+		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, bool canRefreshMethods) {
+			if (documentViewer == null)
 				return false;
 			if (currentLocation == null)
 				return false;
-			if (DebugUtils.MoveCaretTo(uiContext, currentLocation.Value.SerializedDnToken, currentLocation.Value.Offset))
+			if (DebugUtils.MoveCaretTo(documentViewer, currentLocation.Value.SerializedDnToken, currentLocation.Value.Offset))
 				return true;
 			if (!canRefreshMethods)
 				return false;
 
-			RefreshMethodBodies(uiContext);
+			RefreshMethodBodies(documentViewer);
 
 			return false;
 		}
 
-		void RefreshMethodBodies(ITextEditorUIContext uiContext) {
+		void RefreshMethodBodies(IDocumentViewer documentViewer) {
 			if (currentLocation == null)
 				return;
 			if (currentMethod == null)
 				return;
-			if (uiContext == null)
+			if (documentViewer == null)
 				return;
 
 			// If this fails, we're probably in the prolog or epilog. Shouldn't normally happen.
@@ -941,7 +941,7 @@ namespace dnSpy.Debugger {
 			if (memFile != null)
 				inMemoryModuleManager.Value.UpdateModuleMemory(memFile);
 			UpdateCurrentMethod(file);
-			JumpToCurrentStatement(uiContext.FileTab, false);
+			JumpToCurrentStatement(documentViewer.FileTab, false);
 		}
 
 		void UpdateCurrentLocationToInMemoryModule() {
@@ -1042,7 +1042,7 @@ namespace dnSpy.Debugger {
 
 			MemberMapping mapping;
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			var uiContext = tab.TryGetTextEditorUIContext();
+			var uiContext = tab.TryGetDocumentViewer();
 			var cm = uiContext.GetCodeMappings();
 			if ((mapping = cm.TryGetMapping(key.Value)) == null) {
 				// User has decompiled some other code or switched to another tab
@@ -1050,7 +1050,7 @@ namespace dnSpy.Debugger {
 				JumpToCurrentStatement(tab);
 
 				// It could be cached and immediately available. Check again
-				uiContext = tab.TryGetTextEditorUIContext();
+				uiContext = tab.TryGetDocumentViewer();
 				cm = uiContext.GetCodeMappings();
 				if ((mapping = cm.TryGetMapping(key.Value)) == null)
 					return null;
@@ -1149,27 +1149,27 @@ namespace dnSpy.Debugger {
 				return;
 
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			if (!TryShowNextStatement(tab.TryGetTextEditorUIContext())) {
+			if (!TryShowNextStatement(tab.TryGetDocumentViewer())) {
 				UpdateCurrentMethod();
 				JumpToCurrentStatement(tab);
 			}
 		}
 
-		bool TryShowNextStatement(ITextEditorUIContext uiContext) {
+		bool TryShowNextStatement(IDocumentViewer documentViewer) {
 			// Always reset the selected frame
 			StackFrameManager.SelectedFrameNumber = 0;
 			if (currentLocation == null)
 				return false;
-			return DebugUtils.MoveCaretTo(uiContext, currentLocation.Value.SerializedDnToken, currentLocation.Value.Offset);
+			return DebugUtils.MoveCaretTo(documentViewer, currentLocation.Value.SerializedDnToken, currentLocation.Value.Offset);
 		}
 
-		ITextEditorUIContext TryGetTextEditorUIContext(object parameter) {
+		IDocumentViewer TryGetDocumentViewer(object parameter) {
 			var ctx = parameter as IMenuItemContext;
 			if (ctx == null)
 				return null;
-			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID)) {
+			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID)) {
 				var tab = ctx.CreatorObject.Object as IFileTab;
-				return tab == null ? null : tab.UIContext as ITextEditorUIContext;
+				return tab == null ? null : tab.UIContext as IDocumentViewer;
 			}
 			return null;
 		}
@@ -1180,7 +1180,7 @@ namespace dnSpy.Debugger {
 
 			SourceCodeMapping mapping;
 			string errMsg;
-			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetTextEditorUIContext(parameter), out errMsg, out mapping))
+			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out mapping))
 				return false;
 
 			return CanSetNextStatement(mapping.ILRange.From);
@@ -1210,7 +1210,7 @@ namespace dnSpy.Debugger {
 
 		bool DebugSetNextStatement(object parameter, out string errMsg) {
 			SourceCodeMapping mapping;
-			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetTextEditorUIContext(parameter), out errMsg, out mapping))
+			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out mapping))
 				return false;
 			return SetOffset(mapping.ILRange.From, out errMsg);
 		}
@@ -1265,7 +1265,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		bool DebugGetSourceCodeMappingForSetNextStatement(ITextEditorUIContext uiContext, out string errMsg, out SourceCodeMapping mapping) {
+		bool DebugGetSourceCodeMappingForSetNextStatement(IDocumentViewer documentViewer, out string errMsg, out SourceCodeMapping mapping) {
 			errMsg = string.Empty;
 			mapping = null;
 
@@ -1278,22 +1278,22 @@ namespace dnSpy.Debugger {
 				return false;
 			}
 
-			if (uiContext == null) {
-				uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
-				if (uiContext == null) {
+			if (documentViewer == null) {
+				documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
+				if (documentViewer == null) {
 					errMsg = dnSpy_Debugger_Resources.Error_NoTabAvailableDecompileCurrentMethod;
 					return false;
 				}
 			}
 
 			CodeMappings cm;
-			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(uiContext, currentLocation.Value.SerializedDnToken, out cm)) {
+			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(documentViewer, currentLocation.Value.SerializedDnToken, out cm)) {
 				errMsg = dnSpy_Debugger_Resources.Error_NoDebugInfoAvailable;
 				return false;
 			}
 			Debug.Assert(currentLocation != null);
 
-			var location = uiContext.Location;
+			var location = documentViewer.Location;
 			var bps = cm.Find(location.Line, location.Column);
 			if (bps.Count == 0) {
 				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementHere;

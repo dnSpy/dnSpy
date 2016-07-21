@@ -35,35 +35,35 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	interface ITextEditorHelper {
+	interface IDocumentViewerHelper {
 		void FollowReference(TextReference textRef, bool newTab);
 		void SetFocus();
 		void SetActive();
 	}
 
-	sealed class TextEditorUIContext : ITextEditorUIContext, ITextEditorHelper, IZoomable, IDisposable {
+	sealed class DocumentViewer : IDocumentViewer, IDocumentViewerHelper, IZoomable, IDisposable {
 		readonly IWpfCommandManager wpfCommandManager;
-		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
-		readonly TextEditorUIContextControl textEditorUIContextControl;
+		readonly IDocumentViewerManagerImpl documentViewerManagerImpl;
+		readonly DocumentViewerControl documentViewerControl;
 
-		double IZoomable.ScaleValue => textEditorUIContextControl.TextView.ZoomLevel / 100.0;
-		IDnSpyWpfTextViewHost ITextEditorUIContext.TextViewHost => textEditorUIContextControl.TextViewHost;
-		IDnSpyTextView ITextEditorUIContext.TextView => textEditorUIContextControl.TextView;
-		ITextCaret ITextEditorUIContext.Caret => textEditorUIContextControl.TextView.Caret;
-		ITextSelection ITextEditorUIContext.Selection => textEditorUIContextControl.TextView.Selection;
-		DnSpyTextOutputResult ITextEditorUIContext.OutputResult => textEditorUIContextControl.OutputResult;
+		double IZoomable.ScaleValue => documentViewerControl.TextView.ZoomLevel / 100.0;
+		IDnSpyWpfTextViewHost IDocumentViewer.TextViewHost => documentViewerControl.TextViewHost;
+		IDnSpyTextView IDocumentViewer.TextView => documentViewerControl.TextView;
+		ITextCaret IDocumentViewer.Caret => documentViewerControl.TextView.Caret;
+		ITextSelection IDocumentViewer.Selection => documentViewerControl.TextView.Selection;
+		DnSpyTextOutputResult IDocumentViewer.OutputResult => documentViewerControl.OutputResult;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly TextEditorUIContext uiContext;
+			readonly DocumentViewer uiContext;
 
-			public GuidObjectsCreator(TextEditorUIContext uiContext) {
+			public GuidObjectsCreator(DocumentViewer uiContext) {
 				this.uiContext = uiContext;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, uiContext);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, uiContext);
 
-				var teCtrl = (TextEditorUIContextControl)args.CreatorObject.Object;
+				var teCtrl = (DocumentViewerControl)args.CreatorObject.Object;
 				var loc = teCtrl.TextView.GetTextEditorLocation(args.OpenedFromKeyboard);
 				if (loc != null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
@@ -76,20 +76,20 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IMenuManager menuManager, TextEditorUIContextControl textEditorUIContextControl) {
+		public DocumentViewer(IWpfCommandManager wpfCommandManager, IDocumentViewerManagerImpl documentViewerManagerImpl, IMenuManager menuManager, DocumentViewerControl documentViewerControl) {
 			if (wpfCommandManager == null)
 				throw new ArgumentNullException(nameof(wpfCommandManager));
-			if (textEditorUIContextManagerImpl == null)
-				throw new ArgumentNullException(nameof(textEditorUIContextManagerImpl));
+			if (documentViewerManagerImpl == null)
+				throw new ArgumentNullException(nameof(documentViewerManagerImpl));
 			if (menuManager == null)
 				throw new ArgumentNullException(nameof(menuManager));
-			if (textEditorUIContextControl == null)
-				throw new ArgumentNullException(nameof(textEditorUIContextControl));
+			if (documentViewerControl == null)
+				throw new ArgumentNullException(nameof(documentViewerControl));
 			this.wpfCommandManager = wpfCommandManager;
-			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
-			this.textEditorUIContextControl = textEditorUIContextControl;
-			menuManager.InitializeContextMenu(textEditorUIContextControl, MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorUIContextControl.TextView, textEditorUIContextControl));
-			wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorUIContextControl);
+			this.documentViewerManagerImpl = documentViewerManagerImpl;
+			this.documentViewerControl = documentViewerControl;
+			menuManager.InitializeContextMenu(documentViewerControl, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView, documentViewerControl));
+			wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, documentViewerControl);
 		}
 
 		public IFileTab FileTab {
@@ -107,21 +107,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public IInputElement FocusedElement {
 			get {
-				var button = textEditorUIContextControl.CancelButton;
+				var button = documentViewerControl.CancelButton;
 				if (button?.IsVisible == true)
 					return button;
-				return textEditorUIContextControl.TextView.VisualElement;
+				return documentViewerControl.TextView.VisualElement;
 			}
 		}
 
-		public object UIObject => textEditorUIContextControl;
-		public FrameworkElement ScaleElement => textEditorUIContextControl.TextView.VisualElement;
+		public object UIObject => documentViewerControl;
+		public FrameworkElement ScaleElement => documentViewerControl.TextView.VisualElement;
 
 		public TextEditorLocation Location {
 			get {
-				var pos = textEditorUIContextControl.TextView.Caret.Position;
+				var pos = documentViewerControl.TextView.Caret.Position;
 				int caretPos = pos.BufferPosition.Position;
-				var line = textEditorUIContextControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
+				var line = documentViewerControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
 				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position + pos.VirtualSpaces);
 			}
 		}
@@ -129,14 +129,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void OnShow() { }
 
 		public void OnHide() {
-			textEditorUIContextControl.Clear();
+			documentViewerControl.Clear();
 			outputData.Clear();
 		}
 
 		public object Serialize() {
 			if (cachedEditorPositionState != null)
 				return cachedEditorPositionState;
-			return new EditorPositionState(textEditorUIContextControl.TextView);
+			return new EditorPositionState(documentViewerControl.TextView);
 		}
 
 		public void Deserialize(object obj) {
@@ -144,7 +144,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (state == null)
 				return;
 
-			var textView = textEditorUIContextControl.TextView;
+			var textView = documentViewerControl.TextView;
 			if (!textView.VisualElement.IsLoaded) {
 				bool start = cachedEditorPositionState == null;
 				cachedEditorPositionState = state;
@@ -157,7 +157,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		EditorPositionState cachedEditorPositionState;
 
 		void InitializeState(EditorPositionState state) {
-			var textView = textEditorUIContextControl.TextView;
+			var textView = documentViewerControl.TextView;
 
 			if (IsValid(state)) {
 				textView.ViewportLeft = state.ViewportLeft;
@@ -170,7 +170,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		bool IsValid(EditorPositionState state) {
-			var textView = textEditorUIContextControl.TextView;
+			var textView = documentViewerControl.TextView;
 			if (state.CaretAffinity != PositionAffinity.Successor && state.CaretAffinity != PositionAffinity.Predecessor)
 				return false;
 			if (state.CaretVirtualSpaces < 0)
@@ -188,7 +188,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
-			textEditorUIContextControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
+			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			if (cachedEditorPositionState == null)
 				return;
 			InitializeState(cachedEditorPositionState);
@@ -232,8 +232,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (result == null)
 				throw new ArgumentNullException(nameof(result));
 			outputData.Clear();
-			textEditorUIContextControl.SetOutput(result, contentType);
-			textEditorUIContextManagerImpl.RaiseNewContentEvent(this, result);
+			documentViewerControl.SetOutput(result, contentType);
+			documentViewerManagerImpl.RaiseNewContentEvent(this, result);
 		}
 
 		public void AddOutputData(object key, object data) {
@@ -251,29 +251,29 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();
 
-		void ITextEditorHelper.FollowReference(TextReference textRef, bool newTab) {
+		void IDocumentViewerHelper.FollowReference(TextReference textRef, bool newTab) {
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
 				return;
 			FileTab.FollowReference(textRef, newTab);
 		}
 
-		void ITextEditorHelper.SetFocus() => FileTab.TrySetFocus();
-		void ITextEditorHelper.SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
-		public void HideCancelButton() => textEditorUIContextControl.HideCancelButton();
-		public void MoveCaretTo(object @ref) => textEditorUIContextControl.GoToLocation(@ref);
+		void IDocumentViewerHelper.SetFocus() => FileTab.TrySetFocus();
+		void IDocumentViewerHelper.SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
+		public void HideCancelButton() => documentViewerControl.HideCancelButton();
+		public void MoveCaretTo(object @ref) => documentViewerControl.GoToLocation(@ref);
 
 		public void ShowCancelButton(Action onCancel, string message) {
 			if (onCancel == null)
 				throw new ArgumentNullException(nameof(onCancel));
-			textEditorUIContextControl.ShowCancelButton(onCancel, message);
+			documentViewerControl.ShowCancelButton(onCancel, message);
 		}
 
 		public void Dispose() {
-			textEditorUIContextControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
-			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
-			wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorUIContextControl);
-			textEditorUIContextControl.Dispose();
+			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
+			documentViewerManagerImpl.RaiseRemovedEvent(this);
+			wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, documentViewerControl);
+			documentViewerControl.Dispose();
 			outputData.Clear();
 		}
 
@@ -282,12 +282,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				throw new ArgumentOutOfRangeException(nameof(line));
 			if (column < 0)
 				throw new ArgumentOutOfRangeException(nameof(column));
-			textEditorUIContextControl.ScrollAndMoveCaretTo(line, column);
+			documentViewerControl.ScrollAndMoveCaretTo(line, column);
 		}
 
-		public SpanData<ReferenceInfo>? SelectedReferenceInfo => textEditorUIContextControl.GetCurrentReferenceInfo();
-		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() => textEditorUIContextControl.GetSelectedTextReferences();
-		public object SaveReferencePosition() => textEditorUIContextControl.SaveReferencePosition(this.GetCodeMappings());
-		public bool RestoreReferencePosition(object obj) => textEditorUIContextControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
+		public SpanData<ReferenceInfo>? SelectedReferenceInfo => documentViewerControl.GetCurrentReferenceInfo();
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() => documentViewerControl.GetSelectedTextReferences();
+		public object SaveReferencePosition() => documentViewerControl.SaveReferencePosition(this.GetCodeMappings());
+		public bool RestoreReferencePosition(object obj) => documentViewerControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 	}
 }

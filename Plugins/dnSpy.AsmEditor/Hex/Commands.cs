@@ -72,12 +72,12 @@ namespace dnSpy.AsmEditor.Hex {
 			this.CreatorObject = creatorObject;
 		}
 
-		public HexContext(ITextEditorUIContext uiContext, int? line, int? col, object @ref, bool isDefinition) {
+		public HexContext(IDocumentViewer documentViewer, int? line, int? col, object @ref, bool isDefinition) {
 			this.Reference = @ref;
 			this.IsDefinition = isDefinition;
 			this.Line = line;
 			this.Column = col;
-			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID, uiContext);
+			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, documentViewer);
 		}
 	}
 
@@ -86,7 +86,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static readonly object ContextKey = new object();
 
 		protected sealed override HexContext CreateContext(IMenuItemContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID)) {
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID)) {
 				var textRef = context.Find<TextReference>();
 				bool isDefinition = false;
 				object @ref = null;
@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Hex {
 					isDefinition = textRef.IsDefinition;
 				}
 				var pos = context.Find<TextEditorLocation?>();
-				return new HexContext(context.Find<ITextEditorUIContext>(), pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isDefinition);
+				return new HexContext(context.Find<IDocumentViewer>(), pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isDefinition);
 			}
 
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
@@ -128,7 +128,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		internal static HexContext CreateContext(IFileTabManager fileTabManager) {
-			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			var uiContext = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (uiContext != null && ((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)
 				return CreateContext(uiContext);
 
@@ -146,16 +146,16 @@ namespace dnSpy.AsmEditor.Hex {
 			return new HexContext();
 		}
 
-		static HexContext CreateContext(ITextEditorUIContext uiContext) {
-			var refInfo = uiContext.SelectedReferenceInfo;
+		static HexContext CreateContext(IDocumentViewer documentViewer) {
+			var refInfo = documentViewer.SelectedReferenceInfo;
 			bool isDefinition = false;
 			object @ref = null;
 			if (refInfo != null) {
 				@ref = refInfo.Value.Data.Reference;
 				isDefinition = refInfo.Value.Data.IsDefinition;
 			}
-			var pos = uiContext.Location;
-			return new HexContext(uiContext, pos.Line, pos.Column, @ref, isDefinition);
+			var pos = documentViewer.Location;
+			return new HexContext(documentViewer, pos.Line, pos.Column, @ref, isDefinition);
 		}
 
 		static HexContext CreateContext(IFileTreeView fileTreeView) => new HexContext(new GuidObject(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, fileTreeView), fileTreeView.TreeView.TopLevelSelection);
@@ -243,7 +243,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return null;
 			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return GetActiveAssemblyTreeNode(fileTabManager);
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
 				return context.Nodes != null &&
@@ -401,7 +401,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static IList<SourceCodeMapping> GetMappings(HexContext context) {
 			if (context.Line == null || context.Column == null)
 				return null;
-			return MethodBody.BodyCommandUtils.GetMappings(context.CreatorObject.Object as ITextEditorUIContext, context.Line.Value, context.Column.Value);
+			return MethodBody.BodyCommandUtils.GetMappings(context.CreatorObject.Object as IDocumentViewer, context.Line.Value, context.Column.Value);
 		}
 	}
 
@@ -1200,7 +1200,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static string GetInputGestureTextInternal(HexContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) || context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) || context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return dnSpy_AsmEditor_Resources.ShortCutKeyShiftAltR;
 			return null;
 		}
@@ -1320,7 +1320,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (context == null)
 				return null;
 
-			var uiContext = context.CreatorObject.Object as ITextEditorUIContext;
+			var uiContext = context.CreatorObject.Object as IDocumentViewer;
 			if (uiContext != null) {
 				tab = uiContext.FileTab;
 				var content = uiContext.FileTab.Content;

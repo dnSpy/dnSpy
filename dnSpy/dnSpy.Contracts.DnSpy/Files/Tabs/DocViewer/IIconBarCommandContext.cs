@@ -23,9 +23,9 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// </summary>
 	public interface IIconBarCommandContext {
 		/// <summary>
-		/// Gets the <see cref="ITextEditorUIContext"/> instance
+		/// Gets the <see cref="IDocumentViewer"/> instance
 		/// </summary>
-		ITextEditorUIContext UIContext { get; }
+		IDocumentViewer DocumentViewer { get; }
 
 		/// <summary>
 		/// Gets the line number

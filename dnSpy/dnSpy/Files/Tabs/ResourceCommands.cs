@@ -173,7 +173,7 @@ namespace dnSpy.Files.Tabs {
 			}
 
 			static ResourceRef TryCreate(IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				return TryCreate(context.Find<TextReference>());
 			}

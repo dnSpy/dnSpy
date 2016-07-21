@@ -54,9 +54,9 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
-			e.CanExecute = CopyILBytesCodeCommand.CanExecute(fileTabManager.ActiveTab.TryGetTextEditorUIContext());
+			e.CanExecute = CopyILBytesCodeCommand.CanExecute(fileTabManager.ActiveTab.TryGetDocumentViewer());
 		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e) =>
-			CopyILBytesCodeCommand.Execute(fileTabManager.ActiveTab.TryGetTextEditorUIContext(), methodAnnotations);
+			CopyILBytesCodeCommand.Execute(fileTabManager.ActiveTab.TryGetDocumentViewer(), methodAnnotations);
 	}
 
 	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
@@ -69,25 +69,25 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return false;
-			return CanExecute(context.Find<ITextEditorUIContext>());
+			return CanExecute(context.Find<IDocumentViewer>());
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID))
-				Execute(context.Find<ITextEditorUIContext>(), methodAnnotations);
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
+				Execute(context.Find<IDocumentViewer>(), methodAnnotations);
 		}
 
-		public static bool CanExecute(ITextEditorUIContext uiContext) =>
-			uiContext != null && FindInstructions(uiContext).Any();
+		public static bool CanExecute(IDocumentViewer documentViewer) =>
+			documentViewer != null && FindInstructions(documentViewer).Any();
 
-		public static void Execute(ITextEditorUIContext uiContext, Lazy<IMethodAnnotations> methodAnnotations) {
-			if (!CanExecute(uiContext))
+		public static void Execute(IDocumentViewer documentViewer, Lazy<IMethodAnnotations> methodAnnotations) {
+			if (!CanExecute(documentViewer))
 				return;
 
 			var copier = new InstructionILBytesCopier();
-			var text = copier.Copy(FindInstructions(uiContext), methodAnnotations);
+			var text = copier.Copy(FindInstructions(documentViewer), methodAnnotations);
 			if (text.Length > 0) {
 				try {
 					Clipboard.SetText(text);
@@ -101,8 +101,8 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		static IEnumerable<SpanData<ReferenceInfo>> FindInstructions(ITextEditorUIContext uiContext) {
-			foreach (var refInfo in uiContext.GetSelectedTextReferences()) {
+		static IEnumerable<SpanData<ReferenceInfo>> FindInstructions(IDocumentViewer documentViewer) {
+			foreach (var refInfo in documentViewer.GetSelectedTextReferences()) {
 				if (refInfo.Data.IsDefinition && refInfo.Data.Reference is InstructionReference)
 					yield return refInfo;
 			}

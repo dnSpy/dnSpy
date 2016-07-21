@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Creates or returns an existing cached instance of a certain type. This instance is
 		/// cached per tab and is stored in a <see cref="WeakReference"/>.
 		/// </summary>
-		/// <typeparam name="T">Type, eg. <see cref="ITextEditorUIContext"/></typeparam>
+		/// <typeparam name="T">Type, eg. <see cref="IDocumentViewer"/></typeparam>
 		/// <returns></returns>
 		T Get<T>() where T : class, IFileTabUIContext;
 

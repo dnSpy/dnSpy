@@ -31,20 +31,20 @@ namespace dnSpy.Decompiler {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class CodeMappingsLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CodeMappingsLoader(ITextEditorUIContextManager textEditorUIContextManager) {
-			textEditorUIContextManager.Add(OnTextEditorEvent, TextEditorUIContextManagerConstants.ORDER_ASMEDITOR_CODEMAPPINGSCREATOR);
+		CodeMappingsLoader(IDocumentViewerManager documentViewerManager) {
+			documentViewerManager.Add(OnTextEditorEvent, DocumentViewerManagerConstants.ORDER_ASMEDITOR_CODEMAPPINGSCREATOR);
 		}
 
-		void OnTextEditorEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
-			if (@event == TextEditorUIContextListenerEvent.NewContent)
-				AddCodeMappings(uiContext, data as DnSpyTextOutputResult);
+		void OnTextEditorEvent(DocumentViewerEvent @event, IDocumentViewer documentViewer, object data) {
+			if (@event == DocumentViewerEvent.NewContent)
+				AddCodeMappings(documentViewer, data as DnSpyTextOutputResult);
 		}
 
-		void AddCodeMappings(ITextEditorUIContext uiContext, DnSpyTextOutputResult result) {
+		void AddCodeMappings(IDocumentViewer documentViewer, DnSpyTextOutputResult result) {
 			if (result == null)
 				return;
 			var cm = new CodeMappings(result.MemberMappings);
-			uiContext.AddOutputData(CodeMappingsConstants.CodeMappingsKey, cm);
+			documentViewer.AddOutputData(CodeMappingsConstants.CodeMappingsKey, cm);
 		}
 	}
 

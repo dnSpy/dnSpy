@@ -280,7 +280,7 @@ namespace dnSpy.Analyzer {
 		bool GoTo(IFileTab tab, MethodDef method, uint? ilOffset, object @ref) {
 			if (method == null || ilOffset == null)
 				return false;
-			var uiContext = tab.TryGetTextEditorUIContext();
+			var uiContext = tab.TryGetDocumentViewer();
 			if (uiContext == null)
 				return false;
 			var cm = uiContext.GetCodeMappings();
@@ -297,10 +297,10 @@ namespace dnSpy.Analyzer {
 			return true;
 		}
 
-		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetTextReferences(ITextEditorUIContext uiContext, int lineNumber, int columnNumber) {
-			int position = uiContext.TextViewHost.TextView.LineColumnToPosition(lineNumber, columnNumber);
-			var snapshot = uiContext.TextViewHost.TextView.TextSnapshot;
-			foreach (var spanData in uiContext.OutputResult.ReferenceCollection.FindFrom(position)) {
+		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetTextReferences(IDocumentViewer documentViewer, int lineNumber, int columnNumber) {
+			int position = documentViewer.TextView.LineColumnToPosition(lineNumber, columnNumber);
+			var snapshot = documentViewer.TextView.TextSnapshot;
+			foreach (var spanData in documentViewer.OutputResult.ReferenceCollection.FindFrom(position)) {
 				var line = snapshot.GetLineFromPosition(spanData.Span.Start);
 				int currentLineNumber = line.LineNumber;
 				int currentColumnNumber = spanData.Span.Start - line.Start.Position;

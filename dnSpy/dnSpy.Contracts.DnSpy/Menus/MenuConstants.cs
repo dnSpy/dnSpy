@@ -118,11 +118,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Tool window <see cref="TabControl"/></summary>
 		public static readonly string GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID = "33FEE79F-7998-4D63-8E6F-B3AD86134960";
 
-		/// <summary><see cref="ITextEditorUIContext"/>'s UI control</summary>
-		public static readonly string GUIDOBJ_TEXTEDITORUICONTEXTCONTROL_GUID = "0459A32A-88E0-40BE-BB65-87C154BEF541";
+		/// <summary><see cref="IDocumentViewer"/>'s UI control</summary>
+		public static readonly string GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID = "FF1980C8-049C-4B9C-8298-5B5C30558A97";
 
-		/// <summary><see cref="ITextEditorUIContext"/></summary>
-		public static readonly string GUIDOBJ_TEXTEDITORUICONTEXT_GUID = "848AC3FB-7D67-4427-A604-86BFF539E527";
+		/// <summary><see cref="IDocumentViewer"/></summary>
+		public static readonly string GUIDOBJ_DOCUMENTVIEWER_GUID = "F7088928-7BF0-4044-B631-201F6565077A";
 
 		/// <summary><see cref="TextEditorLocation"/></summary>
 		public static readonly string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";

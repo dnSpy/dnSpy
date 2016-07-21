@@ -106,7 +106,11 @@
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\Tabs\DocViewer\DnSpyTextOutputResult.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerEvent.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerManagerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDnSpyTextOutput.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewer.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerManager.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
@@ -232,15 +236,11 @@
     <Compile Include="Files\Tabs\DocViewer\IIconBarCommandContext.cs" />
     <Compile Include="Files\Tabs\DocViewer\IIconBarObject.cs" />
     <Compile Include="Files\Tabs\DocViewer\IMarkedTextLine.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ITextEditorUIContext.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ITextEditorUIContextManager.cs" />
     <Compile Include="Files\Tabs\DocViewer\ITextLineObject.cs" />
     <Compile Include="Files\Tabs\DocViewer\ITextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\DocViewer\ITextMarker.cs" />
     <Compile Include="Files\Tabs\DocViewer\ITextMarkerObject.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextEditorConstants.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextListenerEvent.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextEditorUIContextManagerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextLineObjectEventArgs.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextLineObjectListModifiedEventArgs.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ICodeToolTipCreator.cs" />

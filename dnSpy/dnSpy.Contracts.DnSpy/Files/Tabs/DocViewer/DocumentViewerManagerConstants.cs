@@ -19,24 +19,22 @@
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// <see cref="TextEditorUIContextListener"/> event
+	/// Constants
 	/// </summary>
-	public enum TextEditorUIContextListenerEvent {
-		/// <summary>
-		/// A <see cref="ITextEditorUIContext"/> has been created
-		/// </summary>
-		Added,
+	public static class DocumentViewerManagerConstants {
+		/// <summary>Default order</summary>
+		public const double ORDER_DEFAULT = double.MaxValue;
 
-		/// <summary>
-		/// A <see cref="ITextEditorUIContext"/> has been removed (eg. tab was closed). This event
-		/// isn't raised if the <see cref="ITextEditorUIContext"/> instance has already been GC'd.
-		/// </summary>
-		Removed,
+		/// <summary>Debugger: create code mappings</summary>
+		public static readonly double ORDER_DEBUGGER_CODEMAPPINGSCREATOR = 1000;
 
-		/// <summary>
-		/// New content has been added to the text editor. The <c>data</c> argument is a
-		/// <see cref="DnSpyTextOutputResult"/>
-		/// </summary>
-		NewContent,
+		/// <summary>AsmEditor: create code mappings</summary>
+		public static readonly double ORDER_ASMEDITOR_CODEMAPPINGSCREATOR = 2000;
+
+		/// <summary>Debugger: call stack</summary>
+		public static readonly double ORDER_DEBUGGER_CALLSTACK = 2000;
+
+		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
+		public static readonly double ORDER_DEBUGGER_METHODLOCALPROVIDER = 3000;
 	}
 }
