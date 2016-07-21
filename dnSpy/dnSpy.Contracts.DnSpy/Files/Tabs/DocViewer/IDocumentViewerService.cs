@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>
 		/// Raised when the <see cref="IDocumentViewer"/> instance gets new content
-		/// (its <see cref="IDocumentViewer.SetContent(DnSpyTextOutputResult, IContentType)"/>
+		/// (its <see cref="IDocumentViewer.SetContent(DocumentViewerContent, IContentType)"/>
 		/// method was called). It's only raised if the new content is different from the current
 		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time.
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>
 		/// Raised when the <see cref="IDocumentViewer"/> instance gets new content
-		/// (its <see cref="IDocumentViewer.SetContent(DnSpyTextOutputResult, IContentType)"/>
+		/// (its <see cref="IDocumentViewer.SetContent(DocumentViewerContent, IContentType)"/>
 		/// method was called). It's only raised if the new content is different from the current
 		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time.
@@ -183,9 +183,9 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		public override DocumentViewerEvent EventType => DocumentViewerEvent.NewContent;
 
 		/// <summary>
-		/// New output
+		/// New content
 		/// </summary>
-		public DnSpyTextOutputResult OutputResult { get; }
+		public DocumentViewerContent Content { get; }
 
 		/// <summary>
 		/// New content type
@@ -196,15 +196,15 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// Constructor
 		/// </summary>
 		/// <param name="documentViewer">Document viewer</param>
-		/// <param name="outputResult">New output</param>
+		/// <param name="content">New content</param>
 		/// <param name="contentType">Content type</param>
-		public DocumentViewerNewContentEventArgs(IDocumentViewer documentViewer, DnSpyTextOutputResult outputResult, IContentType contentType)
+		public DocumentViewerNewContentEventArgs(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType)
 			: base(documentViewer) {
-			if (outputResult == null)
-				throw new ArgumentNullException(nameof(outputResult));
+			if (content == null)
+				throw new ArgumentNullException(nameof(content));
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
-			OutputResult = outputResult;
+			Content = content;
 			ContentType = contentType;
 		}
 	}

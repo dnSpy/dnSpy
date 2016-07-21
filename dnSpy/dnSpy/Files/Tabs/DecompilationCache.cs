@@ -59,7 +59,7 @@ namespace dnSpy.Files.Tabs {
 		readonly Dictionary<Key, Item> cachedItems = new Dictionary<Key, Item>();
 
 		sealed class Item {
-			public DnSpyTextOutputResult OutputResult;
+			public DocumentViewerContent Content;
 			public IContentType ContentType;
 			public WeakReference WeakTextOutput;
 			DateTime LastHitUTC;
@@ -69,8 +69,8 @@ namespace dnSpy.Files.Tabs {
 			/// </summary>
 			public TimeSpan Age => DateTime.UtcNow - LastHitUTC;
 
-			public Item(DnSpyTextOutputResult result, IContentType contentType) {
-				this.OutputResult = result;
+			public Item(DocumentViewerContent content, IContentType contentType) {
+				this.Content = content;
 				this.ContentType = contentType;
 				this.LastHitUTC = DateTime.UtcNow;
 			}
@@ -78,13 +78,13 @@ namespace dnSpy.Files.Tabs {
 			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
 				if (WeakTextOutput != null) {
-					OutputResult = (DnSpyTextOutputResult)WeakTextOutput.Target;
+					Content = (DocumentViewerContent)WeakTextOutput.Target;
 					WeakTextOutput = null;
 				}
 			}
 
 			public void MakeWeakReference() {
-				var textOutput = Interlocked.CompareExchange(ref this.OutputResult, null, this.OutputResult);
+				var textOutput = Interlocked.CompareExchange(ref this.Content, null, this.Content);
 				if (textOutput != null)
 					this.WeakTextOutput = new WeakReference(textOutput);
 			}
@@ -155,7 +155,7 @@ namespace dnSpy.Files.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public DnSpyTextOutputResult Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType) {
+		public DocumentViewerContent Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType) {
 			var settings = language.Settings;
 			lock (lockObj) {
 				var key = new Key(language, nodes, settings);
@@ -164,21 +164,21 @@ namespace dnSpy.Files.Tabs {
 				if (cachedItems.TryGetValue(key, out item)) {
 					contentType = item.ContentType;
 					item.Hit();
-					var outputResult = item.OutputResult;
-					if (outputResult == null)
+					var content = item.Content;
+					if (content == null)
 						cachedItems.Remove(key);
-					return outputResult;
+					return content;
 				}
 			}
 			contentType = null;
 			return null;
 		}
 
-		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DnSpyTextOutputResult outputResult, IContentType contentType) {
+		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType) {
 			var settings = language.Settings;
 			lock (lockObj) {
 				var key = new Key(language, nodes, settings);
-				cachedItems[key] = new Item(outputResult, contentType);
+				cachedItems[key] = new Item(content, contentType);
 			}
 		}
 
@@ -212,9 +212,9 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, Item item) {
-			var result = item.OutputResult;
+			var result = item.Content;
 			if (result == null && item.WeakTextOutput != null)
-				result = (DnSpyTextOutputResult)item.WeakTextOutput.Target;
+				result = (DocumentViewerContent)item.WeakTextOutput.Target;
 			var refs = result?.ReferenceCollection;
 			if (refs == null)
 				return false;

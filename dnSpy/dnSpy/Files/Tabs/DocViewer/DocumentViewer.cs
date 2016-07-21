@@ -51,7 +51,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		IDnSpyTextView IDocumentViewer.TextView => documentViewerControl.TextView;
 		ITextCaret IDocumentViewer.Caret => documentViewerControl.TextView.Caret;
 		ITextSelection IDocumentViewer.Selection => documentViewerControl.TextView.Selection;
-		DnSpyTextOutputResult IDocumentViewer.OutputResult => documentViewerControl.OutputResult;
+		DocumentViewerContent IDocumentViewer.Content => documentViewerControl.Content;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly DocumentViewer uiContext;
@@ -261,14 +261,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			section.Attribute("TopLineVerticalDistance", state.TopLineVerticalDistance);
 		}
 
-		public void SetContent(DnSpyTextOutputResult result, IContentType contentType) {
+		public void SetContent(DocumentViewerContent content, IContentType contentType) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (result == null)
-				throw new ArgumentNullException(nameof(result));
-			if (documentViewerControl.SetOutput(result, contentType)) {
+			if (content == null)
+				throw new ArgumentNullException(nameof(content));
+			if (documentViewerControl.SetContent(content, contentType)) {
 				outputData.Clear();
-				documentViewerServiceImpl.RaiseNewContentEvent(this, result, documentViewerControl.TextView.TextBuffer.ContentType);
+				documentViewerServiceImpl.RaiseNewContentEvent(this, content, documentViewerControl.TextView.TextBuffer.ContentType);
 			}
 		}
 

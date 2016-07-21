@@ -25,11 +25,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
 	/// dnSpy text output
 	/// </summary>
-	public interface IDnSpyTextOutput : ITextOutput {
+	public interface IDocumentViewerOutput : ITextOutput {
 		/// <summary>
 		/// Called to disable caching of the result
 		/// </summary>
-		void SetCanNotBeCached();
+		void DisableCaching();
 
 		/// <summary>
 		/// Adds a UI element

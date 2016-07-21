@@ -36,16 +36,16 @@ namespace dnSpy.Files.Tabs {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		DnSpyTextOutputResult Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType);
+		DocumentViewerContent Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType);
 
 		/// <summary>
 		/// Cache decompiled output
 		/// </summary>
 		/// <param name="language">Language</param>
 		/// <param name="nodes">Nodes</param>
-		/// <param name="result">Result</param>
+		/// <param name="content">Content</param>
 		/// <param name="contentType">Content type</param>
-		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DnSpyTextOutputResult result, IContentType contentType);
+		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType);
 
 		/// <summary>
 		/// Clear the cache

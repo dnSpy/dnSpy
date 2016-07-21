@@ -28,7 +28,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	interface IDocumentViewerServiceImpl : IDocumentViewerService {
 		void RaiseAddedEvent(IDocumentViewer documentViewer);
 		void RaiseRemovedEvent(IDocumentViewer documentViewer);
-		void RaiseNewContentEvent(IDocumentViewer documentViewer, DnSpyTextOutputResult outputResult, IContentType contentType);
+		void RaiseNewContentEvent(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType);
 	}
 
 	[Export(typeof(IDocumentViewerService))]
@@ -66,14 +66,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			Removed?.Invoke(this, e);
 		}
 
-		public void RaiseNewContentEvent(IDocumentViewer documentViewer, DnSpyTextOutputResult outputResult, IContentType contentType) {
+		public void RaiseNewContentEvent(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType) {
 			if (documentViewer == null)
 				throw new ArgumentNullException(nameof(documentViewer));
-			if (outputResult == null)
-				throw new ArgumentNullException(nameof(outputResult));
+			if (content == null)
+				throw new ArgumentNullException(nameof(content));
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
-			var e = new DocumentViewerNewContentEventArgs(documentViewer, outputResult, contentType);
+			var e = new DocumentViewerNewContentEventArgs(documentViewer, content, contentType);
 			NotifyListeners(e);
 			NewContent?.Invoke(this, e);
 		}

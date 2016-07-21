@@ -81,11 +81,11 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
 			base.WriteShort(output, language, showOffset);
-			var dnSpyTextOutput = output as IDnSpyTextOutput;
-			if (dnSpyTextOutput != null) {
-				dnSpyTextOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
-				dnSpyTextOutput.WriteLine();
-				dnSpyTextOutput.WriteLine();
+			var documentViewerOutput = output as IDocumentViewerOutput;
+			if (documentViewerOutput != null) {
+				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
+				documentViewerOutput.WriteLine();
+				documentViewerOutput.WriteLine();
 			}
 		}
 

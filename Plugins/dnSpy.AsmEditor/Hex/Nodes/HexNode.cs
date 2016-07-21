@@ -47,9 +47,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			context.ContentTypeString = context.Language.ContentTypeString;
 			context.Language.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
 			DecompileFields(context.Language, context.Output);
-			var dnSpyTextOutput = context.Output as IDnSpyTextOutput;
-			if (dnSpyTextOutput != null)
-				dnSpyTextOutput.SetCanNotBeCached();
+			(context.Output as IDocumentViewerOutput)?.DisableCaching();
 			return true;
 		}
 

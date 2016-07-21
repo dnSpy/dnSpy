@@ -105,10 +105,10 @@
     <Compile Include="Decompiler\ICodeMappings.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DnSpyTextOutputResult.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerContent.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerListenerConstants.cs" />
-    <Compile Include="Files\Tabs\DocViewer\IDnSpyTextOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewer.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />

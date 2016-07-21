@@ -100,18 +100,15 @@ namespace Example2.Plugin {
 		}
 
 		// Gets called by dnSpy if there's only one node to decompile. This method gets called in a
-		// worker thread. The output is also cached unless you call IDnSpyTextOutput.SetCanNotBeCached().
+		// worker thread. The output is also cached unless you call IDocumentViewerOutput.DisableCaching().
 		public bool Decompile(IDecompileNodeContext context) {
 			// Pretend we actually do something...
 			Thread.Sleep(2000);
 
-			// If you don't want the output to be cached, call SetCanNotBeCached()
+			// If you don't want the output to be cached, call DisableCaching()
 			bool cacheOutput = true;
-			if (!cacheOutput) {
-				var dnSpyTextOutput = context.Output as IDnSpyTextOutput;
-				if (dnSpyTextOutput != null)
-					dnSpyTextOutput.SetCanNotBeCached();
-			}
+			if (!cacheOutput)
+				(context.Output as IDocumentViewerOutput).DisableCaching();
 
 			// Create the output and a few references that other code in this plugin will use, eg.
 			// to show a tooltip when hovering over the reference.

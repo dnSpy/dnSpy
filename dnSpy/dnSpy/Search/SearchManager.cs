@@ -257,16 +257,16 @@ namespace dnSpy.Search {
 		}
 
 		bool GoTo(IFileTab tab, MethodDef method, uint ilOffset) {
-			var uiContext = tab.TryGetDocumentViewer();
-			if (uiContext == null || method == null)
+			var documentViewer = tab.TryGetDocumentViewer();
+			if (documentViewer == null || method == null)
 				return false;
-			var cm = uiContext.GetCodeMappings();
+			var cm = documentViewer.GetCodeMappings();
 			var mapping = cm.Find(method, ilOffset);
 			if (mapping == null)
 				return false;
 
 			var location = mapping.StartPosition;
-			uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
+			documentViewer.ScrollAndMoveCaretTo(location.Line, location.Column);
 			return true;
 		}
 	}

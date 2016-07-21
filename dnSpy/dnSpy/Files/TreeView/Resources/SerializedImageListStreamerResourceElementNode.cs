@@ -67,13 +67,13 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var dnSpyTextOutput = output as IDnSpyTextOutput;
-			if (dnSpyTextOutput != null) {
+			var documentViewerOutput = output as IDocumentViewerOutput;
+			if (documentViewerOutput != null) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
 						output.WriteSpace();
 					var imageSource = imageListOptions.ImageSources[i];
-					dnSpyTextOutput.AddUIElement(() => {
+					documentViewerOutput.AddUIElement(() => {
 						return new System.Windows.Controls.Image {
 							Source = imageSource,
 						};

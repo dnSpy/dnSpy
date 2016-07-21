@@ -120,7 +120,7 @@ namespace dnSpy.MainApp {
 
 		public void OnShow(IShowContext ctx) {
 			var uiCtx = (IDocumentViewer)ctx.UIContext;
-			var output = new DnSpyTextOutput();
+			var output = new DocumentViewerOutput();
 			Write(output);
 			uiCtx.SetContent(output.CreateResult(), aboutContentType);
 		}

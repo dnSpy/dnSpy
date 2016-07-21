@@ -69,9 +69,9 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var dnSpyTextOutput = output as IDnSpyTextOutput;
-			if (dnSpyTextOutput != null) {
-				dnSpyTextOutput.AddUIElement(() => {
+			var documentViewerOutput = output as IDocumentViewerOutput;
+			if (documentViewerOutput != null) {
+				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = ImageSource,
 					};

@@ -24,9 +24,9 @@ using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// dnSpy text result shown in the decompiler text editor
+	/// <see cref="IDocumentViewer"/> content
 	/// </summary>
-	public sealed class DnSpyTextOutputResult {
+	public sealed class DocumentViewerContent {
 		/// <summary>
 		/// Gets the text
 		/// </summary>
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="colorCollection">Colors</param>
 		/// <param name="referenceCollection">References</param>
 		/// <param name="memberMappings">Debug info</param>
-		public DnSpyTextOutputResult(string text, CachedTextTokenColors colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MemberMapping[] memberMappings) {
+		public DocumentViewerContent(string text, CachedTextTokenColors colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MemberMapping[] memberMappings) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (colorCollection == null)

@@ -140,6 +140,7 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewer.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerControl.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerCreator.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
@@ -177,7 +178,6 @@
     <Compile Include="Files\Tabs\DocViewer\Commands.cs" />
     <Compile Include="Files\Tabs\DocViewer\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\DocViewer\DecompileNodeContext.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DnSpyTextOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\FileTabCommandConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\FileTabCommandInfoCreator.cs" />
     <Compile Include="Files\Tabs\DocViewer\FileTabCommandTargetFilter.cs" />

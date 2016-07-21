@@ -134,9 +134,9 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var dnSpyTextOutput = output as IDnSpyTextOutput;
-			if (dnSpyTextOutput != null) {
-				dnSpyTextOutput.AddUIElement(() => {
+			var documentViewerOutput = output as IDocumentViewerOutput;
+			if (documentViewerOutput != null) {
+				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
 					};
@@ -144,10 +144,10 @@ namespace dnSpy.Files.TreeView.Resources {
 			}
 
 			base.WriteShort(output, language, showOffset);
-			if (dnSpyTextOutput != null) {
-				dnSpyTextOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
-				dnSpyTextOutput.WriteLine();
-				dnSpyTextOutput.WriteLine();
+			if (documentViewerOutput != null) {
+				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
+				documentViewerOutput.WriteLine();
+				documentViewerOutput.WriteLine();
 			}
 		}
 
@@ -175,11 +175,11 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
-			var dnSpyTextOutput = output as IDnSpyTextOutput;
-			if (dnSpyTextOutput != null) {
+			var documentViewerOutput = output as IDocumentViewerOutput;
+			if (documentViewerOutput != null) {
 				language.WriteCommentBegin(output, true);
 				output.WriteOffsetComment(this, showOffset);
-				dnSpyTextOutput.AddUIElement(() => {
+				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
 					};

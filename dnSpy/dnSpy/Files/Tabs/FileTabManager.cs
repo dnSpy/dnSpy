@@ -571,8 +571,8 @@ namespace dnSpy.Files.Tabs {
 			var modules = new HashSet<IDnSpyFile>(files);
 			if (InModifiedModuleHelper.IsInModifiedModule(modules, tab.Content.Nodes))
 				return true;
-			var uiContext = tab.TryGetDocumentViewer();
-			if (uiContext != null && InModifiedModuleHelper.IsInModifiedModule(FileTreeView.FileManager, modules, uiContext.OutputResult.ReferenceCollection.Select(a => a.Data.Reference)))
+			var documentViewer = tab.TryGetDocumentViewer();
+			if (documentViewer != null && InModifiedModuleHelper.IsInModifiedModule(FileTreeView.FileManager, modules, documentViewer.Content.ReferenceCollection.Select(a => a.Data.Reference)))
 				return true;
 
 			return false;

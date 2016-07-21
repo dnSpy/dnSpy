@@ -215,14 +215,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		IList<SourceCodeMapping> GetMappings() {
-			var uiContext = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
-			if (uiContext == null)
+			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
+			if (documentViewer == null)
 				return null;
-			if (!((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)
+			if (!((UIElement)documentViewer.UIObject).IsKeyboardFocusWithin)
 				return null;
 
-			var pos = uiContext.Location;
-			return BodyCommandUtils.GetMappings(uiContext, pos.Line, pos.Column);
+			var pos = documentViewer.Location;
+			return BodyCommandUtils.GetMappings(documentViewer, pos.Line, pos.Column);
 		}
 
 		void ICommand.Execute(object parameter) => Execute(GetMappings());

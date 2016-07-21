@@ -29,7 +29,7 @@ using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	sealed class DnSpyTextOutput : IDnSpyTextOutput {
+	sealed class DocumentViewerOutput : IDocumentViewerOutput {
 		public bool CanBeCached => canBeCached;
 
 		readonly CachedTextTokenColors cachedTextTokenColors;
@@ -44,7 +44,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		TextPosition ITextOutput.Location => new TextPosition(line, stringBuilder.Length - lineStart + GetIndentSize());
 
-		public DnSpyTextOutput() {
+		public DocumentViewerOutput() {
 			this.cachedTextTokenColors = new CachedTextTokenColors();
 			this.stringBuilder = new StringBuilder();
 			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
@@ -52,14 +52,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.canBeCached = true;
 		}
 
-		public DnSpyTextOutputResult CreateResult() {
+		public DocumentViewerContent CreateResult() {
 			if (hasCreatedResult)
 				throw new InvalidOperationException(nameof(CreateResult) + " can only be called once");
 			hasCreatedResult = true;
-			return new DnSpyTextOutputResult(stringBuilder.ToString(), cachedTextTokenColors, referenceBuilder.Create(), memberMappingsList.ToArray());
+			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextTokenColors, referenceBuilder.Create(), memberMappingsList.ToArray());
 		}
 
-		void IDnSpyTextOutput.SetCanNotBeCached() => canBeCached = false;
+		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
 
 		public void AddDebugSymbols(MemberMapping memberMapping) => memberMappingsList.Add(memberMapping);
 

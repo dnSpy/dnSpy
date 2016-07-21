@@ -1042,16 +1042,16 @@ namespace dnSpy.Debugger {
 
 			MemberMapping mapping;
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			var uiContext = tab.TryGetDocumentViewer();
-			var cm = uiContext.GetCodeMappings();
+			var documentViewer = tab.TryGetDocumentViewer();
+			var cm = documentViewer.GetCodeMappings();
 			if ((mapping = cm.TryGetMapping(key.Value)) == null) {
 				// User has decompiled some other code or switched to another tab
 				UpdateCurrentMethod();
 				JumpToCurrentStatement(tab);
 
 				// It could be cached and immediately available. Check again
-				uiContext = tab.TryGetDocumentViewer();
-				cm = uiContext.GetCodeMappings();
+				documentViewer = tab.TryGetDocumentViewer();
+				cm = documentViewer.GetCodeMappings();
 				if ((mapping = cm.TryGetMapping(key.Value)) == null)
 					return null;
 			}

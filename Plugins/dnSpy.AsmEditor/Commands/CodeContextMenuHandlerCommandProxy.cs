@@ -35,13 +35,13 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		CodeContext CreateContext() {
-			var uiContext = fileTabManager.ActiveTab.TryGetDocumentViewer();
-			if (uiContext == null)
+			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
+			if (documentViewer == null)
 				return null;
-			if (!((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)
+			if (!((UIElement)documentViewer.UIObject).IsKeyboardFocusWithin)
 				return null;
 
-			var refInfo = uiContext.SelectedReferenceInfo;
+			var refInfo = documentViewer.SelectedReferenceInfo;
 			if (refInfo == null)
 				return null;
 

@@ -30,13 +30,13 @@ namespace dnSpy.Decompiler {
 	sealed class CodeMappingsLoader : IDocumentViewerListener {
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.NewContent)
-				AddCodeMappings(e.DocumentViewer, ((DocumentViewerNewContentEventArgs)e).OutputResult);
+				AddCodeMappings(e.DocumentViewer, ((DocumentViewerNewContentEventArgs)e).Content);
 		}
 
-		void AddCodeMappings(IDocumentViewer documentViewer, DnSpyTextOutputResult outputResult) {
-			if (outputResult == null)
+		void AddCodeMappings(IDocumentViewer documentViewer, DocumentViewerContent content) {
+			if (content == null)
 				return;
-			var cm = new CodeMappings(outputResult.MemberMappings);
+			var cm = new CodeMappings(content.MemberMappings);
 			documentViewer.AddContentData(CodeMappingsConstants.CodeMappingsKey, cm);
 		}
 	}

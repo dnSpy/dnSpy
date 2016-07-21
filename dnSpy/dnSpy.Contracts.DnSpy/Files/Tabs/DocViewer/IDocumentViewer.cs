@@ -31,14 +31,14 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// </summary>
 	public interface IDocumentViewer : IFileTabUIContext {
 		/// <summary>
-		/// Sets document content to <paramref name="content"/>
+		/// Sets new content
 		/// </summary>
-		/// <param name="content">New document content</param>
+		/// <param name="content">New content</param>
 		/// <param name="contentType">Content type or null</param>
-		void SetContent(DnSpyTextOutputResult content, IContentType contentType);
+		void SetContent(DocumentViewerContent content, IContentType contentType);
 
 		/// <summary>
-		/// Adds data that is removed each time <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/>
+		/// Adds data that is removed each time <see cref="SetContent(DocumentViewerContent, IContentType)"/>
 		/// gets called with new content.
 		/// </summary>
 		/// <param name="key">Key</param>
@@ -73,13 +73,13 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>
 		/// Gets the text view host. Don't write to the text buffer directly, use
-		/// <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/> to write new text.
+		/// <see cref="SetContent(DocumentViewerContent, IContentType)"/> to write new text.
 		/// </summary>
 		IDnSpyWpfTextViewHost TextViewHost { get; }
 
 		/// <summary>
 		/// Gets the text view. Don't write to the text buffer directly, use
-		/// <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/> to write new text.
+		/// <see cref="SetContent(DocumentViewerContent, IContentType)"/> to write new text.
 		/// </summary>
 		IDnSpyTextView TextView { get; }
 
@@ -94,9 +94,9 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		ITextSelection Selection { get; }
 
 		/// <summary>
-		/// Gets the latest output (set by <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/>)
+		/// Gets the current content (set by <see cref="SetContent(DocumentViewerContent, IContentType)"/>)
 		/// </summary>
-		DnSpyTextOutputResult OutputResult { get; }
+		DocumentViewerContent Content { get; }
 
 		/// <summary>
 		/// Gets the current caret position

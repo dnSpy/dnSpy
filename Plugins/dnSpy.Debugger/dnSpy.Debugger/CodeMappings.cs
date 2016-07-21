@@ -37,13 +37,13 @@ namespace dnSpy.Debugger {
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.NewContent)
-				AddCodeMappings(e.DocumentViewer, ((DocumentViewerNewContentEventArgs)e).OutputResult);
+				AddCodeMappings(e.DocumentViewer, ((DocumentViewerNewContentEventArgs)e).Content);
 		}
 
-		void AddCodeMappings(IDocumentViewer documentViewer, DnSpyTextOutputResult outputResult) {
-			if (outputResult == null)
+		void AddCodeMappings(IDocumentViewer documentViewer, DocumentViewerContent content) {
+			if (content == null)
 				return;
-			var cm = new CodeMappings(outputResult.MemberMappings, serializedDnModuleCreator);
+			var cm = new CodeMappings(content.MemberMappings, serializedDnModuleCreator);
 			documentViewer.AddContentData(CodeMappingsKey, cm);
 		}
 		internal static readonly object CodeMappingsKey = new object();

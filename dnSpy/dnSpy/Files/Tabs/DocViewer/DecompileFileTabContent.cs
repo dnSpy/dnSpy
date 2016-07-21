@@ -139,7 +139,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		sealed class DecompileContext {
 			public DecompileNodeContext DecompileNodeContext;
-			public DnSpyTextOutputResult CachedOutputResult;
+			public DocumentViewerContent CachedContent;
 			public CancellationTokenSource CancellationTokenSource;
 			public object SavedRefPos;
 		}
@@ -150,7 +150,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			decompilationContext.CalculateILRanges = true;
 			decompilationContext.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
 			decompilationContext.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
-			var output = new DnSpyTextOutput();
+			var output = new DocumentViewerOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Language, output, dispatcher);
 			if (ctx.IsRefresh) {
@@ -183,7 +183,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
 			IContentType contentType;
-			decompileContext.CachedOutputResult = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out contentType);
+			decompileContext.CachedContent = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out contentType);
 			decompileContext.DecompileNodeContext.ContentType = contentType;
 			ctx.UserData = decompileContext;
 		}
@@ -208,36 +208,36 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				Debug.Assert(contentType != null);
 			}
 
-			DnSpyTextOutputResult outputResult;
+			DocumentViewerContent content;
 			if (result.IsCanceled) {
-				var dnSpyOutput = new DnSpyTextOutput();
+				var dnSpyOutput = new DocumentViewerOutput();
 				dnSpyOutput.Write(dnSpy_Resources.DecompilationCanceled, BoxedOutputColor.Error);
-				outputResult = dnSpyOutput.CreateResult();
+				content = dnSpyOutput.CreateResult();
 			}
 			else if (result.Exception != null) {
-				var dnSpyOutput = new DnSpyTextOutput();
+				var dnSpyOutput = new DocumentViewerOutput();
 				dnSpyOutput.Write(dnSpy_Resources.DecompilationException, BoxedOutputColor.Error);
 				dnSpyOutput.WriteLine();
 				dnSpyOutput.Write(result.Exception.ToString(), BoxedOutputColor.Text);
-				outputResult = dnSpyOutput.CreateResult();
+				content = dnSpyOutput.CreateResult();
 			}
 			else {
-				outputResult = decompileContext.CachedOutputResult;
-				if (outputResult == null) {
-					var dnSpyOutput = (DnSpyTextOutput)decompileContext.DecompileNodeContext.Output;
-					outputResult = dnSpyOutput.CreateResult();
+				content = decompileContext.CachedContent;
+				if (content == null) {
+					var dnSpyOutput = (DocumentViewerOutput)decompileContext.DecompileNodeContext.Output;
+					content = dnSpyOutput.CreateResult();
 					if (dnSpyOutput.CanBeCached)
-						decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, outputResult, contentType);
+						decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, content, contentType);
 				}
 			}
 
 			if (result.CanShowOutput)
-				uiCtx.SetContent(outputResult, contentType);
+				uiCtx.SetContent(content, contentType);
 		}
 
 		public bool CanStartAsyncWorker(IShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.UserData;
-			if (decompileContext.CachedOutputResult != null)
+			if (decompileContext.CachedContent != null)
 				return false;
 
 			var uiCtx = (IDocumentViewer)ctx.UIContext;

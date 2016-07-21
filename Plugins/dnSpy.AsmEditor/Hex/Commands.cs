@@ -128,17 +128,17 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		internal static HexContext CreateContext(IFileTabManager fileTabManager) {
-			var uiContext = fileTabManager.ActiveTab.TryGetDocumentViewer();
-			if (uiContext != null && ((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)
-				return CreateContext(uiContext);
+			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
+			if (documentViewer != null && ((UIElement)documentViewer.UIObject).IsKeyboardFocusWithin)
+				return CreateContext(documentViewer);
 
 			if (((UIElement)fileTabManager.FileTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
 				return CreateContext(fileTabManager.FileTreeView);
 
 			if (fileTabManager.FileTreeView.TreeView.SelectedItems.Length != 0) {
-				bool teFocus = uiContext != null;
+				bool teFocus = documentViewer != null;
 				if (teFocus)
-					return CreateContext(uiContext);
+					return CreateContext(documentViewer);
 				if (UIUtils.HasSelectedChildrenFocus(fileTabManager.FileTreeView.TreeView.UIObject as ListBox))
 					return CreateContext(fileTabManager.FileTreeView);
 			}

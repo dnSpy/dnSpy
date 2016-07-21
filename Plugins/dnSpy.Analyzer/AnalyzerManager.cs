@@ -280,27 +280,27 @@ namespace dnSpy.Analyzer {
 		bool GoTo(IFileTab tab, MethodDef method, uint? ilOffset, object @ref) {
 			if (method == null || ilOffset == null)
 				return false;
-			var uiContext = tab.TryGetDocumentViewer();
-			if (uiContext == null)
+			var documentViewer = tab.TryGetDocumentViewer();
+			if (documentViewer == null)
 				return false;
-			var cm = uiContext.GetCodeMappings();
+			var cm = documentViewer.GetCodeMappings();
 			var mapping = cm.Find(method, ilOffset.Value);
 			if (mapping == null)
 				return false;
 
 			var location = mapping.StartPosition;
-			var loc = FindLocation(GetTextReferences(uiContext, location.Line, location.Column), mapping.EndPosition, @ref);
+			var loc = FindLocation(GetTextReferences(documentViewer, location.Line, location.Column), mapping.EndPosition, @ref);
 			if (loc == null)
 				loc = new TextEditorLocation(location.Line, location.Column);
 
-			uiContext.ScrollAndMoveCaretTo(loc.Value.Line, loc.Value.Column);
+			documentViewer.ScrollAndMoveCaretTo(loc.Value.Line, loc.Value.Column);
 			return true;
 		}
 
 		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetTextReferences(IDocumentViewer documentViewer, int lineNumber, int columnNumber) {
 			int position = documentViewer.TextView.LineColumnToPosition(lineNumber, columnNumber);
 			var snapshot = documentViewer.TextView.TextSnapshot;
-			foreach (var spanData in documentViewer.OutputResult.ReferenceCollection.FindFrom(position)) {
+			foreach (var spanData in documentViewer.Content.ReferenceCollection.FindFrom(position)) {
 				var line = snapshot.GetLineFromPosition(spanData.Span.Start);
 				int currentLineNumber = line.LineNumber;
 				int currentColumnNumber = spanData.Span.Start - line.Start.Position;
