@@ -93,8 +93,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public IFileTab FileTab {
-			get { return fileTab; }
+			get {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
+				return fileTab;
+			}
 			set {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
 				if (value == null)
 					throw new ArgumentNullException();
 				if (fileTab == null)
@@ -107,6 +113,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public IInputElement FocusedElement {
 			get {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
 				var button = documentViewerControl.CancelButton;
 				if (button?.IsVisible == true)
 					return button;
@@ -114,24 +122,53 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public object UIObject => documentViewerControl;
-		public FrameworkElement ScaleElement => documentViewerControl.TextView.VisualElement;
-		public TextEditorLocation Location => documentViewerControl.TextView.GetTextEditorLocation();
+		public object UIObject {
+			get {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
+				return documentViewerControl;
+			}
+		}
 
-		public void OnShow() { }
+		public FrameworkElement ScaleElement {
+			get {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
+				return documentViewerControl.TextView.VisualElement; ;
+			}
+		}
+
+		public TextEditorLocation Location {
+			get {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
+				return documentViewerControl.TextView.GetTextEditorLocation(); ;
+			}
+		}
+
+		public void OnShow() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+		}
 
 		public void OnHide() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			documentViewerControl.Clear();
 			outputData.Clear();
 		}
 
 		public object Serialize() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (cachedEditorPositionState != null)
 				return cachedEditorPositionState;
 			return new EditorPositionState(documentViewerControl.TextView);
 		}
 
 		public void Deserialize(object obj) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			var state = obj as EditorPositionState;
 			if (state == null)
 				return;
@@ -188,6 +225,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public object CreateSerialized(ISettingsSection section) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 			var caretAffinity = section.Attribute<PositionAffinity?>("CaretAffinity");
@@ -205,6 +244,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public void SaveSerialized(ISettingsSection section, object obj) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 			var state = obj as EditorPositionState;
@@ -221,6 +262,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public void SetContent(DnSpyTextOutputResult result, IContentType contentType) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (result == null)
 				throw new ArgumentNullException(nameof(result));
 			if (documentViewerControl.SetOutput(result, contentType)) {
@@ -230,12 +273,16 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public void AddContentData(object key, object data) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			outputData.Add(key, data);
 		}
 
 		public object GetContentData(object key) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			object data;
@@ -245,24 +292,54 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();
 
 		void IDocumentViewerHelper.FollowReference(TextReference textRef, bool newTab) {
+			Debug.Assert(!isDisposed);
+			if (isDisposed)
+				return;
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
 				return;
 			FileTab.FollowReference(textRef, newTab);
 		}
 
-		void IDocumentViewerHelper.SetFocus() => FileTab.TrySetFocus();
-		void IDocumentViewerHelper.SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
-		public void HideCancelButton() => documentViewerControl.HideCancelButton();
-		public void MoveCaretTo(object @ref) => documentViewerControl.GoToLocation(@ref);
+		void IDocumentViewerHelper.SetFocus() {
+			Debug.Assert(!isDisposed);
+			if (isDisposed)
+				return;
+			FileTab.TrySetFocus();
+		}
+
+		void IDocumentViewerHelper.SetActive() {
+			Debug.Assert(!isDisposed);
+			if (isDisposed)
+				return;
+			FileTab.FileTabManager.ActiveTab = FileTab;
+		}
+
+		public void HideCancelButton() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.HideCancelButton();
+		}
+
+		public void MoveCaretTo(object @ref) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.GoToLocation(@ref);
+		}
 
 		public void ShowCancelButton(Action onCancel, string message) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (onCancel == null)
 				throw new ArgumentNullException(nameof(onCancel));
 			documentViewerControl.ShowCancelButton(onCancel, message);
 		}
 
+		bool isDisposed;
 		public void Dispose() {
+			if (isDisposed)
+				return;
+			isDisposed = true;
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			documentViewerServiceImpl.RaiseRemovedEvent(this);
 			wpfCommandManager.Remove(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
@@ -271,6 +348,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public void ScrollAndMoveCaretTo(int line, int column) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (line < 0)
 				throw new ArgumentOutOfRangeException(nameof(line));
 			if (column < 0)
@@ -278,9 +357,30 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			documentViewerControl.ScrollAndMoveCaretTo(line, column);
 		}
 
-		public SpanData<ReferenceInfo>? SelectedReferenceInfo => documentViewerControl.GetCurrentReferenceInfo();
-		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() => documentViewerControl.GetSelectedTextReferences();
-		public object SaveReferencePosition() => documentViewerControl.SaveReferencePosition(this.GetCodeMappings());
-		public bool RestoreReferencePosition(object obj) => documentViewerControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
+		public SpanData<ReferenceInfo>? SelectedReferenceInfo {
+			get {
+				if (isDisposed)
+					throw new ObjectDisposedException(nameof(IDocumentViewer));
+				return documentViewerControl.GetCurrentReferenceInfo();
+			}
+		}
+
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			return documentViewerControl.GetSelectedTextReferences(); ;
+		}
+
+		public object SaveReferencePosition() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			return documentViewerControl.SaveReferencePosition(this.GetCodeMappings());
+		}
+
+		public bool RestoreReferencePosition(object obj) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			return documentViewerControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
+		}
 	}
 }
