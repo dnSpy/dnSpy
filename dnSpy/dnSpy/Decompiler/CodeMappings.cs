@@ -37,7 +37,7 @@ namespace dnSpy.Decompiler {
 			if (outputResult == null)
 				return;
 			var cm = new CodeMappings(outputResult.MemberMappings);
-			documentViewer.AddOutputData(CodeMappingsConstants.CodeMappingsKey, cm);
+			documentViewer.AddContentData(CodeMappingsConstants.CodeMappingsKey, cm);
 		}
 	}
 

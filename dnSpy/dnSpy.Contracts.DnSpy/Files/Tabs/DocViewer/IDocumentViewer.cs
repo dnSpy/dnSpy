@@ -31,26 +31,26 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// </summary>
 	public interface IDocumentViewer : IFileTabUIContext {
 		/// <summary>
-		/// Sets document to <paramref name="result"/>
+		/// Sets document content to <paramref name="content"/>
 		/// </summary>
-		/// <param name="result">New document data</param>
+		/// <param name="content">New document content</param>
 		/// <param name="contentType">Content type or null</param>
-		void SetOutput(DnSpyTextOutputResult result, IContentType contentType);
+		void SetContent(DnSpyTextOutputResult content, IContentType contentType);
 
 		/// <summary>
-		/// Adds data that is cleared each time <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/>
-		/// gets called.
+		/// Adds data that is removed each time <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/>
+		/// gets called with new content.
 		/// </summary>
 		/// <param name="key">Key</param>
 		/// <param name="data">Value</param>
-		void AddOutputData(object key, object data);
+		void AddContentData(object key, object data);
 
 		/// <summary>
-		/// Returns data added by <see cref="AddOutputData(object, object)"/> or null if not found
+		/// Returns data added by <see cref="AddContentData(object, object)"/> or null if not found
 		/// </summary>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		object GetOutputData(object key);
+		object GetContentData(object key);
 
 		/// <summary>
 		/// Shows a cancel button. Can be used when decompiling in another thread
@@ -73,13 +73,13 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>
 		/// Gets the text view host. Don't write to the text buffer directly, use
-		/// <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/> to write new text.
+		/// <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/> to write new text.
 		/// </summary>
 		IDnSpyWpfTextViewHost TextViewHost { get; }
 
 		/// <summary>
 		/// Gets the text view. Don't write to the text buffer directly, use
-		/// <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/> to write new text.
+		/// <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/> to write new text.
 		/// </summary>
 		IDnSpyTextView TextView { get; }
 
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		ITextSelection Selection { get; }
 
 		/// <summary>
-		/// Gets the latest output (set by <see cref="SetOutput(DnSpyTextOutputResult, IContentType)"/>)
+		/// Gets the latest output (set by <see cref="SetContent(DnSpyTextOutputResult, IContentType)"/>)
 		/// </summary>
 		DnSpyTextOutputResult OutputResult { get; }
 

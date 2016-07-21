@@ -496,8 +496,10 @@
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />
+    <Compile Include="Text\Editor\SnapshotPointExtensions.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
+    <Compile Include="Text\Editor\VirtualSnapshotPointExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
     <Compile Include="Text\OutputColorExtensions.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />

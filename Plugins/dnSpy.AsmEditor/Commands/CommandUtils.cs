@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public static void AddRemoveCommand(this IWpfCommandManager wpfCommandManager, CodeContextMenuHandler settingsCmd, IFileTabManager fileTabManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_TEXTEDITOR_UICONTEXT);
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			cmds.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(settingsCmd, fileTabManager), ModifierKeys.None, Key.Delete);
 		}
 
@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Commands {
 				cmds.Add(SettingsRoutedCommand, new EditMenuHandlerCommandProxy(treeViewCmd));
 			}
 			if (textEditorCmd != null) {
-				var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_TEXTEDITOR_UICONTEXT);
+				var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 				cmds.Add(SettingsRoutedCommand, new CodeContextMenuHandlerCommandProxy(textEditorCmd, fileTabManager), ModifierKeys.Alt, Key.Enter);
 			}
 		}

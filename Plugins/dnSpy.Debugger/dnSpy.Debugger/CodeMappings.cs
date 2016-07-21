@@ -44,7 +44,7 @@ namespace dnSpy.Debugger {
 			if (outputResult == null)
 				return;
 			var cm = new CodeMappings(outputResult.MemberMappings, serializedDnModuleCreator);
-			documentViewer.AddOutputData(CodeMappingsKey, cm);
+			documentViewer.AddContentData(CodeMappingsKey, cm);
 		}
 		internal static readonly object CodeMappingsKey = new object();
 	}
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger {
 		public static CodeMappings TryGetCodeMappings(this IDocumentViewer self) {
 			if (self == null)
 				return null;
-			return (CodeMappings)self.GetOutputData(CodeMappingsLoader.CodeMappingsKey);
+			return (CodeMappings)self.GetContentData(CodeMappingsLoader.CodeMappingsKey);
 		}
 	}
 

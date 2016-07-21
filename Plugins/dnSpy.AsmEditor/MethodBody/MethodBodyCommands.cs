@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		[ImportingConstructor]
 		CommandLoader(IWpfCommandManager wpfCommandManager, EditILInstructionsCommand editILCmd) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_TEXTEDITOR_UICONTEXT);
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			ICommand editILCmd2 = editILCmd;
 			cmds.Add(EditILInstructionsCommand,
 				(s, e) => editILCmd2.Execute(null),

@@ -41,9 +41,9 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>
 		/// Raised when the <see cref="IDocumentViewer"/> instance gets new content
-		/// (its <see cref="IDocumentViewer.SetOutput(DnSpyTextOutputResult, IContentType)"/>
-		/// method was called). It's only called if the input is different from the previous
-		/// input. I.e., calling it twice in a row with the same input won't raise this event
+		/// (its <see cref="IDocumentViewer.SetContent(DnSpyTextOutputResult, IContentType)"/>
+		/// method was called). It's only raised if the new content is different from the current
+		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time.
 		/// </summary>
 		event EventHandler<DocumentViewerNewContentEventArgs> NewContent;
@@ -95,18 +95,23 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// </summary>
 	public enum DocumentViewerEvent {
 		/// <summary>
-		/// A <see cref="IDocumentViewer"/> has been created
+		/// Raised when a new <see cref="IDocumentViewer"/> instance has been created
 		/// </summary>
 		Added,
 
 		/// <summary>
-		/// A <see cref="IDocumentViewer"/> has been removed (eg. tab was closed). This event
-		/// isn't raised if the <see cref="IDocumentViewer"/> instance has already been GC'd.
+		/// Raised when a <see cref="IDocumentViewer"/> instance has been closed. It's not
+		/// raised if the <see cref="IDocumentViewer"/> instance was GC'd (they're stored in
+		/// weak references)
 		/// </summary>
 		Removed,
 
 		/// <summary>
-		/// New content has been added to the text editor
+		/// Raised when the <see cref="IDocumentViewer"/> instance gets new content
+		/// (its <see cref="IDocumentViewer.SetContent(DnSpyTextOutputResult, IContentType)"/>
+		/// method was called). It's only raised if the new content is different from the current
+		/// content. I.e., calling it twice in a row with the same content won't raise this event
+		/// the second time.
 		/// </summary>
 		NewContent,
 	}

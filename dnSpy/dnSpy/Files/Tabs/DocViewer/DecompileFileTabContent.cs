@@ -232,7 +232,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 
 			if (result.CanShowOutput)
-				uiCtx.SetOutput(outputResult, contentType);
+				uiCtx.SetContent(outputResult, contentType);
 		}
 
 		public bool CanStartAsyncWorker(IShowContext ctx) {

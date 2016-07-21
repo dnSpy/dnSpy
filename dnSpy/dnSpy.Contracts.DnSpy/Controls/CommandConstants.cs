@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Controls {
 		public static readonly Guid GUID_MAINWINDOW = new Guid("6C6DF6A3-2681-4A17-B81C-7EF8ABAC845C");
 
 		/// <summary>Guid of <see cref="IDocumentViewer"/> UI control</summary>
-		public static readonly Guid GUID_TEXTEDITOR_UICONTEXT = new Guid("AD0DD2EF-2DCB-4079-BBC4-1D678114D66A");
+		public static readonly Guid GUID_DOCUMENTVIEWER_UICONTEXT = new Guid("38542BD9-D8E0-4281-8B71-6470F1342689");
 
 		/// <summary>Guid of file <see cref="ITreeView"/></summary>
 		public static readonly Guid GUID_FILE_TREEVIEW = new Guid("E0ABA20F-5CD7-4CFD-A9D4-F9F3C655DD4A");

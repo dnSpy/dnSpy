@@ -89,7 +89,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.documentViewerServiceImpl = documentViewerServiceImpl;
 			this.documentViewerControl = documentViewerControl;
 			menuManager.InitializeContextMenu(documentViewerControl, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView, documentViewerControl));
-			wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, documentViewerControl);
+			wpfCommandManager.Add(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 		}
 
 		public IFileTab FileTab {
@@ -116,15 +116,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public object UIObject => documentViewerControl;
 		public FrameworkElement ScaleElement => documentViewerControl.TextView.VisualElement;
-
-		public TextEditorLocation Location {
-			get {
-				var pos = documentViewerControl.TextView.Caret.Position;
-				int caretPos = pos.BufferPosition.Position;
-				var line = documentViewerControl.TextView.TextSnapshot.GetLineFromPosition(caretPos);
-				return new TextEditorLocation(line.LineNumber, caretPos - line.Start.Position + pos.VirtualSpaces);
-			}
-		}
+		public TextEditorLocation Location => documentViewerControl.TextView.GetTextEditorLocation();
 
 		public void OnShow() { }
 
@@ -228,7 +220,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			section.Attribute("TopLineVerticalDistance", state.TopLineVerticalDistance);
 		}
 
-		public void SetOutput(DnSpyTextOutputResult result, IContentType contentType) {
+		public void SetContent(DnSpyTextOutputResult result, IContentType contentType) {
 			if (result == null)
 				throw new ArgumentNullException(nameof(result));
 			if (documentViewerControl.SetOutput(result, contentType)) {
@@ -237,13 +229,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public void AddOutputData(object key, object data) {
+		public void AddContentData(object key, object data) {
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			outputData.Add(key, data);
 		}
 
-		public object GetOutputData(object key) {
+		public object GetContentData(object key) {
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			object data;
@@ -273,7 +265,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void Dispose() {
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			documentViewerServiceImpl.RaiseRemovedEvent(this);
-			wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, documentViewerControl);
+			wpfCommandManager.Remove(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.Dispose();
 			outputData.Clear();
 		}

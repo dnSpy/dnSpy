@@ -122,7 +122,7 @@ namespace dnSpy.MainApp {
 			var uiCtx = (IDocumentViewer)ctx.UIContext;
 			var output = new DnSpyTextOutput();
 			Write(output);
-			uiCtx.SetOutput(output.CreateResult(), aboutContentType);
+			uiCtx.SetContent(output.CreateResult(), aboutContentType);
 		}
 
 		sealed class Info {

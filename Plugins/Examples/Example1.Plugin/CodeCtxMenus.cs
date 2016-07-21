@@ -29,7 +29,7 @@ namespace Example1.Plugin {
 
 		[ImportingConstructor]
 		CommandLoader(IWpfCommandManager wpfCommandManager, MySettings mySettings) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_TEXTEDITOR_UICONTEXT);
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			// This command will be added to all text editors
 			cmds.Add(Option1Command,
 				(s, e) => mySettings.BoolOption1 = !mySettings.BoolOption1,

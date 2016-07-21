@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public static ICodeMappings TryGetCodeMappings(this IDocumentViewer self) {
 			if (self == null)
 				return null;
-			return (ICodeMappings)self.GetOutputData(CodeMappingsConstants.CodeMappingsKey);
+			return (ICodeMappings)self.GetContentData(CodeMappingsConstants.CodeMappingsKey);
 		}
 
 		sealed class EmptyCodeMappings : ICodeMappings {

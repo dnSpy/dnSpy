@@ -100,5 +100,16 @@ namespace dnSpy.Contracts.Text.Editor {
 				columnNumber = line.Length;
 			return line.Start.Position + columnNumber;
 		}
+
+		/// <summary>
+		/// Gets the <see cref="TextEditorLocation"/> of the current caret position
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		/// <returns></returns>
+		public static TextEditorLocation GetTextEditorLocation(this ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return textView.Caret.Position.VirtualBufferPosition.ToTextEditorLocation();
+		}
 	}
 }

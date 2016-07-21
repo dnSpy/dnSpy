@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Input;
 using dnSpy.Contracts.Text;
-using Microsoft.VisualStudio.Text;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
@@ -29,17 +29,9 @@ namespace dnSpy.Text.Editor {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (openedFromKeyboard)
-				return GetTextEditorLocationFromCaret(textView);
+				return textView.GetTextEditorLocation();
 			return GetTextEditorLocationFromMouse(textView);
 		}
-
-		static TextEditorLocation? GetTextEditorLocation(VirtualSnapshotPoint point) {
-			var line = point.Position.GetContainingLine();
-			return new TextEditorLocation(line.LineNumber, point.Position - line.Start + point.VirtualSpaces);
-		}
-
-		static TextEditorLocation? GetTextEditorLocationFromCaret(IWpfTextView textView) =>
-			GetTextEditorLocation(textView.Caret.Position.VirtualBufferPosition);
 
 		static TextEditorLocation? GetTextEditorLocationFromMouse(IWpfTextView textView) {
 			if (!textView.VisualElement.IsVisible)
@@ -49,7 +41,7 @@ namespace dnSpy.Text.Editor {
 				return null;
 			if (loc.Point.X < textView.ViewportLeft || loc.Point.X >= textView.ViewportRight)
 				return null;
-			return GetTextEditorLocation(loc.Position);
+			return loc.Position.ToTextEditorLocation();
 		}
 	}
 }
