@@ -259,7 +259,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void ITextEditorHelper.SetFocus() => FileTab.TrySetFocus();
-		public void SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
+		void ITextEditorHelper.SetActive() => FileTab.FileTabManager.ActiveTab = FileTab;
 		public void HideCancelButton() => textEditorUIContextControl.HideCancelButton();
 		public void MoveCaretTo(object @ref) => textEditorUIContextControl.GoToLocation(@ref);
 

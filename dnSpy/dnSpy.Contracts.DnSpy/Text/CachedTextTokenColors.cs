@@ -27,6 +27,17 @@ namespace dnSpy.Contracts.Text {
 	/// Caches text and data
 	/// </summary>
 	public sealed class CachedTextTokenColors {
+		static CachedTextTokenColors() {
+			var empty = new CachedTextTokenColors();
+			empty.Freeze();
+			Empty = empty;
+		}
+
+		/// <summary>
+		/// Gets an empty frozen instance
+		/// </summary>
+		public static readonly CachedTextTokenColors Empty;
+
 		/// <summary>
 		/// Gets the length of the text
 		/// </summary>
