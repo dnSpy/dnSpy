@@ -140,5 +140,19 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="obj">Saved position</param>
 		/// <returns></returns>
 		bool RestoreReferencePosition(object obj);
+
+		/// <summary>
+		/// Raised when this instance gets new content (its <see cref="SetContent(DocumentViewerContent, IContentType)"/>
+		/// method was called). It's only raised if the new content is different from the current
+		/// content. I.e., calling it twice in a row with the same content won't raise this event
+		/// the second time. This event is raised before <see cref="IDocumentViewerService.NewContent"/>
+		/// </summary>
+		event EventHandler<DocumentViewerNewContentEventArgs> NewContent;
+
+		/// <summary>
+		/// Raised when this instance has been closed. This event is raised before
+		/// <see cref="IDocumentViewerService.Removed"/>
+		/// </summary>
+		event EventHandler<DocumentViewerRemovedEventArgs> Removed;
 	}
 }

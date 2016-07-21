@@ -46,6 +46,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly DocumentViewerControl documentViewerControl;
 
+		public event EventHandler<DocumentViewerNewContentEventArgs> NewContent;
+		public event EventHandler<DocumentViewerRemovedEventArgs> Removed;
+
 		FrameworkElement IDocumentViewer.UIObject => documentViewerControl;
 		double IZoomable.ScaleValue => documentViewerControl.TextView.ZoomLevel / 100.0;
 		IDnSpyWpfTextViewHost IDocumentViewer.TextViewHost => documentViewerControl.TextViewHost;
@@ -269,7 +272,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(content));
 			if (documentViewerControl.SetContent(content, contentType)) {
 				outputData.Clear();
-				documentViewerServiceImpl.RaiseNewContentEvent(this, content, documentViewerControl.TextView.TextBuffer.ContentType);
+				var newContentType = documentViewerControl.TextView.TextBuffer.ContentType;
+				NewContent?.Invoke(this, new DocumentViewerNewContentEventArgs(this, content, newContentType));
+				documentViewerServiceImpl.RaiseNewContentEvent(this, content, newContentType);
 			}
 		}
 
@@ -342,6 +347,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				return;
 			isDisposed = true;
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
+			Removed?.Invoke(this, new DocumentViewerRemovedEventArgs(this));
 			documentViewerServiceImpl.RaiseRemovedEvent(this);
 			wpfCommandManager.Remove(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.Dispose();
