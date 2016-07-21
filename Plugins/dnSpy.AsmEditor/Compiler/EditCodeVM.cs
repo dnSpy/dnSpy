@@ -363,7 +363,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		bool CanAddAssemblyReference => true;
+		bool CanAddAssemblyReference => CanCompile;
 		void AddAssemblyReference() {
 			if (!CanAddAssemblyReference)
 				return;
@@ -373,7 +373,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			AddReferences(new[] { module });
 		}
 
-		bool CanAddGacReference => true;
+		bool CanAddGacReference => CanCompile;
 		void AddGacReference() {
 			if (!CanAddGacReference)
 				return;
