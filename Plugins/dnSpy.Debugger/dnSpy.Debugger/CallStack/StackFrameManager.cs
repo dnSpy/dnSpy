@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.CallStack {
 			this.fileTabManager = fileTabManager;
 			this.textLineObjectManager = textLineObjectManager;
 			this.moduleLoader = moduleLoader;
-			documentViewerService.NewContent += DocumentViewerService_NewContent;
+			documentViewerService.GotNewContent += DocumentViewerService_GotNewContent;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
@@ -154,7 +154,7 @@ namespace dnSpy.Debugger.CallStack {
 				Remove(tab.UIContext as IDocumentViewer);
 		}
 
-		void DocumentViewerService_NewContent(object sender, DocumentViewerNewContentEventArgs e) {
+		void DocumentViewerService_GotNewContent(object sender, DocumentViewerGotNewContentEventArgs e) {
 			Remove(e.DocumentViewer);
 			UpdateStackFrameLines(e.DocumentViewer, false);
 		}

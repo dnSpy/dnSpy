@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public void OnEvent(DocumentViewerEventArgs e) {
-			if (e.EventType == DocumentViewerEvent.NewContent)
+			if (e.EventType == DocumentViewerEvent.GotNewContent)
 				NewMethodInfoAvailable?.Invoke(this, EventArgs.Empty);
 		}
 

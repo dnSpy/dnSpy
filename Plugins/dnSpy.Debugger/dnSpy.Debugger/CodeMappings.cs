@@ -36,8 +36,8 @@ namespace dnSpy.Debugger {
 		}
 
 		public void OnEvent(DocumentViewerEventArgs e) {
-			if (e.EventType == DocumentViewerEvent.NewContent)
-				AddCodeMappings(e.DocumentViewer, ((DocumentViewerNewContentEventArgs)e).Content);
+			if (e.EventType == DocumentViewerEvent.GotNewContent)
+				AddCodeMappings(e.DocumentViewer, ((DocumentViewerGotNewContentEventArgs)e).Content);
 		}
 
 		void AddCodeMappings(IDocumentViewer documentViewer, DocumentViewerContent content) {

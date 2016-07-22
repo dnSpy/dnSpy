@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time.
 		/// </summary>
-		event EventHandler<DocumentViewerNewContentEventArgs> NewContent;
+		event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
 	}
 
 	/// <summary>
@@ -103,13 +103,13 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		Removed,
 
 		/// <summary>
-		/// Raised when the <see cref="IDocumentViewer"/> instance gets new content
+		/// Raised after the <see cref="IDocumentViewer"/> instance got new content
 		/// (its <see cref="IDocumentViewer.SetContent(DocumentViewerContent, IContentType)"/>
 		/// method was called). It's only raised if the new content is different from the current
 		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time.
 		/// </summary>
-		NewContent,
+		GotNewContent,
 	}
 
 	/// <summary>
@@ -176,11 +176,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
 	/// New content event args
 	/// </summary>
-	public sealed class DocumentViewerNewContentEventArgs : DocumentViewerEventArgs {
+	public sealed class DocumentViewerGotNewContentEventArgs : DocumentViewerEventArgs {
 		/// <summary>
-		/// Returns the event type, which is <see cref="DocumentViewerEvent.NewContent"/>
+		/// Returns the event type, which is <see cref="DocumentViewerEvent.GotNewContent"/>
 		/// </summary>
-		public override DocumentViewerEvent EventType => DocumentViewerEvent.NewContent;
+		public override DocumentViewerEvent EventType => DocumentViewerEvent.GotNewContent;
 
 		/// <summary>
 		/// New content
@@ -198,7 +198,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="documentViewer">Document viewer</param>
 		/// <param name="content">New content</param>
 		/// <param name="contentType">Content type</param>
-		public DocumentViewerNewContentEventArgs(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType)
+		public DocumentViewerGotNewContentEventArgs(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType)
 			: base(documentViewer) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));

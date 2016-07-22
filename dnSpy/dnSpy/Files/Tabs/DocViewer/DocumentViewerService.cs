@@ -38,7 +38,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public event EventHandler<DocumentViewerAddedEventArgs> Added;
 		public event EventHandler<DocumentViewerRemovedEventArgs> Removed;
-		public event EventHandler<DocumentViewerNewContentEventArgs> NewContent;
+		public event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
 
 		[ImportingConstructor]
 		DocumentViewerService([ImportMany] IEnumerable<Lazy<IDocumentViewerListener, IDocumentViewerListenerMetadata>> documentViewerListeners) {
@@ -73,9 +73,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(content));
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
-			var e = new DocumentViewerNewContentEventArgs(documentViewer, content, contentType);
+			var e = new DocumentViewerGotNewContentEventArgs(documentViewer, content, contentType);
 			NotifyListeners(e);
-			NewContent?.Invoke(this, e);
+			GotNewContent?.Invoke(this, e);
 		}
 	}
 }

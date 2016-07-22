@@ -46,7 +46,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly DocumentViewerControl documentViewerControl;
 
-		public event EventHandler<DocumentViewerNewContentEventArgs> NewContent;
+		public event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
 		public event EventHandler<DocumentViewerRemovedEventArgs> Removed;
 
 		FrameworkElement IDocumentViewer.UIObject => documentViewerControl;
@@ -273,7 +273,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (documentViewerControl.SetContent(content, contentType)) {
 				outputData.Clear();
 				var newContentType = documentViewerControl.TextView.TextBuffer.ContentType;
-				NewContent?.Invoke(this, new DocumentViewerNewContentEventArgs(this, content, newContentType));
+				GotNewContent?.Invoke(this, new DocumentViewerGotNewContentEventArgs(this, content, newContentType));
 				documentViewerServiceImpl.RaiseNewContentEvent(this, content, newContentType);
 			}
 		}
