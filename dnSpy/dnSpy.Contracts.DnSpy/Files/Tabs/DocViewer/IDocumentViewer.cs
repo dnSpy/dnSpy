@@ -61,12 +61,12 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Shows a cancel button. Can be used when decompiling in another thread
 		/// </summary>
-		/// <param name="onCancel">Called if the user clicks the cancel button</param>
 		/// <param name="message">Message to show to the user or null</param>
-		void ShowCancelButton(Action onCancel, string message);
+		/// <param name="onCancel">Called if the user clicks the cancel button</param>
+		void ShowCancelButton(string message, Action onCancel);
 
 		/// <summary>
-		/// Hides the cancel button shown by <see cref="ShowCancelButton(Action, string)"/>
+		/// Hides the cancel button shown by <see cref="ShowCancelButton(string, Action)"/>
 		/// </summary>
 		void HideCancelButton();
 

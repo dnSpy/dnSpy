@@ -333,7 +333,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			documentViewerControl.GoToLocation(@ref);
 		}
 
-		public void ShowCancelButton(Action onCancel, string message) {
+		public void ShowCancelButton(string message, Action onCancel) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (onCancel == null)

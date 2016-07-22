@@ -134,7 +134,7 @@ namespace dnSpy.BamlDecompiler {
 
 			tab.AsyncExec(cs => {
 				ctx.Token = cs.Token;
-				documentViewer.ShowCancelButton(() => cs.Cancel(), dnSpy_BamlDecompiler_Resources.Saving);
+				documentViewer.ShowCancelButton(dnSpy_BamlDecompiler_Resources.Saving, () => cs.Cancel());
 			}, () => {
 				bamlNode.Decompile(ctx.Output, ctx.Token);
 			}, result => {

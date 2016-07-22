@@ -127,7 +127,7 @@ namespace dnSpy.Files.Tabs {
 
 			tab.AsyncExec(cs => {
 				ctx.DecompileNodeContext.DecompilationContext.CancellationToken = cs.Token;
-				documentViewer.ShowCancelButton(() => cs.Cancel(), dnSpy_Resources.SavingCode);
+				documentViewer.ShowCancelButton(dnSpy_Resources.SavingCode, () => cs.Cancel());
 			}, () => {
 				fileTreeNodeDecompiler.Decompile(ctx.DecompileNodeContext, nodes);
 			}, result => {

@@ -241,7 +241,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				return false;
 
 			var uiCtx = (IDocumentViewer)ctx.UIContext;
-			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), dnSpy_Resources.Decompiling);
+			uiCtx.ShowCancelButton(dnSpy_Resources.Decompiling, () => decompileContext.CancellationTokenSource.Cancel());
 			return true;
 		}
 	}
