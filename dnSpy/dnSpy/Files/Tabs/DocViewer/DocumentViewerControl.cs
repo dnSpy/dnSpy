@@ -386,6 +386,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
 			wpfTextViewHost.TextView.MoveCaretTo(line, column);
 			wpfTextViewHost.TextView.Caret.EnsureVisible();//TODO: Use wpfTextViewHost.TextView.ViewScroller.EnsureSpanVisible()
+			wpfTextViewHost.TextView.Selection.Clear();
 			if (focus)
 				textEditorHelper.SetFocus();
 		}

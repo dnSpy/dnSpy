@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.Hex {
 				@ref = refInfo.Value.Data.Reference;
 				isDefinition = refInfo.Value.Data.IsDefinition;
 			}
-			var pos = documentViewer.Location;
+			var pos = documentViewer.CaretLocation;
 			return new HexContext(documentViewer, pos.Line, pos.Column, @ref, isDefinition);
 		}
 

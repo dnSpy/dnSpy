@@ -1293,7 +1293,7 @@ namespace dnSpy.Debugger {
 			}
 			Debug.Assert(currentLocation != null);
 
-			var location = documentViewer.Location;
+			var location = documentViewer.CaretLocation;
 			var bps = cm.Find(location.Line, location.Column);
 			if (bps.Count == 0) {
 				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementHere;

@@ -50,7 +50,7 @@ namespace Example1.Plugin {
 		public override bool IsChecked(IMenuItemContext context) => mySettings.BoolOption1;
 		public override void Execute(IMenuItemContext context) => mySettings.BoolOption1 = !mySettings.BoolOption1;
 
-		// Only show this in the text editor
+		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 	}
 
@@ -66,7 +66,7 @@ namespace Example1.Plugin {
 		public override bool IsChecked(IMenuItemContext context) => mySettings.BoolOption2;
 		public override void Execute(IMenuItemContext context) => mySettings.BoolOption2 = !mySettings.BoolOption2;
 
-		// Only show this in the text editor
+		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 	}
 
@@ -90,7 +90,7 @@ namespace Example1.Plugin {
 		}
 
 		IMDTokenProvider GetTokenObj(IMenuItemContext context) {
-			// Only show this in the text editor
+			// Only show this in the document viewer
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 
@@ -102,7 +102,7 @@ namespace Example1.Plugin {
 			return textRef.Reference as IMDTokenProvider;
 		}
 
-		// Only show this in the text editor
+		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => GetTokenObj(context) != null;
 	}
@@ -110,32 +110,32 @@ namespace Example1.Plugin {
 	[ExportMenuItem(Group = Constants.GROUP_TEXTEDITOR, Order = 30)]
 	sealed class TextEditorCommand4 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
-			var uiContext = GetUIContext(context);
-			if (uiContext != null) {
+			var documentViewer = GetDocumentViewer(context);
+			if (documentViewer != null) {
 				try {
-					Clipboard.SetText(string.Format("Line,col: {0},{1}", uiContext.Location.Line + 1, uiContext.Location.Column + 1));
+					Clipboard.SetText(string.Format("Line,col: {0},{1}", documentViewer.CaretLocation.Line + 1, documentViewer.CaretLocation.Column + 1));
 				}
 				catch (ExternalException) { }
 			}
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
-			var uiContext = GetUIContext(context);
-			if (uiContext == null)
+			var documentViewer = GetDocumentViewer(context);
+			if (documentViewer == null)
 				return "Copy line and column";
-			return string.Format("Copy line,col {0},{1}", uiContext.Location.Line + 1, uiContext.Location.Column + 1);
+			return string.Format("Copy line,col {0},{1}", documentViewer.CaretLocation.Line + 1, documentViewer.CaretLocation.Column + 1);
 		}
 
-		IDocumentViewer GetUIContext(IMenuItemContext context) {
-			// Only show this in the text editor
+		IDocumentViewer GetDocumentViewer(IMenuItemContext context) {
+			// Only show this in the document viewer
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 
 			return context.Find<IDocumentViewer>();
 		}
 
-		// Only show this in the text editor
+		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
-		public override bool IsEnabled(IMenuItemContext context) => GetUIContext(context) != null;
+		public override bool IsEnabled(IMenuItemContext context) => GetDocumentViewer(context) != null;
 	}
 }

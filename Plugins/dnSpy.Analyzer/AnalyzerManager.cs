@@ -293,7 +293,7 @@ namespace dnSpy.Analyzer {
 			if (loc == null)
 				loc = new TextEditorLocation(location.Line, location.Column);
 
-			documentViewer.ScrollAndMoveCaretTo(loc.Value.Line, loc.Value.Column);
+			documentViewer.ScrollAndMoveCaretTo(loc.Value);
 			return true;
 		}
 

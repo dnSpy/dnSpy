@@ -264,7 +264,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var location = documentViewer.Location;
+			var location = documentViewer.CaretLocation;
 			Toggle(documentViewer, location.Line, location.Column);
 			return true;
 		}
@@ -274,7 +274,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
-			var location = documentViewer.Location;
+			var location = documentViewer.CaretLocation;
 			var ilbps = GetILCodeBreakpoints(documentViewer, location.Line, location.Column);
 			count = ilbps.Count;
 			if (ilbps.Count == 0)
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 				if (documentViewer == null)
 					return false;
-				var location = documentViewer.Location;
+				var location = documentViewer.CaretLocation;
 				return GetILCodeBreakpoints(documentViewer, location.Line, location.Column).Count != 0;
 			}
 		}
@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var location = documentViewer.Location;
+			var location = documentViewer.CaretLocation;
 			var ilbps = GetILCodeBreakpoints(documentViewer, location.Line, location.Column);
 			bool isEnabled = IsEnabled(ilbps);
 			foreach (var ilbp in ilbps)
@@ -312,7 +312,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var location = documentViewer.Location;
+			var location = documentViewer.CaretLocation;
 			var ilbps = GetILCodeBreakpoints(documentViewer, location.Line, location.Column);
 			count = ilbps.Count;
 			return IsEnabled(ilbps);

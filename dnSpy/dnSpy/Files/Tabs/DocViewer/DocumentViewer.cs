@@ -142,7 +142,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public TextEditorLocation Location {
+		public TextEditorLocation CaretLocation {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -354,6 +354,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			outputData.Clear();
 		}
 
+		public void ScrollAndMoveCaretTo(TextEditorLocation location) =>
+			ScrollAndMoveCaretTo(location.Line, location.Column);
 		public void ScrollAndMoveCaretTo(int line, int column) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));

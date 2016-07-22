@@ -221,7 +221,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			var pos = documentViewer.Location;
+			var pos = documentViewer.CaretLocation;
 			return BodyCommandUtils.GetMappings(documentViewer, pos.Line, pos.Column);
 		}
 
