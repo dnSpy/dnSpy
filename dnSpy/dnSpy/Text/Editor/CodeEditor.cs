@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 			PredefinedTextViewRoles.PrimaryDocument,
 			PredefinedTextViewRoles.Structured,
 			PredefinedTextViewRoles.Zoomable,
-			CodeEditorTextViewRoles.CODE,
+			CodeEditorConstants.TextViewRole,
 		};
 
 		public CodeEditor(CodeEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {

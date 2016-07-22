@@ -17,14 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// <see cref="ICodeEditor"/> text view roles
+	/// <see cref="IDocumentViewer"/> constants
 	/// </summary>
-	public static class CodeEditorTextViewRoles {
+	public static class DocumentViewerConstants {
 		/// <summary>
-		/// <see cref="ICodeEditor"/> text view role
+		/// <see cref="IDocumentViewer"/> text view role
 		/// </summary>
-		public const string CODE = "1170BF37-F037-416F-BB13-523C79F44182";
+		public const string TextViewRole = "dnSpy-IDocumentViewer";
 	}
 }

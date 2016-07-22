@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	sealed class OutputTextPaneCommandTargetFilterCreator : ICommandTargetFilterCreator {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE) != true)
+			if (textView?.Roles.Contains(OutputTextPaneConstants.TextViewRole) != true)
 				return null;
 
 			return new OutputTextPaneCommandTargetFilter(textView);

@@ -17,14 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Output;
+
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="IReplEditor"/> text view roles
+	/// <see cref="IOutputTextPane"/> constants
 	/// </summary>
-	public static class ReplTextViewRoles {
+	public static class OutputTextPaneConstants {
 		/// <summary>
-		/// <see cref="IReplEditor"/> text view role
+		/// <see cref="IOutputTextPane"/> text view role
 		/// </summary>
-		public const string REPL = "136E8DC3-CBD2-4A4B-BEAF-5F884B1DEAA9";
+		public const string TextViewRole = "dnSpy-IOutputTextPane";
 	}
 }

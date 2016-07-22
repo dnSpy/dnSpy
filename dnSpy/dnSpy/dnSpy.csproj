@@ -148,7 +148,6 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerIdsExtensions.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerTextViewRoles.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
     <Compile Include="Files\Tabs\FileListLoader.cs" />

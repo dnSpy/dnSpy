@@ -105,6 +105,7 @@
     <Compile Include="Decompiler\ICodeMappings.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContent.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerListenerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewer.cs" />
@@ -459,8 +460,8 @@
     <Compile Include="Text\Classification\ThemeMarkerFormatDefinition.cs" />
     <Compile Include="Text\Color.cs" />
     <Compile Include="Text\ContentTypes.cs" />
+    <Compile Include="Text\Editor\CodeEditorConstants.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />
-    <Compile Include="Text\Editor\CodeEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
     <Compile Include="Text\Editor\DefaultDnSpyOptions.cs" />
     <Compile Include="Text\Editor\DefaultDnSpyTextViewOptions.cs" />
@@ -488,10 +489,10 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyTextViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyWpfViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
-    <Compile Include="Text\Editor\OutputLogEditorTextViewRoles.cs" />
+    <Compile Include="Text\Editor\OutputTextPaneConstants.cs" />
+    <Compile Include="Text\Editor\ReplConstants.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />
-    <Compile Include="Text\Editor\ReplTextViewRoles.cs" />
     <Compile Include="Text\Editor\Roslyn\ContentTypeNames.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />

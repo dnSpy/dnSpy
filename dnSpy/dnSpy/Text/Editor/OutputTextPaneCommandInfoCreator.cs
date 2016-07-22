@@ -28,7 +28,7 @@ namespace dnSpy.Text.Editor {
 	sealed class OutputTextPaneCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(OutputLogEditorTextViewRoles.OUTPUT_TEXTPANE) != true)
+			if (textView?.Roles.Contains(OutputTextPaneConstants.TextViewRole) != true)
 				yield break;
 
 			yield return CommandShortcut.Control(Key.L, OutputTextPaneIds.ClearAll.ToCommandInfo());

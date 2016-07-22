@@ -28,7 +28,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(ReplTextViewRoles.REPL) != true)
+			if (textView?.Roles.Contains(ReplConstants.TextViewRole) != true)
 				yield break;
 
 			yield return CommandShortcut.CtrlShift(Key.C, ReplIds.CopyCode.ToCommandInfo());
