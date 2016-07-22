@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// Span and data collection, see also <see cref="SpanDataCollectionBuilder{TData}"/>
+	/// Span and data collection, sorted by span, no overlaps, see also <see cref="SpanDataCollectionBuilder{TData}"/>
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
 	public sealed class SpanDataCollection<TData> : IEnumerable<SpanData<TData>> {
@@ -109,7 +109,10 @@ namespace dnSpy.Contracts.Text {
 			if (array.Length == 0)
 				return Array.Empty<SpanData<TData>>();
 			int lastPosition = array[array.Length - 1].Span.End;
-			return Find(position, lastPosition - position);
+			int length = lastPosition - position;
+			if (length < 0)
+				return Array.Empty<SpanData<TData>>();
+			return Find(position, length);
 		}
 
 		/// <summary>
