@@ -333,13 +333,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			// shown on the next line.
 			if (caretPos.Affinity == PositionAffinity.Predecessor && pos.Position != 0)
 				pos = pos - 1;
-			var spanData = GetTextReferenceAt(pos.Position);
+			var spanData = GetReferenceInfo(pos.Position);
 			if (spanData == null)
 				return null;
 			return spanData.Value.Data.Reference == null ? null : spanData;
 		}
 
-		public SpanData<ReferenceInfo>? GetTextReferenceAt(int position) => currentContent.Content.ReferenceCollection.Find(position);
+		public SpanData<ReferenceInfo>? GetReferenceInfo(int position) => currentContent.Content.ReferenceCollection.Find(position);
 
 		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() {
 			var selection = wpfTextViewHost.TextView.Selection;
@@ -474,6 +474,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			ScrollAndMoveCaretTo(line.LineNumber, column);
 			wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
 			wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, spanData.Span), false);
+
+			// If there's another reference at the caret, move caret to Start instead of End
+			var nextRef = GetReferenceInfo(spanData.Span.End);
+			if (nextRef != null && nextRef.Value.Span != spanData.Span)
+				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, spanData.Span.Start));
 		}
 
 		IEnumerable<SpanData<ReferenceInfo>> GetReferenceInfosFrom(int position, bool forward) {

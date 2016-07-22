@@ -73,7 +73,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
 
 					int pos = teCtrl.TextView.LineColumnToPosition(loc.Value.Line, loc.Value.Column);
-					var @ref = teCtrl.GetTextReferenceAt(pos);
+					var @ref = teCtrl.GetReferenceInfo(pos);
 					if (@ref != null)
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.ToTextReference());
 				}
