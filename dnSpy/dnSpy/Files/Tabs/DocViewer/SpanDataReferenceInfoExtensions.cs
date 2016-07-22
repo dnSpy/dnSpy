@@ -48,6 +48,36 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				if (mra.Name != mrb.Name)
 					return false;
 
+				var dta = mra.DeclaringType;
+				var dtb = mrb.DeclaringType;
+				if (dta != null) {
+					if (dtb == null)
+						return false;
+					if (dta.Name != dtb.Name)
+						return false;
+					if (dta.Namespace != dtb.Namespace)
+						return false;
+				}
+				else {
+					if (dtb != null)
+						return false;
+				}
+
+				if (mra is IType) {
+					if (!(mrb is IType))
+						return false;
+				}
+				else if (mra.IsMethod) {
+					if (!mrb.IsMethod)
+						return false;
+				}
+				else if (mra.IsField) {
+					if (!mrb.IsField)
+						return false;
+				}
+				else
+					return false;
+
 				mra = Resolve(mra) ?? mra;
 				mrb = Resolve(mrb) ?? mrb;
 				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(mra, mrb);
