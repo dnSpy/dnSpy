@@ -52,7 +52,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		FrameworkElement IDocumentViewer.UIObject => documentViewerControl;
 		double IZoomable.ScaleValue => documentViewerControl.TextView.ZoomLevel / 100.0;
 		IDnSpyWpfTextViewHost IDocumentViewer.TextViewHost => documentViewerControl.TextViewHost;
-		IDnSpyTextView IDocumentViewer.TextView => documentViewerControl.TextView;
+		public IDnSpyTextView TextView => documentViewerControl.TextView;
 		ITextCaret IDocumentViewer.Caret => documentViewerControl.TextView.Caret;
 		ITextSelection IDocumentViewer.Selection => documentViewerControl.TextView.Selection;
 		DocumentViewerContent IDocumentViewer.Content => documentViewerControl.Content;
@@ -94,6 +94,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.documentViewerControl = documentViewerControl;
 			menuManager.InitializeContextMenu(documentViewerControl, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView, documentViewerControl));
 			wpfCommandManager.Add(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
+			documentViewerControl.TextView.Properties.AddProperty(typeof(DocumentViewer), this);
+		}
+
+		internal static DocumentViewer TryGetInstance(ITextView textView) {
+			DocumentViewer documentViewer;
+			textView.Properties.TryGetProperty(typeof(DocumentViewer), out documentViewer);
+			return documentViewer;
 		}
 
 		public IFileTab FileTab {
@@ -345,13 +352,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void Dispose() {
 			if (isDisposed)
 				return;
-			isDisposed = true;
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			Removed?.Invoke(this, new DocumentViewerRemovedEventArgs(this));
 			documentViewerServiceImpl.RaiseRemovedEvent(this);
 			wpfCommandManager.Remove(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.Dispose();
 			outputData.Clear();
+			isDisposed = true;
 		}
 
 		public void ScrollAndMoveCaretTo(TextEditorLocation location) =>
@@ -390,6 +397,30 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			return documentViewerControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
+		}
+
+		public void MoveReference(bool forward) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.MoveReference(forward);
+		}
+
+		public void MoveToNextDefinition(bool forward) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.MoveToNextDefinition(forward);
+		}
+
+		public void FollowReference() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.FollowReference();
+		}
+
+		public void FollowReferenceNewTab() {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.FollowReferenceNewTab();
 		}
 	}
 }

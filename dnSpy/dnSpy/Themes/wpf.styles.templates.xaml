@@ -5881,7 +5881,7 @@
             <GroupBox Header="{x:Static p:dnSpy_Resources.DisplaySettings_OtherOptions}" Grid.Row="1">
                 <StackPanel Margin="3">
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowLineNumbers}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.AutoHighlightRefs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_HighlightReferences}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.HighlightReferences}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_HighlightReferences}"/>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}"/>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}"/>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}"/>

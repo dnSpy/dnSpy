@@ -85,8 +85,9 @@
 		<color name="visiblewhitespace" fg="#FF2B91AF" />
 		<color name="selectedtext" bg="#FF3399FF" />
 		<color name="inactiveselectedtext" bg="#FFBFCDDB" />
-		<color name="localdefinition" bg="#DBE0CC" />
-		<color name="localreference" bg="#DBE0CC" />
+		<color name="highlightedreference" bg="#FFDBE0CC" />
+		<color name="highlightedwrittenreference" bg="#FFDBE0CC" />
+		<color name="highlighteddefinition" bg="#FFDBE0CC" fg="#FF808080" />
 		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="disabledbreakpointstatement" bg="#30963A46" />

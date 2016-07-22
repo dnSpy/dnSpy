@@ -750,14 +750,19 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string InactiveSelectedText = "Theme-InactiveSelectedText";
 
 		/// <summary>
-		/// <see cref="ColorType.LocalDefinition"/>
+		/// <see cref="ColorType.HighlightedReference"/>
 		/// </summary>
-		public const string LocalDefinition = "Theme-LocalDefinition";
+		public const string HighlightedReference = "Theme-HighlightedReference";
 
 		/// <summary>
-		/// <see cref="ColorType.LocalReference"/>
+		/// <see cref="ColorType.HighlightedWrittenReference"/>
 		/// </summary>
-		public const string LocalReference = "Theme-LocalReference";
+		public const string HighlightedWrittenReference = "Theme-HighlightedWrittenReference";
+
+		/// <summary>
+		/// <see cref="ColorType.HighlightedDefinition"/>
+		/// </summary>
+		public const string HighlightedDefinition = "Theme-HighlightedDefinition";
 
 		/// <summary>
 		/// <see cref="ColorType.CurrentStatement"/>

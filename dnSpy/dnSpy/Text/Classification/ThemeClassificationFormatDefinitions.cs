@@ -770,14 +770,19 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition InactiveSelectedTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.LocalDefinition)]
+		[Name(ThemeClassificationTypeNames.HighlightedReference)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LocalDefinitionClassificationTypeDefinition;
+		static ClassificationTypeDefinition HighlightedReferenceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.LocalReference)]
+		[Name(ThemeClassificationTypeNames.HighlightedWrittenReference)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LocalReferenceClassificationTypeDefinition;
+		static ClassificationTypeDefinition HighlightedWrittenReferenceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HighlightedDefinition)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HighlightedDefinitionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentStatement)]
@@ -2163,21 +2168,30 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LocalDefinition)]
-		[Name(ThemeClassificationTypeNameKeys.LocalDefinition)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HighlightedReference)]
+		[Name(ThemeClassificationTypeNameKeys.HighlightedReference)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class LocalDefinition : ThemeClassificationFormatDefinition {
-			LocalDefinition() : base(ColorType.LocalDefinition) { }
+		sealed class HighlightedReference : ThemeMarkerFormatDefinition {
+			HighlightedReference() : base(ColorType.HighlightedReference) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LocalReference)]
-		[Name(ThemeClassificationTypeNameKeys.LocalReference)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HighlightedWrittenReference)]
+		[Name(ThemeClassificationTypeNameKeys.HighlightedWrittenReference)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class LocalReference : ThemeClassificationFormatDefinition {
-			LocalReference() : base(ColorType.LocalReference) { }
+		sealed class HighlightedWrittenReference : ThemeMarkerFormatDefinition {
+			HighlightedWrittenReference() : base(ColorType.HighlightedWrittenReference) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HighlightedDefinition)]
+		[Name(ThemeClassificationTypeNameKeys.HighlightedDefinition)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HighlightedDefinition : ThemeMarkerFormatDefinition {
+			HighlightedDefinition() : base(ColorType.HighlightedDefinition) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

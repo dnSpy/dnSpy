@@ -154,7 +154,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 			wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
 
-			OnAutoHighlightRefsChanged();
+			OnHighlightReferencesChanged();
 		}
 
 		public Button CancelButton => (this.waitAdorner.Content as WaitAdorner)?.button;
@@ -291,7 +291,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
 			toolTipHelper.Close();
 
-			OnAutoHighlightRefsChanged();
+			OnHighlightReferencesChanged();
 		}
 
 		internal void ClearMarkedReferencesAndToolTip() {
@@ -651,12 +651,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		void TextEditorSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(textEditorSettings.AutoHighlightRefs))
-				OnAutoHighlightRefsChanged();
+			if (e.PropertyName == nameof(textEditorSettings.HighlightReferences))
+				OnHighlightReferencesChanged();
 		}
 
-		void OnAutoHighlightRefsChanged() {
-			if (!textEditorSettings.AutoHighlightRefs)
+		void OnHighlightReferencesChanged() {
+			if (!textEditorSettings.HighlightReferences)
 				ClearMarkedReferences();
 			else {
 				int offset = wpfTextView.Caret.Position.BufferPosition.Position;

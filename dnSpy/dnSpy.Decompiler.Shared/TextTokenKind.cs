@@ -166,8 +166,9 @@ namespace dnSpy.Decompiler.Shared {
 		VisibleWhitespace,
 		SelectedText,
 		InactiveSelectedText,
-		LocalDefinition,
-		LocalReference,
+		HighlightedReference,
+		HighlightedWrittenReference,
+		HighlightedDefinition,
 		CurrentStatement,
 		ReturnStatement,
 		SelectedReturnStatement,
@@ -340,8 +341,9 @@ namespace dnSpy.Decompiler.Shared {
 		public static readonly object VisibleWhitespace = TextTokenKind.VisibleWhitespace;
 		public static readonly object SelectedText = TextTokenKind.SelectedText;
 		public static readonly object InactiveSelectedText = TextTokenKind.InactiveSelectedText;
-		public static readonly object LocalDefinition = TextTokenKind.LocalDefinition;
-		public static readonly object LocalReference = TextTokenKind.LocalReference;
+		public static readonly object HighlightedReference = TextTokenKind.HighlightedReference;
+		public static readonly object HighlightedWrittenReference = TextTokenKind.HighlightedWrittenReference;
+		public static readonly object HighlightedDefinition = TextTokenKind.HighlightedDefinition;
 		public static readonly object CurrentStatement = TextTokenKind.CurrentStatement;
 		public static readonly object ReturnStatement = TextTokenKind.ReturnStatement;
 		public static readonly object SelectedReturnStatement = TextTokenKind.SelectedReturnStatement;
@@ -514,8 +516,9 @@ namespace dnSpy.Decompiler.Shared {
 			VisibleWhitespace,
 			SelectedText,
 			InactiveSelectedText,
-			LocalDefinition,
-			LocalReference,
+			HighlightedReference,
+			HighlightedWrittenReference,
+			HighlightedDefinition,
 			CurrentStatement,
 			ReturnStatement,
 			SelectedReturnStatement,

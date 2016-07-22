@@ -50,6 +50,7 @@ namespace dnSpy.Text.Editor {
 			globalOptions.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, textEditorSettings.ShowLineNumbers);
 			globalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, textEditorSettings.WordWrapStyle);
 			globalOptions.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, textEditorSettings.ConvertTabsToSpaces);
+			globalOptions.SetOptionValue(DefaultDnSpyTextViewOptions.ReferenceHighlightingId, textEditorSettings.HighlightReferences);
 		}
 
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -65,6 +66,8 @@ namespace dnSpy.Text.Editor {
 				textEditorSettings.WordWrapStyle = globalOptions.WordWrapStyle();
 			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name)
 				textEditorSettings.ConvertTabsToSpaces = globalOptions.IsConvertTabsToSpacesEnabled();
+			else if (e.OptionId == DefaultDnSpyTextViewOptions.ReferenceHighlightingId.Name)
+				textEditorSettings.HighlightReferences = globalOptions.IsReferenceHighlightingEnabled();
 		}
 	}
 }

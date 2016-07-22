@@ -38,6 +38,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// true if references are highlighted
 		/// </summary>
-		bool AutoHighlightRefs { get; }
+		bool HighlightReferences { get; }
 	}
 }

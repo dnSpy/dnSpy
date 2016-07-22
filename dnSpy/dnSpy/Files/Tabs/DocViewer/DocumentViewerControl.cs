@@ -77,17 +77,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, (TextViewCreatorOptions)null);
 			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
-			wpfTextViewHost.TextView.Properties.AddProperty(typeof(DocumentViewerControl), this);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			Children.Add(wpfTextViewHost.HostControl);
-		}
-
-		internal static DocumentViewerControl TryGetInstance(ITextView textView) {
-			DocumentViewerControl teCtrlInstance;
-			textView.Properties.TryGetProperty(typeof(DocumentViewerControl), out teCtrlInstance);
-			return teCtrlInstance;
 		}
 
 		WaitAdorner CurrentWaitAdorner {
@@ -327,46 +320,23 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		SpanData<ReferenceInfo>? FindDefinition(SpanData<ReferenceInfo> spanData) {
 			if (spanData.Data.IsDefinition)
 				return spanData;
-			return currentContent.Content.ReferenceCollection.FirstOrNull(other => other.Data.IsDefinition && SpanDataEquals(other, spanData));
-		}
-
-		static bool SpanDataEquals(SpanData<ReferenceInfo> refInfoA, SpanData<ReferenceInfo> refInfoB) {
-			if (refInfoA.Data.Reference == null || refInfoB.Data.Reference == null)
-				return false;
-			if (refInfoA.Data.Reference.Equals(refInfoB.Data.Reference))
-				return true;
-
-			var mra = refInfoA.Data.Reference as IMemberRef;
-			var mrb = refInfoB.Data.Reference as IMemberRef;
-			if (mra != null && mrb != null) {
-				// PERF: Prevent expensive resolves by doing a quick name check
-				if (mra.Name != mrb.Name)
-					return false;
-
-				mra = Resolve(mra) ?? mra;
-				mrb = Resolve(mrb) ?? mrb;
-				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(mra, mrb);
-			}
-
-			return false;
-		}
-
-		static IMemberRef Resolve(IMemberRef memberRef) {
-			if (memberRef is ITypeDefOrRef)
-				return ((ITypeDefOrRef)memberRef).ResolveTypeDef();
-			if (memberRef is IMethod && ((IMethod)memberRef).IsMethod)
-				return ((IMethod)memberRef).ResolveMethodDef();
-			if (memberRef is IField)
-				return ((IField)memberRef).ResolveFieldDef();
-			Debug.Assert(memberRef is PropertyDef || memberRef is EventDef || memberRef is GenericParam, "Unknown IMemberRef");
-			return null;
+			return currentContent.Content.ReferenceCollection.FirstOrNull(other => other.Data.IsDefinition && SpanDataReferenceInfoExtensions.CompareReferences(other.Data, spanData.Data));
 		}
 
 		public SpanData<ReferenceInfo>? GetCurrentReferenceInfo() {
-			var pos = wpfTextViewHost.TextView.Caret.Position.VirtualBufferPosition;
-			if (pos.VirtualSpaces > 0)
+			var caretPos = wpfTextViewHost.TextView.Caret.Position;
+			// There are no refs in virtual space
+			if (caretPos.VirtualSpaces > 0)
 				return null;
-			return GetTextReferenceAt(pos.Position.Position);
+			var pos = caretPos.BufferPosition;
+			// If it's at the end of a word wrapped line, don't mark the reference that's
+			// shown on the next line.
+			if (caretPos.Affinity == PositionAffinity.Predecessor && pos.Position != 0)
+				pos = pos - 1;
+			var spanData = GetTextReferenceAt(pos.Position);
+			if (spanData == null)
+				return null;
+			return spanData.Value.Data.Reference == null ? null : spanData;
 		}
 
 		public SpanData<ReferenceInfo>? GetTextReferenceAt(int position) => currentContent.Content.ReferenceCollection.Find(position);
@@ -465,7 +435,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		SpanData<ReferenceInfo>? FindReferenceInfo(SpanData<ReferenceInfo> spanData) {
 			foreach (var other in currentContent.Content.ReferenceCollection) {
-				if (other.Data.IsLocal == spanData.Data.IsLocal && other.Data.IsDefinition == spanData.Data.IsDefinition && SpanDataEquals(other, spanData))
+				if (other.Data.IsLocal == spanData.Data.IsLocal && other.Data.IsDefinition == spanData.Data.IsDefinition && SpanDataReferenceInfoExtensions.CompareReferences(other.Data, spanData.Data))
 					return other;
 			}
 			return null;
@@ -477,7 +447,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				return;
 
 			foreach (var newSpanData in GetReferenceInfosFrom(spanData.Value.Span.Start, forward)) {
-				if (SpanDataEquals(newSpanData, spanData.Value)) {
+				if (SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
 					MoveToSpan(newSpanData);
 					break;
 				}

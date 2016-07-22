@@ -30,9 +30,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.textView = textView;
 		}
 
-		DocumentViewerControl TryGetInstance() =>
-			__documentViewerControl ?? (__documentViewerControl = DocumentViewerControl.TryGetInstance(textView));
-		DocumentViewerControl __documentViewerControl;
+		DocumentViewer TryGetInstance() =>
+			__documentViewer ?? (__documentViewer = DocumentViewer.TryGetInstance(textView));
+		DocumentViewer __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (TryGetInstance() == null)
@@ -63,38 +63,39 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-			var textCtrl = TryGetInstance();
-			if (textCtrl == null)
+			var documentViewer = TryGetInstance();
+			if (documentViewer == null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextReferenceGroup) {
 				switch ((TextReferenceIds)cmdId) {
 				case TextReferenceIds.MoveToNextReference:
-					textCtrl.MoveReference(true);
+					documentViewer.MoveReference(true);
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.MoveToPreviousReference:
-					textCtrl.MoveReference(false);
+					documentViewer.MoveReference(false);
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.MoveToNextDefinition:
-					textCtrl.MoveToNextDefinition(true);
+					documentViewer.MoveToNextDefinition(true);
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.MoveToPreviousDefinition:
-					textCtrl.MoveToNextDefinition(false);
+					documentViewer.MoveToNextDefinition(false);
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.FollowReference:
-					textCtrl.FollowReference();
+					documentViewer.FollowReference();
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.FollowReferenceNewTab:
-					textCtrl.FollowReferenceNewTab();
+					documentViewer.FollowReferenceNewTab();
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.ClearMarkedReferences:
-					//TODO:textCtrl.ClearMarkedReferences();
+					DocumentViewerHighlightReferencesTagger.ClearMarkedReferences(documentViewer.TextView);
+					documentViewer.TextView.Selection.Clear();
 					return CommandTargetStatus.Handled;
 
 				default:

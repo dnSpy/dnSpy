@@ -13,8 +13,9 @@
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
 		<color name="xmldoctooltiptext" italics="true" bold="false" />
 		<color name="linenumber" fg="#2B91AF" />
-		<color name="localdefinition" fg="#FFFFFFFF" bg="#FF800080" />
-		<color name="localreference" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="highlightedreference" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="highlightedwrittenreference" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="highlighteddefinition" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="searchresultmarker" bg="#FF800080" />
 		<color name="specialcharacterbox" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="hextext" fg="#FFFFFFFF" bg="#FF000000" />

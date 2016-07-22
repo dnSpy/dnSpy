@@ -33,6 +33,8 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Files.TreeView;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
@@ -124,29 +126,29 @@ namespace dnSpy.Files.Tabs.Settings {
 		}
 		bool showLineNumbers = true;
 
-		public bool AutoHighlightRefs {
-			get { return autoHighlightRefs; }
+		public bool HighlightReferences {
+			get { return highlightReferences; }
 			set {
-				if (autoHighlightRefs != value) {
-					autoHighlightRefs = value;
-					OnPropertyChanged(nameof(AutoHighlightRefs));
+				if (highlightReferences != value) {
+					highlightReferences = value;
+					OnPropertyChanged(nameof(HighlightReferences));
 				}
 			}
 		}
-		bool autoHighlightRefs = true;
+		bool highlightReferences = true;
 
 		public TextEditorSettingsVM(TextEditorSettingsImpl textEditorSettings, IEditorOptions editorOptions) {
 			FontFamily = textEditorSettings.FontFamily;
 			FontSize = textEditorSettings.FontSize;
 			ShowLineNumbers = editorOptions.IsLineNumberMarginEnabled();
-			AutoHighlightRefs = textEditorSettings.AutoHighlightRefs;
+			HighlightReferences = editorOptions.IsReferenceHighlightingEnabled();
 		}
 
 		public void CopyTo(TextEditorSettingsImpl textEditorSettings, IEditorOptions editorOptions) {
 			textEditorSettings.FontFamily = FontFamily;
 			textEditorSettings.FontSize = FontSize;
 			editorOptions.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, ShowLineNumbers);
-			textEditorSettings.AutoHighlightRefs = AutoHighlightRefs;
+			editorOptions.SetOptionValue(DefaultDnSpyTextViewOptions.ReferenceHighlightingId, HighlightReferences);
 		}
 	}
 

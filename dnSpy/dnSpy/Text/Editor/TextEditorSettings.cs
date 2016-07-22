@@ -66,17 +66,17 @@ namespace dnSpy.Text.Editor {
 		}
 		bool showLineNumbers = true;
 
-		public bool AutoHighlightRefs {
-			get { return autoHighlightRefs; }
+		public bool HighlightReferences {
+			get { return highlightReferences; }
 			set {
-				if (autoHighlightRefs != value) {
-					autoHighlightRefs = value;
-					OnPropertyChanged(nameof(AutoHighlightRefs));
+				if (highlightReferences != value) {
+					highlightReferences = value;
+					OnPropertyChanged(nameof(HighlightReferences));
 					OnModified();
 				}
 			}
 		}
-		bool autoHighlightRefs = true;
+		bool highlightReferences = true;
 
 		public bool HighlightCurrentLine {
 			get { return highlightCurrentLine; }
@@ -154,7 +154,7 @@ namespace dnSpy.Text.Editor {
 			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultMonospacedFont());
 			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
-			this.AutoHighlightRefs = sect.Attribute<bool?>(nameof(AutoHighlightRefs)) ?? this.AutoHighlightRefs;
+			this.HighlightReferences = sect.Attribute<bool?>(nameof(HighlightReferences)) ?? this.HighlightReferences;
 			this.HighlightCurrentLine = sect.Attribute<bool?>(nameof(HighlightCurrentLine)) ?? this.HighlightCurrentLine;
 			this.ForceClearTypeIfNeeded = sect.Attribute<bool?>(nameof(ForceClearTypeIfNeeded)) ?? this.ForceClearTypeIfNeeded;
 			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
@@ -171,7 +171,7 @@ namespace dnSpy.Text.Editor {
 			sect.Attribute(nameof(FontFamily), FontFamily.Source);
 			sect.Attribute(nameof(FontSize), FontSize);
 			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
-			sect.Attribute(nameof(AutoHighlightRefs), AutoHighlightRefs);
+			sect.Attribute(nameof(HighlightReferences), HighlightReferences);
 			sect.Attribute(nameof(HighlightCurrentLine), HighlightCurrentLine);
 			sect.Attribute(nameof(ForceClearTypeIfNeeded), ForceClearTypeIfNeeded);
 			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);

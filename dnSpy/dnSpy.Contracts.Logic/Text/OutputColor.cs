@@ -170,8 +170,9 @@ namespace dnSpy.Contracts.Text {
 		VisibleWhitespace,
 		SelectedText,
 		InactiveSelectedText,
-		LocalDefinition,
-		LocalReference,
+		HighlightedReference,
+		HighlightedWrittenReference,
+		HighlightedDefinition,
 		CurrentStatement,
 		ReturnStatement,
 		SelectedReturnStatement,
@@ -347,8 +348,9 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object VisibleWhitespace = OutputColor.VisibleWhitespace;
 		public static readonly object SelectedText = OutputColor.SelectedText;
 		public static readonly object InactiveSelectedText = OutputColor.InactiveSelectedText;
-		public static readonly object LocalDefinition = OutputColor.LocalDefinition;
-		public static readonly object LocalReference = OutputColor.LocalReference;
+		public static readonly object HighlightedReference = OutputColor.HighlightedReference;
+		public static readonly object HighlightedWrittenReference = OutputColor.HighlightedWrittenReference;
+		public static readonly object HighlightedDefinition = OutputColor.HighlightedDefinition;
 		public static readonly object CurrentStatement = OutputColor.CurrentStatement;
 		public static readonly object ReturnStatement = OutputColor.ReturnStatement;
 		public static readonly object SelectedReturnStatement = OutputColor.SelectedReturnStatement;
@@ -521,8 +523,9 @@ namespace dnSpy.Contracts.Text {
 			VisibleWhitespace,
 			SelectedText,
 			InactiveSelectedText,
-			LocalDefinition,
-			LocalReference,
+			HighlightedReference,
+			HighlightedWrittenReference,
+			HighlightedDefinition,
 			CurrentStatement,
 			ReturnStatement,
 			SelectedReturnStatement,
