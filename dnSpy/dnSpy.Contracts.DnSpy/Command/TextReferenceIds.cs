@@ -17,26 +17,44 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Command;
-
-namespace dnSpy.Files.Tabs.DocViewer {
+namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Extension methods
+	/// Reference IDs
 	/// </summary>
-	static class DocumentViewerIdsExtensions {
+	public enum TextReferenceIds {
 		/// <summary>
-		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
+		/// Move the caret to the next reference
 		/// </summary>
-		/// <param name="id">ID</param>
-		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this DocumentViewerIds id) => new CommandInfo(DocumentViewerCommandConstants.DocumentViewerGroup, (int)id);
+		MoveToNextReference,
 
 		/// <summary>
-		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
+		/// Move the caret to the previous reference
 		/// </summary>
-		/// <param name="id">ID</param>
-		/// <param name="arguments">Arguments or null</param>
-		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this DocumentViewerIds id, object arguments) => new CommandInfo(DocumentViewerCommandConstants.DocumentViewerGroup, (int)id, arguments);
+		MoveToPreviousReference,
+
+		/// <summary>
+		/// Move the caret to the next definition
+		/// </summary>
+		MoveToNextDefinition,
+
+		/// <summary>
+		/// Move the caret to the previous definition
+		/// </summary>
+		MoveToPreviousDefinition,
+
+		/// <summary>
+		/// Move the caret to the definition the reference references
+		/// </summary>
+		FollowReference,
+
+		/// <summary>
+		/// Move the caret to the definition the reference references, use a new tab
+		/// </summary>
+		FollowReferenceNewTab,
+
+		/// <summary>
+		/// Clear all marked references
+		/// </summary>
+		ClearMarkedReferences,
 	}
 }

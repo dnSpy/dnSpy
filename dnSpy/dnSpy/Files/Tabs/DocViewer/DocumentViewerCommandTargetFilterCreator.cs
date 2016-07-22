@@ -22,7 +22,7 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer {
-	[ExportCommandTargetFilterCreator(DocumentViewerCommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER)]
+	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER)]
 	sealed class DocumentViewerCommandTargetFilterCreator : ICommandTargetFilterCreator {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;

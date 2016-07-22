@@ -88,6 +88,8 @@
     <Compile Include="Command\StandardIdsExtensions.cs" />
     <Compile Include="Command\TextEditorIds.cs" />
     <Compile Include="Command\TextEditorIdsExtensions.cs" />
+    <Compile Include="Command\TextReferenceIds.cs" />
+    <Compile Include="Command\TextReferenceIdsExtensions.cs" />
     <Compile Include="Controls\ColorizedTextElementCreator.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />

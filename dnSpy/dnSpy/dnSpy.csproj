@@ -138,14 +138,11 @@
     <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
     <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewer.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandInfoCreator.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandTargetFilter.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandTargetFilterCreator.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerControl.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerCreator.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerIds.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerIdsExtensions.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
@@ -488,6 +485,7 @@
     <Compile Include="Text\Editor\TextFormattingUtilities.cs" />
     <Compile Include="Text\Editor\TextLayer.cs" />
     <Compile Include="Text\Editor\TextMarkerService.cs" />
+    <Compile Include="Text\Editor\TextReferenceCommandInfoCreator.cs" />
     <Compile Include="Text\Editor\TextSelection.cs" />
     <Compile Include="Text\Editor\TextSelectionExtensions.cs" />
     <Compile Include="Text\Editor\TextSelectionLayer.cs" />

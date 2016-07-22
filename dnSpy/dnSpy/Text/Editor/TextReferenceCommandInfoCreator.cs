@@ -20,21 +20,23 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Files.Tabs.DocViewer {
-	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_DOCUMENTVIEWER)]
-	sealed class DocumentViewerCommandInfoCreator : ICommandInfoCreator {
+namespace dnSpy.Text.Editor {
+	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_TEXTREFERENCES)]
+	sealed class TextReferenceCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(DocumentViewerConstants.TextViewRole) != true)
+			if (textView?.Roles.Contains(PredefinedTextViewRoles.Analyzable) != true)
 				yield break;
 
-			yield return CommandShortcut.Create(Key.Tab, TextReferenceIds.MoveToNextReference.ToCommandInfo());
-			yield return CommandShortcut.Shift(Key.Tab, TextReferenceIds.MoveToPreviousReference.ToCommandInfo());
-			yield return CommandShortcut.Create(Key.Enter, TextReferenceIds.FollowReference.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.Enter, TextReferenceIds.FollowReferenceNewTab.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.Down, TextReferenceIds.MoveToNextReference.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.Up, TextReferenceIds.MoveToPreviousReference.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Down, TextReferenceIds.MoveToNextDefinition.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Up, TextReferenceIds.MoveToPreviousDefinition.ToCommandInfo());
+			yield return CommandShortcut.Create(Key.F12, TextReferenceIds.FollowReference.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.F12, TextReferenceIds.FollowReferenceNewTab.ToCommandInfo());
+			yield return CommandShortcut.Create(Key.Escape, TextReferenceIds.ClearMarkedReferences.ToCommandInfo());
 		}
 	}
 }
