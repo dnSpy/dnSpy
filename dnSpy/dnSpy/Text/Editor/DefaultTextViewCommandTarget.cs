@@ -58,20 +58,20 @@ namespace dnSpy.Text.Editor {
 		}
 
 		static bool IsEditCommand(Guid group, int cmdId) {
-			if (group == CommandConstants.DefaultGroup) {
-				switch ((DefaultIds)cmdId) {
-				case DefaultIds.Cut:
-				case DefaultIds.Paste:
-				case DefaultIds.Redo:
-				case DefaultIds.Undo:
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Cut:
+				case StandardIds.Paste:
+				case StandardIds.Redo:
+				case StandardIds.Undo:
 					return true;
 
-				case DefaultIds.Unknown:
-				case DefaultIds.Copy:
+				case StandardIds.Unknown:
+				case StandardIds.Copy:
 					return false;
 
 				default:
-					Debug.Fail($"Unknown {nameof(DefaultIds)} value: {group} {(DefaultIds)cmdId}");
+					Debug.Fail($"Unknown {nameof(StandardIds)} value: {group} {(StandardIds)cmdId}");
 					return true;
 				}
 			}
@@ -193,13 +193,13 @@ namespace dnSpy.Text.Editor {
 			if (IsReadOnly && IsEditCommand(group, cmdId))
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.DefaultGroup) {
-				switch ((DefaultIds)cmdId) {
-				case DefaultIds.Copy:
-				case DefaultIds.Cut:
-				case DefaultIds.Paste:
-				case DefaultIds.Redo:
-				case DefaultIds.Undo:
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Copy:
+				case StandardIds.Cut:
+				case StandardIds.Paste:
+				case StandardIds.Redo:
+				case StandardIds.Undo:
 					return CommandTargetStatus.Handled;
 				default:
 					return CommandTargetStatus.NotHandled;
@@ -325,24 +325,24 @@ namespace dnSpy.Text.Editor {
 			if (IsReadOnly && IsEditCommand(group, cmdId))
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.DefaultGroup) {
-				switch ((DefaultIds)cmdId) {
-				case DefaultIds.Copy:
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Copy:
 					EditorOperations.CopySelection();
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Cut:
+				case StandardIds.Cut:
 					EditorOperations.CutSelection();
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Paste:
+				case StandardIds.Paste:
 					EditorOperations.Paste();
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Redo:
+				case StandardIds.Redo:
 					return CommandTargetStatus.Handled;//TODO:
 
-				case DefaultIds.Undo:
+				case StandardIds.Undo:
 					return CommandTargetStatus.Handled;//TODO:
 
 				default:

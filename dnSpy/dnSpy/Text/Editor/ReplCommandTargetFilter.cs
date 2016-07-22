@@ -40,23 +40,23 @@ namespace dnSpy.Text.Editor {
 			if (replEditor == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.DefaultGroup) {
-				switch ((DefaultIds)cmdId) {
-				case DefaultIds.Copy:
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Copy:
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Cut:
+				case StandardIds.Cut:
 					if (replEditor.ReplEditorOperations.CanCut)
 						return CommandTargetStatus.Handled;
 					return CommandTargetStatus.NotHandledDontCallNextHandler;
 
-				case DefaultIds.Paste:
+				case StandardIds.Paste:
 					if (replEditor.ReplEditorOperations.CanPaste)
 						return CommandTargetStatus.Handled;
 					return CommandTargetStatus.NotHandledDontCallNextHandler;
 
-				case DefaultIds.Redo:
-				case DefaultIds.Undo:
+				case StandardIds.Redo:
+				case StandardIds.Undo:
 					Debug.Assert(nextCommandTarget != null);
 					return nextCommandTarget?.CanExecute(group, cmdId) ?? CommandTargetStatus.NotHandled;
 
@@ -206,22 +206,22 @@ namespace dnSpy.Text.Editor {
 			if (replEditor == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.DefaultGroup) {
-				switch ((DefaultIds)cmdId) {
-				case DefaultIds.Copy:
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Copy:
 					replEditor.ReplEditorOperations.CopySelection();
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Cut:
+				case StandardIds.Cut:
 					replEditor.ReplEditorOperations.CutSelection();
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Paste:
+				case StandardIds.Paste:
 					replEditor.ReplEditorOperations.Paste();
 					return CommandTargetStatus.Handled;
 
-				case DefaultIds.Redo:
-				case DefaultIds.Undo:
+				case StandardIds.Redo:
+				case StandardIds.Undo:
 					replEditor.SearchText = null;
 					Debug.Assert(nextCommandTarget != null);
 					return nextCommandTarget?.Execute(group, cmdId, args, ref result) ?? CommandTargetStatus.NotHandled;

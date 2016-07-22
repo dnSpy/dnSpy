@@ -19,32 +19,22 @@
 
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Default command IDs (group = <see cref="CommandConstants.DefaultGroup"/>)
+	/// Extension methods
 	/// </summary>
-	public enum DefaultIds {
+	public static class StandardIdsExtensions {
 		/// <summary>
-		/// Unknown command, if no other command is found
+		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
 		/// </summary>
-		Unknown,
+		/// <param name="id">ID</param>
+		/// <returns></returns>
+		public static CommandInfo ToCommandInfo(this StandardIds id) => new CommandInfo(CommandConstants.StandardGroup, (int)id);
+
 		/// <summary>
-		/// Copy
+		/// Converts <paramref name="id"/> to a <see cref="CommandInfo"/>
 		/// </summary>
-		Copy,
-		/// <summary>
-		/// Cut
-		/// </summary>
-		Cut,
-		/// <summary>
-		/// Paste
-		/// </summary>
-		Paste,
-		/// <summary>
-		/// Undo
-		/// </summary>
-		Undo,
-		/// <summary>
-		/// Redo
-		/// </summary>
-		Redo,
+		/// <param name="id">ID</param>
+		/// <param name="arguments">Arguments or null</param>
+		/// <returns></returns>
+		public static CommandInfo ToCommandInfo(this StandardIds id, object arguments) => new CommandInfo(CommandConstants.StandardGroup, (int)id, arguments);
 	}
 }

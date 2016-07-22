@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
+		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="id">Command id</param>
 		/// <param name="arguments">Command arguments or null</param>
 		public CommandInfo(Guid group, int id, object arguments = null) {

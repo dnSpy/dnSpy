@@ -161,7 +161,7 @@ namespace dnSpy.Commands {
 				}
 			}
 			if (result.IsDefault)
-				return DefaultIds.Unknown.ToCommandInfo();
+				return StandardIds.Unknown.ToCommandInfo();
 			return result.Command;
 		}
 		KeyInput? prevKey;

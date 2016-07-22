@@ -25,17 +25,17 @@ namespace dnSpy.Commands {
 	[ExportCommandInfoCreator(CommandConstants.CMDINFO_ORDER_DEFAULT)]
 	sealed class DefaultCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
-			yield return CommandShortcut.Control(Key.Z, DefaultIds.Undo.ToCommandInfo());
-			yield return CommandShortcut.Alt(Key.Back, DefaultIds.Undo.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.Y, DefaultIds.Redo.ToCommandInfo());
-			yield return CommandShortcut.CtrlShift(Key.Z, DefaultIds.Redo.ToCommandInfo());
-			yield return CommandShortcut.ShiftAlt(Key.Back, DefaultIds.Redo.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.X, DefaultIds.Cut.ToCommandInfo());
-			yield return CommandShortcut.Shift(Key.Delete, DefaultIds.Cut.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.C, DefaultIds.Copy.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.Insert, DefaultIds.Copy.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.V, DefaultIds.Paste.ToCommandInfo());
-			yield return CommandShortcut.Shift(Key.Insert, DefaultIds.Paste.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Z, StandardIds.Undo.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Back, StandardIds.Undo.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Y, StandardIds.Redo.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.Z, StandardIds.Redo.ToCommandInfo());
+			yield return CommandShortcut.ShiftAlt(Key.Back, StandardIds.Redo.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.X, StandardIds.Cut.ToCommandInfo());
+			yield return CommandShortcut.Shift(Key.Delete, StandardIds.Cut.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.C, StandardIds.Copy.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Insert, StandardIds.Copy.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.V, StandardIds.Paste.ToCommandInfo());
+			yield return CommandShortcut.Shift(Key.Insert, StandardIds.Paste.ToCommandInfo());
 		}
 	}
 }

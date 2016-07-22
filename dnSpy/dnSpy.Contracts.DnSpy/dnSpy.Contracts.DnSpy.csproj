@@ -69,8 +69,6 @@
     <Compile Include="Command\CommandInfo.cs" />
     <Compile Include="Command\CommandShortcut.cs" />
     <Compile Include="Command\CommandTargetStatus.cs" />
-    <Compile Include="Command\DefaultIds.cs" />
-    <Compile Include="Command\DefaultIdsExtensions.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Command\ICommandInfoCreator.cs" />
     <Compile Include="Command\ICommandManager.cs" />
@@ -86,6 +84,8 @@
     <Compile Include="Command\OutputTextPaneIdsExtensions.cs" />
     <Compile Include="Command\ReplIds.cs" />
     <Compile Include="Command\ReplIdsExtensions.cs" />
+    <Compile Include="Command\StandardIds.cs" />
+    <Compile Include="Command\StandardIdsExtensions.cs" />
     <Compile Include="Command\TextEditorIds.cs" />
     <Compile Include="Command\TextEditorIdsExtensions.cs" />
     <Compile Include="Controls\ColorizedTextElementCreator.cs" />

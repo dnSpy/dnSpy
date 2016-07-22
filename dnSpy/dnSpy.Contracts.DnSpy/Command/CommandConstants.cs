@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.Command {
 	/// </summary>
 	public static class CommandConstants {
 		/// <summary>
-		/// Default command IDs (<see cref="DefaultIds"/>)
+		/// Standard command IDs (<see cref="StandardIds"/>)
 		/// </summary>
-		public static readonly Guid DefaultGroup = new Guid("14608CB3-3965-49B2-A8A9-46CDBB4E2E30");
+		public static readonly Guid StandardGroup = new Guid("14608CB3-3965-49B2-A8A9-46CDBB4E2E30");
 
 		/// <summary>
 		/// Text editor command IDs (<see cref="TextEditorIds"/>)

@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Executes the command
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
+		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		/// <param name="args">Arguments or null</param>
 		/// <returns></returns>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Executes the command
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
+		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		/// <param name="args">Arguments or null</param>
 		/// <param name="result">Updated with the result</param>
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Checks whether the command can execute. If it can execute, it must return <see cref="CommandTargetStatus.Handled"/>
 		/// </summary>
-		/// <param name="group">Command group, eg. <see cref="CommandConstants.DefaultGroup"/></param>
+		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		/// <returns></returns>
 		CommandTargetStatus CanExecute(Guid group, int cmdId);
