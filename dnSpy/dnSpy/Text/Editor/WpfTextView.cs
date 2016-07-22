@@ -472,7 +472,10 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (InLayout)
 					throw new InvalidOperationException();
-				if (delayLayoutLinesInProgress)
+				// The adornment layer accesses this property in its LayoutChanged handler to check
+				// whether an adornment intersects the visible textview lines. Don't create new
+				// lines if we're raising LayoutChanged.
+				if (delayLayoutLinesInProgress && !raisingLayoutChanged)
 					DoDelayDisplayLines();
 				return wpfTextViewLineCollection;
 			}
@@ -511,6 +514,8 @@ namespace dnSpy.Text.Editor {
 		void RaiseLayoutChanged(double effectiveViewportWidth, double effectiveViewportHeight, ITextViewLine[] newOrReformattedLines, ITextViewLine[] translatedLines) {
 			if (IsClosed)
 				return;
+			Debug.Assert(!raisingLayoutChanged);
+			raisingLayoutChanged = true;
 			var newViewState = new ViewState(this, effectiveViewportWidth, effectiveViewportHeight);
 			LayoutChanged?.Invoke(this, new TextViewLayoutChangedEventArgs(oldViewState, newViewState, newOrReformattedLines, translatedLines));
 			oldViewState = newViewState;
@@ -520,8 +525,11 @@ namespace dnSpy.Text.Editor {
 					l.SetDeltaY(0);
 				}
 			}
+			Debug.Assert(raisingLayoutChanged);
+			raisingLayoutChanged = false;
 		}
 		ViewState oldViewState;
+		bool raisingLayoutChanged;
 
 		public void Close() {
 			if (IsClosed)
