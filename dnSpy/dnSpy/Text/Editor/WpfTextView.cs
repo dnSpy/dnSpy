@@ -550,6 +550,7 @@ namespace dnSpy.Text.Editor {
 			visiblePhysicalLines.Clear();
 			(__lineTransformCreator as IDisposable)?.Dispose();
 
+			Loaded -= WpfTextView_Loaded;
 			Options.OptionChanged -= EditorOptions_OptionChanged;
 			TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			TextViewModel.DataModel.ContentTypeChanged -= DataModel_ContentTypeChanged;
