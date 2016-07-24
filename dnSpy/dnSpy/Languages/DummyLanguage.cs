@@ -26,7 +26,7 @@ namespace dnSpy.Languages {
 	sealed class DummyLanguage : Language {
 		public override string FileExtension => ".---";
 		public override Guid GenericGuid => new Guid("CAE0EC7B-4311-4C48-AF7C-36E5EA71249A");
-		public override string ContentTypeString => ContentTypes.PLAIN_TEXT;
+		public override string ContentTypeString => ContentTypes.PlainText;
 		public override string GenericNameUI => "---";
 		public override double OrderUI => double.MaxValue;
 		public override Guid UniqueGuid => new Guid("E4E6F1AA-FF88-48BC-B44C-49585E66DCF0");

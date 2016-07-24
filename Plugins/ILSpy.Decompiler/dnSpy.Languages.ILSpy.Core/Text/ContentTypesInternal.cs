@@ -19,10 +19,10 @@
 
 namespace dnSpy.Languages.ILSpy.Core.Text {
 	static class ContentTypesInternal {
-		public const string DECOMPILER_ILSPY = "Decompiler ILSpy";
-		public const string CSHARP_ILSPY = "C# ILSpy";
-		public const string VISUALBASIC_ILSPY = "VB ILSpy";
-		public const string IL_ILSPY = "IL ILSpy";
-		public const string ILAST_ILSPY = "ILAst ILSpy";
+		public const string DecompilerILSpy = "Decompiler ILSpy";
+		public const string CSharpILSpy = "C# ILSpy";
+		public const string VisualBasicILSpy = "VB ILSpy";
+		public const string ILILSpy = "IL ILSpy";
+		public const string ILAstILSpy = "ILAst ILSpy";
 	}
 }

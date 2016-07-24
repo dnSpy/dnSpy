@@ -25,13 +25,13 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor.Operations {
 	[Export(typeof(ITextStructureNavigatorProvider))]
-	[ContentType(ContentTypes.ANY)]
+	[ContentType(ContentTypes.Any)]
 	sealed class AnyTextStructureNavigatorProvider : ITextStructureNavigatorProvider {
 		readonly IContentType contentType;
 
 		[ImportingConstructor]
 		AnyTextStructureNavigatorProvider(IContentTypeRegistryService contentTypeRegistryService) {
-			this.contentType = contentTypeRegistryService.GetContentType(ContentTypes.ANY);
+			this.contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
 		}
 
 		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer) =>

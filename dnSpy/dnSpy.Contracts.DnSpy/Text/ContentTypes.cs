@@ -27,57 +27,57 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Any content
 		/// </summary>
-		public const string ANY = "any";
+		public const string Any = "any";
 
 		/// <summary>
 		/// Inert content
 		/// </summary>
-		public const string INERT = "inert";
+		public const string Inert = "inert";
 
 		/// <summary>
 		/// Text
 		/// </summary>
-		public const string TEXT = "text";
+		public const string Text = "text";
 
 		/// <summary>
 		/// Plain text
 		/// </summary>
-		public const string PLAIN_TEXT = "plaintext";
+		public const string PlainText = "plaintext";
 
 		/// <summary>
 		/// XML
 		/// </summary>
-		public const string XML = "xml";
+		public const string Xml = "xml";
 
 		/// <summary>
 		/// XAML
 		/// </summary>
-		public const string XAML = "XAML";
+		public const string Xaml = "XAML";
 
 		/// <summary>
 		/// Disassembled BAML
 		/// </summary>
-		public const string BAML = "BAML";
+		public const string Baml = "BAML";
 
 		/// <summary>
 		/// Disassembled BAML (dnSpy BAML plugin)
 		/// </summary>
-		public const string BAML_DNSPY = "BAML-dnSpy";
+		public const string BamlDnSpy = "BAML-dnSpy";
 
 		/// <summary>
 		/// Code
 		/// </summary>
-		public const string CODE = "code";
+		public const string Code = "code";
 
 		/// <summary>
 		/// C# code
 		/// </summary>
-		public const string CSHARP = "C#-code";
+		public const string CSharp = "C#-code";
 
 		/// <summary>
 		/// Visual Basic code
 		/// </summary>
-		public const string VISUALBASIC = "VB-code";
+		public const string VisualBasic = "VB-code";
 
 		/// <summary>
 		/// IL code
@@ -87,57 +87,57 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Roslyn (C# / Visual Basic) code
 		/// </summary>
-		public const string ROSLYN_CODE = "Roslyn Languages";
+		public const string RoslynCode = "Roslyn Languages";
 
 		/// <summary>
 		/// C# (Roslyn)
 		/// </summary>
-		public const string CSHARP_ROSLYN = "CSharp";
+		public const string CSharpRoslyn = "CSharp";
 
 		/// <summary>
 		/// Visual Basic (Roslyn)
 		/// </summary>
-		public const string VISUALBASIC_ROSLYN = "Basic";
+		public const string VisualBasicRoslyn = "Basic";
 
 		/// <summary>
 		/// Decompiled code
 		/// </summary>
-		public const string DECOMPILED_CODE = "Decompiled Code";
+		public const string DecompiledCode = "Decompiled Code";
 
 		/// <summary>
 		/// REPL
 		/// </summary>
-		public const string REPL = "REPL";
+		public const string Repl = "REPL";
 
 		/// <summary>
 		/// REPL (Roslyn)
 		/// </summary>
-		public const string REPL_ROSLYN = "REPL Roslyn";
+		public const string ReplRoslyn = "REPL Roslyn";
 
 		/// <summary>
 		/// REPL C# (Roslyn)
 		/// </summary>
-		public const string REPL_CSHARP_ROSLYN = "REPL C# Roslyn";
+		public const string ReplCSharpRoslyn = "REPL C# Roslyn";
 
 		/// <summary>
 		/// REPL Visual Basic (Roslyn)
 		/// </summary>
-		public const string REPL_VISUALBASIC_ROSLYN = "REPL VB Roslyn";
+		public const string ReplVisualBasicRoslyn = "REPL VB Roslyn";
 
 		/// <summary>
 		/// Output window
 		/// </summary>
-		public const string OUTPUT = "Output";
+		public const string Output = "Output";
 
 		/// <summary>
 		/// Output window: Debug
 		/// </summary>
-		public const string OUTPUT_DEBUG = "DebugOutput";
+		public const string OutputDebug = "DebugOutput";
 
 		/// <summary>
 		/// About dnSpy
 		/// </summary>
-		public const string ABOUT_DNSPY = "About dnSpy";
+		public const string AboutDnSpy = "About dnSpy";
 
 		/// <summary>
 		/// Returns a content type or null if it's unknown
@@ -147,19 +147,19 @@ namespace dnSpy.Contracts.Text {
 		public static string TryGetContentTypeStringByExtension(string extension) {
 			var comparer = StringComparer.InvariantCultureIgnoreCase;
 			if (comparer.Equals(extension, ".txt") || comparer.Equals(extension, "txt"))
-				return PLAIN_TEXT;
+				return PlainText;
 			if (comparer.Equals(extension, ".xml") || comparer.Equals(extension, "xml"))
-				return XML;
+				return Xml;
 			if (comparer.Equals(extension, ".xaml") || comparer.Equals(extension, "xaml"))
-				return XAML;
+				return Xaml;
 			if (comparer.Equals(extension, ".cs") || comparer.Equals(extension, "cs"))
-				return CSHARP;
+				return CSharp;
 			if (comparer.Equals(extension, ".csx") || comparer.Equals(extension, "csx"))
-				return CSHARP;
+				return CSharp;
 			if (comparer.Equals(extension, ".vb") || comparer.Equals(extension, "vb"))
-				return VISUALBASIC;
+				return VisualBasic;
 			if (comparer.Equals(extension, ".vbx") || comparer.Equals(extension, "vbx"))
-				return VISUALBASIC;
+				return VisualBasic;
 			if (comparer.Equals(extension, ".il") || comparer.Equals(extension, "il"))
 				return IL;
 

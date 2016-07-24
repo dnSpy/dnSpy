@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.Right)]
 	[Name(PredefinedMarginNames.RightControl)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class RightControlMarginProvider : IWpfTextViewMarginProvider {
 		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;

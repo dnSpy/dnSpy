@@ -42,7 +42,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.Left)]
 	[Name(PredefinedMarginNames.Glyph)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[Order(Before = PredefinedMarginNames.LeftSelection)]
 	sealed class GlyphMarginProvider : IWpfTextViewMarginProvider {

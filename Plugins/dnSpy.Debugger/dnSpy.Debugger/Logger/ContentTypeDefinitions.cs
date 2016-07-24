@@ -25,8 +25,8 @@ namespace dnSpy.Debugger.Logger {
 	static class ContentTypeDefinitions {
 #pragma warning disable 0169
 		[Export]
-		[Name(ContentTypes.OUTPUT_DEBUG)]
-		[BaseDefinition(ContentTypes.OUTPUT)]
+		[Name(ContentTypes.OutputDebug)]
+		[BaseDefinition(ContentTypes.Output)]
 		static readonly ContentTypeDefinition OutputDebugContentTypeDefinition;
 #pragma warning restore 0169
 	}

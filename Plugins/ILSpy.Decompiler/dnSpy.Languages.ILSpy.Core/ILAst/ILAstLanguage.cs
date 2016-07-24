@@ -75,7 +75,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		}
 
 		public override double OrderUI { get; }
-		public override string ContentTypeString => ContentTypesInternal.ILAST_ILSPY;
+		public override string ContentTypeString => ContentTypesInternal.ILAstILSpy;
 		public override string GenericNameUI => "ILAst";
 		public override string UniqueNameUI => uniqueNameUI;
 		public override Guid GenericGuid => LanguageConstants.LANGUAGE_ILAST_ILSPY;

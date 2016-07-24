@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
 	[TextViewRole(LogEditorTextViewRoles.LOG)]
-	[ContentType(ContentTypes.ANY)]
+	[ContentType(ContentTypes.Any)]
 	sealed class CurrentLineHighlighterWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly IEditorFormatMapService editorFormatMapService;
 

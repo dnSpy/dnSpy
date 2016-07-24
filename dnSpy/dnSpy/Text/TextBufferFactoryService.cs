@@ -40,9 +40,9 @@ namespace dnSpy.Text {
 		[ImportingConstructor]
 		TextBufferFactoryService(IContentTypeRegistryService contentTypeRegistryService) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
-			InertContentType = contentTypeRegistryService.GetContentType(ContentTypes.INERT);
-			PlaintextContentType = contentTypeRegistryService.GetContentType(ContentTypes.PLAIN_TEXT);
-			TextContentType = contentTypeRegistryService.GetContentType(ContentTypes.TEXT);
+			InertContentType = contentTypeRegistryService.GetContentType(ContentTypes.Inert);
+			PlaintextContentType = contentTypeRegistryService.GetContentType(ContentTypes.PlainText);
+			TextContentType = contentTypeRegistryService.GetContentType(ContentTypes.Text);
 			Debug.Assert(InertContentType != null);
 			Debug.Assert(PlaintextContentType != null);
 			Debug.Assert(TextContentType != null);

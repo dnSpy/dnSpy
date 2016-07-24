@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.Bottom)]
 	[Name(PredefinedMarginNames.BottomControl)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class BottomControlMarginProvider : IWpfTextViewMarginProvider {
 		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;

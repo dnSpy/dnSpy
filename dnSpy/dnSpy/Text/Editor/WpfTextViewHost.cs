@@ -173,6 +173,6 @@ namespace dnSpy.Text.Editor {
 		bool CanMouseWheelZoom =>
 			TextView.Options.IsMouseWheelZoomEnabled() &&
 			TextView.Roles.Contains(PredefinedTextViewRoles.Zoomable) &&
-			TextView.TextDataModel.ContentType.IsOfType(ContentTypes.TEXT);
+			TextView.TextDataModel.ContentType.IsOfType(ContentTypes.Text);
 	}
 }

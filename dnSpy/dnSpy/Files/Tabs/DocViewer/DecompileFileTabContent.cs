@@ -203,7 +203,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (contentType == null) {
 				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
 				if (contentTypeString == null)
-					contentTypeString = ContentTypes.TryGetContentTypeStringByExtension(decompileContext.DecompileNodeContext.Language.FileExtension) ?? ContentTypes.PLAIN_TEXT;
+					contentTypeString = ContentTypes.TryGetContentTypeStringByExtension(decompileContext.DecompileNodeContext.Language.FileExtension) ?? ContentTypes.PlainText;
 				contentType = decompileFileTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeString);
 				Debug.Assert(contentType != null);
 			}

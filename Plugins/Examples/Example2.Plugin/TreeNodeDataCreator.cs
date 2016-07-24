@@ -112,7 +112,7 @@ namespace Example2.Plugin {
 
 			// Create the output and a few references that other code in this plugin will use, eg.
 			// to show a tooltip when hovering over the reference.
-			context.ContentTypeString = ContentTypes.CSHARP;
+			context.ContentTypeString = ContentTypes.CSharp;
 			context.Output.WriteLine("// Initialize it to the secret key", BoxedOutputColor.Comment);
 			context.Output.WriteReference("int", new StringInfoReference("This is a reference added by the code"), BoxedOutputColor.Keyword);
 			context.Output.WriteSpace();
@@ -206,7 +206,7 @@ namespace Example2.Plugin {
 
 			context.Language.WriteCommentLine(context.Output, "The secret message has been decrypted.");
 			context.Language.WriteCommentLine(context.Output, string.Format("The message is: {0}", msgNode.Message));
-			context.ContentTypeString = ContentTypes.PLAIN_TEXT;
+			context.ContentTypeString = ContentTypes.PlainText;
 			return true;
 		}
 	}

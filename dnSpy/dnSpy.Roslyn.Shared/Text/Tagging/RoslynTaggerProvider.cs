@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	[Export(typeof(ITaggerProvider))]
 	[TagType(typeof(IClassificationTag))]
-	[ContentType(ContentTypes.ROSLYN_CODE)]
+	[ContentType(ContentTypes.RoslynCode)]
 	sealed class RoslynTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypes themeClassificationTypes;
 

@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Classification {
 	[Export(typeof(ITaggerProvider))]
 	[TagType(typeof(ClassificationTag))]
-	[ContentType(ContentTypes.ANY)]
+	[ContentType(ContentTypes.Any)]
 	sealed class ClassifierTaggerProvider : ITaggerProvider {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<IClassifierProvider, INamedContentTypeMetadata>[] classifierProviders;

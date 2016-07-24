@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(ITaggerProvider))]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Analyzable)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[TagType(typeof(TextMarkerTag))]
@@ -67,7 +67,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(IWpfTextViewCreationListener))]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Analyzable)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class TextMarkerServiceWpfTextViewCreationListener : IWpfTextViewCreationListener {

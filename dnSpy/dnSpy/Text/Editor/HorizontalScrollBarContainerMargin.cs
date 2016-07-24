@@ -27,7 +27,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.BottomControl)]
 	[Name(PredefinedMarginNames.HorizontalScrollBarContainer)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[GridCellLength(1.0), GridUnitType(GridUnitType.Star)]
 	sealed class HorizontalScrollBarContainerMarginProvider : IWpfTextViewMarginProvider {

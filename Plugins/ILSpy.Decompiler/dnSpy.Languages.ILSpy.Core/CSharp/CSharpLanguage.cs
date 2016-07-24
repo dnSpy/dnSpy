@@ -101,7 +101,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		}
 #endif
 
-		public override string ContentTypeString => ContentTypesInternal.CSHARP_ILSPY;
+		public override string ContentTypeString => ContentTypesInternal.CSharpILSpy;
 		public override string GenericNameUI => LanguageConstants.GENERIC_NAMEUI_CSHARP;
 		public override string UniqueNameUI => uniqueNameUI;
 		public override double OrderUI { get; }

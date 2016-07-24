@@ -25,9 +25,9 @@ namespace dnSpy.BamlDecompiler {
 	static class ContentTypeDefinitions {
 #pragma warning disable 0169
 		[Export]
-		[Name(ContentTypes.BAML_DNSPY)]
-		[BaseDefinition(ContentTypes.BAML)]
-		static readonly ContentTypeDefinition BAMLDnSpyContentTypeDefinition;
+		[Name(ContentTypes.BamlDnSpy)]
+		[BaseDefinition(ContentTypes.Baml)]
+		static readonly ContentTypeDefinition BamlDnSpyContentTypeDefinition;
 #pragma warning restore 0169
 	}
 }

@@ -66,7 +66,7 @@ namespace Example2.Plugin {
 	// content type (TEXT), this class gets called to create the tagger.
 	[Export(typeof(ITaggerProvider))]
 	[TagType(typeof(IClassificationTag))]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	sealed class TextTaggerProvider : ITaggerProvider {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 

@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
-	[ContentType(ContentTypes.ANY)]
+	[ContentType(ContentTypes.Any)]
 	sealed class KeyboardWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders;
 

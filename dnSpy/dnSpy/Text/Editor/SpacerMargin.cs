@@ -32,7 +32,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.LeftSelection)]
 	[Name(PredefinedMarginNames.Spacer)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[Order(After = PredefinedMarginNames.LineNumber)]
 	sealed class SpacerMarginProvider : IWpfTextViewMarginProvider {

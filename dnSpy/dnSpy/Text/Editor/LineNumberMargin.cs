@@ -42,7 +42,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.LeftSelection)]
 	[Name(PredefinedMarginNames.LineNumber)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
 	[TextViewRole(LogEditorTextViewRoles.LOG)]
 	[Order(Before = PredefinedMarginNames.Spacer)]

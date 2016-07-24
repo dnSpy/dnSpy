@@ -106,11 +106,11 @@ namespace dnSpy.BamlDecompiler {
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
 			if (bamlSettings.DisassembleBaml) {
 				Disassemble(module, document, lang, output, token);
-				return ContentTypes.BAML_DNSPY;
+				return ContentTypes.BamlDnSpy;
 			}
 			else {
 				Decompile(module, document, lang, output, token);
-				return ContentTypes.XAML;
+				return ContentTypes.Xaml;
 			}
 		}
 

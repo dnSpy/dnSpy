@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.BottomControl)]
 	[Name(PredefinedMarginNames.ZoomControl)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Zoomable)]
 	[Order(Before = PredefinedMarginNames.HorizontalScrollBarContainer)]
 	sealed class ZoomControlMarginProvider : IWpfTextViewMarginProvider {

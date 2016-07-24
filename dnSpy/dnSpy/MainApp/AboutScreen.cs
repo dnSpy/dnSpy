@@ -50,7 +50,7 @@ namespace dnSpy.MainApp {
 		DecompileFileTabContentFactory(IAppWindow appWindow, IPluginManager pluginManager, IContentTypeRegistryService contentTypeRegistryService) {
 			this.appWindow = appWindow;
 			this.pluginManager = pluginManager;
-			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.ABOUT_DNSPY);
+			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) => null;
@@ -82,7 +82,7 @@ namespace dnSpy.MainApp {
 			this.fileTabManager = fileTabManager;
 			this.appWindow = appWindow;
 			this.pluginManager = pluginManager;
-			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.ABOUT_DNSPY);
+			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public override void Execute(IMenuItemContext context) {

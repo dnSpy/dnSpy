@@ -30,7 +30,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.BottomRightCorner)]
 	[Name(BottomRightCornerMargin.NAME)]
-	[ContentType(ContentTypes.TEXT)]
+	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[GridCellLength(1.0), GridUnitType(GridUnitType.Star)]
 	sealed class BottomRightCornerMarginProvider : IWpfTextViewMarginProvider {

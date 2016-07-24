@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text {
 	[Export(typeof(ITaggerProvider))]
 	[TagType(typeof(IClassificationTag))]
-	[ContentType(ContentTypes.ANY)]
+	[ContentType(ContentTypes.Any)]
 	sealed class CachedColorsListTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypes themeClassificationTypes;
 

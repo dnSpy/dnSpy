@@ -123,7 +123,7 @@ namespace Example2.Plugin {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			context.ContentTypeString = ContentTypes.PLAIN_TEXT;
+			context.ContentTypeString = ContentTypes.PlainText;
 			context.Output.Write(file.Text, BoxedOutputColor.Text);
 			return true;
 		}
