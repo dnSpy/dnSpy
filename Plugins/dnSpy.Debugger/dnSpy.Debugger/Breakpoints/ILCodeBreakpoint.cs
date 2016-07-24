@@ -36,12 +36,11 @@ namespace dnSpy.Debugger.Breakpoints {
 				marker.HighlightingColor = () => ilbp.IsEnabled ? DebuggerColors.CodeBreakpointHighlightingColor : DebuggerColors.CodeBreakpointDisabledHighlightingColor;
 
 			public override bool IsVisible(IDocumentViewer documentViewer) {
-				TextPosition location, endLocation;
-				var cm = documentViewer.GetCodeMappings();
-				var mm = cm.TryGetMapping(SerializedDnToken);
-				if (mm == null)
+				var methodDebugService = documentViewer.GetMethodDebugService();
+				var info = methodDebugService.TryGetMethodDebugInfo(SerializedDnToken);
+				if (info == null)
 					return false;
-				if (!mm.GetInstructionByTokenAndOffset(ILOffset, out location, out endLocation))
+				if (info.GetSourceStatementByCodeOffset(ILOffset) == null)
 					return false;
 
 				return true;
@@ -80,8 +79,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public int GetLineNumber(IDocumentViewer documentViewer) => myMarkedTextLine.GetLineNumber(documentViewer);
-		public bool GetLocation(IDocumentViewer documentViewer, out TextPosition location, out TextPosition endLocation) =>
-			myMarkedTextLine.GetLocation(documentViewer, out location, out endLocation);
+		public bool GetLocation(IDocumentViewer documentViewer, out TextSpan textSpan) =>
+			myMarkedTextLine.GetLocation(documentViewer, out textSpan);
 		ITextMarker ITextMarkerObject.CreateMarker(IDocumentViewer documentViewer, ITextMarkerService markerService) =>
 			myMarkedTextLine.CreateMarker(documentViewer, markerService);
 		bool ITextLineObject.IsVisible(IDocumentViewer documentViewer) => myMarkedTextLine.IsVisible(documentViewer);

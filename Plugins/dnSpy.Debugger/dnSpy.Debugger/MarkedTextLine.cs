@@ -40,30 +40,12 @@ namespace dnSpy.Debugger {
 		protected void OnObjPropertyChanged(string propName) => ObjPropertyChanged?.Invoke(senderObj, new TextLineObjectEventArgs(propName));
 
 		public int GetLineNumber(IDocumentViewer documentViewer) {
-			TextPosition location, endLocation;
-			if (GetLocation(documentViewer, out location, out endLocation))
-				return location.Line;
 			return -1;
 		}
 
-		public bool GetLocation(IDocumentViewer documentViewer, out TextPosition location, out TextPosition endLocation) {
-			var cm = documentViewer.GetCodeMappings();
-			var mapping = cm.TryGetMapping(methodKey);
-			if (mapping == null) {
-				location = endLocation = new TextPosition();
-				return false;
-			}
-
-			bool isMatch;
-			var map = mapping.GetInstructionByOffset(ILOffset, out isMatch);
-			if (map == null) {
-				location = endLocation = new TextPosition();
-				return false;
-			}
-
-			location = map.StartPosition;
-			endLocation = map.EndPosition;
-			return true;
+		public bool GetLocation(IDocumentViewer documentViewer, out TextSpan textSpan) {
+			textSpan = default(TextSpan);
+			return false;
 		}
 
 		public abstract bool IsVisible(IDocumentViewer documentViewer);
@@ -71,25 +53,16 @@ namespace dnSpy.Debugger {
 
 		public ITextMarker CreateMarker(IDocumentViewer documentViewer, ITextMarkerService markerService) {
 			var marker = CreateMarkerInternal(markerService, documentViewer);
-			var cm = documentViewer.GetCodeMappings();
+			var methodDebugService = documentViewer.GetMethodDebugService();
 			marker.ZOrder = ZOrder;
-			marker.IsVisible = b => cm.TryGetMapping(SerializedDnToken) != null;
+			marker.IsVisible = b => methodDebugService.TryGetMethodDebugInfo(SerializedDnToken) != null;
 			marker.TextMarkerObject = this;
 			Initialize(documentViewer, markerService, marker);
 			return marker;
 		}
 
 		ITextMarker CreateMarkerInternal(ITextMarkerService markerService, IDocumentViewer documentViewer) {
-			TextPosition location, endLocation;
-			if (!GetLocation(documentViewer, out location, out endLocation))
-				throw new InvalidOperationException();
-
-			var line = markerService.TextView.Document.GetLineByNumber(location.Line + 1);
-			var endLine = markerService.TextView.Document.GetLineByNumber(endLocation.Line + 1);
-			int startOffset = line.Offset + location.Column;
-			int endOffset = endLine.Offset + endLocation.Column;
-
-			return markerService.Create(startOffset, endOffset - startOffset);
+			return markerService.Create(0, 0);
 		}
 
 		public abstract bool HasImage { get; }

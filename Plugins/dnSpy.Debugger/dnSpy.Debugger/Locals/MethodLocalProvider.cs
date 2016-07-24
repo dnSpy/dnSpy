@@ -28,7 +28,7 @@ using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Locals {
 	interface IMethodLocalProvider {
-		void GetMethodInfo(SerializedDnToken method, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals);
+		void GetMethodInfo(SerializedDnToken method, out Parameter[] parameters, out Local[] locals, out SourceLocal[] decompilerLocals);
 		event EventHandler NewMethodInfoAvailable;
 	}
 
@@ -49,34 +49,30 @@ namespace dnSpy.Debugger.Locals {
 				NewMethodInfoAvailable?.Invoke(this, EventArgs.Empty);
 		}
 
-		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals) {
+		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out SourceLocal[] decompilerLocals) {
 			parameters = null;
 			locals = null;
-			decLocals = null;
+			decompilerLocals = null;
 
 			foreach (var tab in fileTabManager.VisibleFirstTabs) {
-				if (parameters != null && decLocals != null)
+				if (parameters != null && decompilerLocals != null)
 					break;
 
 				var uiContext = tab.UIContext as IDocumentViewer;
-				var cm = uiContext.TryGetCodeMappings();
-				if (cm == null)
+				var methodDebugService = uiContext.TryGetMethodDebugService();
+				if (methodDebugService == null)
 					continue;
-				var mapping = cm.TryGetMapping(key);
-				if (mapping == null)
+				var info = methodDebugService.TryGetMethodDebugInfo(key);
+				if (info == null)
 					continue;
-				var method = mapping.Method;
-				if (mapping.LocalVariables != null && method.Body != null) {
+				var method = info.Method;
+				if (info.Locals.Length != 0 && method.Body != null) {
 					locals = method.Body.Variables.ToArray();
-					decLocals = new IILVariable[method.Body.Variables.Count];
-					foreach (var v in mapping.LocalVariables) {
-						if (v.GeneratedByDecompiler)
+					decompilerLocals = new SourceLocal[method.Body.Variables.Count];
+					foreach (var v in info.Locals) {
+						if ((uint)v.Local.Index >= decompilerLocals.Length)
 							continue;
-						if (v.OriginalVariable == null)
-							continue;
-						if ((uint)v.OriginalVariable.Index >= decLocals.Length)
-							continue;
-						decLocals[v.OriginalVariable.Index] = v;
+						decompilerLocals[v.Local.Index] = v;
 					}
 				}
 

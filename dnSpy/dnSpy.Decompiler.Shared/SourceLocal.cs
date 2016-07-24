@@ -17,21 +17,36 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text;
+using System;
+using dnlib.DotNet.Emit;
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Decompiler.Shared {
 	/// <summary>
-	/// <see cref="VirtualSnapshotPoint"/> extension methods
+	/// A local used in the decompiled code
 	/// </summary>
-	public static class VirtualSnapshotPointExtensions {
+	public struct SourceLocal {
 		/// <summary>
-		/// Converts <paramref name="point"/> to a <see cref="TextEditorLocation"/>
+		/// The local
 		/// </summary>
-		/// <param name="point">Point</param>
-		/// <returns></returns>
-		public static TextEditorLocation ToTextEditorLocation(this VirtualSnapshotPoint point) {
-			var line = point.Position.GetContainingLine();
-			return new TextEditorLocation(line.LineNumber, point.Position - line.Start + point.VirtualSpaces);
+		public Local Local { get; }
+
+		/// <summary>
+		/// Gets the name of the local that's used in the decompiled code
+		/// </summary>
+		public string Name { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="local">Local</param>
+		/// <param name="name">Name used by the decompiler</param>
+		public SourceLocal(Local local, string name) {
+			if (local == null)
+				throw new ArgumentNullException(nameof(local));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			Local = local;
+			Name = name;
 		}
 	}
 }

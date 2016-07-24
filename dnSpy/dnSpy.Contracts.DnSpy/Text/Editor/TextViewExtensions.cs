@@ -79,37 +79,5 @@ namespace dnSpy.Contracts.Text.Editor {
 				column = snapshotLine.Length;
 			return textView.Caret.MoveTo(snapshotLine.Start + column, caretAffinity, captureHorizontalPosition);
 		}
-
-		/// <summary>
-		/// Converts line and column to a position
-		/// </summary>
-		/// <param name="textView">Text view</param>
-		/// <param name="lineNumber">Line number, 0-based</param>
-		/// <param name="columnNumber">Column number, 0-based</param>
-		/// <returns></returns>
-		public static int LineColumnToPosition(this ITextView textView, int lineNumber, int columnNumber) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			var snapshot = textView.TextSnapshot;
-			if (lineNumber < 0)
-				return 0;
-			if (lineNumber >= snapshot.LineCount)
-				return snapshot.Length;
-			var line = snapshot.GetLineFromLineNumber(lineNumber);
-			if (columnNumber > line.Length)
-				columnNumber = line.Length;
-			return line.Start.Position + columnNumber;
-		}
-
-		/// <summary>
-		/// Gets the <see cref="TextEditorLocation"/> of the current caret position
-		/// </summary>
-		/// <param name="textView">Text view</param>
-		/// <returns></returns>
-		public static TextEditorLocation GetTextEditorLocation(this ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			return textView.Caret.Position.VirtualBufferPosition.ToTextEditorLocation();
-		}
 	}
 }

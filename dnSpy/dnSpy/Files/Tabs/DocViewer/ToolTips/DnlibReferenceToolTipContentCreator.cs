@@ -40,8 +40,6 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				return Create(context, (IMemberRef)@ref);
 			if (@ref is Parameter)
 				return Create(context, (Parameter)@ref);
-			if (@ref is IILVariable)
-				return Create(context, (IILVariable)@ref);
 			if (@ref is OpCode)
 				return Create(context, (OpCode)@ref);
 			return null;
@@ -140,8 +138,6 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		}
 
 		object Create(IToolTipContentCreatorContext context, Parameter p) => Create(context, p, null);
-		object Create(IToolTipContentCreatorContext context, IILVariable local) =>
-			Create(context, local.OriginalVariable, local.Name);
 
 		object Create(IToolTipContentCreatorContext context, IVariable v, string name) {
 			var creator = context.Create();

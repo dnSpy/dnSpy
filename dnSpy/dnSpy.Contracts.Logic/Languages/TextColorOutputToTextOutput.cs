@@ -28,8 +28,9 @@ namespace dnSpy.Contracts.Languages {
 	/// </summary>
 	public sealed class TextColorOutputToTextOutput : ITextOutput {
 		readonly IOutputColorWriter output;
-		int line, col;
 		int indent;
+		int offset;
+		bool needsIndent;
 
 		/// <summary>
 		/// Creates a new <see cref="ITextOutput"/> instance
@@ -41,43 +42,43 @@ namespace dnSpy.Contracts.Languages {
 
 		TextColorOutputToTextOutput(IOutputColorWriter output) {
 			this.output = output;
-			this.line = 1;
-			this.col = 1;
 			this.indent = 0;
+			this.offset = 0;
 		}
 
-		TextPosition ITextOutput.Location => new TextPosition(line - 1, col - 1 + indent);
+		int ITextOutput.Position => offset + (needsIndent ? indent : 0);
 
-		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) { }
+		void ITextOutput.AddMethodDebugInfo(MethodDebugInfo methodDebugInfo) { }
 		void ITextOutput.Indent() => indent++;
 		void ITextOutput.Unindent() => indent--;
 
 		void ITextOutput.Write(string text, int index, int count, object data) {
 			if (index == 0 && text.Length == count)
 				((ITextOutput)this).Write(text, data);
-			((ITextOutput)this).Write(text.Substring(index, count), data);
+			else
+				((ITextOutput)this).Write(text.Substring(index, count), data);
 		}
 
 		void ITextOutput.Write(StringBuilder sb, int index, int count, object data) {
 			if (index == 0 && sb.Length == count)
 				((ITextOutput)this).Write(sb.ToString(), data);
-			((ITextOutput)this).Write(sb.ToString(index, count), data);
+			else
+				((ITextOutput)this).Write(sb.ToString(index, count), data);
 		}
 
 		void ITextOutput.Write(string text, object data) {
-			if (col == 1 && indent > 0)
-				output.Write(BoxedOutputColor.Text, new string('\t', indent));
-			output.Write(data, text);
-			int index = text.LastIndexOfAny(newLineChars);
-			if (index >= 0) {
-				line += text.Split(oneCharNewLineChars).Length - 1;	// good enough for our purposes
-				col = text.Length - (index + 1) + 1;
-				indent = 0;
+			if (needsIndent) {
+				if (indent != 0)
+					output.Write(BoxedOutputColor.Text, new string('\t', indent));
+				offset += indent;
+				needsIndent = false;
 			}
-			else
-				col += text.Length;
+			output.Write(data, text);
+			offset += text.Length;
+			int index = text.LastIndexOfAny(newLineChars);
+			if (index >= 0)
+				needsIndent = true;
 		}
-		static readonly char[] oneCharNewLineChars = new char[] { '\n', '\u0085', '\u2028', '\u2029' };
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		void ITextOutput.WriteDefinition(string text, object definition, object data, bool isLocal) =>

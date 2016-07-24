@@ -132,13 +132,13 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 				output.WriteLine();
 			}
 
-			var memberMapping = new MemberMapping(method);
+			var builder = new MethodDebugInfoBuilder(method);
 			foreach (ILNode node in ilMethod.Body) {
-				node.WriteTo(output, memberMapping);
+				node.WriteTo(output, builder);
 				if (!node.WritesNewLine)
 					output.WriteLine();
 			}
-			output.AddDebugSymbols(memberMapping);
+			output.AddMethodDebugInfo(builder.Create());
 			EndKeywordBlock(output);
 		}
 

@@ -20,7 +20,7 @@ using System.Text;
 
 namespace dnSpy.Decompiler.Shared {
 	public interface ITextOutput {
-		TextPosition Location { get; }
+		int Position { get; }
 
 		void Indent();
 		void Unindent();
@@ -38,7 +38,7 @@ namespace dnSpy.Decompiler.Shared {
 		void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal = true);
 		void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false);
 
-		void AddDebugSymbols(MemberMapping methodDebugSymbols);
+		void AddMethodDebugInfo(MethodDebugInfo methodDebugInfo);
 	}
 
 	public static class TextOutputExtensions {

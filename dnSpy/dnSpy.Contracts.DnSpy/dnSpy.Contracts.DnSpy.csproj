@@ -104,7 +104,7 @@
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\TextBlockColorOutput.cs" />
     <Compile Include="Controls\WindowBase.cs" />
-    <Compile Include="Decompiler\ICodeMappings.cs" />
+    <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerConstants.cs" />
@@ -499,15 +499,13 @@
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />
-    <Compile Include="Text\Editor\SnapshotPointExtensions.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
-    <Compile Include="Text\Editor\VirtualSnapshotPointExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
     <Compile Include="Text\OutputColorExtensions.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
-    <Compile Include="Text\TextEditorLocation.cs" />
+    <Compile Include="Text\TextEditorPosition.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />
     <Compile Include="Themes\ITextColor.cs" />

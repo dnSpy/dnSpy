@@ -185,21 +185,21 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetMappings(context));
-		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<SourceCodeMapping> list) {
+		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) {
 			return editCodeVMCreator.CanCreate &&
 				list != null &&
 				list.Count != 0 &&
-				list[0].Mapping.Method?.Body != null &&
-				list[0].Mapping.Method.Body.Instructions.Count > 0;
+				list[0].Method.Body != null &&
+				list[0].Method.Body.Instructions.Count > 0;
 		}
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetMappings(context));
 
-		void Execute(IList<SourceCodeMapping> list) {
+		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
 				return;
 
-			var method = list[0].Mapping.Method;
+			var method = list[0].Method;
 			var methodNode = appWindow.FileTreeView.FindNode(method);
 			if (methodNode == null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
@@ -214,15 +214,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		IList<SourceCodeMapping> GetMappings() {
+		IList<MethodSourceStatement> GetMappings() {
 			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			var pos = documentViewer.CaretLocation;
-			return BodyCommandUtils.GetMappings(documentViewer, pos.Line, pos.Column);
+			return BodyCommandUtils.GetMappings(documentViewer, documentViewer.Caret.Position.BufferPosition.Position);
 		}
 
 		void ICommand.Execute(object parameter) => Execute(GetMappings());

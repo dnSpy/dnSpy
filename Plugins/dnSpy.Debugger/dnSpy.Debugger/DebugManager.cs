@@ -1040,41 +1040,40 @@ namespace dnSpy.Debugger {
 			if (key == null)
 				return null;
 
-			MemberMapping mapping;
+			MethodDebugInfo info;
 			var tab = fileTabManager.GetOrCreateActiveTab();
 			var documentViewer = tab.TryGetDocumentViewer();
-			var cm = documentViewer.GetCodeMappings();
-			if ((mapping = cm.TryGetMapping(key.Value)) == null) {
+			var methodDebugService = documentViewer.GetMethodDebugService();
+			if ((info = methodDebugService.TryGetMethodDebugInfo(key.Value)) == null) {
 				// User has decompiled some other code or switched to another tab
 				UpdateCurrentMethod();
 				JumpToCurrentStatement(tab);
 
 				// It could be cached and immediately available. Check again
 				documentViewer = tab.TryGetDocumentViewer();
-				cm = documentViewer.GetCodeMappings();
-				if ((mapping = cm.TryGetMapping(key.Value)) == null)
+				methodDebugService = documentViewer.GetMethodDebugService();
+				if ((info = methodDebugService.TryGetMethodDebugInfo(key.Value)) == null)
 					return null;
 			}
 
-			bool isMatch;
-			var scm = mapping.GetInstructionByOffset(frame.GetILOffset(moduleLoader.Value), out isMatch);
-			uint[] ilRanges;
+			var scm = info.GetSourceStatementByCodeOffset(frame.GetILOffset(moduleLoader.Value));
+			uint[] binSpans;
 			if (scm == null)
-				ilRanges = mapping.ToArray(null, false);
+				binSpans = info.GetRanges();
 			else
-				ilRanges = scm.ToArray(isMatch);
+				binSpans = info.GetRanges(scm.Value);
 
-			if (ilRanges.Length == 0)
+			if (binSpans.Length == 0)
 				return null;
-			return CreateStepRanges(ilRanges);
+			return CreateStepRanges(binSpans);
 		}
 
-		static StepRange[] CreateStepRanges(uint[] ilRanges) {
-			var stepRanges = new StepRange[ilRanges.Length / 2];
+		static StepRange[] CreateStepRanges(uint[] ilSpans) {
+			var stepRanges = new StepRange[ilSpans.Length / 2];
 			if (stepRanges.Length == 0)
 				return null;
 			for (int i = 0; i < stepRanges.Length; i++)
-				stepRanges[i] = new StepRange(ilRanges[i * 2], ilRanges[i * 2 + 1]);
+				stepRanges[i] = new StepRange(ilSpans[i * 2], ilSpans[i * 2 + 1]);
 			return stepRanges;
 		}
 
@@ -1178,12 +1177,12 @@ namespace dnSpy.Debugger {
 			if (!IsDebugging)
 				return false;
 
-			SourceCodeMapping mapping;
+			MethodSourceStatement methodStatement;
 			string errMsg;
-			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out mapping))
+			if (!DebugGetMethodSourceStatementForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out methodStatement))
 				return false;
 
-			return CanSetNextStatement(mapping.ILRange.From);
+			return CanSetNextStatement(methodStatement.Statement.BinSpan.Start);
 		}
 
 		bool CanSetNextStatement(uint ilOffset) => CanSetNextStatement(currentLocation, ilOffset);
@@ -1209,10 +1208,10 @@ namespace dnSpy.Debugger {
 		}
 
 		bool DebugSetNextStatement(object parameter, out string errMsg) {
-			SourceCodeMapping mapping;
-			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out mapping))
+			MethodSourceStatement methodStatement;
+			if (!DebugGetMethodSourceStatementForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out methodStatement))
 				return false;
-			return SetOffset(mapping.ILRange.From, out errMsg);
+			return SetOffset(methodStatement.Statement.BinSpan.Start, out errMsg);
 		}
 
 		public bool SetOffset(uint ilOffset, out string errMsg) => SetOffset(currentLocation, ilOffset, GetCurrentMethodILFrame(), out errMsg);
@@ -1265,9 +1264,9 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		bool DebugGetSourceCodeMappingForSetNextStatement(IDocumentViewer documentViewer, out string errMsg, out SourceCodeMapping mapping) {
+		bool DebugGetMethodSourceStatementForSetNextStatement(IDocumentViewer documentViewer, out string errMsg, out MethodSourceStatement methodStatement) {
 			errMsg = string.Empty;
-			mapping = null;
+			methodStatement = default(MethodSourceStatement);
 
 			if (ProcessState == DebuggerProcessState.Terminated) {
 				errMsg = dnSpy_Debugger_Resources.Error_NotDebugging;
@@ -1286,16 +1285,15 @@ namespace dnSpy.Debugger {
 				}
 			}
 
-			CodeMappings cm;
-			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(documentViewer, currentLocation.Value.SerializedDnToken, out cm)) {
+			MethodDebugService methodDebugService;
+			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(documentViewer, currentLocation.Value.SerializedDnToken, out methodDebugService)) {
 				errMsg = dnSpy_Debugger_Resources.Error_NoDebugInfoAvailable;
 				return false;
 			}
 			Debug.Assert(currentLocation != null);
 
-			var location = documentViewer.CaretLocation;
-			var bps = cm.Find(location.Line, location.Column);
-			if (bps.Count == 0) {
+			var methodStatements = methodDebugService.FindByTextPosition(documentViewer.Caret.Position.BufferPosition.Position);
+			if (methodStatements.Count == 0) {
 				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementHere;
 				return false;
 			}
@@ -1305,18 +1303,18 @@ namespace dnSpy.Debugger {
 				return false;
 			}
 
-			foreach (var bp in bps) {
-				var md = bp.Mapping.Method;
+			foreach (var info in methodStatements) {
+				var md = info.Method;
 				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 					continue;
 				var serAsm = serializedDnModuleCreator.Create(md.Module);
 				if (!serAsm.Equals(currentLocation.Value.SerializedDnToken.Module))
 					continue;
 
-				mapping = bp;
+				methodStatement = info;
 				break;
 			}
-			if (mapping == null) {
+			if (methodStatement == null) {
 				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementToAnotherMethod;
 				return false;
 			}

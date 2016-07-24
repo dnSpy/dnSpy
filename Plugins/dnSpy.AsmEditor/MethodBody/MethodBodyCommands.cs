@@ -181,20 +181,20 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 
 		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
-		static bool IsVisible(IList<SourceCodeMapping> list) {
+		static bool IsVisible(IList<MethodSourceStatement> list) {
 			return list != null &&
 				list.Count != 0 &&
-				list[0].Mapping.Method?.Body != null &&
-				list[0].Mapping.Method.Body.Instructions.Count > 0;
+				list[0].Method.Body != null &&
+				list[0].Method.Body.Instructions.Count > 0;
 		}
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetMappings(context));
 
-		void Execute(IList<SourceCodeMapping> list) {
+		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
 				return;
 
-			var method = list[0].Mapping.Method;
+			var method = list[0].Method;
 			var methodNode = appWindow.FileTreeView.FindNode(method);
 			if (methodNode == null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
@@ -209,15 +209,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		IList<SourceCodeMapping> GetMappings() {
+		IList<MethodSourceStatement> GetMappings() {
 			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			var pos = documentViewer.CaretLocation;
-			return BodyCommandUtils.GetMappings(documentViewer, pos.Line, pos.Column);
+			return BodyCommandUtils.GetMappings(documentViewer, documentViewer.Caret.Position.BufferPosition);
 		}
 
 		void ICommand.Execute(object parameter) => Execute(GetMappings());

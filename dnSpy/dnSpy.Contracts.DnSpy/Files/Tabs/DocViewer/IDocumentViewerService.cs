@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		}
 
 		/// <summary>Constructor</summary>
-		/// <param name="order">Order of this instance, eg. <see cref="DocumentViewerListenerConstants.ORDER_DEBUGGER_CODEMAPPINGSCREATOR"/></param>
+		/// <param name="order">Order of this instance, eg. <see cref="DocumentViewerListenerConstants.ORDER_DEBUGGER_METHODDEBUGSERVICECREATOR"/></param>
 		public ExportDocumentViewerListenerAttribute(double order)
 			: base(typeof(IDocumentViewerListener)) {
 			Order = order;

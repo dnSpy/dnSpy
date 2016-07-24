@@ -25,7 +25,6 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
@@ -73,21 +72,21 @@ namespace dnSpy.Debugger {
 			if (documentViewer == null)
 				return false;
 
-			CodeMappings cm;
-			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, key, out cm))
+			MethodDebugService methodDebugService;
+			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, key, out methodDebugService))
 				return false;
 
-			TextPosition location, endLocation;
-			if (!cm.TryGetMapping(key).GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation))
+			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(key).GetSourceStatementByCodeOffset(ilOffset);
+			if (sourceStatement == null)
 				return false;
 
-			documentViewer.ScrollAndMoveCaretTo(location.Line, location.Column);
+			documentViewer.ScrollAndMoveCaretToOffset(sourceStatement.Value.TextSpan.Start);
 			return true;
 		}
 
-		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, SerializedDnToken serToken, out CodeMappings codeMappings) {
-			codeMappings = documentViewer.GetCodeMappings();
-			return codeMappings.TryGetMapping(serToken) != null;
+		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, SerializedDnToken serToken, out MethodDebugService methodDebugService) {
+			methodDebugService = documentViewer.GetMethodDebugService();
+			return methodDebugService.TryGetMethodDebugInfo(serToken) != null;
 		}
 	}
 }

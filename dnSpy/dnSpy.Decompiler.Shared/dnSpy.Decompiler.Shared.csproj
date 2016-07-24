@@ -35,20 +35,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AddressReference.cs" />
-    <Compile Include="CodeMappings.cs" />
+    <Compile Include="BinSpan.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GenericArgumentResolver.cs" />
     <Compile Include="IdentifierEscaper.cs" />
-    <Compile Include="IILVariable.cs" />
     <Compile Include="IInstructionBytesReader.cs" />
-    <Compile Include="ILRange.cs" />
     <Compile Include="InstructionReference.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="MemberComparer.cs" />
+    <Compile Include="MethodDebugInfo.cs" />
+    <Compile Include="MethodDebugInfoBuilder.cs" />
+    <Compile Include="MethodSourceStatement.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleXmlParser.cs" />
-    <Compile Include="TextPosition.cs" />
+    <Compile Include="SourceLocal.cs" />
+    <Compile Include="SourceStatement.cs" />
+    <Compile Include="TextSpan.cs" />
     <Compile Include="TextTokenKind.cs" />
     <Compile Include="TokenReference.cs" />
     <Compile Include="TypesHierarchyHelpers.cs" />

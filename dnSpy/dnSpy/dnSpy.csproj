@@ -85,8 +85,8 @@
     <Compile Include="Culture\CultureManager.cs" />
     <Compile Include="Culture\CultureSettings.cs" />
     <Compile Include="Culture\LanguageInfo.cs" />
-    <Compile Include="Decompiler\CodeMappings.cs" />
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
+    <Compile Include="Decompiler\MethodDebugService.cs" />
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\DefaultDnSpyFileCreator.cs" />

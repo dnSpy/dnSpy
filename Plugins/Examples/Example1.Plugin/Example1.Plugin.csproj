@@ -73,6 +73,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="project.json" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

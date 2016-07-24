@@ -110,22 +110,10 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		SpanDataCollection<ReferenceInfo> ReferenceCollection { get; }
 
 		/// <summary>
-		/// Gets the current caret position
+		/// Scrolls to an offset
 		/// </summary>
-		TextEditorLocation CaretLocation { get; }
-
-		/// <summary>
-		/// Scrolls to a line and column
-		/// </summary>
-		/// <param name="line">Line, 0-based</param>
-		/// <param name="column">Column, 0-based</param>
-		void ScrollAndMoveCaretTo(int line, int column);
-
-		/// <summary>
-		/// Scrolls to a line and column
-		/// </summary>
-		/// <param name="location">Location</param>
-		void ScrollAndMoveCaretTo(TextEditorLocation location);
+		/// <param name="position">Position in the text file</param>
+		void ScrollAndMoveCaretToOffset(int position);
 
 		/// <summary>
 		/// Gets the reference at the caret or null if none

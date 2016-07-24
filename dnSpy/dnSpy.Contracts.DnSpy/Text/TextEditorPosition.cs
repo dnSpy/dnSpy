@@ -18,34 +18,38 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// Text editor location
+	/// Text editor position
 	/// </summary>
-	public struct TextEditorLocation {
+	/// <remarks>It's used by menu handlers only, so it's a class, not a struct (would be boxed otherwise)</remarks>
+	public sealed class TextEditorPosition {
 		/// <summary>
-		/// Line, 0-based
+		/// Gets the position
 		/// </summary>
-		public int Line { get; set; }
+		public int Position { get; }
 
 		/// <summary>
-		/// Column, 0-based
+		/// Gets the virtual spaces
 		/// </summary>
-		public int Column { get; set; }
+		public int VirtualSpaces { get; }
+
+		/// <summary>
+		/// true if it's in virtual space
+		/// </summary>
+		public bool IsInVirtualSpace => VirtualSpaces > 0;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="line">Line, 0-based</param>
-		/// <param name="column">Column, 0-based</param>
-		public TextEditorLocation(int line, int column) {
-			if (line < 0)
-				throw new ArgumentOutOfRangeException(nameof(line));
-			if (column < 0)
-				throw new ArgumentOutOfRangeException(nameof(column));
-			this.Line = line;
-			this.Column = column;
+		/// <param name="point">Position</param>
+		public TextEditorPosition(VirtualSnapshotPoint point) {
+			if (point.Position.Snapshot == null)
+				throw new ArgumentException();
+			Position = point.Position.Position;
+			VirtualSpaces = point.VirtualSpaces;
 		}
 	}
 }

@@ -8,6 +8,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using Microsoft.VisualStudio.Text;
 
 // Adds menu items to the text editor context menu
 // If you have many similar commands, it's better to create a base class and derive from
@@ -113,7 +114,8 @@ namespace Example1.Plugin {
 			var documentViewer = GetDocumentViewer(context);
 			if (documentViewer != null) {
 				try {
-					Clipboard.SetText(string.Format("Line,col: {0},{1}", documentViewer.CaretLocation.Line + 1, documentViewer.CaretLocation.Column + 1));
+					var lineColumn = GetLineColumn(documentViewer.Caret.Position.VirtualBufferPosition);
+					Clipboard.SetText(string.Format("Line,col: {0},{1}", lineColumn.Line + 1, lineColumn.Column + 1));
 				}
 				catch (ExternalException) { }
 			}
@@ -123,7 +125,23 @@ namespace Example1.Plugin {
 			var documentViewer = GetDocumentViewer(context);
 			if (documentViewer == null)
 				return "Copy line and column";
-			return string.Format("Copy line,col {0},{1}", documentViewer.CaretLocation.Line + 1, documentViewer.CaretLocation.Column + 1);
+			var lineColumn = GetLineColumn(documentViewer.Caret.Position.VirtualBufferPosition);
+			return string.Format("Copy line,col {0},{1}", lineColumn.Line + 1, lineColumn.Column + 1);
+		}
+
+		LineColumn GetLineColumn(VirtualSnapshotPoint point) {
+			var line = point.Position.GetContainingLine();
+			int column = point.Position - line.Start + point.VirtualSpaces;
+			return new LineColumn(line.LineNumber, column);
+		}
+
+		struct LineColumn {
+			public int Line { get; }
+			public int Column { get; }
+			public LineColumn(int line, int column) {
+				Line = line;
+				Column = column;
+			}
 		}
 
 		IDocumentViewer GetDocumentViewer(IMenuItemContext context) {

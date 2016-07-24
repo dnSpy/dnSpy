@@ -405,8 +405,8 @@ namespace dnSpy.Debugger.Locals {
 
 			Parameter[] parameters;
 			Local[] locals;
-			IILVariable[] decLocals;
-			methodLocalProvider.GetMethodInfo(key.Value, out parameters, out locals, out decLocals);
+			SourceLocal[] decompilerLocals;
+			methodLocalProvider.GetMethodInfo(key.Value, out parameters, out locals, out decompilerLocals);
 			if (!hasInitializedArgNames && parameters != null) {
 				hasInitializedArgNames = true;
 				foreach (var vm in Root.Children.OfType<NormalValueVM>()) {
@@ -419,14 +419,14 @@ namespace dnSpy.Debugger.Locals {
 					vt.InitializeName(p.Name, p.IsHiddenThisParameter);
 				}
 			}
-			if (!hasInitializedLocalNames && (locals != null || decLocals != null)) {
+			if (!hasInitializedLocalNames && (locals != null || decompilerLocals != null)) {
 				hasInitializedLocalNames = true;
 				foreach (var vm in Root.Children.OfType<NormalValueVM>()) {
 					var vt = vm.NormalValueType as LocalValueType;
 					if (vt == null)
 						continue;
 					var l = locals == null || (uint)vt.Index >= (uint)locals.Length ? null : locals[vt.Index];
-					var dl = decLocals == null || (uint)vt.Index >= (uint)decLocals.Length ? null : decLocals[vt.Index];
+					var dl = decompilerLocals == null || (uint)vt.Index >= (uint)decompilerLocals.Length ? (SourceLocal?)null : decompilerLocals[vt.Index];
 					string name = dl?.Name;
 					if (name == null && l != null && !string.IsNullOrEmpty(l.Name))
 						name = string.Format("[{0}]", l.Name);

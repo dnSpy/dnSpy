@@ -160,7 +160,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 						if (e.Success && !e.HasMovedCaret) {
 							e.HasMovedCaret = ((IDocumentViewer)ctx.UIContext).RestoreReferencePosition(decompileContext.SavedRefPos);
 							if (!e.HasMovedCaret) {
-								((IDocumentViewer)ctx.UIContext).ScrollAndMoveCaretTo(0, 0);
+								((IDocumentViewer)ctx.UIContext).ScrollAndMoveCaretToOffset(0);
 								e.HasMovedCaret = true;
 							}
 						}

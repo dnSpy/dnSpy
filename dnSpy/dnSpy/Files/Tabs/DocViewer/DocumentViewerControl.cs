@@ -68,7 +68,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.textEditorHelper = textEditorHelper;
 			this.defaultContentType = textBufferFactoryService.TextContentType;
 			this.cachedColorsList = new CachedColorsList();
-			this.emptyContent = new DocumentViewerContent(string.Empty, CachedTextTokenColors.Empty, SpanDataCollection<ReferenceInfo>.Empty, Array.Empty<MemberMapping>());
+			this.emptyContent = new DocumentViewerContent(string.Empty, CachedTextTokenColors.Empty, SpanDataCollection<ReferenceInfo>.Empty, Array.Empty<MethodDebugInfo>());
 			this.currentContent = new CurrentContent(emptyContent, defaultContentType);
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
@@ -259,11 +259,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 							return false;
 						textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					}
-					else {
-						var line = wpfTextViewHost.TextView.TextSnapshot.GetLineFromPosition(spanData.Span.Start);
-						int column = spanData.Span.Start - line.Start.Position;
-						ScrollAndMoveCaretTo(line.LineNumber, column);
-					}
+					else
+						ScrollAndMoveCaretToOffset(spanData.Span.Start);
 					return true;
 				}
 
@@ -353,55 +350,54 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
-			wpfTextViewHost.TextView.MoveCaretTo(line, column);
-			wpfTextViewHost.TextView.Caret.EnsureVisible();//TODO: Use wpfTextViewHost.TextView.ViewScroller.EnsureSpanVisible()
+		public void ScrollAndMoveCaretToOffset(int position, bool focus = true) {
+			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
+			if ((uint)position < (uint)snapshot.Length) {
+				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, position));
+				wpfTextViewHost.TextView.Caret.EnsureVisible();//TODO: Use wpfTextViewHost.TextView.ViewScroller.EnsureSpanVisible()
+			}
 			wpfTextViewHost.TextView.Selection.Clear();
 			if (focus)
 				textEditorHelper.SetFocus();
 		}
 
-		public object SaveReferencePosition(ICodeMappings codeMappings) => GetReferencePosition(codeMappings);
+		public object SaveReferencePosition(IMethodDebugService methodDebugService) => GetReferencePosition(methodDebugService);
 
-		public bool RestoreReferencePosition(ICodeMappings codeMappings, object obj) {
+		public bool RestoreReferencePosition(IMethodDebugService methodDebugService, object obj) {
 			var referencePosition = obj as ReferencePosition;
 			if (referencePosition == null)
 				return false;
-			return GoTo(codeMappings, referencePosition);
+			return GoTo(methodDebugService, referencePosition);
 		}
 
 		sealed class ReferencePosition {
-			public SourceCodeMapping SourceCodeMapping { get; }
+			public MethodSourceStatement? MethodSourceStatement { get; }
 			public SpanData<ReferenceInfo>? SpanData { get; }
 
 			public ReferencePosition(SpanData<ReferenceInfo> spanData) {
 				this.SpanData = spanData;
 			}
 
-			public ReferencePosition(IList<SourceCodeMapping> sourceCodeMappings) {
-				this.SourceCodeMapping = sourceCodeMappings.Count > 0 ? sourceCodeMappings[0] : null;
+			public ReferencePosition(IList<MethodSourceStatement> methodSourceStatements) {
+				this.MethodSourceStatement = methodSourceStatements.Count > 0 ? methodSourceStatements[0] : (MethodSourceStatement?)null;
 			}
 		}
 
-		ReferencePosition GetReferencePosition(ICodeMappings codeMappings) {
+		ReferencePosition GetReferencePosition(IMethodDebugService methodDebugService) {
 			int caretPos = wpfTextViewHost.TextView.Caret.Position.BufferPosition.Position;
 			var line = wpfTextViewHost.TextView.TextSnapshot.GetLineFromPosition(caretPos);
-			var mappings = codeMappings.Find(line.LineNumber, caretPos - line.Start.Position).ToList();
-			mappings.Sort(Sort);
-			var mapping = mappings.Count == 0 ? null : mappings[0];
+			var mappings = methodDebugService.FindByTextPosition(caretPos).ToList();
+			mappings.Sort(sortDelegate);
 
-			int position = line.Start.Position;
-			var spanData = currentContent.Content.ReferenceCollection.FindFrom(position).FirstOrDefault(r => r.Data.Reference is IMemberDef && r.Data.IsDefinition && !r.Data.IsLocal);
-
-			if (mapping == null) {
+			var spanData = currentContent.Content.ReferenceCollection.FindFrom(line.Start.Position).FirstOrDefault(r => r.Data.Reference is IMemberDef && r.Data.IsDefinition && !r.Data.IsLocal);
+			if (mappings.Count == 0) {
 				if (spanData.Data.Reference != null)
 					return new ReferencePosition(spanData);
 			}
 			else if (spanData.Data.Reference == null)
 				return new ReferencePosition(mappings);
 			else {
-				position = wpfTextViewHost.TextView.LineColumnToPosition(mapping.StartPosition.Line, mapping.StartPosition.Column);
-				if (position < spanData.Span.Start)
+				if (mappings[0].Statement.TextSpan.Start < spanData.Span.Start)
 					return new ReferencePosition(mappings);
 				return new ReferencePosition(spanData);
 			}
@@ -409,17 +405,18 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			return null;
 		}
 
-		static int Sort(SourceCodeMapping a, SourceCodeMapping b) => a.StartPosition.CompareTo(b.StartPosition);
+		static int Sort(MethodSourceStatement a, MethodSourceStatement b) => a.Statement.TextSpan.Start - b.Statement.TextSpan.Start;
+		static readonly Comparison<MethodSourceStatement> sortDelegate = Sort;
 
-		bool GoTo(ICodeMappings codeMappings, ReferencePosition referencePosition) {
+		bool GoTo(IMethodDebugService methodDebugService, ReferencePosition referencePosition) {
 			if (referencePosition == null)
 				return false;
 
-			if (referencePosition.SourceCodeMapping != null) {
-				var mapping = referencePosition.SourceCodeMapping;
-				var codeMapping = codeMappings.Find(mapping.Mapping.Method, mapping.ILRange.From);
-				if (codeMapping != null) {
-					ScrollAndMoveCaretTo(codeMapping.StartPosition.Line, codeMapping.StartPosition.Column);
+			if (referencePosition.MethodSourceStatement != null) {
+				var methodSourceStatement = referencePosition.MethodSourceStatement.Value;
+				var methodStatement = methodDebugService.FindByCodeOffset(methodSourceStatement.Method, methodSourceStatement.Statement.BinSpan.Start);
+				if (methodStatement != null) {
+					ScrollAndMoveCaretToOffset(methodStatement.Value.Statement.TextSpan.Start);
 					return true;
 				}
 			}
@@ -469,9 +466,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			Debug.Assert(spanData.Span.End <= snapshot.Length);
 			if (spanData.Span.End > snapshot.Length)
 				return;
-			var line = snapshot.GetLineFromPosition(spanData.Span.Start);
-			int column = spanData.Span.End - line.Start.Position;
-			ScrollAndMoveCaretTo(line.LineNumber, column);
+			ScrollAndMoveCaretToOffset(spanData.Span.Start);
 			wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
 			wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, spanData.Span), false);
 

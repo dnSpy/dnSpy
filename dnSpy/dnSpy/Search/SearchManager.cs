@@ -260,13 +260,12 @@ namespace dnSpy.Search {
 			var documentViewer = tab.TryGetDocumentViewer();
 			if (documentViewer == null || method == null)
 				return false;
-			var cm = documentViewer.GetCodeMappings();
-			var mapping = cm.Find(method, ilOffset);
-			if (mapping == null)
+			var methodDebugService = documentViewer.GetMethodDebugService();
+			var methodStatement = methodDebugService.FindByCodeOffset(method, ilOffset);
+			if (methodStatement == null)
 				return false;
 
-			var location = mapping.StartPosition;
-			documentViewer.ScrollAndMoveCaretTo(location.Line, location.Column);
+			documentViewer.ScrollAndMoveCaretToOffset(methodStatement.Value.Statement.TextSpan.Start);
 			return true;
 		}
 	}

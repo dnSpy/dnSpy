@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -29,7 +30,7 @@ using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	static class BodyCommandUtils {
-		public static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
+		public static IList<MethodSourceStatement> GetMappings(IMenuItemContext context) {
 			if (context == null)
 				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
@@ -37,25 +38,38 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var uiContext = context.Find<IDocumentViewer>();
 			if (uiContext == null)
 				return null;
-			var pos = context.Find<TextEditorLocation?>();
+			var pos = context.Find<TextEditorPosition>();
 			if (pos == null)
 				return null;
-			return GetMappings(uiContext, pos.Value.Line, pos.Value.Column);
+			return GetMappings(uiContext, pos.Position);
 		}
 
-		public static IList<SourceCodeMapping> GetMappings(IDocumentViewer documentViewer, int line, int col) {
+		public static IList<MethodSourceStatement> GetMappings(IDocumentViewer documentViewer, int textPosition) {
 			if (documentViewer == null)
 				return null;
-			var cm = documentViewer.GetCodeMappings();
-			var list = cm.Find(line, col);
-			if (list.Count == 0)
+			var methodDebugService = documentViewer.GetMethodDebugService();
+			var methodStatements = methodDebugService.FindByTextPosition(textPosition);
+			if (methodStatements.Count == 0)
 				return null;
-			if (!(list[0].StartPosition.Line <= line && line <= list[0].EndPosition.Line))
+
+			var span = methodStatements[0].Statement.TextSpan;
+			var snapshot = documentViewer.TextView.TextSnapshot;
+			Debug.Assert(span.End <= snapshot.Length);
+			Debug.Assert(textPosition <= snapshot.Length);
+			if (span.End > snapshot.Length)
 				return null;
-			return list;
+			if (textPosition > snapshot.Length)
+				return null;
+			var line1 = snapshot.GetLineFromPosition(span.Start);
+			var line2 = snapshot.GetLineFromPosition(span.End);
+			var textLine = snapshot.GetLineFromPosition(textPosition);
+			if (!(line1.LineNumber <= textLine.LineNumber && textLine.LineNumber <= line2.LineNumber))
+				return null;
+
+			return methodStatements;
 		}
 
-		public static uint[] GetInstructionOffsets(MethodDef method, IList<SourceCodeMapping> list) {
+		public static uint[] GetInstructionOffsets(MethodDef method, IList<MethodSourceStatement> list) {
 			if (method == null)
 				return null;
 			var body = method.Body;
@@ -65,13 +79,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var foundInstrs = new HashSet<uint>();
 			// The instructions' offset field is assumed to be valid
 			var instrs = body.Instructions.Select(a => a.Offset).ToArray();
-			foreach (var range in list.Select(a => a.ILRange)) {
-				int index = Array.BinarySearch(instrs, range.From);
+			foreach (var binSpan in list.Select(a => a.Statement.BinSpan)) {
+				int index = Array.BinarySearch(instrs, binSpan.Start);
 				if (index < 0)
 					continue;
 				for (int i = index; i < instrs.Length; i++) {
 					uint instrOffset = instrs[i];
-					if (instrOffset >= range.To)
+					if (instrOffset >= binSpan.End)
 						break;
 
 					foundInstrs.Add(instrOffset);

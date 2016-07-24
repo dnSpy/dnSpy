@@ -60,8 +60,7 @@ namespace dnSpy.AsmEditor.Hex {
 		public ITreeNodeData[] Nodes { get; }
 		public bool IsDefinition { get; }
 		public object Reference { get; }
-		public int? Line { get; }
-		public int? Column { get; }
+		public int? TextPosition { get; }
 		public GuidObject CreatorObject { get; }
 
 		public HexContext() {
@@ -72,11 +71,10 @@ namespace dnSpy.AsmEditor.Hex {
 			this.CreatorObject = creatorObject;
 		}
 
-		public HexContext(IDocumentViewer documentViewer, int? line, int? col, object @ref, bool isDefinition) {
+		public HexContext(IDocumentViewer documentViewer, int? textPosition, object @ref, bool isDefinition) {
 			this.Reference = @ref;
 			this.IsDefinition = isDefinition;
-			this.Line = line;
-			this.Column = col;
+			this.TextPosition = textPosition;
 			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, documentViewer);
 		}
 	}
@@ -94,8 +92,8 @@ namespace dnSpy.AsmEditor.Hex {
 					@ref = textRef.Reference;
 					isDefinition = textRef.IsDefinition;
 				}
-				var pos = context.Find<TextEditorLocation?>();
-				return new HexContext(context.Find<IDocumentViewer>(), pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isDefinition);
+				var pos = context.Find<TextEditorPosition>();
+				return new HexContext(context.Find<IDocumentViewer>(), pos == null ? (int?)null : pos.Position, @ref, isDefinition);
 			}
 
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
@@ -154,8 +152,7 @@ namespace dnSpy.AsmEditor.Hex {
 				@ref = refInfo.Value.Data.Reference;
 				isDefinition = refInfo.Value.Data.IsDefinition;
 			}
-			var pos = documentViewer.CaretLocation;
-			return new HexContext(documentViewer, pos.Line, pos.Column, @ref, isDefinition);
+			return new HexContext(documentViewer, documentViewer.Caret.Position.BufferPosition, @ref, isDefinition);
 		}
 
 		static HexContext CreateContext(IFileTreeView fileTreeView) => new HexContext(new GuidObject(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, fileTreeView), fileTreeView.TreeView.TopLevelSelection);
@@ -373,12 +370,12 @@ namespace dnSpy.AsmEditor.Hex {
 			if (TVShowMethodInstructionsInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
-			var mappings = GetMappings(context);
-			if (mappings == null || mappings.Count == 0)
+			var methodStatements = GetMappings(context);
+			if (methodStatements == null || methodStatements.Count == 0)
 				return null;
 
-			var method = mappings[0].Mapping.Method;
-			var mod = mappings[0].Mapping.Method.Module as ModuleDefMD;
+			var method = methodStatements[0].Method;
+			var mod = methodStatements[0].Method.Module as ModuleDefMD;
 			if (mod == null || string.IsNullOrEmpty(mod.Location))
 				return null;
 
@@ -386,22 +383,22 @@ namespace dnSpy.AsmEditor.Hex {
 			ulong len;
 			if (methodAnnotations.Value.IsBodyModified(method))
 				len = 0;
-			else if (mappings.Count == 1) {
-				addr += (ulong)method.Body.HeaderSize + mappings[0].ILRange.From;
-				len = mappings[0].ILRange.To - mappings[0].ILRange.From;
+			else if (methodStatements.Count == 1) {
+				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.BinSpan.Start;
+				len = methodStatements[0].Statement.BinSpan.End - methodStatements[0].Statement.BinSpan.Start;
 			}
 			else {
-				addr += (ulong)method.Body.HeaderSize + mappings[0].ILRange.From;
+				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.BinSpan.Start;
 				len = 0;
 			}
 
 			return new AddressReference(mod.Location, true, addr, len);
 		}
 
-		static IList<SourceCodeMapping> GetMappings(HexContext context) {
-			if (context.Line == null || context.Column == null)
+		static IList<MethodSourceStatement> GetMappings(HexContext context) {
+			if (context.TextPosition == null)
 				return null;
-			return MethodBody.BodyCommandUtils.GetMappings(context.CreatorObject.Object as IDocumentViewer, context.Line.Value, context.Column.Value);
+			return MethodBody.BodyCommandUtils.GetMappings(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value);
 		}
 	}
 

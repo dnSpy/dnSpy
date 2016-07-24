@@ -124,8 +124,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="IDocumentViewer"/></summary>
 		public static readonly string GUIDOBJ_DOCUMENTVIEWER_GUID = "F7088928-7BF0-4044-B631-201F6565077A";
 
-		/// <summary><see cref="TextEditorLocation"/></summary>
-		public static readonly string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
+		/// <summary><see cref="TextEditorPosition"/></summary>
+		public static readonly string GUIDOBJ_TEXTEDITORPOSITION_GUID = "F093458D-C95B-4745-8388-047DE348B500";
 
 		/// <summary><c>HexBox</c></summary>
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";

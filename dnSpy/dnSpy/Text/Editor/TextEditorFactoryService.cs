@@ -90,9 +90,9 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(WpfTextView != null);
 				if (WpfTextView != null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID, WpfTextView);
-					var loc = WpfTextView.GetTextEditorLocation(args.OpenedFromKeyboard);
+					var loc = WpfTextView.GetTextEditorPosition(args.OpenedFromKeyboard);
 					if (loc != null)
-						yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
+						yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 				}
 
 				if (createGuidObjects != null) {

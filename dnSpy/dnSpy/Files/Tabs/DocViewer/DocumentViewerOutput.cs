@@ -34,21 +34,20 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		readonly CachedTextTokenColors cachedTextTokenColors;
 		readonly StringBuilder stringBuilder;
-		readonly List<MemberMapping> memberMappingsList;
+		readonly List<MethodDebugInfo> methodDebugInfos;
 		SpanDataCollectionBuilder<ReferenceInfo> referenceBuilder;
-		int line, lineStart;
 		int indentation;
 		bool canBeCached;
 		bool addIndent;
 		bool hasCreatedResult;
 
-		TextPosition ITextOutput.Location => new TextPosition(line, stringBuilder.Length - lineStart + GetIndentSize());
+		int ITextOutput.Position => stringBuilder.Length + GetIndentSize();
 
 		public DocumentViewerOutput() {
 			this.cachedTextTokenColors = new CachedTextTokenColors();
 			this.stringBuilder = new StringBuilder();
 			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
-			this.memberMappingsList = new List<MemberMapping>();
+			this.methodDebugInfos = new List<MethodDebugInfo>();
 			this.canBeCached = true;
 		}
 
@@ -56,12 +55,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (hasCreatedResult)
 				throw new InvalidOperationException(nameof(CreateResult) + " can only be called once");
 			hasCreatedResult = true;
-			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextTokenColors, referenceBuilder.Create(), memberMappingsList.ToArray());
+			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextTokenColors, referenceBuilder.Create(), methodDebugInfos.ToArray());
 		}
 
 		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
 
-		public void AddDebugSymbols(MemberMapping memberMapping) => memberMappingsList.Add(memberMapping);
+		public void AddMethodDebugInfo(MethodDebugInfo methodDebugInfo) => methodDebugInfos.Add(methodDebugInfo);
 
 		public void Indent() => indentation++;
 
@@ -75,12 +74,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			addIndent = true;
 			cachedTextTokenColors.AppendLine();
 			stringBuilder.AppendLine();
-			line++;
-			lineStart = stringBuilder.Length;
 			Debug.Assert(stringBuilder.Length == cachedTextTokenColors.Length);
 		}
 
-		int GetIndentSize() => indentation;// Tabs are used
+		int GetIndentSize() => addIndent ? indentation : 0;// Tabs are used
 
 		void AddIndent() {
 			if (!addIndent)

@@ -23,7 +23,6 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
-using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.MVVM;
@@ -243,8 +242,8 @@ namespace dnSpy.Debugger.CallStack {
 				return false;
 			Remove(documentViewer);
 			bool movedCaret = false;
-			var cm = documentViewer.TryGetCodeMappings();
-			bool updateReturnStatements = cm != null && theDebugger.ProcessState == DebuggerProcessState.Paused;
+			var methodDebugService = documentViewer.TryGetMethodDebugService();
+			bool updateReturnStatements = methodDebugService != null && theDebugger.ProcessState == DebuggerProcessState.Paused;
 			if (updateReturnStatements) {
 				int frameNo = -1;
 				bool tooManyFrames;
@@ -269,16 +268,15 @@ namespace dnSpy.Debugger.CallStack {
 						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
 					var key = new SerializedDnToken(serAsm.Value, token);
 					uint offset = frame.GetILOffset(moduleLoader.Value);
-					MethodDef methodDef;
-					TextPosition location, endLocation;
-					var mm = cm.TryGetMapping(key);
-					if (mm != null && mm.GetInstructionByTokenAndOffset(offset, out methodDef, out location, out endLocation)) {
+					SourceStatement? sourceStatement;
+					var info = methodDebugService.TryGetMethodDebugInfo(key);
+					if (info != null && (sourceStatement = info.GetSourceStatementByCodeOffset(offset)) != null) {
 						var rs = new StackFrameLine(type, documentViewer, key, offset);
 						stackFrameLines.Add(rs);
 						textLineObjectManager.Add(rs);
 
 						if (moveCaret && frameNo == currentState.FrameNumber) {
-							documentViewer.ScrollAndMoveCaretTo(location.Line, location.Column);
+							documentViewer.ScrollAndMoveCaretToOffset(sourceStatement.Value.TextSpan.Start);
 							movedCaret = true;
 						}
 					}

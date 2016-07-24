@@ -27,8 +27,7 @@ namespace dnSpy.Decompiler.Shared {
 		bool needsIndent;
 		readonly char[] outputBuffer;
 
-		int line = 1;
-		int column = 1;
+		int offset;
 
 		public PlainTextOutput(TextWriter writer) {
 			if (writer == null)
@@ -41,7 +40,7 @@ namespace dnSpy.Decompiler.Shared {
 			this.writer = new StringWriter();
 		}
 
-		public TextPosition Location => new TextPosition(line - 1, column - 1 + (needsIndent ? indent : 0));
+		public int Position => offset + (needsIndent ? indent : 0);
 		public override string ToString() => writer.ToString();
 		public void Indent() => indent++;
 		public void Unindent() => indent--;
@@ -52,14 +51,14 @@ namespace dnSpy.Decompiler.Shared {
 				for (int i = 0; i < indent; i++) {
 					writer.Write('\t');
 				}
-				column += indent;
+				offset += indent;
 			}
 		}
 
 		public void Write(string text, object data) {
 			WriteIndent();
 			writer.Write(text);
-			column += text.Length;
+			offset += text.Length;
 		}
 
 		public void Write(string text, int index, int count, object data) {
@@ -78,7 +77,7 @@ namespace dnSpy.Decompiler.Shared {
 					index += len;
 				}
 			}
-			column += count;
+			offset += count;
 		}
 
 		public void Write(StringBuilder sb, int index, int count, object data) {
@@ -95,14 +94,16 @@ namespace dnSpy.Decompiler.Shared {
 					index += len;
 				}
 			}
-			column += count;
+			offset += count;
 		}
 
+		// We must know the length of the newline so we can increment offset by the correct length
+		static readonly char[] newLineArray = new char[] { '\r', '\n' };
 		public void WriteLine() {
-			writer.WriteLine();
+			var nlArray = newLineArray;
+			writer.Write(nlArray);
 			needsIndent = true;
-			line++;
-			column = 1;
+			offset += nlArray.Length;
 		}
 
 		public void WriteDefinition(string text, object definition, object data, bool isLocal) =>
@@ -119,6 +120,6 @@ namespace dnSpy.Decompiler.Shared {
 			WriteDefinition(text, definition, tokenKind.Box(), isLocal);
 		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false) =>
 			WriteReference(text, reference, tokenKind.Box(), isLocal);
-		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) { }
+		void ITextOutput.AddMethodDebugInfo(MethodDebugInfo methodDebugInfo) { }
 	}
 }

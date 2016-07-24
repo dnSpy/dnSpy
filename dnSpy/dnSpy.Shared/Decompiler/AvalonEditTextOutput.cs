@@ -99,8 +99,6 @@ namespace dnSpy.Shared.Decompiler {
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 
-		public readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
-
 		public AvalonEditTextOutput() {
 		}
 
@@ -114,7 +112,7 @@ namespace dnSpy.Shared.Decompiler {
 
 		public int TextLength => b.Length;
 		public override string ToString() => b.ToString();
-		public TextPosition Location => new TextPosition(lineNumber - 1, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0) - 1);
+		public int Position => b.Length + (needsIndent ? indent : 0);
 
 		public string GetCachedText() {
 			if (cachedText != null)
@@ -189,7 +187,7 @@ namespace dnSpy.Shared.Decompiler {
 			}
 		}
 
-		public void AddDebugSymbols(MemberMapping methodDebugSymbols) => DebuggerMemberMappings.Add(methodDebugSymbols);
+		public void AddMethodDebugInfo(MethodDebugInfo methodDebugInfo) { }
 
 		void Append(object data, string s) {
 			cachedTextTokenColors.Append(data, s);

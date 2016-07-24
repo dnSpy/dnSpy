@@ -69,12 +69,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, uiContext);
 
 				var teCtrl = (DocumentViewerControl)args.CreatorObject.Object;
-				var loc = teCtrl.TextView.GetTextEditorLocation(args.OpenedFromKeyboard);
+				var loc = teCtrl.TextView.GetTextEditorPosition(args.OpenedFromKeyboard);
 				if (loc != null) {
-					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, loc);
+					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 
-					int pos = teCtrl.TextView.LineColumnToPosition(loc.Value.Line, loc.Value.Column);
-					var @ref = teCtrl.GetReferenceInfo(pos);
+					var @ref = teCtrl.GetReferenceInfo(loc.Position);
 					if (@ref != null)
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.ToTextReference());
 				}
@@ -147,14 +146,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
 				return documentViewerControl.TextView.VisualElement; ;
-			}
-		}
-
-		public TextEditorLocation CaretLocation {
-			get {
-				if (isDisposed)
-					throw new ObjectDisposedException(nameof(IDocumentViewer));
-				return documentViewerControl.TextView.GetTextEditorLocation(); ;
 			}
 		}
 
@@ -362,16 +353,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			isDisposed = true;
 		}
 
-		public void ScrollAndMoveCaretTo(TextEditorLocation location) =>
-			ScrollAndMoveCaretTo(location.Line, location.Column);
-		public void ScrollAndMoveCaretTo(int line, int column) {
+		public void ScrollAndMoveCaretToOffset(int position) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (line < 0)
-				throw new ArgumentOutOfRangeException(nameof(line));
-			if (column < 0)
-				throw new ArgumentOutOfRangeException(nameof(column));
-			documentViewerControl.ScrollAndMoveCaretTo(line, column);
+			documentViewerControl.ScrollAndMoveCaretToOffset(position);
 		}
 
 		public SpanData<ReferenceInfo>? SelectedReference {
@@ -391,13 +376,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public object SaveReferencePosition() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			return documentViewerControl.SaveReferencePosition(this.GetCodeMappings());
+			return documentViewerControl.SaveReferencePosition(this.GetMethodDebugService());
 		}
 
 		public bool RestoreReferencePosition(object obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			return documentViewerControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
+			return documentViewerControl.RestoreReferencePosition(this.GetMethodDebugService(), obj);
 		}
 
 		public void MoveReference(bool forward) {

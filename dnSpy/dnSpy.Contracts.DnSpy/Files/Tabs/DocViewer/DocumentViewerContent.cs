@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the IL code mappings
 		/// </summary>
-		public ReadOnlyCollection<MemberMapping> MemberMappings { get; }
+		public ReadOnlyCollection<MethodDebugInfo> MethodDebugInfos { get; }
 
 		/// <summary>
 		/// Constructor
@@ -53,21 +53,21 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="text">Text</param>
 		/// <param name="colorCollection">Colors</param>
 		/// <param name="referenceCollection">References</param>
-		/// <param name="memberMappings">Debug info</param>
-		public DocumentViewerContent(string text, CachedTextTokenColors colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MemberMapping[] memberMappings) {
+		/// <param name="methodDebugInfos">Debug info</param>
+		public DocumentViewerContent(string text, CachedTextTokenColors colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MethodDebugInfo[] methodDebugInfos) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (colorCollection == null)
 				throw new ArgumentNullException(nameof(colorCollection));
 			if (referenceCollection == null)
 				throw new ArgumentNullException(nameof(referenceCollection));
-			if (memberMappings == null)
-				throw new ArgumentNullException(nameof(memberMappings));
+			if (methodDebugInfos == null)
+				throw new ArgumentNullException(nameof(methodDebugInfos));
 			colorCollection.Freeze();
 			Text = text;
 			ColorCollection = colorCollection;
 			ReferenceCollection = referenceCollection;
-			MemberMappings = new ReadOnlyCollection<MemberMapping>(memberMappings);
+			MethodDebugInfos = new ReadOnlyCollection<MethodDebugInfo>(methodDebugInfos);
 		}
 	}
 }

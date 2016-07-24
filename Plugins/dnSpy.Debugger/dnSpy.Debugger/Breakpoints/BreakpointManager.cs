@@ -57,7 +57,6 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Clear();
 		bool? GetAddRemoveBreakpointsInfo(out int count);
 		bool GetEnableDisableBreakpointsInfo(out int count);
-		void Toggle(IDocumentViewer documentViewer, int line, int column = -1);
 		Func<object, object> OnRemoveBreakpoints { get; set; }
 	}
 
@@ -255,7 +254,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				Remove(bp);
 		}
 
-		public bool CanToggleBreakpoint => fileTabManager.ActiveTab.TryGetDocumentViewer().GetCodeMappings().Count != 0;
+		public bool CanToggleBreakpoint => fileTabManager.ActiveTab.TryGetDocumentViewer().GetMethodDebugService().Count != 0;
 
 		public bool ToggleBreakpoint() {
 			if (!CanToggleBreakpoint)
@@ -264,8 +263,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var location = documentViewer.CaretLocation;
-			Toggle(documentViewer, location.Line, location.Column);
+			Toggle(documentViewer, documentViewer.Caret.Position.BufferPosition.Position);
 			return true;
 		}
 
@@ -274,8 +272,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
-			var location = documentViewer.CaretLocation;
-			var ilbps = GetILCodeBreakpoints(documentViewer, location.Line, location.Column);
+			var ilbps = GetILCodeBreakpoints(documentViewer, documentViewer.Caret.Position.BufferPosition);
 			count = ilbps.Count;
 			if (ilbps.Count == 0)
 				return null;
@@ -287,8 +284,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 				if (documentViewer == null)
 					return false;
-				var location = documentViewer.CaretLocation;
-				return GetILCodeBreakpoints(documentViewer, location.Line, location.Column).Count != 0;
+				return GetILCodeBreakpoints(documentViewer, documentViewer.Caret.Position.BufferPosition).Count != 0;
 			}
 		}
 
@@ -299,8 +295,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var location = documentViewer.CaretLocation;
-			var ilbps = GetILCodeBreakpoints(documentViewer, location.Line, location.Column);
+			var ilbps = GetILCodeBreakpoints(documentViewer, documentViewer.Caret.Position.BufferPosition);
 			bool isEnabled = IsEnabled(ilbps);
 			foreach (var ilbp in ilbps)
 				ilbp.IsEnabled = !isEnabled;
@@ -312,8 +307,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var location = documentViewer.CaretLocation;
-			var ilbps = GetILCodeBreakpoints(documentViewer, location.Line, location.Column);
+			var ilbps = GetILCodeBreakpoints(documentViewer, documentViewer.Caret.Position.BufferPosition);
 			count = ilbps.Count;
 			return IsEnabled(ilbps);
 		}
@@ -340,19 +334,19 @@ namespace dnSpy.Debugger.Breakpoints {
 			return false;
 		}
 
-		List<ILCodeBreakpoint> GetILCodeBreakpoints(IDocumentViewer documentViewer, int line, int column) =>
-			GetILCodeBreakpoints(documentViewer, documentViewer.GetCodeMappings().Find(line, column));
+		List<ILCodeBreakpoint> GetILCodeBreakpoints(IDocumentViewer documentViewer, int textPosition) =>
+			GetILCodeBreakpoints(documentViewer, documentViewer.GetMethodDebugService().FindByTextPosition(textPosition));
 
-		List<ILCodeBreakpoint> GetILCodeBreakpoints(IDocumentViewer documentViewer, IList<SourceCodeMapping> mappings) {
+		List<ILCodeBreakpoint> GetILCodeBreakpoints(IDocumentViewer documentViewer, IList<MethodSourceStatement> methodStatements) {
 			var list = new List<ILCodeBreakpoint>();
-			if (mappings.Count == 0)
+			if (methodStatements.Count == 0)
 				return list;
-			var mapping = mappings[0];
+			var methodStatement = methodStatements[0];
 			foreach (var ilbp in ILCodeBreakpoints) {
-				TextPosition location, endLocation;
-				if (!ilbp.GetLocation(documentViewer, out location, out endLocation))
+				TextSpan textSpan;
+				if (!ilbp.GetLocation(documentViewer, out textSpan))
 					continue;
-				if (location != mapping.StartPosition || endLocation != mapping.EndPosition)
+				if (textSpan != methodStatement.Statement.TextSpan)
 					continue;
 
 				list.Add(ilbp);
@@ -361,9 +355,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			return list;
 		}
 
-		public void Toggle(IDocumentViewer documentViewer, int line, int column = -1) {
-			var bps = documentViewer.GetCodeMappings().Find(line, column);
-			var ilbps = GetILCodeBreakpoints(documentViewer, bps);
+		public void Toggle(IDocumentViewer documentViewer, int textPosition) {
+			var statements = documentViewer.GetMethodDebugService().FindByTextPosition(textPosition);
+			var ilbps = GetILCodeBreakpoints(documentViewer, statements);
 			if (ilbps.Count > 0) {
 				if (IsEnabled(ilbps)) {
 					foreach (var ilbp in ilbps)
@@ -374,14 +368,14 @@ namespace dnSpy.Debugger.Breakpoints {
 						bpm.IsEnabled = true;
 				}
 			}
-			else if (bps.Count > 0) {
-				foreach (var bp in bps) {
-					var md = bp.Mapping.Method;
+			else if (statements.Count > 0) {
+				foreach (var methodStatement in statements) {
+					var md = methodStatement.Method;
 					var serMod = serializedDnModuleCreator.Create(md.Module);
 					var key = new SerializedDnToken(serMod, md.MDToken);
-					Add(new ILCodeBreakpoint(key, bp.ILRange.From));
+					Add(new ILCodeBreakpoint(key, methodStatement.Statement.BinSpan.Start));
 				}
-				documentViewer.ScrollAndMoveCaretTo(bps[0].StartPosition.Line, bps[0].StartPosition.Column);
+				documentViewer.ScrollAndMoveCaretToOffset(statements[0].Statement.TextSpan.Start);
 			}
 		}
 	}

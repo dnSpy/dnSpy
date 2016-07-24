@@ -531,7 +531,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool IsEnabled(IIconBarCommandContext context) => true;
-		public void Execute(IIconBarCommandContext context) => breakpointManager.Value.Toggle(context.DocumentViewer, context.Line);
+		public void Execute(IIconBarCommandContext context) { }//TODO: => breakpointManager.Value.Toggle(context.DocumentViewer, context.Line);
 	}
 
 	abstract class IconBarCommand : MenuItemBase<ILCodeBreakpoint> {

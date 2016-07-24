@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
+
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
 	/// <see cref="IDocumentViewerListener"/> constants
@@ -25,11 +27,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>Default order</summary>
 		public const double ORDER_DEFAULT = double.MaxValue;
 
-		/// <summary>Debugger: create code mappings</summary>
-		public const double ORDER_DEBUGGER_CODEMAPPINGSCREATOR = 1000;
+		/// <summary>Debugger: create debugger MethodDebugService</summary>
+		public const double ORDER_DEBUGGER_METHODDEBUGSERVICECREATOR = 1000;
 
-		/// <summary>create code mappings</summary>
-		public const double ORDER_CODEMAPPINGSCREATOR = 2000;
+		/// <summary>create <see cref="IMethodDebugService"/></summary>
+		public const double ORDER_METHODDEBUGSERVICECREATOR = 2000;
 
 		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
 		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = 3000;

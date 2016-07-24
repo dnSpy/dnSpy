@@ -27,67 +27,60 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Code mappings
 	/// </summary>
-	public interface ICodeMappings {
+	public interface IMethodDebugService {
 		/// <summary>
-		/// Number of mappings
+		/// Gets <see cref="MethodSourceStatement"/>s
 		/// </summary>
-		int Count { get; }
-
-		/// <summary>
-		/// Gets code mappings
-		/// </summary>
-		/// <param name="line">Line</param>
-		/// <param name="column">Column</param>
+		/// <param name="textPosition">Text position</param>
 		/// <returns></returns>
-		IList<SourceCodeMapping> Find(int line, int column);
+		IList<MethodSourceStatement> FindByTextPosition(int textPosition);
 
 		/// <summary>
-		/// Gets a code mapping
+		/// Gets a code <see cref="MethodSourceStatement"/>
 		/// </summary>
 		/// <param name="method">Method</param>
-		/// <param name="ilOffset">IL offset</param>
+		/// <param name="codeOffset">Code offset</param>
 		/// <returns></returns>
-		SourceCodeMapping Find(MethodDef method, uint ilOffset);
+		MethodSourceStatement? FindByCodeOffset(MethodDef method, uint codeOffset);
 	}
 
 	/// <summary>
 	/// Constants
 	/// </summary>
-	public static class CodeMappingsConstants {
+	internal static class MethodDebugServiceConstants {
 		/// <summary>
 		/// Code mappings key
 		/// </summary>
-		public static readonly object CodeMappingsKey = new object();
+		public static readonly object MethodDebugServiceKey = new object();
 	}
 
 	/// <summary>
 	/// Extension methods
 	/// </summary>
-	public static class CodeMappingsExtensions {
+	public static class MethodDebugServiceExtensions {
 		/// <summary>
-		/// Gets a <see cref="ICodeMappings"/> instance
+		/// Gets a <see cref="IMethodDebugService"/> instance
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ICodeMappings GetCodeMappings(this IDocumentViewer self) => self.TryGetCodeMappings() ?? EmptyCodeMappings.Instance;
+		public static IMethodDebugService GetMethodDebugService(this IDocumentViewer self) => self.TryGetMethodDebugService() ?? EmptyMethodDebugService.Instance;
 
 		/// <summary>
-		/// Gets a <see cref="ICodeMappings"/> or null if none exists
+		/// Gets a <see cref="IMethodDebugService"/> or null if none exists
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ICodeMappings TryGetCodeMappings(this IDocumentViewer self) {
+		public static IMethodDebugService TryGetMethodDebugService(this IDocumentViewer self) {
 			if (self == null)
 				return null;
-			return (ICodeMappings)self.GetContentData(CodeMappingsConstants.CodeMappingsKey);
+			return (IMethodDebugService)self.GetContentData(MethodDebugServiceConstants.MethodDebugServiceKey);
 		}
 
-		sealed class EmptyCodeMappings : ICodeMappings {
-			public static readonly EmptyCodeMappings Instance = new EmptyCodeMappings();
+		sealed class EmptyMethodDebugService : IMethodDebugService {
+			public static readonly EmptyMethodDebugService Instance = new EmptyMethodDebugService();
 
-			public int Count => 0;
-			public IList<SourceCodeMapping> Find(int line, int column) => Array.Empty<SourceCodeMapping>();
-			public SourceCodeMapping Find(MethodDef method, uint ilOffset) => null;
+			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition) => Array.Empty<MethodSourceStatement>();
+			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint ilOffset) => null;
 		}
 	}
 }

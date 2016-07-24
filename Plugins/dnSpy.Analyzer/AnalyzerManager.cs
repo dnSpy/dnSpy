@@ -41,6 +41,7 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Analyzer {
 	interface IAnalyzerManager {
@@ -283,47 +284,45 @@ namespace dnSpy.Analyzer {
 			var documentViewer = tab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return false;
-			var cm = documentViewer.GetCodeMappings();
-			var mapping = cm.Find(method, ilOffset.Value);
-			if (mapping == null)
+			var methodDebugService = documentViewer.GetMethodDebugService();
+			var methodStatement = methodDebugService.FindByCodeOffset(method, ilOffset.Value);
+			if (methodStatement == null)
 				return false;
 
-			var location = mapping.StartPosition;
-			var loc = FindLocation(GetTextReferences(documentViewer, location.Line, location.Column), mapping.EndPosition, @ref);
+			var textSpan = methodStatement.Value.Statement.TextSpan;
+			var loc = FindLocation(documentViewer.Content.ReferenceCollection.FindFrom(textSpan.Start), documentViewer.TextView.TextSnapshot, methodStatement.Value.Statement.TextSpan.End, @ref);
 			if (loc == null)
-				loc = new TextEditorLocation(location.Line, location.Column);
+				loc = textSpan.Start;
 
-			documentViewer.ScrollAndMoveCaretTo(loc.Value);
+			documentViewer.ScrollAndMoveCaretToOffset(loc.Value);
 			return true;
 		}
 
-		IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> GetTextReferences(IDocumentViewer documentViewer, int lineNumber, int columnNumber) {
-			int position = documentViewer.TextView.LineColumnToPosition(lineNumber, columnNumber);
-			var snapshot = documentViewer.TextView.TextSnapshot;
-			foreach (var spanData in documentViewer.Content.ReferenceCollection.FindFrom(position)) {
-				var line = snapshot.GetLineFromPosition(spanData.Span.Start);
-				int currentLineNumber = line.LineNumber;
-				int currentColumnNumber = spanData.Span.Start - line.Start.Position;
-				yield return Tuple.Create(spanData, new TextEditorLocation(currentLineNumber, currentColumnNumber));
-			}
+		static int GetLineNumber(ITextSnapshot snapshot, int position) {
+			Debug.Assert((uint)position <= (uint)snapshot.Length);
+			if ((uint)position > (uint)snapshot.Length)
+				return int.MaxValue;
+			return snapshot.GetLineFromPosition(position).LineNumber;
 		}
 
-		TextEditorLocation? FindLocation(IEnumerable<Tuple<SpanData<ReferenceInfo>, TextEditorLocation>> infos, TextPosition endLoc, object @ref) {
-			foreach (var info in infos) {
-				int c = Compare(info.Item2, endLoc);
+		int? FindLocation(IEnumerable<SpanData<ReferenceInfo>> refs, ITextSnapshot snapshot, int endPos, object @ref) {
+			int lb = GetLineNumber(snapshot, endPos);
+			foreach (var info in refs) {
+				var la = GetLineNumber(snapshot, info.Span.Start);
+				int c = Compare(la, info.Span.Start, lb, endPos);
 				if (c > 0)
 					break;
-				if (RefEquals(@ref, info.Item1.Data.Reference))
-					return info.Item2;
+				if (RefEquals(@ref, info.Data.Reference))
+					return info.Span.Start;
 			}
 			return null;
 		}
 
-		static int Compare(TextEditorLocation a, TextPosition b) {
-			if (a.Line > b.Line)
+		static int Compare(int la, int ca, int lb, int cb) {
+			if (la > lb)
 				return 1;
-			if (a.Line == b.Line)
-				return a.Column.CompareTo(b.Column);
+			if (la == lb)
+				return ca - cb;
 			return -1;
 		}
 

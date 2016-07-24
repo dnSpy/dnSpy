@@ -20,20 +20,25 @@
 using System;
 using System.Windows.Input;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	static class WpfTextViewExtensions {
-		public static TextEditorLocation? GetTextEditorLocation(this IWpfTextView textView, bool openedFromKeyboard) {
+		public static TextEditorPosition GetTextEditorPosition(this IWpfTextView textView, bool openedFromKeyboard) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (openedFromKeyboard)
-				return textView.GetTextEditorLocation();
-			return GetTextEditorLocationFromMouse(textView);
+				return GetTextEditorPosition(textView);
+			return GetTextEditorPositionFromMouse(textView);
 		}
 
-		static TextEditorLocation? GetTextEditorLocationFromMouse(IWpfTextView textView) {
+		static TextEditorPosition GetTextEditorPosition(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return new TextEditorPosition(textView.Caret.Position.VirtualBufferPosition);
+		}
+
+		static TextEditorPosition GetTextEditorPositionFromMouse(IWpfTextView textView) {
 			if (!textView.VisualElement.IsVisible)
 				return null;
 			var loc = MouseLocation.Create(textView, new MouseEventArgs(Mouse.PrimaryDevice, 0));
@@ -41,7 +46,7 @@ namespace dnSpy.Text.Editor {
 				return null;
 			if (loc.Point.X < textView.ViewportLeft || loc.Point.X >= textView.ViewportRight)
 				return null;
-			return loc.Position.ToTextEditorLocation();
+			return new TextEditorPosition(loc.Position);
 		}
 	}
 }

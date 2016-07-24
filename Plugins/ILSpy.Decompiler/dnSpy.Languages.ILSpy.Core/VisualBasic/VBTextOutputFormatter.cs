@@ -37,42 +37,20 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			this.output = output;
 		}
 
-		MemberMapping currentMemberMapping;
-		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
-		List<Tuple<MemberMapping, List<ILRange>>> multiMappings;
+		MethodDebugInfoBuilder currentMethodDebugInfoBuilder;
+		Stack<MethodDebugInfoBuilder> parentMethodDebugInfoBuilder = new Stack<MethodDebugInfoBuilder>();
+		List<Tuple<MethodDebugInfoBuilder, List<BinSpan>>> multiMappings;
 
 		public void StartNode(AstNode node) {
-//			var ranges = node.Annotation<List<ILRange>>();
-//			if (ranges != null && ranges.Count > 0)
-//			{
-//				// find the ancestor that has method mapping as annotation
-//				if (node.Ancestors != null && node.Ancestors.Count() > 0)
-//				{
-//					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
-//					if (n != null) {
-//						MemberMapping mapping = n.Annotation<MemberMapping>();
-//
-//						// add all ranges
-//						foreach (var range in ranges) {
-//							mapping.MemberCodeMappings.Add(new SourceCodeMapping {
-//							                               	ILInstructionOffset = range,
-//							                               	SourceCodeLine = output.CurrentLine,
-//							                               	MemberMapping = mapping
-//							                               });
-//						}
-//					}
-//				}
-//			}
-
 			nodeStack.Push(node);
 
-			MemberMapping mapping = node.Annotation<MemberMapping>();
+			MethodDebugInfoBuilder mapping = node.Annotation<MethodDebugInfoBuilder>();
 			if (mapping != null) {
-				parentMemberMappings.Push(currentMemberMapping);
-				currentMemberMapping = mapping;
+				parentMethodDebugInfoBuilder.Push(currentMethodDebugInfoBuilder);
+				currentMethodDebugInfoBuilder = mapping;
 			}
 			// For ctor/cctor field initializers
-			var mms = node.Annotation<List<Tuple<MemberMapping, List<ILRange>>>>();
+			var mms = node.Annotation<List<Tuple<MethodDebugInfoBuilder, List<BinSpan>>>>();
 			if (mms != null) {
 				Debug.Assert(multiMappings == null);
 				multiMappings = mms;
@@ -83,16 +61,16 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			if (nodeStack.Pop() != node)
 				throw new InvalidOperationException();
 
-			if (node.Annotation<MemberMapping>() != null) {
-				output.AddDebugSymbols(currentMemberMapping);
-				currentMemberMapping = parentMemberMappings.Pop();
+			if (node.Annotation<MethodDebugInfoBuilder>() != null) {
+				output.AddMethodDebugInfo(currentMethodDebugInfoBuilder.Create());
+				currentMethodDebugInfoBuilder = parentMethodDebugInfoBuilder.Pop();
 			}
-			var mms = node.Annotation<List<Tuple<MemberMapping, List<ILRange>>>>();
+			var mms = node.Annotation<List<Tuple<MethodDebugInfoBuilder, List<BinSpan>>>>();
 			if (mms != null) {
 				Debug.Assert(mms == multiMappings);
 				if (mms == multiMappings) {
 					foreach (var mm in mms)
-						output.AddDebugSymbols(mm.Item1);
+						output.AddMethodDebugInfo(mm.Item1.Create());
 					multiMappings = null;
 				}
 			}
@@ -288,17 +266,17 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		class DebugState {
 			public List<AstNode> Nodes = new List<AstNode>();
-			public List<ILRange> ExtraILRanges = new List<ILRange>();
-			public TextPosition StartLocation;
+			public List<BinSpan> ExtraBinSpans = new List<BinSpan>();
+			public int StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.Location });
+		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.Position });
 
 		public void DebugHidden(object hiddenILRanges) {
-			var list = hiddenILRanges as IList<ILRange>;
+			var list = hiddenILRanges as IList<BinSpan>;
 			if (list != null) {
 				if (debugStack.Count > 0)
-					debugStack.Peek().ExtraILRanges.AddRange(list);
+					debugStack.Peek().ExtraBinSpans.AddRange(list);
 			}
 		}
 
@@ -309,30 +287,30 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		public void DebugEnd(AstNode node) {
 			var state = debugStack.Pop();
-			if (currentMemberMapping != null) {
-				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state)))
-					currentMemberMapping.MemberCodeMappings.Add(new SourceCodeMapping(range, state.StartLocation, output.Location, currentMemberMapping));
+			if (currentMethodDebugInfoBuilder != null) {
+				foreach (var binSpan in BinSpan.OrderAndCompact(GetBinSpans(state)))
+					currentMethodDebugInfoBuilder.Add(new SourceStatement(binSpan, new TextSpan(state.StartLocation, output.Position - state.StartLocation)));
 			}
 			else if (multiMappings != null) {
 				foreach (var mm in multiMappings) {
-					foreach (var range in ILRange.OrderAndJoin(mm.Item2))
-						mm.Item1.MemberCodeMappings.Add(new SourceCodeMapping(range, state.StartLocation, output.Location, mm.Item1));
+					foreach (var binSpan in BinSpan.OrderAndCompact(mm.Item2))
+						mm.Item1.Add(new SourceStatement(binSpan, new TextSpan(state.StartLocation, output.Position - state.StartLocation)));
 				}
 			}
 		}
 
-		static IEnumerable<ILRange> GetILRanges(DebugState state) {
+		static IEnumerable<BinSpan> GetBinSpans(DebugState state) {
 			foreach (var node in state.Nodes) {
 				foreach (var ann in node.Annotations) {
-					var list = ann as IList<ILRange>;
+					var list = ann as IList<BinSpan>;
 					if (list == null)
 						continue;
 					foreach (var range in list)
 						yield return range;
 				}
 			}
-			foreach (var range in state.ExtraILRanges)
-				yield return range;
+			foreach (var binSpan in state.ExtraBinSpans)
+				yield return binSpan;
 		}
 	}
 }

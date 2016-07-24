@@ -69,7 +69,6 @@
     <Compile Include="CallStack\StackFrameLine.cs" />
     <Compile Include="CallStack\StackFrameManager.cs" />
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
-    <Compile Include="CodeMappings.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="Logger\ContentTypeDefinitions.cs" />
     <Compile Include="Logger\OutputLogger.cs" />
     <Compile Include="Logger\OutputLoggerSettings.cs" />
+    <Compile Include="MethodDebugService.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="OutputWriterConverter.cs" />
     <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">

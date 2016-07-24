@@ -21,10 +21,8 @@ using System.Linq;
 using dnlib.DotNet;
 
 namespace dnSpy.Decompiler.Shared {
-	public static class TypesHierarchyHelpers
-	{
-		public static bool IsBaseType(TypeDef baseType, TypeDef derivedType, bool resolveTypeArguments)
-		{
+	public static class TypesHierarchyHelpers {
+		public static bool IsBaseType(TypeDef baseType, TypeDef derivedType, bool resolveTypeArguments) {
 			if (baseType == null || derivedType == null)
 				return false;
 			if (resolveTypeArguments)
@@ -52,8 +50,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// <param name="childMethod">The method declared in a derived type.</param>
 		/// <returns>true if <paramref name="childMethod"/> hides or overrides <paramref name="parentMethod"/>,
 		/// otherwise false.</returns>
-		public static bool IsBaseMethod(MethodDef parentMethod, MethodDef childMethod)
-		{
+		public static bool IsBaseMethod(MethodDef parentMethod, MethodDef childMethod) {
 			if (parentMethod == null)
 				return false;
 			if (childMethod == null)
@@ -78,8 +75,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// <param name="childProperty">The property declared in a derived type.</param>
 		/// <returns>true if the <paramref name="childProperty"/> hides or overrides <paramref name="parentProperty"/>,
 		/// otherwise false.</returns>
-		public static bool IsBaseProperty(PropertyDef parentProperty, PropertyDef childProperty)
-		{
+		public static bool IsBaseProperty(PropertyDef parentProperty, PropertyDef childProperty) {
 			if (parentProperty == null)
 				return false;
 			if (childProperty == null)
@@ -97,8 +93,7 @@ namespace dnSpy.Decompiler.Shared {
 			return FindBaseProperties(childProperty).Any(m => m == parentProperty);
 		}
 
-		public static bool IsBaseEvent(EventDef parentEvent, EventDef childEvent)
-		{
+		public static bool IsBaseEvent(EventDef parentEvent, EventDef childEvent) {
 			if (parentEvent == null || parentEvent.Name != childEvent.Name)
 				return false;
 
@@ -110,8 +105,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// </summary>
 		/// <param name="method">The method which overrides or hides methods from base types.</param>
 		/// <returns>Methods overriden or hidden by the specified method.</returns>
-		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef method)
-		{
+		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef method) {
 			if (method == null)
 				yield break;
 
@@ -129,8 +123,7 @@ namespace dnSpy.Decompiler.Shared {
 			}
 		}
 
-		private static bool MatchMethod(MethodDef mCandidate, MethodSig mCandidateSig, MethodDef mMethod)
-		{
+		private static bool MatchMethod(MethodDef mCandidate, MethodSig mCandidateSig, MethodDef mMethod) {
 			if (mCandidate == null || mCandidateSig == null || mMethod == null)
 				return false;
 
@@ -169,12 +162,12 @@ namespace dnSpy.Decompiler.Shared {
 			return new SigComparer().Equals(mCandidateSig.Params, mMethod.MethodSig.Params);
 		}
 
-		public static bool MatchInterfaceMethod(MethodDef candidate, MethodDef method, ITypeDefOrRef interfaceContextType)
-		{
+		public static bool MatchInterfaceMethod(MethodDef candidate, MethodDef method, ITypeDefOrRef interfaceContextType) {
 			var genericInstSig = interfaceContextType.TryGetGenericInstSig();
 			if (genericInstSig != null) {
 				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate == null ? null : candidate.MethodSig, genericInstSig.GenericArguments, null), method);
-			} else {
+			}
+			else {
 				return MatchMethod(candidate, candidate == null ? null : candidate.MethodSig, method);
 			}
 		}
@@ -184,8 +177,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// </summary>
 		/// <param name="property">The property which overrides or hides properties from base types.</param>
 		/// <returns>Properties overriden or hidden by the specified property.</returns>
-		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef property)
-		{
+		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef property) {
 			if (property == null)
 				yield break;
 
@@ -213,8 +205,7 @@ namespace dnSpy.Decompiler.Shared {
 			}
 		}
 
-		private static bool MatchProperty(PropertyDef mCandidate, MethodSig mCandidateSig, PropertyDef mProperty)
-		{
+		private static bool MatchProperty(PropertyDef mCandidate, MethodSig mCandidateSig, PropertyDef mProperty) {
 			if (mCandidate == null || mCandidateSig == null || mProperty == null)
 				return false;
 			if (mCandidate.Name != mProperty.Name)
@@ -230,8 +221,7 @@ namespace dnSpy.Decompiler.Shared {
 			return new SigComparer().Equals(mCandidateSig.Params, mProperty.PropertySig.Params);
 		}
 
-		public static IEnumerable<EventDef> FindBaseEvents(EventDef eventDef)
-		{
+		public static IEnumerable<EventDef> FindBaseEvents(EventDef eventDef) {
 			if (eventDef == null)
 				yield break;
 
@@ -253,8 +243,7 @@ namespace dnSpy.Decompiler.Shared {
 			}
 		}
 
-		private static bool MatchEvent(EventDef mCandidate, TypeSig mCandidateType, EventDef mEvent, TypeSig mEventType)
-		{
+		private static bool MatchEvent(EventDef mCandidate, TypeSig mCandidateType, EventDef mEvent, TypeSig mEventType) {
 			if (mCandidate == null || mCandidateType == null || mEvent == null || mEventType == null)
 				return false;
 			if (mCandidate.Name != mEvent.Name)
@@ -276,8 +265,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// <param name="baseMember">The member which visibility is checked.</param>
 		/// <param name="derivedType">The derived type.</param>
 		/// <returns>true if the member is visible from derived type, othewise false.</returns>
-		public static bool IsVisibleFromDerived(IMemberDef baseMember, TypeDef derivedType)
-		{
+		public static bool IsVisibleFromDerived(IMemberDef baseMember, TypeDef derivedType) {
 			if (baseMember == null)
 				return false;
 			if (derivedType == null)
@@ -317,8 +305,7 @@ namespace dnSpy.Decompiler.Shared {
 		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
 		static readonly UTF8String internalsVisibleToAttributeString = new UTF8String("InternalsVisibleToAttribute");
 
-		static bool Compare(ITypeDefOrRef type, UTF8String expNs, UTF8String expName)
-		{
+		static bool Compare(ITypeDefOrRef type, UTF8String expNs, UTF8String expName) {
 			if (type == null)
 				return false;
 
@@ -332,8 +319,7 @@ namespace dnSpy.Decompiler.Shared {
 			return false;
 		}
 
-		private static MethodAttributes GetAccessAttributes(IMemberDef member)
-		{
+		private static MethodAttributes GetAccessAttributes(IMemberDef member) {
 			var fld = member as FieldDef;
 			if (fld != null)
 				return (MethodAttributes)fld.Attributes;
@@ -346,7 +332,7 @@ namespace dnSpy.Decompiler.Shared {
 			if (prop != null) {
 				var accMeth = prop.GetMethod ?? prop.SetMethod;
 				return accMeth == null ? 0 : accMeth.Attributes;
-		}
+			}
 
 			var evnt = member as EventDef;
 			if (evnt != null) {
@@ -366,8 +352,7 @@ namespace dnSpy.Decompiler.Shared {
 			return 0;
 		}
 
-		private static IEnumerable<TypeSig> BaseTypes(TypeDef typeDef)
-		{
+		private static IEnumerable<TypeSig> BaseTypes(TypeDef typeDef) {
 			if (typeDef == null)
 				yield break;
 			if (typeDef.BaseType == null)
@@ -385,14 +370,12 @@ namespace dnSpy.Decompiler.Shared {
 			} while (typeDef.BaseType != null);
 		}
 
-		private static TypeSig Resolve(TypeSig type, TypeSig typeContext)
-		{
+		private static TypeSig Resolve(TypeSig type, TypeSig typeContext) {
 			var genericArgs = typeContext is GenericInstSig ? ((GenericInstSig)typeContext).GenericArguments : null;
 			return GenericArgumentResolver.Resolve(type, genericArgs, null);
 		}
 
-		private static MethodSig Resolve(MethodBaseSig method, TypeSig typeContext)
-		{
+		private static MethodSig Resolve(MethodBaseSig method, TypeSig typeContext) {
 			var genericArgs = typeContext is GenericInstSig ? ((GenericInstSig)typeContext).GenericArguments : null;
 			return GenericArgumentResolver.Resolve(method, genericArgs, null);
 		}

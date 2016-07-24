@@ -338,21 +338,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public IEnumerable<Tuple<TextReference, TextEditorLocation>> GetTextReferences(int line, int column) {
-			int offset = LineColumnToOffset(line, column);
-			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
-
-			while (refSeg != null) {
-				yield return Tuple.Create(refSeg.ToTextReference(), GetLocation(refSeg));
-				refSeg = references.GetNextSegment(refSeg);
-			}
-		}
-
-		TextEditorLocation GetLocation(ReferenceSegment refSeg) {
-			var line = wpfTextView.TextSnapshot.GetLineFromPosition(refSeg.StartOffset);
-			return new TextEditorLocation(line.LineNumber, refSeg.StartOffset - line.Start.Position);
-		}
-
 		public ReferenceSegment GetReferenceSegmentAt(int offset) {
 			var segs = references.FindSegmentsContaining(offset).ToArray();
 			foreach (var seg in segs) {
@@ -678,9 +663,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				wpfTextViewHost.Close();
 		}
 
-		public object SaveReferencePosition(ICodeMappings cms) => GetRefPos(cms);
+		public object SaveReferencePosition(IMethodDebugService cms) => GetRefPos(cms);
 
-		public bool RestoreReferencePosition(ICodeMappings cms, object obj) {
+		public bool RestoreReferencePosition(IMethodDebugService cms, object obj) {
 			var refPos = obj as RefPos;
 			if (refPos == null)
 				return false;
@@ -688,77 +673,15 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		sealed class RefPos {
-			public SourceCodeMapping SourceCodeMapping;
-			public ReferenceSegment ReferenceSegment;
-
-			public RefPos(IList<SourceCodeMapping> sourceCodeMappings) {
-				this.SourceCodeMapping = sourceCodeMappings.Count > 0 ? sourceCodeMappings[0] : null;
-			}
-
-			public RefPos(ReferenceSegment refSeg) {
-				this.ReferenceSegment = refSeg;
-			}
 		}
 
 		int LineColumnToOffset(TextLocation location) => LineColumnToOffset(location.Line - 1, location.Column - 1);
-		int LineColumnToOffset(TextPosition pos) => LineColumnToOffset(pos.Line, pos.Column);
 		int LineColumnToOffset(int line, int column) {
 			var snapshotLine = wpfTextView.TextSnapshot.GetLineFromLineNumber(line);
 			return snapshotLine.Start.Position + column;
 		}
 
-		RefPos GetRefPos(ICodeMappings cms) {
-			int caretPos = wpfTextView.Caret.Position.BufferPosition.Position;
-			var line = wpfTextView.TextSnapshot.GetLineFromPosition(caretPos);
-			var mappings = cms.Find(line.LineNumber, caretPos - line.Start.Position).ToList();
-			mappings.Sort(Sort);
-			var mapping = mappings.Count == 0 ? null : mappings[0];
-
-			int offset = line.Start.Position;
-			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
-			while (refSeg != null) {
-				if (refSeg.Reference is IMemberDef && refSeg.IsLocalTarget && !refSeg.IsLocal)
-					break;
-				refSeg = references.GetNextSegment(refSeg);
-			}
-			if (mapping == null) {
-				if (refSeg != null)
-					return new RefPos(refSeg);
-			}
-			else if (refSeg == null)
-				return new RefPos(mappings);
-			else {
-				offset = LineColumnToOffset(mapping.StartPosition);
-				if (offset < refSeg.StartOffset)
-					return new RefPos(mappings);
-				return new RefPos(refSeg);
-			}
-
-			return null;
-		}
-
-		static int Sort(SourceCodeMapping a, SourceCodeMapping b) => a.StartPosition.CompareTo(b.StartPosition);
-
-		bool GoTo(ICodeMappings cms, RefPos pos) {
-			if (pos == null)
-				return false;
-
-			if (pos.SourceCodeMapping != null) {
-				var mapping = pos.SourceCodeMapping;
-				var scm = cms.Find(mapping.Mapping.Method, mapping.ILRange.From);
-				if (scm != null) {
-					ScrollAndMoveCaretTo(scm.StartPosition.Line, scm.StartPosition.Column);
-					return true;
-				}
-			}
-
-			if (pos.ReferenceSegment != null) {
-				var refSeg = FindReferenceSegment(pos.ReferenceSegment);
-				if (refSeg != null)
-					return GoToTarget(refSeg, false, false);
-			}
-
-			return false;
-		}
+		RefPos GetRefPos(IMethodDebugService cms) => null;
+		bool GoTo(IMethodDebugService cms, RefPos pos) => false;
 	}
 }
