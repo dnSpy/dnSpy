@@ -147,8 +147,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				return null;
 			if (spanData.Data.IsDefinition)
 				return HighlightedDefinitionTag;
-			const bool isWrittenReference = false;//TODO:
-			return isWrittenReference ? HighlightedWrittenReferenceTag : HighlightedReferenceTag;
+			return spanData.Data.IsWrite ? HighlightedWrittenReferenceTag : HighlightedReferenceTag;
 		}
 
 		public IEnumerable<ITagSpan<ITextMarkerTag>> GetTags(NormalizedSnapshotSpanCollection spans) {

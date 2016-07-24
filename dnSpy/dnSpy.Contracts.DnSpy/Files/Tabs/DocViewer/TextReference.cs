@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
@@ -30,14 +31,24 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		public object Reference { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DecompilerReferenceFlags Flags { get; }
+
+		/// <summary>
 		/// true if it's a local, parameter, or label
 		/// </summary>
-		public bool IsLocal { get; }
+		public bool IsLocal => (Flags & DecompilerReferenceFlags.Local) != 0;
 
 		/// <summary>
 		/// true if it's a definition
 		/// </summary>
-		public bool IsDefinition { get; }
+		public bool IsDefinition => (Flags & DecompilerReferenceFlags.Definition) != 0;
+
+		/// <summary>
+		/// true if it's a write to a reference
+		/// </summary>
+		public bool IsWrite => (Flags & DecompilerReferenceFlags.IsWrite) != 0;
 
 		/// <summary>
 		/// Gets the span or null if it's unknown
@@ -49,7 +60,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="reference">Reference or null</param>
 		public TextReference(object reference)
-			: this(reference, false, false) {
+			: this(reference, DecompilerReferenceFlags.None) {
 		}
 
 		/// <summary>
@@ -58,19 +69,17 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="reference">Reference or null</param>
 		/// <param name="span">Span</param>
 		public TextReference(object reference, Span span)
-			: this(reference, false, false, span) {
+			: this(reference, DecompilerReferenceFlags.None, span) {
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference or null</param>
-		/// <param name="isLocal">true if it's a local, parameter, or label</param>
-		/// <param name="isDefinition">true if it's a definition</param>
-		public TextReference(object reference, bool isLocal, bool isDefinition) {
+		/// <param name="flags">Flags</param>
+		public TextReference(object reference, DecompilerReferenceFlags flags) {
 			this.Reference = reference;
-			this.IsLocal = isLocal;
-			this.IsDefinition = isDefinition;
+			this.Flags = flags;
 			this.Span = null;
 		}
 
@@ -78,13 +87,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference or null</param>
-		/// <param name="isLocal">true if it's a local, parameter, or label</param>
-		/// <param name="isDefinition">true if it's a definition</param>
+		/// <param name="flags">Flags</param>
 		/// <param name="span">Span</param>
-		public TextReference(object reference, bool isLocal, bool isDefinition, Span span) {
+		public TextReference(object reference, DecompilerReferenceFlags flags, Span span) {
 			this.Reference = reference;
-			this.IsLocal = isLocal;
-			this.IsDefinition = isDefinition;
+			this.Flags = flags;
 			this.Span = span;
 		}
 	}

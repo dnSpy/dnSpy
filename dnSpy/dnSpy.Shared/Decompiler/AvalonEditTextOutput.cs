@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -44,7 +42,9 @@ namespace dnSpy.Shared.Decompiler {
 				IsLocalTarget == textRef.IsDefinition;
 		}
 
-		public TextReference ToTextReference() => new TextReference(Reference, IsLocal, IsLocalTarget);
+		public TextReference ToTextReference() {
+			throw new NotImplementedException();
+		}
 	}
 
 	/// <summary>

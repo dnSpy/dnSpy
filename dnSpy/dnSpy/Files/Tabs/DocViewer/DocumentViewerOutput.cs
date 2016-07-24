@@ -134,7 +134,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
-			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(reference, (flags & DecompilerReferenceFlags.Local) != 0, (flags & DecompilerReferenceFlags.Definition) != 0));
+			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(reference, flags));
 			AddText(text, color);
 		}
 

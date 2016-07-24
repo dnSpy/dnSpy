@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Text;
+using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
@@ -32,39 +33,47 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		public object Reference { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DecompilerReferenceFlags Flags { get; }
+
+		/// <summary>
 		/// true if it's a local, parameter, or label
 		/// </summary>
-		public bool IsLocal { get; }
+		public bool IsLocal => (Flags & DecompilerReferenceFlags.Local) != 0;
 
 		/// <summary>
 		/// true if it's a definition
 		/// </summary>
-		public bool IsDefinition { get; }
+		public bool IsDefinition => (Flags & DecompilerReferenceFlags.Definition) != 0;
+
+		/// <summary>
+		/// true if it's a write to a reference
+		/// </summary>
+		public bool IsWrite => (Flags & DecompilerReferenceFlags.IsWrite) != 0;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference or null</param>
-		/// <param name="isLocal">true if it's a local, parameter, or label</param>
-		/// <param name="isDefinition">true if it's a definition</param>
-		public ReferenceInfo(object reference, bool isLocal, bool isDefinition) {
+		/// <param name="flags">Flags</param>
+		public ReferenceInfo(object reference, DecompilerReferenceFlags flags) {
 			Reference = reference;
-			IsLocal = isLocal;
-			IsDefinition = isDefinition;
+			Flags = flags;
 		}
 
 		/// <summary>
 		/// Creates a <see cref="TextReference"/> instance
 		/// </summary>
 		/// <returns></returns>
-		public TextReference ToTextReference() => new TextReference(Reference, IsLocal, IsDefinition);
+		public TextReference ToTextReference() => new TextReference(Reference, Flags);
 
 		/// <summary>
 		/// Creates a <see cref="TextReference"/> instance
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <returns></returns>
-		public TextReference ToTextReference(Span span) => new TextReference(Reference, IsLocal, IsDefinition, span);
+		public TextReference ToTextReference(Span span) => new TextReference(Reference, Flags, span);
 
 		/// <summary>
 		/// operator ==()
@@ -87,7 +96,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(ReferenceInfo other) => IsLocal == other.IsLocal && IsDefinition == other.IsDefinition && Equals(Reference, other.Reference);
+		public bool Equals(ReferenceInfo other) => Flags == other.Flags && Equals(Reference, other.Reference);
 
 		/// <summary>
 		/// Equals()
@@ -100,7 +109,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => (Reference?.GetHashCode() ?? int.MinValue) ^ (IsLocal ? 0x40000000 : 0) ^ (IsDefinition ? 0x20000000 : 0);
+		public override int GetHashCode() => (Reference?.GetHashCode() ?? int.MinValue) ^ (int)Flags;
 	}
 
 	/// <summary>
