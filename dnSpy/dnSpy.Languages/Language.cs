@@ -68,7 +68,7 @@ namespace dnSpy.Languages {
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
 				this.WriteCommentBegin(output, true);
-				output.Write(IdentifierEscaper.Escape(type.Name), type, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
+				output.Write(IdentifierEscaper.Escape(type.Name), type, DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -89,7 +89,7 @@ namespace dnSpy.Languages {
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(dnSpy_Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
+				output.Write(string.Format(dnSpy_Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedOutputColor.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -101,8 +101,8 @@ namespace dnSpy.Languages {
 			output.WriteLine();
 			if (mod.Types.Count > 0) {
 				this.WriteCommentBegin(output, true);
-				output.Write(dnSpy_Languages_Resources.Decompile_GlobalType + " ", BoxedTextTokenKind.Comment);
-				output.Write(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
+				output.Write(dnSpy_Languages_Resources.Decompile_GlobalType + " ", BoxedOutputColor.Comment);
+				output.Write(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
 				output.WriteLine();
 			}
 			this.PrintEntryPoint(mod, output);
@@ -120,7 +120,7 @@ namespace dnSpy.Languages {
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(dnSpy_Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
+				output.Write(string.Format(dnSpy_Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedOutputColor.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -150,12 +150,12 @@ namespace dnSpy.Languages {
 			else if (ep is MethodDef) {
 				var epMethod = (MethodDef)ep;
 				WriteCommentBegin(output, true);
-				output.Write(dnSpy_Languages_Resources.Decompile_EntryPoint + " ", BoxedTextTokenKind.Comment);
+				output.Write(dnSpy_Languages_Resources.Decompile_EntryPoint + " ", BoxedOutputColor.Comment);
 				if (epMethod.DeclaringType != null) {
-					output.Write(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
-					output.Write(".", BoxedTextTokenKind.Comment);
+					output.Write(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
+					output.Write(".", BoxedOutputColor.Comment);
 				}
-				output.Write(IdentifierEscaper.Escape(epMethod.Name), epMethod, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
+				output.Write(IdentifierEscaper.Escape(epMethod.Name), epMethod, DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -190,16 +190,16 @@ namespace dnSpy.Languages {
 
 		protected void WriteCommentLineDeclaringType(IDecompilerOutput output, IMemberDef member) {
 			WriteCommentBegin(output, true);
-			output.Write(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
+			output.Write(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 
 		public virtual void WriteCommentBegin(IDecompilerOutput output, bool addSpace) {
 			if (addSpace)
-				output.Write("// ", BoxedTextTokenKind.Comment);
+				output.Write("// ", BoxedOutputColor.Comment);
 			else
-				output.Write("//", BoxedTextTokenKind.Comment);
+				output.Write("//", BoxedOutputColor.Comment);
 		}
 
 		public virtual void WriteCommentEnd(IDecompilerOutput output, bool addSpace) { }
@@ -214,9 +214,9 @@ namespace dnSpy.Languages {
 			if (type == null)
 				return;
 			if (includeNamespace)
-				output.Write(IdentifierEscaper.Escape(type.FullName), TextTokenKindUtils.GetTextTokenKind(type));
+				output.Write(IdentifierEscaper.Escape(type.FullName), OutputColorHelper.GetColor(type));
 			else
-				output.Write(IdentifierEscaper.Escape(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
+				output.Write(IdentifierEscaper.Escape(type.Name), OutputColorHelper.GetColor(type));
 		}
 
 		public virtual void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
@@ -238,13 +238,13 @@ namespace dnSpy.Languages {
 		protected virtual void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)
 				throw new ArgumentNullException(nameof(property));
-			output.Write(IdentifierEscaper.Escape(property.Name), TextTokenKindUtils.GetTextTokenKind(property));
+			output.Write(IdentifierEscaper.Escape(property.Name), OutputColorHelper.GetColor(property));
 		}
 
 		protected virtual void FormatTypeName(IDecompilerOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
-			output.Write(IdentifierEscaper.Escape(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
+			output.Write(IdentifierEscaper.Escape(type.Name), OutputColorHelper.GetColor(type));
 		}
 
 		public virtual bool ShowMember(IMemberRef member) => true;

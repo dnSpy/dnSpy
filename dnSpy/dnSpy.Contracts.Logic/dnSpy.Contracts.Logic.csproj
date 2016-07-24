@@ -97,6 +97,7 @@
     <Compile Include="Text\IOutputColorWriterExtensions.cs" />
     <Compile Include="Text\NameUtilities.cs" />
     <Compile Include="Text\OutputColor.cs" />
+    <Compile Include="Text\OutputColorHelper.cs" />
     <Compile Include="Utilities\GacInfo.cs" />
     <Compile Include="Utilities\SimpleTypeConverter.cs" />
   </ItemGroup>

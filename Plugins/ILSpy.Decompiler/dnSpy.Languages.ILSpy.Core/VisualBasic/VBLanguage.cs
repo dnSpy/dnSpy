@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Text;
 using dnSpy.Languages.ILSpy.Core.Text;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Languages.ILSpy.VisualBasic {
 	sealed class LanguageProvider : ILanguageProvider {
@@ -79,9 +80,9 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		public override void WriteCommentBegin(IDecompilerOutput output, bool addSpace) {
 			if (addSpace)
-				output.Write("' ", BoxedTextTokenKind.Comment);
+				output.Write("' ", BoxedOutputColor.Comment);
 			else
-				output.Write("'", BoxedTextTokenKind.Comment);
+				output.Write("'", BoxedOutputColor.Comment);
 		}
 
 		public override void WriteCommentEnd(IDecompilerOutput output, bool addSpace) { }
@@ -232,8 +233,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
 			if (type.TryGetByRefSig() != null) {
-				output.Write("ByRef", BoxedTextTokenKind.Keyword);
-				output.Write(" ", BoxedTextTokenKind.Text);
+				output.Write("ByRef", BoxedOutputColor.Keyword);
+				output.Write(" ", BoxedOutputColor.Text);
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
 					((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank--;
 			}

@@ -28,6 +28,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Files.TreeView.Resources {
@@ -71,7 +72,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			if (documentViewerOutput != null) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
-						output.Write(" ", BoxedTextTokenKind.Text);
+						output.Write(" ", BoxedOutputColor.Text);
 					var imageSource = imageListOptions.ImageSources[i];
 					documentViewerOutput.AddUIElement(() => {
 						return new System.Windows.Controls.Image {

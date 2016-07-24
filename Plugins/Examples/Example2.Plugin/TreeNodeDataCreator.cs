@@ -114,11 +114,11 @@ namespace Example2.Plugin {
 			context.ContentTypeString = ContentTypes.CSharp;
 			context.Output.WriteLine("// Initialize it to the secret key", BoxedOutputColor.Comment);
 			context.Output.Write("int", new StringInfoReference("This is a reference added by the code"), DecompilerReferenceFlags.None, BoxedOutputColor.Keyword);
-			context.Output.Write(" ", BoxedTextTokenKind.Text);
+			context.Output.Write(" ", BoxedOutputColor.Text);
 			context.Output.Write("secret", new StringInfoReference("The real secret is actually 42 not 1234"), DecompilerReferenceFlags.None, BoxedOutputColor.Local);
-			context.Output.Write(" ", BoxedTextTokenKind.Text);
+			context.Output.Write(" ", BoxedOutputColor.Text);
 			context.Output.Write("=", BoxedOutputColor.Operator);
-			context.Output.Write(" ", BoxedTextTokenKind.Text);
+			context.Output.Write(" ", BoxedOutputColor.Text);
 			context.Output.Write("1234", BoxedOutputColor.Number);
 			context.Output.Write(";", BoxedOutputColor.Punctuation);
 			context.Output.WriteLine();

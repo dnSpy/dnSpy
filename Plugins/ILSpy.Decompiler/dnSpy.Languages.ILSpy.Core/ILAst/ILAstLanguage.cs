@@ -83,8 +83,8 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 
 		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentBegin(output, true);
-			output.Write("Method: ", BoxedTextTokenKind.Comment);
-			output.Write(IdentifierEscaper.Escape(method.FullName), method, DecompilerReferenceFlags.Definition, BoxedTextTokenKind.Comment);
+			output.Write("Method: ", BoxedOutputColor.Comment);
+			output.Write(IdentifierEscaper.Escape(method.FullName), method, DecompilerReferenceFlags.Definition, BoxedOutputColor.Comment);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 
@@ -104,30 +104,30 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			}
 
 			if (context.CurrentMethodIsAsync) {
-				output.Write("async", BoxedTextTokenKind.Keyword);
-				output.Write("/", BoxedTextTokenKind.Punctuation);
-				output.WriteLine("await", BoxedTextTokenKind.Keyword);
+				output.Write("async", BoxedOutputColor.Keyword);
+				output.Write("/", BoxedOutputColor.Punctuation);
+				output.WriteLine("await", BoxedOutputColor.Keyword);
 			}
 
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.Write(IdentifierEscaper.Escape(v.Name), v, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextTokenKind.Parameter : BoxedTextTokenKind.Local);
+				output.Write(IdentifierEscaper.Escape(v.Name), v, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedOutputColor.Parameter : BoxedOutputColor.Local);
 				if (v.Type != null) {
-					output.Write(" ", BoxedTextTokenKind.Text);
-					output.Write(":", BoxedTextTokenKind.Punctuation);
-					output.Write(" ", BoxedTextTokenKind.Text);
+					output.Write(" ", BoxedOutputColor.Text);
+					output.Write(":", BoxedOutputColor.Punctuation);
+					output.Write(" ", BoxedOutputColor.Text);
 					if (v.IsPinned) {
-						output.Write("pinned", BoxedTextTokenKind.Keyword);
-						output.Write(" ", BoxedTextTokenKind.Text);
+						output.Write("pinned", BoxedOutputColor.Keyword);
+						output.Write(" ", BoxedOutputColor.Text);
 					}
 					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
 				if (v.GeneratedByDecompiler) {
-					output.Write(" ", BoxedTextTokenKind.Text);
-					output.Write("[", BoxedTextTokenKind.Punctuation);
-					output.Write("generated", BoxedTextTokenKind.Keyword);
-					output.Write("]", BoxedTextTokenKind.Punctuation);
+					output.Write(" ", BoxedOutputColor.Text);
+					output.Write("[", BoxedOutputColor.Punctuation);
+					output.Write("generated", BoxedOutputColor.Keyword);
+					output.Write("]", BoxedOutputColor.Punctuation);
 				}
 				output.WriteLine();
 			}
@@ -143,18 +143,18 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		}
 
 		void StartKeywordBlock(IDecompilerOutput output, string keyword, IMemberDef member) {
-			output.Write(keyword, BoxedTextTokenKind.Keyword);
-			output.Write(" ", BoxedTextTokenKind.Text);
-			output.Write(IdentifierEscaper.Escape(member.Name), member, DecompilerReferenceFlags.Definition, TextTokenKindUtils.GetTextTokenKind(member));
-			output.Write(" ", BoxedTextTokenKind.Text);
-			output.Write("{", BoxedTextTokenKind.Punctuation);
+			output.Write(keyword, BoxedOutputColor.Keyword);
+			output.Write(" ", BoxedOutputColor.Text);
+			output.Write(IdentifierEscaper.Escape(member.Name), member, DecompilerReferenceFlags.Definition, OutputColorHelper.GetColor(member));
+			output.Write(" ", BoxedOutputColor.Text);
+			output.Write("{", BoxedOutputColor.Punctuation);
 			output.WriteLine();
 			output.Indent();
 		}
 
 		void EndKeywordBlock(IDecompilerOutput output) {
 			output.Unindent();
-			output.Write("}", BoxedTextTokenKind.Punctuation);
+			output.Write("}", BoxedOutputColor.Punctuation);
 			output.WriteLine();
 		}
 
@@ -180,27 +180,27 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		}
 
 		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
-			output.Write(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), DecompilerReferenceFlags.None, TextTokenKindUtils.GetTextTokenKind(field.FieldType));
-			output.Write(" ", BoxedTextTokenKind.Text);
-			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, TextTokenKindUtils.GetTextTokenKind(field));
+			output.Write(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), DecompilerReferenceFlags.None, OutputColorHelper.GetColor(field.FieldType));
+			output.Write(" ", BoxedOutputColor.Text);
+			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, OutputColorHelper.GetColor(field));
 			var c = field.Constant;
 			if (c != null) {
-				output.Write(" ", BoxedTextTokenKind.Text);
-				output.Write("=", BoxedTextTokenKind.Operator);
-				output.Write(" ", BoxedTextTokenKind.Text);
+				output.Write(" ", BoxedOutputColor.Text);
+				output.Write("=", BoxedOutputColor.Operator);
+				output.Write(" ", BoxedOutputColor.Text);
 				if (c.Value == null)
-					output.Write("null", BoxedTextTokenKind.Keyword);
+					output.Write("null", BoxedOutputColor.Keyword);
 				else {
 					switch (c.Type) {
 					case ElementType.Boolean:
 						if (c.Value is bool)
-							output.Write((bool)c.Value ? "true" : "false", BoxedTextTokenKind.Keyword);
+							output.Write((bool)c.Value ? "true" : "false", BoxedOutputColor.Keyword);
 						else
 							goto default;
 						break;
 
 					case ElementType.Char:
-						output.Write($"'{c.Value}'", BoxedTextTokenKind.Char);
+						output.Write($"'{c.Value}'", BoxedOutputColor.Char);
 						break;
 
 					case ElementType.I1:
@@ -215,15 +215,15 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 					case ElementType.R8:
 					case ElementType.I:
 					case ElementType.U:
-						output.Write($"{c.Value}", BoxedTextTokenKind.Number);
+						output.Write($"{c.Value}", BoxedOutputColor.Number);
 						break;
 
 					case ElementType.String:
-						output.Write($"{c.Value}", BoxedTextTokenKind.String);
+						output.Write($"{c.Value}", BoxedOutputColor.String);
 						break;
 
 					default:
-						output.Write($"{c.Value}", BoxedTextTokenKind.Text);
+						output.Write($"{c.Value}", BoxedOutputColor.Text);
 						break;
 					}
 				}
@@ -255,8 +255,8 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			this.WriteCommentLine(output, $"Type: {type.FullName}");
 			if (type.BaseType != null) {
 				WriteCommentBegin(output, true);
-				output.Write("Base type: ", BoxedTextTokenKind.Comment);
-				output.Write(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
+				output.Write("Base type: ", BoxedOutputColor.Comment);
+				output.Write(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}

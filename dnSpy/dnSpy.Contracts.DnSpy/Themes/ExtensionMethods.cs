@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Themes {
 	/// <summary>
@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Themes {
 		/// </summary>
 		/// <param name="self">Color</param>
 		/// <returns></returns>
-		public static ColorType ToColorType(this TextTokenKind self) => (uint)self + ColorType.FirstNR;
+		public static ColorType ToColorType(this OutputColor self) => (uint)self + ColorType.FirstNR;
 	}
 }

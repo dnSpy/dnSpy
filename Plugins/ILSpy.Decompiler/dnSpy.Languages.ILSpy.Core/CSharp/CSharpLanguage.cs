@@ -25,6 +25,7 @@ using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text;
 using dnSpy.Languages.ILSpy.Core.Text;
 using dnSpy.Languages.ILSpy.Settings;
 using dnSpy.Languages.ILSpy.XmlDoc;
@@ -329,12 +330,12 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool WriteRefIfByRef(IDecompilerOutput output, TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					output.Write("out", BoxedTextTokenKind.Keyword);
-					output.Write(" ", BoxedTextTokenKind.Text);
+					output.Write("out", BoxedOutputColor.Keyword);
+					output.Write(" ", BoxedOutputColor.Text);
 				}
 				else {
-					output.Write("ref", BoxedTextTokenKind.Keyword);
-					output.Write(" ", BoxedTextTokenKind.Text);
+					output.Write("ref", BoxedOutputColor.Keyword);
+					output.Write(" ", BoxedOutputColor.Text);
 				}
 				return true;
 			}
@@ -376,24 +377,24 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
 					TypeToString(output, declaringType, includeNamespace: true);
-					output.Write(".", BoxedTextTokenKind.Operator);
+					output.Write(".", BoxedOutputColor.Operator);
 				}
-				output.Write("this", BoxedTextTokenKind.Keyword);
-				output.Write("[", BoxedTextTokenKind.Punctuation);
+				output.Write("this", BoxedOutputColor.Keyword);
+				output.Write("[", BoxedOutputColor.Punctuation);
 				bool addSeparator = false;
 				foreach (var p in property.PropertySig.GetParams()) {
 					if (addSeparator) {
-						output.Write(",", BoxedTextTokenKind.Punctuation);
-						output.Write(" ", BoxedTextTokenKind.Text);
+						output.Write(",", BoxedOutputColor.Punctuation);
+						output.Write(" ", BoxedOutputColor.Text);
 					}
 					else
 						addSeparator = true;
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				output.Write("]", BoxedTextTokenKind.Punctuation);
+				output.Write("]", BoxedOutputColor.Punctuation);
 			}
 			else
-				WriteIdentifier(output, property.Name, TextTokenKindUtils.GetTextTokenKind(property));
+				WriteIdentifier(output, property.Name, OutputColorHelper.GetColor(property));
 		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {

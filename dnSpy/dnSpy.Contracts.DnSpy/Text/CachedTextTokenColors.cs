@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
@@ -182,7 +181,7 @@ namespace dnSpy.Contracts.Text {
 
 redo:
 			if (isAppendingDefaultText) {
-				if (data.Equals(BoxedTextTokenKind.Text) || data.Equals(BoxedOutputColor.Text)) {
+				if (data.Equals(BoxedOutputColor.Text) || data.Equals(BoxedOutputColor.Text)) {
 					int newLength = currentDefaultTextLength + length;
 					while (newLength > TEXT_TOKEN_LENGTH_MAX) {
 						currentDefaultTextLength = Math.Min(newLength, TEXT_TOKEN_LENGTH_MAX);

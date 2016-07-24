@@ -381,7 +381,7 @@ namespace dnSpy.Languages.CSharp {
 				}
 			}
 
-			WriteIdentifier(RemoveGenericTick(td.Name), TextTokenKindUtils.GetTextTokenKind(td));
+			WriteIdentifier(RemoveGenericTick(td.Name), OutputColorHelper.GetColor(td));
 			WriteToken(type);
 			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
 			WriteGenerics(genParams, BoxedOutputColor.TypeGenericParameter);
@@ -417,7 +417,7 @@ namespace dnSpy.Languages.CSharp {
 				WritePeriod();
 			}
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
-				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), TextTokenKindUtils.GetTextTokenKind(method));
+				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), OutputColorHelper.GetColor(method));
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
@@ -443,7 +443,7 @@ namespace dnSpy.Languages.CSharp {
 				}
 			}
 			else
-				WriteIdentifier(name, TextTokenKindUtils.GetTextTokenKind(method));
+				WriteIdentifier(name, OutputColorHelper.GetColor(method));
 		}
 
 		void WriteToolTip(IField field) => Write(field, true);
@@ -471,7 +471,7 @@ namespace dnSpy.Languages.CSharp {
 				Write(field.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(field.Name, TextTokenKindUtils.GetTextTokenKind(field));
+			WriteIdentifier(field.Name, OutputColorHelper.GetColor(field));
 			WriteToken(field);
 			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
 				WriteSpace();
@@ -583,10 +583,10 @@ namespace dnSpy.Languages.CSharp {
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
 				WritePeriod();
-				WriteIdentifier(GetPropName(ovrMeth), TextTokenKindUtils.GetTextTokenKind(prop));
+				WriteIdentifier(GetPropName(ovrMeth), OutputColorHelper.GetColor(prop));
 			}
 			else
-				WriteIdentifier(prop.Name, TextTokenKindUtils.GetTextTokenKind(prop));
+				WriteIdentifier(prop.Name, OutputColorHelper.GetColor(prop));
 			WriteToken(prop);
 
 			WriteSpace();
@@ -628,7 +628,7 @@ namespace dnSpy.Languages.CSharp {
 				Write(evt.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(evt.Name, TextTokenKindUtils.GetTextTokenKind(evt));
+			WriteIdentifier(evt.Name, OutputColorHelper.GetColor(evt));
 			WriteToken(evt);
 		}
 
@@ -656,7 +656,7 @@ namespace dnSpy.Languages.CSharp {
 				return;
 			}
 
-			WriteIdentifier(gp.Name, TextTokenKindUtils.GetTextTokenKind(gp));
+			WriteIdentifier(gp.Name, OutputColorHelper.GetColor(gp));
 			WriteToken(gp);
 		}
 
@@ -727,7 +727,7 @@ namespace dnSpy.Languages.CSharp {
 					OutputWrite(keyword, BoxedOutputColor.Keyword);
 				else {
 					WriteNamespace(type.Namespace);
-					WriteIdentifier(RemoveGenericTick(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
+					WriteIdentifier(RemoveGenericTick(type.Name), OutputColorHelper.GetColor(type));
 				}
 				WriteToken(type);
 			}

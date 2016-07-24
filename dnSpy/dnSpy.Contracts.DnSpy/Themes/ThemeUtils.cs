@@ -18,9 +18,7 @@
 */
 
 using System.Diagnostics;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.Themes {
 	static class ThemeUtils {
@@ -28,17 +26,14 @@ namespace dnSpy.Contracts.Themes {
 			GetColor(data).ToTextColor(theme);
 
 		public static Color GetColor(object data) {
-			if (data is ITextColor)
-				return new Color((ITextColor)data);
-
-			if (data is TextTokenKind)
-				return new Color(((TextTokenKind)data).ToColorType());
+			if (data is OutputColor)
+				return new Color(((OutputColor)data).ToColorType());
 
 			if (data is ColorType)
 				return new Color((ColorType)data);
 
-			if (data is OutputColor)
-				return new Color(((OutputColor)data).ToColorType());
+			if (data is ITextColor)
+				return new Color((ITextColor)data);
 
 			Debug.Fail($"Unknown color: '{data}'");
 			return new Color(ColorType.Error);

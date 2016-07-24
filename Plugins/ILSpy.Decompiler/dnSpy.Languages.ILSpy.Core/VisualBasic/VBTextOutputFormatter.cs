@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
@@ -191,18 +192,18 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && (node is PrimitiveType || node is InstanceExpression))
-				output.Write(keyword, memberRef, DecompilerReferenceFlags.None, BoxedTextTokenKind.Keyword);
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.None, BoxedOutputColor.Keyword);
 			else if (memberRef != null && (node is ConstructorDeclaration && keyword == "New"))
-				output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextTokenKind.Keyword);
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Keyword);
 			else if (memberRef != null && (node is Accessor && (keyword == "Get" || keyword == "Set" || keyword == "AddHandler" || keyword == "RemoveHandler" || keyword == "RaiseEvent"))) {
 				if (canPrintAccessor)
-					output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextTokenKind.Keyword);
+					output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Keyword);
 				else
-					output.Write(keyword, BoxedTextTokenKind.Keyword);
+					output.Write(keyword, BoxedOutputColor.Keyword);
 				canPrintAccessor = !canPrintAccessor;
 			}
 			else
-				output.Write(keyword, BoxedTextTokenKind.Keyword);
+				output.Write(keyword, BoxedOutputColor.Keyword);
 		}
 		bool canPrintAccessor = true;
 
@@ -237,19 +238,19 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				return (MethodDef)method;
 		}
 
-		public void Space() => output.Write(" ", BoxedTextTokenKind.Text);
+		public void Space() => output.Write(" ", BoxedOutputColor.Text);
 		public void Indent() => output.Indent();
 		public void Unindent() => output.Unindent();
 		public void NewLine() => output.WriteLine();
 
 		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
-				output.Write("'''", BoxedTextTokenKind.XmlDocCommentDelimiter);
+				output.Write("'''", BoxedOutputColor.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
 			}
 			else
-				output.WriteLine("'" + content, BoxedTextTokenKind.Comment);
+				output.WriteLine("'" + content, BoxedOutputColor.Comment);
 		}
 
 		static bool IsDefinition(AstNode node) =>

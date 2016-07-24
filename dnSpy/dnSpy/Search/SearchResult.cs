@@ -125,25 +125,25 @@ namespace dnSpy.Search {
 
 			var md = o as MethodDef;
 			if (md != null) {
-				output.Write(TextTokenKindUtils.GetTextTokenKind(md), IdentifierEscaper.Escape(md.Name));
+				output.Write(OutputColorHelper.GetColor(md), IdentifierEscaper.Escape(md.Name));
 				return;
 			}
 
 			var fd = o as FieldDef;
 			if (fd != null) {
-				output.Write(TextTokenKindUtils.GetTextTokenKind(fd), IdentifierEscaper.Escape(fd.Name));
+				output.Write(OutputColorHelper.GetColor(fd), IdentifierEscaper.Escape(fd.Name));
 				return;
 			}
 
 			var pd = o as PropertyDef;
 			if (pd != null) {
-				output.Write(TextTokenKindUtils.GetTextTokenKind(pd), IdentifierEscaper.Escape(pd.Name));
+				output.Write(OutputColorHelper.GetColor(pd), IdentifierEscaper.Escape(pd.Name));
 				return;
 			}
 
 			var ed = o as EventDef;
 			if (ed != null) {
-				output.Write(TextTokenKindUtils.GetTextTokenKind(ed), IdentifierEscaper.Escape(ed.Name));
+				output.Write(OutputColorHelper.GetColor(ed), IdentifierEscaper.Escape(ed.Name));
 				return;
 			}
 
@@ -173,7 +173,7 @@ namespace dnSpy.Search {
 
 			var paramDef = o as ParamDef;
 			if (paramDef != null) {
-				output.Write(BoxedTextTokenKind.Parameter, IdentifierEscaper.Escape(paramDef.Name));
+				output.Write(BoxedOutputColor.Parameter, IdentifierEscaper.Escape(paramDef.Name));
 				return;
 			}
 
