@@ -35,7 +35,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		public BuilderState(DecompilationContext ctx, BuilderCache cache) {
 			this.cache = cache;
 			this.State = cache.AllocateAstBuilderState();
-			this.State.AstBuilder.Context.CalculateILRanges = ctx.CalculateILRanges;
+			this.State.AstBuilder.Context.CalculateBinSpans = ctx.CalculateBinSpans;
 		}
 
 		public void Dispose() => cache.Free(State);

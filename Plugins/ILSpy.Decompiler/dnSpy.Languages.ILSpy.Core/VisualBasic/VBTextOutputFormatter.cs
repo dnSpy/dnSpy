@@ -272,8 +272,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
 		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.NextPosition });
 
-		public void DebugHidden(object hiddenILRanges) {
-			var list = hiddenILRanges as IList<BinSpan>;
+		public void DebugHidden(object hiddenBinSpans) {
+			var list = hiddenBinSpans as IList<BinSpan>;
 			if (list != null) {
 				if (debugStack.Count > 0)
 					debugStack.Peek().ExtraBinSpans.AddRange(list);
@@ -305,8 +305,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 					var list = ann as IList<BinSpan>;
 					if (list == null)
 						continue;
-					foreach (var range in list)
-						yield return range;
+					foreach (var binSpan in list)
+						yield return binSpan;
 				}
 			}
 			foreach (var binSpan in state.ExtraBinSpans)

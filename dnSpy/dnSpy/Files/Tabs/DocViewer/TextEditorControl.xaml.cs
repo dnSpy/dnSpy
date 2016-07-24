@@ -663,13 +663,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				wpfTextViewHost.Close();
 		}
 
-		public object SaveReferencePosition(IMethodDebugService cms) => GetRefPos(cms);
+		public object SaveReferencePosition(IMethodDebugService methodDebugServicecms) => GetRefPos(methodDebugServicecms);
 
-		public bool RestoreReferencePosition(IMethodDebugService cms, object obj) {
+		public bool RestoreReferencePosition(IMethodDebugService methodDebugServicecms, object obj) {
 			var refPos = obj as RefPos;
 			if (refPos == null)
 				return false;
-			return GoTo(cms, refPos);
+			return GoTo(methodDebugServicecms, refPos);
 		}
 
 		sealed class RefPos {
@@ -681,7 +681,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			return snapshotLine.Start.Position + column;
 		}
 
-		RefPos GetRefPos(IMethodDebugService cms) => null;
-		bool GoTo(IMethodDebugService cms, RefPos pos) => false;
+
+		RefPos GetRefPos(IMethodDebugService methodDebugServicecms) => null;
+		bool GoTo(IMethodDebugService methodDebugServicecms, RefPos pos) => false;
 	}
 }

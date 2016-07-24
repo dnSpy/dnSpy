@@ -72,22 +72,22 @@ namespace dnSpy.Decompiler.Shared {
 			list.AddRange(GetUnusedBinSpans());
 
 			var orderedList = BinSpan.OrderAndCompactList(list);
-			var ilRangeArray = new uint[orderedList.Count * 2];
+			var binSpanArray = new uint[orderedList.Count * 2];
 			for (int i = 0; i < orderedList.Count; i++) {
-				ilRangeArray[i * 2 + 0] = orderedList[i].Start;
-				ilRangeArray[i * 2 + 1] = orderedList[i].End;
+				binSpanArray[i * 2 + 0] = orderedList[i].Start;
+				binSpanArray[i * 2 + 1] = orderedList[i].End;
 			}
-			return ilRangeArray;
+			return binSpanArray;
 		}
 
 		public uint[] GetRanges() {
 			var orderedList = GetUnusedBinSpans();
-			var ilRangeArray = new uint[orderedList.Length * 2];
+			var binSpanArray = new uint[orderedList.Length * 2];
 			for (int i = 0; i < orderedList.Length; i++) {
-				ilRangeArray[i * 2 + 0] = orderedList[i].Start;
-				ilRangeArray[i * 2 + 1] = orderedList[i].End;
+				binSpanArray[i * 2 + 0] = orderedList[i].Start;
+				binSpanArray[i * 2 + 1] = orderedList[i].End;
 			}
-			return ilRangeArray;
+			return binSpanArray;
 		}
 
 		BinSpan[] GetUnusedBinSpans() {

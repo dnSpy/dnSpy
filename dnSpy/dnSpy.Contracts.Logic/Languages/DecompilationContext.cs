@@ -43,9 +43,9 @@ namespace dnSpy.Contracts.Languages {
 		public Func<IDisposable> GetDisableAssemblyLoad { get; set; }
 
 		/// <summary>
-		/// true to calculate ILRanges. Used when debugging
+		/// true to calculate BinSpans. Used when debugging
 		/// </summary>
-		public bool CalculateILRanges { get; set; }
+		public bool CalculateBinSpans { get; set; }
 
 		/// <summary>
 		/// Constructor

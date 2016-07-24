@@ -1056,16 +1056,16 @@ namespace dnSpy.Debugger {
 					return null;
 			}
 
-			var scm = info.GetSourceStatementByCodeOffset(frame.GetILOffset(moduleLoader.Value));
-			uint[] binSpans;
-			if (scm == null)
-				binSpans = info.GetRanges();
+			var sourceStatement = info.GetSourceStatementByCodeOffset(frame.GetILOffset(moduleLoader.Value));
+			uint[] ranges;
+			if (sourceStatement == null)
+				ranges = info.GetRanges();
 			else
-				binSpans = info.GetRanges(scm.Value);
+				ranges = info.GetRanges(sourceStatement.Value);
 
-			if (binSpans.Length == 0)
+			if (ranges.Length == 0)
 				return null;
-			return CreateStepRanges(binSpans);
+			return CreateStepRanges(ranges);
 		}
 
 		static StepRange[] CreateStepRanges(uint[] ilSpans) {

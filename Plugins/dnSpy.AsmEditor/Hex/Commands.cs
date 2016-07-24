@@ -202,8 +202,8 @@ namespace dnSpy.AsmEditor.Hex {
 			var context = HexMenuCommand.CreateContext(fileTabManager);
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				ShowAddressReferenceInHexEditorCommand.ExecuteInternal(fileTabManager, context);
-			else if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
-				ShowILRangeInHexEditorCommand.ExecuteInternal(fileTabManager, methodAnnotations, context);
+			else if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+				ShowBinSpanInHexEditorCommand.ExecuteInternal(fileTabManager, methodAnnotations, context);
 			else if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				ShowHexNodeInHexEditorCommand.ExecuteInternal(fileTabManager, methodAnnotations, context);
 			else if (IsVisibleInternal(fileTabManager, methodAnnotations, context))
@@ -213,7 +213,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static bool CanExecuteCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
 			var context = HexMenuCommand.CreateContext(fileTabManager);
 			return ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context) ||
-				ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
+				ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
 				ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
 				IsVisibleInternal(fileTabManager, methodAnnotations, context);
 		}
@@ -236,7 +236,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static IDnSpyFileNode GetDnSpyFileNode(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
@@ -326,7 +326,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	static class ShowILRangeInHexEditorCommand {
+	static class ShowBinSpanInHexEditorCommand {
 		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 20)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
@@ -443,7 +443,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
@@ -501,7 +501,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
