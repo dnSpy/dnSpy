@@ -28,10 +28,10 @@ using ICSharpCode.NRefactory.VB.Ast;
 
 namespace dnSpy.Languages.ILSpy.VisualBasic {
 	sealed class VBTextOutputFormatter : IOutputFormatter {
-		readonly ITextOutput output;
+		readonly IDecompilerOutput output;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 
-		public VBTextOutputFormatter(ITextOutput output) {
+		public VBTextOutputFormatter(IDecompilerOutput output) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			this.output = output;
@@ -62,7 +62,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				throw new InvalidOperationException();
 
 			if (node.Annotation<MethodDebugInfoBuilder>() != null) {
-				output.AddMethodDebugInfo(currentMethodDebugInfoBuilder.Create());
+				output.AddDebugInfo(currentMethodDebugInfoBuilder.Create());
 				currentMethodDebugInfoBuilder = parentMethodDebugInfoBuilder.Pop();
 			}
 			var mms = node.Annotation<List<Tuple<MethodDebugInfoBuilder, List<BinSpan>>>>();
@@ -70,7 +70,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				Debug.Assert(mms == multiMappings);
 				if (mms == multiMappings) {
 					foreach (var mm in mms)
-						output.AddMethodDebugInfo(mm.Item1.Create());
+						output.AddDebugInfo(mm.Item1.Create());
 					multiMappings = null;
 				}
 			}
@@ -79,25 +79,25 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 		public void WriteIdentifier(string identifier, object data) {
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, data, false);
+				output.Write(IdentifierEscaper.Escape(identifier), definition, DecompilerReferenceFlags.Definition, data);
 				return;
 			}
 
 			object memberRef = GetCurrentMemberReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, data);
+				output.Write(IdentifierEscaper.Escape(identifier), memberRef, DecompilerReferenceFlags.None, data);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, data);
+				output.Write(IdentifierEscaper.Escape(identifier), definition, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, data);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, data, true);
+				output.Write(IdentifierEscaper.Escape(identifier), memberRef, DecompilerReferenceFlags.Local, data);
 				return;
 			}
 
@@ -191,12 +191,12 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && (node is PrimitiveType || node is InstanceExpression))
-				output.WriteReference(keyword, memberRef, BoxedTextTokenKind.Keyword);
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.None, BoxedTextTokenKind.Keyword);
 			else if (memberRef != null && (node is ConstructorDeclaration && keyword == "New"))
-				output.WriteDefinition(keyword, memberRef, BoxedTextTokenKind.Keyword);
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextTokenKind.Keyword);
 			else if (memberRef != null && (node is Accessor && (keyword == "Get" || keyword == "Set" || keyword == "AddHandler" || keyword == "RemoveHandler" || keyword == "RaiseEvent"))) {
 				if (canPrintAccessor)
-					output.WriteDefinition(keyword, memberRef, BoxedTextTokenKind.Keyword);
+					output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextTokenKind.Keyword);
 				else
 					output.Write(keyword, BoxedTextTokenKind.Keyword);
 				canPrintAccessor = !canPrintAccessor;
@@ -223,7 +223,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 
 			if (addRef)
-				output.WriteReference(token, memberRef, data);
+				output.Write(token, memberRef, DecompilerReferenceFlags.None, data);
 			else
 				output.Write(token, data);
 		}
@@ -237,7 +237,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				return (MethodDef)method;
 		}
 
-		public void Space() => output.WriteSpace();
+		public void Space() => output.Write(" ", BoxedTextTokenKind.Text);
 		public void Indent() => output.Indent();
 		public void Unindent() => output.Unindent();
 		public void NewLine() => output.WriteLine();
@@ -270,7 +270,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			public int StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.Position });
+		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.NextPosition });
 
 		public void DebugHidden(object hiddenILRanges) {
 			var list = hiddenILRanges as IList<BinSpan>;
@@ -289,12 +289,12 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			var state = debugStack.Pop();
 			if (currentMethodDebugInfoBuilder != null) {
 				foreach (var binSpan in BinSpan.OrderAndCompact(GetBinSpans(state)))
-					currentMethodDebugInfoBuilder.Add(new SourceStatement(binSpan, new TextSpan(state.StartLocation, output.Position - state.StartLocation)));
+					currentMethodDebugInfoBuilder.Add(new SourceStatement(binSpan, new TextSpan(state.StartLocation, output.NextPosition - state.StartLocation)));
 			}
 			else if (multiMappings != null) {
 				foreach (var mm in multiMappings) {
 					foreach (var binSpan in BinSpan.OrderAndCompact(mm.Item2))
-						mm.Item1.Add(new SourceStatement(binSpan, new TextSpan(state.StartLocation, output.Position - state.StartLocation)));
+						mm.Item1.Add(new SourceStatement(binSpan, new TextSpan(state.StartLocation, output.NextPosition - state.StartLocation)));
 				}
 			}
 		}

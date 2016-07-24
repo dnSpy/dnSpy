@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedOutputColor.Punctuation, ")");
 		}
 
-		protected override void DecompileFields(ILanguage language, ITextOutput output) {
+		protected override void DecompileFields(ILanguage language, IDecompilerOutput output) {
 			language.WriteCommentLine(output, string.Empty);
 			language.WriteCommentBegin(output, true);
 			WriteHeader(output);
@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		public void WriteHeader(ITextOutput output) {
+		public void WriteHeader(IDecompilerOutput output) {
 			var cols = MetaDataTableVM.TableInfo.Columns;
 
 			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedOutputColor.Comment);
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.WriteLine();
 		}
 
-		public void Write(ITextOutput output, MetaDataTableRecordVM mdVM) {
+		public void Write(IDecompilerOutput output, MetaDataTableRecordVM mdVM) {
 			var cols = MetaDataTableVM.TableInfo.Columns;
 
 			output.Write(mdVM.RidString, BoxedOutputColor.Comment);

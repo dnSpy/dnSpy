@@ -589,7 +589,7 @@ namespace dnSpy_Console {
 				}
 
 				var writer = Console.Out;
-				var output = new PlainTextOutput(writer);
+				var output = new TextWriterDecompilerOutput(writer);
 
 				var lang = GetLanguage();
 				if (member is MethodDef)

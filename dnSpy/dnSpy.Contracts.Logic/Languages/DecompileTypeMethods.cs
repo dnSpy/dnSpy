@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
 		/// <param name="type">Type</param>
-		public DecompileTypeMethods(ITextOutput output, DecompilationContext ctx, TypeDef type)
+		public DecompileTypeMethods(IDecompilerOutput output, DecompilationContext ctx, TypeDef type)
 			: base(output, ctx) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));

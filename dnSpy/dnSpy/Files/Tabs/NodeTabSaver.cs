@@ -95,7 +95,7 @@ namespace dnSpy.Files.Tabs {
 			try {
 				var decompilationContext = new DecompilationContext();
 				decompileContext.Writer = new StreamWriter(filename);
-				var output = new PlainTextOutput(decompileContext.Writer);
+				var output = new TextWriterDecompilerOutput(decompileContext.Writer);
 				var dispatcher = Dispatcher.CurrentDispatcher;
 				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, language, output, dispatcher);
 				return decompileContext;

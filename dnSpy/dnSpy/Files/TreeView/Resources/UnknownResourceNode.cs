@@ -37,7 +37,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			: base(treeNodeGroup, resource) {
 		}
 
-		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
 			base.WriteShort(output, language, showOffset);
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {

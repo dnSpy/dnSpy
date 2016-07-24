@@ -125,16 +125,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		sealed class DecompileCodeState : AsyncStateBase {
-			public PlainTextOutput MainOutput { get; }
-			public PlainTextOutput HiddenOutput { get; }
+			public StringBuilderDecompilerOutput MainOutput { get; }
+			public StringBuilderDecompilerOutput HiddenOutput { get; }
 			public DecompilationContext DecompilationContext { get; }
 
 			public DecompileCodeState() {
 				DecompilationContext = new DecompilationContext {
 					CancellationToken = CancellationToken,
 				};
-				MainOutput = new PlainTextOutput();
-				HiddenOutput = new PlainTextOutput();
+				MainOutput = new StringBuilderDecompilerOutput();
+				HiddenOutput = new StringBuilderDecompilerOutput();
 			}
 		}
 		DecompileCodeState decompileCodeState;

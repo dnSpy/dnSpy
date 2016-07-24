@@ -18,26 +18,25 @@
 */
 
 using System;
-using System.Text;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
-	/// Converts a <see cref="IOutputColorWriter"/> to a <see cref="ITextOutput"/>
+	/// Converts a <see cref="IOutputColorWriter"/> to a <see cref="IDecompilerOutput"/>
 	/// </summary>
-	public sealed class TextColorOutputToTextOutput : ITextOutput {
+	public sealed class TextColorOutputToTextOutput : IDecompilerOutput {
 		readonly IOutputColorWriter output;
 		int indent;
 		int offset;
-		bool needsIndent;
+		bool addIndent = true;
 
 		/// <summary>
-		/// Creates a new <see cref="ITextOutput"/> instance
+		/// Creates a new <see cref="IDecompilerOutput"/> instance
 		/// </summary>
 		/// <param name="output">Output to use</param>
 		/// <returns></returns>
-		public static ITextOutput Create(IOutputColorWriter output) =>
+		public static IDecompilerOutput Create(IOutputColorWriter output) =>
 			new TextColorOutputToTextOutput(output);
 
 		TextColorOutputToTextOutput(IOutputColorWriter output) {
@@ -46,56 +45,39 @@ namespace dnSpy.Contracts.Languages {
 			this.offset = 0;
 		}
 
-		int ITextOutput.Position => offset + (needsIndent ? indent : 0);
+		int IDecompilerOutput.Length => offset;
+		int IDecompilerOutput.NextPosition => offset + (addIndent ? indent : 0);
 
-		void ITextOutput.AddMethodDebugInfo(MethodDebugInfo methodDebugInfo) { }
-		void ITextOutput.Indent() => indent++;
-		void ITextOutput.Unindent() => indent--;
+		bool IDecompilerOutput.UsesDebugInfo => false;
+		void IDecompilerOutput.AddDebugInfo(MethodDebugInfo methodDebugInfo) { }
+		void IDecompilerOutput.Indent() => indent++;
+		void IDecompilerOutput.Unindent() => indent--;
 
-		void ITextOutput.Write(string text, int index, int count, object data) {
+		void IDecompilerOutput.Write(string text, int index, int count, object color) {
 			if (index == 0 && text.Length == count)
-				((ITextOutput)this).Write(text, data);
+				((IDecompilerOutput)this).Write(text, color);
 			else
-				((ITextOutput)this).Write(text.Substring(index, count), data);
+				((IDecompilerOutput)this).Write(text.Substring(index, count), color);
 		}
 
-		void ITextOutput.Write(StringBuilder sb, int index, int count, object data) {
-			if (index == 0 && sb.Length == count)
-				((ITextOutput)this).Write(sb.ToString(), data);
-			else
-				((ITextOutput)this).Write(sb.ToString(index, count), data);
-		}
-
-		void ITextOutput.Write(string text, object data) {
-			if (needsIndent) {
+		void IDecompilerOutput.Write(string text, object color) {
+			if (addIndent) {
 				if (indent != 0)
 					output.Write(BoxedOutputColor.Text, new string('\t', indent));
 				offset += indent;
-				needsIndent = false;
+				addIndent = false;
 			}
-			output.Write(data, text);
+			output.Write(color, text);
 			offset += text.Length;
 			int index = text.LastIndexOfAny(newLineChars);
 			if (index >= 0)
-				needsIndent = true;
+				addIndent = true;
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
-		void ITextOutput.WriteDefinition(string text, object definition, object data, bool isLocal) =>
-			((ITextOutput)this).Write(text, data);
-		void ITextOutput.WriteLine() =>
-			((ITextOutput)this).Write(Environment.NewLine, BoxedOutputColor.Text);
-		void ITextOutput.WriteReference(string text, object reference, object data, bool isLocal) =>
-			((ITextOutput)this).Write(text, data);
-		void ITextOutput.Write(string text, TextTokenKind tokenKind) =>
-			((ITextOutput)this).Write(text, tokenKind.Box());
-		void ITextOutput.Write(string text, int index, int count, TextTokenKind tokenKind) =>
-			((ITextOutput)this).Write(text, index, count, tokenKind.Box());
-		void ITextOutput.Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) =>
-			((ITextOutput)this).Write(sb, index, count, tokenKind.Box());
-		void ITextOutput.WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) =>
-			((ITextOutput)this).WriteDefinition(text, definition, tokenKind.Box(), isLocal);
-		void ITextOutput.WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) =>
-			((ITextOutput)this).WriteReference(text, reference, tokenKind.Box(), isLocal);
+		void IDecompilerOutput.Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+			((IDecompilerOutput)this).Write(text, color);
+		void IDecompilerOutput.WriteLine() =>
+			((IDecompilerOutput)this).Write(Environment.NewLine, BoxedOutputColor.Text);
 	}
 }

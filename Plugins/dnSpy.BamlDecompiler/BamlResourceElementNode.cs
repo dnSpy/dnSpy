@@ -54,13 +54,13 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void Disassemble(ModuleDef module, BamlDocument document, ILanguage lang,
-			ITextOutput output, CancellationToken token) {
+			IDecompilerOutput output, CancellationToken token) {
 			var disassembler = new BamlDisassembler(lang, output, token);
 			disassembler.Disassemble(module, document);
 		}
 
 		void Decompile(ModuleDef module, BamlDocument document, ILanguage lang,
-			ITextOutput output, CancellationToken token) {
+			IDecompilerOutput output, CancellationToken token) {
 			var decompiler = new XamlDecompiler();
 			var xaml = decompiler.Decompile(module, document, token, BamlDecompilerOptions.Create(lang), null);
 
@@ -91,7 +91,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		Stream GetDecompiledStream(CancellationToken token) {
-			var output = new PlainTextOutput();
+			var output = new StringBuilderDecompilerOutput();
 			Decompile(output, token);
 			return ResourceUtilities.StringToStream(output.ToString());
 		}
@@ -101,7 +101,7 @@ namespace dnSpy.BamlDecompiler {
 			return true;
 		}
 
-		public string Decompile(ITextOutput output, CancellationToken token) {
+		public string Decompile(IDecompilerOutput output, CancellationToken token) {
 			var lang = Context.Language;
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
 			if (bamlSettings.DisassembleBaml) {
@@ -117,7 +117,7 @@ namespace dnSpy.BamlDecompiler {
 		public override string ToString(CancellationToken token, bool canDecompile) {
 			if (!canDecompile)
 				return null;
-			var output = new PlainTextOutput();
+			var output = new StringBuilderDecompilerOutput();
 			Decompile(output, token);
 			return output.ToString();
 		}

@@ -37,7 +37,7 @@ namespace dnSpy.Languages.MSBuild {
 			this.SubType = "Form";
 		}
 
-		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
+		protected override void Decompile(DecompileContext ctx, IDecompilerOutput output) {
 			if (!language.CanDecompile(DecompilationType.PartialType))
 				base.Decompile(ctx, output);
 			else {
@@ -127,7 +127,7 @@ namespace dnSpy.Languages.MSBuild {
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				if (winFormsFile.Language.CanDecompile(DecompilationType.PartialType)) {
-					var output = new PlainTextOutput(writer);
+					var output = new TextWriterDecompilerOutput(writer);
 					var opts = new DecompilePartialType(output, winFormsFile.DecompilationContext, winFormsFile.Type);
 					foreach (var d in winFormsFile.GetDefsToRemove())
 						opts.Definitions.Add(d);

@@ -110,7 +110,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		public override string FileExtension => ".cs";
 		public override string ProjectFileExtension => ".csproj";
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, method);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: method.DeclaringType, isSingleMember: true);
 			try {
@@ -163,7 +163,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, property);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: property.DeclaringType, isSingleMember: true);
 			try {
@@ -175,7 +175,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, field);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: field.DeclaringType, isSingleMember: true);
 			try {
@@ -224,7 +224,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, ev);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: ev.DeclaringType, isSingleMember: true);
 			try {
@@ -236,7 +236,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: type);
 			try {
 				state.AstBuilder.AddType(type);
@@ -247,7 +247,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		void RunTransformsAndGenerateCode(ref BuilderState state, ITextOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
+		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (additionalTransform != null) {
@@ -272,7 +272,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
-		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteAssembly(asm, output, ctx);
 
 			using (ctx.DisableAssemblyLoad()) {
@@ -287,7 +287,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteModule(mod, output, ctx);
 
 			using (ctx.DisableAssemblyLoad()) {
@@ -318,7 +318,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			return state;
 		}
 
-		protected override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
@@ -326,22 +326,22 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			TypeToString(output, options, type, typeAttributes);
 		}
 
-		bool WriteRefIfByRef(ITextOutput output, TypeSig typeSig, ParamDef pd) {
+		bool WriteRefIfByRef(IDecompilerOutput output, TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
 					output.Write("out", BoxedTextTokenKind.Keyword);
-					output.WriteSpace();
+					output.Write(" ", BoxedTextTokenKind.Text);
 				}
 				else {
 					output.Write("ref", BoxedTextTokenKind.Keyword);
-					output.WriteSpace();
+					output.Write(" ", BoxedTextTokenKind.Text);
 				}
 				return true;
 			}
 			return false;
 		}
 
-		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
+		void TypeToString(IDecompilerOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
 			if (type == null)
 				return;
 			AstType astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
@@ -363,7 +363,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
 
-		protected override void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer) {
+		protected override void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer) {
 			if (property == null)
 				throw new ArgumentNullException(nameof(property));
 
@@ -384,7 +384,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				foreach (var p in property.PropertySig.GetParams()) {
 					if (addSeparator) {
 						output.Write(",", BoxedTextTokenKind.Punctuation);
-						output.WriteSpace();
+						output.Write(" ", BoxedTextTokenKind.Text);
 					}
 					else
 						addSeparator = true;
@@ -409,13 +409,13 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			"using", "virtual", "void", "volatile", "while",
 		};
 
-		static void WriteIdentifier(ITextOutput output, string id, object tokenKind) {
+		static void WriteIdentifier(IDecompilerOutput output, string id, object tokenKind) {
 			if (isKeyword.Contains(id))
 				output.Write("@", tokenKind);
 			output.Write(IdentifierEscaper.Escape(id), tokenKind);
 		}
 
-		protected override void FormatTypeName(ITextOutput output, TypeDef type) {
+		protected override void FormatTypeName(IDecompilerOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
 

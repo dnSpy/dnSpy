@@ -50,25 +50,25 @@ namespace dnSpy.Languages {
 			TypeToString(TextColorOutputToTextOutput.Create(output), type, includeNamespace, pd);
 		public void WriteName(IOutputColorWriter output, PropertyDef property, bool? isIndexer) =>
 			FormatPropertyName(TextColorOutputToTextOutput.Create(output), property, isIndexer);
-		public virtual void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) =>
+		public virtual void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(method.DeclaringType, true) + "." + method.Name);
-		public virtual void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) =>
+		public virtual void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(property.DeclaringType, true) + "." + property.Name);
-		public virtual void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) =>
+		public virtual void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(field.DeclaringType, true) + "." + field.Name);
-		public virtual void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) =>
+		public virtual void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(ev.DeclaringType, true) + "." + ev.Name);
-		public virtual void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) =>
+		public virtual void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(type, true));
 
-		public virtual void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationContext ctx) {
+		public virtual void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, IDecompilerOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, string.IsNullOrEmpty(@namespace) ? string.Empty : IdentifierEscaper.Escape(@namespace));
 			this.WriteCommentLine(output, string.Empty);
 			this.WriteCommentLine(output, dnSpy_Languages_Resources.Decompile_Namespace_Types);
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
 				this.WriteCommentBegin(output, true);
-				output.WriteReference(IdentifierEscaper.Escape(type.Name), type, BoxedTextTokenKind.Comment);
+				output.Write(IdentifierEscaper.Escape(type.Name), type, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.Languages {
 			return m == null ? null : m.MetaData.PEImage;
 		}
 
-		protected void WriteAssembly(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+		protected void WriteAssembly(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			DecompileInternal(asm, output, ctx);
 			output.WriteLine();
 			this.PrintEntryPoint(asm.ManifestModule, output);
@@ -96,13 +96,13 @@ namespace dnSpy.Languages {
 			output.WriteLine();
 		}
 
-		protected void WriteModule(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+		protected void WriteModule(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) {
 			DecompileInternal(mod, output, ctx);
 			output.WriteLine();
 			if (mod.Types.Count > 0) {
 				this.WriteCommentBegin(output, true);
 				output.Write(dnSpy_Languages_Resources.Decompile_GlobalType + " ", BoxedTextTokenKind.Comment);
-				output.WriteReference(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, BoxedTextTokenKind.Comment);
+				output.Write(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
 				output.WriteLine();
 			}
 			this.PrintEntryPoint(mod, output);
@@ -127,10 +127,10 @@ namespace dnSpy.Languages {
 			output.WriteLine();
 		}
 
-		public virtual void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) => DecompileInternal(asm, output, ctx);
-		public virtual void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) => DecompileInternal(mod, output, ctx);
+		public virtual void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) => DecompileInternal(asm, output, ctx);
+		public virtual void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) => DecompileInternal(mod, output, ctx);
 
-		void DecompileInternal(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+		void DecompileInternal(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, asm.ManifestModule.Location);
 			if (asm.IsContentTypeWindowsRuntime)
 				this.WriteCommentLine(output, asm.Name + " [WinRT]");
@@ -138,12 +138,12 @@ namespace dnSpy.Languages {
 				this.WriteCommentLine(output, asm.FullName);
 		}
 
-		void DecompileInternal(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+		void DecompileInternal(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, mod.Location);
 			this.WriteCommentLine(output, mod.Name);
 		}
 
-		protected void PrintEntryPoint(ModuleDef mod, ITextOutput output) {
+		protected void PrintEntryPoint(ModuleDef mod, IDecompilerOutput output) {
 			var ep = GetEntryPoint(mod);
 			if (ep is uint)
 				this.WriteCommentLine(output, string.Format(dnSpy_Languages_Resources.Decompile_NativeEntryPoint, (uint)ep));
@@ -152,10 +152,10 @@ namespace dnSpy.Languages {
 				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Languages_Resources.Decompile_EntryPoint + " ", BoxedTextTokenKind.Comment);
 				if (epMethod.DeclaringType != null) {
-					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, BoxedTextTokenKind.Comment);
+					output.Write(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
 					output.Write(".", BoxedTextTokenKind.Comment);
 				}
-				output.WriteReference(IdentifierEscaper.Escape(epMethod.Name), epMethod, BoxedTextTokenKind.Comment);
+				output.Write(IdentifierEscaper.Escape(epMethod.Name), epMethod, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -188,30 +188,29 @@ namespace dnSpy.Languages {
 			return null;
 		}
 
-		protected void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member) {
+		protected void WriteCommentLineDeclaringType(IDecompilerOutput output, IMemberDef member) {
 			WriteCommentBegin(output, true);
-			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, BoxedTextTokenKind.Comment);
+			output.Write(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 
-		public virtual void WriteCommentBegin(ITextOutput output, bool addSpace) {
+		public virtual void WriteCommentBegin(IDecompilerOutput output, bool addSpace) {
 			if (addSpace)
 				output.Write("// ", BoxedTextTokenKind.Comment);
 			else
 				output.Write("//", BoxedTextTokenKind.Comment);
 		}
 
-		public virtual void WriteCommentEnd(ITextOutput output, bool addSpace) { }
+		public virtual void WriteCommentEnd(IDecompilerOutput output, bool addSpace) { }
 
 		string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
-			var writer = new StringWriter();
-			var output = new PlainTextOutput(writer);
+			var output = new StringBuilderDecompilerOutput();
 			TypeToString(output, type, includeNamespace, typeAttributes);
-			return writer.ToString();
+			return output.ToString();
 		}
 
-		protected virtual void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
+		protected virtual void TypeToString(IDecompilerOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			if (type == null)
 				return;
 			if (includeNamespace)
@@ -236,13 +235,13 @@ namespace dnSpy.Languages {
 			return $"#{variable.Index}";
 		}
 
-		protected virtual void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer = null) {
+		protected virtual void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)
 				throw new ArgumentNullException(nameof(property));
 			output.Write(IdentifierEscaper.Escape(property.Name), TextTokenKindUtils.GetTextTokenKind(property));
 		}
 
-		protected virtual void FormatTypeName(ITextOutput output, TypeDef type) {
+		protected virtual void FormatTypeName(IDecompilerOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
 			output.Write(IdentifierEscaper.Escape(type.Name), TextTokenKindUtils.GetTextTokenKind(type));

@@ -18,35 +18,31 @@
 */
 
 using System;
-using dnSpy.Decompiler.Shared;
 
-namespace dnSpy.Contracts.Languages {
+namespace dnSpy.Decompiler.Shared {
 	/// <summary>
-	/// Base class of <see cref="DecompilationType"/> data
+	/// Flags used by <see cref="IDecompilerOutput.Write(string, object, DecompilerReferenceFlags, object)"/>
 	/// </summary>
-	public abstract class DecompileTypeBase {
+	[Flags]
+	public enum DecompilerReferenceFlags {
 		/// <summary>
-		/// Output
+		/// No bit is set
 		/// </summary>
-		public IDecompilerOutput Output { get; }
+		None						= 0,
 
 		/// <summary>
-		/// Options
+		/// It's a definition (method declaration, field declaration etc) if set, else it's a reference to the definition
 		/// </summary>
-		public DecompilationContext Context { get; }
+		Definition					= 0x00000001,
 
 		/// <summary>
-		/// Constructor
+		/// It's a local definition or reference, eg. a method parameter, method local, method label.
 		/// </summary>
-		/// <param name="output">Output</param>
-		/// <param name="ctx">Context</param>
-		protected DecompileTypeBase(IDecompilerOutput output, DecompilationContext ctx) {
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			if (ctx == null)
-				throw new ArgumentNullException(nameof(ctx));
-			this.Output = output;
-			this.Context = ctx;
-		}
+		Local						= 0x00000002,
+
+		/// <summary>
+		/// The code writes to the reference
+		/// </summary>
+		IsWrite						= 0x00000004,
 	}
 }

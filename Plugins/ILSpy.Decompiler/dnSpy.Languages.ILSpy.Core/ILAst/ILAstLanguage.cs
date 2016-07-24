@@ -81,10 +81,10 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		public override Guid GenericGuid => LanguageConstants.LANGUAGE_ILAST_ILSPY;
 		public override Guid UniqueGuid => uniqueGuid;
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentBegin(output, true);
 			output.Write("Method: ", BoxedTextTokenKind.Comment);
-			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, BoxedTextTokenKind.Comment, false);
+			output.Write(IdentifierEscaper.Escape(method.FullName), method, DecompilerReferenceFlags.Definition, BoxedTextTokenKind.Comment);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 
@@ -112,19 +112,19 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? BoxedTextTokenKind.Parameter : BoxedTextTokenKind.Local);
+				output.Write(IdentifierEscaper.Escape(v.Name), v, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextTokenKind.Parameter : BoxedTextTokenKind.Local);
 				if (v.Type != null) {
-					output.WriteSpace();
+					output.Write(" ", BoxedTextTokenKind.Text);
 					output.Write(":", BoxedTextTokenKind.Punctuation);
-					output.WriteSpace();
+					output.Write(" ", BoxedTextTokenKind.Text);
 					if (v.IsPinned) {
 						output.Write("pinned", BoxedTextTokenKind.Keyword);
-						output.WriteSpace();
+						output.Write(" ", BoxedTextTokenKind.Text);
 					}
 					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
 				if (v.GeneratedByDecompiler) {
-					output.WriteSpace();
+					output.Write(" ", BoxedTextTokenKind.Text);
 					output.Write("[", BoxedTextTokenKind.Punctuation);
 					output.Write("generated", BoxedTextTokenKind.Keyword);
 					output.Write("]", BoxedTextTokenKind.Punctuation);
@@ -138,27 +138,27 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 				if (!node.WritesNewLine)
 					output.WriteLine();
 			}
-			output.AddMethodDebugInfo(builder.Create());
+			output.AddDebugInfo(builder.Create());
 			EndKeywordBlock(output);
 		}
 
-		void StartKeywordBlock(ITextOutput output, string keyword, IMemberDef member) {
+		void StartKeywordBlock(IDecompilerOutput output, string keyword, IMemberDef member) {
 			output.Write(keyword, BoxedTextTokenKind.Keyword);
-			output.WriteSpace();
-			output.WriteDefinition(IdentifierEscaper.Escape(member.Name), member, TextTokenKindUtils.GetTextTokenKind(member), false);
-			output.WriteSpace();
-			output.WriteLeftBrace();
+			output.Write(" ", BoxedTextTokenKind.Text);
+			output.Write(IdentifierEscaper.Escape(member.Name), member, DecompilerReferenceFlags.Definition, TextTokenKindUtils.GetTextTokenKind(member));
+			output.Write(" ", BoxedTextTokenKind.Text);
+			output.Write("{", BoxedTextTokenKind.Punctuation);
 			output.WriteLine();
 			output.Indent();
 		}
 
-		void EndKeywordBlock(ITextOutput output) {
+		void EndKeywordBlock(IDecompilerOutput output) {
 			output.Unindent();
-			output.WriteRightBrace();
+			output.Write("}", BoxedTextTokenKind.Punctuation);
 			output.WriteLine();
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			StartKeywordBlock(output, ".event", ev);
 
 			if (ev.AddMethod != null) {
@@ -179,15 +179,15 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			EndKeywordBlock(output);
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
-			output.WriteReference(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), TextTokenKindUtils.GetTextTokenKind(field.FieldType));
-			output.WriteSpace();
-			output.WriteDefinition(IdentifierEscaper.Escape(field.Name), field, TextTokenKindUtils.GetTextTokenKind(field), false);
+		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
+			output.Write(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), DecompilerReferenceFlags.None, TextTokenKindUtils.GetTextTokenKind(field.FieldType));
+			output.Write(" ", BoxedTextTokenKind.Text);
+			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, TextTokenKindUtils.GetTextTokenKind(field));
 			var c = field.Constant;
 			if (c != null) {
-				output.WriteSpace();
+				output.Write(" ", BoxedTextTokenKind.Text);
 				output.Write("=", BoxedTextTokenKind.Operator);
-				output.WriteSpace();
+				output.Write(" ", BoxedTextTokenKind.Text);
 				if (c.Value == null)
 					output.Write("null", BoxedTextTokenKind.Keyword);
 				else {
@@ -230,7 +230,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			}
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) {
 			StartKeywordBlock(output, ".property", property);
 
 			foreach (var getter in property.GetMethods) {
@@ -251,12 +251,12 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			EndKeywordBlock(output);
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, $"Type: {type.FullName}");
 			if (type.BaseType != null) {
 				WriteCommentBegin(output, true);
 				output.Write("Base type: ", BoxedTextTokenKind.Comment);
-				output.WriteReference(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, BoxedTextTokenKind.Comment);
+				output.Write(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, DecompilerReferenceFlags.None, BoxedTextTokenKind.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -307,7 +307,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 
 		public override string FileExtension => ".il";
 
-		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 	}
 #endif

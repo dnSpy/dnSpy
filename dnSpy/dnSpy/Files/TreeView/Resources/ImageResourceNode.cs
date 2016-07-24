@@ -133,7 +133,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
 		}
 
-		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
 				documentViewerOutput.AddUIElement(() => {
@@ -174,7 +174,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
 		}
 
-		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
 				language.WriteCommentBegin(output, true);
@@ -186,7 +186,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				});
 				output.Write(" = ", BoxedOutputColor.Comment);
 				const string LTR = "\u200E";
-				output.WriteDefinition(NameUtilities.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
+				output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;

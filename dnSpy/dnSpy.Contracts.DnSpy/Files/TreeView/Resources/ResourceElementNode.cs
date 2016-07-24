@@ -131,11 +131,11 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		}
 
 		/// <inheritdoc/>
-		public virtual void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
+		public virtual void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
-			output.WriteDefinition(NameUtilities.CleanName(Name) + LTR, this, BoxedOutputColor.Comment);
+			output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Comment);
 			output.Write($" = {ValueString}", BoxedOutputColor.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();

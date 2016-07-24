@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return true;
 		}
 
-		protected virtual void DecompileFields(ILanguage language, ITextOutput output) {
+		protected virtual void DecompileFields(ILanguage language, IDecompilerOutput output) {
 			foreach (var vm in HexVMs) {
 				language.WriteCommentLine(output, string.Empty);
 				language.WriteCommentLine(output, string.Format("{0}:", vm.Name));

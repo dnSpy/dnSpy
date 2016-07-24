@@ -50,22 +50,22 @@ namespace dnSpy.AsmEditor.MethodBody {
 			sealed class DummyPrinter : ISimpleILPrinter {
 				public double Order => 0;
 
-				public bool Write(ITextOutput output, IMemberRef member) {
+				public bool Write(IDecompilerOutput output, IMemberRef member) {
 					if (member == null || member is GenericParam)
 						return false;
 					Write(output, member);
 					return true;
 				}
 
-				public void Write(ITextOutput output, TypeSig type) {
+				public void Write(IDecompilerOutput output, TypeSig type) {
 					Write(output, type);
 				}
 
-				public void Write(ITextOutput output, MethodSig sig) {
+				public void Write(IDecompilerOutput output, MethodSig sig) {
 					Write(output, sig);
 				}
 
-				void Write(ITextOutput output, object value) {
+				void Write(IDecompilerOutput output, object value) {
 					output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedOutputColor.Text);
 				}
 			}

@@ -23,7 +23,7 @@ using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Languages.ILSpy.Core.IL {
 	static class ILLanguageUtils {
-		public static bool Write(ITextOutput output, IMemberRef member) {
+		public static bool Write(IDecompilerOutput output, IMemberRef member) {
 			var method = member as IMethod;
 			if (method != null && method.IsMethod) {
 				method.WriteMethodTo(output);

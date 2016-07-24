@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
 	/// dnSpy text output
 	/// </summary>
-	public interface IDocumentViewerOutput : ITextOutput {
+	public interface IDocumentViewerOutput : IDecompilerOutput {
 		/// <summary>
 		/// Called to disable caching of the result
 		/// </summary>

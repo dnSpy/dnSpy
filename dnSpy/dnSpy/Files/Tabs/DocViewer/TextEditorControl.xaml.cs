@@ -196,11 +196,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		struct LastOutput : IEquatable<LastOutput> {
-			readonly ITextOutput output;
+			readonly IDecompilerOutput output;
 			readonly IHighlightingDefinition highlighting;
 			readonly IContentType contentType;
 
-			public LastOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
+			public LastOutput(IDecompilerOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
 				this.output = output;
 				this.highlighting = highlighting;
 				this.contentType = contentType;
@@ -220,7 +220,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void OnUseNewRendererChanged() => lastOutput = new LastOutput();
 
 		LastOutput lastOutput;
-		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
+		public void SetOutput(IDecompilerOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
 			if (output == null)
 				throw new ArgumentNullException();
 			if (contentType == null)

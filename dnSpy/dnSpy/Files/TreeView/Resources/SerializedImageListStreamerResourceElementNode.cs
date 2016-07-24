@@ -66,12 +66,12 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.imageData = imageData;
 		}
 
-		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
-						output.WriteSpace();
+						output.Write(" ", BoxedTextTokenKind.Text);
 					var imageSource = imageListOptions.ImageSources[i];
 					documentViewerOutput.AddUIElement(() => {
 						return new System.Windows.Controls.Image {

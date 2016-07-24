@@ -83,10 +83,10 @@ namespace dnSpy.Languages.ILSpy.IL {
 		public override Guid UniqueGuid => LanguageConstants.LANGUAGE_IL_ILSPY;
 		public override string FileExtension => ".il";
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, IMemberDef member) =>
+		ReflectionDisassembler CreateReflectionDisassembler(IDecompilerOutput output, DecompilationContext ctx, IMemberDef member) =>
 			CreateReflectionDisassembler(output, ctx, member.Module);
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, ModuleDef ownerModule) {
+		ReflectionDisassembler CreateReflectionDisassembler(IDecompilerOutput output, DecompilationContext ctx, ModuleDef ownerModule) {
 			var disOpts = new DisassemblerOptions(ctx.CancellationToken, ownerModule);
 			if (langSettings.Settings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
@@ -120,17 +120,17 @@ namespace dnSpy.Languages.ILSpy.IL {
 			}
 		}
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) {
 			var dis = CreateReflectionDisassembler(output, ctx, method);
 			dis.DisassembleMethod(method);
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
 			var dis = CreateReflectionDisassembler(output, ctx, field);
 			dis.DisassembleField(field);
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, property);
 			rd.DisassembleProperty(property);
 			if (property.GetMethod != null) {
@@ -147,7 +147,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 			}
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, ev);
 			rd.DisassembleEvent(ev);
 			if (ev.AddMethod != null) {
@@ -164,12 +164,12 @@ namespace dnSpy.Languages.ILSpy.IL {
 			}
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			var dis = CreateReflectionDisassembler(output, ctx, type);
 			dis.DisassembleType(type);
 		}
 
-		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			output.WriteLine("// " + asm.ManifestModule.Location, BoxedTextTokenKind.Comment);
 			PrintEntryPoint(asm.ManifestModule, output);
 			output.WriteLine();
@@ -178,7 +178,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 			rd.WriteAssemblyHeader(asm);
 		}
 
-		public override void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) {
 			output.WriteLine("// " + mod.Location, BoxedTextTokenKind.Comment);
 			PrintEntryPoint(mod, output);
 			output.WriteLine();
@@ -188,7 +188,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 			rd.WriteModuleHeader(mod);
 		}
 
-		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 
 		public override void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {

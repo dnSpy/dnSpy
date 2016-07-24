@@ -57,12 +57,12 @@ namespace dnSpy.Files.Tabs {
 
 	struct NodeDecompiler {
 		readonly Func<Func<object>, object> execInThread;
-		readonly ITextOutput output;
+		readonly IDecompilerOutput output;
 		readonly ILanguage language;
 		readonly DecompilationContext decompilationContext;
 		readonly IDecompileNodeContext decompileNodeContext;
 
-		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationContext decompilationContext, IDecompileNodeContext decompileNodeContext = null) {
+		public NodeDecompiler(Func<Func<object>, object> execInThread, IDecompilerOutput output, ILanguage language, DecompilationContext decompilationContext, IDecompileNodeContext decompileNodeContext = null) {
 			this.execInThread = execInThread;
 			this.output = output;
 			this.language = language;

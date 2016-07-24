@@ -28,14 +28,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DecompileNodeContext : IDecompileNodeContext {
 		public DecompilationContext DecompilationContext { get; }
 		public ILanguage Language { get; }
-		public ITextOutput Output { get; }
+		public IDecompilerOutput Output { get; }
 		public string FileExtension { get; set; }
 		public IContentType ContentType { get; set; }
 		public string ContentTypeString { get; set; }
 
 		readonly Dispatcher dispatcher;
 
-		public DecompileNodeContext(DecompilationContext decompilationContext, ILanguage language, ITextOutput output, Dispatcher dispatcher) {
+		public DecompileNodeContext(DecompilationContext decompilationContext, ILanguage language, IDecompilerOutput output, Dispatcher dispatcher) {
 			if (decompilationContext == null)
 				throw new ArgumentNullException(nameof(decompilationContext));
 			if (language == null)

@@ -74,7 +74,6 @@
   <ItemGroup>
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
-    <Compile Include="Decompiler\ISmartTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

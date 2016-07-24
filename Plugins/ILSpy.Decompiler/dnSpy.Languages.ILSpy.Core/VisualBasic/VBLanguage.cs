@@ -77,16 +77,16 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 		public override string FileExtension => ".vb";
 		public override string ProjectFileExtension => ".vbproj";
 
-		public override void WriteCommentBegin(ITextOutput output, bool addSpace) {
+		public override void WriteCommentBegin(IDecompilerOutput output, bool addSpace) {
 			if (addSpace)
 				output.Write("' ", BoxedTextTokenKind.Comment);
 			else
 				output.Write("'", BoxedTextTokenKind.Comment);
 		}
 
-		public override void WriteCommentEnd(ITextOutput output, bool addSpace) { }
+		public override void WriteCommentEnd(IDecompilerOutput output, bool addSpace) { }
 
-		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteAssembly(asm, output, ctx);
 
 			using (ctx.DisableAssemblyLoad()) {
@@ -101,7 +101,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteModule(mod, output, ctx);
 
 			using (ctx.DisableAssemblyLoad()) {
@@ -116,7 +116,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, method);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: method.DeclaringType, isSingleMember: true);
 			try {
@@ -128,7 +128,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, property);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: property.DeclaringType, isSingleMember: true);
 			try {
@@ -140,7 +140,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, field);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: field.DeclaringType, isSingleMember: true);
 			try {
@@ -152,7 +152,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, ev);
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: ev.DeclaringType, isSingleMember: true);
 			try {
@@ -164,7 +164,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			var state = CreateAstBuilder(ctx, langSettings.Settings, currentType: type);
 			try {
 				state.AstBuilder.AddType(type);
@@ -177,7 +177,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		public override bool ShowMember(IMemberRef member) => showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
 
-		void RunTransformsAndGenerateCode(ref BuilderState state, ITextOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
+		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (additionalTransform != null) {
@@ -211,14 +211,14 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			return state;
 		}
 
-		protected override void FormatTypeName(ITextOutput output, TypeDef type) {
+		protected override void FormatTypeName(IDecompilerOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
 		}
 
-		protected override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
@@ -226,14 +226,14 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			TypeToString(output, options, type, typeAttributes);
 		}
 
-		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
+		void TypeToString(IDecompilerOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
 			var envProvider = new ILSpyEnvironmentProvider();
 			var converter = new CSharpToVBConverterVisitor(type.Module, envProvider);
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
 			if (type.TryGetByRefSig() != null) {
 				output.Write("ByRef", BoxedTextTokenKind.Keyword);
-				output.WriteSpace();
+				output.Write(" ", BoxedTextTokenKind.Text);
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
 					((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank--;
 			}

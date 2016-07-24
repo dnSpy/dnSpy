@@ -86,10 +86,10 @@ namespace dnSpy.BamlDecompiler {
 		#endregion
 
 		ILanguage lang;
-		ITextOutput output;
+		IDecompilerOutput output;
 		CancellationToken token;
 
-		public BamlDisassembler(ILanguage lang, ITextOutput output, CancellationToken token) {
+		public BamlDisassembler(ILanguage lang, IDecompilerOutput output, CancellationToken token) {
 			this.lang = lang;
 			this.output = output;
 			this.token = token;
@@ -141,7 +141,7 @@ namespace dnSpy.BamlDecompiler {
 				reference = ctx.AssemblyIdMap[id].AssemblyFullName;
 			else
 				reference = null;
-			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedOutputColor.Number, true);
+			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedOutputColor.Number);
 		}
 
 		void WriteTypeId(BamlContext ctx, ushort id) {
@@ -156,7 +156,7 @@ namespace dnSpy.BamlDecompiler {
 			if (reference != null)
 				reference = IdentifierEscaper.Escape(reference);
 
-			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedOutputColor.Number, true);
+			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedOutputColor.Number);
 		}
 
 		void WriteAttributeId(BamlContext ctx, ushort id) {
@@ -183,7 +183,7 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (declType != null && name != null)
 				reference = $"{IdentifierEscaper.Escape(declType)}::{IdentifierEscaper.Escape(name)}";
-			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedOutputColor.Number, true);
+			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedOutputColor.Number);
 		}
 
 		void WriteStringId(BamlContext ctx, ushort id) {
@@ -197,16 +197,16 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (str != null)
 				reference = SimpleTypeConverter.ToString(str, true);
-			output.WriteReference($"0x{id:x4}", BamlToolTipReference.Create(reference), BoxedOutputColor.Number, true);
+			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedOutputColor.Number);
 		}
 
 		void WriteDefinition(string value, string def = null) {
 			string str = SimpleTypeConverter.ToString(value, true);
-			output.WriteDefinition(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), BoxedOutputColor.String, true);
+			output.Write(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.String);
 		}
 
 		void WriteRecordRef(BamlRecord record) {
-			output.WriteReference(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), BoxedOutputColor.Keyword, true);
+			output.Write(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), DecompilerReferenceFlags.Local, BoxedOutputColor.Keyword);
 		}
 
 		public void Disassemble(ModuleDef module, BamlDocument document) {
@@ -256,7 +256,7 @@ namespace dnSpy.BamlDecompiler {
 				}
 			}
 
-			output.WriteDefinition(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), BoxedOutputColor.Keyword, true);
+			output.Write(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Keyword);
 
 			Action<BamlContext, BamlRecord> handler;
 			if (handlerMap.TryGetValue(record.Type, out handler)) {

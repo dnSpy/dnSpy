@@ -45,12 +45,12 @@ namespace dnSpy.Languages.MSBuild {
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
-				var output = new PlainTextOutput(writer);
+				var output = new TextWriterDecompilerOutput(writer);
 				Decompile(ctx, output);
 			}
 		}
 
-		protected virtual void Decompile(DecompileContext ctx, ITextOutput output) =>
+		protected virtual void Decompile(DecompileContext ctx, IDecompilerOutput output) =>
 			language.Decompile(Type, output, decompilationContext);
 	}
 }

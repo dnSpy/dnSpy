@@ -194,7 +194,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		void Write(ITextOutput output) {
+		void Write(IDecompilerOutput output) {
 			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), BoxedOutputColor.Text);
 			output.WriteLine();
 			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedOutputColor.Text);
@@ -210,7 +210,7 @@ namespace dnSpy.MainApp {
 			WriteResourceFile(output, "dnSpy.CREDITS.txt");
 		}
 
-		void WriteResourceFile(ITextOutput dnSpyOutput, string name, bool addNewLine = true) {
+		void WriteResourceFile(IDecompilerOutput dnSpyOutput, string name, bool addNewLine = true) {
 			if (addNewLine)
 				dnSpyOutput.WriteLine();
 			using (var stream = GetType().Assembly.GetManifestResourceStream(name))
@@ -224,7 +224,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		void WriteShortInfo(ITextOutput output, string s) {
+		void WriteShortInfo(IDecompilerOutput output, string s) {
 			if (string.IsNullOrEmpty(s))
 				return;
 			const int MAX_SHORT_LEN = 128;

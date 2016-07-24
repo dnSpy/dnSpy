@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// <param name="output">Output</param>
 		/// <param name="node">Node</param>
 		/// <param name="showOffsetComment">true if the offset and comment should be written</param>
-		public static void WriteOffsetComment(this ITextOutput output, IResourceDataProvider node, bool showOffsetComment) {
+		public static void WriteOffsetComment(this IDecompilerOutput output, IResourceDataProvider node, bool showOffsetComment) {
 			if (!showOffsetComment)
 				return;
 
@@ -116,7 +116,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 
 			var mod = (node as IFileTreeNodeData).GetModule();
 			var filename = mod == null ? null : mod.Location;
-			output.WriteReference($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), BoxedOutputColor.Comment);
+			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
 			output.Write(": ", BoxedOutputColor.Comment);
 		}
 

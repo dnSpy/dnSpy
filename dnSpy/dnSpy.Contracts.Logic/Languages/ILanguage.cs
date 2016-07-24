@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="method">Method</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx);
+		void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a property
@@ -113,7 +113,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="property">Property</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx);
+		void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a field
@@ -121,7 +121,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="field">Field</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx);
+		void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles an event
@@ -129,7 +129,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="ev">Event</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx);
+		void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a type
@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="type">Type</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx);
+		void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a namespace
@@ -146,7 +146,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="types">Types in namespace</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationContext ctx);
+		void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles an assembly
@@ -154,7 +154,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="asm">Assembly</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx);
+		void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a module
@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="mod">Module</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx);
+		void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Writes a tooltip
@@ -193,14 +193,14 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="addSpace">true to add a space before the comment prefix</param>
-		void WriteCommentBegin(ITextOutput output, bool addSpace);
+		void WriteCommentBegin(IDecompilerOutput output, bool addSpace);
 
 		/// <summary>
 		/// Writes a comment suffix
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="addSpace">true to add a space before the comment suffix (if it's written)</param>
-		void WriteCommentEnd(ITextOutput output, bool addSpace);
+		void WriteCommentEnd(IDecompilerOutput output, bool addSpace);
 
 		/// <summary>
 		/// Returns true if the member is visible. Can be used to hide compiler generated types, methods etc
@@ -236,7 +236,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="self">This</param>
 		/// <param name="output">Output</param>
 		/// <param name="comment">Comment</param>
-		public static void WriteCommentLine(this ILanguage self, ITextOutput output, string comment) {
+		public static void WriteCommentLine(this ILanguage self, IDecompilerOutput output, string comment) {
 			self.WriteCommentBegin(output, true);
 			output.Write(comment, BoxedOutputColor.Comment);
 			self.WriteCommentEnd(output, true);

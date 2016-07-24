@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// <param name="language">Language</param>
 		/// <param name="showOffset">true to write offset and size of resource in the PE image, if
 		/// that info is available</param>
-		void WriteShort(ITextOutput output, ILanguage language, bool showOffset);
+		void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset);
 
 		/// <summary>
 		/// Used by the searcher. Should only return a string if the data is text or compiled text.

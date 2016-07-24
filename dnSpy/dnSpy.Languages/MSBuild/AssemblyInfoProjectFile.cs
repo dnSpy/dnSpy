@@ -43,7 +43,7 @@ namespace dnSpy.Languages.MSBuild {
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
-				var output = new PlainTextOutput(writer);
+				var output = new TextWriterDecompilerOutput(writer);
 				language.Decompile(DecompilationType.AssemblyInfo, new DecompileAssemblyInfo(output, decompilationContext, module));
 			}
 		}

@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
 		/// <param name="type">Type</param>
-		public DecompilePartialType(ITextOutput output, DecompilationContext ctx, TypeDef type)
+		public DecompilePartialType(IDecompilerOutput output, DecompilationContext ctx, TypeDef type)
 			: base(output, ctx) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));

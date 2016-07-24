@@ -30,8 +30,8 @@ namespace dnSpy.Languages.ILSpy.IL {
 	sealed class SimpleILPrinter : ISimpleILPrinter {
 		double ISimpleILPrinter.Order => -100;
 
-		bool ISimpleILPrinter.Write(ITextOutput output, IMemberRef member) => ILLanguageUtils.Write(output, member);
-		void ISimpleILPrinter.Write(ITextOutput output, MethodSig sig) => output.Write(sig);
-		void ISimpleILPrinter.Write(ITextOutput output, TypeSig type) => type.WriteTo(output);
+		bool ISimpleILPrinter.Write(IDecompilerOutput output, IMemberRef member) => ILLanguageUtils.Write(output, member);
+		void ISimpleILPrinter.Write(IDecompilerOutput output, MethodSig sig) => output.Write(sig);
+		void ISimpleILPrinter.Write(IDecompilerOutput output, TypeSig type) => type.WriteTo(output);
 	}
 }

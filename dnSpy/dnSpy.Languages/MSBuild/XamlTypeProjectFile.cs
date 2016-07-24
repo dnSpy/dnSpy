@@ -28,7 +28,7 @@ namespace dnSpy.Languages.MSBuild {
 			: base(type, filename, decompilationContext, language) {
 		}
 
-		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
+		protected override void Decompile(DecompileContext ctx, IDecompilerOutput output) {
 			var opts = new DecompilePartialType(output, decompilationContext, Type);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);

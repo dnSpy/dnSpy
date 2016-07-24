@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Output to use
 		/// </summary>
-		ITextOutput Output { get; }
+		IDecompilerOutput Output { get; }
 
 		/// <summary>
 		/// Language to use

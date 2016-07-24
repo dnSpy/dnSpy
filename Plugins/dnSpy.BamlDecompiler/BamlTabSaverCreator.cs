@@ -75,7 +75,7 @@ namespace dnSpy.BamlDecompiler {
 
 		sealed class DecompileContext : IDisposable {
 			public TextWriter Writer;
-			public PlainTextOutput Output;
+			public TextWriterDecompilerOutput Output;
 			public CancellationToken Token;
 
 			public void Dispose() {
@@ -88,7 +88,7 @@ namespace dnSpy.BamlDecompiler {
 			var decompileContext = new DecompileContext();
 			try {
 				decompileContext.Writer = new StreamWriter(filename);
-				decompileContext.Output = new PlainTextOutput(decompileContext.Writer);
+				decompileContext.Output = new TextWriterDecompilerOutput(decompileContext.Writer);
 				return decompileContext;
 			}
 			catch {

@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
 		/// <param name="module">Type</param>
-		public DecompileAssemblyInfo(ITextOutput output, DecompilationContext ctx, ModuleDef module)
+		public DecompileAssemblyInfo(IDecompilerOutput output, DecompilationContext ctx, ModuleDef module)
 			: base(output, ctx) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));

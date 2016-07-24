@@ -38,10 +38,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		SpanDataCollectionBuilder<ReferenceInfo> referenceBuilder;
 		int indentation;
 		bool canBeCached;
-		bool addIndent;
+		bool addIndent = true;
 		bool hasCreatedResult;
 
-		int ITextOutput.Position => stringBuilder.Length + GetIndentSize();
+		int IDecompilerOutput.Length => stringBuilder.Length;
+		int IDecompilerOutput.NextPosition => stringBuilder.Length + GetIndentSize();
 
 		public DocumentViewerOutput() {
 			this.cachedTextTokenColors = new CachedTextTokenColors();
@@ -60,7 +61,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
 
-		public void AddMethodDebugInfo(MethodDebugInfo methodDebugInfo) => methodDebugInfos.Add(methodDebugInfo);
+		bool IDecompilerOutput.UsesDebugInfo => true;
+		public void AddDebugInfo(MethodDebugInfo methodDebugInfo) => methodDebugInfos.Add(methodDebugInfo);
 
 		public void Indent() => indentation++;
 
@@ -112,49 +114,28 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		void AddText(string text, object data) {
+		void AddText(string text, object color) {
 			if (addIndent)
 				AddIndent();
 			stringBuilder.Append(text);
-			cachedTextTokenColors.Append(data, text);
+			cachedTextTokenColors.Append(color, text);
 		}
 
-		void AddText(string text, int index, int count, object data) {
+		void AddText(string text, int index, int count, object color) {
 			if (addIndent)
 				AddIndent();
 			stringBuilder.Append(text, index, count);
-			cachedTextTokenColors.Append(data, text, index, count);
+			cachedTextTokenColors.Append(color, text, index, count);
 		}
 
-		public void Write(string text, TextTokenKind tokenKind) => AddText(text, tokenKind.Box());
-		public void Write(string text, object data) => AddText(text, data);
-		public void Write(string text, int index, int count, TextTokenKind tokenKind) => AddText(text, index, count, tokenKind.Box());
-		public void Write(string text, int index, int count, object data) => AddText(text, index, count, data);
+		public void Write(string text, object color) => AddText(text, color);
+		public void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
 
-		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) => Write(sb, index, count, tokenKind.Box());
-		public void Write(StringBuilder sb, int index, int count, object data) {
-			if (index == 0 && sb.Length == count)
-				AddText(sb.ToString(), data);
-			else
-				AddText(sb.ToString(index, count), data);
-		}
-
-		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) =>
-			WriteDefinition(text, definition, tokenKind.Box(), isLocal);
-		public void WriteDefinition(string text, object definition, object data, bool isLocal) {
+		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
-			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(definition, isLocal, true));
-			AddText(text, data);
-		}
-
-		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) =>
-			WriteReference(text, reference, tokenKind.Box(), isLocal);
-		public void WriteReference(string text, object reference, object data, bool isLocal) {
-			if (addIndent)
-				AddIndent();
-			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(reference, isLocal, false));
-			AddText(text, data);
+			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(reference, (flags & DecompilerReferenceFlags.Local) != 0, (flags & DecompilerReferenceFlags.Definition) != 0));
+			AddText(text, color);
 		}
 
 		public void AddUIElement(Func<UIElement> createElement) {
