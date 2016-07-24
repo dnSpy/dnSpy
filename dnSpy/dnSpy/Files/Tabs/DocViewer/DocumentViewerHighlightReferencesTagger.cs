@@ -168,7 +168,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 					var tag = TryGetTextMarkerTag(spanData);
 					if (tag == null)
 						continue;
-					if (!SpanDataReferenceInfoExtensions.CompareReferences(spanData, theRef))
+					if (!SpanDataReferenceInfoExtensions.CompareReferences(spanData.Data, theRef.Data))
 						continue;
 					yield return new TagSpan<ITextMarkerTag>(new SnapshotSpan(snapshot, spanData.Span), tag);
 				}
@@ -180,7 +180,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				return true;
 			if (a == null || b == null)
 				return false;
-			return SpanDataReferenceInfoExtensions.CompareReferences(a.Value, b.Value);
+			return SpanDataReferenceInfoExtensions.CompareReferences(a.Value.Data, b.Value.Data);
 		}
 
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {

@@ -20,21 +20,9 @@
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	static class SpanDataReferenceInfoExtensions {
-		public static bool CompareReferences(SpanData<ReferenceInfo> refInfoA, SpanData<ReferenceInfo> refInfoB) {
-			// If they have the same span, they must be identical. Overlapping spans aren't supported
-			// and this method shouldn't be called unless both spans are in the same document.
-			if (refInfoA.Span == refInfoB.Span) {
-				Debug.Assert(refInfoA.Data == refInfoB.Data);
-				Debug.Assert(refInfoA.Data.Reference == refInfoB.Data.Reference);
-				return true;
-			}
-			return CompareReferences(refInfoA.Data, refInfoB.Data);
-		}
-
 		public static bool CompareReferences(ReferenceInfo refInfoA, ReferenceInfo refInfoB) {
 			if (refInfoA.Reference == null || refInfoB.Reference == null)
 				return false;
