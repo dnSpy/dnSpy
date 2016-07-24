@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Text span
 	/// </summary>

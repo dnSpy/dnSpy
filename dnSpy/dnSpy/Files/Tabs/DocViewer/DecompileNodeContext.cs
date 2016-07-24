@@ -19,9 +19,9 @@
 
 using System;
 using System.Windows.Threading;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer {

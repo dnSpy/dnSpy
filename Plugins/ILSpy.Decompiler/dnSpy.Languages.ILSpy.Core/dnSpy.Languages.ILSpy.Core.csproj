@@ -76,10 +76,6 @@
       <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
-      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
-      <Name>dnSpy.Decompiler.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Languages\dnSpy.Languages.csproj">
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
       <Name>dnSpy.Languages</Name>

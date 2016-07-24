@@ -18,9 +18,9 @@
 */
 
 using System;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {

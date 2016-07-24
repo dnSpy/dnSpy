@@ -21,7 +21,8 @@ using System;
 using System.Diagnostics;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler.Shared {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+namespace dnSpy.Contracts.Decompiler {
 	public enum TextTokenKind : byte {
 		Text,
 		Operator,
@@ -778,3 +779,4 @@ namespace dnSpy.Decompiler.Shared {
 		}
 	}
 }
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member

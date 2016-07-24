@@ -19,7 +19,7 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>

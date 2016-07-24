@@ -38,6 +38,28 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Decompiler\AddressReference.cs" />
+    <Compile Include="Decompiler\BinSpan.cs" />
+    <Compile Include="Decompiler\DecompilerReferenceFlags.cs" />
+    <Compile Include="Decompiler\Extensions.cs" />
+    <Compile Include="Decompiler\GenericArgumentResolver.cs" />
+    <Compile Include="Decompiler\IDecompilerOutput.cs" />
+    <Compile Include="Decompiler\IdentifierEscaper.cs" />
+    <Compile Include="Decompiler\IInstructionBytesReader.cs" />
+    <Compile Include="Decompiler\InstructionReference.cs" />
+    <Compile Include="Decompiler\MemberComparer.cs" />
+    <Compile Include="Decompiler\MethodDebugInfo.cs" />
+    <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
+    <Compile Include="Decompiler\MethodSourceStatement.cs" />
+    <Compile Include="Decompiler\SimpleXmlParser.cs" />
+    <Compile Include="Decompiler\SourceLocal.cs" />
+    <Compile Include="Decompiler\SourceStatement.cs" />
+    <Compile Include="Decompiler\StringBuilderDecompilerOutput.cs" />
+    <Compile Include="Decompiler\TextSpan.cs" />
+    <Compile Include="Decompiler\TextTokenKind.cs" />
+    <Compile Include="Decompiler\TextWriterDecompilerOutput.cs" />
+    <Compile Include="Decompiler\TokenReference.cs" />
+    <Compile Include="Decompiler\TypesHierarchyHelpers.cs" />
     <Compile Include="Languages\BamlDecompilerOptions.cs" />
     <Compile Include="Languages\DecompilationContext.cs" />
     <Compile Include="Languages\DecompilationType.cs" />
@@ -82,10 +104,6 @@
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
-      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
-      <Name>dnSpy.Decompiler.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

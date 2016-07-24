@@ -22,11 +22,11 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.PE;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Hex;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_HEXADDRREF)]
@@ -79,6 +79,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		ulong? GetFileOffset(AddressReference addrRef, IFileTreeView fileTreeView) {
 			if (!addrRef.IsRVA)
 				return addrRef.Address;
+			if (string.IsNullOrEmpty(addrRef.Filename))
+				return null;
 
 			var file = fileTreeView.GetAllCreatedDnSpyFileNodes().FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.DnSpyFile.Filename, addrRef.Filename));
 			if (file == null)

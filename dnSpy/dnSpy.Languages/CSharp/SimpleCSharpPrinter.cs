@@ -24,10 +24,10 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.CSharp {

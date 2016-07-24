@@ -25,7 +25,6 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Languages.IL;
-using dnSpy.Decompiler.Shared;
 using System.Text;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Languages.XmlDoc;

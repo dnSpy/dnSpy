@@ -26,11 +26,11 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
 using System.Text;
 using dnSpy.Languages.ILSpy.Core.Text;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.VisualBasic {
 	sealed class LanguageProvider : ILanguageProvider {

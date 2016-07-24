@@ -33,7 +33,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.CallStack;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Threads {
 	[ExportAutoLoaded]

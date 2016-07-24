@@ -20,9 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 

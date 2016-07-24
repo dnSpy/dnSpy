@@ -24,7 +24,6 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Decompiler {

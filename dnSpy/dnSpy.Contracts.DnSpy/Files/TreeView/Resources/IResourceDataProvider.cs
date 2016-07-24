@@ -19,8 +19,8 @@
 
 using System.Collections.Generic;
 using System.Threading;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>

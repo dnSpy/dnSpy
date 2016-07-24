@@ -26,10 +26,10 @@ using System.Globalization;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.BamlDecompiler {
 	internal class BamlDisassembler {

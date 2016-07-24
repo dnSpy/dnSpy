@@ -29,13 +29,13 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.IL;
 
 namespace dnSpy.AsmEditor.Commands {

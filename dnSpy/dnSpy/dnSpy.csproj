@@ -603,10 +603,6 @@
       <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
-      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
-      <Name>dnSpy.Decompiler.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
       <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
       <Name>dnSpy.Roslyn.Shared</Name>

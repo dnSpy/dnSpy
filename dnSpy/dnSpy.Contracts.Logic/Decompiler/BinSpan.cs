@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Binary span
 	/// </summary>

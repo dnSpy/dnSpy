@@ -19,7 +19,8 @@
 
 using dnlib.DotNet;
 using dnlib.IO;
-using dnSpy.Decompiler.Shared;
+using dnlib.PE;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Languages.IL {
 	sealed class OriginalInstructionBytesReader : IInstructionBytesReader {
@@ -27,7 +28,15 @@ namespace dnSpy.Languages.IL {
 
 		public OriginalInstructionBytesReader(MethodDef method) {
 			//TODO: This fails and returns null if it's a CorMethodDef!
-			this.stream = method.Module.GetImageStream((uint)method.RVA + method.Body.HeaderSize);
+			this.stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
+		}
+
+		static IImageStream GetImageStream(ModuleDef module, uint rva) {
+			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
+			if (m == null)
+				return null;
+
+			return m.MetaData.PEImage.CreateStream((RVA)rva);
 		}
 
 		public int ReadByte() {

@@ -23,10 +23,10 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class StackFramesUpdatedEventArgs : EventArgs {

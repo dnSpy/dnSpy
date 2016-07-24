@@ -18,8 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>

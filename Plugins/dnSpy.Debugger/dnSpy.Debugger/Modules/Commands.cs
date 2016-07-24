@@ -43,7 +43,6 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Modules {
 	[ExportAutoLoaded]

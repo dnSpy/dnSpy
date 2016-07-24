@@ -18,33 +18,39 @@
 */
 
 using System;
-using dnlib.DotNet;
+using System.Collections.Generic;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Method and statement
+	/// Source statement
 	/// </summary>
-	public struct MethodSourceStatement : IEquatable<MethodSourceStatement> {
-		/// <summary>
-		/// Gets the method
-		/// </summary>
-		public MethodDef Method { get; }
+	public struct SourceStatement : IEquatable<SourceStatement> {
+		internal static readonly IComparer<SourceStatement> SpanStartComparer = new SpanStartComparerImpl();
+		readonly BinSpan binSpan;
+		readonly TextSpan textSpan;
 
 		/// <summary>
-		/// Gets the statement
+		/// Binary span
 		/// </summary>
-		public SourceStatement Statement { get; }
+		public BinSpan BinSpan => binSpan;
+
+		/// <summary>
+		/// Text span
+		/// </summary>
+		public TextSpan TextSpan => textSpan;
+
+		sealed class SpanStartComparerImpl : IComparer<SourceStatement> {
+			public int Compare(SourceStatement x, SourceStatement y) => (int)(x.binSpan.Start - y.binSpan.Start);
+		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="method">Method</param>
-		/// <param name="statement">Statement</param>
-		public MethodSourceStatement(MethodDef method, SourceStatement statement) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			Method = method;
-			Statement = statement;
+		/// <param name="binSpan">Binary span</param>
+		/// <param name="textSpan">Text span</param>
+		public SourceStatement(BinSpan binSpan, TextSpan textSpan) {
+			this.binSpan = binSpan;
+			this.textSpan = textSpan;
 		}
 
 		/// <summary>
@@ -53,7 +59,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(MethodSourceStatement left, MethodSourceStatement right) => left.Equals(right);
+		public static bool operator ==(SourceStatement left, SourceStatement right) => left.Equals(right);
 
 		/// <summary>
 		/// operator !=()
@@ -61,32 +67,32 @@ namespace dnSpy.Decompiler.Shared {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(MethodSourceStatement left, MethodSourceStatement right) => !left.Equals(right);
+		public static bool operator !=(SourceStatement left, SourceStatement right) => !left.Equals(right);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(MethodSourceStatement other) => Method == other.Method && Statement.Equals(other.Statement);
+		public bool Equals(SourceStatement other) => binSpan.Equals(other.binSpan) && textSpan.Equals(other.textSpan);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is MethodSourceStatement && Equals((MethodSourceStatement)obj);
+		public override bool Equals(object obj) => obj is SourceStatement && Equals((SourceStatement)obj);
 
 		/// <summary>
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => Method.GetHashCode() ^ Statement.GetHashCode();
+		public override int GetHashCode() => binSpan.GetHashCode() ^ textSpan.GetHashCode();
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => "{" + Statement.ToString() + "," + Method.ToString() + "}";
+		public override string ToString() => "{" + binSpan.ToString() + "," + textSpan.ToString() + "}";
 	}
 }

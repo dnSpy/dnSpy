@@ -33,7 +33,6 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;

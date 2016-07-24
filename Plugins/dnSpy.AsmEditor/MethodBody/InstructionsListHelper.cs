@@ -37,7 +37,6 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {

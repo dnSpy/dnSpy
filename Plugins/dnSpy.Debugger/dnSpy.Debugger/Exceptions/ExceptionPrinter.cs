@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionPrinter {

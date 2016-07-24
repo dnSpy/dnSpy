@@ -18,8 +18,8 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Languages.ILSpy.Core.IL {
 	static class ILLanguageUtils {

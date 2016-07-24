@@ -18,9 +18,9 @@
 */
 
 using System;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class ILCodeBreakpoint : Breakpoint, IMarkedTextLine {

@@ -25,10 +25,10 @@ using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {

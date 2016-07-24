@@ -21,16 +21,40 @@ using System.Text;
 using System.Globalization;
 
 namespace dndbg.Engine {
+	/// <summary>
+	/// Escapes identifiers
+	/// </summary>
 	static class IdentifierEscaper {
 		const int MAX_IDENTIFIER_LENGTH = 128;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 
+		/// <summary>
+		/// Escapes an identifier
+		/// </summary>
+		/// <param name="id">Identifier</param>
+		/// <returns></returns>
 		public static string Escape(string id) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;
-			var sb = new StringBuilder();
 
-			foreach (var c in id) {
+			// Common case is a valid string
+			int i = 0;
+			if (id.Length <= MAX_IDENTIFIER_LENGTH) {
+				for (; ; i++) {
+					if (i >= id.Length)
+						return id;
+					if (!IsValidChar(id[i]))
+						break;
+				}
+			}
+
+			// Here if obfuscated or weird string
+			var sb = new StringBuilder(id.Length + 10);
+			if (i != 0)
+				sb.Append(id, 0, i);
+
+			for (; i < id.Length; i++) {
+				char c = id[i];
 				if (!IsValidChar(c))
 					sb.Append(string.Format(@"\u{0:X4}", (ushort)c));
 				else

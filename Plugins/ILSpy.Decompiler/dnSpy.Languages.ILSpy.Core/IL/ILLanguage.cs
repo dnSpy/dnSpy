@@ -22,7 +22,6 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.IL;
 using ICSharpCode.Decompiler.Disassembler;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.XmlDoc;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
@@ -31,6 +30,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Languages.ILSpy.Core.Text;
 using dnSpy.Languages.ILSpy.Core.IL;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	sealed class LanguageProvider : ILanguageProvider {

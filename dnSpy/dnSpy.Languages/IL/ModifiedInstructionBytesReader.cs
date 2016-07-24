@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Languages.IL {
 	sealed class ModifiedInstructionBytesReader : IInstructionBytesReader {

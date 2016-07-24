@@ -34,7 +34,6 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]

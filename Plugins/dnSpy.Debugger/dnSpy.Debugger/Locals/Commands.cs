@@ -39,7 +39,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Locals {
 	[ExportAutoLoaded]

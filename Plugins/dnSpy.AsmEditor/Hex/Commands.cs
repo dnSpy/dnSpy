@@ -32,6 +32,7 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.AsmEditor.Utilities;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -43,7 +44,6 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportAutoLoaded]

@@ -25,7 +25,6 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	sealed class CodeToolTipWriter : ICodeToolTipWriter, IXmlDocOutput {

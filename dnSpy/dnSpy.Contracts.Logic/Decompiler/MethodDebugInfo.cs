@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Method statements
 	/// </summary>
@@ -66,12 +66,19 @@ namespace dnSpy.Decompiler.Shared {
 			minTextOffset = -1;
 		}
 
+		/// <summary>
+		/// Gets step ranges
+		/// </summary>
+		/// <param name="sourceStatement">Source statement</param>
+		/// <returns></returns>
 		public uint[] GetRanges(SourceStatement sourceStatement) {
 			var list = new List<BinSpan>(GetUnusedBinSpans().Length + 1);
 			list.Add(sourceStatement.BinSpan);
 			list.AddRange(GetUnusedBinSpans());
 
 			var orderedList = BinSpan.OrderAndCompactList(list);
+			if (orderedList.Count == 0)
+				return Array.Empty<uint>();
 			var binSpanArray = new uint[orderedList.Count * 2];
 			for (int i = 0; i < orderedList.Count; i++) {
 				binSpanArray[i * 2 + 0] = orderedList[i].Start;
@@ -80,8 +87,14 @@ namespace dnSpy.Decompiler.Shared {
 			return binSpanArray;
 		}
 
-		public uint[] GetRanges() {
+		/// <summary>
+		/// Gets unused step ranges
+		/// </summary>
+		/// <returns></returns>
+		public uint[] GetUnusedRanges() {
 			var orderedList = GetUnusedBinSpans();
+			if (orderedList.Length == 0)
+				return Array.Empty<uint>();
 			var binSpanArray = new uint[orderedList.Length * 2];
 			for (int i = 0; i < orderedList.Length; i++) {
 				binSpanArray[i * 2 + 0] = orderedList[i].Start;
@@ -124,6 +137,13 @@ namespace dnSpy.Decompiler.Shared {
 			return res;
 		}
 
+		/// <summary>
+		/// Gets a <see cref="SourceStatement"/>
+		/// </summary>
+		/// <param name="lineStart">Offset of start of line</param>
+		/// <param name="lineEnd">Offset of end of line</param>
+		/// <param name="textPosition">Position in text document</param>
+		/// <returns></returns>
 		public SourceStatement? GetSourceStatementByTextOffset(int lineStart, int lineEnd, int textPosition) {
 			if (Statements.Length == 0)
 				return null;
@@ -169,6 +189,11 @@ namespace dnSpy.Decompiler.Shared {
 			return null;
 		}
 
+		/// <summary>
+		/// Gets a <see cref="SourceStatement"/>
+		/// </summary>
+		/// <param name="ilOffset">IL offset</param>
+		/// <returns></returns>
 		public SourceStatement? GetSourceStatementByCodeOffset(uint ilOffset) {
 			foreach (var statement in Statements) {
 				if (statement.BinSpan.Start <= ilOffset && ilOffset < statement.BinSpan.End)

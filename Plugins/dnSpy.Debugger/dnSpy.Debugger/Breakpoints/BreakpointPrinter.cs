@@ -22,7 +22,6 @@ using System.IO;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {

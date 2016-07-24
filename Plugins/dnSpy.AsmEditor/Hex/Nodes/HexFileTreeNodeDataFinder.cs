@@ -18,8 +18,8 @@
 */
 
 using System.Linq;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportFileTreeNodeDataFinder]

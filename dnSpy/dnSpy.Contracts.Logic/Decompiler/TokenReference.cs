@@ -20,22 +20,65 @@
 using System;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
+	/// <summary>
+	/// Token reference
+	/// </summary>
 	public class TokenReference : IEquatable<TokenReference> {
+		/// <summary>
+		/// Owner module
+		/// </summary>
 		public ModuleDef ModuleDef { get; }
+
+		/// <summary>
+		/// Token
+		/// </summary>
 		public uint Token { get; }
 
-		public TokenReference(IMemberRef mr)
-			: this(mr.Module, mr.MDToken.Raw) {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="reference">Reference</param>
+		public TokenReference(IMemberRef reference)
+			: this(reference.Module, reference.MDToken.Raw) {
 		}
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="module">Owner module</param>
+		/// <param name="token">Token</param>
 		public TokenReference(ModuleDef module, uint token) {
-			this.ModuleDef = module;
-			this.Token = token;
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
+			ModuleDef = module;
+			Token = token;
 		}
 
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(TokenReference other) => other != null && Token == other.Token && ModuleDef == other.ModuleDef;
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public override bool Equals(object obj) => Equals(obj as TokenReference);
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <returns></returns>
 		public override int GetHashCode() => (ModuleDef == null ? 0 : ModuleDef.GetHashCode()) ^ (int)Token;
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() => new MDToken(Token).ToString() + " " + ModuleDef.ToString();
 	}
 }

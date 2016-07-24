@@ -21,8 +21,18 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
+	/// <summary>
+	/// Member comparer base class
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public abstract class MemberRefComparer<T> : IComparer<T> where T : IMemberRef {
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="x">First instance to compare</param>
+		/// <param name="y">Second instance to compare</param>
+		/// <returns></returns>
 		public int Compare(T x, T y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
@@ -34,25 +44,61 @@ namespace dnSpy.Decompiler.Shared {
 		}
 	}
 
+	/// <summary>
+	/// <see cref="TypeDef"/> comparer
+	/// </summary>
 	public sealed class TypeDefComparer : MemberRefComparer<TypeDef> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
 		public static readonly TypeDefComparer Instance = new TypeDefComparer();
 	}
 
+	/// <summary>
+	/// <see cref="FieldDef"/> comparer
+	/// </summary>
 	public sealed class FieldDefComparer : MemberRefComparer<FieldDef> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
 		public static readonly FieldDefComparer Instance = new FieldDefComparer();
 	}
 
+	/// <summary>
+	/// <see cref="EventDef"/> comparer
+	/// </summary>
 	public sealed class EventDefComparer : MemberRefComparer<EventDef> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
 		public static readonly EventDefComparer Instance = new EventDefComparer();
 	}
 
+	/// <summary>
+	/// <see cref="PropertyDef"/> comparer
+	/// </summary>
 	public sealed class PropertyDefComparer : MemberRefComparer<PropertyDef> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
 		public static readonly PropertyDefComparer Instance = new PropertyDefComparer();
 	}
 
+	/// <summary>
+	/// <see cref="MethodDef"/> comparer
+	/// </summary>
 	public sealed class MethodDefComparer : IComparer<MethodDef> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
 		public static readonly MethodDefComparer Instance = new MethodDefComparer();
 
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="x">First instance to compare</param>
+		/// <param name="y">Second instance to compare</param>
+		/// <returns></returns>
 		public int Compare(MethodDef x, MethodDef y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)

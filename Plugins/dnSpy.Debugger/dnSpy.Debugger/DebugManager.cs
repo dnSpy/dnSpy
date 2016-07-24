@@ -34,6 +34,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -44,7 +45,6 @@ using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {
 	interface IDebugManager {
@@ -1059,7 +1059,7 @@ namespace dnSpy.Debugger {
 			var sourceStatement = info.GetSourceStatementByCodeOffset(frame.GetILOffset(moduleLoader.Value));
 			uint[] ranges;
 			if (sourceStatement == null)
-				ranges = info.GetRanges();
+				ranges = info.GetUnusedRanges();
 			else
 				ranges = info.GetRanges(sourceStatement.Value);
 

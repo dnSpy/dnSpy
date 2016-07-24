@@ -23,13 +23,13 @@ using System.IO;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.IO;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Properties;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>

@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.TreeView {
 	interface ITreeNodeGroup2 : ITreeNodeGroup {

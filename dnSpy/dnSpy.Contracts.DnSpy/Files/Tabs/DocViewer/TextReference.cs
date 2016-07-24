@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {

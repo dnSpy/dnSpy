@@ -24,8 +24,8 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger {

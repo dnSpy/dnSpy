@@ -19,20 +19,50 @@
 
 using System;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
+	/// <summary>
+	/// An address reference
+	/// </summary>
 	public sealed class AddressReference : IEquatable<AddressReference> {
+		/// <summary>
+		/// Filename
+		/// </summary>
 		public string Filename { get; }
+
+		/// <summary>
+		/// true if <see cref="Address"/> is an RVA, false if it's a file offset
+		/// </summary>
 		public bool IsRVA { get; }
+
+		/// <summary>
+		/// Address, either an RVA or a file offset (<see cref="IsRVA"/>)
+		/// </summary>
 		public ulong Address { get; }
+
+		/// <summary>
+		/// Length of range
+		/// </summary>
 		public ulong Length { get; }
 
-		public AddressReference(string filename, bool isRva, ulong addr, ulong len) {
-			this.Filename = filename;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="filename">Filename</param>
+		/// <param name="isRva">true if <paramref name="address"/> is an RVA, false if it's a file offset</param>
+		/// <param name="address">Address</param>
+		/// <param name="length">Length</param>
+		public AddressReference(string filename, bool isRva, ulong address, ulong length) {
+			this.Filename = filename ?? string.Empty;
 			this.IsRVA = isRva;
-			this.Address = addr;
-			this.Length = len;
+			this.Address = address;
+			this.Length = length;
 		}
 
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(AddressReference other) {
 			return other != null &&
 				IsRVA == other.IsRVA &&
@@ -41,8 +71,17 @@ namespace dnSpy.Decompiler.Shared {
 				StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
 		}
 
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public override bool Equals(object obj) => Equals(obj as AddressReference);
 
+		/// <summary>
+		/// GetHashCode()
+		/// </summary>
+		/// <returns></returns>
 		public override int GetHashCode() {
 			return StringComparer.OrdinalIgnoreCase.GetHashCode(Filename) ^
 				(IsRVA ? 0 : int.MinValue) ^

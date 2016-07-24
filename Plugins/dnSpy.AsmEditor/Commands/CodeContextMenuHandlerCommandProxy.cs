@@ -19,7 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;

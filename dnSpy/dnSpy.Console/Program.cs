@@ -29,9 +29,9 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.MSBuild;
 using dnSpy_Console.Properties;
 

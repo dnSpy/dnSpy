@@ -22,9 +22,9 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Locals {
 	interface IMethodLocalProvider {

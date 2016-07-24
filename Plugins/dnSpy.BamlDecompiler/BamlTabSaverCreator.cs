@@ -24,9 +24,9 @@ using System.Linq;
 using System.Threading;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages;
 using Microsoft.Win32;
 

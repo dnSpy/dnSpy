@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>

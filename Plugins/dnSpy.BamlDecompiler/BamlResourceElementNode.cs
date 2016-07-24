@@ -27,6 +27,7 @@ using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
@@ -34,7 +35,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.BamlDecompiler {
 	sealed class BamlResourceElementNode : ResourceElementNode, IDecompileSelf {

@@ -18,7 +18,7 @@
 */
 
 using System.Text;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>

@@ -24,11 +24,11 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListModifiedEventArgs : EventArgs {

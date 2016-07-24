@@ -52,7 +52,6 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Text;

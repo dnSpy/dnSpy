@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.IO;
 using dnlib.PE;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class MethodBodyOptions {
@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.CodeType = method.CodeType;
 			if (method.MethodBody is CilBody) {
 				var headerRva = method.RVA;
-				var headerFileOffset = (FileOffset)method.Module.ToFileOffset((uint)headerRva);
+				var headerFileOffset = (FileOffset)(method.Module.ToFileOffset((uint)headerRva) ?? (uint)headerRva);
 				var rva = (RVA)((uint)headerRva + method.Body.HeaderSize);
 				var fileOffset = (FileOffset)((long)headerFileOffset + method.Body.HeaderSize);
 				this.CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, headerRva, headerFileOffset, rva, fileOffset);

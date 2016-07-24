@@ -28,9 +28,9 @@ using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class CilBodyVM : ViewModelBase {

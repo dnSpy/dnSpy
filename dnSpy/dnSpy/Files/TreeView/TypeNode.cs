@@ -20,12 +20,12 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.TreeView {
 	sealed class TypeNode : FileTreeNodeData, ITypeNode {
@@ -48,7 +48,7 @@ namespace dnSpy.Files.TreeView {
 			yield return new BaseTypeFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.BaseTypeFolderTreeNodeGroupType), TypeDef);
 			yield return new DerivedTypesFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.DerivedTypesFolderTreeNodeGroupType), TypeDef);
 
-			var hash = TypeDef.GetPropEventMethods();
+			var hash = TypeDef.GetPropertyAndEventMethods();
 			foreach (var m in TypeDef.Methods) {
 				if (!hash.Contains(m))
 					yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupType), m);

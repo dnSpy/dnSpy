@@ -21,9 +21,9 @@ using System;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>

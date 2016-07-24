@@ -20,18 +20,31 @@
 using System.Text;
 using System.Globalization;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
+	/// <summary>
+	/// Escapes identifiers
+	/// </summary>
 	public static class IdentifierEscaper {
 		const int MAX_IDENTIFIER_LENGTH = 512;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 
-		public static string LimitIdentifierLength(string s) {
+		/// <summary>
+		/// Truncates the length of <paramref name="s"/> if it's too long
+		/// </summary>
+		/// <param name="s">Identifier string</param>
+		/// <returns></returns>
+		public static string Truncate(string s) {
 			if (s == null || s.Length <= MAX_IDENTIFIER_LENGTH)
 				return s;
 
 			return s.Substring(0, MAX_IDENTIFIER_LENGTH) + "…";
 		}
 
+		/// <summary>
+		/// Escapes an identifier
+		/// </summary>
+		/// <param name="id">Identifier</param>
+		/// <returns></returns>
 		public static string Escape(string id) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;

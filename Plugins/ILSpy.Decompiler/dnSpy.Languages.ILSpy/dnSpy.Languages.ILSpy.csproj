@@ -82,10 +82,6 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
-      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
-      <Name>dnSpy.Decompiler.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Languages.ILSpy.Core\dnSpy.Languages.ILSpy.Core.csproj">
       <Project>{ce9ec29d-8a2a-41d4-8f82-bf8b536abc31}</Project>
       <Name>dnSpy.Languages.ILSpy.Core</Name>

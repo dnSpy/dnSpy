@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Builds <see cref="MethodDebugInfo"/> instances
 	/// </summary>

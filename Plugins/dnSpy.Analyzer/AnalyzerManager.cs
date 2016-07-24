@@ -37,10 +37,8 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Analyzer {

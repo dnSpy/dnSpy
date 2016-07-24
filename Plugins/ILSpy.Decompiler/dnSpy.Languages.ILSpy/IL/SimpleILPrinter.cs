@@ -20,10 +20,10 @@
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using ICSharpCode.Decompiler.Disassembler;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Contracts.Text;
 using System.ComponentModel.Composition;
 using dnSpy.Languages.ILSpy.Core.IL;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	[Export(typeof(ISimpleILPrinter))]

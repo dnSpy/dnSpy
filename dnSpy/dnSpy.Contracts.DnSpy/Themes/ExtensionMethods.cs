@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Themes {
 	/// <summary>

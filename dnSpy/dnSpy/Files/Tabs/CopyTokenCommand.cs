@@ -21,10 +21,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs {
 	static class CopyTokenCommand {

@@ -21,9 +21,9 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventOverridesNode : SearchNode {

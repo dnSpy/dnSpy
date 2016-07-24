@@ -31,11 +31,11 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeVM : ViewModelBase, IDisposable {

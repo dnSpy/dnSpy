@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.Decompiler.Shared;
+using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;

@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	// We have to parse it ourselves since we'd get all sorts of exceptions if we let
 	// the standard XML reader try to parse it, even if we set the data to Fragment.
 	// Since it only operates on one line at a time (no extra context), it won't be

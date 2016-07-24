@@ -19,30 +19,22 @@
 
 using System;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Flags used by <see cref="IDecompilerOutput.Write(string, object, DecompilerReferenceFlags, object)"/>
+	/// Instruction bytes reader
 	/// </summary>
-	[Flags]
-	public enum DecompilerReferenceFlags {
+	public interface IInstructionBytesReader : IDisposable {
 		/// <summary>
-		/// No bit is set
+		/// Reads the next byte or returns a value less than 0 if the byte is unknown
 		/// </summary>
-		None						= 0,
+		/// <returns></returns>
+		int ReadByte();
 
 		/// <summary>
-		/// It's a definition (method declaration, field declaration etc) if set, else it's a reference to the definition
+		/// Initializes the next instruction that should be read
 		/// </summary>
-		Definition					= 0x00000001,
-
-		/// <summary>
-		/// It's a local definition or reference, eg. a method parameter, method local, method label.
-		/// </summary>
-		Local						= 0x00000002,
-
-		/// <summary>
-		/// The code writes to the reference
-		/// </summary>
-		IsWrite						= 0x00000004,
+		/// <param name="index">Index of the instruction in the method body</param>
+		/// <param name="offset">Offset of the instruction in the stream</param>
+		void SetInstruction(int index, uint offset);
 	}
 }

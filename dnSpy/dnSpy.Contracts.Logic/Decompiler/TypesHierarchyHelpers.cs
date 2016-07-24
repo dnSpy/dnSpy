@@ -20,7 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler.Shared {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+namespace dnSpy.Contracts.Decompiler {
 	public static class TypesHierarchyHelpers {
 		public static bool IsBaseType(TypeDef baseType, TypeDef derivedType, bool resolveTypeArguments) {
 			if (baseType == null || derivedType == null)
@@ -381,3 +382,4 @@ namespace dnSpy.Decompiler.Shared {
 		}
 	}
 }
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member

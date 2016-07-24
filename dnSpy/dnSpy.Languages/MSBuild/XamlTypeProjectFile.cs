@@ -19,8 +19,8 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class XamlTypeProjectFile : TypeProjectFile {

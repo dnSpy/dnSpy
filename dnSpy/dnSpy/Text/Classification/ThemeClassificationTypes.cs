@@ -18,10 +18,10 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
-using dnSpy.Decompiler.Shared;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {

@@ -22,25 +22,34 @@ using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnlib.IO;
 using dnlib.PE;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
+	/// <summary>
+	/// Extensions
+	/// </summary>
 	public static class Extensions {
-		public static bool IsDefined(this IHasCustomAttribute provider, UTF8String ns, UTF8String name) {
+		/// <summary>
+		/// Checks whether a custom attribute exists
+		/// </summary>
+		/// <param name="provider">Custom attribute provider</param>
+		/// <param name="namespace">Namespace of custom attribute</param>
+		/// <param name="name">Name of custom attribute</param>
+		/// <returns></returns>
+		public static bool IsDefined(this IHasCustomAttribute provider, UTF8String @namespace, UTF8String name) {
 			if (provider == null || provider.CustomAttributes.Count == 0)
 				return false;
 			foreach (var ca in provider.CustomAttributes) {
 				var tr = ca.AttributeType as TypeRef;
 				if (tr != null) {
-					if (tr.Namespace == ns && tr.Name == name)
+					if (tr.Namespace == @namespace && tr.Name == name)
 						return true;
 					continue;
 				}
 
 				var td = ca.AttributeType as TypeDef;
 				if (td != null) {
-					if (td.Namespace == ns && td.Name == name)
+					if (td.Namespace == @namespace && td.Name == name)
 						return true;
 					continue;
 				}
@@ -48,27 +57,14 @@ namespace dnSpy.Decompiler.Shared {
 			return false;
 		}
 
-		public static CustomAttribute Find(this IHasCustomAttribute provider, UTF8String ns, UTF8String name) {
-			if (provider == null || provider.CustomAttributes.Count == 0)
-				return null;
-			foreach (var ca in provider.CustomAttributes) {
-				var tr = ca.AttributeType as TypeRef;
-				if (tr != null) {
-					if (tr.Namespace == ns && tr.Name == name)
-						return ca;
-					continue;
-				}
-
-				var td = ca.AttributeType as TypeDef;
-				if (td != null) {
-					if (td.Namespace == ns && td.Name == name)
-						return ca;
-					continue;
-				}
-			}
-			return null;
-		}
-
+		/// <summary>
+		/// Gets the RVA and file offset of a member definition. Returns false if the RVA and
+		/// file offsets aren't known or if there's no RVA (eg. there's no method body)
+		/// </summary>
+		/// <param name="member">Member</param>
+		/// <param name="rva">Updated with the RVA</param>
+		/// <param name="fileOffset">Updated with the file offset</param>
+		/// <returns></returns>
 		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset) {
 			rva = 0;
 			fileOffset = 0;
@@ -80,25 +76,31 @@ namespace dnSpy.Decompiler.Shared {
 			if (rva == 0)
 				return false;
 
-			fileOffset = member.Module.ToFileOffset(rva);
+			var fo = member.Module.ToFileOffset(rva);
+			if (fo == null)
+				return false;
+			fileOffset = fo.Value;
 			return true;
 		}
 
-		public static IImageStream GetImageStream(this ModuleDef module, uint rva) {
+		/// <summary>
+		/// Converts an RVA to a file offset
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		public static long? ToFileOffset(this ModuleDef module, uint rva) {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (m == null)
 				return null;
-
-			return m.MetaData.PEImage.CreateStream((RVA)rva);
-		}
-
-		public static long ToFileOffset(this ModuleDef module, uint rva) {
-			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
-			if (m == null)
-				return (uint)rva;
 			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);
 		}
 
+		/// <summary>
+		/// Gets the size of the code in the method body
+		/// </summary>
+		/// <param name="body">Method body, can be null</param>
+		/// <returns></returns>
 		public static int GetCodeSize(this CilBody body) {
 			if (body == null || body.Instructions.Count == 0)
 				return 0;
@@ -106,6 +108,11 @@ namespace dnSpy.Decompiler.Shared {
 			return (int)instr.Offset + instr.GetSize();
 		}
 
+		/// <summary>
+		/// Gets all parameters
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <returns></returns>
 		public static IList<Parameter> GetParameters(this IMethod method) {
 			if (method == null || method.MethodSig == null)
 				return new List<Parameter>();
@@ -123,13 +130,13 @@ namespace dnSpy.Decompiler.Shared {
 			return list;
 		}
 
-		public static IEnumerable<MethodDef> GetAllMethods(this PropertyDef p) {
+		static IEnumerable<MethodDef> GetAllMethods(this PropertyDef p) {
 			foreach (var m in p.GetMethods) yield return m;
 			foreach (var m in p.SetMethods) yield return m;
 			foreach (var m in p.OtherMethods) yield return m;
 		}
 
-		public static IEnumerable<MethodDef> GetAllMethods(this EventDef e) {
+		static IEnumerable<MethodDef> GetAllMethods(this EventDef e) {
 			if (e.AddMethod != null)
 				yield return e.AddMethod;
 			if (e.InvokeMethod != null)
@@ -140,7 +147,12 @@ namespace dnSpy.Decompiler.Shared {
 				yield return m;
 		}
 
-		public static HashSet<MethodDef> GetPropEventMethods(this TypeDef type) {
+		/// <summary>
+		/// Gets all methods that are part of properties or events
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public static HashSet<MethodDef> GetPropertyAndEventMethods(this TypeDef type) {
 			var hash = new HashSet<MethodDef>();
 			foreach (var p in type.Properties) {
 				foreach (var m in p.GetAllMethods())
@@ -154,12 +166,17 @@ namespace dnSpy.Decompiler.Shared {
 			return hash;
 		}
 
-		public static bool IsIndexer(this PropertyDef prop) {
-			if (prop == null || prop.PropertySig.GetParamCount() == 0)
+		/// <summary>
+		/// Checks whether <paramref name="property"/> is an indexer property
+		/// </summary>
+		/// <param name="property">Property to check</param>
+		/// <returns></returns>
+		public static bool IsIndexer(this PropertyDef property) {
+			if (property == null || property.PropertySig.GetParamCount() == 0)
 				return false;
 
-			var accessor = prop.GetMethod ?? prop.SetMethod;
-			var basePropDef = prop;
+			var accessor = property.GetMethod ?? property.SetMethod;
+			var basePropDef = property;
 			if (accessor != null && accessor.HasOverrides) {
 				var baseAccessor = accessor.Overrides.First().MethodDeclaration.ResolveMethodDef();
 				if (baseAccessor != null) {
@@ -193,11 +210,33 @@ namespace dnSpy.Decompiler.Shared {
 			return null;
 		}
 
+		/// <summary>
+		/// Resolves a type
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
 		public static TypeDef Resolve(this IType type) => type == null ? null : type.ScopeType.ResolveTypeDef();
+
+		/// <summary>
+		/// Returns true if the fields can be sorted and false if the original metadata order must be used
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
 		public static bool CanSortFields(this TypeDef type) => type.IsAutoLayout;
+
+		/// <summary>
+		/// Returns true if the methods can be sorted and false if the original metadata order must be used
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
 		public static bool CanSortMethods(this TypeDef type) => !(type.IsInterface && type.IsImport);
 
-		public static IEnumerable<IMemberDef> GetNonSortedMethodsPropsEvents(this TypeDef type) {
+		/// <summary>
+		/// Gets all methods, properties and events. They're returned in the original metadata order.
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		public static IEnumerable<IMemberDef> GetNonSortedMethodsPropertiesEvents(this TypeDef type) {
 			var hash = new HashSet<MethodDef>();
 			var defs = new List<Tuple<IMemberDef, List<MethodDef>>>();
 			foreach (var p in type.Properties) {

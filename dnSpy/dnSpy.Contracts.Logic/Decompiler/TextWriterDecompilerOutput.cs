@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Implements <see cref="IDecompilerOutput"/> and writes the text to a <see cref="TextWriter"/>
 	/// </summary>

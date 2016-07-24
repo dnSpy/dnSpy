@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.ObjectModel;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>

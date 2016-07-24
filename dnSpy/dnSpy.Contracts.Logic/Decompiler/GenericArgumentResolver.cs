@@ -2,7 +2,7 @@
 using dnlib.DotNet;
 using dnlib.Threading;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Resolves generic arguments
 	/// </summary>

@@ -18,21 +18,35 @@
 */
 
 using System;
-using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace dnSpy.Decompiler.Shared {
-	public sealed class InstructionReference : IEquatable<InstructionReference> {
-		public MethodDef Method { get; }
-		public Instruction Instruction { get; }
+namespace dnSpy.Contracts.Decompiler {
+	/// <summary>
+	/// A local used in the decompiled code
+	/// </summary>
+	public struct SourceLocal {
+		/// <summary>
+		/// The local
+		/// </summary>
+		public Local Local { get; }
 
-		public InstructionReference(MethodDef method, Instruction instr) {
-			this.Method = method;
-			this.Instruction = instr;
+		/// <summary>
+		/// Gets the name of the local that's used in the decompiled code
+		/// </summary>
+		public string Name { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="local">Local</param>
+		/// <param name="name">Name used by the decompiler</param>
+		public SourceLocal(Local local, string name) {
+			if (local == null)
+				throw new ArgumentNullException(nameof(local));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			Local = local;
+			Name = name;
 		}
-
-		public bool Equals(InstructionReference other) => other != null && Method == other.Method && Instruction == other.Instruction;
-		public override bool Equals(object obj) => Equals(obj as InstructionReference);
-		public override int GetHashCode() => Method.GetHashCode() ^ Instruction.GetHashCode();
 	}
 }

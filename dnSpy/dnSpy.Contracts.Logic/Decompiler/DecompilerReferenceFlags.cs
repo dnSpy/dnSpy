@@ -18,35 +18,31 @@
 */
 
 using System;
-using dnlib.DotNet.Emit;
 
-namespace dnSpy.Decompiler.Shared {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// A local used in the decompiled code
+	/// Flags used by <see cref="IDecompilerOutput.Write(string, object, DecompilerReferenceFlags, object)"/>
 	/// </summary>
-	public struct SourceLocal {
+	[Flags]
+	public enum DecompilerReferenceFlags {
 		/// <summary>
-		/// The local
+		/// No bit is set
 		/// </summary>
-		public Local Local { get; }
+		None						= 0,
 
 		/// <summary>
-		/// Gets the name of the local that's used in the decompiled code
+		/// It's a definition (method declaration, field declaration etc) if set, else it's a reference to the definition
 		/// </summary>
-		public string Name { get; }
+		Definition					= 0x00000001,
 
 		/// <summary>
-		/// Constructor
+		/// It's a local definition or reference, eg. a method parameter, method local, method label.
 		/// </summary>
-		/// <param name="local">Local</param>
-		/// <param name="name">Name used by the decompiler</param>
-		public SourceLocal(Local local, string name) {
-			if (local == null)
-				throw new ArgumentNullException(nameof(local));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			Local = local;
-			Name = name;
-		}
+		Local						= 0x00000002,
+
+		/// <summary>
+		/// The code writes to the reference
+		/// </summary>
+		IsWrite						= 0x00000004,
 	}
 }

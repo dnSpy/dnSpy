@@ -20,8 +20,8 @@
 using System.IO;
 using System.Text;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
