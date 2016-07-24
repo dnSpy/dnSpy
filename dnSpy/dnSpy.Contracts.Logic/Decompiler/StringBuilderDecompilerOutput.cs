@@ -84,12 +84,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Increments the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public void Indent() => indentation++;
+		public void IncreaseIndent() => indentation++;
 
 		/// <summary>
 		/// Decrements the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public void Unindent() {
+		public void DecreaseIndent() {
 			Debug.Assert(indentation > 0);
 			if (indentation > 0)
 				indentation--;

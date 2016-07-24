@@ -38,12 +38,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Increments the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		void Indent();
+		void IncreaseIndent();
 
 		/// <summary>
 		/// Decrements the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		void Unindent();
+		void DecreaseIndent();
 
 		/// <summary>
 		/// Writes a new line without writing any indentation

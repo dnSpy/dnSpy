@@ -133,11 +133,11 @@ namespace dnSpy.Shared.Decompiler {
 			return cachedText;
 		}
 
-		public void Indent() {
+		public void IncreaseIndent() {
 			throw new NotImplementedException();
 		}
 
-		public void Unindent() {
+		public void DecreaseIndent() {
 			throw new NotImplementedException();
 		}
 

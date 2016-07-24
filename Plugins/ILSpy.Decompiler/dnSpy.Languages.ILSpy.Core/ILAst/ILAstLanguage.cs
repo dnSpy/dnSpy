@@ -149,11 +149,11 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			output.Write(" ", BoxedOutputColor.Text);
 			output.Write("{", BoxedOutputColor.Punctuation);
 			output.WriteLine();
-			output.Indent();
+			output.IncreaseIndent();
 		}
 
 		void EndKeywordBlock(IDecompilerOutput output) {
-			output.Unindent();
+			output.DecreaseIndent();
 			output.Write("}", BoxedOutputColor.Punctuation);
 			output.WriteLine();
 		}

@@ -50,8 +50,8 @@ namespace dnSpy.Contracts.Languages {
 
 		bool IDecompilerOutput.UsesDebugInfo => false;
 		void IDecompilerOutput.AddDebugInfo(MethodDebugInfo methodDebugInfo) { }
-		void IDecompilerOutput.Indent() => indent++;
-		void IDecompilerOutput.Unindent() => indent--;
+		void IDecompilerOutput.IncreaseIndent() => indent++;
+		void IDecompilerOutput.DecreaseIndent() => indent--;
 
 		void IDecompilerOutput.Write(string text, int index, int count, object color) {
 			if (index == 0 && text.Length == count)

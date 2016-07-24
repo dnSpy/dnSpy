@@ -248,11 +248,11 @@ namespace dnSpy.BamlDecompiler {
 			if (BamlNode.IsFooter(record)) {
 				while (scopeStack.Count > 0 && !BamlNode.IsMatch(scopeStack.Peek(), record)) {
 					scopeStack.Pop();
-					output.Unindent();
+					output.DecreaseIndent();
 				}
 				if (scopeStack.Count > 0) {
 					scopeStack.Pop();
-					output.Unindent();
+					output.DecreaseIndent();
 				}
 			}
 
@@ -269,7 +269,7 @@ namespace dnSpy.BamlDecompiler {
 
 			if (BamlNode.IsHeader(record)) {
 				scopeStack.Push(record);
-				output.Indent();
+				output.IncreaseIndent();
 			}
 		}
 

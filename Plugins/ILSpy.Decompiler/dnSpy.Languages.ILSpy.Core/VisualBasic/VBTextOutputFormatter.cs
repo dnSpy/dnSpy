@@ -239,8 +239,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 		}
 
 		public void Space() => output.Write(" ", BoxedOutputColor.Text);
-		public void Indent() => output.Indent();
-		public void Unindent() => output.Unindent();
+		public void Indent() => output.IncreaseIndent();
+		public void Unindent() => output.DecreaseIndent();
 		public void NewLine() => output.WriteLine();
 
 		public void WriteComment(bool isDocumentation, string content) {

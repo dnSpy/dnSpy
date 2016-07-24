@@ -64,9 +64,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		bool IDecompilerOutput.UsesDebugInfo => true;
 		public void AddDebugInfo(MethodDebugInfo methodDebugInfo) => methodDebugInfos.Add(methodDebugInfo);
 
-		public void Indent() => indentation++;
+		public void IncreaseIndent() => indentation++;
 
-		public void Unindent() {
+		public void DecreaseIndent() {
 			Debug.Assert(indentation > 0);
 			if (indentation > 0)
 				indentation--;
