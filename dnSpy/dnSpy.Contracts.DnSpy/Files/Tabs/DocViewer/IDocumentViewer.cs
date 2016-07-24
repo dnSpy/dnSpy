@@ -105,6 +105,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		DocumentViewerContent Content { get; }
 
 		/// <summary>
+		/// Gets the reference collection (<see cref="DocumentViewerContent.ReferenceCollection"/>)
+		/// </summary>
+		SpanDataCollection<ReferenceInfo> ReferenceCollection { get; }
+
+		/// <summary>
 		/// Gets the current caret position
 		/// </summary>
 		TextEditorLocation CaretLocation { get; }
@@ -125,13 +130,13 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the reference at the caret or null if none
 		/// </summary>
-		SpanData<ReferenceInfo>? SelectedReferenceInfo { get; }
+		SpanData<ReferenceInfo>? SelectedReference { get; }
 
 		/// <summary>
 		/// Gets all references intersecting with the selection
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences();
+		IEnumerable<SpanData<ReferenceInfo>> GetSelectedReferences();
 
 		/// <summary>
 		/// Saves current location relative to some reference in the code. Return value can be

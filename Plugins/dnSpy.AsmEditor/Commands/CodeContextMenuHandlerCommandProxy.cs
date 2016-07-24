@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			var refInfo = documentViewer.SelectedReferenceInfo;
+			var refInfo = documentViewer.SelectedReference;
 			if (refInfo == null)
 				return null;
 

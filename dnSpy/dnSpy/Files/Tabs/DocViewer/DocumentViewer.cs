@@ -56,6 +56,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		ITextCaret IDocumentViewer.Caret => documentViewerControl.TextView.Caret;
 		ITextSelection IDocumentViewer.Selection => documentViewerControl.TextView.Selection;
 		DocumentViewerContent IDocumentViewer.Content => documentViewerControl.Content;
+		SpanDataCollection<ReferenceInfo> IDocumentViewer.ReferenceCollection => documentViewerControl.Content.ReferenceCollection;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly DocumentViewer uiContext;
@@ -373,7 +374,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			documentViewerControl.ScrollAndMoveCaretTo(line, column);
 		}
 
-		public SpanData<ReferenceInfo>? SelectedReferenceInfo {
+		public SpanData<ReferenceInfo>? SelectedReference {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -381,7 +382,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedTextReferences() {
+		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedReferences() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			return documentViewerControl.GetSelectedTextReferences(); ;

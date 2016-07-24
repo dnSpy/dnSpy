@@ -136,7 +136,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				currentReference = GetCurrentReference();
 		}
 
-		SpanData<ReferenceInfo>? GetCurrentReference() => documentViewer?.SelectedReferenceInfo;
+		SpanData<ReferenceInfo>? GetCurrentReference() => documentViewer?.SelectedReference;
 
 		static readonly ITextMarkerTag HighlightedDefinitionTag = new TextMarkerTag(ThemeClassificationTypeNameKeys.HighlightedDefinition);
 		static readonly ITextMarkerTag HighlightedWrittenReferenceTag = new TextMarkerTag(ThemeClassificationTypeNameKeys.HighlightedWrittenReference);

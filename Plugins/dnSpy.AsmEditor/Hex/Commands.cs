@@ -147,7 +147,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static HexContext CreateContext(IDocumentViewer documentViewer) {
-			var refInfo = documentViewer.SelectedReferenceInfo;
+			var refInfo = documentViewer.SelectedReference;
 			bool isDefinition = false;
 			object @ref = null;
 			if (refInfo != null) {
