@@ -23,6 +23,7 @@ using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -71,13 +72,6 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		void HideCancelButton();
 
 		/// <summary>
-		/// Moves the caret to a reference, this can be a <see cref="TextReference"/>,
-		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
-		/// </summary>
-		/// <param name="ref">Reference</param>
-		void MoveCaretTo(object @ref);
-
-		/// <summary>
 		/// Gets the text view host. Don't write to the text buffer directly, use
 		/// <see cref="SetContent(DocumentViewerContent, IContentType)"/> to write new text.
 		/// </summary>
@@ -110,12 +104,6 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		SpanDataCollection<ReferenceInfo> ReferenceCollection { get; }
 
 		/// <summary>
-		/// Scrolls to an offset
-		/// </summary>
-		/// <param name="position">Position in the text file</param>
-		void ScrollAndMoveCaretToOffset(int position);
-
-		/// <summary>
 		/// Gets the reference at the caret or null if none
 		/// </summary>
 		SpanData<ReferenceInfo>? SelectedReference { get; }
@@ -125,6 +113,44 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<SpanData<ReferenceInfo>> GetSelectedReferences();
+
+		/// <summary>
+		/// Moves the caret to a reference, this can be a <see cref="TextReference"/>,
+		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
+		/// </summary>
+		/// <param name="ref">Reference</param>
+		void MoveCaretToReference(object @ref);
+
+		/// <summary>
+		/// Moves the caret to a position in the document
+		/// </summary>
+		/// <param name="position">Position</param>
+		void MoveCaretToPosition(int position);
+
+		/// <summary>
+		/// Moves the caret to a span in the document and selects it
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="length">Length of span</param>
+		/// <param name="select">true to select the span</param>
+		/// <param name="focus">true to set focus</param>
+		void MoveCaretToSpan(int position, int length, bool select = true, bool focus = true);
+
+		/// <summary>
+		/// Moves the caret to a span in the document and selects it
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <param name="select">true to select the span</param>
+		/// <param name="focus">true to set focus</param>
+		void MoveCaretToSpan(Span span, bool select = true, bool focus = true);
+
+		/// <summary>
+		/// Moves the caret to a span in the document and selects it
+		/// </summary>
+		/// <param name="refInfo">Reference and span</param>
+		/// <param name="select">true to select the span</param>
+		/// <param name="focus">true to set focus</param>
+		void MoveCaretToSpan(SpanData<ReferenceInfo> refInfo, bool select = true, bool focus = true);
 
 		/// <summary>
 		/// Saves current location relative to some reference in the code. Return value can be

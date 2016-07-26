@@ -265,7 +265,7 @@ namespace dnSpy.Search {
 			if (methodStatement == null)
 				return false;
 
-			documentViewer.ScrollAndMoveCaretToOffset(methodStatement.Value.Statement.TextSpan.Start);
+			documentViewer.MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);
 			return true;
 		}
 	}

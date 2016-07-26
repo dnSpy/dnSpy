@@ -259,7 +259,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 						textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					}
 					else
-						ScrollAndMoveCaretToOffset(spanData.Span.Start);
+						MoveCaretToSpan(spanData.Span);
 					return true;
 				}
 
@@ -349,7 +349,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		public void ScrollAndMoveCaretToOffset(int position, bool focus = true) {
+		public void MoveCaretToPosition(int position, bool focus = true) {
 			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
 			if ((uint)position < (uint)snapshot.Length) {
 				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, position));
@@ -415,7 +415,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				var methodSourceStatement = referencePosition.MethodSourceStatement.Value;
 				var methodStatement = methodDebugService.FindByCodeOffset(methodSourceStatement.Method, methodSourceStatement.Statement.BinSpan.Start);
 				if (methodStatement != null) {
-					ScrollAndMoveCaretToOffset(methodStatement.Value.Statement.TextSpan.Start);
+					MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);
 					return true;
 				}
 			}
@@ -444,7 +444,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 			foreach (var newSpanData in GetReferenceInfosFrom(spanData.Value.Span.Start, forward)) {
 				if (SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
-					MoveToSpan(newSpanData);
+					MoveCaretToSpan(newSpanData.Span);
 					break;
 				}
 			}
@@ -454,25 +454,29 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			int offset = wpfTextViewHost.TextView.Caret.Position.BufferPosition.Position;
 			foreach (var newSpanData in GetReferenceInfosFrom(offset, forward)) {
 				if (newSpanData.Data.IsDefinition && newSpanData.Data.Reference is IMemberDef) {
-					MoveToSpan(newSpanData);
+					MoveCaretToSpan(newSpanData.Span);
 					break;
 				}
 			}
 		}
 
-		void MoveToSpan(SpanData<ReferenceInfo> spanData) {
+		public void MoveCaretToSpan(Span span, bool select = true, bool focus = true) {
 			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
-			Debug.Assert(spanData.Span.End <= snapshot.Length);
-			if (spanData.Span.End > snapshot.Length)
+			Debug.Assert(span.End <= snapshot.Length);
+			if (span.End > snapshot.Length)
 				return;
-			ScrollAndMoveCaretToOffset(spanData.Span.End);
-			wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
-			wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, spanData.Span), false);
+			MoveCaretToPosition(span.End, focus);
+			if (!select)
+				wpfTextViewHost.TextView.Selection.Clear();
+			else {
+				wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
+				wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, span), false);
+			}
 
 			// If there's another reference at the caret, move caret to Start instead of End
-			var nextRef = GetReferenceInfo(spanData.Span.End);
-			if (nextRef != null && nextRef.Value.Span != spanData.Span)
-				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, spanData.Span.Start));
+			var nextRef = GetReferenceInfo(span.End);
+			if (nextRef != null && nextRef.Value.Span != span)
+				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, span.Start));
 		}
 
 		IEnumerable<SpanData<ReferenceInfo>> GetReferenceInfosFrom(int position, bool forward) {

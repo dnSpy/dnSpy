@@ -155,7 +155,7 @@ namespace dnSpy.Files.Tabs {
 			if (uiCtx == null)
 				return;
 
-			uiCtx.MoveCaretTo(@ref);
+			uiCtx.MoveCaretToReference(@ref);
 		}
 	}
 }

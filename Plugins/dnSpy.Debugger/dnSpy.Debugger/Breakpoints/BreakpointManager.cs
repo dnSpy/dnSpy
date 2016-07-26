@@ -375,7 +375,7 @@ namespace dnSpy.Debugger.Breakpoints {
 					var key = new SerializedDnToken(serMod, md.MDToken);
 					Add(new ILCodeBreakpoint(key, methodStatement.Statement.BinSpan.Start));
 				}
-				documentViewer.ScrollAndMoveCaretToOffset(statements[0].Statement.TextSpan.Start);
+				documentViewer.MoveCaretToPosition(statements[0].Statement.TextSpan.Start);
 			}
 		}
 	}

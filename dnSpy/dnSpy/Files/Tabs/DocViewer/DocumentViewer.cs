@@ -327,7 +327,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			documentViewerControl.HideCancelButton();
 		}
 
-		public void MoveCaretTo(object @ref) {
+		public void MoveCaretToReference(object @ref) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			documentViewerControl.GoToLocation(@ref);
@@ -354,10 +354,28 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			isDisposed = true;
 		}
 
-		public void ScrollAndMoveCaretToOffset(int position) {
+		public void MoveCaretToPosition(int position) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			documentViewerControl.ScrollAndMoveCaretToOffset(position);
+			documentViewerControl.MoveCaretToPosition(position);
+		}
+
+		public void MoveCaretToSpan(int position, int length, bool select, bool focus) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.MoveCaretToSpan(new Span(position, length), select, focus);
+		}
+
+		public void MoveCaretToSpan(Span span, bool select, bool focus) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.MoveCaretToSpan(span, select, focus);
+		}
+
+		public void MoveCaretToSpan(SpanData<ReferenceInfo> refInfo, bool select, bool focus) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			documentViewerControl.MoveCaretToSpan(refInfo.Span, select, focus);
 		}
 
 		public SpanData<ReferenceInfo>? SelectedReference {

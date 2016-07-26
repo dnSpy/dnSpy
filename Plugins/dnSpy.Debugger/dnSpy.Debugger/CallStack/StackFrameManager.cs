@@ -276,7 +276,7 @@ namespace dnSpy.Debugger.CallStack {
 						textLineObjectManager.Add(rs);
 
 						if (moveCaret && frameNo == currentState.FrameNumber) {
-							documentViewer.ScrollAndMoveCaretToOffset(sourceStatement.Value.TextSpan.Start);
+							documentViewer.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start);
 							movedCaret = true;
 						}
 					}

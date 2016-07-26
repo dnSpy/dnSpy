@@ -292,7 +292,7 @@ namespace dnSpy.Analyzer {
 			if (loc == null)
 				loc = textSpan.Start;
 
-			documentViewer.ScrollAndMoveCaretToOffset(loc.Value);
+			documentViewer.MoveCaretToPosition(loc.Value);
 			return true;
 		}
 

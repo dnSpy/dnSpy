@@ -80,7 +80,7 @@ namespace dnSpy.Debugger {
 			if (sourceStatement == null)
 				return false;
 
-			documentViewer.ScrollAndMoveCaretToOffset(sourceStatement.Value.TextSpan.Start);
+			documentViewer.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start);
 			return true;
 		}
 
