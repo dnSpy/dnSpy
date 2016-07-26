@@ -465,7 +465,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			Debug.Assert(spanData.Span.End <= snapshot.Length);
 			if (spanData.Span.End > snapshot.Length)
 				return;
-			ScrollAndMoveCaretToOffset(spanData.Span.Start);
+			ScrollAndMoveCaretToOffset(spanData.Span.End);
 			wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
 			wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, spanData.Span), false);
 
