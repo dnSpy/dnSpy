@@ -2367,18 +2367,20 @@ namespace dnSpy.Text.Classification {
 
 		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = "----------------")]
-		[Name(Priority.Default)]
+		[Name(Priority.High)]
 		[UserVisible(false)]
-		[Order(After = Priority.Low, Before = Priority.High)]
-		sealed class PriorityDefault : ClassificationFormatDefinition {
+		[Order(After = Priority.Default)]
+		// Make sure High priority really is HIGH PRIORITY. string happens to be the last one unless I add this.
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class PriorityHigh : ClassificationFormatDefinition {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = "----------------")]
-		[Name(Priority.High)]
+		[Name(Priority.Default)]
 		[UserVisible(false)]
-		[Order(After = Priority.Default)]
-		sealed class PriorityHigh : ClassificationFormatDefinition {
+		[Order(After = Priority.Low, Before = Priority.High)]
+		sealed class PriorityDefault : ClassificationFormatDefinition {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

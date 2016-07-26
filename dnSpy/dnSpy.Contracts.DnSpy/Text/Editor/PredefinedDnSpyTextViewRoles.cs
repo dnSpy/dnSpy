@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Output;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -53,5 +54,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Visual Basic REPL
 		/// </summary>
 		public const string VisualBasicRepl = "dnSpy-VisualBasicRepl";
+
+		/// <summary>
+		/// <see cref="IGlyphTextMarkerService"/> services can be used. Not needed if
+		/// <see cref="PredefinedTextViewRoles.Interactive"/> is already used.
+		/// </summary>
+		public const string GlyphTextMarkerServiceable = "dnSpy-GlyphTextMarkerServiceable";
 	}
 }

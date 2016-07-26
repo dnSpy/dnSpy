@@ -41,7 +41,7 @@ namespace dnSpy.Text.Classification {
 		[ImportingConstructor]
 		EditorFormatDefinitionService([ImportMany] IEnumerable<Lazy<EditorFormatDefinition, IEditorFormatMetadata>> editorFormatDefinitions, [ImportMany] IEnumerable<Lazy<EditorFormatDefinition, IClassificationFormatMetadata>> classificationFormatDefinitions) {
 			EditorFormatDefinitions = editorFormatDefinitions.Where(a => Filter(a.Metadata.Name)).ToArray();
-			ClassificationFormatDefinitions = Orderer.Order(classificationFormatDefinitions.Where(a => Filter(((IEditorFormatMetadata)a.Metadata).Name))).ToArray();
+			ClassificationFormatDefinitions = Orderer.Order(classificationFormatDefinitions).Where(a => Filter(((IEditorFormatMetadata)a.Metadata).Name)).ToArray();
 			this.toLazy = new Dictionary<string, Lazy<EditorFormatDefinition, IEditorFormatMetadata>>(StringComparer.OrdinalIgnoreCase);
 			foreach (var e in EditorFormatDefinitions) {
 				var name = e.Metadata.Name;

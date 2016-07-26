@@ -28,6 +28,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.MEF;
 using dnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
@@ -44,6 +45,7 @@ namespace dnSpy.Text.Editor {
 	[Name(PredefinedMarginNames.Glyph)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
+	[TextViewRole(PredefinedDnSpyTextViewRoles.GlyphTextMarkerServiceable)]
 	[Order(Before = PredefinedMarginNames.LeftSelection)]
 	sealed class GlyphMarginProvider : IWpfTextViewMarginProvider {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
@@ -79,15 +81,18 @@ namespace dnSpy.Text.Editor {
 		IEditorFormatMap editorFormatMap;
 		Dictionary<object, LineInfo> lineInfos;
 		Canvas iconCanvas;
+		Canvas[] childCanvases;
 
 		struct GlyphFactoryInfo {
 			public int Order { get; }
 			public IGlyphFactory Factory { get; }
+			public Canvas Canvas { get; }
 			public GlyphFactoryInfo(int order, IGlyphFactory factory) {
 				if (factory == null)
 					throw new ArgumentNullException(nameof(factory));
 				Order = order;
 				Factory = factory;
+				Canvas = new Canvas { Background = Brushes.Transparent };
 			}
 		}
 
@@ -108,12 +113,13 @@ namespace dnSpy.Text.Editor {
 		struct IconInfo {
 			public UIElement Element { get; }
 			public double BaseTopValue { get; }
+			public int Order { get; }
 			public IconInfo(int order, UIElement element) {
 				if (element == null)
 					throw new ArgumentNullException(nameof(element));
 				Element = element;
 				BaseTopValue = GetBaseTopValue(element);
-				SetZIndex(element, order);
+				Order = order;
 			}
 
 			static double GetBaseTopValue(UIElement element) {
@@ -217,6 +223,9 @@ namespace dnSpy.Text.Editor {
 			Children.Add(iconCanvas);
 			mouseProcessorCollection = new MouseProcessorCollection(VisualElement, null, new DefaultMouseProcessor(), CreateMouseProcessors());
 			glyphFactories = CreateGlyphFactories();
+			childCanvases = glyphFactories.Values.OrderBy(a => a.Order).Select(a => a.Canvas).ToArray();
+			foreach (var c in childCanvases)
+				iconCanvas.Children.Add(c);
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IGlyphTag>(wpfTextViewHost.TextView);
 			editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextViewHost.TextView);
 			lineInfos = new Dictionary<object, LineInfo>();
@@ -233,13 +242,17 @@ namespace dnSpy.Text.Editor {
 			else {
 				UnregisterEvents();
 				lineInfos?.Clear();
-				iconCanvas?.Children.Clear();
+				if (childCanvases != null) {
+					foreach (var c in childCanvases)
+						c.Children.Clear();
+				}
 			}
 		}
 
 		void RefreshEverything() {
 			lineInfos.Clear();
-			iconCanvas.Children.Clear();
+			foreach (var c in childCanvases)
+				c.Children.Clear();
 			OnNewLayout(wpfTextViewHost.TextView.TextViewLines, Array.Empty<ITextViewLine>());
 		}
 
@@ -279,7 +292,7 @@ namespace dnSpy.Text.Editor {
 
 			foreach (var info in lineInfos.Values) {
 				foreach (var iconInfo in info.Icons)
-					iconCanvas.Children.Remove(iconInfo.Element);
+					childCanvases[iconInfo.Order].Children.Remove(iconInfo.Element);
 			}
 			lineInfos = newInfos;
 		}
@@ -292,7 +305,7 @@ namespace dnSpy.Text.Editor {
 			var info = new LineInfo(line, CreateIconInfos(wpfLine));
 			newInfos.Add(line.IdentityTag, info);
 			foreach (var iconInfo in info.Icons)
-				iconCanvas.Children.Add(iconInfo.Element);
+				childCanvases[iconInfo.Order].Children.Add(iconInfo.Element);
 		}
 
 		List<IconInfo> CreateIconInfos(IWpfTextViewLine line) {
@@ -363,7 +376,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			lineInfos.Remove(line.IdentityTag);
 			foreach (var iconInfo in info.Icons)
-				iconCanvas.Children.Remove(iconInfo.Element);
+				childCanvases[iconInfo.Order].Children.Remove(iconInfo.Element);
 			AddLine(lineInfos, line);
 		}
 
@@ -380,7 +393,7 @@ namespace dnSpy.Text.Editor {
 			if (!BrushComparer.Equals(Background, newBackground)) {
 				Background = newBackground;
 				// The images could depend on the background color, so recreate every icon
-				if (iconCanvas.Children.Count > 0)
+				if (childCanvases.Any(a => a.Children.Count > 0))
 					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(RefreshEverything));
 			}
 		}

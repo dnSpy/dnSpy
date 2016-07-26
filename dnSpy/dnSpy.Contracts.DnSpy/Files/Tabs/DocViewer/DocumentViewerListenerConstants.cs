@@ -27,13 +27,16 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>Default order</summary>
 		public const double ORDER_DEFAULT = double.MaxValue;
 
+		/// <summary>Glyph text marker service</summary>
+		public const double ORDER_GLYPHTEXTMARKERSERVICE = 1000;
+
 		/// <summary>Debugger: create debugger MethodDebugService</summary>
-		public const double ORDER_DEBUGGER_METHODDEBUGSERVICECREATOR = 1000;
+		public const double ORDER_DEBUGGER_METHODDEBUGSERVICECREATOR = 2000;
 
 		/// <summary>create <see cref="IMethodDebugService"/></summary>
-		public const double ORDER_METHODDEBUGSERVICECREATOR = 2000;
+		public const double ORDER_METHODDEBUGSERVICECREATOR = 3000;
 
 		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
-		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = 3000;
+		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = 4000;
 	}
 }

@@ -94,12 +94,12 @@ namespace dnSpy.Text.Editor {
 		[Name(NEGATIVE_TEXT_MARK_LAYER_NAME)]
 		[Order(Before = PredefinedDnSpyAdornmentLayers.GlyphTextMarker, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
-		AdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
+		static AdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
 
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.TextMarker)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
-		AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
+		static AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
 #pragma warning restore 0169
 
 		readonly IWpfTextView wpfTextView;
@@ -109,7 +109,6 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayer negativeTextMarkerAdornmentLayer;
 		readonly List<MarkerElement> markerElements;
 		readonly IThemeManager themeManager;
-		bool isHighContrastTheme;
 		bool useReducedOpacityForHighContrast;
 
 		public TextMarkerService(IWpfTextView wpfTextView, ITagAggregator<ITextMarkerTag> tagAggregator, IEditorFormatMap editorFormatMap, IThemeManager themeManager) {
@@ -128,7 +127,6 @@ namespace dnSpy.Text.Editor {
 			this.textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
 			this.negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(NEGATIVE_TEXT_MARK_LAYER_NAME);
 			this.markerElements = new List<MarkerElement>();
-			this.isHighContrastTheme = themeManager.Theme.IsHighContrast;
 			this.useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
 			this.onRemovedDelegate = OnRemoved;
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -141,7 +139,7 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId.Name) {
 				useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-				if (isHighContrastTheme)
+				if (themeManager.Theme.IsHighContrast)
 					RefreshExistingMarkers();
 			}
 		}
@@ -283,13 +281,13 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateRange(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 1 && spans[0].Start.Position == 0 && spans[0].Length == spans[0].Snapshot.Length)
-				RemoveAll();
+				RemoveAllMarkerElements();
 			else
 				RemoveMarkerElements(spans);
 			AddMarkerElements(spans);
 		}
 
-		void RemoveAll() {
+		void RemoveAllMarkerElements() {
 			// Clear this first so the remove-callback won't try to remove anything from this list (it'll be empty!)
 			markerElements.Clear();
 			negativeTextMarkerAdornmentLayer.RemoveAllAdornments();
@@ -379,7 +377,7 @@ namespace dnSpy.Text.Editor {
 		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines);
 		void UpdateLines(IList<ITextViewLine> newOrReformattedLines) {
 			if (newOrReformattedLines.Count == wpfTextView.TextViewLines.Count)
-				RemoveAll();
+				RemoveAllMarkerElements();
 
 			var lineSpans = new List<SnapshotSpan>();
 			foreach (var line in newOrReformattedLines)
@@ -389,7 +387,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
-			RemoveAll();
+			RemoveAllMarkerElements();
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;

@@ -146,6 +146,8 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerHighlightReferencesTagger.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
+    <Compile Include="Files\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
+    <Compile Include="Files\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
     <Compile Include="Files\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
@@ -431,10 +433,16 @@
     <Compile Include="Text\Editor\EditorPositionState.cs" />
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\GlyphMargin.cs" />
+    <Compile Include="Text\Editor\GlyphTextMarkerService.cs" />
+    <Compile Include="Text\Editor\GlyphTextViewMarkerClassificationTagger.cs" />
+    <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTagger.cs" />
+    <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTextMarkerTagger.cs" />
+    <Compile Include="Text\Editor\GlyphTextViewMarkerService.cs" />
     <Compile Include="Text\Editor\GoToCommand.cs" />
     <Compile Include="Text\Editor\HorizontalScrollBarContainerMargin.cs" />
     <Compile Include="Text\Editor\HorizontalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
+    <Compile Include="Text\Editor\IGlyphTextMarkerServiceImpl.cs" />
     <Compile Include="Text\Editor\IMarkerSpanCollection.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />

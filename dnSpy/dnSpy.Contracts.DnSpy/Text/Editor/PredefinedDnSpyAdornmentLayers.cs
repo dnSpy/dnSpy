@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class PredefinedDnSpyAdornmentLayers {
 		/// <summary>
-		/// dnSpy glyph text marker layer (similar to "VsTextMarker")
+		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
 		/// </summary>
 		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
 	}
