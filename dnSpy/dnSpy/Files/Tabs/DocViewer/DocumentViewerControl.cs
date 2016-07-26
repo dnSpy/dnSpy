@@ -325,11 +325,20 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (caretPos.VirtualSpaces > 0)
 				return null;
 			var pos = caretPos.BufferPosition;
+			SpanData<ReferenceInfo>? spanData;
+
 			// If it's at the end of a word wrapped line, don't mark the reference that's
 			// shown on the next line.
-			if (caretPos.Affinity == PositionAffinity.Predecessor && pos.Position != 0)
+			if (caretPos.Affinity == PositionAffinity.Predecessor && pos.Position != 0) {
 				pos = pos - 1;
-			var spanData = GetReferenceInfo(pos.Position);
+				var prevSpanData = GetReferenceInfo(pos.Position);
+				if (prevSpanData == null || prevSpanData.Value.Span.End != pos.Position)
+					spanData = prevSpanData;
+				else
+					spanData = null;
+			}
+			else
+				spanData = GetReferenceInfo(pos.Position);
 			if (spanData == null)
 				return null;
 			return spanData.Value.Data.Reference == null ? null : spanData;
