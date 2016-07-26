@@ -469,7 +469,6 @@
     <Compile Include="Text\Editor\DefaultDnSpyTextViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultDnSpyWpfViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultReplEditorOptions.cs" />
-    <Compile Include="Text\Editor\DnSpyAdornmentLayers.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
     <Compile Include="Text\Editor\IDnSpyTextEditorFactoryService.cs" />
@@ -490,6 +489,7 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyTextViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyWpfViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
+    <Compile Include="Text\Editor\PredefinedDnSpyAdornmentLayers.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />

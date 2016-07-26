@@ -92,7 +92,7 @@ namespace dnSpy.Text.Editor {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(NEGATIVE_TEXT_MARK_LAYER_NAME)]
-		[Order(Before = DnSpyAdornmentLayers.DnSpyTextMarker, After = PredefinedAdornmentLayers.Outlining)]
+		[Order(Before = PredefinedDnSpyAdornmentLayers.GlyphTextMarker, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
 		AdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
 

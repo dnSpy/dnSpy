@@ -21,10 +21,10 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// dnSpy adornment layers
 	/// </summary>
-	public static class DnSpyAdornmentLayers {
+	public static class PredefinedDnSpyAdornmentLayers {
 		/// <summary>
-		/// dnSpy text marker layer (similar to "VsTextMarker")
+		/// dnSpy glyph text marker layer (similar to "VsTextMarker")
 		/// </summary>
-		public const string DnSpyTextMarker = "DnSpyTextMarker";
+		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
 	}
 }
