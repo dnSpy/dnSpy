@@ -45,11 +45,11 @@ namespace dnSpy.Languages {
 		public virtual string ProjectFileExtension => null;
 
 		public void WriteName(IOutputColorWriter output, TypeDef type) =>
-			FormatTypeName(TextColorOutputToTextOutput.Create(output), type);
+			FormatTypeName(OutputColorWriterToDecompilerOutput.Create(output), type);
 		public void WriteType(IOutputColorWriter output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) =>
-			TypeToString(TextColorOutputToTextOutput.Create(output), type, includeNamespace, pd);
+			TypeToString(OutputColorWriterToDecompilerOutput.Create(output), type, includeNamespace, pd);
 		public void WriteName(IOutputColorWriter output, PropertyDef property, bool? isIndexer) =>
-			FormatPropertyName(TextColorOutputToTextOutput.Create(output), property, isIndexer);
+			FormatPropertyName(OutputColorWriterToDecompilerOutput.Create(output), property, isIndexer);
 		public virtual void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) =>
 			this.WriteCommentLine(output, TypeToString(method.DeclaringType, true) + "." + method.Name);
 		public virtual void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) =>

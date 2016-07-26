@@ -75,9 +75,9 @@
     <Compile Include="Languages\ILanguageProvider.cs" />
     <Compile Include="Languages\ISimpleILPrinter.cs" />
     <Compile Include="Languages\LanguageConstants.cs" />
+    <Compile Include="Languages\OutputColorWriterToDecompilerOutput.cs" />
     <Compile Include="Languages\SimplePrinterFlags.cs" />
     <Compile Include="Languages\StringBuilderExtensions.cs" />
-    <Compile Include="Languages\TextColorOutputToTextOutput.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocRenderer.cs" />

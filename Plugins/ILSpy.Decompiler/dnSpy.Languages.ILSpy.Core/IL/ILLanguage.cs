@@ -192,7 +192,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 
 		public override void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {
-			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(TextColorOutputToTextOutput.Create(output), member))
+			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(OutputColorWriterToDecompilerOutput.Create(output), member))
 				return;
 
 			base.WriteToolTip(output, member, typeAttributes);

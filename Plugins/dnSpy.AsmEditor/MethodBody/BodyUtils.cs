@@ -549,7 +549,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var mr = obj as IMemberRef;
 			if (mr != null) {
-				if (simpleILPrinter.Write(TextColorOutputToTextOutput.Create(output), mr))
+				if (simpleILPrinter.Write(OutputColorWriterToDecompilerOutput.Create(output), mr))
 					return;
 			}
 
@@ -590,12 +590,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var methodSig = obj as MethodSig;
 			if (methodSig != null) {
-				simpleILPrinter.Write(TextColorOutputToTextOutput.Create(output), methodSig);
+				simpleILPrinter.Write(OutputColorWriterToDecompilerOutput.Create(output), methodSig);
 				return;
 			}
 
 			if (obj is TypeSig) {
-				simpleILPrinter.Write(TextColorOutputToTextOutput.Create(output), obj as TypeSig);
+				simpleILPrinter.Write(OutputColorWriterToDecompilerOutput.Create(output), obj as TypeSig);
 				return;
 			}
 

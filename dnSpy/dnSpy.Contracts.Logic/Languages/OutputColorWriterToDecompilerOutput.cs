@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Languages {
 	/// <summary>
 	/// Converts a <see cref="IOutputColorWriter"/> to a <see cref="IDecompilerOutput"/>
 	/// </summary>
-	public sealed class TextColorOutputToTextOutput : IDecompilerOutput {
+	public sealed class OutputColorWriterToDecompilerOutput : IDecompilerOutput {
 		readonly IOutputColorWriter output;
 		int indent;
 		int offset;
@@ -37,9 +37,9 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output to use</param>
 		/// <returns></returns>
 		public static IDecompilerOutput Create(IOutputColorWriter output) =>
-			new TextColorOutputToTextOutput(output);
+			new OutputColorWriterToDecompilerOutput(output);
 
-		TextColorOutputToTextOutput(IOutputColorWriter output) {
+		OutputColorWriterToDecompilerOutput(IOutputColorWriter output) {
 			this.output = output;
 			this.indent = 0;
 			this.offset = 0;
@@ -65,13 +65,10 @@ namespace dnSpy.Contracts.Languages {
 				if (indent != 0)
 					output.Write(BoxedOutputColor.Text, new string('\t', indent));
 				offset += indent;
-				addIndent = false;
 			}
 			output.Write(color, text);
 			offset += text.Length;
-			int index = text.LastIndexOfAny(newLineChars);
-			if (index >= 0)
-				addIndent = true;
+			addIndent = text.LastIndexOfAny(newLineChars) == text.Length - 1;
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
