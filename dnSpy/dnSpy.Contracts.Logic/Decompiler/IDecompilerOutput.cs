@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public interface IDecompilerOutput {
 		/// <summary>
-		/// Gets the total length of the written text
+		/// Gets the total number of written characters
 		/// </summary>
 		int Length { get; }
 
