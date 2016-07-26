@@ -61,7 +61,7 @@ namespace dnSpy.Files.Tabs {
 		sealed class Item {
 			public DocumentViewerContent Content;
 			public IContentType ContentType;
-			public WeakReference WeakTextOutput;
+			public WeakReference WeakContent;
 			DateTime LastHitUTC;
 
 			/// <summary>
@@ -77,16 +77,16 @@ namespace dnSpy.Files.Tabs {
 
 			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
-				if (WeakTextOutput != null) {
-					Content = (DocumentViewerContent)WeakTextOutput.Target;
-					WeakTextOutput = null;
+				if (WeakContent != null) {
+					Content = (DocumentViewerContent)WeakContent.Target;
+					WeakContent = null;
 				}
 			}
 
 			public void MakeWeakReference() {
-				var textOutput = Interlocked.CompareExchange(ref this.Content, null, this.Content);
-				if (textOutput != null)
-					this.WeakTextOutput = new WeakReference(textOutput);
+				var content = Interlocked.CompareExchange(ref this.Content, null, this.Content);
+				if (content != null)
+					this.WeakContent = new WeakReference(content);
 			}
 		}
 
@@ -187,7 +187,7 @@ namespace dnSpy.Files.Tabs {
 				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {
 					if (kv.Value.Age.TotalMilliseconds > OLD_ITEM_MS) {
 						kv.Value.MakeWeakReference();
-						if (kv.Value.WeakTextOutput != null && kv.Value.WeakTextOutput.Target == null)
+						if (kv.Value.WeakContent != null && kv.Value.WeakContent.Target == null)
 							cachedItems.Remove(kv.Key);
 					}
 				}
@@ -213,8 +213,8 @@ namespace dnSpy.Files.Tabs {
 
 		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, Item item) {
 			var result = item.Content;
-			if (result == null && item.WeakTextOutput != null)
-				result = (DocumentViewerContent)item.WeakTextOutput.Target;
+			if (result == null && item.WeakContent != null)
+				result = (DocumentViewerContent)item.WeakContent.Target;
 			var refs = result?.ReferenceCollection;
 			if (refs == null)
 				return false;
