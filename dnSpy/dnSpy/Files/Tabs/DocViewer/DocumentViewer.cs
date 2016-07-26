@@ -199,6 +199,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 			else
 				textView.Caret.MoveTo(new VirtualSnapshotPoint(textView.TextSnapshot, 0));
+			textView.Selection.Clear();
 		}
 
 		bool IsValid(EditorPositionState state) {

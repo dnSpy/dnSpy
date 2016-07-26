@@ -64,7 +64,6 @@ namespace dnSpy.Text.Editor.Operations {
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 		}
 
-		void MoveToEnd() => wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, wpfTextView.TextSnapshot.Length));
 		int CaretOffset => wpfTextView.Caret.Position.BufferPosition.Position;
 
 		/// <summary>

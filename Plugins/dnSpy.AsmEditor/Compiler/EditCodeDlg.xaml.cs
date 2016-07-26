@@ -112,6 +112,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						if (doc == vm.SelectedDocument) {
 							doc.TextView.MoveCaretTo(diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
 							doc.TextView.Caret.EnsureVisible();
+							doc.TextView.Selection.Clear();
 						}
 					}));
 				});

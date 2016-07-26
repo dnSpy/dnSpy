@@ -91,6 +91,7 @@ namespace dnSpy.Text.Editor {
 					col = columnNumber.Value;
 				if ((uint)col > line.Length)
 					col = line.Length;
+				textView.Selection.Clear();
 				textView.Caret.MoveTo(line.Start + col);
 				textView.Caret.EnsureVisible();
 				return CommandTargetStatus.Handled;
