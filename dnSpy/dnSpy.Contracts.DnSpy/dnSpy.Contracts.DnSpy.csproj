@@ -485,14 +485,12 @@
     <Compile Include="Text\Editor\IReplEditorCreator.cs" />
     <Compile Include="Text\Editor\ITextEditorSettings.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
-    <Compile Include="Text\Editor\LogEditorTextViewRoles.cs" />
     <Compile Include="Text\Editor\Operations\IReplEditorOperations.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyTextViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyWpfViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
-    <Compile Include="Text\Editor\OutputTextPaneConstants.cs" />
-    <Compile Include="Text\Editor\ReplConstants.cs" />
+    <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />
     <Compile Include="Text\Editor\Roslyn\ContentTypeNames.cs" />

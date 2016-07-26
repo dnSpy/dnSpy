@@ -21,8 +21,8 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Contracts.Themes;
 using dnSpy.Scripting.Roslyn.Common;
 
@@ -43,9 +43,9 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		static ReplEditorOptions CreateReplEditorOptions() {
 			var options = new ReplEditorOptions {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
-				ContentTypeGuid = new Guid(ContentTypes.REPL_VISUALBASIC_ROSLYN),
+				ContentTypeString = ContentTypeNames.VisualBasicContentType,
 			};
-			options.Roles.Add(RoslynScriptingTextViewRoles.VisualBasicRepl);
+			options.Roles.Add(PredefinedDnSpyTextViewRoles.VisualBasicRepl);
 			return options;
 		}
 	}

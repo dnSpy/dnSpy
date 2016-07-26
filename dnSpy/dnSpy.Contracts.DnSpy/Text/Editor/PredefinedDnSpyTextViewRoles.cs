@@ -17,14 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Output;
+
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// <see cref="ILogEditor"/> text view roles
+	/// Predefined dnSpy textview roles
 	/// </summary>
-	public static class LogEditorTextViewRoles {
+	public static class PredefinedDnSpyTextViewRoles {
 		/// <summary>
 		/// <see cref="ILogEditor"/> text view role
 		/// </summary>
-		public const string LOG = "A2E7C36E-E47C-47A5-8015-6F8D07B6032A";
+		public const string LogEditor = "dnSpy-ILogEditor";
+
+		/// <summary>
+		/// <see cref="IOutputTextPane"/> text view role
+		/// </summary>
+		public const string OutputTextPane = "dnSpy-IOutputTextPane";
+
+		/// <summary>
+		/// <see cref="IReplEditor"/> text view role
+		/// </summary>
+		public const string ReplEditor = "dnSpy-IReplEditor";
+
+		/// <summary>
+		/// Roslyn REPL (any supported language, eg. C# and Visual Basic)
+		/// </summary>
+		public const string RoslynRepl = "dnSpy-RoslynRepl";
+
+		/// <summary>
+		/// C# REPL
+		/// </summary>
+		public const string CSharpRepl = "dnSpy-CSharpRepl";
+
+		/// <summary>
+		/// Visual Basic REPL
+		/// </summary>
+		public const string VisualBasicRepl = "dnSpy-VisualBasicRepl";
 	}
 }

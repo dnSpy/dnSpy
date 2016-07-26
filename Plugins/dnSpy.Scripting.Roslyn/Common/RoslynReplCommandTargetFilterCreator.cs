@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -26,7 +27,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class RoslynReplCommandTargetFilterCreator : ICommandTargetFilterCreator {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(RoslynReplTextViewRoles.RoslynRepl) != true)
+			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.RoslynRepl) != true)
 				return null;
 
 			return new RoslynReplCommandTargetFilter(textView);

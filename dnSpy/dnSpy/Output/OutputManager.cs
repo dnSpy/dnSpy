@@ -184,7 +184,7 @@ namespace dnSpy.Output {
 				ContentTypeString = contentTypeObj as string,
 				CreateGuidObjects = args => CreateGuidObjects(args),
 			};
-			logEditorOptions.ExtraRoles.Add(OutputTextPaneConstants.TextViewRole);
+			logEditorOptions.ExtraRoles.Add(PredefinedDnSpyTextViewRoles.OutputTextPane);
 			var logEditor = logEditorCreator.Create(logEditorOptions);
 			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
 

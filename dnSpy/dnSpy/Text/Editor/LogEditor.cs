@@ -72,7 +72,7 @@ namespace dnSpy.Text.Editor {
 		static readonly string[] defaultRoles = new string[] {
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Zoomable,
-			LogEditorTextViewRoles.LOG,
+			PredefinedDnSpyTextViewRoles.LogEditor,
 		};
 
 		public LogEditor(LogEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {

@@ -61,7 +61,6 @@
     <Compile Include="Common\RoslynReplCommandTargetFilter.cs" />
     <Compile Include="Common\RoslynReplCommandTargetFilterCreator.cs" />
     <Compile Include="Common\RoslynReplEditorUtils.cs" />
-    <Compile Include="Common\RoslynReplTextViewRoles.cs" />
     <Compile Include="Common\ScriptContent.cs" />
     <Compile Include="Common\ScriptControl.xaml.cs">
       <DependentUpon>ScriptControl.xaml</DependentUpon>

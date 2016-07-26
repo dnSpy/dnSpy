@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor {
 	[Name(PredefinedMarginNames.LineNumber)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
-	[TextViewRole(LogEditorTextViewRoles.LOG)]
+	[TextViewRole(PredefinedDnSpyTextViewRoles.LogEditor)]
 	[Order(Before = PredefinedMarginNames.Spacer)]
 	sealed class LineNumberMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;

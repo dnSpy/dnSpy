@@ -45,7 +45,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
 				ContentTypeString = ContentTypeNames.CSharpContentType,
 			};
-			options.Roles.Add(RoslynReplTextViewRoles.CSharpRepl);
+			options.Roles.Add(PredefinedDnSpyTextViewRoles.CSharpRepl);
 			return options;
 		}
 	}

@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Text.Editor {
 			PredefinedTextViewRoles.Editable,
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Zoomable,
-			ReplConstants.TextViewRole,
+			PredefinedDnSpyTextViewRoles.ReplEditor,
 		};
 
 		/// <summary>

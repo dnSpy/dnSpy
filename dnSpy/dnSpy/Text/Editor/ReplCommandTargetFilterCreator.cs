@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplCommandTargetFilterCreator : ICommandTargetFilterCreator {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(ReplConstants.TextViewRole) != true)
+			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.ReplEditor) != true)
 				return null;
 
 			return new ReplCommandTargetFilter(textView);
