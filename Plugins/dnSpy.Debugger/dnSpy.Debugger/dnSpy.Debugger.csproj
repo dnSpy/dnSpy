@@ -164,7 +164,6 @@
     <Compile Include="Locals\ValuePrinter.cs" />
     <Compile Include="Locals\ValueStringParser.cs" />
     <Compile Include="Locals\ValueVM.cs" />
-    <Compile Include="MarkedTextLine.cs" />
     <Compile Include="Memory\Commands.cs" />
     <Compile Include="Memory\MemoryContent.cs" />
     <Compile Include="Memory\MemoryControl.xaml.cs">
@@ -294,10 +293,6 @@
       <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
-      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
-      <Name>ICSharpCode.AvalonEdit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dndbg\dndbg.csproj">
       <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
       <Name>dndbg</Name>
@@ -305,10 +300,6 @@
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Shared\dnSpy.Shared.csproj">
-      <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
-      <Name>dnSpy.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj">
       <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>

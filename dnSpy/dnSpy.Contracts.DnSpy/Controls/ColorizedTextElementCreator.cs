@@ -21,7 +21,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Text;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>
@@ -88,17 +87,16 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Creates a <see cref="FrameworkElement"/> containing the resulting text
 		/// </summary>
-		/// <param name="newFormatter">true to use the new faster formatter, which has its limitations (doesn't support all characters, no word wrap support)</param>
+		/// <param name="useNewFormatter">true to use the new faster formatter, which has its limitations (doesn't support all characters, no word wrap support)</param>
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public FrameworkElement CreateResultNewFormatter(bool newFormatter, bool useEllipsis = false, bool filterOutNewLines = true) {
-			var provider = newFormatter ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
+		public FrameworkElement CreateResultNewFormatter(bool useNewFormatter, bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (colorizer != null)
-				return colorizer.Create(provider, useEllipsis, filterOutNewLines);
+				return colorizer.Create(useNewFormatter, useEllipsis, filterOutNewLines);
 
 			if (!useEllipsis && filterOutNewLines) {
-				return new FastTextBlock(provider) {
+				return new FastTextBlock(useNewFormatter) {
 					Text = ToString(output.ToString(), filterOutNewLines)
 				};
 			}

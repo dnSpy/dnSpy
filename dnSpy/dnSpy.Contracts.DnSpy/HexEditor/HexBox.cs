@@ -33,7 +33,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using System.Windows.Threading;
-using ICSharpCode.AvalonEdit.Utils;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.HexEditor {
 	/// <summary>
@@ -486,7 +486,7 @@ namespace dnSpy.Contracts.HexEditor {
 		bool useNewFormatter;
 
 		void InitializeAll() {
-			textFormatter = TextFormatterFactory.Create(this, UseNewFormatter ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn);
+			textFormatter = TextFormatterFactory.Create(this, UseNewFormatter);
 			InitializeFontProperties();
 			InitializeSizeProperties(false);
 			RepaintLayers();

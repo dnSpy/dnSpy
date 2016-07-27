@@ -26,7 +26,6 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>
@@ -134,7 +133,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				return null;
 
 			stream.Position = 0;
-			return FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd();
+			return new StreamReader(stream, true).ReadToEnd();
 		}
 
 		/// <summary>
@@ -154,7 +153,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				return false;
 
 			stream.Position = 0;
-			context.Output.Write(FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd(), BoxedOutputColor.Text);
+			context.Output.Write(new StreamReader(stream, true).ReadToEnd(), BoxedOutputColor.Text);
 			string ext;
 			if (type == FileType.Xml)
 				ext = ".xml";

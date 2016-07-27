@@ -94,6 +94,7 @@
     <Compile Include="Controls\CommandConstants.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FontUtilities.cs" />
+    <Compile Include="Controls\GlyphRunFormatter.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IUIObjectProvider.cs" />
     <Compile Include="Controls\IWpfCommandManager.cs" />
@@ -239,16 +240,6 @@
     <Compile Include="Files\Tabs\DocViewer\IDecompileNodeCollection.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDecompileSelf.cs" />
-    <Compile Include="Files\Tabs\DocViewer\IIconBarCommand.cs" />
-    <Compile Include="Files\Tabs\DocViewer\IIconBarCommandContext.cs" />
-    <Compile Include="Files\Tabs\DocViewer\IIconBarObject.cs" />
-    <Compile Include="Files\Tabs\DocViewer\IMarkedTextLine.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ITextLineObject.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ITextLineObjectManager.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ITextMarker.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ITextMarkerObject.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextLineObjectEventArgs.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextLineObjectListModifiedEventArgs.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ICodeToolTipCreator.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ICodeToolTipWriter.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipContentCreator.cs" />
@@ -571,10 +562,6 @@
     <Compile Include="Utilities\UIUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
-      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
-      <Name>ICSharpCode.AvalonEdit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
       <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
       <Name>dnSpy.Contracts.Logic</Name>

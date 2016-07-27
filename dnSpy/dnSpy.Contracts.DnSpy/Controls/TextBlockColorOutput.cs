@@ -31,7 +31,6 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Contracts.Controls {
 	sealed class TextBlockColorOutput : IOutputColorWriter {
@@ -72,12 +71,12 @@ namespace dnSpy.Contracts.Controls {
 			}
 		}
 
-		public FrameworkElement Create(TextFormatterProvider provider, bool useEllipsis, bool filterOutNewLines) {
+		public FrameworkElement Create(bool useNewFormatter, bool useEllipsis, bool filterOutNewLines) {
 			var textBlockText = sb.ToString();
 			cachedTextTokenColors.Finish();
 
 			if (!useEllipsis && filterOutNewLines) {
-				return new FastTextBlock(provider, new TextSrc {
+				return new FastTextBlock(useNewFormatter, new TextSrc {
 					text = textBlockText,
 					cachedTextTokenColors = cachedTextTokenColors,
 				});

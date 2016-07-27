@@ -27,7 +27,6 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Contracts.Controls {
 	sealed class FastTextBlock : FrameworkElement {
@@ -41,14 +40,14 @@ namespace dnSpy.Contracts.Controls {
 			set { SetValue(TextProperty, value); }
 		}
 
-		readonly TextFormatterProvider provider;
+		readonly bool useNewFormatter;
 
-		public FastTextBlock(TextFormatterProvider provider)
-			: this(provider, new TextSrc()) {
+		public FastTextBlock(bool useNewFormatter)
+			: this(useNewFormatter, new TextSrc()) {
 		}
 
-		public FastTextBlock(TextFormatterProvider provider, IFastTextSource src) {
-			this.provider = provider;
+		public FastTextBlock(bool useNewFormatter, IFastTextSource src) {
+			this.useNewFormatter = useNewFormatter;
 			this.src = src;
 		}
 
@@ -186,7 +185,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void MakeNewText() {
 			if (fmt == null)
-				fmt = TextFormatterFactory.Create(this, provider);
+				fmt = TextFormatterFactory.Create(this, useNewFormatter);
 
 			if (line != null)
 				line.Dispose();
