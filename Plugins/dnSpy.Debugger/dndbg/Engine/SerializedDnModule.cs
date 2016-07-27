@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// NOTE: dnSpy.Contracts.Decompiler.ModuleId is a copy of this struct. Keep them in sync.
+
 using System;
 using System.Diagnostics;
 using System.IO;

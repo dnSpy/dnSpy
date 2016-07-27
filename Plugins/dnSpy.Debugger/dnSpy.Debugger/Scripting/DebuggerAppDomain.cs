@@ -24,6 +24,7 @@ using System.Linq;
 using System.Reflection;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 
@@ -96,7 +97,7 @@ namespace dnSpy.Debugger.Scripting {
 				foreach (var m in Modules) {
 					if (m.IsInMemory)
 						continue;
-					if (Utils.IsSameFile(m.ModuleName.Name, name))
+					if (Utils.IsSameFile(m.ModuleId.ModuleName, name))
 						return m;
 				}
 				return null;
@@ -104,9 +105,9 @@ namespace dnSpy.Debugger.Scripting {
 			return null;
 		});
 
-		public IDebuggerModule GetModule(ModuleName name) => debugger.Dispatcher.UI(() => {
+		public IDebuggerModule GetModule(ModuleId name) => debugger.Dispatcher.UI(() => {
 			foreach (var m in Modules) {
-				if (name == m.ModuleName)
+				if (name == m.ModuleId)
 					return m;
 			}
 			return null;
@@ -114,7 +115,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IDebuggerModule GetModuleByName(string name) => debugger.Dispatcher.UI(() => {
 			foreach (var m in Modules) {
-				if (Utils.IsSameFile(m.ModuleName.Name, name))
+				if (Utils.IsSameFile(m.ModuleId.ModuleName, name))
 					return m;
 			}
 			return null;

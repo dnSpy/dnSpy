@@ -287,6 +287,7 @@
     <Compile Include="Menus\ContextMenuCreator.cs" />
     <Compile Include="Menus\MenuItemContext.cs" />
     <Compile Include="Menus\MenuManager.cs" />
+    <Compile Include="Metadata\ModuleIdCreator.cs" />
     <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="Output\CachedWriter.cs" />
     <Compile Include="Output\Commands.cs" />

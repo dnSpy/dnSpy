@@ -178,6 +178,10 @@
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />
     <Compile Include="Menus\MenuItemCommand.cs" />
+    <Compile Include="Metadata\IModuleIdCreator.cs" />
+    <Compile Include="Metadata\IModuleIdFactory.cs" />
+    <Compile Include="Metadata\IModuleIdFactoryProvider.cs" />
+    <Compile Include="Metadata\ModuleIdFactoryProviderConstants.cs" />
     <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">
       <DependentUpon>ProgressDlg.xaml</DependentUpon>
     </Compile>
@@ -388,7 +392,6 @@
     <Compile Include="Scripting\Debugger\IStackChain.cs" />
     <Compile Include="Scripting\Debugger\IStackFrame.cs" />
     <Compile Include="Scripting\Debugger\MappingResult.cs" />
-    <Compile Include="Scripting\Debugger\ModuleName.cs" />
     <Compile Include="Scripting\Debugger\ThreadState.cs" />
     <Compile Include="Scripting\Debugger\ThreadUserState.cs" />
     <Compile Include="Scripting\Debugger\TypeFormatFlags.cs" />

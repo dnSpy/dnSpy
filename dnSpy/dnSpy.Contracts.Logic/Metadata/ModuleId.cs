@@ -17,16 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// NOTE: This is a copy of dndbg.Engine.SerializedDnModule. Keep them in sync.
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 
-namespace dnSpy.Contracts.Scripting.Debugger {
+namespace dnSpy.Contracts.Metadata {
 	/// <summary>
-	/// A module
+	/// Module ID
 	/// </summary>
-	public struct ModuleName : IEquatable<ModuleName> {
+	public struct ModuleId : IEquatable<ModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,
@@ -38,7 +40,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 
 		/// <summary>implicit operator</summary>
 		/// <param name="moduleFilename">Module filename</param>
-		public static implicit operator ModuleName(string moduleFilename) => Create(moduleFilename);
+		public static implicit operator ModuleId(string moduleFilename) => Create(moduleFilename);
 
 		/// <summary>
 		/// Gets the full name, identical to the dnlib assembly full name
@@ -48,7 +50,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Name of module. This is the filename if <see cref="IsInMemory"/> is false, else it's <see cref="ModuleDef.Name"/>
 		/// </summary>
-		public string Name => moduleName ?? string.Empty;
+		public string ModuleName => moduleName ?? string.Empty;
 
 		/// <summary>
 		/// true if it's a dynamic module
@@ -81,7 +83,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="isDynamic">true if it's a dynamic module</param>
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="nameOnly">true if <paramref name="asmFullName"/> is ignored</param>
-		public ModuleName(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
+		public ModuleId(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
 			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
@@ -95,11 +97,12 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		}
 
 		/// <summary>
-		/// Creates a <see cref="ModuleName"/> that was loaded from a file
+		/// Creates a <see cref="ModuleId"/> that was loaded from a file
 		/// </summary>
 		/// <param name="moduleFilename">Module filename</param>
 		/// <returns></returns>
-		public static ModuleName Create(string moduleFilename) => new ModuleName(string.Empty, GetFullName(moduleFilename), false, false, true);
+		public static ModuleId Create(string moduleFilename) =>
+			new ModuleId(string.Empty, GetFullName(moduleFilename), false, false, true);
 
 		static string GetFullName(string filename) {
 			try {
@@ -111,30 +114,33 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		}
 
 		/// <summary>
-		/// Creates a <see cref="ModuleName"/> that was loaded from a file
+		/// Creates a <see cref="ModuleId"/> that was loaded from a file
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static ModuleName CreateFromFile(ModuleDef module) => new ModuleName(module.Assembly?.FullName ?? string.Empty, module.Location, false, false, false);
+		public static ModuleId CreateFromFile(ModuleDef module) =>
+			new ModuleId(module.Assembly?.FullName ?? string.Empty, module.Location, false, false, false);
 
 		/// <summary>
-		/// Creates an in-memory <see cref="ModuleName"/>
+		/// Creates an in-memory <see cref="ModuleId"/>
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static ModuleName CreateInMemory(ModuleDef module) => new ModuleName(module.Assembly?.FullName ?? string.Empty, module.Name, false, true, false);
+		public static ModuleId CreateInMemory(ModuleDef module) =>
+			new ModuleId(module.Assembly?.FullName ?? string.Empty, module.Name, false, true, false);
 
 		/// <summary>
-		/// Creates a <see cref="ModuleName"/>
+		/// Creates a <see cref="ModuleId"/>
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="isDynamic">true if it's a dynamic module</param>
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <returns></returns>
-		public static ModuleName Create(ModuleDef module, bool isDynamic, bool isInMemory) => new ModuleName(module.Assembly?.FullName ?? string.Empty, !isInMemory ? module.Location : module.Name.String, isDynamic, isInMemory, false);
+		public static ModuleId Create(ModuleDef module, bool isDynamic, bool isInMemory) =>
+			new ModuleId(module.Assembly?.FullName ?? string.Empty, !isInMemory ? module.Location : module.Name.String, isDynamic, isInMemory, false);
 
 		/// <summary>
-		/// Creates a <see cref="ModuleName"/>
+		/// Creates a <see cref="ModuleId"/>
 		/// </summary>
 		/// <param name="asmFullName">Full name of assembly. Must be identical to <see cref="AssemblyDef.FullName"/></param>
 		/// <param name="moduleName">Name of module. This is the filename if <paramref name="isInMemory"/>
@@ -143,7 +149,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
-		public static ModuleName Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) => new ModuleName(asmFullName, moduleName, isDynamic, isInMemory, false);
+		public static ModuleId Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
+			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, false);
 
 		/// <summary>
 		/// operator==()
@@ -151,7 +158,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="a">a</param>
 		/// <param name="b">b</param>
 		/// <returns></returns>
-		public static bool operator ==(ModuleName a, ModuleName b) => a.Equals(b);
+		public static bool operator ==(ModuleId a, ModuleId b) => a.Equals(b);
 
 		/// <summary>
 		/// operator!=()
@@ -159,16 +166,16 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="a">a</param>
 		/// <param name="b">b</param>
 		/// <returns></returns>
-		public static bool operator !=(ModuleName a, ModuleName b) => !a.Equals(b);
+		public static bool operator !=(ModuleId a, ModuleId b) => !a.Equals(b);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(ModuleName other) {
+		public bool Equals(ModuleId other) {
 			return (ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
-					ModuleNameComparer.Equals(Name, other.Name) &&
+					ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
 					(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
 		}
 
@@ -178,7 +185,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
 		public override bool Equals(object obj) {
-			var other = obj as ModuleName?;
+			var other = obj as ModuleId?;
 			if (other != null)
 				return Equals(other.Value);
 			return false;
@@ -190,7 +197,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <returns></returns>
 		public override int GetHashCode() {
 			// We can't use AssemblyFullName since it's not used if ModuleNameOnly is true
-			return ModuleNameComparer.GetHashCode(Name) ^ ((int)(flags & Flags.CompareMask) << 16);
+			return ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
 		}
 
 		/// <summary>
@@ -199,8 +206,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <returns></returns>
 		public override string ToString() {
 			if (ModuleNameOnly)
-				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Name);
-			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, Name);
+				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, ModuleName);
+			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
 		}
 	}
 }

@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
@@ -30,7 +31,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the module name instance
 		/// </summary>
-		ModuleName ModuleName { get; }
+		ModuleId ModuleId { get; }
 
 		/// <summary>
 		/// Unique id per debugger

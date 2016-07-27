@@ -25,13 +25,14 @@ using System.Reflection;
 using System.Threading;
 using dndbg.Engine;
 using dnlib.PE;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Debugger.Modules;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerModule : IDebuggerModule {
-		public ModuleName ModuleName => moduleName;
+		public ModuleId ModuleId => moduleName;
 		public IAppDomain AppDomain => debugger.Dispatcher.UI(() => new DebuggerAppDomain(debugger, mod.AppDomain));
 		public IDebuggerAssembly Assembly => debugger.Dispatcher.UI(() => new DebuggerAssembly(debugger, mod.Assembly));
 
@@ -65,7 +66,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly ulong address;
 		readonly uint size;
 		readonly string name;
-		/*readonly*/ ModuleName moduleName;
+		/*readonly*/ ModuleId moduleName;
 
 		public DebuggerModule(Debugger debugger, DnModule mod) {
 			debugger.Dispatcher.VerifyAccess();
@@ -77,7 +78,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.address = mod.Address;
 			this.size = mod.Size;
 			var serMod = mod.SerializedDnModule;
-			this.moduleName = new ModuleName(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
+			this.moduleName = new ModuleId(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
 		}
 
 		public IDebuggerAssembly ResolveAssembly(uint asmRefToken) => debugger.Dispatcher.UI(() => {

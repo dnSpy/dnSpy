@@ -20,6 +20,7 @@
 using System;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 
@@ -155,7 +156,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IILBreakpoint CreateBreakpoint(uint offset, Func<IILBreakpoint, bool> cond) => debugger.Dispatcher.UI(() => {
 			var mod = this.CorFunction.Module;
-			var module = mod == null ? new ModuleName() : Utils.ToModuleName(mod.SerializedDnModule);
+			var module = mod == null ? new ModuleId() : Utils.ToModuleId(mod.SerializedDnModule);
 			return debugger.CreateBreakpoint(module, this.CorFunction.Token, offset, cond);
 		});
 

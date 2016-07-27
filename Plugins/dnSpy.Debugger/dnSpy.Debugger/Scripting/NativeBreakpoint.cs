@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.Scripting {
 		public bool IsIL => false;
 		public bool IsNative => true;
 		public BreakpointKind Kind => BreakpointKind.Native;
-		public ModuleName Module => ModuleName.Create(string.Empty, string.Empty, true, true, false);
+		public ModuleId Module => ModuleId.Create(string.Empty, string.Empty, true, true, false);
 		public uint Offset => 0;
 		public uint Token => 0x06000000;
 		public void Remove() { }
@@ -68,7 +69,7 @@ namespace dnSpy.Debugger.Scripting {
 		public object Tag { get; set; }
 		public bool IsIL => false;
 		public bool IsNative => true;
-		public ModuleName Module { get; }
+		public ModuleId Module { get; }
 		public uint Token { get; }
 		public uint Offset { get; }
 		public DnBreakpoint DnBreakpoint => dbgBreakpoint;
@@ -78,7 +79,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly Func<INativeBreakpoint, bool> cond;
 		readonly DebuggerCode code;
 
-		public NativeBreakpoint(Debugger debugger, ModuleName module, uint token, uint offset, Func<INativeBreakpoint, bool> cond) {
+		public NativeBreakpoint(Debugger debugger, ModuleId module, uint token, uint offset, Func<INativeBreakpoint, bool> cond) {
 			this.debugger = debugger;
 			this.Module = module;
 			this.Token = token;
@@ -92,7 +93,7 @@ namespace dnSpy.Debugger.Scripting {
 		public NativeBreakpoint(Debugger debugger, DebuggerCode code, uint offset, Func<INativeBreakpoint, bool> cond) {
 			Debug.Assert(!code.IsIL);
 			this.debugger = debugger;
-			this.Module = code.Method.Module.ModuleName;
+			this.Module = code.Method.Module.ModuleId;
 			this.Token = code.Method.Token;
 			this.Offset = offset;
 			this.cond = cond ?? condAlwaysTrue;

@@ -17,36 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Metadata;
-
-namespace dnSpy.Contracts.Scripting.Debugger {
+namespace dnSpy.Contracts.Metadata {
 	/// <summary>
-	/// A code breakpoint (IL or native)
+	/// <see cref="IModuleIdFactoryProvider"/> constants
 	/// </summary>
-	public interface ICodeBreakpoint : IBreakpoint {
+	public static class ModuleIdFactoryProviderConstants {
 		/// <summary>
-		/// true if it's an IL breakpoint (<see cref="IILBreakpoint"/>
+		/// Default order
 		/// </summary>
-		bool IsIL { get; }
+		public const double OrderDefault = double.MaxValue;
 
 		/// <summary>
-		/// true if it's a native breakpoint (<see cref="INativeBreakpoint"/>
+		/// Order of debugger plugin's <see cref="IModuleIdFactoryProvider"/>
 		/// </summary>
-		bool IsNative { get; }
-
-		/// <summary>
-		/// Gets the module name
-		/// </summary>
-		ModuleId Module { get; }
-
-		/// <summary>
-		/// Gets the method token
-		/// </summary>
-		uint Token { get; }
-
-		/// <summary>
-		/// Gets the offset of the breakpoint relative to the start of the method
-		/// </summary>
-		uint Offset { get; }
+		public const double OrderDebugger = 10000;
 	}
 }

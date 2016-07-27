@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
@@ -83,7 +84,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="name">Module name</param>
 		/// <returns></returns>
-		IDebuggerModule GetModule(ModuleName name);
+		IDebuggerModule GetModule(ModuleId name);
 
 		/// <summary>
 		/// Finds a module

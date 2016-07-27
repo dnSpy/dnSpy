@@ -28,6 +28,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Debugger.CallStack;
@@ -590,7 +591,7 @@ namespace dnSpy.Debugger.Scripting {
 			return null;
 		}
 
-		public IILBreakpoint CreateBreakpoint(ModuleName module, uint token, uint offset, Func<IILBreakpoint, bool> cond) => dispatcher.UI(() => {
+		public IILBreakpoint CreateBreakpoint(ModuleId module, uint token, uint offset, Func<IILBreakpoint, bool> cond) => dispatcher.UI(() => {
 			var bp = new ILBreakpoint(this, module, token, offset, cond);
 			if (theDebugger.IsDebugging) {
 				Debug.Assert(breakpointsToInitialize.Count == 0);
@@ -602,10 +603,10 @@ namespace dnSpy.Debugger.Scripting {
 		});
 		readonly List<IBreakpoint> breakpointsToInitialize = new List<IBreakpoint>();
 
-		public IILBreakpoint CreateBreakpoint(ModuleName module, uint token, int offset, Func<IILBreakpoint, bool> cond) =>
+		public IILBreakpoint CreateBreakpoint(ModuleId module, uint token, int offset, Func<IILBreakpoint, bool> cond) =>
 			CreateBreakpoint(module, token, (uint)offset, cond);
 
-		public INativeBreakpoint CreateNativeBreakpoint(ModuleName module, uint token, uint offset, Func<INativeBreakpoint, bool> cond) => dispatcher.UI(() => {
+		public INativeBreakpoint CreateNativeBreakpoint(ModuleId module, uint token, uint offset, Func<INativeBreakpoint, bool> cond) => dispatcher.UI(() => {
 			if (!theDebugger.IsDebugging)
 				throw new InvalidOperationException("Native breakpoints can only be set on jitted methods");
 			var bp = new NativeBreakpoint(this, module, token, offset, cond);
@@ -613,7 +614,7 @@ namespace dnSpy.Debugger.Scripting {
 			return bp;
 		});
 
-		public INativeBreakpoint CreateNativeBreakpoint(ModuleName module, uint token, int offset, Func<INativeBreakpoint, bool> cond) =>
+		public INativeBreakpoint CreateNativeBreakpoint(ModuleId module, uint token, int offset, Func<INativeBreakpoint, bool> cond) =>
 			CreateNativeBreakpoint(module, token, (uint)offset, cond);
 
 		public INativeBreakpoint CreateNativeBreakpoint(IDebuggerCode code, uint offset, Func<INativeBreakpoint, bool> cond) => dispatcher.UI(() => {
@@ -662,7 +663,7 @@ namespace dnSpy.Debugger.Scripting {
 				throw new ArgumentNullException();
 			CreateBreakpoint(DebugEventKind.LoadModule, (bp, ctx) => {
 				var c = (ModuleEventContext)ctx;
-				if (!Utils.IsSameFile(c.Module.ModuleName.Name, name))
+				if (!Utils.IsSameFile(c.Module.ModuleId.ModuleName, name))
 					return false;
 				bp.Remove();
 				action?.Invoke(c.Module);
@@ -887,7 +888,7 @@ namespace dnSpy.Debugger.Scripting {
 		IDebuggerModule corLib;
 
 		public IDebuggerModule GetModule(Module module) => dispatcher.UI(() => FirstAppDomain?.GetModule(module));
-		public IDebuggerModule GetModule(ModuleName name) => dispatcher.UI(() => FirstAppDomain?.GetModule(name));
+		public IDebuggerModule GetModule(ModuleId name) => dispatcher.UI(() => FirstAppDomain?.GetModule(name));
 		public IDebuggerModule GetModuleByName(string name) => dispatcher.UI(() => FirstAppDomain?.GetModuleByName(name));
 		public IDebuggerAssembly GetAssembly(Assembly asm) => dispatcher.UI(() => FirstAppDomain?.GetAssembly(asm));
 		public IDebuggerAssembly GetAssembly(string name) => dispatcher.UI(() => FirstAppDomain?.GetAssembly(name));

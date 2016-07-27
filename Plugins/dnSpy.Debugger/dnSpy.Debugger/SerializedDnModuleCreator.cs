@@ -21,6 +21,8 @@ using System.ComponentModel.Composition;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.Scripting;
 
 namespace dnSpy.Debugger {
 	interface ISerializedDnModuleCreator {
@@ -45,6 +47,28 @@ namespace dnSpy.Debugger {
 			if (modNode == null)
 				return SerializedDnModule.CreateFromFile(module);
 			return modNode.DnSpyFile.ToSerializedDnModule();
+		}
+	}
+
+	[ExportModuleIdFactoryProvider(ModuleIdFactoryProviderConstants.OrderDebugger)]
+	sealed class DebuggerModuleIdFactoryProvider : IModuleIdFactoryProvider {
+		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
+
+		[ImportingConstructor]
+		DebuggerModuleIdFactoryProvider(ISerializedDnModuleCreator serializedDnModuleCreator) {
+			this.serializedDnModuleCreator = serializedDnModuleCreator;
+		}
+
+		public IModuleIdFactory Create() => new ModuleIdFactory(serializedDnModuleCreator);
+
+		sealed class ModuleIdFactory : IModuleIdFactory {
+			readonly ISerializedDnModuleCreator serializedDnModuleCreator;
+
+			public ModuleIdFactory(ISerializedDnModuleCreator serializedDnModuleCreator) {
+				this.serializedDnModuleCreator = serializedDnModuleCreator;
+			}
+
+			public ModuleId? Create(ModuleDef module) => serializedDnModuleCreator.Create(module).ToModuleId();
 		}
 	}
 }

@@ -82,6 +82,8 @@
     <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocRenderer.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
+    <Compile Include="Metadata\ModuleId.cs" />
+    <Compile Include="Metadata\ModuleTokenId.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Properties\dnSpy.Contracts.Logic.Designer.cs">
       <AutoGen>True</AutoGen>

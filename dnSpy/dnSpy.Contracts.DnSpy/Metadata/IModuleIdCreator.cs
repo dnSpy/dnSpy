@@ -17,36 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Metadata;
+using dnlib.DotNet;
 
-namespace dnSpy.Contracts.Scripting.Debugger {
+namespace dnSpy.Contracts.Metadata {
 	/// <summary>
-	/// A code breakpoint (IL or native)
+	/// Creates <see cref="ModuleId"/>s
 	/// </summary>
-	public interface ICodeBreakpoint : IBreakpoint {
+	public interface IModuleIdCreator {
 		/// <summary>
-		/// true if it's an IL breakpoint (<see cref="IILBreakpoint"/>
+		/// Creates a <see cref="ModuleId"/>
 		/// </summary>
-		bool IsIL { get; }
-
-		/// <summary>
-		/// true if it's a native breakpoint (<see cref="INativeBreakpoint"/>
-		/// </summary>
-		bool IsNative { get; }
-
-		/// <summary>
-		/// Gets the module name
-		/// </summary>
-		ModuleId Module { get; }
-
-		/// <summary>
-		/// Gets the method token
-		/// </summary>
-		uint Token { get; }
-
-		/// <summary>
-		/// Gets the offset of the breakpoint relative to the start of the method
-		/// </summary>
-		uint Offset { get; }
+		/// <param name="module">Module</param>
+		/// <returns></returns>
+		ModuleId Create(ModuleDef module);
 	}
 }

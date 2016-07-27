@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
@@ -621,7 +622,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="name">Module name</param>
 		/// <returns></returns>
-		IDebuggerModule GetModule(ModuleName name);
+		IDebuggerModule GetModule(ModuleId name);
 
 		/// <summary>
 		/// Finds a module in <see cref="FirstAppDomain"/>
@@ -847,7 +848,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">IL code offset in method</param>
 		/// <param name="cond">Returns true if the breakpoint should pause the debugged process. Called on the UI thread.</param>
 		/// <returns></returns>
-		IILBreakpoint CreateBreakpoint(ModuleName module, uint token, uint offset = 0, Func<IILBreakpoint, bool> cond = null);
+		IILBreakpoint CreateBreakpoint(ModuleId module, uint token, uint offset = 0, Func<IILBreakpoint, bool> cond = null);
 
 		/// <summary>
 		/// Creates an IL code breakpoint that's only valid for the current debugging session (or
@@ -859,7 +860,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">IL code offset in method</param>
 		/// <param name="cond">Returns true if the breakpoint should pause the debugged process. Called on the UI thread.</param>
 		/// <returns></returns>
-		IILBreakpoint CreateBreakpoint(ModuleName module, uint token, int offset, Func<IILBreakpoint, bool> cond = null);
+		IILBreakpoint CreateBreakpoint(ModuleId module, uint token, int offset, Func<IILBreakpoint, bool> cond = null);
 
 		/// <summary>
 		/// Creates a native code breakpoint that's only valid for the current debugging session.
@@ -871,7 +872,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">Native code offset in method</param>
 		/// <param name="cond">Returns true if the breakpoint should pause the debugged process. Called on the UI thread.</param>
 		/// <returns></returns>
-		INativeBreakpoint CreateNativeBreakpoint(ModuleName module, uint token, uint offset = 0, Func<INativeBreakpoint, bool> cond = null);
+		INativeBreakpoint CreateNativeBreakpoint(ModuleId module, uint token, uint offset = 0, Func<INativeBreakpoint, bool> cond = null);
 
 		/// <summary>
 		/// Creates a native code breakpoint that's only valid for the current debugging session.
@@ -883,7 +884,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">Native code offset in method</param>
 		/// <param name="cond">Returns true if the breakpoint should pause the debugged process. Called on the UI thread.</param>
 		/// <returns></returns>
-		INativeBreakpoint CreateNativeBreakpoint(ModuleName module, uint token, int offset, Func<INativeBreakpoint, bool> cond = null);
+		INativeBreakpoint CreateNativeBreakpoint(ModuleId module, uint token, int offset, Func<INativeBreakpoint, bool> cond = null);
 
 		/// <summary>
 		/// Creates a native code breakpoint that's only valid for the current debugging session (or
