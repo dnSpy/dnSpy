@@ -19,21 +19,24 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_GLYPHTEXTMARKERSERVICE)]
 	sealed class GlyphTextMarkerServiceDocumentViewerListener : IDocumentViewerListener {
 		readonly IGlyphTextMarkerService glyphTextMarkerService;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		GlyphTextMarkerServiceDocumentViewerListener(IGlyphTextMarkerService glyphTextMarkerService) {
+		GlyphTextMarkerServiceDocumentViewerListener(IGlyphTextMarkerService glyphTextMarkerService, IModuleIdCreator moduleIdCreator) {
 			this.glyphTextMarkerService = glyphTextMarkerService;
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
 		void IDocumentViewerListener.OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)
-				glyphTextMarkerService.SetMethodOffsetSpanMap(e.DocumentViewer.TextView, new MethodDebugInfoMethodOffsetSpanMap(e.DocumentViewer.Content.MethodDebugInfos));
+				glyphTextMarkerService.SetMethodOffsetSpanMap(e.DocumentViewer.TextView, new MethodDebugInfoMethodOffsetSpanMap(moduleIdCreator, e.DocumentViewer.Content.MethodDebugInfos));
 		}
 	}
 }

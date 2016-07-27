@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
@@ -52,10 +53,12 @@ namespace dnSpy.Text.Editor {
 		public IEditorFormatMapService EditorFormatMapService { get; }
 		public IEnumerable<IGlyphTextMarker> AllMarkers => glyphTextMarkers;
 
+		readonly IModuleIdCreator moduleIdCreator;
 		readonly HashSet<IGlyphTextMarker> glyphTextMarkers;
 
 		[ImportingConstructor]
-		GlyphTextMarkerService(IThemeManager themeManager, IImageManager imageManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
+		GlyphTextMarkerService(IModuleIdCreator moduleIdCreator, IThemeManager themeManager, IImageManager imageManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
+			this.moduleIdCreator = moduleIdCreator;
 			ThemeManager = themeManager;
 			ImageManager = imageManager;
 			ViewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
@@ -66,7 +69,14 @@ namespace dnSpy.Text.Editor {
 		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
-			var marker = new GlyphTextMethodMarker(method, ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
+			return AddMarker(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
+		}
+
+		public IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) =>
+			AddMarker(new ModuleTokenId(module, token), ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
+
+		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
+			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
 			glyphTextMarkers.Add(marker);
 			MarkerAdded?.Invoke(this, new GlyphTextMarkerAddedEventArgs(marker));
 			return marker;
@@ -77,12 +87,10 @@ namespace dnSpy.Text.Editor {
 			public string MarkerTypeName { get; }
 			public IClassificationType ClassificationType { get; }
 			public int ZIndex { get; }
-			public MethodDef Method { get; }
+			public ModuleTokenId Method { get; }
 			public uint ILOffset { get; }
 
-			public GlyphTextMethodMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
-				if (method == null)
-					throw new ArgumentNullException(nameof(method));
+			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
 				Method = method;
 				ILOffset = ilOffset;
 				GlyphImageReference = glyphImage;

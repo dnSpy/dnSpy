@@ -20,30 +20,33 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class MethodDebugInfoMethodOffsetSpanMap : IMethodOffsetSpanMap {
-		readonly Dictionary<MethodDef, MethodDebugInfo> toMethodDebugInfo;
+		readonly IModuleIdCreator moduleIdCreator;
+		readonly Dictionary<ModuleTokenId, MethodDebugInfo> toMethodDebugInfo;
 
-		public MethodDebugInfoMethodOffsetSpanMap(ReadOnlyCollection<MethodDebugInfo> methodDebugInfos) {
+		public MethodDebugInfoMethodOffsetSpanMap(IModuleIdCreator moduleIdCreator, ReadOnlyCollection<MethodDebugInfo> methodDebugInfos) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
-			toMethodDebugInfo = new Dictionary<MethodDef, MethodDebugInfo>(methodDebugInfos.Count);
+			this.moduleIdCreator = moduleIdCreator;
+			toMethodDebugInfo = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 			foreach (var info in methodDebugInfos) {
+				var token = new ModuleTokenId(moduleIdCreator.Create(info.Method.Module), info.Method.MDToken);
 				MethodDebugInfo otherInfo;
-				if (toMethodDebugInfo.TryGetValue(info.Method, out otherInfo)) {
+				if (toMethodDebugInfo.TryGetValue(token, out otherInfo)) {
 					if (info.Statements.Length < otherInfo.Statements.Length)
 						continue;
 				}
-				toMethodDebugInfo[info.Method] = info;
+				toMethodDebugInfo[token] = info;
 			}
 		}
 
-		public Span? ToSpan(MethodDef method, uint ilOffset) {
+		public Span? ToSpan(ModuleTokenId method, uint ilOffset) {
 			MethodDebugInfo info;
 			if (!toMethodDebugInfo.TryGetValue(method, out info))
 				return null;
