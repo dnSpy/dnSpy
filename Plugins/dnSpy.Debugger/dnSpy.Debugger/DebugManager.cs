@@ -40,6 +40,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
@@ -103,14 +104,14 @@ namespace dnSpy.Debugger {
 		readonly ITheDebugger theDebugger;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
-		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		public ITheDebugger TheDebugger => theDebugger;
 		public IStackFrameManager StackFrameManager { get; }
 		public IDebuggerSettings DebuggerSettings { get; }
 
 		[ImportingConstructor]
-		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
+		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdCreator moduleIdCreator) {
 			this.appWindow = appWindow;
 			this.fileTabManager = fileTabManager;
 			this.messageBoxManager = messageBoxManager;
@@ -119,7 +120,7 @@ namespace dnSpy.Debugger {
 			this.StackFrameManager = stackFrameManager;
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleManager = inMemoryModuleManager;
-			this.serializedDnModuleCreator = serializedDnModuleCreator;
+			this.moduleIdCreator = moduleIdCreator;
 			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -959,12 +960,12 @@ namespace dnSpy.Debugger {
 			public bool IsExact => (Mapping & CorDebugMappingResult.MAPPING_EXACT) != 0;
 			public bool IsApproximate => (Mapping & CorDebugMappingResult.MAPPING_APPROXIMATE) != 0;
 
-			public SerializedDnToken SerializedDnToken {
+			public ModuleTokenId SerializedDnToken {
 				get {
 					var mod = Function.Module;
 					if (mod == null)
-						return new SerializedDnToken();
-					return new SerializedDnToken(mod.SerializedDnModule, Function.Token);
+						return new ModuleTokenId();
+					return new ModuleTokenId(mod.SerializedDnModule.ToModuleId(), Function.Token);
 				}
 			}
 
@@ -1077,12 +1078,12 @@ namespace dnSpy.Debugger {
 			return stepRanges;
 		}
 
-		static SerializedDnToken? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
+		static ModuleTokenId? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
 			var sma = frame.SerializedDnModule;
 			if (sma == null)
 				return null;
 
-			return new SerializedDnToken(sma.Value, frame.Token);
+			return new ModuleTokenId(sma.Value.ToModuleId(), frame.Token);
 		}
 
 		CorFrame GetCurrentILFrame() {
@@ -1307,7 +1308,7 @@ namespace dnSpy.Debugger {
 				var md = info.Method;
 				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 					continue;
-				var serAsm = serializedDnModuleCreator.Create(md.Module);
+				var serAsm = moduleIdCreator.Create(md.Module);
 				if (!serAsm.Equals(currentLocation.Value.SerializedDnToken.Module))
 					continue;
 

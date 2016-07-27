@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Utilities;
 
@@ -73,13 +74,15 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public IBreakpointsVM BreakpointsVM => vmBreakpoints.Value;
 		readonly Lazy<IBreakpointsVM> vmBreakpoints;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		BreakpointsContent(IWpfCommandManager wpfCommandManager, Lazy<IBreakpointsVM> breakpointsVM, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager) {
+		BreakpointsContent(IWpfCommandManager wpfCommandManager, Lazy<IBreakpointsVM> breakpointsVM, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdCreator moduleIdCreator) {
 			this.breakpointsControl = new BreakpointsControl();
 			this.moduleLoader = moduleLoader;
 			this.fileTabManager = fileTabManager;
 			this.vmBreakpoints = breakpointsVM;
+			this.moduleIdCreator = moduleIdCreator;
 
 			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_BREAKPOINTS_CONTROL, breakpointsControl);
 			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW, breakpointsControl.ListView);
@@ -87,7 +90,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		void BreakpointsControl_BreakpointsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			GoToSourceBreakpointCtxMenuCommand.GoTo(fileTabManager, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
+			GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdCreator, fileTabManager, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(BreakpointsControl.ListView);

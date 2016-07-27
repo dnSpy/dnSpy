@@ -29,6 +29,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
@@ -157,13 +158,15 @@ namespace dnSpy.Debugger.CallStack {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		SwitchToFrameCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+		SwitchToFrameCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator)
 			: base(theDebugger, callStackContent) {
 			this.stackFrameManager = stackFrameManager;
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
 		internal static CallStackFrameVM GetFrame(CallStackCtxMenuContext context) {
@@ -173,12 +176,12 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public override void Execute(CallStackCtxMenuContext context) =>
-			Execute(stackFrameManager.Value, fileTabManager, moduleLoader.Value, GetFrame(context), false);
+			Execute(moduleIdCreator, stackFrameManager.Value, fileTabManager, moduleLoader.Value, GetFrame(context), false);
 
-		internal static void Execute(IStackFrameManager stackFrameManager, IFileTabManager fileTabManager, IModuleLoader moduleLoader, CallStackFrameVM vm, bool newTab) {
+		internal static void Execute(IModuleIdCreator moduleIdCreator, IStackFrameManager stackFrameManager, IFileTabManager fileTabManager, IModuleLoader moduleLoader, CallStackFrameVM vm, bool newTab) {
 			if (vm != null) {
 				stackFrameManager.SelectedFrameNumber = vm.Index;
-				FrameUtils.GoTo(fileTabManager, moduleLoader, vm.Frame, newTab);
+				FrameUtils.GoTo(moduleIdCreator, fileTabManager, moduleLoader, vm.Frame, newTab);
 			}
 		}
 
@@ -190,17 +193,19 @@ namespace dnSpy.Debugger.CallStack {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		SwitchToFrameNewTabCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+		SwitchToFrameNewTabCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator)
 			: base(theDebugger, callStackContent) {
 			this.stackFrameManager = stackFrameManager;
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
 		public override void Execute(CallStackCtxMenuContext context) =>
-			SwitchToFrameCallStackCtxMenuCommand.Execute(stackFrameManager.Value, fileTabManager, moduleLoader.Value, SwitchToFrameCallStackCtxMenuCommand.GetFrame(context), true);
+			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdCreator, stackFrameManager.Value, fileTabManager, moduleLoader.Value, SwitchToFrameCallStackCtxMenuCommand.GetFrame(context), true);
 		public override bool IsEnabled(CallStackCtxMenuContext context) => SwitchToFrameCallStackCtxMenuCommand.GetFrame(context) != null;
 	}
 
@@ -208,18 +213,20 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		GoToSourceCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+		GoToSourceCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator)
 			: base(theDebugger, callStackContent) {
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
 		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
-				FrameUtils.GoToIL(fileTabManager, moduleLoader.Value, vm.Frame, false);
+				FrameUtils.GoToIL(moduleIdCreator, fileTabManager, moduleLoader.Value, vm.Frame, false);
 		}
 
 		public override bool IsEnabled(CallStackCtxMenuContext context) =>

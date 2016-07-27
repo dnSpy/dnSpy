@@ -74,6 +74,7 @@
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
     <Compile Include="DebuggerAppSettingsTab.cs" />
     <Compile Include="DebuggerColors.cs" />
+    <Compile Include="DebuggerModuleIdFactoryProvider.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DebugManager.cs" />
     <Compile Include="DebugManagerCommands.cs" />
@@ -97,11 +98,13 @@
     <Compile Include="Dialogs\ProcessContext.cs" />
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
+    <Compile Include="IModuleIdProvider.cs" />
     <Compile Include="Logger\Commands.cs" />
     <Compile Include="Logger\ContentTypeDefinitions.cs" />
     <Compile Include="Logger\OutputLogger.cs" />
     <Compile Include="Logger\OutputLoggerSettings.cs" />
     <Compile Include="MethodDebugService.cs" />
+    <Compile Include="ModuleIdExtensions.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="OutputWriterConverter.cs" />
     <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
@@ -142,7 +145,6 @@
     <Compile Include="IMModules\LoadEverythingVM.cs" />
     <Compile Include="IMModules\MemoryModuleDefFile.cs" />
     <Compile Include="IMModules\TreeViewUpdater.cs" />
-    <Compile Include="ISerializedDnModule.cs" />
     <Compile Include="Locals\AskUser.cs" />
     <Compile Include="Locals\Commands.cs" />
     <Compile Include="Locals\EditValueControl.xaml.cs">
@@ -213,8 +215,7 @@
     <Compile Include="Scripting\StackFrame.cs" />
     <Compile Include="Scripting\TypeComparer.cs" />
     <Compile Include="Scripting\Utils.cs" />
-    <Compile Include="SerializedDnModuleCreator.cs" />
-    <Compile Include="SerializedDnToken.cs" />
+    <Compile Include="SerializedDnModuleExtensions.cs" />
     <Compile Include="TheDebugger.cs" />
     <Compile Include="Threads\Commands.cs" />
     <Compile Include="Threads\ThreadColumnConverter.cs" />

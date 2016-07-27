@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IILBreakpoint CreateBreakpoint(uint offset, Func<IILBreakpoint, bool> cond) => debugger.Dispatcher.UI(() => {
 			var mod = this.CorFunction.Module;
-			var module = mod == null ? new ModuleId() : Utils.ToModuleId(mod.SerializedDnModule);
+			var module = mod == null ? new ModuleId() : mod.SerializedDnModule.ToModuleId();
 			return debugger.CreateBreakpoint(module, this.CorFunction.Token, offset, cond);
 		});
 

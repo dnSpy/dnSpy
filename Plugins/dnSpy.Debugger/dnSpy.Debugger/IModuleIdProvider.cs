@@ -17,18 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 
-namespace dnSpy.Contracts.Metadata {
-	/// <summary>
-	/// Creates <see cref="ModuleId"/>s
-	/// </summary>
-	public interface IModuleIdCreator {
-		/// <summary>
-		/// Creates a <see cref="ModuleId"/>
-		/// </summary>
-		/// <param name="module">Module or null</param>
-		/// <returns></returns>
-		ModuleId Create(ModuleDef module);
+namespace dnSpy.Debugger {
+	interface IModuleIdProvider {
+		ModuleId ModuleId { get; }
 	}
 }

@@ -20,11 +20,12 @@
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.CallStack {
 	static class FrameUtils {
-		public static bool GoTo(IFileTabManager fileTabManager, IModuleLoader moduleLoader, CorFrame frame, bool newTab) {
-			if (GoToIL(fileTabManager, moduleLoader, frame, newTab))
+		public static bool GoTo(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IModuleLoader moduleLoader, CorFrame frame, bool newTab) {
+			if (GoToIL(moduleIdCreator, fileTabManager, moduleLoader, frame, newTab))
 				return true;
 
 			//TODO: eg. native frame or internal frame
@@ -46,7 +47,7 @@ namespace dnSpy.Debugger.CallStack {
 			return true;
 		}
 
-		public static bool GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, CorFrame frame, bool newTab) {
+		public static bool GoToIL(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IModuleLoader moduleLoader, CorFrame frame, bool newTab) {
 			if (!CanGoToIL(frame))
 				return false;
 
@@ -54,7 +55,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (func == null)
 				return false;
 
-			return DebugUtils.GoToIL(fileTabManager, moduleLoader.LoadModule(func.Module, canLoadDynFile: true, isAutoLoaded: true), frame.Token, frame.GetILOffset(moduleLoader), newTab);
+			return DebugUtils.GoToIL(moduleIdCreator, fileTabManager, moduleLoader.LoadModule(func.Module, canLoadDynFile: true, isAutoLoaded: true), frame.Token, frame.GetILOffset(moduleLoader), newTab);
 		}
 
 		public static bool CanGoToDisasm(CorFrame frame) {

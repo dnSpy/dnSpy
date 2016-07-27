@@ -20,8 +20,8 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 
@@ -131,8 +131,8 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (isEnabled == null)
 					continue;
 
-				var snModule = SerializedDnModule.Create(asmFullName, moduleName, isDynamic.Value, isInMemory.Value, moduleNameOnly);
-				var key = new SerializedDnToken(snModule, token.Value);
+				var moduleId = ModuleId.Create(asmFullName, moduleName, isDynamic.Value, isInMemory.Value, moduleNameOnly);
+				var key = new ModuleTokenId(moduleId, token.Value);
 
 				if (!isInMemory.Value && !isDynamic.Value) {
 					var s = bpx.Attribute<string>("Method");
@@ -157,23 +157,23 @@ namespace dnSpy.Debugger.Breakpoints {
 			foreach (var bp in breakpointManager.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null) {
-					if (string.IsNullOrEmpty(ilbp.SerializedDnToken.Module.ModuleName))
+					if (string.IsNullOrEmpty(ilbp.MethodToken.Module.ModuleName))
 						continue;
-					if (string.IsNullOrEmpty(ilbp.SerializedDnToken.Module.AssemblyFullName) && !ilbp.SerializedDnToken.Module.ModuleNameOnly)
+					if (string.IsNullOrEmpty(ilbp.MethodToken.Module.AssemblyFullName) && !ilbp.MethodToken.Module.ModuleNameOnly)
 						continue;
 
 					var bpx = section.CreateSection("Breakpoint");
-					bpx.Attribute("Token", ilbp.SerializedDnToken.Token);
-					bpx.Attribute("AssemblyFullName", ilbp.SerializedDnToken.Module.AssemblyFullName);
-					bpx.Attribute("ModuleName", ilbp.SerializedDnToken.Module.ModuleName);
-					bpx.Attribute("IsDynamic", ilbp.SerializedDnToken.Module.IsDynamic);
-					bpx.Attribute("IsInMemory", ilbp.SerializedDnToken.Module.IsInMemory);
-					if (ilbp.SerializedDnToken.Module.ModuleNameOnly)
-						bpx.Attribute("ModuleNameOnly", ilbp.SerializedDnToken.Module.ModuleNameOnly);
+					bpx.Attribute("Token", ilbp.MethodToken.Token);
+					bpx.Attribute("AssemblyFullName", ilbp.MethodToken.Module.AssemblyFullName);
+					bpx.Attribute("ModuleName", ilbp.MethodToken.Module.ModuleName);
+					bpx.Attribute("IsDynamic", ilbp.MethodToken.Module.IsDynamic);
+					bpx.Attribute("IsInMemory", ilbp.MethodToken.Module.IsInMemory);
+					if (ilbp.MethodToken.Module.ModuleNameOnly)
+						bpx.Attribute("ModuleNameOnly", ilbp.MethodToken.Module.ModuleNameOnly);
 					bpx.Attribute("ILOffset", ilbp.ILOffset);
 					bpx.Attribute("IsEnabled", ilbp.IsEnabled);
-					if (!ilbp.SerializedDnToken.Module.IsInMemory && !ilbp.SerializedDnToken.Module.IsDynamic) {
-						var s = GetMethodAsString(ilbp.SerializedDnToken);
+					if (!ilbp.MethodToken.Module.IsInMemory && !ilbp.MethodToken.Module.IsDynamic) {
+						var s = GetMethodAsString(ilbp.MethodToken);
 						if (s == null)
 							continue;
 						bpx.Attribute("Method", s);
@@ -189,7 +189,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		string GetMethodAsString(SerializedDnToken key) {
+		string GetMethodAsString(ModuleTokenId key) {
 			var file = moduleLoader.Value.LoadModule(key.Module, canLoadDynFile: true, diskFileOk: true, isAutoLoaded: true);
 			var method = file?.ModuleDef?.ResolveToken(key.Token) as MethodDef;
 			return method?.ToString();

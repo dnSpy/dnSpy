@@ -28,6 +28,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
@@ -190,33 +191,35 @@ namespace dnSpy.Debugger.Threads {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		SwitchToThreadThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+		SwitchToThreadThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator)
 			: base(theDebugger, threadsContent) {
 			this.stackFrameManager = stackFrameManager;
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) {
-			GoTo(stackFrameManager, fileTabManager, moduleLoader, context, false);
+			GoTo(moduleIdCreator, stackFrameManager, fileTabManager, moduleLoader, context, false);
 		}
 
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => CanGoToThread(context);
 		internal static bool CanGoToThread(ThreadsCtxMenuContext context) => context.SelectedItems.Length == 1;
 
-		internal static void GoTo(Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, ThreadsCtxMenuContext context, bool newTab) {
+		internal static void GoTo(IModuleIdCreator moduleIdCreator, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, ThreadsCtxMenuContext context, bool newTab) {
 			if (context.SelectedItems.Length == 0)
 				return;
-			GoTo(fileTabManager, moduleLoader.Value, stackFrameManager.Value, context.SelectedItems[0], newTab);
+			GoTo(moduleIdCreator, fileTabManager, moduleLoader.Value, stackFrameManager.Value, context.SelectedItems[0], newTab);
 		}
 
-		internal static void GoTo(IFileTabManager fileTabManager, IModuleLoader moduleLoader, IStackFrameManager stackFrameManager, ThreadVM vm, bool newTab) {
+		internal static void GoTo(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IModuleLoader moduleLoader, IStackFrameManager stackFrameManager, ThreadVM vm, bool newTab) {
 			if (vm == null)
 				return;
 			stackFrameManager.SelectedThread = vm.Thread;
-			FrameUtils.GoTo(fileTabManager, moduleLoader, vm.Thread.AllFrames.FirstOrDefault(f => f.IsILFrame), newTab);
+			FrameUtils.GoTo(moduleIdCreator, fileTabManager, moduleLoader, vm.Thread.AllFrames.FirstOrDefault(f => f.IsILFrame), newTab);
 		}
 	}
 
@@ -225,16 +228,18 @@ namespace dnSpy.Debugger.Threads {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator)
 			: base(theDebugger, threadsContent) {
 			this.stackFrameManager = stackFrameManager;
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
-		public override void Execute(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.GoTo(stackFrameManager, fileTabManager, moduleLoader, context, true);
+		public override void Execute(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdCreator, stackFrameManager, fileTabManager, moduleLoader, context, true);
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.CanGoToThread(context);
 	}
 

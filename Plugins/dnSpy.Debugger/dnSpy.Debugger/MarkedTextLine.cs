@@ -21,19 +21,20 @@ using System;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
 	abstract class MarkedTextLine : IMarkedTextLine {
 		readonly IMarkedTextLine senderObj;
 
-		protected MarkedTextLine(SerializedDnToken methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
+		protected MarkedTextLine(ModuleTokenId methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
 			this.methodKey = methodKey;
 			this.ILOffset = ilOffset;
 			this.senderObj = senderObj ?? this;
 		}
 
-		public SerializedDnToken SerializedDnToken => methodKey;
-		SerializedDnToken methodKey;
+		public ModuleTokenId SerializedDnToken => methodKey;
+		ModuleTokenId methodKey;
 
 		public uint ILOffset { get; }
 		public event EventHandler<TextLineObjectEventArgs> ObjPropertyChanged;

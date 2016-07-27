@@ -26,6 +26,7 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Themes;
 using dnSpy.Debugger.IMModules;
@@ -116,15 +117,15 @@ namespace dnSpy.Debugger.Breakpoints {
 				var module = dbg.TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
 				Debug.Assert(module != null);
 				if (module != null && module.IsDynamic)
-					pendingModules.Add(module.SerializedDnModule);
+					pendingModules.Add(module.SerializedDnModule.ToModuleId());
 			}
 		}
 
 		void InMemoryModuleManager_DynamicModulesLoaded(object sender, EventArgs e) {
 			if (nameErrorCounter != 0) {
-				foreach (var serMod in pendingModules) {
+				foreach (var moduleId in pendingModules) {
 					foreach (var vm in breakpointList)
-						vm.RefreshIfNameError(serMod);
+						vm.RefreshIfNameError(moduleId);
 				}
 			}
 			pendingModules.Clear();
@@ -139,7 +140,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			Debug.Assert(0 <= nameErrorCounter && nameErrorCounter <= breakpointList.Count);
 		}
 		int nameErrorCounter;
-		readonly HashSet<SerializedDnModule> pendingModules = new HashSet<SerializedDnModule>();
+		readonly HashSet<ModuleId> pendingModules = new HashSet<ModuleId>();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;

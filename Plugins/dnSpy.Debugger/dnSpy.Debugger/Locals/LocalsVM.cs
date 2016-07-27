@@ -30,6 +30,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.CallStack;
 using ICSharpCode.TreeView;
@@ -197,14 +198,14 @@ namespace dnSpy.Debugger.Locals {
 		sealed class FrameInfo : IEquatable<FrameInfo> {
 			public readonly ValueContext ValueContext;
 
-			public SerializedDnToken? Key {
+			public ModuleTokenId? Key {
 				get {
 					if (ValueContext.Function == null)
 						return null;
 					var mod = ValueContext.Function.Module;
 					if (mod == null)
 						return null;
-					return new SerializedDnToken(mod.SerializedDnModule, ValueContext.Function.Token);
+					return new ModuleTokenId(mod.SerializedDnModule.ToModuleId(), ValueContext.Function.Token);
 				}
 			}
 

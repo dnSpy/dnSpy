@@ -28,6 +28,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -81,15 +82,15 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly IFileTabManager fileTabManager;
 		readonly ITheDebugger theDebugger;
 		readonly IMessageBoxManager messageBoxManager;
-		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		BreakpointManager(ITextLineObjectManager textLineObjectManager, IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
+		BreakpointManager(ITextLineObjectManager textLineObjectManager, IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, IModuleIdCreator moduleIdCreator) {
 			this.textLineObjectManager = textLineObjectManager;
 			this.fileTabManager = fileTabManager;
 			this.theDebugger = theDebugger;
 			this.messageBoxManager = messageBoxManager;
-			this.serializedDnModuleCreator = serializedDnModuleCreator;
+			this.moduleIdCreator = moduleIdCreator;
 			textLineObjectManager.OnListModified += MarkedTextLinesManager_OnListModified;
 			foreach (var bp in Breakpoints)
 				InitializeDebuggerBreakpoint(bp);
@@ -121,25 +122,25 @@ namespace dnSpy.Debugger.Breakpoints {
 			switch (e.Type) {
 			case NotifyFileCollectionType.Clear:
 			case NotifyFileCollectionType.Remove:
-				var existing = new HashSet<SerializedDnModule>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => a.DnSpyFile.ToSerializedDnModule()));
-				var removed = new HashSet<SerializedDnModule>(e.Files.Select(a => a.ToSerializedDnModule()));
-				existing.Remove(new SerializedDnModule());
-				removed.Remove(new SerializedDnModule());
+				var existing = new HashSet<ModuleId>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => moduleIdCreator.Create(a.DnSpyFile.ModuleDef)));
+				var removed = new HashSet<ModuleId>(e.Files.Select(a => moduleIdCreator.Create(a.ModuleDef)));
+				existing.Remove(new ModuleId());
+				removed.Remove(new ModuleId());
 				object orbArg = null;
 				if (OnRemoveBreakpoints != null)
 					orbArg = OnRemoveBreakpoints(orbArg);
 				foreach (var ilbp in ILCodeBreakpoints) {
 					// Don't auto-remove BPs in dynamic modules since they have no disk file. The
 					// user must delete these him/herself.
-					if (ilbp.SerializedDnToken.Module.IsDynamic)
+					if (ilbp.MethodToken.Module.IsDynamic)
 						continue;
 
 					// If the file is still in the TV, don't delete anything. This can happen if
 					// we've loaded an in-memory module and the node just got removed.
-					if (existing.Contains(ilbp.SerializedDnToken.Module))
+					if (existing.Contains(ilbp.MethodToken.Module))
 						continue;
 
-					if (removed.Contains(ilbp.SerializedDnToken.Module))
+					if (removed.Contains(ilbp.MethodToken.Module))
 						Remove(ilbp);
 				}
 				OnRemoveBreakpoints?.Invoke(orbArg);
@@ -187,7 +188,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var ilbp = (ILCodeBreakpoint)bp;
 				Func<ILCodeBreakpointConditionContext, bool> cond = null;//TODO: Let user pick what cond to use
 				Debug.Assert(ilbp.DnBreakpoint == null);
-				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.SerializedDnToken.Module, ilbp.SerializedDnToken.Token, ilbp.ILOffset, cond);
+				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.MethodToken.Module.ToSerializedDnModule(), ilbp.MethodToken.Token, ilbp.ILOffset, cond);
 				break;
 
 			case BreakpointKind.DebugEvent:
@@ -371,8 +372,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			else if (statements.Count > 0) {
 				foreach (var methodStatement in statements) {
 					var md = methodStatement.Method;
-					var serMod = serializedDnModuleCreator.Create(md.Module);
-					var key = new SerializedDnToken(serMod, md.MDToken);
+					var modId = moduleIdCreator.Create(md.Module);
+					var key = new ModuleTokenId(modId, md.MDToken);
 					Add(new ILCodeBreakpoint(key, methodStatement.Statement.BinSpan.Start));
 				}
 				documentViewer.MoveCaretToPosition(statements[0].Statement.TextSpan.Start);

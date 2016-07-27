@@ -25,15 +25,16 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static void GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, SerializedDnModule serAsm, uint token, uint ilOffset, bool newTab) {
-			var file = moduleLoader.LoadModule(serAsm, canLoadDynFile: true, diskFileOk: false, isAutoLoaded: true);
-			GoToIL(fileTabManager, file, token, ilOffset, newTab);
+		public static void GoToIL(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IModuleLoader moduleLoader, ModuleId moduleId, uint token, uint ilOffset, bool newTab) {
+			var file = moduleLoader.LoadModule(moduleId, canLoadDynFile: true, diskFileOk: false, isAutoLoaded: true);
+			GoToIL(moduleIdCreator, fileTabManager, file, token, ilOffset, newTab);
 		}
 
-		public static bool GoToIL(IFileTabManager fileTabManager, IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
+		public static bool GoToIL(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
 			if (file == null)
 				return false;
 
@@ -41,8 +42,8 @@ namespace dnSpy.Debugger {
 			if (method == null)
 				return false;
 
-			var serMod = SerializedDnModuleCreator.Create(fileTabManager.FileTreeView,  method.Module);
-			var key = new SerializedDnToken(serMod, method.MDToken);
+			var modId = moduleIdCreator.Create(method.Module);
+			var key = new ModuleTokenId(modId, method.MDToken);
 
 			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;
 			if (found) {
@@ -68,7 +69,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static bool MoveCaretTo(IDocumentViewer documentViewer, SerializedDnToken key, uint ilOffset) {
+		public static bool MoveCaretTo(IDocumentViewer documentViewer, ModuleTokenId key, uint ilOffset) {
 			if (documentViewer == null)
 				return false;
 
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, SerializedDnToken serToken, out MethodDebugService methodDebugService) {
+		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId serToken, out MethodDebugService methodDebugService) {
 			methodDebugService = documentViewer.GetMethodDebugService();
 			return methodDebugService.TryGetMethodDebugInfo(serToken) != null;
 		}

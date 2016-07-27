@@ -21,7 +21,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Scripting.Debugger;
 
 using DBG = dndbg.Engine;
@@ -99,11 +98,6 @@ namespace dnSpy.Debugger.Scripting {
 			}
 			return cvalues;
 		}
-
-		public static DBG.SerializedDnModule ToSerializedDnModule(this ModuleId moduleId) =>
-			new DBG.SerializedDnModule(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
-		public static ModuleId ToModuleId(this DBG.SerializedDnModule serMod) =>
-			new ModuleId(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
 
 		public static DBG.DebugEventBreakpointKind ToDebugEventBreakpointKind(this DebugEventKind eventKind) {
 			switch (eventKind) {

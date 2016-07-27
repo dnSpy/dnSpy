@@ -24,13 +24,14 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// A class that reads the module from the debugged process' address space.
 	/// </summary>
-	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase, ISerializedDnModule {
+	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase, IModuleIdProvider {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnProcess process;
 			readonly ulong address;
@@ -48,11 +49,11 @@ namespace dnSpy.Debugger.IMModules {
 			public override int GetHashCode() => process.GetHashCode() ^ (int)address ^ (int)(address >> 32);
 		}
 
-		public SerializedDnModule? SerializedDnModule {
+		public ModuleId ModuleId {
 			get {
 				if (!isInMemory)
-					return dndbg.Engine.SerializedDnModule.CreateFromFile(ModuleDef);
-				return dndbg.Engine.SerializedDnModule.CreateInMemory(ModuleDef);
+					return Contracts.Metadata.ModuleId.CreateFromFile(ModuleDef);
+				return Contracts.Metadata.ModuleId.CreateInMemory(ModuleDef);
 			}
 		}
 

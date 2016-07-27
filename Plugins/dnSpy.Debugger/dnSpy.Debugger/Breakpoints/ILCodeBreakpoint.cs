@@ -21,6 +21,7 @@ using System;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class ILCodeBreakpoint : Breakpoint, IMarkedTextLine {
@@ -66,16 +67,18 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public override BreakpointKind Kind => BreakpointKind.ILCode;
+		public ModuleTokenId MethodToken { get; }
 		public SerializedDnToken SerializedDnToken => myMarkedTextLine.SerializedDnToken;
-		public uint ILOffset => myMarkedTextLine.ILOffset;
+		public uint ILOffset { get; }
 		public double ZOrder => myMarkedTextLine.ZOrder;
 		public bool HasImage => myMarkedTextLine.HasImage;
 		public ImageReference? ImageReference => myMarkedTextLine.ImageReference;
 		readonly MyMarkedTextLine myMarkedTextLine;
 
-		public ILCodeBreakpoint(SerializedDnToken methodKey, uint ilOffset, bool isEnabled = true)
+		public ILCodeBreakpoint(ModuleTokenId methodKey, uint ilOffset, bool isEnabled = true)
 			: base(isEnabled) {
-			this.myMarkedTextLine = new MyMarkedTextLine(this, methodKey, ilOffset);
+			MethodToken = methodKey;
+			ILOffset = ilOffset;
 		}
 
 		public int GetLineNumber(IDocumentViewer documentViewer) => myMarkedTextLine.GetLineNumber(documentViewer);

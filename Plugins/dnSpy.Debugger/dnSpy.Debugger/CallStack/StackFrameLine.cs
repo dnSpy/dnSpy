@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.CallStack {
 	enum StackFrameLineType {
@@ -61,7 +62,7 @@ namespace dnSpy.Debugger.CallStack {
 		internal IDocumentViewer DocumentViewer => documentViewer;
 		readonly IDocumentViewer documentViewer;
 
-		public StackFrameLine(StackFrameLineType type, IDocumentViewer documentViewer, SerializedDnToken methodKey, uint ilOffset)
+		public StackFrameLine(StackFrameLineType type, IDocumentViewer documentViewer, ModuleTokenId methodKey, uint ilOffset)
 			: base(methodKey, ilOffset) {
 			this.type = type;
 			this.documentViewer = documentViewer;

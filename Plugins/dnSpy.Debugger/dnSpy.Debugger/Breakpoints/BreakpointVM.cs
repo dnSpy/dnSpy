@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -77,14 +78,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		internal void RefreshNameField() => OnPropertyChanged(nameof(NameObject));
 		void RefreshImage() => OnPropertyChanged(nameof(ImageObject));
 
-		internal void RefreshIfNameError(SerializedDnModule serMod) {
+		internal void RefreshIfNameError(ModuleId moduleId) {
 			if (!NameError)
 				return;
 
 			var dnbp = Breakpoint.DnBreakpoint as DnILCodeBreakpoint;
 			if (dnbp == null)
 				return;
-			if (dnbp.Module != serMod)
+			if (dnbp.Module.ToModuleId() != moduleId)
 				return;
 
 			// If we still can't resolve the method, there's no need to refresh the name field
@@ -98,9 +99,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			var bp = Breakpoint as ILCodeBreakpoint;
 			if (bp == null)
 				return null;
-			var file = Context.ModuleLoader.LoadModule(bp.SerializedDnToken.Module, canLoadDynFile, diskFileOk: true, isAutoLoaded: true);
+			var file = Context.ModuleLoader.LoadModule(bp.MethodToken.Module, canLoadDynFile, diskFileOk: true, isAutoLoaded: true);
 			var mod = file == null ? null : file.ModuleDef;
-			return mod == null ? null : mod.ResolveToken(bp.SerializedDnToken.Token) as MethodDef;
+			return mod == null ? null : mod.ResolveToken(bp.MethodToken.Token) as MethodDef;
 		}
 
 		public void Dispose() {

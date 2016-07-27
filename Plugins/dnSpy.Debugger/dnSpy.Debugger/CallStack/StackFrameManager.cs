@@ -26,6 +26,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
@@ -266,7 +267,7 @@ namespace dnSpy.Debugger.CallStack {
 						type = StackFrameLineType.CurrentStatement;
 					else
 						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
-					var key = new SerializedDnToken(serAsm.Value, token);
+					var key = new ModuleTokenId(serAsm.Value.ToModuleId(), token);
 					uint offset = frame.GetILOffset(moduleLoader.Value);
 					SourceStatement? sourceStatement;
 					var info = methodDebugService.TryGetMethodDebugInfo(key);

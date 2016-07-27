@@ -26,16 +26,17 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Metadata;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger {
 	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_DEBUGGER_METHODDEBUGSERVICECREATOR)]
 	sealed class MethodDebugServiceDocumentViewerListener : IDocumentViewerListener {
-		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		MethodDebugServiceDocumentViewerListener(IDocumentViewerService documentViewerService, ISerializedDnModuleCreator serializedDnModuleCreator) {
-			this.serializedDnModuleCreator = serializedDnModuleCreator;
+		MethodDebugServiceDocumentViewerListener(IDocumentViewerService documentViewerService, IModuleIdCreator moduleIdCreator) {
+			this.moduleIdCreator = moduleIdCreator;
 		}
 
 		public void OnEvent(DocumentViewerEventArgs e) {
@@ -46,7 +47,7 @@ namespace dnSpy.Debugger {
 		void AddMethodDebugService(IDocumentViewer documentViewer, DocumentViewerContent content) {
 			if (content == null)
 				return;
-			var cm = new MethodDebugService(content.MethodDebugInfos, documentViewer.TextView.TextSnapshot, serializedDnModuleCreator);
+			var cm = new MethodDebugService(content.MethodDebugInfos, documentViewer.TextView.TextSnapshot, moduleIdCreator);
 			documentViewer.AddContentData(MethodDebugServiceKey, cm);
 		}
 		internal static readonly object MethodDebugServiceKey = new object();
@@ -63,38 +64,38 @@ namespace dnSpy.Debugger {
 	}
 
 	sealed class MethodDebugService {
-		readonly Dictionary<SerializedDnToken, MethodDebugInfo> dict;
+		readonly Dictionary<ModuleTokenId, MethodDebugInfo> dict;
 		readonly ITextSnapshot snapshot;
 
 		public int Count => dict.Count;
 
 		public MethodDebugService() {
-			this.dict = new Dictionary<SerializedDnToken, MethodDebugInfo>(0);
+			this.dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(0);
 		}
 
-		public MethodDebugService(IList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, ISerializedDnModuleCreator serializedDnModuleCreator) {
+		public MethodDebugService(IList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdCreator moduleIdCreator) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
-			if (serializedDnModuleCreator == null)
-				throw new ArgumentNullException(nameof(serializedDnModuleCreator));
+			if (moduleIdCreator == null)
+				throw new ArgumentNullException(nameof(moduleIdCreator));
 
-			this.dict = new Dictionary<SerializedDnToken, MethodDebugInfo>(methodDebugInfos.Count);
+			this.dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 			this.snapshot = snapshot;
 
-			var serDict = new Dictionary<ModuleDef, SerializedDnModule>();
+			var modIdDict = new Dictionary<ModuleDef, ModuleId>();
 			foreach (var info in methodDebugInfos) {
 				var module = info.Method.Module;
 				if (module == null)
 					continue;
 
-				SerializedDnModule serMod;
-				if (!serDict.TryGetValue(module, out serMod)) {
-					serMod = serializedDnModuleCreator.Create(module);
-					serDict.Add(module, serMod);
+				ModuleId moduleId;
+				if (!modIdDict.TryGetValue(module, out moduleId)) {
+					moduleId = moduleIdCreator.Create(module);
+					modIdDict.Add(module, moduleId);
 				}
-				var key = new SerializedDnToken(serMod, info.Method.MDToken);
+				var key = new ModuleTokenId(moduleId, info.Method.MDToken);
 				MethodDebugInfo oldDebugInfo;
 				if (this.dict.TryGetValue(key, out oldDebugInfo)) {
 					if (info.Statements.Length < oldDebugInfo.Statements.Length)
@@ -165,7 +166,7 @@ namespace dnSpy.Debugger {
 			return list.Distinct().ToList();
 		}
 
-		public MethodDebugInfo TryGetMethodDebugInfo(SerializedDnToken key) {
+		public MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId key) {
 			MethodDebugInfo info;
 			dict.TryGetValue(key, out info);
 			return info;

@@ -18,22 +18,11 @@
 */
 
 using dndbg.Engine;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
-	interface ISerializedDnModule {
-		SerializedDnModule? SerializedDnModule { get; }
-	}
-
-	static class DnSpyFileExtensions {
-		public static SerializedDnModule ToSerializedDnModule(this IDnSpyFile file) {
-			var sdm = file as ISerializedDnModule;
-			if (sdm != null)
-				return sdm.SerializedDnModule ?? new SerializedDnModule();
-			var mod = file.ModuleDef;
-			if (mod == null)
-				return new SerializedDnModule();
-			return SerializedDnModule.CreateFromFile(mod);
-		}
+	static class SerializedDnModuleExtensions {
+		public static ModuleId ToModuleId(this SerializedDnModule serMod) =>
+			new ModuleId(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
 	}
 }

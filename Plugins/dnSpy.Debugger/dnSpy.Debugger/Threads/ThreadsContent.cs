@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.CallStack;
@@ -52,14 +53,16 @@ namespace dnSpy.Debugger.Threads {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IModuleIdCreator moduleIdCreator;
 
 		[ImportingConstructor]
-		ThreadsContent(IWpfCommandManager wpfCommandManager, IThreadsVM threadsVM, IThemeManager themeManager, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader) {
+		ThreadsContent(IWpfCommandManager wpfCommandManager, IThreadsVM threadsVM, IThemeManager themeManager, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator) {
 			this.stackFrameManager = stackFrameManager;
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
 			this.threadsControl = new ThreadsControl();
 			this.vmThreads = threadsVM;
+			this.moduleIdCreator = moduleIdCreator;
 			this.threadsControl.DataContext = this.vmThreads;
 			this.threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
@@ -70,7 +73,7 @@ namespace dnSpy.Debugger.Threads {
 
 		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			SwitchToThreadThreadsCtxMenuCommand.GoTo(fileTabManager, moduleLoader.Value, stackFrameManager.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
+			SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdCreator, fileTabManager, moduleLoader.Value, stackFrameManager.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
