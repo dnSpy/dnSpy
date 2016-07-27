@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Threads {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CurrentImage")) {
 				if (vm.IsCurrent)
-					return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, "CurrentLine"), BackgroundType.GridViewItem);
+					return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, "CurrentStatement"), BackgroundType.GridViewItem);
 				if (vm.Type == ThreadType.Main)
 					return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, "DraggedCurrentInstructionPointer"), BackgroundType.GridViewItem);
 				return null;

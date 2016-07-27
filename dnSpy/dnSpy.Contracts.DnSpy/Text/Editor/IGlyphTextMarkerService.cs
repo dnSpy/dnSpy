@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public interface IMethodOffsetSpanMap {
 		/// <summary>
-		/// Converts a method offset to a <see cref="Span"/>
+		/// Converts a method offset to a <see cref="Span"/> or returns null if the IL offset isn't present in the document
 		/// </summary>
 		/// <param name="method">Method token</param>
 		/// <param name="ilOffset">IL offset</param>

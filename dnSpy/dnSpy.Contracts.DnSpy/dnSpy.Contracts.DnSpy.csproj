@@ -109,6 +109,7 @@
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContent.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerExtensions.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerListenerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewer.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerOutput.cs" />
@@ -246,7 +247,6 @@
     <Compile Include="Files\Tabs\DocViewer\ITextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\DocViewer\ITextMarker.cs" />
     <Compile Include="Files\Tabs\DocViewer\ITextMarkerObject.cs" />
-    <Compile Include="Files\Tabs\DocViewer\TextEditorConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextLineObjectEventArgs.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextLineObjectListModifiedEventArgs.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ICodeToolTipCreator.cs" />
@@ -472,6 +472,7 @@
     <Compile Include="Text\Editor\DefaultDnSpyTextViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultDnSpyWpfViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultReplEditorOptions.cs" />
+    <Compile Include="Text\Editor\GlyphTextMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorCreator.cs" />
     <Compile Include="Text\Editor\IDnSpyTextEditorFactoryService.cs" />
@@ -501,6 +502,7 @@
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />
+    <Compile Include="Text\Editor\TextMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />

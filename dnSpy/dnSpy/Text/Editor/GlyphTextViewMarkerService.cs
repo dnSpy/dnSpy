@@ -119,12 +119,15 @@ namespace dnSpy.Text.Editor {
 			}
 
 			public void Remove(HashSet<IGlyphTextMarker> markers) {
+				int removed = 0;
 				for (int i = allMarkers.Count - 1; i >= 0; i--) {
 					var marker = allMarkers[i];
 					if (markers.Contains(marker)) {
 						allMarkers.RemoveAt(i);
 						inDocMarkers.Remove(marker);
-						return;
+						removed++;
+						if (removed >= markers.Count)
+							break;
 					}
 				}
 			}
@@ -176,8 +179,6 @@ namespace dnSpy.Text.Editor {
 			public Brush BackgroundBrush {
 				get { return backgroundBrush; }
 				set {
-					if (value == null)
-						throw new ArgumentNullException(nameof(value));
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
 						InvalidateVisual();
@@ -343,11 +344,8 @@ namespace dnSpy.Text.Editor {
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();
 			}
-			else {
-				newBrush = new SolidColorBrush(Colors.DarkGray);
-				newBrush.Opacity = BG_BRUSH_OPACITY;
-				newBrush.Freeze();
-			}
+			else
+				return null;
 
 			if (useReducedOpacityForHighContrast && glyphTextMarkerServiceImpl.ThemeManager.Theme.IsHighContrast) {
 				newBrush = newBrush.Clone();

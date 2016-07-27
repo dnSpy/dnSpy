@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
@@ -178,12 +180,13 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HighlightedWrittenReference),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HighlightedDefinition),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentStatement),
-				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReturnStatement),
-				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SelectedReturnStatement),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentStatementMarker),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CallReturn),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CallReturnMarker),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ActiveStatementMarker),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement),
-				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DisabledBreakpointStatement),
-				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SpecialCharacterBox),
-				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SearchResultMarker),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatementMarker),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DisabledBreakpointStatementMarker),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentLine),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentLineNoFocus),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexText),
@@ -197,6 +200,11 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexSelection),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.GlyphMargin),
 			};
+			foreach (var ct in classificationTypes) {
+				Debug.Assert(ct != null);
+				if (ct == null)
+					throw new InvalidOperationException();
+			}
 		}
 
 		const ColorType DEFAULT_COLOR = ColorType.Text;

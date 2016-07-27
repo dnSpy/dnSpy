@@ -17,24 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using Microsoft.VisualStudio.Text;
+
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// Constants
+	/// Extensions
 	/// </summary>
-	public static class TextEditorConstants {
-		/// <summary>Z-order of breakpoints</summary>
-		public static double ZORDER_BREAKPOINT = 1000;
+	public static class DocumentViewerExtensions {
+		internal static object DocumentViewerTextBufferKey = new object();
 
-		/// <summary>Z-order of return statements</summary>
-		public static double ZORDER_RETURNSTATEMENT = 2000;
-
-		/// <summary>Z-order of selected return statements</summary>
-		public static double ZORDER_SELECTEDRETURNSTATEMENT = 3000;
-
-		/// <summary>Z-order of current statement</summary>
-		public static double ZORDER_CURRENTSTATEMENT = 4000;
-
-		/// <summary>Z-order of search results</summary>
-		public static double ZORDER_SEARCHRESULT = 5000;
+		/// <summary>
+		/// Returns a <see cref="IDocumentViewer"/> or null
+		/// </summary>
+		/// <param name="textBuffer">Text buffer</param>
+		/// <returns></returns>
+		public static IDocumentViewer TryGetDocumentViewer(this ITextBuffer textBuffer) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			IDocumentViewer documentViewer;
+			textBuffer.Properties.TryGetProperty(DocumentViewerTextBufferKey, out documentViewer);
+			return documentViewer;
+		}
 	}
 }

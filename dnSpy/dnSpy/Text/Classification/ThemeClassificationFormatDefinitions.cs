@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -790,14 +791,24 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition CurrentStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.ReturnStatement)]
+		[Name(ThemeClassificationTypeNames.CurrentStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReturnStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition CurrentStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.SelectedReturnStatement)]
+		[Name(ThemeClassificationTypeNames.CallReturn)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedReturnStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition CallReturnClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.CallReturnMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition CallReturnMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ActiveStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ActiveStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointStatement)]
@@ -805,19 +816,14 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition BreakpointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.DisabledBreakpointStatement)]
+		[Name(ThemeClassificationTypeNames.BreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledBreakpointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition BreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.SpecialCharacterBox)]
+		[Name(ThemeClassificationTypeNames.DisabledBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SpecialCharacterBoxClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.SearchResultMarker)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SearchResultMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition DisabledBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLine)]
@@ -2198,63 +2204,74 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentStatement)]
 		[Name(ThemeClassificationTypeNameKeys.CurrentStatement)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
 		sealed class CurrentStatement : ThemeClassificationFormatDefinition {
 			CurrentStatement() : base(ColorType.CurrentStatement) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReturnStatement)]
-		[Name(ThemeClassificationTypeNameKeys.ReturnStatement)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CurrentStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.CurrentStatementMarker)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class ReturnStatement : ThemeClassificationFormatDefinition {
-			ReturnStatement() : base(ColorType.ReturnStatement) { }
+		sealed class CurrentStatementMarker : ThemeMarkerFormatDefinition {
+			CurrentStatementMarker() : base(ColorType.CurrentStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedReturnStatement)]
-		[Name(ThemeClassificationTypeNameKeys.SelectedReturnStatement)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CallReturn)]
+		[Name(ThemeClassificationTypeNameKeys.CallReturn)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class CallReturn : ThemeClassificationFormatDefinition {
+			CallReturn() : base(ColorType.CallReturn) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CallReturnMarker)]
+		[Name(ThemeClassificationTypeNameKeys.CallReturnMarker)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class SelectedReturnStatement : ThemeClassificationFormatDefinition {
-			SelectedReturnStatement() : base(ColorType.SelectedReturnStatement) { }
+		sealed class CallReturnMarker : ThemeMarkerFormatDefinition {
+			CallReturnMarker() : base(ColorType.CallReturnMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ActiveStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.ActiveStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ActiveStatementMarker : ThemeMarkerFormatDefinition {
+			ActiveStatementMarker() : base(ColorType.ActiveStatementMarker) {
+				ZOrder = TextMarkerServiceZIndexes.ActiveStatement;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointStatement)]
 		[Name(ThemeClassificationTypeNameKeys.BreakpointStatement)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
 		sealed class BreakpointStatement : ThemeClassificationFormatDefinition {
 			BreakpointStatement() : base(ColorType.BreakpointStatement) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledBreakpointStatement)]
-		[Name(ThemeClassificationTypeNameKeys.DisabledBreakpointStatement)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointStatementMarker)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class DisabledBreakpointStatement : ThemeClassificationFormatDefinition {
-			DisabledBreakpointStatement() : base(ColorType.DisabledBreakpointStatement) { }
+		sealed class BreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			BreakpointStatementMarker() : base(ColorType.BreakpointStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SpecialCharacterBox)]
-		[Name(ThemeClassificationTypeNameKeys.SpecialCharacterBox)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledBreakpointStatementMarker)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class SpecialCharacterBox : ThemeClassificationFormatDefinition {
-			SpecialCharacterBox() : base(ColorType.SpecialCharacterBox) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SearchResultMarker)]
-		[Name(ThemeClassificationTypeNameKeys.SearchResultMarker)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class SearchResultMarker : ThemeClassificationFormatDefinition {
-			SearchResultMarker() : base(ColorType.SearchResultMarker) { }
+		sealed class DisabledBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledBreakpointStatementMarker() : base(ColorType.DisabledBreakpointStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

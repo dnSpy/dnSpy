@@ -42,6 +42,7 @@
     <Compile Include="Breakpoints\BreakpointContext.cs" />
     <Compile Include="Breakpoints\BreakpointListSettings.cs" />
     <Compile Include="Breakpoints\BreakpointManager.cs" />
+    <Compile Include="Breakpoints\BreakpointMarker.cs" />
     <Compile Include="Breakpoints\BreakpointPrinter.cs" />
     <Compile Include="Breakpoints\BreakpointsContent.cs" />
     <Compile Include="Breakpoints\BreakpointsControl.xaml.cs">
@@ -55,25 +56,25 @@
     <Compile Include="Breakpoints\DebugEventBreakpoint.cs" />
     <Compile Include="Breakpoints\ILCodeBreakpoint.cs" />
     <Compile Include="CachedOutput.cs" />
+    <Compile Include="CallStack\ActiveStatementService.cs" />
     <Compile Include="CallStack\CallStackContent.cs" />
     <Compile Include="CallStack\CallStackControl.xaml.cs">
       <DependentUpon>CallStackControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CallStack\CallStackFrameColumnConverter.cs" />
     <Compile Include="CallStack\CallStackFrameVM.cs" />
+    <Compile Include="CallStack\CallStackMarker.cs" />
     <Compile Include="CallStack\CallStackSettings.cs" />
     <Compile Include="CallStack\CallStackToolWindowContent.cs" />
     <Compile Include="CallStack\CallStackVM.cs" />
     <Compile Include="CallStack\Commands.cs" />
     <Compile Include="CallStack\FrameUtils.cs" />
-    <Compile Include="CallStack\StackFrameLine.cs" />
     <Compile Include="CallStack\StackFrameManager.cs" />
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
     <Compile Include="DebuggerAppSettingsTab.cs" />
-    <Compile Include="DebuggerColors.cs" />
     <Compile Include="DebuggerModuleIdFactoryProvider.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DebugManager.cs" />
@@ -331,11 +332,12 @@
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\BreakpointMenu.png" />
     <Resource Include="Images\BreakpointsWindow.png" />
+    <Resource Include="Images\CallReturn.png" />
     <Resource Include="Images\CallStackWindow.png" />
     <Resource Include="Images\ContinueDebugging.png" />
     <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\CurrentLineToolBar.png" />
+    <Resource Include="Images\CurrentStatement.png" />
     <Resource Include="Images\Cursor.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\DeleteAllBreakpoints.png" />
@@ -391,7 +393,6 @@
     <Resource Include="Images\RestartProcess.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\Select.png" />
-    <Resource Include="Images\SelectedReturnLine.png" />
     <Resource Include="Images\SetNextStatement.png" />
     <Resource Include="Images\StartDebugging.png" />
     <Resource Include="Images\StartWithoutDebugging.png" />

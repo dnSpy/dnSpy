@@ -770,14 +770,24 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string CurrentStatement = "CurrentStatement";
 
 		/// <summary>
-		/// <see cref="ColorType.ReturnStatement"/>
+		/// <see cref="ColorType.CurrentStatementMarker"/>
 		/// </summary>
-		public const string ReturnStatement = "ReturnStatement";
+		public const string CurrentStatementMarker = "CurrentStatementMarker";
 
 		/// <summary>
-		/// <see cref="ColorType.SelectedReturnStatement"/>
+		/// <see cref="ColorType.CallReturn"/>
 		/// </summary>
-		public const string SelectedReturnStatement = "SelectedReturnStatement";
+		public const string CallReturn = "CallReturn";
+
+		/// <summary>
+		/// <see cref="ColorType.CallReturnMarker"/>
+		/// </summary>
+		public const string CallReturnMarker = "CallReturnMarker";
+
+		/// <summary>
+		/// <see cref="ColorType.ActiveStatementMarker"/>
+		/// </summary>
+		public const string ActiveStatementMarker = "ActiveStatementMarker";
 
 		/// <summary>
 		/// <see cref="ColorType.BreakpointStatement"/>
@@ -785,19 +795,14 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string BreakpointStatement = "BreakpointStatement";
 
 		/// <summary>
-		/// <see cref="ColorType.DisabledBreakpointStatement"/>
+		/// <see cref="ColorType.BreakpointStatementMarker"/>
 		/// </summary>
-		public const string DisabledBreakpointStatement = "DisabledBreakpointStatement";
+		public const string BreakpointStatementMarker = "BreakpointStatementMarker";
 
 		/// <summary>
-		/// <see cref="ColorType.SpecialCharacterBox"/>
+		/// <see cref="ColorType.DisabledBreakpointStatementMarker"/>
 		/// </summary>
-		public const string SpecialCharacterBox = "SpecialCharacterBox";
-
-		/// <summary>
-		/// <see cref="ColorType.SearchResultMarker"/>
-		/// </summary>
-		public const string SearchResultMarker = "SearchResultMarker";
+		public const string DisabledBreakpointStatementMarker = "DisabledBreakpointStatementMarker";
 
 		/// <summary>
 		/// <see cref="ColorType.CurrentLine"/>

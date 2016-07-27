@@ -75,13 +75,14 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.theDebugger = theDebugger;
 			this.breakpointList = new ObservableCollection<BreakpointVM>();
 			breakpointSettings.PropertyChanged += BreakpointSettings_PropertyChanged;
-			breakpointManager.OnListModified += BreakpointManager_OnListModified;
+			breakpointManager.BreakpointsAdded += BreakpointManager_BreakpointsAdded;
+			breakpointManager.BreakpointsRemoved += BreakpointManager_BreakpointsRemoved;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			inMemoryModuleManager.DynamicModulesLoaded += InMemoryModuleManager_DynamicModulesLoaded;
-			foreach (var bp in breakpointManager.Breakpoints)
+			foreach (var bp in breakpointManager.GetBreakpoints())
 				AddBreakpoint(bp);
 		}
 
@@ -200,11 +201,14 @@ namespace dnSpy.Debugger.Breakpoints {
 				breakpointManager.Remove(bp.Breakpoint);
 		}
 
-		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
-			if (e.Added)
-				AddBreakpoint(e.Breakpoint);
-			else
-				RemoveBreakpoint(e.Breakpoint);
+		void BreakpointManager_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
+			foreach (var bp in e.Breakpoints)
+				AddBreakpoint(bp);
+		}
+
+		void BreakpointManager_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
+			foreach (var bp in e.Breakpoints)
+				RemoveBreakpoint(bp);
 		}
 
 		void AddBreakpoint(Breakpoint bp) => Collection.Add(new BreakpointVM(this, breakpointContext, bp));

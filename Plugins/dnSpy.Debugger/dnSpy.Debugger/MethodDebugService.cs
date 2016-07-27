@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -66,6 +65,7 @@ namespace dnSpy.Debugger {
 	sealed class MethodDebugService {
 		readonly Dictionary<ModuleTokenId, MethodDebugInfo> dict;
 		readonly ITextSnapshot snapshot;
+		MethodSourceStatement[] sortedStatements;
 
 		public int Count => dict.Count;
 
@@ -170,6 +170,70 @@ namespace dnSpy.Debugger {
 			MethodDebugInfo info;
 			dict.TryGetValue(key, out info);
 			return info;
+		}
+
+		public IEnumerable<MethodSourceStatement> GetStatementsByTextSpan(Span span) {
+			if (sortedStatements == null)
+				InitializeSortedStatements();
+
+			int position = span.Start;
+			int end = span.End;
+			int index = GetStartIndex(position);
+			if (index < 0)
+				yield break;
+			var array = sortedStatements;
+			while (index < array.Length) {
+				var mss = array[index++];
+				if (end < mss.Statement.TextSpan.Start)
+					break;
+				Debug.Assert(mss.Statement.TextSpan.Start <= end && mss.Statement.TextSpan.End >= position);
+				yield return mss;
+			}
+		}
+
+		int GetStartIndex(int position) {
+			var array = sortedStatements;
+			int lo = 0, hi = array.Length - 1;
+			while (lo <= hi) {
+				int index = (lo + hi) / 2;
+
+				var mss = array[index];
+				if (position < mss.Statement.TextSpan.Start)
+					hi = index - 1;
+				else if (position >= mss.Statement.TextSpan.End)
+					lo = index + 1;
+				else
+					return index;
+			}
+			if ((uint)hi < (uint)array.Length && array[hi].Statement.TextSpan.End == position)
+				return hi;
+			return lo < array.Length ? lo : -1;
+		}
+
+		void InitializeSortedStatements() {
+			Debug.Assert(sortedStatements == null);
+			if (sortedStatements != null)
+				return;
+			var list = new List<MethodSourceStatement>();
+			foreach (var info in dict.Values) {
+				foreach (var s in info.Statements)
+					list.Add(new MethodSourceStatement(info.Method, s));
+			}
+			list.Sort(MethodSourceStatementComparer.Instance);
+			sortedStatements = list.ToArray();
+		}
+
+		sealed class MethodSourceStatementComparer : IComparer<MethodSourceStatement> {
+			public static readonly MethodSourceStatementComparer Instance = new MethodSourceStatementComparer();
+
+			public int Compare(MethodSourceStatement x, MethodSourceStatement y) {
+				var tsx = x.Statement.TextSpan;
+				var tsy = y.Statement.TextSpan;
+				int c = tsx.Start - tsy.Start;
+				if (c != 0)
+					return c;
+				return tsx.End - tsy.End;
+			}
 		}
 	}
 }

@@ -95,6 +95,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			menuManager.InitializeContextMenu(documentViewerControl, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView, documentViewerControl));
 			wpfCommandManager.Add(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.TextView.Properties.AddProperty(typeof(DocumentViewer), this);
+			documentViewerControl.TextView.TextBuffer.Properties.AddProperty(DocumentViewerExtensions.DocumentViewerTextBufferKey, this);
 		}
 
 		internal static DocumentViewer TryGetInstance(ITextView textView) {

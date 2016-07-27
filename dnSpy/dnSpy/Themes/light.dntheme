@@ -88,15 +88,16 @@
 		<color name="highlightedreference" bg="#FFDBE0CC" />
 		<color name="highlightedwrittenreference" bg="#FFDBE0CC" />
 		<color name="highlighteddefinition" bg="#FFDBE0CC" fg="#FF808080" />
-		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />
-		<color name="breakpointstatement" fg="White" bg="#963A46" />
-		<color name="disabledbreakpointstatement" bg="#30963A46" />
-		<color name="specialcharacterbox" fg="#FFFFFFFF" bg="#C8808080" />
-		<color name="searchresultmarker" bg="#FFFFB7" />
+		<color name="currentstatement" fg="#FF000000" />
+		<color name="currentstatementmarker" bg="#FFFFEE62" />
+		<color name="callreturn" fg="#FF000000" />
+		<color name="callreturnmarker" bg="#FFB4E4B4" />
+		<color name="activestatementmarker" bg="#FFC0C0C0" />
+		<color name="breakpointstatement" fg="#FFFFFFFF" />
+		<color name="breakpointstatementmarker" bg="#FF963A46" />
+		<color name="disabledbreakpointstatementmarker" fg="#FF800000" />
 		<color name="currentline" fg="#EAEAF2" />
 		<color name="currentlinenofocus" fg="#EEEEEE" />
-		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />
-		<color name="returnstatement" bg="#88C0C0C0" />
 		<color name="hextext" fg="Black" bg="White" />
 		<color name="hexoffset" fg="#FF000000" />
 		<color name="hexbyte0" fg="#FF3333CC" />

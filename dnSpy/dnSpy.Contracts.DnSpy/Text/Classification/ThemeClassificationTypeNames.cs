@@ -770,14 +770,24 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string CurrentStatement = "Theme-CurrentStatement";
 
 		/// <summary>
-		/// <see cref="ColorType.ReturnStatement"/>
+		/// <see cref="ColorType.CurrentStatementMarker"/>
 		/// </summary>
-		public const string ReturnStatement = "Theme-ReturnStatement";
+		public const string CurrentStatementMarker = "Theme-CurrentStatementMarker";
 
 		/// <summary>
-		/// <see cref="ColorType.SelectedReturnStatement"/>
+		/// <see cref="ColorType.CallReturn"/>
 		/// </summary>
-		public const string SelectedReturnStatement = "Theme-SelectedReturnStatement";
+		public const string CallReturn = "Theme-CallReturn";
+
+		/// <summary>
+		/// <see cref="ColorType.CallReturnMarker"/>
+		/// </summary>
+		public const string CallReturnMarker = "Theme-CallReturnMarker";
+
+		/// <summary>
+		/// <see cref="ColorType.ActiveStatementMarker"/>
+		/// </summary>
+		public const string ActiveStatementMarker = "Theme-ActiveStatementMarker";
 
 		/// <summary>
 		/// <see cref="ColorType.BreakpointStatement"/>
@@ -785,19 +795,14 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string BreakpointStatement = "Theme-BreakpointStatement";
 
 		/// <summary>
-		/// <see cref="ColorType.DisabledBreakpointStatement"/>
+		/// <see cref="ColorType.BreakpointStatementMarker"/>
 		/// </summary>
-		public const string DisabledBreakpointStatement = "Theme-DisabledBreakpointStatement";
+		public const string BreakpointStatementMarker = "Theme-BreakpointStatementMarker";
 
 		/// <summary>
-		/// <see cref="ColorType.SpecialCharacterBox"/>
+		/// <see cref="ColorType.DisabledBreakpointStatementMarker"/>
 		/// </summary>
-		public const string SpecialCharacterBox = "Theme-SpecialCharacterBox";
-
-		/// <summary>
-		/// <see cref="ColorType.SearchResultMarker"/>
-		/// </summary>
-		public const string SearchResultMarker = "Theme-SearchResultMarker";
+		public const string DisabledBreakpointStatementMarker = "Theme-DisabledBreakpointStatementMarker";
 
 		/// <summary>
 		/// <see cref="ColorType.CurrentLine"/>

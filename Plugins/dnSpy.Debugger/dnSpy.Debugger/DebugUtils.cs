@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Threading;
-using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;

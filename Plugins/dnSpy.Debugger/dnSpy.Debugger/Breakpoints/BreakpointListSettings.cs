@@ -50,7 +50,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.settingsManager = settingsManager;
 			this.moduleLoader = moduleLoader;
 			this.breakpointManager = breakpointManager;
-			breakpointManager.OnListModified += BreakpointManager_OnListModified;
+			breakpointManager.BreakpointsAdded += BreakpointManager_BreakpointsAdded;
+			breakpointManager.BreakpointsRemoved += BreakpointManager_BreakpointsRemoved;
 
 			// Prevent Save() from opening assemblies when all files are closed (Close All)
 			breakpointManager.OnRemoveBreakpoints = a => {
@@ -80,12 +81,15 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
-			if (e.Added)
-				e.Breakpoint.PropertyChanged += Breakpoint_PropertyChanged;
-			else
-				e.Breakpoint.PropertyChanged -= Breakpoint_PropertyChanged;
+		void BreakpointManager_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
+			foreach (var bp in e.Breakpoints)
+				bp.PropertyChanged += Breakpoint_PropertyChanged;
+			Save();
+		}
 
+		void BreakpointManager_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
+			foreach (var bp in e.Breakpoints)
+				bp.PropertyChanged -= Breakpoint_PropertyChanged;
 			Save();
 		}
 
@@ -154,7 +158,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			var section = settingsManager.RecreateSection(SETTINGS_GUID);
 
-			foreach (var bp in breakpointManager.Breakpoints) {
+			foreach (var bp in breakpointManager.GetBreakpoints()) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null) {
 					if (string.IsNullOrEmpty(ilbp.MethodToken.Module.ModuleName))

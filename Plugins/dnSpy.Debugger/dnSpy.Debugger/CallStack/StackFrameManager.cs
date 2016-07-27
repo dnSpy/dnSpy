@@ -23,10 +23,6 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
@@ -47,21 +43,40 @@ namespace dnSpy.Debugger.CallStack {
 		CorFrame FirstILFrame { get; }
 		CorFrame SelectedFrame { get; }
 		event EventHandler<StackFramesUpdatedEventArgs> StackFramesUpdated;
+		event EventHandler<NewFramesEventArgs> NewFrames;
 		List<CorFrame> GetFrames(out bool tooManyFrames);
+	}
+
+	enum NewFramesKind {
+		/// <summary>
+		/// New frames available
+		/// </summary>
+		NewFrames,
+
+		/// <summary>
+		/// No frame exists (eg. debuggee has terminated or it's running)
+		/// </summary>
+		Cleared,
+
+		/// <summary>
+		/// Selected frame number changed
+		/// </summary>
+		NewFrameNumber,
+	}
+
+	sealed class NewFramesEventArgs : EventArgs {
+		public NewFramesKind Kind { get; }
+		public NewFramesEventArgs(NewFramesKind kind) {
+			Kind = kind;
+		}
 	}
 
 	[Export(typeof(IStackFrameManager)), Export(typeof(ILoadBeforeDebug))]
 	sealed class StackFrameManager : ViewModelBase, IStackFrameManager, ILoadBeforeDebug {
-		// VS2015 shows at most 5000 frames but we can increase that to 50000, dnSpy had no trouble
-		// showing 12K frames, which was the total number of frames until I got a SO in the test app.
-		const int MAX_SHOWN_FRAMES = 50000;
-		// We don't need to show all return lines above, a much smaller number should be enough.
-		// A large number will only make everything slow down to a crawl.
-		const int MAX_STACKFRAME_LINES = 500;
-
-		readonly List<StackFrameLine> stackFrameLines = new List<StackFrameLine>();
+		const int MaxShownFrames = 50000;
 
 		public event EventHandler<StackFramesUpdatedEventArgs> StackFramesUpdated;
+		public event EventHandler<NewFramesEventArgs> NewFrames;
 
 		sealed class CurrentState {
 			public int FrameNumber;
@@ -70,17 +85,10 @@ namespace dnSpy.Debugger.CallStack {
 		CurrentState currentState = new CurrentState();
 
 		readonly ITheDebugger theDebugger;
-		readonly IFileTabManager fileTabManager;
-		readonly ITextLineObjectManager textLineObjectManager;
-		readonly Lazy<IModuleLoader> moduleLoader;
 
 		[ImportingConstructor]
-		StackFrameManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, ITextLineObjectManager textLineObjectManager, Lazy<IModuleLoader> moduleLoader, IDocumentViewerService documentViewerService) {
+		StackFrameManager(ITheDebugger theDebugger) {
 			this.theDebugger = theDebugger;
-			this.fileTabManager = fileTabManager;
-			this.textLineObjectManager = textLineObjectManager;
-			this.moduleLoader = moduleLoader;
-			documentViewerService.GotNewContent += DocumentViewerService_GotNewContent;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
@@ -103,7 +111,7 @@ namespace dnSpy.Debugger.CallStack {
 
 			case DebuggerProcessState.Running:
 				if (!dbg.IsEvaluating)
-					ClearStackFrameLines();
+					RaiseClearFrames();
 				break;
 
 			case DebuggerProcessState.Paused:
@@ -119,13 +127,12 @@ namespace dnSpy.Debugger.CallStack {
 					currentState = savedEvalState;
 				savedEvalState = null;
 
-				foreach (var tab in fileTabManager.VisibleFirstTabs)
-					UpdateStackFrameLines(tab.UIContext as IDocumentViewer, false);
+				RaiseNewFrames();
 				break;
 
 			case DebuggerProcessState.Terminated:
 				savedEvalState = null;
-				ClearStackFrameLines();
+				RaiseClearFrames();
 				break;
 
 			default:
@@ -147,17 +154,10 @@ namespace dnSpy.Debugger.CallStack {
 			return false;
 		}
 
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) => ClearStackFrameLines();
-
-		void ClearStackFrameLines() {
-			foreach (var tab in fileTabManager.VisibleFirstTabs)
-				Remove(tab.UIContext as IDocumentViewer);
-		}
-
-		void DocumentViewerService_GotNewContent(object sender, DocumentViewerGotNewContentEventArgs e) {
-			Remove(e.DocumentViewer);
-			UpdateStackFrameLines(e.DocumentViewer, false);
-		}
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) => RaiseClearFrames();
+		void RaiseClearFrames() => NewFrames?.Invoke(this, new NewFramesEventArgs(NewFramesKind.Cleared));
+		void RaiseNewFrames() => NewFrames?.Invoke(this, new NewFramesEventArgs(NewFramesKind.NewFrames));
+		void RaiseNewFrameNumber() => NewFrames?.Invoke(this, new NewFramesEventArgs(NewFramesKind.NewFrameNumber));
 
 		CorFrame GetFrameByNumber(int number) {
 			var thread = currentState.Thread;
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.CallStack {
 					var oldThread = currentState.Thread;
 					currentState.Thread = value;
 					currentState.FrameNumber = 0;
-					UpdateStackFrameLinesInTextViews();
+					RaiseNewFrames();
 					OnPropertyChanged(new VMPropertyChangedEventArgs<DnThread>(nameof(SelectedThread), oldThread, currentState.Thread));
 					OnPropertyChanged(new VMPropertyChangedEventArgs<int>(nameof(SelectedFrameNumber), -1, currentState.FrameNumber));
 				}
@@ -213,80 +213,13 @@ namespace dnSpy.Debugger.CallStack {
 				if (value != currentState.FrameNumber) {
 					var old = currentState.FrameNumber;
 					currentState.FrameNumber = value;
-					UpdateStackFrameLinesInTextViews();
+					RaiseNewFrameNumber();
 					OnPropertyChanged(new VMPropertyChangedEventArgs<int>(nameof(SelectedFrameNumber), old, currentState.FrameNumber));
 				}
 			}
 		}
 
-		void UpdateStackFrameLinesInTextViews() {
-			foreach (var tab in fileTabManager.VisibleFirstTabs)
-				UpdateStackFrameLines(tab.UIContext as IDocumentViewer);
-		}
-
-		void Remove(IDocumentViewer documentViewer) {
-			if (documentViewer == null)
-				return;
-			for (int i = stackFrameLines.Count - 1; i >= 0; i--) {
-				if (stackFrameLines[i].DocumentViewer == documentViewer) {
-					textLineObjectManager.Remove(stackFrameLines[i]);
-					stackFrameLines.RemoveAt(i);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Should be called each time the IL offset has been updated
-		/// </summary>
-		bool UpdateStackFrameLines(IDocumentViewer documentViewer, bool moveCaret = false) {
-			if (documentViewer == null)
-				return false;
-			Remove(documentViewer);
-			bool movedCaret = false;
-			var methodDebugService = documentViewer.TryGetMethodDebugService();
-			bool updateReturnStatements = methodDebugService != null && theDebugger.ProcessState == DebuggerProcessState.Paused;
-			if (updateReturnStatements) {
-				int frameNo = -1;
-				bool tooManyFrames;
-				foreach (var frame in GetFrames(MAX_STACKFRAME_LINES, out tooManyFrames)) {
-					frameNo++;
-					if (!frame.IsILFrame)
-						continue;
-					var ip = frame.ILFrameIP;
-					if (!ip.IsExact && !ip.IsApproximate && !ip.IsProlog && !ip.IsEpilog)
-						continue;
-					uint token = frame.Token;
-					if (token == 0)
-						continue;
-					var serAsm = frame.SerializedDnModule;
-					if (serAsm == null)
-						continue;
-
-					StackFrameLineType type;
-					if (frameNo == 0)
-						type = StackFrameLineType.CurrentStatement;
-					else
-						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
-					var key = new ModuleTokenId(serAsm.Value.ToModuleId(), token);
-					uint offset = frame.GetILOffset(moduleLoader.Value);
-					SourceStatement? sourceStatement;
-					var info = methodDebugService.TryGetMethodDebugInfo(key);
-					if (info != null && (sourceStatement = info.GetSourceStatementByCodeOffset(offset)) != null) {
-						var rs = new StackFrameLine(type, documentViewer, key, offset);
-						stackFrameLines.Add(rs);
-						textLineObjectManager.Add(rs);
-
-						if (moveCaret && frameNo == currentState.FrameNumber) {
-							documentViewer.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start);
-							movedCaret = true;
-						}
-					}
-				}
-			}
-			return movedCaret;
-		}
-
-		public List<CorFrame> GetFrames(out bool tooManyFrames) => GetFrames(MAX_SHOWN_FRAMES, out tooManyFrames);
+		public List<CorFrame> GetFrames(out bool tooManyFrames) => GetFrames(MaxShownFrames, out tooManyFrames);
 
 		List<CorFrame> GetFrames(int max, out bool tooManyFrames) {
 			tooManyFrames = false;

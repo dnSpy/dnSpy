@@ -17,29 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dnSpy.Contracts.Text.Editor;
-
-namespace dnSpy.Contracts.Files.Tabs.DocViewer {
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// A text line object
+	/// Text marker service Z-indexes. Markers with a negative z-index are placed in a
+	/// marker layer below most other layers.
 	/// </summary>
-	public interface ITextLineObject {
+	public static class TextMarkerServiceZIndexes {
 		/// <summary>
-		/// Z-order, eg. <see cref="GlyphTextMarkerServiceZIndexes.Breakpoint"/>
+		/// (Debugger) Z-index of active statement
 		/// </summary>
-		double ZOrder { get; }
-
-		/// <summary>
-		/// Returns true if it's visible
-		/// </summary>
-		/// <param name="documentViewer">Document viewer</param>
-		/// <returns></returns>
-		bool IsVisible(IDocumentViewer documentViewer);
-
-		/// <summary>
-		/// Raised when a property has changed, eg. if it must be redrawn
-		/// </summary>
-		event EventHandler<TextLineObjectEventArgs> ObjPropertyChanged;
+		public const int ActiveStatement = -1;
 	}
 }

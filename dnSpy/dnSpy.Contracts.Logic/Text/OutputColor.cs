@@ -174,12 +174,13 @@ namespace dnSpy.Contracts.Text {
 		HighlightedWrittenReference,
 		HighlightedDefinition,
 		CurrentStatement,
-		ReturnStatement,
-		SelectedReturnStatement,
+		CurrentStatementMarker,
+		CallReturn,
+		CallReturnMarker,
+		ActiveStatementMarker,
 		BreakpointStatement,
-		DisabledBreakpointStatement,
-		SpecialCharacterBox,
-		SearchResultMarker,
+		BreakpointStatementMarker,
+		DisabledBreakpointStatementMarker,
 		CurrentLine,
 		CurrentLineNoFocus,
 		HexText,
@@ -352,12 +353,13 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HighlightedWrittenReference = OutputColor.HighlightedWrittenReference;
 		public static readonly object HighlightedDefinition = OutputColor.HighlightedDefinition;
 		public static readonly object CurrentStatement = OutputColor.CurrentStatement;
-		public static readonly object ReturnStatement = OutputColor.ReturnStatement;
-		public static readonly object SelectedReturnStatement = OutputColor.SelectedReturnStatement;
+		public static readonly object CurrentStatementMarker = OutputColor.CurrentStatementMarker;
+		public static readonly object CallReturn = OutputColor.CallReturn;
+		public static readonly object CallReturnMarker = OutputColor.CallReturnMarker;
+		public static readonly object ActiveStatementMarker = OutputColor.ActiveStatementMarker;
 		public static readonly object BreakpointStatement = OutputColor.BreakpointStatement;
-		public static readonly object DisabledBreakpointStatement = OutputColor.DisabledBreakpointStatement;
-		public static readonly object SpecialCharacterBox = OutputColor.SpecialCharacterBox;
-		public static readonly object SearchResultMarker = OutputColor.SearchResultMarker;
+		public static readonly object BreakpointStatementMarker = OutputColor.BreakpointStatementMarker;
+		public static readonly object DisabledBreakpointStatementMarker = OutputColor.DisabledBreakpointStatementMarker;
 		public static readonly object CurrentLine = OutputColor.CurrentLine;
 		public static readonly object CurrentLineNoFocus = OutputColor.CurrentLineNoFocus;
 		public static readonly object HexText = OutputColor.HexText;
@@ -371,9 +373,14 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexSelection = OutputColor.HexSelection;
 		public static readonly object GlyphMargin = OutputColor.GlyphMargin;
 
-		public static object Box(this OutputColor OutputColor) {
-			Debug.Assert(0 <= OutputColor && OutputColor < OutputColor.Last);
-			int index = (int)OutputColor;
+		/// <summary>
+		/// Boxes <paramref name="color"/>
+		/// </summary>
+		/// <param name="color">Color to box</param>
+		/// <returns></returns>
+		public static object Box(this OutputColor color) {
+			Debug.Assert(0 <= color && color < OutputColor.Last);
+			int index = (int)color;
 			if ((uint)index < (uint)boxedColors.Length)
 				return boxedColors[index];
 			return Text;
@@ -527,12 +534,13 @@ namespace dnSpy.Contracts.Text {
 			HighlightedWrittenReference,
 			HighlightedDefinition,
 			CurrentStatement,
-			ReturnStatement,
-			SelectedReturnStatement,
+			CurrentStatementMarker,
+			CallReturn,
+			CallReturnMarker,
+			ActiveStatementMarker,
 			BreakpointStatement,
-			DisabledBreakpointStatement,
-			SpecialCharacterBox,
-			SearchResultMarker,
+			BreakpointStatementMarker,
+			DisabledBreakpointStatementMarker,
 			CurrentLine,
 			CurrentLineNoFocus,
 			HexText,
