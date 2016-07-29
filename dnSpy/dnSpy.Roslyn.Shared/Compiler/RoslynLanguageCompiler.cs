@@ -32,7 +32,6 @@ using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {

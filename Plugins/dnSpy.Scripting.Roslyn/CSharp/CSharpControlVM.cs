@@ -25,7 +25,6 @@ using System.Threading;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Roslyn.Shared.CSharp;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
@@ -58,7 +57,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 
 		protected override bool IsCompleteSubmission(string text) =>
 			SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
-		static readonly CSharpParseOptions parseOptions = new CSharpParseOptions(languageVersion: CSharpConstants.LatestVersion, kind: SourceCodeKind.Script);
+		static readonly CSharpParseOptions parseOptions = new CSharpParseOptions(kind: SourceCodeKind.Script);
 
 		protected override SyntaxTree CreateSyntaxTree(string code, CancellationToken cancellationToken) =>
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);
