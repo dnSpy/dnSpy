@@ -597,7 +597,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public IEnumerable<ITagSpan<GlyphTextMarkerGlyphTag>> GlyphTextViewMarkerGlyphTags(NormalizedSnapshotSpanCollection spans) {
+		public IEnumerable<ITagSpan<GlyphTextMarkerGlyphTag>> GetGlyphTextMarkerGlyphTags(NormalizedSnapshotSpanCollection spans) {
 			foreach (var info in GetMarkers(spans, true)) {
 				var imgRef = info.Marker.GlyphImageReference;
 				if (imgRef != null)

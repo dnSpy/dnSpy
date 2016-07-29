@@ -67,7 +67,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IEnumerable<ITagSpan<GlyphTextMarkerGlyphTag>> GetTags(NormalizedSnapshotSpanCollection spans) =>
-			service.GlyphTextViewMarkerGlyphTags(spans);
+			service.GetGlyphTextMarkerGlyphTags(spans);
 
 		public static GlyphTextViewMarkerGlyphTagger GetOrCreate(GlyphTextViewMarkerService service) {
 			if (service == null)
