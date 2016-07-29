@@ -1275,4 +1275,7 @@ Are you sure you want to expand it?</value>
   <data name="DebugLogUnloadModule" xml:space="preserve">
     <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
   </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;no exception message&gt;"</value>
+  </data>
 </root>

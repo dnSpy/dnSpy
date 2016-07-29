@@ -36,13 +36,11 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public static string ReflectionReadExceptionMessage(CorValue thisRef) {
+		public static bool ReflectionReadExceptionMessage(CorValue thisRef, out string result) {
+			result = null;
 			if (thisRef == null)
-				return null;
-			string res = null;
-			if (ReflectionReadValue(thisRef, Field_Exception_Message, ref res))
-				return res;
-			return null;
+				return false;
+			return ReflectionReadValue(thisRef, Field_Exception_Message, ref result);
 		}
 
 		public static CorValue ReflectionReadExceptionInnerException(CorValue thisRef) {

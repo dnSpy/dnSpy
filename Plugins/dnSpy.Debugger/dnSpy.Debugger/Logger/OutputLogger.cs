@@ -178,6 +178,13 @@ namespace dnSpy.Debugger.Logger {
 			return s;
 		}
 
+		string GetExceptionMessage(CorValue exValue) {
+			string exMsg;
+			if (EvalUtils.ReflectionReadExceptionMessage(exValue, out exMsg))
+				return exMsg ?? dnSpy_Debugger_Resources.ExceptionMessageIsNull;
+			return "???";
+		}
+
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			if (debugState?.dbg != dbg)
 				return;
@@ -284,7 +291,7 @@ namespace dnSpy.Debugger.Logger {
 							string.Format(dnSpy_Debugger_Resources.DebugLogExceptionHandled,
 									exValue?.ExactType?.ToString() ?? "???",
 									GetModuleName(exModule)));
-						exMsg = FilterUserMessage(EvalUtils.ReflectionReadExceptionMessage(exValue) ?? "???");
+						exMsg = FilterUserMessage(GetExceptionMessage(exValue));
 						textPane.WriteLine(BoxedOutputColor.DebugLogExceptionHandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, exMsg));
 						break;
@@ -297,7 +304,7 @@ namespace dnSpy.Debugger.Logger {
 							string.Format(dnSpy_Debugger_Resources.DebugLogExceptionUnhandled,
 									exValue?.ExactType?.ToString() ?? "???",
 									GetModuleName(exModule)));
-						exMsg = FilterUserMessage(EvalUtils.ReflectionReadExceptionMessage(exValue) ?? "???");
+						exMsg = FilterUserMessage(GetExceptionMessage(exValue));
 						textPane.WriteLine(BoxedOutputColor.DebugLogExceptionUnhandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, exMsg));
 						break;

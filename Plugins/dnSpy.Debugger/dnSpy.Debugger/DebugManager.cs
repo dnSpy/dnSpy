@@ -549,9 +549,10 @@ namespace dnSpy.Debugger {
 		static void AddExceptionInfo(StringBuilder sb, CorValue exValue, string msg) {
 			var exType = exValue?.ExactType;
 			int? hr = EvalUtils.ReflectionReadExceptionHResult(exValue);
-			string exMsg = EvalUtils.ReflectionReadExceptionMessage(exValue);
+			string exMsg;
+			EvalUtils.ReflectionReadExceptionMessage(exValue, out exMsg);
 			string exTypeString = exType?.ToString() ?? dnSpy_Debugger_Resources.UnknownExceptionType;
-			var s = string.Format(dnSpy_Debugger_Resources.ExceptionInfoFormat, msg, exTypeString, exMsg, hr ?? -1);
+			var s = string.Format(dnSpy_Debugger_Resources.ExceptionInfoFormat, msg, exTypeString, exMsg ?? dnSpy_Debugger_Resources.ExceptionMessageIsNull, hr ?? -1);
 			sb.Append(s);
 		}
 
