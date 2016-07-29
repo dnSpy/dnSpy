@@ -61,14 +61,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
-		protected override void Write(IOutputColorWriter output) {
-			output.Write(BoxedOutputColor.Number, string.Format("{0:X2}", (byte)MetaDataTableVM.Table));
+		protected override void Write(ITextColorWriter output) {
+			output.Write(BoxedTextColor.Number, string.Format("{0:X2}", (byte)MetaDataTableVM.Table));
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Type, string.Format("{0}", MetaDataTableVM.Table));
+			output.Write(BoxedTextColor.Type, string.Format("{0}", MetaDataTableVM.Table));
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Punctuation, "(");
-			output.Write(BoxedOutputColor.Number, string.Format("{0}", MetaDataTableVM.Rows));
-			output.Write(BoxedOutputColor.Punctuation, ")");
+			output.Write(BoxedTextColor.Punctuation, "(");
+			output.Write(BoxedTextColor.Number, string.Format("{0}", MetaDataTableVM.Rows));
+			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
 		protected override void DecompileFields(ILanguage language, IDecompilerOutput output) {
@@ -90,14 +90,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void WriteHeader(IDecompilerOutput output) {
 			var cols = MetaDataTableVM.TableInfo.Columns;
 
-			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedOutputColor.Comment);
+			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedTextColor.Comment);
 			for (int i = 0; i < cols.Count; i++) {
-				output.Write("\t", BoxedOutputColor.Comment);
-				output.Write(MetaDataTableVM.GetColumnName(i), BoxedOutputColor.Comment);
+				output.Write("\t", BoxedTextColor.Comment);
+				output.Write(MetaDataTableVM.GetColumnName(i), BoxedTextColor.Comment);
 			}
 			if (MetaDataTableVM.HasInfo) {
-				output.Write("\t", BoxedOutputColor.Comment);
-				output.Write(MetaDataTableVM.InfoName, BoxedOutputColor.Comment);
+				output.Write("\t", BoxedTextColor.Comment);
+				output.Write(MetaDataTableVM.InfoName, BoxedTextColor.Comment);
 			}
 			output.WriteLine();
 		}
@@ -105,18 +105,18 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void Write(IDecompilerOutput output, MetaDataTableRecordVM mdVM) {
 			var cols = MetaDataTableVM.TableInfo.Columns;
 
-			output.Write(mdVM.RidString, BoxedOutputColor.Comment);
-			output.Write("\t", BoxedOutputColor.Comment);
-			output.Write(mdVM.TokenString, BoxedOutputColor.Comment);
-			output.Write("\t", BoxedOutputColor.Comment);
-			output.Write(mdVM.OffsetString, BoxedOutputColor.Comment);
+			output.Write(mdVM.RidString, BoxedTextColor.Comment);
+			output.Write("\t", BoxedTextColor.Comment);
+			output.Write(mdVM.TokenString, BoxedTextColor.Comment);
+			output.Write("\t", BoxedTextColor.Comment);
+			output.Write(mdVM.OffsetString, BoxedTextColor.Comment);
 			for (int j = 0; j < cols.Count; j++) {
-				output.Write("\t", BoxedOutputColor.Comment);
-				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, BoxedOutputColor.Comment);
+				output.Write("\t", BoxedTextColor.Comment);
+				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, BoxedTextColor.Comment);
 			}
 			if (MetaDataTableVM.HasInfo) {
-				output.Write("\t", BoxedOutputColor.Comment);
-				output.Write(mdVM.Info, BoxedOutputColor.Comment);
+				output.Write("\t", BoxedTextColor.Comment);
+				output.Write(mdVM.Info, BoxedTextColor.Comment);
 			}
 			output.WriteLine();
 		}

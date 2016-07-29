@@ -45,8 +45,8 @@ namespace dnSpy.Files.TreeView {
 			this.module = module;
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, dnSpy_Resources.ResourcesFolder);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, dnSpy_Resources.ResourcesFolder);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			var treeNodeGroup = Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);

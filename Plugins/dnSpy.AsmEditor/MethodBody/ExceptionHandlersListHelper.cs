@@ -114,20 +114,20 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var eh = ehs[i];
-				output.Write(BoxedOutputColor.Number, eh.Index.ToString());
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Number, eh.Index.ToString());
+				output.Write(BoxedTextColor.Text, "\t");
 				BodyUtils.WriteObject(output, eh.TryStartVM.SelectedItem);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				BodyUtils.WriteObject(output, eh.TryEndVM.SelectedItem);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				BodyUtils.WriteObject(output, eh.FilterStartVM.SelectedItem);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				BodyUtils.WriteObject(output, eh.HandlerStartVM.SelectedItem);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				BodyUtils.WriteObject(output, eh.HandlerEndVM.SelectedItem);
-				output.Write(BoxedOutputColor.Text, "\t");
-				output.Write(BoxedOutputColor.Text, ((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, ((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name);
+				output.Write(BoxedTextColor.Text, "\t");
 				BodyUtils.WriteObject(output, eh.CatchType);
 			}
 			if (ehs.Length > 1)

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
 	/// Writes tooltips
 	/// </summary>
-	public interface ICodeToolTipWriter : IOutputColorWriter {
+	public interface ICodeToolTipWriter : ITextColorWriter {
 		/// <summary>
 		/// Writes an XML doc comment. Returns true if it was written, false otherwise
 		/// </summary>

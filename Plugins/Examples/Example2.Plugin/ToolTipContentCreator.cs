@@ -19,7 +19,7 @@ namespace Example2.Plugin {
 			var sref = @ref as StringInfoReference;
 			if (sref != null) {
 				var creator = context.Create();
-				creator.Output.Write(BoxedOutputColor.String, sref.Message);
+				creator.Output.Write(BoxedTextColor.String, sref.Message);
 				return creator.Create();
 			}
 

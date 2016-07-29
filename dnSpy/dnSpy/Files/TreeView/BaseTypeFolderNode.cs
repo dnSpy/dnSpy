@@ -51,8 +51,8 @@ namespace dnSpy.Files.TreeView {
 				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, dnSpy_Resources.BaseTypeFolder);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, dnSpy_Resources.BaseTypeFolder);
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;
 

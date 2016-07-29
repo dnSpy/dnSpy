@@ -195,11 +195,11 @@ namespace dnSpy.MainApp {
 		}
 
 		void Write(IDecompilerOutput output) {
-			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), BoxedOutputColor.Text);
+			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), BoxedTextColor.Text);
 			output.WriteLine();
-			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedOutputColor.Text);
+			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedTextColor.Text);
 			output.WriteLine();
-			output.WriteLine(dnSpy_Resources.AboutScreen_LoadedFiles, BoxedOutputColor.Text);
+			output.WriteLine(dnSpy_Resources.AboutScreen_LoadedFiles, BoxedTextColor.Text);
 			foreach (var info in GetInfos()) {
 				output.WriteLine();
 				WriteShortInfo(output, info.NameAndVersion);
@@ -219,7 +219,7 @@ namespace dnSpy.MainApp {
 					var line = streamReader.ReadLine();
 					if (line == null)
 						break;
-					dnSpyOutput.WriteLine(line, BoxedOutputColor.Text);
+					dnSpyOutput.WriteLine(line, BoxedTextColor.Text);
 				}
 			}
 		}
@@ -230,7 +230,7 @@ namespace dnSpy.MainApp {
 			const int MAX_SHORT_LEN = 128;
 			if (s.Length > MAX_SHORT_LEN)
 				s = s.Substring(0, MAX_SHORT_LEN) + "[...]";
-			output.WriteLine(string.Format("\t{0}", s), BoxedOutputColor.Text);
+			output.WriteLine(string.Format("\t{0}", s), BoxedTextColor.Text);
 		}
 
 		List<Info> GetInfos() {

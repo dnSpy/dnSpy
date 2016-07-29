@@ -63,10 +63,10 @@ namespace dnSpy.Files.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, ILanguage language) {
 			var td = TryGetTypeDef();
 			if (td == null)
-				output.Write(BoxedOutputColor.Error, "???");
+				output.Write(BoxedTextColor.Error, "???");
 			else
 				new NodePrinter().Write(output, language, td, Context.ShowToken);
 		}

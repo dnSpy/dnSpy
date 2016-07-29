@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageFileHeaderVM = new ImageFileHeaderVM(this, doc, StartOffset);
 		}
 
-		protected override void Write(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_FileHeader);
+		protected override void Write(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_FileHeader);
 	}
 }

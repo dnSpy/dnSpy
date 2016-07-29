@@ -330,12 +330,12 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool WriteRefIfByRef(IDecompilerOutput output, TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					output.Write("out", BoxedOutputColor.Keyword);
-					output.Write(" ", BoxedOutputColor.Text);
+					output.Write("out", BoxedTextColor.Keyword);
+					output.Write(" ", BoxedTextColor.Text);
 				}
 				else {
-					output.Write("ref", BoxedOutputColor.Keyword);
-					output.Write(" ", BoxedOutputColor.Text);
+					output.Write("ref", BoxedTextColor.Keyword);
+					output.Write(" ", BoxedTextColor.Text);
 				}
 				return true;
 			}
@@ -377,24 +377,24 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
 					TypeToString(output, declaringType, includeNamespace: true);
-					output.Write(".", BoxedOutputColor.Operator);
+					output.Write(".", BoxedTextColor.Operator);
 				}
-				output.Write("this", BoxedOutputColor.Keyword);
-				output.Write("[", BoxedOutputColor.Punctuation);
+				output.Write("this", BoxedTextColor.Keyword);
+				output.Write("[", BoxedTextColor.Punctuation);
 				bool addSeparator = false;
 				foreach (var p in property.PropertySig.GetParams()) {
 					if (addSeparator) {
-						output.Write(",", BoxedOutputColor.Punctuation);
-						output.Write(" ", BoxedOutputColor.Text);
+						output.Write(",", BoxedTextColor.Punctuation);
+						output.Write(" ", BoxedTextColor.Text);
 					}
 					else
 						addSeparator = true;
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				output.Write("]", BoxedOutputColor.Punctuation);
+				output.Write("]", BoxedTextColor.Punctuation);
 			}
 			else
-				WriteIdentifier(output, property.Name, OutputColorHelper.GetColor(property));
+				WriteIdentifier(output, property.Name, TextColorHelper.GetColor(property));
 		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {

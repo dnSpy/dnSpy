@@ -89,25 +89,25 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			while (count > 0) {
 				switch (count) {
 				case 1:
-					AddText("\t", BoxedOutputColor.Text);
+					AddText("\t", BoxedTextColor.Text);
 					return;
 				case 2:
-					AddText("\t\t", BoxedOutputColor.Text);
+					AddText("\t\t", BoxedTextColor.Text);
 					return;
 				case 3:
-					AddText("\t\t\t", BoxedOutputColor.Text);
+					AddText("\t\t\t", BoxedTextColor.Text);
 					return;
 				case 4:
-					AddText("\t\t\t\t", BoxedOutputColor.Text);
+					AddText("\t\t\t\t", BoxedTextColor.Text);
 					return;
 				case 5:
-					AddText("\t\t\t\t\t", BoxedOutputColor.Text);
+					AddText("\t\t\t\t\t", BoxedTextColor.Text);
 					return;
 				case 6:
-					AddText("\t\t\t\t\t\t", BoxedOutputColor.Text);
+					AddText("\t\t\t\t\t\t", BoxedTextColor.Text);
 					return;
 				default:
-					AddText("\t\t\t\t\t\t\t", BoxedOutputColor.Text);
+					AddText("\t\t\t\t\t\t\t", BoxedTextColor.Text);
 					count -= 7;
 					break;
 				}

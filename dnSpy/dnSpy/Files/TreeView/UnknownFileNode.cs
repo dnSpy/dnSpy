@@ -43,7 +43,7 @@ namespace dnSpy.Files.TreeView {
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile);
 	}
 }

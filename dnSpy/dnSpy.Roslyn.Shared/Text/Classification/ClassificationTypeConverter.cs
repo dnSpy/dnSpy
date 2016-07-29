@@ -78,14 +78,14 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 
 		struct SymbolResult {
 			public readonly ISymbol Symbol;
-			public readonly OutputColor? Color;
+			public readonly TextColor? Color;
 
 			public SymbolResult(ISymbol symbol) {
 				this.Symbol = symbol;
 				this.Color = null;
 			}
 
-			public SymbolResult(OutputColor? color) {
+			public SymbolResult(TextColor? color) {
 				this.Symbol = null;
 				this.Color = color;
 			}
@@ -103,13 +103,13 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 
 				// Fix for: using DNS = System;
 				if (node.Parent?.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax)
-					return new SymbolResult(OutputColor.Namespace);
+					return new SymbolResult(TextColor.Namespace);
 			}
 
 			return new SymbolResult();
 		}
 
-		public OutputColor Convert(ClassifiedSpan span) {
+		public TextColor Convert(ClassifiedSpan span) {
 			SymbolResult symRes;
 			switch (span.ClassificationType) {
 			case ClassificationTypeNames.ClassName:
@@ -117,22 +117,22 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 				if (symRes.Color != null)
 					return symRes.Color.Value;
 				if (symRes.Symbol?.IsStatic == true)
-					return OutputColor.StaticType;
+					return TextColor.StaticType;
 				if (symRes.Symbol?.IsSealed == true)
-					return OutputColor.SealedType;
-				return OutputColor.Type;
+					return TextColor.SealedType;
+				return TextColor.Type;
 
 			case ClassificationTypeNames.Comment:
-				return OutputColor.Comment;
+				return TextColor.Comment;
 
 			case ClassificationTypeNames.DelegateName:
-				return OutputColor.Delegate;
+				return TextColor.Delegate;
 
 			case ClassificationTypeNames.EnumName:
-				return OutputColor.Enum;
+				return TextColor.Enum;
 
 			case ClassificationTypeNames.ExcludedCode:
-				return OutputColor.ExcludedCode;
+				return TextColor.ExcludedCode;
 
 			case ClassificationTypeNames.Identifier:
 				symRes = GetSymbolResult(span.TextSpan);
@@ -143,7 +143,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 the_switch:
 					switch (sym.Kind) {
 					case SymbolKind.Alias:
-						return OutputColor.Namespace;
+						return TextColor.Namespace;
 
 					case SymbolKind.ArrayType:
 					case SymbolKind.Assembly:
@@ -153,25 +153,25 @@ the_switch:
 
 					case SymbolKind.Event:
 						var evtSym = (IEventSymbol)sym;
-						return evtSym.IsStatic ? OutputColor.StaticEvent : OutputColor.InstanceEvent;
+						return evtSym.IsStatic ? TextColor.StaticEvent : TextColor.InstanceEvent;
 
 					case SymbolKind.Field:
 						var fldSym = (IFieldSymbol)sym;
 						if (fldSym.ContainingType?.IsScriptClass == true)
-							return OutputColor.Local;
+							return TextColor.Local;
 						if (fldSym.ContainingType?.TypeKind == TypeKind.Enum)
-							return OutputColor.EnumField;
+							return TextColor.EnumField;
 						if (fldSym.IsConst)
-							return OutputColor.LiteralField;
+							return TextColor.LiteralField;
 						if (fldSym.IsStatic)
-							return OutputColor.StaticField;
-						return OutputColor.InstanceField;
+							return TextColor.StaticField;
+						return TextColor.InstanceField;
 
 					case SymbolKind.Label:
-						return OutputColor.Label;
+						return TextColor.Label;
 
 					case SymbolKind.Local:
-						return OutputColor.Local;
+						return TextColor.Local;
 
 					case SymbolKind.Method:
 						var methSym = (IMethodSymbol)sym;
@@ -197,13 +197,13 @@ the_switch:
 						case MethodKind.DeclareMethod:
 						default:
 							if (methSym.IsExtensionMethod)
-								return OutputColor.ExtensionMethod;
+								return TextColor.ExtensionMethod;
 							if (methSym.IsStatic)
-								return OutputColor.StaticMethod;
-							return OutputColor.InstanceMethod;
+								return TextColor.StaticMethod;
+							return TextColor.InstanceMethod;
 
 						case MethodKind.ReducedExtension:
-							return OutputColor.ExtensionMethod;
+							return TextColor.ExtensionMethod;
 						}
 
 					case SymbolKind.NetModule:
@@ -214,22 +214,22 @@ the_switch:
 						switch (nts.TypeKind) {
 						case TypeKind.Class:
 							if (nts.IsStatic)
-								return OutputColor.StaticType;
+								return TextColor.StaticType;
 							if (nts.IsSealed)
-								return OutputColor.SealedType;
-							return OutputColor.Type;
+								return TextColor.SealedType;
+							return TextColor.Type;
 
 						case TypeKind.Delegate:
-							return OutputColor.Delegate;
+							return TextColor.Delegate;
 
 						case TypeKind.Enum:
-							return OutputColor.Enum;
+							return TextColor.Enum;
 
 						case TypeKind.Interface:
-							return OutputColor.Interface;
+							return TextColor.Interface;
 
 						case TypeKind.Struct:
-							return OutputColor.ValueType;
+							return TextColor.ValueType;
 
 						case TypeKind.TypeParameter:
 							return GetTypeParamKind(nts);
@@ -242,24 +242,24 @@ the_switch:
 						case TypeKind.Pointer:
 						case TypeKind.Submission:
 						default:
-							return OutputColor.Type;
+							return TextColor.Type;
 						}
 
 					case SymbolKind.Namespace:
-						return OutputColor.Namespace;
+						return TextColor.Namespace;
 
 					case SymbolKind.Parameter:
-						return OutputColor.Parameter;
+						return TextColor.Parameter;
 
 					case SymbolKind.PointerType:
 						break;
 
 					case SymbolKind.Property:
 						var propSym = (IPropertySymbol)sym;
-						return propSym.IsStatic ? OutputColor.StaticProperty : OutputColor.InstanceProperty;
+						return propSym.IsStatic ? TextColor.StaticProperty : TextColor.InstanceProperty;
 
 					case SymbolKind.RangeVariable:
-						return OutputColor.Local;
+						return TextColor.Local;
 
 					case SymbolKind.TypeParameter:
 					case SymbolKind.Preprocessing:
@@ -269,40 +269,40 @@ the_switch:
 						break;
 					}
 				}
-				return OutputColor.Error;
+				return TextColor.Error;
 
 			case ClassificationTypeNames.InterfaceName:
-				return OutputColor.Interface;
+				return TextColor.Interface;
 
 			case ClassificationTypeNames.Keyword:
-				return OutputColor.Keyword;
+				return TextColor.Keyword;
 
 			case ClassificationTypeNames.ModuleName:
-				return OutputColor.Module;
+				return TextColor.Module;
 
 			case ClassificationTypeNames.NumericLiteral:
-				return OutputColor.Number;
+				return TextColor.Number;
 
 			case ClassificationTypeNames.Operator:
-				return OutputColor.Operator;
+				return TextColor.Operator;
 
 			case ClassificationTypeNames.PreprocessorKeyword:
-				return OutputColor.PreprocessorKeyword;
+				return TextColor.PreprocessorKeyword;
 
 			case ClassificationTypeNames.PreprocessorText:
-				return OutputColor.PreprocessorText;
+				return TextColor.PreprocessorText;
 
 			case ClassificationTypeNames.Punctuation:
-				return OutputColor.Punctuation;
+				return TextColor.Punctuation;
 
 			case ClassificationTypeNames.StringLiteral:
-				return OutputColor.String;
+				return TextColor.String;
 
 			case ClassificationTypeNames.StructName:
-				return OutputColor.ValueType;
+				return TextColor.ValueType;
 
 			case ClassificationTypeNames.Text:
-				return OutputColor.Text;
+				return TextColor.Text;
 
 			case ClassificationTypeNames.TypeParameterName:
 				symRes = GetSymbolResult(span.TextSpan);
@@ -311,84 +311,84 @@ the_switch:
 				return GetTypeParamKind(symRes.Symbol);
 
 			case ClassificationTypeNames.VerbatimStringLiteral:
-				return OutputColor.VerbatimString;
+				return TextColor.VerbatimString;
 
 			case ClassificationTypeNames.WhiteSpace:
-				return OutputColor.Text;
+				return TextColor.Text;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeName:
-				return OutputColor.XmlDocCommentAttributeName;
+				return TextColor.XmlDocCommentAttributeName;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeQuotes:
-				return OutputColor.XmlDocCommentAttributeQuotes;
+				return TextColor.XmlDocCommentAttributeQuotes;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeValue:
-				return OutputColor.XmlDocCommentAttributeValue;
+				return TextColor.XmlDocCommentAttributeValue;
 
 			case ClassificationTypeNames.XmlDocCommentCDataSection:
-				return OutputColor.XmlDocCommentCDataSection;
+				return TextColor.XmlDocCommentCDataSection;
 
 			case ClassificationTypeNames.XmlDocCommentComment:
-				return OutputColor.XmlDocCommentComment;
+				return TextColor.XmlDocCommentComment;
 
 			case ClassificationTypeNames.XmlDocCommentDelimiter:
-				return OutputColor.XmlDocCommentDelimiter;
+				return TextColor.XmlDocCommentDelimiter;
 
 			case ClassificationTypeNames.XmlDocCommentEntityReference:
-				return OutputColor.XmlDocCommentEntityReference;
+				return TextColor.XmlDocCommentEntityReference;
 
 			case ClassificationTypeNames.XmlDocCommentName:
-				return OutputColor.XmlDocCommentName;
+				return TextColor.XmlDocCommentName;
 
 			case ClassificationTypeNames.XmlDocCommentProcessingInstruction:
-				return OutputColor.XmlDocCommentProcessingInstruction;
+				return TextColor.XmlDocCommentProcessingInstruction;
 
 			case ClassificationTypeNames.XmlDocCommentText:
-				return OutputColor.XmlDocCommentText;
+				return TextColor.XmlDocCommentText;
 
 			case ClassificationTypeNames.XmlLiteralAttributeName:
-				return OutputColor.XmlLiteralAttributeName;
+				return TextColor.XmlLiteralAttributeName;
 
 			case ClassificationTypeNames.XmlLiteralAttributeQuotes:
-				return OutputColor.XmlLiteralAttributeQuotes;
+				return TextColor.XmlLiteralAttributeQuotes;
 
 			case ClassificationTypeNames.XmlLiteralAttributeValue:
-				return OutputColor.XmlLiteralAttributeValue;
+				return TextColor.XmlLiteralAttributeValue;
 
 			case ClassificationTypeNames.XmlLiteralCDataSection:
-				return OutputColor.XmlLiteralCDataSection;
+				return TextColor.XmlLiteralCDataSection;
 
 			case ClassificationTypeNames.XmlLiteralComment:
-				return OutputColor.XmlLiteralComment;
+				return TextColor.XmlLiteralComment;
 
 			case ClassificationTypeNames.XmlLiteralDelimiter:
-				return OutputColor.XmlLiteralDelimiter;
+				return TextColor.XmlLiteralDelimiter;
 
 			case ClassificationTypeNames.XmlLiteralEmbeddedExpression:
-				return OutputColor.XmlLiteralEmbeddedExpression;
+				return TextColor.XmlLiteralEmbeddedExpression;
 
 			case ClassificationTypeNames.XmlLiteralEntityReference:
-				return OutputColor.XmlLiteralEntityReference;
+				return TextColor.XmlLiteralEntityReference;
 
 			case ClassificationTypeNames.XmlLiteralName:
-				return OutputColor.XmlLiteralName;
+				return TextColor.XmlLiteralName;
 
 			case ClassificationTypeNames.XmlLiteralProcessingInstruction:
-				return OutputColor.XmlLiteralProcessingInstruction;
+				return TextColor.XmlLiteralProcessingInstruction;
 
 			case ClassificationTypeNames.XmlLiteralText:
-				return OutputColor.XmlLiteralText;
+				return TextColor.XmlLiteralText;
 
 			default:
-				return OutputColor.Error;
+				return TextColor.Error;
 			}
 		}
 
-		OutputColor GetTypeParamKind(ISymbol symbol) {
+		TextColor GetTypeParamKind(ISymbol symbol) {
 			var tsym = symbol as ITypeParameterSymbol;
 			if (tsym != null)
-				return tsym.DeclaringMethod != null ? OutputColor.MethodGenericParameter : OutputColor.TypeGenericParameter;
-			return OutputColor.TypeGenericParameter;
+				return tsym.DeclaringMethod != null ? TextColor.MethodGenericParameter : TextColor.TypeGenericParameter;
+			return TextColor.TypeGenericParameter;
 		}
 	}
 }

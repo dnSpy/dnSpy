@@ -80,9 +80,9 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		public override void WriteCommentBegin(IDecompilerOutput output, bool addSpace) {
 			if (addSpace)
-				output.Write("' ", BoxedOutputColor.Comment);
+				output.Write("' ", BoxedTextColor.Comment);
 			else
-				output.Write("'", BoxedOutputColor.Comment);
+				output.Write("'", BoxedTextColor.Comment);
 		}
 
 		public override void WriteCommentEnd(IDecompilerOutput output, bool addSpace) { }
@@ -233,8 +233,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
 			if (type.TryGetByRefSig() != null) {
-				output.Write("ByRef", BoxedOutputColor.Keyword);
-				output.Write(" ", BoxedOutputColor.Text);
+				output.Write("ByRef", BoxedTextColor.Keyword);
+				output.Write(" ", BoxedTextColor.Text);
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
 					((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank--;
 			}

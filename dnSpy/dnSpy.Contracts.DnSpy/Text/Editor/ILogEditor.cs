@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
-		void Write(string text, OutputColor color);
+		void Write(string text, TextColor color);
 
 		/// <summary>
 		/// Writes text
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
-		void WriteLine(string text, OutputColor color);
+		void WriteLine(string text, TextColor color);
 
 		/// <summary>
 		/// Writes text

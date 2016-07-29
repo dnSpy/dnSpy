@@ -41,8 +41,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.showWrites = showWrites;
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);

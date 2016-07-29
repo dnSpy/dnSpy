@@ -41,16 +41,16 @@ namespace dnSpy.AsmEditor.Themes {
 		void InitializeResources() {
 			var theme = themeManager.Theme;
 
-			foreach (var f in typeof(OutputColor).GetFields()) {
+			foreach (var f in typeof(TextColor).GetFields()) {
 				if (!f.IsLiteral)
 					continue;
-				var val = (OutputColor)f.GetValue(null);
-				if (val != OutputColor.Last)
+				var val = (TextColor)f.GetValue(null);
+				if (val != TextColor.Last)
 					UpdateTextEditorResource(val, f.Name);
 			}
 		}
 
-		void UpdateTextEditorResource(OutputColor colorType, string name) {
+		void UpdateTextEditorResource(TextColor colorType, string name) {
 			var theme = themeManager.Theme;
 
 			var color = theme.GetTextColor(colorType.ToColorType());

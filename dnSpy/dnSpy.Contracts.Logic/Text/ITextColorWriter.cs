@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Text writer
 	/// </summary>
-	public interface IOutputColorWriter {
+	public interface ITextColorWriter {
 		/// <summary>
 		/// Writes text
 		/// </summary>
@@ -36,28 +36,28 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void Write(OutputColor color, string text);
+		void Write(TextColor color, string text);
 	}
 
 	/// <summary>
 	/// Extension methods
 	/// </summary>
-	public static class OutputColorWriterExtensions {
+	public static class TextColorWriterExtensions {
 		/// <summary>
-		/// Writes text using default text color (<see cref="BoxedOutputColor.Text"/>)
+		/// Writes text using default text color (<see cref="BoxedTextColor.Text"/>)
 		/// </summary>
 		/// <param name="writer">Writer</param>
 		/// <param name="text">Text</param>
-		public static void Write(this IOutputColorWriter writer, string text) => writer.Write(BoxedOutputColor.Text, text);
+		public static void Write(this ITextColorWriter writer, string text) => writer.Write(BoxedTextColor.Text, text);
 
 		/// <summary>
-		/// Writes text and a newline using default text color (<see cref="BoxedOutputColor.Text"/>)
+		/// Writes text and a newline using default text color (<see cref="BoxedTextColor.Text"/>)
 		/// </summary>
 		/// <param name="writer">Writer</param>
 		/// <param name="text">Text</param>
-		public static void WriteLine(this IOutputColorWriter writer, string text = null) {
-			writer.Write(BoxedOutputColor.Text, text);
-			writer.Write(BoxedOutputColor.Text, Environment.NewLine);
+		public static void WriteLine(this ITextColorWriter writer, string text = null) {
+			writer.Write(BoxedTextColor.Text, text);
+			writer.Write(BoxedTextColor.Text, Environment.NewLine);
 		}
 	}
 }

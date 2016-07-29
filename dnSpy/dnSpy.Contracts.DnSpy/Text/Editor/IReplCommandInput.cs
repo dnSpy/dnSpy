@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="offset">Offset of text</param>
 		/// <param name="length">Length</param>
 		/// <param name="color">Color</param>
-		void AddColor(int offset, int length, OutputColor color);
+		void AddColor(int offset, int length, TextColor color);
 
 		/// <summary>
 		/// Add color info. No overlaps, and must be in order.

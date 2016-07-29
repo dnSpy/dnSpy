@@ -22,18 +22,18 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Themes {
 	static class ThemeUtils {
-		public static ITextColor GetTextColor(ITheme theme, object data) =>
+		public static IThemeTextColor GetTextColor(ITheme theme, object data) =>
 			GetColor(data).ToTextColor(theme);
 
 		public static Color GetColor(object data) {
-			if (data is OutputColor)
-				return new Color(((OutputColor)data).ToColorType());
+			if (data is TextColor)
+				return new Color(((TextColor)data).ToColorType());
 
 			if (data is ColorType)
 				return new Color((ColorType)data);
 
-			if (data is ITextColor)
-				return new Color((ITextColor)data);
+			if (data is IThemeTextColor)
+				return new Color((IThemeTextColor)data);
 
 			Debug.Fail($"Unknown color: '{data}'");
 			return new Color(ColorType.Error);

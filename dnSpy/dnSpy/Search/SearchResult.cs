@@ -109,7 +109,7 @@ namespace dnSpy.Search {
 			return gen.CreateResult();
 		}
 
-		void CreateUI(IOutputColorWriter output, object o, bool includeNamespace) {
+		void CreateUI(ITextColorWriter output, object o, bool includeNamespace) {
 			var ns = o as NamespaceSearchResult;
 			if (ns != null) {
 				output.WriteNamespace(ns.Namespace);
@@ -125,25 +125,25 @@ namespace dnSpy.Search {
 
 			var md = o as MethodDef;
 			if (md != null) {
-				output.Write(OutputColorHelper.GetColor(md), IdentifierEscaper.Escape(md.Name));
+				output.Write(TextColorHelper.GetColor(md), IdentifierEscaper.Escape(md.Name));
 				return;
 			}
 
 			var fd = o as FieldDef;
 			if (fd != null) {
-				output.Write(OutputColorHelper.GetColor(fd), IdentifierEscaper.Escape(fd.Name));
+				output.Write(TextColorHelper.GetColor(fd), IdentifierEscaper.Escape(fd.Name));
 				return;
 			}
 
 			var pd = o as PropertyDef;
 			if (pd != null) {
-				output.Write(OutputColorHelper.GetColor(pd), IdentifierEscaper.Escape(pd.Name));
+				output.Write(TextColorHelper.GetColor(pd), IdentifierEscaper.Escape(pd.Name));
 				return;
 			}
 
 			var ed = o as EventDef;
 			if (ed != null) {
-				output.Write(OutputColorHelper.GetColor(ed), IdentifierEscaper.Escape(ed.Name));
+				output.Write(TextColorHelper.GetColor(ed), IdentifierEscaper.Escape(ed.Name));
 				return;
 			}
 
@@ -173,14 +173,14 @@ namespace dnSpy.Search {
 
 			var paramDef = o as ParamDef;
 			if (paramDef != null) {
-				output.Write(BoxedOutputColor.Parameter, IdentifierEscaper.Escape(paramDef.Name));
+				output.Write(BoxedTextColor.Parameter, IdentifierEscaper.Escape(paramDef.Name));
 				return;
 			}
 
 			// non-.NET file
 			var file = o as IDnSpyFile;
 			if (file != null) {
-				output.Write(BoxedOutputColor.Text, file.GetShortName());
+				output.Write(BoxedTextColor.Text, file.GetShortName());
 				return;
 			}
 

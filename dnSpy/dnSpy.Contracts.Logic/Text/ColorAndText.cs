@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public ColorAndText(OutputColor color, string text) {
+		public ColorAndText(TextColor color, string text) {
 			Color = color.Box();
 			Text = text;
 		}

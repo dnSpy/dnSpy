@@ -121,8 +121,8 @@ namespace dnSpy.Text.Editor {
 
 		public string GetText() => wpfTextView.TextSnapshot.GetText();
 		public void Write(string text, object color) => OutputPrint(text, color);
-		public void Write(string text, OutputColor color) => OutputPrint(text, color.Box());
-		public void WriteLine(string text, OutputColor color) => WriteLine(text, color.Box());
+		public void Write(string text, TextColor color) => OutputPrint(text, color.Box());
+		public void WriteLine(string text, TextColor color) => WriteLine(text, color.Box());
 
 		public void WriteLine(string text, object color) {
 			OutputPrint(text, color);
@@ -151,10 +151,10 @@ namespace dnSpy.Text.Editor {
 					if (pendingOutput.Count > 0) {
 						var last = pendingOutput[pendingOutput.Count - 1];
 						if (last.Text.Length > 0 && last.Text[last.Text.Length - 1] != '\n')
-							pendingOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
+							pendingOutput.Add(new ColorAndText(BoxedTextColor.Text, Environment.NewLine));
 					}
 					else if (LastLine.Length != 0)
-						pendingOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
+						pendingOutput.Add(new ColorAndText(BoxedTextColor.Text, Environment.NewLine));
 				}
 				pendingOutput.Add(new ColorAndText(color, text));
 			}

@@ -59,8 +59,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) => Write(output);
-		protected abstract void Write(IOutputColorWriter output);
+		protected override void Write(ITextColorWriter output, ILanguage language) => Write(output);
+		protected abstract void Write(ITextColorWriter output);
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
 			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))

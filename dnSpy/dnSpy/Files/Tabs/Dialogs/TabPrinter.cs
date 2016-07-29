@@ -21,13 +21,13 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabPrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 
-		public TabPrinter(IOutputColorWriter output) {
+		public TabPrinter(ITextColorWriter output) {
 			this.output = output;
 		}
 
-		public void WriteName(TabVM vm) => output.Write(BoxedOutputColor.Text, vm.Name);
+		public void WriteName(TabVM vm) => output.Write(BoxedTextColor.Text, vm.Name);
 		public void WriteModule(TabVM vm) => output.WriteModule(vm.Module);
 		public void WritePath(TabVM vm) => output.WriteFilename(vm.Path);
 	}

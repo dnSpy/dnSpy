@@ -91,8 +91,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.AppliedToTreeNode);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.AppliedToTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();

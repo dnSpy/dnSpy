@@ -66,7 +66,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 
 				void Write(IDecompilerOutput output, object value) {
-					output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedOutputColor.Text);
+					output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedTextColor.Text);
 				}
 			}
 		}
@@ -541,21 +541,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public static void WriteObject(IOutputColorWriter output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
+		public static void WriteObject(ITextColorWriter output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
 			if (IsNull(obj)) {
-				output.Write(BoxedOutputColor.Keyword, "null");
+				output.Write(BoxedTextColor.Keyword, "null");
 				return;
 			}
 
 			var mr = obj as IMemberRef;
 			if (mr != null) {
-				if (simpleILPrinter.Write(OutputColorWriterToDecompilerOutput.Create(output), mr))
+				if (simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), mr))
 					return;
 			}
 
 			var local = obj as LocalVM;
 			if (local != null) {
-				output.Write(BoxedOutputColor.Local, IdentifierEscaper.Escape(GetLocalName(local.Name, local.Index)));
+				output.Write(BoxedTextColor.Local, IdentifierEscaper.Escape(GetLocalName(local.Name, local.Index)));
 				output.WriteSpace();
 				output.WriteLocalParameterIndex(local.Index);
 				return;
@@ -564,9 +564,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var parameter = obj as Parameter;
 			if (parameter != null) {
 				if (parameter.IsHiddenThisParameter)
-					output.Write(BoxedOutputColor.Keyword, "this");
+					output.Write(BoxedTextColor.Keyword, "this");
 				else {
-					output.Write(BoxedOutputColor.Parameter, IdentifierEscaper.Escape(GetParameterName(parameter.Name, parameter.Index)));
+					output.Write(BoxedTextColor.Parameter, IdentifierEscaper.Escape(GetParameterName(parameter.Name, parameter.Index)));
 					output.WriteSpace();
 					output.WriteLocalParameterIndex(parameter.Index);
 				}
@@ -590,24 +590,24 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var methodSig = obj as MethodSig;
 			if (methodSig != null) {
-				simpleILPrinter.Write(OutputColorWriterToDecompilerOutput.Create(output), methodSig);
+				simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), methodSig);
 				return;
 			}
 
 			if (obj is TypeSig) {
-				simpleILPrinter.Write(OutputColorWriterToDecompilerOutput.Create(output), obj as TypeSig);
+				simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), obj as TypeSig);
 				return;
 			}
 
 			if (obj is Code) {
-				output.Write(BoxedOutputColor.OpCode, ((Code)obj).ToOpCode().Name);
+				output.Write(BoxedTextColor.OpCode, ((Code)obj).ToOpCode().Name);
 				return;
 			}
 
 			// This code gets called by the combobox and it sometimes passes in the empty string.
 			// It's never shown in the UI.
 			Debug.Assert(string.Empty.Equals(obj), "Shouldn't be here");
-			output.Write(BoxedOutputColor.Text, obj.ToString());
+			output.Write(BoxedTextColor.Text, obj.ToString());
 		}
 
 		static string GetLocalName(string name, int index) {
@@ -622,32 +622,32 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return string.Format("A_{0}", index);
 		}
 
-		static void WriteLocalParameterIndex(this IOutputColorWriter output, int index) {
-			output.Write(BoxedOutputColor.Punctuation, "(");
-			output.Write(BoxedOutputColor.Number, index.ToString());
-			output.Write(BoxedOutputColor.Punctuation, ")");
+		static void WriteLocalParameterIndex(this ITextColorWriter output, int index) {
+			output.Write(BoxedTextColor.Punctuation, "(");
+			output.Write(BoxedTextColor.Number, index.ToString());
+			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
-		static void WriteLong(this IOutputColorWriter output, InstructionVM instr) {
+		static void WriteLong(this ITextColorWriter output, InstructionVM instr) {
 			output.WriteShort(instr);
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.OpCode, instr.Code.ToOpCode().Name);
+			output.Write(BoxedTextColor.OpCode, instr.Code.ToOpCode().Name);
 			output.WriteSpace();
 			Write(output, instr.InstructionOperandVM);
 		}
 
-		static void Write(this IOutputColorWriter output, InstructionOperandVM opvm) {
+		static void Write(this ITextColorWriter output, InstructionOperandVM opvm) {
 			switch (opvm.InstructionOperandType) {
 			case MethodBody.InstructionOperandType.None:
 				break;
 
-			case MethodBody.InstructionOperandType.SByte:	output.Write(BoxedOutputColor.Number, opvm.SByte.StringValue); break;
-			case MethodBody.InstructionOperandType.Byte:	output.Write(BoxedOutputColor.Number, opvm.Byte.StringValue); break;
-			case MethodBody.InstructionOperandType.Int32:	output.Write(BoxedOutputColor.Number, opvm.Int32.StringValue); break;;
-			case MethodBody.InstructionOperandType.Int64:	output.Write(BoxedOutputColor.Number, opvm.Int64.StringValue); break;;
-			case MethodBody.InstructionOperandType.Single:	output.Write(BoxedOutputColor.Number, opvm.Single.StringValue); break;;
-			case MethodBody.InstructionOperandType.Double:	output.Write(BoxedOutputColor.Number, opvm.Double.StringValue); break;;
-			case MethodBody.InstructionOperandType.String:	output.Write(BoxedOutputColor.String, opvm.String.StringValue); break;;
+			case MethodBody.InstructionOperandType.SByte:	output.Write(BoxedTextColor.Number, opvm.SByte.StringValue); break;
+			case MethodBody.InstructionOperandType.Byte:	output.Write(BoxedTextColor.Number, opvm.Byte.StringValue); break;
+			case MethodBody.InstructionOperandType.Int32:	output.Write(BoxedTextColor.Number, opvm.Int32.StringValue); break;;
+			case MethodBody.InstructionOperandType.Int64:	output.Write(BoxedTextColor.Number, opvm.Int64.StringValue); break;;
+			case MethodBody.InstructionOperandType.Single:	output.Write(BoxedTextColor.Number, opvm.Single.StringValue); break;;
+			case MethodBody.InstructionOperandType.Double:	output.Write(BoxedTextColor.Number, opvm.Double.StringValue); break;;
+			case MethodBody.InstructionOperandType.String:	output.Write(BoxedTextColor.String, opvm.String.StringValue); break;;
 
 			case MethodBody.InstructionOperandType.Field:
 			case MethodBody.InstructionOperandType.Method:
@@ -665,24 +665,24 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		static void WriteShort(this IOutputColorWriter output, InstructionVM instr) {
-			output.Write(BoxedOutputColor.Number, instr.Index.ToString());
+		static void WriteShort(this ITextColorWriter output, InstructionVM instr) {
+			output.Write(BoxedTextColor.Number, instr.Index.ToString());
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Punctuation, "(");
-			output.Write(BoxedOutputColor.Number, string.Format("{0:X4}", instr.Offset));
-			output.Write(BoxedOutputColor.Punctuation, ")");
+			output.Write(BoxedTextColor.Punctuation, "(");
+			output.Write(BoxedTextColor.Number, string.Format("{0:X4}", instr.Offset));
+			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
-		static void Write(this IOutputColorWriter output, IList<InstructionVM> instrs) {
-			output.Write(BoxedOutputColor.Punctuation, "[");
+		static void Write(this ITextColorWriter output, IList<InstructionVM> instrs) {
+			output.Write(BoxedTextColor.Punctuation, "[");
 			for (int i = 0; i < instrs.Count; i++) {
 				if (i > 0) {
-					output.Write(BoxedOutputColor.Punctuation, ",");
+					output.Write(BoxedTextColor.Punctuation, ",");
 					output.WriteSpace();
 				}
 				output.WriteShort(instrs[i]);
 			}
-			output.Write(BoxedOutputColor.Punctuation, "]");
+			output.Write(BoxedTextColor.Punctuation, "]");
 		}
 	}
 }

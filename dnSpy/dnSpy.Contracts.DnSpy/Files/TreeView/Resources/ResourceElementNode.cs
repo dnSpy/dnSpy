@@ -45,10 +45,10 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		public string Name => resourceElement.Name;
 
 		/// <inheritdoc/>
-		protected sealed override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected sealed override void Write(ITextColorWriter output, ILanguage language) =>
 			output.WriteFilename(resourceElement.Name);
 		/// <inheritdoc/>
-		protected sealed override void WriteToolTip(IOutputColorWriter output, ILanguage language) =>
+		protected sealed override void WriteToolTip(ITextColorWriter output, ILanguage language) =>
 			base.WriteToolTip(output, language);
 		/// <inheritdoc/>
 		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
@@ -135,8 +135,8 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
-			output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Comment);
-			output.Write($" = {ValueString}", BoxedOutputColor.Comment);
+			output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Comment);
+			output.Write($" = {ValueString}", BoxedTextColor.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

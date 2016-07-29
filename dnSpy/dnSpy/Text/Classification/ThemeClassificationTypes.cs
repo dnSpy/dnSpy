@@ -217,8 +217,8 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassificationType GetClassificationTypeByColorObject(object color) {
-			if (color is OutputColor)
-				return GetClassificationType(((OutputColor)color).ToColorType());
+			if (color is TextColor)
+				return GetClassificationType(((TextColor)color).ToColorType());
 
 			if (color is ColorType)
 				return GetClassificationType((ColorType)color);

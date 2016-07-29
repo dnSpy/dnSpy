@@ -44,8 +44,8 @@ namespace dnSpy.Files.TreeView {
 			this.moduleNode = moduleNode;
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, dnSpy_Resources.ReferencesFolder);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, dnSpy_Resources.ReferencesFolder);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var asmRef in moduleNode.DnSpyFile.ModuleDef.GetAssemblyRefs())

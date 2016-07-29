@@ -51,7 +51,7 @@ namespace dnSpy.Files.TreeView {
 		}
 		List<TypeDef> typesToCreate;
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().WriteNamespace(output, language, Name);
 		public ITypeNode Create(TypeDef type) => Context.FileTreeView.Create(type);
 

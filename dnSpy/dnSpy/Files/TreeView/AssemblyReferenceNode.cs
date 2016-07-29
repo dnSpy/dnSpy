@@ -49,7 +49,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, AssemblyRef, Context.ShowToken);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

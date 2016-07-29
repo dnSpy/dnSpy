@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Text {
 			TokenInfo info;
 			if (!offsetToTokenInfo.TryGetValue(offset, out info)) {
 				defaultTextLength = 0;
-				data = BoxedOutputColor.Text;
+				data = BoxedTextColor.Text;
 				tokenLength = 0;
 				return false;
 			}
@@ -165,7 +165,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		public void AppendLine() {
 			// We must append the same type of new line string as StringBuilder
-			Append(BoxedOutputColor.Text, Environment.NewLine);
+			Append(BoxedTextColor.Text, Environment.NewLine);
 		}
 
 		// Gets called to add one token. No newlines are allowed
@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Text {
 
 redo:
 			if (isAppendingDefaultText) {
-				if (data.Equals(BoxedOutputColor.Text) || data.Equals(BoxedOutputColor.Text)) {
+				if (data.Equals(BoxedTextColor.Text) || data.Equals(BoxedTextColor.Text)) {
 					int newLength = currentDefaultTextLength + length;
 					while (newLength > TEXT_TOKEN_LENGTH_MAX) {
 						currentDefaultTextLength = Math.Min(newLength, TEXT_TOKEN_LENGTH_MAX);

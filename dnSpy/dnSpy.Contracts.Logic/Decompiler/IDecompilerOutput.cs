@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Writes text and color. The text will be indented if needed.
 		/// </summary>
 		/// <param name="text">Text</param>
-		/// <param name="color">Color, eg. <see cref="BoxedOutputColor.Keyword"/></param>
+		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
 		void Write(string text, object color);
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="text">Text</param>
 		/// <param name="index">Index in <paramref name="text"/></param>
 		/// <param name="count">Number of characters to write</param>
-		/// <param name="color">Color, eg. <see cref="BoxedOutputColor.Keyword"/></param>
+		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
 		void Write(string text, int index, int count, object color);
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="text">Text</param>
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
-		/// <param name="color">Color, eg. <see cref="BoxedOutputColor.Keyword"/></param>
+		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
 		void Write(string text, object reference, DecompilerReferenceFlags flags, object color);
 
 		/// <summary>

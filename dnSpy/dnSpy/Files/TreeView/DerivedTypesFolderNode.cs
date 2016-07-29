@@ -55,8 +55,8 @@ namespace dnSpy.Files.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, dnSpy_Resources.DerivedTypes);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, dnSpy_Resources.DerivedTypes);
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;
 	}

@@ -25,11 +25,11 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 		readonly bool useHex;
 		readonly ILanguage language;
 
-		public BreakpointPrinter(IOutputColorWriter output, bool useHex, ILanguage language) {
+		public BreakpointPrinter(ITextColorWriter output, bool useHex, ILanguage language) {
 			this.output = output;
 			this.useHex = useHex;
 			this.language = language;
@@ -51,17 +51,17 @@ namespace dnSpy.Debugger.Breakpoints {
 				return "0x{0:X8}";
 		}
 
-		void WriteILOffset(IOutputColorWriter output, uint offset) {
+		void WriteILOffset(ITextColorWriter output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(BoxedOutputColor.Number, string.Format(GetHexFormatUInt16(), offset));
+				output.Write(BoxedTextColor.Number, string.Format(GetHexFormatUInt16(), offset));
 			else
-				output.Write(BoxedOutputColor.Number, string.Format(GetHexFormatUInt32(), offset));
+				output.Write(BoxedTextColor.Number, string.Format(GetHexFormatUInt32(), offset));
 		}
 
-		void WriteToken(IOutputColorWriter output, uint token) {
+		void WriteToken(ITextColorWriter output, uint token) {
 			// Tokens are always in hex
-			output.Write(BoxedOutputColor.Number, string.Format(GetHexFormatUInt32(), token));
+			output.Write(BoxedTextColor.Number, string.Format(GetHexFormatUInt32(), token));
 		}
 
 		public void WriteName(BreakpointVM vm) {
@@ -83,14 +83,14 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (method == null) {
 					vm.NameError = true;
 					if (printedToken)
-						output.Write(BoxedOutputColor.Error, "???");
+						output.Write(BoxedTextColor.Error, "???");
 					else
-						output.Write(BoxedOutputColor.Number, string.Format("0x{0:X8}", ilbp.MethodToken.Token));
+						output.Write(BoxedTextColor.Number, string.Format("0x{0:X8}", ilbp.MethodToken.Token));
 				}
 				else
 					MethodLanguage.Write(output, method, GetFlags(vm.Context));
 				output.WriteSpace();
-				output.Write(BoxedOutputColor.Operator, "+");
+				output.Write(BoxedTextColor.Operator, "+");
 				output.WriteSpace();
 				WriteILOffset(output, ilbp.ILOffset);
 				return;

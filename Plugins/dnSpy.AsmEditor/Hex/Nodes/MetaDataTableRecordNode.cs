@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override bool SingleClickExpandsChildren => false;
 
 		readonly int index;
-		readonly Tuple<int[], Action<IOutputColorWriter>> infoTuple;
+		readonly Tuple<int[], Action<ITextColorWriter>> infoTuple;
 
 		public MetaDataTableRecordNode(TableInfo tableInfo, int index, ulong startOffset, ulong endOffset)
 			: base(startOffset, endOffset) {
@@ -50,11 +50,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.infoTuple = GetInfoTuple(tableInfo);
 		}
 
-		protected override void Write(IOutputColorWriter output) {
-			output.Write(BoxedOutputColor.Number, string.Format("{0}", index + 1));
+		protected override void Write(ITextColorWriter output) {
+			output.Write(BoxedTextColor.Number, string.Format("{0}", index + 1));
 			if (infoTuple != null) {
 				output.WriteSpace();
-				output.Write(BoxedOutputColor.Operator, "-");
+				output.Write(BoxedTextColor.Operator, "-");
 				output.WriteSpace();
 				infoTuple.Item2(output);
 			}
@@ -74,19 +74,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		Tuple<int[], Action<IOutputColorWriter>> GetInfoTuple(TableInfo tableInfo) {
+		Tuple<int[], Action<ITextColorWriter>> GetInfoTuple(TableInfo tableInfo) {
 			switch (tableInfo.Table) {
-			case Table.Module:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1 }, WriteModuleInfo);
-			case Table.TypeRef:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1, 2 }, WriteTypeRefInfo);
-			case Table.TypeDef:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1, 2 }, WriteTypeDefInfo);
+			case Table.Module:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteModuleInfo);
+			case Table.TypeRef:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1, 2 }, WriteTypeRefInfo);
+			case Table.TypeDef:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1, 2 }, WriteTypeDefInfo);
 			case Table.FieldPtr:				return null;
-			case Table.Field:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1 }, WriteFieldInfo);
+			case Table.Field:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteFieldInfo);
 			case Table.MethodPtr:				return null;
-			case Table.Method:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 3 }, WriteMethodInfo);
+			case Table.Method:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 3 }, WriteMethodInfo);
 			case Table.ParamPtr:				return null;
-			case Table.Param:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 2 }, WriteParamInfo);
+			case Table.Param:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2 }, WriteParamInfo);
 			case Table.InterfaceImpl:			return null;
-			case Table.MemberRef:				return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1 }, WriteMemberRefInfo);
+			case Table.MemberRef:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteMemberRefInfo);
 			case Table.Constant:				return null;
 			case Table.CustomAttribute:			return null;
 			case Table.FieldMarshal:			return null;
@@ -96,29 +96,29 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case Table.StandAloneSig:			return null;
 			case Table.EventMap:				return null;
 			case Table.EventPtr:				return null;
-			case Table.Event:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1 }, WriteEventInfo);
+			case Table.Event:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteEventInfo);
 			case Table.PropertyMap:				return null;
 			case Table.PropertyPtr:				return null;
-			case Table.Property:				return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1 }, WritePropertyInfo);
+			case Table.Property:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WritePropertyInfo);
 			case Table.MethodSemantics:			return null;
 			case Table.MethodImpl:				return null;
-			case Table.ModuleRef:				return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 0 }, WriteModuleRefInfo);
+			case Table.ModuleRef:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 0 }, WriteModuleRefInfo);
 			case Table.TypeSpec:				return null;
-			case Table.ImplMap:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 2 }, WriteImplMapInfo);
+			case Table.ImplMap:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2 }, WriteImplMapInfo);
 			case Table.FieldRVA:				return null;
 			case Table.ENCLog:					return null;
 			case Table.ENCMap:					return null;
-			case Table.Assembly:				return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 7 }, WriteAssemblyInfo);
+			case Table.Assembly:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 7 }, WriteAssemblyInfo);
 			case Table.AssemblyProcessor:		return null;
 			case Table.AssemblyOS:				return null;
-			case Table.AssemblyRef:				return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 6 }, WriteAssemblyRefInfo);
+			case Table.AssemblyRef:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 6 }, WriteAssemblyRefInfo);
 			case Table.AssemblyRefProcessor:	return null;
 			case Table.AssemblyRefOS:			return null;
-			case Table.File:					return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 1 }, WriteFileInfo);
-			case Table.ExportedType:			return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 2, 3 }, WriteExportedTypeInfo);
-			case Table.ManifestResource:		return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 2 }, WriteManifestResourceInfo);
+			case Table.File:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteFileInfo);
+			case Table.ExportedType:			return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2, 3 }, WriteExportedTypeInfo);
+			case Table.ManifestResource:		return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2 }, WriteManifestResourceInfo);
 			case Table.NestedClass:				return null;
-			case Table.GenericParam:			return new Tuple<int[], Action<IOutputColorWriter>>(new int[] { 3 }, WriteGenericParamInfo);
+			case Table.GenericParam:			return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 3 }, WriteGenericParamInfo);
 			case Table.MethodSpec:				return null;
 			case Table.GenericParamConstraint:	return null;
 			default:							throw new InvalidOperationException();
@@ -144,43 +144,43 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			throw new InvalidOperationException();
 		}
 
-		void WriteModuleInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.Module, ReadStringsHeap(1));
+		void WriteModuleInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Module, ReadStringsHeap(1));
 
-		void WriteNamespaceName(IOutputColorWriter output, int nsIndex, int nameIndex) {
+		void WriteNamespaceName(ITextColorWriter output, int nsIndex, int nameIndex) {
 			var ns = ReadStringsHeap(nsIndex);
 			var name = ReadStringsHeap(nameIndex);
 
-			output.Write(BoxedOutputColor.Type, name);
+			output.Write(BoxedTextColor.Type, name);
 
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteSpace();
-				output.Write(BoxedOutputColor.Operator, "-");
+				output.Write(BoxedTextColor.Operator, "-");
 				output.WriteSpace();
 
 				var parts = ns.Split('.');
 				for (int i = 0; i < parts.Length; i++) {
-					output.Write(BoxedOutputColor.Namespace, parts[i]);
+					output.Write(BoxedTextColor.Namespace, parts[i]);
 					if (i + 1 < parts.Length)
-						output.Write(BoxedOutputColor.Operator, ".");
+						output.Write(BoxedTextColor.Operator, ".");
 				}
 			}
 		}
 
-		void WriteTypeRefInfo(IOutputColorWriter output) => WriteNamespaceName(output, 2, 1);
-		void WriteTypeDefInfo(IOutputColorWriter output) => WriteNamespaceName(output, 2, 1);
-		void WriteFieldInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.InstanceField, ReadStringsHeap(1));
-		void WriteMethodInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.InstanceMethod, ReadStringsHeap(3));
-		void WriteParamInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.Parameter, ReadStringsHeap(2));
-		void WriteMemberRefInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.InstanceMethod, ReadStringsHeap(1));
-		void WriteEventInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.InstanceEvent, ReadStringsHeap(1));
-		void WritePropertyInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.InstanceProperty, ReadStringsHeap(1));
-		void WriteModuleRefInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.Module, ReadStringsHeap(0));
-		void WriteImplMapInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.InstanceMethod, ReadStringsHeap(2));
-		void WriteAssemblyInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.Assembly, ReadStringsHeap(7));
-		void WriteAssemblyRefInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.Assembly, ReadStringsHeap(6));
-		void WriteFileInfo(IOutputColorWriter output) => output.WriteFilename(ReadStringsHeap(1));
-		void WriteExportedTypeInfo(IOutputColorWriter output) => WriteNamespaceName(output, 3, 2);
-		void WriteManifestResourceInfo(IOutputColorWriter output) => output.WriteFilename(ReadStringsHeap(2));
-		void WriteGenericParamInfo(IOutputColorWriter output) => output.Write(BoxedOutputColor.TypeGenericParameter, ReadStringsHeap(3));
+		void WriteTypeRefInfo(ITextColorWriter output) => WriteNamespaceName(output, 2, 1);
+		void WriteTypeDefInfo(ITextColorWriter output) => WriteNamespaceName(output, 2, 1);
+		void WriteFieldInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceField, ReadStringsHeap(1));
+		void WriteMethodInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceMethod, ReadStringsHeap(3));
+		void WriteParamInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Parameter, ReadStringsHeap(2));
+		void WriteMemberRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceMethod, ReadStringsHeap(1));
+		void WriteEventInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceEvent, ReadStringsHeap(1));
+		void WritePropertyInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceProperty, ReadStringsHeap(1));
+		void WriteModuleRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Module, ReadStringsHeap(0));
+		void WriteImplMapInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceMethod, ReadStringsHeap(2));
+		void WriteAssemblyInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Assembly, ReadStringsHeap(7));
+		void WriteAssemblyRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Assembly, ReadStringsHeap(6));
+		void WriteFileInfo(ITextColorWriter output) => output.WriteFilename(ReadStringsHeap(1));
+		void WriteExportedTypeInfo(ITextColorWriter output) => WriteNamespaceName(output, 3, 2);
+		void WriteManifestResourceInfo(ITextColorWriter output) => output.WriteFilename(ReadStringsHeap(2));
+		void WriteGenericParamInfo(ITextColorWriter output) => output.Write(BoxedTextColor.TypeGenericParameter, ReadStringsHeap(3));
 	}
 }

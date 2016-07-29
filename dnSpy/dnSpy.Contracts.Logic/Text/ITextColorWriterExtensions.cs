@@ -25,15 +25,15 @@ namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Extension methods
 	/// </summary>
-	public static class IOutputColorWriterExtensions {
+	public static class ITextColorWriterExtensions {
 		/// <summary>
 		/// Writes a newline
 		/// </summary>
 		/// <typeparam name="T">Writer type</typeparam>
 		/// <param name="output">Output</param>
 		/// <returns></returns>
-		public static T WriteLine<T>(this T output) where T : IOutputColorWriter {
-			output.Write(BoxedOutputColor.Text, Environment.NewLine);
+		public static T WriteLine<T>(this T output) where T : ITextColorWriter {
+			output.Write(BoxedTextColor.Text, Environment.NewLine);
 			return output;
 		}
 
@@ -43,8 +43,8 @@ namespace dnSpy.Contracts.Text {
 		/// <typeparam name="T">Writer type</typeparam>
 		/// <param name="output">Output</param>
 		/// <returns></returns>
-		public static T WriteSpace<T>(this T output) where T : IOutputColorWriter {
-			output.Write(BoxedOutputColor.Text, " ");
+		public static T WriteSpace<T>(this T output) where T : ITextColorWriter {
+			output.Write(BoxedTextColor.Text, " ");
 			return output;
 		}
 
@@ -54,8 +54,8 @@ namespace dnSpy.Contracts.Text {
 		/// <typeparam name="T">Writer type</typeparam>
 		/// <param name="output">Output</param>
 		/// <returns></returns>
-		public static T WriteCommaSpace<T>(this T output) where T : IOutputColorWriter {
-			output.Write(BoxedOutputColor.Punctuation, ",");
+		public static T WriteCommaSpace<T>(this T output) where T : ITextColorWriter {
+			output.Write(BoxedTextColor.Punctuation, ",");
 			output.WriteSpace();
 			return output;
 		}
@@ -67,17 +67,17 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="version">Version</param>
 		/// <returns></returns>
-		public static T Write<T>(this T output, Version version) where T : IOutputColorWriter {
+		public static T Write<T>(this T output, Version version) where T : ITextColorWriter {
 			if (version == null)
-				output.Write(BoxedOutputColor.Error, "?.?.?.?");
+				output.Write(BoxedTextColor.Error, "?.?.?.?");
 			else {
-				output.Write(BoxedOutputColor.Number, version.Major.ToString());
-				output.Write(BoxedOutputColor.Number, ".");
-				output.Write(BoxedOutputColor.Number, version.Minor.ToString());
-				output.Write(BoxedOutputColor.Number, ".");
-				output.Write(BoxedOutputColor.Number, version.Build.ToString());
-				output.Write(BoxedOutputColor.Number, ".");
-				output.Write(BoxedOutputColor.Number, version.Revision.ToString());
+				output.Write(BoxedTextColor.Number, version.Major.ToString());
+				output.Write(BoxedTextColor.Number, ".");
+				output.Write(BoxedTextColor.Number, version.Minor.ToString());
+				output.Write(BoxedTextColor.Number, ".");
+				output.Write(BoxedTextColor.Number, version.Build.ToString());
+				output.Write(BoxedTextColor.Number, ".");
+				output.Write(BoxedTextColor.Number, version.Revision.ToString());
 			}
 			return output;
 		}
@@ -89,49 +89,49 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		public static T Write<T>(this T output, IAssembly asm) where T : IOutputColorWriter {
+		public static T Write<T>(this T output, IAssembly asm) where T : ITextColorWriter {
 			if (asm == null)
 				return output;
 			var asmDef = asm as AssemblyDef;
 			bool isExe = asmDef != null &&
 				asmDef.ManifestModule != null &&
 				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
-			output.Write(isExe ? BoxedOutputColor.AssemblyExe : BoxedOutputColor.Assembly, asm.Name);
+			output.Write(isExe ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, asm.Name);
 
 			output.WriteCommaSpace();
 
-			output.Write(BoxedOutputColor.InstanceProperty, "Version");
-			output.Write(BoxedOutputColor.Operator, "=");
+			output.Write(BoxedTextColor.InstanceProperty, "Version");
+			output.Write(BoxedTextColor.Operator, "=");
 			output.Write(asm.Version);
 
 			output.WriteCommaSpace();
 
-			output.Write(BoxedOutputColor.InstanceProperty, "Culture");
-			output.Write(BoxedOutputColor.Operator, "=");
-			output.Write(BoxedOutputColor.EnumField, UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String);
+			output.Write(BoxedTextColor.InstanceProperty, "Culture");
+			output.Write(BoxedTextColor.Operator, "=");
+			output.Write(BoxedTextColor.EnumField, UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String);
 
 			output.WriteCommaSpace();
 
 			var publicKey = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
-			output.Write(BoxedOutputColor.InstanceProperty, publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey");
-			output.Write(BoxedOutputColor.Operator, "=");
+			output.Write(BoxedTextColor.InstanceProperty, publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey");
+			output.Write(BoxedTextColor.Operator, "=");
 			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
-				output.Write(BoxedOutputColor.Keyword, "null");
+				output.Write(BoxedTextColor.Keyword, "null");
 			else
-				output.Write(BoxedOutputColor.Number, publicKey.ToString());
+				output.Write(BoxedTextColor.Number, publicKey.ToString());
 
 			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
 				output.WriteCommaSpace();
-				output.Write(BoxedOutputColor.InstanceProperty, "Retargetable");
-				output.Write(BoxedOutputColor.Operator, "=");
-				output.Write(BoxedOutputColor.EnumField, "Yes");
+				output.Write(BoxedTextColor.InstanceProperty, "Retargetable");
+				output.Write(BoxedTextColor.Operator, "=");
+				output.Write(BoxedTextColor.EnumField, "Yes");
 			}
 
 			if ((asm.Attributes & AssemblyAttributes.ContentType_Mask) == AssemblyAttributes.ContentType_WindowsRuntime) {
 				output.WriteCommaSpace();
-				output.Write(BoxedOutputColor.InstanceProperty, "ContentType");
-				output.Write(BoxedOutputColor.Operator, "=");
-				output.Write(BoxedOutputColor.EnumField, "WindowsRuntime");
+				output.Write(BoxedTextColor.InstanceProperty, "ContentType");
+				output.Write(BoxedTextColor.Operator, "=");
+				output.Write(BoxedTextColor.EnumField, "WindowsRuntime");
 			}
 
 			return output;
@@ -144,17 +144,17 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="namespace">Namespace</param>
 		/// <returns></returns>
-		public static T WriteNamespace<T>(this T output, string @namespace) where T : IOutputColorWriter {
+		public static T WriteNamespace<T>(this T output, string @namespace) where T : ITextColorWriter {
 			if (@namespace == null)
 				return output;
 			if (@namespace.Length == 0)
-				output.Write(BoxedOutputColor.Punctuation, "-");
+				output.Write(BoxedTextColor.Punctuation, "-");
 			else {
 				var parts = @namespace.Split('.');
 				for (int i = 0; i < parts.Length; i++) {
 					if (i > 0)
-						output.Write(BoxedOutputColor.Operator, ".");
-					output.Write(BoxedOutputColor.Namespace, IdentifierEscaper.Escape(parts[i]));
+						output.Write(BoxedTextColor.Operator, ".");
+					output.Write(BoxedTextColor.Namespace, IdentifierEscaper.Escape(parts[i]));
 				}
 			}
 			return output;
@@ -167,8 +167,8 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="name">Module name</param>
 		/// <returns></returns>
-		public static T WriteModule<T>(this T output, string name) where T : IOutputColorWriter {
-			output.Write(BoxedOutputColor.Module, NameUtilities.CleanName(name));
+		public static T WriteModule<T>(this T output, string name) where T : ITextColorWriter {
+			output.Write(BoxedTextColor.Module, NameUtilities.CleanName(name));
 			return output;
 		}
 
@@ -179,7 +179,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static T WriteFilename<T>(this T output, string filename) where T : IOutputColorWriter {
+		public static T WriteFilename<T>(this T output, string filename) where T : ITextColorWriter {
 			if (filename == null)
 				return output;
 			filename = NameUtilities.CleanName(filename);
@@ -187,21 +187,21 @@ namespace dnSpy.Contracts.Text {
 			var parts = s.Split('/');
 			int slashIndex = 0;
 			for (int i = 0; i < parts.Length - 1; i++) {
-				output.Write(BoxedOutputColor.DirectoryPart, parts[i]);
+				output.Write(BoxedTextColor.DirectoryPart, parts[i]);
 				slashIndex += parts[i].Length;
-				output.Write(BoxedOutputColor.Text, filename[slashIndex].ToString());
+				output.Write(BoxedTextColor.Text, filename[slashIndex].ToString());
 				slashIndex++;
 			}
 			var fn = parts[parts.Length - 1];
 			int index = fn.LastIndexOf('.');
 			if (index < 0)
-				output.Write(BoxedOutputColor.FileNameNoExtension, fn);
+				output.Write(BoxedTextColor.FileNameNoExtension, fn);
 			else {
 				string ext = fn.Substring(index + 1);
 				fn = fn.Substring(0, index);
-				output.Write(BoxedOutputColor.FileNameNoExtension, fn);
-				output.Write(BoxedOutputColor.Text, ".");
-				output.Write(BoxedOutputColor.FileExtension, ext);
+				output.Write(BoxedTextColor.FileNameNoExtension, fn);
+				output.Write(BoxedTextColor.Text, ".");
+				output.Write(BoxedTextColor.FileExtension, ext);
 			}
 			return output;
 		}

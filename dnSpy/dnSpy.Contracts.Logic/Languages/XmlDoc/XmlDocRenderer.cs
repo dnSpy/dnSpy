@@ -107,60 +107,60 @@ namespace dnSpy.Contracts.Languages.XmlDoc {
 						break;
 					case "example":
 						output.WriteNewLine();
-						output.Write("Example", BoxedOutputColor.XmlDocToolTipExample);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write("Example", BoxedTextColor.XmlDocToolTipExample);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteNewLine();
 						isNewLine = true;
 						break;
 					case "exception":
 						output.WriteNewLine();
-						output.Write(GetCref(xml["cref"]), BoxedOutputColor.XmlDocToolTipExceptionCref);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipExceptionCref);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "returns":
 						output.WriteNewLine();
-						output.Write("Returns", BoxedOutputColor.XmlDocToolTipReturns);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write("Returns", BoxedTextColor.XmlDocToolTipReturns);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "see":
-						output.Write(GetCref(xml["cref"]), BoxedOutputColor.XmlDocToolTipSeeCref);
-						output.Write((xml["langword"] ?? string.Empty).Trim(), BoxedOutputColor.XmlDocToolTipSeeLangword);
+						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipSeeCref);
+						output.Write((xml["langword"] ?? string.Empty).Trim(), BoxedTextColor.XmlDocToolTipSeeLangword);
 						isNewLine = false;
 						break;
 					case "seealso":
 						output.WriteNewLine();
-						output.Write("See also", BoxedOutputColor.XmlDocToolTipSeeAlso);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write("See also", BoxedTextColor.XmlDocToolTipSeeAlso);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteSpace();
-						output.Write(GetCref(xml["cref"]), BoxedOutputColor.XmlDocToolTipSeeAlsoCref);
+						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipSeeAlsoCref);
 						isNewLine = false;
 						break;
 					case "paramref":
-						output.Write((xml["name"] ?? string.Empty).Trim(), BoxedOutputColor.XmlDocToolTipParamRefName);
+						output.Write((xml["name"] ?? string.Empty).Trim(), BoxedTextColor.XmlDocToolTipParamRefName);
 						isNewLine = false;
 						break;
 					case "param":
 						output.WriteNewLine();
-						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedOutputColor.XmlDocToolTipParamName);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedTextColor.XmlDocToolTipParamName);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "typeparam":
 						output.WriteNewLine();
-						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedOutputColor.XmlDocToolTipTypeParamName);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedTextColor.XmlDocToolTipTypeParamName);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "value":
 						output.WriteNewLine();
-						output.Write("Value", BoxedOutputColor.XmlDocToolTipValue);
-						output.Write(":", BoxedOutputColor.XmlDocToolTipColon);
+						output.Write("Value", BoxedTextColor.XmlDocToolTipValue);
+						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
 						output.WriteNewLine();
 						isNewLine = true;
 						break;
@@ -177,7 +177,7 @@ namespace dnSpy.Contracts.Languages.XmlDoc {
 					var s = whitespace.Replace(xml.Value, " ");
 					if (isNewLine)
 						s = s.TrimStart();
-					output.Write(s, lastElemName == "summary" ? BoxedOutputColor.XmlDocToolTipSummary : BoxedOutputColor.XmlDocToolTipText);
+					output.Write(s, lastElemName == "summary" ? BoxedTextColor.XmlDocToolTipSummary : BoxedTextColor.XmlDocToolTipText);
 					isNewLine = false;
 				}
 			}

@@ -184,9 +184,9 @@ namespace dnSpy.Files.TreeView.Resources {
 						Source = imageSource,
 					};
 				});
-				output.Write(" = ", BoxedOutputColor.Comment);
+				output.Write(" = ", BoxedTextColor.Comment);
 				const string LTR = "\u200E";
-				output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Comment);
+				output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;

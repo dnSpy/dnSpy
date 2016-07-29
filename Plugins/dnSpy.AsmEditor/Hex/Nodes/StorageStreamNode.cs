@@ -98,14 +98,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
-		protected override void Write(IOutputColorWriter output) {
-			output.Write(BoxedOutputColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageStream);
+		protected override void Write(ITextColorWriter output) {
+			output.Write(BoxedTextColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageStream);
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Operator, "#");
-			output.Write(BoxedOutputColor.Number, StreamNumber.ToString());
-			output.Write(BoxedOutputColor.Punctuation, ":");
+			output.Write(BoxedTextColor.Operator, "#");
+			output.Write(BoxedTextColor.Number, StreamNumber.ToString());
+			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(StorageStreamType == StorageStreamType.None ? BoxedOutputColor.Error : BoxedOutputColor.Type, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
+			output.Write(StorageStreamType == StorageStreamType.None ? BoxedTextColor.Error : BoxedTextColor.Type, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

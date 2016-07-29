@@ -72,7 +72,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			if (documentViewerOutput != null) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
-						output.Write(" ", BoxedOutputColor.Text);
+						output.Write(" ", BoxedTextColor.Text);
 					var imageSource = imageListOptions.ImageSources[i];
 					documentViewerOutput.AddUIElement(() => {
 						return new System.Windows.Controls.Image {

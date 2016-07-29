@@ -52,14 +52,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				TreeNode.RefreshUI();
 		}
 
-		protected override void Write(IOutputColorWriter output) {
-			output.Write(BoxedOutputColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_PE_Section);
+		protected override void Write(ITextColorWriter output) {
+			output.Write(BoxedTextColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_PE_Section);
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Operator, "#");
-			output.Write(BoxedOutputColor.Number, SectionNumber.ToString());
-			output.Write(BoxedOutputColor.Punctuation, ":");
+			output.Write(BoxedTextColor.Operator, "#");
+			output.Write(BoxedTextColor.Number, SectionNumber.ToString());
+			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Type, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
+			output.Write(BoxedTextColor.Type, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
 		}
 	}
 }

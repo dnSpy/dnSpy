@@ -124,11 +124,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, languageManager.Language);
 				printer.WriteName(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteAssembly(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteModule(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteFile(vm);
 				output.WriteLine();
 			}

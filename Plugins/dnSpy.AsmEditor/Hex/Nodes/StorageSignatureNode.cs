@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.storageSignatureVM = new StorageSignatureVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 0x10));
 		}
 
-		protected override void Write(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageSignature);
+		protected override void Write(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageSignature);
 	}
 }

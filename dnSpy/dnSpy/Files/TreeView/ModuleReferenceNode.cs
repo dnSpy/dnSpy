@@ -39,7 +39,7 @@ namespace dnSpy.Files.TreeView {
 			this.ModuleRef = moduleRef;
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, ModuleRef, Context.ShowToken);
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
 			filter.GetResult(ModuleRef).FilterType;

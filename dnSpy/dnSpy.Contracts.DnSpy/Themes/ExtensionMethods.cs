@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Themes {
 		/// </summary>
 		/// <param name="self">Color</param>
 		/// <returns></returns>
-		public static ColorType ToColorType(this OutputColor self) => (uint)self + ColorType.FirstNR;
+		public static ColorType ToColorType(this TextColor self) => (uint)self + ColorType.FirstNR;
 	}
 }

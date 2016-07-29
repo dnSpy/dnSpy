@@ -21,13 +21,13 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class FileListPrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 
-		public FileListPrinter(IOutputColorWriter output) {
+		public FileListPrinter(ITextColorWriter output) {
 			this.output = output;
 		}
 
-		public void WriteName(FileListVM vm) => output.Write(BoxedOutputColor.Assembly, vm.Name);
-		public void WriteFileCount(FileListVM vm) => output.Write(BoxedOutputColor.Number, vm.FileCount.ToString());
+		public void WriteName(FileListVM vm) => output.Write(BoxedTextColor.Assembly, vm.Name);
+		public void WriteFileCount(FileListVM vm) => output.Write(BoxedTextColor.Number, vm.FileCount.ToString());
 	}
 }

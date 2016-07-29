@@ -21,13 +21,13 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class GACFilePrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 
-		public GACFilePrinter(IOutputColorWriter output) {
+		public GACFilePrinter(ITextColorWriter output) {
 			this.output = output;
 		}
 
-		public void WriteName(GACFileVM vm) => output.Write(vm.IsExe ? BoxedOutputColor.AssemblyExe : BoxedOutputColor.Assembly, vm.Name);
+		public void WriteName(GACFileVM vm) => output.Write(vm.IsExe ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, vm.Name);
 		public void WriteVersion(GACFileVM vm) => output.Write(vm.Version);
 	}
 }

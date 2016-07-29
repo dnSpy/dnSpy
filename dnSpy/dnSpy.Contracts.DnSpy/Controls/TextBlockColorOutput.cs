@@ -33,7 +33,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.Controls {
-	sealed class TextBlockColorOutput : IOutputColorWriter {
+	sealed class TextBlockColorOutput : ITextColorWriter {
 		readonly CachedTextTokenColors cachedTextTokenColors;
 		readonly StringBuilder sb;
 
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Controls {
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(OutputColor color, string text) => Write(color.Box(), text);
+		public void Write(TextColor color, string text) => Write(color.Box(), text);
 		public void Write(object color, string text) {
 			cachedTextTokenColors.Append(color, text);
 			sb.Append(text);

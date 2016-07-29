@@ -29,9 +29,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.name = name;
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, ILanguage language) {
 			if (name != null)
-				output.Write(BoxedOutputColor.Keyword, name);
+				output.Write(BoxedTextColor.Keyword, name);
 			else
 				base.Write(output, language);
 		}

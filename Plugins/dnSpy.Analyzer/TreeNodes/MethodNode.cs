@@ -41,15 +41,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override void Initialize() => this.TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedMethod);
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, ILanguage language) {
 			if (hidesParent) {
-				output.Write(BoxedOutputColor.Punctuation, "(");
-				output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.HidesParent);
-				output.Write(BoxedOutputColor.Punctuation, ")");
+				output.Write(BoxedTextColor.Punctuation, "(");
+				output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.HidesParent);
+				output.Write(BoxedTextColor.Punctuation, ")");
 				output.WriteSpace();
 			}
 			language.WriteType(output, analyzedMethod.DeclaringType, true);
-			output.Write(BoxedOutputColor.Operator, ".");
+			output.Write(BoxedTextColor.Operator, ".");
 			new NodePrinter().Write(output, language, analyzedMethod, Context.ShowToken);
 		}
 

@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.Locals {
 
 		protected virtual CachedOutput CreateCachedOutputValue() => CachedOutput.Create();
 		protected virtual CachedOutput CreateCachedOutputType() => CachedOutput.Create();
-		public abstract void WriteName(IOutputColorWriter output);
+		public abstract void WriteName(ITextColorWriter output);
 
 		protected ValueContext context;
 		protected TypePrinterFlags TypePrinterFlags => context.LocalsOwner.PrinterContext.TypePrinterFlags;
@@ -186,8 +186,8 @@ namespace dnSpy.Debugger.Locals {
 			this.msg = msg;
 		}
 
-		public override void WriteName(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.Error, msg);
+		public override void WriteName(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.Error, msg);
 	}
 
 	sealed class LiteralFieldValueVM : ValueVM {
@@ -206,8 +206,8 @@ namespace dnSpy.Debugger.Locals {
 		public void Reinitialize(ValueContext context) => this.context = context;
 		protected override CachedOutput CreateCachedOutputValue() => CachedOutput.CreateConstant(info.FieldType, info.Constant, TypePrinterFlags);
 		protected override CachedOutput CreateCachedOutputType() => CachedOutput.Create(info.FieldType, TypePrinterFlags);
-		public override void WriteName(IOutputColorWriter output) =>
-			FieldValueType.WriteName(output, info.Name, BoxedOutputColor.LiteralField, info.OwnerType, overridden);
+		public override void WriteName(ITextColorWriter output) =>
+			FieldValueType.WriteName(output, info.Name, BoxedTextColor.LiteralField, info.OwnerType, overridden);
 	}
 
 	/// <summary>
@@ -715,7 +715,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		internal void RaisePropertyChangedInternal(string propName) => RaisePropertyChanged(propName);
-		public override void WriteName(IOutputColorWriter output) => valueType.WriteName(output);
+		public override void WriteName(ITextColorWriter output) => valueType.WriteName(output);
 
 		public override string SetValueAsText(string newText) {
 			if (!CanEdit)
@@ -1155,7 +1155,7 @@ namespace dnSpy.Debugger.Locals {
 	abstract class NormalValueType {
 		public virtual bool CanEdit => true;
 		public abstract string IconName { get; }
-		public abstract void WriteName(IOutputColorWriter output);
+		public abstract void WriteName(ITextColorWriter output);
 		public NormalValueVM Owner {
 			get { return owner; }
 			set {
@@ -1182,11 +1182,11 @@ namespace dnSpy.Debugger.Locals {
 		}
 		string name;
 
-		public override void WriteName(IOutputColorWriter output) {
+		public override void WriteName(ITextColorWriter output) {
 			var n = name;
 			if (string.IsNullOrEmpty(n))
 				n = string.Format("V_{0}", Index);
-			output.Write(BoxedOutputColor.Local, IdentifierEscaper.Escape(n));
+			output.Write(BoxedTextColor.Local, IdentifierEscaper.Escape(n));
 		}
 	}
 
@@ -1208,14 +1208,14 @@ namespace dnSpy.Debugger.Locals {
 		bool isThis;
 		string name;
 
-		public override void WriteName(IOutputColorWriter output) {
+		public override void WriteName(ITextColorWriter output) {
 			if (isThis)
-				output.Write(BoxedOutputColor.Keyword, "this");
+				output.Write(BoxedTextColor.Keyword, "this");
 			else {
 				var n = name;
 				if (string.IsNullOrEmpty(n))
 					n = string.Format("A_{0}", Index);
-				output.Write(BoxedOutputColor.Parameter, IdentifierEscaper.Escape(n));
+				output.Write(BoxedTextColor.Parameter, IdentifierEscaper.Escape(n));
 			}
 		}
 	}
@@ -1224,8 +1224,8 @@ namespace dnSpy.Debugger.Locals {
 		public override string IconName => "Exception";
 		public override bool CanEdit => false;
 
-		public override void WriteName(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.Local, "$exception");
+		public override void WriteName(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.Local, "$exception");
 	}
 
 	sealed class ArrayElementValueType : NormalValueType {
@@ -1239,13 +1239,13 @@ namespace dnSpy.Debugger.Locals {
 			this.state = state;
 		}
 
-		public override void WriteName(IOutputColorWriter output) {
-			output.Write(BoxedOutputColor.Punctuation, "[");
+		public override void WriteName(ITextColorWriter output) {
+			output.Write(BoxedTextColor.Punctuation, "[");
 
 			if (state.Dimensions.Length == 1 && state.Indices.Length == 1 && state.Indices[0] == 0) {
 				long i2 = index + (int)state.Indices[0];
 				// It's always in decimal
-				output.Write(BoxedOutputColor.Number, i2.ToString());
+				output.Write(BoxedTextColor.Number, i2.ToString());
 			}
 			else {
 				var ary = new uint[state.Dimensions.Length];
@@ -1259,16 +1259,16 @@ namespace dnSpy.Debugger.Locals {
 				}
 				for (int i = 0; i < ary.Length; i++) {
 					if (i > 0) {
-						output.Write(BoxedOutputColor.Punctuation, ",");
-						output.Write(BoxedOutputColor.Text, " ");
+						output.Write(BoxedTextColor.Punctuation, ",");
+						output.Write(BoxedTextColor.Text, " ");
 					}
 					long i2 = ary[i] + (int)state.Indices[i];
 					// It's always in decimal
-					output.Write(BoxedOutputColor.Number, i2.ToString());
+					output.Write(BoxedTextColor.Number, i2.ToString());
 				}
 			}
 
-			output.Write(BoxedOutputColor.Punctuation, "]");
+			output.Write(BoxedTextColor.Punctuation, "]");
 		}
 	}
 
@@ -1361,27 +1361,27 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override void WriteName(IOutputColorWriter output) =>
+		public override void WriteName(ITextColorWriter output) =>
 			WriteName(output, name, GetTypeColor(), vm.OwnerType, vm.Overridden);
 
-		internal static void WriteName(IOutputColorWriter output, string name, object typeColor, CorType ownerType, bool overridden) {
+		internal static void WriteName(ITextColorWriter output, string name, object typeColor, CorType ownerType, bool overridden) {
 			output.Write(typeColor, IdentifierEscaper.Escape(name));
 			if (overridden) {
-				output.Write(BoxedOutputColor.Text, " ");
-				output.Write(BoxedOutputColor.Punctuation, "(");
+				output.Write(BoxedTextColor.Text, " ");
+				output.Write(BoxedTextColor.Punctuation, "(");
 				ownerType.Write(new OutputConverter(output), TypePrinterFlags.Default);
-				output.Write(BoxedOutputColor.Punctuation, ")");
+				output.Write(BoxedTextColor.Punctuation, ")");
 			}
 		}
 
 		object GetTypeColor() {
 			if (IsEnum)
-				return BoxedOutputColor.EnumField;
+				return BoxedTextColor.EnumField;
 			if ((vm.FieldAttributes & FieldAttributes.Literal) != 0)
-				return BoxedOutputColor.LiteralField;
+				return BoxedTextColor.LiteralField;
 			if ((vm.FieldAttributes & FieldAttributes.Static) != 0)
-				return BoxedOutputColor.StaticField;
-			return BoxedOutputColor.InstanceField;
+				return BoxedTextColor.StaticField;
+			return BoxedTextColor.InstanceField;
 		}
 	}
 
@@ -1455,13 +1455,13 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public override void WriteName(IOutputColorWriter output) =>
+		public override void WriteName(ITextColorWriter output) =>
 			FieldValueType.WriteName(output, name, GetTypeColor(), vm.OwnerType, vm.Overridden);
 
 		object GetTypeColor() {
 			if ((vm.GetMethodAttributes & MethodAttributes.Static) != 0)
-				return BoxedOutputColor.StaticProperty;
-			return BoxedOutputColor.InstanceProperty;
+				return BoxedTextColor.StaticProperty;
+			return BoxedTextColor.InstanceProperty;
 		}
 	}
 
@@ -1558,16 +1558,16 @@ namespace dnSpy.Debugger.Locals {
 			Reinitialize(context, type);
 		}
 
-		public override void WriteName(IOutputColorWriter output) {
+		public override void WriteName(ITextColorWriter output) {
 			if (!string.IsNullOrEmpty(name))
-				output.Write(isTypeVar ? BoxedOutputColor.TypeGenericParameter : BoxedOutputColor.MethodGenericParameter, IdentifierEscaper.Escape(name));
+				output.Write(isTypeVar ? BoxedTextColor.TypeGenericParameter : BoxedTextColor.MethodGenericParameter, IdentifierEscaper.Escape(name));
 			else if (isTypeVar) {
-				output.Write(BoxedOutputColor.Operator, "!");
-				output.Write(BoxedOutputColor.Number, string.Format("{0}", index));
+				output.Write(BoxedTextColor.Operator, "!");
+				output.Write(BoxedTextColor.Number, string.Format("{0}", index));
 			}
 			else {
-				output.Write(BoxedOutputColor.Operator, "!!");
-				output.Write(BoxedOutputColor.Number, string.Format("{0}", index));
+				output.Write(BoxedTextColor.Operator, "!!");
+				output.Write(BoxedTextColor.Number, string.Format("{0}", index));
 			}
 		}
 	}
@@ -1631,7 +1631,7 @@ namespace dnSpy.Debugger.Locals {
 			Reinitialize(context);
 		}
 
-		public override void WriteName(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.TypeGenericParameter, dnSpy_Debugger_Resources.Locals_TypeVariables);
+		public override void WriteName(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.TypeGenericParameter, dnSpy_Debugger_Resources.Locals_TypeVariables);
 	}
 }

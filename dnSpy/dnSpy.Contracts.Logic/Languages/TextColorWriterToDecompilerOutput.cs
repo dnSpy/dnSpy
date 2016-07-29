@@ -23,10 +23,10 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
-	/// Converts a <see cref="IOutputColorWriter"/> to a <see cref="IDecompilerOutput"/>
+	/// Converts a <see cref="ITextColorWriter"/> to a <see cref="IDecompilerOutput"/>
 	/// </summary>
-	public sealed class OutputColorWriterToDecompilerOutput : IDecompilerOutput {
-		readonly IOutputColorWriter output;
+	public sealed class TextColorWriterToDecompilerOutput : IDecompilerOutput {
+		readonly ITextColorWriter output;
 		int indent;
 		int offset;
 		bool addIndent = true;
@@ -36,10 +36,10 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="output">Output to use</param>
 		/// <returns></returns>
-		public static IDecompilerOutput Create(IOutputColorWriter output) =>
-			new OutputColorWriterToDecompilerOutput(output);
+		public static IDecompilerOutput Create(ITextColorWriter output) =>
+			new TextColorWriterToDecompilerOutput(output);
 
-		OutputColorWriterToDecompilerOutput(IOutputColorWriter output) {
+		TextColorWriterToDecompilerOutput(ITextColorWriter output) {
 			this.output = output;
 			this.indent = 0;
 			this.offset = 0;
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Languages {
 		void IDecompilerOutput.Write(string text, object color) {
 			if (addIndent) {
 				if (indent != 0)
-					output.Write(BoxedOutputColor.Text, new string('\t', indent));
+					output.Write(BoxedTextColor.Text, new string('\t', indent));
 				offset += indent;
 			}
 			output.Write(color, text);
@@ -75,6 +75,6 @@ namespace dnSpy.Contracts.Languages {
 		void IDecompilerOutput.Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
 			((IDecompilerOutput)this).Write(text, color);
 		void IDecompilerOutput.WriteLine() =>
-			((IDecompilerOutput)this).Write(Environment.NewLine, BoxedOutputColor.Text);
+			((IDecompilerOutput)this).Write(Environment.NewLine, BoxedTextColor.Text);
 	}
 }

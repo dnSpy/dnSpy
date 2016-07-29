@@ -555,7 +555,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void IReplEditor.OutputPrint(string text, OutputColor color, bool startOnNewLine) =>
+		void IReplEditor.OutputPrint(string text, TextColor color, bool startOnNewLine) =>
 			((IReplEditor)this).OutputPrint(text, color.Box(), startOnNewLine);
 
 		void IReplEditor.OutputPrint(string text, object color, bool startOnNewLine) {
@@ -567,10 +567,10 @@ namespace dnSpy.Text.Editor {
 					if (pendingScriptOutput.Count > 0) {
 						var last = pendingScriptOutput[pendingScriptOutput.Count - 1];
 						if (last.Text.Length > 0 && last.Text[last.Text.Length - 1] != '\n')
-							pendingScriptOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
+							pendingScriptOutput.Add(new ColorAndText(BoxedTextColor.Text, Environment.NewLine));
 					}
 					else if (LastLine.Length != 0)
-						pendingScriptOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
+						pendingScriptOutput.Add(new ColorAndText(BoxedTextColor.Text, Environment.NewLine));
 				}
 				pendingScriptOutput.Add(new ColorAndText(color, text));
 			}
@@ -578,7 +578,7 @@ namespace dnSpy.Text.Editor {
 			FlushScriptOutput();
 		}
 
-		void IReplEditor.OutputPrintLine(string text, OutputColor color, bool startOnNewLine) =>
+		void IReplEditor.OutputPrintLine(string text, TextColor color, bool startOnNewLine) =>
 			((IReplEditor)this).OutputPrint(text + Environment.NewLine, color.Box(), startOnNewLine);
 
 		void IReplEditor.OutputPrintLine(string text, object color, bool startOnNewLine) =>
@@ -794,19 +794,19 @@ namespace dnSpy.Text.Editor {
 
 		public CachedTextTokenColors Create(string command, List<ColorOffsetInfo> colorInfos) {
 			if (owner.PrimaryPrompt.Length > totalLength)
-				cachedColors.Append(BoxedOutputColor.ReplPrompt1, owner.PrimaryPrompt.Substring(0, totalLength));
+				cachedColors.Append(BoxedTextColor.ReplPrompt1, owner.PrimaryPrompt.Substring(0, totalLength));
 			else
-				cachedColors.Append(BoxedOutputColor.ReplPrompt1, owner.PrimaryPrompt);
+				cachedColors.Append(BoxedTextColor.ReplPrompt1, owner.PrimaryPrompt);
 			int cmdOffs = 0;
 			foreach (var cinfo in colorInfos) {
 				Debug.Assert(cmdOffs <= cinfo.Offset);
 				if (cmdOffs < cinfo.Offset)
-					Append(BoxedOutputColor.Text, command, cmdOffs, cinfo.Offset - cmdOffs);
+					Append(BoxedTextColor.Text, command, cmdOffs, cinfo.Offset - cmdOffs);
 				Append(cinfo.Color, command, cinfo.Offset, cinfo.Length);
 				cmdOffs = cinfo.Offset + cinfo.Length;
 			}
 			if (cmdOffs < command.Length)
-				Append(BoxedOutputColor.Text, command, cmdOffs, command.Length - cmdOffs);
+				Append(BoxedTextColor.Text, command, cmdOffs, command.Length - cmdOffs);
 
 			cachedColors.Finish();
 			return cachedColors;
@@ -822,7 +822,7 @@ namespace dnSpy.Text.Editor {
 					cachedColors.Append(color, s, so, nlOffs - so + nlLen);
 					so = nlOffs + nlLen;
 					if (cachedColors.Length < totalLength)
-						cachedColors.Append(BoxedOutputColor.ReplPrompt2, owner.SecondaryPrompt);
+						cachedColors.Append(BoxedTextColor.ReplPrompt2, owner.SecondaryPrompt);
 				}
 				else {
 					cachedColors.Append(color, s, so, end - so);
@@ -872,7 +872,7 @@ namespace dnSpy.Text.Editor {
 		public void AddColor(int offset, int length, object color) =>
 			AddColor(new ColorOffsetInfo(offset, length, color));
 
-		public void AddColor(int offset, int length, OutputColor color) =>
+		public void AddColor(int offset, int length, TextColor color) =>
 			AddColor(new ColorOffsetInfo(offset, length, color));
 
 		public void AddColor(ColorOffsetInfo info) {

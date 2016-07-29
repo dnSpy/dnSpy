@@ -79,7 +79,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			execState = null;
 			ReplEditor.Reset();
 			isResetting = false;
-			ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine, BoxedOutputColor.ReplOutputText);
+			ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine, BoxedTextColor.ReplOutputText);
 			InitializeExecutionEngine(loadConfig, false);
 		}
 		bool isResetting;
@@ -119,7 +119,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				return;
 			hasInitialized = true;
 
-			this.ReplEditor.OutputPrintLine(Logo, BoxedOutputColor.ReplOutputText);
+			this.ReplEditor.OutputPrintLine(Logo, BoxedTextColor.ReplOutputText);
 			InitializeExecutionEngine(true, true);
 		}
 		bool hasInitialized;
@@ -202,7 +202,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 				execStateCache.ScriptState = script.RunAsync(execStateCache.Globals, execStateCache.CancellationTokenSource.Token).Result;
 				if (showHelp)
-					this.ReplEditor.OutputPrintLine(Help, BoxedOutputColor.ReplOutputText);
+					this.ReplEditor.OutputPrintLine(Help, BoxedTextColor.ReplOutputText);
 			}, execStateCache.CancellationTokenSource.Token)
 			.ContinueWith(t => {
 				execStateCache.IsInitializing = false;
@@ -210,7 +210,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				if (!t.IsCanceled && !t.IsFaulted)
 					CommandExecuted();
 				else
-					this.ReplEditor.OutputPrintLine($"Could not create the script:\n\n{ex}", BoxedOutputColor.Error, true);
+					this.ReplEditor.OutputPrintLine($"Could not create the script:\n\n{ex}", BoxedTextColor.Error, true);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -222,7 +222,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					CommandExecuted();
 			}
 			catch (Exception ex) {
-				ReplEditor.OutputPrint(ex.ToString(), BoxedOutputColor.Error, true);
+				ReplEditor.OutputPrint(ex.ToString(), BoxedTextColor.Error, true);
 				CommandExecuted();
 			}
 		}
@@ -319,13 +319,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						if (isActive) {
 							try {
 								if (ex != null)
-									this.ReplEditor.OutputPrint(Format(ex.InnerException), BoxedOutputColor.Error, true);
+									this.ReplEditor.OutputPrint(Format(ex.InnerException), BoxedTextColor.Error, true);
 
 								if (!t.IsCanceled && !t.IsFaulted) {
 									oldState.ScriptState = t.Result;
 									var val = t.Result.ReturnValue;
 									if (val != null)
-										ObjectOutputLine(BoxedOutputColor.ReplOutputText, oldState.Globals.PrintOptionsImpl, val, true);
+										ObjectOutputLine(BoxedTextColor.ReplOutputText, oldState.Globals.PrintOptionsImpl, val, true);
 								}
 							}
 							finally {
@@ -350,7 +350,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					else {
 						var ex = t.Exception;
 						if (ex != null) {
-							this.ReplEditor.OutputPrint(ex.ToString(), BoxedOutputColor.Error, true);
+							this.ReplEditor.OutputPrint(ex.ToString(), BoxedTextColor.Error, true);
 							CommandExecuted();
 						}
 					}
@@ -363,7 +363,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					lock (lockObj)
 						execState.Executing = false;
 				}
-				ReplEditor.OutputPrintLine($"Error executing script:\n\n{ex}", BoxedOutputColor.Error, true);
+				ReplEditor.OutputPrintLine($"Error executing script:\n\n{ex}", BoxedTextColor.Error, true);
 				return false;
 			}
 		}
@@ -409,13 +409,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		void PrintDiagnostics(ImmutableArray<Diagnostic> diagnostics) {
 			const int MAX_DIAGS = 5;
 			for (int i = 0; i < diagnostics.Length && i < MAX_DIAGS; i++)
-				ReplEditor.OutputPrintLine(DiagnosticFormatter.Format(diagnostics[i], Thread.CurrentThread.CurrentUICulture), BoxedOutputColor.Error, true);
+				ReplEditor.OutputPrintLine(DiagnosticFormatter.Format(diagnostics[i], Thread.CurrentThread.CurrentUICulture), BoxedTextColor.Error, true);
 			int extraErrors = diagnostics.Length - MAX_DIAGS;
 			if (extraErrors > 0) {
 				if (extraErrors == 1)
-					ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors), BoxedOutputColor.Error, true);
+					ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors), BoxedTextColor.Error, true);
 				else
-					ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors), BoxedOutputColor.Error, true);
+					ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors), BoxedTextColor.Error, true);
 			}
 		}
 
@@ -513,11 +513,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 
 			public void Write(string text, object color) {
-				owner.ReplEditor.OutputPrint(text, color ?? BoxedOutputColor.ReplScriptOutputText, startOnNewLine);
+				owner.ReplEditor.OutputPrint(text, color ?? BoxedTextColor.ReplScriptOutputText, startOnNewLine);
 				startOnNewLine = false;
 			}
 
-			public void Write(string text, OutputColor color) => Write(text, color.Box());
+			public void Write(string text, TextColor color) => Write(text, color.Box());
 		}
 
 		void ObjectOutput(CachedWriter writer, object color, PrintOptionsImpl printOptions, object value) {

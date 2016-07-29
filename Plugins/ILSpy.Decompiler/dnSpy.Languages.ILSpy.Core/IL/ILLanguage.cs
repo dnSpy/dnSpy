@@ -170,7 +170,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 		}
 
 		public override void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
-			output.WriteLine("// " + asm.ManifestModule.Location, BoxedOutputColor.Comment);
+			output.WriteLine("// " + asm.ManifestModule.Location, BoxedTextColor.Comment);
 			PrintEntryPoint(asm.ManifestModule, output);
 			output.WriteLine();
 
@@ -179,7 +179,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 		}
 
 		public override void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) {
-			output.WriteLine("// " + mod.Location, BoxedOutputColor.Comment);
+			output.WriteLine("// " + mod.Location, BoxedTextColor.Comment);
 			PrintEntryPoint(mod, output);
 			output.WriteLine();
 
@@ -191,8 +191,8 @@ namespace dnSpy.Languages.ILSpy.IL {
 		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 
-		public override void WriteToolTip(IOutputColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {
-			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(OutputColorWriterToDecompilerOutput.Create(output), member))
+		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {
+			if (!(member is ITypeDefOrRef) && ILLanguageUtils.Write(TextColorWriterToDecompilerOutput.Create(output), member))
 				return;
 
 			base.WriteToolTip(output, member, typeAttributes);

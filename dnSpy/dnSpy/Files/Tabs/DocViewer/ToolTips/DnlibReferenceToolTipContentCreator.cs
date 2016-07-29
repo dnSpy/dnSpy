@@ -145,7 +145,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			if (v == null) {
 				if (name == null)
 					return null;
-				creator.Output.Write(BoxedOutputColor.Text, string.Format("(local variable) {0}", name));
+				creator.Output.Write(BoxedTextColor.Text, string.Format("(local variable) {0}", name));
 				return creator.Create();
 			}
 
@@ -179,14 +179,14 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
 			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
-			creator.Output.Write(BoxedOutputColor.OpCode, opCode.Name);
+			creator.Output.Write(BoxedTextColor.OpCode, opCode.Name);
 			creator.Output.WriteSpace();
-			creator.Output.Write(BoxedOutputColor.Punctuation, "(");
-			creator.Output.Write(BoxedOutputColor.Number, opCodeHex);
-			creator.Output.Write(BoxedOutputColor.Punctuation, ")");
+			creator.Output.Write(BoxedTextColor.Punctuation, "(");
+			creator.Output.Write(BoxedTextColor.Number, opCodeHex);
+			creator.Output.Write(BoxedTextColor.Punctuation, ")");
 			if (s != null) {
-				creator.Output.Write(BoxedOutputColor.Text, " - ");
-				creator.Output.Write(BoxedOutputColor.Text, s);
+				creator.Output.Write(BoxedTextColor.Text, " - ");
+				creator.Output.Write(BoxedTextColor.Text, s);
 			}
 
 			return creator.Create();

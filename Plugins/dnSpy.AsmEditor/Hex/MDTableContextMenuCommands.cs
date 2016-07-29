@@ -354,7 +354,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(MDTableContext context) {
 			var output = new StringBuilderTextColorOutput();
-			var output2 = OutputColorWriterToDecompilerOutput.Create(output);
+			var output2 = TextColorWriterToDecompilerOutput.Create(output);
 			context.Node.WriteHeader(output2);
 			foreach (var rec in context.Records)
 				context.Node.Write(output2, rec);

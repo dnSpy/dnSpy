@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="output">Output</param>
 		/// <param name="language">Language</param>
 		/// <param name="namespace">Namespace</param>
-		public void WriteNamespace(IOutputColorWriter output, ILanguage language, string @namespace) => output.WriteNamespace(@namespace);
+		public void WriteNamespace(ITextColorWriter output, ILanguage language, string @namespace) => output.WriteNamespace(@namespace);
 
 		/// <summary>
 		/// Writes a file
@@ -58,13 +58,13 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="output">Output</param>
 		/// <param name="language">Language</param>
 		/// <param name="file">File</param>
-		public void Write(IOutputColorWriter output, ILanguage language, IDnSpyFile file) {
+		public void Write(ITextColorWriter output, ILanguage language, IDnSpyFile file) {
 			var filename = GetFilename(file);
 			var peImage = file.PEImage;
 			if (peImage != null)
-				output.Write(IsExe(peImage) ? BoxedOutputColor.AssemblyExe : BoxedOutputColor.Assembly, NameUtilities.CleanName(filename));
+				output.Write(IsExe(peImage) ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, NameUtilities.CleanName(filename));
 			else
-				output.Write(BoxedOutputColor.Text, NameUtilities.CleanName(filename));
+				output.Write(BoxedTextColor.Text, NameUtilities.CleanName(filename));
 		}
 
 		/// <summary>
@@ -76,15 +76,15 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="showToken">true to write tokens</param>
 		/// <param name="showAssemblyVersion">true to write version</param>
 		/// <param name="showAssemblyPublicKeyToken">true to write public key token</param>
-		public void Write(IOutputColorWriter output, ILanguage language, AssemblyDef asm, bool showToken, bool showAssemblyVersion, bool showAssemblyPublicKeyToken) {
-			output.Write(IsExe(asm.ManifestModule) ? BoxedOutputColor.AssemblyExe : BoxedOutputColor.Assembly, asm.Name);
+		public void Write(ITextColorWriter output, ILanguage language, AssemblyDef asm, bool showToken, bool showAssemblyVersion, bool showAssemblyPublicKeyToken) {
+			output.Write(IsExe(asm.ManifestModule) ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, asm.Name);
 
 			bool showAsmVer = showAssemblyVersion;
 			bool showPublicKeyToken = showAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken);
 
 			if (showAsmVer || showPublicKeyToken) {
 				output.WriteSpace();
-				output.Write(BoxedOutputColor.Punctuation, "(");
+				output.Write(BoxedTextColor.Punctuation, "(");
 
 				bool needComma = false;
 				if (showAsmVer) {
@@ -102,12 +102,12 @@ namespace dnSpy.Contracts.Files.TreeView {
 
 					var pkt = asm.PublicKeyToken;
 					if (PublicKeyBase.IsNullOrEmpty2(pkt))
-						output.Write(BoxedOutputColor.Keyword, "null");
+						output.Write(BoxedTextColor.Keyword, "null");
 					else
-						output.Write(BoxedOutputColor.Number, pkt.ToString());
+						output.Write(BoxedTextColor.Number, pkt.ToString());
 				}
 
-				output.Write(BoxedOutputColor.Punctuation, ")");
+				output.Write(BoxedTextColor.Punctuation, ")");
 			}
 
 			WriteToken(output, asm, showToken);
@@ -120,7 +120,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="module">Module</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, ModuleDef module, bool showToken) {
+		public void Write(ITextColorWriter output, ILanguage language, ModuleDef module, bool showToken) {
 			output.WriteModule(module.Name);
 			WriteToken(output, module, showToken);
 		}
@@ -131,12 +131,12 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="output">Output</param>
 		/// <param name="tok">Token provider</param>
 		/// <param name="showToken">true to write tokens</param>
-		void WriteToken(IOutputColorWriter output, IMDTokenProvider tok, bool showToken) {
+		void WriteToken(ITextColorWriter output, IMDTokenProvider tok, bool showToken) {
 			if (!showToken)
 				return;
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Operator, "@");
-			output.Write(BoxedOutputColor.Number, string.Format("{0:X8}", tok.MDToken.Raw));
+			output.Write(BoxedTextColor.Operator, "@");
+			output.Write(BoxedTextColor.Number, string.Format("{0:X8}", tok.MDToken.Raw));
 		}
 
 		/// <summary>
@@ -146,8 +146,8 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="asmRef">Assembly reference</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, AssemblyRef asmRef, bool showToken) {
-			output.Write(BoxedOutputColor.Text, NameUtilities.CleanIdentifier(asmRef.Name));
+		public void Write(ITextColorWriter output, ILanguage language, AssemblyRef asmRef, bool showToken) {
+			output.Write(BoxedTextColor.Text, NameUtilities.CleanIdentifier(asmRef.Name));
 			WriteToken(output, asmRef, showToken);
 		}
 
@@ -158,8 +158,8 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="modRef">Module reference</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, ModuleRef modRef, bool showToken) {
-			output.Write(BoxedOutputColor.Text, NameUtilities.CleanIdentifier(modRef.Name));
+		public void Write(ITextColorWriter output, ILanguage language, ModuleRef modRef, bool showToken) {
+			output.Write(BoxedTextColor.Text, NameUtilities.CleanIdentifier(modRef.Name));
 			WriteToken(output, modRef, showToken);
 		}
 
@@ -170,7 +170,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="type">Type</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, TypeDef type, bool showToken) {
+		public void Write(ITextColorWriter output, ILanguage language, TypeDef type, bool showToken) {
 			language.WriteName(output, type);
 			WriteToken(output, type, showToken);
 		}
@@ -182,7 +182,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="type">Type</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, ITypeDefOrRef type, bool showToken) {
+		public void Write(ITextColorWriter output, ILanguage language, ITypeDefOrRef type, bool showToken) {
 			language.WriteType(output, type, false);
 			WriteToken(output, type, showToken);
 		}
@@ -194,10 +194,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="event">Event</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, EventDef @event, bool showToken) {
-			output.Write(OutputColorHelper.GetColor(@event), NameUtilities.CleanIdentifier(@event.Name));
+		public void Write(ITextColorWriter output, ILanguage language, EventDef @event, bool showToken) {
+			output.Write(TextColorHelper.GetColor(@event), NameUtilities.CleanIdentifier(@event.Name));
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Punctuation, ":");
+			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, @event.EventType, false);
 			WriteToken(output, @event, showToken);
@@ -211,10 +211,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="property">Property</param>
 		/// <param name="showToken">true to write tokens</param>
 		/// <param name="isIndexer">true if it's an indexer</param>
-		public void Write(IOutputColorWriter output, ILanguage language, PropertyDef property, bool showToken, bool? isIndexer) {
+		public void Write(ITextColorWriter output, ILanguage language, PropertyDef property, bool showToken, bool? isIndexer) {
 			language.WriteName(output, property, isIndexer);
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Punctuation, ":");
+			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, property.PropertySig.GetRetType().ToTypeDefOrRef(), false);
 			WriteToken(output, property, showToken);
@@ -227,10 +227,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="field">Field</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, FieldDef field, bool showToken) {
-			output.Write(OutputColorHelper.GetColor(field), NameUtilities.CleanIdentifier(field.Name));
+		public void Write(ITextColorWriter output, ILanguage language, FieldDef field, bool showToken) {
+			output.Write(TextColorHelper.GetColor(field), NameUtilities.CleanIdentifier(field.Name));
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Punctuation, ":");
+			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, field.FieldType.ToTypeDefOrRef(), false);
 			WriteToken(output, field, showToken);
@@ -243,9 +243,9 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <param name="method">Method</param>
 		/// <param name="showToken">true to write tokens</param>
-		public void Write(IOutputColorWriter output, ILanguage language, MethodDef method, bool showToken) {
-			output.Write(OutputColorHelper.GetColor(method), NameUtilities.CleanIdentifier(method.Name));
-			output.Write(BoxedOutputColor.Punctuation, "(");
+		public void Write(ITextColorWriter output, ILanguage language, MethodDef method, bool showToken) {
+			output.Write(TextColorHelper.GetColor(method), NameUtilities.CleanIdentifier(method.Name));
+			output.Write(BoxedTextColor.Punctuation, "(");
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
 					continue;
@@ -256,11 +256,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 			if (method.CallingConvention == CallingConvention.VarArg || method.CallingConvention == CallingConvention.NativeVarArg) {
 				if (method.MethodSig.GetParamCount() > 0)
 					output.WriteCommaSpace();
-				output.Write(BoxedOutputColor.Operator, "...");
+				output.Write(BoxedTextColor.Operator, "...");
 			}
-			output.Write(BoxedOutputColor.Punctuation, ")");
+			output.Write(BoxedTextColor.Punctuation, ")");
 			output.WriteSpace();
-			output.Write(BoxedOutputColor.Punctuation, ":");
+			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
 			language.WriteType(output, method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef);
 			WriteToken(output, method, showToken);

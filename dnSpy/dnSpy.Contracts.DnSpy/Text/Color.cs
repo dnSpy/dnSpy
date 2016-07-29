@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Color or null
 		/// </summary>
-		public ITextColor TextColor { get; }
+		public IThemeTextColor TextColor { get; }
 
 		/// <summary>
 		/// Color or null
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Text {
 		/// Constructor
 		/// </summary>
 		/// <param name="color">Color</param>
-		public Color(ITextColor color) {
+		public Color(IThemeTextColor color) {
 			if (color == null)
 				throw new ArgumentNullException(nameof(color));
 			TextColor = color;
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="fontWeight">Font weight or null</param>
 		/// <param name="fontStyle">Font style or null</param>
 		public Color(Brush foreground, Brush background = null, FontWeight? fontWeight = null, FontStyle? fontStyle = null) {
-			TextColor = new TextColor(foreground, background, fontWeight, fontStyle);
+			TextColor = new ThemeTextColor(foreground, background, fontWeight, fontStyle);
 			ColorType = null;
 		}
 
@@ -74,6 +74,6 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
-		public ITextColor ToTextColor(ITheme theme) => TextColor ?? theme.GetTextColor(ColorType.Value);
+		public IThemeTextColor ToTextColor(ITheme theme) => TextColor ?? theme.GetTextColor(ColorType.Value);
 	}
 }

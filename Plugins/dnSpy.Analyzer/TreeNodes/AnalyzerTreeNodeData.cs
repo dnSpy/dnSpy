@@ -54,7 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 		WeakReference cachedText;
 
-		protected abstract void Write(IOutputColorWriter output, ILanguage language);
+		protected abstract void Write(ITextColorWriter output, ILanguage language);
 		public sealed override object ToolTip => null;
 		public sealed override string ToString() => ToString(Context.Language);
 

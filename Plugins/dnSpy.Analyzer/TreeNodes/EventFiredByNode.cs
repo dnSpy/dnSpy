@@ -47,8 +47,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
-			output.Write(BoxedOutputColor.Text, dnSpy_Analyzer_Resources.RaisedByTreeNode);
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
+			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.RaisedByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();

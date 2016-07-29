@@ -21,24 +21,24 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class ValuePrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 		readonly bool useHex;
 
-		public ValuePrinter(IOutputColorWriter output, bool useHex) {
+		public ValuePrinter(ITextColorWriter output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
 		}
 
 		public void WriteExpander(ValueVM vm) {
 			if (vm.LazyLoading)
-				output.Write(BoxedOutputColor.Text, "+");
+				output.Write(BoxedTextColor.Text, "+");
 			else if (vm.Children.Count == 0) {
 				// VS prints nothing
 			}
 			else if (vm.IsExpanded)
-				output.Write(BoxedOutputColor.Text, "-");
+				output.Write(BoxedTextColor.Text, "-");
 			else
-				output.Write(BoxedOutputColor.Text, "+");
+				output.Write(BoxedTextColor.Text, "+");
 		}
 
 		public void WriteName(ValueVM vm) => vm.WriteName(output);

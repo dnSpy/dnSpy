@@ -169,7 +169,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 							var ed = new EventDeclaration();
 							ed.ReturnType = ev.ReturnType.Detach();
 							ed.Modifiers = ev.Modifiers;
-							ed.Variables.Add(new VariableInitializer(OutputColorHelper.GetColor(ev.Annotation<EventDef>()), ev.Name));
+							ed.Variables.Add(new VariableInitializer(TextColorHelper.GetColor(ev.Annotation<EventDef>()), ev.Name));
 							ed.CopyAnnotationsFrom(ev);
 							ev.ReplaceWith(ed);
 						}

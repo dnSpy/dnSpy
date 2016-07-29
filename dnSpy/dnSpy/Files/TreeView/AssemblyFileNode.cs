@@ -49,17 +49,17 @@ namespace dnSpy.Files.TreeView {
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
 
-		protected override void WriteToolTip(IOutputColorWriter output, ILanguage language) {
+		protected override void WriteToolTip(ITextColorWriter output, ILanguage language) {
 			output.Write(DnSpyFile.AssemblyDef);
 
 			output.WriteLine();
-			output.Write(BoxedOutputColor.EnumField, TargetFrameworkInfo.Create(DnSpyFile.AssemblyDef.ManifestModule).ToString());
+			output.Write(BoxedTextColor.EnumField, TargetFrameworkInfo.Create(DnSpyFile.AssemblyDef.ManifestModule).ToString());
 
 			output.WriteLine();
-			output.Write(BoxedOutputColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.AssemblyDef.ManifestModule));
+			output.Write(BoxedTextColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.AssemblyDef.ManifestModule));
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

@@ -192,18 +192,18 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && (node is PrimitiveType || node is InstanceExpression))
-				output.Write(keyword, memberRef, DecompilerReferenceFlags.None, BoxedOutputColor.Keyword);
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.None, BoxedTextColor.Keyword);
 			else if (memberRef != null && (node is ConstructorDeclaration && keyword == "New"))
-				output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Keyword);
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 			else if (memberRef != null && (node is Accessor && (keyword == "Get" || keyword == "Set" || keyword == "AddHandler" || keyword == "RemoveHandler" || keyword == "RaiseEvent"))) {
 				if (canPrintAccessor)
-					output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedOutputColor.Keyword);
+					output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 				else
-					output.Write(keyword, BoxedOutputColor.Keyword);
+					output.Write(keyword, BoxedTextColor.Keyword);
 				canPrintAccessor = !canPrintAccessor;
 			}
 			else
-				output.Write(keyword, BoxedOutputColor.Keyword);
+				output.Write(keyword, BoxedTextColor.Keyword);
 		}
 		bool canPrintAccessor = true;
 
@@ -238,19 +238,19 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				return (MethodDef)method;
 		}
 
-		public void Space() => output.Write(" ", BoxedOutputColor.Text);
+		public void Space() => output.Write(" ", BoxedTextColor.Text);
 		public void Indent() => output.IncreaseIndent();
 		public void Unindent() => output.DecreaseIndent();
 		public void NewLine() => output.WriteLine();
 
 		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
-				output.Write("'''", BoxedOutputColor.XmlDocCommentDelimiter);
+				output.Write("'''", BoxedTextColor.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
 			}
 			else
-				output.WriteLine("'" + content, BoxedOutputColor.Comment);
+				output.WriteLine("'" + content, BoxedTextColor.Comment);
 		}
 
 		static bool IsDefinition(AstNode node) =>

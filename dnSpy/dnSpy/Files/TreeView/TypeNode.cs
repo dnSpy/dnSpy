@@ -63,7 +63,7 @@ namespace dnSpy.Files.TreeView {
 				yield return new TypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.TypeTreeNodeGroupType), t);
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, TypeDef, Context.ShowToken);
 		public IMethodNode Create(MethodDef method) => Context.FileTreeView.Create(method);
 		public IPropertyNode Create(PropertyDef property) => Context.FileTreeView.Create(property);

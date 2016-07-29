@@ -77,12 +77,12 @@ namespace Example2.Plugin {
 	[ExportMenuItem(Header = "Write Hello to the Log", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 0)]
 	sealed class WriteHelloCtxMenuCommand : LogEditorCtxMenuCommand {
 		public override void Execute(LogEditorCtxMenuContext context) {
-			context.TextPane.Write(OutputColor.Blue, "H");
-			context.TextPane.Write(OutputColor.Red, "E");
-			context.TextPane.Write(OutputColor.Green, "L");
-			context.TextPane.Write(OutputColor.Yellow, "L");
-			context.TextPane.Write(OutputColor.Cyan, "O");
-			context.TextPane.Write(OutputColor.Gray, "!");
+			context.TextPane.Write(TextColor.Blue, "H");
+			context.TextPane.Write(TextColor.Red, "E");
+			context.TextPane.Write(TextColor.Green, "L");
+			context.TextPane.Write(TextColor.Yellow, "L");
+			context.TextPane.Write(TextColor.Cyan, "O");
+			context.TextPane.Write(TextColor.Gray, "!");
 			context.TextPane.WriteLine();
 		}
 	}
@@ -90,6 +90,6 @@ namespace Example2.Plugin {
 	[ExportMenuItem(Header = "Open the Pod Bay Doors", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 10)]
 	sealed class ShowExceptionMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		public override void Execute(LogEditorCtxMenuContext context) =>
-			context.TextPane.WriteLine(OutputColor.Error, "I'm afraid I can't do that.");
+			context.TextPane.WriteLine(TextColor.Error, "I'm afraid I can't do that.");
 	}
 }

@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.storageHeaderVM = new StorageHeaderVM(this, doc, StartOffset);
 		}
 
-		protected override void Write(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageHeader);
+		protected override void Write(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageHeader);
 	}
 }

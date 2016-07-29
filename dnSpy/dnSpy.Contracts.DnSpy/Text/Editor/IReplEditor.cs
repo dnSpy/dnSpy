@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
 		/// <param name="startOnNewLine">true to print the text on a new line</param>
-		void OutputPrint(string text, OutputColor color, bool startOnNewLine = false);
+		void OutputPrint(string text, TextColor color, bool startOnNewLine = false);
 
 		/// <summary>
 		/// Adds script output and a new line. This method can be called from any thread
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
 		/// <param name="startOnNewLine">true to print the text on a new line</param>
-		void OutputPrintLine(string text, OutputColor color, bool startOnNewLine = false);
+		void OutputPrintLine(string text, TextColor color, bool startOnNewLine = false);
 
 		/// <summary>
 		/// Adds script output. This method can be called from any thread

@@ -21,10 +21,10 @@ using System.Text;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// An <see cref="IOutputColorWriter"/> using a <see cref="StringBuilder"/>. It ignores
+	/// An <see cref="ITextColorWriter"/> using a <see cref="StringBuilder"/>. It ignores
 	/// all colors passed to it.
 	/// </summary>
-	public sealed class StringBuilderTextColorOutput : IOutputColorWriter {
+	public sealed class StringBuilderTextColorOutput : ITextColorWriter {
 		readonly StringBuilder sb;
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public void Write(OutputColor color, string text) => sb.Append(text);
+		public void Write(TextColor color, string text) => sb.Append(text);
 
 		/// <summary>
 		/// Gets all the text

@@ -118,13 +118,13 @@ namespace Example2.Plugin {
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
 			new ImageReference(GetType().Assembly, "TextFile");
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, ILanguage language) {
 			output.WriteFilename(Path.GetFileName(file.Filename));
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = ContentTypes.PlainText;
-			context.Output.Write(file.Text, BoxedOutputColor.Text);
+			context.Output.Write(file.Text, BoxedTextColor.Text);
 			return true;
 		}
 	}

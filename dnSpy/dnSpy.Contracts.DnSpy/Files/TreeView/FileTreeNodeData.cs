@@ -71,14 +71,14 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="language">Language</param>
-		protected abstract void Write(IOutputColorWriter output, ILanguage language);
+		protected abstract void Write(ITextColorWriter output, ILanguage language);
 
 		/// <summary>
 		/// Writes the tooltip
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="language">Language</param>
-		protected virtual void WriteToolTip(IOutputColorWriter output, ILanguage language) => Write(output, language);
+		protected virtual void WriteToolTip(ITextColorWriter output, ILanguage language) => Write(output, language);
 
 		/// <inheritdoc/>
 		public sealed override object ToolTip {

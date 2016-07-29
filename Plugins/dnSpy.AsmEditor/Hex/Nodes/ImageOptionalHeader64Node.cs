@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageOptionalHeader64VM = new ImageOptionalHeader64VM(this, doc, StartOffset, EndOffset);
 		}
 
-		protected override void Write(IOutputColorWriter output) =>
-			output.Write(BoxedOutputColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_OptHeader64);
+		protected override void Write(ITextColorWriter output) =>
+			output.Write(BoxedTextColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_OptHeader64);
 	}
 }

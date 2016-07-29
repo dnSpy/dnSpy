@@ -40,7 +40,7 @@ namespace dnSpy.Files.TreeView {
 			this.PropertyDef = property;
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, PropertyDef, Context.ShowToken, null);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

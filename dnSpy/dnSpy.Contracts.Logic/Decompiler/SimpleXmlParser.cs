@@ -35,21 +35,21 @@ namespace dnSpy.Contracts.Decompiler {
 			while (index < text.Length) {
 				int specialIndex = text.IndexOfAny(inTag ? specialCharsTag : specialChars, index);
 				if (specialIndex < 0) {
-					yield return new KeyValuePair<string, object>(text.Substring(index), BoxedOutputColor.XmlDocCommentText);
+					yield return new KeyValuePair<string, object>(text.Substring(index), BoxedTextColor.XmlDocCommentText);
 					break;
 				}
 
 				var c = text[specialIndex];
 				if (c == '>') {
-					yield return new KeyValuePair<string, object>(text.Substring(index, specialIndex - index + 1), BoxedOutputColor.XmlDocCommentText);
+					yield return new KeyValuePair<string, object>(text.Substring(index, specialIndex - index + 1), BoxedTextColor.XmlDocCommentText);
 					index = specialIndex + 1;
 				}
 				else {
 					if (specialIndex - index > 0) {
 						if (c == '<')
-							yield return new KeyValuePair<string, object>(text.Substring(index, specialIndex - index), BoxedOutputColor.XmlDocCommentText);
+							yield return new KeyValuePair<string, object>(text.Substring(index, specialIndex - index), BoxedTextColor.XmlDocCommentText);
 						else // c == '"'
-							yield return new KeyValuePair<string, object>(text.Substring(index, specialIndex - index), inTag ? BoxedOutputColor.XmlDocCommentName : BoxedOutputColor.XmlDocCommentText);
+							yield return new KeyValuePair<string, object>(text.Substring(index, specialIndex - index), inTag ? BoxedTextColor.XmlDocCommentName : BoxedTextColor.XmlDocCommentText);
 					}
 
 					index = specialIndex;
@@ -59,20 +59,20 @@ namespace dnSpy.Contracts.Decompiler {
 					while (index < endIndex) {
 						int attrIndex = text.IndexOf('"', index, endIndex - index);
 						if (attrIndex < 0) {
-							yield return new KeyValuePair<string, object>(text.Substring(index, endIndex - index), BoxedOutputColor.XmlDocCommentName);
+							yield return new KeyValuePair<string, object>(text.Substring(index, endIndex - index), BoxedTextColor.XmlDocCommentName);
 							break;
 						}
 
 						if (attrIndex - index > 0)
-							yield return new KeyValuePair<string, object>(text.Substring(index, attrIndex - index), BoxedOutputColor.XmlDocCommentName);
+							yield return new KeyValuePair<string, object>(text.Substring(index, attrIndex - index), BoxedTextColor.XmlDocCommentName);
 
 						int endAttrIndex = text.IndexOf('"', attrIndex + 1, endIndex - attrIndex - 1);
 						if (endAttrIndex < 0) {
-							yield return new KeyValuePair<string, object>(text.Substring(attrIndex, endIndex - attrIndex), BoxedOutputColor.XmlDocCommentAttributeValue);
+							yield return new KeyValuePair<string, object>(text.Substring(attrIndex, endIndex - attrIndex), BoxedTextColor.XmlDocCommentAttributeValue);
 							break;
 						}
 
-						yield return new KeyValuePair<string, object>(text.Substring(attrIndex, endAttrIndex - attrIndex + 1), BoxedOutputColor.XmlDocCommentAttributeValue);
+						yield return new KeyValuePair<string, object>(text.Substring(attrIndex, endAttrIndex - attrIndex + 1), BoxedTextColor.XmlDocCommentAttributeValue);
 						index = endAttrIndex + 1;
 					}
 

@@ -23,9 +23,9 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// <see cref="OutputColor"/> utilities
+	/// <see cref="TextColor"/> utilities
 	/// </summary>
-	public static class OutputColorHelper {
+	public static class TextColorHelper {
 		/// <summary>
 		/// Gets a type color
 		/// </summary>
@@ -33,17 +33,17 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(TypeDef type) {
 			if (type == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			if (type.IsInterface)
-				return BoxedOutputColor.Interface;
+				return BoxedTextColor.Interface;
 			if (type.IsEnum)
-				return BoxedOutputColor.Enum;
+				return BoxedTextColor.Enum;
 			if (type.IsValueType)
-				return BoxedOutputColor.ValueType;
+				return BoxedTextColor.ValueType;
 
 			if (type.IsDelegate)
-				return BoxedOutputColor.Delegate;
+				return BoxedTextColor.Delegate;
 
 			if (type.IsSealed && type.IsAbstract) {
 				var bt = type.BaseType;
@@ -51,19 +51,19 @@ namespace dnSpy.Contracts.Text {
 					var baseTr = bt as TypeRef;
 					if (baseTr != null) {
 						if (baseTr.Namespace == systemString && baseTr.Name == objectString)
-							return BoxedOutputColor.StaticType;
+							return BoxedTextColor.StaticType;
 					}
 					else {
 						var baseTd = bt as TypeDef;
 						if (baseTd.Namespace == systemString && baseTd.Name == objectString)
-							return BoxedOutputColor.StaticType;
+							return BoxedTextColor.StaticType;
 					}
 				}
 			}
 
 			if (type.IsSealed)
-				return BoxedOutputColor.SealedType;
-			return BoxedOutputColor.Type;
+				return BoxedTextColor.SealedType;
+			return BoxedTextColor.Type;
 		}
 		static readonly UTF8String systemString = new UTF8String("System");
 		static readonly UTF8String objectString = new UTF8String("Object");
@@ -75,13 +75,13 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(TypeRef type) {
 			if (type == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			var td = type.Resolve();
 			if (td != null)
 				return GetColor(td);
 
-			return BoxedOutputColor.Type;
+			return BoxedTextColor.Type;
 		}
 
 		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
@@ -94,41 +94,41 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(IMemberRef memberRef) {
 			if (memberRef == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			if (memberRef.IsField) {
 				var fd = ((IField)memberRef).ResolveFieldDef();
 				if (fd == null)
-					return BoxedOutputColor.InstanceField;
+					return BoxedTextColor.InstanceField;
 				if (fd.DeclaringType.IsEnum)
-					return BoxedOutputColor.EnumField;
+					return BoxedTextColor.EnumField;
 				if (fd.IsLiteral)
-					return BoxedOutputColor.LiteralField;
+					return BoxedTextColor.LiteralField;
 				if (fd.IsStatic)
-					return BoxedOutputColor.StaticField;
-				return BoxedOutputColor.InstanceField;
+					return BoxedTextColor.StaticField;
+				return BoxedTextColor.InstanceField;
 			}
 			if (memberRef.IsMethod) {
 				var mr = (IMethod)memberRef;
 				if (mr.MethodSig == null)
-					return BoxedOutputColor.InstanceMethod;
+					return BoxedTextColor.InstanceMethod;
 				var md = mr.ResolveMethodDef();
 				if (md != null && md.IsConstructor)
 					return GetColor(md.DeclaringType);
 				if (!mr.MethodSig.HasThis) {
 					if (md != null && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
-						return BoxedOutputColor.ExtensionMethod;
-					return BoxedOutputColor.StaticMethod;
+						return BoxedTextColor.ExtensionMethod;
+					return BoxedTextColor.StaticMethod;
 				}
-				return BoxedOutputColor.InstanceMethod;
+				return BoxedTextColor.InstanceMethod;
 			}
 			if (memberRef.IsPropertyDef) {
 				var p = (PropertyDef)memberRef;
-				return GetColor(p.GetMethod ?? p.SetMethod, BoxedOutputColor.StaticProperty, BoxedOutputColor.InstanceProperty);
+				return GetColor(p.GetMethod ?? p.SetMethod, BoxedTextColor.StaticProperty, BoxedTextColor.InstanceProperty);
 			}
 			if (memberRef.IsEventDef) {
 				var e = (EventDef)memberRef;
-				return GetColor(e.AddMethod ?? e.RemoveMethod ?? e.InvokeMethod, BoxedOutputColor.StaticEvent, BoxedOutputColor.InstanceEvent);
+				return GetColor(e.AddMethod ?? e.RemoveMethod ?? e.InvokeMethod, BoxedTextColor.StaticEvent, BoxedTextColor.InstanceEvent);
 			}
 
 			var td = memberRef as TypeDef;
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Text {
 				var gsig = ts.TypeSig as GenericSig;
 				if (gsig != null)
 					return GetColor(gsig);
-				return BoxedOutputColor.Type;
+				return BoxedTextColor.Type;
 			}
 
 			var gp = memberRef as GenericParam;
@@ -153,9 +153,9 @@ namespace dnSpy.Contracts.Text {
 
 			// It can be a MemberRef if it doesn't have a field or method sig (invalid metadata)
 			if (memberRef.IsMemberRef)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
-			return BoxedOutputColor.Text;
+			return BoxedTextColor.Text;
 		}
 
 		/// <summary>
@@ -165,9 +165,9 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(GenericSig genericSig) {
 			if (genericSig == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
-			return genericSig.IsMethodVar ? BoxedOutputColor.MethodGenericParameter : BoxedOutputColor.TypeGenericParameter;
+			return genericSig.IsMethodVar ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter;
 		}
 
 		/// <summary>
@@ -177,15 +177,15 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(GenericParam genericParam) {
 			if (genericParam == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			if (genericParam.DeclaringType != null)
-				return BoxedOutputColor.TypeGenericParameter;
+				return BoxedTextColor.TypeGenericParameter;
 
 			if (genericParam.DeclaringMethod != null)
-				return BoxedOutputColor.MethodGenericParameter;
+				return BoxedTextColor.MethodGenericParameter;
 
-			return BoxedOutputColor.TypeGenericParameter;
+			return BoxedTextColor.TypeGenericParameter;
 		}
 
 		static object GetColor(MethodDef method, object staticValue, object instanceValue) {
@@ -203,7 +203,7 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(ExportedType exportedType) {
 			if (exportedType == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			return GetColor(exportedType.ToTypeRef());
 		}
@@ -216,7 +216,7 @@ namespace dnSpy.Contracts.Text {
 		public static object GetColor(TypeSig typeSig) {
 			typeSig = typeSig.RemovePinnedAndModifiers();
 			if (typeSig == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			var tdr = typeSig as TypeDefOrRefSig;
 			if (tdr != null)
@@ -226,7 +226,7 @@ namespace dnSpy.Contracts.Text {
 			if (gsig != null)
 				return GetColor(gsig);
 
-			return BoxedOutputColor.Text;
+			return BoxedTextColor.Text;
 		}
 
 		/// <summary>
@@ -236,14 +236,14 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(object obj) {
 			if (obj == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			if (obj is byte || obj is sbyte ||
 				obj is ushort || obj is short ||
 				obj is uint || obj is int ||
 				obj is ulong || obj is long ||
 				obj is UIntPtr || obj is IntPtr)
-				return BoxedOutputColor.Number;
+				return BoxedTextColor.Number;
 
 			var r = obj as IMemberRef;
 			if (r != null)
@@ -261,22 +261,22 @@ namespace dnSpy.Contracts.Text {
 			if (gp != null)
 				return GetColor(gp);
 
-			if (obj is OutputColor)
+			if (obj is TextColor)
 				return obj;
 
 			if (obj is Parameter)
-				return BoxedOutputColor.Parameter;
+				return BoxedTextColor.Parameter;
 
 			if (obj is dnlib.DotNet.Emit.Local)
-				return BoxedOutputColor.Local;
+				return BoxedTextColor.Local;
 
 			if (obj is MethodSig)
-				return BoxedOutputColor.Text;//TODO:
+				return BoxedTextColor.Text;//TODO:
 
 			if (obj is string)
-				return BoxedOutputColor.String;
+				return BoxedTextColor.String;
 
-			return BoxedOutputColor.Text;
+			return BoxedTextColor.Text;
 		}
 
 		/// <summary>
@@ -286,21 +286,21 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static object GetColor(Type type) {
 			if (type == null)
-				return BoxedOutputColor.Text;
+				return BoxedTextColor.Text;
 
 			if (type.IsInterface)
-				return BoxedOutputColor.Interface;
+				return BoxedTextColor.Interface;
 			if (type.IsEnum)
-				return BoxedOutputColor.Enum;
+				return BoxedTextColor.Enum;
 			if (type.IsValueType)
-				return BoxedOutputColor.ValueType;
+				return BoxedTextColor.ValueType;
 
 			if (type.BaseType == typeof(MulticastDelegate))
-				return BoxedOutputColor.Delegate;
+				return BoxedTextColor.Delegate;
 
 			if (type.IsSealed)
-				return BoxedOutputColor.SealedType;
-			return BoxedOutputColor.Type;
+				return BoxedTextColor.SealedType;
+			return BoxedTextColor.Type;
 		}
 	}
 }

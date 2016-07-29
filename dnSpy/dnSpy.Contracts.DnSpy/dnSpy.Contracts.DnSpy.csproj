@@ -503,11 +503,11 @@
     <Compile Include="Text\TextEditorPosition.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />
-    <Compile Include="Themes\ITextColor.cs" />
+    <Compile Include="Themes\IThemeTextColor.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />
     <Compile Include="Themes\IThemeManager.cs" />
-    <Compile Include="Themes\TextColor.cs" />
+    <Compile Include="Themes\ThemeTextColor.cs" />
     <Compile Include="Themes\ThemeChangedEventArgs.cs" />
     <Compile Include="Themes\ThemeConstants.cs" />
     <Compile Include="Themes\ThemeUtils.cs" />

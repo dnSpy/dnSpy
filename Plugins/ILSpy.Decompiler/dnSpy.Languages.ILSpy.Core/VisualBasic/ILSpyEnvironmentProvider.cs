@@ -121,11 +121,11 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 				if (def == null)
 					continue;
 				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
-					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, OutputColorHelper.GetColor(method));
+					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextColorHelper.GetColor(method));
 				}
 
 				foreach (var property in def.Properties) {
-					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, OutputColorHelper.GetColor(property));
+					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextColorHelper.GetColor(property));
 				}
 			}
 		}

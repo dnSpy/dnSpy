@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Themes {
 	/// <summary>
 	/// Theme color
 	/// </summary>
-	public interface IThemeColor : ITextColor {
+	public interface IThemeColor : IThemeTextColor {
 		/// <summary>
 		/// Name of color
 		/// </summary>

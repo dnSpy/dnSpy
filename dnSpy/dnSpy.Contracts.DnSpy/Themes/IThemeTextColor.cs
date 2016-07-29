@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Themes {
 	/// <summary>
 	/// Color
 	/// </summary>
-	public interface ITextColor {
+	public interface IThemeTextColor {
 		/// <summary>
 		/// Font weight or null
 		/// </summary>

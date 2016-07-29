@@ -109,7 +109,7 @@ namespace dnSpy.Search {
 
 		void SearchNewThread(object o) {
 			try {
-				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, BoxedOutputColor.Text, true);
+				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, BoxedTextColor.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var opts = new ParallelOptions {
@@ -170,7 +170,7 @@ namespace dnSpy.Search {
 			lock (lockObj) {
 				if (totalResultsFound++ >= options.MaxResults) {
 					if (totalResultsFound == options.MaxResults + 1)
-						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), BoxedOutputColor.Error, true));
+						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), BoxedTextColor.Error, true));
 					throw new TooManyResultsException();
 				}
 			}

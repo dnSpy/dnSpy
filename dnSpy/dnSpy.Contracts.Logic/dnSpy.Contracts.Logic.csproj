@@ -75,9 +75,9 @@
     <Compile Include="Languages\ILanguageProvider.cs" />
     <Compile Include="Languages\ISimpleILPrinter.cs" />
     <Compile Include="Languages\LanguageConstants.cs" />
-    <Compile Include="Languages\OutputColorWriterToDecompilerOutput.cs" />
     <Compile Include="Languages\SimplePrinterFlags.cs" />
     <Compile Include="Languages\StringBuilderExtensions.cs" />
+    <Compile Include="Languages\TextColorWriterToDecompilerOutput.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocRenderer.cs" />
@@ -94,11 +94,11 @@
     <Compile Include="Resources\ResourceHelper.cs" />
     <Compile Include="Text\ColorAndText.cs" />
     <Compile Include="Text\ColorOffsetInfo.cs" />
-    <Compile Include="Text\IOutputColorWriter.cs" />
-    <Compile Include="Text\IOutputColorWriterExtensions.cs" />
+    <Compile Include="Text\ITextColorWriter.cs" />
+    <Compile Include="Text\ITextColorWriterExtensions.cs" />
     <Compile Include="Text\NameUtilities.cs" />
-    <Compile Include="Text\OutputColor.cs" />
-    <Compile Include="Text\OutputColorHelper.cs" />
+    <Compile Include="Text\TextColor.cs" />
+    <Compile Include="Text\TextColorHelper.cs" />
     <Compile Include="Utilities\GacInfo.cs" />
     <Compile Include="Utilities\SimpleTypeConverter.cs" />
   </ItemGroup>

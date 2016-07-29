@@ -50,17 +50,17 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpHelpDescription;
 
 		public void Execute(ScriptControlVM vm, string[] args) {
-			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpKeyboardShortcuts, BoxedOutputColor.ReplOutputText);
+			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpKeyboardShortcuts, BoxedTextColor.ReplOutputText);
 			Print(vm, keyboardShortcuts);
-			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpReplCommands, BoxedOutputColor.ReplOutputText);
+			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpReplCommands, BoxedTextColor.ReplOutputText);
 			Print(vm, GetCommands(vm));
-			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpScriptDirectives, BoxedOutputColor.ReplOutputText);
+			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpScriptDirectives, BoxedTextColor.ReplOutputText);
 			Print(vm, scriptDirectives);
 		}
 
 		void Print(ScriptControlVM vm, IEnumerable<Tuple<string, string>> descs) {
 			foreach (var t in descs)
-				vm.ReplEditor.OutputPrintLine($"  {t.Item1,-20} {t.Item2}", BoxedOutputColor.ReplOutputText);
+				vm.ReplEditor.OutputPrintLine($"  {t.Item1,-20} {t.Item2}", BoxedTextColor.ReplOutputText);
 		}
 
 		IEnumerable<Tuple<string, string>> GetCommands(ScriptControlVM vm) {

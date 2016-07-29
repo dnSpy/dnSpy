@@ -38,9 +38,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override void Initialize() => this.TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedField);
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, ILanguage language) {
 			language.WriteType(output, analyzedField.DeclaringType, true);
-			output.Write(BoxedOutputColor.Operator, ".");
+			output.Write(BoxedTextColor.Operator, ".");
 			new NodePrinter().Write(output, language, analyzedField, Context.ShowToken);
 		}
 

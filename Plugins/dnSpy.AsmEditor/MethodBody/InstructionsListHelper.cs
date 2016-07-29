@@ -247,49 +247,49 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var instr = instrs[i];
-				output.Write(BoxedOutputColor.Number, instr.Index.ToString());
-				output.Write(BoxedOutputColor.Text, "\t");
-				output.Write(BoxedOutputColor.Label, string.Format("{0:X4}", instr.Offset));
-				output.Write(BoxedOutputColor.Text, "\t");
-				output.Write(BoxedOutputColor.OpCode, instr.Code.ToOpCode().ToString());
+				output.Write(BoxedTextColor.Number, instr.Index.ToString());
+				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(BoxedTextColor.Label, string.Format("{0:X4}", instr.Offset));
+				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(BoxedTextColor.OpCode, instr.Code.ToOpCode().ToString());
 
 				switch (instr.InstructionOperandVM.InstructionOperandType) {
 				case InstructionOperandType.None:
 					break;
 
 				case InstructionOperandType.SByte:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.SByte.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.Number, instr.InstructionOperandVM.SByte.StringValue);
 					break;
 
 				case InstructionOperandType.Byte:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Byte.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.Number, instr.InstructionOperandVM.Byte.StringValue);
 					break;
 
 				case InstructionOperandType.Int32:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Int32.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.Number, instr.InstructionOperandVM.Int32.StringValue);
 					break;
 
 				case InstructionOperandType.Int64:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Int64.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.Number, instr.InstructionOperandVM.Int64.StringValue);
 					break;
 
 				case InstructionOperandType.Single:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Single.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.Number, instr.InstructionOperandVM.Single.StringValue);
 					break;
 
 				case InstructionOperandType.Double:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.Number, instr.InstructionOperandVM.Double.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.Number, instr.InstructionOperandVM.Double.StringValue);
 					break;
 
 				case InstructionOperandType.String:
-					output.Write(BoxedOutputColor.Text, "\t");
-					output.Write(BoxedOutputColor.String, instr.InstructionOperandVM.String.StringValue);
+					output.Write(BoxedTextColor.Text, "\t");
+					output.Write(BoxedTextColor.String, instr.InstructionOperandVM.String.StringValue);
 					break;
 
 				case InstructionOperandType.Field:
@@ -301,7 +301,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case InstructionOperandType.SwitchTargets:
 				case InstructionOperandType.Local:
 				case InstructionOperandType.Parameter:
-					output.Write(BoxedOutputColor.Text, "\t");
+					output.Write(BoxedTextColor.Text, "\t");
 					BodyUtils.WriteObject(output, instr.InstructionOperandVM.Value);
 					break;
 

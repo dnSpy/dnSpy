@@ -39,7 +39,7 @@ namespace dnSpy.Languages.CSharp {
 		bool outputLengthExceeded;
 		bool forceWrite;
 
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 		SimplePrinterFlags flags;
 
 		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]> {
@@ -84,7 +84,7 @@ namespace dnSpy.Languages.CSharp {
 		bool ShowFieldLiteralValues => (flags & SimplePrinterFlags.ShowFieldLiteralValues) != 0;
 		bool ShowParameterLiteralValues => (flags & SimplePrinterFlags.ShowParameterLiteralValues) != 0;
 
-		public SimpleCSharpPrinter(IOutputColorWriter output, SimplePrinterFlags flags) {
+		public SimpleCSharpPrinter(ITextColorWriter output, SimplePrinterFlags flags) {
 			this.output = output;
 			this.flags = flags;
 			this.recursionCounter = 0;
@@ -164,32 +164,32 @@ namespace dnSpy.Languages.CSharp {
 			lineLength += s.Length;
 		}
 
-		void WriteSpace() => OutputWrite(" ", BoxedOutputColor.Text);
+		void WriteSpace() => OutputWrite(" ", BoxedTextColor.Text);
 
 		void WriteCommaSpace() {
-			OutputWrite(",", BoxedOutputColor.Punctuation);
+			OutputWrite(",", BoxedTextColor.Punctuation);
 			WriteSpace();
 		}
 
-		void WritePeriod() => OutputWrite(".", BoxedOutputColor.Operator);
+		void WritePeriod() => OutputWrite(".", BoxedTextColor.Operator);
 
-		void WriteError() => OutputWrite("???", BoxedOutputColor.Error);
+		void WriteError() => OutputWrite("???", BoxedTextColor.Error);
 
-		void WriteNumber(object value) => OutputWrite(ConvertNumberToString(value), BoxedOutputColor.Number);
+		void WriteNumber(object value) => OutputWrite(ConvertNumberToString(value), BoxedTextColor.Number);
 
 		void WriteSystemTypeKeyword(string name, string keyword) {
 			if (ShowTypeKeywords)
-				OutputWrite(keyword, BoxedOutputColor.Keyword);
+				OutputWrite(keyword, BoxedTextColor.Keyword);
 			else
 				WriteSystemType(name);
 		}
 
 		void WriteSystemType(string name) {
 			if (ShowNamespaces) {
-				OutputWrite("System", BoxedOutputColor.Namespace);
+				OutputWrite("System", BoxedTextColor.Namespace);
 				WritePeriod();
 			}
-			OutputWrite(name, BoxedOutputColor.Type);
+			OutputWrite(name, BoxedTextColor.Type);
 		}
 
 		string ConvertNumberToString(object value) {
@@ -220,7 +220,7 @@ namespace dnSpy.Languages.CSharp {
 			Debug.Assert(tok != null);
 			if (tok == null)
 				return;
-			OutputWrite(string.Format("/*0x{0:X8}*/", tok.MDToken.Raw), BoxedOutputColor.Comment);
+			OutputWrite(string.Format("/*0x{0:X8}*/", tok.MDToken.Raw), BoxedTextColor.Comment);
 		}
 
 		public void WriteToolTip(IMemberRef member) {
@@ -325,9 +325,9 @@ namespace dnSpy.Languages.CSharp {
 			if (td != null) {
 				int overloads = GetNumberOfOverloads(td, method.Name);
 				if (overloads == 1)
-					OutputWrite(string.Format(" (+ {0})", dnSpy_Languages_Resources.ToolTip_OneMethodOverload), BoxedOutputColor.Text);
+					OutputWrite(string.Format(" (+ {0})", dnSpy_Languages_Resources.ToolTip_OneMethodOverload), BoxedTextColor.Text);
 				else if (overloads > 1)
-					OutputWrite(string.Format(" (+ {0})", string.Format(dnSpy_Languages_Resources.ToolTip_NMethodOverloads, overloads)), BoxedOutputColor.Text);
+					OutputWrite(string.Format(" (+ {0})", string.Format(dnSpy_Languages_Resources.ToolTip_NMethodOverloads, overloads)), BoxedTextColor.Text);
 			}
 		}
 
@@ -376,25 +376,25 @@ namespace dnSpy.Languages.CSharp {
 			}
 			else if (useNamespaces && !UTF8String.IsNullOrEmpty(td.Namespace)) {
 				foreach (var ns in td.Namespace.String.Split('.')) {
-					WriteIdentifier(ns, BoxedOutputColor.Namespace);
+					WriteIdentifier(ns, BoxedTextColor.Namespace);
 					WritePeriod();
 				}
 			}
 
-			WriteIdentifier(RemoveGenericTick(td.Name), OutputColorHelper.GetColor(td));
+			WriteIdentifier(RemoveGenericTick(td.Name), TextColorHelper.GetColor(td));
 			WriteToken(type);
 			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
-			WriteGenerics(genParams, BoxedOutputColor.TypeGenericParameter);
+			WriteGenerics(genParams, BoxedTextColor.TypeGenericParameter);
 		}
 
 		bool WriteRefIfByRef(TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					OutputWrite("out", BoxedOutputColor.Keyword);
+					OutputWrite("out", BoxedTextColor.Keyword);
 					WriteSpace();
 				}
 				else {
-					OutputWrite("ref", BoxedOutputColor.Keyword);
+					OutputWrite("ref", BoxedTextColor.Keyword);
 					WriteSpace();
 				}
 				return true;
@@ -417,7 +417,7 @@ namespace dnSpy.Languages.CSharp {
 				WritePeriod();
 			}
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
-				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), OutputColorHelper.GetColor(method));
+				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), TextColorHelper.GetColor(method));
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
@@ -439,11 +439,11 @@ namespace dnSpy.Languages.CSharp {
 					if (i > 0)
 						WriteSpace();
 					var s = list[i];
-					OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedOutputColor.Keyword : BoxedOutputColor.Operator);
+					OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
 				}
 			}
 			else
-				WriteIdentifier(name, OutputColorHelper.GetColor(method));
+				WriteIdentifier(name, TextColorHelper.GetColor(method));
 		}
 
 		void WriteToolTip(IField field) => Write(field, true);
@@ -462,7 +462,7 @@ namespace dnSpy.Languages.CSharp {
 			var fd = field.ResolveFieldDef();
 			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
 				if (isToolTip)
-					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? dnSpy_Languages_Resources.ToolTip_Constant : dnSpy_Languages_Resources.ToolTip_Field), BoxedOutputColor.Text);
+					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? dnSpy_Languages_Resources.ToolTip_Constant : dnSpy_Languages_Resources.ToolTip_Field), BoxedTextColor.Text);
 				WriteSpace();
 				Write(sig.Type, null, null, null);
 				WriteSpace();
@@ -471,11 +471,11 @@ namespace dnSpy.Languages.CSharp {
 				Write(field.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(field.Name, OutputColorHelper.GetColor(field));
+			WriteIdentifier(field.Name, TextColorHelper.GetColor(field));
 			WriteToken(field);
 			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
 				WriteSpace();
-				OutputWrite("=", BoxedOutputColor.Operator);
+				OutputWrite("=", BoxedTextColor.Operator);
 				WriteSpace();
 				WriteConstant(fd.Constant.Value);
 			}
@@ -483,66 +483,66 @@ namespace dnSpy.Languages.CSharp {
 
 		void WriteConstant(object obj) {
 			if (obj == null) {
-				OutputWrite("null", BoxedOutputColor.Keyword);
+				OutputWrite("null", BoxedTextColor.Keyword);
 				return;
 			}
 
 			switch (Type.GetTypeCode(obj.GetType())) {
 			case TypeCode.Boolean:
-				OutputWrite((bool)obj ? "true" : "false", BoxedOutputColor.Keyword);
+				OutputWrite((bool)obj ? "true" : "false", BoxedTextColor.Keyword);
 				break;
 
 			case TypeCode.Char:
-				OutputWrite(SimpleTypeConverter.ToString((char)obj), BoxedOutputColor.Char);
+				OutputWrite(SimpleTypeConverter.ToString((char)obj), BoxedTextColor.Char);
 				break;
 
 			case TypeCode.SByte:
-				OutputWrite(SimpleTypeConverter.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.Byte:
-				OutputWrite(SimpleTypeConverter.ToString((byte)obj, byte.MinValue, byte.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((byte)obj, byte.MinValue, byte.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.Int16:
-				OutputWrite(SimpleTypeConverter.ToString((short)obj, short.MinValue, short.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((short)obj, short.MinValue, short.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.UInt16:
-				OutputWrite(SimpleTypeConverter.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.Int32:
-				OutputWrite(SimpleTypeConverter.ToString((int)obj, int.MinValue, int.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((int)obj, int.MinValue, int.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.UInt32:
-				OutputWrite(SimpleTypeConverter.ToString((uint)obj, uint.MinValue, uint.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((uint)obj, uint.MinValue, uint.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.Int64:
-				OutputWrite(SimpleTypeConverter.ToString((long)obj, long.MinValue, long.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((long)obj, long.MinValue, long.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.UInt64:
-				OutputWrite(SimpleTypeConverter.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, UseDecimal), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, UseDecimal), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.Single:
-				OutputWrite(SimpleTypeConverter.ToString((float)obj), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((float)obj), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.Double:
-				OutputWrite(SimpleTypeConverter.ToString((double)obj), BoxedOutputColor.Number);
+				OutputWrite(SimpleTypeConverter.ToString((double)obj), BoxedTextColor.Number);
 				break;
 
 			case TypeCode.String:
-				OutputWrite(SimpleTypeConverter.ToString((string)obj, true), BoxedOutputColor.String);
+				OutputWrite(SimpleTypeConverter.ToString((string)obj, true), BoxedTextColor.String);
 				break;
 
 			default:
 				Debug.Fail($"Unknown constant: '{obj}'");
-				OutputWrite(obj.ToString(), BoxedOutputColor.Text);
+				OutputWrite(obj.ToString(), BoxedTextColor.Text);
 				break;
 			}
 		}
@@ -576,33 +576,33 @@ namespace dnSpy.Languages.CSharp {
 					WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
 					WritePeriod();
 				}
-				OutputWrite("this", BoxedOutputColor.Keyword);
+				OutputWrite("this", BoxedTextColor.Keyword);
 				WriteGenericArguments(info);
 				WriteMethodParameterList(info, "[", "]");
 			}
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
 				WritePeriod();
-				WriteIdentifier(GetPropName(ovrMeth), OutputColorHelper.GetColor(prop));
+				WriteIdentifier(GetPropName(ovrMeth), TextColorHelper.GetColor(prop));
 			}
 			else
-				WriteIdentifier(prop.Name, OutputColorHelper.GetColor(prop));
+				WriteIdentifier(prop.Name, TextColorHelper.GetColor(prop));
 			WriteToken(prop);
 
 			WriteSpace();
-			OutputWrite("{", BoxedOutputColor.Punctuation);
+			OutputWrite("{", BoxedTextColor.Punctuation);
 			if (prop.GetMethods.Count > 0) {
 				WriteSpace();
-				OutputWrite("get", BoxedOutputColor.Keyword);
-				OutputWrite(";", BoxedOutputColor.Punctuation);
+				OutputWrite("get", BoxedTextColor.Keyword);
+				OutputWrite(";", BoxedTextColor.Punctuation);
 			}
 			if (prop.SetMethods.Count > 0) {
 				WriteSpace();
-				OutputWrite("set", BoxedOutputColor.Keyword);
-				OutputWrite(";", BoxedOutputColor.Punctuation);
+				OutputWrite("set", BoxedTextColor.Keyword);
+				OutputWrite(";", BoxedTextColor.Punctuation);
 			}
 			WriteSpace();
-			OutputWrite("}", BoxedOutputColor.Punctuation);
+			OutputWrite("}", BoxedTextColor.Punctuation);
 		}
 
 		static string GetPropName(IMethod method) {
@@ -628,7 +628,7 @@ namespace dnSpy.Languages.CSharp {
 				Write(evt.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(evt.Name, OutputColorHelper.GetColor(evt));
+			WriteIdentifier(evt.Name, TextColorHelper.GetColor(evt));
 			WriteToken(evt);
 		}
 
@@ -640,7 +640,7 @@ namespace dnSpy.Languages.CSharp {
 
 			Write(gp);
 			WriteSpace();
-			OutputWrite(dnSpy_Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedOutputColor.Text);
+			OutputWrite(dnSpy_Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedTextColor.Text);
 			WriteSpace();
 
 			var td = gp.Owner as TypeDef;
@@ -656,7 +656,7 @@ namespace dnSpy.Languages.CSharp {
 				return;
 			}
 
-			WriteIdentifier(gp.Name, OutputColorHelper.GetColor(gp));
+			WriteIdentifier(gp.Name, TextColorHelper.GetColor(gp));
 			WriteToken(gp);
 		}
 
@@ -665,7 +665,7 @@ namespace dnSpy.Languages.CSharp {
 
 			MethodDef invoke;
 			if (IsDelegate(td) && (invoke = td.FindMethod("Invoke")) != null && invoke.MethodSig != null) {
-				OutputWrite("delegate", BoxedOutputColor.Keyword);
+				OutputWrite("delegate", BoxedTextColor.Keyword);
 				WriteSpace();
 
 				var info = new MethodInfo(invoke);
@@ -694,7 +694,7 @@ namespace dnSpy.Languages.CSharp {
 				keyword = "interface";
 			else
 				keyword = "class";
-			OutputWrite(keyword, BoxedOutputColor.Keyword);
+			OutputWrite(keyword, BoxedTextColor.Keyword);
 			WriteSpace();
 
 			// Always print the namespace here because that's what VS does
@@ -724,10 +724,10 @@ namespace dnSpy.Languages.CSharp {
 
 				string keyword = GetTypeKeyword(type);
 				if (keyword != null)
-					OutputWrite(keyword, BoxedOutputColor.Keyword);
+					OutputWrite(keyword, BoxedTextColor.Keyword);
 				else {
 					WriteNamespace(type.Namespace);
-					WriteIdentifier(RemoveGenericTick(type.Name), OutputColorHelper.GetColor(type));
+					WriteIdentifier(RemoveGenericTick(type.Name), TextColorHelper.GetColor(type));
 				}
 				WriteToken(type);
 			}
@@ -741,7 +741,7 @@ namespace dnSpy.Languages.CSharp {
 				return;
 			var namespaces = ns.Split(nsSep);
 			for (int i = 0; i < namespaces.Length; i++) {
-				OutputWrite(namespaces[i], BoxedOutputColor.Namespace);
+				OutputWrite(namespaces[i], BoxedTextColor.Namespace);
 				WritePeriod();
 			}
 		}
@@ -807,13 +807,13 @@ namespace dnSpy.Languages.CSharp {
 					Write(list[list.Count - 1].Next, typeGenArgs, methGenArgs);
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
-							OutputWrite("[", BoxedOutputColor.Punctuation);
+							OutputWrite("[", BoxedTextColor.Punctuation);
 							uint rank = aryType.Rank;
 							if (rank == 0)
-								OutputWrite("<RANK0>", BoxedOutputColor.Error);
+								OutputWrite("<RANK0>", BoxedTextColor.Error);
 							else {
 								if (rank == 1)
-									OutputWrite("*", BoxedOutputColor.Operator);
+									OutputWrite("*", BoxedTextColor.Operator);
 								var indexes = aryType.GetLowerBounds();
 								var dims = aryType.GetSizes();
 								if (ShowArrayValueSizes) {
@@ -825,23 +825,23 @@ namespace dnSpy.Languages.CSharp {
 										else if (i < indexes.Count && i < dims.Count) {
 											//TODO: How does VS print these arrays?
 											WriteNumber((int)indexes[i]);
-											OutputWrite("..", BoxedOutputColor.Operator);
+											OutputWrite("..", BoxedTextColor.Operator);
 											WriteNumber((int)(indexes[i] + dims[i]));
 										}
 									}
 								}
 								else {
 									for (uint i = 1; i < rank; i++)
-										OutputWrite(",", BoxedOutputColor.Punctuation);
+										OutputWrite(",", BoxedTextColor.Punctuation);
 								}
 								for (uint i = 1; i < rank; i++)
-									OutputWrite(",", BoxedOutputColor.Punctuation);
+									OutputWrite(",", BoxedTextColor.Punctuation);
 							}
-							OutputWrite("]", BoxedOutputColor.Punctuation);
+							OutputWrite("]", BoxedTextColor.Punctuation);
 						}
 						else {
 							Debug.Assert(aryType.ElementType == ElementType.SZArray);
-							OutputWrite("[]", BoxedOutputColor.Punctuation);
+							OutputWrite("[]", BoxedTextColor.Punctuation);
 						}
 					}
 					return;
@@ -870,12 +870,12 @@ namespace dnSpy.Languages.CSharp {
 
 				case ElementType.Ptr:
 					Write(type.Next, typeGenArgs, methGenArgs);
-					OutputWrite("*", BoxedOutputColor.Operator);
+					OutputWrite("*", BoxedTextColor.Operator);
 					break;
 
 				case ElementType.ByRef:
 					Write(type.Next, typeGenArgs, methGenArgs);
-					OutputWrite("&", BoxedOutputColor.Operator);
+					OutputWrite("&", BoxedTextColor.Operator);
 					break;
 
 				case ElementType.ValueType:
@@ -899,22 +899,22 @@ namespace dnSpy.Languages.CSharp {
 					var gis = (GenericInstSig)type;
 					if (IsSystemNullable(gis)) {
 						Write(gis.GenericArguments[0], typeGenArgs, methGenArgs);
-						OutputWrite("?", BoxedOutputColor.Operator);
+						OutputWrite("?", BoxedTextColor.Operator);
 					}
 					else {
 						Write(gis.GenericType, typeGenArgs, methGenArgs);
-						OutputWrite("<", BoxedOutputColor.Punctuation);
+						OutputWrite("<", BoxedTextColor.Punctuation);
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
 							if (i > 0)
 								WriteCommaSpace();
 							Write(gis.GenericArguments[i], typeGenArgs, methGenArgs);
 						}
-						OutputWrite(">", BoxedOutputColor.Punctuation);
+						OutputWrite(">", BoxedTextColor.Punctuation);
 					}
 					break;
 
 				case ElementType.FnPtr:
-					OutputWrite("fnptr", BoxedOutputColor.Keyword);
+					OutputWrite("fnptr", BoxedTextColor.Keyword);
 					break;
 
 				case ElementType.CModReqd:
@@ -953,10 +953,10 @@ namespace dnSpy.Languages.CSharp {
 			}
 
 			var isLocal = variable is Local;
-			OutputWrite(string.Format("({0}) ", isLocal ? dnSpy_Languages_Resources.ToolTip_Local : dnSpy_Languages_Resources.ToolTip_Parameter), BoxedOutputColor.Text);
+			OutputWrite(string.Format("({0}) ", isLocal ? dnSpy_Languages_Resources.ToolTip_Local : dnSpy_Languages_Resources.ToolTip_Parameter), BoxedTextColor.Text);
 			Write(variable.Type, !isLocal ? ((Parameter)variable).ParamDef : null, null, null);
 			WriteSpace();
-			WriteIdentifier(GetName(variable, name), isLocal ? BoxedOutputColor.Local : BoxedOutputColor.Parameter);
+			WriteIdentifier(GetName(variable, name), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
 			var p = variable as Parameter;
 			var pd = p == null ? null : p.ParamDef;
 			if (pd != null)
@@ -1013,12 +1013,12 @@ namespace dnSpy.Languages.CSharp {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
 				if (module == null) {
-					OutputWrite("null module", BoxedOutputColor.Error);
+					OutputWrite("null module", BoxedTextColor.Error);
 					return;
 				}
 
 				var name = GetFileName(module.Location);
-				OutputWrite(FilterName(name), BoxedOutputColor.Module);
+				OutputWrite(FilterName(name), BoxedTextColor.Module);
 			}
 			finally {
 				recursionCounter--;
@@ -1030,7 +1030,7 @@ namespace dnSpy.Languages.CSharp {
 				return;
 
 			Write(info.ModuleDef);
-			OutputWrite("!", BoxedOutputColor.Operator);
+			OutputWrite("!", BoxedTextColor.Operator);
 			return;
 		}
 
@@ -1061,9 +1061,9 @@ namespace dnSpy.Languages.CSharp {
 		void WriteGenericArguments(MethodInfo info) {
 			if (info.MethodSig.GenParamCount > 0) {
 				if (info.MethodGenericParams != null)
-					WriteGenerics(info.MethodGenericParams, BoxedOutputColor.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
+					WriteGenerics(info.MethodGenericParams, BoxedTextColor.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
 				else if (info.MethodDef != null)
-					WriteGenerics(info.MethodDef.GenericParameters, BoxedOutputColor.MethodGenericParameter);
+					WriteGenerics(info.MethodDef.GenericParameters, BoxedTextColor.MethodGenericParameter);
 			}
 		}
 
@@ -1071,7 +1071,7 @@ namespace dnSpy.Languages.CSharp {
 			if (!ShowParameterTypes && !ShowParameterNames)
 				return;
 
-			OutputWrite(lparen, BoxedOutputColor.Punctuation);
+			OutputWrite(lparen, BoxedTextColor.Punctuation);
 			int baseIndex = info.MethodSig.HasThis ? 1 : 0;
 			int count = info.MethodSig.Params.Count;
 			if (info.RetTypeIsLastArgType)
@@ -1089,7 +1089,7 @@ namespace dnSpy.Languages.CSharp {
 					needSpace = true;
 
 					if (pd != null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
-						OutputWrite("params", BoxedOutputColor.Keyword);
+						OutputWrite("params", BoxedTextColor.Keyword);
 						WriteSpace();
 					}
 					var paramType = info.MethodSig.Params[i];
@@ -1101,11 +1101,11 @@ namespace dnSpy.Languages.CSharp {
 					needSpace = true;
 
 					if (pd != null) {
-						WriteIdentifier(pd.Name, BoxedOutputColor.Parameter);
+						WriteIdentifier(pd.Name, BoxedTextColor.Parameter);
 						WriteToken(pd);
 					}
 					else
-						WriteIdentifier($"A_{i}", BoxedOutputColor.Parameter);
+						WriteIdentifier($"A_{i}", BoxedTextColor.Parameter);
 				}
 				if (ShowParameterLiteralValues && pd != null && pd.Constant != null) {
 					if (needSpace)
@@ -1114,57 +1114,57 @@ namespace dnSpy.Languages.CSharp {
 
 					var c = pd.Constant.Value;
 					WriteSpace();
-					OutputWrite("=", BoxedOutputColor.Operator);
+					OutputWrite("=", BoxedTextColor.Operator);
 					WriteSpace();
 
 					var t = info.MethodSig.Params[i].RemovePinnedAndModifiers();
 					if (t.GetElementType() == ElementType.ByRef)
 						t = t.Next;
 					if (c == null && t != null && t.IsValueType) {
-						OutputWrite("default", BoxedOutputColor.Keyword);
-						OutputWrite("(", BoxedOutputColor.Punctuation);
+						OutputWrite("default", BoxedTextColor.Keyword);
+						OutputWrite("(", BoxedTextColor.Punctuation);
 						Write(t, pd, info.TypeGenericParams, info.MethodGenericParams);
-						OutputWrite(")", BoxedOutputColor.Punctuation);
+						OutputWrite(")", BoxedTextColor.Punctuation);
 					}
 					else
 						WriteConstant(c);
 				}
 			}
-			OutputWrite(rparen, BoxedOutputColor.Punctuation);
+			OutputWrite(rparen, BoxedTextColor.Punctuation);
 		}
 
 		void WriteGenerics(IList<GenericParam> gps, object gpTokenType) {
 			if (gps == null || gps.Count == 0)
 				return;
-			OutputWrite("<", BoxedOutputColor.Punctuation);
+			OutputWrite("<", BoxedTextColor.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				var gp = gps[i];
 				if (gp.IsCovariant) {
-					OutputWrite("out", BoxedOutputColor.Keyword);
+					OutputWrite("out", BoxedTextColor.Keyword);
 					WriteSpace();
 				}
 				else if (gp.IsContravariant) {
-					OutputWrite(dnSpy_Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedOutputColor.Keyword);
+					OutputWrite(dnSpy_Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedTextColor.Keyword);
 					WriteSpace();
 				}
 				WriteIdentifier(gp.Name, gpTokenType);
 				WriteToken(gp);
 			}
-			OutputWrite(">", BoxedOutputColor.Punctuation);
+			OutputWrite(">", BoxedTextColor.Punctuation);
 		}
 
 		void WriteGenerics(IList<TypeSig> gps, object gpTokenType, GenericParamContext gpContext) {
 			if (gps == null || gps.Count == 0)
 				return;
-			OutputWrite("<", BoxedOutputColor.Punctuation);
+			OutputWrite("<", BoxedTextColor.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				Write(gps[i], null, null, null);
 			}
-			OutputWrite(">", BoxedOutputColor.Punctuation);
+			OutputWrite(">", BoxedTextColor.Punctuation);
 		}
 
 		static string GetName(IVariable variable, string name) {

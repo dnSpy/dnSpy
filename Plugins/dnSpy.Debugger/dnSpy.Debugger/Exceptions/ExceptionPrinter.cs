@@ -22,15 +22,15 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionPrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 
-		public ExceptionPrinter(IOutputColorWriter output) {
+		public ExceptionPrinter(ITextColorWriter output) {
 			this.output = output;
 		}
 
 		public void WriteName(ExceptionVM vm) {
 			if (vm.ExceptionInfo.IsOtherExceptions)
-				output.Write(BoxedOutputColor.Text, vm.Name);
+				output.Write(BoxedTextColor.Text, vm.Name);
 			else
 				WriteFullTypeName(vm.Name);
 		}
@@ -40,9 +40,9 @@ namespace dnSpy.Debugger.Exceptions {
 			SplitTypeName(fullName, out ns, out name);
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteNamespace(ns);
-				output.Write(BoxedOutputColor.Operator, ".");
+				output.Write(BoxedTextColor.Operator, ".");
 			}
-			output.Write(BoxedOutputColor.Type, IdentifierEscaper.Escape(name));
+			output.Write(BoxedTextColor.Type, IdentifierEscaper.Escape(name));
 		}
 
 		static void SplitTypeName(string fullName, out string ns, out string name) {

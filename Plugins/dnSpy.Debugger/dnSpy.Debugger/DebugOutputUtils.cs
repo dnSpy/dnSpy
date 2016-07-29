@@ -46,19 +46,19 @@ namespace dnSpy.Debugger {
 			return sb.ToString();
 		}
 
-		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : IOutputColorWriter {
+		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : ITextColorWriter {
 			if (appDomain == null)
-				output.Write(BoxedOutputColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
+				output.Write(BoxedTextColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
 			else {
-				output.Write(BoxedOutputColor.Punctuation, "[");
-				output.Write(BoxedOutputColor.Number, string.Format("{0}", appDomain.Id));
-				output.Write(BoxedOutputColor.Punctuation, "]");
+				output.Write(BoxedTextColor.Punctuation, "[");
+				output.Write(BoxedTextColor.Number, string.Format("{0}", appDomain.Id));
+				output.Write(BoxedTextColor.Punctuation, "]");
 				output.WriteSpace();
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
 				if (HasSameNameAsProcess(dbg, appDomain))
 					output.WriteFilename(filteredName);
 				else
-					output.Write(BoxedOutputColor.String, filteredName);
+					output.Write(BoxedTextColor.String, filteredName);
 			}
 			return output;
 		}
@@ -84,23 +84,23 @@ namespace dnSpy.Debugger {
 			return s;
 		}
 
-		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : IOutputColorWriter {
-			output.Write(BoxedOutputColor.Punctuation, "[");
+		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ITextColorWriter {
+			output.Write(BoxedTextColor.Punctuation, "[");
 			if (useHex)
-				output.Write(BoxedOutputColor.Number, string.Format("0x{0:X}", p.ProcessId));
+				output.Write(BoxedTextColor.Number, string.Format("0x{0:X}", p.ProcessId));
 			else
-				output.Write(BoxedOutputColor.Number, string.Format("{0}", p.ProcessId));
-			output.Write(BoxedOutputColor.Punctuation, "]");
+				output.Write(BoxedTextColor.Number, string.Format("{0}", p.ProcessId));
+			output.Write(BoxedTextColor.Punctuation, "]");
 			output.WriteSpace();
 			output.WriteFilename(GetFilename(p.Filename));
 			return output;
 		}
 
-		public static T WriteYesNo<T>(this T output, bool value) where T : IOutputColorWriter {
+		public static T WriteYesNo<T>(this T output, bool value) where T : ITextColorWriter {
 			if (value)
-				output.Write(BoxedOutputColor.Keyword, dnSpy_Debugger_Resources.YesNo_Yes);
+				output.Write(BoxedTextColor.Keyword, dnSpy_Debugger_Resources.YesNo_Yes);
 			else
-				output.Write(BoxedOutputColor.InstanceMethod, dnSpy_Debugger_Resources.YesNo_No);
+				output.Write(BoxedTextColor.InstanceMethod, dnSpy_Debugger_Resources.YesNo_No);
 			return output;
 		}
 	}

@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="offset">Offset</param>
 		/// <param name="length">Length</param>
 		/// <param name="color">Color</param>
-		public ColorOffsetInfo(int offset, int length, OutputColor color) {
+		public ColorOffsetInfo(int offset, int length, TextColor color) {
 			Debug.Assert(offset + length >= offset && length >= 0);
 			Offset = offset;
 			Length = length;

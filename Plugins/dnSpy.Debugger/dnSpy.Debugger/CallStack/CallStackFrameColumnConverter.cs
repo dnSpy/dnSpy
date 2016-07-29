@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.CallStack {
 			return gen.CreateResult(true);
 		}
 
-		void CreateContent(IOutputColorWriter output, CachedOutput cachedOutput, bool highlight) {
+		void CreateContent(ITextColorWriter output, CachedOutput cachedOutput, bool highlight) {
 			var conv = new OutputConverter(output);
 			foreach (var t in cachedOutput.data)
 				conv.Write(t.Item1, t.Item2);

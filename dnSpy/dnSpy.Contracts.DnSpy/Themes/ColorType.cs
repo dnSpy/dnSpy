@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Themes {
 	/// </summary>
 	public enum ColorType : uint {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		// The order and names of the following constants must match dnSpy.Contracts.Text.OutputColor
+		// The order and names of the following constants must match dnSpy.Contracts.Text.TextColor
 		Text = 0x00004000,
 		FirstNR = Text, // Text should be first so ToString() picks it instead of FirstNR
 		Operator,

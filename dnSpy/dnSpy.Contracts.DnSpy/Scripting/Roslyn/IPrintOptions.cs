@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		int NumberRadix { get; set; }
 
 		/// <summary>
-		/// If true, all calls to <see cref="ITextPrinter.Print(object, OutputColor)"/> will call
+		/// If true, all calls to <see cref="ITextPrinter.Print(object, TextColor)"/> will call
 		/// <see cref="IOutputWritable.WriteTo(IOutputWriter)"/> if the object implements that
 		/// interface.
 		/// </summary>

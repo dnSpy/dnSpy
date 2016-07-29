@@ -105,12 +105,12 @@ namespace dnSpy.Output {
 		public string GetText() => logEditor.GetText();
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
 		public void Write(object color, string s) => WriteInternal(color, s);
-		public void Write(OutputColor color, string s) => WriteInternal(color.Box(), s);
-		public void WriteLine(OutputColor color, string s) => WriteLine(color.Box(), s);
+		public void Write(TextColor color, string s) => WriteInternal(color.Box(), s);
+		public void WriteLine(TextColor color, string s) => WriteLine(color.Box(), s);
 
 		public void WriteLine(object color, string s) {
 			WriteInternal(color, s);
-			WriteInternal(BoxedOutputColor.Text, Environment.NewLine);
+			WriteInternal(BoxedTextColor.Text, Environment.NewLine);
 		}
 
 		public void Write(IEnumerable<ColorAndText> text) {
@@ -126,8 +126,8 @@ namespace dnSpy.Output {
 				if (needTimestamp) {
 					needTimestamp = false;
 					if (ShowTimestamps) {
-						logEditor.Write(DateTime.Now.ToLongTimeString(), BoxedOutputColor.DebugLogTimestamp);
-						logEditor.Write(" ", BoxedOutputColor.Text);
+						logEditor.Write(DateTime.Now.ToLongTimeString(), BoxedTextColor.DebugLogTimestamp);
+						logEditor.Write(" ", BoxedTextColor.Text);
 					}
 				}
 

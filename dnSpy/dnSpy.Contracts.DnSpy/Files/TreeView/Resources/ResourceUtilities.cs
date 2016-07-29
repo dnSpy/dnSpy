@@ -115,8 +115,8 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 
 			var mod = (node as IFileTreeNodeData).GetModule();
 			var filename = mod == null ? null : mod.Location;
-			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedOutputColor.Comment);
-			output.Write(": ", BoxedOutputColor.Comment);
+			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedTextColor.Comment);
+			output.Write(": ", BoxedTextColor.Comment);
 		}
 
 		/// <summary>
@@ -153,7 +153,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				return false;
 
 			stream.Position = 0;
-			context.Output.Write(new StreamReader(stream, true).ReadToEnd(), BoxedOutputColor.Text);
+			context.Output.Write(new StreamReader(stream, true).ReadToEnd(), BoxedTextColor.Text);
 			string ext;
 			if (type == FileType.Xml)
 				ext = ".xml";

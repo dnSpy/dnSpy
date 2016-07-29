@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Logger {
 					int processExitCode;
 					if (!NativeMethods.GetExitCodeProcess(debugState.hProcess_debuggee, out processExitCode))
 						processExitCode = -1;
-					textPane.WriteLine(BoxedOutputColor.DebugLogExitProcess,
+					textPane.WriteLine(BoxedTextColor.DebugLogExitProcess,
 						string.Format(dnSpy_Debugger_Resources.DebugLogExitProcess,
 								GetProcessNameWithPID(debugState.debuggedProcess),
 								processExitCode));
@@ -219,7 +219,7 @@ namespace dnSpy.Debugger.Logger {
 					int threadExitCode;
 					if (!NativeMethods.GetExitCodeThread(etArgs.CorThread?.Handle ?? IntPtr.Zero, out threadExitCode))
 						threadExitCode = -1;
-					textPane.WriteLine(BoxedOutputColor.DebugLogExitThread,
+					textPane.WriteLine(BoxedTextColor.DebugLogExitThread,
 						string.Format(dnSpy_Debugger_Resources.DebugLogExitThread,
 								etArgs.CorThread?.ThreadId ?? 0,
 								threadExitCode));
@@ -231,7 +231,7 @@ namespace dnSpy.Debugger.Logger {
 					var lmArgs = (LoadModuleDebugCallbackEventArgs)e;
 					var module = dbg.Modules.FirstOrDefault(a => a.CorModule == lmArgs.CorModule);
 					Debug.Assert(module != null);
-					textPane.WriteLine(BoxedOutputColor.DebugLogLoadModule,
+					textPane.WriteLine(BoxedTextColor.DebugLogLoadModule,
 						string.Format(dnSpy_Debugger_Resources.DebugLogLoadModule,
 								GetProcessName(module?.Process),
 								GetRuntimeVersion(dbg),
@@ -245,7 +245,7 @@ namespace dnSpy.Debugger.Logger {
 					var ulmArgs = (UnloadModuleDebugCallbackEventArgs)e;
 					var module = dbg.Modules.FirstOrDefault(a => a.CorModule == ulmArgs.CorModule);
 					Debug.Assert(module != null);
-					textPane.WriteLine(BoxedOutputColor.DebugLogUnloadModule,
+					textPane.WriteLine(BoxedTextColor.DebugLogUnloadModule,
 						string.Format(dnSpy_Debugger_Resources.DebugLogUnloadModule,
 								GetProcessName(module?.Process),
 								GetRuntimeVersion(dbg),
@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.Logger {
 				if (outputLoggerSettings.ShowProgramOutputMessages) {
 					var lmsgArgs = (LogMessageDebugCallbackEventArgs)e;
 					var msg = FilterUserMessage(lmsgArgs.Message);
-					textPane.Write(BoxedOutputColor.DebugLogProgramOutput, msg);
+					textPane.Write(BoxedTextColor.DebugLogProgramOutput, msg);
 				}
 				break;
 
@@ -279,12 +279,12 @@ namespace dnSpy.Debugger.Logger {
 						exValue = ex2Args.CorThread?.CurrentException;
 						module = ex2Args.CorFrame?.Function?.Module;
 						exModule = dbg.Modules.FirstOrDefault(a => a.CorModule == module);
-						textPane.WriteLine(BoxedOutputColor.DebugLogExceptionHandled,
+						textPane.WriteLine(BoxedTextColor.DebugLogExceptionHandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogExceptionHandled,
 									exValue?.ExactType?.ToString() ?? "???",
 									GetModuleName(exModule)));
 						exMsg = FilterUserMessage(GetExceptionMessage(exValue));
-						textPane.WriteLine(BoxedOutputColor.DebugLogExceptionHandled,
+						textPane.WriteLine(BoxedTextColor.DebugLogExceptionHandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, exMsg));
 						break;
 
@@ -292,12 +292,12 @@ namespace dnSpy.Debugger.Logger {
 						exValue = ex2Args.CorThread?.CurrentException;
 						module = ex2Args.CorFrame?.Function?.Module;
 						exModule = dbg.Modules.FirstOrDefault(a => a.CorModule == module);
-						textPane.WriteLine(BoxedOutputColor.DebugLogExceptionUnhandled,
+						textPane.WriteLine(BoxedTextColor.DebugLogExceptionUnhandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogExceptionUnhandled,
 									exValue?.ExactType?.ToString() ?? "???",
 									GetModuleName(exModule)));
 						exMsg = FilterUserMessage(GetExceptionMessage(exValue));
-						textPane.WriteLine(BoxedOutputColor.DebugLogExceptionUnhandled,
+						textPane.WriteLine(BoxedTextColor.DebugLogExceptionUnhandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, exMsg));
 						break;
 
@@ -314,11 +314,11 @@ namespace dnSpy.Debugger.Logger {
 					var mda = mdaArgs.CorMDA;
 					var corProcess = mdaArgs.CorProcess ?? mdaArgs.CorThread?.Process;
 					var process = dbg.Processes.FirstOrDefault(a => a.CorProcess == corProcess);
-					textPane.WriteLine(BoxedOutputColor.DebugLogMDA,
+					textPane.WriteLine(BoxedTextColor.DebugLogMDA,
 						string.Format(dnSpy_Debugger_Resources.DebugLogMDA,
 								mda.Name ?? "???",
 								GetProcessFullPath(process)));
-					textPane.WriteLine(BoxedOutputColor.DebugLogMDA,
+					textPane.WriteLine(BoxedTextColor.DebugLogMDA,
 						string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, mda.Description ?? "???"));
 				}
 				break;

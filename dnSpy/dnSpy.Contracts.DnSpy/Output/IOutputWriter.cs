@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Output {
 	/// <summary>
 	/// Writes text to a <see cref="IOutputTextPane"/>
 	/// </summary>
-	public interface IOutputWriter : IOutputColorWriter {
+	public interface IOutputWriter : ITextColorWriter {
 		/// <summary>
 		/// Writes text
 		/// </summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Output {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void WriteLine(OutputColor color, string text);
+		void WriteLine(TextColor color, string text);
 
 		/// <summary>
 		/// Writes text

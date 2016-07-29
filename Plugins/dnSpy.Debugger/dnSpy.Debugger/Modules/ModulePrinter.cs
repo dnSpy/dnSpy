@@ -25,11 +25,11 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModulePrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 		readonly bool useHex;
 		readonly DnDebugger dbg;
 
-		public ModulePrinter(IOutputColorWriter output, bool useHex, DnDebugger dbg) {
+		public ModulePrinter(ITextColorWriter output, bool useHex, DnDebugger dbg) {
 			this.output = output;
 			this.useHex = useHex;
 			this.dbg = dbg;
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Modules {
 		public void WriteOptimized(ModuleVM vm) => output.WriteYesNo(vm.IsOptimized);
 		public void WriteDynamic(ModuleVM vm) => output.WriteYesNo(vm.Module.IsDynamic);
 		public void WriteInMemory(ModuleVM vm) => output.WriteYesNo(vm.Module.IsInMemory);
-		public void WriteOrder(ModuleVM vm) => output.Write(BoxedOutputColor.Number, string.Format("{0}", vm.Module.UniqueId));
+		public void WriteOrder(ModuleVM vm) => output.Write(BoxedTextColor.Number, string.Format("{0}", vm.Module.UniqueId));
 		public void WriteProcess(ModuleVM vm) => output.Write(vm.Module.Process, useHex);
 		public void WriteAppDomain(ModuleVM vm) => output.Write(vm.Module.AppDomain.CorAppDomain, dbg);
 
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.Modules {
 			if (ts != null) {
 				var date = Epoch.AddSeconds(ts.Value);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(BoxedOutputColor.Text, dateString);
+				output.Write(BoxedTextColor.Text, dateString);
 			}
 		}
 		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -69,19 +69,19 @@ namespace dnSpy.Debugger.Modules {
 			ulong addr = vm.Module.Address;
 			ulong endAddr = addr + vm.Module.Size;
 			if (addr == 0)
-				output.Write(BoxedOutputColor.Text, dnSpy_Debugger_Resources.Module_NoAddress);
+				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Module_NoAddress);
 			else {
 				WriteAddress(addr);
-				output.Write(BoxedOutputColor.Operator, "-");
+				output.Write(BoxedTextColor.Operator, "-");
 				WriteAddress(endAddr);
 			}
 		}
 
 		void WriteAddress(ulong addr) {
 			if (IntPtr.Size == 4)
-				output.Write(BoxedOutputColor.Number, string.Format("{0:X8}", addr));
+				output.Write(BoxedTextColor.Number, string.Format("{0:X8}", addr));
 			else
-				output.Write(BoxedOutputColor.Number, string.Format("{0:X16}", addr));
+				output.Write(BoxedTextColor.Number, string.Format("{0:X16}", addr));
 		}
 	}
 }

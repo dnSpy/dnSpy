@@ -139,25 +139,25 @@ namespace dnSpy.Debugger.Modules {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ModulePrinter(output, debuggerSettings.UseHexadecimal, theDebugger.Value.Debugger);
 				printer.WriteName(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteOptimized(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteDynamic(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteInMemory(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteOrder(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteVersion(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteTimestamp(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteAddress(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteProcess(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteAppDomain(vm);
-				output.Write(BoxedOutputColor.Text, "\t");
+				output.Write(BoxedTextColor.Text, "\t");
 				printer.WritePath(vm);
 				output.WriteLine();
 			}

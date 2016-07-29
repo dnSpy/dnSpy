@@ -32,8 +32,8 @@ namespace dnSpy.Output {
 		public string GetText() => string.Empty;
 		public void Write(IEnumerable<ColorAndText> text) { }
 		public void Write(object color, string s) { }
-		public void Write(OutputColor color, string s) { }
+		public void Write(TextColor color, string s) { }
 		public void WriteLine(object color, string s) { }
-		public void WriteLine(OutputColor color, string s) { }
+		public void WriteLine(TextColor color, string s) { }
 	}
 }

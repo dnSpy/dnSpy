@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the output writer
 		/// </summary>
-		public IOutputColorWriter Output => (IOutputColorWriter)output ?? colorizer;
+		public ITextColorWriter Output => (ITextColorWriter)output ?? colorizer;
 
 		/// <summary>
 		/// Creates a new instance

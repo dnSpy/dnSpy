@@ -38,7 +38,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 
 		public UIElement Create() => creator.CreateResult(false, false);
 		public void Write(object color, string text) => creator.Output.Write(color, text);
-		public void Write(OutputColor color, string text) => creator.Output.Write(color.Box(), text);
+		public void Write(TextColor color, string text) => creator.Output.Write(color.Box(), text);
 
 		bool needsNewLine = false;
 
@@ -53,7 +53,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			needsNewLine = false;
 		}
 
-		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedOutputColor.Text);
+		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedTextColor.Text);
 
 		void InitializeNeedsNewLine() {
 			var text = creator.Text;
@@ -101,22 +101,22 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedOutputColor.XmlDocToolTipSummary);
+					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextColor.XmlDocToolTipSummary);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
 						if (cref != null)
-							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedOutputColor.XmlDocToolTipSeeCref);
+							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.XmlDocToolTipSeeCref);
 						var langword = xelem.Attribute("langword");
 						if (langword != null)
-							output.Write(((string)langword).Trim(), BoxedOutputColor.XmlDocToolTipSeeLangword);
+							output.Write(((string)langword).Trim(), BoxedTextColor.XmlDocToolTipSeeLangword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
 						if (nameAttr != null)
-							output.Write(((string)nameAttr).Trim(), BoxedOutputColor.XmlDocToolTipParamRefName);
+							output.Write(((string)nameAttr).Trim(), BoxedTextColor.XmlDocToolTipParamRefName);
 						break;
 					case "BR":
 					case "PARA":
@@ -127,7 +127,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 					}
 				}
 				else
-					output.Write(elem.ToString(), BoxedOutputColor.XmlDocToolTipSummary);
+					output.Write(elem.ToString(), BoxedTextColor.XmlDocToolTipSummary);
 			}
 		}
 	}

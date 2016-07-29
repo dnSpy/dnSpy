@@ -211,14 +211,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			DocumentViewerContent content;
 			if (result.IsCanceled) {
 				var dnSpyOutput = new DocumentViewerOutput();
-				dnSpyOutput.Write(dnSpy_Resources.DecompilationCanceled, BoxedOutputColor.Error);
+				dnSpyOutput.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextColor.Error);
 				content = dnSpyOutput.CreateResult();
 			}
 			else if (result.Exception != null) {
 				var dnSpyOutput = new DocumentViewerOutput();
-				dnSpyOutput.Write(dnSpy_Resources.DecompilationException, BoxedOutputColor.Error);
+				dnSpyOutput.Write(dnSpy_Resources.DecompilationException, BoxedTextColor.Error);
 				dnSpyOutput.WriteLine();
-				dnSpyOutput.Write(result.Exception.ToString(), BoxedOutputColor.Text);
+				dnSpyOutput.Write(result.Exception.ToString(), BoxedTextColor.Text);
 				content = dnSpyOutput.CreateResult();
 			}
 			else {

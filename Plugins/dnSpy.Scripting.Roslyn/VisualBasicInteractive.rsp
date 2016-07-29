@@ -21,5 +21,5 @@
 /R:dnlib.dll
 /Imports:dnSpy.Contracts.Scripting
 /Imports:dnSpy.Contracts.Scripting.Roslyn
-# For OutputColor
+# For TextColor
 /Imports:dnSpy.Contracts.Text

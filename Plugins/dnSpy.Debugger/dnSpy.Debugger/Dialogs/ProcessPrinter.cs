@@ -25,10 +25,10 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessPrinter {
-		readonly IOutputColorWriter output;
+		readonly ITextColorWriter output;
 		readonly bool useHex;
 
-		public ProcessPrinter(IOutputColorWriter output, bool useHex) {
+		public ProcessPrinter(ITextColorWriter output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
 		}
@@ -36,16 +36,16 @@ namespace dnSpy.Debugger.Dialogs {
 		void WriteFilename(ProcessVM vm, string filename) => output.WriteFilename(filename);
 		public void WriteFilename(ProcessVM vm) => WriteFilename(vm, DebugOutputUtils.GetFilename(vm.FullPath));
 		public void WriteFullPath(ProcessVM vm) => WriteFilename(vm, vm.FullPath);
-		public void WriteCLRVersion(ProcessVM vm) => output.Write(BoxedOutputColor.Number, vm.CLRVersion);
-		public void WriteType(ProcessVM vm) => output.Write(BoxedOutputColor.EnumField, TypeToString(vm.CLRTypeInfo.CLRType));
-		public void WriteMachine(ProcessVM vm) => output.Write(BoxedOutputColor.InstanceMethod, ToString(vm.Machine));
-		public void WriteTitle(ProcessVM vm) => output.Write(BoxedOutputColor.String, vm.Title);
+		public void WriteCLRVersion(ProcessVM vm) => output.Write(BoxedTextColor.Number, vm.CLRVersion);
+		public void WriteType(ProcessVM vm) => output.Write(BoxedTextColor.EnumField, TypeToString(vm.CLRTypeInfo.CLRType));
+		public void WriteMachine(ProcessVM vm) => output.Write(BoxedTextColor.InstanceMethod, ToString(vm.Machine));
+		public void WriteTitle(ProcessVM vm) => output.Write(BoxedTextColor.String, vm.Title);
 
 		public void WritePID(ProcessVM vm) {
 			if (useHex)
-				output.Write(BoxedOutputColor.Number, string.Format("0x{0:X8}", vm.PID));
+				output.Write(BoxedTextColor.Number, string.Format("0x{0:X8}", vm.PID));
 			else
-				output.Write(BoxedOutputColor.Number, string.Format("{0}", vm.PID));
+				output.Write(BoxedTextColor.Number, string.Format("{0}", vm.PID));
 		}
 
 		static string TypeToString(CLRType type) {

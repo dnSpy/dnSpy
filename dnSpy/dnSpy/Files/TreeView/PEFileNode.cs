@@ -46,11 +46,11 @@ namespace dnSpy.Files.TreeView {
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, ILanguage language) =>
 			new NodePrinter().Write(output, language, DnSpyFile);
 
-		protected override void WriteToolTip(IOutputColorWriter output, ILanguage language) {
-			output.Write(BoxedOutputColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine));
+		protected override void WriteToolTip(ITextColorWriter output, ILanguage language) {
+			output.Write(BoxedTextColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine));
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

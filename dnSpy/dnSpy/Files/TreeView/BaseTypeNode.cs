@@ -67,10 +67,10 @@ namespace dnSpy.Files.TreeView {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
-		protected override void Write(IOutputColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, ILanguage language) {
 			var tdr = TryGetTypeDefOrRef();
 			if (tdr == null)
-				output.Write(BoxedOutputColor.Error, "???");
+				output.Write(BoxedTextColor.Error, "???");
 			else
 				new NodePrinter().Write(output, language, tdr, Context.ShowToken);
 		}

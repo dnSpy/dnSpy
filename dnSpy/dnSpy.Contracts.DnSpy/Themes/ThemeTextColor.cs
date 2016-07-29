@@ -24,11 +24,11 @@ namespace dnSpy.Contracts.Themes {
 	/// <summary>
 	/// Text color
 	/// </summary>
-	public sealed class TextColor : ITextColor {
+	public sealed class ThemeTextColor : IThemeTextColor {
 		/// <summary>
 		/// An instance with no foreground and background color
 		/// </summary>
-		public static readonly TextColor Null = new TextColor(null);
+		public static readonly ThemeTextColor Null = new ThemeTextColor(null);
 
 		/// <summary>
 		/// Font weight or null
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Themes {
 		/// <param name="background">Background color or null</param>
 		/// <param name="fontWeight">Font weight or null</param>
 		/// <param name="fontStyle">Font style or null</param>
-		public TextColor(Brush foreground, Brush background = null, FontWeight? fontWeight = null, FontStyle? fontStyle = null) {
+		public ThemeTextColor(Brush foreground, Brush background = null, FontWeight? fontWeight = null, FontStyle? fontStyle = null) {
 			Foreground = foreground;
 			Background = background;
 			FontWeight = fontWeight;
