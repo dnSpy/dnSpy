@@ -25,16 +25,19 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState> {
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IClassificationType defaultClassificationType;
+		readonly RoslynClassifierColors roslynClassifierColors;
 
 		public RoslynTagger(IThemeClassificationTypes themeClassificationTypes) {
 			if (themeClassificationTypes == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypes));
-			this.themeClassificationTypes = themeClassificationTypes;
+			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(ColorType.Error);
+			this.roslynClassifierColors = RoslynClassifierColors.GetClassificationTypeInstance(themeClassificationTypes);
 		}
 
 		protected override async Task GetTagsAsync(GetTagsState state, NormalizedSnapshotSpanCollection spans) {
@@ -47,11 +50,11 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			if (!state.UserAsyncState.IsValid)
 				return;
 
-			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, themeClassificationTypes, themeClassificationTypes.GetClassificationType(ColorType.Error), state.CancellationToken);
+			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, roslynClassifierColors, defaultClassificationType, state.CancellationToken);
 			state.UserAsyncState.TagsList.Clear();
 			foreach (var span in spans) {
 				foreach (var info in classifier.GetClassificationColors(span.Span.ToTextSpan()))
-					state.UserAsyncState.TagsList.Add(new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag(info.Type)));
+					state.UserAsyncState.TagsList.Add(new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag((IClassificationType)info.Type)));
 				if (state.UserAsyncState.TagsList.Count != 0) {
 					state.AddResult(new TagsResult(span, state.UserAsyncState.TagsList.ToArray()));
 					state.UserAsyncState.TagsList.Clear();

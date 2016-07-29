@@ -28,19 +28,18 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Scripting;
+using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
+using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
-using dnSpy.Contracts.Scripting.Roslyn;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Roslyn.Shared.Text.Classification;
-using Microsoft.CodeAnalysis.Host.Mef;
-using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {
@@ -255,14 +254,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (cancellationToken.IsCancellationRequested)
 				return Task.CompletedTask;
 
-			ClassifiedSpan[] classifiers;
-			using (var workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices))
-				classifiers = Classifier.GetClassifiedSpans(sem, new TextSpan(0, command.Input.Length), workspace, cancellationToken).ToArray();
-			if (cancellationToken.IsCancellationRequested)
-				return Task.CompletedTask;
-			var converter = new ClassificationTypeConverter(sem, cancellationToken);
-			foreach (var c in classifiers)
-				command.AddColor(c.TextSpan.Start, c.TextSpan.Length, converter.Convert(c));
+			using (var workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices)) {
+				var classifier = new RoslynClassifier(sem.SyntaxTree.GetRoot(), sem, workspace, RoslynClassifierColors.GetTextColorInstance(), BoxedTextColor.Error, cancellationToken);
+				foreach (var info in classifier.GetClassificationColors(new TextSpan(0, command.Input.Length)))
+					command.AddColor(info.Span.Start, info.Span.Length, info.Type);
+			}
 
 			return Task.CompletedTask;
 		}
