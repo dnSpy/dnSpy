@@ -25,7 +25,7 @@ using dnSpy.Scripting.Roslyn.Properties;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class HelpCommand : IScriptCommand {
-		const string NAMES_SEP = ", ";
+		const int LEFT_COL_LEN = 20;
 
 		static readonly Tuple<string, string>[] keyboardShortcuts = new Tuple<string, string>[] {
 			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyEnter, dnSpy_Scripting_Roslyn_Resources.HelpEnter),
@@ -51,22 +51,46 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public void Execute(ScriptControlVM vm, string[] args) {
 			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpKeyboardShortcuts, BoxedTextColor.ReplOutputText);
-			Print(vm, keyboardShortcuts);
+			Print(vm, keyboardShortcuts, BoxedTextColor.PreprocessorKeyword, BoxedTextColor.ReplOutputText);
 			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpReplCommands, BoxedTextColor.ReplOutputText);
-			Print(vm, GetCommands(vm));
+			PrintCommands(vm, BoxedTextColor.PreprocessorKeyword, BoxedTextColor.ReplOutputText);
 			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpScriptDirectives, BoxedTextColor.ReplOutputText);
-			Print(vm, scriptDirectives);
+			Print(vm, scriptDirectives, BoxedTextColor.PreprocessorKeyword, BoxedTextColor.ReplOutputText);
 		}
 
-		void Print(ScriptControlVM vm, IEnumerable<Tuple<string, string>> descs) {
-			foreach (var t in descs)
-				vm.ReplEditor.OutputPrintLine($"  {t.Item1,-20} {t.Item2}", BoxedTextColor.ReplOutputText);
+		void Print(ScriptControlVM vm, IEnumerable<Tuple<string, string>> descs, object color1, object color2) {
+			foreach (var t in descs) {
+				vm.ReplEditor.OutputPrint("  ", BoxedTextColor.ReplOutputText);
+				vm.ReplEditor.OutputPrint(t.Item1, color1);
+				int len = LEFT_COL_LEN - t.Item1.Length;
+				if (len > 0)
+					vm.ReplEditor.OutputPrint(new string(' ', len), BoxedTextColor.ReplOutputText);
+				vm.ReplEditor.OutputPrint(" ", BoxedTextColor.ReplOutputText);
+				vm.ReplEditor.OutputPrint(t.Item2, color2);
+				vm.ReplEditor.OutputPrintLine(string.Empty, BoxedTextColor.ReplOutputText);
+			}
 		}
 
-		IEnumerable<Tuple<string, string>> GetCommands(ScriptControlVM vm) {
+		void PrintCommands(ScriptControlVM vm, object color1, object color2) {
+			const string CMDS_SEP = ", ";
 			var hash = new HashSet<IScriptCommand>(vm.ScriptCommands);
-			return hash.Select(a => Tuple.Create(string.Join(NAMES_SEP, a.Names.Select(b => ScriptControlVM.CMD_PREFIX + b).ToArray()), a.ShortDescription))
-						.OrderBy(a => a.Item1, StringComparer.OrdinalIgnoreCase);
+			var cmds = hash.Select(a => Tuple.Create(a.Names.Select(b => ScriptControlVM.CMD_PREFIX + b).ToArray(), a.ShortDescription))
+						.OrderBy(a => a.Item1[0], StringComparer.OrdinalIgnoreCase);
+			foreach (var t in cmds) {
+				vm.ReplEditor.OutputPrint("  ", BoxedTextColor.ReplOutputText);
+				int cmdsLen = t.Item1.Sum(a => a.Length) + CMDS_SEP.Length * (t.Item1.Length - 1);
+				for (int i = 0; i < t.Item1.Length; i++) {
+					if (i > 0)
+						vm.ReplEditor.OutputPrint(", ", BoxedTextColor.ReplOutputText);
+					vm.ReplEditor.OutputPrint(t.Item1[i], color1);
+				}
+				int len = LEFT_COL_LEN - cmdsLen;
+				if (len > 0)
+					vm.ReplEditor.OutputPrint(new string(' ', len), BoxedTextColor.ReplOutputText);
+				vm.ReplEditor.OutputPrint(" ", BoxedTextColor.ReplOutputText);
+				vm.ReplEditor.OutputPrint(t.Item2, color2);
+				vm.ReplEditor.OutputPrintLine(string.Empty, BoxedTextColor.ReplOutputText);
+			}
 		}
 	}
 }
