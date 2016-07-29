@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
 using dnSpy.Contracts.Properties;
 using WF = System.Windows.Forms;
@@ -94,6 +95,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				var info = infos[0];
 				var name = FixFileNamePart(GetFileName(info.Name));
 				var dlg = new WF.SaveFileDialog {
+					Filter = PickFilenameConstants.AnyFilenameFilter,
 					RestoreDirectory = true,
 					ValidateNames = true,
 					FileName = name,
