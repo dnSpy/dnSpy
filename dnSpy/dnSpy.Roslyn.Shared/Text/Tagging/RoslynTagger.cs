@@ -21,8 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Themes;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 		public RoslynTagger(IThemeClassificationTypes themeClassificationTypes) {
 			if (themeClassificationTypes == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypes));
-			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(ColorType.Error);
+			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(TextColor.Error);
 			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypes);
 		}
 

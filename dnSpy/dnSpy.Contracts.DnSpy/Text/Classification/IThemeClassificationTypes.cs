@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Text.Classification {
@@ -30,13 +29,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <returns></returns>
-		IClassificationType GetClassificationType(ColorType color);
-
-		/// <summary>
-		/// Gets a classification type or a default classification type if <paramref name="color"/> is invalid
-		/// </summary>
-		/// <param name="color">Color</param>
-		/// <returns></returns>
-		IClassificationType GetClassificationTypeByColorObject(object color);
+		IClassificationType GetClassificationType(TextColor color);
 	}
 }

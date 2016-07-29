@@ -29,7 +29,6 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -93,7 +92,7 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(wpfTextViewHost.TextView);
 			this.textLayer = new Layer();
-			this.lineNumberClassificationType = themeClassificationTypes.GetClassificationType(ColorType.LineNumber);
+			this.lineNumberClassificationType = themeClassificationTypes.GetClassificationType(TextColor.LineNumber);
 			this.textFormatterProvider = textFormatterProvider;
 			this.Children.Add(textLayer);
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;

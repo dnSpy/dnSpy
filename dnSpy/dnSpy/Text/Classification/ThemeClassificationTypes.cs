@@ -22,7 +22,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
@@ -32,7 +31,7 @@ namespace dnSpy.Text.Classification {
 
 		[ImportingConstructor]
 		ThemeClassificationTypes(IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.classificationTypes = new IClassificationType[(int)(ColorType.LastNR - ColorType.FirstNR)] {
+			this.classificationTypes = new IClassificationType[(int)TextColor.Last] {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Text),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Operator),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Punctuation),
@@ -207,27 +206,12 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		const ColorType DEFAULT_COLOR = ColorType.Text;
+		const TextColor DEFAULT_COLOR = TextColor.Text;
 
-		public IClassificationType GetClassificationType(ColorType color) {
-			if (!(ColorType.FirstNR <= color && color < ColorType.LastNR))
+		public IClassificationType GetClassificationType(TextColor color) {
+			if (!(0 <= color && color < TextColor.Last))
 				color = DEFAULT_COLOR;
-			int index = (int)(color - ColorType.FirstNR);
-			return classificationTypes[index];
-		}
-
-		public IClassificationType GetClassificationTypeByColorObject(object color) {
-			var ct = color as IClassificationType;
-			if (ct != null)
-				return ct;
-
-			if (color is TextColor)
-				return GetClassificationType(((TextColor)color).ToColorType());
-
-			if (color is ColorType)
-				return GetClassificationType((ColorType)color);
-
-			return GetClassificationType(DEFAULT_COLOR);
+			return classificationTypes[(int)color];
 		}
 	}
 }

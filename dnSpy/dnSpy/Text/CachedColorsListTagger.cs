@@ -24,6 +24,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
@@ -92,8 +93,10 @@ namespace dnSpy.Text {
 						yield break;
 
 					if (tokenLength != 0) {
-						if (offs + defaultTextLength + tokenLength <= snapshot.Length)
-							yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ThemeClassificationTypes.GetClassificationTypeByColorObject(color)));
+						if (offs + defaultTextLength + tokenLength <= snapshot.Length) {
+							var ct = color as IClassificationType ?? ThemeClassificationTypes.GetClassificationType(color as TextColor? ?? TextColor.Text);
+							yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ct));
+						}
 					}
 
 					offs += defaultTextLength + tokenLength;

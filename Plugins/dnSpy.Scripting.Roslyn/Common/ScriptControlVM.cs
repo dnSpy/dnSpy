@@ -34,7 +34,6 @@ using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
@@ -109,7 +108,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 			var themeClassificationTypes = serviceLocator.Resolve<IThemeClassificationTypes>();
 			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypes);
-			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(ColorType.Error);
+			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(TextColor.Error);
 
 			this.toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);
 			foreach (var sc in CreateScriptCommands()) {
