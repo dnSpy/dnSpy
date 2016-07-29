@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnSpy.Contracts.Metadata;
 
@@ -28,17 +29,31 @@ namespace dnSpy.Metadata {
 	[Export(typeof(IModuleIdCreator))]
 	sealed class ModuleIdCreator : IModuleIdCreator {
 		readonly Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>[] moduleIdFactoryProviders;
+		readonly ConditionalWeakTable<ModuleDef, BoxedModuleId> moduleDictionary;
+		readonly ConditionalWeakTable<ModuleDef, BoxedModuleId>.CreateValueCallback callbackCreateCore;
 		IModuleIdFactory[] factories;
+
+		sealed class BoxedModuleId {
+			public ModuleId ModuleId { get; }
+			public BoxedModuleId(ModuleId moduleId) {
+				ModuleId = moduleId;
+			}
+		}
 
 		[ImportingConstructor]
 		ModuleIdCreator([ImportMany] IEnumerable<Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>> moduleIdFactoryProviders) {
 			this.moduleIdFactoryProviders = moduleIdFactoryProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.moduleDictionary = new ConditionalWeakTable<ModuleDef, BoxedModuleId>();
+			this.callbackCreateCore = CreateCore;
 		}
 
 		public ModuleId Create(ModuleDef module) {
 			if (module == null)
 				return new ModuleId();
+			return moduleDictionary.GetValue(module, callbackCreateCore).ModuleId;
+		}
 
+		BoxedModuleId CreateCore(ModuleDef module) {
 			if (factories == null) {
 				var list = new List<IModuleIdFactory>(moduleIdFactoryProviders.Length);
 				foreach (var provider in moduleIdFactoryProviders) {
@@ -52,10 +67,10 @@ namespace dnSpy.Metadata {
 			foreach (var factory in factories) {
 				var id = factory.Create(module);
 				if (id != null)
-					return id.Value;
+					return new BoxedModuleId(id.Value);
 			}
 
-			return ModuleId.CreateFromFile(module);
+			return new BoxedModuleId(ModuleId.CreateFromFile(module));
 		}
 	}
 }

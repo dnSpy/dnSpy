@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		public SpanDataCollection<ReferenceInfo> ReferenceCollection { get; }
 
 		/// <summary>
-		/// Gets the IL code mappings
+		/// Gets the method debug info collection
 		/// </summary>
 		public ReadOnlyCollection<MethodDebugInfo> MethodDebugInfos { get; }
 

@@ -25,7 +25,8 @@ namespace dnSpy.Contracts.Metadata {
 	/// </summary>
 	public interface IModuleIdFactory {
 		/// <summary>
-		/// Creates a <see cref="ModuleId"/> or returns null
+		/// Creates a <see cref="ModuleId"/> or returns null. The returned value can be cached so
+		/// it must always produce the same value for the same input module.
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
