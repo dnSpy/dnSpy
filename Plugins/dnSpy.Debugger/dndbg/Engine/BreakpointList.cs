@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace dndbg.Engine {
 	sealed class BreakpointList<TBP> {
-		readonly Dictionary<SerializedDnModule, List<TBP>> dict = new Dictionary<SerializedDnModule, List<TBP>>();
+		readonly Dictionary<DnModuleId, List<TBP>> dict = new Dictionary<DnModuleId, List<TBP>>();
 
 		public IEnumerable<TBP> GetBreakpoints() {
 			foreach (var list in dict.Values) {
@@ -31,21 +31,21 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public TBP[] GetBreakpoints(SerializedDnModule module) {
+		public TBP[] GetBreakpoints(DnModuleId module) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
 				return Array.Empty<TBP>();
 			return list.ToArray();
 		}
 
-		public void Add(SerializedDnModule module, TBP bp) {
+		public void Add(DnModuleId module, TBP bp) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
 				dict.Add(module, list = new List<TBP>());
 			list.Add(bp);
 		}
 
-		public bool Remove(SerializedDnModule module, TBP bp) {
+		public bool Remove(DnModuleId module, TBP bp) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
 				return false;

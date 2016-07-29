@@ -134,10 +134,10 @@ namespace dndbg.Engine {
 		bool IsOurModule(CorModule module) => IsModule(module, filename);
 		static bool IsModule(CorModule module, string filename) => module != null && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
-		void SetILBreakpoint(SerializedDnModule serMod, uint token) {
+		void SetILBreakpoint(DnModuleId moduleId, uint token) {
 			Debug.Assert(token != 0 && breakpoint == null);
 			DnBreakpoint bp = null;
-			bp = debugger.CreateBreakpoint(serMod, token, 0, ctx2 => {
+			bp = debugger.CreateBreakpoint(moduleId, token, 0, ctx2 => {
 				debugger.RemoveBreakpoint(bp);
 				return true;
 			});
@@ -150,12 +150,12 @@ namespace dndbg.Engine {
 				return false;
 			debugger.RemoveBreakpoint(breakpoint);
 			breakpoint = null;
-			var serMod = mod.SerializedDnModule;
+			var moduleId = mod.DnModuleId;
 
 			if (type == BreakProcessKind.ModuleCctorOrEntryPoint) {
 				uint cctorToken = MetaDataUtils.GetGlobalStaticConstructor(mod.GetMetaDataInterface<IMetaDataImport>());
 				if (cctorToken != 0) {
-					SetILBreakpoint(serMod, cctorToken);
+					SetILBreakpoint(moduleId, cctorToken);
 					return false;
 				}
 			}
@@ -164,7 +164,7 @@ namespace dndbg.Engine {
 			uint epToken = GetEntryPointToken(filename, out otherModuleName);
 			if (epToken != 0) {
 				if ((Table)(epToken >> 24) == Table.Method) {
-					SetILBreakpoint(serMod, epToken);
+					SetILBreakpoint(moduleId, epToken);
 					return false;
 				}
 
@@ -196,7 +196,7 @@ namespace dndbg.Engine {
 			string otherModuleName;
 			uint epToken = GetEntryPointToken(otherModuleFullName, out otherModuleName);
 			if (epToken != 0 && (Table)(epToken >> 24) == Table.Method) {
-				SetILBreakpoint(mod.SerializedDnModule, epToken);
+				SetILBreakpoint(mod.DnModuleId, epToken);
 				return false;
 			}
 

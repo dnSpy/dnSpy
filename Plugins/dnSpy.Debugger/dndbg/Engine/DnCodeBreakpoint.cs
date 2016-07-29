@@ -32,14 +32,14 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class DnCodeBreakpoint : DnBreakpoint {
-		public SerializedDnModule Module { get; }
+		public DnModuleId Module { get; }
 		public uint Token { get; }
 		public uint Offset { get; }
 
 		readonly List<ModuleCodeBreakpoint> rawBps = new List<ModuleCodeBreakpoint>();
 		readonly CorCode code;
 
-		internal DnCodeBreakpoint(SerializedDnModule module, uint token, uint offset) {
+		internal DnCodeBreakpoint(DnModuleId module, uint token, uint offset) {
 			this.Module = module;
 			this.Token = token;
 			this.Offset = offset;
@@ -54,8 +54,8 @@ namespace dndbg.Engine {
 			this.code = code;
 		}
 
-		static SerializedDnModule GetModule(CorCode code) =>
-			code.Function?.Module?.SerializedDnModule ?? new SerializedDnModule();
+		static DnModuleId GetModule(CorCode code) =>
+			code.Function?.Module?.DnModuleId ?? new DnModuleId();
 
 		sealed protected override void OnIsEnabledChanged() {
 			foreach (var bp in rawBps)
@@ -77,7 +77,7 @@ namespace dndbg.Engine {
 				c = GetCode(func);
 			}
 			else {
-				if (GetModule(code) != module.SerializedDnModule)
+				if (GetModule(code) != module.DnModuleId)
 					return false;
 			}
 			if (c == null)

@@ -966,7 +966,7 @@ namespace dnSpy.Debugger {
 					var mod = Function.Module;
 					if (mod == null)
 						return new ModuleTokenId();
-					return new ModuleTokenId(mod.SerializedDnModule.ToModuleId(), Function.Token);
+					return new ModuleTokenId(mod.DnModuleId.ToModuleId(), Function.Token);
 				}
 			}
 
@@ -1080,7 +1080,7 @@ namespace dnSpy.Debugger {
 		}
 
 		static ModuleTokenId? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
-			var sma = frame.SerializedDnModule;
+			var sma = frame.DnModuleId;
 			if (sma == null)
 				return null;
 
@@ -1309,8 +1309,8 @@ namespace dnSpy.Debugger {
 				var md = info.Method;
 				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 					continue;
-				var serAsm = moduleIdCreator.Create(md.Module);
-				if (!serAsm.Equals(currentLocation.Value.SerializedDnToken.Module))
+				var moduleId = moduleIdCreator.Create(md.Module);
+				if (!moduleId.Equals(currentLocation.Value.SerializedDnToken.Module))
 					continue;
 
 				methodStatement = info;

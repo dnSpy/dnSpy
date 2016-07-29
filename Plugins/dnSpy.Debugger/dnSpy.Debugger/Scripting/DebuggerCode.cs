@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Scripting {
 			var func = this.CorCode.Function;
 			var mod = func?.Module;
 			uint token = func?.Token ?? 0;
-			var module = mod == null ? new ModuleId() : mod.SerializedDnModule.ToModuleId();
+			var module = mod == null ? new ModuleId() : mod.DnModuleId.ToModuleId();
 			return debugger.CreateBreakpoint(module, token, offset, cond);
 		});
 

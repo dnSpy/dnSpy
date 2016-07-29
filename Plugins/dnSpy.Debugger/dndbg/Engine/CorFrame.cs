@@ -255,7 +255,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the module of the function or null
 		/// </summary>
-		public SerializedDnModule? SerializedDnModule => Function?.Module?.SerializedDnModule;
+		public DnModuleId? DnModuleId => Function?.Module?.DnModuleId;
 
 		public CorFrame(ICorDebugFrame frame)
 			: base(frame) {

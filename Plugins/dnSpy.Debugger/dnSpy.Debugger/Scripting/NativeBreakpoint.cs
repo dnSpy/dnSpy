@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.Scripting {
 			if (dbgBreakpoint != null)
 				throw new InvalidOperationException();
 			if (code == null)
-				dbgBreakpoint = dbg.CreateNativeBreakpoint(Module.ToSerializedDnModule(), Token, Offset, a => cond(this));
+				dbgBreakpoint = dbg.CreateNativeBreakpoint(Module.ToDnModuleId(), Token, Offset, a => cond(this));
 			else
 				dbgBreakpoint = dbg.CreateNativeBreakpoint(code.CorCode, Offset, a => cond(this));
 			dbgBreakpoint.IsEnabled = isEnabled;

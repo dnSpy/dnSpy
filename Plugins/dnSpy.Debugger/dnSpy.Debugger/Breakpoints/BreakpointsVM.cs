@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var module = dbg.TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
 				Debug.Assert(module != null);
 				if (module != null && module.IsDynamic)
-					pendingModules.Add(module.SerializedDnModule.ToModuleId());
+					pendingModules.Add(module.DnModuleId.ToModuleId());
 			}
 		}
 

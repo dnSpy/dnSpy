@@ -673,9 +673,9 @@ namespace dndbg.Engine {
 		void RemoveModuleFromBreakpoints(DnModule module) {
 			if (module == null)
 				return;
-			foreach (var bp in this.ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+			foreach (var bp in this.ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.RemoveModule(module);
-			foreach (var bp in this.nativeCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+			foreach (var bp in this.nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.RemoveModule(module);
 		}
 
@@ -811,9 +811,9 @@ namespace dndbg.Engine {
 					if (module != null) {
 						if (module.CorModuleDef != null)
 							module.CorModuleDef.LoadClass(cls.Token);
-						foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+						foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 							bp.AddBreakpoint(module);
-						foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+						foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 							bp.AddBreakpoint(module);
 					}
 				}
@@ -1334,9 +1334,9 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="module"></param>
 		public void AddBreakpoints(DnModule module) {
-			foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+			foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.AddBreakpoint(module);
-			foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+			foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.AddBreakpoint(module);
 		}
 
@@ -1373,7 +1373,7 @@ namespace dndbg.Engine {
 		/// <param name="offset">IL offset</param>
 		/// <param name="cond">Condition</param>
 		/// <returns></returns>
-		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
+		public DnILCodeBreakpoint CreateBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnILCodeBreakpoint(module, token, offset, cond);
 			ilCodeBreakpointList.Add(module, bp);
@@ -1390,7 +1390,7 @@ namespace dndbg.Engine {
 		/// <param name="offset">Offset</param>
 		/// <param name="cond">Condition</param>
 		/// <returns></returns>
-		public DnNativeCodeBreakpoint CreateNativeBreakpoint(SerializedDnModule module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
+		public DnNativeCodeBreakpoint CreateNativeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnNativeCodeBreakpoint(module, token, offset, cond);
 			nativeCodeBreakpointList.Add(module, bp);
@@ -1409,19 +1409,19 @@ namespace dndbg.Engine {
 		public DnNativeCodeBreakpoint CreateNativeBreakpoint(CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnNativeCodeBreakpoint(code, offset, cond);
-			var module = code.Function?.Module?.SerializedDnModule ?? new SerializedDnModule();
+			var module = code.Function?.Module?.DnModuleId ?? new DnModuleId();
 			nativeCodeBreakpointList.Add(module, bp);
 			foreach (var dnMod in GetLoadedDnModules(module))
 				bp.AddBreakpoint(dnMod);
 			return bp;
 		}
 
-		IEnumerable<DnModule> GetLoadedDnModules(SerializedDnModule module) {
+		IEnumerable<DnModule> GetLoadedDnModules(DnModuleId module) {
 			foreach (var process in processes.GetAll()) {
 				foreach (var appDomain in process.AppDomains) {
 					foreach (var assembly in appDomain.Assemblies) {
 						foreach (var dnMod in assembly.Modules) {
-							if (dnMod.SerializedDnModule.Equals(module))
+							if (dnMod.DnModuleId.Equals(module))
 								yield return dnMod;
 						}
 					}

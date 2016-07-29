@@ -123,6 +123,7 @@
     <Compile Include="Engine\DnEval.cs" />
     <Compile Include="Engine\DnILCodeBreakpoint.cs" />
     <Compile Include="Engine\DnModule.cs" />
+    <Compile Include="Engine\DnModuleId.cs" />
     <Compile Include="Engine\DnNativeCodeBreakpoint.cs" />
     <Compile Include="Engine\DnProcess.cs" />
     <Compile Include="Engine\DnThread.cs" />
@@ -134,7 +135,6 @@
     <Compile Include="Engine\MetaDataUtils.cs" />
     <Compile Include="Engine\NativeMethods.cs" />
     <Compile Include="Engine\ProcessCreationFlags.cs" />
-    <Compile Include="Engine\SerializedDnModule.cs" />
     <Compile Include="Engine\StepRange.cs" />
     <Compile Include="Engine\TypeComparer.cs" />
     <Compile Include="Engine\TypePrinter.cs" />

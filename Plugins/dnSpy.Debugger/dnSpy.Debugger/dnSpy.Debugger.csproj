@@ -99,6 +99,7 @@
     <Compile Include="Dialogs\ProcessContext.cs" />
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
+    <Compile Include="DnModuleIdExtensions.cs" />
     <Compile Include="IModuleIdProvider.cs" />
     <Compile Include="Logger\Commands.cs" />
     <Compile Include="Logger\ContentTypeDefinitions.cs" />
@@ -215,7 +216,6 @@
     <Compile Include="Scripting\StackFrame.cs" />
     <Compile Include="Scripting\TypeComparer.cs" />
     <Compile Include="Scripting\Utils.cs" />
-    <Compile Include="SerializedDnModuleExtensions.cs" />
     <Compile Include="TheDebugger.cs" />
     <Compile Include="Threads\Commands.cs" />
     <Compile Include="Threads\ThreadColumnConverter.cs" />

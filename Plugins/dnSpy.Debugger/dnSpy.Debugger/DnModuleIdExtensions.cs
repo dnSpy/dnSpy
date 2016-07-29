@@ -21,8 +21,8 @@ using dndbg.Engine;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
-	static class SerializedDnModuleExtensions {
-		public static ModuleId ToModuleId(this SerializedDnModule serMod) =>
-			new ModuleId(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
+	static class DnModuleIdExtensions {
+		public static ModuleId ToModuleId(this DnModuleId moduleId) =>
+			new ModuleId(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
 	}
 }

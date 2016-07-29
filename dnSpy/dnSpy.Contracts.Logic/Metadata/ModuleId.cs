@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// NOTE: This is a copy of dndbg.Engine.SerializedDnModule. Keep them in sync.
+// NOTE: This is a copy of dndbg.Engine.DnModuleId. Keep them in sync.
 
 using System;
 using System.Diagnostics;

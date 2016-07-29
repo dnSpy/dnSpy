@@ -72,7 +72,7 @@ namespace dnSpy.Debugger {
 				return null;
 			//TODO: This method should have an AppDomain parameter.
 			foreach (var m in dbg.Modules) {
-				if (m.SerializedDnModule.ToModuleId().Equals(moduleId))
+				if (m.DnModuleId.ToModuleId().Equals(moduleId))
 					return m;
 			}
 			return null;
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger {
 			if (dnModule != null)
 				return LoadModule(dnModule, canLoadDynFile, isAutoLoaded);
 
-			return LoadModule(module.SerializedDnModule.ToModuleId(), canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
+			return LoadModule(module.DnModuleId.ToModuleId(), canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
 		}
 
 		public IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded) {
@@ -98,8 +98,8 @@ namespace dnSpy.Debugger {
 			var file = inMemoryModuleManager.Value.FindFile(module);
 			if (file != null)
 				return file;
-			var serMod = module.SerializedDnModule;
-			return LoadModule(serMod.ToModuleId(), canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
+			var moduleId = module.DnModuleId;
+			return LoadModule(moduleId.ToModuleId(), canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
 		}
 
 		IEnumerable<IDnSpyFile> AllDnSpyFiles => inMemoryModuleManager.Value.AllDnSpyFiles;
@@ -146,8 +146,8 @@ namespace dnSpy.Debugger {
 			}
 
 			foreach (var file in AllDnSpyFiles) {
-				var serModFile = moduleIdCreator.Create(file.ModuleDef);
-				if (serModFile.Equals(moduleId))
+				var moduleIdFile = moduleIdCreator.Create(file.ModuleDef);
+				if (moduleIdFile.Equals(moduleId))
 					return file;
 			}
 

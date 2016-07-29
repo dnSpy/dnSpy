@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.CallStack {
 				uint token = frame.Token;
 				if (token == 0)
 					continue;
-				var mod = frame.SerializedDnModule;
+				var mod = frame.DnModuleId;
 				if (mod == null)
 					continue;
 

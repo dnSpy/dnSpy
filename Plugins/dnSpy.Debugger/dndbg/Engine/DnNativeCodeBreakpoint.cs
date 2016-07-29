@@ -33,7 +33,7 @@ namespace dndbg.Engine {
 	public sealed class DnNativeCodeBreakpoint : DnCodeBreakpoint {
 		internal Func<NativeCodeBreakpointConditionContext, bool> Condition { get; }
 
-		internal DnNativeCodeBreakpoint(SerializedDnModule module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
+		internal DnNativeCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
 			: base(module, token, offset) {
 			this.Condition = cond ?? defaultCond;
 		}

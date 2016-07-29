@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.CallStack {
 			uint token = frame.Token;
 			if (token == 0)
 				return null;
-			var mod = frame.SerializedDnModule;
+			var mod = frame.DnModuleId;
 			if (mod == null)
 				return null;
 			return new KeyValuePair<ModuleTokenId, uint>(new ModuleTokenId(mod.Value.ToModuleId(), frame.Token), ip.Offset);

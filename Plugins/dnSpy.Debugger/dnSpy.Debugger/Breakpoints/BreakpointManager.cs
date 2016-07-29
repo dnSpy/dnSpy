@@ -195,7 +195,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var ilbp = (ILCodeBreakpoint)bp;
 				Func<ILCodeBreakpointConditionContext, bool> cond = null;//TODO: Let user pick what cond to use
 				Debug.Assert(ilbp.DnBreakpoint == null);
-				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.MethodToken.Module.ToSerializedDnModule(), ilbp.MethodToken.Token, ilbp.ILOffset, cond);
+				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.MethodToken.Module.ToDnModuleId(), ilbp.MethodToken.Token, ilbp.ILOffset, cond);
 				break;
 
 			case BreakpointKind.DebugEvent:

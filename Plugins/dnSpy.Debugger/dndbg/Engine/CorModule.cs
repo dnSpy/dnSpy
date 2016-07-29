@@ -136,7 +136,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public SerializedDnModule SerializedDnModule => new SerializedDnModule(Assembly?.FullName ?? string.Empty, SerializedName, IsDynamic, IsInMemory, false);
+		public DnModuleId DnModuleId => new DnModuleId(Assembly?.FullName ?? string.Empty, SerializedName, IsDynamic, IsInMemory, false);
 
 		/// <summary>
 		/// Gets/sets the JIT compiler flags. The setter can only be called from the

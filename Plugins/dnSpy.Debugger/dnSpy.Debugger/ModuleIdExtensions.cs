@@ -22,7 +22,7 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
 	static class ModuleIdExtensions {
-		public static SerializedDnModule ToSerializedDnModule(this ModuleId moduleId) =>
-			new SerializedDnModule(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
+		public static DnModuleId ToDnModuleId(this ModuleId moduleId) =>
+			new DnModuleId(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
 	}
 }

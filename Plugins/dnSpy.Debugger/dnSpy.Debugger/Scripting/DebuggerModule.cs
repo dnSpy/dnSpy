@@ -32,7 +32,7 @@ using dnSpy.Debugger.Modules;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerModule : IDebuggerModule {
-		public ModuleId ModuleId => moduleName;
+		public ModuleId ModuleId => moduleId;
 		public IAppDomain AppDomain => debugger.Dispatcher.UI(() => new DebuggerAppDomain(debugger, mod.AppDomain));
 		public IDebuggerAssembly Assembly => debugger.Dispatcher.UI(() => new DebuggerAssembly(debugger, mod.Assembly));
 
@@ -51,8 +51,8 @@ namespace dnSpy.Debugger.Scripting {
 
 		public bool HasUnloaded => debugger.Dispatcher.UI(() => mod.HasUnloaded);
 		public int UniqueId => uniqueId;
-		public bool IsDynamic => moduleName.IsDynamic;
-		public bool IsInMemory => moduleName.IsInMemory;
+		public bool IsDynamic => moduleId.IsDynamic;
+		public bool IsInMemory => moduleId.IsInMemory;
 		public bool IsManifestModule => debugger.Dispatcher.UI(() => mod.CorModule.IsManifestModule);
 		public string Name => name;
 		public string UniquerName => debugger.Dispatcher.UI(() => mod.CorModule.UniquerName);
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly ulong address;
 		readonly uint size;
 		readonly string name;
-		/*readonly*/ ModuleId moduleName;
+		/*readonly*/ ModuleId moduleId;
 
 		public DebuggerModule(Debugger debugger, DnModule mod) {
 			debugger.Dispatcher.VerifyAccess();
@@ -77,8 +77,8 @@ namespace dnSpy.Debugger.Scripting {
 			this.name = mod.Name;
 			this.address = mod.Address;
 			this.size = mod.Size;
-			var serMod = mod.SerializedDnModule;
-			this.moduleName = new ModuleId(serMod.AssemblyFullName, serMod.ModuleName, serMod.IsDynamic, serMod.IsInMemory, serMod.ModuleNameOnly);
+			var moduleId = mod.DnModuleId;
+			this.moduleId = new ModuleId(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
 		}
 
 		public IDebuggerAssembly ResolveAssembly(uint asmRefToken) => debugger.Dispatcher.UI(() => {
