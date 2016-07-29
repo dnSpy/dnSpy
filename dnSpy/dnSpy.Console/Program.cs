@@ -487,7 +487,7 @@ namespace dnSpy_Console {
 					case "--output-dir":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingOutputDir);
-						outputDir = next;
+						outputDir = Path.GetFullPath(next);
 						i++;
 						break;
 
