@@ -27,22 +27,14 @@ using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Output;
-using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Logger {
-	[ExportAutoLoaded]
-	sealed class CreateOutputLogger : IAutoLoaded {
-		[ImportingConstructor]
-		CreateOutputLogger(OutputLogger logger) {
-			// Nothing
-		}
-	}
-
-	[Export, Export(typeof(ILoadBeforeDebug))]
-	sealed class OutputLogger : ILoadBeforeDebug {
+	[Export(typeof(ILoadBeforeDebug))]
+	[ExportOutputManagerListener]
+	sealed class OutputLogger : ILoadBeforeDebug, IOutputManagerListener {
 		public static readonly Guid GUID_OUTPUT_LOGGER_DEBUG = new Guid("7B6E802A-B58C-4689-877E-3358FCDCEFAC");
 
 		readonly IOutputManager outputManager;

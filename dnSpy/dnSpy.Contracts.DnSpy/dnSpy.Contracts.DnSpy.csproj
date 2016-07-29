@@ -194,6 +194,7 @@
     <Compile Include="MVVM\PickFilename.cs" />
     <Compile Include="MVVM\PickFilenameConstants.cs" />
     <Compile Include="MVVM\PickSaveFilename.cs" />
+    <Compile Include="Output\IOutputManagerListener.cs" />
     <Compile Include="Properties\dnSpy.Contracts.DnSpy.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

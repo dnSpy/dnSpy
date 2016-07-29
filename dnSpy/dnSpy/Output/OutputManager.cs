@@ -27,6 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
@@ -135,7 +136,7 @@ namespace dnSpy.Output {
 		readonly IMenuManager menuManager;
 
 		[ImportingConstructor]
-		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuManager menuManager) {
+		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuManager menuManager, [ImportMany] IEnumerable<Lazy<IOutputManagerListener, IOutputManagerListenerMetadata>> outputManagerListeners) {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorCreator = logEditorCreator;
 			this.outputManagerSettingsImpl = outputManagerSettingsImpl;
@@ -144,6 +145,13 @@ namespace dnSpy.Output {
 			this.menuManager = menuManager;
 			this.outputBuffers = new ObservableCollection<OutputBufferVM>();
 			this.outputBuffers.CollectionChanged += OutputBuffers_CollectionChanged;
+
+			var listeners = outputManagerListeners.OrderBy(a => a.Metadata.Order).ToArray();
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+				foreach (var lazy in outputManagerListeners) {
+					var l = lazy.Value;
+				}
+			}));
 		}
 
 		void OutputBuffers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {

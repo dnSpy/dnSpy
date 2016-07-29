@@ -22,7 +22,8 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Output {
 	/// <summary>
-	/// Output manager
+	/// Output manager. Export an <see cref="IOutputManagerListener"/> to get notified whenever
+	/// the output window is first shown.
 	/// </summary>
 	public interface IOutputManager {
 		/// <summary>
