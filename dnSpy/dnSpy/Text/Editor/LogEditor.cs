@@ -55,7 +55,7 @@ namespace dnSpy.Text.Editor {
 		readonly IDnSpyWpfTextView wpfTextView;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
-		CachedTextTokenColors cachedTextTokenColors;
+		CachedTextColorsCollection cachedTextColorsCollection;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly LogEditor logEditorUI;
@@ -101,11 +101,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void SetNewDocument() {
-			cachedTextTokenColors = new CachedTextTokenColors();
+			cachedTextColorsCollection = new CachedTextColorsCollection();
 			wpfTextView.TextBuffer.Replace(new Span(0, wpfTextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
 			ClearUndoRedoHistory();
 			cachedColorsList.Clear();
-			cachedColorsList.Add(0, cachedTextTokenColors);
+			cachedColorsList.Add(0, cachedTextColorsCollection);
 		}
 
 		void ClearUndoRedoHistory() {
@@ -187,12 +187,12 @@ namespace dnSpy.Text.Editor {
 
 			foreach (var info in newPendingOutput) {
 				sb.Append(info.Text);
-				cachedTextTokenColors.Append(info.Color, info.Text);
+				cachedTextColorsCollection.Append(info.Color, info.Text);
 			}
 			if (sb.Length == 0)
 				return;
 
-			cachedTextTokenColors.Flush();
+			cachedTextColorsCollection.Flush();
 			RawAppend(sb.ToString());
 		}
 

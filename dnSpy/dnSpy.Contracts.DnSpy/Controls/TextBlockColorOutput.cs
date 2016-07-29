@@ -34,22 +34,22 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.Controls {
 	sealed class TextBlockColorOutput : ITextColorWriter {
-		readonly CachedTextTokenColors cachedTextTokenColors;
+		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly StringBuilder sb;
 
 		public bool IsEmpty => sb.Length == 0;
 		public string Text => sb.ToString();
 
 		public TextBlockColorOutput() {
-			this.cachedTextTokenColors = new CachedTextTokenColors();
+			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.sb = new StringBuilder();
 		}
 
 		public void Write(TextColor color, string text) => Write(color.Box(), text);
 		public void Write(object color, string text) {
-			cachedTextTokenColors.Append(color, text);
+			cachedTextColorsCollection.Append(color, text);
 			sb.Append(text);
-			Debug.Assert(sb.Length == cachedTextTokenColors.Length);
+			Debug.Assert(sb.Length == cachedTextColorsCollection.Length);
 		}
 
 		IEnumerable<Tuple<string, int>> GetLines(string s) {
@@ -73,12 +73,12 @@ namespace dnSpy.Contracts.Controls {
 
 		public FrameworkElement Create(bool useNewFormatter, bool useEllipsis, bool filterOutNewLines) {
 			var textBlockText = sb.ToString();
-			cachedTextTokenColors.Finish();
+			cachedTextColorsCollection.Finish();
 
 			if (!useEllipsis && filterOutNewLines) {
 				return new FastTextBlock(useNewFormatter, new TextSrc {
 					text = textBlockText,
-					cachedTextTokenColors = cachedTextTokenColors,
+					cachedTextColorsCollection = cachedTextColorsCollection,
 				});
 			}
 
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Controls {
 				while (offs < endOffs) {
 					int defaultTextLength, tokenLength;
 					object color;
-					if (!cachedTextTokenColors.Find(offs, out defaultTextLength, out color, out tokenLength)) {
+					if (!cachedTextColorsCollection.Find(offs, out defaultTextLength, out color, out tokenLength)) {
 						Debug.Fail("Could not find token info");
 						break;
 					}
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Controls {
 		sealed class TextSrc : TextSource, FastTextBlock.IFastTextSource {
 			FastTextBlock parent;
 			internal string text;
-			internal CachedTextTokenColors cachedTextTokenColors;
+			internal CachedTextColorsCollection cachedTextColorsCollection;
 
 			sealed class TextProps : TextRunProperties {
 				internal Brush background;
@@ -212,7 +212,7 @@ namespace dnSpy.Contracts.Controls {
 
 				int defaultTextLength, tokenLength;
 				object color;
-				if (!cachedTextTokenColors.Find(index, out defaultTextLength, out color, out tokenLength)) {
+				if (!cachedTextColorsCollection.Find(index, out defaultTextLength, out color, out tokenLength)) {
 					Debug.Fail("Could not find token info");
 					return new TextCharacters(" ", GetDefaultTextRunProperties());
 				}

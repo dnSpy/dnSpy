@@ -23,11 +23,11 @@ using System.Diagnostics;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
-	/// Caches text and data
+	/// Caches text colors and spans
 	/// </summary>
-	public sealed class CachedTextTokenColors {
-		static CachedTextTokenColors() {
-			var empty = new CachedTextTokenColors();
+	public sealed class CachedTextColorsCollection {
+		static CachedTextColorsCollection() {
+			var empty = new CachedTextColorsCollection();
 			empty.Freeze();
 			Empty = empty;
 		}
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Gets an empty frozen instance
 		/// </summary>
-		public static readonly CachedTextTokenColors Empty;
+		public static readonly CachedTextColorsCollection Empty;
 
 		/// <summary>
 		/// Gets the length of the text

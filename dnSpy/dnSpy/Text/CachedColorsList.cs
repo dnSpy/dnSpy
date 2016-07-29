@@ -39,27 +39,27 @@ namespace dnSpy.Text {
 		}
 		int previousReturnedIndex;
 
-		public void Add(int offset, CachedTextTokenColors cachedColors) {
+		public void Add(int offset, CachedTextColorsCollection cachedTextColorsCollection) {
 			Debug.Assert((cachedColorsList.Count == 0 && offset == 0) || (cachedColorsList.Count > 0 && cachedColorsList.Last().Offset + cachedColorsList.Last().CachedColors.Length <= offset));
-			cachedColorsList.Add(new OffsetAndCachedColors(offset, cachedColors));
+			cachedColorsList.Add(new OffsetAndCachedColors(offset, cachedTextColorsCollection));
 		}
 
 		public void SetAsyncUpdatingAfterChanges(int docOffset) =>
 			AddOrUpdate(docOffset, OffsetAndCachedColors.Default.CachedColors);
 
-		public void AddOrUpdate(int docOffset, CachedTextTokenColors newCachedColors) {
+		public void AddOrUpdate(int docOffset, CachedTextColorsCollection newCachedTextColorsCollection) {
 			for (int i = 0; i < cachedColorsList.Count; i++) {
 				int mi = (previousReturnedIndex + i) % cachedColorsList.Count;
 				var info = cachedColorsList[mi];
 				if (info.Offset == docOffset) {
-					cachedColorsList[mi] = new OffsetAndCachedColors(docOffset, newCachedColors);
+					cachedColorsList[mi] = new OffsetAndCachedColors(docOffset, newCachedTextColorsCollection);
 					return;
 				}
 			}
-			Add(docOffset, newCachedColors);
+			Add(docOffset, newCachedTextColorsCollection);
 		}
 
-		public CachedTextTokenColors RemoveLastCachedTextTokenColors() {
+		public CachedTextColorsCollection RemoveLastCachedTextColorsCollection() {
 			Debug.Assert(cachedColorsList.Count > 0);
 			if (cachedColorsList.Count == 0)
 				return null;

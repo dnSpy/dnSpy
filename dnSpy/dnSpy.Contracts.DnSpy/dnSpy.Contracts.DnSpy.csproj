@@ -441,7 +441,7 @@
     <Compile Include="Tabs\TabGroupManagerOptions.cs" />
     <Compile Include="Tabs\TabGroupSelectedEventArgs.cs" />
     <Compile Include="Tabs\TabSelectedEventArgs.cs" />
-    <Compile Include="Text\CachedTextTokenColors.cs" />
+    <Compile Include="Text\CachedTextColorsCollection.cs" />
     <Compile Include="Text\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Classification\EditorFormatMapConstants.cs" />
     <Compile Include="Text\Classification\IThemeClassificationTypes.cs" />

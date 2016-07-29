@@ -32,7 +32,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DocumentViewerOutput : IDocumentViewerOutput {
 		public bool CanBeCached => canBeCached;
 
-		readonly CachedTextTokenColors cachedTextTokenColors;
+		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly StringBuilder stringBuilder;
 		readonly List<MethodDebugInfo> methodDebugInfos;
 		SpanDataCollectionBuilder<ReferenceInfo> referenceBuilder;
@@ -45,7 +45,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		int IDecompilerOutput.NextPosition => stringBuilder.Length + GetIndentSize();
 
 		public DocumentViewerOutput() {
-			this.cachedTextTokenColors = new CachedTextTokenColors();
+			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.stringBuilder = new StringBuilder();
 			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
 			this.methodDebugInfos = new List<MethodDebugInfo>();
@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (hasCreatedResult)
 				throw new InvalidOperationException(nameof(CreateResult) + " can only be called once");
 			hasCreatedResult = true;
-			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextTokenColors, referenceBuilder.Create(), methodDebugInfos.ToArray());
+			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextColorsCollection, referenceBuilder.Create(), methodDebugInfos.ToArray());
 		}
 
 		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
@@ -74,9 +74,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public void WriteLine() {
 			addIndent = true;
-			cachedTextTokenColors.AppendLine();
+			cachedTextColorsCollection.AppendLine();
 			stringBuilder.AppendLine();
-			Debug.Assert(stringBuilder.Length == cachedTextTokenColors.Length);
+			Debug.Assert(stringBuilder.Length == cachedTextColorsCollection.Length);
 		}
 
 		int GetIndentSize() => addIndent ? indentation : 0;// Tabs are used
@@ -118,14 +118,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (addIndent)
 				AddIndent();
 			stringBuilder.Append(text);
-			cachedTextTokenColors.Append(color, text);
+			cachedTextColorsCollection.Append(color, text);
 		}
 
 		void AddText(string text, int index, int count, object color) {
 			if (addIndent)
 				AddIndent();
 			stringBuilder.Append(text, index, count);
-			cachedTextTokenColors.Append(color, text, index, count);
+			cachedTextColorsCollection.Append(color, text, index, count);
 		}
 
 		public void Write(string text, object color) => AddText(text, color);

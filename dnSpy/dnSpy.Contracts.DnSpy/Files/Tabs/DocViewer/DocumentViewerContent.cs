@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the colors
 		/// </summary>
-		public CachedTextTokenColors ColorCollection { get; }
+		public CachedTextColorsCollection ColorCollection { get; }
 
 		/// <summary>
 		/// Gets the references
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="colorCollection">Colors</param>
 		/// <param name="referenceCollection">References</param>
 		/// <param name="methodDebugInfos">Debug info</param>
-		public DocumentViewerContent(string text, CachedTextTokenColors colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MethodDebugInfo[] methodDebugInfos) {
+		public DocumentViewerContent(string text, CachedTextColorsCollection colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MethodDebugInfo[] methodDebugInfos) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (colorCollection == null)

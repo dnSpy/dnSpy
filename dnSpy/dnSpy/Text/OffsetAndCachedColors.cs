@@ -23,16 +23,16 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Text {
 	struct OffsetAndCachedColors {
 		public int Offset { get; }
-		public CachedTextTokenColors CachedColors { get; }
+		public CachedTextColorsCollection CachedColors { get; }
 
 		static OffsetAndCachedColors() {
-			var info = new CachedTextTokenColors();
-			info.Finish();
-			Default = new OffsetAndCachedColors(0, info);
+			var coll = new CachedTextColorsCollection();
+			coll.Freeze();
+			Default = new OffsetAndCachedColors(0, coll);
 		}
 		public static readonly OffsetAndCachedColors Default;
 
-		public OffsetAndCachedColors(int offset, CachedTextTokenColors cachedColors) {
+		public OffsetAndCachedColors(int offset, CachedTextColorsCollection cachedColors) {
 			Offset = offset;
 			CachedColors = cachedColors;
 		}

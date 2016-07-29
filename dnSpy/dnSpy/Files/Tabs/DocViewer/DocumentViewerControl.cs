@@ -67,7 +67,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.textEditorHelper = textEditorHelper;
 			this.defaultContentType = textBufferFactoryService.TextContentType;
 			this.cachedColorsList = new CachedColorsList();
-			this.emptyContent = new DocumentViewerContent(string.Empty, CachedTextTokenColors.Empty, SpanDataCollection<ReferenceInfo>.Empty, Array.Empty<MethodDebugInfo>());
+			this.emptyContent = new DocumentViewerContent(string.Empty, CachedTextColorsCollection.Empty, SpanDataCollection<ReferenceInfo>.Empty, Array.Empty<MethodDebugInfo>());
 			this.currentContent = new CurrentContent(emptyContent, defaultContentType);
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
