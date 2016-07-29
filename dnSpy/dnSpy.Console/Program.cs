@@ -31,6 +31,7 @@ using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Languages.MSBuild;
 using dnSpy_Console.Properties;
@@ -67,6 +68,114 @@ namespace dnSpy_Console {
 		}
 	}
 
+	struct ConsoleColorPair {
+		public ConsoleColor? Foreground { get; }
+		public ConsoleColor? Background { get; }
+		public ConsoleColorPair(ConsoleColor? foreground, ConsoleColor? background) {
+			Foreground = foreground;
+			Background = background;
+		}
+	}
+
+	sealed class ColorProvider {
+		readonly Dictionary<TextColor, ConsoleColorPair> colors = new Dictionary<TextColor, ConsoleColorPair>();
+
+		public void Add(TextColor color, ConsoleColor? foreground, ConsoleColor? background = null) {
+			if (foreground != null || background != null)
+				colors[color] = new ConsoleColorPair(foreground, background);
+		}
+
+		public ConsoleColorPair? GetColor(TextColor? color) {
+			if (color == null)
+				return null;
+			ConsoleColorPair ccPair;
+			return colors.TryGetValue(color.Value, out ccPair) ? ccPair : (ConsoleColorPair?)null;
+		}
+	}
+
+	sealed class ConsoleColorizerOutput : IDecompilerOutput {
+		readonly ColorProvider colorProvider;
+		readonly TextWriter writer;
+		readonly string indentationString;
+		int indentation;
+		bool addIndent = true;
+		int position;
+
+		public int Length => position;
+		public int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
+
+		bool IDecompilerOutput.UsesDebugInfo => false;
+
+		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, string indentationString = "\t") {
+			if (writer == null)
+				throw new ArgumentNullException(nameof(writer));
+			if (colorProvider == null)
+				throw new ArgumentNullException(nameof(colorProvider));
+			if (indentationString == null)
+				throw new ArgumentNullException(nameof(indentationString));
+			this.writer = writer;
+			this.colorProvider = colorProvider;
+			this.indentationString = indentationString;
+		}
+
+		void IDecompilerOutput.AddDebugInfo(MethodDebugInfo methodDebugInfo) { }
+		public void IncreaseIndent() => indentation++;
+
+		public void DecreaseIndent() {
+			Debug.Assert(indentation > 0);
+			if (indentation > 0)
+				indentation--;
+		}
+
+		public void WriteLine() {
+			var nlArray = newLineArray;
+			writer.Write(nlArray);
+			position += nlArray.Length;
+			addIndent = true;
+		}
+		static readonly char[] newLineArray = Environment.NewLine.ToCharArray();
+
+		void AddIndent() {
+			if (!addIndent)
+				return;
+			addIndent = false;
+			for (int i = 0; i < indentation; i++)
+				writer.Write(indentationString);
+			position += indentationString.Length * indentation;
+		}
+
+		void AddText(string text, object color) {
+			if (addIndent)
+				AddIndent();
+			var colorPair = colorProvider.GetColor(color as TextColor?);
+			if (colorPair != null) {
+				if (colorPair.Value.Foreground != null)
+					Console.ForegroundColor = colorPair.Value.Foreground.Value;
+				if (colorPair.Value.Background != null)
+					Console.BackgroundColor = colorPair.Value.Background.Value;
+				writer.Write(text);
+				Console.ResetColor();
+			}
+			else
+				writer.Write(text);
+
+			position += text.Length;
+		}
+
+		void AddText(string text, int index, int count, object color) {
+			if (index == 0 && count == text.Length)
+				AddText(text, color);
+			else
+				AddText(text.Substring(index, count), color);
+		}
+
+		public void Write(string text, object color) => AddText(text, color);
+		public void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
+		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
+		public override string ToString() => writer.ToString();
+		public void Dispose() => writer.Dispose();
+	}
+
 	sealed class DnSpyDecompiler : IMSBuildProjectWriterLogger {
 		bool isRecursive = false;
 		bool useGac = true;
@@ -75,6 +184,7 @@ namespace dnSpy_Console {
 		bool unpackResources = true;
 		bool createResX = true;
 		bool decompileBaml = true;
+		bool colorizeOutput;
 		Guid projectGuid = Guid.NewGuid();
 		int numThreads;
 		int mdToken;
@@ -109,6 +219,7 @@ namespace dnSpy_Console {
 			this.bamlDecompiler = TryLoadBamlDecompiler();
 			this.decompileBaml = bamlDecompiler != null;
 			this.reservedOptions = GetReservedOptions();
+			this.colorizeOutput = !Console.IsOutputRedirected;
 
 			var langs = new List<ILanguage>();
 			langs.AddRange(GetAllLanguages());
@@ -235,6 +346,7 @@ namespace dnSpy_Console {
 			new UsageInfo("--no-resources", null, dnSpy_Console_Resources.CmdLineDescription_NoResources),
 			new UsageInfo("--no-resx", null, dnSpy_Console_Resources.CmdLineDescription_NoResX),
 			new UsageInfo("--no-baml", null, dnSpy_Console_Resources.CmdLineDescription_NoBAML),
+			new UsageInfo("--no-color", null, dnSpy_Console_Resources.CmdLineDescription_NoColor),
 			new UsageInfo("--vs", "N", string.Format(dnSpy_Console_Resources.CmdLineDescription_VSVersion, 2015)),
 			new UsageInfo("--project-guid", "N", dnSpy_Console_Resources.CmdLineDescription_ProjectGUID),
 			new UsageInfo("-t", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_Type1),
@@ -331,6 +443,7 @@ namespace dnSpy_Console {
 			"resources",
 			"resx",
 			"baml",
+			"color",
 			"type",
 			"md",
 			"gac-file",
@@ -465,6 +578,10 @@ namespace dnSpy_Console {
 						decompileBaml = false;
 						break;
 
+					case "--no-color":
+						colorizeOutput = false;
+						break;
+
 					case "-t":
 					case "--type":
 						if (next == null)
@@ -589,7 +706,11 @@ namespace dnSpy_Console {
 				}
 
 				var writer = Console.Out;
-				var output = new TextWriterDecompilerOutput(writer);
+				IDecompilerOutput output;
+				if (colorizeOutput)
+					output = new ConsoleColorizerOutput(writer, CreateColorProvider());
+				else
+					output = new TextWriterDecompilerOutput(writer);
 
 				var lang = GetLanguage();
 				if (member is MethodDef)
@@ -846,5 +967,60 @@ namespace dnSpy_Console {
 			Console.Error.WriteLine(string.Format(dnSpy_Console_Resources.Error1, message));
 		}
 		int errors;
+
+		ColorProvider CreateColorProvider() {
+			var provider = new ColorProvider();
+			provider.Add(TextColor.Operator, null, null);
+			provider.Add(TextColor.Punctuation, null, null);
+			provider.Add(TextColor.Number, null, null);
+			provider.Add(TextColor.Comment, ConsoleColor.Green, null);
+			provider.Add(TextColor.Keyword, ConsoleColor.Cyan, null);
+			provider.Add(TextColor.String, ConsoleColor.DarkYellow, null);
+			provider.Add(TextColor.VerbatimString, ConsoleColor.DarkYellow, null);
+			provider.Add(TextColor.Char, ConsoleColor.DarkYellow, null);
+			provider.Add(TextColor.Namespace, ConsoleColor.Yellow, null);
+			provider.Add(TextColor.Type, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.SealedType, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.StaticType, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.Delegate, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.Enum, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.Interface, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.ValueType, ConsoleColor.Green, null);
+			provider.Add(TextColor.TypeGenericParameter, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.MethodGenericParameter, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.InstanceMethod, ConsoleColor.DarkYellow, null);
+			provider.Add(TextColor.StaticMethod, ConsoleColor.DarkYellow, null);
+			provider.Add(TextColor.ExtensionMethod, ConsoleColor.DarkYellow, null);
+			provider.Add(TextColor.InstanceField, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.EnumField, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.LiteralField, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.StaticField, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.InstanceEvent, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.StaticEvent, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.InstanceProperty, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.StaticProperty, ConsoleColor.Magenta, null);
+			provider.Add(TextColor.Local, ConsoleColor.White, null);
+			provider.Add(TextColor.Parameter, ConsoleColor.White, null);
+			provider.Add(TextColor.PreprocessorKeyword, ConsoleColor.Blue, null);
+			provider.Add(TextColor.PreprocessorText, null, null);
+			provider.Add(TextColor.Label, ConsoleColor.DarkRed, null);
+			provider.Add(TextColor.OpCode, ConsoleColor.Cyan, null);
+			provider.Add(TextColor.ILDirective, ConsoleColor.Cyan, null);
+			provider.Add(TextColor.ILModule, ConsoleColor.DarkMagenta, null);
+			provider.Add(TextColor.ExcludedCode, null, null);
+			provider.Add(TextColor.XmlDocCommentAttributeName, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentAttributeQuotes, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentAttributeValue, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentCDataSection, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentComment, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentDelimiter, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentEntityReference, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentName, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentProcessingInstruction, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.XmlDocCommentText, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.Module, ConsoleColor.DarkGreen, null);
+			provider.Add(TextColor.Error, ConsoleColor.Red, null);
+			return provider;
+		}
 	}
 }

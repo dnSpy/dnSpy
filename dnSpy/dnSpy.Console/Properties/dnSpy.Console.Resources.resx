@@ -306,4 +306,7 @@
   <data name="UsageHeader" xml:space="preserve">
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
   </data>
+  <data name="CmdLineDescription_NoColor" xml:space="preserve">
+    <value>don't colorize the text</value>
+  </data>
 </root>

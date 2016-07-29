@@ -115,6 +115,15 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to don&apos;t colorize the text.
+        /// </summary>
+        internal static string CmdLineDescription_NoColor {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_NoColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to don&apos;t use the GAC to look up assemblies. Useful with --no-stdlib.
         /// </summary>
         internal static string CmdLineDescription_NoGAC {
