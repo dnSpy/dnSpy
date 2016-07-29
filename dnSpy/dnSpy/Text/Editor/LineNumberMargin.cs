@@ -150,7 +150,7 @@ namespace dnSpy.Text.Editor {
 		int GetMaxLineDigits() {
 			int lines = wpfTextViewHost.TextView.TextSnapshot.LineCount;
 			int digits = (int)Math.Log10(lines) + 1;
-			const int MINIMUM_LINE_DIGITS = 3;
+			const int MINIMUM_LINE_DIGITS = 4;
 			return Math.Max(MINIMUM_LINE_DIGITS, digits);
 		}
 
