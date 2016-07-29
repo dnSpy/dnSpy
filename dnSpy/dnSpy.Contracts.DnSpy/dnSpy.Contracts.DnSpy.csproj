@@ -490,7 +490,6 @@
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />
-    <Compile Include="Text\Editor\Roslyn\ContentTypeNames.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditor.cs" />
     <Compile Include="Text\Editor\Roslyn\IRoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\Roslyn\RoslynCodeEditorOptions.cs" />

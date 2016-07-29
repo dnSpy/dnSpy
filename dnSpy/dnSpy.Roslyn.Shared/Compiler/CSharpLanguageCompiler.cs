@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
@@ -45,7 +46,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	}
 
 	sealed class CSharpLanguageCompiler : RoslynLanguageCompiler {
-		protected override string ContentType => ContentTypeNames.CSharpContentType;
+		protected override string ContentType => ContentTypes.CSharpRoslyn;
 		protected override string LanguageName => LanguageNames.CSharp;
 		protected override CompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 		protected override ParseOptions ParseOptions => new CSharpParseOptions();
