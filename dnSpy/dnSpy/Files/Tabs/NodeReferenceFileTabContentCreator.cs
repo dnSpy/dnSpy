@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Search;
 
@@ -37,6 +38,9 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
+			var textRef = @ref as TextReference;
+			if (textRef != null)
+				@ref = textRef.Reference;
 			var node = @ref as IFileTreeNodeData;
 			if (node != null)
 				return Create(node);
@@ -52,6 +56,12 @@ namespace dnSpy.Files.Tabs {
 			var mod = @ref as ModuleDef;
 			if (mod != null)
 				return Create(mod);
+			var asmRef = @ref as IAssembly;
+			if (asmRef != null) {
+				file = fileTreeView.FileManager.Resolve(asmRef, null);
+				if (file != null)
+					return Create(file);
+			}
 			return null;
 		}
 
