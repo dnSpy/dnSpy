@@ -77,7 +77,7 @@ namespace dnSpy.Languages.MSBuild {
 					string name;
 					lock (filenameCreator)
 						name = filenameCreator.Create(modOpts.Module);
-					var p = new Project(modOpts, name, satelliteAssemblyFinder);
+					var p = new Project(modOpts, name, satelliteAssemblyFinder, options.CreateDecompilerOutput);
 					lock (projects)
 						projects.Add(p);
 					p.CreateProjectFiles(ctx);

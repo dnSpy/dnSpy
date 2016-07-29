@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,8 +33,8 @@ namespace dnSpy.Languages.MSBuild {
 		public ILanguage Language => language;
 		public DecompilationContext DecompilationContext => decompilationContext;
 
-		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
-			: base(type, filename, decompilationContext, language) {
+		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
+			: base(type, filename, decompilationContext, language, createDecompilerOutput) {
 			this.SubType = "Form";
 		}
 
@@ -118,16 +119,18 @@ namespace dnSpy.Languages.MSBuild {
 		readonly string filename;
 
 		readonly WinFormsProjectFile winFormsFile;
+		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
-		public WinFormsDesignerProjectFile(WinFormsProjectFile winFormsFile, string filename) {
+		public WinFormsDesignerProjectFile(WinFormsProjectFile winFormsFile, string filename, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			this.winFormsFile = winFormsFile;
 			this.filename = filename;
+			this.createDecompilerOutput = createDecompilerOutput;
 		}
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				if (winFormsFile.Language.CanDecompile(DecompilationType.PartialType)) {
-					var output = new TextWriterDecompilerOutput(writer);
+					var output = createDecompilerOutput(writer);
 					var opts = new DecompilePartialType(output, winFormsFile.DecompilationContext, winFormsFile.Type);
 					foreach (var d in winFormsFile.GetDefsToRemove())
 						opts.Definitions.Add(d);

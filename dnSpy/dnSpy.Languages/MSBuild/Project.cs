@@ -26,6 +26,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
 using dnlib.PE;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.Properties;
 
@@ -53,13 +54,15 @@ namespace dnSpy.Languages.MSBuild {
 		ApplicationManifest applicationManifest;
 
 		readonly SatelliteAssemblyFinder satelliteAssemblyFinder;
+		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
-		public Project(ProjectModuleOptions options, string projDir, SatelliteAssemblyFinder satelliteAssemblyFinder) {
+		public Project(ProjectModuleOptions options, string projDir, SatelliteAssemblyFinder satelliteAssemblyFinder, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.Options = options;
 			this.Directory = projDir;
 			this.satelliteAssemblyFinder = satelliteAssemblyFinder;
+			this.createDecompilerOutput = createDecompilerOutput;
 			this.Files = new List<ProjectFile>();
 			this.DefaultNamespace = new DefaultNamespaceFinder(options.Module).Find();
 			this.Filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Language.ProjectFileExtension);
@@ -92,7 +95,7 @@ namespace dnSpy.Languages.MSBuild {
 			InitializeSplashScreen();
 			if (Options.Language.CanDecompile(DecompilationType.AssemblyInfo)) {
 				var filename = filenameCreator.CreateFromRelativePath(Path.Combine(PropertiesFolder, "AssemblyInfo"), Options.Language.FileExtension);
-				Files.Add(new AssemblyInfoProjectFile(Options.Module, filename, Options.DecompilationContext, Options.Language));
+				Files.Add(new AssemblyInfoProjectFile(Options.Module, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput));
 			}
 
 			var ep = Options.Module.EntryPoint;
@@ -197,9 +200,9 @@ namespace dnSpy.Languages.MSBuild {
 				TypeProjectFile newFile;
 				var isAppType = DotNetUtils.IsSystemWindowsApplication(type);
 				if (!Options.Language.CanDecompile(DecompilationType.PartialType))
-					newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language);
+					newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 				else
-					newFile = new XamlTypeProjectFile(type, filename, Options.DecompilationContext, Options.Language);
+					newFile = new XamlTypeProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 				newFile.DependentUpon = bamlFile;
 				if (isAppType && DotNetUtils.IsStartUpClass(type)) {
 					bamlFile.IsAppDef = true;
@@ -215,17 +218,17 @@ namespace dnSpy.Languages.MSBuild {
 			if (resxFile != null) {
 				if (DotNetUtils.IsWinForm(type)) {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename));
-					var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Language);
+					var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 					resxFile.DependentUpon = newFile;
 					var dname = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
-					var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname);
+					var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname, createDecompilerOutput);
 					winFormsDesignerFile.DependentUpon = newFile;
 					Files.Add(winFormsDesignerFile);
 					return newFile;
 				}
 				else {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
-					var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language);
+					var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 					newFile.DependentUpon = resxFile;
 					newFile.AutoGen = true;
 					newFile.DesignTime = true;
@@ -242,12 +245,12 @@ namespace dnSpy.Languages.MSBuild {
 				ProjectFile designerTypeFile;
 				if (Options.Language.CanDecompile(DecompilationType.PartialType)) {
 					var typeFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, Options.DecompilationContext, Options.Language);
-					designerTypeFile = new SettingsDesignerTypeProjectFile(settingsTypeFile, designerFilename);
+					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+					designerTypeFile = new SettingsDesignerTypeProjectFile(settingsTypeFile, designerFilename, createDecompilerOutput);
 					Files.Add(settingsTypeFile);
 				}
 				else
-					designerTypeFile = new TypeProjectFile(type, designerFilename, Options.DecompilationContext, Options.Language);
+					designerTypeFile = new TypeProjectFile(type, designerFilename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 				var settingsFile = new SettingsProjectFile(type, settingsFilename);
 				designerTypeFile.DependentUpon = settingsFile;
 				designerTypeFile.AutoGen = true;
@@ -259,7 +262,7 @@ namespace dnSpy.Languages.MSBuild {
 			}
 
 			var newFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-			return new TypeProjectFile(type, newFilename, Options.DecompilationContext, Options.Language);
+			return new TypeProjectFile(type, newFilename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 		}
 
 		void CreateEmptyAppXamlFile() {
@@ -282,7 +285,7 @@ namespace dnSpy.Languages.MSBuild {
 			var name = Path.GetFileNameWithoutExtension(file.Filename);
 			filename = Path.Combine(Path.GetDirectoryName(filename), name + ".xaml");
 
-			var newFile = new XamlTypeProjectFile(file.Type, filename + Options.Language.FileExtension, Options.DecompilationContext, Options.Language);
+			var newFile = new XamlTypeProjectFile(file.Type, filename + Options.Language.FileExtension, Options.DecompilationContext, Options.Language, createDecompilerOutput);
 			Files.Add(newFile);
 			var bamlFile = new AppBamlResourceProjectFile(filename, file.Type, Options.Language);
 			newFile.DependentUpon = bamlFile;

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.IO;
 using System.Text;
 using dnlib.DotNet;
@@ -33,19 +34,21 @@ namespace dnSpy.Languages.MSBuild {
 
 		protected readonly DecompilationContext decompilationContext;
 		protected readonly ILanguage language;
+		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
 		public TypeDef Type { get; }
 
-		public TypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language) {
+		public TypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			this.Type = type;
 			this.filename = filename;
 			this.decompilationContext = decompilationContext;
 			this.language = language;
+			this.createDecompilerOutput = createDecompilerOutput;
 		}
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
-				var output = new TextWriterDecompilerOutput(writer);
+				var output = createDecompilerOutput(writer);
 				Decompile(ctx, output);
 			}
 		}

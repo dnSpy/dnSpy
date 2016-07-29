@@ -17,15 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class XamlTypeProjectFile : TypeProjectFile {
-		public XamlTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
-			: base(type, filename, decompilationContext, language) {
+		public XamlTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
+			: base(type, filename, decompilationContext, language, createDecompilerOutput) {
 		}
 
 		protected override void Decompile(DecompileContext ctx, IDecompilerOutput output) {

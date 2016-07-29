@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,8 +35,8 @@ namespace dnSpy.Languages.MSBuild {
 		public override BuildAction BuildAction => isEmpty ? BuildAction.DontIncludeInProjectFile : base.BuildAction;
 		bool isEmpty;
 
-		public SettingsTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
-			: base(type, filename, decompilationContext, language) {
+		public SettingsTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
+			: base(type, filename, decompilationContext, language, createDecompilerOutput) {
 		}
 
 		public override void Create(DecompileContext ctx) {
@@ -126,16 +127,18 @@ namespace dnSpy.Languages.MSBuild {
 		readonly string filename;
 
 		readonly SettingsTypeProjectFile typeFile;
+		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
-		public SettingsDesignerTypeProjectFile(SettingsTypeProjectFile typeFile, string filename) {
+		public SettingsDesignerTypeProjectFile(SettingsTypeProjectFile typeFile, string filename, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			this.typeFile = typeFile;
 			this.filename = filename;
+			this.createDecompilerOutput = createDecompilerOutput;
 		}
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				if (typeFile.Language.CanDecompile(DecompilationType.PartialType)) {
-					var output = new TextWriterDecompilerOutput(writer);
+					var output = createDecompilerOutput(writer);
 					var opts = new DecompilePartialType(output, typeFile.DecompilationContext, typeFile.Type);
 					foreach (var d in typeFile.GetDefsToRemove())
 						opts.Definitions.Add(d);

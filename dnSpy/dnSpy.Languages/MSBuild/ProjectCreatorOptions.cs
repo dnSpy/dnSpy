@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Languages.MSBuild {
 	public sealed class ProjectCreatorOptions {
@@ -70,13 +72,24 @@ namespace dnSpy.Languages.MSBuild {
 		/// </summary>
 		public CancellationToken CancellationToken { get; }
 
-		public ProjectCreatorOptions(string dir, CancellationToken cancellationToken) {
-			if (dir == null)
-				throw new ArgumentNullException(nameof(dir));
-			this.Directory = dir;
+		/// <summary>
+		/// Creates a <see cref="IDecompilerOutput"/>
+		/// </summary>
+		public Func<TextWriter, IDecompilerOutput> CreateDecompilerOutput { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="directory">Base directory</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public ProjectCreatorOptions(string directory, CancellationToken cancellationToken) {
+			if (directory == null)
+				throw new ArgumentNullException(nameof(directory));
+			this.Directory = directory;
 			this.CancellationToken = cancellationToken;
 			this.ProjectModules = new List<ProjectModuleOptions>();
 			this.UserGACPaths = new List<string>();
+			this.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter);
 		}
 	}
 }

@@ -309,4 +309,13 @@
   <data name="CmdLineDescription_NoColor" xml:space="preserve">
     <value>don't colorize the text</value>
   </data>
+  <data name="CmdLineDescription_Spaces" xml:space="preserve">
+    <value>Size of a tab in spaces or 0 to use one tab</value>
+  </data>
+  <data name="InvalidSpacesArgument" xml:space="preserve">
+    <value>Number of spaces must be between {0} and {1}</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Missing argument</value>
+  </data>
 </root>

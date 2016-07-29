@@ -188,6 +188,7 @@ namespace dnSpy_Console {
 		Guid projectGuid = Guid.NewGuid();
 		int numThreads;
 		int mdToken;
+		int spaces;
 		string typeName;
 		ProjectVersion projectVersion = ProjectVersion.VS2010;
 		string outputDir;
@@ -347,6 +348,7 @@ namespace dnSpy_Console {
 			new UsageInfo("--no-resx", null, dnSpy_Console_Resources.CmdLineDescription_NoResX),
 			new UsageInfo("--no-baml", null, dnSpy_Console_Resources.CmdLineDescription_NoBAML),
 			new UsageInfo("--no-color", null, dnSpy_Console_Resources.CmdLineDescription_NoColor),
+			new UsageInfo("--spaces", "N", dnSpy_Console_Resources.CmdLineDescription_Spaces),
 			new UsageInfo("--vs", "N", string.Format(dnSpy_Console_Resources.CmdLineDescription_VSVersion, 2015)),
 			new UsageInfo("--project-guid", "N", dnSpy_Console_Resources.CmdLineDescription_ProjectGUID),
 			new UsageInfo("-t", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_Type1),
@@ -444,6 +446,7 @@ namespace dnSpy_Console {
 			"resx",
 			"baml",
 			"color",
+			"spaces",
 			"type",
 			"md",
 			"gac-file",
@@ -582,6 +585,15 @@ namespace dnSpy_Console {
 						colorizeOutput = false;
 						break;
 
+					case "--spaces":
+						if (next == null)
+							throw new ErrorException(dnSpy_Console_Resources.MissingArgument);
+						const int MIN_SPACES = 0, MAX_SPACES = 100;
+						if (!int.TryParse(next, out spaces) || spaces < MIN_SPACES || spaces > MAX_SPACES)
+							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidSpacesArgument, MIN_SPACES, MAX_SPACES));
+						i++;
+						break;
+
 					case "-t":
 					case "--type":
 						if (next == null)
@@ -708,9 +720,9 @@ namespace dnSpy_Console {
 				var writer = Console.Out;
 				IDecompilerOutput output;
 				if (colorizeOutput)
-					output = new ConsoleColorizerOutput(writer, CreateColorProvider());
+					output = new ConsoleColorizerOutput(writer, CreateColorProvider(), GetIndentationString());
 				else
-					output = new TextWriterDecompilerOutput(writer);
+					output = new TextWriterDecompilerOutput(writer, GetIndentationString());
 
 				var lang = GetLanguage();
 				if (member is MethodDef)
@@ -738,11 +750,19 @@ namespace dnSpy_Console {
 				options.NumberOfThreads = numThreads;
 				options.ProjectModules.AddRange(files);
 				options.UserGACPaths.AddRange(userGacPaths);
+				string indentationString = GetIndentationString();
+				options.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter, indentationString);
 				if (createSlnFile && !string.IsNullOrEmpty(slnName))
 					options.SolutionFilename = slnName;
 				var creator = new MSBuildProjectCreator(options);
 				creator.Create();
 			}
+		}
+
+		string GetIndentationString() {
+			if (spaces <= 0)
+				return "\t";
+			return new string(' ', spaces);
 		}
 
 		static TypeDef FindType(ModuleDef module, string name) {

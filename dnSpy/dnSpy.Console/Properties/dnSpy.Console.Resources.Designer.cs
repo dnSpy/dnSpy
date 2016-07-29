@@ -214,6 +214,15 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Size of a tab in spaces or 0 to use one tab.
+        /// </summary>
+        internal static string CmdLineDescription_Spaces {
+            get {
+                return ResourceManager.GetString("CmdLineDescription_Spaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to decompile the type with the specified name to stdout. Either Namespace.Name or Name, case insensitive.
         /// </summary>
         internal static string CmdLineDescription_Type1 {
@@ -412,6 +421,15 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Number of spaces must be between {0} and {1}.
+        /// </summary>
+        internal static string InvalidSpacesArgument {
+            get {
+                return ResourceManager.GetString("InvalidSpacesArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid metadata token.
         /// </summary>
         internal static string InvalidToken {
@@ -480,6 +498,15 @@ namespace dnSpy_Console.Properties {
         internal static string LanguageXDoesNotSupportProjects {
             get {
                 return ResourceManager.GetString("LanguageXDoesNotSupportProjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing argument.
+        /// </summary>
+        internal static string MissingArgument {
+            get {
+                return ResourceManager.GetString("MissingArgument", resourceCulture);
             }
         }
         
