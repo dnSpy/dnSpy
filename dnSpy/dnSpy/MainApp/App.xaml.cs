@@ -216,13 +216,11 @@ namespace dnSpy.MainApp {
 
 		bool CanLoadPlugin(Assembly asm) {
 			var ourPublicKeyToken = GetType().Assembly.GetName().GetPublicKeyToken();
-#pragma warning disable 0436
-			var ourStableVersion = new Version(DnSpyAssemblyConstants.STABLE_ASSEMBLY_VERSION);
-#pragma warning restore 0436
+			var minimumVersion = new Version(3, 0, 0, 0);
 			foreach (var a in asm.GetReferencedAssemblies()) {
 				if (!Equals(ourPublicKeyToken, a.GetPublicKeyToken()))
 					continue;
-				if (!a.Version.Equals(ourStableVersion))
+				if (a.Version < minimumVersion)
 					return false;
 			}
 			return true;

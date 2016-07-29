@@ -20,19 +20,14 @@
 using System.Reflection;
 
 #pragma warning disable 0436
-#if USE_STABLE_VERSION
-[assembly: AssemblyVersion(DnSpyAssemblyConstants.STABLE_ASSEMBLY_VERSION)]
-#else
-[assembly: AssemblyVersion(DnSpyAssemblyConstants.NONSTABLE_ASSEMBLY_VERSION)]
-#endif
+[assembly: AssemblyVersion(DnSpyAssemblyConstants.ASSEMBLY_VERSION)]
 [assembly: AssemblyFileVersion(DnSpyAssemblyConstants.ASSEMBLY_FILE_VERSION)]
 [assembly: AssemblyInformationalVersion(DnSpyAssemblyConstants.ASSEMBLY_INFORMATIONAL_VERSION)]
 
 static class DnSpyAssemblyConstants {
-	// Don't change the stable version number unless there are breaking changes
-	public const string STABLE_ASSEMBLY_VERSION						= "3.0.0.0";
-	public const string NONSTABLE_ASSEMBLY_VERSION					= "3.0.0.0";
-	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "3.0.0.0-beta";
-	public const string ASSEMBLY_FILE_VERSION						= NONSTABLE_ASSEMBLY_VERSION;
+	public const string ASSEMBLY_VERSION							= "3.0.0.0";
+	// This is shown in the title bar. 3 numbers are enough
+	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "3.0.0-beta";
+	public const string ASSEMBLY_FILE_VERSION						= ASSEMBLY_VERSION;
 }
 #pragma warning restore 0436
