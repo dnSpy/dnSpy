@@ -110,8 +110,6 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			if (node.Annotation<ILVariable>() != null)
 				return null;
 			var memberRef = node.Annotation<IMemberRef>();
-			if (node.Parent is ObjectCreationExpression)
-				memberRef = node.Parent.Annotation<IMethod>();
 			if (memberRef == null && node is Identifier) {
 				node = node.Parent ?? node;
 				memberRef = node.Annotation<IMemberRef>();
@@ -130,8 +128,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			if (variable != null) {
 				if (variable.OriginalParameter != null)
 					return variable.OriginalParameter;
-				//if (variable.OriginalVariable != null)
-				//    return variable.OriginalVariable;
+				if (variable.OriginalVariable != null)
+					return variable.OriginalVariable;
 				return variable;
 			}
 			return null;
@@ -143,15 +141,19 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			if (parameterDef != null)
 				return parameterDef;
 
-			if (node is VariableIdentifier)
+			if (node is VariableIdentifier) {
+				var variable = ((VariableIdentifier)node).Name.Annotation<ILVariable>();
+				if (variable != null)
+					return variable.OriginalParameter ?? (object)variable.OriginalVariable ?? variable;
 				node = node.Parent ?? node;
-			if (node is VariableDeclaratorWithTypeAndInitializer || node is CatchBlock || node is ForEachStatement) {
+			}
+			if (node is VariableDeclaratorWithTypeAndInitializer || node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
 				var variable = node.Annotation<ILVariable>();
 				if (variable != null) {
 					if (variable.OriginalParameter != null)
 						return variable.OriginalParameter;
-					//if (variable.OriginalVariable != null)
-					//    return variable.OriginalVariable;
+					if (variable.OriginalVariable != null)
+						return variable.OriginalVariable;
 					return variable;
 				}
 			}
