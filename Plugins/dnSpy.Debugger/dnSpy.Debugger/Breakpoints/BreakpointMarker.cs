@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -25,6 +26,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[Export(typeof(IBreakpointListener))]
@@ -83,9 +85,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		void UpdateMarker(ILCodeBreakpoint ilbp) {
 			RemoveMarker(ilbp);
 			var info = GetBreakpointMarkerInfo(ilbp);
-			var marker = glyphTextMarkerService.AddMarker(ilbp.MethodToken, ilbp.ILOffset, info.ImageReference, info.MarkerTypeName, info.ClassificationType, info.ZIndex);
+			var marker = glyphTextMarkerService.AddMarker(ilbp.MethodToken, ilbp.ILOffset, info.ImageReference, info.MarkerTypeName, info.ClassificationType, info.ZIndex, textViewFilter);
 			toMethodMarkers.Add(ilbp, marker);
 		}
+		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 
 		void BreakpointRemoved(ILCodeBreakpoint ilbp) {
 			Debug.Assert(toMethodMarkers.ContainsKey(ilbp));

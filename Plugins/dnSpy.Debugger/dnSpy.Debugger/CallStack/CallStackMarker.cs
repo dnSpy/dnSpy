@@ -27,6 +27,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.CallStack {
 	[Export(typeof(ILoadBeforeDebug))]
@@ -100,6 +101,7 @@ namespace dnSpy.Debugger.CallStack {
 			return new KeyValuePair<ModuleTokenId, uint>(new ModuleTokenId(mod.Value.ToModuleId(), frame.Token), ip.Offset);
 		}
 
+		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 		void AddMarkers(bool updateActiveStatements) {
 			Debug.Assert(currentStatementMarker == null);
 			Debug.Assert(callReturnMarker == null);
@@ -117,7 +119,8 @@ namespace dnSpy.Debugger.CallStack {
 					new ImageReference(GetType().Assembly, "CurrentStatement"),
 					ThemeClassificationTypeNameKeys.CurrentStatementMarker,
 					classificationTypeCurrentStatement,
-					GlyphTextMarkerServiceZIndexes.CurrentStatement);
+					GlyphTextMarkerServiceZIndexes.CurrentStatement,
+					textViewFilter);
 			}
 
 			int selectedFrameNumber = stackFrameManager.SelectedFrameNumber;
@@ -129,7 +132,8 @@ namespace dnSpy.Debugger.CallStack {
 					new ImageReference(GetType().Assembly, "CallReturn"),
 					ThemeClassificationTypeNameKeys.CallReturnMarker,
 					classificationTypeCallReturn,
-					GlyphTextMarkerServiceZIndexes.ReturnStatement);
+					GlyphTextMarkerServiceZIndexes.ReturnStatement,
+					textViewFilter);
 			}
 
 			if (updateActiveStatements)

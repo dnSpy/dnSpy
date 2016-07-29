@@ -55,23 +55,23 @@ namespace dnSpy.Text.Editor {
 
 		struct MarkerAndNullableSpan {
 			public Span? Span { get; }
-			public IGlyphTextMarker Marker { get; }
-			public MarkerAndNullableSpan(Span? span, IGlyphTextMarker marker) {
+			public IGlyphTextMarkerImpl Marker { get; }
+			public MarkerAndNullableSpan(Span? span, IGlyphTextMarkerImpl marker) {
 				Span = span;
 				Marker = marker;
 			}
 		}
 
 		sealed class MarkerAndSpanCollection {
-			readonly List<IGlyphTextMarker> allMarkers;
-			readonly Dictionary<IGlyphTextMarker, Span> inDocMarkers;
+			readonly List<IGlyphTextMarkerImpl> allMarkers;
+			readonly Dictionary<IGlyphTextMarkerImpl, Span> inDocMarkers;
 
 			public int Count => allMarkers.Count;
 			public int CountInDocument => inDocMarkers.Count;
 
 			public MarkerAndSpanCollection() {
-				this.allMarkers = new List<IGlyphTextMarker>();
-				this.inDocMarkers = new Dictionary<IGlyphTextMarker, Span>();
+				this.allMarkers = new List<IGlyphTextMarkerImpl>();
+				this.inDocMarkers = new Dictionary<IGlyphTextMarkerImpl, Span>();
 			}
 
 			public void UpdateSpans(IMethodOffsetSpanMap map) {
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 				if (map != null) {
 					var allMarkers = this.allMarkers;
 					for (int i = 0; i < allMarkers.Count; i++) {
-						var methodMarker = allMarkers[i] as IGlyphTextMethodMarker;
+						var methodMarker = allMarkers[i] as IGlyphTextMethodMarkerImpl;
 						if (methodMarker != null) {
 							var span = map.ToSpan(methodMarker.Method, methodMarker.ILOffset);
 							if (span != null)
@@ -101,13 +101,13 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			public void Add(IGlyphTextMarker marker, Span? span) {
+			public void Add(IGlyphTextMarkerImpl marker, Span? span) {
 				allMarkers.Add(marker);
 				if (span != null)
 					inDocMarkers.Add(marker, span.Value);
 			}
 
-			public void Remove(IGlyphTextMarker marker) {
+			public void Remove(IGlyphTextMarkerImpl marker) {
 				for (int i = 0; i < allMarkers.Count; i++) {
 					if (allMarkers[i] == marker) {
 						allMarkers.RemoveAt(i);
@@ -118,7 +118,7 @@ namespace dnSpy.Text.Editor {
 				Debug.Fail("Failed to remove marker");
 			}
 
-			public void Remove(HashSet<IGlyphTextMarker> markers) {
+			public void Remove(HashSet<IGlyphTextMarkerImpl> markers) {
 				int removed = 0;
 				for (int i = allMarkers.Count - 1; i >= 0; i--) {
 					var marker = allMarkers[i];
@@ -138,7 +138,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		GlyphTextViewMarkerService(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl, IWpfTextView wpfTextView, IEnumerable<IGlyphTextMarker> allMarkers) {
+		GlyphTextViewMarkerService(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl, IWpfTextView wpfTextView, IEnumerable<IGlyphTextMarkerImpl> allMarkers) {
 			if (glyphTextMarkerServiceImpl == null)
 				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
 			if (wpfTextView == null)
@@ -161,8 +161,10 @@ namespace dnSpy.Text.Editor {
 			glyphTextMarkerServiceImpl.MarkerRemoved += GlyphTextMarkerServiceImpl_MarkerRemoved;
 			glyphTextMarkerServiceImpl.MarkersRemoved += GlyphTextMarkerServiceImpl_MarkersRemoved;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
-			foreach (var marker in allMarkers)
-				markerAndSpanCollection.Add(marker, null);
+			foreach (var marker in allMarkers) {
+				if (marker.TextViewFilter(TextView))
+					markerAndSpanCollection.Add(marker, null);
+			}
 		}
 
 		void Initialize() {
@@ -508,6 +510,8 @@ namespace dnSpy.Text.Editor {
 
 		void GlyphTextMarkerServiceImpl_MarkerAdded(object sender, GlyphTextMarkerAddedEventArgs e) {
 			if (TextView.IsClosed)
+				return;
+			if (!e.Marker.TextViewFilter(TextView))
 				return;
 			markerAndSpanCollection.Add(e.Marker, GetSnapshotSpan(e.Marker)?.Span);
 			Refresh(e.Marker);

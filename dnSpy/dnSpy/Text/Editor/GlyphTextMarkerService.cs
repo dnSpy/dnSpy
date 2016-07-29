@@ -32,6 +32,13 @@ using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
+	interface IGlyphTextMarkerImpl : IGlyphTextMarker {
+		Func<ITextView, bool> TextViewFilter { get; }
+	}
+
+	interface IGlyphTextMethodMarkerImpl : IGlyphTextMethodMarker, IGlyphTextMarkerImpl {
+	}
+
 	[Export(typeof(IGlyphTextMarkerService))]
 	[Export(typeof(IGlyphTextMarkerServiceImpl))]
 	sealed class GlyphTextMarkerService : IGlyphTextMarkerServiceImpl {
@@ -51,10 +58,10 @@ namespace dnSpy.Text.Editor {
 		public IImageManager ImageManager { get; }
 		public IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		public IEditorFormatMapService EditorFormatMapService { get; }
-		public IEnumerable<IGlyphTextMarker> AllMarkers => glyphTextMarkers;
+		public IEnumerable<IGlyphTextMarkerImpl> AllMarkers => glyphTextMarkers;
 
 		readonly IModuleIdCreator moduleIdCreator;
-		readonly HashSet<IGlyphTextMarker> glyphTextMarkers;
+		readonly HashSet<IGlyphTextMarkerImpl> glyphTextMarkers;
 
 		[ImportingConstructor]
 		GlyphTextMarkerService(IModuleIdCreator moduleIdCreator, IThemeManager themeManager, IImageManager imageManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
@@ -63,54 +70,60 @@ namespace dnSpy.Text.Editor {
 			ImageManager = imageManager;
 			ViewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			EditorFormatMapService = editorFormatMapService;
-			this.glyphTextMarkers = new HashSet<IGlyphTextMarker>();
+			this.glyphTextMarkers = new HashSet<IGlyphTextMarkerImpl>();
 		}
 
-		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
+		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) {
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
-			return AddMarker(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
+			return AddMarker(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, classificationType, zIndex, textViewFilter);
 		}
 
-		public IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) =>
-			AddMarker(new ModuleTokenId(module, token), ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
+		public IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) =>
+			AddMarker(new ModuleTokenId(module, token), ilOffset, glyphImage, markerTypeName, classificationType, zIndex, textViewFilter);
 
-		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
-			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, classificationType, zIndex);
+		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) {
+			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, classificationType, zIndex, textViewFilter);
 			glyphTextMarkers.Add(marker);
 			MarkerAdded?.Invoke(this, new GlyphTextMarkerAddedEventArgs(marker));
 			return marker;
 		}
 
-		sealed class GlyphTextMethodMarker : IGlyphTextMethodMarker {
+		sealed class GlyphTextMethodMarker : IGlyphTextMethodMarkerImpl {
 			public ImageReference? GlyphImageReference { get; }
 			public string MarkerTypeName { get; }
 			public IClassificationType ClassificationType { get; }
 			public int ZIndex { get; }
+			public Func<ITextView, bool> TextViewFilter { get; }
 			public ModuleTokenId Method { get; }
 			public uint ILOffset { get; }
 
-			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex) {
+			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) {
 				Method = method;
 				ILOffset = ilOffset;
 				GlyphImageReference = glyphImage;
 				MarkerTypeName = markerTypeName;
 				ClassificationType = classificationType;
 				ZIndex = zIndex;
+				TextViewFilter = textViewFilter ?? defaultTextViewFilter;
 			}
+			static readonly Func<ITextView, bool> defaultTextViewFilter = a => true;
 		}
 
 		public void Remove(IGlyphTextMarker marker) {
 			if (marker == null)
 				throw new ArgumentNullException(nameof(marker));
-			glyphTextMarkers.Remove(marker);
-			MarkerRemoved?.Invoke(this, new GlyphTextMarkerRemovedEventArgs(marker));
+			var markerImpl = (IGlyphTextMarkerImpl)marker;
+			glyphTextMarkers.Remove(markerImpl);
+			MarkerRemoved?.Invoke(this, new GlyphTextMarkerRemovedEventArgs(markerImpl));
 		}
 
 		public void Remove(IEnumerable<IGlyphTextMarker> markers) {
 			if (markers == null)
 				throw new ArgumentNullException(nameof(markers));
-			var hash = new HashSet<IGlyphTextMarker>(markers);
+			var hash = new HashSet<IGlyphTextMarkerImpl>();
+			foreach (var m in markers)
+				hash.Add((IGlyphTextMarkerImpl)m);
 			foreach (var m in hash)
 				glyphTextMarkers.Remove(m);
 			MarkersRemoved?.Invoke(this, new GlyphTextMarkersRemovedEventArgs(hash));

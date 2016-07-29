@@ -31,16 +31,16 @@ namespace dnSpy.Text.Editor {
 		IImageManager ImageManager { get; }
 		IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		IEditorFormatMapService EditorFormatMapService { get; }
-		IEnumerable<IGlyphTextMarker> AllMarkers { get; }
+		IEnumerable<IGlyphTextMarkerImpl> AllMarkers { get; }
 		event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
 		event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
 	}
 
 	abstract class GlyphTextMarkerEventArgs : EventArgs {
-		public IGlyphTextMarker Marker { get; }
+		public IGlyphTextMarkerImpl Marker { get; }
 
-		protected GlyphTextMarkerEventArgs(IGlyphTextMarker marker) {
+		protected GlyphTextMarkerEventArgs(IGlyphTextMarkerImpl marker) {
 			if (marker == null)
 				throw new ArgumentNullException(nameof(marker));
 			Marker = marker;
@@ -48,21 +48,21 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class GlyphTextMarkerAddedEventArgs : GlyphTextMarkerEventArgs {
-		public GlyphTextMarkerAddedEventArgs(IGlyphTextMarker marker)
+		public GlyphTextMarkerAddedEventArgs(IGlyphTextMarkerImpl marker)
 			: base(marker) {
 		}
 	}
 
 	sealed class GlyphTextMarkerRemovedEventArgs : GlyphTextMarkerEventArgs {
-		public GlyphTextMarkerRemovedEventArgs(IGlyphTextMarker marker)
+		public GlyphTextMarkerRemovedEventArgs(IGlyphTextMarkerImpl marker)
 			: base(marker) {
 		}
 	}
 
 	sealed class GlyphTextMarkersRemovedEventArgs : EventArgs {
-		public HashSet<IGlyphTextMarker> Markers { get; }
+		public HashSet<IGlyphTextMarkerImpl> Markers { get; }
 
-		public GlyphTextMarkersRemovedEventArgs(HashSet<IGlyphTextMarker> markers) {
+		public GlyphTextMarkersRemovedEventArgs(HashSet<IGlyphTextMarkerImpl> markers) {
 			if (markers == null)
 				throw new ArgumentNullException(nameof(markers));
 			Markers = markers;

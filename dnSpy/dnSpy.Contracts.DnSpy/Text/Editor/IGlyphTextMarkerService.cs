@@ -48,8 +48,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) or null. It should have a background color and an optional foreground color for the border</param>
 		/// <param name="classificationType">Classification type or null. Only the foreground color is needed. If it has a background color, it will hide the text markers shown in the text marker layer (eg. search result, highlighted reference)</param>
 		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/></param>
+		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
-		IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex);
+		IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter = null);
 
 		/// <summary>
 		/// Adds a marker
@@ -61,8 +62,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) or null. It should have a background color and an optional foreground color for the border</param>
 		/// <param name="classificationType">Classification type or null. Only the foreground color is needed. If it has a background color, it will hide the text markers shown in the text marker layer (eg. search result, highlighted reference)</param>
 		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/></param>
+		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
-		IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex);
+		IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter = null);
 
 		/// <summary>
 		/// Adds a marker
@@ -73,8 +75,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) or null. It should have a background color and an optional foreground color for the border</param>
 		/// <param name="classificationType">Classification type or null. Only the foreground color is needed. If it has a background color, it will hide the text markers shown in the text marker layer (eg. search result, highlighted reference)</param>
 		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/></param>
+		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
-		IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex);
+		IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter = null);
 
 		/// <summary>
 		/// Removes a marker
