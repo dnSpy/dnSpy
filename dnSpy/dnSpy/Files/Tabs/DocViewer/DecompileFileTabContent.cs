@@ -126,7 +126,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			get { return fileTab; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (fileTab == null)
 					fileTab = value;
 				else if (fileTab != value)

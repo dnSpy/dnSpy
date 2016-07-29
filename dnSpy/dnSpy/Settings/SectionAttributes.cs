@@ -36,7 +36,7 @@ namespace dnSpy.Settings {
 		public T Attribute<T>(string name) {
 			Debug.Assert(name != null);
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 
 			string stringValue;
 			if (!attributes.TryGetValue(name, out stringValue))
@@ -56,7 +56,7 @@ namespace dnSpy.Settings {
 		public void Attribute<T>(string name, T value) {
 			Debug.Assert(name != null);
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
 			var stringValue = c.ConvertToInvariantString(value);
@@ -66,7 +66,7 @@ namespace dnSpy.Settings {
 		public void RemoveAttribute(string name) {
 			Debug.Assert(name != null);
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 
 			attributes.Remove(name);
 		}

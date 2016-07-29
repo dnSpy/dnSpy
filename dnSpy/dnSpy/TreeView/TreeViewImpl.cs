@@ -136,7 +136,7 @@ namespace dnSpy.TreeView {
 
 		internal void AddSorted(TreeNodeImpl owner, ITreeNode node) {
 			if (node == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(node));
 			if (node.TreeView != this)
 				throw new InvalidOperationException("You can only add a ITreeNode to a treeview that created it");
 			AddSorted(owner, (TreeNodeImpl)node);

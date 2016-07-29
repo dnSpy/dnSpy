@@ -40,7 +40,7 @@ namespace dndbg.Engine {
 			public SignatureReaderHelper(IMetaDataImport mdi) {
 				Debug.Assert(mdi != null);
 				if (mdi == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(mdi));
 				this.mdi = mdi;
 			}
 

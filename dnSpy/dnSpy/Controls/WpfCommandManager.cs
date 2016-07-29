@@ -34,13 +34,13 @@ namespace dnSpy.Controls {
 
 		public void Add(Guid guid, UIElement elem) {
 			if (elem == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(elem));
 			GetCommands(guid).Add(elem);
 		}
 
 		public void Remove(Guid guid, UIElement elem) {
 			if (elem == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(elem));
 			GetCommands(guid).Remove(elem);
 		}
 

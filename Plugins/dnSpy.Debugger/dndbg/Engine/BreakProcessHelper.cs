@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 
 		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename) {
 			if (debugger == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(debugger));
 			this.debugger = debugger;
 			this.type = type;
 			this.filename = filename;

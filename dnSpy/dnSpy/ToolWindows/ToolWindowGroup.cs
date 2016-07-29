@@ -35,7 +35,7 @@ namespace dnSpy.ToolWindows {
 			get { return ((TabContentImpl)TabGroup.ActiveTabContent)?.Content; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				var impl = GetTabContentImpl(value);
 				if (impl == null)
 					throw new ArgumentException();
@@ -67,7 +67,7 @@ namespace dnSpy.ToolWindows {
 
 		public void Close(IToolWindowContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
 			Debug.Assert(impl != null);
 			if (impl == null)
@@ -78,8 +78,10 @@ namespace dnSpy.ToolWindows {
 		public void Close(TabContentImpl impl) => TabGroup.Close(impl);
 
 		public void MoveTo(IToolWindowGroup destGroup, IToolWindowContent content) {
-			if (destGroup == null || content == null)
-				throw new ArgumentNullException();
+			if (destGroup == null)
+				throw new ArgumentNullException(nameof(destGroup));
+			if (content == null)
+				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
 			Debug.Assert(impl != null);
 			if (impl == null)
@@ -102,7 +104,7 @@ namespace dnSpy.ToolWindows {
 
 		public void SetFocus(IToolWindowContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
 			Debug.Assert(impl != null);
 			if (impl == null)

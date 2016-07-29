@@ -236,7 +236,7 @@ namespace dnSpy.Analyzer {
 
 		public void OnActivated(IAnalyzerTreeNodeData node) {
 			if (node == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(node));
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
 			FollowNode(node, newTab, null);
 		}

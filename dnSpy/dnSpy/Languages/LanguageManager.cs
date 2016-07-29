@@ -47,7 +47,7 @@ namespace dnSpy.Languages {
 			get { return language; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (Array.IndexOf(languages, value) < 0)
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");
 				if (language != value) {

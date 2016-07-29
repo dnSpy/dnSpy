@@ -38,7 +38,7 @@ namespace dnSpy.Culture {
 
 		public static LanguageInfo Create(CultureInfo cultureInfo) {
 			if (cultureInfo == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(cultureInfo));
 			return new LanguageInfo(cultureInfo);
 		}
 

@@ -61,7 +61,7 @@ namespace dnSpy.Tabs {
 
 		public void Remove(ITabGroupManager mgr) {
 			if (mgr == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(mgr));
 			int index = tabGroupManagers.IndexOf((TabGroupManager)mgr);
 			Debug.Assert(index >= 0);
 			if (index >= 0) {

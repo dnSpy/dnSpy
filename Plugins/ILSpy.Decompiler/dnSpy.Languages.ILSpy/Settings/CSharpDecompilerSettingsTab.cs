@@ -72,7 +72,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		void SetDecompilationObject(int index, DecompilationObjectVM newValue) {
 			Debug.Assert(newValue != null);
 			if (newValue == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(newValue));
 			if (decompilationObjectVMs[index] == newValue)
 				return;
 

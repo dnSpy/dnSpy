@@ -114,7 +114,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (fileTab == null)
 					fileTab = value;
 				else if (fileTab != value)

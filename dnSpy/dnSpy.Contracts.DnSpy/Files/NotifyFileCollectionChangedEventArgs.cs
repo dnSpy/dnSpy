@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Files {
 		/// <returns></returns>
 		public static NotifyFileCollectionChangedEventArgs CreateClear(IDnSpyFile[] clearedFiles, object data) {
 			if (clearedFiles == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(clearedFiles));
 			var e = new NotifyFileCollectionChangedEventArgs();
 			e.Type = NotifyFileCollectionType.Clear;
 			e.Files = clearedFiles;
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Files {
 		/// <returns></returns>
 		public static NotifyFileCollectionChangedEventArgs CreateAdd(IDnSpyFile file, object data) {
 			if (file == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(file));
 			var e = new NotifyFileCollectionChangedEventArgs();
 			e.Type = NotifyFileCollectionType.Add;
 			e.Files = new IDnSpyFile[] { file };
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Files {
 		/// <returns></returns>
 		public static NotifyFileCollectionChangedEventArgs CreateRemove(IDnSpyFile file, object data) {
 			if (file == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(file));
 			return CreateRemove(new[] { file }, data);
 		}
 
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Files {
 		/// <returns></returns>
 		public static NotifyFileCollectionChangedEventArgs CreateRemove(IDnSpyFile[] files, object data) {
 			if (files == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(files));
 			var e = new NotifyFileCollectionChangedEventArgs();
 			e.Type = NotifyFileCollectionType.Remove;
 			e.Files = files;

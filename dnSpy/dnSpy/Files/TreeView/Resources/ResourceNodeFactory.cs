@@ -37,8 +37,12 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
-			if (module == null || resource == null || treeNodeGroup == null)
-				throw new ArgumentNullException();
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
+			if (resource == null)
+				throw new ArgumentNullException(nameof(resource));
+			if (treeNodeGroup == null)
+				throw new ArgumentNullException(nameof(treeNodeGroup));
 			foreach (var creator in creators) {
 				try {
 					var node = creator.Value.Create(module, resource, treeNodeGroup);
@@ -52,8 +56,12 @@ namespace dnSpy.Files.TreeView.Resources {
 		}
 
 		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
-			if (module == null || resourceElement == null || treeNodeGroup == null)
-				throw new ArgumentNullException();
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
+			if (resourceElement == null)
+				throw new ArgumentNullException(nameof(resourceElement));
+			if (treeNodeGroup == null)
+				throw new ArgumentNullException(nameof(treeNodeGroup));
 			foreach (var creator in creators) {
 				try {
 					var node = creator.Value.Create(module, resourceElement, treeNodeGroup);

@@ -205,7 +205,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void Show(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
 			if (tabContent == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(tabContent));
 			Debug.Assert(tabContent.FileTab == null || tabContent.FileTab == this);
 			HideCurrentContent();
 			Content = tabContent;

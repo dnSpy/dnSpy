@@ -28,7 +28,7 @@ namespace dndbg.Engine {
 		protected COMObject(T obj) {
 			Debug.Assert(obj != null);
 			if (obj == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(obj));
 			this.obj = obj;
 		}
 

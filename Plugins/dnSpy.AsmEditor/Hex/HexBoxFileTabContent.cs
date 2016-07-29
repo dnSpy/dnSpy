@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public HexBoxFileTabContent(HexDocument hexDocument, IMenuManager menuManager, IHexEditorSettings hexEditorSettings, IAppSettings appSettings, Lazy<IHexBoxUndoManager> hexBoxUndoManager) {
 			if (hexDocument == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(hexDocument));
 			this.hexDocument = hexDocument;
 			this.menuManager = menuManager;
 			this.hexEditorSettings = hexEditorSettings;

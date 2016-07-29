@@ -619,7 +619,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public INativeBreakpoint CreateNativeBreakpoint(IDebuggerCode code, uint offset, Func<INativeBreakpoint, bool> cond) => dispatcher.UI(() => {
 			if (code == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(code));
 			if (code.IsIL)
 				throw new ArgumentException("code is IL code, not native code");
 			Debug.Assert(theDebugger.IsDebugging);
@@ -660,7 +660,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public void BreakOnLoad(string name, Action<IDebuggerModule> action) {
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 			CreateBreakpoint(DebugEventKind.LoadModule, (bp, ctx) => {
 				var c = (ModuleEventContext)ctx;
 				if (!Utils.IsSameFile(c.Module.ModuleId.ModuleName, name))
@@ -676,7 +676,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public void BreakOnLoadAssembly(IAssembly assembly, Action<IDebuggerAssembly> action, AssemblyNameComparerFlags flags) {
 			if (assembly == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(assembly));
 			assembly = assembly.ToAssemblyRef();// Prevent storing AssemblyDef refs
 			// Use the LoadModule event since without a module, we won't know the full assembly name
 			CreateBreakpoint(DebugEventKind.LoadModule, (bp, ctx) => {

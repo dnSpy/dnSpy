@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.TreeView {
 			get { return treeNode; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (treeNode != null)
 					throw new InvalidOperationException();
 				treeNode = value;

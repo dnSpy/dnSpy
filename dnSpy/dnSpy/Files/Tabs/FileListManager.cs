@@ -40,7 +40,7 @@ namespace dnSpy.Files.Tabs {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				int index = fileLists.IndexOf(value);
 				if (index < 0)
 					throw new InvalidOperationException();

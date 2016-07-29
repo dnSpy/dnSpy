@@ -79,8 +79,12 @@ namespace dnSpy.Languages.MSBuild {
 		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>> DecompileBaml;
 
 		public ProjectModuleOptions(ModuleDef module, ILanguage language, DecompilationContext decompilationContext) {
-			if (language == null || decompilationContext == null || module == null)
-				throw new ArgumentNullException();
+			if (language == null)
+				throw new ArgumentNullException(nameof(language));
+			if (decompilationContext == null)
+				throw new ArgumentNullException(nameof(decompilationContext));
+			if (module == null)
+				throw new ArgumentNullException(nameof(module));
 			this.Module = module;
 			this.Language = language;
 			this.DecompilationContext = decompilationContext;

@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.App {
 			get { return messageBoxManager; }
 			internal set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (messageBoxManager != null)
 					throw new InvalidOperationException();
 				messageBoxManager = value;

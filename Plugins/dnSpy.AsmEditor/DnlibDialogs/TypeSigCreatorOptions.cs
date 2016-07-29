@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get { return module; }
 			private set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				module = value;
 			}
 		}
@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get { return language; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				language = value;
 			}
 		}

@@ -422,13 +422,13 @@ namespace dnSpy.MainApp {
 
 		public void Show(IToolWindowContent content, AppToolWindowLocation? location) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			Show(content, GetLocation(content.Guid, location), true, true);
 		}
 
 		void Show(IToolWindowContent content, AppToolWindowLocation location, bool active, bool focus) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
 			if (t != null) {
 				if (active)
@@ -566,7 +566,7 @@ namespace dnSpy.MainApp {
 
 		public void Close(IToolWindowContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
 			Debug.Assert(t != null);
 			if (t == null)

@@ -56,7 +56,7 @@ namespace dnSpy.Languages.MSBuild {
 
 		public Project(ProjectModuleOptions options, string projDir, SatelliteAssemblyFinder satelliteAssemblyFinder) {
 			if (options == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(options));
 			this.Options = options;
 			this.Directory = projDir;
 			this.satelliteAssemblyFinder = satelliteAssemblyFinder;

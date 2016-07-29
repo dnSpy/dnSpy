@@ -72,7 +72,7 @@ namespace dnSpy.Languages.MSBuild {
 
 		public ProjectCreatorOptions(string dir, CancellationToken cancellationToken) {
 			if (dir == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(dir));
 			this.Directory = dir;
 			this.CancellationToken = cancellationToken;
 			this.ProjectModules = new List<ProjectModuleOptions>();

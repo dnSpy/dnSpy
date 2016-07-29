@@ -33,7 +33,7 @@ namespace dnSpy.Text.Editor {
 				if (parent == null)
 					throw new InvalidOperationException();
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (parent == value)
 					return;
 				var oldParent = parent;

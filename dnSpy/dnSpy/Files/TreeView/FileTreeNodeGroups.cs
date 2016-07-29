@@ -97,7 +97,7 @@ namespace dnSpy.Files.TreeView {
 
 		public void SetMemberOrder(MemberKind[] newOrders) {
 			if (newOrders == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(newOrders));
 
 			var infos = new Tuple<double, MemberKind, ITreeNodeGroup2>[] {
 				Tuple.Create(FileTVConstants.ORDER_TYPE_METHOD, MemberKind.Methods, MethodTreeNodeGroupType),

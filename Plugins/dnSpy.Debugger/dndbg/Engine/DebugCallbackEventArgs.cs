@@ -88,7 +88,7 @@ namespace dndbg.Engine {
 
 		public void AddPauseState(DebuggerPauseState state) {
 			if (state == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(state));
 			debuggerPauseStates.Add(state);
 		}
 

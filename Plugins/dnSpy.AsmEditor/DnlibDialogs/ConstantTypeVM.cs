@@ -714,7 +714,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (clist.IndexOf(ConstantType.Type) >= 0 ||
 					clist.IndexOf(ConstantType.TypeArray) >= 0 ||
 					clist.IndexOf(ConstantType.ObjectArray) >= 0) {
-					throw new ArgumentNullException();
+					throw new ArgumentException();
 				}
 			}
 			this.ArraysCanBeNull = arraysCanBeNull;

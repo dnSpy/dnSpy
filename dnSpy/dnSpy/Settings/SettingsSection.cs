@@ -48,7 +48,7 @@ namespace dnSpy.Settings {
 
 		public void CopyFrom(ISettingsSection section) {
 			if (section == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(section));
 			foreach (var attr in section.Attributes)
 				this.Attribute(attr.Item1, attr.Item2);
 			foreach (var child in section.Sections)

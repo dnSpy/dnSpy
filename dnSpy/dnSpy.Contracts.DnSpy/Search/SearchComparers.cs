@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Search {
 
 		public RegExStringLiteralSearchComparer(Regex regex) {
 			if (regex == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(regex));
 			this.regex = regex;
 		}
 
@@ -165,7 +165,7 @@ namespace dnSpy.Contracts.Search {
 
 		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false) {
 			if (s == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(s));
 			this.str = s;
 			this.stringComparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
 			this.matchWholeString = matchWholeString;
@@ -256,7 +256,7 @@ namespace dnSpy.Contracts.Search {
 
 		public RegExSearchComparer(Regex regex) {
 			if (regex == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(regex));
 			this.regex = regex;
 		}
 

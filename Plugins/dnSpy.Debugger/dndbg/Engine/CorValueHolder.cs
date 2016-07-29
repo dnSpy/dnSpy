@@ -68,7 +68,7 @@ namespace dndbg.Engine {
 		/// returned value will be owned by this <see cref="CorValueHolder"/> instance</param>
 		public CorValueHolder(CorValue value, Func<CorValue> getCorValue) {
 			if (getCorValue == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(getCorValue));
 			this.value = value;
 			this.getCorValue = getCorValue;
 		}

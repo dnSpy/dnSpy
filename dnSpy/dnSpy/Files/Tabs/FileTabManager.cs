@@ -82,7 +82,7 @@ namespace dnSpy.Files.Tabs {
 			get { return ActiveTabContentImpl; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				var impl = value as TabContentImpl;
 				if (impl == null)
 					throw new InvalidOperationException();
@@ -441,7 +441,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void SetFocus(IFileTab tab) {
 			if (tab == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(tab));
 			var impl = tab as TabContentImpl;
 			if (impl == null)
 				throw new InvalidOperationException();
@@ -453,7 +453,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void Refresh(IEnumerable<IFileTab> tabs) {
 			if (tabs == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(tabs));
 			foreach (var tab in tabs.ToArray()) {
 				var impl = tab as TabContentImpl;
 				if (impl == null)
@@ -477,7 +477,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void Close(IFileTab tab) {
 			if (tab == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(tab));
 			var impl = tab as TabContentImpl;
 			if (impl == null)
 				throw new InvalidOperationException();

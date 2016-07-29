@@ -47,7 +47,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void SetCurrent(IFileTabContent content, bool saveCurrent) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			if (saveCurrent && current != null)
 				oldList.Add(new TabContentState(current, current.FileTab.UIContext.Serialize()));
 			this.current = content;
@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void OverwriteCurrent(IFileTabContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			this.current = content;
 		}
 

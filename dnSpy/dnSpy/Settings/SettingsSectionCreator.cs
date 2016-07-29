@@ -36,7 +36,7 @@ namespace dnSpy.Settings {
 		public ISettingsSection CreateSection(string name) {
 			Debug.Assert(name != null);
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 
 			var section = new SettingsSection(name);
 			sections.Add(section);
@@ -46,7 +46,7 @@ namespace dnSpy.Settings {
 		public ISettingsSection GetOrCreateSection(string name) {
 			Debug.Assert(name != null);
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 
 			var section = sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
 			if (section != null)
@@ -58,7 +58,7 @@ namespace dnSpy.Settings {
 		public void RemoveSection(string name) {
 			Debug.Assert(name != null);
 			if (name == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(name));
 
 			for (int i = sections.Count - 1; i >= 0; i--) {
 				if (StringComparer.Ordinal.Equals(name, sections[i].Name))
@@ -69,7 +69,7 @@ namespace dnSpy.Settings {
 		public void RemoveSection(ISettingsSection section) {
 			Debug.Assert(section != null);
 			if (section == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(section));
 
 			bool b = sections.Remove(section);
 			Debug.Assert(b);

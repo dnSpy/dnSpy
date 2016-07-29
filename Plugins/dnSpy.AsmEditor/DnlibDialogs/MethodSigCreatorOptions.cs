@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get { return typeSigCreatorOptions; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				typeSigCreatorOptions = value;
 			}
 		}

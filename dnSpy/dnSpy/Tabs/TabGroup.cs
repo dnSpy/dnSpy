@@ -84,7 +84,7 @@ namespace dnSpy.Tabs {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				var impl = GetTabItemImpl(value);
 				if (impl == null)
 					throw new InvalidOperationException();
@@ -94,7 +94,7 @@ namespace dnSpy.Tabs {
 
 		public void SetFocus(ITabContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabItemImpl(content);
 			if (impl == null)
 				throw new InvalidOperationException();
@@ -450,7 +450,7 @@ namespace dnSpy.Tabs {
 
 		public void Add(ITabContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var impl = new TabItemImpl(this, content, options.TabItemStyle);
 			AddEvents(impl);
 			content.OnVisibilityChanged(TabContentVisibilityEvent.Added);
@@ -460,7 +460,7 @@ namespace dnSpy.Tabs {
 
 		int IndexOf(ITabContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			for (int i = 0; i < tabControl.Items.Count; i++) {
 				var ti = (TabItemImpl)tabControl.Items[i];
 				if (ti.TabContent == content)
@@ -591,7 +591,7 @@ namespace dnSpy.Tabs {
 
 		void ITabGroup.Close(ITabContent content) {
 			if (content == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabItemImpl(content);
 			if (impl == null)
 				throw new InvalidOperationException();

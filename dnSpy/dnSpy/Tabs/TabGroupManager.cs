@@ -41,7 +41,7 @@ namespace dnSpy.Tabs {
 			get { return ActiveIndex < 0 ? null : stackedContent[ActiveIndex]; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				var g = value as TabGroup;
 				if (g == null)
 					throw new InvalidOperationException();
@@ -341,7 +341,7 @@ namespace dnSpy.Tabs {
 
 		public void Close(ITabGroup tabGroup) {
 			if (tabGroup == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(tabGroup));
 			var impl = tabGroup as TabGroup;
 			if (impl == null)
 				throw new InvalidOperationException();

@@ -37,7 +37,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public ScriptGlobals(IScriptGlobalsHelper owner, Dispatcher dispatcher, CancellationToken token) {
 			if (owner == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(owner));
+			if (dispatcher == null)
+				throw new ArgumentNullException(nameof(dispatcher));
 			this.owner = owner;
 			this.token = token;
 			this.dispatcher = dispatcher;

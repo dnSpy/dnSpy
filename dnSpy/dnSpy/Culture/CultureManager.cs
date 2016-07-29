@@ -75,7 +75,7 @@ namespace dnSpy.Culture {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (value.Type == LanguageType.CultureInfo)
 					cultureSettings.UIName = value.CultureInfo.Name;
 				else {

@@ -54,7 +54,7 @@ namespace dnSpy.Settings {
 		public void RemoveSection(ISettingsSection section) {
 			Debug.Assert(section != null);
 			if (section == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(section));
 
 			ISettingsSection other;
 			bool b = sections.TryGetValue(section.Name, out other);

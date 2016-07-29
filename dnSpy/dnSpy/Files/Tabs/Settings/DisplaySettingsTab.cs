@@ -230,7 +230,7 @@ namespace dnSpy.Files.Tabs.Settings {
 		void SetMemberKind(int index, MemberKindVM newValue) {
 			Debug.Assert(newValue != null);
 			if (newValue == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(newValue));
 			if (memberKindVMs[index] == newValue)
 				return;
 

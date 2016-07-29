@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get { return filename; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				filename = value;
 				OnPropertyChanged(nameof(FileName));
 				HasErrorUpdated();

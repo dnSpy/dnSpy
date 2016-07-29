@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		public CachedValidationError(Func<string> checkError) {
 			if (checkError == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(checkError));
 			this.checkError = checkError;
 			this.errorMsgValid = false;
 			this.errorMsg = null;
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.MVVM {
 			get { return stringValue; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (stringValue != value)
 					ForceWriteStringValue(value);
 			}
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		protected DataFieldVM(Action<DataFieldVM> onUpdated) {
 			if (onUpdated == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(onUpdated));
 			this.onUpdated = onUpdated;
 			this.cachedError = new CachedValidationError(() => Validate());
 		}

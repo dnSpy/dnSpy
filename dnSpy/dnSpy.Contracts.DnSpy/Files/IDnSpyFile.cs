@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Files {
 		/// <returns></returns>
 		public static IEnumerable<IDnSpyFile> NonLoadedDescendantsAndSelf(this IDnSpyFile file) {
 			if (file == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(file));
 			yield return file;
 			if (file.ChildrenLoaded) {
 				foreach (var child in file.Children) {

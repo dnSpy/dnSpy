@@ -53,7 +53,7 @@ namespace dnSpy.Search {
 			get { return filterSearcherOptions.Context.Language; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				filterSearcherOptions.Context.Language = value;
 			}
 		}

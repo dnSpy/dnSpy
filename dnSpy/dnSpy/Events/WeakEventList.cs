@@ -87,13 +87,13 @@ namespace dnSpy.Events {
 
 		public void Add(EventHandler<TEventArgs> h) {
 			if (h == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(h));
 			handlers.Add(Info.Create(h));
 		}
 
 		public void Remove(EventHandler<TEventArgs> h) {
 			if (h == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(h));
 			for (int i = 0; i < handlers.Count; i++) {
 				if (handlers[i].Equals(h)) {
 					handlers.RemoveAt(i);

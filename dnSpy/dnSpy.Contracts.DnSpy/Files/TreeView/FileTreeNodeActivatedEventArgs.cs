@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="node">Node</param>
 		public FileTreeNodeActivatedEventArgs(IFileTreeNodeData node) {
 			if (node == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(node));
 			this.Node = node;
 		}
 	}

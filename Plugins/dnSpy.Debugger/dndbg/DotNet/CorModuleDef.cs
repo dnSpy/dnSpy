@@ -145,7 +145,7 @@ namespace dndbg.DotNet {
 
 		public CorModuleDef(IMetaDataImport mdi, ICorModuleDefHelper corModuleDefHelper) {
 			if (mdi == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(mdi));
 			this.rid = 1;
 			this.origRid = 1;
 			this.mdi = mdi;

@@ -88,7 +88,7 @@ namespace dnSpy.Files.Tabs {
 
 			public Key(object obj) {
 				if (obj == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(obj));
 				this.obj = obj;
 			}
 

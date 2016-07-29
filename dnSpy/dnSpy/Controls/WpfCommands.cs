@@ -77,7 +77,7 @@ namespace dnSpy.Controls {
 
 		public void Add(UIElement elem) {
 			if (elem == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(elem));
 			uiElements.Add(new WeakReference(elem));
 			foreach (var c in commandBindings)
 				elem.CommandBindings.Add(c);
@@ -87,7 +87,7 @@ namespace dnSpy.Controls {
 
 		public void Remove(UIElement elem) {
 			if (elem == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(elem));
 			for (int i = uiElements.Count - 1; i >= 0; i--) {
 				var t = uiElements[i].Target;
 				if (t == elem || t == null)

@@ -128,8 +128,10 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// <param name="treeNodeGroup"></param>
 		/// <param name="resource"></param>
 		protected ResourceNode(ITreeNodeGroup treeNodeGroup, Resource resource) {
-			if (treeNodeGroup == null || resource == null)
-				throw new ArgumentNullException();
+			if (treeNodeGroup == null)
+				throw new ArgumentNullException(nameof(treeNodeGroup));
+			if (resource == null)
+				throw new ArgumentNullException(nameof(resource));
 			this.treeNodeGroup = treeNodeGroup;
 			this.Resource = resource;
 		}

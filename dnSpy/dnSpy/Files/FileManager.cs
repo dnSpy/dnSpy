@@ -138,7 +138,7 @@ namespace dnSpy.Files {
 
 		public IDnSpyFile GetOrAdd(IDnSpyFile file) {
 			if (file == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(file));
 
 			IDnSpyFile result;
 			lock (lockObj)
@@ -150,7 +150,7 @@ namespace dnSpy.Files {
 
 		public IDnSpyFile ForceAdd(IDnSpyFile file, bool delayLoad, object data) {
 			if (file == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(file));
 
 			lock (lockObj)
 				files.Add(file);
@@ -331,7 +331,7 @@ namespace dnSpy.Files {
 
 		public void SetDispatcher(Action<Action> action) {
 			if (action == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(action));
 			if (dispatcher != null)
 				throw new InvalidOperationException("SetDispatcher() can only be called once");
 			dispatcher = action;

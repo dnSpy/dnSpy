@@ -57,7 +57,7 @@ namespace dnSpy.ToolWindows {
 			get { return GetToolWindowGroup(tabGroupManager.ActiveTabGroup); }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				var tg = GetTabGroup(value);
 				if (tg == null)
 					throw new InvalidOperationException();
@@ -107,7 +107,7 @@ namespace dnSpy.ToolWindows {
 
 		public void Close(IToolWindowGroup group) {
 			if (group == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(group));
 			var impl = group as ToolWindowGroup;
 			if (impl == null)
 				throw new InvalidOperationException();

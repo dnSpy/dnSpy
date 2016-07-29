@@ -42,8 +42,10 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="file">File</param>
 		/// <param name="type">Type</param>
 		public SearchTypeInfo(IDnSpyFile file, TypeDef type) {
-			if (file == null || type == null)
-				throw new ArgumentNullException();
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
 			this.DnSpyFile = file;
 			this.Type = type;
 		}

@@ -70,7 +70,7 @@ namespace dnSpy.TreeView {
 
 		TreeNodeImpl GetAndVerifyTreeNodeImpl(ITreeNode treeNode) {
 			if (treeNode == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(treeNode));
 			var impl = treeNode as TreeNodeImpl;
 			if (impl == null)
 				throw new InvalidOperationException("ITreeNode is not our impl class. Only insert nodes in the correct owner tree");

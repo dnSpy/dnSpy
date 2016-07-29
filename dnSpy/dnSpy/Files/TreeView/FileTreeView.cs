@@ -63,7 +63,7 @@ namespace dnSpy.Files.TreeView {
 
 		public bool RaiseNodeActivated(IFileTreeNodeData node) {
 			if (node == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(node));
 			if (NodeActivated == null)
 				return false;
 			var e = new FileTreeNodeActivatedEventArgs(node);
@@ -701,7 +701,7 @@ namespace dnSpy.Files.TreeView {
 
 		public void AddNode(IDnSpyFileNode fileNode, int index) {
 			if (fileNode == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(fileNode));
 			Debug.Assert(!TreeView.Root.DataChildren.Contains(fileNode));
 			Debug.Assert(fileNode.TreeNode.Parent == null);
 			FileManager.ForceAdd(fileNode.DnSpyFile, false, new AddFileInfo(fileNode, index));

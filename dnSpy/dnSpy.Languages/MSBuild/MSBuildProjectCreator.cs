@@ -55,7 +55,7 @@ namespace dnSpy.Languages.MSBuild {
 
 		public MSBuildProjectCreator(ProjectCreatorOptions options) {
 			if (options == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(options));
 			this.options = options;
 			this.logger = new MyLogger(this, options.Logger);
 			this.progressListener = options.ProgressListener ?? NoMSBuildProgressListener.Instance;

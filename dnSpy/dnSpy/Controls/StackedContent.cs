@@ -131,7 +131,7 @@ namespace dnSpy.Controls {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException(nameof(value));
 				if (IsHorizontal != value.IsHorizontal)
 					return;
 				if (!IsHorizontal) {
@@ -175,7 +175,7 @@ namespace dnSpy.Controls {
 
 		public void Remove(TChild child) {
 			if (child == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(child));
 			int index = IndexOf(child);
 			Debug.Assert(index >= 0);
 			if (index >= 0) {

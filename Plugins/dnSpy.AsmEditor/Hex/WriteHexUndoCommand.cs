@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public static void AddAndExecute(IUndoCommandManager undoCommandManager, HexDocument doc, ulong offset, byte[] data, string descr = null) {
 			if (doc == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(doc));
 			if (data == null || data.Length == 0)
 				return;
 			undoCommandManager.Add(new WriteHexUndoCommand(doc, offset, data, descr));

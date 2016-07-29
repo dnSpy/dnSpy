@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="onShownHandler">Handler or null</param>
 		public FileTabReferenceResult(IFileTabContent fileTabContent, object serializedUI = null, Action<ShowTabContentEventArgs> onShownHandler = null) {
 			if (fileTabContent == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(fileTabContent));
 			this.FileTabContent = fileTabContent;
 			this.SerializedUI = serializedUI;
 			this.OnShownHandler = onShownHandler;

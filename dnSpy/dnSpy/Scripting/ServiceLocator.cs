@@ -49,7 +49,7 @@ namespace dnSpy.Scripting {
 
 		public void SetCompositionContainer(CompositionContainer compositionContainer) {
 			if (compositionContainer == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(compositionContainer));
 			if (this.compositionContainer != null)
 				throw new InvalidOperationException();
 			this.compositionContainer = compositionContainer;

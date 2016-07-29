@@ -46,7 +46,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		public LanguageProvider(LanguageSettingsManager languageSettingsManager) {
 			Debug.Assert(languageSettingsManager != null);
 			if (languageSettingsManager == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(languageSettingsManager));
 			this.languageSettingsManager = languageSettingsManager;
 		}
 

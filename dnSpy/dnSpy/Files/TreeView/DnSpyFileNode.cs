@@ -27,7 +27,7 @@ namespace dnSpy.Files.TreeView {
 
 		protected DnSpyFileNode(IDnSpyFile dnSpyFile) {
 			if (dnSpyFile == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(dnSpyFile));
 			this.DnSpyFile = dnSpyFile;
 		}
 

@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public static DBG.DebugProcessOptions Convert(DebugOptions options, IDebuggerSettings settings, DBG.CLRTypeDebugInfo info) {
 			if (options == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(options));
 			var o = new DBG.DebugProcessOptions(info);
 			o.Filename = options.Filename;
 			o.CommandLine = options.CommandLine;
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public static DBG.AttachProcessOptions Convert(AttachOptions options, IDebuggerSettings settings, string debuggeeVersion = null) {
 			if (options == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(options));
 			var o = new DBG.AttachProcessOptions(new DBG.DesktopCLRTypeAttachInfo(debuggeeVersion));
 			o.ProcessId = options.ProcessId;
 			o.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;

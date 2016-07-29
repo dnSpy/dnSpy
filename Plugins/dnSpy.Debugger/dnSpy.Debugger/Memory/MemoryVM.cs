@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Memory {
 
 		public void SetRefreshLines(Action refreshLines) {
 			if (refreshLines == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(refreshLines));
 			if (this.refreshLines != null)
 				throw new InvalidOperationException();
 			this.refreshLines = refreshLines;

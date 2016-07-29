@@ -30,7 +30,7 @@ namespace dndbg.Engine {
 
 		public CorProcessReader(CorProcess process) {
 			if (process == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(process));
 			this.process = process;
 		}
 
