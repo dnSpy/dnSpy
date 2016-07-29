@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		FontFamily fontFamily = new FontFamily(FontUtilities.GetDefaultMonospacedFont());
+		FontFamily fontFamily = new FontFamily(FontUtilities.GetDefaultTextEditorFont());
 
 		public double FontSize {
 			get { return fontSize; }
@@ -151,7 +151,7 @@ namespace dnSpy.Text.Editor {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultMonospacedFont());
+			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultTextEditorFont());
 			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
 			this.HighlightReferences = sect.Attribute<bool?>(nameof(HighlightReferences)) ?? this.HighlightReferences;

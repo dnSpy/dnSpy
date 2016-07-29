@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -45,19 +47,71 @@ namespace dnSpy.Contracts.Controls {
 			GLOBAL_MONOSPACE_FONT,
 		};
 
+		static IEnumerable<string> GetDefaultLanguageFontsToCheck(bool onlyMonospacedFonts) {
+			switch (CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName) {
+			case "CHS":
+				yield return "NSimSun";
+				break;
+
+			case "CHT":
+				yield return "MingLiU";
+				yield return "MingLiU-ExtB";
+				yield return "MingLiU_HKSCS";
+				yield return "MingLiU_HKSCS-ExtB";
+				break;
+
+			case "JPN":
+				yield return "MS Gothic";
+				break;
+
+			case "KOR":
+				if (!onlyMonospacedFonts)
+					yield return "DotumChe";
+				break;
+
+			default:
+				yield return "Consolas";
+				break;
+			}
+		}
+
+		static IEnumerable<string> GetDefaultFontsToCheck(bool onlyMonospacedFonts) {
+			foreach (var name in GetDefaultLanguageFontsToCheck(onlyMonospacedFonts))
+				yield return name;
+			foreach (var name in monospacedFontsToCheck)
+				yield return name;
+		}
+
+		const string DefaultFontIfNoOtherFound = "Courier New";
+
 		/// <summary>
 		/// Returns the default monospaced font
 		/// </summary>
 		/// <returns></returns>
 		public static string GetDefaultMonospacedFont() {
-			foreach (var name in monospacedFontsToCheck) {
+			foreach (var name in GetDefaultFontsToCheck(true)) {
 				if (Exists(name))
 					return name;
 			}
 
-			Debug.Fail("Couldn't find a default monospace font");
+			Debug.Fail("Couldn't find a default monospaced font");
 
-			return "Courier New";
+			return DefaultFontIfNoOtherFound;
+		}
+
+		/// <summary>
+		/// Returns the default text editor font (usually a monospaced font, but no guarantee)
+		/// </summary>
+		/// <returns></returns>
+		public static string GetDefaultTextEditorFont() {
+			foreach (var name in GetDefaultFontsToCheck(false)) {
+				if (Exists(name))
+					return name;
+			}
+
+			Debug.Fail("Couldn't find a default text editor font");
+
+			return DefaultFontIfNoOtherFound;
 		}
 
 		/// <summary>
