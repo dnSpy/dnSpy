@@ -25,13 +25,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
 	public struct ClassifierResult {
 		public readonly Span Span;
-		public readonly object Type;
+		public readonly IClassificationType Type;
 
-		public ClassifierResult(Span span, object type) {
+		public ClassifierResult(Span span, IClassificationType type) {
 			this.Span = span;
 			this.Type = type;
 		}
@@ -41,22 +42,22 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		readonly SyntaxNode syntaxRoot;
 		readonly SemanticModel semanticModel;
 		readonly Workspace workspace;
-		readonly RoslynClassifierColors roslynClassifierColors;
-		readonly object defaultColor;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
+		readonly IClassificationType defaultClassificationType;
 		/*readonly*/ CancellationToken cancellationToken;
 
-		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassifierColors roslynClassifierColors, object defaultColor, CancellationToken cancellationToken) {
+		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes roslynClassificationTypes, IClassificationType defaultClassificationType, CancellationToken cancellationToken) {
 			this.syntaxRoot = syntaxRoot;
 			this.semanticModel = semanticModel;
 			this.workspace = workspace;
-			this.roslynClassifierColors = roslynClassifierColors;
-			this.defaultColor = defaultColor;
+			this.roslynClassificationTypes = roslynClassificationTypes;
+			this.defaultClassificationType = defaultClassificationType;
 			this.cancellationToken = cancellationToken;
 		}
 
 		public IEnumerable<ClassifierResult> GetClassificationColors(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
-				var color = GetColorType(cspan) ?? defaultColor;
+				var color = GetClassificationType(cspan) ?? defaultClassificationType;
 				if (color != null)
 					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color);
 			}
@@ -64,14 +65,14 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 
 		struct SymbolResult {
 			public readonly ISymbol Symbol;
-			public readonly object Type;
+			public readonly IClassificationType Type;
 
 			public SymbolResult(ISymbol symbol) {
 				Symbol = symbol;
 				Type = null;
 			}
 
-			public SymbolResult(object type) {
+			public SymbolResult(IClassificationType type) {
 				Symbol = null;
 				Type = type;
 			}
@@ -82,7 +83,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 
 			// Fix for: using DNS = System;
 			if (node.Parent?.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax)
-				return new SymbolResult(roslynClassifierColors.Namespace);
+				return new SymbolResult(roslynClassificationTypes.Namespace);
 
 			var symInfo = semanticModel.GetSymbolInfo(node, cancellationToken);
 			var symbol = symInfo.Symbol ?? symInfo.CandidateSymbols.FirstOrDefault() ??
@@ -91,7 +92,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 			return new SymbolResult(symbol);
 		}
 
-		object GetColorType2(ClassifiedSpan cspan) {
+		IClassificationType GetClassificationType2(ClassifiedSpan cspan) {
 			var symRes = GetSymbolResult(cspan.TextSpan);
 			if (symRes.Type != null)
 				return symRes.Type;
@@ -101,7 +102,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 the_switch:
 			switch (symbol.Kind) {
 			case SymbolKind.Alias:
-				return roslynClassifierColors.Namespace;
+				return roslynClassificationTypes.Namespace;
 
 			case SymbolKind.ArrayType:
 			case SymbolKind.Assembly:
@@ -111,25 +112,25 @@ the_switch:
 
 			case SymbolKind.Event:
 				var evtSym = (IEventSymbol)symbol;
-				return evtSym.IsStatic ? roslynClassifierColors.StaticEvent : roslynClassifierColors.InstanceEvent;
+				return evtSym.IsStatic ? roslynClassificationTypes.StaticEvent : roslynClassificationTypes.InstanceEvent;
 
 			case SymbolKind.Field:
 				var fldSym = (IFieldSymbol)symbol;
 				if (fldSym.ContainingType?.IsScriptClass == true)
-					return roslynClassifierColors.Local;
+					return roslynClassificationTypes.Local;
 				if (fldSym.ContainingType?.TypeKind == TypeKind.Enum)
-					return roslynClassifierColors.EnumField;
+					return roslynClassificationTypes.EnumField;
 				if (fldSym.IsConst)
-					return roslynClassifierColors.LiteralField;
+					return roslynClassificationTypes.LiteralField;
 				if (fldSym.IsStatic)
-					return roslynClassifierColors.StaticField;
-				return roslynClassifierColors.InstanceField;
+					return roslynClassificationTypes.StaticField;
+				return roslynClassificationTypes.InstanceField;
 
 			case SymbolKind.Label:
-				return roslynClassifierColors.Label;
+				return roslynClassificationTypes.Label;
 
 			case SymbolKind.Local:
-				return roslynClassifierColors.Local;
+				return roslynClassificationTypes.Local;
 
 			case SymbolKind.Method:
 				var methSym = (IMethodSymbol)symbol;
@@ -155,13 +156,13 @@ the_switch:
 				case MethodKind.DeclareMethod:
 				default:
 					if (methSym.IsExtensionMethod)
-						return roslynClassifierColors.ExtensionMethod;
+						return roslynClassificationTypes.ExtensionMethod;
 					if (methSym.IsStatic)
-						return roslynClassifierColors.StaticMethod;
-					return roslynClassifierColors.InstanceMethod;
+						return roslynClassificationTypes.StaticMethod;
+					return roslynClassificationTypes.InstanceMethod;
 
 				case MethodKind.ReducedExtension:
-					return roslynClassifierColors.ExtensionMethod;
+					return roslynClassificationTypes.ExtensionMethod;
 				}
 
 			case SymbolKind.NetModule:
@@ -172,27 +173,27 @@ the_switch:
 				switch (nts.TypeKind) {
 				case TypeKind.Class:
 					if (nts.IsStatic)
-						return roslynClassifierColors.StaticType;
+						return roslynClassificationTypes.StaticType;
 					if (nts.IsSealed)
-						return roslynClassifierColors.SealedType;
-					return roslynClassifierColors.Type;
+						return roslynClassificationTypes.SealedType;
+					return roslynClassificationTypes.Type;
 
 				case TypeKind.Delegate:
-					return roslynClassifierColors.Delegate;
+					return roslynClassificationTypes.Delegate;
 
 				case TypeKind.Enum:
-					return roslynClassifierColors.Enum;
+					return roslynClassificationTypes.Enum;
 
 				case TypeKind.Interface:
-					return roslynClassifierColors.Interface;
+					return roslynClassificationTypes.Interface;
 
 				case TypeKind.Struct:
-					return roslynClassifierColors.ValueType;
+					return roslynClassificationTypes.ValueType;
 
 				case TypeKind.TypeParameter:
 					if ((symbol as ITypeParameterSymbol)?.DeclaringMethod != null)
-						return roslynClassifierColors.MethodGenericParameter;
-					return roslynClassifierColors.TypeGenericParameter;
+						return roslynClassificationTypes.MethodGenericParameter;
+					return roslynClassificationTypes.TypeGenericParameter;
 
 				case TypeKind.Unknown:
 				case TypeKind.Array:
@@ -207,24 +208,24 @@ the_switch:
 				break;
 
 			case SymbolKind.Namespace:
-				return roslynClassifierColors.Namespace;
+				return roslynClassificationTypes.Namespace;
 
 			case SymbolKind.Parameter:
-				return roslynClassifierColors.Parameter;
+				return roslynClassificationTypes.Parameter;
 
 			case SymbolKind.PointerType:
 				break;
 
 			case SymbolKind.Property:
 				var propSym = (IPropertySymbol)symbol;
-				return propSym.IsStatic ? roslynClassifierColors.StaticProperty : roslynClassifierColors.InstanceProperty;
+				return propSym.IsStatic ? roslynClassificationTypes.StaticProperty : roslynClassificationTypes.InstanceProperty;
 
 			case SymbolKind.RangeVariable:
-				return roslynClassifierColors.Local;
+				return roslynClassificationTypes.Local;
 
 			case SymbolKind.TypeParameter:
 				return (symbol as ITypeParameterSymbol)?.DeclaringMethod != null ?
-					roslynClassifierColors.MethodGenericParameter : roslynClassifierColors.TypeGenericParameter;
+					roslynClassificationTypes.MethodGenericParameter : roslynClassificationTypes.TypeGenericParameter;
 
 			case SymbolKind.Preprocessing:
 				break;
@@ -237,8 +238,8 @@ the_switch:
 			return null;
 		}
 
-		object GetColorType(ClassifiedSpan cspan) {
-			object colorType;
+		IClassificationType GetClassificationType(ClassifiedSpan cspan) {
+			IClassificationType classificationType;
 			SymbolResult symRes;
 			switch (cspan.ClassificationType) {
 			case ClassificationTypeNames.ClassName:
@@ -246,133 +247,133 @@ the_switch:
 				if (symRes.Type != null)
 					return symRes.Type;
 				if (symRes.Symbol?.IsStatic == true)
-					return roslynClassifierColors.StaticType;
+					return roslynClassificationTypes.StaticType;
 				if (symRes.Symbol?.IsSealed == true)
-					return roslynClassifierColors.SealedType;
+					return roslynClassificationTypes.SealedType;
 				Debug.WriteLineIf(symRes.Symbol == null, "Couldn't get ClassName classification type");
-				return roslynClassifierColors.Type;
+				return roslynClassificationTypes.Type;
 
 			case ClassificationTypeNames.Comment:
-				return roslynClassifierColors.Comment;
+				return roslynClassificationTypes.Comment;
 
 			case ClassificationTypeNames.DelegateName:
-				return roslynClassifierColors.Delegate;
+				return roslynClassificationTypes.Delegate;
 
 			case ClassificationTypeNames.EnumName:
-				return roslynClassifierColors.Enum;
+				return roslynClassificationTypes.Enum;
 
 			case ClassificationTypeNames.ExcludedCode:
-				return roslynClassifierColors.ExcludedCode;
+				return roslynClassificationTypes.ExcludedCode;
 
 			case ClassificationTypeNames.Identifier:
-				return GetColorType2(cspan);
+				return GetClassificationType2(cspan);
 
 			case ClassificationTypeNames.InterfaceName:
-				return roslynClassifierColors.Interface;
+				return roslynClassificationTypes.Interface;
 
 			case ClassificationTypeNames.Keyword:
-				return roslynClassifierColors.Keyword;
+				return roslynClassificationTypes.Keyword;
 
 			case ClassificationTypeNames.ModuleName:
-				return roslynClassifierColors.Module;
+				return roslynClassificationTypes.Module;
 
 			case ClassificationTypeNames.NumericLiteral:
-				return roslynClassifierColors.Number;
+				return roslynClassificationTypes.Number;
 
 			case ClassificationTypeNames.Operator:
-				return roslynClassifierColors.Operator;
+				return roslynClassificationTypes.Operator;
 
 			case ClassificationTypeNames.PreprocessorKeyword:
-				return roslynClassifierColors.PreprocessorKeyword;
+				return roslynClassificationTypes.PreprocessorKeyword;
 
 			case ClassificationTypeNames.PreprocessorText:
-				return roslynClassifierColors.PreprocessorText;
+				return roslynClassificationTypes.PreprocessorText;
 
 			case ClassificationTypeNames.Punctuation:
-				return roslynClassifierColors.Punctuation;
+				return roslynClassificationTypes.Punctuation;
 
 			case ClassificationTypeNames.StringLiteral:
-				return roslynClassifierColors.String;
+				return roslynClassificationTypes.String;
 
 			case ClassificationTypeNames.StructName:
-				return roslynClassifierColors.ValueType;
+				return roslynClassificationTypes.ValueType;
 
 			case ClassificationTypeNames.Text:
-				return roslynClassifierColors.Text;
+				return roslynClassificationTypes.Text;
 
 			case ClassificationTypeNames.TypeParameterName:
-				colorType = GetColorType2(cspan);
-				Debug.WriteLineIf(colorType == null, "Couldn't get TypeParameterName color type");
-				return colorType ?? roslynClassifierColors.TypeGenericParameter;
+				classificationType = GetClassificationType2(cspan);
+				Debug.WriteLineIf(classificationType == null, "Couldn't get TypeParameterName color type");
+				return classificationType ?? roslynClassificationTypes.TypeGenericParameter;
 
 			case ClassificationTypeNames.VerbatimStringLiteral:
-				return roslynClassifierColors.VerbatimString;
+				return roslynClassificationTypes.VerbatimString;
 
 			case ClassificationTypeNames.WhiteSpace:
-				return roslynClassifierColors.Text;
+				return roslynClassificationTypes.Text;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeName:
-				return roslynClassifierColors.XmlDocCommentAttributeName;
+				return roslynClassificationTypes.XmlDocCommentAttributeName;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeQuotes:
-				return roslynClassifierColors.XmlDocCommentAttributeQuotes;
+				return roslynClassificationTypes.XmlDocCommentAttributeQuotes;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeValue:
-				return roslynClassifierColors.XmlDocCommentAttributeValue;
+				return roslynClassificationTypes.XmlDocCommentAttributeValue;
 
 			case ClassificationTypeNames.XmlDocCommentCDataSection:
-				return roslynClassifierColors.XmlDocCommentCDataSection;
+				return roslynClassificationTypes.XmlDocCommentCDataSection;
 
 			case ClassificationTypeNames.XmlDocCommentComment:
-				return roslynClassifierColors.XmlDocCommentComment;
+				return roslynClassificationTypes.XmlDocCommentComment;
 
 			case ClassificationTypeNames.XmlDocCommentDelimiter:
-				return roslynClassifierColors.XmlDocCommentDelimiter;
+				return roslynClassificationTypes.XmlDocCommentDelimiter;
 
 			case ClassificationTypeNames.XmlDocCommentEntityReference:
-				return roslynClassifierColors.XmlDocCommentEntityReference;
+				return roslynClassificationTypes.XmlDocCommentEntityReference;
 
 			case ClassificationTypeNames.XmlDocCommentName:
-				return roslynClassifierColors.XmlDocCommentName;
+				return roslynClassificationTypes.XmlDocCommentName;
 
 			case ClassificationTypeNames.XmlDocCommentProcessingInstruction:
-				return roslynClassifierColors.XmlDocCommentProcessingInstruction;
+				return roslynClassificationTypes.XmlDocCommentProcessingInstruction;
 
 			case ClassificationTypeNames.XmlDocCommentText:
-				return roslynClassifierColors.XmlDocCommentText;
+				return roslynClassificationTypes.XmlDocCommentText;
 
 			case ClassificationTypeNames.XmlLiteralAttributeName:
-				return roslynClassifierColors.XmlLiteralAttributeName;
+				return roslynClassificationTypes.XmlLiteralAttributeName;
 
 			case ClassificationTypeNames.XmlLiteralAttributeQuotes:
-				return roslynClassifierColors.XmlLiteralAttributeQuotes;
+				return roslynClassificationTypes.XmlLiteralAttributeQuotes;
 
 			case ClassificationTypeNames.XmlLiteralAttributeValue:
-				return roslynClassifierColors.XmlLiteralAttributeValue;
+				return roslynClassificationTypes.XmlLiteralAttributeValue;
 
 			case ClassificationTypeNames.XmlLiteralCDataSection:
-				return roslynClassifierColors.XmlLiteralCDataSection;
+				return roslynClassificationTypes.XmlLiteralCDataSection;
 
 			case ClassificationTypeNames.XmlLiteralComment:
-				return roslynClassifierColors.XmlLiteralComment;
+				return roslynClassificationTypes.XmlLiteralComment;
 
 			case ClassificationTypeNames.XmlLiteralDelimiter:
-				return roslynClassifierColors.XmlLiteralDelimiter;
+				return roslynClassificationTypes.XmlLiteralDelimiter;
 
 			case ClassificationTypeNames.XmlLiteralEmbeddedExpression:
-				return roslynClassifierColors.XmlLiteralEmbeddedExpression;
+				return roslynClassificationTypes.XmlLiteralEmbeddedExpression;
 
 			case ClassificationTypeNames.XmlLiteralEntityReference:
-				return roslynClassifierColors.XmlLiteralEntityReference;
+				return roslynClassificationTypes.XmlLiteralEntityReference;
 
 			case ClassificationTypeNames.XmlLiteralName:
-				return roslynClassifierColors.XmlLiteralName;
+				return roslynClassificationTypes.XmlLiteralName;
 
 			case ClassificationTypeNames.XmlLiteralProcessingInstruction:
-				return roslynClassifierColors.XmlLiteralProcessingInstruction;
+				return roslynClassificationTypes.XmlLiteralProcessingInstruction;
 
 			case ClassificationTypeNames.XmlLiteralText:
-				return roslynClassifierColors.XmlLiteralText;
+				return roslynClassificationTypes.XmlLiteralText;
 
 			default:
 				Debug.WriteLine($"Unknown ClassificationType = '{cspan.ClassificationType}'");

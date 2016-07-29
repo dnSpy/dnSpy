@@ -92,8 +92,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ResourceHelper.cs" />
-    <Compile Include="Text\ColorAndText.cs" />
-    <Compile Include="Text\ColorOffsetInfo.cs" />
     <Compile Include="Text\ITextColorWriter.cs" />
     <Compile Include="Text\ITextColorWriterExtensions.cs" />
     <Compile Include="Text\NameUtilities.cs" />

@@ -32,7 +32,9 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Themes;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
@@ -40,6 +42,7 @@ using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {
@@ -95,12 +98,18 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		readonly Dispatcher dispatcher;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
+		readonly IClassificationType defaultClassificationType;
 
 		protected ScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.ReplEditor = replEditor;
 			this.ReplEditor.CommandHandler = this;
 			this.serviceLocator = serviceLocator;
+
+			var themeClassificationTypes = serviceLocator.Resolve<IThemeClassificationTypes>();
+			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypes);
+			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(ColorType.Error);
 
 			this.toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);
 			foreach (var sc in CreateScriptCommands()) {
@@ -255,9 +264,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				return Task.CompletedTask;
 
 			using (var workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices)) {
-				var classifier = new RoslynClassifier(sem.SyntaxTree.GetRoot(), sem, workspace, RoslynClassifierColors.GetTextColorInstance(), BoxedTextColor.Error, cancellationToken);
+				var classifier = new RoslynClassifier(sem.SyntaxTree.GetRoot(), sem, workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
 				foreach (var info in classifier.GetClassificationColors(new TextSpan(0, command.Input.Length)))
-					command.AddColor(info.Span.Start, info.Span.Length, info.Type);
+					command.AddClassification(info.Span.Start, info.Span.Length, info.Type);
 			}
 
 			return Task.CompletedTask;

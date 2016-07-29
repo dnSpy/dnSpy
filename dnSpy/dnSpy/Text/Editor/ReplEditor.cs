@@ -35,6 +35,7 @@ using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
@@ -52,6 +53,9 @@ namespace dnSpy.Text.Editor {
 
 		public string PrimaryPrompt { get; }
 		public string SecondaryPrompt { get; }
+		public IClassificationType TextClassificationType { get; }
+		public IClassificationType ReplPrompt1ClassificationType { get; }
+		public IClassificationType ReplPrompt2ClassificationType { get; }
 
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
@@ -70,7 +74,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options?.Clone() ?? new ReplEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
@@ -78,6 +82,9 @@ namespace dnSpy.Text.Editor {
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<ReplSubBuffer>();
 			this.cachedColorsList = new CachedColorsList();
+			TextClassificationType = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Text);
+			ReplPrompt1ClassificationType = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplPrompt1);
+			ReplPrompt2ClassificationType = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplPrompt2);
 
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
@@ -792,27 +799,30 @@ namespace dnSpy.Text.Editor {
 			this.totalLength = totalLength;
 		}
 
-		public CachedTextTokenColors Create(string command, List<ColorOffsetInfo> colorInfos) {
+		public CachedTextTokenColors Create(string command, List<SpanAndClassificationType> colorInfos) {
 			if (owner.PrimaryPrompt.Length > totalLength)
-				cachedColors.Append(BoxedTextColor.ReplPrompt1, owner.PrimaryPrompt.Substring(0, totalLength));
+				cachedColors.Append(owner.ReplPrompt1ClassificationType, owner.PrimaryPrompt.Substring(0, totalLength));
 			else
-				cachedColors.Append(BoxedTextColor.ReplPrompt1, owner.PrimaryPrompt);
+				cachedColors.Append(owner.ReplPrompt1ClassificationType, owner.PrimaryPrompt);
 			int cmdOffs = 0;
 			foreach (var cinfo in colorInfos) {
 				Debug.Assert(cmdOffs <= cinfo.Offset);
 				if (cmdOffs < cinfo.Offset)
-					Append(BoxedTextColor.Text, command, cmdOffs, cinfo.Offset - cmdOffs);
-				Append(cinfo.Color, command, cinfo.Offset, cinfo.Length);
+					Append(owner.TextClassificationType, command, cmdOffs, cinfo.Offset - cmdOffs);
+				Append(cinfo.ClassificationType, command, cinfo.Offset, cinfo.Length);
 				cmdOffs = cinfo.Offset + cinfo.Length;
 			}
 			if (cmdOffs < command.Length)
-				Append(BoxedTextColor.Text, command, cmdOffs, command.Length - cmdOffs);
+				Append(owner.TextClassificationType, command, cmdOffs, command.Length - cmdOffs);
 
 			cachedColors.Finish();
 			return cachedColors;
 		}
 
-		void Append(object color, string s, int offset, int length) {
+		void Append(IClassificationType classificationType, string s, int offset, int length) {
+			object color = classificationType;
+			if (color == owner.TextClassificationType)
+				color = BoxedTextColor.Text;
 			int so = offset;
 			int end = offset + length;
 			while (so < end) {
@@ -822,7 +832,7 @@ namespace dnSpy.Text.Editor {
 					cachedColors.Append(color, s, so, nlOffs - so + nlLen);
 					so = nlOffs + nlLen;
 					if (cachedColors.Length < totalLength)
-						cachedColors.Append(BoxedTextColor.ReplPrompt2, owner.SecondaryPrompt);
+						cachedColors.Append(owner.ReplPrompt2ClassificationType, owner.SecondaryPrompt);
 				}
 				else {
 					cachedColors.Append(color, s, so, end - so);
@@ -863,34 +873,37 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplCommandInput : IReplCommandInput {
 		public string Input { get; }
 
-		public List<ColorOffsetInfo> ColorInfos { get; } = new List<ColorOffsetInfo>();
+		public List<SpanAndClassificationType> ColorInfos { get; } = new List<SpanAndClassificationType>();
 
 		public ReplCommandInput(string input) {
 			Input = input;
 		}
 
-		public void AddColor(int offset, int length, object color) =>
-			AddColor(new ColorOffsetInfo(offset, length, color));
-
-		public void AddColor(int offset, int length, TextColor color) =>
-			AddColor(new ColorOffsetInfo(offset, length, color));
-
-		public void AddColor(ColorOffsetInfo info) {
+		public void AddClassification(int offset, int length, IClassificationType classificationType) {
 #if DEBUG
-			Debug.Assert(info.Offset >= nextMinOffset);
-			if (info.Offset < nextMinOffset)
-				throw new InvalidOperationException();
-			nextMinOffset = info.Offset + info.Length;
+			//TODO: Remove this requirement
+			Debug.Assert(offset >= nextMinOffset);
+			if (offset < nextMinOffset)
+				throw new InvalidOperationException("All classifications must be ordered and there must be no overlaps");
+			nextMinOffset = offset + length;
 #endif
-			ColorInfos.Add(info);
+			ColorInfos.Add(new SpanAndClassificationType(offset, length, classificationType));
 		}
 #if DEBUG
 		int nextMinOffset;
 #endif
+	}
 
-		public void AddColors(IEnumerable<ColorOffsetInfo> infos) {
-			foreach (var info in infos)
-				AddColor(info);
+	struct SpanAndClassificationType {
+		public int Offset { get; }
+		public int Length { get; }
+		public IClassificationType ClassificationType { get; }
+
+		public SpanAndClassificationType(int offset, int length, IClassificationType classificationType) {
+			Debug.Assert(offset + length >= offset && length >= 0);
+			Offset = offset;
+			Length = length;
+			ClassificationType = classificationType;
 		}
 	}
 }

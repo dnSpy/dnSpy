@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -30,31 +30,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		string Input { get; }
 
 		/// <summary>
-		/// Add color info. No overlaps, and must be in order.
+		/// Adds classification info
 		/// </summary>
 		/// <param name="offset">Offset of text</param>
 		/// <param name="length">Length</param>
-		/// <param name="color">Color</param>
-		void AddColor(int offset, int length, object color);
-
-		/// <summary>
-		/// Add color info. No overlaps, and must be in order.
-		/// </summary>
-		/// <param name="offset">Offset of text</param>
-		/// <param name="length">Length</param>
-		/// <param name="color">Color</param>
-		void AddColor(int offset, int length, TextColor color);
-
-		/// <summary>
-		/// Add color info. No overlaps, and must be in order.
-		/// </summary>
-		/// <param name="info">Color info</param>
-		void AddColor(ColorOffsetInfo info);
-
-		/// <summary>
-		/// Add color infos. No overlaps, and must be in order.
-		/// </summary>
-		/// <param name="infos">Color infos</param>
-		void AddColors(IEnumerable<ColorOffsetInfo> infos);
+		/// <param name="classificationType">Classification type</param>
+		void AddClassification(int offset, int length, IClassificationType classificationType);
 	}
 }

@@ -21,79 +21,80 @@ using System.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
-	public sealed class RoslynClassifierColors {
-		public readonly object Comment;
-		public readonly object Delegate;
-		public readonly object Enum;
-		public readonly object EnumField;
-		public readonly object ExcludedCode;
-		public readonly object ExtensionMethod;
-		public readonly object InstanceEvent;
-		public readonly object InstanceField;
-		public readonly object InstanceMethod;
-		public readonly object InstanceProperty;
-		public readonly object Interface;
-		public readonly object Keyword;
-		public readonly object Label;
-		public readonly object LiteralField;
-		public readonly object Local;
-		public readonly object MethodGenericParameter;
-		public readonly object Module;
-		public readonly object Namespace;
-		public readonly object Number;
-		public readonly object Operator;
-		public readonly object Parameter;
-		public readonly object PreprocessorKeyword;
-		public readonly object PreprocessorText;
-		public readonly object Punctuation;
-		public readonly object SealedType;
-		public readonly object StaticEvent;
-		public readonly object StaticField;
-		public readonly object StaticMethod;
-		public readonly object StaticProperty;
-		public readonly object StaticType;
-		public readonly object String;
-		public readonly object Text;
-		public readonly object Type;
-		public readonly object TypeGenericParameter;
-		public readonly object ValueType;
-		public readonly object VerbatimString;
-		public readonly object XmlDocCommentAttributeName;
-		public readonly object XmlDocCommentAttributeQuotes;
-		public readonly object XmlDocCommentAttributeValue;
-		public readonly object XmlDocCommentCDataSection;
-		public readonly object XmlDocCommentComment;
-		public readonly object XmlDocCommentDelimiter;
-		public readonly object XmlDocCommentEntityReference;
-		public readonly object XmlDocCommentName;
-		public readonly object XmlDocCommentProcessingInstruction;
-		public readonly object XmlDocCommentText;
-		public readonly object XmlLiteralAttributeName;
-		public readonly object XmlLiteralAttributeQuotes;
-		public readonly object XmlLiteralAttributeValue;
-		public readonly object XmlLiteralCDataSection;
-		public readonly object XmlLiteralComment;
-		public readonly object XmlLiteralDelimiter;
-		public readonly object XmlLiteralEmbeddedExpression;
-		public readonly object XmlLiteralEntityReference;
-		public readonly object XmlLiteralName;
-		public readonly object XmlLiteralProcessingInstruction;
-		public readonly object XmlLiteralText;
+	public sealed class RoslynClassificationTypes {
+		public readonly IClassificationType Comment;
+		public readonly IClassificationType Delegate;
+		public readonly IClassificationType Enum;
+		public readonly IClassificationType EnumField;
+		public readonly IClassificationType ExcludedCode;
+		public readonly IClassificationType ExtensionMethod;
+		public readonly IClassificationType InstanceEvent;
+		public readonly IClassificationType InstanceField;
+		public readonly IClassificationType InstanceMethod;
+		public readonly IClassificationType InstanceProperty;
+		public readonly IClassificationType Interface;
+		public readonly IClassificationType Keyword;
+		public readonly IClassificationType Label;
+		public readonly IClassificationType LiteralField;
+		public readonly IClassificationType Local;
+		public readonly IClassificationType MethodGenericParameter;
+		public readonly IClassificationType Module;
+		public readonly IClassificationType Namespace;
+		public readonly IClassificationType Number;
+		public readonly IClassificationType Operator;
+		public readonly IClassificationType Parameter;
+		public readonly IClassificationType PreprocessorKeyword;
+		public readonly IClassificationType PreprocessorText;
+		public readonly IClassificationType Punctuation;
+		public readonly IClassificationType SealedType;
+		public readonly IClassificationType StaticEvent;
+		public readonly IClassificationType StaticField;
+		public readonly IClassificationType StaticMethod;
+		public readonly IClassificationType StaticProperty;
+		public readonly IClassificationType StaticType;
+		public readonly IClassificationType String;
+		public readonly IClassificationType Text;
+		public readonly IClassificationType Type;
+		public readonly IClassificationType TypeGenericParameter;
+		public readonly IClassificationType ValueType;
+		public readonly IClassificationType VerbatimString;
+		public readonly IClassificationType XmlDocCommentAttributeName;
+		public readonly IClassificationType XmlDocCommentAttributeQuotes;
+		public readonly IClassificationType XmlDocCommentAttributeValue;
+		public readonly IClassificationType XmlDocCommentCDataSection;
+		public readonly IClassificationType XmlDocCommentComment;
+		public readonly IClassificationType XmlDocCommentDelimiter;
+		public readonly IClassificationType XmlDocCommentEntityReference;
+		public readonly IClassificationType XmlDocCommentName;
+		public readonly IClassificationType XmlDocCommentProcessingInstruction;
+		public readonly IClassificationType XmlDocCommentText;
+		public readonly IClassificationType XmlLiteralAttributeName;
+		public readonly IClassificationType XmlLiteralAttributeQuotes;
+		public readonly IClassificationType XmlLiteralAttributeValue;
+		public readonly IClassificationType XmlLiteralCDataSection;
+		public readonly IClassificationType XmlLiteralComment;
+		public readonly IClassificationType XmlLiteralDelimiter;
+		public readonly IClassificationType XmlLiteralEmbeddedExpression;
+		public readonly IClassificationType XmlLiteralEntityReference;
+		public readonly IClassificationType XmlLiteralName;
+		public readonly IClassificationType XmlLiteralProcessingInstruction;
+		public readonly IClassificationType XmlLiteralText;
 
 		/// <summary>
 		/// Gets the cached instance that contains <see cref="IClassificationType"/> values
 		/// </summary>
 		/// <returns></returns>
-		public static RoslynClassifierColors GetClassificationTypeInstance(IThemeClassificationTypes themeClassificationTypes) {
+		public static RoslynClassificationTypes GetClassificationTypeInstance(IThemeClassificationTypes themeClassificationTypes) {
 			if (classificationTypeInstance == null)
-				Interlocked.CompareExchange(ref classificationTypeInstance, new RoslynClassifierColors(themeClassificationTypes), null);
+				Interlocked.CompareExchange(ref classificationTypeInstance, new RoslynClassificationTypes(themeClassificationTypes), null);
 			return classificationTypeInstance;
 		}
-		static RoslynClassifierColors classificationTypeInstance;
+		static RoslynClassificationTypes classificationTypeInstance;
 
-		RoslynClassifierColors(IThemeClassificationTypes themeClassificationTypes) {
+		RoslynClassificationTypes(IThemeClassificationTypes themeClassificationTypes) {
 			Comment = themeClassificationTypes.GetClassificationType(ColorType.Comment);
 			Delegate = themeClassificationTypes.GetClassificationType(ColorType.Delegate);
 			Enum = themeClassificationTypes.GetClassificationType(ColorType.Enum);
@@ -151,77 +152,6 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 			XmlLiteralName = themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralName);
 			XmlLiteralProcessingInstruction = themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralProcessingInstruction);
 			XmlLiteralText = themeClassificationTypes.GetClassificationType(ColorType.XmlLiteralText);
-		}
-
-		/// <summary>
-		/// Gets the cached instance that contains boxed <see cref="TextColor"/> values
-		/// </summary>
-		/// <returns></returns>
-		public static RoslynClassifierColors GetTextColorInstance() {
-			if (textColorInstance == null)
-				Interlocked.CompareExchange(ref textColorInstance, new RoslynClassifierColors(true), null);
-			return textColorInstance;
-		}
-		static RoslynClassifierColors textColorInstance;
-
-		RoslynClassifierColors(bool dummy) {
-			Comment = BoxedTextColor.Comment;
-			Delegate = BoxedTextColor.Delegate;
-			Enum = BoxedTextColor.Enum;
-			EnumField = BoxedTextColor.EnumField;
-			ExcludedCode = BoxedTextColor.ExcludedCode;
-			ExtensionMethod = BoxedTextColor.ExtensionMethod;
-			InstanceEvent = BoxedTextColor.InstanceEvent;
-			InstanceField = BoxedTextColor.InstanceField;
-			InstanceMethod = BoxedTextColor.InstanceMethod;
-			InstanceProperty = BoxedTextColor.InstanceProperty;
-			Interface = BoxedTextColor.Interface;
-			Keyword = BoxedTextColor.Keyword;
-			Label = BoxedTextColor.Label;
-			LiteralField = BoxedTextColor.LiteralField;
-			Local = BoxedTextColor.Local;
-			MethodGenericParameter = BoxedTextColor.MethodGenericParameter;
-			Module = BoxedTextColor.Module;
-			Namespace = BoxedTextColor.Namespace;
-			Number = BoxedTextColor.Number;
-			Operator = BoxedTextColor.Operator;
-			Parameter = BoxedTextColor.Parameter;
-			PreprocessorKeyword = BoxedTextColor.PreprocessorKeyword;
-			PreprocessorText = BoxedTextColor.PreprocessorText;
-			Punctuation = BoxedTextColor.Punctuation;
-			SealedType = BoxedTextColor.SealedType;
-			StaticEvent = BoxedTextColor.StaticEvent;
-			StaticField = BoxedTextColor.StaticField;
-			StaticMethod = BoxedTextColor.StaticMethod;
-			StaticProperty = BoxedTextColor.StaticProperty;
-			StaticType = BoxedTextColor.StaticType;
-			String = BoxedTextColor.String;
-			Text = BoxedTextColor.Text;
-			Type = BoxedTextColor.Type;
-			TypeGenericParameter = BoxedTextColor.TypeGenericParameter;
-			ValueType = BoxedTextColor.ValueType;
-			VerbatimString = BoxedTextColor.VerbatimString;
-			XmlDocCommentAttributeName = BoxedTextColor.XmlDocCommentAttributeName;
-			XmlDocCommentAttributeQuotes = BoxedTextColor.XmlDocCommentAttributeQuotes;
-			XmlDocCommentAttributeValue = BoxedTextColor.XmlDocCommentAttributeValue;
-			XmlDocCommentCDataSection = BoxedTextColor.XmlDocCommentCDataSection;
-			XmlDocCommentComment = BoxedTextColor.XmlDocCommentComment;
-			XmlDocCommentDelimiter = BoxedTextColor.XmlDocCommentDelimiter;
-			XmlDocCommentEntityReference = BoxedTextColor.XmlDocCommentEntityReference;
-			XmlDocCommentName = BoxedTextColor.XmlDocCommentName;
-			XmlDocCommentProcessingInstruction = BoxedTextColor.XmlDocCommentProcessingInstruction;
-			XmlDocCommentText = BoxedTextColor.XmlDocCommentText;
-			XmlLiteralAttributeName = BoxedTextColor.XmlLiteralAttributeName;
-			XmlLiteralAttributeQuotes = BoxedTextColor.XmlLiteralAttributeQuotes;
-			XmlLiteralAttributeValue = BoxedTextColor.XmlLiteralAttributeValue;
-			XmlLiteralCDataSection = BoxedTextColor.XmlLiteralCDataSection;
-			XmlLiteralComment = BoxedTextColor.XmlLiteralComment;
-			XmlLiteralDelimiter = BoxedTextColor.XmlLiteralDelimiter;
-			XmlLiteralEmbeddedExpression = BoxedTextColor.XmlLiteralEmbeddedExpression;
-			XmlLiteralEntityReference = BoxedTextColor.XmlLiteralEntityReference;
-			XmlLiteralName = BoxedTextColor.XmlLiteralName;
-			XmlLiteralProcessingInstruction = BoxedTextColor.XmlLiteralProcessingInstruction;
-			XmlLiteralText = BoxedTextColor.XmlLiteralText;
 		}
 	}
 }

@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Text {
 
 redo:
 			if (isAppendingDefaultText) {
-				if (data.Equals(BoxedTextColor.Text) || data.Equals(BoxedTextColor.Text)) {
+				if (data.Equals(BoxedTextColor.Text)) {
 					int newLength = currentDefaultTextLength + length;
 					while (newLength > TEXT_TOKEN_LENGTH_MAX) {
 						currentDefaultTextLength = Math.Min(newLength, TEXT_TOKEN_LENGTH_MAX);
