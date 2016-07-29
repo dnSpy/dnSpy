@@ -28,14 +28,14 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// Theme marker definition
 	/// </summary>
 	public abstract class ThemeMarkerFormatDefinition : MarkerFormatDefinition, IThemeFormatDefinition {
-		readonly ColorType colorType;
+		readonly TextColor textColor;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="colorType">Color type</param>
-		protected ThemeMarkerFormatDefinition(ColorType colorType) {
-			this.colorType = colorType;
+		/// <param name="textColor">Color</param>
+		protected ThemeMarkerFormatDefinition(TextColor textColor) {
+			this.textColor = textColor;
 		}
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Text.Classification {
 			return res;
 		}
 
-		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(colorType).Foreground;
-		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(colorType).Background;
+		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
+		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
 	}
 }

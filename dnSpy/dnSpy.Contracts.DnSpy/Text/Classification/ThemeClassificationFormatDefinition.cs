@@ -28,14 +28,14 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// Theme classification definition
 	/// </summary>
 	public abstract class ThemeClassificationFormatDefinition : ClassificationFormatDefinition, IThemeFormatDefinition {
-		readonly ColorType colorType;
+		readonly TextColor textColor;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="colorType">Color type</param>
-		protected ThemeClassificationFormatDefinition(ColorType colorType) {
-			this.colorType = colorType;
+		/// <param name="textColor">Color</param>
+		protected ThemeClassificationFormatDefinition(TextColor textColor) {
+			this.textColor = textColor;
 		}
 
 		/// <summary>
@@ -74,18 +74,18 @@ namespace dnSpy.Contracts.Text.Classification {
 			return res;
 		}
 
-		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(colorType).Foreground;
-		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(colorType).Background;
+		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
+		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
 
 		bool? GetIsBold(ITheme theme) {
-			var tc = theme.GetExplicitColor(colorType);
+			var tc = theme.GetExplicitColor(textColor.ToColorType());
 			if (tc.FontWeight == null)
 				return null;
 			return tc.FontWeight.Value == FontWeights.Bold;
 		}
 
 		bool? GetIsItalic(ITheme theme) {
-			var tc = theme.GetExplicitColor(colorType);
+			var tc = theme.GetExplicitColor(textColor.ToColorType());
 			if (tc.FontStyle == null)
 				return null;
 			return tc.FontStyle.Value == FontStyles.Italic;

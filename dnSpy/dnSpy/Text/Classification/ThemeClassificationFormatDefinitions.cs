@@ -18,9 +18,9 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
@@ -892,7 +892,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Low)]
 		sealed class Text : ThemeClassificationFormatDefinition {
-			Text() : base(ColorType.Text) { }
+			Text() : base(TextColor.Text) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -901,7 +901,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.PreprocessorKeyword)]
 		sealed class Operator : ThemeClassificationFormatDefinition {
-			Operator() : base(ColorType.Operator) { }
+			Operator() : base(TextColor.Operator) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -910,7 +910,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class Punctuation : ThemeClassificationFormatDefinition {
-			Punctuation() : base(ColorType.Punctuation) { }
+			Punctuation() : base(TextColor.Punctuation) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -919,7 +919,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Operator)]
 		sealed class Number : ThemeClassificationFormatDefinition {
-			Number() : base(ColorType.Number) { }
+			Number() : base(TextColor.Number) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -928,7 +928,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.ExcludedCode)]
 		sealed class Comment : ThemeClassificationFormatDefinition {
-			Comment() : base(ColorType.Comment) { }
+			Comment() : base(TextColor.Comment) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -937,7 +937,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Literal)]
 		sealed class Keyword : ThemeClassificationFormatDefinition {
-			Keyword() : base(ColorType.Keyword) { }
+			Keyword() : base(TextColor.Keyword) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -946,7 +946,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage)]
 		sealed class String : ThemeClassificationFormatDefinition {
-			String() : base(ColorType.String) { }
+			String() : base(TextColor.String) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -955,7 +955,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class VerbatimString : ThemeClassificationFormatDefinition {
-			VerbatimString() : base(ColorType.VerbatimString) { }
+			VerbatimString() : base(TextColor.VerbatimString) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -964,7 +964,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class Char : ThemeClassificationFormatDefinition {
-			Char() : base(ColorType.Char) { }
+			Char() : base(TextColor.Char) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -973,7 +973,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Namespace : ThemeClassificationFormatDefinition {
-			Namespace() : base(ColorType.Namespace) { }
+			Namespace() : base(TextColor.Namespace) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -982,7 +982,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Type : ThemeClassificationFormatDefinition {
-			Type() : base(ColorType.Type) { }
+			Type() : base(TextColor.Type) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -991,7 +991,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class SealedType : ThemeClassificationFormatDefinition {
-			SealedType() : base(ColorType.SealedType) { }
+			SealedType() : base(TextColor.SealedType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1000,7 +1000,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticType : ThemeClassificationFormatDefinition {
-			StaticType() : base(ColorType.StaticType) { }
+			StaticType() : base(TextColor.StaticType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1009,7 +1009,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Delegate : ThemeClassificationFormatDefinition {
-			Delegate() : base(ColorType.Delegate) { }
+			Delegate() : base(TextColor.Delegate) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1018,7 +1018,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Enum : ThemeClassificationFormatDefinition {
-			Enum() : base(ColorType.Enum) { }
+			Enum() : base(TextColor.Enum) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1027,7 +1027,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Interface : ThemeClassificationFormatDefinition {
-			Interface() : base(ColorType.Interface) { }
+			Interface() : base(TextColor.Interface) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1036,7 +1036,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ValueType : ThemeClassificationFormatDefinition {
-			ValueType() : base(ColorType.ValueType) { }
+			ValueType() : base(TextColor.ValueType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1045,7 +1045,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class TypeGenericParameter : ThemeClassificationFormatDefinition {
-			TypeGenericParameter() : base(ColorType.TypeGenericParameter) { }
+			TypeGenericParameter() : base(TextColor.TypeGenericParameter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1054,7 +1054,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class MethodGenericParameter : ThemeClassificationFormatDefinition {
-			MethodGenericParameter() : base(ColorType.MethodGenericParameter) { }
+			MethodGenericParameter() : base(TextColor.MethodGenericParameter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1063,7 +1063,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceMethod : ThemeClassificationFormatDefinition {
-			InstanceMethod() : base(ColorType.InstanceMethod) { }
+			InstanceMethod() : base(TextColor.InstanceMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1072,7 +1072,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticMethod : ThemeClassificationFormatDefinition {
-			StaticMethod() : base(ColorType.StaticMethod) { }
+			StaticMethod() : base(TextColor.StaticMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1081,7 +1081,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ExtensionMethod : ThemeClassificationFormatDefinition {
-			ExtensionMethod() : base(ColorType.ExtensionMethod) { }
+			ExtensionMethod() : base(TextColor.ExtensionMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1090,7 +1090,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceField : ThemeClassificationFormatDefinition {
-			InstanceField() : base(ColorType.InstanceField) { }
+			InstanceField() : base(TextColor.InstanceField) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1099,7 +1099,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class EnumField : ThemeClassificationFormatDefinition {
-			EnumField() : base(ColorType.EnumField) { }
+			EnumField() : base(TextColor.EnumField) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1108,7 +1108,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class LiteralField : ThemeClassificationFormatDefinition {
-			LiteralField() : base(ColorType.LiteralField) { }
+			LiteralField() : base(TextColor.LiteralField) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1117,7 +1117,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticField : ThemeClassificationFormatDefinition {
-			StaticField() : base(ColorType.StaticField) { }
+			StaticField() : base(TextColor.StaticField) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1126,7 +1126,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceEvent : ThemeClassificationFormatDefinition {
-			InstanceEvent() : base(ColorType.InstanceEvent) { }
+			InstanceEvent() : base(TextColor.InstanceEvent) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1135,7 +1135,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticEvent : ThemeClassificationFormatDefinition {
-			StaticEvent() : base(ColorType.StaticEvent) { }
+			StaticEvent() : base(TextColor.StaticEvent) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1144,7 +1144,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class InstanceProperty : ThemeClassificationFormatDefinition {
-			InstanceProperty() : base(ColorType.InstanceProperty) { }
+			InstanceProperty() : base(TextColor.InstanceProperty) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1153,7 +1153,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class StaticProperty : ThemeClassificationFormatDefinition {
-			StaticProperty() : base(ColorType.StaticProperty) { }
+			StaticProperty() : base(TextColor.StaticProperty) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1162,7 +1162,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Local : ThemeClassificationFormatDefinition {
-			Local() : base(ColorType.Local) { }
+			Local() : base(TextColor.Local) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1171,7 +1171,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Parameter : ThemeClassificationFormatDefinition {
-			Parameter() : base(ColorType.Parameter) { }
+			Parameter() : base(TextColor.Parameter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1180,7 +1180,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.String)]
 		sealed class PreprocessorKeyword : ThemeClassificationFormatDefinition {
-			PreprocessorKeyword() : base(ColorType.PreprocessorKeyword) { }
+			PreprocessorKeyword() : base(TextColor.PreprocessorKeyword) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1189,7 +1189,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class PreprocessorText : ThemeClassificationFormatDefinition {
-			PreprocessorText() : base(ColorType.PreprocessorText) { }
+			PreprocessorText() : base(TextColor.PreprocessorText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1198,7 +1198,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Label : ThemeClassificationFormatDefinition {
-			Label() : base(ColorType.Label) { }
+			Label() : base(TextColor.Label) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1207,7 +1207,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class OpCode : ThemeClassificationFormatDefinition {
-			OpCode() : base(ColorType.OpCode) { }
+			OpCode() : base(TextColor.OpCode) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1216,7 +1216,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ILDirective : ThemeClassificationFormatDefinition {
-			ILDirective() : base(ColorType.ILDirective) { }
+			ILDirective() : base(TextColor.ILDirective) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1225,7 +1225,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ILModule : ThemeClassificationFormatDefinition {
-			ILModule() : base(ColorType.ILModule) { }
+			ILModule() : base(TextColor.ILModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1234,7 +1234,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = ThemeClassificationTypeNameKeys.Identifier)]
 		sealed class ExcludedCode : ThemeClassificationFormatDefinition {
-			ExcludedCode() : base(ColorType.ExcludedCode) { }
+			ExcludedCode() : base(TextColor.ExcludedCode) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1243,7 +1243,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentAttributeName : ThemeClassificationFormatDefinition {
-			XmlDocCommentAttributeName() : base(ColorType.XmlDocCommentAttributeName) { }
+			XmlDocCommentAttributeName() : base(TextColor.XmlDocCommentAttributeName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1252,7 +1252,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentAttributeQuotes : ThemeClassificationFormatDefinition {
-			XmlDocCommentAttributeQuotes() : base(ColorType.XmlDocCommentAttributeQuotes) { }
+			XmlDocCommentAttributeQuotes() : base(TextColor.XmlDocCommentAttributeQuotes) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1261,7 +1261,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentAttributeValue : ThemeClassificationFormatDefinition {
-			XmlDocCommentAttributeValue() : base(ColorType.XmlDocCommentAttributeValue) { }
+			XmlDocCommentAttributeValue() : base(TextColor.XmlDocCommentAttributeValue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1270,7 +1270,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentCDataSection : ThemeClassificationFormatDefinition {
-			XmlDocCommentCDataSection() : base(ColorType.XmlDocCommentCDataSection) { }
+			XmlDocCommentCDataSection() : base(TextColor.XmlDocCommentCDataSection) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1279,7 +1279,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentComment : ThemeClassificationFormatDefinition {
-			XmlDocCommentComment() : base(ColorType.XmlDocCommentComment) { }
+			XmlDocCommentComment() : base(TextColor.XmlDocCommentComment) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1288,7 +1288,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentDelimiter : ThemeClassificationFormatDefinition {
-			XmlDocCommentDelimiter() : base(ColorType.XmlDocCommentDelimiter) { }
+			XmlDocCommentDelimiter() : base(TextColor.XmlDocCommentDelimiter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1297,7 +1297,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentEntityReference : ThemeClassificationFormatDefinition {
-			XmlDocCommentEntityReference() : base(ColorType.XmlDocCommentEntityReference) { }
+			XmlDocCommentEntityReference() : base(TextColor.XmlDocCommentEntityReference) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1306,7 +1306,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentName : ThemeClassificationFormatDefinition {
-			XmlDocCommentName() : base(ColorType.XmlDocCommentName) { }
+			XmlDocCommentName() : base(TextColor.XmlDocCommentName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1315,7 +1315,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlDocCommentProcessingInstruction : ThemeClassificationFormatDefinition {
-			XmlDocCommentProcessingInstruction() : base(ColorType.XmlDocCommentProcessingInstruction) { }
+			XmlDocCommentProcessingInstruction() : base(TextColor.XmlDocCommentProcessingInstruction) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1324,7 +1324,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default, Before = Priority.High)]
 		sealed class XmlDocCommentText : ThemeClassificationFormatDefinition {
-			XmlDocCommentText() : base(ColorType.XmlDocCommentText) { }
+			XmlDocCommentText() : base(TextColor.XmlDocCommentText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1333,7 +1333,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralAttributeName : ThemeClassificationFormatDefinition {
-			XmlLiteralAttributeName() : base(ColorType.XmlLiteralAttributeName) { }
+			XmlLiteralAttributeName() : base(TextColor.XmlLiteralAttributeName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1342,7 +1342,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralAttributeQuotes : ThemeClassificationFormatDefinition {
-			XmlLiteralAttributeQuotes() : base(ColorType.XmlLiteralAttributeQuotes) { }
+			XmlLiteralAttributeQuotes() : base(TextColor.XmlLiteralAttributeQuotes) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1351,7 +1351,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralAttributeValue : ThemeClassificationFormatDefinition {
-			XmlLiteralAttributeValue() : base(ColorType.XmlLiteralAttributeValue) { }
+			XmlLiteralAttributeValue() : base(TextColor.XmlLiteralAttributeValue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1360,7 +1360,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralCDataSection : ThemeClassificationFormatDefinition {
-			XmlLiteralCDataSection() : base(ColorType.XmlLiteralCDataSection) { }
+			XmlLiteralCDataSection() : base(TextColor.XmlLiteralCDataSection) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1369,7 +1369,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralComment : ThemeClassificationFormatDefinition {
-			XmlLiteralComment() : base(ColorType.XmlLiteralComment) { }
+			XmlLiteralComment() : base(TextColor.XmlLiteralComment) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1378,7 +1378,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralDelimiter : ThemeClassificationFormatDefinition {
-			XmlLiteralDelimiter() : base(ColorType.XmlLiteralDelimiter) { }
+			XmlLiteralDelimiter() : base(TextColor.XmlLiteralDelimiter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1387,7 +1387,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralEmbeddedExpression : ThemeClassificationFormatDefinition {
-			XmlLiteralEmbeddedExpression() : base(ColorType.XmlLiteralEmbeddedExpression) { }
+			XmlLiteralEmbeddedExpression() : base(TextColor.XmlLiteralEmbeddedExpression) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1396,7 +1396,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralEntityReference : ThemeClassificationFormatDefinition {
-			XmlLiteralEntityReference() : base(ColorType.XmlLiteralEntityReference) { }
+			XmlLiteralEntityReference() : base(TextColor.XmlLiteralEntityReference) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1405,7 +1405,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralName : ThemeClassificationFormatDefinition {
-			XmlLiteralName() : base(ColorType.XmlLiteralName) { }
+			XmlLiteralName() : base(TextColor.XmlLiteralName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1414,7 +1414,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralProcessingInstruction : ThemeClassificationFormatDefinition {
-			XmlLiteralProcessingInstruction() : base(ColorType.XmlLiteralProcessingInstruction) { }
+			XmlLiteralProcessingInstruction() : base(TextColor.XmlLiteralProcessingInstruction) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1423,7 +1423,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = LanguagePriority.NaturalLanguage, Before = LanguagePriority.FormalLanguage)]
 		sealed class XmlLiteralText : ThemeClassificationFormatDefinition {
-			XmlLiteralText() : base(ColorType.XmlLiteralText) { }
+			XmlLiteralText() : base(TextColor.XmlLiteralText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1432,7 +1432,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlAttributeName : ThemeClassificationFormatDefinition {
-			XmlAttributeName() : base(ColorType.XmlAttributeName) { }
+			XmlAttributeName() : base(TextColor.XmlAttributeName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1441,7 +1441,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlAttributeQuotes : ThemeClassificationFormatDefinition {
-			XmlAttributeQuotes() : base(ColorType.XmlAttributeQuotes) { }
+			XmlAttributeQuotes() : base(TextColor.XmlAttributeQuotes) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1450,7 +1450,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlAttributeValue : ThemeClassificationFormatDefinition {
-			XmlAttributeValue() : base(ColorType.XmlAttributeValue) { }
+			XmlAttributeValue() : base(TextColor.XmlAttributeValue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1459,7 +1459,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlCDataSection : ThemeClassificationFormatDefinition {
-			XmlCDataSection() : base(ColorType.XmlCDataSection) { }
+			XmlCDataSection() : base(TextColor.XmlCDataSection) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1468,7 +1468,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlComment : ThemeClassificationFormatDefinition {
-			XmlComment() : base(ColorType.XmlComment) { }
+			XmlComment() : base(TextColor.XmlComment) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1477,7 +1477,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDelimiter : ThemeClassificationFormatDefinition {
-			XmlDelimiter() : base(ColorType.XmlDelimiter) { }
+			XmlDelimiter() : base(TextColor.XmlDelimiter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1486,7 +1486,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlKeyword : ThemeClassificationFormatDefinition {
-			XmlKeyword() : base(ColorType.XmlKeyword) { }
+			XmlKeyword() : base(TextColor.XmlKeyword) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1495,7 +1495,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlName : ThemeClassificationFormatDefinition {
-			XmlName() : base(ColorType.XmlName) { }
+			XmlName() : base(TextColor.XmlName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1504,7 +1504,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlProcessingInstruction : ThemeClassificationFormatDefinition {
-			XmlProcessingInstruction() : base(ColorType.XmlProcessingInstruction) { }
+			XmlProcessingInstruction() : base(TextColor.XmlProcessingInstruction) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1513,7 +1513,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlText : ThemeClassificationFormatDefinition {
-			XmlText() : base(ColorType.XmlText) { }
+			XmlText() : base(TextColor.XmlText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1522,7 +1522,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipColon : ThemeClassificationFormatDefinition {
-			XmlDocToolTipColon() : base(ColorType.XmlDocToolTipColon) { }
+			XmlDocToolTipColon() : base(TextColor.XmlDocToolTipColon) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1531,7 +1531,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipExample : ThemeClassificationFormatDefinition {
-			XmlDocToolTipExample() : base(ColorType.XmlDocToolTipExample) { }
+			XmlDocToolTipExample() : base(TextColor.XmlDocToolTipExample) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1540,7 +1540,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipExceptionCref : ThemeClassificationFormatDefinition {
-			XmlDocToolTipExceptionCref() : base(ColorType.XmlDocToolTipExceptionCref) { }
+			XmlDocToolTipExceptionCref() : base(TextColor.XmlDocToolTipExceptionCref) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1549,7 +1549,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipReturns : ThemeClassificationFormatDefinition {
-			XmlDocToolTipReturns() : base(ColorType.XmlDocToolTipReturns) { }
+			XmlDocToolTipReturns() : base(TextColor.XmlDocToolTipReturns) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1558,7 +1558,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeCref : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeCref() : base(ColorType.XmlDocToolTipSeeCref) { }
+			XmlDocToolTipSeeCref() : base(TextColor.XmlDocToolTipSeeCref) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1567,7 +1567,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeLangword : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeLangword() : base(ColorType.XmlDocToolTipSeeLangword) { }
+			XmlDocToolTipSeeLangword() : base(TextColor.XmlDocToolTipSeeLangword) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1576,7 +1576,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeAlso : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeAlso() : base(ColorType.XmlDocToolTipSeeAlso) { }
+			XmlDocToolTipSeeAlso() : base(TextColor.XmlDocToolTipSeeAlso) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1585,7 +1585,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSeeAlsoCref : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeAlsoCref() : base(ColorType.XmlDocToolTipSeeAlsoCref) { }
+			XmlDocToolTipSeeAlsoCref() : base(TextColor.XmlDocToolTipSeeAlsoCref) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1594,7 +1594,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipParamRefName : ThemeClassificationFormatDefinition {
-			XmlDocToolTipParamRefName() : base(ColorType.XmlDocToolTipParamRefName) { }
+			XmlDocToolTipParamRefName() : base(TextColor.XmlDocToolTipParamRefName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1603,7 +1603,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipParamName : ThemeClassificationFormatDefinition {
-			XmlDocToolTipParamName() : base(ColorType.XmlDocToolTipParamName) { }
+			XmlDocToolTipParamName() : base(TextColor.XmlDocToolTipParamName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1612,7 +1612,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipTypeParamName : ThemeClassificationFormatDefinition {
-			XmlDocToolTipTypeParamName() : base(ColorType.XmlDocToolTipTypeParamName) { }
+			XmlDocToolTipTypeParamName() : base(TextColor.XmlDocToolTipTypeParamName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1621,7 +1621,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipValue : ThemeClassificationFormatDefinition {
-			XmlDocToolTipValue() : base(ColorType.XmlDocToolTipValue) { }
+			XmlDocToolTipValue() : base(TextColor.XmlDocToolTipValue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1630,7 +1630,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipSummary : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSummary() : base(ColorType.XmlDocToolTipSummary) { }
+			XmlDocToolTipSummary() : base(TextColor.XmlDocToolTipSummary) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1639,7 +1639,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class XmlDocToolTipText : ThemeClassificationFormatDefinition {
-			XmlDocToolTipText() : base(ColorType.XmlDocToolTipText) { }
+			XmlDocToolTipText() : base(TextColor.XmlDocToolTipText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1648,7 +1648,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Assembly : ThemeClassificationFormatDefinition {
-			Assembly() : base(ColorType.Assembly) { }
+			Assembly() : base(TextColor.Assembly) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1657,7 +1657,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class AssemblyExe : ThemeClassificationFormatDefinition {
-			AssemblyExe() : base(ColorType.AssemblyExe) { }
+			AssemblyExe() : base(TextColor.AssemblyExe) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1666,7 +1666,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class Module : ThemeClassificationFormatDefinition {
-			Module() : base(ColorType.Module) { }
+			Module() : base(TextColor.Module) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1675,7 +1675,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class DirectoryPart : ThemeClassificationFormatDefinition {
-			DirectoryPart() : base(ColorType.DirectoryPart) { }
+			DirectoryPart() : base(TextColor.DirectoryPart) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1684,7 +1684,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class FileNameNoExtension : ThemeClassificationFormatDefinition {
-			FileNameNoExtension() : base(ColorType.FileNameNoExtension) { }
+			FileNameNoExtension() : base(TextColor.FileNameNoExtension) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1693,7 +1693,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class FileExtension : ThemeClassificationFormatDefinition {
-			FileExtension() : base(ColorType.FileExtension) { }
+			FileExtension() : base(TextColor.FileExtension) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1702,7 +1702,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class Error : ThemeClassificationFormatDefinition {
-			Error() : base(ColorType.Error) { }
+			Error() : base(TextColor.Error) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1711,7 +1711,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ToStringEval : ThemeClassificationFormatDefinition {
-			ToStringEval() : base(ColorType.ToStringEval) { }
+			ToStringEval() : base(TextColor.ToStringEval) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1720,7 +1720,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ReplPrompt1 : ThemeClassificationFormatDefinition {
-			ReplPrompt1() : base(ColorType.ReplPrompt1) { }
+			ReplPrompt1() : base(TextColor.ReplPrompt1) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1729,7 +1729,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ReplPrompt2 : ThemeClassificationFormatDefinition {
-			ReplPrompt2() : base(ColorType.ReplPrompt2) { }
+			ReplPrompt2() : base(TextColor.ReplPrompt2) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1738,7 +1738,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ReplOutputText : ThemeClassificationFormatDefinition {
-			ReplOutputText() : base(ColorType.ReplOutputText) { }
+			ReplOutputText() : base(TextColor.ReplOutputText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1747,7 +1747,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ReplScriptOutputText : ThemeClassificationFormatDefinition {
-			ReplScriptOutputText() : base(ColorType.ReplScriptOutputText) { }
+			ReplScriptOutputText() : base(TextColor.ReplScriptOutputText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1756,7 +1756,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Black : ThemeClassificationFormatDefinition {
-			Black() : base(ColorType.Black) { }
+			Black() : base(TextColor.Black) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1765,7 +1765,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Blue : ThemeClassificationFormatDefinition {
-			Blue() : base(ColorType.Blue) { }
+			Blue() : base(TextColor.Blue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1774,7 +1774,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Cyan : ThemeClassificationFormatDefinition {
-			Cyan() : base(ColorType.Cyan) { }
+			Cyan() : base(TextColor.Cyan) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1783,7 +1783,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkBlue : ThemeClassificationFormatDefinition {
-			DarkBlue() : base(ColorType.DarkBlue) { }
+			DarkBlue() : base(TextColor.DarkBlue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1792,7 +1792,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkCyan : ThemeClassificationFormatDefinition {
-			DarkCyan() : base(ColorType.DarkCyan) { }
+			DarkCyan() : base(TextColor.DarkCyan) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1801,7 +1801,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkGray : ThemeClassificationFormatDefinition {
-			DarkGray() : base(ColorType.DarkGray) { }
+			DarkGray() : base(TextColor.DarkGray) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1810,7 +1810,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkGreen : ThemeClassificationFormatDefinition {
-			DarkGreen() : base(ColorType.DarkGreen) { }
+			DarkGreen() : base(TextColor.DarkGreen) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1819,7 +1819,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkMagenta : ThemeClassificationFormatDefinition {
-			DarkMagenta() : base(ColorType.DarkMagenta) { }
+			DarkMagenta() : base(TextColor.DarkMagenta) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1828,7 +1828,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkRed : ThemeClassificationFormatDefinition {
-			DarkRed() : base(ColorType.DarkRed) { }
+			DarkRed() : base(TextColor.DarkRed) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1837,7 +1837,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DarkYellow : ThemeClassificationFormatDefinition {
-			DarkYellow() : base(ColorType.DarkYellow) { }
+			DarkYellow() : base(TextColor.DarkYellow) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1846,7 +1846,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Gray : ThemeClassificationFormatDefinition {
-			Gray() : base(ColorType.Gray) { }
+			Gray() : base(TextColor.Gray) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1855,7 +1855,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Green : ThemeClassificationFormatDefinition {
-			Green() : base(ColorType.Green) { }
+			Green() : base(TextColor.Green) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1864,7 +1864,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Magenta : ThemeClassificationFormatDefinition {
-			Magenta() : base(ColorType.Magenta) { }
+			Magenta() : base(TextColor.Magenta) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1873,7 +1873,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Red : ThemeClassificationFormatDefinition {
-			Red() : base(ColorType.Red) { }
+			Red() : base(TextColor.Red) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1882,7 +1882,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class White : ThemeClassificationFormatDefinition {
-			White() : base(ColorType.White) { }
+			White() : base(TextColor.White) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1891,7 +1891,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Yellow : ThemeClassificationFormatDefinition {
-			Yellow() : base(ColorType.Yellow) { }
+			Yellow() : base(TextColor.Yellow) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1900,7 +1900,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvBlack : ThemeClassificationFormatDefinition {
-			InvBlack() : base(ColorType.InvBlack) { }
+			InvBlack() : base(TextColor.InvBlack) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1909,7 +1909,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvBlue : ThemeClassificationFormatDefinition {
-			InvBlue() : base(ColorType.InvBlue) { }
+			InvBlue() : base(TextColor.InvBlue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1918,7 +1918,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvCyan : ThemeClassificationFormatDefinition {
-			InvCyan() : base(ColorType.InvCyan) { }
+			InvCyan() : base(TextColor.InvCyan) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1927,7 +1927,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkBlue : ThemeClassificationFormatDefinition {
-			InvDarkBlue() : base(ColorType.InvDarkBlue) { }
+			InvDarkBlue() : base(TextColor.InvDarkBlue) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1936,7 +1936,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkCyan : ThemeClassificationFormatDefinition {
-			InvDarkCyan() : base(ColorType.InvDarkCyan) { }
+			InvDarkCyan() : base(TextColor.InvDarkCyan) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1945,7 +1945,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkGray : ThemeClassificationFormatDefinition {
-			InvDarkGray() : base(ColorType.InvDarkGray) { }
+			InvDarkGray() : base(TextColor.InvDarkGray) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1954,7 +1954,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkGreen : ThemeClassificationFormatDefinition {
-			InvDarkGreen() : base(ColorType.InvDarkGreen) { }
+			InvDarkGreen() : base(TextColor.InvDarkGreen) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1963,7 +1963,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkMagenta : ThemeClassificationFormatDefinition {
-			InvDarkMagenta() : base(ColorType.InvDarkMagenta) { }
+			InvDarkMagenta() : base(TextColor.InvDarkMagenta) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1972,7 +1972,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkRed : ThemeClassificationFormatDefinition {
-			InvDarkRed() : base(ColorType.InvDarkRed) { }
+			InvDarkRed() : base(TextColor.InvDarkRed) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1981,7 +1981,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvDarkYellow : ThemeClassificationFormatDefinition {
-			InvDarkYellow() : base(ColorType.InvDarkYellow) { }
+			InvDarkYellow() : base(TextColor.InvDarkYellow) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1990,7 +1990,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvGray : ThemeClassificationFormatDefinition {
-			InvGray() : base(ColorType.InvGray) { }
+			InvGray() : base(TextColor.InvGray) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1999,7 +1999,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvGreen : ThemeClassificationFormatDefinition {
-			InvGreen() : base(ColorType.InvGreen) { }
+			InvGreen() : base(TextColor.InvGreen) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2008,7 +2008,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvMagenta : ThemeClassificationFormatDefinition {
-			InvMagenta() : base(ColorType.InvMagenta) { }
+			InvMagenta() : base(TextColor.InvMagenta) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2017,7 +2017,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvRed : ThemeClassificationFormatDefinition {
-			InvRed() : base(ColorType.InvRed) { }
+			InvRed() : base(TextColor.InvRed) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2026,7 +2026,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvWhite : ThemeClassificationFormatDefinition {
-			InvWhite() : base(ColorType.InvWhite) { }
+			InvWhite() : base(TextColor.InvWhite) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2035,7 +2035,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InvYellow : ThemeClassificationFormatDefinition {
-			InvYellow() : base(ColorType.InvYellow) { }
+			InvYellow() : base(TextColor.InvYellow) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2044,7 +2044,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogExceptionHandled : ThemeClassificationFormatDefinition {
-			DebugLogExceptionHandled() : base(ColorType.DebugLogExceptionHandled) { }
+			DebugLogExceptionHandled() : base(TextColor.DebugLogExceptionHandled) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2053,7 +2053,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogExceptionUnhandled : ThemeClassificationFormatDefinition {
-			DebugLogExceptionUnhandled() : base(ColorType.DebugLogExceptionUnhandled) { }
+			DebugLogExceptionUnhandled() : base(TextColor.DebugLogExceptionUnhandled) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2062,7 +2062,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogStepFiltering : ThemeClassificationFormatDefinition {
-			DebugLogStepFiltering() : base(ColorType.DebugLogStepFiltering) { }
+			DebugLogStepFiltering() : base(TextColor.DebugLogStepFiltering) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2071,7 +2071,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogLoadModule : ThemeClassificationFormatDefinition {
-			DebugLogLoadModule() : base(ColorType.DebugLogLoadModule) { }
+			DebugLogLoadModule() : base(TextColor.DebugLogLoadModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2080,7 +2080,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogUnloadModule : ThemeClassificationFormatDefinition {
-			DebugLogUnloadModule() : base(ColorType.DebugLogUnloadModule) { }
+			DebugLogUnloadModule() : base(TextColor.DebugLogUnloadModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2089,7 +2089,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogExitProcess : ThemeClassificationFormatDefinition {
-			DebugLogExitProcess() : base(ColorType.DebugLogExitProcess) { }
+			DebugLogExitProcess() : base(TextColor.DebugLogExitProcess) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2098,7 +2098,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogExitThread : ThemeClassificationFormatDefinition {
-			DebugLogExitThread() : base(ColorType.DebugLogExitThread) { }
+			DebugLogExitThread() : base(TextColor.DebugLogExitThread) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2107,7 +2107,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogProgramOutput : ThemeClassificationFormatDefinition {
-			DebugLogProgramOutput() : base(ColorType.DebugLogProgramOutput) { }
+			DebugLogProgramOutput() : base(TextColor.DebugLogProgramOutput) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2116,7 +2116,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogMDA : ThemeClassificationFormatDefinition {
-			DebugLogMDA() : base(ColorType.DebugLogMDA) { }
+			DebugLogMDA() : base(TextColor.DebugLogMDA) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2125,7 +2125,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DebugLogTimestamp : ThemeClassificationFormatDefinition {
-			DebugLogTimestamp() : base(ColorType.DebugLogTimestamp) { }
+			DebugLogTimestamp() : base(TextColor.DebugLogTimestamp) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2134,7 +2134,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class LineNumber : ThemeClassificationFormatDefinition {
-			LineNumber() : base(ColorType.LineNumber) { }
+			LineNumber() : base(TextColor.LineNumber) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2143,7 +2143,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class Link : ThemeClassificationFormatDefinition {
-			Link() : base(ColorType.Link) { }
+			Link() : base(TextColor.Link) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2152,7 +2152,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class VisibleWhitespace : ThemeClassificationFormatDefinition {
-			VisibleWhitespace() : base(ColorType.VisibleWhitespace) { }
+			VisibleWhitespace() : base(TextColor.VisibleWhitespace) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2161,7 +2161,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class SelectedText : ThemeClassificationFormatDefinition {
-			SelectedText() : base(ColorType.SelectedText) { }
+			SelectedText() : base(TextColor.SelectedText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2170,7 +2170,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class InactiveSelectedText : ThemeClassificationFormatDefinition {
-			InactiveSelectedText() : base(ColorType.InactiveSelectedText) { }
+			InactiveSelectedText() : base(TextColor.InactiveSelectedText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2179,7 +2179,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedReference : ThemeMarkerFormatDefinition {
-			HighlightedReference() : base(ColorType.HighlightedReference) { }
+			HighlightedReference() : base(TextColor.HighlightedReference) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2188,7 +2188,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedWrittenReference : ThemeMarkerFormatDefinition {
-			HighlightedWrittenReference() : base(ColorType.HighlightedWrittenReference) { }
+			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2197,7 +2197,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedDefinition : ThemeMarkerFormatDefinition {
-			HighlightedDefinition() : base(ColorType.HighlightedDefinition) { }
+			HighlightedDefinition() : base(TextColor.HighlightedDefinition) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2206,7 +2206,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.String)]
 		sealed class CurrentStatement : ThemeClassificationFormatDefinition {
-			CurrentStatement() : base(ColorType.CurrentStatement) { }
+			CurrentStatement() : base(TextColor.CurrentStatement) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2215,7 +2215,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class CurrentStatementMarker : ThemeMarkerFormatDefinition {
-			CurrentStatementMarker() : base(ColorType.CurrentStatementMarker) { }
+			CurrentStatementMarker() : base(TextColor.CurrentStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2224,7 +2224,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.String)]
 		sealed class CallReturn : ThemeClassificationFormatDefinition {
-			CallReturn() : base(ColorType.CallReturn) { }
+			CallReturn() : base(TextColor.CallReturn) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2233,7 +2233,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class CallReturnMarker : ThemeMarkerFormatDefinition {
-			CallReturnMarker() : base(ColorType.CallReturnMarker) { }
+			CallReturnMarker() : base(TextColor.CallReturnMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2242,7 +2242,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ActiveStatementMarker : ThemeMarkerFormatDefinition {
-			ActiveStatementMarker() : base(ColorType.ActiveStatementMarker) {
+			ActiveStatementMarker() : base(TextColor.ActiveStatementMarker) {
 				ZOrder = TextMarkerServiceZIndexes.ActiveStatement;
 			}
 		}
@@ -2253,7 +2253,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.String)]
 		sealed class BreakpointStatement : ThemeClassificationFormatDefinition {
-			BreakpointStatement() : base(ColorType.BreakpointStatement) { }
+			BreakpointStatement() : base(TextColor.BreakpointStatement) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2262,7 +2262,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class BreakpointStatementMarker : ThemeMarkerFormatDefinition {
-			BreakpointStatementMarker() : base(ColorType.BreakpointStatementMarker) { }
+			BreakpointStatementMarker() : base(TextColor.BreakpointStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2271,7 +2271,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class DisabledBreakpointStatementMarker : ThemeMarkerFormatDefinition {
-			DisabledBreakpointStatementMarker() : base(ColorType.DisabledBreakpointStatementMarker) { }
+			DisabledBreakpointStatementMarker() : base(TextColor.DisabledBreakpointStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2280,7 +2280,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(Before = Priority.Default)]
 		sealed class CurrentLine : ThemeClassificationFormatDefinition {
-			CurrentLine() : base(ColorType.CurrentLine) { }
+			CurrentLine() : base(TextColor.CurrentLine) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2289,7 +2289,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(Before = Priority.Default)]
 		sealed class CurrentLineNoFocus : ThemeClassificationFormatDefinition {
-			CurrentLineNoFocus() : base(ColorType.CurrentLineNoFocus) { }
+			CurrentLineNoFocus() : base(TextColor.CurrentLineNoFocus) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2298,7 +2298,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexText : ThemeClassificationFormatDefinition {
-			HexText() : base(ColorType.HexText) { }
+			HexText() : base(TextColor.HexText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2307,7 +2307,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexOffset : ThemeClassificationFormatDefinition {
-			HexOffset() : base(ColorType.HexOffset) { }
+			HexOffset() : base(TextColor.HexOffset) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2316,7 +2316,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexByte0 : ThemeClassificationFormatDefinition {
-			HexByte0() : base(ColorType.HexByte0) { }
+			HexByte0() : base(TextColor.HexByte0) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2325,7 +2325,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexByte1 : ThemeClassificationFormatDefinition {
-			HexByte1() : base(ColorType.HexByte1) { }
+			HexByte1() : base(TextColor.HexByte1) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2334,7 +2334,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexByteError : ThemeClassificationFormatDefinition {
-			HexByteError() : base(ColorType.HexByteError) { }
+			HexByteError() : base(TextColor.HexByteError) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2343,7 +2343,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexAscii : ThemeClassificationFormatDefinition {
-			HexAscii() : base(ColorType.HexAscii) { }
+			HexAscii() : base(TextColor.HexAscii) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2352,7 +2352,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexCaret : ThemeClassificationFormatDefinition {
-			HexCaret() : base(ColorType.HexCaret) { }
+			HexCaret() : base(TextColor.HexCaret) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2361,7 +2361,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexInactiveCaret : ThemeClassificationFormatDefinition {
-			HexInactiveCaret() : base(ColorType.HexInactiveCaret) { }
+			HexInactiveCaret() : base(TextColor.HexInactiveCaret) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2370,7 +2370,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexSelection : ThemeClassificationFormatDefinition {
-			HexSelection() : base(ColorType.HexSelection) { }
+			HexSelection() : base(TextColor.HexSelection) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2379,7 +2379,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class GlyphMargin : ThemeClassificationFormatDefinition {
-			GlyphMargin() : base(ColorType.GlyphMargin) { }
+			GlyphMargin() : base(TextColor.GlyphMargin) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

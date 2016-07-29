@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Controls {
 					offs += defaultTextLength;
 
 					if (tokenLength != 0) {
-						var hlColor = ThemeUtils.GetTextColor(themeManager.Theme, color);
+						var hlColor = GetTextColor(themeManager.Theme, color);
 						var text = textBlockText.Substring(offs, tokenLength);
 						var elem = new Run(text);
 						if (hlColor.FontStyle != null)
@@ -130,6 +130,9 @@ namespace dnSpy.Contracts.Controls {
 				textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 			return textBlock;
 		}
+
+		static IThemeTextColor GetTextColor(ITheme theme, object data) =>
+			theme.GetTextColor((data as TextColor? ?? TextColor.Text).ToColorType());
 
 		public override string ToString() => Text;
 
@@ -223,7 +226,7 @@ namespace dnSpy.Contracts.Controls {
 				index += defaultTextLength;
 
 				if (tokenLength != 0) {
-					var tc = ThemeUtils.GetTextColor(themeManager.Theme, color);
+					var tc = GetTextColor(themeManager.Theme, color);
 					var tokenText = text.Substring(index, tokenLength);
 
 					var textProps = new TextProps();
