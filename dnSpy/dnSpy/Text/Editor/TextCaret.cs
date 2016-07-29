@@ -321,7 +321,8 @@ namespace dnSpy.Text.Editor {
 			var line = ContainingTextViewLine;
 			if (line.IsLastDocumentLine()) {
 				MoveTo(line.End);
-				EnsureVisible();
+				if (textView.ViewportHeight != 0)
+					EnsureVisible();
 			}
 		}
 
