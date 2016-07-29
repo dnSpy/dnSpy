@@ -25,7 +25,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
-using dnSpy.Contracts.Text.Editor.Roslyn;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
@@ -43,12 +43,12 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected abstract string AppearanceCategory { get; }
 		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
-		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
+		readonly ICodeEditorCreator codeEditorCreator;
 		readonly List<RoslynCodeDocument> documents;
 		AdhocWorkspace workspace;
 
-		protected RoslynLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator) {
-			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
+		protected RoslynLanguageCompiler(ICodeEditorCreator codeEditorCreator) {
+			this.codeEditorCreator = codeEditorCreator;
 			this.documents = new List<RoslynCodeDocument>();
 		}
 
@@ -91,9 +91,9 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		}
 
 		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension) {
-			var options = new RoslynCodeEditorOptions();
+			var options = new CodeEditorOptions();
 			options.ContentTypeString = ContentType;
-			var codeEditor = roslynCodeEditorCreator.Create(options);
+			var codeEditor = codeEditorCreator.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 

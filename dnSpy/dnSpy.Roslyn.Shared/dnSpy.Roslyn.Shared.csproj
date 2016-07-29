@@ -42,8 +42,6 @@
     <Compile Include="Text\Classification\RoslynClassificationTypes.cs" />
     <Compile Include="Text\Classification\RoslynClassifier.cs" />
     <Compile Include="Text\Editor\RoslynAppearanceCategoryConstants.cs" />
-    <Compile Include="Text\Editor\RoslynCodeEditor.cs" />
-    <Compile Include="Text\Editor\RoslynCodeEditorCreator.cs" />
     <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
     <Compile Include="Text\Tagging\AsyncTagger.cs" />

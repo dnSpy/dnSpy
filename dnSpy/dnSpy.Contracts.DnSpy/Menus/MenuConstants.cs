@@ -24,7 +24,6 @@ using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Roslyn;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
 using Microsoft.VisualStudio.Text.Editor;
@@ -150,9 +149,6 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary><see cref="ICodeEditor"/></summary>
 		public static readonly string GUIDOBJ_CODE_EDITOR_GUID = "297907F8-38BE-4C8C-90D1-3400BB0EB36E";
-
-		/// <summary><see cref="IRoslynCodeEditor"/></summary>
-		public static readonly string GUIDOBJ_ROSLYN_CODE_EDITOR_GUID = "2DDCEF20-FAE2-4852-B4EF-D1B6A9AED30F";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";

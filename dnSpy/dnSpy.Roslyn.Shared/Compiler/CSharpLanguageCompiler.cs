@@ -24,7 +24,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Roslyn;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -35,13 +35,13 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "CSharpFile");
 		public Guid Language => LanguageConstants.LANGUAGE_CSHARP;
-		public ILanguageCompiler Create() => new CSharpLanguageCompiler(roslynCodeEditorCreator);
+		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorCreator);
 
-		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
+		readonly ICodeEditorCreator codeEditorCreator;
 
 		[ImportingConstructor]
-		CSharpLanguageCompilerCreator(IRoslynCodeEditorCreator roslynCodeEditorCreator) {
-			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
+		CSharpLanguageCompilerCreator(ICodeEditorCreator codeEditorCreator) {
+			this.codeEditorCreator = codeEditorCreator;
 		}
 	}
 
@@ -54,8 +54,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_CSharp;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
-		public CSharpLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator)
-			: base(roslynCodeEditorCreator) {
+		public CSharpLanguageCompiler(ICodeEditorCreator codeEditorCreator)
+			: base(codeEditorCreator) {
 		}
 	}
 }

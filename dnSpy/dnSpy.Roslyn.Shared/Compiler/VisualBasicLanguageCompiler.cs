@@ -24,7 +24,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor.Roslyn;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;
@@ -35,13 +35,13 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "VisualBasicFile");
 		public Guid Language => LanguageConstants.LANGUAGE_VISUALBASIC;
-		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(roslynCodeEditorCreator);
+		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorCreator);
 
-		readonly IRoslynCodeEditorCreator roslynCodeEditorCreator;
+		readonly ICodeEditorCreator codeEditorCreator;
 
 		[ImportingConstructor]
-		VisualBasicLanguageCompilerCreator(IRoslynCodeEditorCreator roslynCodeEditorCreator) {
-			this.roslynCodeEditorCreator = roslynCodeEditorCreator;
+		VisualBasicLanguageCompilerCreator(ICodeEditorCreator codeEditorCreator) {
+			this.codeEditorCreator = codeEditorCreator;
 		}
 	}
 
@@ -57,8 +57,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 		};
 
-		public VisualBasicLanguageCompiler(IRoslynCodeEditorCreator roslynCodeEditorCreator)
-			: base(roslynCodeEditorCreator) {
+		public VisualBasicLanguageCompiler(ICodeEditorCreator codeEditorCreator)
+			: base(codeEditorCreator) {
 		}
 	}
 }
