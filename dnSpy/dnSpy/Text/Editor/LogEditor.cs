@@ -96,7 +96,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultDisabled);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
 			SetNewDocument();
 		}

@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultDisabled;
+		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
 
 		public bool ConvertTabsToSpaces {
 			get { return convertTabsToSpaces; }

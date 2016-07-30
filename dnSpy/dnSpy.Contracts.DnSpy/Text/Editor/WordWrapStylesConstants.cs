@@ -25,8 +25,18 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class WordWrapStylesConstants {
 		/// <summary>
-		/// Default disabled word wrap
+		/// Default disabled word wrap styles
 		/// </summary>
 		public const WordWrapStyles DefaultDisabled = WordWrapStyles.None | WordWrapStyles.VisibleGlyphs | WordWrapStyles.AutoIndent;
+
+		/// <summary>
+		/// Default enabled word wrap styles
+		/// </summary>
+		public const WordWrapStyles DefaultEnabled = DefaultDisabled | WordWrapStyles.WordWrap;
+
+		/// <summary>
+		/// Default word wrap styles value
+		/// </summary>
+		public const WordWrapStyles DefaultValue = DefaultEnabled;
 	}
 }

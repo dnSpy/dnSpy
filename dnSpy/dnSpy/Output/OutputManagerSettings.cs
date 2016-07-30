@@ -46,7 +46,7 @@ namespace dnSpy.Output {
 				}
 			}
 		}
-		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultDisabled;
+		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
 
 		public bool ShowLineNumbers {
 			get { return showLineNumbers; }
