@@ -22,7 +22,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace dnSpy.Controls {
-	public class TabButton : ButtonBase {
+	class TabButton : ButtonBase {
 		public static readonly DependencyProperty GlyphForegroundProperty =
 			DependencyProperty.Register(nameof(GlyphForeground), typeof(Brush), typeof(TabButton),
 			new FrameworkPropertyMetadata(null));
