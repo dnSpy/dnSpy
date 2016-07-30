@@ -474,6 +474,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 	{
 		public string Name { get; set; }
 		public bool GeneratedByDecompiler { get; set; }
+		public bool GeneratedByDecompilerButCanBeRenamed;
 		public TypeSig Type;
 		public Local OriginalVariable { get; set; }
 		public Parameter OriginalParameter;

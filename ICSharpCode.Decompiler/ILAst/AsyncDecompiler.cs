@@ -582,8 +582,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 		{
 			var expressions = new ILBlock(newTopLevelBody).GetSelfAndChildrenRecursive<ILExpression>();
 			foreach (var v in expressions.Select(e => e.Operand).OfType<ILVariable>()) {
-				if (v.OriginalVariable != null && v.OriginalVariable.Index >= smallestGeneratedVariableIndex)
+				if (v.OriginalVariable != null && v.OriginalVariable.Index >= smallestGeneratedVariableIndex) {
 					v.GeneratedByDecompiler = true;
+					v.GeneratedByDecompilerButCanBeRenamed = true;
+				}
 			}
 		}
 		#endregion

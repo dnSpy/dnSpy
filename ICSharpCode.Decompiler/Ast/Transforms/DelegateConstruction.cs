@@ -455,6 +455,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					ILVariable ilVar = new ILVariable
 					{
 						GeneratedByDecompiler = true,
+						GeneratedByDecompilerButCanBeRenamed = true,
 						Name = capturedVariableName,
 						Type = field.FieldType,
 					};
