@@ -475,17 +475,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (span.End > snapshot.Length)
 				return;
 			MoveCaretToPosition(span.End, focus);
+
+			bool isReversed = false;
+			// If there's another reference at the caret, move caret to Start instead of End
+			var nextRef = GetReferenceInfo(span.End);
+			if (nextRef != null && nextRef.Value.Span != span) {
+				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, span.Start));
+				isReversed = true;
+			}
+
 			if (!select)
 				wpfTextViewHost.TextView.Selection.Clear();
 			else {
 				wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
-				wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, span), false);
+				wpfTextViewHost.TextView.Selection.Select(new SnapshotSpan(snapshot, span), isReversed);
 			}
-
-			// If there's another reference at the caret, move caret to Start instead of End
-			var nextRef = GetReferenceInfo(span.End);
-			if (nextRef != null && nextRef.Value.Span != span)
-				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, span.Start));
 		}
 
 		IEnumerable<SpanData<ReferenceInfo>> GetReferenceInfosFrom(int position, bool forward) {
