@@ -41,27 +41,27 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		IEnumerable<IDecompilerOption> CreateOptions() {
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.ShowILComments_GUID,
 						() => ilSettings.ShowILComments, a => ilSettings.ShowILComments = a) {
-				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_ShowILComments,
+				Description = dnSpy_Languages_ILSpy_Core_Resources.DecompilerSettings_ShowILComments,
 				Name = DecompilerOptionConstants.ShowILComments_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.ShowXmlDocumentation_GUID,
 						() => ilSettings.ShowXmlDocumentation, a => ilSettings.ShowXmlDocumentation = a) {
-				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_ShowXMLDocComments,
+				Description = dnSpy_Languages_ILSpy_Core_Resources.DecompilerSettings_ShowXMLDocComments,
 				Name = DecompilerOptionConstants.ShowXmlDocumentation_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID,
 						() => ilSettings.ShowTokenAndRvaComments, a => ilSettings.ShowTokenAndRvaComments = a) {
-				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_ShowTokensRvasOffsets,
+				Description = dnSpy_Languages_ILSpy_Core_Resources.DecompilerSettings_ShowTokensRvasOffsets,
 				Name = DecompilerOptionConstants.ShowTokenAndRvaComments_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.ShowILBytes_GUID,
 						() => ilSettings.ShowILBytes, a => ilSettings.ShowILBytes = a) {
-				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_ShowILInstrBytes,
+				Description = dnSpy_Languages_ILSpy_Core_Resources.DecompilerSettings_ShowILInstrBytes,
 				Name = DecompilerOptionConstants.ShowILBytes_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.SortMembers_GUID,
 						() => ilSettings.SortMembers, a => ilSettings.SortMembers = a) {
-				Description = dnSpy_Languages_ILSpy_Core.DecompilerSettings_SortMethods,
+				Description = dnSpy_Languages_ILSpy_Core_Resources.DecompilerSettings_SortMethods,
 				Name = DecompilerOptionConstants.SortMembers_NAME,
 			};
 		}

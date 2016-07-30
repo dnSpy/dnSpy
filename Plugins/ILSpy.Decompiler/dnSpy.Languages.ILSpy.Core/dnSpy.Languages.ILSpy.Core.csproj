@@ -44,10 +44,10 @@
     <Compile Include="CSharp\DecompileTypeMethodsTransform.cs" />
     <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
     <Compile Include="IL\ILLanguageUtils.cs" />
-    <Compile Include="Properties\dnSpy.Languages.ILSpy.Core.Designer.cs">
+    <Compile Include="Properties\dnSpy.Languages.ILSpy.Core.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.Languages.ILSpy.Core.resx</DependentUpon>
+      <DependentUpon>dnSpy.Languages.ILSpy.Core.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ILAst\ILAstLanguage.cs" />
     <Compile Include="IL\ILLanguage.cs" />
@@ -106,9 +106,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Core.resx">
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Core.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Languages.ILSpy.Core.Designer.cs</LastGenOutput>
+      <LastGenOutput>dnSpy.Languages.ILSpy.Core.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

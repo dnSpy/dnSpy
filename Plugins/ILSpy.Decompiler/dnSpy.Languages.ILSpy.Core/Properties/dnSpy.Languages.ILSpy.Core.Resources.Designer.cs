@@ -22,14 +22,14 @@ namespace dnSpy.Languages.ILSpy.Core.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class dnSpy_Languages_ILSpy_Core {
+    public class dnSpy_Languages_ILSpy_Core_Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal dnSpy_Languages_ILSpy_Core() {
+        internal dnSpy_Languages_ILSpy_Core_Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace dnSpy.Languages.ILSpy.Core.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Languages.ILSpy.Core.Properties.dnSpy.Languages.ILSpy.Core", typeof(dnSpy_Languages_ILSpy_Core).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Languages.ILSpy.Core.Properties.dnSpy.Languages.ILSpy.Core.Resources", typeof(dnSpy_Languages_ILSpy_Core_Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
