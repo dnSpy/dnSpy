@@ -29,31 +29,24 @@ namespace dnSpy.Metadata {
 	[Export(typeof(IModuleIdCreator))]
 	sealed class ModuleIdCreator : IModuleIdCreator {
 		readonly Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>[] moduleIdFactoryProviders;
-		readonly ConditionalWeakTable<ModuleDef, BoxedModuleId> moduleDictionary;
-		readonly ConditionalWeakTable<ModuleDef, BoxedModuleId>.CreateValueCallback callbackCreateCore;
+		readonly ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>> moduleDictionary;
+		readonly ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>>.CreateValueCallback callbackCreateCore;
 		IModuleIdFactory[] factories;
-
-		sealed class BoxedModuleId {
-			public ModuleId ModuleId { get; }
-			public BoxedModuleId(ModuleId moduleId) {
-				ModuleId = moduleId;
-			}
-		}
 
 		[ImportingConstructor]
 		ModuleIdCreator([ImportMany] IEnumerable<Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>> moduleIdFactoryProviders) {
 			this.moduleIdFactoryProviders = moduleIdFactoryProviders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.moduleDictionary = new ConditionalWeakTable<ModuleDef, BoxedModuleId>();
+			this.moduleDictionary = new ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>>();
 			this.callbackCreateCore = CreateCore;
 		}
 
 		public ModuleId Create(ModuleDef module) {
 			if (module == null)
 				return new ModuleId();
-			return moduleDictionary.GetValue(module, callbackCreateCore).ModuleId;
+			return moduleDictionary.GetValue(module, callbackCreateCore).Value;
 		}
 
-		BoxedModuleId CreateCore(ModuleDef module) {
+		StrongBox<ModuleId> CreateCore(ModuleDef module) {
 			if (factories == null) {
 				var list = new List<IModuleIdFactory>(moduleIdFactoryProviders.Length);
 				foreach (var provider in moduleIdFactoryProviders) {
@@ -67,10 +60,10 @@ namespace dnSpy.Metadata {
 			foreach (var factory in factories) {
 				var id = factory.Create(module);
 				if (id != null)
-					return new BoxedModuleId(id.Value);
+					return new StrongBox<ModuleId>(id.Value);
 			}
 
-			return new BoxedModuleId(ModuleId.CreateFromFile(module));
+			return new StrongBox<ModuleId>(ModuleId.CreateFromFile(module));
 		}
 	}
 }
