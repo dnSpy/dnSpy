@@ -20,6 +20,7 @@
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -86,7 +87,7 @@ namespace dnSpy.Files.Tabs {
 		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
 			var textRef = @ref as TextReference;
 			if (textRef != null) {
-				if (textRef.Reference is IAssembly || textRef.Reference is ModuleDef || textRef.Reference is ModuleRef)
+				if (textRef.Reference is IAssembly || textRef.Reference is ModuleDef || textRef.Reference is ModuleRef || textRef.Reference is NamespaceReference)
 					return null;
 				var result = CreateMemberRefResult(fileTabManager, textRef.Reference);
 				if (result != null)

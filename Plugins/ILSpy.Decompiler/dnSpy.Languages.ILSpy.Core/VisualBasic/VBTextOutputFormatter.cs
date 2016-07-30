@@ -84,7 +84,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				return;
 			}
 
-			object memberRef = GetCurrentMemberReference();
+			object memberRef = GetCurrentMemberReference() ?? (object)(extraData as NamespaceReference);
 			if (memberRef != null) {
 				output.Write(IdentifierEscaper.Escape(identifier), memberRef, DecompilerReferenceFlags.None, data);
 				return;
@@ -96,7 +96,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				return;
 			}
 
-			memberRef = GetCurrentLocalReference() ?? extraData as NamespaceReference;
+			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
 				output.Write(IdentifierEscaper.Escape(identifier), memberRef, DecompilerReferenceFlags.Local, data);
 				return;
