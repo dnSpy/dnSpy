@@ -48,8 +48,8 @@ namespace dnSpy.Contracts.Languages {
 		int IDecompilerOutput.Length => offset;
 		int IDecompilerOutput.NextPosition => offset + (addIndent ? indent : 0);
 
-		bool IDecompilerOutput.UsesDebugInfo => false;
-		void IDecompilerOutput.AddDebugInfo(MethodDebugInfo methodDebugInfo) { }
+		bool IDecompilerOutput.UsesCustomData => false;
+		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
 		void IDecompilerOutput.IncreaseIndent() => indent++;
 		void IDecompilerOutput.DecreaseIndent() => indent--;
 

@@ -34,7 +34,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly StringBuilder stringBuilder;
-		readonly List<MethodDebugInfo> methodDebugInfos;
+		readonly Dictionary<string, object> customDataDict;
 		SpanDataCollectionBuilder<ReferenceInfo> referenceBuilder;
 		int indentation;
 		bool canBeCached;
@@ -48,21 +48,32 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.stringBuilder = new StringBuilder();
 			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
-			this.methodDebugInfos = new List<MethodDebugInfo>();
 			this.canBeCached = true;
+			this.customDataDict = new Dictionary<string, object>(StringComparer.Ordinal);
 		}
 
-		public DocumentViewerContent CreateResult() {
+		internal Dictionary<string, object> GetCustomDataDictionary() => customDataDict;
+
+		public DocumentViewerContent CreateResult(Dictionary<string, object> dataDict) {
 			if (hasCreatedResult)
 				throw new InvalidOperationException(nameof(CreateResult) + " can only be called once");
 			hasCreatedResult = true;
-			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextColorsCollection, referenceBuilder.Create(), methodDebugInfos.ToArray());
+			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
 		}
 
 		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
 
-		bool IDecompilerOutput.UsesDebugInfo => true;
-		public void AddDebugInfo(MethodDebugInfo methodDebugInfo) => methodDebugInfos.Add(methodDebugInfo);
+		bool IDecompilerOutput.UsesCustomData => true;
+
+		public void AddCustomData<TData>(string id, TData data) {
+			object listObj;
+			List<TData> list;
+			if (customDataDict.TryGetValue(id, out listObj))
+				list = (List<TData>)listObj;
+			else
+				customDataDict.Add(id, list = new List<TData>());
+			list.Add(data);
+		}
 
 		public void IncreaseIndent() => indentation++;
 

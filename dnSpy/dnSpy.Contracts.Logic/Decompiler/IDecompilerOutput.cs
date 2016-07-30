@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -76,23 +77,36 @@ namespace dnSpy.Contracts.Decompiler {
 		void Write(string text, object reference, DecompilerReferenceFlags flags, object color);
 
 		/// <summary>
-		/// Adds debug info, see also <see cref="UsesDebugInfo"/>
+		/// Adds custom data to a list
 		/// </summary>
-		/// <param name="methodDebugInfo">Debug info</param>
-		void AddDebugInfo(MethodDebugInfo methodDebugInfo);
+		/// <typeparam name="TData">Type of data to store</typeparam>
+		/// <param name="id">Unique id that is used as a key in a dictionary. Must not be null. Eg., <see cref="PredefinedCustomDataIds.DebugInfo"/></param>
+		/// <param name="data">Data to add. If a span is needed, see <see cref="TextSpanData{TData}"/></param>
+		void AddCustomData<TData>(string id, TData data);
 
 		/// <summary>
-		/// true if the debug info added by <see cref="AddDebugInfo(MethodDebugInfo)"/> is used
-		/// and isn't ignored. If this is false, <see cref="AddDebugInfo(MethodDebugInfo)"/> doesn't
+		/// true if custom data added by <see cref="AddCustomData{TData}(string, TData)"/> is used
+		/// and isn't ignored. If this is false, <see cref="AddCustomData{TData}(string, TData)"/> doesn't
 		/// have to be called.
 		/// </summary>
-		bool UsesDebugInfo { get; }
+		bool UsesCustomData { get; }
 	}
 
 	/// <summary>
 	/// <see cref="IDecompilerOutput"/> extension methods
 	/// </summary>
 	public static class DecompilerOutputExtensions {
+		/// <summary>
+		/// Adds debug info to the custom data collection, see also <see cref="IDecompilerOutput.UsesCustomData"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="methodDebugInfo">Debug info</param>
+		public static void AddDebugInfo(this IDecompilerOutput output, MethodDebugInfo methodDebugInfo) {
+			if (methodDebugInfo == null)
+				throw new ArgumentNullException(nameof(methodDebugInfo));
+			output.AddCustomData(PredefinedCustomDataIds.DebugInfo, methodDebugInfo);
+		}
+
 		/// <summary>
 		/// Writes text and a new line
 		/// </summary>

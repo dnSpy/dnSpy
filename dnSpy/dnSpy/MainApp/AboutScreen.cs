@@ -122,7 +122,7 @@ namespace dnSpy.MainApp {
 			var uiCtx = (IDocumentViewer)ctx.UIContext;
 			var output = new DocumentViewerOutput();
 			Write(output);
-			uiCtx.SetContent(output.CreateResult(), aboutContentType);
+			uiCtx.SetContent(output.CreateResult(new Dictionary<string, object>()), aboutContentType);
 		}
 
 		sealed class Info {
@@ -210,16 +210,16 @@ namespace dnSpy.MainApp {
 			WriteResourceFile(output, "dnSpy.CREDITS.txt");
 		}
 
-		void WriteResourceFile(IDecompilerOutput dnSpyOutput, string name, bool addNewLine = true) {
+		void WriteResourceFile(IDecompilerOutput output, string name, bool addNewLine = true) {
 			if (addNewLine)
-				dnSpyOutput.WriteLine();
+				output.WriteLine();
 			using (var stream = GetType().Assembly.GetManifestResourceStream(name))
 			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
 				for (;;) {
 					var line = streamReader.ReadLine();
 					if (line == null)
 						break;
-					dnSpyOutput.WriteLine(line, BoxedTextColor.Text);
+					output.WriteLine(line, BoxedTextColor.Text);
 				}
 			}
 		}

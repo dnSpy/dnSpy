@@ -52,11 +52,13 @@
     <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
+    <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
     <Compile Include="Decompiler\SourceLocal.cs" />
     <Compile Include="Decompiler\SourceStatement.cs" />
     <Compile Include="Decompiler\StringBuilderDecompilerOutput.cs" />
     <Compile Include="Decompiler\TextSpan.cs" />
+    <Compile Include="Decompiler\TextSpanData.cs" />
     <Compile Include="Decompiler\TextWriterDecompilerOutput.cs" />
     <Compile Include="Decompiler\TokenReference.cs" />
     <Compile Include="Decompiler\TypesHierarchyHelpers.cs" />

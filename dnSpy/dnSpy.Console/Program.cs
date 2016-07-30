@@ -104,7 +104,7 @@ namespace dnSpy_Console {
 		public int Length => position;
 		public int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
 
-		bool IDecompilerOutput.UsesDebugInfo => false;
+		bool IDecompilerOutput.UsesCustomData => false;
 
 		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, string indentationString = "\t") {
 			if (writer == null)
@@ -118,7 +118,7 @@ namespace dnSpy_Console {
 			this.indentationString = indentationString;
 		}
 
-		void IDecompilerOutput.AddDebugInfo(MethodDebugInfo methodDebugInfo) { }
+		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
 		public void IncreaseIndent() => indentation++;
 
 		public void DecreaseIndent() {

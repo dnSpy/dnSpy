@@ -110,9 +110,12 @@
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContent.cs" />
+    <Compile Include="Files\Tabs\DocViewer\DocumentViewerContentDataIds.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerExtensions.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerListenerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewer.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerCustomDataContext.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />

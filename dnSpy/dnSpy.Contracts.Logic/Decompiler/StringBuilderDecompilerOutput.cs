@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public int NextPosition => sb.Length + (addIndent ? indentation * indentationString.Length : 0);
 
-		bool IDecompilerOutput.UsesDebugInfo => false;
+		bool IDecompilerOutput.UsesCustomData => false;
 
 		/// <summary>
 		/// Constructor
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Decompiler {
 			this.indentationString = indentationString;
 		}
 
-		void IDecompilerOutput.AddDebugInfo(MethodDebugInfo methodDebugInfo) { }
+		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
 
 		/// <summary>
 		/// Increments the indentation level. Nothing is added to the output stream.

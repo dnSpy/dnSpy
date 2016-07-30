@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
@@ -47,27 +48,62 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// </summary>
 		public ReadOnlyCollection<MethodDebugInfo> MethodDebugInfos { get; }
 
+		readonly Dictionary<string, object> customDataDict;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="colorCollection">Colors</param>
 		/// <param name="referenceCollection">References</param>
-		/// <param name="methodDebugInfos">Debug info</param>
-		public DocumentViewerContent(string text, CachedTextColorsCollection colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, MethodDebugInfo[] methodDebugInfos) {
+		/// <param name="customDataDict">Custom data dictionary</param>
+		public DocumentViewerContent(string text, CachedTextColorsCollection colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, Dictionary<string, object> customDataDict) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (colorCollection == null)
 				throw new ArgumentNullException(nameof(colorCollection));
 			if (referenceCollection == null)
 				throw new ArgumentNullException(nameof(referenceCollection));
-			if (methodDebugInfos == null)
-				throw new ArgumentNullException(nameof(methodDebugInfos));
+			if (customDataDict == null)
+				throw new ArgumentNullException(nameof(customDataDict));
 			colorCollection.Freeze();
 			Text = text;
 			ColorCollection = colorCollection;
 			ReferenceCollection = referenceCollection;
-			MethodDebugInfos = new ReadOnlyCollection<MethodDebugInfo>(methodDebugInfos);
+			this.customDataDict = customDataDict;
+			MethodDebugInfos = GetCustomData<ReadOnlyCollection<MethodDebugInfo>>(DocumentViewerContentDataIds.DebugInfo) ?? emptyMethodDebugInfos;
+		}
+		static readonly ReadOnlyCollection<MethodDebugInfo> emptyMethodDebugInfos = new ReadOnlyCollection<MethodDebugInfo>(Array.Empty<MethodDebugInfo>());
+
+		/// <summary>
+		/// Gets custom data. Returns false if it doesn't exist.
+		/// </summary>
+		/// <typeparam name="TData">Type of data</typeparam>
+		/// <param name="id">Key, eg., <see cref="DocumentViewerContentDataIds.DebugInfo"/></param>
+		/// <param name="data">Updated with data</param>
+		/// <returns></returns>
+		bool TryGetCustomData<TData>(string id, out TData data) {
+			object obj;
+			if (!customDataDict.TryGetValue(id, out obj)) {
+				data = default(TData);
+				return false;
+			}
+
+			data = (TData)obj;
+			return true;
+		}
+
+		/// <summary>
+		/// Gets custom data
+		/// </summary>
+		/// <typeparam name="TData">Type of data</typeparam>
+		/// <param name="id">Key, eg., <see cref="DocumentViewerContentDataIds.DebugInfo"/></param>
+		/// <returns></returns>
+		public TData GetCustomData<TData>(string id) {
+			object obj;
+			if (!customDataDict.TryGetValue(id, out obj))
+				return default(TData);
+			return (TData)obj;
 		}
 	}
 }
