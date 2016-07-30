@@ -60,5 +60,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <see cref="PredefinedTextViewRoles.Interactive"/> is already used.
 		/// </summary>
 		public const string GlyphTextMarkerServiceable = "dnSpy-GlyphTextMarkerServiceable";
+
+		/// <summary>
+		/// Allows the current line highlighter to be used. Not needed if
+		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
+		/// </summary>
+		public const string CanHaveCurrentLineHighlighter = "dnSpy-CanHaveCurrentLineHighlighter";
 	}
 }
