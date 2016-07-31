@@ -447,6 +447,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Clear</summary>
 		public const string GROUP_CTX_REPL_CLEAR = "2000,1B3A6F12-AB30-4750-AB62-BB34DE4D9D0C";
 
+		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Settings</summary>
+		public const string GROUP_CTX_REPL_SETTINGS = "3000,0585159F-E555-433D-B854-42A36487B7C4";
+
 		/// <summary>Group: Context Menu, Type: Output text editor, Group: Copy</summary>
 		public const string GROUP_CTX_OUTPUT_COPY = "0,7E2D36F5-9F04-411C-81B6-DD92B53A9D57";
 

@@ -22,6 +22,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor {
 	sealed class ReplCommandTargetFilter : ICommandTargetFilter {
@@ -86,6 +87,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.DOWN:
 				case TextEditorIds.DOWN_EXT:
 				case TextEditorIds.DOWN_EXT_COL:
+				case TextEditorIds.TOGGLEWORDWRAP:
 				case TextEditorIds.ECMD_CONVERTSPACESTOTABS:
 				case TextEditorIds.ECMD_CONVERTTABSTOSPACES:
 				case TextEditorIds.EditorLineFirstColumn:
@@ -165,7 +167,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
 				case TextEditorIds.TOGGLEVISSPACE:
-				case TextEditorIds.TOGGLEWORDWRAP:
 					return CommandTargetStatus.NotHandled;
 
 				default:
@@ -315,6 +316,10 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.DOWN_EXT_COL:
 					textView.Selection.Mode = TextSelectionMode.Box;
 					replEditor.ReplEditorOperations.MoveLineDown(true);
+					return CommandTargetStatus.Handled;
+
+				case TextEditorIds.TOGGLEWORDWRAP:
+					textView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, textView.Options.WordWrapStyle() ^ WordWrapStyles.WordWrap);
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.ECMD_CONVERTSPACESTOTABS:
@@ -541,7 +546,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
 				case TextEditorIds.TOGGLEVISSPACE:
-				case TextEditorIds.TOGGLEWORDWRAP:
 					return CommandTargetStatus.NotHandled;
 
 				case TextEditorIds.TOPLINE:

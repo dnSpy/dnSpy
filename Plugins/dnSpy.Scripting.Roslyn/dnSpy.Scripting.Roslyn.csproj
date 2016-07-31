@@ -132,6 +132,7 @@
     <Resource Include="Images\Paste.png" />
     <Resource Include="Images\Reset.png" />
     <Resource Include="Images\VBInteractiveWindow.png" />
+    <Resource Include="Images\WordWrap.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Common\ScriptControl.xaml">

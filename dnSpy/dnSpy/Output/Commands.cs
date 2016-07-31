@@ -88,7 +88,7 @@ namespace dnSpy.Output {
 		public override bool IsChecked(LogEditorCtxMenuContext context) => context.Owner.ShowTimestamps;
 	}
 
-	[ExportMenuItem(Header = "res:WordWrapHeader", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Group = MenuConstants.GROUP_CTX_OUTPUT_SETTINGS, Order = 20)]
+	[ExportMenuItem(Header = "res:WordWrapHeader", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Icon = "WordWrap", Group = MenuConstants.GROUP_CTX_OUTPUT_SETTINGS, Order = 20)]
 	sealed class ToggleWordWrapOutputEditorCtxMenuCommand : LogEditorCtxMenuCommand {
 		ToggleWordWrapOutputEditorCtxMenuCommand()
 			: base(OutputCommands.ToggleWordWrapCommand) {

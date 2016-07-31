@@ -267,4 +267,13 @@
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
     <value>Ctrl+Shift+C</value>
   </data>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Show Line Numbers</value>
+  </data>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>_Word Wrap</value>
+  </data>
 </root>

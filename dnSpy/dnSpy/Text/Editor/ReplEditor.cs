@@ -104,6 +104,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 			//TODO: Support box selection
 			wpfTextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.AllowBoxSelectionId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			wpfTextView.Closed += WpfTextView_Closed;

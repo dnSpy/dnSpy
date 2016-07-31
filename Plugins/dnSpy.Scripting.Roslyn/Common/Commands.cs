@@ -22,6 +22,8 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ReplEditorCtxMenuContext {
@@ -85,5 +87,18 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ClearReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
 		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.ReplGroup, (int)ReplIds.ClearScreen);
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.ReplGroup, (int)ReplIds.ClearScreen) == CommandTargetStatus.Handled;
+	}
+
+	[ExportMenuItem(Header = "res:ShowLineNumbersCommand", Group = MenuConstants.GROUP_CTX_REPL_SETTINGS, Order = 0)]
+	sealed class ShowLineNumbersReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
+		public override void Execute(ReplEditorCtxMenuContext context) => context.UI.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, !context.UI.TextView.Options.IsLineNumberMarginEnabled());
+		public override bool IsChecked(ReplEditorCtxMenuContext context) => context.UI.TextView.Options.IsLineNumberMarginEnabled();
+	}
+
+	[ExportMenuItem(Header = "res:WordWrapHeader", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Icon = "WordWrap", Group = MenuConstants.GROUP_CTX_REPL_SETTINGS, Order = 10)]
+	sealed class WordWrapReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.TextEditorGroup, (int)TextEditorIds.TOGGLEWORDWRAP);
+		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.TextEditorGroup, (int)TextEditorIds.TOGGLEWORDWRAP) == CommandTargetStatus.Handled;
+		public override bool IsChecked(ReplEditorCtxMenuContext context) => (context.UI.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 	}
 }

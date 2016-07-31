@@ -421,6 +421,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+E, Ctrl+W.
+        /// </summary>
+        public static string ShortCutKeyCtrlECtrlW {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlECtrlW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Enter.
         /// </summary>
         public static string ShortCutKeyCtrlEnter {
@@ -493,6 +502,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Line Numbers.
+        /// </summary>
+        public static string ShowLineNumbersCommand {
+            get {
+                return ResourceManager.GetString("ShowLineNumbersCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to C# Interactive.
         /// </summary>
         public static string Window_CSharp {
@@ -507,6 +525,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string Window_VisualBasic {
             get {
                 return ResourceManager.GetString("Window_VisualBasic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Word Wrap.
+        /// </summary>
+        public static string WordWrapHeader {
+            get {
+                return ResourceManager.GetString("WordWrapHeader", resourceCulture);
             }
         }
     }
