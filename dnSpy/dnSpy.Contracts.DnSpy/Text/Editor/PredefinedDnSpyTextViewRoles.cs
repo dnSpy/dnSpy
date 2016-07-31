@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Output;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -78,5 +79,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// documentation for more info.
 		/// </summary>
 		public const string CustomLineNumberMargin = "dnSpy-CustomLineNumberMargin";
+
+		/// <summary>
+		/// <see cref="IDocumentViewer"/> text view role
+		/// </summary>
+		public const string DocumentViewer = "dnSpy-IDocumentViewer";
 	}
 }

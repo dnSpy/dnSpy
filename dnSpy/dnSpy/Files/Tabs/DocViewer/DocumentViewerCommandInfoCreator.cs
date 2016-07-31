@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer {
@@ -28,7 +28,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DocumentViewerCommandInfoCreator : ICommandInfoCreator {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(DocumentViewerConstants.TextViewRole) != true)
+			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.DocumentViewer) != true)
 				yield break;
 
 			yield return CommandShortcut.Create(Key.Tab, TextReferenceIds.MoveToNextReference.ToCommandInfo());

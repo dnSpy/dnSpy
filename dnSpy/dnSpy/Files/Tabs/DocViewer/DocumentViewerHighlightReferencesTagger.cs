@@ -34,7 +34,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Files.Tabs.DocViewer {
 	[Export(typeof(IViewTaggerProvider))]
 	[ContentType(ContentTypes.Text)]
-	[TextViewRole(DocumentViewerConstants.TextViewRole)]
+	[TextViewRole(PredefinedDnSpyTextViewRoles.DocumentViewer)]
 	[TagType(typeof(ITextMarkerTag))]
 	sealed class HighlightReferencesViewTaggerProvider : IViewTaggerProvider {
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {

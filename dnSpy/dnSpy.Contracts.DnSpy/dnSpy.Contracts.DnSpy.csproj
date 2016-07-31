@@ -108,7 +108,6 @@
     <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContent.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContentDataIds.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerExtensions.cs" />
