@@ -134,6 +134,7 @@
     <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Paste.png" />
     <Resource Include="Images\Reset.png" />
+    <Resource Include="Images\Save.png" />
     <Resource Include="Images\VBInteractiveWindow.png" />
     <Resource Include="Images\WordWrap.png" />
   </ItemGroup>

@@ -44,9 +44,15 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 			}
 		}
 
+		static readonly string CODEFILTERTEXT = string.Format("{1} (*.vbx)|*.vbx|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.VisualBasicScriptFiles);
+
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
 		protected override ObjectFormatter ObjectFormatter => VisualBasicObjectFormatter.Instance;
 		protected override DiagnosticFormatter DiagnosticFormatter => VisualBasicDiagnosticFormatter.Instance;
+		protected override string TextFilenameNoExtension => "VisualBasicScript";
+		protected override string CodeFilenameNoExtension => "VisualBasicScript";
+		protected override string CodeFileExtension => "vbx";
+		protected override string CodeFilterText => CODEFILTERTEXT;
 
 		public VisualBasicControlVM(IReplEditor replEditor, ReplSettings settings, IServiceLocator serviceLocator)
 			: base(replEditor, settings, serviceLocator) {

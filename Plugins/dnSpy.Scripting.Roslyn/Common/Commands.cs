@@ -83,6 +83,18 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Paste) == CommandTargetStatus.Handled;
 	}
 
+	[ExportMenuItem(Header = "res:SaveCommand", Icon = "Save", InputGestureText = "res:ShortCutKeyCtrlS", Group = MenuConstants.GROUP_CTX_REPL_SAVE, Order = 0)]
+	sealed class SaveReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.SaveText);
+		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.SaveText) == CommandTargetStatus.Handled;
+	}
+
+	[ExportMenuItem(Header = "res:SaveCodeCommand", InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_CTX_REPL_SAVE, Order = 10)]
+	sealed class SaveCodeReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
+		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.SaveCode);
+		public override bool IsEnabled(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.CanExecute(RoslynReplCommandConstants.RoslynReplGroup, (int)RoslynReplIds.SaveCode) == CommandTargetStatus.Handled;
+	}
+
 	[ExportMenuItem(Header = "res:ClearScreenCommand", Icon = "ClearWindowContent", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_REPL_CLEAR, Order = 0)]
 	sealed class ClearReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
 		public override void Execute(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget.Execute(CommandConstants.ReplGroup, (int)ReplIds.ClearScreen);

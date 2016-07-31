@@ -57,8 +57,16 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
 		internal const string CMD_PREFIX = "#";
 
+		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.TextFiles);
+
+		protected abstract string TextFilenameNoExtension { get; }
+		protected abstract string CodeFilenameNoExtension { get; }
+		protected abstract string CodeFileExtension { get; }
+		protected abstract string CodeFilterText { get; }
+
 		public ICommand ResetCommand => new RelayCommand(a => Reset(), a => CanReset);
 		public ICommand ClearCommand => new RelayCommand(a => ReplEditor.ClearScreen(), a => ReplEditor.CanClearScreen);
+		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
 		public ICommand HistoryPreviousCommand => new RelayCommand(a => ReplEditor.SelectPreviousCommand(), a => ReplEditor.CanSelectPreviousCommand);
 		public ICommand HistoryNextCommand => new RelayCommand(a => ReplEditor.SelectNextCommand(), a => ReplEditor.CanSelectNextCommand);
 		public object ResetImageObject => this;
@@ -66,7 +74,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public object HistoryPreviousImageObject => this;
 		public object HistoryNextImageObject => this;
 		public object ToggleWordWrapImageObject => this;
+		public object SaveImageObject => this;
 		public bool CanReset => hasInitialized && (execState == null || !execState.IsInitializing);
+
+		public bool CanSaveText => ReplEditor.CanSaveText;
+		public void SaveText() => ReplEditor.SaveText(TextFilenameNoExtension, "txt", TEXTFILES_FILTER);
+		public bool CanSaveCode => ReplEditor.CanSaveCode;
+		public void SaveCode() => ReplEditor.SaveCode(CodeFilenameNoExtension, CodeFileExtension, CodeFilterText);
 
 		public void Reset(bool loadConfig = true) {
 			if (!CanReset)
@@ -199,6 +213,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			OnPropertyChanged(nameof(HistoryPreviousImageObject));
 			OnPropertyChanged(nameof(HistoryNextImageObject));
 			OnPropertyChanged(nameof(ToggleWordWrapImageObject));
+			OnPropertyChanged(nameof(SaveImageObject));
 		}
 
 		public bool IsCommand(string text) {

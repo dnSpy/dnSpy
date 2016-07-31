@@ -44,9 +44,15 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			}
 		}
 
+		static readonly string CODEFILTERTEXT = string.Format("{1} (*.csx)|*.csx|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.CSharpScriptFiles);
+
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
 		protected override ObjectFormatter ObjectFormatter => CSharpObjectFormatter.Instance;
 		protected override DiagnosticFormatter DiagnosticFormatter => CSharpDiagnosticFormatter.Instance;
+		protected override string TextFilenameNoExtension => "CSharpScript";
+		protected override string CodeFilenameNoExtension => "CSharpScript";
+		protected override string CodeFileExtension => "csx";
+		protected override string CodeFilterText => CODEFILTERTEXT;
 
 		public CSharpControlVM(IReplEditor replEditor, ReplSettings settings, IServiceLocator serviceLocator)
 			: base(replEditor, settings, serviceLocator) {

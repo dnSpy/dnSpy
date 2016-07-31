@@ -61,6 +61,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Files.
+        /// </summary>
+        public static string AllFiles {
+            get {
+                return ResourceManager.GetString("AllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Screen.
         /// </summary>
         public static string ClearScreenCommand {
@@ -102,6 +111,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string CopyCommand {
             get {
                 return ResourceManager.GetString("CopyCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C# Script Files.
+        /// </summary>
+        public static string CSharpScriptFiles {
+            get {
+                return ResourceManager.GetString("CSharpScriptFiles", resourceCulture);
             }
         }
         
@@ -304,6 +322,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save (Ctrl+S).
+        /// </summary>
+        public static string Repl_Save_ToolTip {
+            get {
+                return ResourceManager.GetString("Repl_Save_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toggle Word Wrap (Ctrl+E, Ctrl+W).
         /// </summary>
         public static string Repl_WordWrap_ToolTip {
@@ -318,6 +345,24 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string ResettingExecutionEngine {
             get {
                 return ResourceManager.GetString("ResettingExecutionEngine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Code....
+        /// </summary>
+        public static string SaveCodeCommand {
+            get {
+                return ResourceManager.GetString("SaveCodeCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save....
+        /// </summary>
+        public static string SaveCommand {
+            get {
+                return ResourceManager.GetString("SaveCommand", resourceCulture);
             }
         }
         
@@ -457,11 +502,29 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+S.
+        /// </summary>
+        public static string ShortCutKeyCtrlS {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift+C.
         /// </summary>
         public static string ShortCutKeyCtrlShiftC {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShiftC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+S.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftS {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftS", resourceCulture);
             }
         }
         
@@ -516,6 +579,24 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string ShowLineNumbersCommand {
             get {
                 return ResourceManager.GetString("ShowLineNumbersCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Files.
+        /// </summary>
+        public static string TextFiles {
+            get {
+                return ResourceManager.GetString("TextFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visual Basic Script Files.
+        /// </summary>
+        public static string VisualBasicScriptFiles {
+            get {
+                return ResourceManager.GetString("VisualBasicScriptFiles", resourceCulture);
             }
         }
         

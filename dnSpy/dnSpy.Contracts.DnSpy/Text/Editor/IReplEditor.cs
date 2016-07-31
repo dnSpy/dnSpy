@@ -39,6 +39,32 @@ namespace dnSpy.Contracts.Text.Editor {
 		void ClearScreen();
 
 		/// <summary>
+		/// true if <see cref="SaveText(string, string, string)"/> can be called
+		/// </summary>
+		bool CanSaveText { get; }
+
+		/// <summary>
+		/// Saves the text
+		/// </summary>
+		/// <param name="filenameNoExtension">Suggested filename without the file extension</param>
+		/// <param name="fileExtension">File extension</param>
+		/// <param name="filesFilter">File filter passed to <c>SaveFileDialog</c></param>
+		void SaveText(string filenameNoExtension, string fileExtension, string filesFilter);
+
+		/// <summary>
+		/// true if <see cref="SaveCode(string, string, string)"/> can be called
+		/// </summary>
+		bool CanSaveCode { get; }
+
+		/// <summary>
+		/// Saves the code
+		/// </summary>
+		/// <param name="filenameNoExtension">Suggested filename without the file extension</param>
+		/// <param name="fileExtension">File extension</param>
+		/// <param name="filesFilter">File filter passed to <c>SaveFileDialog</c></param>
+		void SaveCode(string filenameNoExtension, string fileExtension, string filesFilter);
+
+		/// <summary>
 		/// true if <see cref="CopyCode"/> can be called
 		/// </summary>
 		bool CanCopyCode { get; }
@@ -67,6 +93,12 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Selects the next command
 		/// </summary>
 		void SelectNextCommand();
+
+		/// <summary>
+		/// Gets all code
+		/// </summary>
+		/// <returns></returns>
+		string GetCode();
 
 		/// <summary>
 		/// Adds script output. This method can be called from any thread

@@ -60,6 +60,9 @@
                     <Image Source="{Binding HistoryNextImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_ArrowDown}" Width="16" Height="16"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding SaveCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Repl_Save_ToolTip}">
+                    <Image Source="{Binding SaveImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Save}" Width="16" Height="16"/>
+                </Button>
                 <CheckBox Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding WordWrap}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Repl_WordWrap_ToolTip}">
                     <Image Source="{Binding ToggleWordWrapImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_WordWrap}" Width="16" Height="16"/>
                 </CheckBox>

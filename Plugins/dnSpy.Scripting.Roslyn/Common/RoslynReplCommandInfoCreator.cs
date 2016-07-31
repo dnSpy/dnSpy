@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Windows.Input;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
@@ -31,7 +32,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.RoslynRepl) != true)
 				yield break;
 
-			//yield return CommandShortcut.YYYYYYYYY(Key.XXXXXXXXXXX, RoslynReplIds.Reset.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.S, RoslynReplIds.SaveText.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.S, RoslynReplIds.SaveCode.ToCommandInfo());
 		}
 	}
 }

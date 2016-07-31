@@ -20,14 +20,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -62,6 +65,7 @@ namespace dnSpy.Text.Editor {
 		readonly CachedColorsList cachedColorsList;
 		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
 		readonly IDnSpyWpfTextView wpfTextView;
+		readonly IPickSaveFilename pickSaveFilename;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ReplEditor replEditorUI;
@@ -75,8 +79,9 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypes themeClassificationTypes) {
+		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypes themeClassificationTypes, IPickSaveFilename pickSaveFilename) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
 			this.PrimaryPrompt = options.PrimaryPrompt;
@@ -350,6 +355,42 @@ namespace dnSpy.Text.Editor {
 			WriteOffsetOfPrompt(null, true);
 			if (hasPrompt)
 				PrintPrompt();
+		}
+
+		public bool CanSaveText => true;
+		public void SaveText(string filenameNoExtension, string fileExtension, string filesFilter) {
+			if (filenameNoExtension == null)
+				throw new ArgumentNullException(nameof(filenameNoExtension));
+			if (fileExtension == null)
+				throw new ArgumentNullException(nameof(fileExtension));
+			if (!CanSaveText)
+				return;
+			SaveToFile(filenameNoExtension, fileExtension, filesFilter, TextView.TextSnapshot.GetText());
+		}
+
+		public bool CanSaveCode => true;
+		public void SaveCode(string filenameNoExtension, string fileExtension, string filesFilter) {
+			if (filenameNoExtension == null)
+				throw new ArgumentNullException(nameof(filenameNoExtension));
+			if (fileExtension == null)
+				throw new ArgumentNullException(nameof(fileExtension));
+			if (!CanSaveCode)
+				return;
+			SaveToFile(filenameNoExtension, fileExtension, filesFilter, GetCode());
+		}
+
+		void SaveToFile(string filenameNoExtension, string fileExtension, string filesFilter, string fileContents) {
+			if (fileExtension.Length > 0 && fileExtension[0] == '.')
+				fileExtension = fileExtension.Substring(1);
+			var filename = pickSaveFilename.GetFilename(filenameNoExtension + "." + fileExtension, fileExtension, filesFilter);
+			if (filename == null)
+				return;
+			try {
+				File.WriteAllText(filename, fileContents);
+			}
+			catch (Exception ex) {
+				MsgBox.Instance.Show(ex);
+			}
 		}
 
 		void AddNewDocument() {
@@ -660,26 +701,16 @@ namespace dnSpy.Text.Editor {
 		/// </summary>
 		bool IsExecMode => OffsetOfPrompt == null;
 
-		public bool CanCopyCode => !wpfTextView.Selection.IsEmpty;
-		public void CopyCode() {
-			if (!CanCopyCode)
-				return;
-
-			int startOffset = wpfTextView.Selection.Start.Position;
-			int endOffset = wpfTextView.Selection.End.Position;
-			Debug.Assert(endOffset > startOffset);
+		public string GetCode() {
+			int startOffset = 0;
+			int endOffset = wpfTextView.TextSnapshot.Length;
 			if (endOffset <= startOffset)
-				return;
+				return string.Empty;
 
 			var sb = new StringBuilder();
 			foreach (var buf in AllSubBuffers)
 				AddCode(sb, buf, startOffset, endOffset);
-			if (sb.Length > 0) {
-				try {
-					Clipboard.SetText(sb.ToString());
-				}
-				catch (ExternalException) { }
-			}
+			return sb.ToString();
 		}
 
 		void AddCode(StringBuilder sb, ReplSubBuffer buf, int startOffset, int endOffset) {
@@ -712,6 +743,20 @@ namespace dnSpy.Text.Editor {
 
 				offs = eol;
 				prompt = SecondaryPrompt;
+			}
+		}
+
+		public bool CanCopyCode => !wpfTextView.Selection.IsEmpty;
+		public void CopyCode() {
+			if (!CanCopyCode)
+				return;
+
+			var code = GetCode();
+			if (code.Length > 0) {
+				try {
+					Clipboard.SetText(code.ToString());
+				}
+				catch (ExternalException) { }
 			}
 		}
 

@@ -26,5 +26,15 @@ namespace dnSpy.Scripting.Roslyn.Commands {
 		/// Resets the REPL
 		/// </summary>
 		Reset,
+
+		/// <summary>
+		/// Saves text
+		/// </summary>
+		SaveText,
+
+		/// <summary>
+		/// Saves code
+		/// </summary>
+		SaveCode,
 	}
 }
