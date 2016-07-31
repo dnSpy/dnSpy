@@ -107,18 +107,18 @@ namespace dnSpy.Text.Editor {
 					inDocMarkers.Add(marker, span.Value);
 			}
 
-			public void Remove(IGlyphTextMarkerImpl marker) {
+			public bool Remove(IGlyphTextMarkerImpl marker) {
 				for (int i = 0; i < allMarkers.Count; i++) {
 					if (allMarkers[i] == marker) {
 						allMarkers.RemoveAt(i);
 						inDocMarkers.Remove(marker);
-						return;
+						return true;
 					}
 				}
-				Debug.Fail("Failed to remove marker");
+				return false;
 			}
 
-			public void Remove(HashSet<IGlyphTextMarkerImpl> markers) {
+			public bool Remove(HashSet<IGlyphTextMarkerImpl> markers) {
 				int removed = 0;
 				for (int i = allMarkers.Count - 1; i >= 0; i--) {
 					var marker = allMarkers[i];
@@ -130,6 +130,7 @@ namespace dnSpy.Text.Editor {
 							break;
 					}
 				}
+				return removed > 0;
 			}
 
 			public void Clear() {
@@ -451,8 +452,10 @@ namespace dnSpy.Text.Editor {
 			glyphTextViewMarkerGlyphTextMarkerTagTagger.RaiseTagsChanged(span);
 		}
 
-		void Refresh(IGlyphTextMarker marker) {
-			var methodMarker = marker as IGlyphTextMethodMarker;
+		void Refresh(IGlyphTextMarkerImpl marker) {
+			if (!marker.TextViewFilter(TextView))
+				return;
+			var methodMarker = marker as IGlyphTextMethodMarkerImpl;
 			if (methodMarker != null) {
 				Refresh(methodMarker);
 				return;
@@ -461,7 +464,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Fail("Unknown marker type: " + marker.GetType());
 		}
 
-		void Refresh(IGlyphTextMethodMarker marker) {
+		void Refresh(IGlyphTextMethodMarkerImpl marker) {
 			var span = GetSnapshotSpan(marker);
 			if (span == null)
 				return;
@@ -520,14 +523,18 @@ namespace dnSpy.Text.Editor {
 		void GlyphTextMarkerServiceImpl_MarkerRemoved(object sender, GlyphTextMarkerRemovedEventArgs e) {
 			if (TextView.IsClosed)
 				return;
-			markerAndSpanCollection.Remove(e.Marker);
-			Refresh(e.Marker);
+			bool removed = markerAndSpanCollection.Remove(e.Marker);
+			Debug.Assert(removed == e.Marker.TextViewFilter(TextView));
+			if (removed)
+				Refresh(e.Marker);
 		}
 
 		void GlyphTextMarkerServiceImpl_MarkersRemoved(object sender, GlyphTextMarkersRemovedEventArgs e) {
 			if (TextView.IsClosed)
 				return;
-			markerAndSpanCollection.Remove(e.Markers);
+			bool removed = markerAndSpanCollection.Remove(e.Markers);
+			if (!removed)
+				return;
 			if (e.Markers.Count > 10)
 				InvalidateEverything();
 			else {
