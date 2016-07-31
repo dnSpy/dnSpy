@@ -36,6 +36,9 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection GetOrCreateSection(Guid guid) {
+			if (guid == Guid.Empty)
+				throw new ArgumentOutOfRangeException(nameof(guid));
+
 			var name = guid.ToString();
 			ISettingsSection section;
 			if (sections.TryGetValue(name, out section))
@@ -47,6 +50,9 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(Guid guid) {
+			if (guid == Guid.Empty)
+				throw new ArgumentOutOfRangeException(nameof(guid));
+
 			var name = guid.ToString();
 			sections.Remove(name);
 		}
@@ -66,6 +72,9 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection RecreateSection(Guid guid) {
+			if (guid == Guid.Empty)
+				throw new ArgumentOutOfRangeException(nameof(guid));
+
 			RemoveSection(guid);
 			return GetOrCreateSection(guid);
 		}
