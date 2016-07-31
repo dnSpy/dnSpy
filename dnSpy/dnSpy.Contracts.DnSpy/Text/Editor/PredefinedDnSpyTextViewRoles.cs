@@ -66,5 +66,17 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
 		/// </summary>
 		public const string CanHaveCurrentLineHighlighter = "dnSpy-CanHaveCurrentLineHighlighter";
+
+		/// <summary>
+		/// Allows the line number margin to be used. Not needed if
+		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
+		/// </summary>
+		public const string CanHaveLineNumberMargin = "dnSpy-LineNumberMargin";
+
+		/// <summary>
+		/// Enables the custom line number margin, see <see cref="Editor.CustomLineNumberMargin"/>
+		/// documentation for more info.
+		/// </summary>
+		public const string CustomLineNumberMargin = "dnSpy-CustomLineNumberMargin";
 	}
 }

@@ -74,6 +74,7 @@ namespace dnSpy.Text.Editor {
 			PredefinedTextViewRoles.Zoomable,
 			PredefinedDnSpyTextViewRoles.LogEditor,
 			PredefinedDnSpyTextViewRoles.CanHaveCurrentLineHighlighter,
+			PredefinedDnSpyTextViewRoles.CanHaveLineNumberMargin,
 		};
 
 		public LogEditor(LogEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {

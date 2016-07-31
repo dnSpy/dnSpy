@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -35,6 +36,7 @@ namespace dnSpy.Text.Editor {
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[Order(After = PredefinedMarginNames.LineNumber)]
+	[Order(After = PredefinedDnSpyMarginNames.CustomLineNumber)]
 	sealed class SpacerMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IThemeClassificationTypes themeClassificationTypes;
