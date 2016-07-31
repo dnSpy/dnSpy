@@ -54,6 +54,7 @@
     <Compile Include="Common\IScriptCommand.cs" />
     <Compile Include="Common\IScriptGlobalsHelper.cs" />
     <Compile Include="Common\PrintOptionsImpl.cs" />
+    <Compile Include="Common\ReplSettings.cs" />
     <Compile Include="Common\ResetCommand.cs" />
     <Compile Include="Common\RespFileUtils.cs" />
     <Compile Include="Common\ResponseFileReader.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="CSharp\Constants.cs" />
     <Compile Include="CSharp\CSharpContent.cs" />
     <Compile Include="CSharp\CSharpControlVM.cs" />
+    <Compile Include="CSharp\CSharpReplSettingsImpl.cs" />
     <Compile Include="CSharp\CSharpToolWindowContent.cs" />
     <Compile Include="CSharp\TextEditorFormatDefinition.cs" />
     <Compile Include="Plugin.cs" />
@@ -82,6 +84,7 @@
       <DependentUpon>dnSpy.Scripting.Roslyn.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="VisualBasic\VisualBasicReplSettingsImpl.cs" />
     <None Include="VisualBasic\Constants.cs" />
     <None Include="VisualBasic\TextEditorFormatDefinition.cs" />
     <None Include="VisualBasic\VisualBasicContent.cs" />

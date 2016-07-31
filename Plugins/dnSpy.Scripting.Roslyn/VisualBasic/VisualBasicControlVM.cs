@@ -48,8 +48,8 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		protected override ObjectFormatter ObjectFormatter => VisualBasicObjectFormatter.Instance;
 		protected override DiagnosticFormatter DiagnosticFormatter => VisualBasicDiagnosticFormatter.Instance;
 
-		public VisualBasicControlVM(IReplEditor replEditor, IServiceLocator serviceLocator)
-			: base(replEditor, serviceLocator) {
+		public VisualBasicControlVM(IReplEditor replEditor, ReplSettings settings, IServiceLocator serviceLocator)
+			: base(replEditor, settings, serviceLocator) {
 		}
 
 		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>

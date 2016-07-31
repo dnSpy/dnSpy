@@ -48,8 +48,8 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		protected override ObjectFormatter ObjectFormatter => CSharpObjectFormatter.Instance;
 		protected override DiagnosticFormatter DiagnosticFormatter => CSharpDiagnosticFormatter.Instance;
 
-		public CSharpControlVM(IReplEditor replEditor, IServiceLocator serviceLocator)
-			: base(replEditor, serviceLocator) {
+		public CSharpControlVM(IReplEditor replEditor, ReplSettings settings, IServiceLocator serviceLocator)
+			: base(replEditor, settings, serviceLocator) {
 		}
 
 		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>

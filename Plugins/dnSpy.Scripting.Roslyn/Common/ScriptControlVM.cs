@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -91,13 +92,34 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public bool WordWrap {
 			get { return (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0; }
 			set {
-				if (WordWrap == value)
-					return;
 				if (value)
-					ReplEditor.TextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, ReplEditor.TextView.Options.WordWrapStyle() | WordWrapStyles.WordWrap);
+					WordWrapStyle |= WordWrapStyles.WordWrap;
 				else
-					ReplEditor.TextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, ReplEditor.TextView.Options.WordWrapStyle() & ~WordWrapStyles.WordWrap);
-				OnPropertyChanged(nameof(WordWrap));
+					WordWrapStyle &= ~WordWrapStyles.WordWrap;
+			}
+		}
+
+		WordWrapStyles WordWrapStyle {
+			get { return ReplEditor.TextView.Options.WordWrapStyle(); }
+			set {
+				var oldWordWrapStyle = WordWrapStyle;
+				if (value == oldWordWrapStyle)
+					return;
+				ReplEditor.TextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value);
+				OnPropertyChanged(nameof(WordWrapStyle));
+				if (((oldWordWrapStyle ^ value) & WordWrapStyles.WordWrap) != 0)
+					OnPropertyChanged(nameof(WordWrap));
+				replSettings.WordWrapStyle = value;
+			}
+		}
+
+		bool ShowLineNumbers {
+			get { return ReplEditor.TextView.Options.IsLineNumberMarginEnabled(); }
+			set {
+				if (ShowLineNumbers == value)
+					return;
+				ReplEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value);
+				replSettings.ShowLineNumbers = value;
 			}
 		}
 
@@ -115,9 +137,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly Dispatcher dispatcher;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
+		readonly ReplSettings replSettings;
 
-		protected ScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) {
+		protected ScriptControlVM(IReplEditor replEditor, ReplSettings replSettings, IServiceLocator serviceLocator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.replSettings = replSettings;
+			this.replSettings.PropertyChanged += ReplSettings_PropertyChanged;
 			this.ReplEditor = replEditor;
 			this.ReplEditor.CommandHandler = this;
 			this.serviceLocator = serviceLocator;
@@ -133,6 +158,16 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				foreach (var name in sc.Names)
 					this.toScriptCommand.Add(name, sc);
 			}
+
+			WordWrapStyle = replSettings.WordWrapStyle;
+			ShowLineNumbers = replSettings.ShowLineNumbers;
+		}
+
+		void ReplSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(replSettings.WordWrapStyle))
+				WordWrapStyle = replSettings.WordWrapStyle;
+			else if (e.PropertyName == nameof(replSettings.ShowLineNumbers))
+				ShowLineNumbers = replSettings.ShowLineNumbers;
 		}
 
 		protected abstract string Logo { get; }
@@ -150,8 +185,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		bool hasInitialized;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
 				OnPropertyChanged(nameof(WordWrap));
+				replSettings.WordWrapStyle = WordWrapStyle;
+			}
+			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
+				replSettings.ShowLineNumbers = ShowLineNumbers;
 		}
 
 		public void RefreshThemeFields() {

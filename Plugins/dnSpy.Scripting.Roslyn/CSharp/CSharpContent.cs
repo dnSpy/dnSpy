@@ -33,12 +33,12 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 	[Export(typeof(ICSharpContent))]
 	sealed class CSharpContent : ScriptContent, ICSharpContent {
 		[ImportingConstructor]
-		CSharpContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, IServiceLocator serviceLocator)
-			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), serviceLocator, Constants.REPL_CSharp) {
+		CSharpContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, CSharpReplSettingsImpl replSettings, IServiceLocator serviceLocator)
+			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_CSharp) {
 		}
 
-		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) =>
-			new CSharpControlVM(replEditor, serviceLocator);
+		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings) =>
+			new CSharpControlVM(replEditor, replSettings, serviceLocator);
 
 		static ReplEditorOptions CreateReplEditorOptions() {
 			var options = new ReplEditorOptions {
