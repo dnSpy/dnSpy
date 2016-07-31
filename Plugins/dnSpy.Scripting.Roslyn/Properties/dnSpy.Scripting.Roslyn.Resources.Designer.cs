@@ -304,6 +304,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle Word Wrap (Ctrl+E, Ctrl+W).
+        /// </summary>
+        public static string Repl_WordWrap_ToolTip {
+            get {
+                return ResourceManager.GetString("Repl_WordWrap_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resetting execution engine..
         /// </summary>
         public static string ResettingExecutionEngine {

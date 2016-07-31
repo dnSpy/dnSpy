@@ -42,6 +42,8 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class UserScriptOptions {
@@ -62,6 +64,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public object ClearWindowContentImageObject => this;
 		public object HistoryPreviousImageObject => this;
 		public object HistoryNextImageObject => this;
+		public object ToggleWordWrapImageObject => this;
 		public bool CanReset => hasInitialized && (execState == null || !execState.IsInitializing);
 
 		public void Reset(bool loadConfig = true) {
@@ -85,6 +88,19 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 		bool isResetting;
 
+		public bool WordWrap {
+			get { return (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0; }
+			set {
+				if (WordWrap == value)
+					return;
+				if (value)
+					ReplEditor.TextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, ReplEditor.TextView.Options.WordWrapStyle() | WordWrapStyles.WordWrap);
+				else
+					ReplEditor.TextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, ReplEditor.TextView.Options.WordWrapStyle() & ~WordWrapStyles.WordWrap);
+				OnPropertyChanged(nameof(WordWrap));
+			}
+		}
+
 		public IReplEditor ReplEditor { get; }
 
 		public IEnumerable<IScriptCommand> ScriptCommands => toScriptCommand.Values;
@@ -105,6 +121,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.ReplEditor = replEditor;
 			this.ReplEditor.CommandHandler = this;
 			this.serviceLocator = serviceLocator;
+
+			ReplEditor.TextView.Options.OptionChanged += Options_OptionChanged;
 
 			var themeClassificationTypes = serviceLocator.Resolve<IThemeClassificationTypes>();
 			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypes);
@@ -131,11 +149,17 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 		bool hasInitialized;
 
+		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
+				OnPropertyChanged(nameof(WordWrap));
+		}
+
 		public void RefreshThemeFields() {
 			OnPropertyChanged(nameof(ResetImageObject));
 			OnPropertyChanged(nameof(ClearWindowContentImageObject));
 			OnPropertyChanged(nameof(HistoryPreviousImageObject));
 			OnPropertyChanged(nameof(HistoryNextImageObject));
+			OnPropertyChanged(nameof(ToggleWordWrapImageObject));
 		}
 
 		public bool IsCommand(string text) {

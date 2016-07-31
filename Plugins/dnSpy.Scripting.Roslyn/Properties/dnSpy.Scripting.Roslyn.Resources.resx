@@ -276,4 +276,7 @@
   <data name="WordWrapHeader" xml:space="preserve">
     <value>_Word Wrap</value>
   </data>
+  <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
+    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+  </data>
 </root>
