@@ -47,6 +47,15 @@ namespace dnSpy.Text.Editor {
 		void SelectSameTextPreviousCommand();
 		void SelectSameTextNextCommand();
 		bool TrySubmit(bool force);
-		ReplSubBuffer FindBuffer(int offset);
+		ReplSubBufferInfo FindBuffer(int offset);
+	}
+
+	struct ReplSubBufferInfo {
+		public ReplSubBuffer Buffer { get; }
+		public int CodeBufferIndex { get; }
+		public ReplSubBufferInfo(ReplSubBuffer buffer, int codeBufferIndex) {
+			Buffer = buffer;
+			CodeBufferIndex = codeBufferIndex;
+		}
 	}
 }

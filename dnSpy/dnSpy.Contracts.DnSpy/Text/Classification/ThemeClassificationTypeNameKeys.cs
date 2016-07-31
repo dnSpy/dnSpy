@@ -728,6 +728,21 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string LineNumber = "Line Number";
 
 		/// <summary>
+		/// <see cref="TextColor.ReplLineNumberInput1"/>
+		/// </summary>
+		public const string ReplLineNumberInput1 = "ReplLineNumberInput1";
+
+		/// <summary>
+		/// <see cref="TextColor.ReplLineNumberInput2"/>
+		/// </summary>
+		public const string ReplLineNumberInput2 = "ReplLineNumberInput2";
+
+		/// <summary>
+		/// <see cref="TextColor.ReplLineNumberOutput"/>
+		/// </summary>
+		public const string ReplLineNumberOutput = "ReplLineNumberOutput";
+
+		/// <summary>
 		/// <see cref="TextColor.Link"/>
 		/// </summary>
 		public const string Link = "Link";

@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -34,17 +35,19 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly IThemeClassificationTypes themeClassificationTypes;
 
 		[ImportingConstructor]
-		ReplEditorCreator(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		ReplEditorCreator(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypes themeClassificationTypes) {
 			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
+			this.themeClassificationTypes = themeClassificationTypes;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypes);
 	}
 }

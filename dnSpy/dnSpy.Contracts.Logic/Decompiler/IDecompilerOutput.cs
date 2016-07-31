@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Adds custom data to a list
 		/// </summary>
 		/// <typeparam name="TData">Type of data to store</typeparam>
-		/// <param name="id">Unique id that is used as a key in a dictionary. Must not be null. Eg., <see cref="PredefinedCustomDataIds.DebugInfo"/></param>
+		/// <param name="id">Key, eg., <see cref="PredefinedCustomDataIds.DebugInfo"/></param>
 		/// <param name="data">Data to add. If a span is needed, see <see cref="TextSpanData{TData}"/></param>
 		void AddCustomData<TData>(string id, TData data);
 

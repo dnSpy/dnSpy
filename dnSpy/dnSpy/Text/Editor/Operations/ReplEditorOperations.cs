@@ -422,7 +422,7 @@ namespace dnSpy.Text.Editor.Operations {
 		public void SelectSameTextNextCommand() => replEditor.SelectSameTextNextCommand();
 
 		public void SelectAll() {
-			var buf = replEditor.FindBuffer(CaretOffset);
+			var buf = replEditor.FindBuffer(CaretOffset).Buffer;
 			var newSel = new SnapshotSpan(new SnapshotPoint(wpfTextView.TextSnapshot, buf.Kind == ReplBufferKind.Code ? buf.Span.Start + replEditor.PrimaryPrompt.Length : buf.Span.Start), new SnapshotPoint(wpfTextView.TextSnapshot, buf.Span.End));
 			if (newSel.IsEmpty || (wpfTextView.Selection.Mode == TextSelectionMode.Stream && wpfTextView.Selection.StreamSelectionSpan == new VirtualSnapshotSpan(newSel)))
 				newSel = new SnapshotSpan(wpfTextView.TextSnapshot, 0, wpfTextView.TextSnapshot.Length);

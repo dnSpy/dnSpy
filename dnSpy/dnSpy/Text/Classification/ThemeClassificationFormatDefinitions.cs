@@ -751,6 +751,21 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition LineNumberClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplLineNumberInput1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ReplLineNumberInput1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplLineNumberInput2)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ReplLineNumberInput2ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ReplLineNumberOutput)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ReplLineNumberOutputClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Link)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LinkClassificationTypeDefinition;
@@ -2135,6 +2150,33 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class LineNumber : ThemeClassificationFormatDefinition {
 			LineNumber() : base(TextColor.LineNumber) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplLineNumberInput1)]
+		[Name(ThemeClassificationTypeNameKeys.ReplLineNumberInput1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ReplLineNumberInput1 : ThemeClassificationFormatDefinition {
+			ReplLineNumberInput1() : base(TextColor.ReplLineNumberInput1) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplLineNumberInput2)]
+		[Name(ThemeClassificationTypeNameKeys.ReplLineNumberInput2)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ReplLineNumberInput2 : ThemeClassificationFormatDefinition {
+			ReplLineNumberInput2() : base(TextColor.ReplLineNumberInput2) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ReplLineNumberOutput)]
+		[Name(ThemeClassificationTypeNameKeys.ReplLineNumberOutput)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ReplLineNumberOutput : ThemeClassificationFormatDefinition {
+			ReplLineNumberOutput() : base(TextColor.ReplLineNumberOutput) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

@@ -37,6 +37,7 @@ using dnSpy.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
@@ -74,7 +75,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypes themeClassificationTypes) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			options = options?.Clone() ?? new ReplEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
@@ -96,7 +97,7 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextView = wpfTextViewHost.TextView;
 			ReplEditorUtils.AddInstance(this, wpfTextView);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.REPL);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
+			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			//TODO: ReplEditorOperations doesn't support virtual space
@@ -112,6 +113,7 @@ namespace dnSpy.Text.Editor {
 			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView, editorOperationsFactoryService);
 			wpfTextView.VisualElement.Loaded += WpfTextView_Loaded;
 			UpdateRefreshScreenOnChange();
+			CustomLineNumberMargin.SetOwner(wpfTextView, new ReplCustomLineNumberMarginOwner(this, themeClassificationTypes));
 		}
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
@@ -775,16 +777,25 @@ namespace dnSpy.Text.Editor {
 				AddSubBuffer(new ReplSubBuffer(ReplBufferKind.Output, start, LastLine.Start.Position));
 		}
 
-		public ReplSubBuffer FindBuffer(int offset) {
+		public ReplSubBufferInfo FindBuffer(int offset) {
+			int bufferKindIndex = -1;
 			foreach (var buf in AllSubBuffers) {
+				if (buf.Kind != ReplBufferKind.Code)
+					bufferKindIndex = -1;
+				else
+					bufferKindIndex++;
 				if (buf.Span.Start <= offset && offset < buf.Span.End)
-					return buf;
+					return new ReplSubBufferInfo(buf, bufferKindIndex);
 			}
 			var active = ActiveSubBuffer;
+			if (active.Kind != ReplBufferKind.Code)
+				bufferKindIndex = -1;
+			else
+				bufferKindIndex++;
 			if (active.Span.Start <= offset && offset <= active.Span.End)
-				return active;
+				return new ReplSubBufferInfo(active, bufferKindIndex);
 			Debug.Fail("Couldn't find a buffer");
-			return active;
+			return new ReplSubBufferInfo(active, bufferKindIndex);
 		}
 	}
 
@@ -904,6 +915,96 @@ namespace dnSpy.Text.Editor {
 			Offset = offset;
 			Length = length;
 			ClassificationType = classificationType;
+		}
+	}
+
+	sealed class ReplCustomLineNumberMarginOwner : ICustomLineNumberMarginOwner {
+		readonly IClassificationType replLineNumberInput1ClassificationType;
+		readonly IClassificationType replLineNumberInput2ClassificationType;
+		readonly IClassificationType replLineNumberOutputClassificationType;
+		TextFormattingRunProperties replLineNumberInput1TextFormattingRunProperties;
+		TextFormattingRunProperties replLineNumberInput2TextFormattingRunProperties;
+		TextFormattingRunProperties replLineNumberOutputTextFormattingRunProperties;
+		readonly IReplEditor2 replEditor;
+
+		public ReplCustomLineNumberMarginOwner(IReplEditor2 replEditor, IThemeClassificationTypes themeClassificationTypes) {
+			if (replEditor == null)
+				throw new ArgumentNullException(nameof(replEditor));
+			if (themeClassificationTypes == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypes));
+			this.replEditor = replEditor;
+			this.replLineNumberInput1ClassificationType = themeClassificationTypes.GetClassificationType(TextColor.ReplLineNumberInput1);
+			this.replLineNumberInput2ClassificationType = themeClassificationTypes.GetClassificationType(TextColor.ReplLineNumberInput2);
+			this.replLineNumberOutputClassificationType = themeClassificationTypes.GetClassificationType(TextColor.ReplLineNumberOutput);
+		}
+
+		sealed class ReplState {
+			public ReplSubBufferInfo BufferInfo;
+			public ITextSnapshotLine BufferStartLine;
+		}
+
+		public TextFormattingRunProperties GetDefaultTextFormattingRunProperties() => replLineNumberOutputTextFormattingRunProperties;
+
+		public int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object state) {
+			if (!viewLine.IsFirstTextViewLineForSnapshotLine)
+				return null;
+			ReplState replState;
+			if (state == null)
+				state = replState = new ReplState();
+			else
+				replState = (ReplState)state;
+			if (replState.BufferInfo.Buffer == null || viewLine.Start.Position < replState.BufferInfo.Buffer.Span.Start || viewLine.Start.Position >= replState.BufferInfo.Buffer.Span.End) {
+				var subBufferInfo = replEditor.FindBuffer(viewLine.Start.Position);
+				var snapshot = viewLine.Snapshot;
+				Debug.Assert(subBufferInfo.Buffer.Span.Start <= snapshot.Length);
+				if (subBufferInfo.Buffer.Span.Start > snapshot.Length)
+					return null;
+				replState.BufferInfo = subBufferInfo;
+				replState.BufferStartLine = snapshot.GetLineFromPosition(subBufferInfo.Buffer.Span.Start);
+			}
+			int lineNumber = snapshotLine.LineNumber - replState.BufferStartLine.LineNumber;
+			Debug.Assert(lineNumber >= 0);
+			if (lineNumber < 0)
+				return null;
+
+			return lineNumber + 1;
+		}
+
+		public TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object state) {
+			var replState = (ReplState)state;
+			switch (replState.BufferInfo.Buffer.Kind) {
+			case ReplBufferKind.Output:
+				return replLineNumberOutputTextFormattingRunProperties;
+
+			case ReplBufferKind.Code:
+				switch (replState.BufferInfo.CodeBufferIndex % 2) {
+				case 0:
+					return replLineNumberInput1TextFormattingRunProperties;
+				case 1:
+					return replLineNumberInput2TextFormattingRunProperties;
+				default:
+					throw new InvalidOperationException();
+				}
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		public int? GetMaxLineNumberDigits() => null;
+
+		public void OnTextPropertiesChanged(IClassificationFormatMap classificationFormatMap) {
+			replLineNumberInput1TextFormattingRunProperties = classificationFormatMap.GetTextProperties(replLineNumberInput1ClassificationType);
+			replLineNumberInput2TextFormattingRunProperties = classificationFormatMap.GetTextProperties(replLineNumberInput2ClassificationType);
+			replLineNumberOutputTextFormattingRunProperties = classificationFormatMap.GetTextProperties(replLineNumberOutputClassificationType);
+		}
+
+		public void OnVisible() { }
+
+		public void OnInvisible() {
+			replLineNumberInput1TextFormattingRunProperties = null;
+			replLineNumberInput2TextFormattingRunProperties = null;
+			replLineNumberOutputTextFormattingRunProperties = null;
 		}
 	}
 }

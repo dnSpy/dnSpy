@@ -166,6 +166,9 @@ namespace dnSpy.Contracts.Text {
 		DebugLogMDA,
 		DebugLogTimestamp,
 		LineNumber,
+		ReplLineNumberInput1,
+		ReplLineNumberInput2,
+		ReplLineNumberOutput,
 		Link,
 		VisibleWhitespace,
 		SelectedText,
@@ -345,6 +348,9 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebugLogMDA = TextColor.DebugLogMDA;
 		public static readonly object DebugLogTimestamp = TextColor.DebugLogTimestamp;
 		public static readonly object LineNumber = TextColor.LineNumber;
+		public static readonly object ReplLineNumberInput1 = TextColor.ReplLineNumberInput1;
+		public static readonly object ReplLineNumberInput2 = TextColor.ReplLineNumberInput2;
+		public static readonly object ReplLineNumberOutput = TextColor.ReplLineNumberOutput;
 		public static readonly object Link = TextColor.Link;
 		public static readonly object VisibleWhitespace = TextColor.VisibleWhitespace;
 		public static readonly object SelectedText = TextColor.SelectedText;
@@ -526,6 +532,9 @@ namespace dnSpy.Contracts.Text {
 			DebugLogMDA,
 			DebugLogTimestamp,
 			LineNumber,
+			ReplLineNumberInput1,
+			ReplLineNumberInput2,
+			ReplLineNumberOutput,
 			Link,
 			VisibleWhitespace,
 			SelectedText,
