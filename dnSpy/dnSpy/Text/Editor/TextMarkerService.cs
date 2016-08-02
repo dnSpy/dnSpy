@@ -232,6 +232,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void TagAggregator_BatchedTagsChanged(object sender, BatchedTagsChangedEventArgs e) {
+			if (wpfTextView.IsClosed)
+				return;
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
 			List<SnapshotSpan> intersectionSpans = null;
 			foreach (var mappingSpan in e.Spans) {
@@ -295,14 +297,14 @@ namespace dnSpy.Text.Editor {
 		}
 
 		Brush GetBackgroundBrush(ResourceDictionary props) {
-			System.Windows.Media.Color? color;
+			Color? color;
 			SolidColorBrush scBrush;
 			Brush fillBrush;
 
 			const double BG_BRUSH_OPACITY = 0.8;
 			const double BG_BRUSH_HIGHCONTRAST_OPACITY = 0.5;
 			Brush newBrush;
-			if ((color = props[EditorFormatDefinition.BackgroundColorId] as System.Windows.Media.Color?) != null) {
+			if ((color = props[EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
 				newBrush = new SolidColorBrush(color.Value);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
@@ -334,12 +336,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		Pen GetPen(ResourceDictionary props) {
-			System.Windows.Media.Color? color;
+			Color? color;
 			SolidColorBrush scBrush;
 
 			const double PEN_THICKNESS = 0.5;
 			Pen newPen;
-			if ((color = props[EditorFormatDefinition.ForegroundColorId] as System.Windows.Media.Color?) != null) {
+			if ((color = props[EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
 				var brush = new SolidColorBrush(color.Value);
 				brush.Freeze();
 				newPen = new Pen(brush, PEN_THICKNESS);

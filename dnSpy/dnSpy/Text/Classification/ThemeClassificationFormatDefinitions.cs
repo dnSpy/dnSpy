@@ -904,6 +904,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.BraceMatching)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition BraceMatchingClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.LineSeparator)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition LineSeparatorClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2436,6 +2441,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class BraceMatching : ThemeClassificationFormatDefinition {
 			BraceMatching() : base(TextColor.BraceMatching) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LineSeparator)]
+		[Name(ThemeClassificationTypeNameKeys.LineSeparator)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class LineSeparator : ThemeClassificationFormatDefinition {
+			LineSeparator() : base(TextColor.LineSeparator) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

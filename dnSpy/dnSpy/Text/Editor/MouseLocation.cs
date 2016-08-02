@@ -59,7 +59,7 @@ namespace dnSpy.Text.Editor {
 				textViewLine = wpfTextView.TextViewLines.FirstVisibleLine;
 			else
 				textViewLine = wpfTextView.TextViewLines.LastVisibleLine;
-			position = textViewLine.GetVirtualBufferPositionFromXCoordinate(point.X);
+			position = textViewLine.GetInsertionBufferPositionFromXCoordinate(point.X);
 
 			return new MouseLocation(textViewLine, position, point);
 		}

@@ -36,5 +36,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// TData = <see cref="Decompiler.BracePair"/>
 		/// </summary>
 		public const string BracePair = "BracePair";
+
+		/// <summary>
+		/// TData = <see cref="Decompiler.LineSeparator"/>
+		/// </summary>
+		public const string LineSeparator = "LineSeparator";
 	}
 }

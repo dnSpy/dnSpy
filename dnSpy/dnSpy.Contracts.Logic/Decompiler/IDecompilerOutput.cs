@@ -143,6 +143,14 @@ namespace dnSpy.Contracts.Decompiler {
 			output.AddCustomData(PredefinedCustomDataIds.BracePair, new BracePair(left, right));
 
 		/// <summary>
+		/// Adds a <see cref="LineSeparator"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="position">Position of the line that gets a line separator</param>
+		public static void AddLineSeparator(this IDecompilerOutput output, int position) =>
+			output.AddCustomData(PredefinedCustomDataIds.LineSeparator, new LineSeparator(position));
+
+		/// <summary>
 		/// Writes text and a new line
 		/// </summary>
 		/// <param name="output">Output</param>

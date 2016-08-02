@@ -182,7 +182,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				var theRef = currentSpanReference.Value;
 				foreach (var span in spans) {
 					foreach (var spanData in spanReferenceCollection.Find(span.Span)) {
-						Debug.Assert(spanData.Span.End <= snapshot.Length);
 						if (spanData.Span.End > snapshot.Length)
 							continue;
 						if (spanData.Data == null)

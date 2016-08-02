@@ -48,6 +48,7 @@
     <Compile Include="Decompiler\IdentifierEscaper.cs" />
     <Compile Include="Decompiler\IInstructionBytesReader.cs" />
     <Compile Include="Decompiler\InstructionReference.cs" />
+    <Compile Include="Decompiler\LineSeparator.cs" />
     <Compile Include="Decompiler\MemberComparer.cs" />
     <Compile Include="Decompiler\MethodDebugInfo.cs" />
     <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />

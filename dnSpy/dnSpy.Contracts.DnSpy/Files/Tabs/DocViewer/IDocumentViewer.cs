@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// Gets the text view. Don't write to the text buffer directly, use
 		/// <see cref="SetContent(DocumentViewerContent, IContentType)"/> to write new text.
 		/// </summary>
-		IDnSpyTextView TextView { get; }
+		IDnSpyWpfTextView TextView { get; }
 
 		/// <summary>
 		/// Gets the caret

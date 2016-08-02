@@ -881,5 +881,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.BraceMatching"/>
 		/// </summary>
 		public const string BraceMatching = "brace matching";
+
+		/// <summary>
+		/// <see cref="TextColor.LineSeparator"/>
+		/// </summary>
+		public const string LineSeparator = "LineSeparator";
 	}
 }

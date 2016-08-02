@@ -1786,6 +1786,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.BreakpointStatementMarker, "Breakpoint statement (marker)"),
 			new BrushColorInfo(ColorType.DisabledBreakpointStatementMarker, "Disabled breakpoint statement (marker)"),
 			new BrushColorInfo(ColorType.BraceMatching, "Brace matching"),
+			new BrushColorInfo(ColorType.LineSeparator, "Line separator"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
 				DefaultBackground = "White",

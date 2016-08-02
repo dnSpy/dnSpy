@@ -17,19 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// dnSpy adornment layers
+	/// Line separator
 	/// </summary>
-	public static class PredefinedDnSpyAdornmentLayers {
+	public struct LineSeparator {
 		/// <summary>
-		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
+		/// Gets the position of the line that gets a line separator
 		/// </summary>
-		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
+		public int Position { get; }
 
 		/// <summary>
-		/// Line separator adornment layer
+		/// Constructor
 		/// </summary>
-		public const string LineSeparator = "dnSpy-LineSeparator";
+		/// <param name="position">Position of the line that gets a line separator</param>
+		public LineSeparator(int position) {
+			Position = position;
+		}
 	}
 }

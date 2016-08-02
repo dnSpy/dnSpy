@@ -474,6 +474,7 @@
     <Compile Include="Text\Editor\IDnSpyWpfTextView.cs" />
     <Compile Include="Text\Editor\IDnSpyWpfTextViewHost.cs" />
     <Compile Include="Text\Editor\IGlyphTextMarkerService.cs" />
+    <Compile Include="Text\Editor\ILineSeparatorTag.cs" />
     <Compile Include="Text\Editor\ILogEditor.cs" />
     <Compile Include="Text\Editor\ILogEditorCreator.cs" />
     <Compile Include="Text\Editor\IndentStyle.cs" />

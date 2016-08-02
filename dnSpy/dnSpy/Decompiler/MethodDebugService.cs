@@ -65,7 +65,6 @@ namespace dnSpy.Decompiler {
 			if (methodDebugInfos.Count == 0)
 				return Array.Empty<MethodSourceStatement>();
 
-			Debug.Assert(textPosition <= snapshot.Length);
 			if (textPosition > snapshot.Length)
 				return Array.Empty<MethodSourceStatement>();
 			var line = snapshot.GetLineFromPosition(textPosition);

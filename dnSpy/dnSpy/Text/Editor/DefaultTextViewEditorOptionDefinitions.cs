@@ -76,4 +76,10 @@ namespace dnSpy.Text.Editor {
 		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.BraceMatchingId;
 		public override bool Default => true;
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class LineSeparatorEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.LineSeparatorId;
+		public override bool Default => false;
+	}
 }

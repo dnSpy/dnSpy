@@ -52,8 +52,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.bracePairServiceProvider = bracePairServiceProvider;
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
-			textView.Properties.GetOrCreateSingletonProperty(typeof(BracePairViewTagger), () => new BracePairViewTagger(textView, bracePairServiceProvider.GetBracePairService(textView))) as ITagger<T>;
+		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+			if (textView.TextBuffer != buffer)
+				return null;
+			return textView.Properties.GetOrCreateSingletonProperty(typeof(BracePairViewTagger), () => new BracePairViewTagger(textView, bracePairServiceProvider.GetBracePairService(textView))) as ITagger<T>;
+		}
 	}
 
 	sealed class BracePairViewTagger : ITagger<IBracePairTag> {

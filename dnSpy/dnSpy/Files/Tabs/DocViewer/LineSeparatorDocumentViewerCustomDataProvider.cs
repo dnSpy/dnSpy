@@ -17,19 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
-	/// <summary>
-	/// dnSpy adornment layers
-	/// </summary>
-	public static class PredefinedDnSpyAdornmentLayers {
-		/// <summary>
-		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
-		/// </summary>
-		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
+using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 
-		/// <summary>
-		/// Line separator adornment layer
-		/// </summary>
-		public const string LineSeparator = "dnSpy-LineSeparator";
+namespace dnSpy.Files.Tabs.DocViewer {
+	[ExportDocumentViewerCustomDataProvider]
+	sealed class LineSeparatorDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
+		public void OnCustomData(IDocumentViewerCustomDataContext context) {
+			var data = context.GetData<LineSeparator>(PredefinedCustomDataIds.LineSeparator);
+			var coll = data.Length == 0 ? LineSeparatorCollection.Empty : new LineSeparatorCollection(data);
+			context.AddCustomData(DocumentViewerContentDataIds.LineSeparator, coll);
+		}
 	}
 }

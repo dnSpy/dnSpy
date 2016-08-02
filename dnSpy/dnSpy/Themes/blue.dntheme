@@ -158,6 +158,7 @@
 		<color name="debuglogtimestamp" fg="#FF6600CC" />
 		<color name="glyphmargin" bg="#FFE6E7E8" />
 		<color name="bracematching" bg="#FFDBE0CC" />
+		<color name="lineseparator" fg="#FFA5A5A5" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

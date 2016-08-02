@@ -35,6 +35,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> EnableColorizationId = new EditorOptionKey<bool>("ITextView/EnableColorization");
 		public static readonly EditorOptionKey<bool> ReferenceHighlightingId = new EditorOptionKey<bool>("ITextView/ReferenceHighlighting");
 		public static readonly EditorOptionKey<bool> BraceMatchingId = new EditorOptionKey<bool>("ITextView/BraceMatching");
+		public static readonly EditorOptionKey<bool> LineSeparatorId = new EditorOptionKey<bool>("ITextView/LineSeparator");
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

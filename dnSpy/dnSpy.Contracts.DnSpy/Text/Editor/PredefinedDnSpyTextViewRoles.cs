@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <see cref="IGlyphTextMarkerService"/> services can be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Interactive"/> is already used.
 		/// </summary>
-		public const string GlyphTextMarkerServiceable = "dnSpy-GlyphTextMarkerServiceable";
+		public const string CanHaveGlyphTextMarkerService = "dnSpy-CanHaveGlyphTextMarkerService";
 
 		/// <summary>
 		/// Allows the current line highlighter to be used. Not needed if
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Allows the line number margin to be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
 		/// </summary>
-		public const string CanHaveLineNumberMargin = "dnSpy-LineNumberMargin";
+		public const string CanHaveLineNumberMargin = "dnSpy-CanHaveLineNumberMargin";
 
 		/// <summary>
 		/// Enables the custom line number margin, see <see cref="Editor.CustomLineNumberMargin"/>
@@ -84,5 +84,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <see cref="IDocumentViewer"/> text view role
 		/// </summary>
 		public const string DocumentViewer = "dnSpy-IDocumentViewer";
+
+		/// <summary>
+		/// Allows line separators to be used. Not needed if
+		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
+		/// </summary>
+		public const string CanHaveLineSeparator = "dnSpy-CanHaveLineSeparator";
 	}
 }

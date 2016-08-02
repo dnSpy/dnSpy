@@ -17,19 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text.Tagging;
+
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// dnSpy adornment layers
+	/// Line separator tag
 	/// </summary>
-	public static class PredefinedDnSpyAdornmentLayers {
+	public interface ILineSeparatorTag : ITag {
 		/// <summary>
-		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
+		/// true to put the line separator after the real line
 		/// </summary>
-		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
+		bool IsPhysicalLine { get; }
+	}
+
+	/// <summary>
+	/// Line separator tag
+	/// </summary>
+	public sealed class LineSeparatorTag : ILineSeparatorTag {
+		/// <summary>
+		/// true to put the line separator after the real line
+		/// </summary>
+		public bool IsPhysicalLine { get; }
 
 		/// <summary>
-		/// Line separator adornment layer
+		/// Constructor
 		/// </summary>
-		public const string LineSeparator = "dnSpy-LineSeparator";
+		/// <param name="isPhysicalLine">true to put the line separator after the real line</param>
+		public LineSeparatorTag(bool isPhysicalLine) {
+			IsPhysicalLine = isPhysicalLine;
+		}
 	}
 }

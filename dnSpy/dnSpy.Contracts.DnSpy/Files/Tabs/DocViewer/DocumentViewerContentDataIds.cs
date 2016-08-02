@@ -40,5 +40,10 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <see cref="Decompiler.BracePair"/> data
 		/// </summary>
 		public const string BracePair = "DebugInfo-BracePair";
+
+		/// <summary>
+		/// <see cref="Decompiler.LineSeparator"/> data
+		/// </summary>
+		public const string LineSeparator = "DebugInfo-LineSeparator";
 	}
 }

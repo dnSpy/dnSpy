@@ -123,5 +123,16 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDnSpyTextViewOptions.BraceMatchingId);
 		}
+
+		/// <summary>
+		/// Returns true if line separators should be shown
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsLineSeparatorEnabled(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.LineSeparatorId);
+		}
 	}
 }

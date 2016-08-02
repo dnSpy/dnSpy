@@ -32,7 +32,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IViewTaggerProvider))]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.GlyphTextMarkerServiceable)]
+	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveGlyphTextMarkerService)]
 	[TagType(typeof(IGlyphTextMarkerTag))]
 	sealed class GlyphTextViewMarkerGlyphTextMarkerTaggerProvider : IViewTaggerProvider {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;

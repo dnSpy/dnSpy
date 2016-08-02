@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 	[Name(PredefinedMarginNames.Glyph)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.GlyphTextMarkerServiceable)]
+	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveGlyphTextMarkerService)]
 	[Order(Before = PredefinedMarginNames.LeftSelection)]
 	sealed class GlyphMarginProvider : IWpfTextViewMarginProvider {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
