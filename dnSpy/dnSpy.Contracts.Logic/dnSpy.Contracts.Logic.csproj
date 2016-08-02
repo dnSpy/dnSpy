@@ -56,6 +56,7 @@
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
     <Compile Include="Decompiler\SourceLocal.cs" />
     <Compile Include="Decompiler\SourceStatement.cs" />
+    <Compile Include="Decompiler\SpanReference.cs" />
     <Compile Include="Decompiler\StringBuilderDecompilerOutput.cs" />
     <Compile Include="Decompiler\TextSpan.cs" />
     <Compile Include="Decompiler\TextSpanData.cs" />

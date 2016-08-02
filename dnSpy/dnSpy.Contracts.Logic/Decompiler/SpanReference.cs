@@ -19,17 +19,34 @@
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Predefined custom data IDs passed to <see cref="IDecompilerOutput.AddCustomData{TData}(string, TData)"/>
+	/// Contains a span and a reference. Should be used for references to eg. keywords and
+	/// is used by the Visual Basic decompiler to highlight eg. 'While', 'End While', etc.
+	/// 
+	/// Normal clickable references should be created by calling
+	/// <see cref="IDecompilerOutput.Write(string, object, DecompilerReferenceFlags, object)"/>.
+	/// 
+	/// Use <see cref="DecompilerOutputExtensions.AddSpanReference(IDecompilerOutput, SpanReference)"/>
+	/// to add an instance.
 	/// </summary>
-	public static class PredefinedCustomDataIds {
+	public struct SpanReference {
 		/// <summary>
-		/// TData = <see cref="MethodDebugInfo"/>
+		/// Gets the reference
 		/// </summary>
-		public const string DebugInfo = "DebugInfo";
+		public object Reference { get; }
 
 		/// <summary>
-		/// TData = <see cref="Decompiler.SpanReference"/>
+		/// Gets the span
 		/// </summary>
-		public const string SpanReference = "SpanReference";
+		public TextSpan Span { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="reference">Reference</param>
+		/// <param name="span">Span</param>
+		public SpanReference(object reference, TextSpan span) {
+			Reference = reference;
+			Span = span;
+		}
 	}
 }

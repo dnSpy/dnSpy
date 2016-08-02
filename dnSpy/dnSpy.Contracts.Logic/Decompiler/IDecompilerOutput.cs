@@ -108,6 +108,24 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		/// <summary>
+		/// Adds a <see cref="SpanReference"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="spanReference">Data</param>
+		public static void AddSpanReference(this IDecompilerOutput output, SpanReference spanReference) =>
+			output.AddCustomData(PredefinedCustomDataIds.SpanReference, spanReference);
+
+		/// <summary>
+		/// Adds a <see cref="SpanReference"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="reference">Reference</param>
+		/// <param name="start">Start position</param>
+		/// <param name="end">End position</param>
+		public static void AddSpanReference(this IDecompilerOutput output, object reference, int start, int end) =>
+			output.AddCustomData(PredefinedCustomDataIds.SpanReference, new SpanReference(reference, TextSpan.FromBounds(start, end)));
+
+		/// <summary>
 		/// Writes text and a new line
 		/// </summary>
 		/// <param name="output">Output</param>

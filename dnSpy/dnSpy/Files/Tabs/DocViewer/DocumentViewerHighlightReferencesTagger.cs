@@ -63,6 +63,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		readonly ITextView textView;
 		SpanData<ReferenceInfo>? currentReference;
+		SpanData<object>? currentSpanReference;
+		SpanDataCollection<object> spanReferenceCollection;
 		IDocumentViewer documentViewer;
 		bool canHighlightReferences;
 
@@ -70,6 +72,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
+			this.spanReferenceCollection = SpanDataCollection<object>.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
 			UpdateReferenceHighlighting();
@@ -84,11 +87,15 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			canHighlightReferences = textView.Options.IsReferenceHighlightingEnabled();
 			if (canHighlightReferences) {
 				textView.Caret.PositionChanged += Caret_PositionChanged;
+				spanReferenceCollection = GetSpanReferenceCollection();
 				currentReference = GetCurrentReference();
+				currentSpanReference = GetCurrentSpanReference();
 			}
 			else {
 				textView.Caret.PositionChanged -= Caret_PositionChanged;
 				currentReference = null;
+				currentSpanReference = null;
+				spanReferenceCollection = SpanDataCollection<object>.Empty;
 			}
 			RefreshAllTags();
 		}
@@ -110,9 +117,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				return;
 			if (documentViewer == null)
 				return;
-			if (currentReference == null)
+			if (currentReference == null && currentSpanReference == null)
 				return;
 			currentReference = null;
+			currentSpanReference = null;
 			RefreshAllTags();
 		}
 
@@ -132,11 +140,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		void DocumentViewer_GotNewContent(object sender, DocumentViewerGotNewContentEventArgs e) {
-			if (canHighlightReferences)
+			if (canHighlightReferences) {
+				spanReferenceCollection = GetSpanReferenceCollection();
 				currentReference = GetCurrentReference();
+				currentSpanReference = GetCurrentSpanReference();
+			}
 		}
 
 		SpanData<ReferenceInfo>? GetCurrentReference() => documentViewer?.SelectedReference;
+		SpanDataCollection<object> GetSpanReferenceCollection() => documentViewer?.Content.GetCustomData<SpanDataCollection<object>>(DocumentViewerContentDataIds.SpanReference) ?? SpanDataCollection<object>.Empty;
+
+		SpanData<object>? GetCurrentSpanReference() {
+			if (documentViewer == null)
+				return null;
+			return SpanDataCollectionUtilities.GetCurrentSpanReference(spanReferenceCollection, documentViewer.TextView);
+		}
 
 		static readonly ITextMarkerTag HighlightedDefinitionTag = new TextMarkerTag(ThemeClassificationTypeNameKeys.HighlightedDefinition);
 		static readonly ITextMarkerTag HighlightedWrittenReferenceTag = new TextMarkerTag(ThemeClassificationTypeNameKeys.HighlightedWrittenReference);
@@ -153,23 +171,46 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public IEnumerable<ITagSpan<ITextMarkerTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			if (documentViewer == null)
 				yield break;
-			if (currentReference == null)
-				yield break;
-			if (spans.Count == 0)
-				yield break;
-			var snapshot = spans[0].Snapshot;
-			var theRef = currentReference.Value;
-			foreach (var span in spans) {
-				foreach (var spanData in documentViewer.Content.ReferenceCollection.Find(span.Span)) {
-					Debug.Assert(spanData.Span.End <= snapshot.Length);
-					if (spanData.Span.End > snapshot.Length)
-						continue;
-					var tag = TryGetTextMarkerTag(spanData);
-					if (tag == null)
-						continue;
-					if (!SpanDataReferenceInfoExtensions.CompareReferences(spanData.Data, theRef.Data))
-						continue;
-					yield return new TagSpan<ITextMarkerTag>(new SnapshotSpan(snapshot, spanData.Span), tag);
+
+			// It's not common for both references to be non-null but it does happen if it's VB and the reference
+			// is at eg. a Get keyword. For that reason, check for span refs first or we won't see the definition
+			// highlight because it's hidden behind another span reference.
+			if (currentSpanReference != null) {
+				if (spans.Count == 0)
+					yield break;
+				var snapshot = spans[0].Snapshot;
+				var theRef = currentSpanReference.Value;
+				foreach (var span in spans) {
+					foreach (var spanData in spanReferenceCollection.Find(span.Span)) {
+						Debug.Assert(spanData.Span.End <= snapshot.Length);
+						if (spanData.Span.End > snapshot.Length)
+							continue;
+						if (spanData.Data == null)
+							continue;
+						if (!object.Equals(spanData.Data, theRef.Data))
+							continue;
+						yield return new TagSpan<ITextMarkerTag>(new SnapshotSpan(snapshot, spanData.Span), HighlightedReferenceTag);
+					}
+				}
+			}
+
+			if (currentReference != null) {
+				if (spans.Count == 0)
+					yield break;
+				var snapshot = spans[0].Snapshot;
+				var theRef = currentReference.Value;
+				foreach (var span in spans) {
+					foreach (var spanData in documentViewer.Content.ReferenceCollection.Find(span.Span)) {
+						Debug.Assert(spanData.Span.End <= snapshot.Length);
+						if (spanData.Span.End > snapshot.Length)
+							continue;
+						var tag = TryGetTextMarkerTag(spanData);
+						if (tag == null)
+							continue;
+						if (!SpanDataReferenceInfoExtensions.CompareReferences(spanData.Data, theRef.Data))
+							continue;
+						yield return new TagSpan<ITextMarkerTag>(new SnapshotSpan(snapshot, spanData.Span), tag);
+					}
 				}
 			}
 		}
@@ -182,14 +223,40 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			return SpanDataReferenceInfoExtensions.CompareReferences(a.Value.Data, b.Value.Data);
 		}
 
+		static bool IsSameReference(SpanData<object>? a, SpanData<object>? b) {
+			if (a == null && b == null)
+				return true;
+			if (a == null || b == null)
+				return false;
+			return object.Equals(a.Value.Data, b.Value.Data);
+		}
+
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
 			if (documentViewer == null)
 				return;
+
+			bool refresh = false;
+
 			var newRef = GetCurrentReference();
-			if (IsSameReference(newRef, currentReference))
-				return;
-			currentReference = newRef;
-			RefreshAllTags();
+			if (newRef != null) {
+				if (!IsSameReference(newRef, currentReference))
+					refresh = true;
+			}
+
+			var newSpanRef = GetCurrentSpanReference();
+			if (newSpanRef != null) {
+				if (!IsSameReference(newSpanRef, currentSpanReference))
+					refresh = true;
+			}
+
+			if (((currentReference == null) != (newRef == null)) || ((currentSpanReference == null) != (newSpanRef == null)))
+				refresh = true;
+
+			if (refresh) {
+				currentReference = newRef;
+				currentSpanReference = newSpanRef;
+				RefreshAllTags();
+			}
 		}
 
 		void RefreshAllTags() {
@@ -199,6 +266,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		void TextView_Closed(object sender, EventArgs e) {
 			currentReference = null;
+			currentSpanReference = null;
+			spanReferenceCollection = SpanDataCollection<object>.Empty;
 			textView.Closed -= TextView_Closed;
 			textView.Caret.PositionChanged -= Caret_PositionChanged;
 			textView.Options.OptionChanged -= Options_OptionChanged;

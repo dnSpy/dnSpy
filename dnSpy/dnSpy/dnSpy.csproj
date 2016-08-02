@@ -149,7 +149,9 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
     <Compile Include="Files\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
+    <Compile Include="Files\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
     <Compile Include="Files\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
+    <Compile Include="Files\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
     <Compile Include="Files\Tabs\FileListLoader.cs" />

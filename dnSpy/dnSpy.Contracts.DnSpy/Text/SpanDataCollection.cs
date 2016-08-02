@@ -227,8 +227,19 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static SpanDataCollectionBuilder<TData> CreateBuilder() => new SpanDataCollectionBuilder<TData>(true);
 
+		/// <summary>
+		/// Creates a <see cref="SpanDataCollectionBuilder{TData}"/>
+		/// </summary>
+		/// <param name="capacity">Capacity</param>
+		/// <returns></returns>
+		public static SpanDataCollectionBuilder<TData> CreateBuilder(int capacity) => new SpanDataCollectionBuilder<TData>(capacity);
+
 		SpanDataCollectionBuilder(bool unused) {
 			this.list = new List<SpanData<TData>>();
+		}
+
+		SpanDataCollectionBuilder(int capacity) {
+			this.list = new List<SpanData<TData>>(capacity);
 		}
 
 		/// <summary>
@@ -246,6 +257,6 @@ namespace dnSpy.Contracts.Text {
 		/// Creates a <see cref="SpanDataCollection{TData}"/>
 		/// </summary>
 		/// <returns></returns>
-		public SpanDataCollection<TData> Create() => new SpanDataCollection<TData>(list.ToArray());
+		public SpanDataCollection<TData> Create() => list.Count == 0 ? SpanDataCollection<TData>.Empty : new SpanDataCollection<TData>(list.ToArray());
 	}
 }

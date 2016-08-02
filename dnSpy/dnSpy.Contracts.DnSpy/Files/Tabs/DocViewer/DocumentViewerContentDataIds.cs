@@ -19,6 +19,7 @@
 
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
@@ -29,5 +30,10 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// Data is a <see cref="ReadOnlyCollection{T}"/> collection (<see cref="MethodDebugInfo"/> elements)
 		/// </summary>
 		public const string DebugInfo = "DebugInfo-Content";
+
+		/// <summary>
+		/// Data is a <see cref="SpanDataCollection{TData}"/> (<see cref="object"/> elements)
+		/// </summary>
+		public const string SpanReference = "DebugInfo-SpanReference";
 	}
 }
