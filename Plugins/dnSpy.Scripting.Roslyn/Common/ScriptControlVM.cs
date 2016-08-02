@@ -617,7 +617,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			else
 				ReplEditor.OutputPrint(Format(value, printOptions.RoslynPrintOptions), color, startOnNewLine);
 		}
- 
+
 		void ObjectOutputLine(object color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
 			ObjectOutput(color, printOptions, value, startOnNewLine);
 			ReplEditor.OutputPrintLine(string.Empty, color);

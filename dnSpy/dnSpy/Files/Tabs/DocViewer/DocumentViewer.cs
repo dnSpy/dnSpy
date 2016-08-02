@@ -146,7 +146,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
-				return documentViewerControl.TextView.VisualElement; ;
+				return documentViewerControl.TextView.VisualElement;
 			}
 		}
 
@@ -390,7 +390,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public IEnumerable<SpanData<ReferenceInfo>> GetSelectedReferences() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			return documentViewerControl.GetSelectedTextReferences(); ;
+			return documentViewerControl.GetSelectedTextReferences();
 		}
 
 		public object SaveReferencePosition() {
