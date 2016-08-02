@@ -49,6 +49,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				case TextReferenceIds.ClearMarkedReferences:
 					return CommandTargetStatus.Handled;
 
+				case TextReferenceIds.MoveToMatchingBrace:
+				case TextReferenceIds.MoveToMatchingBraceSelect:
+					return CommandTargetStatus.NotHandled;
+
 				default:
 					Debug.Fail($"Unknown {nameof(TextReferenceIds)} id: {(TextReferenceIds)cmdId}");
 					return CommandTargetStatus.NotHandled;
@@ -97,6 +101,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 					DocumentViewerHighlightReferencesTagger.ClearMarkedReferences(documentViewer.TextView);
 					documentViewer.TextView.Selection.Clear();
 					return CommandTargetStatus.Handled;
+
+				case TextReferenceIds.MoveToMatchingBrace:
+				case TextReferenceIds.MoveToMatchingBraceSelect:
+					return CommandTargetStatus.NotHandled;
 
 				default:
 					Debug.Fail($"Unknown {nameof(TextReferenceIds)} id: {(TextReferenceIds)cmdId}");

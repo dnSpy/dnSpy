@@ -70,4 +70,10 @@ namespace dnSpy.Text.Editor {
 		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.ReferenceHighlightingId;
 		public override bool Default => true;
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class BraceMatchingEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.BraceMatchingId;
+		public override bool Default => true;
+	}
 }

@@ -126,6 +126,23 @@ namespace dnSpy.Contracts.Decompiler {
 			output.AddCustomData(PredefinedCustomDataIds.SpanReference, new SpanReference(reference, TextSpan.FromBounds(start, end)));
 
 		/// <summary>
+		/// Adds a <see cref="BracePair"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="bracePair">Brace pair</param>
+		public static void AddBracePair(this IDecompilerOutput output, BracePair bracePair) =>
+			output.AddCustomData(PredefinedCustomDataIds.BracePair, bracePair);
+
+		/// <summary>
+		/// Adds a <see cref="BracePair"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="left">Span of left brace</param>
+		/// <param name="right">Span of right brace</param>
+		public static void AddBracePair(this IDecompilerOutput output, TextSpan left, TextSpan right) =>
+			output.AddCustomData(PredefinedCustomDataIds.BracePair, new BracePair(left, right));
+
+		/// <summary>
 		/// Writes text and a new line
 		/// </summary>
 		/// <param name="output">Output</param>

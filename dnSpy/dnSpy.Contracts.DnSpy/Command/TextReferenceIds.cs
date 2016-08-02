@@ -56,5 +56,15 @@ namespace dnSpy.Contracts.Command {
 		/// Clear all marked references
 		/// </summary>
 		ClearMarkedReferences,
+
+		/// <summary>
+		/// Moves the caret to the matching brace
+		/// </summary>
+		MoveToMatchingBrace,
+
+		/// <summary>
+		/// Moves the caret to the matching brace, select span
+		/// </summary>
+		MoveToMatchingBraceSelect,
 	}
 }

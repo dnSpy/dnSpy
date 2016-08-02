@@ -876,5 +876,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.GlyphMargin"/>
 		/// </summary>
 		public const string GlyphMargin = "Theme-GlyphMargin";
+
+		/// <summary>
+		/// <see cref="TextColor.BraceMatching"/>
+		/// </summary>
+		public const string BraceMatching = "brace matching";
 	}
 }

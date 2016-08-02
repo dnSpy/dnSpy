@@ -112,5 +112,16 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDnSpyTextViewOptions.ReferenceHighlightingId);
 		}
+
+		/// <summary>
+		/// Returns true if braces should be highlighted
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsBraceMatchingEnabled(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.BraceMatchingId);
+		}
 	}
 }

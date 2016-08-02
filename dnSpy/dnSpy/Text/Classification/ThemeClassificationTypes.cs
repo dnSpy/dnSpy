@@ -201,6 +201,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexInactiveCaret),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexSelection),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.GlyphMargin),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BraceMatching),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

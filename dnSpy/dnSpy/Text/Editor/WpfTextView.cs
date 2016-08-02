@@ -183,10 +183,6 @@ namespace dnSpy.Text.Editor {
 			this.textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
 			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(this);
 			this.editorFormatMap = editorFormatMapService.GetEditorFormatMap(this);
-			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
-				RegisteredCommandElement = commandManager.Register(VisualElement, this);
-			else
-				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
 			this.textLayer = new TextLayer(GetAdornmentLayer(PredefinedAdornmentLayers.Text));
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection), editorFormatMap);
@@ -209,6 +205,11 @@ namespace dnSpy.Text.Editor {
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
 			InitializeZoom();
+
+			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
+				RegisteredCommandElement = commandManager.Register(VisualElement, this);
+			else
+				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
 			NotifyTextViewCreated(TextViewModel.DataModel.ContentType, null);
 		}

@@ -38,5 +38,8 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
 		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = 4000;
+
+		/// <summary>Brace pair service</summary>
+		public const double ORDER_BRACEPAIRSERVICE = 5000;
 	}
 }

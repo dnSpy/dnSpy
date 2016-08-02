@@ -243,6 +243,11 @@ namespace dnSpy.Contracts.Text {
 		}
 
 		/// <summary>
+		/// Clears the created list
+		/// </summary>
+		public void Clear() => list.Clear();
+
+		/// <summary>
 		/// Adds span and data. The span must be located after the previously added span
 		/// </summary>
 		/// <param name="span">Span</param>

@@ -27,6 +27,7 @@
 		<color name="hexinactivecaret" bg="#FFFFFFFF" />
 		<color name="hexselection" bg="#33FFFFFF" />
 		<color name="glyphmargin" bg="#FFE6E7E8" />
+		<color name="bracematching" bg="#FF0E4583" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

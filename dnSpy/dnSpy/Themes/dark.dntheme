@@ -157,6 +157,7 @@
 		<color name="debuglogmda" fg="#FFFF0000" />
 		<color name="debuglogtimestamp" fg="#FFCC99FF" />
 		<color name="glyphmargin" bg="#FF333333" />
+		<color name="bracematching" bg="#FF0E4583" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

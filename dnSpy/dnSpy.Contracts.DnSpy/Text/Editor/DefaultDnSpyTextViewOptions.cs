@@ -34,6 +34,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const int DefaultRefreshScreenOnChangeWaitMilliSeconds = 150;
 		public static readonly EditorOptionKey<bool> EnableColorizationId = new EditorOptionKey<bool>("ITextView/EnableColorization");
 		public static readonly EditorOptionKey<bool> ReferenceHighlightingId = new EditorOptionKey<bool>("ITextView/ReferenceHighlighting");
+		public static readonly EditorOptionKey<bool> BraceMatchingId = new EditorOptionKey<bool>("ITextView/BraceMatching");
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

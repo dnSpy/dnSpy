@@ -36,7 +36,8 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Alt(Key.Up, TextReferenceIds.MoveToPreviousDefinition.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.F12, TextReferenceIds.FollowReference.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.F12, TextReferenceIds.FollowReferenceNewTab.ToCommandInfo());
-			yield return CommandShortcut.Create(Key.Escape, TextReferenceIds.ClearMarkedReferences.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.OemCloseBrackets, TextReferenceIds.MoveToMatchingBrace.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.OemCloseBrackets, TextReferenceIds.MoveToMatchingBraceSelect.ToCommandInfo());
 		}
 	}
 }

@@ -194,6 +194,7 @@ namespace dnSpy.Contracts.Themes {
 		HexInactiveCaret,
 		HexSelection,
 		GlyphMargin,
+		BraceMatching,
 
 		// Must be last in this group
 		LastNR,

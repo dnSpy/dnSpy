@@ -17,24 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Decompiler {
-	/// <summary>
-	/// Predefined custom data IDs passed to <see cref="IDecompilerOutput.AddCustomData{TData}(string, TData)"/>
-	/// </summary>
-	public static class PredefinedCustomDataIds {
-		/// <summary>
-		/// TData = <see cref="MethodDebugInfo"/>
-		/// </summary>
-		public const string DebugInfo = "DebugInfo";
+using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 
-		/// <summary>
-		/// TData = <see cref="Decompiler.SpanReference"/>
-		/// </summary>
-		public const string SpanReference = "SpanReference";
-
-		/// <summary>
-		/// TData = <see cref="Decompiler.BracePair"/>
-		/// </summary>
-		public const string BracePair = "BracePair";
+namespace dnSpy.Files.Tabs.DocViewer {
+	[ExportDocumentViewerCustomDataProvider]
+	sealed class BracePairDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
+		public void OnCustomData(IDocumentViewerCustomDataContext context) {
+			var data = context.GetData<BracePair>(PredefinedCustomDataIds.BracePair);
+			var coll = data.Length == 0 ? BracePairCollection.Empty : new BracePairCollection(data);
+			context.AddCustomData(DocumentViewerContentDataIds.BracePair, coll);
+		}
 	}
 }

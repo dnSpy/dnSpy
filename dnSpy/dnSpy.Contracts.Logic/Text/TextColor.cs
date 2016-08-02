@@ -196,6 +196,7 @@ namespace dnSpy.Contracts.Text {
 		HexInactiveCaret,
 		HexSelection,
 		GlyphMargin,
+		BraceMatching,
 
 		/// <summary>
 		/// Must be last
@@ -378,6 +379,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexInactiveCaret = TextColor.HexInactiveCaret;
 		public static readonly object HexSelection = TextColor.HexSelection;
 		public static readonly object GlyphMargin = TextColor.GlyphMargin;
+		public static readonly object BraceMatching = TextColor.BraceMatching;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -562,6 +564,7 @@ namespace dnSpy.Contracts.Text {
 			HexInactiveCaret,
 			HexSelection,
 			GlyphMargin,
+			BraceMatching,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

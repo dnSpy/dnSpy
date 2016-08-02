@@ -899,6 +899,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.GlyphMargin)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition GlyphMarginClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BraceMatching)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BraceMatchingClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2422,6 +2427,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class GlyphMargin : ThemeClassificationFormatDefinition {
 			GlyphMargin() : base(TextColor.GlyphMargin) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BraceMatching)]
+		[Name(ThemeClassificationTypeNameKeys.BraceMatching)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class BraceMatching : ThemeClassificationFormatDefinition {
+			BraceMatching() : base(TextColor.BraceMatching) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

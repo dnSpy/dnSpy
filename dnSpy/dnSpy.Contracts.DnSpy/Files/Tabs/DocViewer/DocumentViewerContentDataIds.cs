@@ -35,5 +35,10 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// Data is a <see cref="SpanDataCollection{TData}"/> (<see cref="object"/> elements)
 		/// </summary>
 		public const string SpanReference = "DebugInfo-SpanReference";
+
+		/// <summary>
+		/// <see cref="Decompiler.BracePair"/> data
+		/// </summary>
+		public const string BracePair = "DebugInfo-BracePair";
 	}
 }
