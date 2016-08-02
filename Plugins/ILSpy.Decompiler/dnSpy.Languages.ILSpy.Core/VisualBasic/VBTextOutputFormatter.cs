@@ -140,6 +140,12 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			var parameterDef = node.Annotation<Parameter>();
 			if (parameterDef != null)
 				return parameterDef;
+			if (node is ParameterDeclaration) {
+				node = ((ParameterDeclaration)node).Name;
+				parameterDef = node.Annotation<Parameter>();
+				if (parameterDef != null)
+					return parameterDef;
+			}
 
 			if (node is VariableIdentifier) {
 				var variable = ((VariableIdentifier)node).Name.Annotation<ILVariable>();
@@ -315,5 +321,18 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			foreach (var binSpan in state.ExtraBinSpans)
 				yield return binSpan;
 		}
+
+		public void AddSpanReference(object reference, int start, int end) {
+			Debug.Assert(reference != null);
+			if (reference != null)
+				output.AddSpanReference(reference, start, end);
+		}
+
+		public int NextPosition => output.NextPosition;
+
+		public void AddBracePair(int leftStart, int leftEnd, int rightStart, int rightEnd) =>
+			output.AddBracePair(TextSpan.FromBounds(leftStart, leftEnd), TextSpan.FromBounds(rightStart, rightEnd));
+
+		public void AddLineSeparator(int position) => output.AddLineSeparator(position);
 	}
 }
