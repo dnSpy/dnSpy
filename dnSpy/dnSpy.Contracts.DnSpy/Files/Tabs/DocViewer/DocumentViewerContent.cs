@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <param name="id">Key, eg., <see cref="DocumentViewerContentDataIds.DebugInfo"/></param>
 		/// <param name="data">Updated with data</param>
 		/// <returns></returns>
-		bool TryGetCustomData<TData>(string id, out TData data) {
+		public bool TryGetCustomData<TData>(string id, out TData data) {
 			object obj;
 			if (!customDataDict.TryGetValue(id, out obj)) {
 				data = default(TData);
