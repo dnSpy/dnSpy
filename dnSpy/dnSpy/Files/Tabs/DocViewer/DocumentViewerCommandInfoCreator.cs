@@ -35,6 +35,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			yield return CommandShortcut.Shift(Key.Tab, TextReferenceIds.MoveToPreviousReference.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.Enter, TextReferenceIds.FollowReference.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.Enter, TextReferenceIds.FollowReferenceNewTab.ToCommandInfo());
+			yield return CommandShortcut.Create(Key.Escape, TextReferenceIds.ClearMarkedReferences.ToCommandInfo());
 		}
 	}
 }
