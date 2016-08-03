@@ -29,7 +29,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (caretPos.VirtualSpaces > 0)
 				return null;
 			var pos = caretPos.BufferPosition;
-			SpanData<TData>? spanData;
 
 			// If it's at the end of a word wrapped line, don't mark the reference that's
 			// shown on the next line.
@@ -37,15 +36,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				pos = pos - 1;
 				var prevSpanData = spanReferenceCollection.Find(pos.Position);
 				if (prevSpanData == null || prevSpanData.Value.Span.End != pos.Position)
-					spanData = prevSpanData;
+					return prevSpanData;
 				else
-					spanData = null;
+					return null;
 			}
 			else
-				spanData = spanReferenceCollection.Find(pos.Position);
-			if (spanData == null)
-				return null;
-			return spanData.Value.Data == null ? null : spanData;
+				return spanReferenceCollection.Find(pos.Position);
 		}
 	}
 }

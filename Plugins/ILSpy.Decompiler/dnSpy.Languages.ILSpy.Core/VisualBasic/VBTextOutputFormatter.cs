@@ -327,7 +327,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 		public void AddHighlightedKeywordReference(object reference, int start, int end) {
 			Debug.Assert(reference != null);
 			if (reference != null)
-				output.AddSpanReference(reference, start, end);
+				output.AddSpanReference(reference, start, end, PredefinedSpanReferenceIds.HighlightRelatedKeywords);
 		}
 
 		public int NextPosition => output.NextPosition;

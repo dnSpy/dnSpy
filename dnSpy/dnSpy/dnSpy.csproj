@@ -151,6 +151,7 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerOutput.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
+    <Compile Include="Files\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
     <Compile Include="Files\Tabs\DocViewer\LineSeparatorCollection.cs" />
     <Compile Include="Files\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\LineSeparatorViewTagger.cs" />

@@ -17,27 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Decompiler {
+using dnSpy.Contracts.Decompiler;
+
+namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 	/// <summary>
-	/// Contains a span, a reference and a reference id. Should be used for references to eg. keywords
-	/// and is used by the Visual Basic decompiler to highlight eg. 'While', 'End While', etc.
-	/// 
-	/// Normal clickable references should be created by calling
-	/// <see cref="IDecompilerOutput.Write(string, object, DecompilerReferenceFlags, object)"/>.
-	/// 
-	/// Use <see cref="DecompilerOutputExtensions.AddSpanReference(IDecompilerOutput, SpanReference)"/>
-	/// to add an instance.
+	/// Reference and id. Created from a <see cref="SpanReference"/>
 	/// </summary>
-	public struct SpanReference {
+	public struct ReferenceAndId {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>
 		public object Reference { get; }
-
-		/// <summary>
-		/// Gets the span
-		/// </summary>
-		public TextSpan Span { get; }
 
 		/// <summary>
 		/// Id or null (eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/>). This is used to enable
@@ -49,11 +39,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference</param>
-		/// <param name="span">Span</param>
 		/// <param name="id">Reference id or null, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/></param>
-		public SpanReference(object reference, TextSpan span, string id) {
+		public ReferenceAndId(object reference, string id) {
 			Reference = reference;
-			Span = span;
 			Id = id;
 		}
 	}

@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		public const string DebugInfo = "DebugInfo-Content";
 
 		/// <summary>
-		/// Data is a <see cref="SpanDataCollection{TData}"/> (<see cref="object"/> elements)
+		/// Data is a <see cref="SpanDataCollection{TData}"/> (<see cref="ReferenceAndId"/> elements)
 		/// </summary>
 		public const string SpanReference = "DebugInfo-SpanReference";
 

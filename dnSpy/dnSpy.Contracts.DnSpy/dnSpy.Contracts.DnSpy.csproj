@@ -116,7 +116,9 @@
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerCustomDataContext.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerOutput.cs" />
+    <Compile Include="Files\Tabs\DocViewer\IDocumentViewerReferenceEnablerProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\IDocumentViewerService.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ReferenceAndId.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />

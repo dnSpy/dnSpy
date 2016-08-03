@@ -41,7 +41,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
 		public DocumentViewerContent Content => currentContent.Content;
 		readonly DocumentViewerContent emptyContent;
-		SpanDataCollection<object> spanReferenceCollection;
+		SpanDataCollection<ReferenceAndId> spanReferenceCollection;
 
 		readonly CachedColorsList cachedColorsList;
 		readonly IContentType defaultContentType;
@@ -70,7 +70,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.cachedColorsList = new CachedColorsList();
 			this.emptyContent = new DocumentViewerContent(string.Empty, CachedTextColorsCollection.Empty, SpanDataCollection<ReferenceInfo>.Empty, new Dictionary<string, object>());
 			this.currentContent = new CurrentContent(emptyContent, defaultContentType);
-			this.spanReferenceCollection = SpanDataCollection<object>.Empty;
+			this.spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
@@ -151,7 +151,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (currentContent.Equals(newContent))
 				return false;
 			currentContent = newContent;
-			spanReferenceCollection = newContent.Content.GetCustomData<SpanDataCollection<object>>(DocumentViewerContentDataIds.SpanReference) ?? SpanDataCollection<object>.Empty;
+			spanReferenceCollection = newContent.Content.GetCustomData<SpanDataCollection<ReferenceAndId>>(DocumentViewerContentDataIds.SpanReference) ?? SpanDataCollection<ReferenceAndId>.Empty;
 
 			TextView.TextBuffer.ChangeContentType(contentType, null);
 			cachedColorsList.Clear();
@@ -324,7 +324,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public SpanData<ReferenceInfo>? GetCurrentReferenceInfo() {
 			var caretPos = wpfTextViewHost.TextView.Caret.Position;
-			return SpanDataCollectionUtilities.GetCurrentSpanReference(currentContent.Content.ReferenceCollection, wpfTextViewHost.TextView);
+			var spanData = SpanDataCollectionUtilities.GetCurrentSpanReference(currentContent.Content.ReferenceCollection, wpfTextViewHost.TextView);
+			return spanData?.Data.Reference == null ? null : spanData;
 		}
 
 		public SpanData<ReferenceInfo>? GetReferenceInfo(int position) => currentContent.Content.ReferenceCollection.Find(position);
@@ -433,9 +434,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			// Check these references first because if the caret is at a Get declaration (VB), then there's
 			// no code references to it, but there's a 'Get' and 'End Get' in these refs that should be used.
 			var spanRefData = SpanDataCollectionUtilities.GetCurrentSpanReference(spanReferenceCollection, TextView);
-			if (spanRefData != null) {
+			if (spanRefData?.Data.Reference != null) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanReferenceCollection, spanRefData.Value.Span.Start, forward)) {
-					if (object.Equals(newSpanData.Data, spanRefData.Value.Data)) {
+					if (object.Equals(newSpanData.Data.Reference, spanRefData.Value.Data.Reference)) {
 						MoveCaretToSpan(newSpanData.Span);
 						break;
 					}
@@ -529,7 +530,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			CurrentWaitAdorner = null;
 			cachedColorsList.Clear();
 			currentContent = new CurrentContent(emptyContent, defaultContentType);
-			spanReferenceCollection = SpanDataCollection<object>.Empty;
+			spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 			wpfTextViewHost.TextView.TextBuffer.Replace(new Span(0, wpfTextViewHost.TextView.TextBuffer.CurrentSnapshot.Length), string.Empty);
 		}
 

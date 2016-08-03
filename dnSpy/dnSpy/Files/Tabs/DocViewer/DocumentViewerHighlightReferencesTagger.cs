@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -52,9 +53,27 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 	[ExportDocumentViewerListener]
 	sealed class HighlightReferencesDocumentViewerListener : IDocumentViewerListener {
+		readonly Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>> documentViewerReferenceEnablerProviders;
+
+		[ImportingConstructor]
+		HighlightReferencesDocumentViewerListener([ImportMany] Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>[] documentViewerReferenceEnablerProviders) {
+			this.documentViewerReferenceEnablerProviders = new Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>>(documentViewerReferenceEnablerProviders.Length, StringComparer.Ordinal);
+			foreach (var lazy in documentViewerReferenceEnablerProviders) {
+				string id = lazy.Metadata.Id;
+				Debug.Assert(id != null);
+				if (id == null)
+					continue;
+				bool b = this.documentViewerReferenceEnablerProviders.ContainsKey(id);
+				Debug.Assert(!b);
+				if (b)
+					continue;
+				this.documentViewerReferenceEnablerProviders.Add(id, lazy);
+			}
+		}
+
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.Added)
-				DocumentViewerHighlightReferencesTagger.OnDocumentViewerCreated(e.DocumentViewer);
+				DocumentViewerHighlightReferencesTagger.OnDocumentViewerCreated(e.DocumentViewer, documentViewerReferenceEnablerProviders);
 		}
 	}
 
@@ -63,18 +82,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		readonly ITextView textView;
 		SpanData<ReferenceInfo>? currentReference;
-		SpanData<object>? currentSpanReference;
-		SpanDataCollection<object> spanReferenceCollection;
+		SpanData<ReferenceAndId>? currentSpanReference;
+		SpanDataCollection<ReferenceAndId> spanReferenceCollection;
 		IDocumentViewer documentViewer;
+		Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>> documentViewerReferenceEnablerProviders;
+		Dictionary<string, IDocumentViewerReferenceEnabler> documentViewerReferenceEnablers;
 		bool canHighlightReferences;
 
 		DocumentViewerHighlightReferencesTagger(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
-			this.spanReferenceCollection = SpanDataCollection<object>.Empty;
+			this.spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
+			textView.Caret.PositionChanged += Caret_PositionChanged;
 			UpdateReferenceHighlighting();
 		}
 
@@ -85,18 +107,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		void UpdateReferenceHighlighting() {
 			canHighlightReferences = textView.Options.IsReferenceHighlightingEnabled();
-			if (canHighlightReferences) {
-				textView.Caret.PositionChanged += Caret_PositionChanged;
-				spanReferenceCollection = GetSpanReferenceCollection();
-				currentReference = GetCurrentReference();
-				currentSpanReference = GetCurrentSpanReference();
-			}
-			else {
-				textView.Caret.PositionChanged -= Caret_PositionChanged;
-				currentReference = null;
-				currentSpanReference = null;
-				spanReferenceCollection = SpanDataCollection<object>.Empty;
-			}
+			currentReference = GetCurrentReference();
 			RefreshAllTags();
 		}
 
@@ -113,8 +124,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		void ClearMarkedReferences() {
-			if (!canHighlightReferences)
-				return;
 			if (documentViewer == null)
 				return;
 			if (currentReference == null && currentSpanReference == null)
@@ -124,36 +133,38 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			RefreshAllTags();
 		}
 
-		public static void OnDocumentViewerCreated(IDocumentViewer documentViewer) {
+		public static void OnDocumentViewerCreated(IDocumentViewer documentViewer, Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>> documentViewerReferenceEnablerProviders) {
 			if (documentViewer == null)
 				throw new ArgumentNullException(nameof(documentViewer));
-			GetOrCreate(documentViewer.TextView).SetDocumentViewer(documentViewer);
+			GetOrCreate(documentViewer.TextView).SetDocumentViewer(documentViewer, documentViewerReferenceEnablerProviders);
 		}
 
-		void SetDocumentViewer(IDocumentViewer documentViewer) {
+		void SetDocumentViewer(IDocumentViewer documentViewer, Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>> documentViewerReferenceEnablerProviders) {
 			if (documentViewer == null)
 				throw new ArgumentNullException(nameof(documentViewer));
+			if (documentViewerReferenceEnablerProviders == null)
+				throw new ArgumentNullException(nameof(documentViewerReferenceEnablerProviders));
 			if (this.documentViewer != null)
 				throw new InvalidOperationException();
 			this.documentViewer = documentViewer;
+			this.documentViewerReferenceEnablerProviders = documentViewerReferenceEnablerProviders;
+			this.documentViewerReferenceEnablers = new Dictionary<string, IDocumentViewerReferenceEnabler>(documentViewerReferenceEnablerProviders.Count, StringComparer.Ordinal);
 			documentViewer.GotNewContent += DocumentViewer_GotNewContent;
 		}
 
 		void DocumentViewer_GotNewContent(object sender, DocumentViewerGotNewContentEventArgs e) {
-			if (canHighlightReferences) {
-				spanReferenceCollection = GetSpanReferenceCollection();
-				currentReference = GetCurrentReference();
-				currentSpanReference = GetCurrentSpanReference();
-			}
+			spanReferenceCollection = documentViewer?.Content.GetCustomData<SpanDataCollection<ReferenceAndId>>(DocumentViewerContentDataIds.SpanReference) ?? SpanDataCollection<ReferenceAndId>.Empty;
+			currentReference = GetCurrentReference();
+			currentSpanReference = GetCurrentSpanReference();
 		}
 
-		SpanData<ReferenceInfo>? GetCurrentReference() => documentViewer?.SelectedReference;
-		SpanDataCollection<object> GetSpanReferenceCollection() => documentViewer?.Content.GetCustomData<SpanDataCollection<object>>(DocumentViewerContentDataIds.SpanReference) ?? SpanDataCollection<object>.Empty;
+		SpanData<ReferenceInfo>? GetCurrentReference() => canHighlightReferences ? documentViewer?.SelectedReference : null;
 
-		SpanData<object>? GetCurrentSpanReference() {
+		SpanData<ReferenceAndId>? GetCurrentSpanReference() {
 			if (documentViewer == null)
 				return null;
-			return SpanDataCollectionUtilities.GetCurrentSpanReference(spanReferenceCollection, documentViewer.TextView);
+			var spanData = SpanDataCollectionUtilities.GetCurrentSpanReference(spanReferenceCollection, documentViewer.TextView);
+			return spanData?.Data.Reference == null ? null : spanData;
 		}
 
 		static readonly ITextMarkerTag HighlightedDefinitionTag = new TextMarkerTag(ThemeClassificationTypeNameKeys.HighlightedDefinition);
@@ -168,9 +179,42 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			return spanData.Data.IsWrite ? HighlightedWrittenReferenceTag : HighlightedReferenceTag;
 		}
 
+		bool IsEnabled(string id) {
+			// A null id is always enabled
+			if (id == null)
+				return true;
+
+			IDocumentViewerReferenceEnabler refChecker;
+			if (!documentViewerReferenceEnablers.TryGetValue(id, out refChecker)) {
+				Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata> lazy;
+				bool b = documentViewerReferenceEnablerProviders.TryGetValue(id, out lazy);
+				Debug.Assert(b, $"Missing {nameof(IDocumentViewerReferenceEnablerProvider)} for reference id = {id}");
+				if (b) {
+					refChecker = lazy.Value.Create(documentViewer);
+					if (refChecker != null)
+						refChecker.IsEnabledChanged += DocumentViewerReferenceEnabler_IsEnabledChanged;
+				}
+				else
+					refChecker = null;
+				documentViewerReferenceEnablers.Add(id, refChecker);
+			}
+
+			return refChecker?.IsEnabled ?? true;
+		}
+
+		void DocumentViewerReferenceEnabler_IsEnabledChanged(object sender, EventArgs e) {
+			if (documentViewer.TextView.IsClosed)
+				return;
+			RefreshAllTags();
+		}
+
 		public IEnumerable<ITagSpan<ITextMarkerTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			if (documentViewer == null)
 				yield break;
+			if (documentViewer.TextView.IsClosed)
+				yield break;
+			Debug.Assert(documentViewerReferenceEnablerProviders != null);
+			Debug.Assert(documentViewerReferenceEnablers != null);
 
 			// It's not common for both references to be non-null but it does happen if it's VB and the reference
 			// is at eg. a Get keyword. For that reason, check for span refs first or we won't see the definition
@@ -184,9 +228,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 					foreach (var spanData in spanReferenceCollection.Find(span.Span)) {
 						if (spanData.Span.End > snapshot.Length)
 							continue;
-						if (spanData.Data == null)
+						if (!IsEnabled(spanData.Data.Id))
 							continue;
-						if (!object.Equals(spanData.Data, theRef.Data))
+						if (spanData.Data.Reference == null)
+							continue;
+						if (!object.Equals(spanData.Data.Reference, theRef.Data.Reference))
 							continue;
 						yield return new TagSpan<ITextMarkerTag>(new SnapshotSpan(snapshot, spanData.Span), HighlightedReferenceTag);
 					}
@@ -222,12 +268,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			return SpanDataReferenceInfoExtensions.CompareReferences(a.Value.Data, b.Value.Data);
 		}
 
-		static bool IsSameReference(SpanData<object>? a, SpanData<object>? b) {
+		static bool IsSameReference(SpanData<ReferenceAndId>? a, SpanData<ReferenceAndId>? b) {
 			if (a == null && b == null)
 				return true;
 			if (a == null || b == null)
 				return false;
-			return object.Equals(a.Value.Data, b.Value.Data);
+			return object.Equals(a.Value.Data.Reference, b.Value.Data.Reference);
 		}
 
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
@@ -264,12 +310,20 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
+			if (documentViewerReferenceEnablers != null) {
+				foreach (var v in documentViewerReferenceEnablers.Values) {
+					v.IsEnabledChanged -= DocumentViewerReferenceEnabler_IsEnabledChanged;
+					v.Dispose();
+				}
+			}
+			documentViewerReferenceEnablers = null;
+			documentViewerReferenceEnablerProviders = null;
 			currentReference = null;
 			currentSpanReference = null;
-			spanReferenceCollection = SpanDataCollection<object>.Empty;
+			spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 			textView.Closed -= TextView_Closed;
-			textView.Caret.PositionChanged -= Caret_PositionChanged;
 			textView.Options.OptionChanged -= Options_OptionChanged;
+			textView.Caret.PositionChanged -= Caret_PositionChanged;
 			if (documentViewer != null)
 				documentViewer.GotNewContent -= DocumentViewer_GotNewContent;
 		}

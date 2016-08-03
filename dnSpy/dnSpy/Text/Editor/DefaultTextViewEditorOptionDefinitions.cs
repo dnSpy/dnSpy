@@ -80,6 +80,12 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class LineSeparatorEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.LineSeparatorId;
-		public override bool Default => false;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class HighlightRelatedKeywordsEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.HighlightRelatedKeywordsId;
+		public override bool Default => true;
 	}
 }

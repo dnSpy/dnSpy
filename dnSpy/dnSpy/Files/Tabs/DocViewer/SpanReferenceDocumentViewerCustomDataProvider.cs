@@ -27,18 +27,18 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	[ExportDocumentViewerCustomDataProvider]
 	sealed class SpanReferenceDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
 		public void OnCustomData(IDocumentViewerCustomDataContext context) {
-			SpanDataCollection<object> result;
+			SpanDataCollection<ReferenceAndId> result;
 			var data = context.GetData<SpanReference>(PredefinedCustomDataIds.SpanReference);
 			if (data.Length == 0)
-				result = SpanDataCollection<object>.Empty;
+				result = SpanDataCollection<ReferenceAndId>.Empty;
 			else {
-				var builder = SpanDataCollectionBuilder<object>.CreateBuilder(data.Length);
+				var builder = SpanDataCollectionBuilder<ReferenceAndId>.CreateBuilder(data.Length);
 				int prevEnd = 0;
 				foreach (var d in data) {
 					// The data should already be sorted. We don't support overlaps at the moment.
 					Debug.Assert(prevEnd <= d.Span.Start);
 					if (prevEnd <= d.Span.Start) {
-						builder.Add(new Span(d.Span.Start, d.Span.Length), d.Reference);
+						builder.Add(new Span(d.Span.Start, d.Span.Length), new ReferenceAndId(d.Reference, d.Id));
 						prevEnd = d.Span.End;
 					}
 				}

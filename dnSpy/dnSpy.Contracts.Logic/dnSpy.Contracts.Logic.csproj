@@ -55,6 +55,7 @@
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
     <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
+    <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
     <Compile Include="Decompiler\SourceLocal.cs" />
     <Compile Include="Decompiler\SourceStatement.cs" />

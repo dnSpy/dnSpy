@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		}
 
 		/// <summary>Constructor</summary>
-		/// <param name="order">Order of this instance></param>
+		/// <param name="order">Order of this instance</param>
 		public ExportDocumentViewerCustomDataProviderAttribute(double order)
 			: base(typeof(IDocumentViewerCustomDataProvider)) {
 			Order = order;

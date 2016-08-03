@@ -122,8 +122,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="start">Start position</param>
 		/// <param name="end">End position</param>
-		public static void AddSpanReference(this IDecompilerOutput output, object reference, int start, int end) =>
-			output.AddCustomData(PredefinedCustomDataIds.SpanReference, new SpanReference(reference, TextSpan.FromBounds(start, end)));
+		/// <param name="id">Reference id or null, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/></param>
+		public static void AddSpanReference(this IDecompilerOutput output, object reference, int start, int end, string id) =>
+			output.AddCustomData(PredefinedCustomDataIds.SpanReference, new SpanReference(reference, TextSpan.FromBounds(start, end), id));
 
 		/// <summary>
 		/// Adds a <see cref="BracePair"/>
