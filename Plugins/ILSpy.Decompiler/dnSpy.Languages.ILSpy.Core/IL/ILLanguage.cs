@@ -122,51 +122,51 @@ namespace dnSpy.Languages.ILSpy.IL {
 
 		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) {
 			var dis = CreateReflectionDisassembler(output, ctx, method);
-			dis.DisassembleMethod(method);
+			dis.DisassembleMethod(method, true);
 		}
 
 		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
 			var dis = CreateReflectionDisassembler(output, ctx, field);
-			dis.DisassembleField(field);
+			dis.DisassembleField(field, false);
 		}
 
 		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, property);
-			rd.DisassembleProperty(property);
+			rd.DisassembleProperty(property, addLineSep: true);
 			if (property.GetMethod != null) {
 				output.WriteLine();
-				rd.DisassembleMethod(property.GetMethod);
+				rd.DisassembleMethod(property.GetMethod, true);
 			}
 			if (property.SetMethod != null) {
 				output.WriteLine();
-				rd.DisassembleMethod(property.SetMethod);
+				rd.DisassembleMethod(property.SetMethod, true);
 			}
 			foreach (var m in property.OtherMethods) {
 				output.WriteLine();
-				rd.DisassembleMethod(m);
+				rd.DisassembleMethod(m, true);
 			}
 		}
 
 		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, ev);
-			rd.DisassembleEvent(ev);
+			rd.DisassembleEvent(ev, addLineSep: true);
 			if (ev.AddMethod != null) {
 				output.WriteLine();
-				rd.DisassembleMethod(ev.AddMethod);
+				rd.DisassembleMethod(ev.AddMethod, true);
 			}
 			if (ev.RemoveMethod != null) {
 				output.WriteLine();
-				rd.DisassembleMethod(ev.RemoveMethod);
+				rd.DisassembleMethod(ev.RemoveMethod, true);
 			}
 			foreach (var m in ev.OtherMethods) {
 				output.WriteLine();
-				rd.DisassembleMethod(m);
+				rd.DisassembleMethod(m, true);
 			}
 		}
 
 		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			var dis = CreateReflectionDisassembler(output, ctx, type);
-			dis.DisassembleType(type);
+			dis.DisassembleType(type, true);
 		}
 
 		public override void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {

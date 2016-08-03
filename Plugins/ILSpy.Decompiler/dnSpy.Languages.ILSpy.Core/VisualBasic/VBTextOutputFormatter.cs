@@ -137,6 +137,8 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		object GetCurrentLocalDefinition() {
 			AstNode node = nodeStack.Peek();
+			if (node is Identifier && node.Parent is CatchBlock)
+				node = node.Parent;
 			var parameterDef = node.Annotation<Parameter>();
 			if (parameterDef != null)
 				return parameterDef;
@@ -322,7 +324,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 				yield return binSpan;
 		}
 
-		public void AddSpanReference(object reference, int start, int end) {
+		public void AddHighlightedKeywordReference(object reference, int start, int end) {
 			Debug.Assert(reference != null);
 			if (reference != null)
 				output.AddSpanReference(reference, start, end);
