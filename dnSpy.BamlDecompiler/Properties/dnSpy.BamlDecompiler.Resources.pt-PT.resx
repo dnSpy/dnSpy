@@ -151,13 +151,13 @@
     <value>Descompilador BAML</value>
   </data>
   <data name="SaveBAML" xml:space="preserve">
-    <value>_Save BAML...</value>
+    <value>Guardar BAML...</value>
   </data>
   <data name="SaveXAML" xml:space="preserve">
-    <value>_Save XAML...</value>
+    <value>Guardar XAML...</value>
   </data>
   <data name="Saving" xml:space="preserve">
-    <value>Salvando...</value>
+    <value>Guardando...</value>
   </data>
   <data name="XAMLFile" xml:space="preserve">
     <value>Ficheiro XAML</value>

@@ -19,17 +19,24 @@ ILSpy decompiler and analyzer credits:
 
 Translators:
 
-Chinese Simplified
+Chinese Simplified:
+
 	Ulysses Wu
 	YanJun Sun
 	iFish
 	SquallATF
 	linkinshi
 
-Russian
+Russian:
+
 	Igor Besedin
 	Konctantin
 
-Portuguese
+Portuguese:
 
 	Raphael Aquiles
+
+German:
+
+	patricksadowski
+	li0nsar3c00l

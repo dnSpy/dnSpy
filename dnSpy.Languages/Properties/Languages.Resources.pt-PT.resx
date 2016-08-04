@@ -124,7 +124,7 @@
     <value>Não foi possível criar o diretório {0}, Erro: {1}</value>
   </data>
   <data name="MSBuild_CreateApplicationIcon" xml:space="preserve">
-    <value>Criar ícone do aplicativo</value>
+    <value>Criar ícone do aplicação</value>
   </data>
   <data name="MSBuild_CreateAppManifest" xml:space="preserve">
     <value>Criar app.manifest</value>

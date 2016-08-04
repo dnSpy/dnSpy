@@ -118,214 +118,212 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
+    <value>Alle Dateien</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro:
-
-{0}</value>
+    <value>Ein Fehler ist aufgetreten: {0}</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>_Abbrechen</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>Definições padrão</value>
+    <value>_Default-Einstellungen</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>OK</value>
+    <value>_OK</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Reset</value>
+    <value>Zurücksetzen</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Bytes por linha</value>
+    <value>Bytes pro Zeile</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Limpar Byte</value>
+    <value>Leere Byte</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Limpar Bytes Selecionados</value>
+    <value>Leere ausgewählte Bytes</value>
   </data>
   <data name="ClearSelectionKey" xml:space="preserve">
-    <value>Del</value>
+    <value>Löschen</value>
     <comment>the delete key</comment>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Copiar</value>
+    <value>Cop_y</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copiar Array c#</value>
+    <value>C#-Array kopieren</value>
   </data>
   <data name="CopyCSharpArrayKey" xml:space="preserve">
-    <value>CTRL + Shift + P</value>
+    <value>Strg+Umschalt+P</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
-    <value>CTRL + C</value>
+    <value>Strg+C</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Copiar Offset</value>
+    <value>Kopiere Offset</value>
   </data>
   <data name="CopyOffsetKey" xml:space="preserve">
-    <value>CTRL + Alt + O</value>
+    <value>Strg+Alt+O</value>
   </data>
   <data name="CopyUIContentsCommand" xml:space="preserve">
-    <value>Copiar conteúdo da UI</value>
+    <value>UI-Inhalte kopieren</value>
   </data>
   <data name="CopyUIContentsKey" xml:space="preserve">
-    <value>CTRL + Shift + C</value>
+    <value>Strg+Umschalt+C</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Copiar String Unicode</value>
+    <value>Unicode-Zeichenfolge kopieren</value>
   </data>
   <data name="CopyUnicodeStringKey" xml:space="preserve">
-    <value>CTRL + Shift + U</value>
+    <value>Strg+Umschalt+U</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Copiar String UTF-8</value>
+    <value>UTF-8-String kopieren</value>
   </data>
   <data name="CopyUTF8StringKey" xml:space="preserve">
-    <value>CTRL + Shift + 8</value>
+    <value>Strg+Umschalt+8</value>
   </data>
   <data name="CopyVBArrayCommand" xml:space="preserve">
-    <value>Copiar array VB</value>
+    <value>VB-Array kopieren</value>
   </data>
   <data name="CopyVBArrayKey" xml:space="preserve">
-    <value>CTRL + Shift + B</value>
+    <value>Strg+Umschalt+B</value>
   </data>
   <data name="CouldNotConvert" xml:space="preserve">
-    <value>Não foi possível converter '{0}'</value>
+    <value>Konnte '{0}' nicht konvertieren</value>
   </data>
   <data name="CouldNotConvertFromString" xml:space="preserve">
-    <value>Não foi possível convertê-lo de uma string '{0}'</value>
+    <value>Konnte es nicht aus einer Zeichenfolge konvertieren: {0}</value>
   </data>
   <data name="CouldNotDeserializeData" xml:space="preserve">
-    <value>Não foi possível desserializar dados: {0}</value>
+    <value>Konnte Daten nicht deserialisieren: {0}</value>
   </data>
   <data name="Files_DotNetExecutables" xml:space="preserve">
-    <value>Executáveis .NET</value>
+    <value>ausführbare .NET Dateien</value>
   </data>
   <data name="Files_DotNetNetModules" xml:space="preserve">
-    <value>NetModules .NET</value>
+    <value>.NET NetModules</value>
   </data>
   <data name="Files_Executables" xml:space="preserve">
-    <value>Executáveis</value>
+    <value>Ausführbare Dateien</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Imagens</value>
+    <value>Bilder</value>
   </data>
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
-    <value>Ficheiros de Chave de Nome Forte</value>
+    <value>Schlüsseldateien mit starken Namen</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Preencher Seleção com Byte...</value>
+    <value>Fülle Selektion mit Byte...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>Byte</value>
+    <value>_Byte</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Inserir Valor</value>
+    <value>Wert eingeben</value>
   </data>
   <data name="Font" xml:space="preserve">
-    <value>Fonte</value>
+    <value>Schrift</value>
   </data>
   <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Ir para Endereço...</value>
+    <value>Gehe zu Adresse...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Ir para Offset...</value>
+    <value>Gehe zu Versatz...</value>
   </data>
   <data name="GoToOffsetKey" xml:space="preserve">
-    <value>CTRL + G</value>
+    <value>Strg+G</value>
   </data>
   <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>Endereço</value>
+    <value>_Adresse</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
-    <value>Offset</value>
+    <value>_Versatz</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Ir para Offset</value>
+    <value>Gehe zu Versatz</value>
   </data>
   <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Ir para endereço</value>
+    <value>Gehe zu Adresse</value>
   </data>
   <data name="HexEditorAppDlgTitle" xml:space="preserve">
     <value>Hex Editor</value>
   </data>
   <data name="HexEditorCharacterEncodingCommand" xml:space="preserve">
-    <value>Codificação</value>
+    <value>Kodierung</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Guardar Seleção</value>
+    <value>Speichere Auswah_l...</value>
   </data>
   <data name="HexEditorSaveSelectionKey" xml:space="preserve">
-    <value>CTRL + Alt + S</value>
+    <value>Strg+Alt+S</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Guardar seleção 0x{0:X}-0x{1:X}</value>
+    <value>Auswahl 0x{0:X}-0x{1:X} speichern</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Selecionar...</value>
+    <value>Auswählen...</value>
   </data>
   <data name="HexEditorSelectKey" xml:space="preserve">
-    <value>CTRL + L</value>
+    <value>Strg+L</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>Fim</value>
+    <value>_Ende</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
-    <value>Ínicio</value>
+    <value>_Anfang</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Selecionar</value>
+    <value>Auswahl</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Configurações...</value>
+    <value>Einstellungen...</value>
   </data>
   <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
-    <value>Outras opções</value>
+    <value>Andere Optionen</value>
   </data>
   <data name="HexEditorShowAsciiCommand" xml:space="preserve">
-    <value>Mostrar ASCII</value>
+    <value>Zeige ASCII</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>16 Bytes</value>
+    <value>_16 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>32 Bytes</value>
+    <value>_32 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>48 Bytes</value>
+    <value>_48 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>64 Bytes</value>
+    <value>_64 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>8 Bytes</value>
+    <value>_8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>Ajustar à largura</value>
+    <value>An Breite an_passen</value>
   </data>
   <data name="HexEditor_CharacterEncoding_ANSI" xml:space="preserve">
-    <value>ANSI</value>
+    <value>_ANSI</value>
   </data>
   <data name="HexEditor_CharacterEncoding_ANSI_2" xml:space="preserve">
     <value>ANSI</value>
   </data>
   <data name="HexEditor_CharacterEncoding_ASCII" xml:space="preserve">
-    <value>ASCII</value>
+    <value>A_SCII</value>
   </data>
   <data name="HexEditor_CharacterEncoding_ASCII_2" xml:space="preserve">
     <value>ASCII</value>
   </data>
   <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE" xml:space="preserve">
-    <value>BE Unicode</value>
+    <value>_BE Unicode</value>
   </data>
   <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2" xml:space="preserve">
     <value>BE Unicode</value>
   </data>
   <data name="HexEditor_CharacterEncoding_UNICODE" xml:space="preserve">
-    <value>Unicode</value>
+    <value>_Unicode</value>
   </data>
   <data name="HexEditor_CharacterEncoding_UNICODE_2" xml:space="preserve">
     <value>Unicode</value>
@@ -349,226 +347,226 @@
     <value>UTF-8</value>
   </data>
   <data name="HexEditor_Default" xml:space="preserve">
-    <value>Padrão</value>
+    <value>_Standard</value>
   </data>
   <data name="HexEditor_Default2" xml:space="preserve">
-    <value>Padrão</value>
+    <value>Standard</value>
   </data>
   <data name="InvalidBoolean" xml:space="preserve">
-    <value>Valor deve ser um valor booleano (True ou False)</value>
+    <value>Wert muss ein boolscher Wert sein (Ja oder Nein)</value>
   </data>
   <data name="InvalidChar" xml:space="preserve">
-    <value>Um caratere deve ser colocado entre aspas simples (')</value>
+    <value>Ein Zeichen muss in einfachen Anführungszeichnen (') eingeschlossen sein</value>
   </data>
   <data name="InvalidDateTime" xml:space="preserve">
-    <value>Valor deve ser um DateTime</value>
+    <value>Wert muss ein DateTime sein</value>
   </data>
   <data name="InvalidDecimal" xml:space="preserve">
-    <value>Valor deve ser um número Decimal</value>
+    <value>Wert muss ein Decimal sein</value>
   </data>
   <data name="InvalidDouble" xml:space="preserve">
-    <value>Valor deve ser um número de ponto flutuante de 64 bits</value>
+    <value>Wert muss eine Gleitkommazahl mit doppelter Genauigkeit sein</value>
   </data>
   <data name="InvalidEscapeSequence" xml:space="preserve">
-    <value>Sequência de escape de caratere desconhecido: \{0}</value>
+    <value>Unbekannte Zeichen Escape-Sequenz: \{0}</value>
   </data>
   <data name="InvalidEscapeSequence2" xml:space="preserve">
-    <value>Sequência de escape de carateres desconhecidos: \{0}</value>
+    <value>Unbekannte Zeichenfolge Escape-Sequenz: \{0}</value>
   </data>
   <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID Inválido</value>
+    <value>Ungültige GUID</value>
   </data>
   <data name="InvalidHexCharacter" xml:space="preserve">
-    <value>Uma string hexadecimal deve conter somente os dígitos hexadecimais: 0-9 e A-F</value>
+    <value>Eine HEX-Zeichenfolge darf nur hexadezimale Zeichen enthalten: 0-9 und A-F</value>
   </data>
   <data name="InvalidHexStringSize" xml:space="preserve">
-    <value>Uma string hexadecimal deve conter um número par de dígitos hexadecimais</value>
+    <value>Eine hexadezimale Zeichenfolge muss eine gerade Anzahl an hexadezimalen Zeichen enthalten</value>
   </data>
   <data name="InvalidInteger1" xml:space="preserve">
-    <value>O valor não é um inteiro hexadecimal ou decimal</value>
+    <value>Der Wert ist keine Hexadezimalzahl oder Dezimalzahl</value>
   </data>
   <data name="InvalidInteger2" xml:space="preserve">
-    <value>O valor é muito pequeno</value>
+    <value>Der Wert ist zu klein</value>
   </data>
   <data name="InvalidInteger3" xml:space="preserve">
-    <value>O valor é muito grande</value>
+    <value>Der Wert ist zu groß</value>
   </data>
   <data name="InvalidInteger4" xml:space="preserve">
-    <value>Valor deve estar entre {0} e {1} (0x{1:X}) inclusive</value>
+    <value>Wert muss zwischen {0} und inklusive {1} (0x{1:X}) sein</value>
   </data>
   <data name="InvalidInteger5" xml:space="preserve">
-    <value>Valor deve estar entre {0} ({2}0x{0:X}) e {1} (0x{1:X}) inclusive</value>
+    <value>Wert muss zwischen {0} ({2}0x{0:X}) und inklusive {1} (0x{1:X}) sein</value>
   </data>
   <data name="InvalidListValue" xml:space="preserve">
-    <value>Valor na lista não pode ser vazio</value>
+    <value>Das Element in der Liste kann nicht leer sein</value>
   </data>
   <data name="InvalidListValue2" xml:space="preserve">
-    <value>Lista de elementos deve ser separadas por vírgulas</value>
+    <value>Elemente einer Liste müssen mit Komma getrennt sein</value>
   </data>
   <data name="InvalidSingle" xml:space="preserve">
-    <value>Valor deve ser um número de ponto flutuante de 32 bits</value>
+    <value>Wert muss eine Gleitkommazahl mit einfacher Genauigkeit sein</value>
   </data>
   <data name="InvalidString1" xml:space="preserve">
-    <value>Uma string deve conter o valor 'null' ou deve estar entre aspas duplas (')</value>
+    <value>Eine Zeichenfolge muss 'null' oder in doppelten Anführungszeichen (") eingeschlossen sein</value>
   </data>
   <data name="InvalidString2" xml:space="preserve">
-    <value>Uma string deve estar entre aspas duplas (')</value>
+    <value>Eine Zeichenfolge muss in doppelten Anführungszeichen (") eingeschlossen sein</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
-    <value>Valor deve ser um TimeSpan</value>
+    <value>Wert muss ein TimeSpan sein</value>
   </data>
   <data name="InvalidUnsignedInteger1" xml:space="preserve">
-    <value>São permitidos apenas números inteiros não negativos</value>
+    <value>Nur nicht-negative Ganzzahlen sind erlaubt</value>
   </data>
   <data name="InvalidUnsignedInteger2" xml:space="preserve">
-    <value>O valor não é um hexadecimal não-assinado ou decimal inteiro</value>
+    <value>Der Wert ist keine vorzeichenlose Hexadezimalzahl oder Dezimalzahl</value>
   </data>
   <data name="InvalidUnsignedInteger3" xml:space="preserve">
-    <value>Valor deve estar entre {0} e {1} inclusive (0x{1:X})</value>
+    <value>Wert muss zwischen {0} und inklusive {1} (0x{1:X}) sein</value>
   </data>
   <data name="InvalidUnsignedInteger4" xml:space="preserve">
-    <value>Valor deve estar entre {0} (0x{0:X}) e {1} inclusive (0x{1:X})</value>
+    <value>Der Wert muss zwischen {0} (0x{0:X}) und inklusive {1} (0x{1:X}) sein</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>Offset Base</value>
+    <value>_Basisversatz</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>Esse valor é adicionado para o offset de início antes dele ser mostrado na tela</value>
+    <value>Dieser Wert wird zum Anfangsversatz hinzugefügt bevor er angezeigt wird</value>
   </data>
   <data name="LocalHexSettings_ByteGroupSize" xml:space="preserve">
-    <value>Byte _Group Size</value>
+    <value>Byte _Gruppengröße</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes por Linha</value>
+    <value>B_ytes pro Zeile</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>Offset Final</value>
+    <value>_Endversatz</value>
   </data>
   <data name="LocalHexSettings_LowerCaseHex" xml:space="preserve">
-    <value>Hex em Minúsculas</value>
+    <value>Hex _klein schreiben</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Offset Bi_t Size</value>
+    <value>Verschiebe um Bitgröße</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Mostrar ASCII</value>
+    <value>_Zeige ASCII</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Offset de Ínicio</value>
+    <value>_Anfangsversatz</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Configurações de Hex Editor local</value>
+    <value>Lokale Hex Editor Einstellungen</value>
   </data>
   <data name="LocalHexSettings_UseHexPrefix" xml:space="preserve">
-    <value>_Usar Prefixo Hex (offset)</value>
+    <value>Hex Präfix für Versatz _verwenden</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Usar Offsets _Relativos</value>
+    <value>Verwende _relative Versätze</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>Todos os offsets são relativos para o offset de início</value>
+    <value>Alle Versätze sind relativ zum Anfangsversatz</value>
   </data>
   <data name="LowerCaseHexCommand" xml:space="preserve">
-    <value>Hex em Minúsculas</value>
+    <value>Schreibe Hex-Werte klein</value>
   </data>
   <data name="NewDataNotImageList" xml:space="preserve">
-    <value>Os novos dados não são uma lista de imagem.</value>
+    <value>Der neue Wert ist keine Liste von Bildern.</value>
   </data>
   <data name="NoTypeConverter" xml:space="preserve">
-    <value>{0} não tem um TypeConverter e não pode ser convertido de uma string.</value>
+    <value>{0} hat keinen TypeConverter und kann nicht in eine Zeichenfolge konvertiert werden.</value>
   </data>
   <data name="NumberOfBytes" xml:space="preserve">
-    <value>{0} bytes</value>
+    <value>{0} Bytes</value>
   </data>
   <data name="NumberOfBytesAndType" xml:space="preserve">
-    <value>{0} bytes, Tipo = {1}</value>
+    <value>{0} Bytes, Typ = {1}</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Colar</value>
+    <value>_Einfügen</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>_Colar (#Blob Data)</value>
+    <value>_Einfügen (#Blob Data)</value>
   </data>
   <data name="PasteDotNetMetaDataBlobKey" xml:space="preserve">
-    <value>CTRL + B</value>
+    <value>STRG + B</value>
   </data>
   <data name="PasteKey" xml:space="preserve">
-    <value>CTRL + V</value>
+    <value>Strg+V</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>_Colar (Unicode)</value>
+    <value>_Einfügen (Unicode)</value>
   </data>
   <data name="PasteUnicodeKey" xml:space="preserve">
-    <value>CTRL + U</value>
+    <value>Strg+U</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>_Colar (UTF-8)</value>
+    <value>_Einfügen (UTF-8)</value>
   </data>
   <data name="PasteUTF8Key" xml:space="preserve">
-    <value>CTRL + 8</value>
+    <value>Strg+8</value>
   </data>
   <data name="ResourceTypeCantBeChanged" xml:space="preserve">
-    <value>Tipo de recurso não pode ser alterado</value>
+    <value>Ressourcentyp kann nicht geändert werden</value>
   </data>
   <data name="SaveResource" xml:space="preserve">
-    <value>Guardar Recurso</value>
+    <value>Ressource speichern</value>
   </data>
   <data name="SaveResources" xml:space="preserve">
-    <value>Guardar Recursos</value>
+    <value>Ressourcen speichern</value>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Mostrar Todos os Bytes</value>
+    <value>Zeige alle Bytes</value>
   </data>
   <data name="ShowAllBytesKey" xml:space="preserve">
-    <value>CTRL + Shift + D</value>
+    <value>Strg+Umschalt+D</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Mostrar Apenas Bytes Selecionados</value>
+    <value>Zeige nur gewählte Bytes</value>
   </data>
   <data name="ShowOnlySelectedBytesKey" xml:space="preserve">
-    <value>CTRL + D</value>
+    <value>Strg+D</value>
   </data>
   <data name="UseHexPrefixCommand" xml:space="preserve">
-    <value>Usar prefixo 0x (offset)</value>
+    <value>Verwende 0x Präfix (Versatz)</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
-    <value>Valor deve ser de tipo {0}.
-Erro: {1}</value>
+    <value>Wert muss den Typ {0} haben.
+Fehler: {1}</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
-    <value>Fechar</value>
+    <value>Schließen</value>
   </data>
   <data name="Window_Maximize" xml:space="preserve">
-    <value>Maximizar</value>
+    <value>Maximieren</value>
   </data>
   <data name="Window_Minimize" xml:space="preserve">
-    <value>Minimizar</value>
+    <value>Minimieren</value>
   </data>
   <data name="Window_Restore" xml:space="preserve">
-    <value>Restaurar para baixo</value>
+    <value>Wiederherstellen</value>
   </data>
   <data name="LocalHexSettings_Encoding" xml:space="preserve">
-    <value>Codificação</value>
+    <value>_Kodierung</value>
   </data>
   <data name="SearchPanel_ErrorText" xml:space="preserve">
-    <value>Erro:</value>
+    <value>Fehler:</value>
   </data>
   <data name="SearchPanel_FindNextText" xml:space="preserve">
-    <value>Localizar próxima (F3)</value>
+    <value>Weitersuchen (F3)</value>
   </data>
   <data name="SearchPanel_FindPreviousText" xml:space="preserve">
-    <value>Localizar anterior (Shift + F3)</value>
+    <value>Vorheriges suchen (Umschalt+F3)</value>
   </data>
   <data name="SearchPanel_MatchCaseText" xml:space="preserve">
-    <value>Coincidir maiúsculas/minúsculas</value>
+    <value>Groß-/Kleinschreibung beachten</value>
   </data>
   <data name="SearchPanel_MatchWholeWordsText" xml:space="preserve">
-    <value>Correspondem a palavras inteiras</value>
+    <value>Nur ganzes Wort suchen</value>
   </data>
   <data name="SearchPanel_NoMatchesFoundText" xml:space="preserve">
-    <value>Nenhuma correspondência encontrada!</value>
+    <value>Keine Übereinstimmungen gefunden!</value>
   </data>
   <data name="SearchPanel_UseRegexText" xml:space="preserve">
-    <value>Usar expressões regulares</value>
+    <value>Reguläre Ausdrücke verwenden</value>
   </data>
 </root>

@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_ze</value>
+    <value>Analisar</value>
   </data>
   <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analyzer</value>
+    <value>Analisador</value>
   </data>
   <data name="AppliedToTreeNode" xml:space="preserve">
     <value>Aplicado a</value>
@@ -130,7 +130,7 @@
     <value>Atribuído por</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Cop_y</value>
+    <value>Copiar</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
     <value>Duplo Clique</value>
@@ -154,22 +154,22 @@
     <value>Mostrar referência em método</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Mostrar referência em método (Nova_Aba)</value>
+    <value>Mostrar Referência em Método (Novo Guia)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Ir para Referência (Nova Aba)</value>
+    <value>Ir para Referência (Novo Guia)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>hides</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementado por</value>
+    <value>Implementado Por</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanciado por</value>
+    <value>Instanciado Por</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Overridden por</value>
+    <value>Overridden Por</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analisa os assemblies</value>
@@ -181,13 +181,13 @@
     <value>set</value>
   </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Raised por</value>
+    <value>Raised Por</value>
   </data>
   <data name="ReadByTreeNode" xml:space="preserve">
     <value>Lido por</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>_Remove</value>
+    <value>Remover</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Procurando...</value>
@@ -211,7 +211,7 @@
     <value>Realce de sintaxe</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Usado por</value>
+    <value>Usado Por</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
     <value>Utiliza</value>

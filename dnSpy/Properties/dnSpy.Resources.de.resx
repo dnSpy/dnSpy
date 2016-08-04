@@ -118,825 +118,827 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About_Issues" xml:space="preserve">
-    <value>_Problemas</value>
+    <value>_Issues</value>
   </data>
   <data name="About_LatestBuild" xml:space="preserve">
-    <value>Última _Build</value>
+    <value>Neuester _Build</value>
   </data>
   <data name="About_LatestRelease" xml:space="preserve">
-    <value>_Última Release</value>
+    <value>_Aktuellste Version</value>
   </data>
   <data name="About_Menu" xml:space="preserve">
-    <value>_Sobre</value>
+    <value>_Über</value>
   </data>
   <data name="About_SourceCode" xml:space="preserve">
-    <value>_Código Fonte</value>
+    <value>_Source Code</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
-    <value>Sobre</value>
+    <value>Über</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
+    <value>Alle Dateien</value>
   </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
-    <value>Explorador Assembly</value>
+    <value>Assembly Ex_plorer</value>
   </data>
   <data name="AssemblyExplorerKey" xml:space="preserve">
-    <value>CTRL + Alt + L</value>
+    <value>Strg+Alt+L</value>
   </data>
   <data name="AssemblyExplorerTitle" xml:space="preserve">
-    <value>Explorador Assembly</value>
+    <value>Assembly Explorer</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
-    <value>Tipos Base e Interfaces</value>
+    <value>Basistyp und Schnittstellen</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>_Abbrechen</value>
   </data>
   <data name="Button_No" xml:space="preserve">
-    <value>Não</value>
+    <value>_Nein</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>OK</value>
+    <value>_OK</value>
   </data>
   <data name="Button_Save" xml:space="preserve">
-    <value>Guardar...</value>
+    <value>_Speichern...</value>
   </data>
   <data name="Button_SaveCode" xml:space="preserve">
-    <value>Guardar Código...</value>
+    <value>Code _speichern...</value>
   </data>
   <data name="Button_Yes" xml:space="preserve">
-    <value>Sim</value>
+    <value>_Ja</value>
   </data>
   <data name="CantConvertInputToType" xml:space="preserve">
-    <value>Não é possível converter a entrada para o tipo desejado: {0}</value>
+    <value>Die Eingabe kann nicht in den benötigten Typ umgewandelt werden: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Fechar Todos os Grupos de Guias, Exceto Este</value>
+    <value>Alle Registergruppen außer diesem schließen</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>Fechar Todos Exceto Este</value>
+    <value>_Alle außer diesem schließen</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
-    <value>Fechar Todos os Guias</value>
+    <value>A_lle Registerkarten schließen</value>
   </data>
   <data name="CloseTabCommand" xml:space="preserve">
-    <value>_Fechar</value>
+    <value>_Schließen</value>
   </data>
   <data name="CloseTabGroupCommand" xml:space="preserve">
-    <value>Fechar Grupo de Guias</value>
+    <value>Registergruppe schließen</value>
   </data>
   <data name="CloseTabKey" xml:space="preserve">
-    <value>CTRL + W</value>
+    <value>Strg+W</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Copiar</value>
+    <value>Cop_y</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
-    <value>CTRL + C</value>
+    <value>Strg+C</value>
   </data>
   <data name="CopyMDTokenCommand" xml:space="preserve">
-    <value>Copiar Token MD</value>
+    <value>MD Token _kopieren</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
-    <value>Não foi possível iniciar o navegador</value>
+    <value>Konnte Browser nicht starten</value>
   </data>
   <data name="DecompilationCanceled" xml:space="preserve">
-    <value>A operação foi cancelada</value>
+    <value>Die Aktion wurde abgebrochen</value>
   </data>
   <data name="DecompilationException" xml:space="preserve">
-    <value>Ocorreu um erro</value>
+    <value>Ein Fehler trat auf</value>
   </data>
   <data name="DecompileCancelButton" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Abbrechen</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>A Descompilar...</value>
+    <value>Dekompiliere...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
-    <value>Tipos Derivados</value>
+    <value>Vererbte Typen</value>
   </data>
   <data name="DisplayDlgTabTitle" xml:space="preserve">
-    <value>Mostrar</value>
+    <value>Anzeige</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
-    <value>Executáveis .NET</value>
+    <value>.NET Executables</value>
   </data>
   <data name="EmptyTabTitle" xml:space="preserve">
-    <value>&lt;vazio&gt;</value>
+    <value>&lt;leer&gt;</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Ocorreu uma exceção:</value>
+    <value>Ein Ausnahme trat auf:</value>
   </data>
   <data name="ExitAppCommand" xml:space="preserve">
-    <value>Sair</value>
+    <value>S_chließen</value>
   </data>
   <data name="ExitAppKey" xml:space="preserve">
-    <value>ALT + F4</value>
+    <value>Alt+F4</value>
   </data>
   <data name="ExplorerOpenWithDnSpy" xml:space="preserve">
-    <value>Abrir com dnSpy</value>
+    <value>Mit dnSpy öffnen</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>Encontrar</value>
+    <value>_Schnellsuche</value>
   </data>
   <data name="FindCommand2" xml:space="preserve">
-    <value>Encontrar</value>
+    <value>Schnellsuche</value>
   </data>
   <data name="FindKey" xml:space="preserve">
-    <value>Ctrl + F</value>
+    <value>Strg+F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>Tela Cheia</value>
+    <value>V_ollbild</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
-    <value>Shift + Alt + Enter</value>
+    <value>Umschalt+Alt+Enter</value>
   </data>
   <data name="FullScreenToolBarCommand" xml:space="preserve">
-    <value>Tela Cheia</value>
+    <value>Vollbild</value>
   </data>
   <data name="GoToEntryPointCommand" xml:space="preserve">
-    <value>Ir ao Ponto de Entrada</value>
+    <value>Gehe zu _Einstiegspunkt</value>
   </data>
   <data name="GoToGlobalCctorCommand" xml:space="preserve">
-    <value>Ir para &lt;Módulo&gt; .ccto_r</value>
+    <value>Gehe zu &lt;Module&gt; .ccto_r</value>
   </data>
   <data name="GoToLine_EnterLineNum" xml:space="preserve">
-    <value>Digite um número de linha</value>
+    <value>Zeilennummer eingeben</value>
   </data>
   <data name="GoToLine_InvalidLine" xml:space="preserve">
-    <value>Linha inválida: {0}</value>
+    <value>Ungültige Zeile: {0}</value>
   </data>
   <data name="GoToLine_Label" xml:space="preserve">
-    <value>Linha [, coluna]</value>
+    <value>_Zeile [, column]</value>
   </data>
   <data name="GoToLine_Title" xml:space="preserve">
-    <value>Ir para linha</value>
+    <value>Gehe zu Zeile</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Ir para referência</value>
+    <value>Gehe zu Verweis</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
-    <value>Duplo Clique</value>
+    <value>Doppelklick</value>
   </data>
   <data name="GoToTokenCommand" xml:space="preserve">
-    <value>Ir para MD Token...</value>
+    <value>Gehe zu M_D Token...</value>
   </data>
   <data name="GoToTokenKey" xml:space="preserve">
-    <value>CTRL + D</value>
+    <value>Strg+D</value>
   </data>
   <data name="GoToToken_CouldNotResolve" xml:space="preserve">
-    <value>Não foi possível resolver o token de referência membro: 0x{0:X8}</value>
+    <value>Konnte Member Referenztoken nicht auflösen: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_InvalidToken" xml:space="preserve">
-    <value>Token de metadados inválido: 0x{0:X8}</value>
+    <value>Ungültiges Metadaten Token: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_Label" xml:space="preserve">
-    <value>Token de Metadata</value>
+    <value>_Metadaten Token</value>
   </data>
   <data name="GoToToken_Title" xml:space="preserve">
-    <value>Ir para o Token de MD</value>
+    <value>Gehe zu MD Token</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>Esconder Guias</value>
+    <value>_Verstecke alle Registerkarten</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
-    <value>Esconder</value>
+    <value>_Ausblenden</value>
   </data>
   <data name="HighlightLine" xml:space="preserve">
-    <value>Realçar Linha Atual</value>
+    <value>_Aktuelle Zeile hervorheben</value>
   </data>
   <data name="InvalidInputTextMessageBox" xml:space="preserve">
-    <value>O texto é inválido</value>
+    <value>Der Text ist ungültig</value>
   </data>
   <data name="LoadingDnSpyPleaseWait" xml:space="preserve">
-    <value>Carregando dnSpy. Aguarde...</value>
+    <value>Lade dnSpy. Bitte warten...</value>
   </data>
   <data name="Menu_Edit" xml:space="preserve">
-    <value>Editar</value>
+    <value>_Bearbeiten</value>
   </data>
   <data name="Menu_File" xml:space="preserve">
-    <value>Ficheiro</value>
+    <value>_Datei</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
-    <value>Ajuda</value>
+    <value>_Hilfe</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
-    <value>Temas</value>
+    <value>_Themes</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
-    <value>Vizualizar</value>
+    <value>_Ansicht</value>
   </data>
   <data name="Menu_Windows" xml:space="preserve">
-    <value>Janela</value>
+    <value>_Fenster</value>
   </data>
   <data name="MergeAllTabGroupsCommand" xml:space="preserve">
-    <value>Juntar Todos os Grupos de Guias</value>
+    <value>Führe alle Registergruppen zusammen</value>
   </data>
   <data name="MessageBoxDontShowAgain" xml:space="preserve">
-    <value>Não mostrar novamente</value>
+    <value>_Nicht wieder anzeigen</value>
   </data>
   <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
-    <value>Mover Todos para o Próximo Grupo de Guia</value>
+    <value>Verschiebe alle in nächste Registergruppe</value>
   </data>
   <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Mover Todos para o Grupo de Guia Anterior</value>
+    <value>Verschiebe alle in vorherige Registergruppe</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
-    <value>Fundo</value>
+    <value>_Unten</value>
   </data>
   <data name="MoveLeftCommand" xml:space="preserve">
-    <value>Esquerda</value>
+    <value>_Links</value>
   </data>
   <data name="MoveRightCommand" xml:space="preserve">
-    <value>Direita</value>
+    <value>_Rechts</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
-    <value>Mover Grupo de Guia Após Próximo Grupo de Guia</value>
+    <value>Verschiebe Registergruppe hinter nächste Registergruppe</value>
   </data>
   <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
-    <value>Mover Grupo de Guia Antes Próximo Grupo de Guia</value>
+    <value>Verschiebe Registergruppe vor vorherige Registergruppe</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
-    <value>Mover para Próximo Grupo de Guias</value>
+    <value>Gehe zu _nächster Registergruppe</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
-    <value>Mover</value>
+    <value>_Verschieben</value>
   </data>
   <data name="MoveToolWindowGroupCommand" xml:space="preserve">
-    <value>Mover Grupo</value>
+    <value>_Gruppe verschieben</value>
   </data>
   <data name="MoveTopCommand" xml:space="preserve">
-    <value>Topo</value>
+    <value>_Oben</value>
   </data>
   <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Mover para Grupo de Guias Anterior</value>
+    <value>Gehe zu _vorheriger Registergruppen</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navegar para Trás (Backspace)</value>
+    <value>Rückwärts navigieren (Backspace)</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navegar para Frente (Alt + Right)</value>
+    <value>Vorwärts navigieren (Alt+Right)</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
-    <value>Os novos dados não são uma imagem.</value>
+    <value>Die neuen Daten sind kein Bild.</value>
   </data>
   <data name="NewHorizontalTabGroupCommand" xml:space="preserve">
-    <value>Novo Grupo de Guias Horizontais</value>
+    <value>Neue hori_zontale Registergruppe</value>
   </data>
   <data name="NewTabCommand" xml:space="preserve">
-    <value>Novo Guia</value>
+    <value>Neues _Register</value>
   </data>
   <data name="NewVerticalTabGroupCommand" xml:space="preserve">
-    <value>Novo Grupo de Guias Verticais</value>
+    <value>Neue _vertikale Registergruppe</value>
   </data>
   <data name="NewWindowCommand" xml:space="preserve">
-    <value>Nova Janela</value>
+    <value>_Neues Fenster</value>
   </data>
   <data name="OpenCommand" xml:space="preserve">
-    <value>Abrir...</value>
+    <value>_Öffnen...</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>Abrir Pasta Recipiente</value>
+    <value>Beinhaltendes Verzeichnis _öffnen</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
-    <value>Abrir a partir de GAC...</value>
+    <value>Von _GAC öffnen...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
-    <value>Criado por:</value>
+    <value>Erstellt von:</value>
   </data>
   <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
-    <value>Versão do Ficheiro:</value>
+    <value>Datei Version:</value>
   </data>
   <data name="OpenGAC_Name_Column" xml:space="preserve">
-    <value>Nome</value>
+    <value>Name</value>
   </data>
   <data name="OpenGAC_Name_Label" xml:space="preserve">
-    <value>Nome:</value>
+    <value>Name:</value>
   </data>
   <data name="OpenGAC_Path_Label" xml:space="preserve">
-    <value>Caminho:</value>
+    <value>Pfad:</value>
   </data>
   <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
-    <value>Mostrar duplicados</value>
+    <value>_Duplikate anzeigen</value>
   </data>
   <data name="OpenGAC_ShowFiles" xml:space="preserve">
-    <value>Mostrando {0:n0} de {1:n0} de ficheiros</value>
+    <value>Zeige {0:n0} von {1:n0} Dateien</value>
   </data>
   <data name="OpenGAC_Title" xml:space="preserve">
-    <value>Abrir a partir do GAC</value>
+    <value>Von GAC öffnen</value>
   </data>
   <data name="OpenGAC_Version_Column" xml:space="preserve">
-    <value>Versão</value>
+    <value>Version</value>
   </data>
   <data name="OpenGAC_Version_Label" xml:space="preserve">
-    <value>Versão:</value>
+    <value>Version:</value>
   </data>
   <data name="OpenInNewTabCommand" xml:space="preserve">
-    <value>Abrir em Novo Guia</value>
+    <value>In neuem Tab öffnen</value>
   </data>
   <data name="OpenInNewTabKey" xml:space="preserve">
-    <value>CTRL + T</value>
+    <value>Strg+T</value>
   </data>
   <data name="OpenInNewTabKey2" xml:space="preserve">
-    <value>CTRL + F12</value>
+    <value>Strg+F12</value>
   </data>
   <data name="OpenInNewTabKey3" xml:space="preserve">
-    <value>CTRL + Clique</value>
+    <value>Strg+Klick</value>
   </data>
   <data name="OpenKey" xml:space="preserve">
-    <value>CTRL + O</value>
+    <value>Strg+O</value>
   </data>
   <data name="OpenListCommand" xml:space="preserve">
-    <value>Open L_ist...</value>
+    <value>L_iste öffnen...</value>
   </data>
   <data name="OpenList_AskForName" xml:space="preserve">
-    <value>Nome</value>
+    <value>_Name</value>
   </data>
   <data name="OpenList_Files_Column" xml:space="preserve">
-    <value>Ficheiros</value>
+    <value>Dateien</value>
   </data>
   <data name="OpenList_MissingName" xml:space="preserve">
-    <value>Nome em falta</value>
+    <value>Fehlender Name</value>
   </data>
   <data name="OpenList_Name_Column" xml:space="preserve">
-    <value>Nome</value>
+    <value>Name</value>
   </data>
   <data name="OpenList_New_Button" xml:space="preserve">
-    <value>_Nova...</value>
+    <value>_Neu...</value>
   </data>
   <data name="OpenList_Open_Button" xml:space="preserve">
-    <value>_Abrir</value>
+    <value>_Öffnen</value>
   </data>
   <data name="OpenList_Remove_Button" xml:space="preserve">
-    <value>Remover</value>
+    <value>_Entfernen</value>
   </data>
   <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
-    <value>S_aved lists</value>
+    <value>G_espeicherte Listen</value>
   </data>
   <data name="OpenList_Search_Label" xml:space="preserve">
-    <value>Procurar</value>
+    <value>_Suche</value>
   </data>
   <data name="OpenList_Title" xml:space="preserve">
-    <value>Abrir Lista</value>
+    <value>Liste öffnen</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Abrir (Ctrl + O)</value>
+    <value>Öffnen (Strg+O)</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
-    <value>Opções</value>
+    <value>Optionen</value>
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
-    <value>Habilitar todas as mensagens de aviso</value>
+    <value>Aktiviere alle Warnung</value>
   </data>
   <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Desserializar tipos em recursos (inseguro)</value>
+    <value>Deserialisiere Typen in Ressourcen (unsicher)</value>
   </data>
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Qualquer assembly pode ser carregado e executado com dados a partir dos recursos.</value>
+    <value>Jede Assembly könnte mit den Daten aus den Ressourcen geladen und ausgeführt werden.</value>
   </data>
   <data name="Options_Misc_ExplorerIntegration" xml:space="preserve">
-    <value>Integração com Windows Explorer</value>
+    <value>Windows Explorer Integration</value>
   </data>
   <data name="Options_Misc_ExplorerIntegration_ToolTip" xml:space="preserve">
-    <value>Adiciona uma entrada de menu de contexto para o Windows Explorer para abrir os assemblies no dnSpy</value>
+    <value>Fügt einen Kontextmenüeintrag im Windows Explorer zum Öffnen von Assemblies in dnSpy ein</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
-    <value>Usar memória mapeada I/O</value>
+    <value>Nutze Memory-Mapped I/O</value>
   </data>
   <data name="Options_Misc_UseMmapdIO_ToolTip" xml:space="preserve">
-    <value>Pode ser desativado por módulo, se você right-click sobre ela.</value>
+    <value>Kann für jedes Modul über Rechtsklick deaktiviert werden.</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
-    <value>Referências</value>
+    <value>Referenzen</value>
   </data>
   <data name="ReloadAsmsCommand" xml:space="preserve">
-    <value>_Recarregar Todos Assemblies</value>
+    <value>Alle Assemblies neu _laden</value>
   </data>
   <data name="ResourcesFolder" xml:space="preserve">
-    <value>Recursos</value>
+    <value>Ressourcen</value>
   </data>
   <data name="SaveKey" xml:space="preserve">
-    <value>CTRL + S</value>
+    <value>Strg+S</value>
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
-    <value>Guardar</value>
+    <value>Speichern</value>
   </data>
   <data name="SavingCode" xml:space="preserve">
-    <value>Guardando...</value>
+    <value>Speichere...</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
-    <value>Pesquisa interrompida, mais de {0:n0} resultados encontrados.</value>
+    <value>Suche abgebrochen, mehr als {0:n0} Ergebnisse gefunden.</value>
   </data>
   <data name="SearchAssembliesCommand" xml:space="preserve">
-    <value>_Procurar Assemblies</value>
+    <value>Assemblies _suchen</value>
   </data>
   <data name="SearchAssembliesKey" xml:space="preserve">
-    <value>CTRL + K</value>
+    <value>Strg+K</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Procurar Assemblies (Ctrl + K)</value>
+    <value>Assemblies suchen (Strg+K)</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Pesquisando...</value>
+    <value>Suche...</value>
   </data>
   <data name="SearchMsdnCommand" xml:space="preserve">
-    <value>Procurar _MSDN</value>
+    <value>_MSDN durchsuchen</value>
   </data>
   <data name="SearchWindow_Options" xml:space="preserve">
-    <value>Opções</value>
+    <value>Optionen</value>
   </data>
   <data name="SearchWindow_SearchFor" xml:space="preserve">
-    <value>Pesquisar por:</value>
+    <value>Suchen nach:</value>
   </data>
   <data name="ShowCodeCommand" xml:space="preserve">
     <value>_Code</value>
   </data>
   <data name="ShowCodeKey" xml:space="preserve">
-    <value>Ctrl + Alt + 0</value>
+    <value>Strg+Alt+0</value>
   </data>
   <data name="OpenInNewTabKey4" xml:space="preserve">
-    <value>Shift + Duplo Clique</value>
+    <value>Umschalt+Doppelklick</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Realce de sintaxe</value>
+    <value>Syntax hervorheben</value>
   </data>
   <data name="TabsDlg_Activate_Button" xml:space="preserve">
-    <value>Ativar</value>
+    <value>_Aktivieren</value>
   </data>
   <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
-    <value>Fechar Janela</value>
+    <value>Fenster s_chließen</value>
   </data>
   <data name="TabsDlg_Module_Column" xml:space="preserve">
-    <value>Módulo</value>
+    <value>Modul</value>
   </data>
   <data name="TabsDlg_Name_Column" xml:space="preserve">
-    <value>Nome</value>
+    <value>Name</value>
   </data>
   <data name="TabsDlg_Path_Column" xml:space="preserve">
-    <value>Caminho</value>
+    <value>Pfad</value>
   </data>
   <data name="TabsDlg_Title" xml:space="preserve">
-    <value>Windows</value>
+    <value>Fenster</value>
   </data>
   <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
-    <value>O editor de texto está usando o novo formatador de texto mais rápido. Ele não suporta quebra automática ou todos os caracteres unicode. Ativar/desativar isso nas opções.</value>
+    <value>Der Text Editor nutzt den neuen Textformatierer. Dieser unterstützt keinen Zeilenumbruch oder alle Unicode Zeichen. De-/Aktiviere ihn in den Optionen.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Ocorreu um erro desconhecido</value>
+    <value>Ein unbekannter Fehler trat auf</value>
   </data>
   <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
-    <value>Usar Grupo de Guias Horizontal</value>
+    <value>Horizontale Registergruppe benutzen</value>
   </data>
   <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
-    <value>Usar Grupo de Guias Vertical</value>
+    <value>Vertikale Registergruppe benutzen</value>
   </data>
   <data name="WindowsCommand" xml:space="preserve">
-    <value>Janelas...</value>
+    <value>_Fenster...</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
-    <value>Word Wrap</value>
+    <value>_Zeilenumbruch</value>
   </data>
   <data name="WordWrapKey" xml:space="preserve">
-    <value>Ctrl + Alt + W</value>
+    <value>Strg+Alt+W</value>
   </data>
   <data name="CloseTabButtonToolTip" xml:space="preserve">
-    <value>Fechar</value>
+    <value>Schließen</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Descompilar o tipo completo em vez de um único membro</value>
+    <value>Dekompiliere den kompletten Typ statt einzelne Member</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
-    <value>Referências de destaque</value>
+    <value>Referenzen hervorheben</value>
   </data>
   <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
-    <value>Restaurar guias na inicialização</value>
+    <value>Stelle Registerkarten beim Start wieder her</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Mostrar token de chave pública do assembly</value>
+    <value>Zeige Assembly Public Key Token</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
-    <value>Mostrar versão do assembly</value>
+    <value>Zeige Assembly Version</value>
   </data>
   <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
-    <value>Mostrar números de linha</value>
+    <value>Zeige Zeilennummern</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
-    <value>Mostrar tokens de metadados</value>
+    <value>Zeige Metadaten Tokens</value>
   </data>
   <data name="DisplaySettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Clique único expande TreeView nodes</value>
+    <value>Knoten im Baum mit Einfach-Klick erweitern</value>
   </data>
   <data name="DisplaySettings_SyntaxHighlightTreeView" xml:space="preserve">
-    <value>Realce de sintaxe TreeView</value>
+    <value>Syntax im Baum hervorheben</value>
   </data>
   <data name="Font" xml:space="preserve">
-    <value>Fonte</value>
+    <value>Schrift</value>
   </data>
   <data name="MiscDlgTabTitle" xml:space="preserve">
-    <value>Outros</value>
+    <value>Sonstiges</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
-    <value>Opções...</value>
+    <value>_Optionen...</value>
   </data>
   <data name="SearchWindow_AllAbove" xml:space="preserve">
-    <value>Todas as Anteriores</value>
+    <value>Alle oberhalb</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
-    <value>CTRL + B</value>
+    <value>STRG + B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
     <value>Assembly</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
-    <value>AssemblyRef</value>
+    <value>Assembly Ref</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
-    <value>Pesquisa Case Sensitive</value>
+    <value>Groß-/Kleinschreibung beachten</value>
   </data>
   <data name="SearchWindow_Class" xml:space="preserve">
-    <value>Classe</value>
+    <value>Klasse</value>
   </data>
   <data name="SearchWindow_DecompileResources" xml:space="preserve">
-    <value>Decompilar recursos (por exemplo. XAML)</value>
+    <value>Ressourcen dekompilieren (z. B. XAML)</value>
   </data>
   <data name="SearchWindow_Delegate" xml:space="preserve">
-    <value>Delegate</value>
+    <value>Delegat</value>
   </data>
   <data name="SearchWindow_Enum" xml:space="preserve">
-    <value>Enum</value>
+    <value>Enumeration</value>
   </data>
   <data name="SearchWindow_Event" xml:space="preserve">
-    <value>Event</value>
+    <value>Ereignis</value>
   </data>
   <data name="SearchWindow_Event_Key" xml:space="preserve">
-    <value>CTRL + E</value>
+    <value>Strg+E</value>
   </data>
   <data name="SearchWindow_Field" xml:space="preserve">
-    <value>Field</value>
+    <value>Feld</value>
   </data>
   <data name="SearchWindow_Field_Key" xml:space="preserve">
-    <value>Ctrl + F</value>
+    <value>Strg+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>Tipo genérico</value>
+    <value>Generischer Typ</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
-    <value>Interface</value>
+    <value>Schnittstelle</value>
   </data>
   <data name="SearchWindow_Literal" xml:space="preserve">
-    <value>Number/String</value>
+    <value>Zahl/Text</value>
   </data>
   <data name="SearchWindow_Literal_Key" xml:space="preserve">
-    <value>CTRL + L</value>
+    <value>Strg+L</value>
   </data>
   <data name="SearchWindow_Local" xml:space="preserve">
-    <value>Local</value>
+    <value>Lokal</value>
   </data>
   <data name="SearchWindow_Local_Key" xml:space="preserve">
-    <value>Ctrl + I</value>
+    <value>Strg+I</value>
   </data>
   <data name="SearchWindow_MatchAny" xml:space="preserve">
-    <value>Corresponder a Qualquer Termo de Pesquisa</value>
+    <value>Nach jedem Begriff suchen</value>
   </data>
   <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
-    <value>Correspondem a Palavras Inteiras</value>
+    <value>Nur ganzes Wort suchen</value>
   </data>
   <data name="SearchWindow_Member" xml:space="preserve">
-    <value>Membro</value>
+    <value>Member</value>
   </data>
   <data name="SearchWindow_Member_Key" xml:space="preserve">
-    <value>CTRL + U</value>
+    <value>Strg+U</value>
   </data>
   <data name="SearchWindow_Method" xml:space="preserve">
-    <value>Método</value>
+    <value>Methode</value>
   </data>
   <data name="SearchWindow_Method_Key" xml:space="preserve">
-    <value>CTRL + M</value>
+    <value>Strg+M</value>
   </data>
   <data name="SearchWindow_Module" xml:space="preserve">
-    <value>Módulo</value>
+    <value>Modul</value>
   </data>
   <data name="SearchWindow_ModuleRef" xml:space="preserve">
-    <value>ModuleRef</value>
+    <value>Modul Ref</value>
   </data>
   <data name="SearchWindow_Namespace" xml:space="preserve">
-    <value>Namespace</value>
+    <value>Namensraum</value>
   </data>
   <data name="SearchWindow_NonGeneric" xml:space="preserve">
-    <value>Tipo Não-Genérico</value>
+    <value>Nicht-Generischer Typ</value>
   </data>
   <data name="SearchWindow_Parameter" xml:space="preserve">
-    <value>Parâmetro</value>
+    <value>Parameter</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Parâmetro/Local</value>
+    <value>Parameter/Lokal</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
-    <value>Ctrl + N</value>
+    <value>Strg+N</value>
   </data>
   <data name="SearchWindow_Parameter_Key" xml:space="preserve">
-    <value>CTRL + J</value>
+    <value>Strg+J</value>
   </data>
   <data name="SearchWindow_Property" xml:space="preserve">
-    <value>Propriedade</value>
+    <value>Eigenschaft</value>
   </data>
   <data name="SearchWindow_Property_Key" xml:space="preserve">
-    <value>CTRL + P</value>
+    <value>Strg+P</value>
   </data>
   <data name="SearchWindow_Resource" xml:space="preserve">
-    <value>Recurso</value>
+    <value>Ressource</value>
   </data>
   <data name="SearchWindow_Resource_Key" xml:space="preserve">
-    <value>CTRL + R</value>
+    <value>Strg + R</value>
   </data>
   <data name="SearchWindow_Struct" xml:space="preserve">
-    <value>Struct</value>
+    <value>Struktur</value>
   </data>
   <data name="SearchWindow_Title" xml:space="preserve">
-    <value>Pesquisa</value>
+    <value>Suche</value>
   </data>
   <data name="SearchWindow_Type" xml:space="preserve">
-    <value>Tipo</value>
+    <value>Typ</value>
   </data>
   <data name="SearchWindow_Type_Key" xml:space="preserve">
-    <value>CTRL + T</value>
+    <value>Strg+T</value>
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
-    <value>Posição da janela</value>
+    <value>Fensterposition</value>
   </data>
   <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Usar o novo formatador de texto</value>
+    <value>Neuen Textformatierer benutzen</value>
   </data>
   <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>O novo formatador de texto é mais rápido, mas não suporta quebra automática ou todos os carateres unicode.</value>
+    <value>Der neue Textformatierer ist schneller, unterstützt aber keinen Zeilenumbruch oder alle Unicode Zeichen.</value>
   </data>
   <data name="UseNewRenderer_FileTreeView" xml:space="preserve">
-    <value>Ficheiro TreeView</value>
+    <value>Datei Baumansicht</value>
   </data>
   <data name="UseNewRenderer_HexEditor" xml:space="preserve">
     <value>Hex Editor</value>
   </data>
   <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Editor de texto</value>
+    <value>Text Editor</value>
   </data>
   <data name="DisplaySettings_OtherOptions" xml:space="preserve">
-    <value>Outras opções</value>
+    <value>Andere Optionen</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
-    <value>Azul</value>
+    <value>_Blau</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>Escuro</value>
+    <value>_Dunkel</value>
   </data>
   <data name="Theme_HighContrast" xml:space="preserve">
-    <value>Alto Contraste</value>
+    <value>_Hoher Konstrast</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>Claro</value>
+    <value>_Hell</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>Busca (Ctrl + E ou Ctrl + F)</value>
+    <value>Suche (Strg+E or Strg+F)</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>Línguagem</value>
+    <value>Sprache</value>
   </data>
   <data name="Language_OperatingSystemLanguage" xml:space="preserve">
-    <value>Sistema</value>
+    <value>System</value>
   </data>
   <data name="LanguageSwitchMessage" xml:space="preserve">
-    <value>Você deve reiniciar o dnSpy para que a mudança do idioma tenha efeito.</value>
+    <value>Sie müssen dnSpy neustarten, damit die Sprachänderung wirksam wird.</value>
   </data>
   <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
-    <value>Ctrl + Shift + O</value>
+    <value>Strg+Umschalt+O</value>
   </data>
   <data name="SortAsmsCommand" xml:space="preserve">
-    <value>Sor_t Assemblies</value>
+    <value>Assemblies sor_tieren</value>
   </data>
   <data name="AskReadSettings" xml:space="preserve">
-    <value>Você quer carregar as configurações salvas?</value>
+    <value>Möchten Sie die gespeicherten Einstellungen laden?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>Exportar para Projeto</value>
+    <value>In Pro_jekt exportieren...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
-    <value>Exportar para Projeto</value>
+    <value>In Projekt exportieren</value>
   </data>
   <data name="Error_FileAlreadyExists" xml:space="preserve">
-    <value>Já existe um ficheiro com o mesmo nome que a pasta de destino.</value>
+    <value>Es existiert bereits eine Datei mit dem gleichen Namen wie das Ausgabeverzeichnis.</value>
   </data>
   <data name="Error_MissingDestinationFolder" xml:space="preserve">
-    <value>Faltando a pasta de destino.</value>
+    <value>Fehlendes Ausgabeverzeichnis.</value>
   </data>
   <data name="ExportToProject_Button_Export" xml:space="preserve">
-    <value>Exportar</value>
+    <value>_Exportieren</value>
   </data>
   <data name="ExportToProject_CreateResX" xml:space="preserve">
-    <value>Criar ficheiros .res_x</value>
+    <value>.res_x Dateien erzeugen</value>
   </data>
   <data name="ExportToProject_DecompileXaml" xml:space="preserve">
-    <value>Descompilar _baml para xaml</value>
+    <value>Dekompiliere _baml zu xaml</value>
   </data>
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
-    <value>Pasta</value>
+    <value>_Verzeichnis</value>
   </data>
   <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>Não referêncie mscorlib. dll</value>
+    <value>_Nicht auf mscorlib.dll referenzieren</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
-    <value>Um ficheiro será descompilado. Selecione mais de um assembly para descompilar mais de um ficheiro.</value>
+    <value>Eine Datei wird dekompiliert. Wählen Sie mehr als eine Assembly, um mehr als eine Datei zu dekompilieren.</value>
   </data>
   <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
-    <value>{0:n0} ficheiros vão ser descompilados.</value>
+    <value>{0:n0} Dateien werden dekompiliert.</value>
   </data>
   <data name="ExportToProject_Language" xml:space="preserve">
-    <value>Linguagem</value>
+    <value>_Sprache</value>
   </data>
   <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
-    <value>Abrir projeto em Visual Studio</value>
+    <value>_Projekt in Visual Studio öffnen</value>
   </data>
   <data name="ExportToProject_ProjectVersion" xml:space="preserve">
-    <value>Versão</value>
+    <value>_Version</value>
   </data>
   <data name="ExportToProject_SolutionFilename" xml:space="preserve">
-    <value>Solução</value>
+    <value>_Projektmappe</value>
   </data>
   <data name="ExportToProject_UnpackResources" xml:space="preserve">
-    <value>Desempacotar recursos</value>
+    <value>Ressourcen _entpacken</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nome do ficheiro em falta</value>
+    <value>Fehlender Dateiname</value>
   </data>
   <data name="Button_Close" xml:space="preserve">
-    <value>Fechar</value>
+    <value>_Schließen</value>
   </data>
   <data name="ErrorExceptionOccurred" xml:space="preserve">
-    <value>Ocorreu uma exceção{0}</value>
+    <value>Eine Ausnahme trat auf
+
+{0}</value>
   </data>
   <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
-    <value>Log de erros</value>
+    <value>Fehlerprotokoll</value>
   </data>
   <data name="DecompilerDlgTabTitle" xml:space="preserve">
-    <value>Descompilador</value>
+    <value>Dekompilierer</value>
   </data>
   <data name="DisplaySettings_MemberOrder" xml:space="preserve">
-    <value>Ordem de membro TreeView (reinicialização necessária)</value>
+    <value>Memberreihenfolge im Baum (Neustart nötig)</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
-    <value>Eventos</value>
+    <value>Ereignisse</value>
   </data>
   <data name="MemberKind_Fields" xml:space="preserve">
-    <value>Campos</value>
+    <value>Felder</value>
   </data>
   <data name="MemberKind_Methods" xml:space="preserve">
-    <value>Métodos</value>
+    <value>Methoden</value>
   </data>
   <data name="MemberKind_NestedTypes" xml:space="preserve">
-    <value>Tipos aninhados</value>
+    <value>Geschachtelte Typen</value>
   </data>
   <data name="MemberKind_Properties" xml:space="preserve">
-    <value>Propriedades</value>
+    <value>Eigenschaften</value>
   </data>
   <data name="AboutScreen_LicenseInfo" xml:space="preserve">
-    <value>dnSpy está licenciado sob a GPLv3.</value>
+    <value>dnSpy ist unter GPLv3 lizensiert.</value>
   </data>
   <data name="AboutScreen_LoadedFiles" xml:space="preserve">
-    <value>Ficheiros carregados:</value>
+    <value>Geladene Dateien:</value>
   </data>
   <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
-    <value>Procurar em assemblies GAC</value>
+    <value>In GAC Assemblies suchen</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
+    <value>Alle Dateien</value>
   </data>
   <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
-    <value>Ficheiros na Mesma Pasta</value>
+    <value>Dateien im selben Verzeichnis</value>
   </data>
   <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
-    <value>Ficheiros Selecionados</value>
+    <value>Ausgewählte Dateien</value>
   </data>
   <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
-    <value>Tipo Selecionado</value>
+    <value>Ausgewählter Typ</value>
   </data>
   <data name="GoToResourceCommand" xml:space="preserve">
-    <value>Ir para Recurso</value>
+    <value>Gehe zu Re_ssource</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
-    <value>Collapse Tree_View Nodes</value>
+    <value>Alle Knoten zusammenklappen</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
-    <value>Fechar Tudo</value>
+    <value>Alle schließen</value>
   </data>
   <data name="ExportToProject_NewGuid" xml:space="preserve">
-    <value>Novo</value>
+    <value>_Neu</value>
   </data>
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
-    <value>GUID do Projeto</value>
+    <value>_Projekt GUID</value>
   </data>
   <data name="ShortCutKeyCtrlShiftW" xml:space="preserve">
-    <value>Ctrl + Shift + W</value>
+    <value>Strg+Umschalt+W</value>
   </data>
   <data name="About_Wiki" xml:space="preserve">
-    <value>Wiki</value>
+    <value>_Wiki</value>
   </data>
 </root>

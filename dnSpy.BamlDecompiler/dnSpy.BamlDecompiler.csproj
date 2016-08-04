@@ -167,6 +167,7 @@
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">

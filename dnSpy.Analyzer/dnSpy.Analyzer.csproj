@@ -127,6 +127,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.de.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

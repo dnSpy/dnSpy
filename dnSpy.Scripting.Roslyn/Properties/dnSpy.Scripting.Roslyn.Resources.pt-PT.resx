@@ -124,10 +124,10 @@
     <value>+ {0} erros adicionais</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Cop_y</value>
+    <value>Copiar</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
-    <value>Cu_t</value>
+    <value>Cortar</value>
   </data>
   <data name="HelpAltDown" xml:space="preserve">
     <value>Mostrar próximo comando</value>
@@ -178,7 +178,7 @@
     <value>Carregando contexto de '{0}'.</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Paste</value>
+    <value>Colar</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Scripting</value>
@@ -187,13 +187,13 @@
     <value>Redefinindo o motor de execução.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Limpar tela (Ctrl + L)</value>
+    <value>Limpar ecrã (Ctrl + L)</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>História seguinte (Alt + seta para baixo)</value>
+    <value>Histórico seguinte (Alt + seta para baixo)</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>História anterior (Alt + seta para cima)</value>
+    <value>Histórico anterior (Alt + seta para cima)</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -208,22 +208,22 @@
     <value>CTRL + A</value>
   </data>
   <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
-    <value>Ctrl + Alt + seta para baixo</value>
+    <value>CTRL + Alt + seta para baixo</value>
   </data>
   <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
-    <value>Ctrl + Alt + N</value>
+    <value>CTRL + Alt + N</value>
   </data>
   <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
-    <value>Ctrl + Alt + seta acima</value>
+    <value>CTRL + Alt + seta acima</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>CTRL + C</value>
   </data>
   <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
-    <value>Ctrl + Enter</value>
+    <value>CTRL + Enter</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
-    <value>Ctrl + V</value>
+    <value>CTRL + V</value>
   </data>
   <data name="ShortCutKeyCtrlX" xml:space="preserve">
     <value>CTRL + X</value>
@@ -235,7 +235,7 @@
     <value>ESC</value>
   </data>
   <data name="ShortCutKeyShiftEnter" xml:space="preserve">
-    <value>Shift+Enter</value>
+    <value>Shift + Enter</value>
   </data>
   <data name="Window_CSharp" xml:space="preserve">
     <value>C# interativo</value>
@@ -250,7 +250,7 @@
     <value>Redefinir o ambiente de execução</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>Limpar tela</value>
+    <value>Limpar Ecrã</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>CTRL + L</value>
@@ -259,6 +259,6 @@
     <value>Visual Basic interativo</value>
   </data>
   <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
-    <value>Ctrl + Alt + I</value>
+    <value>CTRL + Alt + I</value>
   </data>
 </root>

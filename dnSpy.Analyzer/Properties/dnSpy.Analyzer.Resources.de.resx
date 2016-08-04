@@ -117,135 +117,103 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error1" xml:space="preserve">
-    <value>ERRO: {0}</value>
+  <data name="AnalyzeCommand" xml:space="preserve">
+    <value>Analy_sieren</value>
   </data>
-  <data name="Examples" xml:space="preserve">
-    <value>Exemplos:
-  {0} -o c:\out\path C:\some\path
-      Decompila todos ficheiros .NET no diretório acima e salva os em C:\out\path
-  {0} -o c:\out\path -r C:\some\path
-      Decompila todos ficheiros .NET no diretório acima e todos os sub diretórios {0} -o C:\out\path C:\some\path\*.dll
-      Decompila todos ficheiros *.dll .NET no diretório acima e salva os em C:\out\path
-  {0} --md 0x06000123 file.dll
-      Decompila o membro com o token 0x06000123
-  {0} -t system.int32 --gac-file "mscorlib, Version=4.0.0.0"
-      Decompila System.Int32 de mscorlib</value>
+  <data name="AnalyzerWindowTitle" xml:space="preserve">
+    <value>Analysierer</value>
   </data>
-  <data name="FileOrDirDoesNotExist" xml:space="preserve">
-    <value>Ficheiro/diretório '{0}' não existe</value>
+  <data name="AppliedToTreeNode" xml:space="preserve">
+    <value>Angewendet auf</value>
   </data>
-  <data name="InvalidOption" xml:space="preserve">
-    <value>Opção inválida: {0}</value>
+  <data name="AssignedByTreeNode" xml:space="preserve">
+    <value>Zugewiesen durch</value>
   </data>
-  <data name="InvalidSolutionName" xml:space="preserve">
-    <value>nome .sln ({0}) deve ser relativo ao diretório de projeto</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>_Kopieren</value>
   </data>
-  <data name="InvalidToken" xml:space="preserve">
-    <value>Token de metadados inválidos</value>
+  <data name="DoubleClick" xml:space="preserve">
+    <value>Doppelklick</value>
   </data>
-  <data name="InvalidVSVersion" xml:space="preserve">
-    <value>Versão inválida do Visual Studio: {0}</value>
+  <data name="EventAdderTreeNodeName" xml:space="preserve">
+    <value>Hinzufügen</value>
   </data>
-  <data name="LanguageDoesNotExist" xml:space="preserve">
-    <value>Língua '{0}' não existe</value>
+  <data name="EventRemoverTreeNodeName" xml:space="preserve">
+    <value>Entfernen</value>
   </data>
-  <data name="Languages" xml:space="preserve">
-    <value>Idiomas:</value>
+  <data name="ExposedByTreeNode" xml:space="preserve">
+    <value>Exponiert durch</value>
   </data>
-  <data name="LanguageXDoesNotExist" xml:space="preserve">
-    <value>Língua {0} não existe</value>
+  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
+    <value>Erweiterungsmethoden</value>
   </data>
-  <data name="MissingAsmSearchPath" xml:space="preserve">
-    <value>Caminho de pesquisa de assembly em falta</value>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Gehe zu Verweis</value>
   </data>
-  <data name="MissingDotNetFilename" xml:space="preserve">
-    <value>Nome do ficheiro .NET em falta</value>
+  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
+    <value>Zeige Verweis in Methode</value>
   </data>
-  <data name="MissingLanguageName" xml:space="preserve">
-    <value>Nome da linguagem em falta</value>
+  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
+    <value>Zeige Verweis in Methode (neuer _Tab)</value>
   </data>
-  <data name="MissingMDToken" xml:space="preserve">
-    <value>Token de metadados em falta</value>
+  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
+    <value>Gehe zu Verweis (neuer Ta_b)</value>
   </data>
-  <data name="MissingNumberOfThreads" xml:space="preserve">
-    <value>Número de threads em falta</value>
+  <data name="HidesParent" xml:space="preserve">
+    <value>versteckt</value>
   </data>
-  <data name="MissingOptions" xml:space="preserve">
-    <value>Nenhuma opção especificada</value>
+  <data name="ImplementedByTreeNode" xml:space="preserve">
+    <value>Implementiert von</value>
   </data>
-  <data name="MissingOutputDir" xml:space="preserve">
-    <value>Diretório de output em falta</value>
+  <data name="InstantiatedByTreeNode" xml:space="preserve">
+    <value>Instanziiert von</value>
   </data>
-  <data name="MissingSolutionName" xml:space="preserve">
-    <value>Nome .sln em falta</value>
+  <data name="OverriddenByTreeNode" xml:space="preserve">
+    <value>Überschrieben von</value>
   </data>
-  <data name="MissingVSVersion" xml:space="preserve">
-    <value>Versão Visual Studio em falta</value>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Analysiert Assemblys</value>
   </data>
-  <data name="NoLanguagesFound" xml:space="preserve">
-    <value>Nenhuma linguagem foi encontrada. Certifique-se que existem os ficheiros dll de linguagem na mesma pasta como este programa.</value>
+  <data name="PropertyGetterTreeNode" xml:space="preserve">
+    <value>holen</value>
   </data>
-  <data name="NotDotNetFile" xml:space="preserve">
-    <value>{0} não é um ficheiro .NET</value>
+  <data name="PropertySetterTreeNode" xml:space="preserve">
+    <value>setzen</value>
   </data>
-  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
-    <value>Apenas um ficheiro pode ser compilado ao usar --md</value>
+  <data name="RaisedByTreeNode" xml:space="preserve">
+    <value>Ausgelöst durch</value>
   </data>
-  <data name="Usage" xml:space="preserve">
-    <value>{0} [options] [fileOrDir1] [fileOrDir2] [...]
-
-  --asm-path caminho    caminho de procura de assembly. Caminhos podem ser separados com '{1}' ou você pode usar múltiplos  --asm-path's
-  --user-gac caminho    caminho GAC do utilizador. Caminhos podem ser separados com '{1}' ou você pode usar múltiplos --user-gac's
-  --no-gac     não usar o GAC para procurar assemblies. Útil com --no-stdlib
-  --no-stdlib  projetos não fazem referencia a mscorlib
-  --no-sln     não criar ficheiro .sln
-  --sln-name nome   nome do ficheiro .sln
-  --threads N  número de threads de trabalho. Padrão é um thread por core
-  --no-resources   não descompactar  recursos
-  --no-resx    não criar ficheiro .resx
-  --no-baml    não descompilar baml para xaml
-  --vs N       Visual Studio versão, 2005, 2008, ..., 2015
-  --project-guid N    guid do projeto
-  -t nome      descompilar o tipo com o nome especificado para stdout. Seja Namespace.Name ou Name, case insensitive
-  --type nome  mesmo que -t
-  --md N       descompila o número com token de metadata N para stdout
-  --gac-file N descompila um assembly de GAC. Utilize nome completo do assembly para descompilar uma versão exata.
-  -r           procura recursiva por ficheiro .NET para descompilar
-  -o outdir    diretório de output
-  -l lang      define linguagem, padrão é C#. Guids podem ser usados.</value>
+  <data name="ReadByTreeNode" xml:space="preserve">
+    <value>Gelesen von</value>
   </data>
-  <data name="MissingUserGacPath" xml:space="preserve">
-    <value>Caminho GAC do utilizador em falta</value>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>_Entfernen</value>
   </data>
-  <data name="InvalidMemberToDecompile" xml:space="preserve">
-    <value>Somente tipos, métodos, campos, eventos e propriedades podem ser descompilados</value>
+  <data name="Searching" xml:space="preserve">
+    <value>Suche...</value>
   </data>
-  <data name="CouldNotFindTypeX" xml:space="preserve">
-    <value>Tipo {0} não pôde ser encontrado</value>
+  <data name="ShiftDoubleClick" xml:space="preserve">
+    <value>Umschalt+Doppelklick</value>
   </data>
-  <data name="CouldNotResolveGacFileX" xml:space="preserve">
-    <value>Não foi possível resolver o assembly GAC '{0}'</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Strg+C</value>
   </data>
-  <data name="MissingGacFile" xml:space="preserve">
-    <value>Nome de assembly GAC em falta</value>
+  <data name="ShortCutKeyCtrlR" xml:space="preserve">
+    <value>Strg + R</value>
   </data>
-  <data name="MissingTypeName" xml:space="preserve">
-    <value>Nome completo do tipo em falta</value>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Löschen</value>
   </data>
-  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
-    <value>Língua {0} não oferece suporte a criação de ficheiros do projeto</value>
+  <data name="ShowMetadataTokensCommand" xml:space="preserve">
+    <value>Zeige Tokens</value>
   </data>
-  <data name="LanguageOptions" xml:space="preserve">
-    <value>Opções de linguagem:</value>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Syntax hervorheben</value>
   </data>
-  <data name="LanguageOptionsDesc" xml:space="preserve">
-    <value>Todas as opções booleanas podem ser desactivadas por meio de 'no-' ou ' dont-', por exemplo. --dont-sort-members</value>
+  <data name="UsedByTreeNode" xml:space="preserve">
+    <value>Verwendet von</value>
   </data>
-  <data name="MissingOptionArgument" xml:space="preserve">
-    <value>Argumento de opção em falta</value>
-  </data>
-  <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID Inválido</value>
+  <data name="UsesTreeNode" xml:space="preserve">
+    <value>Benutzt</value>
   </data>
 </root>

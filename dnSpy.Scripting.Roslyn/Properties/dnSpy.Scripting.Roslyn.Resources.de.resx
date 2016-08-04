@@ -117,135 +117,148 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error1" xml:space="preserve">
-    <value>ERRO: {0}</value>
+  <data name="CompilationAdditionalError" xml:space="preserve">
+    <value>+ zusätzlicher {0} Fehler</value>
   </data>
-  <data name="Examples" xml:space="preserve">
-    <value>Exemplos:
-  {0} -o c:\out\path C:\some\path
-      Decompila todos ficheiros .NET no diretório acima e salva os em C:\out\path
-  {0} -o c:\out\path -r C:\some\path
-      Decompila todos ficheiros .NET no diretório acima e todos os sub diretórios {0} -o C:\out\path C:\some\path\*.dll
-      Decompila todos ficheiros *.dll .NET no diretório acima e salva os em C:\out\path
-  {0} --md 0x06000123 file.dll
-      Decompila o membro com o token 0x06000123
-  {0} -t system.int32 --gac-file "mscorlib, Version=4.0.0.0"
-      Decompila System.Int32 de mscorlib</value>
+  <data name="CompilationAdditionalErrors" xml:space="preserve">
+    <value>+ zusätzliche {0} Fehler</value>
   </data>
-  <data name="FileOrDirDoesNotExist" xml:space="preserve">
-    <value>Ficheiro/diretório '{0}' não existe</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>_Kopieren</value>
   </data>
-  <data name="InvalidOption" xml:space="preserve">
-    <value>Opção inválida: {0}</value>
+  <data name="CutCommand" xml:space="preserve">
+    <value>_Ausschneiden</value>
   </data>
-  <data name="InvalidSolutionName" xml:space="preserve">
-    <value>nome .sln ({0}) deve ser relativo ao diretório de projeto</value>
+  <data name="HelpAltDown" xml:space="preserve">
+    <value>Zeige nächsten Befehl</value>
   </data>
-  <data name="InvalidToken" xml:space="preserve">
-    <value>Token de metadados inválidos</value>
+  <data name="HelpAltUp" xml:space="preserve">
+    <value>Zeige vorherigen Befehl</value>
   </data>
-  <data name="InvalidVSVersion" xml:space="preserve">
-    <value>Versão inválida do Visual Studio: {0}</value>
+  <data name="HelpCtrlA" xml:space="preserve">
+    <value>Wähle Eingabetext. Drücke erneut, um alle Texte zu markieren</value>
   </data>
-  <data name="LanguageDoesNotExist" xml:space="preserve">
-    <value>Língua '{0}' não existe</value>
+  <data name="HelpCtrlAltDown" xml:space="preserve">
+    <value>Zeige nächsten Befehl entsprechend des aktuellen Eingabetextes</value>
   </data>
-  <data name="Languages" xml:space="preserve">
-    <value>Idiomas:</value>
+  <data name="HelpCtrlAltUp" xml:space="preserve">
+    <value>Zeige vorherigen Befehl entsprechend des aktuellen Eingabetextes</value>
   </data>
-  <data name="LanguageXDoesNotExist" xml:space="preserve">
-    <value>Língua {0} não existe</value>
+  <data name="HelpCtrlEnter" xml:space="preserve">
+    <value>Führe Befehl aus</value>
   </data>
-  <data name="MissingAsmSearchPath" xml:space="preserve">
-    <value>Caminho de pesquisa de assembly em falta</value>
+  <data name="HelpEnter" xml:space="preserve">
+    <value>Führe Befehl aus</value>
   </data>
-  <data name="MissingDotNetFilename" xml:space="preserve">
-    <value>Nome do ficheiro .NET em falta</value>
+  <data name="HelpEscape" xml:space="preserve">
+    <value>Leere aktuelle Eingabe</value>
   </data>
-  <data name="MissingLanguageName" xml:space="preserve">
-    <value>Nome da linguagem em falta</value>
+  <data name="HelpKeyboardShortcuts" xml:space="preserve">
+    <value>Tastaturkombinationen:</value>
   </data>
-  <data name="MissingMDToken" xml:space="preserve">
-    <value>Token de metadados em falta</value>
+  <data name="HelpReplCommands" xml:space="preserve">
+    <value>REPL-Befehle:</value>
   </data>
-  <data name="MissingNumberOfThreads" xml:space="preserve">
-    <value>Número de threads em falta</value>
+  <data name="HelpScriptDirectives" xml:space="preserve">
+    <value>Skript-Richtlinien:</value>
   </data>
-  <data name="MissingOptions" xml:space="preserve">
-    <value>Nenhuma opção especificada</value>
+  <data name="HelpScriptDirective_load" xml:space="preserve">
+    <value>Laden und ausführen eines Skriptes, #load "myscript.csx"</value>
   </data>
-  <data name="MissingOutputDir" xml:space="preserve">
-    <value>Diretório de output em falta</value>
+  <data name="HelpScriptDirective_r" xml:space="preserve">
+    <value>Füge einen Verweis, entweder einer Assembly oder ein Pfad zu einer Datei auf der Festplatte oder einen Relativpfad zu DnSpy oder Benutzerverzeichnis hinzu, #r "myfile.dll"</value>
   </data>
-  <data name="MissingSolutionName" xml:space="preserve">
-    <value>Nome .sln em falta</value>
+  <data name="HelpShiftEnter" xml:space="preserve">
+    <value>Eine neue Zeile einfügen</value>
   </data>
-  <data name="MissingVSVersion" xml:space="preserve">
-    <value>Versão Visual Studio em falta</value>
+  <data name="HelpString" xml:space="preserve">
+    <value>Gib "#help" ein für weitere Informationen.</value>
   </data>
-  <data name="NoLanguagesFound" xml:space="preserve">
-    <value>Nenhuma linguagem foi encontrada. Certifique-se que existem os ficheiros dll de linguagem na mesma pasta como este programa.</value>
+  <data name="LoadingContextFromFile" xml:space="preserve">
+    <value>Lade Kontext von '{0}'.</value>
   </data>
-  <data name="NotDotNetFile" xml:space="preserve">
-    <value>{0} não é um ficheiro .NET</value>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Einfügen</value>
   </data>
-  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
-    <value>Apenas um ficheiro pode ser compilado ao usar --md</value>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Skripting</value>
   </data>
-  <data name="Usage" xml:space="preserve">
-    <value>{0} [options] [fileOrDir1] [fileOrDir2] [...]
-
-  --asm-path caminho    caminho de procura de assembly. Caminhos podem ser separados com '{1}' ou você pode usar múltiplos  --asm-path's
-  --user-gac caminho    caminho GAC do utilizador. Caminhos podem ser separados com '{1}' ou você pode usar múltiplos --user-gac's
-  --no-gac     não usar o GAC para procurar assemblies. Útil com --no-stdlib
-  --no-stdlib  projetos não fazem referencia a mscorlib
-  --no-sln     não criar ficheiro .sln
-  --sln-name nome   nome do ficheiro .sln
-  --threads N  número de threads de trabalho. Padrão é um thread por core
-  --no-resources   não descompactar  recursos
-  --no-resx    não criar ficheiro .resx
-  --no-baml    não descompilar baml para xaml
-  --vs N       Visual Studio versão, 2005, 2008, ..., 2015
-  --project-guid N    guid do projeto
-  -t nome      descompilar o tipo com o nome especificado para stdout. Seja Namespace.Name ou Name, case insensitive
-  --type nome  mesmo que -t
-  --md N       descompila o número com token de metadata N para stdout
-  --gac-file N descompila um assembly de GAC. Utilize nome completo do assembly para descompilar uma versão exata.
-  -r           procura recursiva por ficheiro .NET para descompilar
-  -o outdir    diretório de output
-  -l lang      define linguagem, padrão é C#. Guids podem ser usados.</value>
+  <data name="ResettingExecutionEngine" xml:space="preserve">
+    <value>Ausführungsmodul zurücksetzen.</value>
   </data>
-  <data name="MissingUserGacPath" xml:space="preserve">
-    <value>Caminho GAC do utilizador em falta</value>
+  <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
+    <value>Leeren des Bildschirms (Strg+L)</value>
   </data>
-  <data name="InvalidMemberToDecompile" xml:space="preserve">
-    <value>Somente tipos, métodos, campos, eventos e propriedades podem ser descompilados</value>
+  <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
+    <value>Verlauf weiter (Alt+Pfeil unten)</value>
   </data>
-  <data name="CouldNotFindTypeX" xml:space="preserve">
-    <value>Tipo {0} não pôde ser encontrado</value>
+  <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
+    <value>Verlauf zurück (Alt+Pfeil oben)</value>
   </data>
-  <data name="CouldNotResolveGacFileX" xml:space="preserve">
-    <value>Não foi possível resolver o assembly GAC '{0}'</value>
+  <data name="Script_ToolTip_Reset" xml:space="preserve">
+    <value>Zurücksetzen</value>
   </data>
-  <data name="MissingGacFile" xml:space="preserve">
-    <value>Nome de assembly GAC em falta</value>
+  <data name="ShortCutKeyAltDown" xml:space="preserve">
+    <value>Alt+Pfeil unten</value>
   </data>
-  <data name="MissingTypeName" xml:space="preserve">
-    <value>Nome completo do tipo em falta</value>
+  <data name="ShortCutKeyAltUp" xml:space="preserve">
+    <value>Alt+Pfeil oben</value>
   </data>
-  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
-    <value>Língua {0} não oferece suporte a criação de ficheiros do projeto</value>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Strg+A</value>
   </data>
-  <data name="LanguageOptions" xml:space="preserve">
-    <value>Opções de linguagem:</value>
+  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
+    <value>Strg+Alt+Pfeil unten</value>
   </data>
-  <data name="LanguageOptionsDesc" xml:space="preserve">
-    <value>Todas as opções booleanas podem ser desactivadas por meio de 'no-' ou ' dont-', por exemplo. --dont-sort-members</value>
+  <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
+    <value>Strg+Alt+N</value>
   </data>
-  <data name="MissingOptionArgument" xml:space="preserve">
-    <value>Argumento de opção em falta</value>
+  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
+    <value>Strg+Alt+Pfeil oben</value>
   </data>
-  <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID Inválido</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Strg+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Strg+Eingabe</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Strg+V</value>
+  </data>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>Strg+X</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Eingabe</value>
+  </data>
+  <data name="ShortCutKeyEscape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
+    <value>Umschalt+Eingabe</value>
+  </data>
+  <data name="Window_CSharp" xml:space="preserve">
+    <value>C# interaktiv</value>
+  </data>
+  <data name="HelpClearDescription" xml:space="preserve">
+    <value>Leere den Skript Editor</value>
+  </data>
+  <data name="HelpHelpDescription" xml:space="preserve">
+    <value>Zeige die Hilfe</value>
+  </data>
+  <data name="HelpResetDescription" xml:space="preserve">
+    <value>Zurücksetzen der Ausführungsumgebung</value>
+  </data>
+  <data name="ClearScreenCommand" xml:space="preserve">
+    <value>Leere den Bildschirm</value>
+  </data>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>Strg+L</value>
+  </data>
+  <data name="Window_VisualBasic" xml:space="preserve">
+    <value>Visual Basic interaktiv</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
+    <value>Strg+Alt+I</value>
   </data>
 </root>

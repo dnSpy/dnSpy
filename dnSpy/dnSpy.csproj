@@ -358,6 +358,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

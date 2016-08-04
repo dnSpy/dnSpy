@@ -97,6 +97,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CSharpInteractive.rsp">
