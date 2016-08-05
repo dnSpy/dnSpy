@@ -106,6 +106,7 @@
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
     <Compile Include="Files\Tabs\DefaultFileList.cs" />
+    <Compile Include="Files\Tabs\DefaultFileTabContentCreator.cs" />
     <Compile Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
       <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
     </Compile>

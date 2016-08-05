@@ -108,6 +108,7 @@
     <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
+    <Compile Include="Files\Tabs\DefaultFileTabContentCreatorConstants.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContent.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerContentDataIds.cs" />
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerExtensions.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Files\Tabs\DocViewer\ReferenceAndId.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />
+    <Compile Include="Files\Tabs\IDefaultFileTabContentCreator.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
     <Compile Include="Files\TreeView\Resources\Deserializer.cs" />

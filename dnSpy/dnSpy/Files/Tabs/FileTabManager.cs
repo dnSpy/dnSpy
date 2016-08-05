@@ -73,7 +73,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		TabContentImpl CreateNewTab(ITabGroup tabGroup) {
-			var impl = new TabContentImpl(this, fileTabUIContextLocatorCreator.Create(), refFactories);
+			var impl = new TabContentImpl(this, fileTabUIContextLocatorCreator.Create(), refFactories, defaultContentFactories);
 			tabGroup.Add(impl);
 			return impl;
 		}
@@ -152,15 +152,17 @@ namespace dnSpy.Files.Tabs {
 		readonly IWpfFocusManager wpfFocusManager;
 		readonly IDecompilationCache decompilationCache;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
+		readonly Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>[] defaultContentFactories;
 
 		[ImportingConstructor]
-		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
+		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories, [ImportMany] IEnumerable<Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>> defaultContentFactories) {
 			this.Settings = fileTabManagerSettings;
 			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
 			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
 			this.wpfFocusManager = wpfFocusManager;
 			this.decompilationCache = decompilationCache;
 			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
+			this.defaultContentFactories = defaultContentFactories.OrderBy(a => a.Metadata.Order).ToArray();
 			var tvElem = fileTreeView.TreeView.UIObject as UIElement;
 			Debug.Assert(tvElem != null);
 			if (tvElem != null) {

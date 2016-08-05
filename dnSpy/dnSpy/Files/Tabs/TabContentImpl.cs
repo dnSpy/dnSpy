@@ -115,15 +115,17 @@ namespace dnSpy.Files.Tabs {
 
 		readonly IFileTabUIContextLocator fileTabUIContextLocator;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
+		readonly Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>[] defaultContentFactories;
 		readonly TabElementScaler elementScaler;
 
-		public TabContentImpl(FileTabManager fileTabManager, IFileTabUIContextLocator fileTabUIContextLocator, Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories) {
+		public TabContentImpl(FileTabManager fileTabManager, IFileTabUIContextLocator fileTabUIContextLocator, Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories, Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>[] defaultContentFactories) {
 			this.elementScaler = new TabElementScaler();
 			this.tabHistory = new TabHistory();
 			this.tabHistory.SetCurrent(new NullFileTabContent(), false);
 			this.fileTabManager = fileTabManager;
 			this.fileTabUIContextLocator = fileTabUIContextLocator;
 			this.refFactories = refFactories;
+			this.defaultContentFactories = defaultContentFactories;
 			this.uiContext = new NullFileTabUIContext();
 			this.uiObject = this.uiContext.UIObject;
 		}
@@ -179,6 +181,16 @@ namespace dnSpy.Files.Tabs {
 					result.OnShownHandler?.Invoke(e);
 				});
 			}
+			else {
+				var defaultContent = TryCreateDefaultContent();
+				if (defaultContent != null) {
+					Show(defaultContent, null, e => {
+						onShown?.Invoke(new ShowTabContentEventArgs(false, this));
+					});
+				}
+				else
+					onShown?.Invoke(new ShowTabContentEventArgs(false, this));
+			}
 		}
 
 		public void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown) {
@@ -197,6 +209,15 @@ namespace dnSpy.Files.Tabs {
 		FileTabReferenceResult TryCreateContentFromReference(object @ref, IFileTabContent sourceContent) {
 			foreach (var f in refFactories) {
 				var c = f.Value.Create(FileTabManager, sourceContent, @ref);
+				if (c != null)
+					return c;
+			}
+			return null;
+		}
+
+		IFileTabContent TryCreateDefaultContent() {
+			foreach (var f in defaultContentFactories) {
+				var c = f.Value.Create(FileTabManager);
 				if (c != null)
 					return c;
 			}
