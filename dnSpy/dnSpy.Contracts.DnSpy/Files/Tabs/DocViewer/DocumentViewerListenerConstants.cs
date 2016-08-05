@@ -30,19 +30,16 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>Glyph text marker service</summary>
 		public const double ORDER_GLYPHTEXTMARKERSERVICE = 1000;
 
-		/// <summary>Debugger: create debugger MethodDebugService</summary>
-		public const double ORDER_DEBUGGER_METHODDEBUGSERVICECREATOR = 2000;
-
 		/// <summary>create <see cref="IMethodDebugService"/></summary>
-		public const double ORDER_METHODDEBUGSERVICECREATOR = 3000;
+		public const double ORDER_METHODDEBUGSERVICECREATOR = 2000;
 
 		/// <summary>Debugger: locals (<c>MethodLocalProvider</c>)</summary>
-		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = 4000;
+		public const double ORDER_DEBUGGER_METHODLOCALPROVIDER = ORDER_METHODDEBUGSERVICECREATOR + 1000;
 
 		/// <summary>Brace pair service</summary>
-		public const double ORDER_BRACEPAIRSERVICE = 5000;
+		public const double ORDER_BRACEPAIRSERVICE = 4000;
 
 		/// <summary>Line separator service</summary>
-		public const double ORDER_LINESEPARATORSERVICE = 6000;
+		public const double ORDER_LINESEPARATORSERVICE = 5000;
 	}
 }

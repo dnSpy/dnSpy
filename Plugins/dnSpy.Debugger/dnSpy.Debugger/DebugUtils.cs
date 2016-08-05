@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -72,7 +73,7 @@ namespace dnSpy.Debugger {
 			if (documentViewer == null)
 				return false;
 
-			MethodDebugService methodDebugService;
+			IMethodDebugService methodDebugService;
 			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, key, out methodDebugService))
 				return false;
 
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId serToken, out MethodDebugService methodDebugService) {
+		public static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId serToken, out IMethodDebugService methodDebugService) {
 			methodDebugService = documentViewer.GetMethodDebugService();
 			return methodDebugService.TryGetMethodDebugInfo(serToken) != null;
 		}

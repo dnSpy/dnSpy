@@ -105,7 +105,6 @@
     <Compile Include="Logger\ContentTypeDefinitions.cs" />
     <Compile Include="Logger\OutputLogger.cs" />
     <Compile Include="Logger\OutputLoggerSettings.cs" />
-    <Compile Include="MethodDebugService.cs" />
     <Compile Include="ModuleIdExtensions.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="OutputWriterConverter.cs" />

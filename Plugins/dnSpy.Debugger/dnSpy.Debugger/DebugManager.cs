@@ -1287,7 +1287,7 @@ namespace dnSpy.Debugger {
 				}
 			}
 
-			MethodDebugService methodDebugService;
+			IMethodDebugService methodDebugService;
 			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(documentViewer, currentLocation.Value.SerializedDnToken, out methodDebugService)) {
 				errMsg = dnSpy_Debugger_Resources.Error_NoDebugInfoAvailable;
 				return false;

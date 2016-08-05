@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text;
@@ -101,6 +102,7 @@ namespace dnSpy.Debugger.CallStack {
 				yield break;
 
 			var methodDebugService = docViewer.TryGetMethodDebugService();
+			Debug.Assert(methodDebugService != null);
 			if (methodDebugService == null)
 				yield break;
 

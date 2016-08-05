@@ -21,12 +21,19 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Metadata;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Code mappings
+	/// Method debug info service
 	/// </summary>
 	public interface IMethodDebugService {
+		/// <summary>
+		/// Gets the number of <see cref="MethodDebugInfo"/>s
+		/// </summary>
+		int Count { get; }
+
 		/// <summary>
 		/// Gets <see cref="MethodSourceStatement"/>s
 		/// </summary>
@@ -41,6 +48,35 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="codeOffset">Code offset</param>
 		/// <returns></returns>
 		MethodSourceStatement? FindByCodeOffset(MethodDef method, uint codeOffset);
+
+		/// <summary>
+		/// Gets a code <see cref="MethodSourceStatement"/>
+		/// </summary>
+		/// <param name="token">Token</param>
+		/// <param name="codeOffset">Code offset</param>
+		/// <returns></returns>
+		MethodSourceStatement? FindByCodeOffset(ModuleTokenId token, uint codeOffset);
+
+		/// <summary>
+		/// Gets a <see cref="MethodDebugInfo"/> or null if it doesn't exist
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <returns></returns>
+		MethodDebugInfo TryGetMethodDebugInfo(MethodDef method);
+
+		/// <summary>
+		/// Gets a <see cref="MethodDebugInfo"/> or null if it doesn't exist
+		/// </summary>
+		/// <param name="token">Token</param>
+		/// <returns></returns>
+		MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token);
+
+		/// <summary>
+		/// Gets all <see cref="MethodSourceStatement"/>s that intersect a span
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		IEnumerable<MethodSourceStatement> GetStatementsByTextSpan(Span span);
 	}
 
 	/// <summary>
@@ -48,7 +84,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	internal static class MethodDebugServiceConstants {
 		/// <summary>
-		/// Code mappings key
+		/// <see cref="IMethodDebugService"/> key
 		/// </summary>
 		public static readonly object MethodDebugServiceKey = new object();
 	}
@@ -78,8 +114,13 @@ namespace dnSpy.Contracts.Decompiler {
 		sealed class EmptyMethodDebugService : IMethodDebugService {
 			public static readonly EmptyMethodDebugService Instance = new EmptyMethodDebugService();
 
+			int IMethodDebugService.Count => 0;
 			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition) => Array.Empty<MethodSourceStatement>();
-			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint ilOffset) => null;
+			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(ModuleTokenId token, uint codeOffset) => null;
+			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint codeOffset) => null;
+			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(ModuleTokenId token) => null;
+			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(MethodDef method) => null;
+			IEnumerable<MethodSourceStatement> IMethodDebugService.GetStatementsByTextSpan(Span span) => Array.Empty<MethodSourceStatement>();
 		}
 	}
 }
