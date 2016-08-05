@@ -58,6 +58,7 @@ namespace dnSpy.Text.Editor {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.CurrentLineHighlighter)]
+		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Caret)]
 		[Order(Before = PredefinedAdornmentLayers.Selection)]
 		[Order(Before = PredefinedAdornmentLayers.Text)]

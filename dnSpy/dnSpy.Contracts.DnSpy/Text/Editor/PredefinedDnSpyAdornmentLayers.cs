@@ -23,6 +23,16 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class PredefinedDnSpyAdornmentLayers {
 		/// <summary>
+		/// Bottom layer. All layers should normally be after this layer.
+		/// </summary>
+		public const string BottomLayer = "dnSpy-BottomLayer";
+
+		/// <summary>
+		/// Top layer. All layers should normally be before this layer.
+		/// </summary>
+		public const string TopLayer = "dnSpy-TopLayer";
+
+		/// <summary>
 		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
 		/// </summary>
 		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
