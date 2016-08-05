@@ -83,7 +83,7 @@ namespace dnSpy.Files.Tabs {
 		public object ToolTip {
 			get { return toolTip; }
 			set {
-				if (toolTip != value) {
+				if (!object.Equals(toolTip, value)) {
 					toolTip = value;
 					OnPropertyChanged(nameof(ToolTip));
 				}
