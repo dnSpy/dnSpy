@@ -25,21 +25,26 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Z-index of bookmarks
 		/// </summary>
-		public const int Bookmark = 1;
+		public const int Bookmark = 1000;
 
 		/// <summary>
-		/// (Debugger) Z-index of breakpoints
+		/// (Debugger) Z-index of disabled breakpoints
 		/// </summary>
-		public const int Breakpoint = 2;
+		public const int DisabledBreakpoint = 2000;
+
+		/// <summary>
+		/// (Debugger) Z-index of enabled breakpoints
+		/// </summary>
+		public const int EnabledBreakpoint = 2500;
 
 		/// <summary>
 		/// (Debugger) Z-index of current statement
 		/// </summary>
-		public const int CurrentStatement = 3;
+		public const int CurrentStatement = 3000;
 
 		/// <summary>
 		/// (Debugger) Z-index of return statement
 		/// </summary>
-		public const int ReturnStatement = 4;
+		public const int ReturnStatement = 4000;
 	}
 }
