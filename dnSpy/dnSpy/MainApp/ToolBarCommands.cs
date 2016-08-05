@@ -82,7 +82,7 @@ namespace dnSpy.MainApp {
 			UpdateSelectedItem();
 			this.comboBox = new ComboBox {
 				DisplayMemberPath = "Name",
-				Width = 80,
+				Width = 90,
 				ItemsSource = infos,
 			};
 			this.comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectedItem)) {
