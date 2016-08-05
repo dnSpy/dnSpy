@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -26,7 +27,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DebugInfoDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
 		public void OnCustomData(IDocumentViewerCustomDataContext context) {
 			var data = context.GetData<MethodDebugInfo>(PredefinedCustomDataIds.DebugInfo);
-			context.AddCustomData(DocumentViewerContentDataIds.DebugInfo, new ReadOnlyCollection<MethodDebugInfo>(data));
+			var coll = data.Length == 0 ? emptyCollection : new ReadOnlyCollection<MethodDebugInfo>(data);
+			context.AddCustomData(DocumentViewerContentDataIds.DebugInfo, coll);
 		}
+		static readonly ReadOnlyCollection<MethodDebugInfo> emptyCollection = new ReadOnlyCollection<MethodDebugInfo>(Array.Empty<MethodDebugInfo>());
 	}
 }
