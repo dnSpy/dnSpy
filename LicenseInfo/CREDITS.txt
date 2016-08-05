@@ -35,3 +35,8 @@ Russian:
 Portuguese:
 
 	Raphael Aquiles
+
+German:
+
+	patricksadowski
+	li0nsar3c00l
