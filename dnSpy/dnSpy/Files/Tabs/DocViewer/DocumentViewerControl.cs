@@ -156,10 +156,41 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			TextView.TextBuffer.ChangeContentType(contentType, null);
 			cachedColorsList.Clear();
 			cachedColorsList.Add(0, content.ColorCollection);
-			TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), content.Text);
+
+			// If it's the same text, don't update text buffer and caret. It can be the same text if
+			// it's not been cached, eg. it's the resources or some other content with UI content.
+			// This simulates the cached code path above which also doesn't move the caret. And as
+			// an added bonus, it will use less memory and CPU.
+			bool sameText = IsSameTextAsCurrentSnapshot(TextView.TextSnapshot, content.Text);
+			if (!sameText) {
+				TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), content.Text);
+				TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
+				TextView.Caret.EnsureVisible();
+			}
+
 			TextView.Selection.Clear();
-			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
-			TextView.Caret.EnsureVisible();
+			return true;
+		}
+
+		static bool IsSameTextAsCurrentSnapshot(ITextSnapshot snapshot, string text) {
+			if (snapshot.Length != text.Length)
+				return false;
+			if (text.Length == 0)
+				return true;
+			int mid = text.Length / 2;
+			if (snapshot[mid] != text[mid])
+				return false;
+			var buf = new char[Math.Min(1024, text.Length)];
+			int offset = 0;
+			while (offset < text.Length) {
+				int count = Math.Min(buf.Length, text.Length - offset);
+				snapshot.CopyTo(offset, buf, 0, count);
+				for (int i = 0, j = offset; i < count; i++, j++) {
+					if (buf[i] != text[j])
+						return false;
+				}
+				offset += count;
+			}
 			return true;
 		}
 
