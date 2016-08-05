@@ -65,9 +65,9 @@ namespace dnSpy.Text {
 		public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;//TODO: Use this event
 #pragma warning restore 0067
 
-		TextDocument Document {
+		internal TextDocument Document {
 			get { return document; }
-			set {
+			private set {
 				if (document != null)
 					throw new InvalidOperationException();
 				document = value;
@@ -181,6 +181,15 @@ namespace dnSpy.Text {
 			}
 			//TODO: Use reiteratedVersionNumber
 			PostChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		internal bool IsSafeToAccessDocumentFromSnapshot(TextSnapshot snapshot) {
+			// If it's not the latest snapshot, Document could be different
+			if (snapshot != CurrentSnapshot)
+				return false;
+			// It's only safe to access Document on the owner thread. If owner thread
+			// is null, assume there's only one thread that accesses the text buffer.
+			return CheckAccess();
 		}
 
 		public void TakeThreadOwnership() {

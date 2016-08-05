@@ -37,10 +37,11 @@ namespace dnSpy.Text {
 		public char this[int position] => textSource.GetCharAt(position);
 		public IContentType ContentType { get; }
 		public int Length => textSource.TextLength;
-		public ITextBuffer TextBuffer { get; }
+		ITextBuffer ITextSnapshot.TextBuffer => TextBuffer;
 		public ITextVersion Version { get; }
+		TextBuffer TextBuffer { get; }
 
-		public TextSnapshot(ITextSource textSource, IContentType contentType, ITextBuffer textBuffer, ITextVersion textVersion) {
+		public TextSnapshot(ITextSource textSource, IContentType contentType, TextBuffer textBuffer, ITextVersion textVersion) {
 			if (textSource == null)
 				throw new ArgumentNullException(nameof(textSource));
 			if (contentType == null)
@@ -65,6 +66,8 @@ namespace dnSpy.Text {
 
 		public int LineCount {
 			get {
+				if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this))
+					return TextBuffer.Document.LineCount;
 				if (lineOffsets == null)
 					lineOffsets = CreateLineOffsets();
 				return lineOffsets.Length;
@@ -73,6 +76,22 @@ namespace dnSpy.Text {
 
 		public IEnumerable<ITextSnapshotLine> Lines {
 			get {
+				if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this)) {
+					int lineNo = 0;
+					foreach (var docLine in TextBuffer.Document.Lines) {
+						yield return new TextSnapshotLine(this, lineNo, docLine.Offset, docLine.Length, docLine.DelimiterLength);
+						lineNo++;
+						// Make sure text buffer wasn't edited
+						if (!TextBuffer.IsSafeToAccessDocumentFromSnapshot(this)) {
+							if (lineOffsets == null)
+								lineOffsets = CreateLineOffsets();
+							for (; lineNo < lineOffsets.Length; lineNo++)
+								yield return GetLineFromLineNumber(lineNo);
+							yield break;
+						}
+					}
+					yield break;
+				}
 				if (lineOffsets == null)
 					lineOffsets = CreateLineOffsets();
 				for (int lineNo = 0; lineNo < lineOffsets.Length; lineNo++)
@@ -81,33 +100,46 @@ namespace dnSpy.Text {
 		}
 
 		public ITextSnapshotLine GetLineFromLineNumber(int lineNumber) {
+			if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this)) {
+				var docLine = TextBuffer.Document.GetLineByNumber(lineNumber + 1);
+				return new TextSnapshotLine(this, lineNumber, docLine.Offset, docLine.Length, docLine.DelimiterLength);
+			}
 			if (lineOffsets == null)
 				lineOffsets = CreateLineOffsets();
-			if ((uint)lineNumber >= (uint)lineOffsets.Length)
+			var array = lineOffsets;
+			if ((uint)lineNumber >= (uint)array.Length)
 				throw new ArgumentOutOfRangeException(nameof(lineNumber));
-			int start = (int)(lineOffsets[lineNumber] & OFFSET_MASK);
-			int lineBreakLength = (int)(lineOffsets[lineNumber] >> LINEBREAK_SHIFT);
-			int end = (lineNumber + 1 < lineOffsets.Length ? (int)(lineOffsets[lineNumber + 1] & OFFSET_MASK) : Length) - lineBreakLength;
+			int start = (int)(array[lineNumber] & OFFSET_MASK);
+			int lineBreakLength = (int)(array[lineNumber] >> LINEBREAK_SHIFT);
+			int end = (lineNumber + 1 < array.Length ? (int)(array[lineNumber + 1] & OFFSET_MASK) : Length) - lineBreakLength;
 			return new TextSnapshotLine(this, lineNumber, start, end - start, lineBreakLength);
 		}
 
-		public ITextSnapshotLine GetLineFromPosition(int position) =>
-			GetLineFromLineNumber(GetLineNumberFromPosition(position));
+		public ITextSnapshotLine GetLineFromPosition(int position) {
+			if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this)) {
+				var docLine = TextBuffer.Document.GetLineByOffset(position);
+				return new TextSnapshotLine(this, docLine.LineNumber - 1, docLine.Offset, docLine.Length, docLine.DelimiterLength);
+			}
+			return GetLineFromLineNumber(GetLineNumberFromPosition(position));
+		}
 
 		public int GetLineNumberFromPosition(int position) {
 			if ((uint)position > (uint)Length)
 				throw new ArgumentOutOfRangeException(nameof(position));
+			if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this))
+				return TextBuffer.Document.GetLineByOffset(position).LineNumber - 1;
 			if (lineOffsets == null)
 				lineOffsets = CreateLineOffsets();
+			var array = lineOffsets;
 			if (position == Length)
-				return lineOffsets.Length - 1;
+				return array.Length - 1;
 
-			int lo = 0, hi = lineOffsets.Length - 1;
+			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {
 				int lineNo = (lo + hi) / 2;
 
-				int start = (int)(lineOffsets[lineNo] & OFFSET_MASK);
-				int end = lineNo + 1 < lineOffsets.Length ? (int)(lineOffsets[lineNo + 1] & OFFSET_MASK) : Length;
+				int start = (int)(array[lineNo] & OFFSET_MASK);
+				int end = lineNo + 1 < array.Length ? (int)(array[lineNo + 1] & OFFSET_MASK) : Length;
 
 				if (position < start)
 					hi = lineNo - 1;

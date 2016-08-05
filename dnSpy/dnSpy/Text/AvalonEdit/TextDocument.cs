@@ -79,6 +79,19 @@ namespace dnSpy.Text.AvalonEdit {
 		readonly DocumentLineTree lineTree;
 		readonly LineManager lineManager;
 
+		public int LineCount => lineTree.LineCount;
+		public IList<DocumentLine> Lines => lineTree;
+		public DocumentLine GetLineByNumber(int lineNumber) {
+			if (lineNumber < 1 || lineNumber > lineTree.LineCount)
+				throw new ArgumentOutOfRangeException(nameof(lineNumber));
+			return lineTree.GetByNumber(lineNumber);
+		}
+		public DocumentLine GetLineByOffset(int offset) {
+			if ((uint)offset > (uint)rope.Length)
+				throw new ArgumentOutOfRangeException(nameof(offset));
+			return lineTree.GetByOffset(offset);
+		}
+
 		/// <summary>
 		/// Create a new text document with the specified initial text.
 		/// </summary>
