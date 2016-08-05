@@ -130,7 +130,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 					return variable.OriginalParameter;
 				if (variable.OriginalVariable != null)
 					return variable.OriginalVariable;
-				return variable;
+				return variable.Id;
 			}
 			return null;
 		}
@@ -162,7 +162,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 						return variable.OriginalParameter;
 					if (variable.OriginalVariable != null)
 						return variable.OriginalVariable;
-					return variable;
+					return variable.Id;
 				}
 			}
 
