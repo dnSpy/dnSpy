@@ -1334,13 +1334,14 @@ namespace dnSpy.Text.Editor.Operations {
 		public void ScrollDownAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(ScrollDirection.Down);
 		public void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(ScrollDirection.Up);
 		void ScrollAndMoveCaretIfNecessary(ScrollDirection scrollDirection) {
+			bool firstDocLineWasVisible = TextView.TextViewLines.FirstVisibleLine.IsFirstDocumentLine();
 			ViewScroller.ScrollViewportVerticallyByLine(scrollDirection);
 
 			var pos = Caret.Position.VirtualBufferPosition;
 			var line = Caret.ContainingTextViewLine;
 			var firstVisLine = TextView.TextViewLines.FirstVisibleLine;
 			var lastVisLine = TextView.TextViewLines.LastVisibleLine;
-			if (scrollDirection == ScrollDirection.Up && firstVisLine.IsFirstDocumentLine())
+			if (scrollDirection == ScrollDirection.Up && firstDocLineWasVisible)
 				lastVisLine = TextView.GetLastFullyVisibleLine();
 			if (line.VisibilityState == VisibilityState.Unattached)
 				Caret.MoveTo(line.Start <= firstVisLine.Start ? firstVisLine : lastVisLine);
