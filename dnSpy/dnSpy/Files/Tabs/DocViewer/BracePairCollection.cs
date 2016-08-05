@@ -76,21 +76,31 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			public int Compare(BracePair x, BracePair y) => x.Right.Start - y.Right.Start;
 		}
 
-		public BracePairResult? FindBracePair(int position) {
+		public BracePairResultCollection? GetBracePairs(int position) {
 			var left = leftSorted.Find(position);
 			var right = rightSorted.Find(position);
-			if (left != null && right != null) {
-				// Example: >( as in SomeMethod<T>(int arg)
-				// We should really return both results but our code can only handle one.
-				// Visual Studio highlights both references.
-				return new BracePairResult(left.Value.Span, left.Value.Data);
-			}
+			if (left != null && right != null)
+				return new BracePairResultCollection(new BracePairResult(left.Value.Span, left.Value.Data), new BracePairResult(right.Value.Data, right.Value.Span));
 			if (left != null)
-				return new BracePairResult(left.Value.Span, left.Value.Data);
+				return new BracePairResultCollection(new BracePairResult(left.Value.Span, left.Value.Data), null);
 			if (right != null)
-				return new BracePairResult(right.Value.Data, right.Value.Span);
+				return new BracePairResultCollection(new BracePairResult(right.Value.Data, right.Value.Span), null);
 			return null;
 		}
+	}
+
+	struct BracePairResultCollection : IEquatable<BracePairResultCollection> {
+		public BracePairResult First;
+		public BracePairResult? Second;
+		public BracePairResultCollection(BracePairResult first, BracePairResult? second) {
+			First = first;
+			Second = second;
+		}
+
+		public bool Equals(BracePairResultCollection other) => First.Equals(other.First) && Nullable.Equals(Second, other.Second);
+		public override bool Equals(object obj) => obj is BracePairResultCollection && Equals((BracePairResultCollection)obj);
+		public override int GetHashCode() => First.GetHashCode() ^ (Second?.GetHashCode() ?? 0);
+		public override string ToString() => Second == null ? First.ToString() : "{" + First.ToString() + "," + Second.Value.ToString() + "}";
 	}
 
 	struct BracePairResult : IEquatable<BracePairResult> {
