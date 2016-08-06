@@ -262,7 +262,7 @@ namespace dnSpy.Contracts.MVVM {
 				Debug.Fail("Exception caught in Validate(). ConvertToValue() should return an error string instead of throwing for performance reasons! Throwing is SLOOOOW!");
 				if (!string.IsNullOrEmpty(ex.Message))
 					return ex.Message;
-				return string.Format(dnSpy_Contracts_DnSpy.CouldNotConvert, StringValue);
+				return string.Format(dnSpy_Contracts_DnSpy_Resources.CouldNotConvert, StringValue);
 			}
 		}
 	}
@@ -370,7 +370,7 @@ namespace dnSpy.Contracts.MVVM {
 				return res;
 			}
 
-			error = dnSpy_Contracts_DnSpy.InvalidGuid;
+			error = dnSpy_Contracts_DnSpy_Resources.InvalidGuid;
 			return Guid.Empty;
 		}
 	}
@@ -1833,7 +1833,7 @@ namespace dnSpy.Contracts.MVVM {
 			}
 			catch (Exception ex) {
 				value = default(T);
-				error = string.Format(dnSpy_Contracts_DnSpy.ValueMustBeType, typeof(T).FullName, ex.Message);
+				error = string.Format(dnSpy_Contracts_DnSpy_Resources.ValueMustBeType, typeof(T).FullName, ex.Message);
 			}
 			return error;
 		}

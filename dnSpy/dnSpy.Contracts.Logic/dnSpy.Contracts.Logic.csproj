@@ -92,10 +92,10 @@
     <Compile Include="Metadata\ModuleId.cs" />
     <Compile Include="Metadata\ModuleTokenId.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
-    <Compile Include="Properties\dnSpy.Contracts.Logic.Designer.cs">
+    <Compile Include="Properties\dnSpy.Contracts.Logic.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.Contracts.Logic.resx</DependentUpon>
+      <DependentUpon>dnSpy.Contracts.Logic.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ResourceHelper.cs" />
@@ -123,9 +123,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.resx">
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Contracts.Logic.Designer.cs</LastGenOutput>
+      <LastGenOutput>dnSpy.Contracts.Logic.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

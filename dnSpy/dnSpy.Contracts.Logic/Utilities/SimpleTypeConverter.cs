@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Utilities {
 			s = s.Replace("\u2028", string.Empty);
 			s = s.Replace("\u2029", string.Empty);
 			if (s.Length % 2 != 0) {
-				error = dnSpy_Contracts_Logic.InvalidHexStringSize;
+				error = dnSpy_Contracts_Logic_Resources.InvalidHexStringSize;
 				return null;
 			}
 			var bytes = new byte[s.Length / 2];
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Utilities {
 				int upper = TryParseHexChar(s[i]);
 				int lower = TryParseHexChar(s[i + 1]);
 				if (upper < 0 || lower < 0) {
-					error = dnSpy_Contracts_Logic.InvalidHexCharacter;
+					error = dnSpy_Contracts_Logic_Resources.InvalidHexCharacter;
 					return null;
 				}
 				bytes[i / 2] = (byte)((upper << 4) | lower);
@@ -306,13 +306,13 @@ namespace dnSpy.Contracts.Utilities {
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value);
 			if (!isValid) {
 				if (s.StartsWith("-"))
-					return dnSpy_Contracts_Logic.InvalidUnsignedInteger1;
-				return dnSpy_Contracts_Logic.InvalidUnsignedInteger2;
+					return dnSpy_Contracts_Logic_Resources.InvalidUnsignedInteger1;
+				return dnSpy_Contracts_Logic_Resources.InvalidUnsignedInteger2;
 			}
 			if (value < min || value > max) {
 				if (min == 0)
-					return string.Format(dnSpy_Contracts_Logic.InvalidUnsignedInteger3, min, max);
-				return string.Format(dnSpy_Contracts_Logic.InvalidUnsignedInteger4, min, max);
+					return string.Format(dnSpy_Contracts_Logic_Resources.InvalidUnsignedInteger3, min, max);
+				return string.Format(dnSpy_Contracts_Logic_Resources.InvalidUnsignedInteger4, min, max);
 			}
 
 			return null;
@@ -338,7 +338,7 @@ namespace dnSpy.Contracts.Utilities {
 				error = null;
 				return value;
 			}
-			error = dnSpy_Contracts_Logic.InvalidSingle;
+			error = dnSpy_Contracts_Logic_Resources.InvalidSingle;
 			return 0;
 		}
 
@@ -354,7 +354,7 @@ namespace dnSpy.Contracts.Utilities {
 				error = null;
 				return value;
 			}
-			error = dnSpy_Contracts_Logic.InvalidDouble;
+			error = dnSpy_Contracts_Logic_Resources.InvalidDouble;
 			return 0;
 		}
 
@@ -370,7 +370,7 @@ namespace dnSpy.Contracts.Utilities {
 				error = null;
 				return value;
 			}
-			error = dnSpy_Contracts_Logic.InvalidDecimal;
+			error = dnSpy_Contracts_Logic_Resources.InvalidDecimal;
 			return 0;
 		}
 
@@ -386,7 +386,7 @@ namespace dnSpy.Contracts.Utilities {
 				error = null;
 				return value;
 			}
-			error = dnSpy_Contracts_Logic.InvalidDateTime;
+			error = dnSpy_Contracts_Logic_Resources.InvalidDateTime;
 			return DateTime.MinValue;
 		}
 
@@ -402,7 +402,7 @@ namespace dnSpy.Contracts.Utilities {
 				error = null;
 				return value;
 			}
-			error = dnSpy_Contracts_Logic.InvalidTimeSpan;
+			error = dnSpy_Contracts_Logic_Resources.InvalidTimeSpan;
 			return TimeSpan.Zero;
 		}
 
@@ -418,7 +418,7 @@ namespace dnSpy.Contracts.Utilities {
 				error = null;
 				return value;
 			}
-			error = dnSpy_Contracts_Logic.InvalidBoolean;
+			error = dnSpy_Contracts_Logic_Resources.InvalidBoolean;
 			return false;
 		}
 
@@ -440,7 +440,7 @@ namespace dnSpy.Contracts.Utilities {
 		}
 
 		static char SetParseCharError(out string error) {
-			error = dnSpy_Contracts_Logic.InvalidChar;
+			error = dnSpy_Contracts_Logic_Resources.InvalidChar;
 			return (char)0;
 		}
 
@@ -481,7 +481,7 @@ namespace dnSpy.Contracts.Utilities {
 					break;
 
 				default:
-					error = string.Format(dnSpy_Contracts_Logic.InvalidEscapeSequence, c);
+					error = string.Format(dnSpy_Contracts_Logic_Resources.InvalidEscapeSequence, c);
 					return (char)0;
 				}
 			}
@@ -515,8 +515,8 @@ namespace dnSpy.Contracts.Utilities {
 
 		static string SetParseStringError(bool canHaveNull, out string error) {
 			error = canHaveNull ?
-				dnSpy_Contracts_Logic.InvalidString1 :
-				dnSpy_Contracts_Logic.InvalidString2;
+				dnSpy_Contracts_Logic_Resources.InvalidString1 :
+				dnSpy_Contracts_Logic_Resources.InvalidString2;
 			return null;
 		}
 
@@ -573,7 +573,7 @@ namespace dnSpy.Contracts.Utilities {
 						break;
 
 					default:
-						error = string.Format(dnSpy_Contracts_Logic.InvalidEscapeSequence2, c);
+						error = string.Format(dnSpy_Contracts_Logic_Resources.InvalidEscapeSequence2, c);
 						return null;
 					}
 				}
@@ -679,21 +679,21 @@ namespace dnSpy.Contracts.Utilities {
 			else
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value2);
 			if (!isValid)
-				return dnSpy_Contracts_Logic.InvalidInteger1;
+				return dnSpy_Contracts_Logic_Resources.InvalidInteger1;
 			if (isSigned) {
 				if (value2 > (ulong)long.MaxValue + 1)
-					return dnSpy_Contracts_Logic.InvalidInteger2;
+					return dnSpy_Contracts_Logic_Resources.InvalidInteger2;
 				value = unchecked(-(long)value2);
 			}
 			else {
 				if (value2 > (ulong)long.MaxValue)
-					return dnSpy_Contracts_Logic.InvalidInteger3;
+					return dnSpy_Contracts_Logic_Resources.InvalidInteger3;
 				value = (long)value2;
 			}
 			if (value < min || value > max) {
 				if (min == 0)
-					return string.Format(dnSpy_Contracts_Logic.InvalidInteger4, min, max);
-				return string.Format(dnSpy_Contracts_Logic.InvalidInteger5, minObject, max, min < 0 ? "-" : string.Empty);
+					return string.Format(dnSpy_Contracts_Logic_Resources.InvalidInteger4, min, max);
+				return string.Format(dnSpy_Contracts_Logic_Resources.InvalidInteger5, minObject, max, min < 0 ? "-" : string.Empty);
 			}
 
 			return null;
@@ -888,7 +888,7 @@ namespace dnSpy.Contracts.Utilities {
 			foreach (var elem in s.Split(',')) {
 				var value = elem.Trim();
 				if (value == string.Empty) {
-					error = dnSpy_Contracts_Logic.InvalidListValue;
+					error = dnSpy_Contracts_Logic_Resources.InvalidListValue;
 					return null;
 				}
 				var res = parseValue(value);
@@ -926,7 +926,7 @@ namespace dnSpy.Contracts.Utilities {
 				if (index >= s.Length)
 					break;
 				if (s[index] != ',') {
-					error = dnSpy_Contracts_Logic.InvalidListValue2;
+					error = dnSpy_Contracts_Logic_Resources.InvalidListValue2;
 					return null;
 				}
 				index++;

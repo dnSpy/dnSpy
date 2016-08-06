@@ -65,12 +65,12 @@ namespace dnSpy.Contracts.Hex {
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			if (dnHexBox.IsMemory) {
-				win.Title = dnSpy_Contracts_DnSpy.GoToOffset_Title_Address;
-				win.offsetLabel.Content = dnSpy_Contracts_DnSpy.GoToOffset_Address_Label;
+				win.Title = dnSpy_Contracts_DnSpy_Resources.GoToOffset_Title_Address;
+				win.offsetLabel.Content = dnSpy_Contracts_DnSpy_Resources.GoToOffset_Address_Label;
 			}
 			else {
-				win.Title = dnSpy_Contracts_DnSpy.GoToOffset_Title;
-				win.offsetLabel.Content = dnSpy_Contracts_DnSpy.GoToOffset_Offset_Label;
+				win.Title = dnSpy_Contracts_DnSpy_Resources.GoToOffset_Title;
+				win.offsetLabel.Content = dnSpy_Contracts_DnSpy_Resources.GoToOffset_Offset_Label;
 			}
 			if (win.ShowDialog() != true)
 				return;
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Hex {
 			dnHexBox.CaretPosition = new HexBoxPosition(dnHexBox.VisibleToPhysicalOffset(data.OffsetVM.Value), dnHexBox.CaretPosition.Kind, 0);
 		}
 
-		public override string GetHeader(DnHexBox context) => context.IsMemory ? dnSpy_Contracts_DnSpy.GoToAddressCommand : dnSpy_Contracts_DnSpy.GoToOffsetCommand;
+		public override string GetHeader(DnHexBox context) => context.IsMemory ? dnSpy_Contracts_DnSpy_Resources.GoToAddressCommand : dnSpy_Contracts_DnSpy_Resources.GoToOffsetCommand;
 	}
 
 	[ExportMenuItem(Header = "res:HexEditorSelectCommand", InputGestureText = "res:HexEditorSelectKey", Group = MenuConstants.GROUP_CTX_HEXBOX_SHOW, Order = 10)]
@@ -211,13 +211,13 @@ namespace dnSpy.Contracts.Hex {
 			var win = new ProgressDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;
-			win.Title = string.Format(dnSpy_Contracts_DnSpy.HexEditorSaveSelection_Title, sel.Value.StartOffset, sel.Value.EndOffset);
+			win.Title = string.Format(dnSpy_Contracts_DnSpy_Resources.HexEditorSaveSelection_Title, sel.Value.StartOffset, sel.Value.EndOffset);
 			var res = win.ShowDialog();
 			if (res != true)
 				return;
 			if (!data.WasError)
 				return;
-			MsgBox.Instance.Show(string.Format(dnSpy_Contracts_DnSpy.AnErrorOccurred, data.ErrorMessage));
+			MsgBox.Instance.Show(string.Format(dnSpy_Contracts_DnSpy_Resources.AnErrorOccurred, data.ErrorMessage));
 		}
 
 		internal static bool CanExecute(DnHexBox dnHexBox) => dnHexBox.Document != null && dnHexBox.Selection != null;
@@ -275,7 +275,7 @@ namespace dnSpy.Contracts.Hex {
 		public override void Execute(DnHexBox dnHexBox) => dnHexBox.ClearBytes();
 		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.Document != null;
 		public override bool IsVisible(DnHexBox dnHexBox) => true;
-		public override string GetHeader(DnHexBox context) => context.Selection != null ? dnSpy_Contracts_DnSpy.ClearSelectedBytesCommand : dnSpy_Contracts_DnSpy.ClearByteCommand;
+		public override string GetHeader(DnHexBox context) => context.Selection != null ? dnSpy_Contracts_DnSpy_Resources.ClearSelectedBytesCommand : dnSpy_Contracts_DnSpy_Resources.ClearByteCommand;
 	}
 
 	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = "Fill", Group = MenuConstants.GROUP_CTX_HEXBOX_EDIT, Order = 10)]
@@ -292,7 +292,7 @@ namespace dnSpy.Contracts.Hex {
 			if (sel == null)
 				return;
 
-			var res = messageBoxManager.Ask<byte?>(dnSpy_Contracts_DnSpy.FillSelection_Label, "0xFF", dnSpy_Contracts_DnSpy.FillSelection_Title, s => {
+			var res = messageBoxManager.Ask<byte?>(dnSpy_Contracts_DnSpy_Resources.FillSelection_Label, "0xFF", dnSpy_Contracts_DnSpy_Resources.FillSelection_Title, s => {
 				string error;
 				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
 				return string.IsNullOrEmpty(error) ? b : (byte?)null;
@@ -381,13 +381,13 @@ namespace dnSpy.Contracts.Hex {
 		public override void Execute(DnHexBox context) { }
 
 		static readonly Tuple<int?, string>[] subMenus = new Tuple<int?, string>[] {
-			Tuple.Create((int?)0, dnSpy_Contracts_DnSpy.HexEditor_BytesPerLine_FitToWidth),
-			Tuple.Create((int?)8, dnSpy_Contracts_DnSpy.HexEditor_BytesPerLine_8),
-			Tuple.Create((int?)16, dnSpy_Contracts_DnSpy.HexEditor_BytesPerLine_16),
-			Tuple.Create((int?)32, dnSpy_Contracts_DnSpy.HexEditor_BytesPerLine_32),
-			Tuple.Create((int?)48, dnSpy_Contracts_DnSpy.HexEditor_BytesPerLine_48),
-			Tuple.Create((int?)64, dnSpy_Contracts_DnSpy.HexEditor_BytesPerLine_64),
-			Tuple.Create((int?)null, dnSpy_Contracts_DnSpy.HexEditor_Default),
+			Tuple.Create((int?)0, dnSpy_Contracts_DnSpy_Resources.HexEditor_BytesPerLine_FitToWidth),
+			Tuple.Create((int?)8, dnSpy_Contracts_DnSpy_Resources.HexEditor_BytesPerLine_8),
+			Tuple.Create((int?)16, dnSpy_Contracts_DnSpy_Resources.HexEditor_BytesPerLine_16),
+			Tuple.Create((int?)32, dnSpy_Contracts_DnSpy_Resources.HexEditor_BytesPerLine_32),
+			Tuple.Create((int?)48, dnSpy_Contracts_DnSpy_Resources.HexEditor_BytesPerLine_48),
+			Tuple.Create((int?)64, dnSpy_Contracts_DnSpy_Resources.HexEditor_BytesPerLine_64),
+			Tuple.Create((int?)null, dnSpy_Contracts_DnSpy_Resources.HexEditor_Default),
 		};
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
@@ -416,14 +416,14 @@ namespace dnSpy.Contracts.Hex {
 		public override void Execute(DnHexBox context) { }
 
 		static readonly Tuple<AsciiEncoding?, string>[] subMenus = new Tuple<AsciiEncoding?, string>[] {
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.ASCII, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_ASCII),
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.ANSI, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_ANSI),
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF7, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UTF7),
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF8, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UTF8),
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF32, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UTF32),
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.Unicode, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UNICODE),
-			Tuple.Create((AsciiEncoding?)AsciiEncoding.BigEndianUnicode, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE),
-			Tuple.Create((AsciiEncoding?)null, dnSpy_Contracts_DnSpy.HexEditor_Default),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.ASCII, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_ASCII),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.ANSI, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_ANSI),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF7, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UTF7),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF8, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UTF8),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF32, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UTF32),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.Unicode, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UNICODE),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.BigEndianUnicode, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE),
+			Tuple.Create((AsciiEncoding?)null, dnSpy_Contracts_DnSpy_Resources.HexEditor_Default),
 		};
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {

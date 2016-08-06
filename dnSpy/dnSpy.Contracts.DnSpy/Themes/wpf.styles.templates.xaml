@@ -11,7 +11,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <GroupBox Grid.Row="0" Header="{x:Static p:dnSpy_Contracts_DnSpy.Font}">
+            <GroupBox Grid.Row="0" Header="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Font}">
                 <Grid>
                     <Grid.Resources>
                         <mvvmvc:FontSizeConverter x:Key="fontSizeConverter" />
@@ -58,7 +58,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_Contracts_DnSpy.HexEditorSettings_OtherOptions}">
+            <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_Contracts_DnSpy_Resources.HexEditorSettings_OtherOptions}">
                 <Grid Margin="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -73,17 +73,17 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_BytesPerLine}" />
+                    <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_BytesPerLine}" />
                     <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="bytesPerLineTextBox" Text="{Binding BytesPerLineVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-                    <Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesGroupCountTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_ByteGroupSize}" />
+                    <Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesGroupCountTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_ByteGroupSize}" />
                     <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Name="bytesGroupCountTextBox" Text="{Binding BytesGroupCountVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_Encoding}" Target="{Binding ElementName=encodingComboBox}" />
+                    <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_Encoding}" Target="{Binding ElementName=encodingComboBox}" />
                     <ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding AsciiEncodingVM.Items}" SelectedIndex="{Binding AsciiEncodingVM.SelectedIndex}" VerticalContentAlignment="Center" />
 
-                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseHexPrefix}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_UseHexPrefix}" />
-                    <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding Settings.ShowAscii}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_ShowASCII}" />
-                    <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.LowerCaseHex}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_LowerCaseHex}" />
+                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseHexPrefix}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_UseHexPrefix}" />
+                    <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding Settings.ShowAscii}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_ShowASCII}" />
+                    <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.LowerCaseHex}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_LowerCaseHex}" />
                 </Grid>
             </GroupBox>
         </Grid>

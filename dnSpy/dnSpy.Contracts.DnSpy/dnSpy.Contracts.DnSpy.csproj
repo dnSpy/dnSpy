@@ -205,10 +205,10 @@
     <Compile Include="MVVM\PickFilenameConstants.cs" />
     <Compile Include="MVVM\PickSaveFilename.cs" />
     <Compile Include="Output\IOutputManagerListener.cs" />
-    <Compile Include="Properties\dnSpy.Contracts.DnSpy.Designer.cs">
+    <Compile Include="Properties\dnSpy.Contracts.DnSpy.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.Contracts.DnSpy.resx</DependentUpon>
+      <DependentUpon>dnSpy.Contracts.DnSpy.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Files\DnSpyFileInfo.cs" />
     <Compile Include="Files\FileConstants.cs" />
@@ -598,9 +598,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.resx">
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Contracts.DnSpy.Designer.cs</LastGenOutput>
+      <LastGenOutput>dnSpy.Contracts.DnSpy.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -158,7 +158,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", SimpleTypeConverter.ByteArrayToString(file.HashValue));
 				break;
 			case ResourceType.Embedded:
-				extra = string.Format(dnSpy_Contracts_DnSpy.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);
+				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);
 				break;
 			}
 			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedTextColor.Comment);

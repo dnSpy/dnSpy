@@ -28,7 +28,7 @@
              Width="550"
              SizeToContent="Height"
              ResizeMode="NoResize"
-             Title="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_Title}"
+             Title="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinWidth="550">
     <winlocal:WindowBase.Resources>
@@ -56,26 +56,26 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=startOffsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_StartOffset}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=startOffsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_StartOffset}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="startOffsetTextBox" Text="{Binding StartOffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=endOffsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_EndOffset}" />
+            <Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=endOffsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_EndOffset}" />
             <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Name="endOffsetTextBox" Text="{Binding EndOffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=baseOffsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_BaseOffset}" ToolTip="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_BaseOffset_ToolTip}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=baseOffsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_BaseOffset}" ToolTip="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_BaseOffset_ToolTip}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="baseOffsetTextBox" Text="{Binding BaseOffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=hexOffsetSizeTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_OffsetBitSize}" />
+            <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=hexOffsetSizeTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_OffsetBitSize}" />
             <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="hexOffsetSizeTextBox" Text="{Binding HexOffsetSizeVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=byteGroupSizeTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_ByteGroupSize}" />
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=byteGroupSizeTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_ByteGroupSize}" />
             <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="byteGroupSizeTextBox" Text="{Binding BytesGroupCountVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_BytesPerLine}" />
+            <Label Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_BytesPerLine}" />
             <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Name="bytesPerLineTextBox" Text="{Binding BytesPerLineVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_Encoding}" Target="{Binding ElementName=encodingComboBox}" />
+            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_Encoding}" Target="{Binding ElementName=encodingComboBox}" />
             <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding AsciiEncodingVM.Items}" SelectedIndex="{Binding AsciiEncodingVM.SelectedIndex}" VerticalContentAlignment="Center" />
 
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseHexPrefix}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_UseHexPrefix}" IsThreeState="True" />
-            <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding ShowAscii}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_ShowASCII}" IsThreeState="True" />
-            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding LowerCaseHex}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_LowerCaseHex}" IsThreeState="True" />
-            <CheckBox Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseRelativeOffsets}" Content="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_UseRelOffsets}" ToolTip="{x:Static p:dnSpy_Contracts_DnSpy.LocalHexSettings_UseRelOffsets_ToolTip}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseHexPrefix}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_UseHexPrefix}" IsThreeState="True" />
+            <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding ShowAscii}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_ShowASCII}" IsThreeState="True" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding LowerCaseHex}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_LowerCaseHex}" IsThreeState="True" />
+            <CheckBox Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseRelativeOffsets}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_UseRelOffsets}" ToolTip="{x:Static p:dnSpy_Contracts_DnSpy_Resources.LocalHexSettings_UseRelOffsets_ToolTip}" />
         </Grid>
 
         <Grid Grid.Row="1" Margin="0 5 5 0">
@@ -86,10 +86,10 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_DefaultSettings}" Style="{StaticResource DialogButton}" Margin="5,0,5,0" Command="{Binding ResetToDefaultCommand}" />
-            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-            <Button Grid.Column="4" Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
+            <Button Grid.Column="0" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_DefaultSettings}" Style="{StaticResource DialogButton}" Margin="5,0,5,0" Command="{Binding ResetToDefaultCommand}" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+            <Button Grid.Column="4" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

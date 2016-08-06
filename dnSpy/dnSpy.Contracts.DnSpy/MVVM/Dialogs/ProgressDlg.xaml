@@ -51,7 +51,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Margin="5 5 5 5" Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_Cancel}" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Margin="5 5 5 5" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

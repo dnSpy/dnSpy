@@ -28,7 +28,7 @@
              Width="250"
              SizeToContent="Height"
              ResizeMode="NoResize"
-             Title="{x:Static p:dnSpy_Contracts_DnSpy.GoToOffset_Title}"
+             Title="{x:Static p:dnSpy_Contracts_DnSpy_Resources.GoToOffset_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinWidth="200">
     <winlocal:WindowBase.Resources>
@@ -46,13 +46,13 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Label Name="offsetLabel" Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=offsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy.GoToOffset_Offset_Label}" />
+            <Label Name="offsetLabel" Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=offsetTextBox}" Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.GoToOffset_Offset_Label}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="offsetTextBox" Text="{Binding OffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-            <Button Content="{x:Static p:dnSpy_Contracts_DnSpy.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
+            <Button Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Content="{x:Static p:dnSpy_Contracts_DnSpy_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
         </StackPanel>
     </Grid>
 </winlocal:WindowBase>

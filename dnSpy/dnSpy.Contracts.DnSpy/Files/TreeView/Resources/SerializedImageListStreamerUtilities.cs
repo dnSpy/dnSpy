@@ -105,13 +105,13 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
 			if (!GetImageData(module, binData.TypeName, binData.Data, out imageData))
-				return dnSpy_Contracts_DnSpy.NewDataNotImageList;
+				return dnSpy_Contracts_DnSpy_Resources.NewDataNotImageList;
 
 			try {
 				ReadImageData(imageData);
 			}
 			catch {
-				return dnSpy_Contracts_DnSpy.NewDataNotImageList;
+				return dnSpy_Contracts_DnSpy_Resources.NewDataNotImageList;
 			}
 
 			return string.Empty;

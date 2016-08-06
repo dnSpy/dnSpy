@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 			}
 			catch (Exception ex) {
 				obj = null;
-				return string.Format(dnSpy_Contracts_DnSpy.CouldNotDeserializeData, ex.Message);
+				return string.Format(dnSpy_Contracts_DnSpy_Resources.CouldNotDeserializeData, ex.Message);
 			}
 		}
 
@@ -105,10 +105,10 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				}
 			}
 			catch (Exception ex) {
-				return string.Format(dnSpy_Contracts_DnSpy.CouldNotConvertFromString, ex.Message);
+				return string.Format(dnSpy_Contracts_DnSpy_Resources.CouldNotConvertFromString, ex.Message);
 			}
 
-			return string.Format(dnSpy_Contracts_DnSpy.NoTypeConverter, targetType);
+			return string.Format(dnSpy_Contracts_DnSpy_Resources.NoTypeConverter, targetType);
 		}
 
 		/// <summary>

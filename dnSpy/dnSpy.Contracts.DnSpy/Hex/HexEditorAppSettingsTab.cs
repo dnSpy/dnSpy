@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Hex {
 
 	sealed class HexEditorAppSettingsTab : IAppSettingsTab {
 		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_HEXEDITOR;
-		public string Title => dnSpy_Contracts_DnSpy.HexEditorAppDlgTitle;
+		public string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
 		public object UIObject => displayAppSettingsVM;
 
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;
@@ -94,13 +94,13 @@ namespace dnSpy.Contracts.Hex {
 
 		public EnumListVM AsciiEncodingVM { get; }
 		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
-			new EnumVM(AsciiEncoding.ASCII, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_ASCII_2),
-			new EnumVM(AsciiEncoding.ANSI, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_ANSI_2),
-			new EnumVM(AsciiEncoding.UTF7, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UTF7_2),
-			new EnumVM(AsciiEncoding.UTF8, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UTF8_2),
-			new EnumVM(AsciiEncoding.UTF32, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UTF32_2),
-			new EnumVM(AsciiEncoding.Unicode, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_UNICODE_2),
-			new EnumVM(AsciiEncoding.BigEndianUnicode, dnSpy_Contracts_DnSpy.HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2),
+			new EnumVM(AsciiEncoding.ASCII, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_ASCII_2),
+			new EnumVM(AsciiEncoding.ANSI, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_ANSI_2),
+			new EnumVM(AsciiEncoding.UTF7, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UTF7_2),
+			new EnumVM(AsciiEncoding.UTF8, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UTF8_2),
+			new EnumVM(AsciiEncoding.UTF32, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UTF32_2),
+			new EnumVM(AsciiEncoding.Unicode, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_UNICODE_2),
+			new EnumVM(AsciiEncoding.BigEndianUnicode, dnSpy_Contracts_DnSpy_Resources.HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2),
 		};
 
 		public HexEditorAppSettingsVM(HexEditorSettings hexEditorSettings) {

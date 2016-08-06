@@ -25,13 +25,13 @@ namespace dnSpy.Contracts.MVVM {
 	/// </summary>
 	public static class PickFilenameConstants {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static readonly string ImagesFilter = $"{dnSpy_Contracts_DnSpy.Files_Images}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
-		public static readonly string StrongNameKeyFilter = $"{dnSpy_Contracts_DnSpy.Files_StrongNameKeyFiles} (*.snk)|*.snk|{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
-		public static readonly string AnyFilenameFilter = $"{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
-		public static readonly string DotNetExecutableFilter = $"{dnSpy_Contracts_DnSpy.Files_DotNetExecutables} (*.exe)|*.exe|{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
-		public static readonly string DotNetAssemblyOrModuleFilter = $"{dnSpy_Contracts_DnSpy.Files_DotNetExecutables} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
-		public static readonly string NetModuleFilter = $"{dnSpy_Contracts_DnSpy.Files_DotNetNetModules} (*.netmodule)|*.netmodule|{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
-		public static readonly string ExecutableFilter = $"{dnSpy_Contracts_DnSpy.Files_Executables} (*.exe)|*.exe|{dnSpy_Contracts_DnSpy.AllFiles} (*.*)|*.*";
+		public static readonly string ImagesFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_Images}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string StrongNameKeyFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_StrongNameKeyFiles} (*.snk)|*.snk|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string AnyFilenameFilter = $"{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string DotNetExecutableFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_DotNetExecutables} (*.exe)|*.exe|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string DotNetAssemblyOrModuleFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_DotNetExecutables} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string NetModuleFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_DotNetNetModules} (*.netmodule)|*.netmodule|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string ExecutableFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_Executables} (*.exe)|*.exe|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

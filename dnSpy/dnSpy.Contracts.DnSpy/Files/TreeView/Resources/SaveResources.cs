@@ -81,13 +81,13 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 			var win = new ProgressDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;
-			win.Title = files.Length == 1 ? dnSpy_Contracts_DnSpy.SaveResource : dnSpy_Contracts_DnSpy.SaveResources;
+			win.Title = files.Length == 1 ? dnSpy_Contracts_DnSpy_Resources.SaveResource : dnSpy_Contracts_DnSpy_Resources.SaveResources;
 			var res = win.ShowDialog();
 			if (res != true)
 				return;
 			if (!data.WasError)
 				return;
-			MsgBox.Instance.Show(string.Format(dnSpy_Contracts_DnSpy.AnErrorOccurred, data.ErrorMessage));
+			MsgBox.Instance.Show(string.Format(dnSpy_Contracts_DnSpy_Resources.AnErrorOccurred, data.ErrorMessage));
 		}
 
 		static IEnumerable<Tuple<ResourceData, string>> GetFiles(ResourceData[] infos, bool useSubDirs) {
