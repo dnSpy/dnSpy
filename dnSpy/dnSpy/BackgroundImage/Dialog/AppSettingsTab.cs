@@ -229,7 +229,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 
 		static double FilterScale(double value) {
 			if (double.IsNaN(value))
-				return 0;
+				return 1;
 			if (value < 0)
 				return 1;
 			return value;
