@@ -17,14 +17,54 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.BackgroundImage {
 	/// <summary>
-	/// <see cref="ICodeEditor"/> constants
+	/// Image placement
 	/// </summary>
-	public static class CodeEditorConstants {
+	public enum ImagePlacement {
 		/// <summary>
-		/// <see cref="ICodeEditor"/> text view role
+		/// Top left corner
 		/// </summary>
-		public const string TextViewRole = "dnSpy-ICodeEditor";
+		TopLeft,
+
+		/// <summary>
+		/// Top right corner
+		/// </summary>
+		TopRight,
+
+		/// <summary>
+		/// Bottom left corner
+		/// </summary>
+		BottomLeft,
+
+		/// <summary>
+		/// Bottom right corner
+		/// </summary>
+		BottomRight,
+
+		/// <summary>
+		/// Top
+		/// </summary>
+		Top,
+
+		/// <summary>
+		/// Left
+		/// </summary>
+		Left,
+
+		/// <summary>
+		/// Right
+		/// </summary>
+		Right,
+
+		/// <summary>
+		/// Bottom
+		/// </summary>
+		Bottom,
+
+		/// <summary>
+		/// Center
+		/// </summary>
+		Center,
 	}
 }

@@ -27,6 +27,11 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class PredefinedDnSpyTextViewRoles {
 		/// <summary>
+		/// <see cref="IDocumentViewer"/> text view role
+		/// </summary>
+		public const string DocumentViewer = "dnSpy-IDocumentViewer";
+
+		/// <summary>
 		/// <see cref="ILogEditor"/> text view role
 		/// </summary>
 		public const string LogEditor = "dnSpy-ILogEditor";
@@ -57,6 +62,17 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const string VisualBasicRepl = "dnSpy-VisualBasicRepl";
 
 		/// <summary>
+		/// <see cref="ICodeEditor"/> text view role
+		/// </summary>
+		public const string CodeEditor = "dnSpy-ICodeEditor";
+
+		/// <summary>
+		/// Enables the custom line number margin, see <see cref="Editor.CustomLineNumberMargin"/>
+		/// documentation for more info.
+		/// </summary>
+		public const string CustomLineNumberMargin = "dnSpy-CustomLineNumberMargin";
+
+		/// <summary>
 		/// <see cref="IGlyphTextMarkerService"/> services can be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Interactive"/> is already used.
 		/// </summary>
@@ -75,20 +91,14 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const string CanHaveLineNumberMargin = "dnSpy-CanHaveLineNumberMargin";
 
 		/// <summary>
-		/// Enables the custom line number margin, see <see cref="Editor.CustomLineNumberMargin"/>
-		/// documentation for more info.
-		/// </summary>
-		public const string CustomLineNumberMargin = "dnSpy-CustomLineNumberMargin";
-
-		/// <summary>
-		/// <see cref="IDocumentViewer"/> text view role
-		/// </summary>
-		public const string DocumentViewer = "dnSpy-IDocumentViewer";
-
-		/// <summary>
 		/// Allows line separators to be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
 		/// </summary>
 		public const string CanHaveLineSeparator = "dnSpy-CanHaveLineSeparator";
+
+		/// <summary>
+		/// Allows background images to be used
+		/// </summary>
+		public const string CanHaveBackgroundImage = "dnSpy-CanHaveBackgroundImage";
 	}
 }

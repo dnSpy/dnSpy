@@ -41,5 +41,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Line separator adornment layer
 		/// </summary>
 		public const string LineSeparator = "dnSpy-LineSeparator";
+
+		/// <summary>
+		/// Background image adornment layer
+		/// </summary>
+		public const string BackgroundImage = "dnSpy-BackgroundImage";
 	}
 }

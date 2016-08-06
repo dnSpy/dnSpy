@@ -72,9 +72,10 @@ namespace dnSpy.Text.Editor {
 		static readonly string[] defaultRoles = new string[] {
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Zoomable,
-			PredefinedDnSpyTextViewRoles.LogEditor,
 			PredefinedDnSpyTextViewRoles.CanHaveCurrentLineHighlighter,
+			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
 			PredefinedDnSpyTextViewRoles.CanHaveLineNumberMargin,
+			PredefinedDnSpyTextViewRoles.LogEditor,
 		};
 
 		public LogEditor(LogEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {

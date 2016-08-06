@@ -995,4 +995,121 @@
   <data name="Window_Restore" xml:space="preserve">
     <value>Restore Down</value>
   </data>
+  <data name="BackgroundImageOptDlgTab" xml:space="preserve">
+    <value>Background Image</value>
+  </data>
+  <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
+    <value>Code editor</value>
+  </data>
+  <data name="BgImgDisplayName_Default" xml:space="preserve">
+    <value>Other text windows</value>
+  </data>
+  <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
+    <value>Main text viewer</value>
+  </data>
+  <data name="BgImgDisplayName_Logger" xml:space="preserve">
+    <value>Log window</value>
+  </data>
+  <data name="BgImgDisplayName_REPL" xml:space="preserve">
+    <value>REPL window</value>
+  </data>
+  <data name="BgImgSettings_Direction" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="BgImgSettings_GridColumn" xml:space="preserve">
+    <value>Grid Column</value>
+  </data>
+  <data name="BgImgSettings_GridColumns" xml:space="preserve">
+    <value>Grid Columns</value>
+  </data>
+  <data name="BgImgSettings_GridColumnSpan" xml:space="preserve">
+    <value>Column Span</value>
+  </data>
+  <data name="BgImgSettings_GridRow" xml:space="preserve">
+    <value>Grid Row</value>
+  </data>
+  <data name="BgImgSettings_GridRows" xml:space="preserve">
+    <value>Grid Rows</value>
+  </data>
+  <data name="BgImgSettings_GridRowSpan" xml:space="preserve">
+    <value>Row Span</value>
+  </data>
+  <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
+    <value>Horizontal Offset</value>
+  </data>
+  <data name="BgImgSettings_Images" xml:space="preserve">
+    <value>Add paths to images and image folders, one path per line:</value>
+  </data>
+  <data name="BgImgSettings_Interval" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="BgImgSettings_MaxHeight" xml:space="preserve">
+    <value>Max Height</value>
+  </data>
+  <data name="BgImgSettings_MaxWidth" xml:space="preserve">
+    <value>Max Width</value>
+  </data>
+  <data name="BgImgSettings_Opacity" xml:space="preserve">
+    <value>Opacity</value>
+  </data>
+  <data name="BgImgSettings_Placement" xml:space="preserve">
+    <value>Placement</value>
+  </data>
+  <data name="BgImgSettings_RandomImage" xml:space="preserve">
+    <value>Random Image</value>
+  </data>
+  <data name="BgImgSettings_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="BgImgSettings_Scale" xml:space="preserve">
+    <value>Scale</value>
+  </data>
+  <data name="BgImgSettings_ShowImages" xml:space="preserve">
+    <value>Show Images</value>
+  </data>
+  <data name="BgImgSettings_Stretch" xml:space="preserve">
+    <value>Stretch</value>
+  </data>
+  <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
+    <value>Vertical Offset</value>
+  </data>
+  <data name="ImagePlacement_Bottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="ImagePlacement_BottomLeft" xml:space="preserve">
+    <value>Bottom Left</value>
+  </data>
+  <data name="ImagePlacement_BottomRight" xml:space="preserve">
+    <value>Bottom Right</value>
+  </data>
+  <data name="ImagePlacement_Center" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="ImagePlacement_Left" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="ImagePlacement_Right" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="ImagePlacement_Top" xml:space="preserve">
+    <value>Top</value>
+  </data>
+  <data name="ImagePlacement_TopLeft" xml:space="preserve">
+    <value>Top Left</value>
+  </data>
+  <data name="ImagePlacement_TopRight" xml:space="preserve">
+    <value>Top Right</value>
+  </data>
+  <data name="StretchDirection_Both" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="StretchDirection_DownOnly" xml:space="preserve">
+    <value>Down Only</value>
+  </data>
+  <data name="StretchDirection_UpOnly" xml:space="preserve">
+    <value>Up Only</value>
+  </data>
+  <data name="Files_Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
 </root>

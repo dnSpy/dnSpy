@@ -65,6 +65,8 @@
     <Compile Include="AsmEditor\Compiler\LineLocation.cs" />
     <Compile Include="AsmEditor\Compiler\LineLocationSpan.cs" />
     <Compile Include="AsmEditor\Compiler\TargetPlatform.cs" />
+    <Compile Include="BackgroundImage\BackgroundImageOptionDefinitionConstants.cs" />
+    <Compile Include="BackgroundImage\IBackgroundImageOptionDefinition.cs" />
     <Compile Include="Command\CommandConstants.cs" />
     <Compile Include="Command\CommandInfo.cs" />
     <Compile Include="Command\CommandShortcut.cs" />
@@ -183,6 +185,8 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Hex\SelectVM.cs" />
+    <Compile Include="BackgroundImage\DefaultImageSettings.cs" />
+    <Compile Include="BackgroundImage\ImagePlacement.cs" />
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />
     <Compile Include="Menus\MenuItemCommand.cs" />
@@ -462,7 +466,6 @@
     <Compile Include="Text\Classification\ThemeMarkerFormatDefinition.cs" />
     <Compile Include="Text\ColorAndText.cs" />
     <Compile Include="Text\ContentTypes.cs" />
-    <Compile Include="Text\Editor\CodeEditorConstants.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
     <Compile Include="Text\Editor\DefaultDnSpyOptions.cs" />

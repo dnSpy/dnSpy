@@ -187,11 +187,245 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Background Image.
+        /// </summary>
+        public static string BackgroundImageOptDlgTab {
+            get {
+                return ResourceManager.GetString("BackgroundImageOptDlgTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Base Type and Interfaces.
         /// </summary>
         public static string BaseTypeFolder {
             get {
                 return ResourceManager.GetString("BaseTypeFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code editor.
+        /// </summary>
+        public static string BgImgDisplayName_CodeEditor {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_CodeEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other text windows.
+        /// </summary>
+        public static string BgImgDisplayName_Default {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main text viewer.
+        /// </summary>
+        public static string BgImgDisplayName_DocumentViewer {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_DocumentViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log window.
+        /// </summary>
+        public static string BgImgDisplayName_Logger {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_Logger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REPL window.
+        /// </summary>
+        public static string BgImgDisplayName_REPL {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_REPL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direction.
+        /// </summary>
+        public static string BgImgSettings_Direction {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Direction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid Column.
+        /// </summary>
+        public static string BgImgSettings_GridColumn {
+            get {
+                return ResourceManager.GetString("BgImgSettings_GridColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid Columns.
+        /// </summary>
+        public static string BgImgSettings_GridColumns {
+            get {
+                return ResourceManager.GetString("BgImgSettings_GridColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column Span.
+        /// </summary>
+        public static string BgImgSettings_GridColumnSpan {
+            get {
+                return ResourceManager.GetString("BgImgSettings_GridColumnSpan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid Row.
+        /// </summary>
+        public static string BgImgSettings_GridRow {
+            get {
+                return ResourceManager.GetString("BgImgSettings_GridRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid Rows.
+        /// </summary>
+        public static string BgImgSettings_GridRows {
+            get {
+                return ResourceManager.GetString("BgImgSettings_GridRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row Span.
+        /// </summary>
+        public static string BgImgSettings_GridRowSpan {
+            get {
+                return ResourceManager.GetString("BgImgSettings_GridRowSpan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horizontal Offset.
+        /// </summary>
+        public static string BgImgSettings_HorizontalOffset {
+            get {
+                return ResourceManager.GetString("BgImgSettings_HorizontalOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add paths to images and image folders, one path per line:.
+        /// </summary>
+        public static string BgImgSettings_Images {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Images", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval.
+        /// </summary>
+        public static string BgImgSettings_Interval {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max Height.
+        /// </summary>
+        public static string BgImgSettings_MaxHeight {
+            get {
+                return ResourceManager.GetString("BgImgSettings_MaxHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max Width.
+        /// </summary>
+        public static string BgImgSettings_MaxWidth {
+            get {
+                return ResourceManager.GetString("BgImgSettings_MaxWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opacity.
+        /// </summary>
+        public static string BgImgSettings_Opacity {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Opacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Placement.
+        /// </summary>
+        public static string BgImgSettings_Placement {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Placement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Random Image.
+        /// </summary>
+        public static string BgImgSettings_RandomImage {
+            get {
+                return ResourceManager.GetString("BgImgSettings_RandomImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string BgImgSettings_Reset {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scale.
+        /// </summary>
+        public static string BgImgSettings_Scale {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Scale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Images.
+        /// </summary>
+        public static string BgImgSettings_ShowImages {
+            get {
+                return ResourceManager.GetString("BgImgSettings_ShowImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stretch.
+        /// </summary>
+        public static string BgImgSettings_Stretch {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Stretch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical Offset.
+        /// </summary>
+        public static string BgImgSettings_VerticalOffset {
+            get {
+                return ResourceManager.GetString("BgImgSettings_VerticalOffset", resourceCulture);
             }
         }
         
@@ -792,6 +1026,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Images.
+        /// </summary>
+        public static string Files_Images {
+            get {
+                return ResourceManager.GetString("Files_Images", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Find.
         /// </summary>
         public static string FindCommand {
@@ -1013,6 +1256,87 @@ namespace dnSpy.Properties {
         public static string HighlightLine {
             get {
                 return ResourceManager.GetString("HighlightLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom.
+        /// </summary>
+        public static string ImagePlacement_Bottom {
+            get {
+                return ResourceManager.GetString("ImagePlacement_Bottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom Left.
+        /// </summary>
+        public static string ImagePlacement_BottomLeft {
+            get {
+                return ResourceManager.GetString("ImagePlacement_BottomLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom Right.
+        /// </summary>
+        public static string ImagePlacement_BottomRight {
+            get {
+                return ResourceManager.GetString("ImagePlacement_BottomRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Center.
+        /// </summary>
+        public static string ImagePlacement_Center {
+            get {
+                return ResourceManager.GetString("ImagePlacement_Center", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        public static string ImagePlacement_Left {
+            get {
+                return ResourceManager.GetString("ImagePlacement_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        public static string ImagePlacement_Right {
+            get {
+                return ResourceManager.GetString("ImagePlacement_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top.
+        /// </summary>
+        public static string ImagePlacement_Top {
+            get {
+                return ResourceManager.GetString("ImagePlacement_Top", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top Left.
+        /// </summary>
+        public static string ImagePlacement_TopLeft {
+            get {
+                return ResourceManager.GetString("ImagePlacement_TopLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top Right.
+        /// </summary>
+        public static string ImagePlacement_TopRight {
+            get {
+                return ResourceManager.GetString("ImagePlacement_TopRight", resourceCulture);
             }
         }
         
@@ -2417,6 +2741,33 @@ namespace dnSpy.Properties {
         public static string SortAsmsCommand {
             get {
                 return ResourceManager.GetString("SortAsmsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Both.
+        /// </summary>
+        public static string StretchDirection_Both {
+            get {
+                return ResourceManager.GetString("StretchDirection_Both", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down Only.
+        /// </summary>
+        public static string StretchDirection_DownOnly {
+            get {
+                return ResourceManager.GetString("StretchDirection_DownOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up Only.
+        /// </summary>
+        public static string StretchDirection_UpOnly {
+            get {
+                return ResourceManager.GetString("StretchDirection_UpOnly", resourceCulture);
             }
         }
         

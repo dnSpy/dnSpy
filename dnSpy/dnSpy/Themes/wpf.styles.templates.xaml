@@ -13,6 +13,7 @@
                     xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:search="clr-namespace:dnSpy.Search"
+                    xmlns:bgImg="clr-namespace:dnSpy.BackgroundImage.Dialog"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -5962,6 +5963,106 @@
             </Grid.RowDefinitions>
             <ComboBox Grid.Row="0" HorizontalAlignment="Stretch" ItemsSource="{Binding LanguageSettings}" SelectedItem="{Binding SelectedLanguageSetting}" DisplayMemberPath="Name" Visibility="{Binding HasMoreThanOneSetting, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ContentPresenter Grid.Row="1" Margin="0 5 0 0" Content="{Binding CurrentUIObject}"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type bgImg:AppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 0 0 0" HorizontalAlignment="Stretch" Name="settingsComboBox" DisplayMemberPath="Name" ItemsSource="{Binding Settings}" SelectedItem="{Binding CurrentItem}" VerticalContentAlignment="Center" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 5 5 5" TextWrapping="Wrap" Text="{x:Static p:dnSpy_Resources.BgImgSettings_Images}" />
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="0 0 5 0"
+                         IsEnabled="{Binding IsEnabled}"
+                         Text="{Binding Images, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         VerticalContentAlignment="Top"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         MinLines="3"
+                         MaxLines="3"
+                         AllowDrop="True"
+                         AcceptsReturn="True" />
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" Margin="0 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
+                    <Button Grid.Row="1" Margin="0 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickDirectoryCommand}" />
+                </Grid>
+            </Grid>
+
+            <Label Grid.Row="3" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Placement}" Target="{Binding ElementName=imagePlacementComboBox}" IsEnabled="{Binding IsEnabled}" />
+            <ComboBox Grid.Row="3" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="imagePlacementComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ImagePlacementVM.Items}" SelectedIndex="{Binding ImagePlacementVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="3" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=opacityTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Opacity}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="3" Grid.Column="3" Margin="0 0 0 0" Name="opacityTextBox" Text="{Binding OpacityVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <Label Grid.Row="4" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Stretch}" Target="{Binding ElementName=stretchComboBox}" IsEnabled="{Binding IsEnabled}" />
+            <ComboBox Grid.Row="4" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="stretchComboBox" DisplayMemberPath="Name" ItemsSource="{Binding StretchVM.Items}" SelectedIndex="{Binding StretchVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="4" Grid.Column="2" Margin="0 0 5 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Direction}" Target="{Binding ElementName=stretchDirectionComboBox}" IsEnabled="{Binding IsEnabled}" />
+            <ComboBox Grid.Row="4" Grid.Column="3" Margin="0 0 0 0" HorizontalAlignment="Stretch" Name="stretchDirectionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding StretchDirectionVM.Items}" SelectedIndex="{Binding StretchDirectionVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+
+            <Label Grid.Row="5" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=intervalTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Interval}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="5" Grid.Column="1" Margin="0 0 5 0" Name="intervalTextBox" Text="{Binding IntervalVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="5" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=scaleTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Scale}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="5" Grid.Column="3" Margin="0 0 0 0" Name="scaleTextBox" Text="{Binding ScaleVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 5 0" IsChecked="{Binding IsRandom}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_RandomImage}" IsEnabled="{Binding IsEnabled}" />
+            <CheckBox Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 0 0 0" IsChecked="{Binding IsEnabled}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_ShowImages}" />
+
+            <Label Grid.Row="7" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=horizontalOffsetTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_HorizontalOffset}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="7" Grid.Column="1" Margin="0 0 5 0" Name="horizontalOffsetTextBox" Text="{Binding HorizontalOffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="7" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=verticalOffsetTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_VerticalOffset}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="7" Grid.Column="3" Margin="0 0 0 0" Name="verticalOffsetTextBox" Text="{Binding VerticalOffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <Label Grid.Row="8" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=gridColumnsTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridColumns}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="8" Grid.Column="1" Margin="0 0 5 0" Name="gridColumnsTextBox" Text="{Binding TotalGridColumnsVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="8" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=gridRowsTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridRows}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="8" Grid.Column="3" Margin="0 0 0 0" Name="gridRowsTextBox" Text="{Binding TotalGridRowsVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <Label Grid.Row="9" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=gridColumnTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridColumn}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="9" Grid.Column="1" Margin="0 0 5 0" Name="gridColumnTextBox" Text="{Binding GridColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="9" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=gridRowTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridRow}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="9" Grid.Column="3" Margin="0 0 0 0" Name="gridRowTextBox" Text="{Binding GridRowVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <Label Grid.Row="10" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=gridColumnSpanTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridColumnSpan}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="10" Grid.Column="1" Margin="0 0 5 0" Name="gridColumnSpanTextBox" Text="{Binding GridColumnSpanVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="10" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=gridRowSpanTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridRowSpan}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="10" Grid.Column="3" Margin="0 0 0 0" Name="gridRowSpanTextBox" Text="{Binding GridRowSpanVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <Label Grid.Row="11" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=maxWidthTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_MaxWidth}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="11" Grid.Column="1" Margin="0 0 5 0" Name="maxWidthTextBox" Text="{Binding MaxWidthVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="11" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=maxHeightTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_MaxHeight}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="11" Grid.Column="3" Margin="0 0 0 0" Name="maxHeightTextBox" Text="{Binding MaxHeightVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+
+            <Button Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Reset}" Command="{Binding ResetCommand}" />
         </Grid>
     </DataTemplate>
 

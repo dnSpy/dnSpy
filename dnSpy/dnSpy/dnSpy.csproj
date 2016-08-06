@@ -65,6 +65,17 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundImage\BackgroundImageOptionDefinitions.cs" />
+    <Compile Include="BackgroundImage\BackgroundImageOptionDefinitionService.cs" />
+    <Compile Include="BackgroundImage\BackgroundImageService.cs" />
+    <Compile Include="BackgroundImage\BackgroundImageSettings.cs" />
+    <Compile Include="BackgroundImage\BackgroundImageSettingsService.cs" />
+    <Compile Include="BackgroundImage\DefaultRawSettings.cs" />
+    <Compile Include="BackgroundImage\Dialog\AppSettingsTab.cs" />
+    <Compile Include="BackgroundImage\ImageSourceService.cs" />
+    <Compile Include="BackgroundImage\ImageSourceServiceProvider.cs" />
+    <Compile Include="BackgroundImage\RawSettings.cs" />
+    <Compile Include="BackgroundImage\WpfTextViewCreationListener.cs" />
     <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Commands\CreatorAndCommand.cs" />
     <Compile Include="Commands\DefaultCommandInfoCreator.cs" />
