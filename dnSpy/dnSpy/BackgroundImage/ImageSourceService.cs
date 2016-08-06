@@ -295,7 +295,8 @@ namespace dnSpy.BackgroundImage {
 				if (currentImageInfo != null && StringComparer.InvariantCultureIgnoreCase.Equals(filename, currentImageInfo.Filename))
 					return currentImageInfo;
 				try {
-					var img = new BitmapImage(new Uri(filename, UriKind.RelativeOrAbsolute));
+					// Make sure \\?\C:\some\path\image.png won't throw an exception
+					var img = new BitmapImage(new Uri(filename, filename.StartsWith(@"\\") ? UriKind.Relative : UriKind.RelativeOrAbsolute));
 					img.Freeze();
 					return new ImageInfo(img, filename);
 				}
