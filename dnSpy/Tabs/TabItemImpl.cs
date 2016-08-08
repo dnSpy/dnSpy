@@ -116,7 +116,16 @@ namespace dnSpy.Tabs {
 		protected override void OnMouseDown(MouseButtonEventArgs e) {
 			base.OnMouseDown(e);
 			if (!e.Handled) {
-				tabGroup.SetFocus(TabContent);
+                var tabItem = e.Source as TabItemImpl;
+                if (tabItem != null && e.ChangedButton == MouseButton.Middle)
+                {
+                    this.Owner.Close(tabItem);
+                }
+                else
+                {
+                    tabGroup.SetFocus(TabContent);
+                }
+
 				e.Handled = true;
 				return;
 			}
