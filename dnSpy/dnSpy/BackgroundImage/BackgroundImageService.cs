@@ -169,8 +169,6 @@ namespace dnSpy.BackgroundImage {
 				image.Width = size.Width;
 				image.Height = size.Height;
 			}
-			Debug.Assert(viewportWidth == 0 || (size.Width > 0 && size.Width != double.PositiveInfinity));
-			Debug.Assert(viewportHeight == 0 || (size.Height > 0 && size.Height != double.PositiveInfinity));
 
 			switch (imageSourceService.ImagePlacement) {
 			case ImagePlacement.TopLeft:

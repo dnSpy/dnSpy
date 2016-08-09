@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
@@ -35,6 +36,16 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="filter">Filename filter or null</param>
 		/// <returns></returns>
 		string GetFilename(string currentFileName, string defaultExtension, string filter = null);
+
+		/// <summary>
+		/// Lets the user pick filenames. Returns an empty array if the user canceled the dialog box.
+		/// </summary>
+		/// <param name="currentFileName">Current filename or null</param>
+		/// <param name="defaultExtension">Default extension. It must not contain a period. Eg. valid
+		/// extensions are "exe" and "dll" but not ".exe"</param>
+		/// <param name="filter">Filename filter or null</param>
+		/// <returns></returns>
+		string[] GetFilenames(string currentFileName, string defaultExtension, string filter = null);
 	}
 
 	/// <summary>
@@ -43,11 +54,11 @@ namespace dnSpy.Contracts.MVVM {
 	[Export(typeof(IPickFilename))]
 	public sealed class PickFilename : IPickFilename {
 		/// <inheritdoc/>
-		public string GetFilename(string currentFileName, string extension, string filter) {
+		public string GetFilename(string currentFileName, string defaultExtension, string filter) {
 			var dialog = new OpenFileDialog() {
 				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
 				RestoreDirectory = true,
-				DefaultExt = extension,
+				DefaultExt = defaultExtension,
 				ValidateNames = true,
 			};
 			if (File.Exists(currentFileName))
@@ -57,6 +68,24 @@ namespace dnSpy.Contracts.MVVM {
 				return null;
 
 			return dialog.FileName;
+		}
+
+		/// <inheritdoc/>
+		public string[] GetFilenames(string currentFileName, string defaultExtension, string filter = null) {
+			var dialog = new OpenFileDialog() {
+				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
+				RestoreDirectory = true,
+				DefaultExt = defaultExtension,
+				ValidateNames = true,
+				Multiselect = true,
+			};
+			if (File.Exists(currentFileName))
+				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName);
+
+			if (dialog.ShowDialog() != DialogResult.OK)
+				return Array.Empty<string>();
+
+			return dialog.FileNames;
 		}
 	}
 }

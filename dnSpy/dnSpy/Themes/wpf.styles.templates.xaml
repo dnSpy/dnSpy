@@ -6014,7 +6014,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Button Grid.Row="0" Margin="0 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
+                    <Button Grid.Row="0" Margin="0 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenamesCommand}" />
                     <Button Grid.Row="1" Margin="0 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickDirectoryCommand}" />
                 </Grid>
             </Grid>

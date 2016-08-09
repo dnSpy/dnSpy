@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -58,7 +59,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public object UIObject => this;
 
 		public ICommand ResetCommand => new RelayCommand(a => ResetSettings(), a => CanResetSettings);
-		public ICommand PickFilenameCommand => new RelayCommand(a => PickFilename(), a => CanPickFilename);
+		public ICommand PickFilenamesCommand => new RelayCommand(a => PickFilenames(), a => CanPickFilenames);
 		public ICommand PickDirectoryCommand => new RelayCommand(a => PickDirectory(), a => CanPickDirectory);
 
 		public Settings CurrentItem {
@@ -283,19 +284,37 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 
 		static readonly string ImagesFilter = $"{dnSpy_Resources.Files_Images}|*.png;*.gif;*.bmp;*.jpg;*.jpeg|{dnSpy_Resources.AllFiles} (*.*)|*.*";
-		bool CanPickFilename => IsEnabled;
-		void PickFilename() => AddToImages(pickFilename.GetFilename(null, null, ImagesFilter));
+		bool CanPickFilenames => IsEnabled;
+		void PickFilenames() => AddToImages(pickFilename.GetFilenames(null, null, ImagesFilter));
 
 		bool CanPickDirectory => IsEnabled;
-		void PickDirectory() => AddToImages(pickDirectory.GetDirectory());
+		void PickDirectory() => AddToImages(new[] { pickDirectory.GetDirectory(GetLastDirectory()) });
 
-		void AddToImages(string name) {
-			if (string.IsNullOrWhiteSpace(name))
-				return;
+		string GetLastDirectory() {
+			foreach (var t in Images.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Reverse()) {
+				var f = t.Trim();
+				if (Directory.Exists(f))
+					return f;
+				if (File.Exists(f)) {
+					try {
+						return Path.GetDirectoryName(f);
+					}
+					catch {
+					}
+				}
+			}
+			return null;
+		}
+
+		void AddToImages(string[] filenames) {
 			var images = Images;
-			if (images.Length != 0 && !images.EndsWith(Environment.NewLine))
-				images += Environment.NewLine;
-			images += name + Environment.NewLine;
+			foreach (var name in filenames) {
+				if (string.IsNullOrWhiteSpace(name))
+					return;
+				if (images.Length != 0 && !images.EndsWith(Environment.NewLine))
+					images += Environment.NewLine;
+				images += name + Environment.NewLine;
+			}
 			Images = images;
 		}
 
