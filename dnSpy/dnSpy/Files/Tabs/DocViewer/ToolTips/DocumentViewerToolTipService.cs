@@ -103,12 +103,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => CloseToolTip();
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => CloseToolTip();
 
-		SpanData<ReferenceInfo>? GetReference(int position) {
-			var spanData = documentViewer.Content.ReferenceCollection.Find(position);
-			if (spanData != null && spanData.Value.Span.End == position)
-				return null;
-			return spanData;
-		}
+		SpanData<ReferenceInfo>? GetReference(int position) => documentViewer.Content.ReferenceCollection.Find(position, false);
 
 		void TextView_MouseHover(object sender, MouseHoverEventArgs e) {
 			var spanData = GetReference(e.Position);

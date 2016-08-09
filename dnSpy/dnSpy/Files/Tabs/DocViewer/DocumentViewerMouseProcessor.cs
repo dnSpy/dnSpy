@@ -107,8 +107,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (loc == null || loc.Position.IsInVirtualSpace)
 				return null;
 			int pos = loc.Position.Position.Position;
-			var spanData = documentViewer.Content.ReferenceCollection.Find(pos);
-			if (spanData == null || spanData.Value.Span.End == pos)
+			var spanData = documentViewer.Content.ReferenceCollection.Find(pos, false);
+			if (spanData == null)
 				return null;
 			if (spanData.Value.Data.Reference == null)
 				return null;

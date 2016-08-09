@@ -70,8 +70,9 @@ namespace dnSpy.Contracts.Text {
 		/// Finds data or returns null if not found
 		/// </summary>
 		/// <param name="position">Position</param>
+		/// <param name="allowIntersection">true if references whose <see cref="Span.End"/> equals <paramref name="position"/> can be returned</param>
 		/// <returns></returns>
-		public SpanData<TData>? Find(int position) {
+		public SpanData<TData>? Find(int position, bool allowIntersection = true) {
 			var array = spanDataArray;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {
@@ -85,7 +86,7 @@ namespace dnSpy.Contracts.Text {
 				else
 					return spanData;
 			}
-			if ((uint)hi < (uint)array.Length && array[hi].Span.End == position)
+			if (allowIntersection && (uint)hi < (uint)array.Length && array[hi].Span.End == position)
 				return array[hi];
 			return null;
 		}
