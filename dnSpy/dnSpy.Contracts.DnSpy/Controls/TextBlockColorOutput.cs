@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Controls {
 			}
 		}
 
-		public FrameworkElement Create(bool useNewFormatter, bool useEllipsis, bool filterOutNewLines) {
+		public FrameworkElement Create(bool useNewFormatter, bool useEllipsis, bool filterOutNewLines, TextWrapping textWrapping) {
 			var textBlockText = sb.ToString();
 			cachedTextColorsCollection.Finish();
 
@@ -128,6 +128,7 @@ namespace dnSpy.Contracts.Controls {
 
 			if (useEllipsis)
 				textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+			textBlock.TextWrapping = textWrapping;
 			return textBlock;
 		}
 

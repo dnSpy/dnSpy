@@ -36,7 +36,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			this.creator = ColorizedTextElementCreator.Create(syntaxHighlight);
 		}
 
-		public UIElement Create() => creator.CreateResult(false, false);
+		public UIElement Create() => creator.CreateResult(false, false, TextWrapping.Wrap);
 		public void Write(object color, string text) => creator.Output.Write(color, text);
 		public void Write(TextColor color, string text) => creator.Output.Write(color.Box(), text);
 

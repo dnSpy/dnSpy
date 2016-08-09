@@ -80,9 +80,10 @@ namespace dnSpy.Contracts.Controls {
 		/// </summary>
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <param name="filterOutNewLines">true to filter out newline characters</param>
+		/// <param name="textWrapping">Text wrapping</param>
 		/// <returns></returns>
-		public FrameworkElement CreateResult(bool useEllipsis = false, bool filterOutNewLines = true) =>
-			CreateResultNewFormatter(false, useEllipsis, filterOutNewLines);
+		public FrameworkElement CreateResult(bool useEllipsis = false, bool filterOutNewLines = true, TextWrapping textWrapping = TextWrapping.NoWrap) =>
+			CreateResultNewFormatter(false, useEllipsis, filterOutNewLines, textWrapping);
 
 		/// <summary>
 		/// Creates a <see cref="FrameworkElement"/> containing the resulting text
@@ -90,10 +91,11 @@ namespace dnSpy.Contracts.Controls {
 		/// <param name="useNewFormatter">true to use the new faster formatter, which has its limitations (doesn't support all characters, no word wrap support)</param>
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <param name="filterOutNewLines">true to filter out newline characters</param>
+		/// <param name="textWrapping">Text wrapping</param>
 		/// <returns></returns>
-		public FrameworkElement CreateResultNewFormatter(bool useNewFormatter, bool useEllipsis = false, bool filterOutNewLines = true) {
+		public FrameworkElement CreateResultNewFormatter(bool useNewFormatter, bool useEllipsis = false, bool filterOutNewLines = true, TextWrapping textWrapping = TextWrapping.NoWrap) {
 			if (colorizer != null)
-				return colorizer.Create(useNewFormatter, useEllipsis, filterOutNewLines);
+				return colorizer.Create(useNewFormatter, useEllipsis, filterOutNewLines, textWrapping);
 
 			if (!useEllipsis && filterOutNewLines) {
 				return new FastTextBlock(useNewFormatter) {
@@ -103,7 +105,8 @@ namespace dnSpy.Contracts.Controls {
 			else {
 				return new TextBlock {
 					Text = ToString(output.ToString(), filterOutNewLines),
-					TextTrimming = TextTrimming.CharacterEllipsis
+					TextTrimming = TextTrimming.CharacterEllipsis,
+					TextWrapping = textWrapping,
 				};
 			}
 		}

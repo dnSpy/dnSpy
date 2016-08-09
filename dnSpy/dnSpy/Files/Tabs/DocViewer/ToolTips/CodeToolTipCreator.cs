@@ -49,26 +49,30 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			var res = new StackPanel {
 				Orientation = Orientation.Vertical,
 			};
-			var sp = new StackPanel {
-				Orientation = Orientation.Horizontal,
-			};
-			res.Children.Add(sp);
+			var sigGrid = new Grid();
+			sigGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+			sigGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+			res.Children.Add(sigGrid);
 			for (int i = 1; i < writers.Count; i++) {
 				var output = writers[i];
 				if (!output.IsEmpty)
 					res.Children.Add(output.Create());
 			}
 			if (Image != null) {
-				sp.Children.Add(new Image {
+				var img = new Image {
 					Width = 16,
 					Height = 16,
 					Source = imageManager.GetImage(Image.Value, BackgroundType.CodeToolTip),
 					Margin = new Thickness(0, 0, 4, 0),
 					VerticalAlignment = VerticalAlignment.Top,
 					HorizontalAlignment = HorizontalAlignment.Left,
-				});
+				};
+				Grid.SetColumn(img, 0);
+				sigGrid.Children.Add(img);
 			}
-			sp.Children.Add(writers[0].Create());
+			var sig = writers[0].Create();
+			Grid.SetColumn(sig, 1);
+			sigGrid.Children.Add(sig);
 			return res;
 		}
 
