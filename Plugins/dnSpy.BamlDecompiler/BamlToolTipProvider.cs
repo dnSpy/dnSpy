@@ -21,9 +21,9 @@ using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.BamlDecompiler {
-	[ExportToolTipContentCreator(Order = 0)]
-	sealed class BamlToolTipContentCreator : IToolTipContentCreator {
-		public object Create(IToolTipContentCreatorContext context, object @ref) {
+	[ExportToolTipProvider]
+	sealed class BamlToolTipProvider : IToolTipProvider {
+		public object Create(IToolTipProviderContext context, object @ref) {
 			var bref = @ref as BamlToolTipReference;
 			if (bref != null) {
 				var creator = context.Create();

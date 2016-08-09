@@ -41,5 +41,8 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 
 		/// <summary>Line separator service</summary>
 		public const double ORDER_LINESEPARATORSERVICE = 5000;
+
+		/// <summary>Tooltip service</summary>
+		public const double ORDER_TOOLTIPSERVICE = 6000;
 	}
 }

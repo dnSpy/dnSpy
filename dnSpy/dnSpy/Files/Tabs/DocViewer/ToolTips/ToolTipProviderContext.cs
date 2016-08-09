@@ -17,48 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
-	interface ICodeToolTipManager {
-		object CreateToolTip(ILanguage language, object @ref);
-	}
+	sealed class ToolTipProviderContext : IToolTipProviderContext {
+		public IDocumentViewer DocumentViewer { get; }
+		public ILanguage Language { get; }
 
-	[Export(typeof(ICodeToolTipManager))]
-	sealed class CodeToolTipManager : ICodeToolTipManager {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
-		readonly Lazy<IToolTipContentCreator, IToolTipContentCreatorMetadata>[] creators;
 
-		[ImportingConstructor]
-		CodeToolTipManager(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, [ImportMany] IEnumerable<Lazy<IToolTipContentCreator, IToolTipContentCreatorMetadata>> mefCreators) {
+		public ToolTipProviderContext(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguage language, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer) {
+			this.DocumentViewer = documentViewer;
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
+			this.Language = language;
 			this.codeToolTipSettings = codeToolTipSettings;
-			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public object CreateToolTip(ILanguage language, object @ref) {
-			if (language == null)
-				return null;
-			if (@ref == null)
-				return null;
-
-			var ctx = new ToolTipContentCreatorContext(imageManager, dotNetImageManager, language, codeToolTipSettings);
-			foreach (var creator in creators) {
-				var ttObj = creator.Value.Create(ctx, @ref);
-				if (ttObj != null)
-					return ttObj;
-			}
-
-			return null;
-		}
+		public ICodeToolTipCreator Create() =>
+			new CodeToolTipCreator(imageManager, dotNetImageManager, codeToolTipSettings.SyntaxHighlight);
 	}
 }

@@ -48,7 +48,7 @@
     <Compile Include="Annotations.cs" />
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="BamlTabSaverCreator.cs" />
-    <Compile Include="BamlToolTipContentCreator.cs" />
+    <Compile Include="BamlToolTipProvider.cs" />
     <Compile Include="Baml\KnownThings.cs" />
     <Compile Include="Baml\KnownMembers.cs" />
     <None Include="Baml\KnownThings.gen.cs" />

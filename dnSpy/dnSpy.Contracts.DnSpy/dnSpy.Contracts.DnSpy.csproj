@@ -124,6 +124,8 @@
     <Compile Include="Files\Tabs\DocViewer\ReferenceAndId.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipProvider.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipProviderContext.cs" />
     <Compile Include="Files\Tabs\IDefaultFileTabContentCreator.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
@@ -253,8 +255,6 @@
     <Compile Include="Files\Tabs\DocViewer\IDecompileSelf.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ICodeToolTipCreator.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ICodeToolTipWriter.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipContentCreator.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipContentCreatorContext.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeActivatedEventArgs.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeFilterResult.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeGroupType.cs" />

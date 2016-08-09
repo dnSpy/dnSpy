@@ -22,38 +22,44 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
-	/// Creates tooltips. Use <see cref="ExportToolTipContentCreatorAttribute"/> to export an
+	/// Creates tooltips. Use <see cref="ExportToolTipProviderAttribute"/> to export an
 	/// instance.
 	/// </summary>
-	public interface IToolTipContentCreator {
+	public interface IToolTipProvider {
 		/// <summary>
 		/// Creates a tooltip or returns null
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		object Create(IToolTipContentCreatorContext context, object @ref);
+		object Create(IToolTipProviderContext context, object @ref);
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IToolTipContentCreatorMetadata {
-		/// <summary>See <see cref="ExportToolTipContentCreatorAttribute.Order"/></summary>
+	public interface IToolTipProviderMetadata {
+		/// <summary>See <see cref="ExportToolTipProviderAttribute.Order"/></summary>
 		double Order { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="IToolTipContentCreator"/> instance
+	/// Exports a <see cref="IToolTipProvider"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportToolTipContentCreatorAttribute : ExportAttribute, IToolTipContentCreatorMetadata {
+	public sealed class ExportToolTipProviderAttribute : ExportAttribute, IToolTipProviderMetadata {
 		/// <summary>Constructor</summary>
-		public ExportToolTipContentCreatorAttribute()
-			: base(typeof(IToolTipContentCreator)) {
+		public ExportToolTipProviderAttribute()
+			: this(double.MaxValue) {
+		}
+
+		/// <summary>Constructor</summary>
+		/// <param name="order">Order of this instance</param>
+		public ExportToolTipProviderAttribute(double order)
+			: base(typeof(IToolTipProvider)) {
 		}
 
 		/// <summary>
 		/// Order of this instance
 		/// </summary>
-		public double Order { get; set; }
+		public double Order { get; }
 	}
 }

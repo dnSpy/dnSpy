@@ -21,9 +21,14 @@ using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
-	/// <see cref="IToolTipContentCreator"/> context
+	/// <see cref="IToolTipProvider"/> context
 	/// </summary>
-	public interface IToolTipContentCreatorContext {
+	public interface IToolTipProviderContext {
+		/// <summary>
+		/// Document viewer
+		/// </summary>
+		IDocumentViewer DocumentViewer { get; }
+
 		/// <summary>
 		/// Language to use
 		/// </summary>
