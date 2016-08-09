@@ -102,7 +102,6 @@ namespace dnSpy.Debugger.CallStack {
 				yield break;
 
 			var methodDebugService = docViewer.TryGetMethodDebugService();
-			Debug.Assert(methodDebugService != null);
 			if (methodDebugService == null)
 				yield break;
 
