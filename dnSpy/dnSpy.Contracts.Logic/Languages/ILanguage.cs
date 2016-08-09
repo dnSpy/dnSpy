@@ -181,6 +181,13 @@ namespace dnSpy.Contracts.Languages {
 		void WriteToolTip(ITextColorWriter output, IVariable variable, string name);
 
 		/// <summary>
+		/// Writes a namespace tooltip
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="namespace">Namespace</param>
+		void WriteNamespaceToolTip(ITextColorWriter output, string @namespace);
+
+		/// <summary>
 		/// Writes <paramref name="member"/> to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Output</param>

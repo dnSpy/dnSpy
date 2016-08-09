@@ -26,7 +26,6 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Text;
@@ -43,9 +42,11 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			if (@ref is Parameter)
 				return Create(context, (Parameter)@ref);
 			if (@ref is Local)
-				return Create(context, (Local)@ref, context.DocumentViewer);
+				return Create(context, (Local)@ref);
 			if (@ref is OpCode)
 				return Create(context, (OpCode)@ref);
+			if (@ref is NamespaceReference)
+				return Create(context, (NamespaceReference)@ref);
 			return null;
 		}
 
@@ -121,6 +122,13 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return creator.Create();
 		}
 
+		object Create(IToolTipProviderContext context, NamespaceReference nsRef) {
+			var creator = context.Create();
+			creator.SetImage(nsRef);
+			context.Language.WriteNamespaceToolTip(creator.Output, nsRef.Namespace);
+			return creator.Create();
+		}
+
 		object Create(IToolTipProviderContext context, IMemberRef @ref) {
 			var creator = context.Create();
 
@@ -141,8 +149,8 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return creator.Create();
 		}
 
-		object Create(IToolTipProviderContext context, Local local, IDocumentViewer documentViewer) {
-			var name = GetDecompilerLocalName(documentViewer.Content.MethodDebugInfos, local) ?? local.Name;
+		object Create(IToolTipProviderContext context, Local local) {
+			var name = GetDecompilerLocalName(context.DocumentViewer.Content.MethodDebugInfos, local) ?? local.Name;
 			return Create(context, local, name);
 		}
 

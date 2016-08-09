@@ -963,6 +963,23 @@ namespace dnSpy.Languages.CSharp {
 				WriteToken(pd);
 		}
 
+		public void WriteNamespaceToolTip(string @namespace) {
+			if (@namespace == null) {
+				WriteError();
+				return;
+			}
+
+			OutputWrite("namespace", BoxedTextColor.Keyword);
+			WriteSpace();
+			var parts = @namespace.Split(namespaceSeparators);
+			for (int i = 0; i < parts.Length; i++) {
+				if (i > 0)
+					OutputWrite(".", BoxedTextColor.Operator);
+				OutputWrite(parts[i], BoxedTextColor.Namespace);
+			}
+		}
+		static readonly char[] namespaceSeparators = new char[] { '.' };
+
 		struct MethodInfo {
 			public readonly ModuleDef ModuleDef;
 			public readonly IList<TypeSig> TypeGenericParams;

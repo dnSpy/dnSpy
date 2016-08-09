@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 
@@ -98,6 +99,9 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			var fd = @ref as FieldDef;
 			if (fd != null)
 				return dotNetImageManager.GetImageReference(fd);
+
+			if (@ref is NamespaceReference)
+				return dotNetImageManager.GetNamespaceImageReference();
 
 			if (@ref is GenericParam)
 				return dotNetImageManager.GetImageReferenceGenericParameter();
