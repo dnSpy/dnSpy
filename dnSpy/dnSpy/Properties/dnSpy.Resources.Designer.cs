@@ -250,65 +250,20 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bottom Margin %.
+        /// </summary>
+        public static string BgImgSettings_BottomMarginPercent {
+            get {
+                return ResourceManager.GetString("BgImgSettings_BottomMarginPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Direction.
         /// </summary>
         public static string BgImgSettings_Direction {
             get {
                 return ResourceManager.GetString("BgImgSettings_Direction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Grid Column.
-        /// </summary>
-        public static string BgImgSettings_GridColumn {
-            get {
-                return ResourceManager.GetString("BgImgSettings_GridColumn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Grid Columns.
-        /// </summary>
-        public static string BgImgSettings_GridColumns {
-            get {
-                return ResourceManager.GetString("BgImgSettings_GridColumns", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Column Span.
-        /// </summary>
-        public static string BgImgSettings_GridColumnSpan {
-            get {
-                return ResourceManager.GetString("BgImgSettings_GridColumnSpan", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Grid Row.
-        /// </summary>
-        public static string BgImgSettings_GridRow {
-            get {
-                return ResourceManager.GetString("BgImgSettings_GridRow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Grid Rows.
-        /// </summary>
-        public static string BgImgSettings_GridRows {
-            get {
-                return ResourceManager.GetString("BgImgSettings_GridRows", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Row Span.
-        /// </summary>
-        public static string BgImgSettings_GridRowSpan {
-            get {
-                return ResourceManager.GetString("BgImgSettings_GridRowSpan", resourceCulture);
             }
         }
         
@@ -336,6 +291,15 @@ namespace dnSpy.Properties {
         public static string BgImgSettings_Interval {
             get {
                 return ResourceManager.GetString("BgImgSettings_Interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Margin %.
+        /// </summary>
+        public static string BgImgSettings_LeftMarginPercent {
+            get {
+                return ResourceManager.GetString("BgImgSettings_LeftMarginPercent", resourceCulture);
             }
         }
         
@@ -394,11 +358,11 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Scale.
+        ///   Looks up a localized string similar to Right Margin %.
         /// </summary>
-        public static string BgImgSettings_Scale {
+        public static string BgImgSettings_RightMarginPercent {
             get {
-                return ResourceManager.GetString("BgImgSettings_Scale", resourceCulture);
+                return ResourceManager.GetString("BgImgSettings_RightMarginPercent", resourceCulture);
             }
         }
         
@@ -421,11 +385,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Top Margin %.
+        /// </summary>
+        public static string BgImgSettings_TopMarginPercent {
+            get {
+                return ResourceManager.GetString("BgImgSettings_TopMarginPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vertical Offset.
         /// </summary>
         public static string BgImgSettings_VerticalOffset {
             get {
                 return ResourceManager.GetString("BgImgSettings_VerticalOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom %.
+        /// </summary>
+        public static string BgImgSettings_Zoom {
+            get {
+                return ResourceManager.GetString("BgImgSettings_Zoom", resourceCulture);
             }
         }
         

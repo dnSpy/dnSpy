@@ -74,15 +74,13 @@ namespace dnSpy.BackgroundImage.Dialog {
 					OpacityVM.Value = currentItem.RawSettings.Opacity;
 					HorizontalOffsetVM.Value = currentItem.RawSettings.HorizontalOffset;
 					VerticalOffsetVM.Value = currentItem.RawSettings.VerticalOffset;
-					TotalGridRowsVM.Value = currentItem.RawSettings.TotalGridRows;
-					TotalGridColumnsVM.Value = currentItem.RawSettings.TotalGridColumns;
-					GridRowVM.Value = currentItem.RawSettings.GridRow;
-					GridColumnVM.Value = currentItem.RawSettings.GridColumn;
-					GridRowSpanVM.Value = currentItem.RawSettings.GridRowSpan;
-					GridColumnSpanVM.Value = currentItem.RawSettings.GridColumnSpan;
+					LeftMarginWidthPercentVM.Value = currentItem.RawSettings.LeftMarginWidthPercent;
+					RightMarginWidthPercentVM.Value = currentItem.RawSettings.RightMarginWidthPercent;
+					TopMarginHeightPercentVM.Value = currentItem.RawSettings.TopMarginHeightPercent;
+					BottomMarginHeightPercentVM.Value = currentItem.RawSettings.BottomMarginHeightPercent;
 					MaxHeightVM.Value = currentItem.RawSettings.MaxHeight;
 					MaxWidthVM.Value = currentItem.RawSettings.MaxWidth;
-					ScaleVM.Value = currentItem.RawSettings.Scale;
+					ZoomVM.Value = currentItem.RawSettings.Zoom;
 					IntervalVM.Value = currentItem.RawSettings.Interval;
 					StretchVM.SelectedItem = currentItem.RawSettings.Stretch;
 					StretchDirectionVM.SelectedItem = currentItem.RawSettings.StretchDirection;
@@ -131,23 +129,17 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public DoubleVM VerticalOffsetVM => verticalOffsetVM;
 		readonly DoubleVM verticalOffsetVM;
 
-		public Int32VM TotalGridRowsVM => totalGridRowsVM;
-		readonly Int32VM totalGridRowsVM;
+		public DoubleVM LeftMarginWidthPercentVM => leftMarginWidthPercentVM;
+		readonly DoubleVM leftMarginWidthPercentVM;
 
-		public Int32VM TotalGridColumnsVM => totalGridColumnsVM;
-		readonly Int32VM totalGridColumnsVM;
+		public DoubleVM RightMarginWidthPercentVM => rightMarginWidthPercentVM;
+		readonly DoubleVM rightMarginWidthPercentVM;
 
-		public Int32VM GridRowVM => gridRowVM;
-		readonly Int32VM gridRowVM;
+		public DoubleVM TopMarginHeightPercentVM => topMarginHeightPercentVM;
+		readonly DoubleVM topMarginHeightPercentVM;
 
-		public Int32VM GridColumnVM => gridColumnVM;
-		readonly Int32VM gridColumnVM;
-
-		public Int32VM GridRowSpanVM => gridRowSpanVM;
-		readonly Int32VM gridRowSpanVM;
-
-		public Int32VM GridColumnSpanVM => gridColumnSpanVM;
-		readonly Int32VM gridColumnSpanVM;
+		public DoubleVM BottomMarginHeightPercentVM => bottomMarginHeightPercentVM;
+		readonly DoubleVM bottomMarginHeightPercentVM;
 
 		public DoubleVM MaxHeightVM => maxHeightVM;
 		readonly DoubleVM maxHeightVM;
@@ -155,8 +147,8 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public DoubleVM MaxWidthVM => maxWidthVM;
 		readonly DoubleVM maxWidthVM;
 
-		public DoubleVM ScaleVM => scaleVM;
-		readonly DoubleVM scaleVM;
+		public DoubleVM ZoomVM => zoomVM;
+		readonly DoubleVM zoomVM;
 
 		public DefaultConverterVM<TimeSpan> IntervalVM => intervalVM;
 		readonly DefaultConverterVM<TimeSpan> intervalVM;
@@ -214,21 +206,28 @@ namespace dnSpy.BackgroundImage.Dialog {
 			this.opacityVM = new DoubleVM(a => { if (!opacityVM.HasError) currentItem.RawSettings.Opacity = FilterOpacity(opacityVM.Value); });
 			this.horizontalOffsetVM = new DoubleVM(a => { if (!horizontalOffsetVM.HasError) currentItem.RawSettings.HorizontalOffset = FilterOffset(horizontalOffsetVM.Value); });
 			this.verticalOffsetVM = new DoubleVM(a => { if (!verticalOffsetVM.HasError) currentItem.RawSettings.VerticalOffset = FilterOffset(verticalOffsetVM.Value); });
-			const int MAX_COL_ROW = 100;
-			this.totalGridRowsVM = new Int32VM(a => { if (!totalGridRowsVM.HasError) currentItem.RawSettings.TotalGridRows = totalGridRowsVM.Value; }, true) { Min = 0, Max = MAX_COL_ROW };
-			this.totalGridColumnsVM = new Int32VM(a => { if (!totalGridColumnsVM.HasError) currentItem.RawSettings.TotalGridColumns = totalGridColumnsVM.Value; }, true) { Min = 0, Max = MAX_COL_ROW };
-			this.gridRowVM = new Int32VM(a => { if (!gridRowVM.HasError) currentItem.RawSettings.GridRow = gridRowVM.Value; }, true) { Min = 0, Max = MAX_COL_ROW };
-			this.gridColumnVM = new Int32VM(a => { if (!gridColumnVM.HasError) currentItem.RawSettings.GridColumn = gridColumnVM.Value; }, true) { Min = 0, Max = MAX_COL_ROW };
-			this.gridRowSpanVM = new Int32VM(a => { if (!gridRowSpanVM.HasError) currentItem.RawSettings.GridRowSpan = gridRowSpanVM.Value; }, true) { Min = 0, Max = MAX_COL_ROW };
-			this.gridColumnSpanVM = new Int32VM(a => { if (!gridColumnSpanVM.HasError) currentItem.RawSettings.GridColumnSpan = gridColumnSpanVM.Value; }, true) { Min = 0, Max = MAX_COL_ROW };
+			this.leftMarginWidthPercentVM = new DoubleVM(a => { if (!leftMarginWidthPercentVM.HasError) currentItem.RawSettings.LeftMarginWidthPercent = FilterMarginPercent(leftMarginWidthPercentVM.Value); });
+			this.rightMarginWidthPercentVM = new DoubleVM(a => { if (!rightMarginWidthPercentVM.HasError) currentItem.RawSettings.RightMarginWidthPercent = FilterMarginPercent(rightMarginWidthPercentVM.Value); });
+			this.topMarginHeightPercentVM = new DoubleVM(a => { if (!topMarginHeightPercentVM.HasError) currentItem.RawSettings.TopMarginHeightPercent = FilterMarginPercent(topMarginHeightPercentVM.Value); });
+			this.bottomMarginHeightPercentVM = new DoubleVM(a => { if (!bottomMarginHeightPercentVM.HasError) currentItem.RawSettings.BottomMarginHeightPercent = FilterMarginPercent(bottomMarginHeightPercentVM.Value); });
 			this.maxHeightVM = new DoubleVM(a => { if (!maxHeightVM.HasError) currentItem.RawSettings.MaxHeight = FilterLength(maxHeightVM.Value); });
 			this.maxWidthVM = new DoubleVM(a => { if (!maxWidthVM.HasError) currentItem.RawSettings.MaxWidth = FilterLength(maxWidthVM.Value); });
-			this.scaleVM = new DoubleVM(a => { if (!scaleVM.HasError) currentItem.RawSettings.Scale = FilterScale(scaleVM.Value); });
+			this.zoomVM = new DoubleVM(a => { if (!zoomVM.HasError) currentItem.RawSettings.Zoom = FilterZoom(zoomVM.Value); });
 			this.intervalVM = new DefaultConverterVM<TimeSpan>(a => { if (!intervalVM.HasError) currentItem.RawSettings.Interval = intervalVM.Value; });
 			CurrentItem = this.Settings.FirstOrDefault(a => a.Id == backgroundImageSettingsService.LastSelectedId) ?? this.Settings[0];
 		}
 
-		static double FilterScale(double value) {
+		static double FilterMarginPercent(double value) {
+			if (double.IsNaN(value))
+				return 100;
+			if (value < 0)
+				return 0;
+			if (value > 100)
+				return 100;
+			return value;
+		}
+
+		static double FilterZoom(double value) {
 			if (double.IsNaN(value))
 				return 1;
 			if (value < 0)
@@ -268,15 +267,13 @@ namespace dnSpy.BackgroundImage.Dialog {
 			OpacityVM.Value = DefaultRawSettings.Opacity;
 			HorizontalOffsetVM.Value = DefaultRawSettings.HorizontalOffset;
 			VerticalOffsetVM.Value = DefaultRawSettings.VerticalOffset;
-			TotalGridRowsVM.Value = DefaultRawSettings.TotalGridRows;
-			TotalGridColumnsVM.Value = DefaultRawSettings.TotalGridColumns;
-			GridRowVM.Value = DefaultRawSettings.GridRow;
-			GridColumnVM.Value = DefaultRawSettings.GridColumn;
-			GridRowSpanVM.Value = DefaultRawSettings.GridRowSpan;
-			GridColumnSpanVM.Value = DefaultRawSettings.GridColumnSpan;
+			LeftMarginWidthPercentVM.Value = DefaultRawSettings.LeftMarginWidthPercent;
+			RightMarginWidthPercentVM.Value = DefaultRawSettings.RightMarginWidthPercent;
+			TopMarginHeightPercentVM.Value = DefaultRawSettings.TopMarginHeightPercent;
+			BottomMarginHeightPercentVM.Value = DefaultRawSettings.BottomMarginHeightPercent;
 			MaxHeightVM.Value = DefaultRawSettings.MaxHeight;
 			MaxWidthVM.Value = DefaultRawSettings.MaxWidth;
-			ScaleVM.Value = DefaultRawSettings.Scale;
+			ZoomVM.Value = DefaultRawSettings.Zoom;
 			IntervalVM.Value = DefaultRawSettings.Interval;
 			StretchVM.SelectedItem = DefaultRawSettings.DefaultStretch;
 			StretchDirectionVM.SelectedItem = DefaultRawSettings.DefaultStretchDirection;

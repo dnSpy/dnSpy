@@ -32,15 +32,13 @@ namespace dnSpy.BackgroundImage {
 		double Opacity { get; }
 		double HorizontalOffset { get; }
 		double VerticalOffset { get; }
-		int TotalGridRows { get; }
-		int TotalGridColumns { get; }
-		int GridRow { get; }
-		int GridColumn { get; }
-		int GridRowSpan { get; }
-		int GridColumnSpan { get; }
+		double LeftMarginWidthPercent { get; }
+		double RightMarginWidthPercent { get; }
+		double TopMarginHeightPercent { get; }
+		double BottomMarginHeightPercent { get; }
 		double MaxHeight { get; }
 		double MaxWidth { get; }
-		double Scale { get; }
+		double Zoom { get; }
 		ImagePlacement ImagePlacement { get; }
 		bool IsRandom { get; }
 		bool IsEnabled { get; }
@@ -58,15 +56,13 @@ namespace dnSpy.BackgroundImage {
 		public double Opacity => rawSettings.Opacity;
 		public double HorizontalOffset => rawSettings.HorizontalOffset;
 		public double VerticalOffset => rawSettings.VerticalOffset;
-		public int TotalGridRows => rawSettings.TotalGridRows;
-		public int TotalGridColumns => rawSettings.TotalGridColumns;
-		public int GridRow => rawSettings.GridRow;
-		public int GridColumn => rawSettings.GridColumn;
-		public int GridRowSpan => rawSettings.GridRowSpan;
-		public int GridColumnSpan => rawSettings.GridColumnSpan;
+		public double LeftMarginWidthPercent => rawSettings.LeftMarginWidthPercent;
+		public double RightMarginWidthPercent => rawSettings.RightMarginWidthPercent;
+		public double TopMarginHeightPercent => rawSettings.TopMarginHeightPercent;
+		public double BottomMarginHeightPercent => rawSettings.BottomMarginHeightPercent;
 		public double MaxHeight => rawSettings.MaxHeight;
 		public double MaxWidth => rawSettings.MaxWidth;
-		public double Scale => rawSettings.Scale;
+		public double Zoom => rawSettings.Zoom;
 		public ImagePlacement ImagePlacement => rawSettings.ImagePlacement;
 		public bool IsRandom => rawSettings.IsRandom;
 		public bool IsEnabled => rawSettings.IsEnabled;

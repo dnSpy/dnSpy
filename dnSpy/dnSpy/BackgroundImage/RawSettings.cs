@@ -33,15 +33,13 @@ namespace dnSpy.BackgroundImage {
 		public double Opacity { get; set; }
 		public double HorizontalOffset { get; set; }
 		public double VerticalOffset { get; set; }
-		public int TotalGridRows { get; set; }
-		public int TotalGridColumns { get; set; }
-		public int GridRow { get; set; }
-		public int GridColumn { get; set; }
-		public int GridRowSpan { get; set; }
-		public int GridColumnSpan { get; set; }
+		public double LeftMarginWidthPercent { get; set; }
+		public double RightMarginWidthPercent { get; set; }
+		public double TopMarginHeightPercent { get; set; }
+		public double BottomMarginHeightPercent { get; set; }
 		public double MaxHeight { get; set; }
 		public double MaxWidth { get; set; }
-		public double Scale { get; set; }
+		public double Zoom { get; set; }
 		public ImagePlacement ImagePlacement { get; set; }
 		public bool IsRandom { get; set; }
 		public bool IsEnabled { get; set; }
@@ -65,15 +63,13 @@ namespace dnSpy.BackgroundImage {
 			Opacity = DefaultRawSettings.Opacity;
 			HorizontalOffset = DefaultRawSettings.HorizontalOffset;
 			VerticalOffset = DefaultRawSettings.VerticalOffset;
-			TotalGridRows = DefaultRawSettings.TotalGridRows;
-			TotalGridColumns = DefaultRawSettings.TotalGridColumns;
-			GridRow = DefaultRawSettings.GridRow;
-			GridColumn = DefaultRawSettings.GridColumn;
-			GridRowSpan = DefaultRawSettings.GridRowSpan;
-			GridColumnSpan = DefaultRawSettings.GridColumnSpan;
+			LeftMarginWidthPercent = DefaultRawSettings.LeftMarginWidthPercent;
+			RightMarginWidthPercent = DefaultRawSettings.RightMarginWidthPercent;
+			TopMarginHeightPercent = DefaultRawSettings.TopMarginHeightPercent;
+			BottomMarginHeightPercent = DefaultRawSettings.BottomMarginHeightPercent;
 			MaxHeight = DefaultRawSettings.MaxHeight;
 			MaxWidth = DefaultRawSettings.MaxWidth;
-			Scale = DefaultRawSettings.Scale;
+			Zoom = DefaultRawSettings.Zoom;
 			ImagePlacement = DefaultRawSettings.DefaultImagePlacement;
 			IsRandom = DefaultRawSettings.IsRandom;
 			IsEnabled = DefaultRawSettings.IsEnabled;
@@ -95,15 +91,13 @@ namespace dnSpy.BackgroundImage {
 			Opacity = defaultSettings.Opacity ?? DefaultRawSettings.Opacity;
 			HorizontalOffset = defaultSettings.HorizontalOffset ?? DefaultRawSettings.HorizontalOffset;
 			VerticalOffset = defaultSettings.VerticalOffset ?? DefaultRawSettings.VerticalOffset;
-			TotalGridRows = defaultSettings.TotalGridRows ?? DefaultRawSettings.TotalGridRows;
-			TotalGridColumns = defaultSettings.TotalGridColumns ?? DefaultRawSettings.TotalGridColumns;
-			GridRow = defaultSettings.GridRow ?? DefaultRawSettings.GridRow;
-			GridColumn = defaultSettings.GridColumn ?? DefaultRawSettings.GridColumn;
-			GridRowSpan = defaultSettings.GridRowSpan ?? DefaultRawSettings.GridRowSpan;
-			GridColumnSpan = defaultSettings.GridColumnSpan ?? DefaultRawSettings.GridColumnSpan;
+			LeftMarginWidthPercent = defaultSettings.LeftMarginWidthPercent ?? DefaultRawSettings.LeftMarginWidthPercent;
+			RightMarginWidthPercent = defaultSettings.RightMarginWidthPercent ?? DefaultRawSettings.RightMarginWidthPercent;
+			TopMarginHeightPercent = defaultSettings.TopMarginHeightPercent ?? DefaultRawSettings.TopMarginHeightPercent;
+			BottomMarginHeightPercent = defaultSettings.BottomMarginHeightPercent ?? DefaultRawSettings.BottomMarginHeightPercent;
 			MaxHeight = defaultSettings.MaxHeight ?? DefaultRawSettings.MaxHeight;
 			MaxWidth = defaultSettings.MaxWidth ?? DefaultRawSettings.MaxWidth;
-			Scale = defaultSettings.Scale ?? DefaultRawSettings.Scale;
+			Zoom = defaultSettings.Zoom ?? DefaultRawSettings.Zoom;
 			ImagePlacement = defaultSettings.ImagePlacement ?? DefaultRawSettings.DefaultImagePlacement;
 			IsRandom = defaultSettings.IsRandom ?? DefaultRawSettings.IsRandom;
 			IsEnabled = defaultSettings.IsEnabled ?? DefaultRawSettings.IsEnabled;
@@ -129,15 +123,13 @@ namespace dnSpy.BackgroundImage {
 			Opacity = section.Attribute<double?>(nameof(Opacity)) ?? DefaultRawSettings.Opacity;
 			HorizontalOffset = section.Attribute<double?>(nameof(HorizontalOffset)) ?? DefaultRawSettings.HorizontalOffset;
 			VerticalOffset = section.Attribute<double?>(nameof(VerticalOffset)) ?? DefaultRawSettings.VerticalOffset;
-			TotalGridRows = section.Attribute<int?>(nameof(TotalGridRows)) ?? DefaultRawSettings.TotalGridRows;
-			TotalGridColumns = section.Attribute<int?>(nameof(TotalGridColumns)) ?? DefaultRawSettings.TotalGridColumns;
-			GridRow = section.Attribute<int?>(nameof(GridRow)) ?? DefaultRawSettings.GridRow;
-			GridColumn = section.Attribute<int?>(nameof(GridColumn)) ?? DefaultRawSettings.GridColumn;
-			GridRowSpan = section.Attribute<int?>(nameof(GridRowSpan)) ?? DefaultRawSettings.GridRowSpan;
-			GridColumnSpan = section.Attribute<int?>(nameof(GridColumnSpan)) ?? DefaultRawSettings.GridColumnSpan;
+			LeftMarginWidthPercent = section.Attribute<double?>(nameof(LeftMarginWidthPercent)) ?? DefaultRawSettings.LeftMarginWidthPercent;
+			RightMarginWidthPercent = section.Attribute<double?>(nameof(RightMarginWidthPercent)) ?? DefaultRawSettings.RightMarginWidthPercent;
+			TopMarginHeightPercent = section.Attribute<double?>(nameof(TopMarginHeightPercent)) ?? DefaultRawSettings.TopMarginHeightPercent;
+			BottomMarginHeightPercent = section.Attribute<double?>(nameof(BottomMarginHeightPercent)) ?? DefaultRawSettings.BottomMarginHeightPercent;
 			MaxHeight = section.Attribute<double?>(nameof(MaxHeight)) ?? DefaultRawSettings.MaxHeight;
 			MaxWidth = section.Attribute<double?>(nameof(MaxWidth)) ?? DefaultRawSettings.MaxWidth;
-			Scale = section.Attribute<double?>(nameof(Scale)) ?? DefaultRawSettings.Scale;
+			Zoom = section.Attribute<double?>(nameof(Zoom)) ?? DefaultRawSettings.Zoom;
 			ImagePlacement = section.Attribute<ImagePlacement?>(nameof(ImagePlacement)) ?? DefaultRawSettings.DefaultImagePlacement;
 			IsRandom = section.Attribute<bool?>(nameof(IsRandom)) ?? DefaultRawSettings.IsRandom;
 			IsEnabled = section.Attribute<bool?>(nameof(IsEnabled)) ?? DefaultRawSettings.IsEnabled;
@@ -159,15 +151,13 @@ namespace dnSpy.BackgroundImage {
 			section.Attribute(nameof(Opacity), Opacity);
 			section.Attribute(nameof(HorizontalOffset), HorizontalOffset);
 			section.Attribute(nameof(VerticalOffset), VerticalOffset);
-			section.Attribute(nameof(TotalGridRows), TotalGridRows);
-			section.Attribute(nameof(TotalGridColumns), TotalGridColumns);
-			section.Attribute(nameof(GridRow), GridRow);
-			section.Attribute(nameof(GridColumn), GridColumn);
-			section.Attribute(nameof(GridRowSpan), GridRowSpan);
-			section.Attribute(nameof(GridColumnSpan), GridColumnSpan);
+			section.Attribute(nameof(LeftMarginWidthPercent), LeftMarginWidthPercent);
+			section.Attribute(nameof(RightMarginWidthPercent), RightMarginWidthPercent);
+			section.Attribute(nameof(TopMarginHeightPercent), TopMarginHeightPercent);
+			section.Attribute(nameof(BottomMarginHeightPercent), BottomMarginHeightPercent);
 			section.Attribute(nameof(MaxHeight), MaxHeight);
 			section.Attribute(nameof(MaxWidth), MaxWidth);
-			section.Attribute(nameof(Scale), Scale);
+			section.Attribute(nameof(Zoom), Zoom);
 			section.Attribute(nameof(ImagePlacement), ImagePlacement);
 			section.Attribute(nameof(IsRandom), IsRandom);
 			section.Attribute(nameof(IsEnabled), IsEnabled);
@@ -181,15 +171,13 @@ namespace dnSpy.BackgroundImage {
 			this.Opacity = other.Opacity;
 			this.HorizontalOffset = other.HorizontalOffset;
 			this.VerticalOffset = other.VerticalOffset;
-			this.TotalGridRows = other.TotalGridRows;
-			this.TotalGridColumns = other.TotalGridColumns;
-			this.GridRow = other.GridRow;
-			this.GridColumn = other.GridColumn;
-			this.GridRowSpan = other.GridRowSpan;
-			this.GridColumnSpan = other.GridColumnSpan;
+			this.LeftMarginWidthPercent = other.LeftMarginWidthPercent;
+			this.RightMarginWidthPercent = other.RightMarginWidthPercent;
+			this.TopMarginHeightPercent = other.TopMarginHeightPercent;
+			this.BottomMarginHeightPercent = other.BottomMarginHeightPercent;
 			this.MaxHeight = other.MaxHeight;
 			this.MaxWidth = other.MaxWidth;
-			this.Scale = other.Scale;
+			this.Zoom = other.Zoom;
 			this.ImagePlacement = other.ImagePlacement;
 			this.IsRandom = other.IsRandom;
 			this.IsEnabled = other.IsEnabled;
@@ -213,23 +201,19 @@ namespace dnSpy.BackgroundImage {
 				return false;
 			if (VerticalOffset != other.VerticalOffset)
 				return false;
-			if (TotalGridRows != other.TotalGridRows)
+			if (LeftMarginWidthPercent != other.LeftMarginWidthPercent)
 				return false;
-			if (TotalGridColumns != other.TotalGridColumns)
+			if (RightMarginWidthPercent != other.RightMarginWidthPercent)
 				return false;
-			if (GridRow != other.GridRow)
+			if (TopMarginHeightPercent != other.TopMarginHeightPercent)
 				return false;
-			if (GridColumn != other.GridColumn)
-				return false;
-			if (GridRowSpan != other.GridRowSpan)
-				return false;
-			if (GridColumnSpan != other.GridColumnSpan)
+			if (BottomMarginHeightPercent != other.BottomMarginHeightPercent)
 				return false;
 			if (MaxHeight != other.MaxHeight)
 				return false;
 			if (MaxWidth != other.MaxWidth)
 				return false;
-			if (Scale != other.Scale)
+			if (Zoom != other.Zoom)
 				return false;
 			if (ImagePlacement != other.ImagePlacement)
 				return false;
@@ -270,15 +254,13 @@ namespace dnSpy.BackgroundImage {
 			hc ^= Opacity.GetHashCode();
 			hc ^= HorizontalOffset.GetHashCode();
 			hc ^= VerticalOffset.GetHashCode();
-			hc ^= TotalGridRows << 20;
-			hc ^= TotalGridColumns << 23;
-			hc ^= GridRow << 26;
-			hc ^= GridColumn << 29;
-			hc ^= GridRowSpan << 10;
-			hc ^= GridColumnSpan << 12;
+			hc ^= LeftMarginWidthPercent.GetHashCode();
+			hc ^= RightMarginWidthPercent.GetHashCode();
+			hc ^= TopMarginHeightPercent.GetHashCode();
+			hc ^= BottomMarginHeightPercent.GetHashCode();
 			hc ^= MaxHeight.GetHashCode();
 			hc ^= MaxWidth.GetHashCode();
-			hc ^= Scale.GetHashCode();
+			hc ^= Zoom.GetHashCode();
 			hc ^= (int)ImagePlacement;
 			hc ^= IsRandom ? int.MinValue : 0;
 			hc ^= IsEnabled ? 0x40000000 : 0;

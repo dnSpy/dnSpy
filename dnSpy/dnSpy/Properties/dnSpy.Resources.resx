@@ -1016,24 +1016,6 @@
   <data name="BgImgSettings_Direction" xml:space="preserve">
     <value>Direction</value>
   </data>
-  <data name="BgImgSettings_GridColumn" xml:space="preserve">
-    <value>Grid Column</value>
-  </data>
-  <data name="BgImgSettings_GridColumns" xml:space="preserve">
-    <value>Grid Columns</value>
-  </data>
-  <data name="BgImgSettings_GridColumnSpan" xml:space="preserve">
-    <value>Column Span</value>
-  </data>
-  <data name="BgImgSettings_GridRow" xml:space="preserve">
-    <value>Grid Row</value>
-  </data>
-  <data name="BgImgSettings_GridRows" xml:space="preserve">
-    <value>Grid Rows</value>
-  </data>
-  <data name="BgImgSettings_GridRowSpan" xml:space="preserve">
-    <value>Row Span</value>
-  </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
     <value>Horizontal Offset</value>
   </data>
@@ -1061,8 +1043,8 @@
   <data name="BgImgSettings_Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
-  <data name="BgImgSettings_Scale" xml:space="preserve">
-    <value>Scale</value>
+  <data name="BgImgSettings_Zoom" xml:space="preserve">
+    <value>Zoom %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
     <value>Show Images</value>
@@ -1111,5 +1093,17 @@
   </data>
   <data name="Files_Images" xml:space="preserve">
     <value>Images</value>
+  </data>
+  <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
+    <value>Bottom Margin %</value>
+  </data>
+  <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
+    <value>Left Margin %</value>
+  </data>
+  <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
+    <value>Right Margin %</value>
+  </data>
+  <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
+    <value>Top Margin %</value>
   </data>
 </root>

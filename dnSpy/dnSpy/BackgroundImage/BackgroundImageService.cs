@@ -84,19 +84,68 @@ namespace dnSpy.BackgroundImage {
 			currentImage = null;
 		}
 
+		static Stretch Filter(Stretch value) {
+			if (value < 0 || value > Stretch.UniformToFill)
+				return DefaultRawSettings.DefaultStretch;
+			return value;
+		}
+
+		static StretchDirection Filter(StretchDirection value) {
+			if (value < 0 || value > StretchDirection.Both)
+				return DefaultRawSettings.DefaultStretchDirection;
+			return value;
+		}
+
+		static double FilterOpacity(double value) {
+			if (double.IsNaN(value))
+				return DefaultRawSettings.Opacity;
+			if (value < 0 || value > 1)
+				return DefaultRawSettings.Opacity;
+			return value;
+		}
+
+		static double FilterLength(double value) {
+			if (double.IsNaN(value))
+				return double.PositiveInfinity;
+			if (value <= 0)
+				return double.PositiveInfinity;
+			return value;
+		}
+
+		static double FilterZoom(double value) {
+			if (double.IsNaN(value))
+				return DefaultRawSettings.Zoom;
+			return value;
+		}
+
+		static double FilterOffset(double value) {
+			if (double.IsNaN(value))
+				return 0;
+			return value;
+		}
+
+		static double FilterMargin(double value) {
+			if (double.IsNaN(value))
+				return 0;
+			if (value < 0)
+				return 0;
+			return value;
+		}
+
 		Image InitializeImage(Image image) {
-			image.Stretch = imageSourceService.Stretch;
-			image.StretchDirection = imageSourceService.StretchDirection;
-			image.Opacity = imageSourceService.Opacity;
+			image.Stretch = Filter(imageSourceService.Stretch);
+			image.StretchDirection = Filter(imageSourceService.StretchDirection);
+			image.Opacity = FilterOpacity(imageSourceService.Opacity);
 			image.Source = imageSourceService.ImageSource;
-			image.MaxHeight = imageSourceService.MaxHeight <= 0 ? double.PositiveInfinity : imageSourceService.MaxHeight;
-			image.MaxWidth = imageSourceService.MaxWidth <= 0 ? double.PositiveInfinity : imageSourceService.MaxWidth;
+			image.MaxHeight = FilterLength(imageSourceService.MaxHeight);
+			image.MaxWidth = FilterLength(imageSourceService.MaxWidth);
 			image.ClearValue(FrameworkElement.HeightProperty);
 			image.ClearValue(FrameworkElement.WidthProperty);
-			if (imageSourceService.Scale == 1)
+			double scale = FilterZoom(imageSourceService.Zoom) / 100;
+			if (scale == 1)
 				image.LayoutTransform = Transform.Identity;
 			else {
-				var scaleTransform = new ScaleTransform(imageSourceService.Scale, imageSourceService.Scale);
+				var scaleTransform = new ScaleTransform(scale, scale);
 				scaleTransform.Freeze();
 				image.LayoutTransform = scaleTransform;
 			}
@@ -120,36 +169,31 @@ namespace dnSpy.BackgroundImage {
 			UpdateImagePosition(currentImage);
 		}
 
-		bool UsesGridColumns => imageSourceService.TotalGridColumns > 1 && (uint)imageSourceService.GridColumn < (uint)imageSourceService.TotalGridColumns && (uint)(imageSourceService.GridColumn + (imageSourceService.GridColumnSpan <= 0 ? 1 : imageSourceService.GridColumnSpan)) <= (uint)imageSourceService.TotalGridColumns;
-		bool UsesGridRows => imageSourceService.TotalGridRows > 1 && (uint)imageSourceService.GridRow < (uint)imageSourceService.TotalGridRows && (uint)(imageSourceService.GridRow + (imageSourceService.GridRowSpan <= 0 ? 1 : imageSourceService.GridRowSpan)) <= (uint)imageSourceService.TotalGridRows;
-
 		const bool resizeTooBigImages = true;
 		void UpdateImagePosition(Image image) {
-			double viewportWidth, viewportHeight;
-			double xOffs, yOffs;
-			if (UsesGridColumns) {
-				viewportWidth = wpfTextView.ViewportWidth / imageSourceService.TotalGridColumns * (imageSourceService.GridColumnSpan <= 0 ? 1 : imageSourceService.GridColumnSpan);
-				xOffs = (double)imageSourceService.GridColumn / imageSourceService.TotalGridColumns * wpfTextView.ViewportWidth;
+			double leftMargin = FilterMargin(imageSourceService.LeftMarginWidthPercent) / 100;
+			double rightMargin = FilterMargin(imageSourceService.RightMarginWidthPercent) / 100;
+			double topMargin = FilterMargin(imageSourceService.TopMarginHeightPercent) / 100;
+			double bottomMargin = FilterMargin(imageSourceService.BottomMarginHeightPercent) / 100;
+			if (double.IsNaN(leftMargin) || double.IsNaN(rightMargin) || leftMargin < 0 || rightMargin < 0 || leftMargin + rightMargin > 1) {
+				leftMargin = 0;
+				rightMargin = 0;
 			}
-			else {
-				viewportWidth = wpfTextView.ViewportWidth;
-				xOffs = 0;
+			if (double.IsNaN(topMargin) || double.IsNaN(bottomMargin) || topMargin < 0 || bottomMargin < 0 || topMargin + bottomMargin > 1) {
+				topMargin = 0;
+				bottomMargin = 0;
 			}
-			if (UsesGridRows) {
-				viewportHeight = wpfTextView.ViewportHeight / imageSourceService.TotalGridRows * (imageSourceService.GridRowSpan <= 0 ? 1 : imageSourceService.GridRowSpan);
-				yOffs = (double)imageSourceService.GridRow / imageSourceService.TotalGridRows * wpfTextView.ViewportHeight;
-			}
-			else {
-				viewportHeight = wpfTextView.ViewportHeight;
-				yOffs = 0;
-			}
+			double viewportWidth = (1 - leftMargin - rightMargin) * wpfTextView.ViewportWidth;
+			double viewportHeight = (1 - topMargin - bottomMargin) * wpfTextView.ViewportHeight;
+			double xOffs = leftMargin * wpfTextView.ViewportWidth;
+			double yOffs = topMargin * wpfTextView.ViewportHeight;
 
 			Size size;
 			image.ClearValue(FrameworkElement.HeightProperty);
 			image.ClearValue(FrameworkElement.WidthProperty);
 			if (imageSourceService.Stretch == Stretch.None) {
-				image.Stretch = imageSourceService.Stretch;
-				image.StretchDirection = imageSourceService.StretchDirection;
+				image.Stretch = Filter(imageSourceService.Stretch);
+				image.StretchDirection = Filter(imageSourceService.StretchDirection);
 
 				image.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 				size = image.DesiredSize;
@@ -215,8 +259,8 @@ namespace dnSpy.BackgroundImage {
 				break;
 			}
 
-			Canvas.SetLeft(image, wpfTextView.ViewportLeft + imageSourceService.HorizontalOffset + xOffs);
-			Canvas.SetTop(image, wpfTextView.ViewportTop + imageSourceService.VerticalOffset + yOffs);
+			Canvas.SetLeft(image, wpfTextView.ViewportLeft + FilterOffset(imageSourceService.HorizontalOffset) + xOffs);
+			Canvas.SetTop(image, wpfTextView.ViewportTop + FilterOffset(imageSourceService.VerticalOffset) + yOffs);
 		}
 
 		public void OnSettingsChanged() {

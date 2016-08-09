@@ -57,34 +57,24 @@ namespace dnSpy.Contracts.BackgroundImage {
 		public double? VerticalOffset { get; set; }
 
 		/// <summary>
-		/// Number of grid rows or null to use the default value
+		/// Left margin width (%) or null to use the default value
 		/// </summary>
-		public int? TotalGridRows { get; set; }
+		public double? LeftMarginWidthPercent { get; }
 
 		/// <summary>
-		/// Number of grid columns or null to use the default value
+		/// Right margin width (%) or null to use the default value
 		/// </summary>
-		public int? TotalGridColumns { get; set; }
+		public double? RightMarginWidthPercent { get; }
 
 		/// <summary>
-		/// Grid row or null to use the default value
+		/// Top margin height (%) or null to use the default value
 		/// </summary>
-		public int? GridRow { get; set; }
+		public double? TopMarginHeightPercent { get; }
 
 		/// <summary>
-		/// Grid column or null to use the default value
+		/// Bottom margin height (%) or null to use the default value
 		/// </summary>
-		public int? GridColumn { get; set; }
-
-		/// <summary>
-		/// Grid row span or null to use the default value
-		/// </summary>
-		public int? GridRowSpan { get; set; }
-
-		/// <summary>
-		/// Grid column span or null to use the default value
-		/// </summary>
-		public int? GridColumnSpan { get; set; }
+		public double? BottomMarginHeightPercent { get; }
 
 		/// <summary>
 		/// Max height or null to use the default value
@@ -97,9 +87,9 @@ namespace dnSpy.Contracts.BackgroundImage {
 		public double? MaxWidth { get; set; }
 
 		/// <summary>
-		/// Scale or null to use the default value
+		/// Zoom (%) or null to use the default value
 		/// </summary>
-		public double? Scale { get; set; }
+		public double? Zoom { get; set; }
 
 		/// <summary>
 		/// Image placement or null to use the default value

@@ -5981,7 +5981,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -6031,8 +6030,8 @@
 
             <Label Grid.Row="5" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=intervalTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Interval}" IsEnabled="{Binding IsEnabled}" />
             <TextBox Grid.Row="5" Grid.Column="1" Margin="0 0 5 0" Name="intervalTextBox" Text="{Binding IntervalVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-            <Label Grid.Row="5" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=scaleTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Scale}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="5" Grid.Column="3" Margin="0 0 0 0" Name="scaleTextBox" Text="{Binding ScaleVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="5" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=zoomTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Zoom}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="5" Grid.Column="3" Margin="0 0 0 0" Name="zoomTextBox" Text="{Binding ZoomVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
             <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 5 0" IsChecked="{Binding IsRandom}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_RandomImage}" IsEnabled="{Binding IsEnabled}" />
             <CheckBox Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 0 0 0" IsChecked="{Binding IsEnabled}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_ShowImages}" />
@@ -6042,27 +6041,22 @@
             <Label Grid.Row="7" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=verticalOffsetTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_VerticalOffset}" IsEnabled="{Binding IsEnabled}" />
             <TextBox Grid.Row="7" Grid.Column="3" Margin="0 0 0 0" Name="verticalOffsetTextBox" Text="{Binding VerticalOffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
-            <Label Grid.Row="8" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=gridColumnsTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridColumns}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="8" Grid.Column="1" Margin="0 0 5 0" Name="gridColumnsTextBox" Text="{Binding TotalGridColumnsVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-            <Label Grid.Row="8" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=gridRowsTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridRows}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="8" Grid.Column="3" Margin="0 0 0 0" Name="gridRowsTextBox" Text="{Binding TotalGridRowsVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="8" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=leftMarginPercentTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_LeftMarginPercent}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="8" Grid.Column="1" Margin="0 0 5 0" Name="leftMarginPercentTextBox" Text="{Binding LeftMarginWidthPercentVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="8" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=rightMarginPercentTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_RightMarginPercent}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="8" Grid.Column="3" Margin="0 0 0 0" Name="rightMarginPercentTextBox" Text="{Binding RightMarginWidthPercentVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
-            <Label Grid.Row="9" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=gridColumnTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridColumn}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="9" Grid.Column="1" Margin="0 0 5 0" Name="gridColumnTextBox" Text="{Binding GridColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-            <Label Grid.Row="9" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=gridRowTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridRow}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="9" Grid.Column="3" Margin="0 0 0 0" Name="gridRowTextBox" Text="{Binding GridRowVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="9" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=topMarginPercentTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_TopMarginPercent}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="9" Grid.Column="1" Margin="0 0 5 0" Name="topMarginPercentTextBox" Text="{Binding TopMarginHeightPercentVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="9" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=bottomMarginPercentTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_BottomMarginPercent}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="9" Grid.Column="3" Margin="0 0 0 0" Name="bottomMarginPercentTextBox" Text="{Binding BottomMarginHeightPercentVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
-            <Label Grid.Row="10" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=gridColumnSpanTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridColumnSpan}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="10" Grid.Column="1" Margin="0 0 5 0" Name="gridColumnSpanTextBox" Text="{Binding GridColumnSpanVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-            <Label Grid.Row="10" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=gridRowSpanTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_GridRowSpan}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="10" Grid.Column="3" Margin="0 0 0 0" Name="gridRowSpanTextBox" Text="{Binding GridRowSpanVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="10" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=maxWidthTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_MaxWidth}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="10" Grid.Column="1" Margin="0 0 5 0" Name="maxWidthTextBox" Text="{Binding MaxWidthVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <Label Grid.Row="10" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=maxHeightTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_MaxHeight}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="10" Grid.Column="3" Margin="0 0 0 0" Name="maxHeightTextBox" Text="{Binding MaxHeightVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
-            <Label Grid.Row="11" Grid.Column="0" Margin="-5 0 5 0" Target="{Binding ElementName=maxWidthTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_MaxWidth}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="11" Grid.Column="1" Margin="0 0 5 0" Name="maxWidthTextBox" Text="{Binding MaxWidthVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-            <Label Grid.Row="11" Grid.Column="2" Margin="0 0 5 0" Target="{Binding ElementName=maxHeightTextBox}" Content="{x:Static p:dnSpy_Resources.BgImgSettings_MaxHeight}" IsEnabled="{Binding IsEnabled}" />
-            <TextBox Grid.Row="11" Grid.Column="3" Margin="0 0 0 0" Name="maxHeightTextBox" Text="{Binding MaxHeightVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-
-            <Button Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Reset}" Command="{Binding ResetCommand}" />
+            <Button Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Reset}" Command="{Binding ResetCommand}" />
         </Grid>
     </DataTemplate>
 

@@ -45,15 +45,13 @@ namespace dnSpy.BackgroundImage {
 		double Opacity { get; }
 		double HorizontalOffset { get; }
 		double VerticalOffset { get; }
-		int TotalGridRows { get; }
-		int TotalGridColumns { get; }
-		int GridRow { get; }
-		int GridColumn { get; }
-		int GridRowSpan { get; }
-		int GridColumnSpan { get; }
+		double LeftMarginWidthPercent { get; }
+		double RightMarginWidthPercent { get; }
+		double TopMarginHeightPercent { get; }
+		double BottomMarginHeightPercent { get; }
 		double MaxHeight { get; }
 		double MaxWidth { get; }
-		double Scale { get; }
+		double Zoom { get; }
 		ImagePlacement ImagePlacement { get; }
 	}
 
@@ -69,15 +67,13 @@ namespace dnSpy.BackgroundImage {
 		public double Opacity => backgroundImageSettings.Opacity;
 		public double HorizontalOffset => backgroundImageSettings.HorizontalOffset;
 		public double VerticalOffset => backgroundImageSettings.VerticalOffset;
-		public int TotalGridRows => backgroundImageSettings.TotalGridRows;
-		public int TotalGridColumns => backgroundImageSettings.TotalGridColumns;
-		public int GridRow => backgroundImageSettings.GridRow;
-		public int GridColumn => backgroundImageSettings.GridColumn;
-		public int GridRowSpan => backgroundImageSettings.GridRowSpan;
-		public int GridColumnSpan => backgroundImageSettings.GridColumnSpan;
+		public double LeftMarginWidthPercent => backgroundImageSettings.LeftMarginWidthPercent;
+		public double RightMarginWidthPercent => backgroundImageSettings.RightMarginWidthPercent;
+		public double TopMarginHeightPercent => backgroundImageSettings.TopMarginHeightPercent;
+		public double BottomMarginHeightPercent => backgroundImageSettings.BottomMarginHeightPercent;
 		public double MaxHeight => backgroundImageSettings.MaxHeight;
 		public double MaxWidth => backgroundImageSettings.MaxWidth;
-		public double Scale => backgroundImageSettings.Scale;
+		public double Zoom => backgroundImageSettings.Zoom;
 		public ImagePlacement ImagePlacement => backgroundImageSettings.ImagePlacement;
 
 		sealed class ImageIterator : IDisposable {
