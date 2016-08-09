@@ -526,6 +526,7 @@
     <Compile Include="Text\Editor\ViewScroller.cs" />
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextView.LayoutHelper.cs" />
+    <Compile Include="Text\Editor\WpfTextView.MouseHoverHelper.cs" />
     <Compile Include="Text\Editor\WpfTextViewConstants.cs" />
     <Compile Include="Text\Editor\WpfTextViewContainerMargin.cs" />
     <Compile Include="Text\Editor\WpfTextViewExtensions.cs" />

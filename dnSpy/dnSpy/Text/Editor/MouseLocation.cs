@@ -64,6 +64,24 @@ namespace dnSpy.Text.Editor {
 			return new MouseLocation(textViewLine, position, point);
 		}
 
+		public static MouseLocation TryCreateTextOnly(IWpfTextView wpfTextView, MouseEventArgs e) {
+			ITextViewLine textViewLine;
+
+			var point = GetTextPoint(wpfTextView, e);
+			var line = wpfTextView.TextViewLines.GetTextViewLineContainingYCoordinate(point.Y);
+			if (line != null)
+				textViewLine = line;
+			else if (point.Y <= wpfTextView.ViewportTop)
+				textViewLine = wpfTextView.TextViewLines.FirstVisibleLine;
+			else
+				textViewLine = wpfTextView.TextViewLines.LastVisibleLine;
+			var position = textViewLine.GetBufferPositionFromXCoordinate(point.X, true);
+			if (position == null)
+				return null;
+
+			return new MouseLocation(textViewLine, new VirtualSnapshotPoint(position.Value), point);
+		}
+
 		public override string ToString() {
 			var line = Position.Position.GetContainingLine();
 			int col = Position.Position - line.Start + Position.VirtualSpaces;

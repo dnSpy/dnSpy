@@ -74,9 +74,6 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler ViewportWidthChanged;
 		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
 		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;
-#pragma warning disable 0067
-		public event EventHandler<MouseHoverEventArgs> MouseHover;//TODO: Use this event
-#pragma warning restore 0067
 		public IFormattedLineSource FormattedLineSource { get; private set; }
 		public bool InLayout { get; private set; }
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
@@ -164,6 +161,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(lineTransformCreatorService));
 			if (wpfTextViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
+			this.mouseHoverHelper = new MouseHoverHelper(this);
 			this.physicalLineCache = new PhysicalLineCache(32);
 			this.visiblePhysicalLines = new List<PhysicalLine>();
 			this.invalidatedRegions = new List<SnapshotSpan>();
@@ -531,6 +529,7 @@ namespace dnSpy.Text.Editor {
 			}
 			Debug.Assert(raisingLayoutChanged);
 			raisingLayoutChanged = false;
+			mouseHoverHelper.OnLayoutChanged();
 		}
 		ViewState oldViewState;
 		bool raisingLayoutChanged;
@@ -538,6 +537,7 @@ namespace dnSpy.Text.Editor {
 		public void Close() {
 			if (IsClosed)
 				throw new InvalidOperationException();
+			mouseHoverHelper.OnClosed();
 			StopRefreshTimer();
 			RegisteredCommandElement.Unregister();
 			TextViewModel.Dispose();
@@ -826,6 +826,12 @@ namespace dnSpy.Text.Editor {
 		public ILineTransformSource LineTransformSource => this;
 		LineTransform ILineTransformSource.GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement) =>
 			LineTransformCreator.GetLineTransform(line, yPosition, placement);
+
+		public event EventHandler<MouseHoverEventArgs> MouseHover {
+			add { mouseHoverHelper.MouseHover += value; }
+			remove { mouseHoverHelper.MouseHover -= value; }
+		}
+		readonly MouseHoverHelper mouseHoverHelper;
 
 		public ISpaceReservationManager GetSpaceReservationManager(string name) {
 			throw new NotImplementedException();//TODO:

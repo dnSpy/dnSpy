@@ -421,8 +421,12 @@ namespace dnSpy.Text.Formatting {
 		public SnapshotPoint? GetBufferPositionFromXCoordinate(double xCoordinate, bool textOnly) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			if (!(TextLeft <= xCoordinate && xCoordinate < TextRight))
+			if (xCoordinate < TextLeft)
 				return null;
+			if (xCoordinate >= TextLeft + Width)
+				return null;
+			if (xCoordinate >= TextRight)
+				return End;
 
 			//TODO: Use textOnly
 
