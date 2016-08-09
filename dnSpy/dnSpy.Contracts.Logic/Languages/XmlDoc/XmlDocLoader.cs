@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
@@ -30,6 +31,7 @@ namespace dnSpy.Contracts.Languages.XmlDoc {
 	public static class XmlDocLoader {
 		static readonly Lazy<XmlDocumentationProvider> mscorlibDocumentation = new Lazy<XmlDocumentationProvider>(LoadMscorlibDocumentation);
 		static readonly ConditionalWeakTable<ModuleDef, XmlDocumentationProvider> cache = new ConditionalWeakTable<ModuleDef, XmlDocumentationProvider>();
+		static readonly string[] refAsmPathsV4;
 
 		static XmlDocumentationProvider LoadMscorlibDocumentation() {
 			string xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
@@ -73,6 +75,35 @@ namespace dnSpy.Contracts.Languages.XmlDoc {
 				pfd = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 			referenceAssembliesPath = Path.Combine(pfd, "Reference Assemblies", "Microsoft", "Framework");
 			frameworkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.NET", "Framework");
+			refAsmPathsV4 = GetReferenceV4PathsSortedByHighestestVersion();
+		}
+
+		static string[] GetReferenceV4PathsSortedByHighestestVersion() {
+			var baseDir = Path.Combine(referenceAssembliesPath, ".NETFramework");
+			var list = new List<Tuple<string, Version>>();
+			foreach (var dir in GetDirectories(baseDir)) {
+				var s = Path.GetFileName(dir);
+				if (!s.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+					continue;
+				Version version;
+				if (!Version.TryParse(s.Substring(1), out version))
+					continue;
+				if (version.Major < 4)
+					continue;
+				list.Add(Tuple.Create(dir, version));
+			}
+			return list.OrderByDescending(a => a.Item2).Select(a => a.Item1).ToArray();
+		}
+
+		static string[] GetDirectories(string path) {
+			if (!Directory.Exists(path))
+				return Array.Empty<string>();
+			try {
+				return Directory.GetDirectories(path);
+			}
+			catch {
+			}
+			return Array.Empty<string>();
 		}
 
 		static readonly string referenceAssembliesPath;
@@ -102,9 +133,13 @@ namespace dnSpy.Contracts.Languages.XmlDoc {
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v3.5", "Profile", "Client", assemblyFileName));
 			}
 			else {  // .NET 4.0
-				fileName = LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.5.1", assemblyFileName))
-					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.5", assemblyFileName))
-					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.0", assemblyFileName))
+				fileName = null;
+				foreach (var path in refAsmPathsV4) {
+					fileName = LookupLocalizedXmlDoc(Path.Combine(path, assemblyFileName));
+					if (fileName != null)
+						break;
+				}
+				fileName = fileName
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, runtime, assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v4.0.30319", assemblyFileName));
 			}
