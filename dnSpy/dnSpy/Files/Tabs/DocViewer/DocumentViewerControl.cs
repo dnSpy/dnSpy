@@ -249,7 +249,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
 			if (spanData == null)
 				return false;
 

@@ -498,6 +498,7 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyAdornmentLayers.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyMarginNames.cs" />
+    <Compile Include="Text\Editor\PredefinedDnSpyMouseProcessorProviders.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />

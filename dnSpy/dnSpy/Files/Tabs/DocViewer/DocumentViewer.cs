@@ -55,7 +55,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public IDnSpyWpfTextView TextView => documentViewerControl.TextView;
 		ITextCaret IDocumentViewer.Caret => documentViewerControl.TextView.Caret;
 		ITextSelection IDocumentViewer.Selection => documentViewerControl.TextView.Selection;
-		DocumentViewerContent IDocumentViewer.Content => documentViewerControl.Content;
+		public DocumentViewerContent Content => documentViewerControl.Content;
 		SpanDataCollection<ReferenceInfo> IDocumentViewer.ReferenceCollection => documentViewerControl.Content.ReferenceCollection;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
@@ -427,6 +427,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			documentViewerControl.FollowReferenceNewTab();
+		}
+
+		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+			if (isDisposed)
+				throw new ObjectDisposedException(nameof(IDocumentViewer));
+			return documentViewerControl.GoTo(spanData, newTab, followLocalRefs, canRecordHistory, canJumpToReference);
 		}
 	}
 }
