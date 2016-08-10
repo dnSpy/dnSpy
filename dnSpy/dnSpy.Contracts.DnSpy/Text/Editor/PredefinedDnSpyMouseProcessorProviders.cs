@@ -28,6 +28,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// <see cref="IDocumentViewer"/> <see cref="IMouseProcessorProvider"/>
 		/// </summary>
-		public const string DocumentViewerMouseProcessorProvider = "DocumentViewerMouseProcessorProvider";
+		public const string DocumentViewer = "DocumentViewer";
 	}
 }

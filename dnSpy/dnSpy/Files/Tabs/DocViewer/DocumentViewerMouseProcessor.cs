@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	[Export(typeof(IMouseProcessorProvider))]
-	[Name(PredefinedDnSpyMouseProcessorProviders.DocumentViewerMouseProcessorProvider)]
+	[Name(PredefinedDnSpyMouseProcessorProviders.DocumentViewer)]
 	[ContentType(ContentTypes.Any)]
 	[TextViewRole(PredefinedDnSpyTextViewRoles.DocumentViewer)]
 	sealed class DocumentViewerMouseProcessorProvider : IMouseProcessorProvider {
