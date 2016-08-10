@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
@@ -59,21 +60,21 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		SpanDataCollection<ReferenceInfo> IDocumentViewer.ReferenceCollection => documentViewerControl.Content.ReferenceCollection;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly DocumentViewer uiContext;
+			readonly DocumentViewer documentViewer;
 
-			public GuidObjectsCreator(DocumentViewer uiContext) {
-				this.uiContext = uiContext;
+			public GuidObjectsCreator(DocumentViewer documentViewer) {
+				this.documentViewer = documentViewer;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, uiContext);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, documentViewer);
 
-				var teCtrl = (DocumentViewerControl)args.CreatorObject.Object;
-				var loc = teCtrl.TextView.GetTextEditorPosition(args.OpenedFromKeyboard);
+				var dvCtrl = documentViewer.documentViewerControl;
+				var loc = dvCtrl.TextView.GetTextEditorPosition(args.OpenedFromKeyboard);
 				if (loc != null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 
-					var @ref = teCtrl.GetReferenceInfo(loc.Position);
+					var @ref = dvCtrl.GetReferenceInfo(loc.Position);
 					if (@ref != null)
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.ToTextReference());
 				}
@@ -92,7 +93,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.wpfCommandManager = wpfCommandManager;
 			this.documentViewerServiceImpl = documentViewerServiceImpl;
 			this.documentViewerControl = documentViewerControl;
-			menuManager.InitializeContextMenu(documentViewerControl, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView, documentViewerControl));
+			menuManager.InitializeContextMenu(documentViewerControl.TextView.VisualElement, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView));
+			// Prevent the tab control's context menu from popping up when right-clicking in the textview host margin
+			menuManager.InitializeContextMenu(documentViewerControl, Guid.NewGuid());
 			wpfCommandManager.Add(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.TextView.Properties.AddProperty(typeof(DocumentViewer), this);
 			documentViewerControl.TextView.TextBuffer.Properties.AddProperty(DocumentViewerExtensions.DocumentViewerTextBufferKey, this);
