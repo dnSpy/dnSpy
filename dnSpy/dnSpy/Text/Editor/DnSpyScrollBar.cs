@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
@@ -48,5 +49,19 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected abstract void OnScroll(ScrollEventArgs e);
+
+		// TODO: Hack so the correct context menu is shown in the text view
+		protected override void OnContextMenuOpening(ContextMenuEventArgs e) {
+			ClearValue(ContextMenuProperty);
+			base.OnContextMenuOpening(e);
+			var ctxMenu = ContextMenu;
+			if (ctxMenu != null) {
+				if (IsEnabled) {
+					ctxMenu.PlacementTarget = this;
+					ctxMenu.IsOpen = true;
+				}
+				e.Handled = true;
+			}
+		}
 	}
 }
