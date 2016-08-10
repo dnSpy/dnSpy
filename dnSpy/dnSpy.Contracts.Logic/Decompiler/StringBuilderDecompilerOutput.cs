@@ -124,6 +124,12 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		/// <summary>
+		/// Writes text. The text will be indented if needed.
+		/// </summary>
+		/// <param name="text">Text</param>
+		public void Write(string text) => AddText(text, BoxedTextColor.Text);
+
+		/// <summary>
 		/// Writes text and color. The text will be indented if needed.
 		/// </summary>
 		/// <param name="text">Text</param>

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Text;
 
 namespace dnSpy.Contracts.Text {
@@ -42,6 +43,16 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		public StringBuilderTextColorOutput() {
 			this.sb = new StringBuilder();
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="stringBuilder">String builder</param>
+		public StringBuilderTextColorOutput(StringBuilder stringBuilder) {
+			if (stringBuilder == null)
+				throw new ArgumentNullException(nameof(stringBuilder));
+			this.sb = stringBuilder;
 		}
 
 		/// <summary>
