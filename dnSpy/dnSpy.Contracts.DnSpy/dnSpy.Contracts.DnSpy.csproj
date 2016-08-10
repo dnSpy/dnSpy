@@ -480,6 +480,8 @@
     <Compile Include="Text\Editor\IDnSpyTextView.cs" />
     <Compile Include="Text\Editor\IDnSpyWpfTextView.cs" />
     <Compile Include="Text\Editor\IDnSpyWpfTextViewHost.cs" />
+    <Compile Include="Text\Editor\IGlyphTextMarkerHandler.cs" />
+    <Compile Include="Text\Editor\IGlyphTextMarkerMouseProcessor.cs" />
     <Compile Include="Text\Editor\IGlyphTextMarkerService.cs" />
     <Compile Include="Text\Editor\ILineSeparatorTag.cs" />
     <Compile Include="Text\Editor\ILogEditor.cs" />
@@ -500,6 +502,7 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDnSpyWpfViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyAdornmentLayers.cs" />
+    <Compile Include="Text\Editor\PredefinedDnSpyGlyphMouseProcessorProviders.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyMarginNames.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyMouseProcessorProviders.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />

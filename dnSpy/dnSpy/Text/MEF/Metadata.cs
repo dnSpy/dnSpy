@@ -136,6 +136,11 @@ namespace dnSpy.Text.MEF {
 	public interface IGlyphMetadata : ITaggerMetadata, IOrderable {
 	}
 
+	public interface IGlyphTextMarkerMouseProcessorProviderMetadata : IOrderable {
+		[DefaultValue(null)]
+		IEnumerable<string> TextViewRoles { get; }
+	}
+
 	public interface IMarginContextMenuHandlerProviderMetadata {
 		[DefaultValue(null)]
 		IEnumerable<string> TextViewRoles { get; }

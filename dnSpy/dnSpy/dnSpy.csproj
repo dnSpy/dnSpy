@@ -451,6 +451,7 @@
     <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\GlyphMargin.cs" />
     <Compile Include="Text\Editor\GlyphTextMarkerService.cs" />
+    <Compile Include="Text\Editor\GlyphTextMarkerServiceMouseProcessor.cs" />
     <Compile Include="Text\Editor\GlyphTextViewMarkerClassificationTagger.cs" />
     <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTagger.cs" />
     <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTextMarkerTagger.cs" />

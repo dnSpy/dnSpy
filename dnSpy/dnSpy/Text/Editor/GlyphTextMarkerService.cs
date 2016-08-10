@@ -21,11 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
+using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
+using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -34,6 +38,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextMarkerImpl : IGlyphTextMarker {
 		Func<ITextView, bool> TextViewFilter { get; }
+		IGlyphTextMarkerHandler Handler { get; }
 	}
 
 	interface IGlyphTextMethodMarkerImpl : IGlyphTextMethodMarker, IGlyphTextMarkerImpl {
@@ -60,31 +65,30 @@ namespace dnSpy.Text.Editor {
 		public IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		public IEditorFormatMapService EditorFormatMapService { get; }
 		public IEnumerable<IGlyphTextMarkerImpl> AllMarkers => glyphTextMarkers;
+		public Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>[] GlyphTextMarkerMouseProcessorProviders { get; }
 
 		readonly IModuleIdCreator moduleIdCreator;
 		readonly HashSet<IGlyphTextMarkerImpl> glyphTextMarkers;
 
 		[ImportingConstructor]
-		GlyphTextMarkerService(IModuleIdCreator moduleIdCreator, IThemeManager themeManager, IImageManager imageManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
+		GlyphTextMarkerService(IModuleIdCreator moduleIdCreator, IThemeManager themeManager, IImageManager imageManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>> glyphTextMarkerMouseProcessorProviders) {
 			this.moduleIdCreator = moduleIdCreator;
 			ThemeManager = themeManager;
 			ImageManager = imageManager;
 			ViewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			EditorFormatMapService = editorFormatMapService;
 			this.glyphTextMarkers = new HashSet<IGlyphTextMarkerImpl>();
+			this.GlyphTextMarkerMouseProcessorProviders = Orderer.Order(glyphTextMarkerMouseProcessorProviders).ToArray();
 		}
 
-		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) {
+		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
-			return AddMarker(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, classificationType, zIndex, textViewFilter);
+			return AddMarker(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 		}
 
-		public IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) =>
-			AddMarker(new ModuleTokenId(module, token), ilOffset, glyphImage, markerTypeName, classificationType, zIndex, textViewFilter);
-
-		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) {
-			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, classificationType, zIndex, textViewFilter);
+		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 			glyphTextMarkers.Add(marker);
 			MarkerAdded?.Invoke(this, new GlyphTextMarkerAddedEventArgs(marker));
 			return marker;
@@ -95,20 +99,32 @@ namespace dnSpy.Text.Editor {
 			public string MarkerTypeName { get; }
 			public IClassificationType ClassificationType { get; }
 			public int ZIndex { get; }
+			public object Tag { get; }
+			public IGlyphTextMarkerHandler Handler { get; }
 			public Func<ITextView, bool> TextViewFilter { get; }
 			public ModuleTokenId Method { get; }
 			public uint ILOffset { get; }
 
-			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, Func<ITextView, bool> textViewFilter) {
+			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 				Method = method;
 				ILOffset = ilOffset;
 				GlyphImageReference = glyphImage;
 				MarkerTypeName = markerTypeName;
 				ClassificationType = classificationType;
 				ZIndex = zIndex;
+				Tag = tag;
+				Handler = handler ?? NullGlyphTextMarkerHandler.Instance;
 				TextViewFilter = textViewFilter ?? defaultTextViewFilter;
 			}
 			static readonly Func<ITextView, bool> defaultTextViewFilter = a => true;
+
+			sealed class NullGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
+				public static readonly NullGlyphTextMarkerHandler Instance = new NullGlyphTextMarkerHandler();
+				IGlyphTextMarkerHandlerMouseProcessor IGlyphTextMarkerHandler.MouseProcessor => null;
+				FrameworkElement IGlyphTextMarkerHandler.GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
+				string IGlyphTextMarkerHandler.GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
+				IEnumerable<GuidObject> IGlyphTextMarkerHandler.GetMenuContextObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint, GuidObjectsCreatorArgs args) { yield break; }
+			}
 		}
 
 		public void Remove(IGlyphTextMarker marker) {

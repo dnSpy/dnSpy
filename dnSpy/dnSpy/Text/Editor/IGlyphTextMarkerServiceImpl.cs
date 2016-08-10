@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
+using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
@@ -32,6 +33,7 @@ namespace dnSpy.Text.Editor {
 		IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		IEditorFormatMapService EditorFormatMapService { get; }
 		IEnumerable<IGlyphTextMarkerImpl> AllMarkers { get; }
+		Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>[] GlyphTextMarkerMouseProcessorProviders { get; }
 		event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
 		event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;

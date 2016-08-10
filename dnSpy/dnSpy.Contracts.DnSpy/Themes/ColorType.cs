@@ -455,6 +455,8 @@ namespace dnSpy.Contracts.Themes {
 		ToolTipForeground,
 		CodeToolTip,
 		CodeToolTipBorder,
+		ScreenTip,
+		ScreenTipBorder,
 		CilButton,
 		CilButtonBorder,
 		CilButtonBorderFocused,

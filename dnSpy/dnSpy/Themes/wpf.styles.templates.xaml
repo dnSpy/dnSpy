@@ -5826,6 +5826,23 @@
                 Value="False"/>
     </Style>
 
+    <Style x:Key="GlyphTextMarkerToolTipStyle"
+           BasedOn="{StaticResource {x:Type ToolTip}}"
+           TargetType="{x:Type ToolTip}">
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource ScreenTipBorder}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource ScreenTipBackground}"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource ScreenTipText}"/>
+        <Setter Property="Padding"
+                Value="1,1,1,1"/>
+        <Setter Property="BorderThickness"
+                Value="1,1,1,1"/>
+        <Setter Property="HasDropShadow"
+                Value="False"/>
+    </Style>
+
     <DataTemplate DataType="{x:Type tabssettings:DisplayAppSettingsVM}">
         <Grid>
             <Grid.Resources>

@@ -1086,6 +1086,16 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
 				BackgroundResourceKey = "CodeToolTipBorder",
 			},
+			new BrushColorInfo(ColorType.ScreenTip, "Glyph Margin ToolTip") {
+				DefaultForeground = "#FF1E1E1E",// Environment.ScreenTipText
+				ForegroundResourceKey = "ScreenTipText",
+				DefaultBackground = "#FFFDFBAC",// Environment.ScreenTipBackground
+				BackgroundResourceKey = "ScreenTipBackground",
+			},
+			new BrushColorInfo(ColorType.ScreenTipBorder, "Glyph Margin ToolTip border") {
+				DefaultBackground = "#FFFDFBAC",// Environment.ScreenTipBorder
+				BackgroundResourceKey = "ScreenTipBorder",
+			},
 			new BrushColorInfo(ColorType.CilButton, "CIL Button") {
 				DefaultForeground = "#FF1E1E1E",
 				ForegroundResourceKey = "CilButtonText",

@@ -403,6 +403,8 @@
 		<color name="tooltipforeground" fg="#DCDCDC" />
 		<color name="codetooltip" fg="#FFDCDCDC" bg="#FF1E1E1E" />
 		<color name="codetooltipborder" bg="#FF4D4D50" />
+		<color name="screentip" fg="#FF252526" bg="#FFFEFCC8" />
+		<color name="screentipborder" bg="#FFFEFCC8" />
 		<color name="cilbutton" fg="#FFF1F1F1" bg="Transparent" />
 		<color name="cilbuttonborder" bg="Transparent" />
 		<color name="cilbuttonborderfocused" bg="#FF007ACC" />
