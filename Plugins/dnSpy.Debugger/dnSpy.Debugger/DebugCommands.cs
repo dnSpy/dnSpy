@@ -519,4 +519,37 @@ namespace dnSpy.Debugger {
 			}
 		}
 	}
+
+	abstract class GlyphMarginCommand : MenuItemBase<ILCodeBreakpoint> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override ILCodeBreakpoint CreateContext(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_GLYPHMARGIN_GUID))
+				return null;
+			return context.Find<ILCodeBreakpoint>();
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.GLYPHMARGIN_GUID, Header = "res:DeleteBreakpointCommand", Icon = "BreakpointMenu", Group = MenuConstants.GROUP_GLYPHMARGIN_DEBUG_BPS, Order = 0)]
+	sealed class DeleteBreakpointCommand : GlyphMarginCommand {
+		readonly Lazy<IBreakpointManager> breakpointManager;
+
+		[ImportingConstructor]
+		DeleteBreakpointCommand(Lazy<IBreakpointManager> breakpointManager) {
+			this.breakpointManager = breakpointManager;
+		}
+
+		public override void Execute(ILCodeBreakpoint context) => breakpointManager.Value.Remove(context);
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.GLYPHMARGIN_GUID, InputGestureText = "res:ShortCutKeyCtrlF9", Group = MenuConstants.GROUP_GLYPHMARGIN_DEBUG_BPS, Order = 10)]
+	sealed class EnableAndDisableBreakpointCommand : GlyphMarginCommand {
+		public override void Execute(ILCodeBreakpoint context) => context.IsEnabled = !context.IsEnabled;
+		public override bool IsEnabled(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
+		public override string GetHeader(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(context.IsEnabled, 1);
+		public override ImageReference? GetIcon(ILCodeBreakpoint context) => EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal();
+	}
 }

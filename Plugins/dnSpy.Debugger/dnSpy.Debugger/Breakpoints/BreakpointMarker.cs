@@ -34,12 +34,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly IGlyphTextMarkerService glyphTextMarkerService;
 		readonly IClassificationType classificationTypeEnabledBreakpoint;
 		readonly Dictionary<ILCodeBreakpoint, IGlyphTextMethodMarker> toMethodMarkers;
+		readonly ILCodeBreakpointGlyphTextMarkerHandler ilCodeBreakpointGlyphTextMarkerHandler;
 
 		[ImportingConstructor]
-		BreakpointMarker(IBreakpointManager breakpointManager, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		BreakpointMarker(IBreakpointManager breakpointManager, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, ILCodeBreakpointGlyphTextMarkerHandler ilCodeBreakpointGlyphTextMarkerHandler) {
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.classificationTypeEnabledBreakpoint = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement);
 			this.toMethodMarkers = new Dictionary<ILCodeBreakpoint, IGlyphTextMethodMarker>();
+			this.ilCodeBreakpointGlyphTextMarkerHandler = ilCodeBreakpointGlyphTextMarkerHandler;
 			breakpointManager.BreakpointsAdded += BreakpointManager_BreakpointsAdded;
 			breakpointManager.BreakpointsRemoved += BreakpointManager_BreakpointsRemoved;
 		}
@@ -85,7 +87,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void UpdateMarker(ILCodeBreakpoint ilbp) {
 			RemoveMarker(ilbp);
 			var info = GetBreakpointMarkerInfo(ilbp);
-			var marker = glyphTextMarkerService.AddMarker(ilbp.MethodToken, ilbp.ILOffset, info.ImageReference, info.MarkerTypeName, info.ClassificationType, info.ZIndex, textViewFilter);
+			var marker = glyphTextMarkerService.AddMarker(ilbp.MethodToken, ilbp.ILOffset, info.ImageReference, info.MarkerTypeName, info.ClassificationType, info.ZIndex, GlyphTextMarkerHelper.GetTag(ilbp), ilCodeBreakpointGlyphTextMarkerHandler, textViewFilter);
 			toMethodMarkers.Add(ilbp, marker);
 		}
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);

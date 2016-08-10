@@ -1791,6 +1791,33 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IL offset 0x{0}.
+        /// </summary>
+        public static string GlyphToolTip_IL_offset_0 {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_IL_offset_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to line {0} character {1}.
+        /// </summary>
+        public static string GlyphToolTip_line_0_character_1 {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_line_0_character_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        public static string GlyphToolTip_Location {
+            get {
+                return ResourceManager.GetString("GlyphToolTip_Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Go To Code.
         /// </summary>
         public static string GoToCodeCommand {

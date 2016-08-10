@@ -165,6 +165,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="ICodeEditor"/></summary>
 		public static readonly string GUIDOBJ_CODE_EDITOR_GUID = "297907F8-38BE-4C8C-90D1-3400BB0EB36E";
 
+		/// <summary>Breakpoint</summary>
+		public static readonly string GUIDOBJ_BREAKPOINT_GUID = "A229BFE6-0445-4B5C-9D4B-E590995B9D93";
+
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";
 
@@ -476,5 +479,8 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Output text editor, Group: User Commands</summary>
 		public const string GROUP_CTX_OUTPUT_USER_COMMANDS = "2000,A48F98FE-5BA6-4023-A7E5-0C3D6AFCC10B";
+
+		/// <summary>Group: Glyph margin, Type: Debugger, Group: Breakpoints</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_BPS = "10000,423F4513-1EAF-43FD-BD46-FDCFB6DFAA04";
 	}
 }

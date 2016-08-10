@@ -72,6 +72,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Add(Breakpoint bp);
 		void Remove(Breakpoint bp);
 		void Clear();
+		void Toggle(IDocumentViewer documentViewer, int textPosition);
 		bool? GetAddRemoveBreakpointsInfo(out int count);
 		bool GetEnableDisableBreakpointsInfo(out int count);
 		Func<object, object> OnRemoveBreakpoints { get; set; }

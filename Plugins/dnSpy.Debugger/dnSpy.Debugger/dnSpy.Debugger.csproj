@@ -54,7 +54,10 @@
     <Compile Include="Breakpoints\BreakpointVM.cs" />
     <Compile Include="Breakpoints\Commands.cs" />
     <Compile Include="Breakpoints\DebugEventBreakpoint.cs" />
+    <Compile Include="Breakpoints\GlyphTextMarkerHelper.cs" />
+    <Compile Include="Breakpoints\GlyphTextMarkerMouseProcessor.cs" />
     <Compile Include="Breakpoints\ILCodeBreakpoint.cs" />
+    <Compile Include="Breakpoints\ILCodeBreakpointGlyphTextMarkerHandler.cs" />
     <Compile Include="CachedOutput.cs" />
     <Compile Include="CallStack\ActiveStatementService.cs" />
     <Compile Include="CallStack\CallStackContent.cs" />

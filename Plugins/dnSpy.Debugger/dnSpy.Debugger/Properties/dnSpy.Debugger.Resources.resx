@@ -1278,4 +1278,13 @@ Are you sure you want to expand it?</value>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>
   </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL offset 0x{0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>line {0} character {1}</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
 </root>

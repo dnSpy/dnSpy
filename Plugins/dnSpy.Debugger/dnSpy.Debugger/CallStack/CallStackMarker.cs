@@ -120,6 +120,8 @@ namespace dnSpy.Debugger.CallStack {
 					ThemeClassificationTypeNameKeys.CurrentStatementMarker,
 					classificationTypeCurrentStatement,
 					GlyphTextMarkerServiceZIndexes.CurrentStatement,
+					null,
+					null,
 					textViewFilter);
 			}
 
@@ -133,6 +135,8 @@ namespace dnSpy.Debugger.CallStack {
 					ThemeClassificationTypeNameKeys.CallReturnMarker,
 					classificationTypeCallReturn,
 					GlyphTextMarkerServiceZIndexes.ReturnStatement,
+					null,
+					null,
 					textViewFilter);
 			}
 
