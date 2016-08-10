@@ -524,6 +524,7 @@
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewMouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
+    <Compile Include="Text\Editor\ToolTipHelper.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarContainerMargin.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\ViewScroller.cs" />

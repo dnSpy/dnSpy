@@ -25,15 +25,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
-using dnSpy.Controls;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -120,9 +117,6 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		static bool SameReferences(SpanData<ReferenceInfo> a, SpanData<ReferenceInfo> b) =>
 			a.Span == b.Span;
 
-		const double maxToolTipHeightMultiplier = 0.8;
-		const double maxToolTipWidthMultiplier = 0.8;
-
 		bool ShowToolTip(SpanData<ReferenceInfo> info) {
 			var toolTipContent = CreateToolTipContent(GetLanguage(), info.Data.Reference);
 			if (toolTipContent == null)
@@ -131,20 +125,10 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			CloseToolTip();
 			currentReference = info;
 			toolTip = new ToolTip();
-			toolTip.SetResourceReference(FrameworkElement.StyleProperty, "CodeToolTip");
+			toolTip.SetResourceReference(FrameworkElement.StyleProperty, "CodeToolTipStyle");
 			SetScaleTransform(toolTip);
 			toolTip.Content = toolTipContent;
 			toolTip.IsOpen = true;
-
-			var screen = new Screen(documentViewer.TextView.VisualElement);
-			if (screen.IsValid) {
-				var zoomMultiplier = documentViewer.TextView.ZoomLevel == 0 ? 1 : 100 / documentViewer.TextView.ZoomLevel;
-				var source = PresentationSource.FromVisual(documentViewer.TextView.VisualElement);
-				var transformFromDevice = source?.CompositionTarget.TransformFromDevice ?? Matrix.Identity;
-				var wpfRect = transformFromDevice.Transform(new Point(screen.DisplayRect.Width, screen.DisplayRect.Height));
-				toolTip.MaxWidth = wpfRect.X * zoomMultiplier * maxToolTipWidthMultiplier;
-				toolTip.MaxHeight = wpfRect.Y * zoomMultiplier * maxToolTipHeightMultiplier;
-			}
 
 			documentViewer.TextView.VisualElement.MouseLeave += VisualElement_MouseLeave;
 			documentViewer.TextView.VisualElement.MouseMove += VisualElement_MouseMove;
@@ -158,10 +142,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			// instead of Ideal; don't change the default settings if it's 100% zoom.
 			if (documentViewer.TextView.ZoomLevel == 100)
 				return;
-			var metroWindow = Window.GetWindow(documentViewer.TextView.VisualElement) as MetroWindow;
-			if (metroWindow == null)
-				return;
-			metroWindow.SetScaleTransform(toolTip, documentViewer.TextView.ZoomLevel / 100);
+			ToolTipHelper.SetScaleTransform(documentViewer.TextView, toolTip);
 		}
 
 		void VisualElement_MouseMove(object sender, MouseEventArgs e) {

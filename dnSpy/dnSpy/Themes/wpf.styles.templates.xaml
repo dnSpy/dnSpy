@@ -5811,7 +5811,7 @@
 		</DataTemplate.Triggers>
 	</DataTemplate>
 
-    <Style x:Key="CodeToolTip"
+    <Style x:Key="CodeToolTipStyle"
            BasedOn="{StaticResource {x:Type ToolTip}}"
            TargetType="{x:Type ToolTip}">
         <Setter Property="BorderBrush"
