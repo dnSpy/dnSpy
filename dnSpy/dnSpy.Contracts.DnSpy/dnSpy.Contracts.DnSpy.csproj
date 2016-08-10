@@ -503,6 +503,7 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyAdornmentLayers.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyGlyphMouseProcessorProviders.cs" />
+    <Compile Include="Text\Editor\PredefinedDnSpyGlyphTextMarkerMouseProcessorProviderNames.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyMarginNames.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyMouseProcessorProviders.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
