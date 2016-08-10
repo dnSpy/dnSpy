@@ -135,4 +135,11 @@ namespace dnSpy.Text.MEF {
 
 	public interface IGlyphMetadata : ITaggerMetadata, IOrderable {
 	}
+
+	public interface IMarginContextMenuHandlerProviderMetadata {
+		[DefaultValue(null)]
+		IEnumerable<string> TextViewRoles { get; }
+
+		string MarginName { get; }
+	}
 }

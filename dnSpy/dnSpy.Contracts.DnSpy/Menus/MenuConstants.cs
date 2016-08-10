@@ -60,6 +60,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Guid of app menu: Help</summary>
 		public const string APP_MENU_HELP_GUID = "52504C1B-7C35-464A-A35D-6D9F59E035D9";
 
+		/// <summary>Guid of glyph margin</summary>
+		public const string GLYPHMARGIN_GUID = "53F9F2FF-5AF8-4FC6-B849-74AB88EFB367";
+
 		/// <summary>App menu order: File</summary>
 		public const double ORDER_APP_MENU_FILE = 0;
 
@@ -126,6 +129,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><c>HexBox</c></summary>
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 
+		/// <summary>Glyph margin</summary>
+		public static readonly string GUIDOBJ_GLYPHMARGIN_GUID = "60A3ECC3-3714-418E-8C26-D33F00EA31B4";
+
 		/// <summary>REPL text editor control</summary>
 		public static readonly string GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID = "18953907-F276-43F8-B267-DFEA192DD9B8";
 
@@ -134,6 +140,15 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary><see cref="IWpfTextView"/></summary>
 		public static readonly string GUIDOBJ_WPF_TEXTVIEW_GUID = "2579A07D-C6F5-4A13-B0FB-2C8828278C0C";
+
+		/// <summary><see cref="IWpfTextViewHost"/></summary>
+		public static readonly string GUIDOBJ_WPF_TEXTVIEW_HOST_GUID = "C1F6C5AB-1E0F-4BF3-A787-39AA78F0F7A1";
+
+		/// <summary><see cref="IWpfTextViewMargin"/></summary>
+		public static readonly string GUIDOBJ_WPF_TEXTVIEW_MARGIN_GUID = "36C94DC4-05AA-4F2B-A6C4-02EFE187AAA3";
+
+		/// <summary>Point of mouse relative to <see cref="IWpfTextViewMargin"/></summary>
+		public static readonly string GUIDOBJ_MARGIN_POINT_GUID = "FEAC116C-FA91-42D9-A646-BD8F3A6A6EFD";
 
 		/// <summary>Log text editor control</summary>
 		public static readonly string GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID = "898C7BE5-EDAE-42E5-A97F-1FA73C18ED36";
