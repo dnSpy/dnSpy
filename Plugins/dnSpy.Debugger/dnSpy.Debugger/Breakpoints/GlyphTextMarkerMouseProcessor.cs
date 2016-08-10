@@ -57,20 +57,19 @@ namespace dnSpy.Debugger.Breakpoints {
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 		}
 
-		WeakReference leftButtonDownLineWeakReference;
+		WeakReference leftButtonDownLineIdentityTagWeakReference;
 
-		void ClearPressedLine() => leftButtonDownLineWeakReference = null;
+		void ClearPressedLine() => leftButtonDownLineIdentityTagWeakReference = null;
 
 		public override void OnMouseLeftButtonDown(IGlyphTextMarkerMouseProcessorContext context, MouseButtonEventArgs e) =>
-			leftButtonDownLineWeakReference = new WeakReference(context.Line.IdentityTag);
+			leftButtonDownLineIdentityTagWeakReference = new WeakReference(context.Line.IdentityTag);
 
 		public override void OnMouseLeftButtonUp(IGlyphTextMarkerMouseProcessorContext context, MouseButtonEventArgs e) {
-			bool sameLine = leftButtonDownLineWeakReference?.Target == context.Line.IdentityTag;
-			leftButtonDownLineWeakReference = null;
+			bool sameLine = leftButtonDownLineIdentityTagWeakReference?.Target == context.Line.IdentityTag;
+			leftButtonDownLineIdentityTagWeakReference = null;
 
 			if (sameLine) {
 				e.Handled = true;
-
 				var documentViewer = wpfTextViewHost.TextView.TextBuffer.TryGetDocumentViewer();
 				Debug.Assert(documentViewer != null);
 				if (documentViewer != null)

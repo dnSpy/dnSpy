@@ -154,7 +154,7 @@ namespace dnSpy.Text.Editor {
 			if (markers.Length > 0) {
 				var glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
 				foreach (var marker in markers) {
-					foreach (var o in marker.Handler.GetMenuContextObjects(glyphTextMarkerHandlerContext, marker, marginRelativePoint, args))
+					foreach (var o in marker.Handler.GetContextMenuObjects(glyphTextMarkerHandlerContext, marker, marginRelativePoint, args))
 						yield return o;
 				}
 			}
@@ -162,7 +162,7 @@ namespace dnSpy.Text.Editor {
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
 				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
-					foreach (var o in processor.GetMenuContextObjects(context, marginRelativePoint, args))
+					foreach (var o in processor.GetContextMenuObjects(context, marginRelativePoint, args))
 						yield return o;
 				}
 			}
@@ -444,7 +444,7 @@ namespace dnSpy.Text.Editor {
 		ToolTip toolTip;
 		IGlyphTextMarker toolTipMarker;
 		IWpfTextViewLine toolTipLine;
-		DispatcherTimer toolTipDispatcherTimer;
+		readonly DispatcherTimer toolTipDispatcherTimer;
 		const int TOOLTIP_WAIT_MILLISECONDS = 150;
 
 		void ToolTipDispatcherTimer_Tick(object sender, EventArgs e) {
@@ -517,8 +517,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
-			bool refresh = toolTipLine != null || popup.Child != null;
-			if (popup.Child != null) {
+			bool refresh = toolTipLine != null || popup.IsOpen;
+			if (popup.IsOpen) {
 				if (e.OldSnapshot != e.NewSnapshot)
 					ClosePopup();
 				if (e.VerticalTranslation)

@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			return sb.ToString();
 		}
 
-		IEnumerable<GuidObject> IGlyphTextMarkerHandler.GetMenuContextObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint, GuidObjectsCreatorArgs args) {
+		IEnumerable<GuidObject> IGlyphTextMarkerHandler.GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint, GuidObjectsCreatorArgs args) {
 			var ilbp = GlyphTextMarkerHelper.TryGetILCodeBreakpoint(marker);
 			if (ilbp != null)
 				yield return new GuidObject(MenuConstants.GUIDOBJ_BREAKPOINT_GUID, ilbp);

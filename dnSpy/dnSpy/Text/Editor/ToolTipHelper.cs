@@ -18,7 +18,6 @@
 */
 
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 using dnSpy.Controls;
@@ -29,11 +28,11 @@ namespace dnSpy.Text.Editor {
 		const double maxToolTipHeightMultiplier = 0.8;
 		const double maxToolTipWidthMultiplier = 0.8;
 
-		public static void SetScaleTransform(IWpfTextView wpfTextView, ToolTip toolTip) {
+		public static void SetScaleTransform(IWpfTextView wpfTextView, FrameworkElement popupElement) {
 			var metroWindow = Window.GetWindow(wpfTextView.VisualElement) as MetroWindow;
 			if (metroWindow == null)
 				return;
-			metroWindow.SetScaleTransform(toolTip, wpfTextView.ZoomLevel / 100);
+			metroWindow.SetScaleTransform(popupElement, wpfTextView.ZoomLevel / 100);
 
 			var screen = new Screen(wpfTextView.VisualElement);
 			if (screen.IsValid) {
@@ -41,8 +40,8 @@ namespace dnSpy.Text.Editor {
 				var source = PresentationSource.FromVisual(wpfTextView.VisualElement);
 				var transformFromDevice = source?.CompositionTarget.TransformFromDevice ?? Matrix.Identity;
 				var wpfRect = transformFromDevice.Transform(new Point(screen.DisplayRect.Width, screen.DisplayRect.Height));
-				toolTip.MaxWidth = wpfRect.X * zoomMultiplier * maxToolTipWidthMultiplier;
-				toolTip.MaxHeight = wpfRect.Y * zoomMultiplier * maxToolTipHeightMultiplier;
+				popupElement.MaxWidth = wpfRect.X * zoomMultiplier * maxToolTipWidthMultiplier;
+				popupElement.MaxHeight = wpfRect.Y * zoomMultiplier * maxToolTipHeightMultiplier;
 			}
 		}
 	}
