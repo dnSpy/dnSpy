@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Text.Editor;
@@ -71,7 +70,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (sameLine) {
 				e.Handled = true;
 				var documentViewer = wpfTextViewHost.TextView.TextBuffer.TryGetDocumentViewer();
-				Debug.Assert(documentViewer != null);
 				if (documentViewer != null)
 					breakpointManager.Value.Toggle(documentViewer, context.Line.Start.Position);
 			}
