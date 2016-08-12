@@ -744,6 +744,8 @@
     <Resource Include="Images\ConstructorProtectedInternal.png" />
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\CSharpFile.png" />
+    <Resource Include="Images\DefaultWatermarkDark.png" />
+    <Resource Include="Images\DefaultWatermarkLight.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
     <Resource Include="Images\DelegatePrivate.png" />

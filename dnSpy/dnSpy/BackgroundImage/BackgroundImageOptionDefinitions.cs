@@ -40,7 +40,12 @@ namespace dnSpy.BackgroundImage {
 			public string DisplayName => dnSpy_Resources.BgImgDisplayName_DocumentViewer;
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_DocumentViewer;
 			public bool UserVisible => true;
-			public DefaultImageSettings GetDefaultImageSettings() => null;
+			public DefaultImageSettings GetDefaultImageSettings() => new DefaultImageSettings {
+				Images = new string[] {
+					@"l|pack://application:,,,/dnSpy;component/Images/DefaultWatermarkLight.png",
+					@"d|pack://application:,,,/dnSpy;component/Images/DefaultWatermarkDark.png",
+				},
+			};
 			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDnSpyTextViewRoles.DocumentViewer);
 		}
 
