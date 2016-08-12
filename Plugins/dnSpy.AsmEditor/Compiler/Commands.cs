@@ -183,7 +183,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override string GetHeader(IMenuItemContext context) => editCodeVMCreator.GetHeader();
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
-		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetMappings(context));
+		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) {
 			return editCodeVMCreator.CanCreate &&
 				list != null &&
@@ -192,7 +192,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				list[0].Method.Body.Instructions.Count > 0;
 		}
 
-		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetMappings(context));
+		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context));
 
 		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
@@ -213,17 +213,17 @@ namespace dnSpy.AsmEditor.Compiler {
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		IList<MethodSourceStatement> GetMappings() {
+		IList<MethodSourceStatement> GetStatements() {
 			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			return BodyCommandUtils.GetMappings(documentViewer, documentViewer.Caret.Position.BufferPosition.Position);
+			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition.Position);
 		}
 
-		void ICommand.Execute(object parameter) => Execute(GetMappings());
-		bool ICommand.CanExecute(object parameter) => IsVisible(editCodeVMCreator, GetMappings());
+		void ICommand.Execute(object parameter) => Execute(GetStatements());
+		bool ICommand.CanExecute(object parameter) => IsVisible(editCodeVMCreator, GetStatements());
 	}
 }

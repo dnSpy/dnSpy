@@ -179,7 +179,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 
-		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetMappings(context));
+		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetStatements(context));
 		static bool IsVisible(IList<MethodSourceStatement> list) {
 			return list != null &&
 				list.Count != 0 &&
@@ -187,7 +187,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				list[0].Method.Body.Instructions.Count > 0;
 		}
 
-		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetMappings(context));
+		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context));
 
 		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
@@ -208,17 +208,17 @@ namespace dnSpy.AsmEditor.MethodBody {
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		IList<MethodSourceStatement> GetMappings() {
+		IList<MethodSourceStatement> GetStatements() {
 			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			return BodyCommandUtils.GetMappings(documentViewer, documentViewer.Caret.Position.BufferPosition);
+			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition);
 		}
 
-		void ICommand.Execute(object parameter) => Execute(GetMappings());
-		bool ICommand.CanExecute(object parameter) => IsVisible(GetMappings());
+		void ICommand.Execute(object parameter) => Execute(GetStatements());
+		bool ICommand.CanExecute(object parameter) => IsVisible(GetStatements());
 	}
 }

@@ -370,7 +370,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (TVShowMethodInstructionsInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
-			var methodStatements = GetMappings(context);
+			var methodStatements = GetStatements(context);
 			if (methodStatements == null || methodStatements.Count == 0)
 				return null;
 
@@ -395,10 +395,10 @@ namespace dnSpy.AsmEditor.Hex {
 			return new AddressReference(mod.Location, true, addr, len);
 		}
 
-		static IList<MethodSourceStatement> GetMappings(HexContext context) {
+		static IList<MethodSourceStatement> GetStatements(HexContext context) {
 			if (context.TextPosition == null)
 				return null;
-			return MethodBody.BodyCommandUtils.GetMappings(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value);
+			return MethodBody.BodyCommandUtils.GetStatements(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value);
 		}
 	}
 

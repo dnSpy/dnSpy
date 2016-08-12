@@ -29,7 +29,7 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	static class BodyCommandUtils {
-		public static IList<MethodSourceStatement> GetMappings(IMenuItemContext context) {
+		public static IList<MethodSourceStatement> GetStatements(IMenuItemContext context) {
 			if (context == null)
 				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
@@ -40,10 +40,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var pos = context.Find<TextEditorPosition>();
 			if (pos == null)
 				return null;
-			return GetMappings(uiContext, pos.Position);
+			return GetStatements(uiContext, pos.Position);
 		}
 
-		public static IList<MethodSourceStatement> GetMappings(IDocumentViewer documentViewer, int textPosition) {
+		public static IList<MethodSourceStatement> GetStatements(IDocumentViewer documentViewer, int textPosition) {
 			if (documentViewer == null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
