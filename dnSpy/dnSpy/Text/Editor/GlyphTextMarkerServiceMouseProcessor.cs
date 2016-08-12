@@ -89,7 +89,6 @@ namespace dnSpy.Text.Editor {
 			this.margin = margin;
 			this.toolTipDispatcherTimer = new DispatcherTimer(DispatcherPriority.Normal, margin.VisualElement.Dispatcher);
 			this.popup = new Popup { AllowsTransparency = true };
-			popup.Closed += Popup_Closed;
 
 			var list = new List<IGlyphTextMarkerMouseProcessor>();
 			foreach (var lazy in glyphTextMarkerServiceImpl.GlyphTextMarkerMouseProcessorProviders) {
@@ -103,6 +102,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextViewHost.TextView.Closed += TextView_Closed;
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 			toolTipDispatcherTimer.Tick += ToolTipDispatcherTimer_Tick;
+			popup.Closed += Popup_Closed;
 			glyphTextViewMarkerService.AddGlyphTextMarkerListener(this);
 		}
 
@@ -499,6 +499,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void AddPopupContent(IWpfTextViewLine line, IGlyphTextMarker marker, FrameworkElement popupContent) {
+			// We must close it or it refuses to use the new scale transform
+			popup.IsOpen = false;
 			popupTopViewLinePosition = wpfTextViewHost.TextView.TextViewLines.FirstVisibleLine.Start.Position;
 			popupMarker = marker;
 			popup.Child = popupContent;
@@ -509,10 +511,9 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(!double.IsNaN(popupContentHeight), "You must initialize the Height property of the popup content!");
 			if (double.IsNaN(popupContentHeight))
 				popupContentHeight = 0;
-			var zoomMultiplier = wpfTextViewHost.TextView.ZoomLevel == 0 ? 1 : 100 / wpfTextViewHost.TextView.ZoomLevel;
-			popupContentHeight *= zoomMultiplier;
 			popup.VerticalOffset = line.TextTop - wpfTextViewHost.TextView.ViewportTop + 1 - popupContentHeight;
 			popup.Visibility = Visibility.Visible;
+			ToolTipHelper.SetScaleTransform(wpfTextViewHost.TextView, popup);
 			popup.IsOpen = true;
 		}
 
