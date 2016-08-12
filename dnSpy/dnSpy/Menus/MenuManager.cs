@@ -238,7 +238,10 @@ namespace dnSpy.Menus {
 			foreach (var i in allItems)
 				menu.Items.Add(i);
 
-			menu.Closed += (s, e) => ctxMenuElem.ContextMenu = new ContextMenu();
+			menu.Closed += (s, e) => {
+				ctx.Dispose();
+				ctxMenuElem.ContextMenu = new ContextMenu();
+			};
 			if (initCtxMenu != null)
 				initCtxMenu.Initialize(ctx, menu);
 			ctxMenuElem.ContextMenu = menu;
@@ -246,7 +249,7 @@ namespace dnSpy.Menus {
 			return true;
 		}
 
-		List<object> CreateMenuItems(IMenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem, bool isCtxMenu) {
+		List<object> CreateMenuItems(MenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem, bool isCtxMenu) {
 			var allItems = new List<object>();
 
 			var items = new List<MenuItemMD>();
@@ -283,7 +286,7 @@ namespace dnSpy.Menus {
 			return allItems;
 		}
 
-		MenuItem Create(IMenuItem item, IMenuItemMetadata metadata, IMenuItemContext ctx, IInputElement commandTarget, MenuItem menuItem, bool isCtxMenu) {
+		MenuItem Create(IMenuItem item, IMenuItemMetadata metadata, MenuItemContext ctx, IInputElement commandTarget, MenuItem menuItem, bool isCtxMenu) {
 			if (menuItem == null)
 				menuItem = new MenuItem();
 			menuItem.CommandTarget = commandTarget;
@@ -333,7 +336,15 @@ namespace dnSpy.Menus {
 				}
 			}
 
-			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => {
+			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => {
+				Debug.Assert(!ctx.IsDisposed);
+				if (!ctx.IsDisposed) {
+					item.Execute(ctx);
+					ctx.Dispose();
+				}
+			}, a => {
+				if (ctx.IsDisposed)
+					return false;
 				bool b = item.IsEnabled(ctx);
 				if (lastIsEnabledCallValue != b && iconImgRef != null)
 					imageManager.Add16x16Image(menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue = b);
@@ -352,7 +363,7 @@ namespace dnSpy.Menus {
 			}
 		}
 
-		void InitializeSubMenu(MenuItem menuItem, IMenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget, bool isCtxMenu) {
+		void InitializeSubMenu(MenuItem menuItem, MenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget, bool isCtxMenu) {
 			Reinitialize(menuItem);
 
 			List<MenuItemGroupMD> groups;
@@ -368,7 +379,7 @@ namespace dnSpy.Menus {
 			}
 		}
 
-		void InitializeMainSubMenu(MenuItem menuItem, MenuMD md, IInputElement commandTarget) {
+		MenuItemContext InitializeMainSubMenu(MenuItem menuItem, MenuMD md, IInputElement commandTarget) {
 			Reinitialize(menuItem);
 
 			List<MenuItemGroupMD> groups;
@@ -383,7 +394,10 @@ namespace dnSpy.Menus {
 					if (firstMenuItem != i)
 						menuItem.Items.Add(i);
 				}
+				return ctx;
 			}
+
+			return null;
 		}
 
 		public Menu CreateMenu(Guid menuGuid, IInputElement commandTarget) {
@@ -404,12 +418,19 @@ namespace dnSpy.Menus {
 				var topMenuItem = new MenuItem() { Header = ResourceHelper.GetString(md.Menu, md.Metadata.Header) };
 				topMenuItem.Items.Add(new MenuItem());
 				var mdTmp = md;
+				MenuItemContext ctxTmp = null;
 				topMenuItem.SubmenuOpened += (s, e) => {
-					if (e.Source == topMenuItem)
-						InitializeMainSubMenu(topMenuItem, mdTmp, commandTarget);
+					if (e.Source == topMenuItem) {
+						ctxTmp?.Dispose();
+						ctxTmp = InitializeMainSubMenu(topMenuItem, mdTmp, commandTarget);
+					}
 				};
 				topMenuItem.SubmenuClosed += (s, e) => {
 					if (e.Source == topMenuItem) {
+						Debug.Assert(ctxTmp != null);
+						ctxTmp?.Dispose();
+						ctxTmp = null;
+
 						// There must always be exactly one MenuItem in the list when it's not shown.
 						// We must re-use the first one or the first menu item won't be highlighted
 						// when the menu is opened from the keyboard, eg. Alt+F.

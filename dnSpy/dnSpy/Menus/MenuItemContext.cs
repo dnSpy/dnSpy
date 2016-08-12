@@ -24,6 +24,7 @@ using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemContext : IMenuItemContext {
+		public bool IsDisposed { get; private set; }
 		public bool OpenedFromKeyboard { get; }
 		public Guid MenuGuid { get; }
 		public GuidObject CreatorObject => guidObjects[0];
@@ -62,5 +63,17 @@ namespace dnSpy.Menus {
 			}
 			return default(T);
 		}
+
+		public void Dispose() {
+			if (IsDisposed)
+				return;
+			IsDisposed = true;
+
+			// Clear everything. We don't want to hold on to objects that could've gotten disposed,
+			// eg. IDocumentViewer. Those instances could throw ObjectDisposedException
+			guidObjects.Clear();
+			guidObjects.Add(new GuidObject(Guid.Empty, disposedObject));
+		}
+		static readonly object disposedObject = new object();
 	}
 }
