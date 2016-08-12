@@ -47,8 +47,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Creates context menu objects
 		/// </summary>
 		/// <param name="marginRelativePoint">Position of the mouse pointer relative to the glyph margin</param>
-		/// <param name="args">Context menu object creator args</param>
 		/// <returns></returns>
-		IEnumerable<GuidObject> GetContextMenuObjects(Point marginRelativePoint, GuidObjectsCreatorArgs args);
+		IEnumerable<GuidObject> GetContextMenuObjects(Point marginRelativePoint);
 	}
 }

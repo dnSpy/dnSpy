@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_MARGIN_POINT_GUID, point);
 
 				foreach (var handler in handlers) {
-					foreach (var o in handler.GetContextMenuObjects(point, args))
+					foreach (var o in handler.GetContextMenuObjects(point))
 						yield return o;
 				}
 			}

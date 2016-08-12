@@ -144,7 +144,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public IEnumerable<GuidObject> GetContextMenuObjects(Point marginRelativePoint, GuidObjectsCreatorArgs args) {
+		public IEnumerable<GuidObject> GetContextMenuObjects(Point marginRelativePoint) {
 			var line = GetLine(marginRelativePoint);
 			if (line == null)
 				yield break;
@@ -154,7 +154,7 @@ namespace dnSpy.Text.Editor {
 			if (markers.Length > 0) {
 				var glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
 				foreach (var marker in markers) {
-					foreach (var o in marker.Handler.GetContextMenuObjects(glyphTextMarkerHandlerContext, marker, marginRelativePoint, args))
+					foreach (var o in marker.Handler.GetContextMenuObjects(glyphTextMarkerHandlerContext, marker, marginRelativePoint))
 						yield return o;
 				}
 			}
@@ -162,7 +162,7 @@ namespace dnSpy.Text.Editor {
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
 				var context = new GlyphTextMarkerMouseProcessorContext(wpfTextViewHost, margin, line, markers);
 				foreach (var processor in glyphTextMarkerMouseProcessors) {
-					foreach (var o in processor.GetContextMenuObjects(context, marginRelativePoint, args))
+					foreach (var o in processor.GetContextMenuObjects(context, marginRelativePoint))
 						yield return o;
 				}
 			}

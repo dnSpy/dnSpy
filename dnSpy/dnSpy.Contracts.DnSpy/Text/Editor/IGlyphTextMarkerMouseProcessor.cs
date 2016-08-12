@@ -81,9 +81,8 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="marginRelativePoint">Position of the mouse pointer relative to the glyph margin</param>
-		/// <param name="args">Context menu object creator args</param>
 		/// <returns></returns>
-		IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerMouseProcessorContext context, Point marginRelativePoint, GuidObjectsCreatorArgs args);
+		IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerMouseProcessorContext context, Point marginRelativePoint);
 
 		/// <summary>
 		/// Mouse down handler
@@ -163,9 +162,8 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="marginRelativePoint">Position of the mouse pointer relative to the glyph margin</param>
-		/// <param name="args">Context menu object creator args</param>
 		/// <returns></returns>
-		public virtual IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerMouseProcessorContext context, Point marginRelativePoint, GuidObjectsCreatorArgs args) {
+		public virtual IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerMouseProcessorContext context, Point marginRelativePoint) {
 			yield break;
 		}
 

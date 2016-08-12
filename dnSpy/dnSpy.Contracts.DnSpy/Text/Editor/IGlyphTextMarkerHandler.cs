@@ -40,9 +40,8 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="context">Context</param>
 		/// <param name="marker">Marker</param>
 		/// <param name="marginRelativePoint">Position of the mouse pointer relative to the glyph margin</param>
-		/// <param name="args">Context menu object creator args</param>
 		/// <returns></returns>
-		IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint, GuidObjectsCreatorArgs args);
+		IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint);
 
 		/// <summary>
 		/// Gets the tool tip content or null if the next handler should be checked
