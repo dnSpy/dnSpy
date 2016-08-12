@@ -110,18 +110,6 @@ namespace dnSpy.BackgroundImage {
 				public abstract IEnumerable<string> Filenames { get; }
 			}
 
-			sealed class PackIterator : FilenameIterator {
-				readonly string uri;
-
-				public PackIterator(string uri) {
-					this.uri = uri;
-				}
-
-				public override IEnumerable<string> Filenames {
-					get { yield return uri; }
-				}
-			}
-
 			sealed class FileIterator : FilenameIterator {
 				readonly string filename;
 
@@ -159,6 +147,8 @@ namespace dnSpy.BackgroundImage {
 				}
 
 				string[] GetFiles(string searchPattern) {
+					if (!Directory.Exists(dirPath))
+						return Array.Empty<string>();
 					try {
 						return Directory.GetFiles(dirPath, searchPattern);
 					}
@@ -182,15 +172,15 @@ namespace dnSpy.BackgroundImage {
 				foreach (var path in imagePaths) {
 					if (path == null)
 						continue;
-					if (path.StartsWith("pack://"))
-						list.Add(new PackIterator(path));
+					if (HasAllowedUriScheme(path))
+						list.Add(new FileIterator(path));
 					else if (File.Exists(path))
 						list.Add(new FileIterator(path));
 					else if (Directory.Exists(path))
 						list.Add(new DirectoryIterator(path));
 				}
 				this.isRandom = isRandom;
-				cachedAllFilenamesList = null;
+				cachedAllFilenamesListWeakRef = null;
 				currentEnumerator?.Dispose();
 				currentEnumerator = null;
 				filenameIterators = list.ToArray();
@@ -223,8 +213,9 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			List<string> GetAllFilenames() {
-				if (cachedAllFilenamesList != null && (DateTimeOffset.Now - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
-					return cachedAllFilenamesList;
+				var list = cachedAllFilenamesListWeakRef?.Target as List<string>;
+				if (list != null && (DateTimeOffset.Now - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
+					return list;
 
 				var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 				foreach (var iter in filenameIterators) {
@@ -232,9 +223,10 @@ namespace dnSpy.BackgroundImage {
 						hash.Add(filename);
 				}
 				cachedTime = DateTimeOffset.Now;
-				return cachedAllFilenamesList = hash.ToList();
+				cachedAllFilenamesListWeakRef = new WeakReference(list = hash.ToList());
+				return list;
 			}
-			List<string> cachedAllFilenamesList;
+			WeakReference cachedAllFilenamesListWeakRef;
 			DateTimeOffset cachedTime;
 			const double cachedFilenamesMaxMilliseconds = 5 * 1000;
 
@@ -285,8 +277,20 @@ namespace dnSpy.BackgroundImage {
 				return null;
 			}
 
+			static bool HasAllowedUriScheme(string filename) {
+				foreach (var scheme in allowedUriSchemes) {
+					if (filename.StartsWith(scheme, StringComparison.OrdinalIgnoreCase))
+						return true;
+				}
+				return false;
+			}
+			static readonly string[] allowedUriSchemes = new string[] {
+				"pack://",
+				"file://",
+			};
+
 			ImageInfo TryCreateImageSource(string filename) {
-				if (!filename.StartsWith("pack://") && !File.Exists(filename))
+				if (!HasAllowedUriScheme(filename) && !File.Exists(filename))
 					return null;
 				if (currentImageInfo != null && StringComparer.InvariantCultureIgnoreCase.Equals(filename, currentImageInfo.Filename))
 					return currentImageInfo;
