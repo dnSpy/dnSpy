@@ -548,7 +548,7 @@ namespace dnSpy.Images {
 		public ImageReference GetImageReferenceLocal() =>
 			new ImageReference(GetType().Assembly, "Local");
 		public ImageReference GetImageReferenceParameter() =>
-			new ImageReference(GetType().Assembly, "Parameter");
+			new ImageReference(GetType().Assembly, "Local");
 		public ImageReference GetImageReferenceType() =>
 			new ImageReference(GetType().Assembly, "Class");
 		public ImageReference GetImageReferenceMethod() =>
