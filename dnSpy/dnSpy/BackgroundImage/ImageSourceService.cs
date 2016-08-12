@@ -27,6 +27,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using dnSpy.Contracts.BackgroundImage;
+using dnSpy.Contracts.Themes;
 
 namespace dnSpy.BackgroundImage {
 	interface IImageSourceServiceListener {
@@ -56,6 +57,7 @@ namespace dnSpy.BackgroundImage {
 	}
 
 	sealed class ImageSourceService : IImageSourceService {
+		readonly IThemeManager themeManager;
 		readonly IBackgroundImageSettings backgroundImageSettings;
 		readonly List<IImageSourceServiceListener> listeners;
 		ImageIterator imageIterator;
@@ -80,8 +82,19 @@ namespace dnSpy.BackgroundImage {
 			ImageInfo currentImageInfo;
 			FilenameIterator[] filenameIterators;
 			int currentFilenameIteratorIndex;
-			IEnumerator<string> currentEnumerator;
+			EnumeratorInfo currentEnumeratorInfo;
 			bool isRandom;
+			ITheme theme;
+
+			sealed class EnumeratorInfo {
+				public FilenameIterator Iterator { get; }
+				public IEnumerator<string> Enumerator { get; }
+				public EnumeratorInfo(FilenameIterator iterator) {
+					Iterator = iterator;
+					Enumerator = iterator.Filenames.GetEnumerator();
+				}
+				public void Dispose() => Enumerator.Dispose();
+			}
 
 			sealed class ImageInfo {
 				public ImageSource ImageSource { get; }
@@ -105,15 +118,101 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			public bool HasImageSource => currentImageInfo != null;
+			public bool HasThemeImages => filenameIterators.Any(a => a.SourceOptions.HasThemeImages);
+
+			sealed class SourceOptions {
+				static readonly SourceOptions Empty = new SourceOptions(Array.Empty<string>());
+
+				const string ANY_DARK_THEME = "d";
+				const string ANY_LIGHT_THEME = "l";
+				const string THEME_KEY1 = "theme";
+				const string THEME_KEY2 = "t";
+
+				public bool HasThemeImages => themeNames.Length > 0;
+
+				readonly string[] themeNames;
+
+				SourceOptions(string[] themeNames) {
+					this.themeNames = themeNames;
+				}
+
+				public bool IsSupportedTheme(ITheme theme) {
+					if (themeNames.Length == 0)
+						return true;
+					foreach (var themeName in themeNames) {
+						if (IsSupported(theme, themeName))
+							return true;
+					}
+					return false;
+				}
+
+				bool IsSupported(ITheme theme, string themeName) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(themeName, ANY_DARK_THEME) && theme.IsDark)
+						return true;
+					if (StringComparer.OrdinalIgnoreCase.Equals(themeName, ANY_LIGHT_THEME) && theme.IsLight)
+						return true;
+					if (StringComparer.InvariantCultureIgnoreCase.Equals(theme.Name, themeName))
+						return true;
+					Guid guid;
+					if (Guid.TryParse(themeName, out guid) && theme.Guid == guid)
+						return true;
+					return false;
+				}
+
+				public static SourceOptions Create(string options) {
+					if (string.IsNullOrWhiteSpace(options))
+						return Empty;
+					var optionsArray = options.Split(optionsSeparator, StringSplitOptions.RemoveEmptyEntries);
+					if (optionsArray.Length == 0)
+						return Empty;
+
+					var themes = new List<string>();
+					foreach (var option in optionsArray) {
+						int index = option.IndexOf('=');
+						string key, value;
+						if (index >= 0) {
+							key = option.Substring(0, index);
+							value = option.Substring(index + 1);
+						}
+						else {
+							key = option;
+							value = string.Empty;
+						}
+						key = key.Trim();
+						value = value.Trim();
+
+						switch (key.ToLowerInvariant()) {
+						case ANY_DARK_THEME:
+						case ANY_LIGHT_THEME:
+							themes.Add(key);
+							break;
+
+						case THEME_KEY1:
+						case THEME_KEY2:
+							if (!string.IsNullOrWhiteSpace(value))
+								themes.Add(value);
+							break;
+						}
+					}
+
+					return new SourceOptions(themes.ToArray());
+				}
+				static readonly char[] optionsSeparator = new char[] { ',' };
+			}
 
 			abstract class FilenameIterator {
 				public abstract IEnumerable<string> Filenames { get; }
+				public SourceOptions SourceOptions { get; }
+				protected FilenameIterator(SourceOptions sourceOptions) {
+					SourceOptions = sourceOptions;
+				}
 			}
 
 			sealed class FileIterator : FilenameIterator {
 				readonly string filename;
 
-				public FileIterator(string filename) {
+				public FileIterator(string filename, SourceOptions sourceOptions)
+					: base(sourceOptions) {
 					this.filename = filename;
 				}
 
@@ -132,7 +231,8 @@ namespace dnSpy.BackgroundImage {
 				};
 				readonly string dirPath;
 
-				public DirectoryIterator(string dirPath) {
+				public DirectoryIterator(string dirPath, SourceOptions sourceOptions)
+					: base(sourceOptions) {
 					this.dirPath = dirPath;
 				}
 
@@ -161,28 +261,41 @@ namespace dnSpy.BackgroundImage {
 			public ImageIterator(bool isRandom) {
 				this.filenameIterators = Array.Empty<FilenameIterator>();
 				this.currentFilenameIteratorIndex = 0;
-				this.currentEnumerator = null;
+				this.currentEnumeratorInfo = null;
 				this.isRandom = isRandom;
 			}
 
-			public void SetImagePaths(string[] imagePaths, bool isRandom) {
+			public void SetImagePaths(string[] imagePaths, bool isRandom, ITheme theme) {
 				if (imagePaths == null)
 					throw new ArgumentNullException(nameof(imagePaths));
+				if (theme == null)
+					throw new ArgumentNullException(nameof(theme));
 				var list = new List<FilenameIterator>(imagePaths.Length);
-				foreach (var path in imagePaths) {
-					if (path == null)
+				foreach (var pathInfo in imagePaths) {
+					if (pathInfo == null)
 						continue;
+
+					var path = pathInfo;
+					string optionsString = string.Empty;
+					int index = path.IndexOf('|');
+					if (index >= 0) {
+						optionsString = path.Substring(0, index);
+						path = path.Substring(index + 1);
+					}
+					path = path.Trim();
+					var sourceOptions = SourceOptions.Create(optionsString);
 					if (HasAllowedUriScheme(path))
-						list.Add(new FileIterator(path));
+						list.Add(new FileIterator(path, sourceOptions));
 					else if (File.Exists(path))
-						list.Add(new FileIterator(path));
+						list.Add(new FileIterator(path, sourceOptions));
 					else if (Directory.Exists(path))
-						list.Add(new DirectoryIterator(path));
+						list.Add(new DirectoryIterator(path, sourceOptions));
 				}
 				this.isRandom = isRandom;
+				this.theme = theme;
 				cachedAllFilenamesListWeakRef = null;
-				currentEnumerator?.Dispose();
-				currentEnumerator = null;
+				currentEnumeratorInfo?.Dispose();
+				currentEnumeratorInfo = null;
 				filenameIterators = list.ToArray();
 				currentFilenameIteratorIndex = 0;
 				NextImageSource();
@@ -219,6 +332,8 @@ namespace dnSpy.BackgroundImage {
 
 				var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 				foreach (var iter in filenameIterators) {
+					if (!iter.SourceOptions.IsSupportedTheme(theme))
+						continue;
 					foreach (var filename in iter.Filenames)
 						hash.Add(filename);
 				}
@@ -243,9 +358,9 @@ namespace dnSpy.BackgroundImage {
 			ImageInfo TryCreateNextImageSource() {
 				if (filenameIterators.Length == 0)
 					return null;
-				if (currentEnumerator == null)
-					currentEnumerator = filenameIterators[currentFilenameIteratorIndex].Filenames.GetEnumerator();
-				var imgInfo = TryCreateNextImageSource(currentEnumerator);
+				if (currentEnumeratorInfo == null)
+					currentEnumeratorInfo = new EnumeratorInfo(filenameIterators[currentFilenameIteratorIndex]);
+				var imgInfo = TryCreateNextImageSource(currentEnumeratorInfo);
 				if (imgInfo != null)
 					return imgInfo;
 
@@ -253,12 +368,12 @@ namespace dnSpy.BackgroundImage {
 				// This loop will retry the current iterator again in case it has already returned
 				// some filenames.
 				for (int i = 0; i < filenameIterators.Length; i++) {
-					currentEnumerator?.Dispose();
-					currentEnumerator = null;
+					currentEnumeratorInfo?.Dispose();
+					currentEnumeratorInfo = null;
 					currentFilenameIteratorIndex = (i + 1 + baseIndex) % filenameIterators.Length;
-					currentEnumerator = filenameIterators[currentFilenameIteratorIndex].Filenames.GetEnumerator();
+					currentEnumeratorInfo = new EnumeratorInfo(filenameIterators[currentFilenameIteratorIndex]);
 
-					imgInfo = TryCreateNextImageSource(currentEnumerator);
+					imgInfo = TryCreateNextImageSource(currentEnumeratorInfo);
 					if (imgInfo != null)
 						return imgInfo;
 				}
@@ -266,11 +381,13 @@ namespace dnSpy.BackgroundImage {
 				return null;
 			}
 
-			ImageInfo TryCreateNextImageSource(IEnumerator<string> enumerator) {
-				if (enumerator == null)
+			ImageInfo TryCreateNextImageSource(EnumeratorInfo info) {
+				if (info == null)
 					return null;
-				while (enumerator.MoveNext()) {
-					var imgInfo = TryCreateImageSource(enumerator.Current);
+				if (!info.Iterator.SourceOptions.IsSupportedTheme(theme))
+					return null;
+				while (info.Enumerator.MoveNext()) {
+					var imgInfo = TryCreateImageSource(info.Enumerator.Current);
 					if (imgInfo != null)
 						return imgInfo;
 				}
@@ -305,14 +422,22 @@ namespace dnSpy.BackgroundImage {
 				return null;
 			}
 
-			public void Dispose() => currentEnumerator?.Dispose();
+			public void Dispose() => currentEnumeratorInfo?.Dispose();
 		}
 
-		public ImageSourceService(IBackgroundImageSettings backgroundImageSettings) {
+		public ImageSourceService(IThemeManager themeManager, IBackgroundImageSettings backgroundImageSettings) {
+			if (themeManager == null)
+				throw new ArgumentNullException(nameof(themeManager));
 			if (backgroundImageSettings == null)
 				throw new ArgumentNullException(nameof(backgroundImageSettings));
+			this.themeManager = themeManager;
 			this.backgroundImageSettings = backgroundImageSettings;
 			this.listeners = new List<IImageSourceServiceListener>();
+		}
+
+		void ThemeManager_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {
+			if (backgroundImageSettings.IsEnabled && imageIterator.HasThemeImages)
+				OnSettingsChanged();
 		}
 
 		public void Register(IImageSourceServiceListener listener) {
@@ -324,6 +449,7 @@ namespace dnSpy.BackgroundImage {
 				Debug.Assert(imageIterator == null);
 				imageIterator = new ImageIterator(backgroundImageSettings.IsRandom);
 				backgroundImageSettings.SettingsChanged += BackgroundImageSettings_SettingsChanged;
+				themeManager.ThemeChangedLowPriority += ThemeManager_ThemeChangedLowPriority;
 				OnSettingsChanged();
 			}
 			listeners.Add(listener);
@@ -343,6 +469,7 @@ namespace dnSpy.BackgroundImage {
 			if (listeners.Count == 0) {
 				DisposeTimer();
 				backgroundImageSettings.SettingsChanged -= BackgroundImageSettings_SettingsChanged;
+				themeManager.ThemeChangedLowPriority -= ThemeManager_ThemeChangedLowPriority;
 				Debug.Assert(imageIterator != null);
 				imageIterator.Dispose();
 				imageIterator = null;
@@ -377,7 +504,7 @@ namespace dnSpy.BackgroundImage {
 
 		void OnSettingsChanged() {
 			if (backgroundImageSettings.IsEnabled)
-				imageIterator.SetImagePaths(backgroundImageSettings.Images, backgroundImageSettings.IsRandom);
+				imageIterator.SetImagePaths(backgroundImageSettings.Images, backgroundImageSettings.IsRandom, themeManager.Theme);
 			UpdateEnabled();
 			UpdateTimer();
 			NotifySettingsChanged();

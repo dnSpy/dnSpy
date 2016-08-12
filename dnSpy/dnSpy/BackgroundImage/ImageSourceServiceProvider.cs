@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.BackgroundImage;
+using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.BackgroundImage {
@@ -30,12 +31,14 @@ namespace dnSpy.BackgroundImage {
 
 	[Export(typeof(IImageSourceServiceProvider))]
 	sealed class ImageSourceServiceProvider : IImageSourceServiceProvider {
+		readonly IThemeManager themeManager;
 		readonly IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService;
 		readonly IBackgroundImageSettingsService backgroundImageSettingsService;
 		readonly Dictionary<IBackgroundImageOptionDefinition, IImageSourceService> imageSourceServices;
 
 		[ImportingConstructor]
-		ImageSourceServiceProvider(IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService, IBackgroundImageSettingsService backgroundImageSettingsService) {
+		ImageSourceServiceProvider(IThemeManager themeManager, IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService, IBackgroundImageSettingsService backgroundImageSettingsService) {
+			this.themeManager = themeManager;
 			this.backgroundImageOptionDefinitionService = backgroundImageOptionDefinitionService;
 			this.backgroundImageSettingsService = backgroundImageSettingsService;
 			this.imageSourceServices = new Dictionary<IBackgroundImageOptionDefinition, IImageSourceService>();
@@ -47,7 +50,7 @@ namespace dnSpy.BackgroundImage {
 			var lazy = backgroundImageOptionDefinitionService.GetOptionDefinition(wpfTextView);
 			IImageSourceService imageSourceService;
 			if (!imageSourceServices.TryGetValue(lazy.Value, out imageSourceService))
-				imageSourceServices.Add(lazy.Value, imageSourceService = new ImageSourceService(backgroundImageSettingsService.GetSettings(lazy)));
+				imageSourceServices.Add(lazy.Value, imageSourceService = new ImageSourceService(themeManager, backgroundImageSettingsService.GetSettings(lazy)));
 			return imageSourceService;
 		}
 	}
