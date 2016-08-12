@@ -641,17 +641,27 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToolTip">
-                    <Border Name="Border" 
-                        Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}" 
-                        SnapsToDevicePixels="True">
-                        <ContentPresenter 
-                            Margin="{TemplateBinding Padding}" 
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                    </Border>
+                    <Grid>
+                        <!-- This extra border is a high DPI fix which is noticeable when eg. zooming in. Without it,
+                             there's an extra 1px border between the real border and the background. This 'border' is
+                             invisible, meaning the color behind the tooltip is shown.
+                             Test: zoom in text viewer to 380% (other zoom levels also work), place mouse cursor over
+                                   a breakpoint glyph in the glyph margin and wait 150ms for the tooltip to appear.
+                        -->
+                        <Border Background="{TemplateBinding Background}"
+                                BorderThickness="0"
+                                SnapsToDevicePixels="True"/>
+                        <Border Name="Border"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
