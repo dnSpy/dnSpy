@@ -136,11 +136,12 @@ namespace dnSpy.BackgroundImage {
 			Interval = section.Attribute<TimeSpan?>(nameof(Interval)) ?? DefaultRawSettings.Interval;
 		}
 
-		static string SerializeImages(string[] s) => string.Join(";", s);
+		const string SEP_STRING = "<{[]}>";
+		static string SerializeImages(string[] s) => string.Join(SEP_STRING, s);
 		static string[] DeserializeImages(string s) {
 			if (s == null)
 				return Array.Empty<string>();
-			return s.Split(';').Where(a => !string.IsNullOrEmpty(a)).Select(a => a.Trim()).ToArray();
+			return s.Split(new string[] { SEP_STRING }, StringSplitOptions.None).Where(a => !string.IsNullOrEmpty(a)).Select(a => a.Trim()).ToArray();
 		}
 
 		public void SaveSettings(ISettingsSection section) {
