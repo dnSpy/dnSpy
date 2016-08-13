@@ -486,6 +486,8 @@
     <Compile Include="Text\Editor\Operations\EditorOperationsFactoryService.cs" />
     <Compile Include="Text\Editor\Operations\EditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\Operations\ReplEditorOperations.cs" />
+    <Compile Include="Text\Editor\Operations\TextSearchNavigator.cs" />
+    <Compile Include="Text\Editor\Operations\TextSearchNavigatorFactoryService.cs" />
     <Compile Include="Text\Editor\Operations\TextSearchService.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigatorSelectorService.cs" />
