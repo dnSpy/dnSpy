@@ -486,6 +486,7 @@
     <Compile Include="Text\Editor\Operations\EditorOperationsFactoryService.cs" />
     <Compile Include="Text\Editor\Operations\EditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\Operations\ReplEditorOperations.cs" />
+    <Compile Include="Text\Editor\Operations\TextSearchService.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\WordParser.cs" />
@@ -584,6 +585,7 @@
     <Compile Include="Text\TextVersion.cs" />
     <Compile Include="Text\TrackingPoint.cs" />
     <Compile Include="Text\TrackingSpan.cs" />
+    <Compile Include="Text\UnicodeUtilities.cs" />
     <Compile Include="Text\WPF\BrushComparer.cs" />
     <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
