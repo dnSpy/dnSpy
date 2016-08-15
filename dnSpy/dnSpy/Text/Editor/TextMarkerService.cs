@@ -173,7 +173,7 @@ namespace dnSpy.Text.Editor {
 			}
 			Pen pen;
 
-			public SnapshotSpan Span { get; }
+			public SnapshotSpan Span { get; private set; }
 			public string Type { get; }
 			public int ZIndex { get; }
 
@@ -190,6 +190,9 @@ namespace dnSpy.Text.Editor {
 				this.geometry = geometry;
 				Panel.SetZIndex(this, zIndex);
 			}
+
+			public void AdvanceSnapshot(ITextSnapshot snapshot) =>
+				Span = Span.TranslateTo(snapshot, SpanTrackingMode.EdgeExclusive);
 
 			protected override void OnRender(DrawingContext drawingContext) {
 				base.OnRender(drawingContext);
@@ -378,10 +381,16 @@ namespace dnSpy.Text.Editor {
 			return markerElement;
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines);
-		void UpdateLines(IList<ITextViewLine> newOrReformattedLines) {
+		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines, e.OldSnapshot, e.NewSnapshot);
+		void UpdateLines(IList<ITextViewLine> newOrReformattedLines, ITextSnapshot oldSnapshot, ITextSnapshot newSnapshot) {
 			if (newOrReformattedLines.Count == wpfTextView.TextViewLines.Count)
 				RemoveAllMarkerElements();
+
+			if (oldSnapshot != newSnapshot) {
+				foreach (var markerElement in markerElements)
+					markerElement.AdvanceSnapshot(newSnapshot);
+			}
+			Debug.Assert(markerElements.Count == 0 || markerElements[0].Span.Snapshot == newSnapshot);
 
 			var lineSpans = new List<SnapshotSpan>();
 			foreach (var line in newOrReformattedLines)
