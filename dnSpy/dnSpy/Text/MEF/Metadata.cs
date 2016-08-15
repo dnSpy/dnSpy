@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.MEF {
@@ -63,6 +64,9 @@ namespace dnSpy.Text.MEF {
 	public interface IAdornmentLayersMetadata : IOrderable {
 		[DefaultValue(false)]
 		bool IsOverlayLayer { get; }
+
+		[DefaultValue(LayerKind.Normal)]
+		LayerKind LayerKind { get; }
 	}
 
 	public interface IOrderableContentTypeAndTextViewRoleMetadata : IContentTypeAndTextViewRoleMetadata, IOrderable {

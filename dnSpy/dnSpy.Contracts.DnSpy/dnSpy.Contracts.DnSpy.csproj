@@ -493,7 +493,10 @@
     <Compile Include="Text\Editor\IReplCommandInput.cs" />
     <Compile Include="Text\Editor\IReplEditor.cs" />
     <Compile Include="Text\Editor\IReplEditorCreator.cs" />
+    <Compile Include="Text\Editor\IsOverlayLayerAttribute.cs" />
     <Compile Include="Text\Editor\ITextEditorSettings.cs" />
+    <Compile Include="Text\Editor\LayerKind.cs" />
+    <Compile Include="Text\Editor\LayerKindAttribute.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
     <Compile Include="Text\Editor\MarginNameAttribute.cs" />
     <Compile Include="Text\Editor\Operations\IReplEditorOperations.cs" />

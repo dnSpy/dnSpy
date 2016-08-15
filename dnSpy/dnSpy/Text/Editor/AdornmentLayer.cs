@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -35,11 +36,13 @@ namespace dnSpy.Text.Editor {
 		public bool IsEmpty => adornmentLayerElements.Count == 0;
 		public ReadOnlyCollection<IAdornmentLayerElement> Elements => new ReadOnlyCollection<IAdornmentLayerElement>(adornmentLayerElements.ToArray());
 		readonly List<AdornmentLayerElement> adornmentLayerElements;
+		readonly LayerKind layerKind;
 
-		public AdornmentLayer(IWpfTextView textView, MetadataAndOrder<IAdornmentLayersMetadata> info) {
+		public AdornmentLayer(IWpfTextView textView, LayerKind layerKind, MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			TextView = textView;
+			this.layerKind = layerKind;
 			Info = info;
 			this.adornmentLayerElements = new List<AdornmentLayerElement>();
 		}
@@ -53,6 +56,12 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(visualSpan));
 			if ((uint)behavior > (uint)AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentOutOfRangeException(nameof(behavior));
+			if (layerKind != LayerKind.Normal) {
+				if (behavior != AdornmentPositioningBehavior.OwnerControlled)
+					throw new ArgumentOutOfRangeException(nameof(behavior), "Special layers must use AdornmentPositioningBehavior.OwnerControlled");
+				if (visualSpan != null)
+					throw new ArgumentOutOfRangeException(nameof(visualSpan), "Special layers must use a null visual span");
+			}
 			bool canAdd = visualSpan == null || TextView.TextViewLines.IntersectsBufferSpan(visualSpan.Value);
 			if (canAdd) {
 				var layerElem = new AdornmentLayerElement(behavior, visualSpan, tag, adornment, removedCallback);

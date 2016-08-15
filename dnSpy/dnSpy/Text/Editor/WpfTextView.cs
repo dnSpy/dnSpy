@@ -107,7 +107,9 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformCreatorService lineTransformCreatorService;
 		readonly Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners;
-		readonly AdornmentLayerCollection adornmentLayerCollection;
+		readonly AdornmentLayerCollection normalAdornmentLayerCollection;
+		readonly AdornmentLayerCollection overlayAdornmentLayerCollection;
+		readonly AdornmentLayerCollection underlayAdornmentLayerCollection;
 		readonly PhysicalLineCache physicalLineCache;
 		readonly List<PhysicalLine> visiblePhysicalLines;
 		readonly TextLayer textLayer;
@@ -171,7 +173,9 @@ namespace dnSpy.Text.Editor {
 			this.lineTransformCreatorService = lineTransformCreatorService;
 			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
 			this.recreateLineTransformCreator = true;
-			this.adornmentLayerCollection = new AdornmentLayerCollection(this);
+			this.normalAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Normal);
+			this.overlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Overlay);
+			this.underlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Underlay);
 			Properties = new PropertyCollection();
 			TextViewModel = textViewModel;
 			Roles = roles;
@@ -189,7 +193,9 @@ namespace dnSpy.Text.Editor {
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection), editorFormatMap);
 			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService, classificationFormatMap);
 
-			Children.Add(adornmentLayerCollection);
+			Children.Add(underlayAdornmentLayerCollection);
+			Children.Add(normalAdornmentLayerCollection);
+			Children.Add(overlayAdornmentLayerCollection);
 			this.Cursor = Cursors.IBeam;
 			this.Focusable = true;
 			this.FocusVisualStyle = null;
@@ -504,7 +510,7 @@ namespace dnSpy.Text.Editor {
 					return;
 				viewportLeft = left;
 				UpdateVisibleLines();
-				SetLeft(adornmentLayerCollection, -viewportLeft);
+				SetLeft(normalAdornmentLayerCollection, -viewportLeft);
 				RaiseLayoutChanged();
 				if (!IsClosed)
 					ViewportLeftChanged?.Invoke(this, EventArgs.Empty);
@@ -700,7 +706,7 @@ namespace dnSpy.Text.Editor {
 
 			if (layoutHelper.NewViewportTop != viewportTop) {
 				viewportTop = layoutHelper.NewViewportTop;
-				SetTop(adornmentLayerCollection, -viewportTop);
+				SetTop(normalAdornmentLayerCollection, -viewportTop);
 			}
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 		}
@@ -747,10 +753,33 @@ namespace dnSpy.Text.Editor {
 		public IAdornmentLayer GetAdornmentLayer(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+
 			var info = adornmentLayerDefinitionService.GetLayerDefinition(name);
 			if (info == null)
 				throw new ArgumentException($"Adornment layer {name} doesn't exist");
-			return adornmentLayerCollection.GetAdornmentLayer(info.Value);
+
+			switch (GetLayerKind(info.Value.Metadata)) {
+			case LayerKind.Normal:
+				return normalAdornmentLayerCollection.GetAdornmentLayer(info.Value);
+
+			case LayerKind.Overlay:
+				return overlayAdornmentLayerCollection.GetAdornmentLayer(info.Value);
+
+			case LayerKind.Underlay:
+				return underlayAdornmentLayerCollection.GetAdornmentLayer(info.Value);
+
+			default:
+				Debug.Fail($"Invalid {nameof(LayerKind)} value: {info.Value.Metadata.LayerKind}");
+				goto case LayerKind.Normal;
+			}
+		}
+
+		static LayerKind GetLayerKind(IAdornmentLayersMetadata md) {
+			if (md.IsOverlayLayer) {
+				Debug.Assert(md.LayerKind == LayerKind.Normal, $"Use only one of {nameof(IsOverlayLayerAttribute)} and {nameof(LayerKindAttribute)}");
+				return LayerKind.Overlay;
+			}
+			return md.LayerKind;
 		}
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo) {

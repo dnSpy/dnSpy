@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -29,12 +30,16 @@ namespace dnSpy.Text.Editor {
 	sealed class AdornmentLayerCollection : Canvas {
 		readonly IWpfTextView wpfTextView;
 		readonly List<AdornmentLayer> adornmentLayers;
+		readonly LayerKind layerKind;
 
-		public AdornmentLayerCollection(IWpfTextView wpfTextView) {
+		public AdornmentLayerCollection(IWpfTextView wpfTextView, LayerKind layerKind) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
+			this.layerKind = layerKind;
 			this.adornmentLayers = new List<AdornmentLayer>();
+			if (layerKind != LayerKind.Normal)
+				ClipToBounds = true;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
@@ -47,7 +52,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		AdornmentLayer Create(MetadataAndOrder<IAdornmentLayersMetadata> info) {
-			var layer = new AdornmentLayer(wpfTextView, info);
+			var layer = new AdornmentLayer(wpfTextView, layerKind, info);
 			int index = GetInsertIndex(info);
 			adornmentLayers.Insert(index, layer);
 			Children.Insert(index, layer);
@@ -66,16 +71,20 @@ namespace dnSpy.Text.Editor {
 			if (Width != wpfTextView.VisualElement.ActualWidth || Height != wpfTextView.VisualElement.ActualHeight) {
 				Width = wpfTextView.VisualElement.ActualWidth;
 				Height = wpfTextView.VisualElement.ActualHeight;
-				// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
-				// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
-				// It's ignored if HW acceleration is enabled.
-				// This will reduce the number of bytes sent over the network and should speed up the display
-				// if it's a slow connection.
-				VisualScrollableAreaClip = new Rect(0, 0, Width, Height);
+				if (layerKind == LayerKind.Normal) {
+					// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
+					// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
+					// It's ignored if HW acceleration is enabled.
+					// This will reduce the number of bytes sent over the network and should speed up the display
+					// if it's a slow connection.
+					VisualScrollableAreaClip = new Rect(0, 0, Width, Height);
+				}
 			}
 
-			foreach (var layer in adornmentLayers)
-				layer.OnLayoutChanged(e);
+			if (layerKind == LayerKind.Normal) {
+				foreach (var layer in adornmentLayers)
+					layer.OnLayoutChanged(e);
+			}
 		}
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
