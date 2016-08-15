@@ -38,8 +38,7 @@ namespace dnSpy.BackgroundImage {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDnSpyAdornmentLayers.BackgroundImage)]
-		[Order(Before = PredefinedDnSpyAdornmentLayers.BottomLayer)]
-		[Order(Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[LayerKind(LayerKind.Underlay)]
 		static AdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
 #pragma warning restore 0169
 
@@ -55,9 +54,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
-			if (e.HorizontalTranslation || e.VerticalTranslation)
-				UpdateImagePosition();
-			else if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
+			if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
 				UpdateImagePosition();
 			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
 				UpdateImagePosition();
@@ -259,8 +256,8 @@ namespace dnSpy.BackgroundImage {
 				break;
 			}
 
-			Canvas.SetLeft(image, wpfTextView.ViewportLeft + FilterOffset(imageSourceService.HorizontalOffset) + xOffs);
-			Canvas.SetTop(image, wpfTextView.ViewportTop + FilterOffset(imageSourceService.VerticalOffset) + yOffs);
+			Canvas.SetLeft(image, FilterOffset(imageSourceService.HorizontalOffset) + xOffs);
+			Canvas.SetTop(image, FilterOffset(imageSourceService.VerticalOffset) + yOffs);
 		}
 
 		public void OnSettingsChanged() {
