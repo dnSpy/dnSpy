@@ -28,7 +28,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using dnSpy.AsmEditor.Utilities;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
@@ -106,7 +105,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			vm.SelectedDocument = doc;
 
 			if (diag.LineLocationSpan != null) {
-				UIUtils.Focus(doc.TextView.VisualElement, () => {
+				UIUtilities.Focus(doc.TextView.VisualElement, () => {
 					// The caret isn't always moved unless we wait a little
 					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 						if (doc == vm.SelectedDocument) {
@@ -122,7 +121,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var vm = (EditCodeVM)sender;
 			if (e.PropertyName == nameof(vm.SelectedDocument))
-				UIUtils.Focus(vm.SelectedDocument?.TextView.VisualElement);
+				UIUtilities.Focus(vm.SelectedDocument?.TextView.VisualElement);
 		}
 
 		void CopyToClipboard(CompilerDiagnosticVM[] diags) {

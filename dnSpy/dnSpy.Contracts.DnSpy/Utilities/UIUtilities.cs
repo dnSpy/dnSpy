@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -96,6 +97,58 @@ namespace dnSpy.Contracts.Utilities {
 				focused = item.Focus();
 			if (!focused)
 				selector.Focus();
+		}
+
+		/// <summary>
+		/// Focuses <paramref name="element"/>
+		/// </summary>
+		/// <param name="element">Element to focus</param>
+		/// <param name="calledAfterFocus">Delegate that gets called once the element has gotten focus. Can be null.</param>
+		public static void Focus(IInputElement element, Action calledAfterFocus = null) {
+			var uiElem = element as UIElement;
+			var fwkElem = element as FrameworkElement;
+			if (uiElem == null || (fwkElem != null && fwkElem.IsLoaded && fwkElem.IsVisible) || (fwkElem == null && uiElem.IsVisible)) {
+				element.Focus();
+				calledAfterFocus?.Invoke();
+				return;
+			}
+
+			new FocusHelper(uiElem, calledAfterFocus);
+		}
+
+		sealed class FocusHelper {
+			readonly Action calledAfterFocus;
+			readonly UIElement element;
+
+			public FocusHelper(UIElement element, Action calledAfterFocus) {
+				this.element = element;
+				var fwkElem = element as FrameworkElement;
+				this.calledAfterFocus = calledAfterFocus;
+				if (fwkElem == null || fwkElem.IsLoaded)
+					element.IsVisibleChanged += UIElement_IsVisibleChanged;
+				else
+					fwkElem.Loaded += FrameworkElement_Loaded;
+			}
+
+			void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+				if (sender != element)
+					return;
+				element.IsVisibleChanged -= UIElement_IsVisibleChanged;
+				Focus();
+			}
+
+			void FrameworkElement_Loaded(object sender, RoutedEventArgs e) {
+				if (sender != element)
+					return;
+				var fwkElem = (FrameworkElement)element;
+				fwkElem.Loaded -= FrameworkElement_Loaded;
+				Focus();
+			}
+
+			void Focus() {
+				element.Focus();
+				calledAfterFocus?.Invoke();
+			}
 		}
 	}
 }

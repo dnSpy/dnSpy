@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -66,34 +65,6 @@ namespace dnSpy.AsmEditor.Utilities {
 						item.Focus();
 				}
 			}));
-		}
-
-		public static void Focus(IInputElement elem, Action calledAfterFocus = null) {
-			var uiElem = elem as UIElement;
-			if (uiElem == null || uiElem.IsVisible) {
-				elem.Focus();
-				calledAfterFocus?.Invoke();
-				return;
-			}
-
-			new FocusHelper(uiElem, calledAfterFocus);
-		}
-
-		sealed class FocusHelper {
-			readonly Action calledAfterFocus;
-
-			public FocusHelper(UIElement elem, Action calledAfterFocus) {
-				Debug.Assert(!elem.IsVisible);
-				this.calledAfterFocus = calledAfterFocus;
-				elem.IsVisibleChanged += UIElement_IsVisibleChanged;
-			}
-
-			void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-				var elem = (UIElement)sender;
-				elem.IsVisibleChanged -= UIElement_IsVisibleChanged;
-				elem.Focus();
-				calledAfterFocus?.Invoke();
-			}
 		}
 	}
 }
