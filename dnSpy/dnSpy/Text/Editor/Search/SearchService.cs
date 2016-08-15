@@ -253,6 +253,8 @@ namespace dnSpy.Text.Editor.Search {
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FindNext(false)), new KeyGesture(Key.F3, ModifierKeys.Shift)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FindNextSelected(true)), new KeyGesture(Key.F3, ModifierKeys.Control)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FindNextSelected(false)), new KeyGesture(Key.F3, ModifierKeys.Control | ModifierKeys.Shift)));
+				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FocusSearchStringTextBox()), new KeyGesture(Key.N, ModifierKeys.Alt)));
+				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FocusReplaceStringTextBox(), a => IsReplaceMode), new KeyGesture(Key.P, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => MatchCase = !MatchCase), new KeyGesture(Key.C, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => MatchWholeWords = !MatchWholeWords), new KeyGesture(Key.W, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => UseRegularExpressions = !UseRegularExpressions), new KeyGesture(Key.E, ModifierKeys.Alt)));
@@ -346,6 +348,16 @@ namespace dnSpy.Text.Editor.Search {
 			else
 				searchControl.searchStringTextBox.SelectAll();
 			UIUtilities.Focus(searchControl.searchStringTextBox, action);
+		}
+
+		void FocusReplaceStringTextBox() {
+			Action action = null;
+			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
+			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
+				action = () => searchControl.replaceStringTextBox.SelectAll();
+			else
+				searchControl.replaceStringTextBox.SelectAll();
+			UIUtilities.Focus(searchControl.replaceStringTextBox, action);
 		}
 
 		void RepositionControl() {
