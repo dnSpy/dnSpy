@@ -44,7 +44,11 @@ using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
-	sealed partial class WpfTextView : Canvas, IDnSpyWpfTextView, ILineTransformSource {
+	interface IDnSpyWpfTextViewImpl : IDnSpyWpfTextView {
+		bool IsMouseOverOverlayLayerElement(MouseEventArgs e);
+	}
+
+	sealed partial class WpfTextView : Canvas, IDnSpyWpfTextView, ILineTransformSource, IDnSpyWpfTextViewImpl {
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => this;
 		public ITextViewRoleSet Roles { get; }
@@ -869,5 +873,7 @@ namespace dnSpy.Text.Editor {
 		public void QueueSpaceReservationStackRefresh() {
 			//TODO:
 		}
+
+		bool IDnSpyWpfTextViewImpl.IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 	}
 }

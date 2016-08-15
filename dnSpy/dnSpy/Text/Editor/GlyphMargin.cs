@@ -229,7 +229,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			iconCanvas = new Canvas { Background = Brushes.Transparent };
 			Children.Add(iconCanvas);
-			mouseProcessorCollection = new MouseProcessorCollection(VisualElement, null, new DefaultMouseProcessor(), CreateMouseProcessors());
+			mouseProcessorCollection = new MouseProcessorCollection(VisualElement, null, new DefaultMouseProcessor(), CreateMouseProcessors(), null);
 			glyphFactories = CreateGlyphFactories();
 			childCanvases = glyphFactories.Values.OrderBy(a => a.Order).Select(a => a.Canvas).ToArray();
 			foreach (var c in childCanvases)

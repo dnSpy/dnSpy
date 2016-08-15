@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -30,17 +31,29 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
 		readonly IWpfTextView wpfTextView;
+		readonly IDnSpyWpfTextViewImpl dnSpyWpfTextView;
 		readonly Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly Func<MouseEventArgs, bool> allowEventDelegate;
 		MouseProcessorCollection mouseProcessorCollection;
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
+			this.dnSpyWpfTextView = wpfTextView as IDnSpyWpfTextViewImpl;
 			this.mouseProcessorProviders = Orderer.Order(mouseProcessorProviders).ToArray();
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
+			this.allowEventDelegate = AllowMouseEvent;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			Reinitialize();
+		}
+
+		bool AllowMouseEvent(MouseEventArgs e) {
+			if (dnSpyWpfTextView != null && dnSpyWpfTextView.IsMouseOverOverlayLayerElement(e)) {
+				e.Handled = true;
+				return false;
+			}
+			return true;
 		}
 
 		void Reinitialize() {
@@ -56,7 +69,7 @@ namespace dnSpy.Text.Editor {
 					list.Add(mouseProcessor);
 			}
 			UIElement manipulationElem = null;//TODO:
-			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView, editorOperationsFactoryService), list.ToArray());
+			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
 		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) => Reinitialize();

@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
@@ -84,6 +85,14 @@ namespace dnSpy.Text.Editor {
 					break;
 				}
 			}
+		}
+
+		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
+			foreach (UIElement elem in Children) {
+				if (elem.IsMouseOver)
+					return true;
+			}
+			return false;
 		}
 
 		public void RemoveAdornmentsByTag(object tag) {

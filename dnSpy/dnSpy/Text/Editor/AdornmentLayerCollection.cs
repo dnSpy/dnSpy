@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Editor;
@@ -90,6 +91,14 @@ namespace dnSpy.Text.Editor {
 		void WpfTextView_Closed(object sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
+		}
+
+		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
+			foreach (var layer in adornmentLayers) {
+				if (layer.IsMouseOverOverlayLayerElement(e))
+					return true;
+			}
+			return false;
 		}
 	}
 }
