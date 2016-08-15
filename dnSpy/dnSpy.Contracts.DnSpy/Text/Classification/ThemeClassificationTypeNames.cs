@@ -886,5 +886,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.LineSeparator"/>
 		/// </summary>
 		public const string LineSeparator = "Theme-LineSeparator";
+
+		/// <summary>
+		/// <see cref="TextColor.FindMatchHighlightMarker"/>
+		/// </summary>
+		public const string FindMatchHighlightMarker = "Theme-FindMatchHighlightMarker";
 	}
 }

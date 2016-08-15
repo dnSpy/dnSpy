@@ -196,6 +196,7 @@ namespace dnSpy.Contracts.Themes {
 		GlyphMargin,
 		BraceMatching,
 		LineSeparator,
+		FindMatchHighlightMarker,
 
 		// Must be last in this group
 		LastNR,
@@ -618,6 +619,16 @@ namespace dnSpy.Contracts.Themes {
 		XmlDocToolTipDescriptionText,
 		MemoryWindowDisabled,
 		TreeViewNode,
+		EnvironmentDropDownGlyph,
+		EnvironmentDropDownMouseOverGlyph,
+		EnvironmentDropDownMouseDownGlyph,
+		EnvironmentCommandBarMouseOverBackground,
+		EnvironmentCommandBarMouseDownBackground,
+		EnvironmentComboBoxDisabledBackground,
+		EnvironmentIconGeneralStroke,
+		EnvironmentIconGeneralFill,
+		EnvironmentIconActionFill,
+		SearchControlMouseOverDropDownButtonGlyph,
 
 		// Add new color types before this comment
 

@@ -909,6 +909,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.LineSeparator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LineSeparatorClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.FindMatchHighlightMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition FindMatchHighlightMarkerClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2231,7 +2236,9 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedReference : ThemeMarkerFormatDefinition {
-			HighlightedReference() : base(TextColor.HighlightedReference) { }
+			HighlightedReference() : base(TextColor.HighlightedReference) {
+				ZOrder = TextMarkerServiceZIndexes.HighlightedReference;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2240,7 +2247,9 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedWrittenReference : ThemeMarkerFormatDefinition {
-			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) { }
+			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) {
+				ZOrder = TextMarkerServiceZIndexes.HighlightedWrittenReference;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2249,7 +2258,9 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedDefinition : ThemeMarkerFormatDefinition {
-			HighlightedDefinition() : base(TextColor.HighlightedDefinition) { }
+			HighlightedDefinition() : base(TextColor.HighlightedDefinition) {
+				ZOrder = TextMarkerServiceZIndexes.HighlightedDefinition;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2450,6 +2461,17 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class LineSeparator : ThemeClassificationFormatDefinition {
 			LineSeparator() : base(TextColor.LineSeparator) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.FindMatchHighlightMarker)]
+		[Name(ThemeClassificationTypeNameKeys.FindMatchHighlightMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class FindMatchHighlightMarker : ThemeMarkerFormatDefinition {
+			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) {
+				ZOrder = TextMarkerServiceZIndexes.FindMatch;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

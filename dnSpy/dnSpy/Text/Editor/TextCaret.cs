@@ -104,7 +104,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void InitializeIME() {
-			Debug.Assert(imeState.HwndSource == null);
+			if (imeState.HwndSource != null)
+				return;
 			imeState.HwndSource = PresentationSource.FromVisual(textView.VisualElement) as HwndSource;
 			if (imeState.HwndSource == null)
 				return;

@@ -36,6 +36,15 @@ namespace dnSpy.Commands {
 			yield return CommandShortcut.Control(Key.Insert, StandardIds.Copy.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.V, StandardIds.Paste.ToCommandInfo());
 			yield return CommandShortcut.Shift(Key.Insert, StandardIds.Paste.ToCommandInfo());
+
+			yield return CommandShortcut.Control(Key.F, StandardIds.Find.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.H, StandardIds.Replace.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.I, StandardIds.IncrementalSearch.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.I, StandardIds.IncrementalSearchBackward.ToCommandInfo());
+			yield return CommandShortcut.Create(Key.F3, StandardIds.FindNext.ToCommandInfo());
+			yield return CommandShortcut.Shift(Key.F3, StandardIds.FindPrevious.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.F3, StandardIds.FindNextSelected.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.F3, StandardIds.FindPreviousSelected.ToCommandInfo());
 		}
 	}
 }

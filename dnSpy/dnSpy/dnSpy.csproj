@@ -510,6 +510,15 @@
     <Compile Include="Text\Editor\RightControlMargin.cs" />
     <Compile Include="Text\Editor\ScrollMap.cs" />
     <Compile Include="Text\Editor\ScrollMapFactoryService.cs" />
+    <Compile Include="Text\Editor\Search\CommandTargetFilter.cs" />
+    <Compile Include="Text\Editor\Search\CommandTargetFilterCreator.cs" />
+    <Compile Include="Text\Editor\Search\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Text\Editor\Search\SearchService.cs" />
+    <Compile Include="Text\Editor\Search\SearchServiceProvider.cs" />
+    <Compile Include="Text\Editor\Search\TextMarkerTagger.cs" />
+    <Compile Include="Text\Editor\Search\WpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\SelectionUtilities.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\SpacerMargin.cs" />
@@ -715,6 +724,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\Dialog\AppSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Text\Editor\Search\SearchControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -159,6 +159,7 @@
 		<color name="glyphmargin" bg="#FF333333" />
 		<color name="bracematching" bg="#FF0E4583" />
 		<color name="lineseparator" fg="#FFA5A5A5" />
+		<color name="findmatchhighlightmarker" bg="#FF773800" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
@@ -565,5 +566,15 @@
 		<color name="searchboxwatermark" fg="#FFA0A0A0" />
 		<color name="memorywindowdisabled" bg="#40FFFFFF" />
 		<color name="treeviewnode" fg="#F1F1F1" />
+		<color name="environmentdropdownglyph" bg="#FF999999" />
+		<color name="environmentdropdownmouseoverglyph" bg="#FF007ACC" />
+		<color name="environmentdropdownmousedownglyph" bg="#FFFFFFFF" />
+		<color name="environmentcommandbarmouseoverbackground" fg="#FF3E3E40" bg="#FF3E3E40" color3="#FF3E3E40" color4="#FF3E3E40" />
+		<color name="environmentcommandbarmousedownbackground" fg="#FF007ACC" bg="#FF007ACC" color3="#FF007ACC" />
+		<color name="environmentcomboboxdisabledbackground" bg="#FF2D2D30" />
+		<color name="environmenticongeneralstroke" bg="#00000000" />
+		<color name="environmenticongeneralfill" bg="#FFC8C8C8" />
+		<color name="environmenticonactionfill" bg="#FF7AC1FF" />
+		<color name="searchcontrolmouseoverdropdownbuttonglyph" bg="#FF007ACC" />
 	</colors>
 </theme>

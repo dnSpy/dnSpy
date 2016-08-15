@@ -64,10 +64,18 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Paste:
 				case StandardIds.Redo:
 				case StandardIds.Undo:
+				case StandardIds.Replace:
 					return true;
 
 				case StandardIds.Unknown:
 				case StandardIds.Copy:
+				case StandardIds.Find:
+				case StandardIds.IncrementalSearch:
+				case StandardIds.IncrementalSearchBackward:
+				case StandardIds.FindNext:
+				case StandardIds.FindPrevious:
+				case StandardIds.FindNextSelected:
+				case StandardIds.FindPreviousSelected:
 					return false;
 
 				default:
@@ -200,6 +208,7 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Paste:
 				case StandardIds.Redo:
 				case StandardIds.Undo:
+				case StandardIds.Replace:
 					return CommandTargetStatus.Handled;
 				default:
 					return CommandTargetStatus.NotHandled;

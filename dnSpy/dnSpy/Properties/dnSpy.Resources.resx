@@ -1106,4 +1106,34 @@
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
     <value>Top Margin %</value>
   </data>
+  <data name="Search_FindNextToolTip" xml:space="preserve">
+    <value>Find next (F3)</value>
+  </data>
+  <data name="Search_FindPreviousToolTip" xml:space="preserve">
+    <value>Find previous (Shift+F3)</value>
+  </data>
+  <data name="Search_MatchCaseToolTip" xml:space="preserve">
+    <value>Match case (Alt+C)</value>
+  </data>
+  <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
+    <value>Match whole word (Alt+W)</value>
+  </data>
+  <data name="Search_ReplaceAllToolTip" xml:space="preserve">
+    <value>Replace all (Alt+A)</value>
+  </data>
+  <data name="Search_ReplaceNextToolTip" xml:space="preserve">
+    <value>Replace next (Alt+R)</value>
+  </data>
+  <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
+    <value>Use Regular Expressions (Alt+E)</value>
+  </data>
+  <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
+    <value>Toggle to switch between find and replace modes</value>
+  </data>
+  <data name="Search_CloseToolTip" xml:space="preserve">
+    <value>Close (Esc)</value>
+  </data>
+  <data name="Search_NothingFound" xml:space="preserve">
+    <value>Nothing found</value>
+  </data>
 </root>

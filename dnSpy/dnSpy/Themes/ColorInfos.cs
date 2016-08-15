@@ -1778,6 +1778,51 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.TreeViewNode, "TreeView node") {
 				DefaultForeground = "#FF000000",
 			},
+			new BrushColorInfo(ColorType.EnvironmentDropDownGlyph, "Environment DropDownGlyph") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "EnvironmentDropDownGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentDropDownMouseOverGlyph, "Environment DropDownMouseOverGlyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "EnvironmentDropDownMouseOverGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentDropDownMouseDownGlyph, "Environment DropDownMouseDownGlyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentDropDownMouseDownGlyph",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentCommandBarMouseOverBackground, new Point(0, 1), "Environment CommandBarMouseOverBackground", 0, 0.5, 0.5, 1) {
+				ResourceKey = "EnvironmentCommandBarMouseOverBackground",
+				DefaultForeground = "#FFC9DEF5",// Environment.CommandBarMouseOverBackgroundBegin
+				DefaultBackground = "#FFC9DEF5",// Environment.CommandBarMouseOverBackgroundMiddle1
+				DefaultColor3 = "#FFC9DEF5",// Environment.CommandBarMouseOverBackgroundMiddle2
+				DefaultColor4 = "#FFC9DEF5",// Environment.CommandBarMouseOverBackgroundEnd
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentCommandBarMouseDownBackground, new Point(0, 1), "Environment CommandBarMouseDownBackground", 0, 0.5, 1) {
+				ResourceKey = "EnvironmentCommandBarMouseDownBackground",
+				DefaultForeground = "#FF007ACC",// Environment.CommandBarMouseDownBackgroundBegin
+				DefaultBackground = "#FF007ACC",// Environment.CommandBarMouseDownBackgroundMiddle
+				DefaultColor3 = "#FF007ACC",// Environment.CommandBarMouseDownBackgroundEnd
+			},
+			new BrushColorInfo(ColorType.EnvironmentComboBoxDisabledBackground, "Environment ComboBoxDisabledBackground") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentComboBoxDisabledBackground",
+			},
+			new BrushColorInfo(ColorType.EnvironmentIconGeneralStroke, "Environment IconGeneralStroke") {
+				DefaultBackground = "#00000000",
+				BackgroundResourceKey = "EnvironmentIconGeneralStroke",
+			},
+			new BrushColorInfo(ColorType.EnvironmentIconGeneralFill, "Environment IconGeneralFill") {
+				DefaultBackground = "#FF424242",
+				BackgroundResourceKey = "EnvironmentIconGeneralFill",
+			},
+			new BrushColorInfo(ColorType.EnvironmentIconActionFill, "Environment IconActionFill") {
+				DefaultBackground = "#FF00529B",
+				BackgroundResourceKey = "EnvironmentIconActionFill",
+			},
+			new BrushColorInfo(ColorType.SearchControlMouseOverDropDownButtonGlyph, "SearchControl MouseOverDropDownButtonGlyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "SearchControlMouseOverDropDownButtonGlyph",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),
@@ -1797,6 +1842,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.DisabledBreakpointStatementMarker, "Disabled breakpoint statement (marker)"),
 			new BrushColorInfo(ColorType.BraceMatching, "Brace matching"),
 			new BrushColorInfo(ColorType.LineSeparator, "Line separator"),
+			new BrushColorInfo(ColorType.FindMatchHighlightMarker, "Find Match Highlight"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
 				DefaultBackground = "White",

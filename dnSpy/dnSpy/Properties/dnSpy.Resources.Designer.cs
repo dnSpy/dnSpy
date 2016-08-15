@@ -2124,6 +2124,96 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close (Esc).
+        /// </summary>
+        public static string Search_CloseToolTip {
+            get {
+                return ResourceManager.GetString("Search_CloseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find next (F3).
+        /// </summary>
+        public static string Search_FindNextToolTip {
+            get {
+                return ResourceManager.GetString("Search_FindNextToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find previous (Shift+F3).
+        /// </summary>
+        public static string Search_FindPreviousToolTip {
+            get {
+                return ResourceManager.GetString("Search_FindPreviousToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match case (Alt+C).
+        /// </summary>
+        public static string Search_MatchCaseToolTip {
+            get {
+                return ResourceManager.GetString("Search_MatchCaseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match whole word (Alt+W).
+        /// </summary>
+        public static string Search_MatchWholeWordToolTip {
+            get {
+                return ResourceManager.GetString("Search_MatchWholeWordToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing found.
+        /// </summary>
+        public static string Search_NothingFound {
+            get {
+                return ResourceManager.GetString("Search_NothingFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace all (Alt+A).
+        /// </summary>
+        public static string Search_ReplaceAllToolTip {
+            get {
+                return ResourceManager.GetString("Search_ReplaceAllToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace next (Alt+R).
+        /// </summary>
+        public static string Search_ReplaceNextToolTip {
+            get {
+                return ResourceManager.GetString("Search_ReplaceNextToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle to switch between find and replace modes.
+        /// </summary>
+        public static string Search_ToggleReplaceModeToolTip {
+            get {
+                return ResourceManager.GetString("Search_ToggleReplaceModeToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Regular Expressions (Alt+E).
+        /// </summary>
+        public static string Search_UseRegularExpressionsToolTip {
+            get {
+                return ResourceManager.GetString("Search_UseRegularExpressionsToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search aborted, more than {0:n0} results found..
         /// </summary>
         public static string SearchAbortedMessage {

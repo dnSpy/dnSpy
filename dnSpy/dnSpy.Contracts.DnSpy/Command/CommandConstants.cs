@@ -65,38 +65,48 @@ namespace dnSpy.Contracts.Command {
 		public const double CMDTARGETFILTER_ORDER_TEXT_EDITOR = 50000;
 
 		/// <summary>
+		/// Order of text editor search service's <see cref="ICommandTargetFilter"/> when search UI is visible
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_SEARCH_FOCUS = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1000000;
+
+		/// <summary>
+		/// Order of text editor search service's <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_SEARCH = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1000;
+
+		/// <summary>
 		/// Order of text references <see cref="ICommandInfoCreator"/>
 		/// </summary>
-		public const double CMDINFO_ORDER_TEXTREFERENCES = CMDINFO_ORDER_TEXT_EDITOR - 1000;
+		public const double CMDINFO_ORDER_TEXTREFERENCES = CMDINFO_ORDER_TEXT_EDITOR - 2000;
 
 		/// <summary>
 		/// Order of document viewer <see cref="ICommandInfoCreator"/>
 		/// </summary>
-		public const double CMDINFO_ORDER_DOCUMENTVIEWER = CMDINFO_ORDER_TEXT_EDITOR - 2000;
+		public const double CMDINFO_ORDER_DOCUMENTVIEWER = CMDINFO_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
 		/// Order of document viewer <see cref="ICommandTargetFilter"/>
 		/// </summary>
-		public const double CMDTARGETFILTER_ORDER_DOCUMENTVIEWER = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 2000;
+		public const double CMDTARGETFILTER_ORDER_DOCUMENTVIEWER = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
 		/// Order of REPL editor <see cref="ICommandInfoCreator"/>
 		/// </summary>
-		public const double CMDINFO_ORDER_REPL = CMDINFO_ORDER_TEXT_EDITOR - 2000;
+		public const double CMDINFO_ORDER_REPL = CMDINFO_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
 		/// Order of REPL editor <see cref="ICommandTargetFilter"/>
 		/// </summary>
-		public const double CMDTARGETFILTER_ORDER_REPL = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 2000;
+		public const double CMDTARGETFILTER_ORDER_REPL = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
 		/// Order of output logger text pane <see cref="ICommandInfoCreator"/>
 		/// </summary>
-		public const double CMDINFO_ORDER_OUTPUT_TEXTPANE = CMDINFO_ORDER_TEXT_EDITOR - 2000;
+		public const double CMDINFO_ORDER_OUTPUT_TEXTPANE = CMDINFO_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
 		/// Order of output logger text pane <see cref="ICommandTargetFilter"/>
 		/// </summary>
-		public const double CMDTARGETFILTER_ORDER_OUTPUT_TEXTPANE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 2000;
+		public const double CMDTARGETFILTER_ORDER_OUTPUT_TEXTPANE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
 	}
 }

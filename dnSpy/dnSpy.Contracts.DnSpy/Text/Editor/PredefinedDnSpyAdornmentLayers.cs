@@ -46,5 +46,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Background image adornment layer
 		/// </summary>
 		public const string BackgroundImage = "dnSpy-BackgroundImage";
+
+		/// <summary>
+		/// Search layer
+		/// </summary>
+		public const string Search = "dnSpy-Search";
 	}
 }

@@ -198,6 +198,7 @@ namespace dnSpy.Contracts.Text {
 		GlyphMargin,
 		BraceMatching,
 		LineSeparator,
+		FindMatchHighlightMarker,
 
 		/// <summary>
 		/// Must be last
@@ -382,6 +383,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object GlyphMargin = TextColor.GlyphMargin;
 		public static readonly object BraceMatching = TextColor.BraceMatching;
 		public static readonly object LineSeparator = TextColor.LineSeparator;
+		public static readonly object FindMatchHighlightMarker = TextColor.FindMatchHighlightMarker;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -568,6 +570,7 @@ namespace dnSpy.Contracts.Text {
 			GlyphMargin,
 			BraceMatching,
 			LineSeparator,
+			FindMatchHighlightMarker,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

@@ -26,6 +26,26 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// (Debugger) Z-index of active statement
 		/// </summary>
-		public const int ActiveStatement = -1;
+		public const int ActiveStatement = -1000;
+
+		/// <summary>
+		/// Highlighted reference
+		/// </summary>
+		public const int HighlightedReference = 0;
+
+		/// <summary>
+		/// Highlighted written reference
+		/// </summary>
+		public const int HighlightedWrittenReference = 0;
+
+		/// <summary>
+		/// Highlighted definition
+		/// </summary>
+		public const int HighlightedDefinition = 0;
+
+		/// <summary>
+		/// Find match
+		/// </summary>
+		public const int FindMatch = 5000;
 	}
 }

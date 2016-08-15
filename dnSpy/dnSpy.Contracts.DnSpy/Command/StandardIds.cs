@@ -26,25 +26,70 @@ namespace dnSpy.Contracts.Command {
 		/// Unknown command, if no other command is found
 		/// </summary>
 		Unknown,
+
 		/// <summary>
 		/// Copy
 		/// </summary>
 		Copy,
+
 		/// <summary>
 		/// Cut
 		/// </summary>
 		Cut,
+
 		/// <summary>
 		/// Paste
 		/// </summary>
 		Paste,
+
 		/// <summary>
 		/// Undo
 		/// </summary>
 		Undo,
+
 		/// <summary>
 		/// Redo
 		/// </summary>
 		Redo,
+
+		/// <summary>
+		/// Find (eg. Ctrl+F)
+		/// </summary>
+		Find,
+
+		/// <summary>
+		/// Replace (eg. Ctrl+H)
+		/// </summary>
+		Replace,
+
+		/// <summary>
+		/// Incremental search (eg. Ctrl+I)
+		/// </summary>
+		IncrementalSearch,
+
+		/// <summary>
+		/// Backward incremental search (eg. Ctrl+Shift+I)
+		/// </summary>
+		IncrementalSearchBackward,
+
+		/// <summary>
+		/// Find next (eg. F3)
+		/// </summary>
+		FindNext,
+
+		/// <summary>
+		/// Find previous (eg. Shift+F3)
+		/// </summary>
+		FindPrevious,
+
+		/// <summary>
+		/// Find next selected (eg. Ctrl+F3)
+		/// </summary>
+		FindNextSelected,
+
+		/// <summary>
+		/// Find previous selected (eg. Ctrl+Shift+F3)
+		/// </summary>
+		FindPreviousSelected,
 	}
 }
