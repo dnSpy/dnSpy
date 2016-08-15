@@ -67,16 +67,13 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			if (service == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextReferenceGroup) {
-				switch ((TextReferenceIds)cmdId) {
-				case TextReferenceIds.ClearMarkedReferences:
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.CANCEL:
 					if (service.IsToolTipOpen)
 						return CommandTargetStatus.Handled;
 					else
 						return nextCommandTarget.CanExecute(group, cmdId);
-
-				default:
-					return CommandTargetStatus.NotHandled;
 				}
 			}
 			return CommandTargetStatus.NotHandled;
@@ -92,18 +89,15 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			if (service == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextReferenceGroup) {
-				switch ((TextReferenceIds)cmdId) {
-				case TextReferenceIds.ClearMarkedReferences:
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.CANCEL:
 					if (service.IsToolTipOpen) {
 						service.CloseToolTip();
 						return CommandTargetStatus.Handled;
 					}
 					else
 						return nextCommandTarget.Execute(group, cmdId, args, ref result);
-
-				default:
-					return CommandTargetStatus.NotHandled;
 				}
 			}
 			return CommandTargetStatus.NotHandled;

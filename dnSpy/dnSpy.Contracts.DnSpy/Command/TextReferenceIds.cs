@@ -53,11 +53,6 @@ namespace dnSpy.Contracts.Command {
 		FollowReferenceNewTab,
 
 		/// <summary>
-		/// Clear all marked references
-		/// </summary>
-		ClearMarkedReferences,
-
-		/// <summary>
 		/// Moves the caret to the matching brace
 		/// </summary>
 		MoveToMatchingBrace,

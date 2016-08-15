@@ -34,7 +34,6 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.CtrlShift(Key.C, ReplIds.CopyCode.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.Enter, ReplIds.Submit.ToCommandInfo());
 			yield return CommandShortcut.Shift(Key.Enter, ReplIds.NewLineDontSubmit.ToCommandInfo());
-			yield return CommandShortcut.Create(Key.Escape, ReplIds.ClearInput.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.L, ReplIds.ClearScreen.ToCommandInfo());
 			yield return CommandShortcut.Alt(Key.Up, ReplIds.SelectPreviousCommand.ToCommandInfo());
 			yield return CommandShortcut.Alt(Key.Down, ReplIds.SelectNextCommand.ToCommandInfo());

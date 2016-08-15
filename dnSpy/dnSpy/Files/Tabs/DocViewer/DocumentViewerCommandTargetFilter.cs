@@ -38,7 +38,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (TryGetInstance() == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextReferenceGroup) {
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.CANCEL:
+					return CommandTargetStatus.Handled;
+				}
+			}
+			else if (group == CommandConstants.TextReferenceGroup) {
 				switch ((TextReferenceIds)cmdId) {
 				case TextReferenceIds.MoveToNextReference:
 				case TextReferenceIds.MoveToPreviousReference:
@@ -46,7 +52,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				case TextReferenceIds.MoveToPreviousDefinition:
 				case TextReferenceIds.FollowReference:
 				case TextReferenceIds.FollowReferenceNewTab:
-				case TextReferenceIds.ClearMarkedReferences:
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.MoveToMatchingBrace:
@@ -71,7 +76,15 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (documentViewer == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextReferenceGroup) {
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.CANCEL:
+					DocumentViewerHighlightReferencesTagger.ClearMarkedReferences(documentViewer.TextView);
+					documentViewer.TextView.Selection.Clear();
+					return CommandTargetStatus.Handled;
+				}
+			}
+			else if (group == CommandConstants.TextReferenceGroup) {
 				switch ((TextReferenceIds)cmdId) {
 				case TextReferenceIds.MoveToNextReference:
 					documentViewer.MoveReference(true);
@@ -95,11 +108,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 				case TextReferenceIds.FollowReferenceNewTab:
 					documentViewer.FollowReferenceNewTab();
-					return CommandTargetStatus.Handled;
-
-				case TextReferenceIds.ClearMarkedReferences:
-					DocumentViewerHighlightReferencesTagger.ClearMarkedReferences(documentViewer.TextView);
-					documentViewer.TextView.Selection.Clear();
 					return CommandTargetStatus.Handled;
 
 				case TextReferenceIds.MoveToMatchingBrace:
