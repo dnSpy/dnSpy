@@ -433,6 +433,7 @@
     <Compile Include="Text\Editor\CodeEditorCreator.cs" />
     <Compile Include="Text\Editor\CommonGuidObjectsCreator.cs" />
     <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
+    <Compile Include="Text\Editor\CopyWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\CurrentLineHighlighter.cs" />
     <Compile Include="Text\Editor\CustomLineNumberMargin.cs" />
     <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
