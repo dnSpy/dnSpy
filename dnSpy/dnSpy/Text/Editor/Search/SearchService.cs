@@ -65,6 +65,7 @@ namespace dnSpy.Text.Editor.Search {
 		const int MAX_SEARCH_RESULTS = 5000;
 
 		enum SearchKind {
+			None,
 			Find,
 			Replace,
 			IncrementalSearchForward,
@@ -167,7 +168,7 @@ namespace dnSpy.Text.Editor.Search {
 			this.listeners = new List<ITextMarkerListener>();
 			this.searchString = string.Empty;
 			this.replaceString = string.Empty;
-			this.searchKind = SearchKind.Find;
+			this.searchKind = SearchKind.None;
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -302,6 +303,7 @@ namespace dnSpy.Text.Editor.Search {
 		public bool ShowOptionsRow => searchKind == SearchKind.Find || searchKind == SearchKind.Replace;
 		public bool IsReplaceMode => searchKind == SearchKind.Replace;
 		void SetSearchKind(SearchKind value) {
+			Debug.Assert(value != SearchKind.None);
 			if (IsSearchControlVisible && searchKind == value)
 				return;
 			searchKind = value;
@@ -368,7 +370,7 @@ namespace dnSpy.Text.Editor.Search {
 
 		void CloseSearchControl() {
 			if (layer == null || layer.IsEmpty) {
-				Debug.Assert(searchKind == SearchKind.Find);
+				Debug.Assert(searchKind == SearchKind.None);
 				return;
 			}
 			CleanUpIncrementalSearch();
@@ -377,7 +379,7 @@ namespace dnSpy.Text.Editor.Search {
 			findResultCollection = null;
 			RefreshAllTags();
 			wpfTextView.VisualElement.Focus();
-			searchKind = SearchKind.Find;
+			searchKind = SearchKind.None;
 		}
 		SnapshotPoint? incrementalStartPosition;
 
@@ -557,6 +559,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		FindOptions GetFindOptions(SearchKind searchKind, bool? forward) {
+			Debug.Assert(searchKind != SearchKind.None);
 			var options = FindOptions.None;
 			switch (searchKind) {
 			case SearchKind.Find:
@@ -587,6 +590,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		SnapshotPoint GetStartingPosition(SearchKind searchKind, FindOptions options, bool restart) {
+			Debug.Assert(searchKind != SearchKind.None);
 			switch (searchKind) {
 			case SearchKind.Find:
 			case SearchKind.Replace:
@@ -619,7 +623,7 @@ namespace dnSpy.Text.Editor.Search {
 
 		public void FindNext(bool forward) {
 			var options = GetFindOptions(SearchKind.Find, forward);
-			var startingPosition = GetStartingPosition(searchKind, options, restart: false);
+			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart: false);
 			FindNextCore(options, startingPosition);
 		}
 
