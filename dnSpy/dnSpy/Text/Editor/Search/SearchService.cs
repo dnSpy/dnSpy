@@ -276,6 +276,7 @@ namespace dnSpy.Text.Editor.Search {
 				searchControl.AddHandler(UIElement.MouseDownEvent, new MouseButtonEventHandler(SearchControl_MouseDown), true);
 				SelectAllWhenFocused(searchControl.searchStringTextBox);
 				SelectAllWhenFocused(searchControl.replaceStringTextBox);
+				searchControl.searchStringTextBox.IsVisibleChanged += SearchStringTextBox_IsVisibleChanged;
 			}
 			if (layer == null)
 				layer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.Search);
@@ -289,6 +290,16 @@ namespace dnSpy.Text.Editor.Search {
 
 			if (!wasShown)
 				UpdateTextMarkerSearch();
+		}
+
+		void SearchStringTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			// HACK to make sure the red error border is shown whenever the UI is shown
+			if (foundSomething)
+				return;
+			foundSomething = true;
+			OnPropertyChanged(nameof(SearchString));
+			foundSomething = false;
+			OnPropertyChanged(nameof(SearchString));
 		}
 
 		static void SelectAllWhenFocused(TextBox textBox) =>
