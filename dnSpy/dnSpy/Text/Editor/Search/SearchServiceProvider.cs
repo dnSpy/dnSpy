@@ -31,18 +31,20 @@ namespace dnSpy.Text.Editor.Search {
 	sealed class SearchServiceProvider : ISearchServiceProvider {
 		readonly ITextSearchService2 textSearchService2;
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
+		readonly ISearchSettings searchSettings;
 
 		[ImportingConstructor]
-		SearchServiceProvider(ITextSearchService2 textSearchService2, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService) {
+		SearchServiceProvider(ITextSearchService2 textSearchService2, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISearchSettings searchSettings) {
 			this.textSearchService2 = textSearchService2;
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
+			this.searchSettings = searchSettings;
 		}
 
 		public ISearchService Get(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(SearchService),
-				() => new SearchService(wpfTextView, textSearchService2,
+				() => new SearchService(wpfTextView, textSearchService2, searchSettings,
 					textStructureNavigatorSelectorService.GetTextStructureNavigator(wpfTextView.TextBuffer)));
 		}
 	}

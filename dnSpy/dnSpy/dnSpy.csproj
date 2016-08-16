@@ -518,6 +518,7 @@
     </Compile>
     <Compile Include="Text\Editor\Search\SearchService.cs" />
     <Compile Include="Text\Editor\Search\SearchServiceProvider.cs" />
+    <Compile Include="Text\Editor\Search\SearchSettings.cs" />
     <Compile Include="Text\Editor\Search\TextMarkerTagger.cs" />
     <Compile Include="Text\Editor\Search\WpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\SelectionUtilities.cs" />

@@ -83,6 +83,7 @@ namespace dnSpy.Text.Editor.Search {
 			bool updateMarkers = false;
 			if (searchString != newSearchString) {
 				searchString = newSearchString ?? string.Empty;
+				SaveSettings();
 				OnPropertyChanged(nameof(SearchString));
 				restartSearch = true;
 				updateMarkers = true;
@@ -105,6 +106,7 @@ namespace dnSpy.Text.Editor.Search {
 			set {
 				if (replaceString != value) {
 					replaceString = value ?? string.Empty;
+					SaveSettings();
 					OnPropertyChanged(nameof(ReplaceString));
 				}
 			}
@@ -116,6 +118,7 @@ namespace dnSpy.Text.Editor.Search {
 			set {
 				if (matchCase != value) {
 					matchCase = value;
+					SaveSettings();
 					OnPropertyChanged(nameof(MatchCase));
 					RestartSearchAndUpdateMarkers();
 				}
@@ -128,6 +131,7 @@ namespace dnSpy.Text.Editor.Search {
 			set {
 				if (matchWholeWords != value) {
 					matchWholeWords = value;
+					SaveSettings();
 					OnPropertyChanged(nameof(MatchWholeWords));
 					RestartSearchAndUpdateMarkers();
 				}
@@ -140,6 +144,7 @@ namespace dnSpy.Text.Editor.Search {
 			set {
 				if (useRegularExpressions != value) {
 					useRegularExpressions = value;
+					SaveSettings();
 					OnPropertyChanged(nameof(UseRegularExpressions));
 					RestartSearchAndUpdateMarkers();
 				}
@@ -149,21 +154,25 @@ namespace dnSpy.Text.Editor.Search {
 
 		readonly IWpfTextView wpfTextView;
 		readonly ITextSearchService2 textSearchService2;
+		readonly ISearchSettings searchSettings;
 		readonly ITextStructureNavigator textStructureNavigator;
 		readonly List<ITextMarkerListener> listeners;
 		SearchControl searchControl;
 		IAdornmentLayer layer;
 		NormalizedSnapshotSpanCollection findResultCollection;
 
-		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ITextStructureNavigator textStructureNavigator) {
+		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, ITextStructureNavigator textStructureNavigator) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (textSearchService2 == null)
 				throw new ArgumentNullException(nameof(textSearchService2));
+			if (searchSettings == null)
+				throw new ArgumentNullException(nameof(searchSettings));
 			if (textStructureNavigator == null)
 				throw new ArgumentNullException(nameof(textStructureNavigator));
 			this.wpfTextView = wpfTextView;
 			this.textSearchService2 = textSearchService2;
+			this.searchSettings = searchSettings;
 			this.textStructureNavigator = textStructureNavigator;
 			this.listeners = new List<ITextMarkerListener>();
 			this.searchString = string.Empty;
@@ -250,7 +259,26 @@ namespace dnSpy.Text.Editor.Search {
 
 		bool IsSearchControlVisible => layer != null && !layer.IsEmpty;
 
+		void UseGlobalSettingsIfUiIsHidden() {
+			if (!IsSearchControlVisible && !disableSaveSettings) {
+				disableSaveSettings = true;
+				SearchString = searchSettings.SearchString;
+				ReplaceString = searchSettings.ReplaceString;
+				MatchCase = searchSettings.MatchCase;
+				MatchWholeWords = searchSettings.MatchWholeWords;
+				UseRegularExpressions = searchSettings.UseRegularExpressions;
+				disableSaveSettings = false;
+			}
+		}
+
+		bool disableSaveSettings;
+		void SaveSettings() {
+			if (!disableSaveSettings)
+				searchSettings.SaveSettings(SearchString, ReplaceString, MatchCase, MatchWholeWords, UseRegularExpressions);
+		}
+
 		void ShowSearchControl(SearchKind searchKind) {
+			UseGlobalSettingsIfUiIsHidden();
 			bool wasShown = IsSearchControlVisible;
 			if (searchControl == null) {
 				searchControl = new SearchControl { DataContext = this };
@@ -401,6 +429,7 @@ namespace dnSpy.Text.Editor.Search {
 			RefreshAllTags();
 			wpfTextView.VisualElement.Focus();
 			searchKind = SearchKind.None;
+			SaveSettings();
 		}
 		SnapshotPoint? incrementalStartPosition;
 
@@ -643,6 +672,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		public void FindNext(bool forward) {
+			UseGlobalSettingsIfUiIsHidden();
 			var options = GetFindOptions(SearchKind.Find, forward);
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart: false);
 			FindNextCore(options, startingPosition);
