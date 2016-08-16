@@ -28,7 +28,6 @@
     <Geometry x:Key="DownArrow"> M 0,0 L 3.5,4 L 7,0 Z</Geometry>
     <Geometry x:Key="UpArrow">   M 0,4 L 3.5,0 L 7,4 Z</Geometry>
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
-	<Geometry x:Key="ScrollBarRightArrow">M0,0 0,9 1,9 1,8 2,8 2,7 3,7 3,6 4,6 4,5 5,5 5,4 4,4 4,3 3,3 3,2 2,2 2,1 1,1 1,0z</Geometry>
     <Geometry x:Key="Checkmark">F1M5,11L3,7 5,7 6,9 9,3 11,3 7,11 5,11z</Geometry>
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
 	<SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
@@ -3010,47 +3009,23 @@
 								  Grid.Column="1"
 								  x:Name="arrowPath"
 								  Fill="{DynamicResource EnvironmentScrollBarArrowGlyph}"
-								  Data="{StaticResource ScrollBarRightArrow}"
+								  Data="M0,0L0,9 5,4.5 0,0z"
 								  SnapsToDevicePixels="true" />
 						</Grid>
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
-							Value="{x:Static theme:ScrollGlyph.RightArrow}">
-							<Setter Property="LayoutTransform"
-								TargetName="arrowPath">
-								<Setter.Value>
-									<RotateTransform Angle="0" />
-								</Setter.Value>
-							</Setter>
-						</Trigger>
-						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.DownArrow}">
-							<Setter Property="LayoutTransform"
-								TargetName="arrowPath">
-								<Setter.Value>
-									<RotateTransform Angle="90" />
-								</Setter.Value>
-							</Setter>
-						</Trigger>
+                            <Setter TargetName="arrowPath" Property="Data" Value="M0,0L4.5,5 9,0 0,0z" />
+                        </Trigger>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.LeftArrow}">
-							<Setter Property="LayoutTransform"
-								TargetName="arrowPath">
-								<Setter.Value>
-									<RotateTransform Angle="180" />
-								</Setter.Value>
-							</Setter>
-						</Trigger>
+                            <Setter TargetName="arrowPath" Property="Data" Value="M5,0L0,4.5 5,9 5,0z" />
+                        </Trigger>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.UpArrow}">
-							<Setter Property="LayoutTransform"
-								TargetName="arrowPath">
-								<Setter.Value>
-									<RotateTransform Angle="270" />
-								</Setter.Value>
-							</Setter>
-						</Trigger>
+                            <Setter TargetName="arrowPath" Property="Data" Value="M0,5L4.5,0 9,5 0,5z" />
+                        </Trigger>
 						<Trigger Property="IsMouseOver" Value="True">
 							<Setter TargetName="Border"
 									Property="Background"
