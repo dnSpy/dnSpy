@@ -208,18 +208,14 @@ namespace dnSpy.Text.Editor.Search {
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
 					case TextEditorIds.BACKSPACE:
-						if (SearchString.Length != 0) {
-							SearchString = SearchString.Substring(0, SearchString.Length - 1);
-							RestartSearch();
-						}
+						if (SearchString.Length != 0)
+							SetIncrementalSearchString(SearchString.Substring(0, SearchString.Length - 1));
 						return CommandTargetStatus.Handled;
 
 					case TextEditorIds.TYPECHAR:
 						var s = args as string;
-						if (s != null && s.IndexOfAny(newLineChars) < 0) {
-							SearchString += s;
-							RestartSearch();
-						}
+						if (s != null && s.IndexOfAny(newLineChars) < 0)
+							SetIncrementalSearchString(SearchString + s);
 						else
 							CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
@@ -239,6 +235,18 @@ namespace dnSpy.Text.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			return CommandTargetStatus.NotHandledDontCallNextHandler;
 		}
+
+		void SetIncrementalSearchString(string newSearchString) {
+			isIncrementalSearchCaretMove = true;
+			try {
+				SearchString = newSearchString;
+				RestartSearch();
+			}
+			finally {
+				isIncrementalSearchCaretMove = false;
+			}
+		}
+		bool isIncrementalSearchCaretMove;
 
 		bool IsSearchControlVisible => layer != null && !layer.IsEmpty;
 
@@ -340,7 +348,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
-			if (!isOurCaretMove)
+			if (!isIncrementalSearchCaretMove)
 				CancelIncrementalSearch();
 		}
 
@@ -652,19 +660,12 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void ShowSearchResult(SnapshotSpan span) {
-			try {
-				isOurCaretMove = true;
-				//TODO: Use editorOperations.SelectAndMoveCaret(new VirtualSnapshotPoint(res.Value.Start), new VirtualSnapshotPoint(res.Value.End));
-				wpfTextView.Selection.Mode = TextSelectionMode.Stream;
-				wpfTextView.Selection.Select(new VirtualSnapshotPoint(span.Start), new VirtualSnapshotPoint(span.End));
-				wpfTextView.Caret.MoveTo(span.End);
-				wpfTextView.Caret.EnsureVisible();
-			}
-			finally {
-				isOurCaretMove = false;
-			}
+			//TODO: Use editorOperations.SelectAndMoveCaret(new VirtualSnapshotPoint(res.Value.Start), new VirtualSnapshotPoint(res.Value.End));
+			wpfTextView.Selection.Mode = TextSelectionMode.Stream;
+			wpfTextView.Selection.Select(new VirtualSnapshotPoint(span.Start), new VirtualSnapshotPoint(span.End));
+			wpfTextView.Caret.MoveTo(span.End);
+			wpfTextView.Caret.EnsureVisible();
 		}
-		bool isOurCaretMove;
 
 		void SetFoundResult(bool found) {
 			if (foundSomething == found)
