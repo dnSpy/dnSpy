@@ -216,10 +216,12 @@ namespace dnSpy.Text.Editor.Search {
 
 					case TextEditorIds.TYPECHAR:
 						var s = args as string;
-						if (s != null) {
+						if (s != null && s.IndexOfAny(newLineChars) < 0) {
 							SearchString += s;
 							RestartSearch();
 						}
+						else
+							CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
 
 					default:
