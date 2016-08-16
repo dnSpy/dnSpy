@@ -281,7 +281,7 @@
                 </Image>
             </CheckBox>
         </StackPanel>
-        <Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Height="4">
+        <Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Height="4" Margin="0 4 0 0">
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
                     <Style.Setters>
