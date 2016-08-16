@@ -114,7 +114,7 @@
         </Grid.ColumnDefinitions>
         <ToggleButton Grid.Row="0" Grid.Column="0" Margin="4 4 0 0" Width="21" Height="21" Command="{Binding ToggleFindReplaceCommand}" IsChecked="{Binding IsReplaceMode, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="Transparent" ToolTip="{x:Static p:dnSpy_Resources.Search_ToggleReplaceModeToolTip}" Focusable="True" FocusVisualStyle="{x:Null}" Style="{StaticResource ToggleReplaceStyle}" />
         <StackPanel Grid.Row="0" Grid.Column="1" Margin="4 4 0 0" Orientation="Horizontal">
-            <TextBox Width="200" Margin="0 0 4 0" Name="searchStringTextBox" Text="{Binding SearchString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Width="200" Margin="0 0 4 0" Name="searchStringTextBox" Text="{Binding SearchString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" />
             <Button Margin="0 0 4 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding FindPreviousCommand}" ToolTip="{x:Static p:dnSpy_Resources.Search_FindPreviousToolTip}">
                 <Image Width="17" Height="17" Stretch="None">
                     <Image.Source>
@@ -160,7 +160,7 @@
             </Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" Margin="4 4 0 0" Orientation="Horizontal" Visibility="{Binding ShowReplaceRow, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBox Width="200" Margin="0 0 4 0" Name="replaceStringTextBox" Text="{Binding ReplaceString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanReplace}" />
+            <TextBox Width="200" Margin="0 0 4 0" Name="replaceStringTextBox" Text="{Binding ReplaceString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanReplace}" VerticalAlignment="Stretch" />
             <Button Margin="0 0 4 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding ReplaceNextCommand}" ToolTip="{x:Static p:dnSpy_Resources.Search_ReplaceNextToolTip}">
                 <Image Width="17" Height="17" Stretch="None">
                     <Image.Source>
