@@ -49,7 +49,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			void WpfTextView_MouseMove(object sender, MouseEventArgs e) {
-				if (owner.IsClosed) {
+				if (owner.IsClosed || owner.IsMouseOverOverlayLayerElement(e)) {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
 				}

@@ -874,6 +874,6 @@ namespace dnSpy.Text.Editor {
 			//TODO:
 		}
 
-		bool IDnSpyWpfTextViewImpl.IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
+		public bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 	}
 }
