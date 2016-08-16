@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
@@ -132,5 +133,33 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		public override bool IsVisible(IMenuItemContext context) =>
 			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
+	}
+
+	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
+	sealed class IncrementalSearchContexMenuEntry : MenuItemBase {
+		IncrementalSearchContexMenuEntry() {
+		}
+
+		public override bool IsVisible(IMenuItemContext context) => GetViewer(context) != null;
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			var docViewer = GetViewer(context);
+			if (docViewer == null)
+				return false;
+			return docViewer.TextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.IncrementalSearch) == CommandTargetStatus.Handled;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			var docViewer = GetViewer(context);
+			if (docViewer == null)
+				return;
+			docViewer.TextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.IncrementalSearch);
+		}
+
+		IDocumentViewer GetViewer(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
+				return null;
+			return context.Find<IDocumentViewer>();
+		}
 	}
 }

@@ -1323,6 +1323,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incremental Search.
+        /// </summary>
+        public static string IncrementalSearchCommand {
+            get {
+                return ResourceManager.GetString("IncrementalSearchCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The text is invalid.
         /// </summary>
         public static string InvalidInputTextMessageBox {
@@ -2732,6 +2741,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlF4 {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlF4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+I.
+        /// </summary>
+        public static string ShortCutKeyCtrlI {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlI", resourceCulture);
             }
         }
         

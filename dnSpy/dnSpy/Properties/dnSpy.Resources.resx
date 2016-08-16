@@ -1136,4 +1136,10 @@
   <data name="Search_NothingFound" xml:space="preserve">
     <value>Nothing found</value>
   </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Incremental Search</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
 </root>
