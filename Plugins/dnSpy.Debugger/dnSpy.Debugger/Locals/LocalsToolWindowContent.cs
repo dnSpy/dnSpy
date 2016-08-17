@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Locals {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class LocalsToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class LocalsToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<ILocalsContent> localsContent;
 
 		public LocalsToolWindowContent LocalsToolWindowContent => localsToolWindowContent ?? (localsToolWindowContent = new LocalsToolWindowContent(localsContent));
 		LocalsToolWindowContent localsToolWindowContent;
 
 		[ImportingConstructor]
-		LocalsToolWindowContentCreator(Lazy<ILocalsContent> localsContent) {
+		LocalsToolWindowContentProvider(Lazy<ILocalsContent> localsContent) {
 			this.localsContent = localsContent;
 		}
 

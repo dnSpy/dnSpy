@@ -33,9 +33,9 @@ namespace dnSpy.Text.Editor {
 		readonly bool isHorizontal;
 		WpfTextViewMarginInfo[] margins;
 
-		public WpfTextViewContainerMargin(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IWpfTextViewHost wpfTextViewHost, string name, bool isHorizontal) {
-			if (wpfTextViewMarginProviderCollectionCreator == null)
-				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionCreator));
+		public WpfTextViewContainerMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IWpfTextViewHost wpfTextViewHost, string name, bool isHorizontal) {
+			if (wpfTextViewMarginProviderCollectionProvider == null)
+				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			if (name == null)
@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor {
 			this.name = name;
 			this.isHorizontal = isHorizontal;
 			this.margins = Array.Empty<WpfTextViewMarginInfo>();
-			this.wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionCreator.Create(wpfTextViewHost, this, name);
+			this.wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionProvider.Create(wpfTextViewHost, this, name);
 			this.wpfTextViewMarginProviderCollection.MarginsChanged += WpfTextViewMarginProviderCollection_MarginsChanged;
 			UpdateMarginChildren();
 		}

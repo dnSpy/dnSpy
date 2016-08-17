@@ -50,12 +50,12 @@ namespace dnSpy.Contracts.Command {
 		public static readonly Guid TextReferenceGroup = new Guid("8D5BC6C7-C013-4401-9ADC-62B411573F3C");
 
 		/// <summary>
-		/// Order of default <see cref="ICommandInfoCreator"/>
+		/// Order of default <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_DEFAULT = 100000;
 
 		/// <summary>
-		/// Order of default text editor <see cref="ICommandInfoCreator"/>
+		/// Order of default text editor <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_TEXT_EDITOR = 50000;
 
@@ -75,12 +75,12 @@ namespace dnSpy.Contracts.Command {
 		public const double CMDTARGETFILTER_ORDER_SEARCH = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1000;
 
 		/// <summary>
-		/// Order of text references <see cref="ICommandInfoCreator"/>
+		/// Order of text references <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_TEXTREFERENCES = CMDINFO_ORDER_TEXT_EDITOR - 2000;
 
 		/// <summary>
-		/// Order of document viewer <see cref="ICommandInfoCreator"/>
+		/// Order of document viewer <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_DOCUMENTVIEWER = CMDINFO_ORDER_TEXT_EDITOR - 3000;
 
@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Command {
 		public const double CMDTARGETFILTER_ORDER_DOCUMENTVIEWER = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
-		/// Order of REPL editor <see cref="ICommandInfoCreator"/>
+		/// Order of REPL editor <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_REPL = CMDINFO_ORDER_TEXT_EDITOR - 3000;
 
@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Command {
 		public const double CMDTARGETFILTER_ORDER_REPL = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
 
 		/// <summary>
-		/// Order of output logger text pane <see cref="ICommandInfoCreator"/>
+		/// Order of output logger text pane <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_OUTPUT_TEXTPANE = CMDINFO_ORDER_TEXT_EDITOR - 3000;
 

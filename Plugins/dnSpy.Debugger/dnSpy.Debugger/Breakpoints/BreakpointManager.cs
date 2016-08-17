@@ -95,16 +95,16 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly IFileTabManager fileTabManager;
 		readonly ITheDebugger theDebugger;
 		readonly IMessageBoxManager messageBoxManager;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 		readonly Lazy<IBreakpointListener>[] breakpointListeners;
 		bool breakpointListenersInitialized;
 
 		[ImportingConstructor]
-		BreakpointManager(IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, IModuleIdCreator moduleIdCreator, [ImportMany] IEnumerable<Lazy<IBreakpointListener>> breakpointListeners) {
+		BreakpointManager(IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, IModuleIdProvider moduleIdProvider, [ImportMany] IEnumerable<Lazy<IBreakpointListener>> breakpointListeners) {
 			this.fileTabManager = fileTabManager;
 			this.theDebugger = theDebugger;
 			this.messageBoxManager = messageBoxManager;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 			this.breakpointListeners = breakpointListeners.ToArray();
 
 			fileTabManager.FileCollectionChanged += FileTabManager_FileCollectionChanged;
@@ -130,8 +130,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			switch (e.Type) {
 			case NotifyFileCollectionType.Clear:
 			case NotifyFileCollectionType.Remove:
-				var existing = new HashSet<ModuleId>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => moduleIdCreator.Create(a.DnSpyFile.ModuleDef)));
-				var removed = new HashSet<ModuleId>(e.Files.Select(a => moduleIdCreator.Create(a.ModuleDef)));
+				var existing = new HashSet<ModuleId>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => moduleIdProvider.Create(a.DnSpyFile.ModuleDef)));
+				var removed = new HashSet<ModuleId>(e.Files.Select(a => moduleIdProvider.Create(a.ModuleDef)));
 				existing.Remove(new ModuleId());
 				removed.Remove(new ModuleId());
 				object orbArg = null;
@@ -416,7 +416,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			else if (statements.Count > 0) {
 				foreach (var methodStatement in statements) {
 					var md = methodStatement.Method;
-					var modId = moduleIdCreator.Create(md.Module);
+					var modId = moduleIdProvider.Create(md.Module);
 					var key = new ModuleTokenId(modId, md.MDToken);
 					Add(new ILCodeBreakpoint(key, methodStatement.Statement.BinSpan.Start));
 				}

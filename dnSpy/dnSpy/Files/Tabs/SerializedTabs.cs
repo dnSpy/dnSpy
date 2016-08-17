@@ -79,24 +79,24 @@ namespace dnSpy.Files.Tabs {
 				stg.Save(section.CreateSection(TABGROUP_SECTION));
 		}
 
-		public static SerializedTabGroupWindow Create(IFileTabContentFactoryManager creator, ITabGroupManager tabGroupManager, string name) {
+		public static SerializedTabGroupWindow Create(IFileTabContentFactoryManager factory, ITabGroupManager tabGroupManager, string name) {
 			int index = tabGroupManager.TabGroups.ToList().IndexOf(tabGroupManager.ActiveTabGroup);
 			var stackedContentState = ((TabGroupManager)tabGroupManager).StackedContentState;
 			var tgw = new SerializedTabGroupWindow(name, index, tabGroupManager.IsHorizontal, stackedContentState);
 
 			foreach (var g in tabGroupManager.TabGroups)
-				tgw.TabGroups.Add(SerializedTabGroup.Create(creator, g));
+				tgw.TabGroups.Add(SerializedTabGroup.Create(factory, g));
 
 			return tgw;
 		}
 
-		public IEnumerable<object> Restore(FileTabManager fileTabManager, IFileTabContentFactoryManager creator, ITabGroupManager mgr) {
+		public IEnumerable<object> Restore(FileTabManager fileTabManager, IFileTabContentFactoryManager fileTabContentFactoryManager, ITabGroupManager mgr) {
 			mgr.IsHorizontal = IsHorizontal;
 			for (int i = 0; i < TabGroups.Count; i++) {
 				var stg = TabGroups[i];
 				var g = i == 0 ? mgr.ActiveTabGroup ?? mgr.Create() : mgr.Create();
 				yield return null;
-				foreach (var o in stg.Restore(fileTabManager, creator, g))
+				foreach (var o in stg.Restore(fileTabManager, fileTabContentFactoryManager, g))
 					yield return o;
 			}
 
@@ -142,12 +142,12 @@ namespace dnSpy.Files.Tabs {
 				st.Save(section.CreateSection(TAB_SECTION));
 		}
 
-		public static SerializedTabGroup Create(IFileTabContentFactoryManager creator, ITabGroup g) {
+		public static SerializedTabGroup Create(IFileTabContentFactoryManager fileTabContentFactoryManager, ITabGroup g) {
 			int index = g.TabContents.ToList().IndexOf(g.ActiveTabContent);
 			var tg = new SerializedTabGroup(index);
 
 			foreach (IFileTab tab in g.TabContents) {
-				var t = SerializedTab.TryCreate(creator, tab);
+				var t = SerializedTab.TryCreate(fileTabContentFactoryManager, tab);
 				if (t != null)
 					tg.Tabs.Add(t);
 			}
@@ -155,9 +155,9 @@ namespace dnSpy.Files.Tabs {
 			return tg;
 		}
 
-		public IEnumerable<object> Restore(FileTabManager fileTabManager, IFileTabContentFactoryManager creator, ITabGroup g) {
+		public IEnumerable<object> Restore(FileTabManager fileTabManager, IFileTabContentFactoryManager fileTabContentFactoryManager, ITabGroup g) {
 			foreach (var st in Tabs) {
-				foreach (var o in st.TryRestore(fileTabManager, creator, g))
+				foreach (var o in st.TryRestore(fileTabManager, fileTabContentFactoryManager, g))
 					yield return o;
 			}
 			var ary = g.TabContents.ToArray();
@@ -225,9 +225,9 @@ namespace dnSpy.Files.Tabs {
 				DnSpyFileInfoSerializer.Save(section.CreateSection(AUTOLOADED_SECTION), f);
 		}
 
-		public static SerializedTab TryCreate(IFileTabContentFactoryManager creator, IFileTab tab) {
+		public static SerializedTab TryCreate(IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTab tab) {
 			var contentSect = new SettingsSection(CONTENT_SECTION);
-			var guid = creator.Serialize(tab.Content, contentSect);
+			var guid = fileTabContentFactoryManager.Serialize(tab.Content, contentSect);
 			if (guid == null)
 				return null;
 			contentSect.Attribute(CONTENT_GUID_ATTR, guid.Value);
@@ -268,7 +268,7 @@ namespace dnSpy.Files.Tabs {
 			public IFileTreeNodeData[] Nodes;
 		}
 
-		public IEnumerable<object> TryRestore(FileTabManager fileTabManager, IFileTabContentFactoryManager creator, ITabGroup g) {
+		public IEnumerable<object> TryRestore(FileTabManager fileTabManager, IFileTabContentFactoryManager fileTabContentFactoryManager, ITabGroup g) {
 			var guid = Content.Attribute<Guid?>(CONTENT_GUID_ATTR);
 			if (guid == null)
 				yield break;
@@ -277,7 +277,7 @@ namespace dnSpy.Files.Tabs {
 				yield return o;
 			if (ctx.Nodes == null)
 				yield break;
-			var tabContent = creator.Deserialize(guid.Value, Content, ctx.Nodes);
+			var tabContent = fileTabContentFactoryManager.Deserialize(guid.Value, Content, ctx.Nodes);
 			yield return null;
 			if (tabContent == null)
 				yield break;

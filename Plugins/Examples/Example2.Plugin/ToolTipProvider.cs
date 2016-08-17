@@ -18,9 +18,9 @@ namespace Example2.Plugin {
 			// This reference is added to the "decompiled" code by ModuleChildNode.Decompile()
 			var sref = @ref as StringInfoReference;
 			if (sref != null) {
-				var creator = context.Create();
-				creator.Output.Write(BoxedTextColor.String, sref.Message);
-				return creator.Create();
+				var provider = context.Create();
+				provider.Output.Write(BoxedTextColor.String, sref.Message);
+				return provider.Create();
 			}
 
 			return null;

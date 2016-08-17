@@ -30,19 +30,19 @@ namespace dnSpy.Debugger.Memory {
 
 	[Export(typeof(IMemoryWindowManager))]
 	sealed class MemoryWindowManager : IMemoryWindowManager {
-		readonly Lazy<MemoryToolWindowContentCreator> memoryToolWindowContentCreator;
+		readonly Lazy<MemoryToolWindowContentProvider> memoryToolWindowContentProvider;
 		readonly IMainToolWindowManager mainToolWindowManager;
 
 		[ImportingConstructor]
-		MemoryWindowManager(Lazy<MemoryToolWindowContentCreator> memoryToolWindowContentCreator, IMainToolWindowManager mainToolWindowManager) {
-			this.memoryToolWindowContentCreator = memoryToolWindowContentCreator;
+		MemoryWindowManager(Lazy<MemoryToolWindowContentProvider> memoryToolWindowContentProvider, IMainToolWindowManager mainToolWindowManager) {
+			this.memoryToolWindowContentProvider = memoryToolWindowContentProvider;
 			this.mainToolWindowManager = mainToolWindowManager;
 		}
 
 		public void Show(ulong addr, ulong size) {
 			var mc = GetMemoryToolWindowContent(addr, size);
 			if (mc == null)
-				mc = memoryToolWindowContentCreator.Value.Contents[0].Content;
+				mc = memoryToolWindowContentProvider.Value.Contents[0].Content;
 			ShowInMemoryWindow(mc, addr, size);
 		}
 
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		MemoryToolWindowContent GetMemoryToolWindowContent(ulong addr, ulong size) {
-			foreach (var info in memoryToolWindowContentCreator.Value.Contents) {
+			foreach (var info in memoryToolWindowContentProvider.Value.Contents) {
 				var mc = info.Content;
 				if (CanShowAll(mc, addr, size))
 					return mc;
@@ -86,9 +86,9 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		MemoryToolWindowContent GetMemoryToolWindowContent(int windowIndex) {
-			if ((uint)windowIndex >= memoryToolWindowContentCreator.Value.Contents.Length)
+			if ((uint)windowIndex >= memoryToolWindowContentProvider.Value.Contents.Length)
 				return null;
-			return memoryToolWindowContentCreator.Value.Contents[windowIndex].Content;
+			return memoryToolWindowContentProvider.Value.Contents[windowIndex].Content;
 		}
 	}
 }

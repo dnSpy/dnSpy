@@ -37,14 +37,14 @@ namespace dnSpy.Text.Editor {
 			this.marginContextMenuHandlerProviders = marginContextMenuHandlerProviders.ToArray();
 		}
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IWpfTextViewHost wpfTextViewHost;
 			readonly IWpfTextViewMargin margin;
 			readonly string marginName;
 			readonly Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders;
 			IMarginContextMenuHandler[] handlers;
 
-			public GuidObjectsCreator(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName, Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders) {
+			public GuidObjectsProvider(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName, Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders) {
 				this.wpfTextViewHost = wpfTextViewHost;
 				this.margin = margin;
 				this.marginName = marginName;
@@ -67,7 +67,7 @@ namespace dnSpy.Text.Editor {
 				handlers = list.ToArray();
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				if (handlers == null)
 					InitializeHandlers();
 
@@ -85,7 +85,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public IGuidObjectsCreator Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName) {
+		public IGuidObjectsProvider Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName) {
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			if (margin == null)
@@ -94,7 +94,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(marginName));
 			if (margin.GetTextViewMargin(marginName) != margin)
 				throw new ArgumentException();
-			return new GuidObjectsCreator(wpfTextViewHost, margin, marginName, marginContextMenuHandlerProviders);
+			return new GuidObjectsProvider(wpfTextViewHost, margin, marginName, marginContextMenuHandlerProviders);
 		}
 	}
 }

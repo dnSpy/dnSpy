@@ -212,7 +212,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly ILanguageManager languageManager;
 		readonly IFileTreeView fileTreeView;
 		readonly IFileTreeNodeFilter filter;
-		readonly IFileSearcherCreator fileSearcherCreator;
+		readonly IFileSearcherProvider fileSearcherProvider;
 
 		public bool SyntaxHighlight { get; set; }
 		public string Title { get; }
@@ -220,9 +220,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool MatchWholeWords { get; }
 		bool MatchAnySearchTerm { get; }
 
-		public MemberPickerVM(IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
+		public MemberPickerVM(IFileSearcherProvider fileSearcherProvider, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
 			this.Title = title;
-			this.fileSearcherCreator = fileSearcherCreator;
+			this.fileSearcherProvider = fileSearcherProvider;
 			this.languageManager = languageManager;
 			this.fileTreeView = fileTreeView;
 			this.language = languageManager.Language;
@@ -282,7 +282,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					Filter = filter,
 					SearchDecompiledData = false,
 				};
-				fileSearcher = fileSearcherCreator.Create(options);
+				fileSearcher = fileSearcherProvider.Create(options);
 				fileSearcher.SyntaxHighlight = SyntaxHighlight;
 				fileSearcher.Language = Language;
 				fileSearcher.BackgroundType = BackgroundType.Search;

@@ -25,12 +25,12 @@ using dnSpy.AsmEditor.SaveModule;
 using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.AsmEditor.Hex {
-	[ExportTabSaverCreator(Order = TabConstants.ORDER_HEXTABSAVERCREATOR)]
-	sealed class HexTabSaverCreator : ITabSaverCreator {
+	[ExportTabSaverProvider(Order = TabConstants.ORDER_HEXTABSAVERPROVIDER)]
+	sealed class HexTabSaverProvider : ITabSaverProvider {
 		readonly Lazy<IDocumentSaver> documentSaver;
 
 		[ImportingConstructor]
-		HexTabSaverCreator(Lazy<IDocumentSaver> documentSaver) {
+		HexTabSaverProvider(Lazy<IDocumentSaver> documentSaver) {
 			this.documentSaver = documentSaver;
 		}
 

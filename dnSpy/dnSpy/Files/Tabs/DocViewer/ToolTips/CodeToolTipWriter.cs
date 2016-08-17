@@ -28,35 +28,35 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	sealed class CodeToolTipWriter : ICodeToolTipWriter, IXmlDocOutput {
-		readonly ColorizedTextElementCreator creator;
+		readonly ColorizedTextElementProvider provider;
 
-		public bool IsEmpty => creator.IsEmpty;
+		public bool IsEmpty => provider.IsEmpty;
 
 		public CodeToolTipWriter(bool syntaxHighlight) {
-			this.creator = ColorizedTextElementCreator.Create(syntaxHighlight);
+			this.provider = ColorizedTextElementProvider.Create(syntaxHighlight);
 		}
 
-		public UIElement Create() => creator.CreateResult(false, false, TextWrapping.Wrap);
-		public void Write(object color, string text) => creator.Output.Write(color, text);
-		public void Write(TextColor color, string text) => creator.Output.Write(color.Box(), text);
+		public UIElement Create() => provider.CreateResult(false, false, TextWrapping.Wrap);
+		public void Write(object color, string text) => provider.Output.Write(color, text);
+		public void Write(TextColor color, string text) => provider.Output.Write(color.Box(), text);
 
 		bool needsNewLine = false;
 
 		void IXmlDocOutput.Write(string s, object data) {
 			if (needsNewLine)
 				((IXmlDocOutput)this).WriteNewLine();
-			creator.Output.Write(data, s);
+			provider.Output.Write(data, s);
 		}
 
 		void IXmlDocOutput.WriteNewLine() {
-			creator.Output.WriteLine();
+			provider.Output.WriteLine();
 			needsNewLine = false;
 		}
 
 		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedTextColor.Text);
 
 		void InitializeNeedsNewLine() {
-			var text = creator.Text;
+			var text = provider.Text;
 			needsNewLine = text.Length > 0 && !text.EndsWith(Environment.NewLine);
 		}
 

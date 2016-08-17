@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <inheritdoc/>
 		public sealed override object Text {
 			get {
-				var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
+				var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
 
 				var cached = cachedText != null ? cachedText.Target : null;
 				if (cached != null)
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <inheritdoc/>
 		public sealed override object ToolTip {
 			get {
-				var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
+				var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
 				WriteToolTip(gen.Output, Context.Language);
 				return gen.CreateResult(filterOutNewLines: false);
 			}

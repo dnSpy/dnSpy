@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Text.Editor {
 	sealed partial class WpfTextView {
 		sealed class LayoutHelper {
-			readonly ILineTransformCreator lineTransformCreator;
+			readonly ILineTransformProvider lineTransformProvider;
 			readonly List<PhysicalLine> oldLines;
 			readonly IFormattedLineSource formattedLineSource;
 			readonly ITextViewModel textViewModel;
@@ -46,8 +46,8 @@ namespace dnSpy.Text.Editor {
 			public List<IWpfTextViewLine> TranslatedLines { get; private set; }
 			readonly double requestedViewportTop;
 
-			public LayoutHelper(ILineTransformCreator lineTransformCreator, double newViewportTop, HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
-				this.lineTransformCreator = lineTransformCreator;
+			public LayoutHelper(ILineTransformProvider lineTransformProvider, double newViewportTop, HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
+				this.lineTransformProvider = lineTransformProvider;
 				this.requestedViewportTop = newViewportTop;
 				this.oldLines = oldLines;
 				this.formattedLineSource = formattedLineSource;
@@ -223,7 +223,7 @@ namespace dnSpy.Text.Editor {
 
 			IFormattedLine AddLineTransform(IFormattedLine line, double yPosition, ViewRelativePosition placement) {
 				if (line != null) {
-					var lineTransform = lineTransformCreator.GetLineTransform(line, yPosition, placement);
+					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
 						line.SetLineTransform(lineTransform);
 						line.SetChange(TextViewLineChange.NewOrReformatted);

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Settings {
 	/// <summary>
 	/// Settings section
 	/// </summary>
-	public interface ISettingsSection : ISettingsSectionCreator {
+	public interface ISettingsSection : ISettingsSectionProvider {
 		/// <summary>
 		/// Name of section
 		/// </summary>

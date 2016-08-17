@@ -34,15 +34,15 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class FileTreeViewWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class FileTreeViewWindowContentProvider : IMainToolWindowContentProvider {
 		readonly IFileTreeView fileTreeView;
 
 		FileTreeViewWindowContent FileTreeViewWindowContent => fileTreeViewWindowContent ?? (fileTreeViewWindowContent = new FileTreeViewWindowContent(fileTreeView.TreeView));
 		FileTreeViewWindowContent fileTreeViewWindowContent;
 
 		[ImportingConstructor]
-		FileTreeViewWindowContentCreator(IFileTreeView fileTreeView) {
+		FileTreeViewWindowContentProvider(IFileTreeView fileTreeView) {
 			this.fileTreeView = fileTreeView;
 		}
 

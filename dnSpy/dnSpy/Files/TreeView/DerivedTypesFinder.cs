@@ -27,7 +27,7 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
 
 namespace dnSpy.Files.TreeView {
-	sealed class DerivedTypesFinder : AsyncNodeCreator {
+	sealed class DerivedTypesFinder : AsyncNodeProvider {
 		readonly WeakReference[] weakModules;
 		readonly TypeDef type;
 		readonly ITreeNodeGroup msgNodeGroup;

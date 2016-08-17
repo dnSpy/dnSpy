@@ -31,14 +31,14 @@ namespace dnSpy.Text.Editor {
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[GridCellLength(1.0), GridUnitType(GridUnitType.Star)]
 	sealed class VerticalScrollBarContainerMarginProvider : IWpfTextViewMarginProvider {
-		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
+		readonly IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider;
 
 		[ImportingConstructor]
-		VerticalScrollBarContainerMarginProvider(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator) {
-			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
+		VerticalScrollBarContainerMarginProvider(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider) {
+			this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
 		}
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
-			new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionCreator, wpfTextViewHost, PredefinedMarginNames.VerticalScrollBarContainer, false);
+			new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.VerticalScrollBarContainer, false);
 	}
 }

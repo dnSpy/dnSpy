@@ -27,18 +27,18 @@ using dnSpy.Properties;
 namespace dnSpy.Files.Tabs {
 	[Export(typeof(ISaveManager))]
 	sealed class SaveManager : ISaveManager {
-		readonly ITabSaverCreator[] creators;
+		readonly ITabSaverProvider[] tabSaverProviders;
 
 		[ImportingConstructor]
-		SaveManager([ImportMany] IEnumerable<Lazy<ITabSaverCreator, ITabSaverCreatorMetadata>> mefCreators) {
-			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
+		SaveManager([ImportMany] IEnumerable<Lazy<ITabSaverProvider, ITabSaverProviderMetadata>> tabSaverProviders) {
+			this.tabSaverProviders = tabSaverProviders.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
 		}
 
 		ITabSaver GetTabSaver(IFileTab tab) {
 			if (tab == null)
 				return null;
-			foreach (var creator in creators) {
-				var ts = creator.Create(tab);
+			foreach (var provider in tabSaverProviders) {
+				var ts = provider.Create(tab);
 				if (ts != null)
 					return ts;
 			}

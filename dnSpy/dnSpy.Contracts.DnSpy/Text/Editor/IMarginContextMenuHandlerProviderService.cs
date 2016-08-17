@@ -22,17 +22,17 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Creates a <see cref="IGuidObjectsCreator"/> that uses <see cref="IMarginContextMenuHandler"/>s
+	/// Creates a <see cref="IGuidObjectsProvider"/> that uses <see cref="IMarginContextMenuHandler"/>s
 	/// to create objects.
 	/// </summary>
 	public interface IMarginContextMenuService {
 		/// <summary>
-		/// Creates a <see cref="IGuidObjectsCreator"/>
+		/// Creates a <see cref="IGuidObjectsProvider"/>
 		/// </summary>
 		/// <param name="wpfTextViewHost">Text view host</param>
 		/// <param name="margin">Margin</param>
 		/// <param name="marginName">Margin name</param>
 		/// <returns></returns>
-		IGuidObjectsCreator Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName);
+		IGuidObjectsProvider Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName);
 	}
 }

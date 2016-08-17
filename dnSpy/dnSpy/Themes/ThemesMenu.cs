@@ -26,7 +26,7 @@ using dnSpy.Properties;
 
 namespace dnSpy.Themes {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_THEMES_GUID, Group = MenuConstants.GROUP_APP_MENU_THEMES_THEMES, Order = 0)]
-	sealed class ThemesMenu : MenuItemBase, IMenuItemCreator {
+	sealed class ThemesMenu : MenuItemBase, IMenuItemProvider {
 		readonly ThemeManager themeManager;
 
 		[ImportingConstructor]

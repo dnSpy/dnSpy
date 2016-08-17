@@ -47,7 +47,7 @@ namespace dnSpy.Culture {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.LANGUAGE_GUID, Group = Constants.GROUP_LANGUAGE, Order = 0)]
-	sealed class ShowSupportedLanguagesCommand : MenuItemBase, IMenuItemCreator {
+	sealed class ShowSupportedLanguagesCommand : MenuItemBase, IMenuItemProvider {
 		readonly ICultureManager cultureManager;
 
 		[ImportingConstructor]

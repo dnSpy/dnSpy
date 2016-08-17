@@ -27,15 +27,14 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
-using dnSpy.Shared.Menus;
 
 namespace dnSpy.Scripting.Roslyn.VisualBasic {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class VisualBasicToolWindowContentCreator : ScriptToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class VisualBasicToolWindowContentProvider : ScriptToolWindowContentProvider {
 		readonly Lazy<IVisualBasicContent> visualBasicContent;
 
 		[ImportingConstructor]
-		VisualBasicToolWindowContentCreator(Lazy<IVisualBasicContent> visualBasicContent)
+		VisualBasicToolWindowContentProvider(Lazy<IVisualBasicContent> visualBasicContent)
 			: base(VisualBasicToolWindowContent.THE_GUID) {
 			this.visualBasicContent = visualBasicContent;
 		}

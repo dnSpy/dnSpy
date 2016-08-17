@@ -73,7 +73,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		TabContentImpl CreateNewTab(ITabGroup tabGroup) {
-			var impl = new TabContentImpl(this, fileTabUIContextLocatorCreator.Create(), refFactories, defaultContentFactories);
+			var impl = new TabContentImpl(this, fileTabUIContextLocatorProvider.Create(), referenceFileTabContentProviders, defaultFileTabContentProviders);
 			tabGroup.Add(impl);
 			return impl;
 		}
@@ -146,23 +146,23 @@ namespace dnSpy.Files.Tabs {
 
 		public IFileTabManagerSettings Settings { get; }
 
-		readonly IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator;
+		readonly IFileTabUIContextLocatorProvider fileTabUIContextLocatorProvider;
 		readonly ITabManager tabManager;
 		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
 		readonly IWpfFocusManager wpfFocusManager;
 		readonly IDecompilationCache decompilationCache;
-		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
-		readonly Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>[] defaultContentFactories;
+		readonly Lazy<IReferenceFileTabContentProvider, IReferenceFileTabContentProviderMetadata>[] referenceFileTabContentProviders;
+		readonly Lazy<IDefaultFileTabContentProvider, IDefaultFileTabContentProviderMetadata>[] defaultFileTabContentProviders;
 
 		[ImportingConstructor]
-		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories, [ImportMany] IEnumerable<Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>> defaultContentFactories) {
+		FileTabManager(IFileTabUIContextLocatorProvider fileTabUIContextLocatorProvider, FileTreeView fileTreeView, ITabManagerProvider tabManagerProvider, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentProvider, IReferenceFileTabContentProviderMetadata>> referenceFileTabContentProviders, [ImportMany] IEnumerable<Lazy<IDefaultFileTabContentProvider, IDefaultFileTabContentProviderMetadata>> defaultFileTabContentProviders) {
 			this.Settings = fileTabManagerSettings;
-			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
+			this.fileTabUIContextLocatorProvider = fileTabUIContextLocatorProvider;
 			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
 			this.wpfFocusManager = wpfFocusManager;
 			this.decompilationCache = decompilationCache;
-			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
-			this.defaultContentFactories = defaultContentFactories.OrderBy(a => a.Metadata.Order).ToArray();
+			this.referenceFileTabContentProviders = referenceFileTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.defaultFileTabContentProviders = defaultFileTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			var tvElem = fileTreeView.TreeView.UIObject as UIElement;
 			Debug.Assert(tvElem != null);
 			if (tvElem != null) {
@@ -175,7 +175,7 @@ namespace dnSpy.Files.Tabs {
 			this.FileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
 			this.FileTreeView.NodeActivated += FileTreeView_NodeActivated;
 			this.FileTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
-			this.tabManager = tabManagerCreator.Create();
+			this.tabManager = tabManagerProvider.Create();
 			this.TabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
 			this.TabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
 			this.TabGroupManager.TabGroupSelectionChanged += TabGroupManager_TabGroupSelectionChanged;

@@ -51,7 +51,7 @@
     <Compile Include="ToolWindowControl.xaml.cs">
       <DependentUpon>ToolWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TreeNodeDataCreator.cs" />
+    <Compile Include="TreeNodeDataProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

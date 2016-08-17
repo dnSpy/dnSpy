@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>
 	/// File treeview
 	/// </summary>
-	public interface IFileTreeView : IFileTreeNodeCreator {
+	public interface IFileTreeView : IFileTreeNodeProvider {
 		/// <summary>
 		/// Gets the <see cref="IFileManager"/> instance
 		/// </summary>
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 
 		/// <summary>
 		/// Creates a new <see cref="IDnSpyFileNode"/> instance. This will internally call all
-		/// <see cref="IDnSpyFileNodeCreator"/>s it can find.
+		/// <see cref="IDnSpyFileNodeProvider"/>s it can find.
 		/// </summary>
 		/// <param name="owner">Owner node or null if owner is the root node</param>
 		/// <param name="file">New file</param>

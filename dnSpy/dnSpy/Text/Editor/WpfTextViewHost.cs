@@ -42,9 +42,9 @@ namespace dnSpy.Text.Editor {
 		readonly Grid grid;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
-		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IDnSpyWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
-			if (wpfTextViewMarginProviderCollectionCreator == null)
-				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionCreator));
+		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDnSpyWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
+			if (wpfTextViewMarginProviderCollectionProvider == null)
+				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (editorOperationsFactoryService == null)
@@ -59,11 +59,11 @@ namespace dnSpy.Text.Editor {
 			TextView.BackgroundBrushChanged += TextView_BackgroundBrushChanged;
 
 			this.containerMargins = new IWpfTextViewMargin[5];
-			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Top, true, 0, 0, 3);
-			containerMargins[1] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Bottom, true, 2, 0, 2);
-			containerMargins[2] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.BottomRightCorner, true, 2, 2, 1);
-			containerMargins[3] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Left, false, 1, 0, 1);
-			containerMargins[4] = CreateContainerMargin(wpfTextViewMarginProviderCollectionCreator, PredefinedMarginNames.Right, false, 1, 2, 1);
+			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Top, true, 0, 0, 3);
+			containerMargins[1] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Bottom, true, 2, 0, 2);
+			containerMargins[2] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.BottomRightCorner, true, 2, 2, 1);
+			containerMargins[3] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Left, false, 1, 0, 1);
+			containerMargins[4] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Right, false, 1, 2, 1);
 			Add(TextView.VisualElement, 1, 1, 1);
 			Debug.Assert(!containerMargins.Any(a => a == null));
 
@@ -75,8 +75,8 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		IWpfTextViewMargin CreateContainerMargin(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, string name, bool isHorizontal, int row, int column, int columnSpan) {
-			var margin = new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionCreator, this, name, isHorizontal);
+		IWpfTextViewMargin CreateContainerMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, string name, bool isHorizontal, int row, int column, int columnSpan) {
+			var margin = new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionProvider, this, name, isHorizontal);
 			Add(margin.VisualElement, row, column, columnSpan);
 			margin.VisualElement.AddHandler(MouseDownEvent, new MouseButtonEventHandler(Margin_VisualElement_MouseDown), true);
 			return margin;

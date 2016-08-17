@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Converters {
 					}
 				}
 
-				var gen = ColorizedTextElementCreator.Create(true);
+				var gen = ColorizedTextElementProvider.Create(true);
 				BodyUtils.WriteObject(gen.Output, value, flags);
 				return gen.CreateResult(true, true);
 			}

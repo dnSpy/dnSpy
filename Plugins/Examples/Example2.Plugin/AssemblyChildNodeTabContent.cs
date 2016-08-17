@@ -8,7 +8,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
 // This file adds custom file tab content when the user clicks on our new AssemblyChildNode tree node.
-// This node is created by TreeNodeDataCreator.cs.
+// This node is created by TreeNodeDataProvider.cs.
 
 namespace Example2.Plugin {
 	[ExportFileTabContentFactory]

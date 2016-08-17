@@ -104,14 +104,14 @@ namespace dnSpy.Debugger {
 		readonly ITheDebugger theDebugger;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 
 		public ITheDebugger TheDebugger => theDebugger;
 		public IStackFrameManager StackFrameManager { get; }
 		public IDebuggerSettings DebuggerSettings { get; }
 
 		[ImportingConstructor]
-		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdCreator moduleIdCreator) {
+		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdProvider moduleIdProvider) {
 			this.appWindow = appWindow;
 			this.fileTabManager = fileTabManager;
 			this.messageBoxManager = messageBoxManager;
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger {
 			this.StackFrameManager = stackFrameManager;
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleManager = inMemoryModuleManager;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -1309,7 +1309,7 @@ namespace dnSpy.Debugger {
 				var md = info.Method;
 				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 					continue;
-				var moduleId = moduleIdCreator.Create(md.Module);
+				var moduleId = moduleIdProvider.Create(md.Module);
 				if (!moduleId.Equals(currentLocation.Value.SerializedDnToken.Module))
 					continue;
 

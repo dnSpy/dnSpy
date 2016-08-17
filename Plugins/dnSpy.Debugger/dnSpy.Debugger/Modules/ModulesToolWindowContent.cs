@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Modules {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class ModulesToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class ModulesToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<IModulesContent> modulesContent;
 
 		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ?? (modulesToolWindowContent = new ModulesToolWindowContent(modulesContent));
 		ModulesToolWindowContent modulesToolWindowContent;
 
 		[ImportingConstructor]
-		ModulesToolWindowContentCreator(Lazy<IModulesContent> modulesContent) {
+		ModulesToolWindowContentProvider(Lazy<IModulesContent> modulesContent) {
 			this.modulesContent = modulesContent;
 		}
 

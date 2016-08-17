@@ -26,9 +26,9 @@ namespace dnSpy.BamlDecompiler {
 		public object Create(IToolTipProviderContext context, object @ref) {
 			var bref = @ref as BamlToolTipReference;
 			if (bref != null) {
-				var creator = context.Create();
-				creator.Output.Write(BoxedTextColor.Text, bref.String);
-				return creator.Create();
+				var provider = context.Create();
+				provider.Output.Write(BoxedTextColor.Text, bref.String);
+				return provider.Create();
 			}
 
 			return null;

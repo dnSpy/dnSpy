@@ -43,12 +43,12 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected abstract string AppearanceCategory { get; }
 		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
-		readonly ICodeEditorCreator codeEditorCreator;
+		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
 		AdhocWorkspace workspace;
 
-		protected RoslynLanguageCompiler(ICodeEditorCreator codeEditorCreator) {
-			this.codeEditorCreator = codeEditorCreator;
+		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider) {
+			this.codeEditorProvider = codeEditorProvider;
 			this.documents = new List<RoslynCodeDocument>();
 		}
 
@@ -93,7 +93,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension) {
 			var options = new CodeEditorOptions();
 			options.ContentTypeString = ContentType;
-			var codeEditor = codeEditorCreator.Create(options);
+			var codeEditor = codeEditorProvider.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 

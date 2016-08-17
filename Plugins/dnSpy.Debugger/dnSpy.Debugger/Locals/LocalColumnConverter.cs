@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Locals {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = ColorizedTextElementCreator.Create(vm.PrinterContext.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(vm.PrinterContext.SyntaxHighlight);
 			var printer = new ValuePrinter(gen.Output, vm.PrinterContext.UseHexadecimal);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

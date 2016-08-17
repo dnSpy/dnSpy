@@ -32,7 +32,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Languages.IL;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
-	[ExportToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
+	[ExportToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
 	sealed class DnlibReferenceToolTipProvider : IToolTipProvider {
 		public object Create(IToolTipProviderContext context, object @ref) {
 			if (@ref is GenericParam)
@@ -95,21 +95,21 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		}
 
 		object Create(IToolTipProviderContext context, GenericParam gp) {
-			var creator = context.Create();
-			creator.SetImage(gp);
+			var provider = context.Create();
+			provider.SetImage(gp);
 
-			context.Language.WriteToolTip(creator.Output, gp, null);
+			context.Language.WriteToolTip(provider.Output, gp, null);
 
-			creator.CreateNewOutput();
+			provider.CreateNewOutput();
 			try {
 				var docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
 				if (docProvider != null) {
-					if (!creator.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
+					if (!provider.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
 						// If there's no doc available, use the parent class' documentation if this
 						// is a generic type parameter (and not a generic method parameter).
 						var owner = ((TypeDef)gp.Owner).DeclaringType;
 						while (owner != null) {
-							if (creator.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
+							if (provider.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
 								break;
 							owner = owner.DeclaringType;
 						}
@@ -119,34 +119,34 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			catch (XmlException) {
 			}
 
-			return creator.Create();
+			return provider.Create();
 		}
 
 		object Create(IToolTipProviderContext context, NamespaceReference nsRef) {
-			var creator = context.Create();
-			creator.SetImage(nsRef);
-			context.Language.WriteNamespaceToolTip(creator.Output, nsRef.Namespace);
-			return creator.Create();
+			var provider = context.Create();
+			provider.SetImage(nsRef);
+			context.Language.WriteNamespaceToolTip(provider.Output, nsRef.Namespace);
+			return provider.Create();
 		}
 
 		object Create(IToolTipProviderContext context, IMemberRef @ref) {
-			var creator = context.Create();
+			var provider = context.Create();
 
 			var resolvedRef = Resolve(@ref) ?? @ref;
-			creator.SetImage(resolvedRef);
-			context.Language.WriteToolTip(creator.Output, @ref, null);
-			creator.CreateNewOutput();
+			provider.SetImage(resolvedRef);
+			context.Language.WriteToolTip(provider.Output, @ref, null);
+			provider.CreateNewOutput();
 			try {
 				if (resolvedRef is IMemberDef) {
 					var docProvider = XmlDocLoader.LoadDocumentation(resolvedRef.Module);
 					if (docProvider != null)
-						creator.Output.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
+						provider.Output.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
 				}
 			}
 			catch (XmlException) {
 			}
 
-			return creator.Create();
+			return provider.Create();
 		}
 
 		object Create(IToolTipProviderContext context, Local local) {
@@ -166,28 +166,28 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 
 		object Create(IToolTipProviderContext context, Parameter p) => Create(context, p, null);
 		object Create(IToolTipProviderContext context, IVariable v, string name) {
-			var creator = context.Create();
-			creator.SetImage(v);
+			var provider = context.Create();
+			provider.SetImage(v);
 
 			if (v == null) {
 				if (name == null)
 					return null;
-				creator.Output.Write(BoxedTextColor.Text, string.Format("(local variable) {0}", name));
-				return creator.Create();
+				provider.Output.Write(BoxedTextColor.Text, string.Format("(local variable) {0}", name));
+				return provider.Create();
 			}
 
-			context.Language.WriteToolTip(creator.Output, v, name);
+			context.Language.WriteToolTip(provider.Output, v, name);
 
-			creator.CreateNewOutput();
+			provider.CreateNewOutput();
 			if (v is Parameter) {
 				var method = ((Parameter)v).Method;
 				try {
 					var docProvider = XmlDocLoader.LoadDocumentation(method.Module);
 					if (docProvider != null) {
-						if (!creator.Output.WriteXmlDocParameter(GetDocumentation(docProvider, method), v.Name)) {
+						if (!provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, method), v.Name)) {
 							var owner = method.DeclaringType;
 							while (owner != null) {
-								if (creator.Output.WriteXmlDocParameter(GetDocumentation(docProvider, owner), v.Name))
+								if (provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, owner), v.Name))
 									break;
 								owner = owner.DeclaringType;
 							}
@@ -198,25 +198,25 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				}
 			}
 
-			return creator.Create();
+			return provider.Create();
 		}
 
 		object Create(IToolTipProviderContext context, OpCode opCode) {
-			var creator = context.Create();
+			var provider = context.Create();
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
 			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
-			creator.Output.Write(BoxedTextColor.OpCode, opCode.Name);
-			creator.Output.WriteSpace();
-			creator.Output.Write(BoxedTextColor.Punctuation, "(");
-			creator.Output.Write(BoxedTextColor.Number, opCodeHex);
-			creator.Output.Write(BoxedTextColor.Punctuation, ")");
+			provider.Output.Write(BoxedTextColor.OpCode, opCode.Name);
+			provider.Output.WriteSpace();
+			provider.Output.Write(BoxedTextColor.Punctuation, "(");
+			provider.Output.Write(BoxedTextColor.Number, opCodeHex);
+			provider.Output.Write(BoxedTextColor.Punctuation, ")");
 			if (s != null) {
-				creator.Output.Write(BoxedTextColor.Text, " - ");
-				creator.Output.Write(BoxedTextColor.Text, s);
+				provider.Output.Write(BoxedTextColor.Text, " - ");
+				provider.Output.Write(BoxedTextColor.Text, s);
 			}
 
-			return creator.Create();
+			return provider.Create();
 		}
 	}
 }

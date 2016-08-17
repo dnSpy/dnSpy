@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Annotations.cs" />
     <Compile Include="BamlDecompiler.cs" />
-    <Compile Include="BamlTabSaverCreator.cs" />
+    <Compile Include="BamlTabSaver.cs" />
     <Compile Include="BamlToolTipProvider.cs" />
     <Compile Include="Baml\KnownThings.cs" />
     <Compile Include="Baml\KnownMembers.cs" />
@@ -106,7 +106,7 @@
     <Compile Include="BamlDisassembler.cs" />
     <Compile Include="BamlElement.cs" />
     <Compile Include="BamlResourceElementNode.cs" />
-    <Compile Include="BamlResourceNodeCreator.cs" />
+    <Compile Include="BamlResourceNodeProvider.cs" />
     <Compile Include="Baml\BamlContext.cs" />
     <Compile Include="Baml\BamlDocument.cs" />
     <Compile Include="Baml\BamlNode.cs" />

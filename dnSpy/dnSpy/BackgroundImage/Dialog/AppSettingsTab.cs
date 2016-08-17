@@ -33,14 +33,14 @@ using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.BackgroundImage.Dialog {
-	[Export(typeof(IAppSettingsTabCreator))]
-	sealed class AppSettingsTabCreator : IAppSettingsTabCreator {
+	[Export(typeof(IAppSettingsTabProvider))]
+	sealed class AppSettingsTabProvider : IAppSettingsTabProvider {
 		readonly IBackgroundImageSettingsService backgroundImageSettingsService;
 		readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
 		[ImportingConstructor]
-		AppSettingsTabCreator(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		AppSettingsTabProvider(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory) {
 			this.backgroundImageSettingsService = backgroundImageSettingsService;
 			this.pickFilename = pickFilename;
 			this.pickDirectory = pickDirectory;

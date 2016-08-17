@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Threads {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class ThreadsToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class ThreadsToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<IThreadsContent> threadsContent;
 
 		public ThreadsToolWindowContent ThreadsToolWindowContent => threadsToolWindowContent ?? (threadsToolWindowContent = new ThreadsToolWindowContent(threadsContent));
 		ThreadsToolWindowContent threadsToolWindowContent;
 
 		[ImportingConstructor]
-		ThreadsToolWindowContentCreator(Lazy<IThreadsContent> threadsContent) {
+		ThreadsToolWindowContentProvider(Lazy<IThreadsContent> threadsContent) {
 			this.threadsContent = threadsContent;
 		}
 

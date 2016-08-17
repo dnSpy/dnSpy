@@ -73,7 +73,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
-		readonly Lazy<IToolTipProvider, IToolTipProviderMetadata>[] creators;
+		readonly Lazy<IToolTipProvider, IToolTipProviderMetadata>[] toolTipProviders;
 		readonly IDocumentViewer documentViewer;
 		ToolTip toolTip;
 		SpanData<ReferenceInfo>? currentReference;
@@ -92,7 +92,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
 			this.codeToolTipSettings = codeToolTipSettings;
-			this.creators = toolTipProviders;
+			this.toolTipProviders = toolTipProviders;
 			this.documentViewer = documentViewer;
 			documentViewer.TextView.Closed += TextView_Closed;
 			documentViewer.TextView.MouseHover += TextView_MouseHover;
@@ -172,8 +172,8 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				return null;
 
 			var ctx = new ToolTipProviderContext(imageManager, dotNetImageManager, language, codeToolTipSettings, documentViewer);
-			foreach (var creator in creators) {
-				var toolTipContent = creator.Value.Create(ctx, @ref);
+			foreach (var provider in toolTipProviders) {
+				var toolTipContent = provider.Value.Create(ctx, @ref);
 				if (toolTipContent != null)
 					return toolTipContent;
 			}

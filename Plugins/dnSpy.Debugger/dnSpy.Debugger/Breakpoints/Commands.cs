@@ -212,28 +212,28 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class GoToSourceBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IFileTabManager fileTabManager;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		GoToSourceBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdCreator moduleIdCreator)
+		GoToSourceBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdProvider moduleIdProvider)
 			: base(breakpointsContent) {
 			this.moduleLoader = moduleLoader;
 			this.fileTabManager = fileTabManager;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
-				GoTo(moduleIdCreator, fileTabManager, moduleLoader, context.SelectedItems[0], false);
+				GoTo(moduleIdProvider, fileTabManager, moduleLoader, context.SelectedItems[0], false);
 		}
 
-		internal static void GoTo(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, BreakpointVM vm, bool newTab) {
+		internal static void GoTo(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, BreakpointVM vm, bool newTab) {
 			if (vm == null)
 				return;
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp == null)
 				return;
-			DebugUtils.GoToIL(moduleIdCreator, fileTabManager, moduleLoader.Value, ilbp.MethodToken.Module, ilbp.MethodToken.Token, ilbp.ILOffset, newTab);
+			DebugUtils.GoToIL(moduleIdProvider, fileTabManager, moduleLoader.Value, ilbp.MethodToken.Module, ilbp.MethodToken.Token, ilbp.ILOffset, newTab);
 		}
 
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
@@ -243,19 +243,19 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class GoToSourceNewTabBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IFileTabManager fileTabManager;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		GoToSourceNewTabBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdCreator moduleIdCreator)
+		GoToSourceNewTabBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdProvider moduleIdProvider)
 			: base(breakpointsContent) {
 			this.moduleLoader = moduleLoader;
 			this.fileTabManager = fileTabManager;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
-				GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdCreator, fileTabManager, moduleLoader, context.SelectedItems[0], true);
+				GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, fileTabManager, moduleLoader, context.SelectedItems[0], true);
 		}
 
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;

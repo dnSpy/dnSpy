@@ -377,7 +377,7 @@ namespace dnSpy.Contracts.Hex {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.BYTES_PER_LINE_GUID, Group = Constants.GROUP_BYTES_PER_LINE, Order = 0)]
-	sealed class BytesPerLineSubCtxMenuCommand : HexBoxCommand, IMenuItemCreator {
+	sealed class BytesPerLineSubCtxMenuCommand : HexBoxCommand, IMenuItemProvider {
 		public override void Execute(DnHexBox context) { }
 
 		static readonly Tuple<int?, string>[] subMenus = new Tuple<int?, string>[] {
@@ -412,7 +412,7 @@ namespace dnSpy.Contracts.Hex {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.ENCODING_GUID, Group = Constants.GROUP_ENCODING, Order = 0)]
-	sealed class EncodingSubCtxMenuCommand : HexBoxCommand, IMenuItemCreator {
+	sealed class EncodingSubCtxMenuCommand : HexBoxCommand, IMenuItemProvider {
 		public override void Execute(DnHexBox context) { }
 
 		static readonly Tuple<AsciiEncoding?, string>[] subMenus = new Tuple<AsciiEncoding?, string>[] {

@@ -31,22 +31,22 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="elem">Element that needs a context menu</param>
 		/// <param name="guid">Guid of <paramref name="elem"/></param>
-		/// <param name="creator">A <see cref="IGuidObjectsCreator"/> instance or null</param>
+		/// <param name="provider">A <see cref="IGuidObjectsProvider"/> instance or null</param>
 		/// <param name="initCtxMenu">A <see cref="IContextMenuInitializer"/> instance or null</param>
 		/// <param name="ctxMenuGuid">Guid of context menu, default is <see cref="MenuConstants.CTX_MENU_GUID"/></param>
 		/// <returns></returns>
-		IContextMenuCreator InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsCreator creator = null, IContextMenuInitializer initCtxMenu = null, Guid? ctxMenuGuid = null);
+		IContextMenuProvider InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsProvider provider = null, IContextMenuInitializer initCtxMenu = null, Guid? ctxMenuGuid = null);
 
 		/// <summary>
 		/// Initializes a context menu. Should be called when <paramref name="elem"/> has been created.
 		/// </summary>
 		/// <param name="elem">Element that needs a context menu</param>
 		/// <param name="guid">Guid of <paramref name="elem"/></param>
-		/// <param name="creator">A <see cref="IGuidObjectsCreator"/> instance or null</param>
+		/// <param name="provider">A <see cref="IGuidObjectsProvider"/> instance or null</param>
 		/// <param name="initCtxMenu">A <see cref="IContextMenuInitializer"/> instance or null</param>
 		/// <param name="ctxMenuGuid">Guid of context menu, default is <see cref="MenuConstants.CTX_MENU_GUID"/></param>
 		/// <returns></returns>
-		IContextMenuCreator InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator = null, IContextMenuInitializer initCtxMenu = null, string ctxMenuGuid = null);
+		IContextMenuProvider InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsProvider provider = null, IContextMenuInitializer initCtxMenu = null, string ctxMenuGuid = null);
 
 		/// <summary>
 		/// Creates a <see cref="Menu"/>

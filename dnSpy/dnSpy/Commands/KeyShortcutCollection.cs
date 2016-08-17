@@ -25,40 +25,40 @@ using dnSpy.Contracts.Command;
 namespace dnSpy.Commands {
 	sealed class KeyShortcutCollection {
 		readonly HashSet<KeyInput> twoKeyCombos;
-		readonly Dictionary<KeyShortcut, List<CreatorAndCommand>> dict;
+		readonly Dictionary<KeyShortcut, List<ProviderAndCommand>> dict;
 
 		public KeyShortcutCollection() {
 			this.twoKeyCombos = new HashSet<KeyInput>();
-			this.dict = new Dictionary<KeyShortcut, List<CreatorAndCommand>>();
+			this.dict = new Dictionary<KeyShortcut, List<ProviderAndCommand>>();
 		}
 
-		public void Add(ICommandInfoCreator creator, object target) {
-			foreach (var t in creator.GetCommandShortcuts(target)) {
-				List<CreatorAndCommand> list;
+		public void Add(ICommandInfoProvider provider, object target) {
+			foreach (var t in provider.GetCommandShortcuts(target)) {
+				List<ProviderAndCommand> list;
 				if (!dict.TryGetValue(t.KeyShortcut, out list))
-					dict.Add(t.KeyShortcut, list = new List<CreatorAndCommand>());
-				list.Add(new CreatorAndCommand(creator, t.CommandInfo));
+					dict.Add(t.KeyShortcut, list = new List<ProviderAndCommand>());
+				list.Add(new ProviderAndCommand(provider, t.CommandInfo));
 				if (t.KeyShortcut.HasTwoKeyInputs)
 					twoKeyCombos.Add(t.KeyShortcut.KeyInput1);
 			}
 		}
 
-		public IEnumerable<CreatorAndCommand> GetTwoKeyShortcuts(KeyShortcut keyShortcut) {
+		public IEnumerable<ProviderAndCommand> GetTwoKeyShortcuts(KeyShortcut keyShortcut) {
 			Debug.Assert(keyShortcut.HasTwoKeyInputs);
-			List<CreatorAndCommand> list;
+			List<ProviderAndCommand> list;
 			if (dict.TryGetValue(keyShortcut, out list))
 				return list;
-			return Array.Empty<CreatorAndCommand>();
+			return Array.Empty<ProviderAndCommand>();
 		}
 
 		public bool IsTwoKeyCombo(KeyInput keyInput) => twoKeyCombos.Contains(keyInput);
 
-		public IEnumerable<CreatorAndCommand> GetOneKeyShortcuts(KeyInput keyInput) {
+		public IEnumerable<ProviderAndCommand> GetOneKeyShortcuts(KeyInput keyInput) {
 			var keyShortcut = new KeyShortcut(keyInput, KeyInput.Default);
-			List<CreatorAndCommand> list;
+			List<ProviderAndCommand> list;
 			if (dict.TryGetValue(keyShortcut, out list))
 				return list;
-			return Array.Empty<CreatorAndCommand>();
+			return Array.Empty<ProviderAndCommand>();
 		}
 	}
 }

@@ -35,7 +35,7 @@ namespace Example2.Plugin {
 		}
 	}
 
-	// Dummy dependency "needed" by MainToolWindowContentCreator
+	// Dummy dependency "needed" by MainToolWindowContentProvider
 	[Export]
 	sealed class DeppDep {
 		public void Hello() {
@@ -43,15 +43,15 @@ namespace Example2.Plugin {
 	}
 
 	// Called by dnSpy to create the tool window
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class MainToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class MainToolWindowContentProvider : IMainToolWindowContentProvider {
 		// Caches the created tool window
 		ToolWindowContent ToolWindowContent => myToolWindowContent ?? (myToolWindowContent = new ToolWindowContent());
 		ToolWindowContent myToolWindowContent;
 
 		// Add any deps to the constructor if needed, else remove the constructor
 		[ImportingConstructor]
-		MainToolWindowContentCreator(DeppDep deppDep) {
+		MainToolWindowContentProvider(DeppDep deppDep) {
 			deppDep.Hello();
 		}
 

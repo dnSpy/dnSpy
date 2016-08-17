@@ -28,7 +28,7 @@ namespace dnSpy.Scripting.Roslyn.Commands {
 		public static readonly Guid RoslynReplGroup = new Guid("75758152-7214-4C5C-8F5C-180441233B46");
 
 		/// <summary>
-		/// Order of Roslyn REPL editor <see cref="ICommandInfoCreator"/>
+		/// Order of Roslyn REPL editor <see cref="ICommandInfoProvider"/>
 		/// </summary>
 		public const double CMDINFO_ORDER_ROSLYN_REPL = CommandConstants.CMDINFO_ORDER_REPL - 100;
 

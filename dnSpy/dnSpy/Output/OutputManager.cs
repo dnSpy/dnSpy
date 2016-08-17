@@ -128,7 +128,7 @@ namespace dnSpy.Output {
 
 		public ObservableCollection<OutputBufferVM> OutputBuffers => outputBuffers;
 		readonly ObservableCollection<OutputBufferVM> outputBuffers;
-		readonly ILogEditorCreator logEditorCreator;
+		readonly ILogEditorProvider logEditorProvider;
 		readonly OutputManagerSettingsImpl outputManagerSettingsImpl;
 		readonly IPickSaveFilename pickSaveFilename;
 		Guid prevSelectedGuid;
@@ -136,9 +136,9 @@ namespace dnSpy.Output {
 		readonly IMenuManager menuManager;
 
 		[ImportingConstructor]
-		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuManager menuManager, [ImportMany] IEnumerable<Lazy<IOutputManagerListener, IOutputManagerListenerMetadata>> outputManagerListeners) {
+		OutputManager(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuManager menuManager, [ImportMany] IEnumerable<Lazy<IOutputManagerListener, IOutputManagerListenerMetadata>> outputManagerListeners) {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
-			this.logEditorCreator = logEditorCreator;
+			this.logEditorProvider = logEditorProvider;
 			this.outputManagerSettingsImpl = outputManagerSettingsImpl;
 			this.prevSelectedGuid = outputManagerSettingsImpl.SelectedGuid;
 			this.pickSaveFilename = pickSaveFilename;
@@ -193,7 +193,7 @@ namespace dnSpy.Output {
 				CreateGuidObjects = args => CreateGuidObjects(args),
 			};
 			logEditorOptions.ExtraRoles.Add(PredefinedDnSpyTextViewRoles.OutputTextPane);
-			var logEditor = logEditorCreator.Create(logEditorOptions);
+			var logEditor = logEditorProvider.Create(logEditorOptions);
 			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
 
 			// Prevent toolwindow's ctx menu from showing up when right-clicking in the left margin
@@ -209,7 +209,7 @@ namespace dnSpy.Output {
 			return vm;
 		}
 
-		IEnumerable<GuidObject> CreateGuidObjects(GuidObjectsCreatorArgs args) {
+		IEnumerable<GuidObject> CreateGuidObjects(GuidObjectsProviderArgs args) {
 			yield return new GuidObject(MenuConstants.GUIDOBJ_OUTPUT_MANAGER_GUID, this);
 			var vm = SelectedOutputBufferVM as IOutputTextPane;
 			if (vm != null)

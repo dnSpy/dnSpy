@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Exceptions {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new ExceptionPrinter(gen.Output);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

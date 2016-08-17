@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Analyzer {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class AnalyzerToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class AnalyzerToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<IAnalyzerManager> analyzerManager;
 
 		public AnalyzerToolWindowContent FileTreeViewWindowContent => analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerManager));
 		AnalyzerToolWindowContent analyzerToolWindowContent;
 
 		[ImportingConstructor]
-		AnalyzerToolWindowContentCreator(Lazy<IAnalyzerManager> analyzerManager) {
+		AnalyzerToolWindowContentProvider(Lazy<IAnalyzerManager> analyzerManager) {
 			this.analyzerManager = analyzerManager;
 		}
 

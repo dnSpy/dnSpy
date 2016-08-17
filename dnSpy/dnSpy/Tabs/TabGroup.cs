@@ -204,17 +204,17 @@ namespace dnSpy.Tabs {
 		readonly IWpfFocusManager wpfFocusManager;
 		readonly TabGroupManagerOptions options;
 
-		public IContextMenuCreator ContextMenuCreator => contextMenuCreator;
-		readonly IContextMenuCreator contextMenuCreator;
+		public IContextMenuProvider ContextMenuProvider => contextMenuProvider;
+		readonly IContextMenuProvider contextMenuProvider;
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly TabGroup tabGroup;
 
-			public GuidObjectsCreator(TabGroup tabGroup) {
+			public GuidObjectsProvider(TabGroup tabGroup) {
 				this.tabGroup = tabGroup;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TABGROUP_GUID, tabGroup);
 			}
 		}
@@ -230,9 +230,9 @@ namespace dnSpy.Tabs {
 			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
 			this.tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
 			if (options.InitializeContextMenu != null)
-				this.contextMenuCreator = options.InitializeContextMenu(menuManager, this, this.tabControl);
+				this.contextMenuProvider = options.InitializeContextMenu(menuManager, this, this.tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
-				this.contextMenuCreator = menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsCreator(this));
+				this.contextMenuProvider = menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
 		}
 
 		void TabControl_PreviewKeyDown(object sender, KeyEventArgs e) {

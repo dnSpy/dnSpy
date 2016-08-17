@@ -23,12 +23,12 @@ using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Files.Tabs {
 	sealed class FileTabUIContextLocator : IFileTabUIContextLocator, IDisposable {
-		readonly Lazy<IFileTabUIContextCreator, IFileTabUIContextCreatorMetadata>[] creators;
+		readonly Lazy<IFileTabUIContextProvider, IFileTabUIContextProviderMetadata>[] fileTabUIContextProviders;
 		readonly Dictionary<object, WeakReference> weakCachedInstances;
 		readonly Dictionary<object, object> strongCachedInstances;
 
-		public FileTabUIContextLocator(Lazy<IFileTabUIContextCreator, IFileTabUIContextCreatorMetadata>[] creators) {
-			this.creators = creators;
+		public FileTabUIContextLocator(Lazy<IFileTabUIContextProvider, IFileTabUIContextProviderMetadata>[] fileTabUIContextProviders) {
+			this.fileTabUIContextProviders = fileTabUIContextProviders;
 			this.weakCachedInstances = new Dictionary<object, WeakReference>();
 			this.strongCachedInstances = new Dictionary<object, object>();
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		ReferenceResult<T> Create<T>() where T : class, IFileTabUIContext {
-			foreach (var c in creators) {
+			foreach (var c in fileTabUIContextProviders) {
 				var t = c.Value.Create<T>() as T;
 				if (t != null)
 					return new ReferenceResult<T>(t, c.Metadata.UseStrongReference);

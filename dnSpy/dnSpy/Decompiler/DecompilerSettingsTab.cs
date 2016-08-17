@@ -31,19 +31,19 @@ namespace dnSpy.Decompiler {
 		public string LastSelectedSettingsName { get; set; }
 	}
 
-	[Export(typeof(IAppSettingsTabCreator))]
-	sealed class DecompilerAppSettingsTabCreator : IAppSettingsTabCreator {
-		readonly Lazy<IDecompilerSettingsTabCreator>[] creators;
+	[Export(typeof(IAppSettingsTabProvider))]
+	sealed class DecompilerAppSettingsTabProvider : IAppSettingsTabProvider {
+		readonly Lazy<IDecompilerSettingsTabProvider>[] decompilerSettingsTabProviders;
 		readonly DecompilerAppSettingsTabSettings decompilerAppSettingsTabSettings;
 
 		[ImportingConstructor]
-		DecompilerAppSettingsTabCreator([ImportMany] IEnumerable<Lazy<IDecompilerSettingsTabCreator>> creators) {
-			this.creators = creators.ToArray();
+		DecompilerAppSettingsTabProvider([ImportMany] IEnumerable<Lazy<IDecompilerSettingsTabProvider>> decompilerSettingsTabProviders) {
+			this.decompilerSettingsTabProviders = decompilerSettingsTabProviders.ToArray();
 			this.decompilerAppSettingsTabSettings = new DecompilerAppSettingsTabSettings();
 		}
 
 		public IEnumerable<IAppSettingsTab> Create() {
-			var settings = creators.SelectMany(a => a.Value.Create()).OrderBy(a => a.Order).ToArray();
+			var settings = decompilerSettingsTabProviders.SelectMany(a => a.Value.Create()).OrderBy(a => a.Order).ToArray();
 			if (settings.Length > 0)
 				yield return new DecompilerAppSettingsTab(settings, decompilerAppSettingsTabSettings);
 		}

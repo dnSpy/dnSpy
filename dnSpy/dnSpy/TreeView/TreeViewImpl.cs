@@ -127,9 +127,9 @@ namespace dnSpy.TreeView {
 		internal void AddChildren(TreeNodeImpl impl) {
 			foreach (var data in impl.Data.CreateChildren())
 				AddSorted(impl, Create(data));
-			foreach (var creator in treeViewManager.GetCreators(impl.Data.Guid)) {
-				var context = new TreeNodeDataCreatorContext(impl);
-				foreach (var data in creator.Create(context))
+			foreach (var provider in treeViewManager.GetProviders(impl.Data.Guid)) {
+				var context = new TreeNodeDataProviderContext(impl);
+				foreach (var data in provider.Create(context))
 					AddSorted(impl, Create(data));
 			}
 		}

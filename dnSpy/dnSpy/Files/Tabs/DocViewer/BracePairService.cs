@@ -77,12 +77,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void RaiseTagsChanged(SnapshotSpan span) => TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(span));
 	}
 
-	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 100)]
-	sealed class BracePairCommandTargetFilterCreator : ICommandTargetFilterCreator {
+	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 100)]
+	sealed class BracePairCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<IBracePairServiceProvider> bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairCommandTargetFilterCreator(Lazy<IBracePairServiceProvider> bracePairServiceProvider) {
+		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) {
 			this.bracePairServiceProvider = bracePairServiceProvider;
 		}
 

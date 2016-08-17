@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
-	/// Created by <see cref="IReferenceFileTabContentCreator"/>
+	/// Created by <see cref="IReferenceFileTabContentProvider"/>
 	/// </summary>
 	public sealed class FileTabReferenceResult {
 		/// <summary>

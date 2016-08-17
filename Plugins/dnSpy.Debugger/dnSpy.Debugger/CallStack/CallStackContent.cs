@@ -52,16 +52,16 @@ namespace dnSpy.Debugger.CallStack {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		CallStackContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, ICallStackVM callStackVM, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdCreator moduleIdCreator) {
+		CallStackContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, ICallStackVM callStackVM, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
 			this.callStackControl = new CallStackControl();
 			this.vmCallStack = callStackVM;
 			this.stackFrameManager = stackFrameManager;
 			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 			this.callStackControl.DataContext = this.vmCallStack;
 			this.callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		void CallStackControl_CallStackListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdCreator, stackFrameManager.Value, fileTabManager, moduleLoader.Value, callStackControl.ListView.SelectedItem as CallStackFrameVM, newTab);
+			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdProvider, stackFrameManager.Value, fileTabManager, moduleLoader.Value, callStackControl.ListView.SelectedItem as CallStackFrameVM, newTab);
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmCallStack.RefreshThemeFields();

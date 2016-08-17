@@ -30,18 +30,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
-	[Export(typeof(ILanguageCompilerCreator))]
-	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerCreator {
+	[Export(typeof(ILanguageCompilerProvider))]
+	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerProvider {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "VisualBasicFile");
 		public Guid Language => LanguageConstants.LANGUAGE_VISUALBASIC;
-		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorCreator);
+		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorProvider);
 
-		readonly ICodeEditorCreator codeEditorCreator;
+		readonly ICodeEditorProvider codeEditorProvider;
 
 		[ImportingConstructor]
-		VisualBasicLanguageCompilerCreator(ICodeEditorCreator codeEditorCreator) {
-			this.codeEditorCreator = codeEditorCreator;
+		VisualBasicLanguageCompilerCreator(ICodeEditorProvider codeEditorProvider) {
+			this.codeEditorProvider = codeEditorProvider;
 		}
 	}
 
@@ -57,8 +57,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 		};
 
-		public VisualBasicLanguageCompiler(ICodeEditorCreator codeEditorCreator)
-			: base(codeEditorCreator) {
+		public VisualBasicLanguageCompiler(ICodeEditorProvider codeEditorProvider)
+			: base(codeEditorProvider) {
 		}
 	}
 }

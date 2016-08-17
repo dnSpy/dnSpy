@@ -32,7 +32,7 @@ namespace dnSpy.Files {
 		readonly object lockObj;
 		readonly List<IDnSpyFile> files;
 		readonly List<IDnSpyFile> tempCache;
-		readonly IDnSpyFileCreator[] dnSpyFileCreators;
+		readonly IDnSpyFileProvider[] dnSpyFileProviders;
 
 		public IAssemblyResolver AssemblyResolver { get; }
 
@@ -59,12 +59,12 @@ namespace dnSpy.Files {
 		public IFileManagerSettings Settings { get; }
 
 		[ImportingConstructor]
-		public FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
+		public FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileProvider[] dnSpyFileProviders) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
 			this.tempCache = new List<IDnSpyFile>();
 			this.AssemblyResolver = new AssemblyResolver(this);
-			this.dnSpyFileCreators = mefCreators.OrderBy(a => a.Order).ToArray();
+			this.dnSpyFileProviders = dnSpyFileProviders.OrderBy(a => a.Order).ToArray();
 			this.Settings = fileManagerSettings;
 		}
 
@@ -240,14 +240,14 @@ namespace dnSpy.Files {
 		static void Dispose(IDnSpyFile file) => (file as IDisposable)?.Dispose();
 
 		IDnSpyFilenameKey TryCreateKey(DnSpyFileInfo info) {
-			foreach (var creator in dnSpyFileCreators) {
+			foreach (var provider in dnSpyFileProviders) {
 				try {
-					var key = creator.CreateKey(this, info);
+					var key = provider.CreateKey(this, info);
 					if (key != null)
 						return key;
 				}
 				catch (Exception ex) {
-					Debug.WriteLine(string.Format("IDnSpyFileCreator ({0}) failed with an exception: {1}", creator.GetType(), ex.Message));
+					Debug.WriteLine($"{nameof(IDnSpyFileProvider)} ({provider.GetType()}) failed with an exception: {ex.Message}");
 				}
 			}
 
@@ -255,14 +255,14 @@ namespace dnSpy.Files {
 		}
 
 		internal IDnSpyFile TryCreateDnSpyFile(DnSpyFileInfo info) {
-			foreach (var creator in dnSpyFileCreators) {
+			foreach (var provider in dnSpyFileProviders) {
 				try {
-					var file = creator.Create(this, info);
+					var file = provider.Create(this, info);
 					if (file != null)
 						return file;
 				}
 				catch (Exception ex) {
-					Debug.WriteLine(string.Format("IDnSpyFileCreator ({0}) failed with an exception: {1}", creator.GetType(), ex.Message));
+					Debug.WriteLine($"{nameof(IDnSpyFileProvider)} ({provider.GetType()}) failed with an exception: {ex.Message}");
 				}
 			}
 

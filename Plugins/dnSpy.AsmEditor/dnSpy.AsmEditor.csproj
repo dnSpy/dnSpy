@@ -105,7 +105,7 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Hex\AsmEdHexDocument.cs" />
     <Compile Include="Commands\AsmEditorContext.cs" />
-    <Compile Include="Hex\HexAddressReferenceFileTabContentCreator.cs" />
+    <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
     <Compile Include="Hex\HexBoxFileTabContent.cs" />
     <Compile Include="Hex\HexBoxUIState.cs" />
     <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
@@ -137,7 +137,7 @@
     <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
     <Compile Include="Hex\Nodes\MetaDataTableVM.cs" />
     <Compile Include="Hex\Nodes\PENode.cs" />
-    <Compile Include="Hex\Nodes\PETreeNodeDataCreator.cs" />
+    <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
     <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
     <Compile Include="Hex\Nodes\StorageHeaderVM.cs" />
     <Compile Include="Hex\Nodes\StorageSignatureNode.cs" />
@@ -146,7 +146,7 @@
     <Compile Include="Hex\Nodes\StorageStreamVM.cs" />
     <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
     <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
-    <Compile Include="Hex\Nodes\TokenReferenceFileTabContentCreator.cs" />
+    <Compile Include="Hex\Nodes\TokenReferenceFileTabContentProvider.cs" />
     <Compile Include="Hex\Nodes\VirtualizedList.cs" />
     <Compile Include="MethodBody\BodyCommandUtils.cs" />
     <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">

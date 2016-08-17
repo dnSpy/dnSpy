@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Properties;
 
 namespace dnSpy.Search {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class SearchToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class SearchToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<ISearchManager> searchManager;
 
 		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchManager));
 		SearchToolWindowContent searchToolWindowContent;
 
 		[ImportingConstructor]
-		SearchToolWindowContentCreator(Lazy<ISearchManager> searchManager) {
+		SearchToolWindowContentProvider(Lazy<ISearchManager> searchManager) {
 			this.searchManager = searchManager;
 		}
 

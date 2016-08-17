@@ -27,13 +27,13 @@ using dnSpy.Contracts.Command;
 namespace dnSpy.Commands {
 	[Export(typeof(ICommandManager))]
 	sealed class CommandManager : ICommandManager {
-		readonly Lazy<ICommandInfoCreator, ICommandInfoCreatorMetadata>[] commandInfoCreators;
-		readonly Lazy<ICommandTargetFilterCreator, ICommandTargetFilterCreatorMetadata>[] commandTargetFilterCreator;
+		readonly Lazy<ICommandInfoProvider, ICommandInfoProviderMetadata>[] commandInfoProviders;
+		readonly Lazy<ICommandTargetFilterProvider, ICommandTargetFilterProviderMetadata>[] commandTargetFilterProviders;
 
 		[ImportingConstructor]
-		CommandManager([ImportMany] IEnumerable<Lazy<ICommandInfoCreator, ICommandInfoCreatorMetadata>> commandInfoCreators, [ImportMany] IEnumerable<Lazy<ICommandTargetFilterCreator, ICommandTargetFilterCreatorMetadata>> commandTargetFilterCreator) {
-			this.commandInfoCreators = commandInfoCreators.OrderBy(a => a.Metadata.Order).ToArray();
-			this.commandTargetFilterCreator = commandTargetFilterCreator.OrderBy(a => a.Metadata.Order).ToArray();
+		CommandManager([ImportMany] IEnumerable<Lazy<ICommandInfoProvider, ICommandInfoProviderMetadata>> commandInfoProviders, [ImportMany] IEnumerable<Lazy<ICommandTargetFilterProvider, ICommandTargetFilterProviderMetadata>> commandTargetFilterProviders) {
+			this.commandInfoProviders = commandInfoProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.commandTargetFilterProviders = commandTargetFilterProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public IRegisteredCommandElement Register(UIElement sourceElement, object target) {
@@ -43,11 +43,11 @@ namespace dnSpy.Commands {
 				throw new ArgumentNullException(nameof(target));
 
 			var coll = new KeyShortcutCollection();
-			foreach (var creator in commandInfoCreators)
-				coll.Add(creator.Value, target);
+			foreach (var provider in commandInfoProviders)
+				coll.Add(provider.Value, target);
 
 			var cmdElem = new RegisteredCommandElement(this, sourceElement, coll, target);
-			foreach (var c in commandTargetFilterCreator) {
+			foreach (var c in commandTargetFilterProviders) {
 				var filter = c.Value.Create(target);
 				if (filter == null)
 					continue;
@@ -57,8 +57,8 @@ namespace dnSpy.Commands {
 		}
 
 		public CommandInfo? CreateCommandInfo(object target, string text) {
-			foreach (var c in commandInfoCreators) {
-				var c2 = c.Value as ICommandInfoCreator2;
+			foreach (var c in commandInfoProviders) {
+				var c2 = c.Value as ICommandInfoProvider2;
 				if (c2 == null)
 					continue;
 				var cmd = c2.CreateFromTextInput(target, text);

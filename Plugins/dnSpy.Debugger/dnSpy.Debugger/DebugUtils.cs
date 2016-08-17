@@ -29,12 +29,12 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static void GoToIL(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IModuleLoader moduleLoader, ModuleId moduleId, uint token, uint ilOffset, bool newTab) {
+		public static void GoToIL(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, IModuleLoader moduleLoader, ModuleId moduleId, uint token, uint ilOffset, bool newTab) {
 			var file = moduleLoader.LoadModule(moduleId, canLoadDynFile: true, diskFileOk: false, isAutoLoaded: true);
-			GoToIL(moduleIdCreator, fileTabManager, file, token, ilOffset, newTab);
+			GoToIL(moduleIdProvider, fileTabManager, file, token, ilOffset, newTab);
 		}
 
-		public static bool GoToIL(IModuleIdCreator moduleIdCreator, IFileTabManager fileTabManager, IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
+		public static bool GoToIL(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
 			if (file == null)
 				return false;
 
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger {
 			if (method == null)
 				return false;
 
-			var modId = moduleIdCreator.Create(method.Module);
+			var modId = moduleIdProvider.Create(method.Module);
 			var key = new ModuleTokenId(modId, method.MDToken);
 
 			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;

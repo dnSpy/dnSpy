@@ -25,13 +25,13 @@ using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	abstract class ScriptToolWindowContentCreator : IMainToolWindowContentCreator {
+	abstract class ScriptToolWindowContentProvider : IMainToolWindowContentProvider {
 		public ScriptToolWindowContent ScriptToolWindowContent => scriptToolWindowContent ?? (scriptToolWindowContent = CreateContent());
 		ScriptToolWindowContent scriptToolWindowContent;
 
 		readonly Guid contentGuid;
 
-		protected ScriptToolWindowContentCreator(Guid contentGuid) {
+		protected ScriptToolWindowContentProvider(Guid contentGuid) {
 			this.contentGuid = contentGuid;
 		}
 

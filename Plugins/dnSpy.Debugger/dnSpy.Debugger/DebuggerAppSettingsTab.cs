@@ -27,12 +27,12 @@ using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger {
-	[Export(typeof(IAppSettingsTabCreator))]
-	sealed class DebuggerAppSettingsTabCreator : IAppSettingsTabCreator {
+	[Export(typeof(IAppSettingsTabProvider))]
+	sealed class DebuggerAppSettingsTabProvider : IAppSettingsTabProvider {
 		readonly DebuggerSettingsImpl debuggerSettingsImpl;
 
 		[ImportingConstructor]
-		DebuggerAppSettingsTabCreator(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
+		DebuggerAppSettingsTabProvider(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
 			this.debuggerSettingsImpl = debuggerSettingsImpl;
 		}
 

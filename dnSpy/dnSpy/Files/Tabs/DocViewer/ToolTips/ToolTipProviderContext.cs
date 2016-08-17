@@ -39,7 +39,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			this.codeToolTipSettings = codeToolTipSettings;
 		}
 
-		public ICodeToolTipCreator Create() =>
-			new CodeToolTipCreator(imageManager, dotNetImageManager, codeToolTipSettings.SyntaxHighlight);
+		public ICodeToolTipProvider Create() =>
+			new CodeToolTipProvider(imageManager, dotNetImageManager, codeToolTipSettings.SyntaxHighlight);
 	}
 }

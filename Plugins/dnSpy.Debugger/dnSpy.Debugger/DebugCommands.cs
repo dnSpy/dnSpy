@@ -486,7 +486,7 @@ namespace dnSpy.Debugger {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
-	sealed class SubMenuMemoryWindowCommand : MenuItemBase, IMenuItemCreator {
+	sealed class SubMenuMemoryWindowCommand : MenuItemBase, IMenuItemProvider {
 		static SubMenuMemoryWindowCommand() {
 			subCmds = new Tuple<IMenuItem, string, string>[DebugRoutedCommands.ShowMemoryCommands.Length];
 			for (int i = 0; i < subCmds.Length; i++) {

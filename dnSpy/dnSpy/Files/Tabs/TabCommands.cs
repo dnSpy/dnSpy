@@ -554,7 +554,7 @@ namespace dnSpy.Files.Tabs {
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_WINDOW_ALLWINDOWS, Order = 0)]
-	sealed class AllTabsMenuItemCommand : MenuTabGroupCommand, IMenuItemCreator {
+	sealed class AllTabsMenuItemCommand : MenuTabGroupCommand, IMenuItemProvider {
 		readonly ISaveManager saveManager;
 		readonly ITabsVMSettings tabsVMSettings;
 		readonly IAppWindow appWindow;

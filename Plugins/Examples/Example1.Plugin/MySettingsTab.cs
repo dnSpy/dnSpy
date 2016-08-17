@@ -6,13 +6,13 @@ using dnSpy.Contracts.Settings.Dialog;
 
 namespace Example1.Plugin {
 	// This instance gets called by dnSpy to create the tab each time the user opens the options dialog
-	[Export(typeof(IAppSettingsTabCreator))]	// Tell MEF we're exporting this instance
-	sealed class MyAppSettingsTabCreator : IAppSettingsTabCreator {
+	[Export(typeof(IAppSettingsTabProvider))]	// Tell MEF we're exporting this instance
+	sealed class MyAppSettingsTabProvider : IAppSettingsTabProvider {
 		readonly MySettings mySettings;
 
 		// This constructor gets the single MySettingsImpl instance exported by MySettingsImpl in MySettings.cs
 		[ImportingConstructor]
-		MyAppSettingsTabCreator(MySettings mySettings) {
+		MyAppSettingsTabProvider(MySettings mySettings) {
 			this.mySettings = mySettings;
 		}
 

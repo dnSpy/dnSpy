@@ -24,7 +24,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Settings {
 	sealed class SettingsSection : ISettingsSection {
 		readonly SectionAttributes sectionAttributes;
-		readonly SettingsSectionCreator settingsSectionCreator;
+		readonly SettingsSectionProvider settingsSectionProvider;
 
 		public string Name { get; }
 		public Tuple<string, string>[] Attributes => sectionAttributes.Attributes;
@@ -32,14 +32,14 @@ namespace dnSpy.Settings {
 		public SettingsSection(string name) {
 			this.Name = name;
 			this.sectionAttributes = new SectionAttributes();
-			this.settingsSectionCreator = new SettingsSectionCreator();
+			this.settingsSectionProvider = new SettingsSectionProvider();
 		}
 
-		public ISettingsSection[] Sections => settingsSectionCreator.Sections;
-		public ISettingsSection CreateSection(string name) => settingsSectionCreator.CreateSection(name);
-		public ISettingsSection GetOrCreateSection(string name) => settingsSectionCreator.GetOrCreateSection(name);
-		public void RemoveSection(string name) => settingsSectionCreator.RemoveSection(name);
-		public void RemoveSection(ISettingsSection section) => settingsSectionCreator.RemoveSection(section);
+		public ISettingsSection[] Sections => settingsSectionProvider.Sections;
+		public ISettingsSection CreateSection(string name) => settingsSectionProvider.CreateSection(name);
+		public ISettingsSection GetOrCreateSection(string name) => settingsSectionProvider.GetOrCreateSection(name);
+		public void RemoveSection(string name) => settingsSectionProvider.RemoveSection(name);
+		public void RemoveSection(ISettingsSection section) => settingsSectionProvider.RemoveSection(section);
 		public ISettingsSection[] SectionsWithName(string name) => Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
 		public ISettingsSection TryGetSection(string name) => Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
 		public T Attribute<T>(string name) => sectionAttributes.Attribute<T>(name);

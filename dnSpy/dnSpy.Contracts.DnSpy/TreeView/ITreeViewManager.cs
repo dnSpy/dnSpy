@@ -34,10 +34,10 @@ namespace dnSpy.Contracts.TreeView {
 		ITreeView Create(Guid guid, TreeViewOptions options);
 
 		/// <summary>
-		/// Gets <see cref="ITreeNodeDataCreator"/>s
+		/// Gets <see cref="ITreeNodeDataProvider"/>s
 		/// </summary>
 		/// <param name="guid">Guid of owner tree node (<see cref="ITreeView.Guid"/>)</param>
 		/// <returns></returns>
-		IEnumerable<ITreeNodeDataCreator> GetCreators(Guid guid);
+		IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid);
 	}
 }

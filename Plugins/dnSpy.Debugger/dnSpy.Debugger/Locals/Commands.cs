@@ -404,7 +404,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
-	sealed class ShowInMemoryXLocalsSubCtxMenuCommand : LocalsCtxMenuCommand, IMenuItemCreator {
+	sealed class ShowInMemoryXLocalsSubCtxMenuCommand : LocalsCtxMenuCommand, IMenuItemProvider {
 		readonly Tuple<IMenuItem, string, string>[] subCmds;
 
 		[ImportingConstructor]

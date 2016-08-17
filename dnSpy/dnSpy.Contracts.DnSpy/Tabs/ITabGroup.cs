@@ -126,8 +126,8 @@ namespace dnSpy.Contracts.Tabs {
 		void SelectPreviousTab();
 
 		/// <summary>
-		/// Gets the context menu creator
+		/// Gets the context menu provider
 		/// </summary>
-		IContextMenuCreator ContextMenuCreator { get; }
+		IContextMenuProvider ContextMenuProvider { get; }
 	}
 }

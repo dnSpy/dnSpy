@@ -32,8 +32,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Memory {
-	[Export, Export(typeof(IMainToolWindowContentCreator))]
-	sealed class MemoryToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export, Export(typeof(IMainToolWindowContentProvider))]
+	sealed class MemoryToolWindowContentProvider : IMainToolWindowContentProvider {
 		public TWContent[] Contents => contents;
 		readonly TWContent[] contents;
 
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.Memory {
 		readonly IAppSettings appSettings;
 
 		[ImportingConstructor]
-		MemoryToolWindowContentCreator(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IMenuManager menuManager, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
+		MemoryToolWindowContentProvider(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IMenuManager menuManager, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
 			this.wpfCommandManager = wpfCommandManager;
 			this.themeManager = themeManager;
 			this.menuManager = menuManager;

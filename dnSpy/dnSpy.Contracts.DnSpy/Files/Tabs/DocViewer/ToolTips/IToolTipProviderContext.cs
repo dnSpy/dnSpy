@@ -35,10 +35,10 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 		ILanguage Language { get; }
 
 		/// <summary>
-		/// Creates a <see cref="ICodeToolTipCreator"/> instance that can be used to create the
+		/// Creates a <see cref="ICodeToolTipProvider"/> instance that can be used to create the
 		/// code tooltip
 		/// </summary>
 		/// <returns></returns>
-		ICodeToolTipCreator Create();
+		ICodeToolTipProvider Create();
 	}
 }

@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// A class that reads the module from the debugged process' address space.
 	/// </summary>
-	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase, IModuleIdProvider {
+	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase, IModuleIdHolder {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnProcess process;
 			readonly ulong address;

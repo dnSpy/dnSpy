@@ -29,12 +29,12 @@ using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 
 namespace dnSpy.Scripting.Roslyn.CSharp {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class CSharpToolWindowContentCreator : ScriptToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class CSharpToolWindowContentProvider : ScriptToolWindowContentProvider {
 		readonly Lazy<ICSharpContent> csharpContent;
 
 		[ImportingConstructor]
-		CSharpToolWindowContentCreator(Lazy<ICSharpContent> csharpContent)
+		CSharpToolWindowContentProvider(Lazy<ICSharpContent> csharpContent)
 			: base(CSharpToolWindowContent.THE_GUID) {
 			this.csharpContent = csharpContent;
 		}

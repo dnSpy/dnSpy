@@ -48,49 +48,49 @@ namespace dnSpy.Contracts.Files.Tabs {
 		public const double ORDER_DEFAULTDECOMPILENODE = double.MaxValue;
 
 		/// <summary>
-		/// Order of <see cref="IFileTabUIContextCreator"/> instance that creates <see cref="IDocumentViewer"/> instances
+		/// Order of <see cref="IFileTabUIContextProvider"/> instance that creates <see cref="IDocumentViewer"/> instances
 		/// </summary>
-		public const double ORDER_DOCUMENTVIEWERCREATOR = double.MaxValue;
+		public const double ORDER_DOCUMENTVIEWERPROVIDER = double.MaxValue;
 
 		/// <summary>
 		/// Order of dnlib reference <see cref="IToolTipProvider"/> instance
 		/// </summary>
-		public const double ORDER_DNLIBREFTOOLTIPCONTENTCREATOR = double.MaxValue;
+		public const double ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER = double.MaxValue;
 
 		/// <summary>
-		/// Order of default <see cref="ITabSaverCreator"/> instance
+		/// Order of default <see cref="ITabSaverProvider"/> instance
 		/// </summary>
-		public const double ORDER_DEFAULTTABSAVERCREATOR = double.MaxValue;
+		public const double ORDER_DEFAULTTABSAVERPROVIDER = double.MaxValue;
 
 		/// <summary>
-		/// Order of baml <see cref="ITabSaverCreator"/> instance
+		/// Order of baml <see cref="ITabSaverProvider"/> instance
 		/// </summary>
-		public const double ORDER_BAMLTABSAVERCREATOR = 1000;
+		public const double ORDER_BAMLTABSAVERPROVIDER = 1000;
 
 		/// <summary>
-		/// Order of hex <see cref="ITabSaverCreator"/> instance
+		/// Order of hex <see cref="ITabSaverProvider"/> instance
 		/// </summary>
-		public const double ORDER_HEXTABSAVERCREATOR = 2000;
+		public const double ORDER_HEXTABSAVERPROVIDER = 2000;
 
 		/// <summary>
-		/// Order of hex <see cref="TokenReference"/> <see cref="IReferenceFileTabContentCreator"/> instance
+		/// Order of hex <see cref="TokenReference"/> <see cref="IReferenceFileTabContentProvider"/> instance
 		/// </summary>
-		public const double ORDER_CONTENTCREATOR_HEXTOKENREF = 1000;
+		public const double ORDER_CONTENTPROVIDER_HEXTOKENREF = 1000;
 
 		/// <summary>
-		/// Order of hex <see cref="AddressReference"/> <see cref="IReferenceFileTabContentCreator"/> instance
+		/// Order of hex <see cref="AddressReference"/> <see cref="IReferenceFileTabContentProvider"/> instance
 		/// </summary>
-		public const double ORDER_CONTENTCREATOR_HEXADDRREF = 2000;
+		public const double ORDER_CONTENTPROVIDER_HEXADDRREF = 2000;
 
 		/// <summary>
-		/// Order of default <see cref="IReferenceFileTabContentCreator"/> instance
+		/// Order of default <see cref="IReferenceFileTabContentProvider"/> instance
 		/// </summary>
-		public const double ORDER_CONTENTCREATOR_TEXTREF = 10000;
+		public const double ORDER_CONTENTPROVIDER_TEXTREF = 10000;
 
 		/// <summary>
-		/// Order of <see cref="IReferenceFileTabContentCreator"/> instance that creates content
+		/// Order of <see cref="IReferenceFileTabContentProvider"/> instance that creates content
 		/// from <see cref="IFileTreeNodeData"/> nodes.
 		/// </summary>
-		public const double ORDER_CONTENTCREATOR_NODE = 20000;
+		public const double ORDER_CONTENTPROVIDER_NODE = 20000;
 	}
 }

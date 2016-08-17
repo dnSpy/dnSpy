@@ -25,8 +25,8 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Files.TreeView.Resources {
-	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_UNKNOWNSERIALIZEDRSRCELEM)]
-	sealed class UnknownSerializedResourceElementNodeCreator : IResourceNodeCreator {
+	[ExportResourceNodeProvider(Order = FileTVConstants.ORDER_RSRCPROVIDER_UNKNOWNSERIALIZEDRSRCELEM)]
+	sealed class UnknownSerializedResourceElementNodeProvider : IResourceNodeProvider {
 		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
 		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {

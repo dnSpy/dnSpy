@@ -114,18 +114,18 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		readonly IFileTabUIContextLocator fileTabUIContextLocator;
-		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
-		readonly Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>[] defaultContentFactories;
+		readonly Lazy<IReferenceFileTabContentProvider, IReferenceFileTabContentProviderMetadata>[] referenceFileTabContentProviders;
+		readonly Lazy<IDefaultFileTabContentProvider, IDefaultFileTabContentProviderMetadata>[] defaultFileTabContentProviders;
 		readonly TabElementScaler elementScaler;
 
-		public TabContentImpl(FileTabManager fileTabManager, IFileTabUIContextLocator fileTabUIContextLocator, Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories, Lazy<IDefaultFileTabContentCreator, IDefaultFileTabContentCreatorMetadata>[] defaultContentFactories) {
+		public TabContentImpl(FileTabManager fileTabManager, IFileTabUIContextLocator fileTabUIContextLocator, Lazy<IReferenceFileTabContentProvider, IReferenceFileTabContentProviderMetadata>[] referenceFileTabContentProviders, Lazy<IDefaultFileTabContentProvider, IDefaultFileTabContentProviderMetadata>[] defaultFileTabContentProviders) {
 			this.elementScaler = new TabElementScaler();
 			this.tabHistory = new TabHistory();
 			this.tabHistory.SetCurrent(new NullFileTabContent(), false);
 			this.fileTabManager = fileTabManager;
 			this.fileTabUIContextLocator = fileTabUIContextLocator;
-			this.refFactories = refFactories;
-			this.defaultContentFactories = defaultContentFactories;
+			this.referenceFileTabContentProviders = referenceFileTabContentProviders;
+			this.defaultFileTabContentProviders = defaultFileTabContentProviders;
 			this.uiContext = new NullFileTabUIContext();
 			this.uiObject = this.uiContext.UIObject;
 		}
@@ -207,7 +207,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		FileTabReferenceResult TryCreateContentFromReference(object @ref, IFileTabContent sourceContent) {
-			foreach (var f in refFactories) {
+			foreach (var f in referenceFileTabContentProviders) {
 				var c = f.Value.Create(FileTabManager, sourceContent, @ref);
 				if (c != null)
 					return c;
@@ -216,7 +216,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		IFileTabContent TryCreateDefaultContent() {
-			foreach (var f in defaultContentFactories) {
+			foreach (var f in defaultFileTabContentProviders) {
 				var c = f.Value.Create(FileTabManager);
 				if (c != null)
 					return c;

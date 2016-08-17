@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class ExceptionsToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class ExceptionsToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 
 		public ExceptionsToolWindowContent ExceptionsToolWindowContent => exceptionsToolWindowContent ?? (exceptionsToolWindowContent = new ExceptionsToolWindowContent(exceptionsContent));
 		ExceptionsToolWindowContent exceptionsToolWindowContent;
 
 		[ImportingConstructor]
-		ExceptionsToolWindowContentCreator(Lazy<IExceptionsContent> exceptionsContent) {
+		ExceptionsToolWindowContentProvider(Lazy<IExceptionsContent> exceptionsContent) {
 			this.exceptionsContent = exceptionsContent;
 		}
 

@@ -57,14 +57,14 @@ namespace dnSpy.Text.Editor {
 		readonly Dispatcher dispatcher;
 		CachedTextColorsCollection cachedTextColorsCollection;
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly LogEditor logEditorUI;
 
-			public GuidObjectsCreator(LogEditor logEditorUI) {
+			public GuidObjectsProvider(LogEditor logEditorUI) {
 				this.logEditorUI = logEditorUI;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_LOG_EDITOR_GUID, logEditorUI);
 			}
 		}
@@ -82,7 +82,7 @@ namespace dnSpy.Text.Editor {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.cachedColorsList = new CachedColorsList();
 			options = options?.Clone() ?? new LogEditorOptions();
-			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
+			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);

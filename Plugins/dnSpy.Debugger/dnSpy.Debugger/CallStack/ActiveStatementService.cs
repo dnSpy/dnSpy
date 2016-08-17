@@ -78,13 +78,13 @@ namespace dnSpy.Debugger.CallStack {
 
 	[Export(typeof(ActiveStatementService))]
 	sealed class ActiveStatementService {
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 		readonly HashSet<ActiveStatementTagger> taggers;
 		Dictionary<ModuleTokenId, List<uint>> activeStatements;
 
 		[ImportingConstructor]
-		ActiveStatementService(IModuleIdCreator moduleIdCreator) {
-			this.moduleIdCreator = moduleIdCreator;
+		ActiveStatementService(IModuleIdProvider moduleIdProvider) {
+			this.moduleIdProvider = moduleIdProvider;
 			this.taggers = new HashSet<ActiveStatementTagger>();
 			this.activeStatements = new Dictionary<ModuleTokenId, List<uint>>();
 		}
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.CallStack {
 				foreach (var info in methodDebugService.GetStatementsByTextSpan(span.Span)) {
 					if (info.Method != method) {
 						method = info.Method;
-						var moduleTokenId = new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken);
+						var moduleTokenId = new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken);
 						if (!activeStatements.TryGetValue(moduleTokenId, out ilOffsets))
 							continue;
 					}

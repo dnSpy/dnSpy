@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.IMModules {
 	/// A class holding a <see cref="dndbg.DotNet.CorModuleDef"/> reference. Should only be used if
 	/// it's a dynamic module since it uses <c>IMetaDataImport</c> to read the MD.
 	/// </summary>
-	sealed class CorModuleDefFile : DnSpyDotNetFileBase, IModuleIdProvider {
+	sealed class CorModuleDefFile : DnSpyDotNetFileBase, IModuleIdHolder {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnModule dnModule;
 

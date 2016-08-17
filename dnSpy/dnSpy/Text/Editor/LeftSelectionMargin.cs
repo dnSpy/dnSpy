@@ -35,25 +35,25 @@ namespace dnSpy.Text.Editor {
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class LeftSelectionMarginProvider : IWpfTextViewMarginProvider {
-		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
+		readonly IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		LeftSelectionMarginProvider(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
+		LeftSelectionMarginProvider(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IEditorOperationsFactoryService editorOperationsFactoryService) {
+			this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
-			new LeftSelectionMargin(wpfTextViewMarginProviderCollectionCreator, wpfTextViewHost, editorOperationsFactoryService.GetEditorOperations(wpfTextViewHost.TextView));
+			new LeftSelectionMargin(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, editorOperationsFactoryService.GetEditorOperations(wpfTextViewHost.TextView));
 	}
 
 	sealed class LeftSelectionMargin : WpfTextViewContainerMargin {
 		readonly IWpfTextViewHost wpfTextViewHost;
 		readonly IEditorOperations editorOperations;
 
-		public LeftSelectionMargin(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IWpfTextViewHost wpfTextViewHost, IEditorOperations editorOperations)
-			: base(wpfTextViewMarginProviderCollectionCreator, wpfTextViewHost, PredefinedMarginNames.LeftSelection, false) {
+		public LeftSelectionMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IWpfTextViewHost wpfTextViewHost, IEditorOperations editorOperations)
+			: base(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.LeftSelection, false) {
 			if (editorOperations == null)
 				throw new ArgumentNullException(nameof(editorOperations));
 			this.Cursor = Cursors.Arrow;//TODO: Use an arrow pointing to the right

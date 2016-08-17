@@ -29,11 +29,11 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Files.TreeView.Resources {
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ResourceNodeFactory : IResourceNodeFactory {
-		readonly Lazy<IResourceNodeCreator, IResourceNodeCreatorMetadata>[] creators;
+		readonly Lazy<IResourceNodeProvider, IResourceNodeProviderMetadata>[] resourceNodeProviders;
 
 		[ImportingConstructor]
-		public ResourceNodeFactory([ImportMany] IEnumerable<Lazy<IResourceNodeCreator, IResourceNodeCreatorMetadata>> mefCreators) {
-			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).ToArray();
+		public ResourceNodeFactory([ImportMany] IEnumerable<Lazy<IResourceNodeProvider, IResourceNodeProviderMetadata>> resourceNodeProviders) {
+			this.resourceNodeProviders = resourceNodeProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
@@ -43,9 +43,9 @@ namespace dnSpy.Files.TreeView.Resources {
 				throw new ArgumentNullException(nameof(resource));
 			if (treeNodeGroup == null)
 				throw new ArgumentNullException(nameof(treeNodeGroup));
-			foreach (var creator in creators) {
+			foreach (var provider in resourceNodeProviders) {
 				try {
-					var node = creator.Value.Create(module, resource, treeNodeGroup);
+					var node = provider.Value.Create(module, resource, treeNodeGroup);
 					if (node != null)
 						return node;
 				}
@@ -62,9 +62,9 @@ namespace dnSpy.Files.TreeView.Resources {
 				throw new ArgumentNullException(nameof(resourceElement));
 			if (treeNodeGroup == null)
 				throw new ArgumentNullException(nameof(treeNodeGroup));
-			foreach (var creator in creators) {
+			foreach (var provider in resourceNodeProviders) {
 				try {
-					var node = creator.Value.Create(module, resourceElement, treeNodeGroup);
+					var node = provider.Value.Create(module, resourceElement, treeNodeGroup);
 					if (node != null)
 						return node;
 				}

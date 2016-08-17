@@ -29,12 +29,12 @@ using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Properties;
 
 namespace dnSpy.Contracts.Hex {
-	[Export(typeof(IAppSettingsTabCreator))]
-	sealed class HexEditorAppSettingsTabCreator : IAppSettingsTabCreator {
+	[Export(typeof(IAppSettingsTabProvider))]
+	sealed class HexEditorAppSettingsTabProvider : IAppSettingsTabProvider {
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;
 
 		[ImportingConstructor]
-		HexEditorAppSettingsTabCreator(HexEditorSettingsImpl hexEditorSettingsImpl) {
+		HexEditorAppSettingsTabProvider(HexEditorSettingsImpl hexEditorSettingsImpl) {
 			this.hexEditorSettingsImpl = hexEditorSettingsImpl;
 		}
 

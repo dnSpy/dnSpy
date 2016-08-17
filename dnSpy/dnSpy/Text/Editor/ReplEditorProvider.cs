@@ -1,0 +1,56 @@
+﻿/*
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.Utilities;
+
+namespace dnSpy.Text.Editor {
+	[Export(typeof(IReplEditorProvider))]
+	sealed class ReplEditorProvider : IReplEditorProvider {
+		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly ITextBufferFactoryService textBufferFactoryService;
+		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IPickSaveFilename pickSaveFilename;
+
+		[ImportingConstructor]
+		ReplEditorProvider(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypes themeClassificationTypes, IPickSaveFilename pickSaveFilename) {
+			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
+			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.textBufferFactoryService = textBufferFactoryService;
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
+			this.editorOptionsFactoryService = editorOptionsFactoryService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
+			this.themeClassificationTypes = themeClassificationTypes;
+			this.pickSaveFilename = pickSaveFilename;
+		}
+
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypes, pickSaveFilename);
+	}
+}

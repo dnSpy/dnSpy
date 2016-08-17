@@ -36,14 +36,14 @@ namespace dnSpy.Text.Editor {
 		public FrameworkElement ScaleElement => TextViewHost.TextView.VisualElement;
 		public object Tag { get; set; }
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly CodeEditor codeEditor;
 
-			public GuidObjectsCreator(CodeEditor codeEditorUI) {
+			public GuidObjectsProvider(CodeEditor codeEditorUI) {
 				this.codeEditor = codeEditorUI;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditor);
 			}
 		}
@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 
 		public CodeEditor(CodeEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			options = options?.Clone() ?? new CodeEditorOptions();
-			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
+			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = options.TextBuffer;
 			if (textBuffer == null)

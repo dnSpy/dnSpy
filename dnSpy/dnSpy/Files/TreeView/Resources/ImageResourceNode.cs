@@ -35,8 +35,8 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
 
 namespace dnSpy.Files.TreeView.Resources {
-	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_IMAGE_RESOURCE_NODE)]
-	sealed class ImageResourceNodeCreator : IResourceNodeCreator {
+	[ExportResourceNodeProvider(Order = FileTVConstants.ORDER_RSRCPROVIDER_IMAGE_RESOURCE_NODE)]
+	sealed class ImageResourceNodeProvider : IResourceNodeProvider {
 		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
 			if (er == null)

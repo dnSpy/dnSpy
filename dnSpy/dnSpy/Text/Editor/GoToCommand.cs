@@ -28,12 +28,12 @@ using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1)]
-	sealed class GoToCommandTargetFilterCreator : ICommandTargetFilterCreator {
+	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1)]
+	sealed class GoToCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly IMessageBoxManager messageBoxManager;
 
 		[ImportingConstructor]
-		GoToCommandTargetFilterCreator(IMessageBoxManager messageBoxManager) {
+		GoToCommandTargetFilterProvider(IMessageBoxManager messageBoxManager) {
 			this.messageBoxManager = messageBoxManager;
 		}
 

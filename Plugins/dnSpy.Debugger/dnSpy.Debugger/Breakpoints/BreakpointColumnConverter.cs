@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, img), BackgroundType.GridViewItem);
 			}
 
-			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Language);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

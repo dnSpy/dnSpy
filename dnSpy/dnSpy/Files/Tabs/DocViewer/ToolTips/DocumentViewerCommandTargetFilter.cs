@@ -25,12 +25,12 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
-	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 1)]
-	sealed class DocumentViewerCommandTargetFilterCreator : ICommandTargetFilterCreator {
+	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 1)]
+	sealed class DocumentViewerCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerCommandTargetFilterCreator(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
+		DocumentViewerCommandTargetFilterProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
 			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 		}
 

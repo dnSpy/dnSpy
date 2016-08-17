@@ -30,13 +30,13 @@ using dnSpy.Properties;
 using Microsoft.Win32;
 
 namespace dnSpy.MainApp {
-	[ExportSimpleAppOptionCreator(Guid = AppSettingsConstants.GUID_DYNTAB_MISC)]
-	sealed class AppMiscOptionCreator : ISimpleAppOptionCreator {
+	[ExportSimpleAppOptionProvider(Guid = AppSettingsConstants.GUID_DYNTAB_MISC)]
+	sealed class AppMiscOptionProvider : ISimpleAppOptionProvider {
 		readonly MessageBoxManager messageBoxManager;
 		readonly AppSettingsImpl appSettings;
 
 		[ImportingConstructor]
-		AppMiscOptionCreator(MessageBoxManager messageBoxManager, AppSettingsImpl appSettings) {
+		AppMiscOptionProvider(MessageBoxManager messageBoxManager, AppSettingsImpl appSettings) {
 			this.messageBoxManager = messageBoxManager;
 			this.appSettings = appSettings;
 		}

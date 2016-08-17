@@ -277,18 +277,18 @@ namespace dnSpy.MainApp {
 		readonly StackedContent<IStackedContentChild> horizontalContent;
 		readonly StackedContent<IStackedContentChild> verticalContent;
 		readonly Dictionary<AppToolWindowLocation, ToolWindowUI> toolWindowUIs;
-		readonly Lazy<IMainToolWindowContentCreator>[] contentCreators;
+		readonly Lazy<IMainToolWindowContentProvider>[] mainToolWindowContentProviders;
 		readonly Dictionary<Guid, AppToolWindowLocation> savedLocations;
 
 		public object UIObject => horizontalContent.UIObject;
 
 		[ImportingConstructor]
-		MainWindowControl(IToolWindowManagerCreator toolWindowManagerCreator, [ImportMany] Lazy<IMainToolWindowContentCreator>[] contentCreators) {
+		MainWindowControl(IToolWindowManagerProvider toolWindowManagerProvider, [ImportMany] Lazy<IMainToolWindowContentProvider>[] mainToolWindowContentProviders) {
 			this.horizontalContent = new StackedContent<IStackedContentChild>(true);
 			this.verticalContent = new StackedContent<IStackedContentChild>(false);
 			this.toolWindowUIs = new Dictionary<AppToolWindowLocation, ToolWindowUI>();
-			var toolWindowManager = toolWindowManagerCreator.Create();
-			this.contentCreators = contentCreators.ToArray();
+			var toolWindowManager = toolWindowManagerProvider.Create();
+			this.mainToolWindowContentProviders = mainToolWindowContentProviders.ToArray();
 			this.savedLocations = new Dictionary<Guid, AppToolWindowLocation>();
 
 			var guid = new Guid(MenuConstants.GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID);
@@ -353,7 +353,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void RestoreDefault() {
-			var infos = contentCreators.SelectMany(a => a.Value.ContentInfos.Where(b => b.IsDefault)).OrderBy(a => a.Order).ToArray();
+			var infos = mainToolWindowContentProviders.SelectMany(a => a.Value.ContentInfos.Where(b => b.IsDefault)).OrderBy(a => a.Order).ToArray();
 			foreach (var info in infos)
 				Show(info.Guid, info.Location, false, false);
 
@@ -411,8 +411,8 @@ namespace dnSpy.MainApp {
 		AppToolWindowLocation GetLocation(Guid guid, AppToolWindowLocation? location) => GetSavedLocation(guid) ?? location ?? GetDefaultLocation(guid);
 
 		AppToolWindowLocation GetDefaultLocation(Guid guid) {
-			foreach (var creator in this.contentCreators) {
-				foreach (var info in creator.Value.ContentInfos) {
+			foreach (var provider in this.mainToolWindowContentProviders) {
+				foreach (var info in provider.Value.ContentInfos) {
 					if (info.Guid == guid)
 						return info.Location;
 				}
@@ -521,8 +521,8 @@ namespace dnSpy.MainApp {
 		}
 
 		IToolWindowContent Create(Guid guid) {
-			foreach (var creator in contentCreators) {
-				var content = creator.Value.GetOrCreate(guid);
+			foreach (var provider in mainToolWindowContentProviders) {
+				var content = provider.Value.GetOrCreate(guid);
 				if (content != null)
 					return content;
 			}

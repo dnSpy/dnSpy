@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.Files {
 	/// </summary>
 	public static class FileConstants {
 		/// <summary>
-		/// Order of default <see cref="IDnSpyFileCreator"/> instance
+		/// Order of default <see cref="IDnSpyFileProvider"/> instance
 		/// </summary>
-		public const double ORDER_DEFAULT_FILE_CREATOR = double.MaxValue;
+		public const double ORDER_DEFAULT_FILE_PROVIDER = double.MaxValue;
 
 		/// <summary>
 		/// A normal <see cref="IDnSpyFile"/> created from a file. <see cref="DnSpyFileInfo.Name"/>

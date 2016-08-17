@@ -42,15 +42,15 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Files.Tabs.Settings {
-	[Export(typeof(IAppSettingsTabCreator))]
-	sealed class DisplayAppSettingsTabCreator : IAppSettingsTabCreator {
+	[Export(typeof(IAppSettingsTabProvider))]
+	sealed class DisplayAppSettingsTabProvider : IAppSettingsTabProvider {
 		readonly TextEditorSettingsImpl textEditorSettingsImpl;
 		readonly IEditorOptions editorOptions;
 		readonly FileTreeViewSettingsImpl fileTreeViewSettings;
 		readonly FileTabManagerSettingsImpl fileTabManagerSettings;
 
 		[ImportingConstructor]
-		DisplayAppSettingsTabCreator(TextEditorSettingsImpl textEditorSettingsImpl, IEditorOptionsFactoryService editorOptionsFactoryService, FileTreeViewSettingsImpl fileTreeViewSettings, FileTabManagerSettingsImpl fileTabManagerSettings) {
+		DisplayAppSettingsTabProvider(TextEditorSettingsImpl textEditorSettingsImpl, IEditorOptionsFactoryService editorOptionsFactoryService, FileTreeViewSettingsImpl fileTreeViewSettings, FileTabManagerSettingsImpl fileTabManagerSettings) {
 			this.textEditorSettingsImpl = textEditorSettingsImpl;
 			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 			this.fileTreeViewSettings = fileTreeViewSettings;

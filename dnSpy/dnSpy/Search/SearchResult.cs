@@ -103,7 +103,7 @@ namespace dnSpy.Search {
 		}
 
 		object CreateUI(object o, bool includeNamespace) {
-			var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
 			var output = gen.Output;
 			CreateUI(gen.Output, o, includeNamespace);
 			return gen.CreateResult();

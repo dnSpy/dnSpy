@@ -22,7 +22,7 @@ namespace Example2.Plugin {
 		public override DnSpyFileInfo? SerializedFile => new DnSpyFileInfo(Filename, THE_GUID);
 
 		// Since we open files from disk, we return a FilenameKey.
-		// If this gets changed, also update MyDnSpyFileCreator.CreateKey()
+		// If this gets changed, also update MyDnSpyFileProvider.CreateKey()
 		public override IDnSpyFilenameKey Key => new FilenameKey(Filename);
 
 		// Used by MyDnSpyFileNode.Decompile() to show the file in the text editor
@@ -53,8 +53,8 @@ namespace Example2.Plugin {
 
 	// Gets called by the IFileManager instance to create IDnSpyFile instances. If it's a .txt file
 	// or our MyDnSpyFile.THE_GUID, then create a MyDnSpyFile instance.
-	[Export(typeof(IDnSpyFileCreator))]
-	sealed class MyDnSpyFileCreator : IDnSpyFileCreator {
+	[Export(typeof(IDnSpyFileProvider))]
+	sealed class MyDnSpyFileProvider : IDnSpyFileProvider {
 		public double Order => 0;
 
 		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
@@ -88,8 +88,8 @@ namespace Example2.Plugin {
 	}
 
 	// Gets called by dnSpy to create a IDnSpyFileNode
-	[ExportDnSpyFileNodeCreator]
-	sealed class MyDnSpyFileNodeCreator : IDnSpyFileNodeCreator {
+	[ExportDnSpyFileNodeProvider]
+	sealed class MyDnSpyFileNodeProvider : IDnSpyFileNodeProvider {
 		public IDnSpyFileNode Create(IFileTreeView fileTreeView, IDnSpyFileNode owner, IDnSpyFile file) {
 			var myFile = file as MyDnSpyFile;
 			if (myFile != null)
@@ -99,7 +99,7 @@ namespace Example2.Plugin {
 	}
 
 	// Our MyDnSpyFile tree node class. It implements IDecompileSelf to "decompile" itself. You could
-	// also export a IDecompileNode instance to do it, see TreeNodeDataCreator.cs for an example.
+	// also export a IDecompileNode instance to do it, see TreeNodeDataProvider.cs for an example.
 	// Or you could create a completely new IFileTabContent for these nodes, see AssemblyChildNodeTabContent.cs
 	sealed class MyDnSpyFileNode : FileTreeNodeData, IDnSpyFileNode, IDecompileSelf {
 		//TODO: Use your own guid

@@ -38,17 +38,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly ILanguageManager languageManager;
-		readonly ILanguageCompilerCreator[] languageCompilerCreators;
+		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		public bool CanCreate => TryGetUsedLanguage() != null;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IImageManager imageManager, IOpenFromGAC openFromGAC, IFileTreeView fileTreeView, ILanguageManager languageManager, [ImportMany] IEnumerable<ILanguageCompilerCreator> languageCompilerCreators) {
+		EditCodeVMCreator(IImageManager imageManager, IOpenFromGAC openFromGAC, IFileTreeView fileTreeView, ILanguageManager languageManager, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.imageManager = imageManager;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = new OpenAssembly(fileTreeView.FileManager);
 			this.languageManager = languageManager;
-			this.languageCompilerCreators = languageCompilerCreators.OrderBy(a => a.Order).ToArray();
+			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
 
 		public ImageReference? GetIcon() {
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (lang == null)
 				return null;
 
-			return languageCompilerCreators.FirstOrDefault(a => a.Language == lang.GenericGuid)?.Icon;
+			return languageCompilerProviders.FirstOrDefault(a => a.Language == lang.GenericGuid)?.Icon;
 		}
 
 		public string GetHeader() {
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 			if (!language.CanDecompile(DecompilationType.TypeMethods))
 				return false;
-			return languageCompilerCreators.Any(a => a.Language == language.GenericGuid);
+			return languageCompilerProviders.Any(a => a.Language == language.GenericGuid);
 		}
 
 		ILanguage TryGetUsedLanguage() {
@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (language == null)
 				throw new InvalidOperationException();
 
-			var serviceCreator = languageCompilerCreators.FirstOrDefault(a => a.Language == language.GenericGuid);
+			var serviceCreator = languageCompilerProviders.FirstOrDefault(a => a.Language == language.GenericGuid);
 			Debug.Assert(serviceCreator != null);
 			if (serviceCreator == null)
 				throw new InvalidOperationException();

@@ -263,7 +263,7 @@ namespace dnSpy.ToolWindows {
 				return;
 
 			Owner.SetFocus(this);
-			Owner.TabGroup.ContextMenuCreator.Show(fe);
+			Owner.TabGroup.ContextMenuProvider.Show(fe);
 		}
 	}
 }

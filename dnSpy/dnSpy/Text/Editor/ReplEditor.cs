@@ -67,14 +67,14 @@ namespace dnSpy.Text.Editor {
 		readonly IDnSpyWpfTextView wpfTextView;
 		readonly IPickSaveFilename pickSaveFilename;
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly ReplEditor replEditorUI;
 
-			public GuidObjectsCreator(ReplEditor replEditorUI) {
+			public GuidObjectsProvider(ReplEditor replEditorUI) {
 				this.replEditorUI = replEditorUI;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_REPL_EDITOR_GUID, replEditorUI);
 			}
 		}
@@ -83,7 +83,7 @@ namespace dnSpy.Text.Editor {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
-			options.CreateGuidObjects = CommonGuidObjectsCreator.Create(options.CreateGuidObjects, new GuidObjectsCreator(this));
+			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 			this.PrimaryPrompt = options.PrimaryPrompt;
 			this.SecondaryPrompt = options.SecondaryPrompt;
 			this.subBuffers = new List<ReplSubBuffer>();
@@ -426,7 +426,7 @@ namespace dnSpy.Text.Editor {
 
 				if (changedState.CancellationToken.IsCancellationRequested)
 					return;
-				var cachedColors = new CachedTextColorsCollectionCreator(this, totalLength).Create(buf.Input, buf.ColorInfos);
+				var cachedColors = new CachedTextColorsCollectionBuilder(this, totalLength).Create(buf.Input, buf.ColorInfos);
 				Debug.Assert(cachedColors.Length == totalLength);
 				if (currentDocVersion == docVersion)
 					cachedColorsList.AddOrUpdate(baseOffset, cachedColors);
@@ -861,12 +861,12 @@ namespace dnSpy.Text.Editor {
 		}
 	}
 
-	struct CachedTextColorsCollectionCreator {
+	struct CachedTextColorsCollectionBuilder {
 		readonly ReplEditor owner;
 		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly int totalLength;
 
-		public CachedTextColorsCollectionCreator(ReplEditor owner, int totalLength) {
+		public CachedTextColorsCollectionBuilder(ReplEditor owner, int totalLength) {
 			this.owner = owner;
 			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.totalLength = totalLength;

@@ -39,7 +39,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public sealed override object Text {
 			get {
-				var gen = ColorizedTextElementCreator.Create(Context.SyntaxHighlight);
+				var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
 
 				var cached = cachedText?.Target;
 				if (cached != null)

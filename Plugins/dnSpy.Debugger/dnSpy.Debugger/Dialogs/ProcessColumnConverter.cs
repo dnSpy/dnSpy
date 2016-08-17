@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Dialogs {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new ProcessPrinter(gen.Output, false);
 			HorizontalAlignment? horizAlign = null;
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "FullPath"))

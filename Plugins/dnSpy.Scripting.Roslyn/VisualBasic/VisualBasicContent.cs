@@ -33,8 +33,8 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	[Export(typeof(IVisualBasicContent))]
 	sealed class VisualBasicContent : ScriptContent, IVisualBasicContent {
 		[ImportingConstructor]
-		VisualBasicContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, VisualBasicReplSettingsImpl replSettings, IServiceLocator serviceLocator)
-			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_VisualBasic) {
+		VisualBasicContent(IThemeManager themeManager, IReplEditorProvider replEditorProvider, VisualBasicReplSettingsImpl replSettings, IServiceLocator serviceLocator)
+			: base(themeManager, replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_VisualBasic) {
 		}
 
 		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings) =>

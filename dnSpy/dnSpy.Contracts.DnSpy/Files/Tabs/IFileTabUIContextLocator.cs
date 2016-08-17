@@ -29,10 +29,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Creates or returns an existing cached instance of a certain type. This instance is
 		/// cached per tab and is stored in either a <see cref="WeakReference"/> or a strong
-		/// reference (see <see cref="ExportFileTabUIContextCreatorAttribute.UseStrongReference"/>)
+		/// reference (see <see cref="ExportFileTabUIContextProviderAttribute.UseStrongReference"/>)
 		/// </summary>
 		/// <typeparam name="T">Type, eg. <see cref="IDocumentViewer"/>. There must be an exported
-		/// <see cref="IFileTabUIContextCreator"/> that can create the type.</typeparam>
+		/// <see cref="IFileTabUIContextProvider"/> that can create the type.</typeparam>
 		/// <returns></returns>
 		T Get<T>() where T : class, IFileTabUIContext;
 

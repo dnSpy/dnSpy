@@ -95,8 +95,8 @@ namespace dnSpy.Search {
 
 		public object UIObject => searchControl;
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				var listBox = (ListBox)args.CreatorObject.Object;
 				var searchResult = listBox.SelectedItem as ISearchResult;
 				if (searchResult != null) {
@@ -109,16 +109,16 @@ namespace dnSpy.Search {
 		}
 
 		[ImportingConstructor]
-		SearchManager(IImageManager imageManager, ILanguageManager languageManager, IThemeManager themeManager, ISearchSettings searchSettings, IFileSearcherCreator fileSearcherCreator, IMenuManager menuManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+		SearchManager(IImageManager imageManager, ILanguageManager languageManager, IThemeManager themeManager, ISearchSettings searchSettings, IFileSearcherProvider fileSearcherProvider, IMenuManager menuManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
 			this.searchControl = new SearchControl();
-			this.vmSearch = new SearchControlVM(imageManager, fileSearcherCreator, fileTabManager.FileTreeView, searchSettings) {
+			this.vmSearch = new SearchControlVM(imageManager, fileSearcherProvider, fileTabManager.FileTreeView, searchSettings) {
 				Language = languageManager.Language,
 				BackgroundType = BackgroundType.Search,
 			};
 			this.searchControl.DataContext = this.vmSearch;
 
-			menuManager.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsCreator());
+			menuManager.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
 			wpfCommandManager.Add(CommandConstants.GUID_SEARCH_CONTROL, this.searchControl);
 			wpfCommandManager.Add(CommandConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;

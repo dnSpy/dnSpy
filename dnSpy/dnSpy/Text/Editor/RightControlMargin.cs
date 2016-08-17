@@ -29,14 +29,14 @@ namespace dnSpy.Text.Editor {
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class RightControlMarginProvider : IWpfTextViewMarginProvider {
-		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
+		readonly IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider;
 
 		[ImportingConstructor]
-		RightControlMarginProvider(IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator) {
-			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
+		RightControlMarginProvider(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider) {
+			this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
 		}
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
-			new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionCreator, wpfTextViewHost, PredefinedMarginNames.RightControl, false);
+			new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.RightControl, false);
 	}
 }

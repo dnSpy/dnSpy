@@ -27,12 +27,12 @@ using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandTargetFilterCreator(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR)]
-	sealed class DefaultTextViewCommandTargetFilterCreator : ICommandTargetFilterCreator {
+	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR)]
+	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterCreator(IEditorOperationsFactoryService editorOperationsFactoryService) {
+		DefaultTextViewCommandTargetFilterProvider(IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 

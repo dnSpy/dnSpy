@@ -7,13 +7,13 @@ using dnSpy.Contracts.Settings.Dialog;
 
 namespace Example1.Plugin {
 	// This class adds a new option to the Misc tab
-	[ExportSimpleAppOptionCreator(Guid = AppSettingsConstants.GUID_DYNTAB_MISC)]
-	sealed class MiscOptionCreator : ISimpleAppOptionCreator {
+	[ExportSimpleAppOptionProvider(Guid = AppSettingsConstants.GUID_DYNTAB_MISC)]
+	sealed class MiscOptionProvider : ISimpleAppOptionProvider {
 		readonly MySettings mySettings;
 
 		// This constructor gets the single MySettingsImpl instance exported by MySettingsImpl in MySettings.cs
 		[ImportingConstructor]
-		MiscOptionCreator(MySettings mySettings) {
+		MiscOptionProvider(MySettings mySettings) {
 			this.mySettings = mySettings;
 		}
 

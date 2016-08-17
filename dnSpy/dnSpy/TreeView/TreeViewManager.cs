@@ -31,37 +31,37 @@ namespace dnSpy.TreeView {
 	sealed class TreeViewManager : ITreeViewManager {
 		readonly IThemeManager themeManager;
 		readonly IImageManager imageManager;
-		readonly Dictionary<Guid, List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>>> guidToCreator;
+		readonly Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>> guidToProvider;
 
 		[ImportingConstructor]
-		TreeViewManager(IThemeManager themeManager, IImageManager imageManager, [ImportMany] IEnumerable<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> treeNodeDataCreators) {
+		TreeViewManager(IThemeManager themeManager, IImageManager imageManager, [ImportMany] IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
-			this.guidToCreator = new Dictionary<Guid, List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>>>();
-			InitializeGuidToCreator(treeNodeDataCreators);
+			this.guidToProvider = new Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>>();
+			InitializeGuidToProvider(treeNodeDataProviders);
 		}
 
-		void InitializeGuidToCreator(IEnumerable<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> treeNodeDataCreators) {
-			foreach (var creator in treeNodeDataCreators.OrderBy(a => a.Metadata.Order)) {
+		void InitializeGuidToProvider(IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
+			foreach (var provider in treeNodeDataProviders.OrderBy(a => a.Metadata.Order)) {
 				Guid guid;
-				bool b = Guid.TryParse(creator.Metadata.Guid, out guid);
-				Debug.Assert(b, string.Format("Couldn't parse guid: '{0}'", creator.Metadata.Guid));
+				bool b = Guid.TryParse(provider.Metadata.Guid, out guid);
+				Debug.Assert(b, string.Format("Couldn't parse guid: '{0}'", provider.Metadata.Guid));
 				if (!b)
 					continue;
 
-				List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> list;
-				if (!guidToCreator.TryGetValue(guid, out list))
-					guidToCreator.Add(guid, list = new List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>>());
-				list.Add(creator);
+				List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> list;
+				if (!guidToProvider.TryGetValue(guid, out list))
+					guidToProvider.Add(guid, list = new List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>());
+				list.Add(provider);
 			}
 		}
 
 		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeManager, imageManager, guid, options);
 
-		public IEnumerable<ITreeNodeDataCreator> GetCreators(Guid guid) {
-			List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> list;
-			if (!guidToCreator.TryGetValue(guid, out list))
-				return Array.Empty<ITreeNodeDataCreator>();
+		public IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid) {
+			List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> list;
+			if (!guidToProvider.TryGetValue(guid, out list))
+				return Array.Empty<ITreeNodeDataProvider>();
 			return list.Select(a => a.Value);
 		}
 	}

@@ -137,12 +137,12 @@ namespace dnSpy.Search {
 		BackgroundType backgroundType;
 
 		readonly IImageManager imageManager;
-		readonly IFileSearcherCreator fileSearcherCreator;
+		readonly IFileSearcherProvider fileSearcherProvider;
 		readonly IFileTreeView fileTreeView;
 
-		public SearchControlVM(IImageManager imageManager, IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView, ISearchSettings searchSettings) {
+		public SearchControlVM(IImageManager imageManager, IFileSearcherProvider fileSearcherProvider, IFileTreeView fileTreeView, ISearchSettings searchSettings) {
 			this.imageManager = imageManager;
-			this.fileSearcherCreator = fileSearcherCreator;
+			this.fileSearcherProvider = fileSearcherProvider;
 			this.fileTreeView = fileTreeView;
 			this.SearchSettings = searchSettings;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
@@ -201,7 +201,7 @@ namespace dnSpy.Search {
 					Filter = new FlagsFileTreeNodeFilter(selectedSearchTypeVM.Flags),
 					SearchDecompiledData = SearchSettings.SearchDecompiledData,
 				};
-				fileSearcher = fileSearcherCreator.Create(options);
+				fileSearcher = fileSearcherProvider.Create(options);
 				fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;
 				fileSearcher.Language = Language;
 				fileSearcher.BackgroundType = BackgroundType;

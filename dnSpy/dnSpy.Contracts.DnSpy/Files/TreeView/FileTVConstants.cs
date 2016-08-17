@@ -222,22 +222,22 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>Order of <see cref="IResourceElementNode"/>s</summary>
 		public const double ORDER_RESOURCE_ELEM = 0;
 
-		/// <summary>Order of <see cref="IResourceElementSetNode"/> creator</summary>
-		public const double ORDER_RSRCCREATOR_RSRCELEMSET = 0;
+		/// <summary>Order of <see cref="IResourceElementSetNode"/> provider</summary>
+		public const double ORDER_RSRCPROVIDER_RSRCELEMSET = 0;
 
-		/// <summary>Order of <see cref="IImageResourceNode"/> and <see cref="IImageResourceElementNode"/> creator</summary>
-		public const double ORDER_RSRCCREATOR_IMAGE_RESOURCE_NODE = 1000;
+		/// <summary>Order of <see cref="IImageResourceNode"/> and <see cref="IImageResourceElementNode"/> provider</summary>
+		public const double ORDER_RSRCPROVIDER_IMAGE_RESOURCE_NODE = 1000;
 
-		/// <summary>Order of <see cref="ISerializedImageResourceElementNode"/> creator</summary>
-		public const double ORDER_RSRCCREATOR_SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE = 2000;
+		/// <summary>Order of <see cref="ISerializedImageResourceElementNode"/> provider</summary>
+		public const double ORDER_RSRCPROVIDER_SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE = 2000;
 
-		/// <summary>Order of <c>BamlResourceElementNode</c> creator</summary>
-		public const double ORDER_RSRCCREATOR_BAML_NODE = 3000;
+		/// <summary>Order of <c>BamlResourceElementNode</c> provider</summary>
+		public const double ORDER_RSRCPROVIDER_BAML_NODE = 3000;
 
-		/// <summary>Order of <see cref="ISerializedImageListStreamerResourceElementNode"/> creator</summary>
-		public const double ORDER_RSRCCREATOR_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE = 10000;
+		/// <summary>Order of <see cref="ISerializedImageListStreamerResourceElementNode"/> provider</summary>
+		public const double ORDER_RSRCPROVIDER_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE = 10000;
 
-		/// <summary>Order of <see cref="IUnknownSerializedResourceElementNode"/> creator</summary>
-		public const double ORDER_RSRCCREATOR_UNKNOWNSERIALIZEDRSRCELEM = double.MaxValue;
+		/// <summary>Order of <see cref="IUnknownSerializedResourceElementNode"/> provider</summary>
+		public const double ORDER_RSRCPROVIDER_UNKNOWNSERIALIZEDRSRCELEM = double.MaxValue;
 	}
 }

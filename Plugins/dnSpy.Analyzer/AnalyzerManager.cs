@@ -89,14 +89,14 @@ namespace dnSpy.Analyzer {
 
 		public ITreeView TreeView { get; }
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly ITreeView treeView;
 
-			public GuidObjectsCreator(ITreeView treeView) {
+			public GuidObjectsProvider(ITreeView treeView) {
 				this.treeView = treeView;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, treeView.TopLevelSelection);
 			}
 		}
@@ -131,7 +131,7 @@ namespace dnSpy.Analyzer {
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
-			menuManager.InitializeContextMenu((FrameworkElement)this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsCreator(this.TreeView));
+			menuManager.InitializeContextMenu((FrameworkElement)this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
 			wpfCommandManager.Add(CommandConstants.GUID_ANALYZER_TREEVIEW, (UIElement)this.TreeView.UIObject);
 			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
 			var command = new RelayCommand(a => ActivateNode());

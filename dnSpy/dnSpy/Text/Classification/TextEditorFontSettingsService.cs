@@ -34,9 +34,9 @@ namespace dnSpy.Text.Classification {
 		[ImportingConstructor]
 		TextEditorFontSettingsService(IThemeManager themeManager, ITextEditorSettings textEditorSettings, [ImportMany] IEnumerable<Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>> textEditorFormatDefinitions) {
 			themeManager.ThemeChangedHighPriority += ThemeManager_ThemeChangedHighPriority;
-			var creator = new TextEditorFontSettingsDictionaryCreator(textEditorSettings, textEditorFormatDefinitions);
-			this.toTextEditorFontSettings = creator.Result;
-			this.defaultTextEditorFontSettings = creator.DefaultSettings;
+			var provider = new TextEditorFontSettingsDictionaryProvider(textEditorSettings, textEditorFormatDefinitions);
+			this.toTextEditorFontSettings = provider.Result;
+			this.defaultTextEditorFontSettings = provider.DefaultSettings;
 		}
 
 		void ThemeManager_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {

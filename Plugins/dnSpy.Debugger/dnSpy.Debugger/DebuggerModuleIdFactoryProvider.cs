@@ -42,9 +42,9 @@ namespace dnSpy.Debugger {
 			}
 
 			public ModuleId? Create(ModuleDef module) {
-				var midProvider = fileTreeView.FindNode(module)?.DnSpyFile as IModuleIdProvider;
-				if (midProvider != null)
-					return midProvider.ModuleId;
+				var midHolder = fileTreeView.FindNode(module)?.DnSpyFile as IModuleIdHolder;
+				if (midHolder != null)
+					return midHolder.ModuleId;
 				return null;
 			}
 		}

@@ -58,14 +58,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public DocumentViewerContent Content => documentViewerControl.Content;
 		SpanDataCollection<ReferenceInfo> IDocumentViewer.ReferenceCollection => documentViewerControl.Content.ReferenceCollection;
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly DocumentViewer documentViewer;
 
-			public GuidObjectsCreator(DocumentViewer documentViewer) {
+			public GuidObjectsProvider(DocumentViewer documentViewer) {
 				this.documentViewer = documentViewer;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, documentViewer);
 
 				var dvCtrl = documentViewer.documentViewerControl;
@@ -92,7 +92,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			this.wpfCommandManager = wpfCommandManager;
 			this.documentViewerServiceImpl = documentViewerServiceImpl;
 			this.documentViewerControl = documentViewerControl;
-			menuManager.InitializeContextMenu(documentViewerControl.TextView.VisualElement, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(documentViewerControl.TextView));
+			menuManager.InitializeContextMenu(documentViewerControl.TextView.VisualElement, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsProvider(this), new ContextMenuInitializer(documentViewerControl.TextView));
 			// Prevent the tab control's context menu from popping up when right-clicking in the textview host margin
 			menuManager.InitializeContextMenu(documentViewerControl, Guid.NewGuid());
 			wpfCommandManager.Add(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);

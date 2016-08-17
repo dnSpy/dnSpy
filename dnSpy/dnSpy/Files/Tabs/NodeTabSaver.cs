@@ -34,13 +34,13 @@ using dnSpy.Properties;
 using Microsoft.Win32;
 
 namespace dnSpy.Files.Tabs {
-	[ExportTabSaverCreator(Order = TabConstants.ORDER_DEFAULTTABSAVERCREATOR)]
-	sealed class NodeTabSaverCreator : ITabSaverCreator {
+	[ExportTabSaverProvider(Order = TabConstants.ORDER_DEFAULTTABSAVERPROVIDER)]
+	sealed class NodeTabSaverProvider : ITabSaverProvider {
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 		readonly IMessageBoxManager messageBoxManager;
 
 		[ImportingConstructor]
-		NodeTabSaverCreator(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IMessageBoxManager messageBoxManager) {
+		NodeTabSaverProvider(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IMessageBoxManager messageBoxManager) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.messageBoxManager = messageBoxManager;
 		}

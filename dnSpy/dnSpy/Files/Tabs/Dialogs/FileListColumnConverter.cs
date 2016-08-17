@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = ColorizedTextElementCreator.Create(vm.Owner.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(vm.Owner.SyntaxHighlight);
 			var printer = new FileListPrinter(gen.Output);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);

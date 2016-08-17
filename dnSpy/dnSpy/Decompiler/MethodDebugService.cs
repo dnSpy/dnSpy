@@ -29,13 +29,13 @@ using dnSpy.Contracts.Metadata;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Decompiler {
-	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_METHODDEBUGSERVICECREATOR)]
+	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_METHODDEBUGSERVICE)]
 	sealed class MethodDebugServiceDocumentViewerListener : IDocumentViewerListener {
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		MethodDebugServiceDocumentViewerListener(IModuleIdCreator moduleIdCreator) {
-			this.moduleIdCreator = moduleIdCreator;
+		MethodDebugServiceDocumentViewerListener(IModuleIdProvider moduleIdProvider) {
+			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public void OnEvent(DocumentViewerEventArgs e) {
@@ -46,7 +46,7 @@ namespace dnSpy.Decompiler {
 		void AddMethodDebugService(IDocumentViewer documentViewer, DocumentViewerContent content) {
 			if (content == null)
 				return;
-			var service = new MethodDebugService(content.MethodDebugInfos, documentViewer.TextView.TextSnapshot, moduleIdCreator);
+			var service = new MethodDebugService(content.MethodDebugInfos, documentViewer.TextView.TextSnapshot, moduleIdProvider);
 			documentViewer.AddContentData(MethodDebugServiceConstants.MethodDebugServiceKey, service);
 		}
 	}
@@ -54,22 +54,22 @@ namespace dnSpy.Decompiler {
 	sealed class MethodDebugService : IMethodDebugService {
 		readonly Dictionary<ModuleTokenId, MethodDebugInfo> dict;
 		readonly ITextSnapshot snapshot;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 		MethodSourceStatement[] sortedStatements;
 
 		public int Count => dict.Count;
 
-		public MethodDebugService(IList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdCreator moduleIdCreator) {
+		public MethodDebugService(IList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdProvider moduleIdProvider) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
-			if (moduleIdCreator == null)
-				throw new ArgumentNullException(nameof(moduleIdCreator));
+			if (moduleIdProvider == null)
+				throw new ArgumentNullException(nameof(moduleIdProvider));
 
 			this.dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 			this.snapshot = snapshot;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 
 			var modIdDict = new Dictionary<ModuleDef, ModuleId>();
 			foreach (var info in methodDebugInfos) {
@@ -79,7 +79,7 @@ namespace dnSpy.Decompiler {
 
 				ModuleId moduleId;
 				if (!modIdDict.TryGetValue(module, out moduleId)) {
-					moduleId = moduleIdCreator.Create(module);
+					moduleId = moduleIdProvider.Create(module);
 					modIdDict.Add(module, moduleId);
 				}
 				var key = new ModuleTokenId(moduleId, info.Method.MDToken);
@@ -153,7 +153,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public MethodSourceStatement? FindByCodeOffset(MethodDef method, uint codeOffset) =>
-			FindByCodeOffset(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken), codeOffset);
+			FindByCodeOffset(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken), codeOffset);
 
 		public MethodSourceStatement? FindByCodeOffset(ModuleTokenId token, uint codeOffset) {
 			MethodDebugInfo info;
@@ -167,7 +167,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public MethodDebugInfo TryGetMethodDebugInfo(MethodDef method) =>
-			TryGetMethodDebugInfo(new ModuleTokenId(moduleIdCreator.Create(method.Module), method.MDToken));
+			TryGetMethodDebugInfo(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken));
 
 		public MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token) {
 			MethodDebugInfo info;

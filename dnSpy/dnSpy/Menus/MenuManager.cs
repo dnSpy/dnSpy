@@ -89,12 +89,12 @@ namespace dnSpy.Menus {
 			this.mefMenuItems = mefMenuItems;
 		}
 
-		public IContextMenuCreator InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
+		public IContextMenuProvider InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
 			Debug.Assert(guid != Guid.Empty);
-			return new ContextMenuCreator(this, elem, guid, creator, initCtxMenu, ctxMenuGuid);
+			return new ContextMenuProvider(this, elem, guid, provider, initCtxMenu, ctxMenuGuid);
 		}
 
-		public IContextMenuCreator InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, string ctxMenuGuid) => InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu, ctxMenuGuid == null ? (Guid?)null : new Guid(ctxMenuGuid));
+		public IContextMenuProvider InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, string ctxMenuGuid) => InitializeContextMenu(elem, new Guid(guid), provider, initCtxMenu, ctxMenuGuid == null ? (Guid?)null : new Guid(ctxMenuGuid));
 
 		void InitializeMenuItemObjects() {
 			if (guidToGroups != null)
@@ -216,7 +216,7 @@ namespace dnSpy.Menus {
 		}
 
 		WeakReference prevEventArgs = new WeakReference(null);
-		internal bool? ShowContextMenu(object evArgs, FrameworkElement ctxMenuElem, Guid topLevelMenuGuid, Guid ownerMenuGuid, GuidObject creatorObject, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, bool openedFromKeyboard) {
+		internal bool? ShowContextMenu(object evArgs, FrameworkElement ctxMenuElem, Guid topLevelMenuGuid, Guid ownerMenuGuid, GuidObject creatorObject, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, bool openedFromKeyboard) {
 			InitializeMenuItemObjects();
 
 			// There could be nested contex menu handler calls, eg. first text editor followed by
@@ -224,7 +224,7 @@ namespace dnSpy.Menus {
 			if (prevEventArgs.Target == evArgs)
 				return null;
 
-			var ctx = new MenuItemContext(topLevelMenuGuid, openedFromKeyboard, creatorObject, creator?.GetGuidObjects(new GuidObjectsCreatorArgs(creatorObject, openedFromKeyboard)));
+			var ctx = new MenuItemContext(topLevelMenuGuid, openedFromKeyboard, creatorObject, provider?.GetGuidObjects(new GuidObjectsProviderArgs(creatorObject, openedFromKeyboard)));
 
 			List<MenuItemGroupMD> groups;
 			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out groups);
@@ -267,9 +267,9 @@ namespace dnSpy.Menus {
 				needSeparator = true;
 
 				foreach (var item in items) {
-					var itemCreator = item.MenuItem as IMenuItemCreator;
-					if (itemCreator != null) {
-						foreach (var createdItem in itemCreator.Create(ctx)) {
+					var itemProvider = item.MenuItem as IMenuItemProvider;
+					if (itemProvider != null) {
+						foreach (var createdItem in itemProvider.Create(ctx)) {
 							var menuItem = Create(createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 							firstMenuItem = null;
 							allItems.Add(menuItem);

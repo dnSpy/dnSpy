@@ -44,15 +44,15 @@ namespace dnSpy.Debugger {
 		readonly IDebuggerSettings debuggerSettings;
 		readonly IFileManager fileManager;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		ModuleLoader(Lazy<ITheDebugger> theDebugger, IDebuggerSettings debuggerSettings, IFileManager fileManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdCreator moduleIdCreator) {
+		ModuleLoader(Lazy<ITheDebugger> theDebugger, IDebuggerSettings debuggerSettings, IFileManager fileManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdProvider moduleIdProvider) {
 			this.theDebugger = theDebugger;
 			this.debuggerSettings = debuggerSettings;
 			this.fileManager = fileManager;
 			this.inMemoryModuleManager = inMemoryModuleManager;
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public DnModule GetDnModule(CorModule module) {
@@ -140,13 +140,13 @@ namespace dnSpy.Debugger {
 
 		IDnSpyFile LoadExisting(ModuleId moduleId) {
 			foreach (var file in AllActiveDnSpyFiles) {
-				var otherId = moduleIdCreator.Create(file.ModuleDef);
+				var otherId = moduleIdProvider.Create(file.ModuleDef);
 				if (otherId.Equals(moduleId))
 					return file;
 			}
 
 			foreach (var file in AllDnSpyFiles) {
-				var moduleIdFile = moduleIdCreator.Create(file.ModuleDef);
+				var moduleIdFile = moduleIdProvider.Create(file.ModuleDef);
 				if (moduleIdFile.Equals(moduleId))
 					return file;
 			}

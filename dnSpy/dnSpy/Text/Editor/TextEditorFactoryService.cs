@@ -49,8 +49,8 @@ namespace dnSpy.Text.Editor {
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
-		readonly ILineTransformCreatorService lineTransformCreatorService;
-		readonly IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator;
+		readonly ILineTransformProviderService lineTransformProviderService;
+		readonly IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider;
 		readonly IMenuManager menuManager;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
@@ -76,17 +76,17 @@ namespace dnSpy.Text.Editor {
 			PredefinedTextViewRoles.Zoomable,
 		};
 
-		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects;
-			readonly IGuidObjectsCreator guidObjectsCreator;
+		sealed class GuidObjectsProvider : IGuidObjectsProvider {
+			readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects;
+			readonly IGuidObjectsProvider guidObjectsProvider;
 			internal IWpfTextView WpfTextView { get; set; }
 
-			public GuidObjectsCreator(Func<GuidObjectsCreatorArgs, IEnumerable<GuidObject>> createGuidObjects, IGuidObjectsCreator guidObjectsCreator) {
+			public GuidObjectsProvider(Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects, IGuidObjectsProvider guidObjectsProvider) {
 				this.createGuidObjects = createGuidObjects;
-				this.guidObjectsCreator = guidObjectsCreator;
+				this.guidObjectsProvider = guidObjectsProvider;
 			}
 
-			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsCreatorArgs args) {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				Debug.Assert(WpfTextView != null);
 				if (WpfTextView != null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID, WpfTextView);
@@ -100,15 +100,15 @@ namespace dnSpy.Text.Editor {
 						yield return guidObject;
 				}
 
-				if (guidObjectsCreator != null) {
-					foreach (var guidObject in guidObjectsCreator.GetGuidObjects(args))
+				if (guidObjectsProvider != null) {
+					foreach (var guidObject in guidObjectsProvider.GetGuidObjects(args))
 						yield return guidObject;
 				}
 			}
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformCreatorService lineTransformCreatorService, IWpfTextViewMarginProviderCollectionCreator wpfTextViewMarginProviderCollectionCreator, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandManager = commandManager;
@@ -120,8 +120,8 @@ namespace dnSpy.Text.Editor {
 			this.classificationFormatMapService = classificationFormatMapService;
 			this.editorFormatMapService = editorFormatMapService;
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
-			this.lineTransformCreatorService = lineTransformCreatorService;
-			this.wpfTextViewMarginProviderCollectionCreator = wpfTextViewMarginProviderCollectionCreator;
+			this.lineTransformProviderService = lineTransformProviderService;
+			this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
 			this.menuManager = menuManager;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
@@ -183,13 +183,13 @@ namespace dnSpy.Text.Editor {
 			return CreateTextViewImpl(viewModel, roles, parentOptions, options);
 		}
 
-		IDnSpyWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsCreator> createGuidObjectsCreator = null) {
-			var guidObjectsCreator = new GuidObjectsCreator(options?.CreateGuidObjects, createGuidObjectsCreator?.Invoke());
-			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformCreatorService, wpfTextViewCreationListeners);
-			guidObjectsCreator.WpfTextView = wpfTextView;
+		IDnSpyWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsProvider> createGuidObjectsProvider = null) {
+			var guidObjectsProvider = new GuidObjectsProvider(options?.CreateGuidObjects, createGuidObjectsProvider?.Invoke());
+			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, wpfTextViewCreationListeners);
+			guidObjectsProvider.WpfTextView = wpfTextView;
 
 			if (options?.MenuGuid != null)
-				menuManager.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsCreator, new ContextMenuInitializer(wpfTextView));
+				menuManager.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new ContextMenuInitializer(wpfTextView));
 
 			TextViewCreated?.Invoke(this, new TextViewCreatedEventArgs(wpfTextView));
 
@@ -208,7 +208,7 @@ namespace dnSpy.Text.Editor {
 		public IDnSpyWpfTextViewHost CreateTextViewHost(IDnSpyWpfTextView wpfTextView, bool setFocus) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			return new WpfTextViewHost(wpfTextViewMarginProviderCollectionCreator, wpfTextView, editorOperationsFactoryService, setFocus);
+			return new WpfTextViewHost(wpfTextViewMarginProviderCollectionProvider, wpfTextView, editorOperationsFactoryService, setFocus);
 		}
 
 		public ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new TextViewRoleSet(roles);

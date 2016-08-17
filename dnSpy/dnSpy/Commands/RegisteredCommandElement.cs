@@ -142,7 +142,7 @@ namespace dnSpy.Commands {
 
 		CommandInfo GetCommand(KeyEventArgs e, object target, out bool waitForSecondKey) {
 			var keyInput = new KeyInput(e);
-			CreatorAndCommand result;
+			ProviderAndCommand result;
 			if (prevKey != null) {
 				waitForSecondKey = false;
 				var keyShortcut = new KeyShortcut(prevKey.Value, keyInput);
@@ -153,7 +153,7 @@ namespace dnSpy.Commands {
 				if (keyShortcutCollection.IsTwoKeyCombo(keyInput)) {
 					waitForSecondKey = true;
 					prevKey = keyInput;
-					result = default(CreatorAndCommand);
+					result = default(ProviderAndCommand);
 				}
 				else {
 					waitForSecondKey = false;

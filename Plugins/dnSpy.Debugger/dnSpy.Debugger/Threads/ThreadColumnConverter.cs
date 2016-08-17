@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Threads {
 				}
 			}
 
-			var gen = ColorizedTextElementCreator.Create(vm.Context.SyntaxHighlight);
+			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new ThreadPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Id"))
 				printer.WriteId(vm);

@@ -27,15 +27,15 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.CallStack {
-	[Export(typeof(IMainToolWindowContentCreator))]
-	sealed class CallStackToolWindowContentCreator : IMainToolWindowContentCreator {
+	[Export(typeof(IMainToolWindowContentProvider))]
+	sealed class CallStackToolWindowContentProvider : IMainToolWindowContentProvider {
 		readonly Lazy<ICallStackContent> callStackContent;
 
 		public CallStackToolWindowContent CallStackToolWindowContent => callStackToolWindowContent ?? (callStackToolWindowContent = new CallStackToolWindowContent(callStackContent));
 		CallStackToolWindowContent callStackToolWindowContent;
 
 		[ImportingConstructor]
-		CallStackToolWindowContentCreator(Lazy<ICallStackContent> callStackContent) {
+		CallStackToolWindowContentProvider(Lazy<ICallStackContent> callStackContent) {
 			this.callStackContent = callStackContent;
 		}
 

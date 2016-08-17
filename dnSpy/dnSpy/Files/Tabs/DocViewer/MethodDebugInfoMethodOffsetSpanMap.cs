@@ -27,16 +27,16 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class MethodDebugInfoMethodOffsetSpanMap : IMethodOffsetSpanMap {
-		readonly IModuleIdCreator moduleIdCreator;
+		readonly IModuleIdProvider moduleIdProvider;
 		readonly Dictionary<ModuleTokenId, MethodDebugInfo> toMethodDebugInfo;
 
-		public MethodDebugInfoMethodOffsetSpanMap(IModuleIdCreator moduleIdCreator, ReadOnlyCollection<MethodDebugInfo> methodDebugInfos) {
+		public MethodDebugInfoMethodOffsetSpanMap(IModuleIdProvider moduleIdProvider, ReadOnlyCollection<MethodDebugInfo> methodDebugInfos) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
-			this.moduleIdCreator = moduleIdCreator;
+			this.moduleIdProvider = moduleIdProvider;
 			toMethodDebugInfo = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 			foreach (var info in methodDebugInfos) {
-				var token = new ModuleTokenId(moduleIdCreator.Create(info.Method.Module), info.Method.MDToken);
+				var token = new ModuleTokenId(moduleIdProvider.Create(info.Method.Module), info.Method.MDToken);
 				MethodDebugInfo otherInfo;
 				if (toMethodDebugInfo.TryGetValue(token, out otherInfo)) {
 					if (info.Statements.Length < otherInfo.Statements.Length)

@@ -82,12 +82,12 @@ namespace dnSpy.BamlDecompiler {
 
 	// This is disabled for now since it only contains one option that can be modified in the text
 	// editor by using the context menu. Enable again when more options are added.
-	// [Export(typeof(IAppSettingsTabCreator))]
-	sealed class BamlSettingsTabCreator : IAppSettingsTabCreator {
+	// [Export(typeof(IAppSettingsTabProvider))]
+	sealed class BamlSettingsTabProvider : IAppSettingsTabProvider {
 		readonly BamlSettingsImpl bamlSettings;
 
 		[ImportingConstructor]
-		BamlSettingsTabCreator(BamlSettingsImpl bamlSettings) {
+		BamlSettingsTabProvider(BamlSettingsImpl bamlSettings) {
 			this.bamlSettings = bamlSettings;
 		}
 
