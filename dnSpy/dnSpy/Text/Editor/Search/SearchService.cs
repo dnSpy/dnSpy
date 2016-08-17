@@ -599,9 +599,13 @@ namespace dnSpy.Text.Editor.Search {
 			var snapshot = wpfTextView.TextSnapshot;
 			var options = GetFindOptions(SearchKind.Replace, true);
 			var startingPosition = GetStartingPosition(SearchKind.Replace, options, restart: true);
-			startingPosition = startingPosition.TranslateTo(snapshot, PointTrackingMode.Negative);
+			if (startingPosition == null) {
+				expandedReplacePattern = null;
+				return null;
+			}
+			startingPosition = startingPosition.Value.TranslateTo(snapshot, PointTrackingMode.Negative);
 			try {
-				return textSearchService2.FindForReplace(startingPosition, SearchString, Unescape(ReplaceString, options), options, out expandedReplacePattern);
+				return textSearchService2.FindForReplace(startingPosition.Value, SearchString, Unescape(ReplaceString, options), options, out expandedReplacePattern);
 			}
 			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
 				// Invalid regex string
@@ -733,7 +737,7 @@ namespace dnSpy.Text.Editor.Search {
 
 		static bool IsMultiLineRegexPattern(string s) => s.Contains(@"\r") || s.Contains(@"\n") || s.Contains("$");
 
-		SnapshotPoint GetStartingPosition(SearchKind searchKind, FindOptions options, bool restart) {
+		SnapshotPoint? GetStartingPosition(SearchKind searchKind, FindOptions options, bool restart) {
 			Debug.Assert(searchKind != SearchKind.None);
 			switch (searchKind) {
 			case SearchKind.Find:
@@ -742,17 +746,14 @@ namespace dnSpy.Text.Editor.Search {
 
 			case SearchKind.IncrementalSearchBackward:
 			case SearchKind.IncrementalSearchForward:
-				Debug.Assert(incrementalStartPosition != null);
-				if (incrementalStartPosition == null)
-					return GetStartingPosition(options, restart);
-				return incrementalStartPosition.Value;
+				return incrementalStartPosition;
 
 			default:
 				throw new ArgumentOutOfRangeException(nameof(searchKind));
 			}
 		}
 
-		SnapshotPoint GetStartingPosition(FindOptions options, bool restart) {
+		SnapshotPoint? GetStartingPosition(FindOptions options, bool restart) {
 			if (wpfTextView.Selection.IsEmpty)
 				return wpfTextView.Caret.Position.BufferPosition;
 			if (restart) {
@@ -763,11 +764,15 @@ namespace dnSpy.Text.Editor.Search {
 			if ((options & FindOptions.SearchReverse) != 0) {
 				if (wpfTextView.Selection.End.Position.Position > 0)
 					return wpfTextView.Selection.End.Position - 1;
-				return wpfTextView.Selection.End.Position;
+				if ((options & FindOptions.Wrap) != 0)
+					return new SnapshotPoint(wpfTextView.TextSnapshot, wpfTextView.TextSnapshot.Length);
+				return null;
 			}
 			if (wpfTextView.Selection.Start.Position.Position != wpfTextView.Selection.Start.Position.Snapshot.Length)
 				return wpfTextView.Selection.Start.Position + 1;
-			return wpfTextView.Selection.Start.Position;
+			if ((options & FindOptions.Wrap) != 0)
+				return new SnapshotPoint(wpfTextView.TextSnapshot, 0);
+			return null;
 		}
 
 		public void FindNext(bool forward) {
@@ -777,8 +782,10 @@ namespace dnSpy.Text.Editor.Search {
 			FindNextCore(options, startingPosition);
 		}
 
-		void FindNextCore(FindOptions options, SnapshotPoint startingPosition) {
-			var res = FindNextResultCore(options, startingPosition);
+		void FindNextCore(FindOptions options, SnapshotPoint? startingPosition) {
+			if (startingPosition == null)
+				return;
+			var res = FindNextResultCore(options, startingPosition.Value);
 			if (res == null)
 				return;
 			ShowSearchResult(res.Value);
