@@ -931,15 +931,25 @@ namespace dnSpy.Text.Editor.Search {
 			var snapshot = wpfTextView.TextSnapshot;
 			var searchRange = new SnapshotSpan(snapshot, 0, snapshot.Length);
 			var options = GetFindOptions(searchKind, true);
+			int count = 0;
 			try {
-				findResultCollection = new NormalizedSnapshotSpanCollection(textSearchService2.FindAll(searchRange, SearchString, options).Take(MAX_SEARCH_RESULTS));
+				var list = new List<SnapshotSpan>();
+				foreach (var res in textSearchService2.FindAll(searchRange, SearchString, options)) {
+					if (res.Length != 0)
+						list.Add(res);
+					count++;
+					if (count == MAX_SEARCH_RESULTS)
+						break;
+				}
+				findResultCollection = new NormalizedSnapshotSpanCollection(list);
 			}
 			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
 				// Invalid regex string
 				findResultCollection = NormalizedSnapshotSpanCollection.Empty;
+				count = 0;
 			}
 			RefreshAllTags();
-			SetFoundResult(findResultCollection.Count != 0);
+			SetFoundResult(count != 0);
 		}
 
 		void RefreshAllTags() {
