@@ -33,8 +33,8 @@ namespace dnSpy.Contracts.Command {
 		NotHandled,
 
 		/// <summary>
-		/// Command was not handled, but don't call the next <see cref="ICommandTarget"/> in the chain
+		/// Let WPF handle the command, don't pass it to the next <see cref="ICommandTarget"/> handler
 		/// </summary>
-		NotHandledDontCallNextHandler,
+		LetWpfHandleCommand,
 	}
 }

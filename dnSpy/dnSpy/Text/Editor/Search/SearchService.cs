@@ -216,7 +216,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!searchControl.IsKeyboardFocusWithin)
 				return CommandTargetStatus.NotHandled;
 			// Make sure the WPF controls work as expected by ignoring all other text editor commands
-			return CommandTargetStatus.NotHandledDontCallNextHandler;
+			return CommandTargetStatus.LetWpfHandleCommand;
 		}
 
 		public CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result) {
@@ -254,7 +254,7 @@ namespace dnSpy.Text.Editor.Search {
 
 			if (!searchControl.IsKeyboardFocusWithin)
 				return CommandTargetStatus.NotHandled;
-			return CommandTargetStatus.NotHandledDontCallNextHandler;
+			return CommandTargetStatus.LetWpfHandleCommand;
 		}
 
 		void SetIncrementalSearchString(string newSearchString) {

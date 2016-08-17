@@ -43,13 +43,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (group == RoslynReplCommandConstants.RoslynReplGroup) {
 				switch ((RoslynReplIds)cmdId) {
 				case RoslynReplIds.Reset:
-					return vm.CanReset ? CommandTargetStatus.Handled : CommandTargetStatus.NotHandledDontCallNextHandler;
+					return vm.CanReset ? CommandTargetStatus.Handled : CommandTargetStatus.LetWpfHandleCommand;
 
 				case RoslynReplIds.SaveText:
-					return vm.CanSaveText ? CommandTargetStatus.Handled : CommandTargetStatus.NotHandledDontCallNextHandler;
+					return vm.CanSaveText ? CommandTargetStatus.Handled : CommandTargetStatus.LetWpfHandleCommand;
 
 				case RoslynReplIds.SaveCode:
-					return vm.CanSaveCode ? CommandTargetStatus.Handled : CommandTargetStatus.NotHandledDontCallNextHandler;
+					return vm.CanSaveCode ? CommandTargetStatus.Handled : CommandTargetStatus.LetWpfHandleCommand;
 
 				default:
 					Debug.Fail($"Unknown {nameof(RoslynReplIds)} value: {(RoslynReplIds)cmdId}");

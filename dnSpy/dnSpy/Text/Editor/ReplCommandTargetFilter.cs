@@ -49,17 +49,17 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Cut:
 					if (replEditor.ReplEditorOperations.CanCut)
 						return CommandTargetStatus.Handled;
-					return CommandTargetStatus.NotHandledDontCallNextHandler;
+					return CommandTargetStatus.LetWpfHandleCommand;
 
 				case StandardIds.Paste:
 					if (replEditor.ReplEditorOperations.CanPaste)
 						return CommandTargetStatus.Handled;
-					return CommandTargetStatus.NotHandledDontCallNextHandler;
+					return CommandTargetStatus.LetWpfHandleCommand;
 
 				case StandardIds.Redo:
 				case StandardIds.Undo:
 					Debug.Assert(nextCommandTarget != null);
-					return nextCommandTarget?.CanExecute(group, cmdId) ?? CommandTargetStatus.NotHandledDontCallNextHandler;
+					return nextCommandTarget?.CanExecute(group, cmdId) ?? CommandTargetStatus.LetWpfHandleCommand;
 
 				default:
 					return CommandTargetStatus.NotHandled;
@@ -225,7 +225,7 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Undo:
 					replEditor.SearchText = null;
 					Debug.Assert(nextCommandTarget != null);
-					return nextCommandTarget?.Execute(group, cmdId, args, ref result) ?? CommandTargetStatus.NotHandledDontCallNextHandler;
+					return nextCommandTarget?.Execute(group, cmdId, args, ref result) ?? CommandTargetStatus.LetWpfHandleCommand;
 
 				default:
 					return CommandTargetStatus.NotHandled;
