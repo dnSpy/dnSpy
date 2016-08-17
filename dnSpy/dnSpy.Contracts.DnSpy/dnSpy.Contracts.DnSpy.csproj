@@ -489,6 +489,8 @@
     <Compile Include="Text\Editor\IMarginContextMenuHandler.cs" />
     <Compile Include="Text\Editor\IMarginContextMenuHandlerProviderService.cs" />
     <Compile Include="Text\Editor\IndentStyle.cs" />
+    <Compile Include="Text\Editor\IReplaceListener.cs" />
+    <Compile Include="Text\Editor\IReplaceListenerProvider.cs" />
     <Compile Include="Text\Editor\IReplCommandHandler.cs" />
     <Compile Include="Text\Editor\IReplCommandInput.cs" />
     <Compile Include="Text\Editor\IReplEditor.cs" />

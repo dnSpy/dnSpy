@@ -843,6 +843,22 @@ namespace dnSpy.Text.Editor {
 			Debug.Fail("Couldn't find a buffer");
 			return new ReplSubBufferInfo(active, bufferKindIndex);
 		}
+
+		public bool CanReplace(SnapshotSpan span, string newText) {
+			Debug.Assert(span.Snapshot == TextView.TextSnapshot);
+			if (OffsetOfPrompt == null)
+				return false;
+			if (span.Span.Start < OffsetOfPrompt.Value)
+				return false;
+			if (newText.IndexOfAny(newLineChars) >= 0)
+				return false;
+			var line = span.Start.GetContainingLine();
+			// Don't allow removing the newline
+			if (span.End > line.End)
+				return false;
+			var prompt = line.Start.Position == OffsetOfPrompt.Value ? PrimaryPrompt : SecondaryPrompt;
+			return span.Start.Position >= line.Start.Position + prompt.Length;
+		}
 	}
 
 	struct CachedTextColorsCollectionCreator {

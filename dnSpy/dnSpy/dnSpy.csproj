@@ -506,6 +506,7 @@
     <Compile Include="Text\Editor\ReplCommandTargetFilterCreator.cs" />
     <Compile Include="Text\Editor\ReplEditor.cs" />
     <Compile Include="Text\Editor\ReplEditorCreator.cs" />
+    <Compile Include="Text\Editor\ReplEditorReplaceListener.cs" />
     <Compile Include="Text\Editor\ReplSubBuffer.cs" />
     <Compile Include="Text\Editor\ResourceDictionaryUtilities.cs" />
     <Compile Include="Text\Editor\RightControlMargin.cs" />

@@ -158,12 +158,14 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchSettings searchSettings;
 		readonly IMessageBoxManager messageBoxManager;
 		readonly ITextStructureNavigator textStructureNavigator;
+		readonly Lazy<IReplaceListenerProvider>[] replaceListenerProviders;
 		readonly List<ITextMarkerListener> listeners;
 		SearchControl searchControl;
 		IAdornmentLayer layer;
 		NormalizedSnapshotSpanCollection findResultCollection;
+		IReplaceListener[] replaceListeners;
 
-		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxManager messageBoxManager, ITextStructureNavigator textStructureNavigator) {
+		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxManager messageBoxManager, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (textSearchService2 == null)
@@ -174,11 +176,14 @@ namespace dnSpy.Text.Editor.Search {
 				throw new ArgumentNullException(nameof(messageBoxManager));
 			if (textStructureNavigator == null)
 				throw new ArgumentNullException(nameof(textStructureNavigator));
+			if (replaceListenerProviders == null)
+				throw new ArgumentNullException(nameof(replaceListenerProviders));
 			this.wpfTextView = wpfTextView;
 			this.textSearchService2 = textSearchService2;
 			this.searchSettings = searchSettings;
 			this.messageBoxManager = messageBoxManager;
 			this.textStructureNavigator = textStructureNavigator;
+			this.replaceListenerProviders = replaceListenerProviders;
 			this.listeners = new List<ITextMarkerListener>();
 			this.searchString = string.Empty;
 			this.replaceString = string.Empty;
@@ -538,12 +543,11 @@ namespace dnSpy.Text.Editor.Search {
 
 			var vres = new VirtualSnapshotSpan(res.Value);
 			if (!wpfTextView.Selection.IsEmpty && wpfTextView.Selection.StreamSelectionSpan == vres) {
-				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
-					if (!ed.Replace(res.Value.Span, expandedReplacePattern))
-						return;
-					ed.Apply();
-					if (ed.Canceled)
-						return;
+				if (CanReplaceSpan(res.Value, expandedReplacePattern)) {
+					using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
+						if (ed.Replace(res.Value.Span, expandedReplacePattern))
+							ed.Apply();
+					}
 				}
 				wpfTextView.Selection.Clear();
 				var newPos = res.Value.End.TranslateTo(wpfTextView.TextSnapshot, PointTrackingMode.Positive);
@@ -577,6 +581,23 @@ namespace dnSpy.Text.Editor.Search {
 			}
 		}
 
+		bool CanReplaceSpan(SnapshotSpan span, string newText) {
+			if (replaceListeners == null) {
+				var list = new List<IReplaceListener>(replaceListenerProviders.Length);
+				foreach (var provider in replaceListenerProviders) {
+					var listener = provider.Value.Create(wpfTextView);
+					if (listener != null)
+						list.Add(listener);
+				}
+				replaceListeners = list.Count == 0 ? Array.Empty<IReplaceListener>() : list.ToArray();
+			}
+			foreach (var listener in replaceListeners) {
+				if (!listener.CanReplace(span, newText))
+					return false;
+			}
+			return true;
+		}
+
 		bool CanReplaceAll => CanReplace && SearchString.Length > 0;
 		void ReplaceAll() {
 			if (!CanReplaceAll)
@@ -585,8 +606,10 @@ namespace dnSpy.Text.Editor.Search {
 			try {
 				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
 					foreach (var res in GetAllResultsForReplaceAll()) {
-						// Ignore errors due to read-only regions
-						ed.Replace(res.Item1.Span, res.Item2);
+						if (CanReplaceSpan(res.Item1, res.Item2)) {
+							// Ignore errors due to read-only regions
+							ed.Replace(res.Item1.Span, res.Item2);
+						}
 					}
 					ed.Apply();
 					if (ed.Canceled)
