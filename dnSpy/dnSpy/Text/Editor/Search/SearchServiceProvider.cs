@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.App;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 
@@ -32,19 +33,21 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ITextSearchService2 textSearchService2;
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
 		readonly ISearchSettings searchSettings;
+		readonly IMessageBoxManager messageBoxManager;
 
 		[ImportingConstructor]
-		SearchServiceProvider(ITextSearchService2 textSearchService2, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISearchSettings searchSettings) {
+		SearchServiceProvider(ITextSearchService2 textSearchService2, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISearchSettings searchSettings, IMessageBoxManager messageBoxManager) {
 			this.textSearchService2 = textSearchService2;
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
 			this.searchSettings = searchSettings;
+			this.messageBoxManager = messageBoxManager;
 		}
 
 		public ISearchService Get(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(SearchService),
-				() => new SearchService(wpfTextView, textSearchService2, searchSettings,
+				() => new SearchService(wpfTextView, textSearchService2, searchSettings, messageBoxManager,
 					textStructureNavigatorSelectorService.GetTextStructureNavigator(wpfTextView.TextBuffer)));
 		}
 	}

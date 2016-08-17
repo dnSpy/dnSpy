@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
@@ -155,24 +156,28 @@ namespace dnSpy.Text.Editor.Search {
 		readonly IWpfTextView wpfTextView;
 		readonly ITextSearchService2 textSearchService2;
 		readonly ISearchSettings searchSettings;
+		readonly IMessageBoxManager messageBoxManager;
 		readonly ITextStructureNavigator textStructureNavigator;
 		readonly List<ITextMarkerListener> listeners;
 		SearchControl searchControl;
 		IAdornmentLayer layer;
 		NormalizedSnapshotSpanCollection findResultCollection;
 
-		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, ITextStructureNavigator textStructureNavigator) {
+		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxManager messageBoxManager, ITextStructureNavigator textStructureNavigator) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (textSearchService2 == null)
 				throw new ArgumentNullException(nameof(textSearchService2));
 			if (searchSettings == null)
 				throw new ArgumentNullException(nameof(searchSettings));
+			if (messageBoxManager == null)
+				throw new ArgumentNullException(nameof(messageBoxManager));
 			if (textStructureNavigator == null)
 				throw new ArgumentNullException(nameof(textStructureNavigator));
 			this.wpfTextView = wpfTextView;
 			this.textSearchService2 = textSearchService2;
 			this.searchSettings = searchSettings;
+			this.messageBoxManager = messageBoxManager;
 			this.textStructureNavigator = textStructureNavigator;
 			this.listeners = new List<ITextMarkerListener>();
 			this.searchString = string.Empty;
@@ -576,28 +581,56 @@ namespace dnSpy.Text.Editor.Search {
 			if (!CanReplaceAll)
 				return;
 
-			var snapshot = wpfTextView.TextSnapshot;
-			var options = GetFindOptions(SearchKind.Replace, true);
-			var searchRange = new SnapshotSpan(snapshot, 0, snapshot.Length);
-			Tuple<SnapshotSpan, string>[] result;
 			try {
-				result = textSearchService2.FindAllForReplace(searchRange, SearchString, ReplaceString, options).ToArray();
-			}
-			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
-				// Invalid regex string
-				return;
-			}
-			using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
-				foreach (var res in result) {
-					// Ignore errors due to read-only regions
-					ed.Replace(res.Item1.Span, res.Item2);
+				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
+					foreach (var res in GetAllResultsForReplaceAll()) {
+						// Ignore errors due to read-only regions
+						ed.Replace(res.Item1.Span, res.Item2);
+					}
+					ed.Apply();
+					if (ed.Canceled)
+						return;
 				}
-				ed.Apply();
-				if (ed.Canceled)
-					return;
+			}
+			catch (OutOfMemoryException) {
+				messageBoxManager.Show("Out of memory");
+				return;
 			}
 			wpfTextView.Selection.Clear();
 			wpfTextView.Caret.EnsureVisible();
+		}
+
+		// Finds all results but makes sure that all replacements never overlap another one,
+		// eg. if SearchString is aaa and text is aaaaaaaa, it returns two results, starting
+		// at offsets 0 and 3. The last two aa's aren't touched. Normal FindNext finds matches
+		// at offsets 0, 1, 2, 3, 4, 5.
+		IEnumerable<Tuple<SnapshotSpan, string>> GetAllResultsForReplaceAll() {
+			var snapshot = wpfTextView.TextSnapshot;
+			var options = GetFindOptions(SearchKind.Replace, true) & ~FindOptions.Wrap;
+			var startingPosition = new SnapshotPoint(snapshot, 0);
+			var searchString = SearchString;
+			var reaplceString = ReplaceString;
+			for (;;) {
+				string expandedReplacePattern;
+				SnapshotSpan? res;
+				try {
+					res = textSearchService2.FindForReplace(startingPosition, searchString, replaceString, options, out expandedReplacePattern);
+				}
+				catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
+					// Invalid regex string
+					res = null;
+					expandedReplacePattern = null;
+				}
+				if (res == null)
+					break;
+				yield return Tuple.Create(res.Value, expandedReplacePattern);
+				if (startingPosition.Position == snapshot.Length)
+					break;
+				if (res.Value.Length != 0)
+					startingPosition = res.Value.End;
+				else
+					startingPosition = res.Value.End + 1;
+			}
 		}
 
 		bool CanToggleFindReplace => true;
@@ -666,9 +699,14 @@ namespace dnSpy.Text.Editor.Search {
 					return wpfTextView.Selection.Start.Position;
 				return wpfTextView.Selection.End.Position;
 			}
-			if ((options & FindOptions.SearchReverse) != 0)
-				return wpfTextView.Selection.Start.Position;
-			return wpfTextView.Selection.End.Position;
+			if ((options & FindOptions.SearchReverse) != 0) {
+				if (wpfTextView.Selection.End.Position.Position > 0)
+					return wpfTextView.Selection.End.Position - 1;
+				return wpfTextView.Selection.End.Position;
+			}
+			if (wpfTextView.Selection.Start.Position.Position != wpfTextView.Selection.Start.Position.Snapshot.Length)
+				return wpfTextView.Selection.Start.Position + 1;
+			return wpfTextView.Selection.Start.Position;
 		}
 
 		public void FindNext(bool forward) {

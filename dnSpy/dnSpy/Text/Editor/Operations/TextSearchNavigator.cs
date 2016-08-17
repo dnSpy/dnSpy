@@ -71,6 +71,11 @@ namespace dnSpy.Text.Editor.Operations {
 		bool IsValidStartingPosition(SnapshotSpan range, SnapshotPoint startingPosition) =>
 			range.Snapshot == startingPosition.Snapshot && range.Start <= startingPosition && startingPosition <= range.End;
 
+		bool FindFailed() {
+			currentResult = null;
+			return false;
+		}
+
 		public bool Find() {
 			if (SearchTerm == null)
 				throw new InvalidOperationException();
@@ -78,8 +83,24 @@ namespace dnSpy.Text.Editor.Operations {
 				throw new InvalidOperationException();
 
 			SnapshotPoint startingPosition;
-			if (CurrentResult != null)
-				startingPosition = (SearchOptions & FindOptions.SearchReverse) != 0 ? CurrentResult.Value.Start : CurrentResult.Value.End;
+			if (CurrentResult != null) {
+				if ((SearchOptions & FindOptions.SearchReverse) != 0) {
+					if (CurrentResult.Value.End.Position > 0)
+						startingPosition = CurrentResult.Value.End - 1;
+					else if ((SearchOptions & FindOptions.Wrap) != 0)
+						startingPosition = new SnapshotPoint(CurrentResult.Value.Snapshot, CurrentResult.Value.Snapshot.Length);
+					else
+						return FindFailed();
+				}
+				else {
+					if (CurrentResult.Value.Start.Position != CurrentResult.Value.Snapshot.Length)
+						startingPosition = CurrentResult.Value.Start + 1;
+					else if ((SearchOptions & FindOptions.Wrap) != 0)
+						startingPosition = new SnapshotPoint(CurrentResult.Value.Snapshot, 0);
+					else
+						return FindFailed();
+				}
+			}
 			else if (StartPoint != null)
 				startingPosition = StartPoint.Value;
 			else
@@ -87,17 +108,14 @@ namespace dnSpy.Text.Editor.Operations {
 			startingPosition = startingPosition.TranslateTo(buffer.CurrentSnapshot, (SearchOptions & FindOptions.SearchReverse) != 0 ? PointTrackingMode.Negative : PointTrackingMode.Positive);
 
 			var spanToUse = searchSpan?.GetSpan(buffer.CurrentSnapshot) ?? new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length);
-			if (!IsValidStartingPosition(spanToUse, startingPosition)) {
-				currentResult = null;
-				return false;
-			}
+			if (!IsValidStartingPosition(spanToUse, startingPosition))
+				return FindFailed();
 			foreach (var result in textSearchService2.FindAll(spanToUse, startingPosition, SearchTerm, SearchOptions)) {
 				currentResult = result;
 				return true;
 			}
 
-			currentResult = null;
-			return false;
+			return FindFailed();
 		}
 
 		public bool Replace() {

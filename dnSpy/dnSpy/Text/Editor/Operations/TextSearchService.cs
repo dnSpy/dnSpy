@@ -281,10 +281,13 @@ namespace dnSpy.Text.Editor.Operations {
 				}
 
 				if ((options & FindOptions.Wrap) != 0) {
-					var range2 = new SnapshotSpan(startingPosition, searchRange.End);
+					var range2 = new SnapshotSpan(startLine.Start, searchRange.End);
 					if (range2.Length > 0) {
-						foreach (var res in FindAllSingleLineReverse(startLine, lastLine, range2, searchPattern, options, stringComparison, replacePattern))
+						foreach (var res in FindAllSingleLineReverse(startLine, lastLine, range2, searchPattern, options, stringComparison, replacePattern)) {
+							if (res.Position + res.Length <= startingPosition.Position)
+								break;
 							yield return res;
+						}
 					}
 				}
 			}
@@ -298,10 +301,13 @@ namespace dnSpy.Text.Editor.Operations {
 				}
 
 				if ((options & FindOptions.Wrap) != 0) {
-					var range2 = new SnapshotSpan(searchRange.Start, startingPosition);
+					var range2 = new SnapshotSpan(searchRange.Start, startLine.EndIncludingLineBreak);
 					if (range2.Length > 0) {
-						foreach (var res in FindAllSingleLineForward(firstLine, startLine, range2, searchPattern, options, stringComparison, replacePattern))
+						foreach (var res in FindAllSingleLineForward(firstLine, startLine, range2, searchPattern, options, stringComparison, replacePattern)) {
+							if (res.Position >= startingPosition.Position)
+								break;
 							yield return res;
+						}
 					}
 				}
 			}
@@ -321,7 +327,7 @@ namespace dnSpy.Text.Editor.Operations {
 				var text = range.Value.GetText();
 				int index = 0;
 				if (regex != null) {
-					foreach (var res in GetRegexResults(regex, range.Value, text, index, searchPattern, options, replacePattern))
+					foreach (var res in GetRegexResults(regex, range.Value.Start, text, index, searchPattern, options, replacePattern))
 						yield return res;
 				}
 				else {
@@ -331,7 +337,7 @@ namespace dnSpy.Text.Editor.Operations {
 							break;
 						if (!onlyWords || UnicodeUtilities.IsWord(line, range.Value.Start.Position - line.Start.Position + index, searchPattern.Length))
 							yield return new FindResult(range.Value.Start.Position + index, searchPattern.Length, replacePattern);
-						index += searchPattern.Length;
+						index++;
 					}
 				}
 			}
@@ -351,18 +357,17 @@ namespace dnSpy.Text.Editor.Operations {
 				var text = range.Value.GetText();
 				int index = text.Length;
 				if (regex != null) {
-					foreach (var res in GetRegexResults(regex, range.Value, text, index, searchPattern, options, replacePattern))
+					foreach (var res in GetRegexResults(regex, range.Value.Start, text, index, searchPattern, options, replacePattern))
 						yield return res;
 				}
 				else {
-					index--;
-					while (index >= 0) {
-						index = text.LastIndexOf(searchPattern, index, index + 1, stringComparison);
+					while (index > 0) {
+						index = text.LastIndexOf(searchPattern, index - 1, index, stringComparison);
 						if (index < 0)
 							break;
 						if (!onlyWords || UnicodeUtilities.IsWord(line, range.Value.Start.Position - line.Start.Position + index, searchPattern.Length))
 							yield return new FindResult(range.Value.Start.Position + index, searchPattern.Length, replacePattern);
-						index--;
+						index += searchPattern.Length - 1;
 					}
 				}
 			}
@@ -375,34 +380,42 @@ namespace dnSpy.Text.Editor.Operations {
 			if ((options & FindOptions.SearchReverse) != 0) {
 				// reverse search
 
+				var searchText = searchRange.GetText();
 				var range1 = new SnapshotSpan(searchRange.Start, startingPosition);
 				if (range1.Length > 0) {
-					foreach (var res in FindAllCoreMultilineReverse(range1, searchPattern, options, stringComparison, replacePattern))
+					foreach (var res in FindAllCoreMultilineReverse(searchText, searchRange.Start, startingPosition, searchPattern, options, stringComparison, replacePattern))
 						yield return res;
 				}
 
 				if ((options & FindOptions.Wrap) != 0) {
 					var range2 = new SnapshotSpan(startingPosition, searchRange.End);
 					if (range2.Length > 0) {
-						foreach (var res in FindAllCoreMultilineReverse(range2, searchPattern, options, stringComparison, replacePattern))
+						foreach (var res in FindAllCoreMultilineReverse(searchText, searchRange.Start, searchRange.End, searchPattern, options, stringComparison, replacePattern)) {
+							if (res.Position + res.Length <= startingPosition.Position)
+								break;
 							yield return res;
+						}
 					}
 				}
 			}
 			else {
 				// forward search
 
+				var searchText = searchRange.GetText();
 				var range1 = new SnapshotSpan(startingPosition, searchRange.End);
 				if (range1.Length > 0) {
-					foreach (var res in FindAllCoreMultilineForward(range1, searchPattern, options, stringComparison, replacePattern))
+					foreach (var res in FindAllCoreMultilineForward(searchText, searchRange.Start, startingPosition, searchPattern, options, stringComparison, replacePattern))
 						yield return res;
 				}
 
 				if ((options & FindOptions.Wrap) != 0) {
 					var range2 = new SnapshotSpan(searchRange.Start, startingPosition);
 					if (range2.Length > 0) {
-						foreach (var res in FindAllCoreMultilineForward(range2, searchPattern, options, stringComparison, replacePattern))
+						foreach (var res in FindAllCoreMultilineForward(searchText, searchRange.Start, searchRange.Start, searchPattern, options, stringComparison, replacePattern)) {
+							if (res.Position >= startingPosition.Position)
+								break;
 							yield return res;
+						}
 					}
 				}
 			}
@@ -417,56 +430,53 @@ namespace dnSpy.Text.Editor.Operations {
 			return UnicodeUtilities.IsWord(line, position - line.Start.Position, length);
 		}
 
-		IEnumerable<FindResult> GetRegexResults(Regex regex, SnapshotSpan range, string text, int index, string searchPattern, FindOptions options, string replacePattern) {
+		IEnumerable<FindResult> GetRegexResults(Regex regex, SnapshotPoint searchTextPosition, string searchText, int index, string searchPattern, FindOptions options, string replacePattern) {
 			bool onlyWords = (options & FindOptions.WholeWord) != 0;
-			foreach (Match match in regex.Matches(text, index)) {
-				int position = range.Start.Position + match.Index;
-				if (!onlyWords || IsWord(range.Snapshot, position, searchPattern.Length))
+			foreach (Match match in regex.Matches(searchText, index)) {
+				int position = searchTextPosition.Position + match.Index;
+				if (!onlyWords || IsWord(searchTextPosition.Snapshot, position, searchPattern.Length))
 					yield return new FindResult(position, match.Length, replacePattern == null ? null : match.Result(replacePattern));
 			}
 		}
 
-		IEnumerable<FindResult> FindAllCoreMultilineForward(SnapshotSpan range, string searchPattern, FindOptions options, StringComparison stringComparison, string replacePattern) {
+		IEnumerable<FindResult> FindAllCoreMultilineForward(string searchText, SnapshotPoint searchTextPosition, SnapshotPoint startingPosition, string searchPattern, FindOptions options, StringComparison stringComparison, string replacePattern) {
 			Debug.Assert((options & FindOptions.SearchReverse) == 0);
-			var text = range.GetText();
 			bool onlyWords = (options & FindOptions.WholeWord) != 0;
-			int index = 0;
+			int index = startingPosition - searchTextPosition;
 			if ((options & FindOptions.UseRegularExpressions) != 0) {
 				var regex = GetRegex(searchPattern, options);
-				foreach (var res in GetRegexResults(regex, range, text, index, searchPattern, options, replacePattern))
+				foreach (var res in GetRegexResults(regex, searchTextPosition, searchText, index, searchPattern, options, replacePattern))
 					yield return res;
 			}
 			else {
-				while (index < text.Length) {
-					index = text.IndexOf(searchPattern, index, text.Length - index, stringComparison);
+				while (index < searchText.Length) {
+					index = searchText.IndexOf(searchPattern, index, searchText.Length - index, stringComparison);
 					if (index < 0)
 						break;
-					if (!onlyWords || IsWord(range.Snapshot, range.Start.Position + index, searchPattern.Length))
-						yield return new FindResult(range.Start.Position + index, searchPattern.Length, replacePattern);
-					index += searchPattern.Length;
+					if (!onlyWords || IsWord(searchTextPosition.Snapshot, searchTextPosition.Position + index, searchPattern.Length))
+						yield return new FindResult(searchTextPosition.Position + index, searchPattern.Length, replacePattern);
+					index++;
 				}
 			}
 		}
 
-		IEnumerable<FindResult> FindAllCoreMultilineReverse(SnapshotSpan range, string searchPattern, FindOptions options, StringComparison stringComparison, string replacePattern) {
+		IEnumerable<FindResult> FindAllCoreMultilineReverse(string searchText, SnapshotPoint searchTextPosition, SnapshotPoint startingPosition, string searchPattern, FindOptions options, StringComparison stringComparison, string replacePattern) {
 			Debug.Assert((options & FindOptions.SearchReverse) != 0);
-			var text = range.GetText();
 			bool onlyWords = (options & FindOptions.WholeWord) != 0;
-			int index = text.Length;
+			int index = startingPosition - searchTextPosition;
 			if ((options & FindOptions.UseRegularExpressions) != 0) {
 				var regex = GetRegex(searchPattern, options);
-				foreach (var res in GetRegexResults(regex, range, text, index, searchPattern, options, replacePattern))
+				foreach (var res in GetRegexResults(regex, searchTextPosition, searchText, index, searchPattern, options, replacePattern))
 					yield return res;
 			}
 			else {
-				index--;
-				while (index >= 0) {
-					index = text.LastIndexOf(searchPattern, index, index + 1, stringComparison);
+				while (index > 0) {
+					index = searchText.LastIndexOf(searchPattern, index - 1, index, stringComparison);
 					if (index < 0)
 						break;
-					if (!onlyWords || IsWord(range.Snapshot, range.Start.Position + index, searchPattern.Length))
-						yield return new FindResult(range.Start.Position + index, searchPattern.Length, replacePattern);
-					index--;
+					if (!onlyWords || IsWord(searchTextPosition.Snapshot, searchTextPosition.Position + index, searchPattern.Length))
+						yield return new FindResult(searchTextPosition.Position + index, searchPattern.Length, replacePattern);
+					index += searchPattern.Length - 1;
 				}
 			}
 		}
