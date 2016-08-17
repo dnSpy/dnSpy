@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -563,6 +564,33 @@ namespace dnSpy.Text.Editor.Search {
 				ShowSearchResult(res.Value);
 		}
 
+		static string Unescape(string s, FindOptions options) {
+			if ((options & FindOptions.UseRegularExpressions) == 0)
+				return s;
+			if (s.IndexOf('\\') < 0)
+				return s;
+			var sb = new StringBuilder(s.Length);
+			for (int i = 0; i < s.Length; i++) {
+				var c = s[i];
+				if (c == '\\' && i + 1 < s.Length) {
+					i++;
+					c = s[i];
+					switch (c) {
+					case 't': sb.Append('\t'); break;
+					case 'n': sb.Append('\n'); break;
+					case 'r': sb.Append('\r'); break;
+					default:
+						sb.Append('\\');
+						sb.Append(c);
+						break;
+					}
+				}
+				else
+					sb.Append(c);
+			}
+			return sb.ToString();
+		}
+
 		SnapshotSpan? ReplaceFindNextCore(out string expandedReplacePattern) {
 			if (SearchString.Length == 0) {
 				expandedReplacePattern = null;
@@ -573,7 +601,7 @@ namespace dnSpy.Text.Editor.Search {
 			var startingPosition = GetStartingPosition(SearchKind.Replace, options, restart: true);
 			startingPosition = startingPosition.TranslateTo(snapshot, PointTrackingMode.Negative);
 			try {
-				return textSearchService2.FindForReplace(startingPosition, SearchString, ReplaceString, options, out expandedReplacePattern);
+				return textSearchService2.FindForReplace(startingPosition, SearchString, Unescape(ReplaceString, options), options, out expandedReplacePattern);
 			}
 			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
 				// Invalid regex string
@@ -634,7 +662,7 @@ namespace dnSpy.Text.Editor.Search {
 			var options = GetFindOptions(SearchKind.Replace, true) & ~FindOptions.Wrap;
 			var startingPosition = new SnapshotPoint(snapshot, 0);
 			var searchString = SearchString;
-			var reaplceString = ReplaceString;
+			var replaceString = Unescape(ReplaceString, options);
 			for (;;) {
 				string expandedReplacePattern;
 				SnapshotSpan? res;
@@ -693,9 +721,17 @@ namespace dnSpy.Text.Editor.Search {
 			}
 			if (forward == false)
 				options |= FindOptions.SearchReverse;
-			options |= FindOptions.Wrap;
+			if ((options & FindOptions.UseRegularExpressions) != 0) {
+				if (IsMultiLineRegexPattern(SearchString))
+					options |= FindOptions.Multiline;
+				else
+					options |= FindOptions.SingleLine;
+			}
+			options |= FindOptions.Wrap | FindOptions.OrdinalComparison;
 			return options;
 		}
+
+		static bool IsMultiLineRegexPattern(string s) => s.Contains(@"\r") || s.Contains(@"\n") || s.Contains("$");
 
 		SnapshotPoint GetStartingPosition(SearchKind searchKind, FindOptions options, bool restart) {
 			Debug.Assert(searchKind != SearchKind.None);
