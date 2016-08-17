@@ -372,6 +372,7 @@ namespace dnSpy.Text.Editor.Search {
 			OnPropertyChanged(nameof(ShowReplaceRow));
 			OnPropertyChanged(nameof(ShowOptionsRow));
 			OnPropertyChanged(nameof(IsReplaceMode));
+			OnPropertyChanged(nameof(CanReplace));
 		}
 		SearchKind searchKind;
 		bool inIncrementalSearch;
@@ -524,7 +525,7 @@ namespace dnSpy.Text.Editor.Search {
 			ShowSearchControl(forward ? SearchKind.IncrementalSearchForward : SearchKind.IncrementalSearchBackward);
 		}
 
-		public bool CanReplace => !wpfTextView.Options.DoesViewProhibitUserInput();
+		public bool CanReplace => IsReplaceMode && !wpfTextView.Options.DoesViewProhibitUserInput();
 		bool CanReplaceNext => CanReplace && SearchString.Length > 0;
 		void ReplaceNext() {
 			if (!CanReplaceNext)
