@@ -36,6 +36,7 @@ using dnSpy.Properties;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
+using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
@@ -317,6 +318,7 @@ namespace dnSpy.Text.Editor.Search {
 				SelectAllWhenFocused(searchControl.searchStringTextBox);
 				SelectAllWhenFocused(searchControl.replaceStringTextBox);
 				searchControl.searchStringTextBox.IsVisibleChanged += SearchStringTextBox_IsVisibleChanged;
+				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			}
 			if (layer == null)
 				layer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.Search);
@@ -424,10 +426,63 @@ namespace dnSpy.Text.Editor.Search {
 			UIUtilities.Focus(searchControl.replaceStringTextBox, action);
 		}
 
-		void RepositionControl() {
+		void RepositionControl(bool recalcSize = false) {
 			Debug.Assert(searchControl != null);
-			searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-			Canvas.SetLeft(searchControl, wpfTextView.ViewportWidth - searchControl.DesiredSize.Width);
+			if (recalcSize)
+				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+			PositionControlAtTop();
+		}
+
+		void PositionControlAtTop() =>
+			PositionControl(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, 0.0);
+
+		void PositionControlAtBottom() =>
+			PositionControl(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, wpfTextView.ViewportHeight - searchControl.DesiredSize.Height);
+
+		void PositionControl(double left, double top) {
+			if (Canvas.GetLeft(searchControl) == left && Canvas.GetTop(searchControl) == top)
+				return;
+			Canvas.SetLeft(searchControl, left);
+			Canvas.SetTop(searchControl, top);
+		}
+
+		void RepositionWithoutCoveringSpan(SnapshotSpan span) {
+			if (!IsSearchControlVisible)
+				return;
+
+			var rectTop = new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+			var rectBottom = new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, wpfTextView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+			bool intersectsTop = false, intersectsBottom = false;
+			foreach (var line in wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(span)) {
+				if (Intersects(span, line, rectTop))
+					intersectsTop = true;
+				if (Intersects(span, line, rectBottom))
+					intersectsBottom = true;
+				if (intersectsTop && intersectsBottom)
+					break;
+			}
+			if (intersectsBottom || !intersectsTop)
+				PositionControlAtTop();
+			else
+				PositionControlAtBottom();
+		}
+
+		bool Intersects(SnapshotSpan fullSpan, ITextViewLine line, Rect rect) {
+			var span = fullSpan.Intersection(line.ExtentIncludingLineBreak);
+			if (span == null || span.Value.Length == 0)
+				return false;
+			var start = line.GetExtendedCharacterBounds(span.Value.Start);
+			var end = line.GetExtendedCharacterBounds(span.Value.End - 1);
+			double left = Math.Min(start.Left, end.Left) - wpfTextView.ViewportLeft;
+			double top = Math.Min(start.Top, end.Top) - wpfTextView.ViewportTop;
+			double right = Math.Max(start.Right, end.Right) - wpfTextView.ViewportLeft;
+			double bottom = Math.Max(start.Bottom, end.Bottom) - wpfTextView.ViewportTop;
+			bool b = left <= right && top <= bottom;
+			Debug.Assert(b);
+			if (!b)
+				return false;
+			var r = new Rect(left, top, right - left, bottom - top);
+			return r.IntersectsWith(rect);
 		}
 
 		void CloseSearchControl() {
@@ -812,6 +867,8 @@ namespace dnSpy.Text.Editor.Search {
 			wpfTextView.Selection.Select(new VirtualSnapshotPoint(span.Start), new VirtualSnapshotPoint(span.End));
 			wpfTextView.Caret.MoveTo(span.End);
 			wpfTextView.Caret.EnsureVisible();
+			if (IsSearchControlVisible)
+				RepositionWithoutCoveringSpan(span);
 		}
 
 		void SetFoundResult(bool found) {
@@ -971,9 +1028,9 @@ namespace dnSpy.Text.Editor.Search {
 			if (!IsSearchControlVisible)
 				return;
 			if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
-				RepositionControl();
+				RepositionControl(true);
 			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
-				RepositionControl();
+				RepositionControl(true);
 			if (e.OldSnapshot != e.NewSnapshot) {
 				CancelIncrementalSearch();
 				UpdateTextMarkerSearch();
