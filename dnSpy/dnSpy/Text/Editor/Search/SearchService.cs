@@ -269,10 +269,11 @@ namespace dnSpy.Text.Editor.Search {
 
 		bool IsSearchControlVisible => layer != null && !layer.IsEmpty;
 
-		void UseGlobalSettingsIfUiIsHidden() {
+		void UseGlobalSettingsIfUiIsHidden(bool canOverwriteSearchString) {
 			if (!IsSearchControlVisible && !disableSaveSettings) {
 				disableSaveSettings = true;
-				SearchString = searchSettings.SearchString;
+				if (canOverwriteSearchString)
+					SearchString = searchSettings.SearchString;
 				ReplaceString = searchSettings.ReplaceString;
 				MatchCase = searchSettings.MatchCase;
 				MatchWholeWords = searchSettings.MatchWholeWords;
@@ -287,8 +288,8 @@ namespace dnSpy.Text.Editor.Search {
 				searchSettings.SaveSettings(SearchString, ReplaceString, MatchCase, MatchWholeWords, UseRegularExpressions);
 		}
 
-		void ShowSearchControl(SearchKind searchKind) {
-			UseGlobalSettingsIfUiIsHidden();
+		void ShowSearchControl(SearchKind searchKind, bool canOverwriteSearchString) {
+			UseGlobalSettingsIfUiIsHidden(canOverwriteSearchString);
 			bool wasShown = IsSearchControlVisible;
 			if (searchControl == null) {
 				searchControl = new SearchControl { DataContext = this };
@@ -507,7 +508,7 @@ namespace dnSpy.Text.Editor.Search {
 			}
 
 			UpdateSearchStringFromCaretPosition();
-			ShowSearchControl(SearchKind.Find);
+			ShowSearchControl(SearchKind.Find, false);
 			FocusSearchStringTextBox();
 		}
 
@@ -519,7 +520,7 @@ namespace dnSpy.Text.Editor.Search {
 			}
 
 			UpdateSearchStringFromCaretPosition();
-			ShowSearchControl(SearchKind.Replace);
+			ShowSearchControl(SearchKind.Replace, false);
 			FocusSearchStringTextBox();
 		}
 
@@ -527,7 +528,7 @@ namespace dnSpy.Text.Editor.Search {
 			SearchString = string.Empty;
 			wpfTextView.VisualElement.Focus();
 			incrementalStartPosition = wpfTextView.Caret.Position.BufferPosition;
-			ShowSearchControl(forward ? SearchKind.IncrementalSearchForward : SearchKind.IncrementalSearchBackward);
+			ShowSearchControl(forward ? SearchKind.IncrementalSearchForward : SearchKind.IncrementalSearchBackward, false);
 		}
 
 		public bool CanReplace => IsReplaceMode && !wpfTextView.Options.DoesViewProhibitUserInput();
@@ -734,7 +735,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		public void FindNext(bool forward) {
-			UseGlobalSettingsIfUiIsHidden();
+			UseGlobalSettingsIfUiIsHidden(true);
 			var options = GetFindOptions(SearchKind.Find, forward);
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart: false);
 			FindNextCore(options, startingPosition);
@@ -794,7 +795,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (newSearchString == null)
 				return;
 
-			ShowSearchControl(SearchKind.Find);
+			ShowSearchControl(SearchKind.Find, false);
 			// Don't focus the search control. Whoever has focus (most likely text editor)
 			// should keep the focus.
 
