@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		}
 
 		/// <summary>
-		/// true if it's an overlay layer, false if it's a normal layer
+		/// Layer kind
 		/// </summary>
 		public LayerKind LayerKind { get; }
 	}
