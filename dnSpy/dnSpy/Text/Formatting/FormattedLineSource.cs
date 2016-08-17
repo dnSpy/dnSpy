@@ -50,6 +50,7 @@ namespace dnSpy.Text.Formatting {
 		readonly FormattedTextCache formattedTextCache;
 		readonly TextFormatter textFormatter;
 		readonly TextParagraphProperties defaultTextParagraphProperties;
+		readonly double wrapGlyphWidth;
 
 		// Should be enough...
 		const int MAX_LINE_LENGTH = 5000;
@@ -83,6 +84,7 @@ namespace dnSpy.Text.Formatting {
 			WordWrapWidth = wordWrapWidth;
 			MaxAutoIndent = Math.Round(maxAutoIndent);
 			ColumnWidth = formattedTextCache.GetColumnWidth(classificationFormatMap.DefaultTextProperties);
+			this.wrapGlyphWidth = isViewWrapEnabled ? 1.5 * ColumnWidth : 0;
 			LineHeight = WpfTextViewLine.DEFAULT_TOP_SPACE + WpfTextViewLine.DEFAULT_BOTTOM_SPACE + formattedTextCache.GetLineHeight(classificationFormatMap.DefaultTextProperties);
 			TextHeightAboveBaseline = formattedTextCache.GetTextHeightAboveBaseline(classificationFormatMap.DefaultTextProperties);
 			TextHeightBelowBaseline = formattedTextCache.GetTextHeightBelowBaseline(classificationFormatMap.DefaultTextProperties);
@@ -118,7 +120,7 @@ namespace dnSpy.Text.Formatting {
 					new MappingPoint(textSource.ConvertColumnToBufferPosition(column), PointTrackingMode.Negative), lineSegment)
 					?? defaultTextParagraphProperties;
 
-				double paragraphWidth = WordWrapWidth == 0 ? 0 : Math.Max(1, WordWrapWidth - autoIndent);
+				double paragraphWidth = WordWrapWidth == 0 ? 0 : Math.Max(1, WordWrapWidth - autoIndent - wrapGlyphWidth);
 
 				textSource.SetMaxLineLength(MAX_LINE_LENGTH);
 				var textLine = textFormatter.FormatLine(textSource, column, paragraphWidth, paragraphProperties, previousLineBreak);

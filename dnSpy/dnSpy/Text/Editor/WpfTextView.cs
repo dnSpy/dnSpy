@@ -428,7 +428,7 @@ namespace dnSpy.Text.Editor {
 				classifier,
 				textAndAdornmentSequencer,
 				classificationFormatMap,
-				isWordWrap);
+				(wordWrapStyle & (WordWrapStyles.WordWrap | WordWrapStyles.VisibleGlyphs)) == (WordWrapStyles.WordWrap | WordWrapStyles.VisibleGlyphs));
 		}
 
 		protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e) {
