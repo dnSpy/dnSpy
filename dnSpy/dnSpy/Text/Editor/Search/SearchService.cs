@@ -213,6 +213,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
 
+			bool wasInIncrementalSearch = inIncrementalSearch;
 			if (inIncrementalSearch) {
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
@@ -233,6 +234,8 @@ namespace dnSpy.Text.Editor.Search {
 				CancelIncrementalSearch();
 			}
 			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL) {
+				if (wasInIncrementalSearch)
+					wpfTextView.Selection.Clear();
 				CloseSearchControl();
 				return CommandTargetStatus.Handled;
 			}
