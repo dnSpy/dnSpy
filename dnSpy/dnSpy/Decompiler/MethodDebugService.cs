@@ -205,8 +205,11 @@ namespace dnSpy.Decompiler {
 					hi = index - 1;
 				else if (position >= mss.Statement.TextSpan.End)
 					lo = index + 1;
-				else
+				else {
+					if (index > 0 && array[index - 1].Statement.TextSpan.End == position)
+						return index - 1;
 					return index;
+				}
 			}
 			if ((uint)hi < (uint)array.Length && array[hi].Statement.TextSpan.End == position)
 				return hi;

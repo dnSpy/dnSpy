@@ -160,8 +160,11 @@ namespace dnSpy.Contracts.Text {
 					hi = index - 1;
 				else if (position >= spanData.Span.End)
 					lo = index + 1;
-				else
+				else {
+					if (index > 0 && array[index - 1].Span.End == position)
+						return index - 1;
 					return index;
+				}
 			}
 			if ((uint)hi < (uint)array.Length && array[hi].Span.End == position)
 				return hi;

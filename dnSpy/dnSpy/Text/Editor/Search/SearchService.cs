@@ -863,7 +863,7 @@ namespace dnSpy.Text.Editor.Search {
 					continue;
 				for (int i = index; i < findResultCollection.Count; i++) {
 					var resSpan = findResultCollection[i];
-					if (resSpan.Start >= snapshotSpan.End)
+					if (resSpan.Start > snapshotSpan.End)
 						break;
 					yield return resSpan;
 				}
@@ -883,9 +883,14 @@ namespace dnSpy.Text.Editor.Search {
 					hi = index - 1;
 				else if (position >= span.Span.End)
 					lo = index + 1;
-				else
+				else {
+					if (index > 0 && array[index - 1].End == position)
+						return index - 1;
 					return index;
+				}
 			}
+			if ((uint)hi < (uint)array.Count && array[hi].End == position)
+				return hi;
 			return lo < array.Count ? lo : -1;
 		}
 
