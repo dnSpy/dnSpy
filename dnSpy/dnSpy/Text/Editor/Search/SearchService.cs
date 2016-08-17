@@ -213,7 +213,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
 
-			if (searchKind == SearchKind.IncrementalSearchForward || searchKind == SearchKind.IncrementalSearchBackward) {
+			if (inIncrementalSearch) {
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
 					case TextEditorIds.BACKSPACE:
@@ -228,12 +228,9 @@ namespace dnSpy.Text.Editor.Search {
 						else
 							CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
-
-					default:
-						CancelIncrementalSearch();
-						break;
 					}
 				}
+				CancelIncrementalSearch();
 			}
 			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL) {
 				CloseSearchControl();
