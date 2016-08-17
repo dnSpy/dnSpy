@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="glyphImage">Image shown in the glyph margin or null if none</param>
 		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) or null. It should have a background color and an optional foreground color for the border</param>
 		/// <param name="classificationType">Classification type or null. Only the foreground color is needed. If it has a background color, it will hide the text markers shown in the text marker layer (eg. search result, highlighted reference)</param>
-		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/></param>
+		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/>, eg. <see cref="GlyphTextMarkerServiceZIndexes.EnabledBreakpoint"/></param>
 		/// <param name="tag">User data</param>
 		/// <param name="handler">Glyph handler or null</param>
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="glyphImage">Image shown in the glyph margin or null if none</param>
 		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) or null. It should have a background color and an optional foreground color for the border</param>
 		/// <param name="classificationType">Classification type or null. Only the foreground color is needed. If it has a background color, it will hide the text markers shown in the text marker layer (eg. search result, highlighted reference)</param>
-		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/></param>
+		/// <param name="zIndex">Z-index of <paramref name="glyphImage"/> and <paramref name="markerTypeName"/>, eg. <see cref="GlyphTextMarkerServiceZIndexes.EnabledBreakpoint"/></param>
 		/// <param name="tag">User data</param>
 		/// <param name="handler">Glyph handler or null</param>
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		IClassificationType ClassificationType { get; }
 
 		/// <summary>
-		/// Gets the z-index of <see cref="GlyphImageReference"/> and <see cref="MarkerTypeName"/>
+		/// Gets the z-index of <see cref="GlyphImageReference"/> and <see cref="MarkerTypeName"/>, eg. <see cref="GlyphTextMarkerServiceZIndexes.EnabledBreakpoint"/>
 		/// </summary>
 		int ZIndex { get; }
 
