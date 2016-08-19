@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor.Search {
 	[Export(typeof(IViewTaggerProvider))]
-	[ContentType(ContentTypes.Text)]
+	[ContentType(ContentTypes.Any)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[TagType(typeof(ITextMarkerTag))]
 	sealed class TextMarkerTaggerProvider : IViewTaggerProvider {
