@@ -102,6 +102,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 			this.ProgressMaximum = task.ProgressMaximum;
 			this.IsIndeterminate = task.IsIndeterminate;
 			this.cancellationTokenSource = new CancellationTokenSource();
+			Token = cancellationTokenSource.Token;
 			Start();
 		}
 
@@ -120,9 +121,10 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Cancels the task
 		/// </summary>
 		public void Cancel() {
+			if (cancelling)
+				return;
 			cancelling = true;
-			if (cancellationTokenSource != null)
-				cancellationTokenSource.Cancel();
+			cancellationTokenSource?.Cancel();
 		}
 
 		/// <summary>
@@ -265,10 +267,9 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// <summary>
 		/// Gets the cancellation token
 		/// </summary>
-		public CancellationToken Token => cancellationTokenSource.Token;
+		public CancellationToken Token { get; }
 
-		void IProgress.ThrowIfCancellationRequested() =>
-			this.cancellationTokenSource.Token.ThrowIfCancellationRequested();
+		void IProgress.ThrowIfCancellationRequested() => Token.ThrowIfCancellationRequested();
 
 		void OnTaskCompleted() {
 			cancellationTokenSource.Dispose();

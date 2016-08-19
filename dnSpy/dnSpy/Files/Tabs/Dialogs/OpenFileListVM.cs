@@ -101,6 +101,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		readonly List<FileListVM> addedFileLists;
 		readonly Func<string, string> askUser;
 		readonly CancellationTokenSource cancellationTokenSource;
+		readonly CancellationToken cancellationToken;
 
 		public OpenFileListVM(bool syntaxHighlight, FileListManager fileListManager, Func<string, string> askUser) {
 			this.SyntaxHighlight = syntaxHighlight;
@@ -113,6 +114,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.removedFileLists = new HashSet<FileListVM>();
 			this.addedFileLists = new List<FileListVM>();
 			this.cancellationTokenSource = new CancellationTokenSource();
+			this.cancellationToken = cancellationTokenSource.Token;
 			this.searchingForDefaultLists = true;
 
 			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -122,7 +124,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 			Refilter();
 
-			Task.Factory.StartNew(() => new DefaultFileListFinder(cancellationTokenSource.Token).Find(), cancellationTokenSource.Token)
+			Task.Factory.StartNew(() => new DefaultFileListFinder(cancellationToken).Find(), cancellationToken)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				SearchingForDefaultLists = false;
@@ -204,7 +206,14 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 
-		public void Dispose() => cancellationTokenSource.Cancel();
+		public void Dispose() {
+			if (disposed)
+				return;
+			disposed = true;
+			cancellationTokenSource.Cancel();
+			cancellationTokenSource.Dispose();
+		}
+		bool disposed;
 	}
 
 	sealed class FileListVM_Comparer : System.Collections.IComparer {

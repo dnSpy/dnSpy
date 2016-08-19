@@ -78,20 +78,27 @@ namespace dnSpy.Debugger.Dialogs {
 			if (IsRefreshing)
 				return;
 
+			cancellationTokenSource?.Cancel();
+			cancellationTokenSource?.Dispose();
+			cancellationTokenSource = null;
 			Collection.Clear();
-			cancellationToken = new CancellationTokenSource();
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
 			refreshThread = new Thread(RefreshAsync);
 			OnPropertyChanged(nameof(IsRefreshing));
 			refreshThread.Start();
 		}
 		Thread refreshThread;
-		CancellationTokenSource cancellationToken;
+		CancellationTokenSource cancellationTokenSource;
+		CancellationToken cancellationToken;
 
 		void CancelRefresh() {
 			if (refreshThread == null)
 				return;
 
-			cancellationToken.Cancel();
+			cancellationTokenSource?.Cancel();
+			cancellationTokenSource?.Dispose();
+			cancellationTokenSource = null;
 		}
 
 		void ExecInOriginalThread(Action action) {
@@ -124,7 +131,7 @@ namespace dnSpy.Debugger.Dialogs {
 		void RefreshAsync() {
 			try {
 				var finder = new ManagedProcessesFinder();
-				foreach (var info in finder.FindAll(cancellationToken.Token))
+				foreach (var info in finder.FindAll(cancellationToken))
 					AddInfo(info);
 			}
 			catch (OperationCanceledException) {

@@ -222,6 +222,7 @@ namespace dnSpy.Debugger.IMModules {
 				win.DataContext = data;
 				win.Owner = ownerWindow;
 				var res = win.ShowDialog();
+				data.Dispose();
 				if (res != true) {
 					Debug.Fail("User canceled but this is currently impossible...");
 					//TODO: User canceled (can't currently happen though)

@@ -28,24 +28,26 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.IMModules {
 	sealed class MyCancellationToken : ICancellationToken {
-		/*readonly*/ CancellationToken token;
+		/*readonly*/ CancellationToken cancellationToken;
 
-		public MyCancellationToken(CancellationToken token) {
-			this.token = token;
+		public MyCancellationToken(CancellationToken cancellationToken) {
+			this.cancellationToken = cancellationToken;
 		}
 
-		public void ThrowIfCancellationRequested() => token.ThrowIfCancellationRequested();
+		public void ThrowIfCancellationRequested() => cancellationToken.ThrowIfCancellationRequested();
 	}
 
-	sealed class LoadEverythingVM : ViewModelBase {
+	sealed class LoadEverythingVM : ViewModelBase, IDisposable {
 		public ICommand CancelCommand => new RelayCommand(a => Cancel(), a => CanCancel);
 
 		readonly ModuleDef[] modules;
 		readonly CancellationTokenSource cancellationTokenSource;
+		readonly CancellationToken cancellationToken;
 
 		public LoadEverythingVM(IEnumerable<ModuleDef> modules) {
 			this.modules = modules.ToArray();
 			this.cancellationTokenSource = new CancellationTokenSource();
+			this.cancellationToken = cancellationTokenSource.Token;
 
 			// Make sure the name is shown. Should be removed when the user can cancel since then
 			// the UI will update automatically instead of being frozen.
@@ -57,9 +59,14 @@ namespace dnSpy.Debugger.IMModules {
 		bool cancelling;
 
 		public void Cancel() {
+			if (cancelling)
+				return;
 			cancelling = true;
 			cancellationTokenSource.Cancel();
+			cancellationTokenSource.Dispose();
 		}
+
+		public void Dispose() => Cancel();
 
 		public bool WasCanceled {
 			get { return wasCanceled; }
@@ -98,7 +105,7 @@ namespace dnSpy.Debugger.IMModules {
 			foreach (var module in modules) {
 				try {
 					CurrentItemName = CalculateCurrentItemName(module);
-					module.LoadEverything(new MyCancellationToken(cancellationTokenSource.Token));
+					module.LoadEverything(new MyCancellationToken(cancellationToken));
 				}
 				catch (OperationCanceledException) {
 					WasCanceled = true;

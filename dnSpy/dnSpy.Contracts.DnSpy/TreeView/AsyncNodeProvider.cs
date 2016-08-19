@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.TreeView {
 			}
 			// If it's been canceled, don't add any new nodes since the search might've restarted.
 			// We must not add 'old' nodes to the current Children list.
-			if (cancellationTokenSource.IsCancellationRequested)
+			if (canceled)
 				return;
 			foreach (var n in nodes)
 				targetNode.TreeNode.AddChild(targetNode.TreeNode.TreeView.Create(n));
@@ -157,7 +157,10 @@ namespace dnSpy.Contracts.TreeView {
 			}
 			ExecInUIThread(RemoveMessageNode_UI);
 			IsRunning = false;
+			disposed = true;
+			cancellationTokenSource.Dispose();
 		}
+		bool disposed;
 
 		/// <summary>
 		/// Method that gets called in the worker thread
@@ -167,6 +170,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Cancels the async worker
 		/// </summary>
-		public void Cancel() => cancellationTokenSource.Cancel();
+		public void Cancel() {
+			canceled = true;
+			if (!disposed)
+				cancellationTokenSource.Cancel();
+		}
+		bool canceled;
 	}
 }

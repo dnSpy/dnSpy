@@ -52,21 +52,25 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			public bool TaskStarted { get; set; }
 			public GetTagsStateImpl GetTagsStateImpl { get; }
 			public ITextSnapshot Snapshot { get; }
-			public CancellationToken CancellationToken => cancellationTokenSource.Token;
-			CancellationTokenSource cancellationTokenSource;
+			public CancellationToken CancellationToken { get; }
+			readonly CancellationTokenSource cancellationTokenSource;
 
 			public SnapshotState(ITextSnapshot snapshot) {
 				if (snapshot == null)
 					throw new ArgumentNullException(nameof(snapshot));
 				Snapshot = snapshot;
 				this.cancellationTokenSource = new CancellationTokenSource();
+				CancellationToken = cancellationTokenSource.Token;
 				GetTagsStateImpl = new GetTagsStateImpl(CancellationToken);
 			}
 
 			public void Cancel() {
-				if (!cancellationTokenSource.IsCancellationRequested)
-					cancellationTokenSource.Cancel();
+				if (canceled)
+					return;
+				canceled = true;
+				cancellationTokenSource.Cancel();
 			}
+			bool canceled;
 
 			int refCounter;
 			public void AddRef() => Interlocked.Increment(ref refCounter);

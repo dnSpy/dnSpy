@@ -42,6 +42,7 @@ namespace dnSpy.Search {
 		const DispatcherPriority DISPATCHER_PRIO = DispatcherPriority.Background;
 		readonly FileSearcherOptions options;
 		readonly CancellationTokenSource cancellationTokenSource;
+		readonly CancellationToken cancellationToken;
 		readonly FilterSearcherOptions filterSearcherOptions;
 
 		public bool SyntaxHighlight {
@@ -72,6 +73,7 @@ namespace dnSpy.Search {
 				throw new ArgumentException("options.SearchComparer is null", nameof(options));
 			this.options = options.Clone();
 			this.cancellationTokenSource = new CancellationTokenSource();
+			this.cancellationToken = cancellationTokenSource.Token;
 			this.filterSearcherOptions = new FilterSearcherOptions {
 				Dispatcher = Dispatcher.CurrentDispatcher,
 				FileTreeView = fileTreeView,
@@ -80,7 +82,7 @@ namespace dnSpy.Search {
 				SearchComparer = options.SearchComparer,
 				OnMatch = r => AddSearchResult(r),
 				Context = searchResultContext,
-				CancellationToken = this.cancellationTokenSource.Token,
+				CancellationToken = this.cancellationToken,
 				SearchDecompiledData = options.SearchDecompiledData,
 			};
 		}
@@ -88,7 +90,11 @@ namespace dnSpy.Search {
 		public event EventHandler OnSearchCompleted;
 		public event EventHandler<SearchResultEventArgs> OnNewSearchResults;
 
-		public void Cancel() => this.cancellationTokenSource.Cancel();
+		public void Cancel() {
+			if (!disposed)
+				cancellationTokenSource.Cancel();
+		}
+
 		public void Start(IEnumerable<IDnSpyFileNode> files) => StartInternal(files.ToArray());
 		public void Start(IEnumerable<SearchTypeInfo> typeInfos) => StartInternal(typeInfos.ToArray());
 
@@ -97,7 +103,7 @@ namespace dnSpy.Search {
 			if (hasStarted)
 				throw new InvalidOperationException();
 			hasStarted = true;
-			var task = Task.Factory.StartNew(SearchNewThread, o, cancellationTokenSource.Token)
+			var task = Task.Factory.StartNew(SearchNewThread, o, cancellationToken)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
@@ -113,14 +119,14 @@ namespace dnSpy.Search {
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var opts = new ParallelOptions {
-					CancellationToken = cancellationTokenSource.Token,
+					CancellationToken = cancellationToken,
 					MaxDegreeOfParallelism = Environment.ProcessorCount,
 				};
 
 				if (o is IDnSpyFileNode[]) {
 					Parallel.ForEach((IDnSpyFileNode[])o, opts, node => {
 						try {
-							cancellationTokenSource.Token.ThrowIfCancellationRequested();
+							cancellationToken.ThrowIfCancellationRequested();
 							var searcher = new FilterSearcher(filterSearcherOptions);
 							searcher.SearchAssemblies(new IDnSpyFileNode[] { node });
 						}
@@ -133,7 +139,7 @@ namespace dnSpy.Search {
 				else if (o is SearchTypeInfo[]) {
 					Parallel.ForEach((SearchTypeInfo[])o, opts, info => {
 						try {
-							cancellationTokenSource.Token.ThrowIfCancellationRequested();
+							cancellationToken.ThrowIfCancellationRequested();
 							var searcher = new FilterSearcher(filterSearcherOptions);
 							searcher.SearchTypes(new SearchTypeInfo[] { info });
 						}
@@ -161,12 +167,16 @@ namespace dnSpy.Search {
 		}
 
 		void SearchCompleted() {
+			disposed = true;
+			cancellationTokenSource.Cancel();
+			cancellationTokenSource.Dispose();
 			Debug.Assert(OnSearchCompleted != null);
 			OnSearchCompleted?.Invoke(this, EventArgs.Empty);
 		}
+		bool disposed;
 
 		void AddSearchResult(SearchResult result) {
-			cancellationTokenSource.Token.ThrowIfCancellationRequested();
+			cancellationToken.ThrowIfCancellationRequested();
 			lock (lockObj) {
 				if (totalResultsFound++ >= options.MaxResults) {
 					if (totalResultsFound == options.MaxResults + 1)

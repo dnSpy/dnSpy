@@ -93,6 +93,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				catch {
 					// Ignore buggy script exceptions
 				}
+				execState.CancellationTokenSource.Dispose();
 			}
 			isResetting = true;
 			execState = null;
@@ -227,6 +228,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		sealed class ExecState {
 			public ScriptOptions ScriptOptions;
 			public readonly CancellationTokenSource CancellationTokenSource;
+			public readonly CancellationToken CancellationToken;
 			public readonly ScriptGlobals Globals;
 			public ScriptState<object> ScriptState;
 			public Task<ScriptState<object>> ExecTask;
@@ -234,7 +236,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			public bool IsInitializing;
 			public ExecState(ScriptControlVM vm, Dispatcher dispatcher, CancellationTokenSource cts) {
 				this.CancellationTokenSource = cts;
-				this.Globals = new ScriptGlobals(vm, dispatcher, cts.Token);
+				this.CancellationToken = cts.Token;
+				this.Globals = new ScriptGlobals(vm, dispatcher, CancellationToken);
 				this.IsInitializing = true;
 			}
 		}
@@ -264,7 +267,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			execState = new ExecState(this, dispatcher, new CancellationTokenSource());
 			var execStateCache = execState;
 			Task.Run(() => {
-				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+				execStateCache.CancellationToken.ThrowIfCancellationRequested();
 
 				var userOpts = new UserScriptOptions();
 				if (loadConfig) {
@@ -284,11 +287,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				execStateCache.ScriptOptions = opts;
 
 				var script = Create<object>(string.Empty, execStateCache.ScriptOptions, typeof(IScriptGlobals), null);
-				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
-				execStateCache.ScriptState = script.RunAsync(execStateCache.Globals, execStateCache.CancellationTokenSource.Token).Result;
+				execStateCache.CancellationToken.ThrowIfCancellationRequested();
+				execStateCache.ScriptState = script.RunAsync(execStateCache.Globals, execStateCache.CancellationToken).Result;
 				if (showHelp)
 					this.ReplEditor.OutputPrintLine(Help, BoxedTextColor.ReplOutputText);
-			}, execStateCache.CancellationTokenSource.Token)
+			}, execStateCache.CancellationToken)
 			.ContinueWith(t => {
 				execStateCache.IsInitializing = false;
 				var ex = t.Exception;
@@ -381,11 +384,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 				var taskSched = TaskScheduler.FromCurrentSynchronizationContext();
 				Task.Run(() => {
-					oldState.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+					oldState.CancellationToken.ThrowIfCancellationRequested();
 
 					var opts = oldState.ScriptOptions.WithReferences(Array.Empty<MetadataReference>()).WithImports(Array.Empty<string>());
-					var execTask = oldState.ScriptState.ContinueWithAsync(input, opts, oldState.CancellationTokenSource.Token);
-					oldState.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+					var execTask = oldState.ScriptState.ContinueWithAsync(input, opts, oldState.CancellationToken);
+					oldState.CancellationToken.ThrowIfCancellationRequested();
 					lock (lockObj) {
 						if (oldState == execState)
 							oldState.ExecTask = execTask;

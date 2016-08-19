@@ -271,7 +271,7 @@ namespace dnSpy.Files.Tabs {
 					asyncShow = true;
 					var ctx = new AsyncWorkerContext();
 					asyncWorkerContext = ctx;
-					Task.Factory.StartNew(() => asyncTabContent.AsyncWorker(showCtx, ctx.CancellationTokenSource), ctx.CancellationTokenSource.Token)
+					Task.Factory.StartNew(() => asyncTabContent.AsyncWorker(showCtx, ctx.CancellationTokenSource), ctx.CancellationToken)
 					.ContinueWith(t => {
 						bool canShowAsyncOutput = ctx == asyncWorkerContext &&
 												cachedUIContext.FileTab == this &&
@@ -294,14 +294,14 @@ namespace dnSpy.Files.Tabs {
 
 		sealed class AsyncWorkerContext : IDisposable {
 			public readonly CancellationTokenSource CancellationTokenSource;
+			public readonly CancellationToken CancellationToken;
 
 			public AsyncWorkerContext() {
 				this.CancellationTokenSource = new CancellationTokenSource();
+				this.CancellationToken = CancellationTokenSource.Token;
 			}
 
-			public void Dispose() {
-				this.CancellationTokenSource.Dispose();
-			}
+			public void Dispose() => this.CancellationTokenSource.Dispose();
 		}
 		AsyncWorkerContext asyncWorkerContext;
 
@@ -313,7 +313,7 @@ namespace dnSpy.Files.Tabs {
 			var ctx = new AsyncWorkerContext();
 			asyncWorkerContext = ctx;
 			preExec(ctx.CancellationTokenSource);
-			Task.Factory.StartNew(() => asyncAction(), ctx.CancellationTokenSource.Token)
+			Task.Factory.StartNew(() => asyncAction(), ctx.CancellationToken)
 			.ContinueWith(t => {
 				if (asyncWorkerContext == ctx)
 					asyncWorkerContext = null;

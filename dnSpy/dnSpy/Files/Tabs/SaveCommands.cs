@@ -104,12 +104,14 @@ namespace dnSpy.Files.Tabs {
 				win.ShowDialog();
 			if (vm.IsComplete)
 				exportToProjectSettings.ProjectVersion = vm.ProjectVersion;
+			task.Dispose();
 		}
 
 		sealed class ExportTask : IExportTask, IMSBuildProjectWriterLogger, IMSBuildProgressListener {
 			readonly ExportProjectCommand owner;
 			readonly ModuleDef[] modules;
 			readonly CancellationTokenSource cancellationTokenSource;
+			readonly CancellationToken cancellationToken;
 			readonly Dispatcher dispatcher;
 			readonly IBamlDecompiler bamlDecompiler;
 
@@ -120,10 +122,20 @@ namespace dnSpy.Files.Tabs {
 				this.owner = owner;
 				this.modules = modules;
 				this.cancellationTokenSource = new CancellationTokenSource();
+				this.cancellationToken = cancellationTokenSource.Token;
 				this.dispatcher = Dispatcher.CurrentDispatcher;
 				if (owner.bamlDecompiler != null)
 					this.bamlDecompiler = owner.bamlDecompiler.Value;
 			}
+
+			public void Dispose() {
+				if (disposed)
+					return;
+				disposed = true;
+				cancellationTokenSource.Cancel();
+				cancellationTokenSource.Dispose();
+			}
+			bool disposed;
 
 			public void Cancel(ExportToProjectVM vm) {
 				cancellationTokenSource.Cancel();
@@ -137,10 +149,10 @@ namespace dnSpy.Files.Tabs {
 				vm.IsIndeterminate = false;
 				Task.Factory.StartNew(() => {
 					var decompilationContext = new DecompilationContext {
-						CancellationToken = cancellationTokenSource.Token,
+						CancellationToken = cancellationToken,
 						GetDisableAssemblyLoad = () => owner.fileTreeView.FileManager.DisableAssemblyLoad(),
 					};
-					var options = new ProjectCreatorOptions(vm.Directory, cancellationTokenSource.Token);
+					var options = new ProjectCreatorOptions(vm.Directory, cancellationToken);
 					options.ProjectVersion = vm.ProjectVersion;
 					if (vm.CreateSolution)
 						options.SolutionFilename = vm.SolutionFilename;
@@ -176,7 +188,7 @@ namespace dnSpy.Files.Tabs {
 						fileToOpen = creator.SolutionFilename;
 					else
 						fileToOpen = creator.ProjectFilenames.FirstOrDefault();
-				}, cancellationTokenSource.Token)
+				}, cancellationToken)
 				.ContinueWith(t => {
 					var ex = t.Exception;
 					if (ex != null)

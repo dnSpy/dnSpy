@@ -90,6 +90,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		bool showDuplicates;
 
 		readonly CancellationTokenSource cancellationTokenSource;
+		readonly CancellationToken cancellationToken;
 		readonly HashSet<GACFileVM> uniqueFiles;
 
 		public OpenFromGACVM(bool syntaxHighlight) {
@@ -98,11 +99,12 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
 			this.collectionView.CustomSort = new GACFileVM_Comparer();
 			this.cancellationTokenSource = new CancellationTokenSource();
+			this.cancellationToken = cancellationTokenSource.Token;
 			this.searchingGAC = true;
 			this.uniqueFiles = new HashSet<GACFileVM>(new GACFileVM_EqualityComparer());
 
 			var dispatcher = Dispatcher.CurrentDispatcher;
-			Task.Factory.StartNew(() => new GACFileFinder(this, dispatcher, cancellationTokenSource.Token).Find(), cancellationTokenSource.Token)
+			Task.Factory.StartNew(() => new GACFileFinder(this, dispatcher, cancellationToken).Find(), cancellationToken)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				SearchingGAC = false;
@@ -155,8 +157,13 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		static readonly char[] sep = new char[] { ' ' };
 
 		public void Dispose() {
+			if (disposed)
+				return;
+			disposed = true;
 			cancellationTokenSource.Cancel();
+			cancellationTokenSource.Dispose();
 		}
+		bool disposed;
 	}
 
 	sealed class GACFileVM_EqualityComparer : IEqualityComparer<GACFileVM> {

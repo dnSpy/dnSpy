@@ -916,13 +916,14 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class CommandTextChangedState : IDisposable {
-		public CancellationToken CancellationToken => cancellationTokenSource.Token;
+		public CancellationToken CancellationToken { get; }
 		readonly CancellationTokenSource cancellationTokenSource;
 		readonly int version;
 		bool hasDisposed;
 
 		public CommandTextChangedState(int version) {
 			this.cancellationTokenSource = new CancellationTokenSource();
+			CancellationToken = cancellationTokenSource.Token;
 			this.version = version;
 		}
 

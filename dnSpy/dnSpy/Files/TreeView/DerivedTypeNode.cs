@@ -55,8 +55,10 @@ namespace dnSpy.Files.TreeView {
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (!createChildren)
 				yield break;
-			if (derivedTypesFinder != null)
+			if (derivedTypesFinder != null) {
 				derivedTypesFinder.Cancel();
+				derivedTypesFinder = null;
+			}
 			var td = TryGetTypeDef();
 			if (td != null)
 				derivedTypesFinder = new DerivedTypesFinder(this, td);

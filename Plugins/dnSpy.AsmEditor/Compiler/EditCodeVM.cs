@@ -105,10 +105,12 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		abstract class AsyncStateBase : IDisposable {
 			readonly CancellationTokenSource cancellationTokenSource;
-			public CancellationToken CancellationToken => cancellationTokenSource.Token;
+			public CancellationToken CancellationToken { get; }
+			bool disposed;
 
 			protected AsyncStateBase() {
 				this.cancellationTokenSource = new CancellationTokenSource();
+				CancellationToken = cancellationTokenSource.Token;
 			}
 
 			public void CancelAndDispose() {
@@ -116,11 +118,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				Dispose();
 			}
 
-			void Cancel() => cancellationTokenSource.Cancel();
+			void Cancel() {
+				if (!disposed)
+					cancellationTokenSource.Cancel();
+			}
 
 			public void Dispose() {
-				if (!cancellationTokenSource.IsCancellationRequested)
-					cancellationTokenSource.Dispose();
+				disposed = true;
+				cancellationTokenSource.Dispose();
 			}
 		}
 
