@@ -100,5 +100,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Allows background images to be used
 		/// </summary>
 		public const string CanHaveBackgroundImage = "dnSpy-CanHaveBackgroundImage";
+
+		/// <summary>
+		/// Allows line compressor
+		/// </summary>
+		public const string CanHaveLineCompressor = "dnSpy-CanHaveLineCompressor";
 	}
 }

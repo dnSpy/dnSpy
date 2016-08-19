@@ -37,6 +37,8 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> BraceMatchingId = new EditorOptionKey<bool>("ITextView/BraceMatching");
 		public static readonly EditorOptionKey<bool> LineSeparatorId = new EditorOptionKey<bool>("ITextView/LineSeparator");
 		public static readonly EditorOptionKey<bool> HighlightRelatedKeywordsId = new EditorOptionKey<bool>("ITextView/HighlightRelatedKeywords");
+		public static readonly EditorOptionKey<bool> CompressEmptyOrWhitespaceLinesId = new EditorOptionKey<bool>("ITextView/CompressEmptyOrWhitespaceLines");
+		public static readonly EditorOptionKey<bool> CompressNonLetterLinesId = new EditorOptionKey<bool>("ITextView/CompressNonLetterLines");
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

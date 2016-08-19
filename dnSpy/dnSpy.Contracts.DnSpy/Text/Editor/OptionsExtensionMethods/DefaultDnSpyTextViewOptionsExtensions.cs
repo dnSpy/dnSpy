@@ -145,5 +145,27 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDnSpyTextViewOptions.HighlightRelatedKeywordsId);
 		}
+
+		/// <summary>
+		/// Returns true if empty or whitespace-only lines should be compressed
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsCompressEmptyOrWhitespaceLinesEnabled(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.CompressEmptyOrWhitespaceLinesId);
+		}
+
+		/// <summary>
+		/// Returns true if non-empty lines that don't contain letters or digits should be compressed
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsCompressNonLetterLinesEnabled(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.CompressNonLetterLinesId);
+		}
 	}
 }
