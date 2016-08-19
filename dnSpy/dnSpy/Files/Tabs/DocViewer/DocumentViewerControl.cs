@@ -529,8 +529,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (referenceCollection.Count == 0)
 				yield break;
 
+			int startIndex = referenceCollection.GetStartIndex(position);
+			// If it's between two refs, always prefer the one whose Start == position
+			if (startIndex >= 0 && startIndex + 1 < referenceCollection.Count && referenceCollection[startIndex + 1].Span.Start == position)
+				startIndex = startIndex + 1;
 			if (forward) {
-				int startIndex = referenceCollection.GetStartIndex(position);
 				if (startIndex < 0)
 					startIndex = referenceCollection.Count - 1;
 
@@ -540,7 +543,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				}
 			}
 			else {
-				int startIndex = referenceCollection.GetStartIndex(position);
 				if (startIndex < 0)
 					startIndex = 0;
 
