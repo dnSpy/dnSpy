@@ -949,7 +949,7 @@ namespace dnSpy.Text.Editor.Search {
 			// should keep the focus.
 
 			// This search doesn't use the options from the search control
-			var options = FindOptions.Wrap | FindOptions.MatchCase;
+			var options = FindOptions.Wrap | FindOptions.MatchCase | FindOptions.OrdinalComparison;
 			if (!forward)
 				options |= FindOptions.SearchReverse;
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart);
