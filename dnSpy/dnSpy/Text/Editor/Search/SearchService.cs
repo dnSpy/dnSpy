@@ -75,6 +75,13 @@ namespace dnSpy.Text.Editor.Search {
 			IncrementalSearchBackward,
 		}
 
+		enum SearchControlPosition {
+			TopRight,
+			BottomRight,
+
+			Default = TopRight,
+		}
+
 		public string SearchString {
 			get { return searchString; }
 			set { SetSearchString(value); }
@@ -163,6 +170,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly Lazy<IReplaceListenerProvider>[] replaceListenerProviders;
 		readonly List<ITextMarkerListener> listeners;
 		SearchControl searchControl;
+		SearchControlPosition searchControlPosition;
 		IAdornmentLayer layer;
 		NormalizedSnapshotSpanCollection findResultCollection;
 		IReplaceListener[] replaceListeners;
@@ -190,6 +198,7 @@ namespace dnSpy.Text.Editor.Search {
 			this.searchString = string.Empty;
 			this.replaceString = string.Empty;
 			this.searchKind = SearchKind.None;
+			this.searchControlPosition = SearchControlPosition.Default;
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -318,6 +327,7 @@ namespace dnSpy.Text.Editor.Search {
 				SelectAllWhenFocused(searchControl.searchStringTextBox);
 				SelectAllWhenFocused(searchControl.replaceStringTextBox);
 				searchControl.searchStringTextBox.IsVisibleChanged += SearchStringTextBox_IsVisibleChanged;
+				searchControl.SizeChanged += SearchControl_SizeChanged;
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			}
 			if (layer == null)
@@ -430,41 +440,73 @@ namespace dnSpy.Text.Editor.Search {
 			Debug.Assert(searchControl != null);
 			if (recalcSize)
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-			PositionControlAtTop();
+			PositionSearchControl(SearchControlPosition.Default);
 		}
 
-		void PositionControlAtTop() =>
-			PositionControl(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, 0.0);
+		Rect TopRightRect => new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+		Rect BottomRightRect => new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, wpfTextView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
 
-		void PositionControlAtBottom() =>
-			PositionControl(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, wpfTextView.ViewportHeight - searchControl.DesiredSize.Height);
-
-		void PositionControl(double left, double top) {
+		void PositionSearchControl(Rect rect) => PositionSearchControl(rect.Left, rect.Top);
+		void PositionSearchControl(double left, double top) {
 			if (Canvas.GetLeft(searchControl) == left && Canvas.GetTop(searchControl) == top)
 				return;
 			Canvas.SetLeft(searchControl, left);
 			Canvas.SetTop(searchControl, top);
 		}
 
-		void RepositionWithoutCoveringSpan(SnapshotSpan span) {
-			if (!IsSearchControlVisible)
-				return;
+		void PositionWithoutCoveringSpan(SnapshotSpan span) =>
+			PositionSearchControl(GetsearchControlPosition(span));
 
-			var rectTop = new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
-			var rectBottom = new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, wpfTextView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
-			bool intersectsTop = false, intersectsBottom = false;
-			foreach (var line in wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(span)) {
-				if (Intersects(span, line, rectTop))
-					intersectsTop = true;
-				if (Intersects(span, line, rectBottom))
-					intersectsBottom = true;
-				if (intersectsTop && intersectsBottom)
-					break;
+		void PositionSearchControl(SearchControlPosition position) {
+			switch (position) {
+			case SearchControlPosition.TopRight:
+				searchControlPosition = position;
+				PositionSearchControl(TopRightRect);
+				break;
+
+			case SearchControlPosition.BottomRight:
+				searchControlPosition = position;
+				PositionSearchControl(BottomRightRect);
+				break;
+
+			default:
+				throw new InvalidOperationException();
 			}
-			if (intersectsBottom || !intersectsTop)
-				PositionControlAtTop();
-			else
-				PositionControlAtBottom();
+		}
+
+		void SearchControl_SizeChanged(object sender, SizeChangedEventArgs e) =>
+			PositionSearchControl(searchControlPosition);
+
+		sealed class PositionInfo {
+			public SearchControlPosition Position { get; }
+			public Rect Rect { get; }
+			public bool IntersectsSpan { get; set; }
+			public PositionInfo(SearchControlPosition position, Rect rect) {
+				Position = position;
+				Rect = rect;
+				IntersectsSpan = false;
+			}
+		}
+
+		SearchControlPosition GetsearchControlPosition(SnapshotSpan span) {
+			if (!IsSearchControlVisible)
+				return SearchControlPosition.Default;
+
+			var infos = new PositionInfo[] {
+				// Sorted on preferred priority
+				new PositionInfo(SearchControlPosition.TopRight, TopRightRect),
+				new PositionInfo(SearchControlPosition.BottomRight, BottomRightRect),
+			};
+			Debug.Assert(infos.Length != 0 && infos[0].Position == SearchControlPosition.Default);
+
+			foreach (var line in wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(span)) {
+				foreach (var info in infos) {
+					if (Intersects(span, line, info.Rect))
+						info.IntersectsSpan = true;
+				}
+			}
+			var info2 = infos.FirstOrDefault(a => !a.IntersectsSpan) ?? infos.First(a => a.Position == SearchControlPosition.Default);
+			return info2.Position;
 		}
 
 		bool Intersects(SnapshotSpan fullSpan, ITextViewLine line, Rect rect) {
@@ -487,7 +529,7 @@ namespace dnSpy.Text.Editor.Search {
 
 		void CloseSearchControl() {
 			if (layer == null || layer.IsEmpty) {
-				Debug.Assert(searchKind == SearchKind.None);
+				Debug.Assert(searchKind == SearchKind.None && searchControlPosition == SearchControlPosition.Default);
 				return;
 			}
 			CleanUpIncrementalSearch();
@@ -497,6 +539,7 @@ namespace dnSpy.Text.Editor.Search {
 			RefreshAllTags();
 			wpfTextView.VisualElement.Focus();
 			searchKind = SearchKind.None;
+			searchControlPosition = SearchControlPosition.Default;
 			SaveSettings();
 		}
 		SnapshotPoint? incrementalStartPosition;
@@ -868,7 +911,7 @@ namespace dnSpy.Text.Editor.Search {
 			wpfTextView.Caret.MoveTo(span.End);
 			wpfTextView.Caret.EnsureVisible();
 			if (IsSearchControlVisible)
-				RepositionWithoutCoveringSpan(span);
+				PositionWithoutCoveringSpan(span);
 		}
 
 		void SetFoundResult(bool found) {
