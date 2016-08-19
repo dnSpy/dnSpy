@@ -28,8 +28,8 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
-using dnSpy.Properties;
 using dnSpy.Contracts.Text;
+using dnSpy.Properties;
 
 namespace dnSpy.Search {
 	[Serializable]

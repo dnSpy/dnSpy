@@ -18,8 +18,8 @@
 */
 
 using System.Windows.Input;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Properties;
 
 namespace dnSpy.Contracts.Hex {

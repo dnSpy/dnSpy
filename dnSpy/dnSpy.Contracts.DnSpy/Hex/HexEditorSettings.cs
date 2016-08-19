@@ -22,9 +22,9 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.Contracts.Hex {
 	interface IHexEditorSettings : INotifyPropertyChanged {

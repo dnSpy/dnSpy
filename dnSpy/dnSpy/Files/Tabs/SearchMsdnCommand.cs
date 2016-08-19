@@ -16,15 +16,15 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Linq;
-using System.Diagnostics;
-using dnlib.DotNet;
-using dnSpy.Contracts.Menus;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Files.Tabs {
 	static class SearchMsdnCtxMenuCommand {

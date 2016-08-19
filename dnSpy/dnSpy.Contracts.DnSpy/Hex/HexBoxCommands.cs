@@ -25,13 +25,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
-using dnSpy.Contracts.Utilities;
-using dnSpy.Contracts.HexEditor;
-using WF = System.Windows.Forms;
 using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.Utilities;
+using WF = System.Windows.Forms;
 
 namespace dnSpy.Contracts.Hex {
 	abstract class HexBoxCommand : MenuItemBase<DnHexBox> {

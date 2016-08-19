@@ -23,16 +23,16 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.AsmEditor.DnlibDialogs;
-using dnSpy.Contracts.Menus;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.App;
-using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Field {

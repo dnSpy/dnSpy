@@ -17,12 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Linq;
 using System.Drawing;
-using System.Windows.Input;
+using System.Linq;
 using System.Windows.Forms;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using System.Windows.Input;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {

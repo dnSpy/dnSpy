@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text;
 using System.Globalization;
+using System.Text;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>

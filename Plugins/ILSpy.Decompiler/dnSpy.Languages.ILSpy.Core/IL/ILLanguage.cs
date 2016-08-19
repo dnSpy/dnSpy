@@ -18,19 +18,19 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
-using dnSpy.Languages.IL;
-using ICSharpCode.Decompiler.Disassembler;
-using dnSpy.Languages.ILSpy.XmlDoc;
-using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
 using System.Text;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Languages.XmlDoc;
-using dnSpy.Languages.ILSpy.Core.Text;
-using dnSpy.Languages.ILSpy.Core.IL;
+using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Languages.XmlDoc;
+using dnSpy.Contracts.Text;
+using dnSpy.Languages.IL;
+using dnSpy.Languages.ILSpy.Core.IL;
+using dnSpy.Languages.ILSpy.Core.Text;
+using dnSpy.Languages.ILSpy.Settings;
+using dnSpy.Languages.ILSpy.XmlDoc;
+using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	sealed class LanguageProvider : ILanguageProvider {

@@ -17,11 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Settings;
-using System.Xml.Linq;
-using System.IO;
-using dnSpy.Contracts.App;
 using System;
+using System.IO;
+using System.Xml.Linq;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
 	struct XmlSettingsReader {

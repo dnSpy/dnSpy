@@ -23,9 +23,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
-using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.Contracts.Hex {
 	sealed class DnHexBox : HexBox {

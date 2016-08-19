@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using System.Runtime.InteropServices;
 
 namespace dnSpy.Contracts.HexEditor {
 	static class ClipboardUtils {

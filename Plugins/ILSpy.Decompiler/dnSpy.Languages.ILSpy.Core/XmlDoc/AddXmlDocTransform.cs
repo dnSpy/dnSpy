@@ -16,10 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 using System.Text;
+using dnlib.DotNet;
 using dnSpy.Contracts.Languages.XmlDoc;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.Languages.ILSpy.XmlDoc {
 	/// <summary>

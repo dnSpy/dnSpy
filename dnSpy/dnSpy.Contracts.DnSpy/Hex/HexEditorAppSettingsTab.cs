@@ -23,10 +23,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Contracts.Hex {
 	[Export(typeof(IAppSettingsTabProvider))]

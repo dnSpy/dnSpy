@@ -18,20 +18,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Text;
+using dnSpy.Languages.ILSpy.Core.Text;
 using dnSpy.Languages.ILSpy.CSharp;
+using dnSpy.Languages.ILSpy.Settings;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
-using dnSpy.Languages.ILSpy.Settings;
-using System.Diagnostics;
-using System.Text;
-using dnSpy.Languages.ILSpy.Core.Text;
-using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Languages.ILSpy.VisualBasic {
 	sealed class LanguageProvider : ILanguageProvider {

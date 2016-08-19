@@ -19,8 +19,8 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.AsmEditor.ViewHelpers;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class TypeDefOrRefAndCAsControl : UserControl {
