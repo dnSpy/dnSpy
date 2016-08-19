@@ -96,6 +96,11 @@ namespace dnSpy.Files {
 			if (tempAsm.Version.Major >= assembly.Version.Major)
 				assembly = tempAsm;
 
+			// Most people don't have the old mscrolib 1.x files, but there could still be references
+			// to them, eg. some of the older VS SDK Interop assemblies have refs to them.
+			if (assembly.Version.Major == 1 && assembly.Name == mscorlibName && PublicKeyBase.TokenEquals(assembly.PublicKeyOrToken, mscorlibPublicKeyToken))
+				assembly = mscorlibRef40;
+
 			if (assembly.IsContentTypeWindowsRuntime) {
 				if (failedAssemblyResolveCache.IsFailed(assembly))
 					return null;
@@ -120,6 +125,8 @@ namespace dnSpy.Files {
 			}
 		}
 		static readonly UTF8String mscorlibName = new UTF8String("mscorlib");
+		static readonly PublicKeyToken mscorlibPublicKeyToken = new PublicKeyToken("b77a5c561934e089");
+		static readonly AssemblyRef mscorlibRef40 = new AssemblyRefUser(mscorlibName, new Version(4, 0, 0, 0), mscorlibPublicKeyToken);
 
 		IDnSpyFile ResolveNormal(IAssembly assembly, ModuleDef sourceModule) {
 			var existingFile = fileManager.FindAssembly(assembly);
