@@ -202,6 +202,7 @@ namespace dnSpy.Text.Editor.Search {
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
 			wpfTextView.Closed += WpfTextView_Closed;
+			UseGlobalSettings(true);
 		}
 
 		public CommandTargetStatus CanExecuteSearchControl(Guid group, int cmdId) {
@@ -281,7 +282,12 @@ namespace dnSpy.Text.Editor.Search {
 		bool IsSearchControlVisible => layer != null && !layer.IsEmpty;
 
 		void UseGlobalSettingsIfUiIsHidden(bool canOverwriteSearchString) {
-			if (!IsSearchControlVisible && !disableSaveSettings) {
+			if (!IsSearchControlVisible)
+				UseGlobalSettings(canOverwriteSearchString);
+		}
+
+		void UseGlobalSettings(bool canOverwriteSearchString) {
+			if (!disableSaveSettings) {
 				disableSaveSettings = true;
 				if (canOverwriteSearchString)
 					SearchString = searchSettings.SearchString;
