@@ -103,7 +103,7 @@ namespace dnSpy.Text.Editor {
 					UpdateLineNumberLayerSize();
 					UpdateForceClearTypeIfNeeded();
 					OnTextPropertiesChanged();
-					UpdateLines(Array.Empty<ITextViewLine>());
+					UpdateLines(Array.Empty<ITextViewLine>(), Array.Empty<ITextViewLine>());
 				}
 			}
 			else {
@@ -118,7 +118,7 @@ namespace dnSpy.Text.Editor {
 		protected void RefreshMargin() {
 			if (Visibility == Visibility.Visible) {
 				OnTextPropertiesChanged();
-				UpdateLines(Array.Empty<ITextViewLine>());
+				UpdateLines(Array.Empty<ITextViewLine>(), Array.Empty<ITextViewLine>());
 			}
 		}
 
@@ -154,10 +154,10 @@ namespace dnSpy.Text.Editor {
 				SetTop(textLayer, -e.NewViewState.ViewportTop);
 			if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
 				UpdateLineNumberLayerSize();
-			UpdateLines(e.NewOrReformattedLines);
+			UpdateLines(e.NewOrReformattedLines, e.TranslatedLines);
 		}
 
-		void UpdateLines(IList<ITextViewLine> newOrReformattedLines) {
+		void UpdateLines(IList<ITextViewLine> newOrReformattedLines, IList<ITextViewLine> translatedLines) {
 			if (wpfTextViewHost.IsClosed)
 				return;
 			var textViewLines = wpfTextViewHost.TextView.TextViewLines;
@@ -165,6 +165,13 @@ namespace dnSpy.Text.Editor {
 				return;
 
 			foreach (var viewLine in newOrReformattedLines) {
+				Line line;
+				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
+					identityTagToLine.Remove(viewLine.IdentityTag);
+					line.Dispose();
+				}
+			}
+			foreach (var viewLine in translatedLines) {
 				Line line;
 				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
 					identityTagToLine.Remove(viewLine.IdentityTag);
