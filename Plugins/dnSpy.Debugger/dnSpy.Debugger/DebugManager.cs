@@ -1316,7 +1316,7 @@ namespace dnSpy.Debugger {
 				methodStatement = info;
 				break;
 			}
-			if (methodStatement == null) {
+			if (methodStatement.Method == null) {
 				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementToAnotherMethod;
 				return false;
 			}

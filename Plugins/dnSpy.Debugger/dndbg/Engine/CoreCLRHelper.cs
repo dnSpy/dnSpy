@@ -169,7 +169,7 @@ namespace dndbg.Engine {
 
 		static T GetDelegate<T>(IntPtr handle, string funcName) where T : class {
 			var addr = NativeMethods.GetProcAddress(handle, funcName);
-			if (addr == null)
+			if (addr == IntPtr.Zero)
 				return null;
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(addr, typeof(T));
 		}
