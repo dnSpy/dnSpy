@@ -243,8 +243,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			Dictionary<string, object> customDataDict;
 			Dictionary<string, object> resultDict;
 
-			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, Dictionary<string, object> customDataDict) {
+			public string Text { get; }
+
+			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, string text, Dictionary<string, object> customDataDict) {
 				DocumentViewer = documentViewer;
+				Text = text;
 				this.customDataDict = customDataDict;
 				this.resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
 			}
@@ -282,7 +285,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		DocumentViewerContent CreateContent(IDocumentViewer documentViewer, DocumentViewerOutput docViewerOutput) {
-			using (var context = new DocumentViewerCustomDataContext(documentViewer, docViewerOutput.GetCustomDataDictionary())) {
+			using (var context = new DocumentViewerCustomDataContext(documentViewer, docViewerOutput.GetCachedText(), docViewerOutput.GetCustomDataDictionary())) {
 				foreach (var lazy in decompileFileTabContentFactory.DocumentViewerCustomDataProviders)
 					lazy.Value.OnCustomData(context);
 				return docViewerOutput.CreateResult(context.GetResultDictionary());

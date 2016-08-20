@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		IDocumentViewer DocumentViewer { get; }
 
 		/// <summary>
+		/// Gets the new text
+		/// </summary>
+		string Text { get; }
+
+		/// <summary>
 		/// Gets data added by <see cref="IDecompilerOutput.AddCustomData{TData}(string, TData)"/>
 		/// </summary>
 		/// <typeparam name="TData">Type of data</typeparam>

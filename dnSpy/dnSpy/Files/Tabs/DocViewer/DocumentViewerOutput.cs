@@ -44,6 +44,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		int IDecompilerOutput.Length => stringBuilder.Length;
 		int IDecompilerOutput.NextPosition => stringBuilder.Length + GetIndentSize();
 
+		public string GetCachedText() => cachedText ?? (cachedText = stringBuilder.ToString());
+		string cachedText;
+
 		public DocumentViewerOutput() {
 			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.stringBuilder = new StringBuilder();
@@ -58,7 +61,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (hasCreatedResult)
 				throw new InvalidOperationException(nameof(CreateResult) + " can only be called once");
 			hasCreatedResult = true;
-			return new DocumentViewerContent(stringBuilder.ToString(), cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
+			Debug.Assert(GetCachedText() == stringBuilder.ToString());
+			return new DocumentViewerContent(GetCachedText(), cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
 		}
 
 		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
