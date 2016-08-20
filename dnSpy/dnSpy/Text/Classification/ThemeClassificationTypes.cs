@@ -204,6 +204,19 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BraceMatching),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.LineSeparator),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.FindMatchHighlightMarker),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerNamespace),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerType),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerMethod),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerConditional),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerLoop),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerProperty),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerEvent),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerTry),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerCatch),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerFilter),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerFinally),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerFault),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerOther),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

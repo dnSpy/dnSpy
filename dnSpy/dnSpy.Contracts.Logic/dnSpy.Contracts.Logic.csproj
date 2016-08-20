@@ -41,7 +41,8 @@
   <ItemGroup>
     <Compile Include="Decompiler\AddressReference.cs" />
     <Compile Include="Decompiler\BinSpan.cs" />
-    <Compile Include="Decompiler\BracePair.cs" />
+    <Compile Include="Decompiler\CodeBracesRange.cs" />
+    <Compile Include="Decompiler\CodeBracesRangeFlags.cs" />
     <Compile Include="Decompiler\DecompilerReferenceFlags.cs" />
     <Compile Include="Decompiler\Extensions.cs" />
     <Compile Include="Decompiler\GenericArgumentResolver.cs" />

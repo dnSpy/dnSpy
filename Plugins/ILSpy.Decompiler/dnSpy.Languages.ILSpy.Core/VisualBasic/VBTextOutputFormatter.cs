@@ -151,8 +151,13 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 			if (node is VariableIdentifier) {
 				var variable = ((VariableIdentifier)node).Name.Annotation<ILVariable>();
-				if (variable != null)
-					return variable.OriginalParameter ?? (object)variable.OriginalVariable ?? variable;
+				if (variable != null) {
+					if (variable.OriginalParameter != null)
+						return variable.OriginalParameter;
+					if (variable.OriginalVariable != null)
+						return variable.OriginalVariable;
+					return variable.Id;
+				}
 				node = node.Parent ?? node;
 			}
 			if (node is VariableDeclaratorWithTypeAndInitializer || node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
@@ -332,8 +337,11 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 
 		public int NextPosition => output.NextPosition;
 
-		public void AddBracePair(int leftStart, int leftEnd, int rightStart, int rightEnd) =>
-			output.AddBracePair(TextSpan.FromBounds(leftStart, leftEnd), TextSpan.FromBounds(rightStart, rightEnd));
+		public void AddBracePair(int leftStart, int leftEnd, int rightStart, int rightEnd, CodeBracesRangeFlags flags) =>
+			output.AddBracePair(TextSpan.FromBounds(leftStart, leftEnd), TextSpan.FromBounds(rightStart, rightEnd), flags);
+
+		public void AddBlock(int start, int end, CodeBracesRangeFlags flags) =>
+			output.AddBracePair(new TextSpan(start, 0), new TextSpan(end, 0), flags);
 
 		public void AddLineSeparator(int position) => output.AddLineSeparator(position);
 	}

@@ -167,6 +167,7 @@
     <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Files\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
     <Compile Include="Files\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
+    <Compile Include="Files\Tabs\DocViewer\LazyStructureVisualizerCollection.cs" />
     <Compile Include="Files\Tabs\DocViewer\LineSeparatorCollection.cs" />
     <Compile Include="Files\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
@@ -174,6 +175,10 @@
     <Compile Include="Files\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
     <Compile Include="Files\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
     <Compile Include="Files\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerCollection.cs" />
+    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerDocumentViewerListener.cs" />
+    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerServiceDataProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\DocumentViewerCommandTargetFilter.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\DocumentViewerToolTipService.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
@@ -527,6 +532,7 @@
     <Compile Include="Text\Editor\SelectionUtilities.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
     <Compile Include="Text\Editor\SpacerMargin.cs" />
+    <Compile Include="Text\Editor\StructureVisualizerService.cs" />
     <Compile Include="Text\Editor\SystemTextCaret.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
     <Compile Include="Text\Editor\TextCaretLayer.cs" />

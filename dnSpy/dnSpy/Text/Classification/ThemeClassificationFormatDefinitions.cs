@@ -914,6 +914,71 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.FindMatchHighlightMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition FindMatchHighlightMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerNamespace)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerNamespaceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerType)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerTypeClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerMethod)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerMethodClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerConditional)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerConditionalClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerLoop)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerLoopClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerProperty)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerPropertyClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerEvent)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerEventClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerTry)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerTryClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerCatch)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerCatchClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerFilter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerFilterClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerFinally)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerFinallyClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerFault)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerFaultClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerOther)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerOtherClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2472,6 +2537,123 @@ namespace dnSpy.Text.Classification {
 			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) {
 				ZOrder = TextMarkerServiceZIndexes.FindMatch;
 			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerNamespace)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerNamespace)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerNamespace : ThemeMarkerFormatDefinition {
+			StructureVisualizerNamespace() : base(TextColor.StructureVisualizerNamespace) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerType)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerType)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerType : ThemeMarkerFormatDefinition {
+			StructureVisualizerType() : base(TextColor.StructureVisualizerType) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerMethod)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerMethod)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerMethod : ThemeMarkerFormatDefinition {
+			StructureVisualizerMethod() : base(TextColor.StructureVisualizerMethod) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerConditional)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerConditional)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerConditional : ThemeMarkerFormatDefinition {
+			StructureVisualizerConditional() : base(TextColor.StructureVisualizerConditional) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLoop)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLoop)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerLoop : ThemeMarkerFormatDefinition {
+			StructureVisualizerLoop() : base(TextColor.StructureVisualizerLoop) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerProperty)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerProperty)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerProperty : ThemeMarkerFormatDefinition {
+			StructureVisualizerProperty() : base(TextColor.StructureVisualizerProperty) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerEvent)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerEvent)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerEvent : ThemeMarkerFormatDefinition {
+			StructureVisualizerEvent() : base(TextColor.StructureVisualizerEvent) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerTry)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerTry)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerTry : ThemeMarkerFormatDefinition {
+			StructureVisualizerTry() : base(TextColor.StructureVisualizerTry) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerCatch)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerCatch)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerCatch : ThemeMarkerFormatDefinition {
+			StructureVisualizerCatch() : base(TextColor.StructureVisualizerCatch) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFilter)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFilter)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerFilter : ThemeMarkerFormatDefinition {
+			StructureVisualizerFilter() : base(TextColor.StructureVisualizerFilter) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFinally)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFinally)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerFinally : ThemeMarkerFormatDefinition {
+			StructureVisualizerFinally() : base(TextColor.StructureVisualizerFinally) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFault)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFault)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerFault : ThemeMarkerFormatDefinition {
+			StructureVisualizerFault() : base(TextColor.StructureVisualizerFault) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerOther)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerOther)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerOther : ThemeMarkerFormatDefinition {
+			StructureVisualizerOther() : base(TextColor.StructureVisualizerOther) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

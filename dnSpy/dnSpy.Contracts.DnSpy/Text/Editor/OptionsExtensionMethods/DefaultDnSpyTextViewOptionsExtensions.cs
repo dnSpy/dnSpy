@@ -167,5 +167,16 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDnSpyTextViewOptions.CompressNonLetterLinesId);
 		}
+
+		/// <summary>
+		/// Returns true if the vertical lines between start and end blocks are shown
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsShowStructureLinesEnabled(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.ShowStructureLinesId);
+		}
 	}
 }

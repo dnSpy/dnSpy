@@ -497,6 +497,9 @@
     <Compile Include="Text\Editor\IReplEditor.cs" />
     <Compile Include="Text\Editor\IReplEditorProvider.cs" />
     <Compile Include="Text\Editor\IsOverlayLayerAttribute.cs" />
+    <Compile Include="Text\Editor\IStructureVisualizerService.cs" />
+    <Compile Include="Text\Editor\IStructureVisualizerServiceDataProvider.cs" />
+    <Compile Include="Text\Editor\IStructureVisualizerServiceProvider.cs" />
     <Compile Include="Text\Editor\ITextEditorSettings.cs" />
     <Compile Include="Text\Editor\LayerKind.cs" />
     <Compile Include="Text\Editor\LayerKindAttribute.cs" />
@@ -515,6 +518,8 @@
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />
+    <Compile Include="Text\Editor\StructureVisualizerData.cs" />
+    <Compile Include="Text\Editor\StructureVisualizerDataBlockKind.cs" />
     <Compile Include="Text\Editor\TextMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />

@@ -26,26 +26,28 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class BracePairCollection {
-		public static readonly BracePairCollection Empty = new BracePairCollection(Array.Empty<BracePair>());
+		public static readonly BracePairCollection Empty = new BracePairCollection(Array.Empty<CodeBracesRange>());
 
 		readonly SpanDataCollection<Span> leftSorted;
 		readonly SpanDataCollection<Span> rightSorted;
 
-		public BracePairCollection(BracePair[] pairs) {
-			if (pairs == null)
-				throw new ArgumentNullException(nameof(pairs));
+		public BracePairCollection(CodeBracesRange[] ranges) {
+			if (ranges == null)
+				throw new ArgumentNullException(nameof(ranges));
 
-			if (pairs.Length == 0) {
+			if (ranges.Length == 0) {
 				leftSorted = SpanDataCollection<Span>.Empty;
 				rightSorted = SpanDataCollection<Span>.Empty;
 			}
 			else {
 				int prevEnd;
-				var builder = SpanDataCollectionBuilder<Span>.CreateBuilder(pairs.Length);
+				var builder = SpanDataCollectionBuilder<Span>.CreateBuilder(ranges.Length);
 
-				Array.Sort(pairs, LeftSorter.Instance);
+				Array.Sort(ranges, LeftSorter.Instance);
 				prevEnd = 0;
-				foreach (var p in pairs) {
+				foreach (var p in ranges) {
+					if (!p.Flags.IsBraces())
+						continue;
 					if (prevEnd <= p.Left.Start) {
 						builder.Add(new Span(p.Left.Start, p.Left.Length), new Span(p.Right.Start, p.Right.Length));
 						prevEnd = p.Left.End;
@@ -54,9 +56,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				leftSorted = builder.Create();
 
 				builder.Clear();
-				Array.Sort(pairs, RightSorter.Instance);
+				Array.Sort(ranges, RightSorter.Instance);
 				prevEnd = 0;
-				foreach (var p in pairs) {
+				foreach (var p in ranges) {
+					if (!p.Flags.IsBraces())
+						continue;
 					if (prevEnd <= p.Right.Start) {
 						builder.Add(new Span(p.Right.Start, p.Right.Length), new Span(p.Left.Start, p.Left.Length));
 						prevEnd = p.Right.End;
@@ -66,14 +70,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			}
 		}
 
-		sealed class LeftSorter : IComparer<BracePair> {
+		sealed class LeftSorter : IComparer<CodeBracesRange> {
 			public static readonly LeftSorter Instance = new LeftSorter();
-			public int Compare(BracePair x, BracePair y) => x.Left.Start - y.Left.Start;
+			public int Compare(CodeBracesRange x, CodeBracesRange y) => x.Left.Start - y.Left.Start;
 		}
 
-		sealed class RightSorter : IComparer<BracePair> {
+		sealed class RightSorter : IComparer<CodeBracesRange> {
 			public static readonly RightSorter Instance = new RightSorter();
-			public int Compare(BracePair x, BracePair y) => x.Right.Start - y.Right.Start;
+			public int Compare(CodeBracesRange x, CodeBracesRange y) => x.Right.Start - y.Right.Start;
 		}
 
 		public BracePairResultCollection? GetBracePairs(int position) {

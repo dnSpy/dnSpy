@@ -34,16 +34,21 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Data is a <see cref="SpanDataCollection{TData}"/> (<see cref="ReferenceAndId"/> elements)
 		/// </summary>
-		public const string SpanReference = "DebugInfo-SpanReference";
+		public const string SpanReference = "SpanReference-Content";
 
 		/// <summary>
-		/// <see cref="Decompiler.BracePair"/> data
+		/// Brace pair data
 		/// </summary>
-		public const string BracePair = "DebugInfo-BracePair";
+		public const string BracePair = "BracePair-Content";
+
+		/// <summary>
+		/// Structure visualizer data
+		/// </summary>
+		public const string StructureVisualizer = "StructureVisualizer-Content";
 
 		/// <summary>
 		/// <see cref="Decompiler.LineSeparator"/> data
 		/// </summary>
-		public const string LineSeparator = "DebugInfo-LineSeparator";
+		public const string LineSeparator = "LineSeparator-Content";
 	}
 }

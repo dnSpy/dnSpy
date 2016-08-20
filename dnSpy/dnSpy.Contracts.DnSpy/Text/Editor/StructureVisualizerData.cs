@@ -17,29 +17,38 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Decompiler {
+using Microsoft.VisualStudio.Text;
+
+namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Brace pair
+	/// Data consumed by <see cref="IStructureVisualizerService"/>
 	/// </summary>
-	public struct BracePair {
+	public struct StructureVisualizerData {
 		/// <summary>
-		/// Span of left brace
+		/// Span of start block
 		/// </summary>
-		public TextSpan Left { get; }
+		public SnapshotSpan Top { get; }
 
 		/// <summary>
-		/// Span of right brace
+		/// Span of end block
 		/// </summary>
-		public TextSpan Right { get; }
+		public SnapshotSpan Bottom { get; }
+
+		/// <summary>
+		/// Block kind
+		/// </summary>
+		public StructureVisualizerDataBlockKind BlockKind { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="left">Span of left brace</param>
-		/// <param name="right">Span of right brace</param>
-		public BracePair(TextSpan left, TextSpan right) {
-			Left = left;
-			Right = right;
+		/// <param name="blockTop">Start block span</param>
+		/// <param name="blockBottom">End block span</param>
+		/// <param name="blockKind">Block kind</param>
+		public StructureVisualizerData(SnapshotSpan blockTop, SnapshotSpan blockBottom, StructureVisualizerDataBlockKind blockKind) {
+			Top = blockTop;
+			Bottom = blockBottom;
+			BlockKind = blockKind;
 		}
 	}
 }

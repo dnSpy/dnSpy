@@ -242,7 +242,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	}
 
 	interface IBracePairService {
-		void SetBracePairCollection(BracePairCollection coll);
+		void SetBracePairCollection(BracePairCollection bracePairCollection);
 		void SetBracePairViewTagger(BracePairViewTagger tagger);
 		IEnumerable<ITagSpan<IBracePairTag>> GetTags(NormalizedSnapshotSpanCollection spans);
 	}
@@ -265,6 +265,8 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (textView.IsClosed)
+				return;
 			if (e.OptionId == DefaultDnSpyTextViewOptions.BraceMatchingId.Name)
 				UpdateBraceMatching();
 		}
@@ -386,6 +388,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		void TextView_Closed(object sender, EventArgs e) {
 			currentBracePair = null;
+			bracePairCollection = BracePairCollection.Empty;
 			textView.Closed -= TextView_Closed;
 			textView.Options.OptionChanged -= Options_OptionChanged;
 			textView.Caret.PositionChanged -= Caret_PositionChanged;

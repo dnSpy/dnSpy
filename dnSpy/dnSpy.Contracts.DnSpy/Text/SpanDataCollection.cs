@@ -216,6 +216,12 @@ namespace dnSpy.Contracts.Text {
 			Span = span;
 			Data = data;
 		}
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() => "[" + Span.ToString() + "]";
 	}
 
 	/// <summary>

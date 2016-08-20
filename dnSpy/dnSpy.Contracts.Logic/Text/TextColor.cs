@@ -199,6 +199,19 @@ namespace dnSpy.Contracts.Text {
 		BraceMatching,
 		LineSeparator,
 		FindMatchHighlightMarker,
+		StructureVisualizerNamespace,
+		StructureVisualizerType,
+		StructureVisualizerMethod,
+		StructureVisualizerConditional,
+		StructureVisualizerLoop,
+		StructureVisualizerProperty,
+		StructureVisualizerEvent,
+		StructureVisualizerTry,
+		StructureVisualizerCatch,
+		StructureVisualizerFilter,
+		StructureVisualizerFinally,
+		StructureVisualizerFault,
+		StructureVisualizerOther,
 
 		/// <summary>
 		/// Must be last
@@ -384,6 +397,19 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object BraceMatching = TextColor.BraceMatching;
 		public static readonly object LineSeparator = TextColor.LineSeparator;
 		public static readonly object FindMatchHighlightMarker = TextColor.FindMatchHighlightMarker;
+		public static readonly object StructureVisualizerNamespace = TextColor.StructureVisualizerNamespace;
+		public static readonly object StructureVisualizerType = TextColor.StructureVisualizerType;
+		public static readonly object StructureVisualizerMethod = TextColor.StructureVisualizerMethod;
+		public static readonly object StructureVisualizerConditional = TextColor.StructureVisualizerConditional;
+		public static readonly object StructureVisualizerLoop = TextColor.StructureVisualizerLoop;
+		public static readonly object StructureVisualizerProperty = TextColor.StructureVisualizerProperty;
+		public static readonly object StructureVisualizerEvent = TextColor.StructureVisualizerEvent;
+		public static readonly object StructureVisualizerTry = TextColor.StructureVisualizerTry;
+		public static readonly object StructureVisualizerCatch = TextColor.StructureVisualizerCatch;
+		public static readonly object StructureVisualizerFilter = TextColor.StructureVisualizerFilter;
+		public static readonly object StructureVisualizerFinally = TextColor.StructureVisualizerFinally;
+		public static readonly object StructureVisualizerFault = TextColor.StructureVisualizerFault;
+		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -571,6 +597,19 @@ namespace dnSpy.Contracts.Text {
 			BraceMatching,
 			LineSeparator,
 			FindMatchHighlightMarker,
+			StructureVisualizerNamespace,
+			StructureVisualizerType,
+			StructureVisualizerMethod,
+			StructureVisualizerConditional,
+			StructureVisualizerLoop,
+			StructureVisualizerProperty,
+			StructureVisualizerEvent,
+			StructureVisualizerTry,
+			StructureVisualizerCatch,
+			StructureVisualizerFilter,
+			StructureVisualizerFinally,
+			StructureVisualizerFault,
+			StructureVisualizerOther,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

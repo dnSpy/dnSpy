@@ -39,10 +39,13 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>Brace pair service</summary>
 		public const double ORDER_BRACEPAIRSERVICE = 4000;
 
+		/// <summary>Structure visualizer service</summary>
+		public const double ORDER_STRUCTUREVISUALIZERSERVICE = 5000;
+
 		/// <summary>Line separator service</summary>
-		public const double ORDER_LINESEPARATORSERVICE = 5000;
+		public const double ORDER_LINESEPARATORSERVICE = 6000;
 
 		/// <summary>Tooltip service</summary>
-		public const double ORDER_TOOLTIPSERVICE = 6000;
+		public const double ORDER_TOOLTIPSERVICE = 7000;
 	}
 }

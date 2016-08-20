@@ -160,6 +160,19 @@
 		<color name="bracematching" bg="#FF0E4583" />
 		<color name="lineseparator" fg="#FFA5A5A5" />
 		<color name="findmatchhighlightmarker" bg="#FF773800" />
+		<color name="structurevisualizernamespace" fg="#FF4C4C4C" />
+		<color name="structurevisualizertype" fg="#FF135647" />
+		<color name="structurevisualizermethod" fg="#FF133856" />
+		<color name="structurevisualizerconditional" fg="#FF163F1B" />
+		<color name="structurevisualizerloop" fg="#FF7938A5" />
+		<color name="structurevisualizerproperty" fg="#FF133856" />
+		<color name="structurevisualizerevent" fg="#FF133856" />
+		<color name="structurevisualizertry" fg="#FFA54D47" />
+		<color name="structurevisualizercatch" fg="#FFA54D47" />
+		<color name="structurevisualizerfilter" fg="#FFA54D47" />
+		<color name="structurevisualizerfinally" fg="#FFA54D47" />
+		<color name="structurevisualizerfault" fg="#FFA54D47" />
+		<color name="structurevisualizerother" fg="#FF4C4C4C" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

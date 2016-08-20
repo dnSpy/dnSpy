@@ -22,11 +22,11 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	[ExportDocumentViewerCustomDataProvider]
-	sealed class BracePairDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
+	sealed class StructureVisualizerDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
 		public void OnCustomData(IDocumentViewerCustomDataContext context) {
 			var data = context.GetData<CodeBracesRange>(PredefinedCustomDataIds.CodeBracesRange);
-			var coll = data.Length == 0 ? BracePairCollection.Empty : new BracePairCollection(data);
-			context.AddCustomData(DocumentViewerContentDataIds.BracePair, coll);
+			var coll = data.Length == 0 ? LazyStructureVisualizerCollection.Empty : new LazyStructureVisualizerCollection(data);
+			context.AddCustomData(DocumentViewerContentDataIds.StructureVisualizer, coll);
 		}
 	}
 }

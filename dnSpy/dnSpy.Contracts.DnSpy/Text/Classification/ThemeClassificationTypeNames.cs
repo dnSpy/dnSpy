@@ -891,5 +891,70 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.FindMatchHighlightMarker"/>
 		/// </summary>
 		public const string FindMatchHighlightMarker = "Theme-FindMatchHighlightMarker";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerNamespace"/>
+		/// </summary>
+		public const string StructureVisualizerNamespace = "Theme-StructureVisualizerNamespace";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerType"/>
+		/// </summary>
+		public const string StructureVisualizerType = "Theme-StructureVisualizerType";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerMethod"/>
+		/// </summary>
+		public const string StructureVisualizerMethod = "Theme-StructureVisualizerMethod";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerConditional"/>
+		/// </summary>
+		public const string StructureVisualizerConditional = "Theme-StructureVisualizerConditional";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerLoop"/>
+		/// </summary>
+		public const string StructureVisualizerLoop = "Theme-StructureVisualizerLoop";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerProperty"/>
+		/// </summary>
+		public const string StructureVisualizerProperty = "Theme-StructureVisualizerProperty";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerEvent"/>
+		/// </summary>
+		public const string StructureVisualizerEvent = "Theme-StructureVisualizerEvent";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerTry"/>
+		/// </summary>
+		public const string StructureVisualizerTry = "Theme-StructureVisualizerTry";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerCatch"/>
+		/// </summary>
+		public const string StructureVisualizerCatch = "Theme-StructureVisualizerCatch";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerFilter"/>
+		/// </summary>
+		public const string StructureVisualizerFilter = "Theme-StructureVisualizerFilter";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerFinally"/>
+		/// </summary>
+		public const string StructureVisualizerFinally = "Theme-StructureVisualizerFinally";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerFault"/>
+		/// </summary>
+		public const string StructureVisualizerFault = "Theme-StructureVisualizerFault";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerOther"/>
+		/// </summary>
+		public const string StructureVisualizerOther = "Theme-StructureVisualizerOther";
 	}
 }

@@ -100,4 +100,10 @@ namespace dnSpy.Text.Editor {
 		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CompressNonLetterLinesId;
 		public override bool Default => true;
 	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class ShowStructureLinesEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.ShowStructureLinesId;
+		public override bool Default => true;
+	}
 }

@@ -19,42 +19,77 @@
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// dnSpy adornment layers
+	/// Block kind
 	/// </summary>
-	public static class PredefinedDnSpyAdornmentLayers {
+	public enum StructureVisualizerDataBlockKind {
 		/// <summary>
-		/// Bottom layer. All layers should normally be after this layer.
+		/// Not a block
 		/// </summary>
-		public const string BottomLayer = "dnSpy-BottomLayer";
+		None,
 
 		/// <summary>
-		/// Top layer. All layers should normally be before this layer.
+		/// Namespace
 		/// </summary>
-		public const string TopLayer = "dnSpy-TopLayer";
+		Namespace,
 
 		/// <summary>
-		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
+		/// Type
 		/// </summary>
-		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
+		Type,
 
 		/// <summary>
-		/// Line separator adornment layer
+		/// Method
 		/// </summary>
-		public const string LineSeparator = "dnSpy-LineSeparator";
+		Method,
 
 		/// <summary>
-		/// Background image adornment layer
+		/// Conditional
 		/// </summary>
-		public const string BackgroundImage = "dnSpy-BackgroundImage";
+		Conditional,
 
 		/// <summary>
-		/// Search adornment layer
+		/// Loop
 		/// </summary>
-		public const string Search = "dnSpy-Search";
+		Loop,
 
 		/// <summary>
-		/// Structure visualizer adornment layer
+		/// Property
 		/// </summary>
-		public const string StructureVisualizer = "dnSpy-StructureVisualizer";
+		Property,
+
+		/// <summary>
+		/// Event
+		/// </summary>
+		Event,
+
+		/// <summary>
+		/// Try
+		/// </summary>
+		Try,
+
+		/// <summary>
+		/// Catch
+		/// </summary>
+		Catch,
+
+		/// <summary>
+		/// Catch filter
+		/// </summary>
+		Filter,
+
+		/// <summary>
+		/// Finally
+		/// </summary>
+		Finally,
+
+		/// <summary>
+		/// Fault
+		/// </summary>
+		Fault,
+
+		/// <summary>
+		/// Other block kind
+		/// </summary>
+		Other,
 	}
 }

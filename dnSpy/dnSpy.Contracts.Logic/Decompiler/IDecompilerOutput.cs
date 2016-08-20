@@ -127,21 +127,22 @@ namespace dnSpy.Contracts.Decompiler {
 			output.AddCustomData(PredefinedCustomDataIds.SpanReference, new SpanReference(reference, TextSpan.FromBounds(start, end), id));
 
 		/// <summary>
-		/// Adds a <see cref="BracePair"/>
+		/// Adds a <see cref="CodeBracesRange"/>
 		/// </summary>
 		/// <param name="output">Output</param>
-		/// <param name="bracePair">Brace pair</param>
-		public static void AddBracePair(this IDecompilerOutput output, BracePair bracePair) =>
-			output.AddCustomData(PredefinedCustomDataIds.BracePair, bracePair);
+		/// <param name="range">Range</param>
+		public static void AddCodeBracesRange(this IDecompilerOutput output, CodeBracesRange range) =>
+			output.AddCustomData(PredefinedCustomDataIds.CodeBracesRange, range);
 
 		/// <summary>
-		/// Adds a <see cref="BracePair"/>
+		/// Adds a <see cref="CodeBracesRange"/>
 		/// </summary>
 		/// <param name="output">Output</param>
-		/// <param name="left">Span of left brace</param>
-		/// <param name="right">Span of right brace</param>
-		public static void AddBracePair(this IDecompilerOutput output, TextSpan left, TextSpan right) =>
-			output.AddCustomData(PredefinedCustomDataIds.BracePair, new BracePair(left, right));
+		/// <param name="start">Start span</param>
+		/// <param name="end">End span</param>
+		/// <param name="flags">Flags</param>
+		public static void AddBracePair(this IDecompilerOutput output, TextSpan start, TextSpan end, CodeBracesRangeFlags flags) =>
+			output.AddCustomData(PredefinedCustomDataIds.CodeBracesRange, new CodeBracesRange(start, end, flags));
 
 		/// <summary>
 		/// Adds a <see cref="LineSeparator"/>

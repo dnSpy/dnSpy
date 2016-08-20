@@ -19,27 +19,34 @@
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Predefined custom data IDs passed to <see cref="IDecompilerOutput.AddCustomData{TData}(string, TData)"/>
+	/// Brace pair
 	/// </summary>
-	public static class PredefinedCustomDataIds {
+	public struct CodeBracesRange {
 		/// <summary>
-		/// TData = <see cref="MethodDebugInfo"/>
+		/// Span of start brace
 		/// </summary>
-		public const string DebugInfo = "DebugInfo";
+		public TextSpan Left { get; }
 
 		/// <summary>
-		/// TData = <see cref="Decompiler.SpanReference"/>
+		/// Span of end brace
 		/// </summary>
-		public const string SpanReference = "SpanReference";
+		public TextSpan Right { get; }
 
 		/// <summary>
-		/// TData = <see cref="Decompiler.CodeBracesRange"/>
+		/// Gets the kind
 		/// </summary>
-		public const string CodeBracesRange = "CodeBracesRange";
+		public CodeBracesRangeFlags Flags { get; }
 
 		/// <summary>
-		/// TData = <see cref="Decompiler.LineSeparator"/>
+		/// Constructor
 		/// </summary>
-		public const string LineSeparator = "LineSeparator";
+		/// <param name="left">Span of left brace</param>
+		/// <param name="right">Span of right brace</param>
+		/// <param name="flags">Flags</param>
+		public CodeBracesRange(TextSpan left, TextSpan right, CodeBracesRangeFlags flags) {
+			Left = left;
+			Right = right;
+			Flags = flags;
+		}
 	}
 }

@@ -256,6 +256,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void RemoveMarkerElements(NormalizedSnapshotSpanCollection spans) {
+			if (spans.Count == 0)
+				return;
 			for (int i = markerElements.Count - 1; i >= 0; i--) {
 				var markerElement = markerElements[i];
 				if (spans.IntersectsWith(markerElement.Span)) {
