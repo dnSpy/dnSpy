@@ -599,10 +599,10 @@ namespace dnSpy.Text.Editor.Search {
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
-		void UpdateSearchStringFromCaretPosition() {
+		void UpdateSearchStringFromCaretPosition(bool canSearch) {
 			var newSearchString = TryGetSearchStringAtCaret();
 			if (newSearchString != null)
-				SetSearchString(newSearchString);
+				SetSearchString(newSearchString, canSearch);
 		}
 
 		public void ShowFind() {
@@ -612,7 +612,7 @@ namespace dnSpy.Text.Editor.Search {
 				return;
 			}
 
-			UpdateSearchStringFromCaretPosition();
+			UpdateSearchStringFromCaretPosition(false);
 			ShowSearchControl(SearchKind.Find, false);
 			FocusSearchStringTextBox();
 		}
@@ -624,7 +624,7 @@ namespace dnSpy.Text.Editor.Search {
 				return;
 			}
 
-			UpdateSearchStringFromCaretPosition();
+			UpdateSearchStringFromCaretPosition(false);
 			ShowSearchControl(SearchKind.Replace, false);
 			FocusSearchStringTextBox();
 		}
