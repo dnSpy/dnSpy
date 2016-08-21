@@ -211,7 +211,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
 
-			if (searchKind == SearchKind.IncrementalSearchForward || searchKind == SearchKind.IncrementalSearchBackward) {
+			if (inIncrementalSearch) {
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
 					case TextEditorIds.BACKSPACE:
@@ -270,7 +270,7 @@ namespace dnSpy.Text.Editor.Search {
 		void SetIncrementalSearchString(string newSearchString) {
 			isIncrementalSearchCaretMove = true;
 			try {
-				SearchString = newSearchString;
+				SetSearchString(newSearchString, false);
 				RestartSearch();
 			}
 			finally {
@@ -374,7 +374,7 @@ namespace dnSpy.Text.Editor.Search {
 		void CloseSearchControlIfIncrementalSearch() {
 			if (wpfTextView.IsClosed)
 				return;
-			if (searchKind == SearchKind.IncrementalSearchForward || searchKind == SearchKind.IncrementalSearchBackward)
+			if (inIncrementalSearch)
 				CloseSearchControl();
 		}
 

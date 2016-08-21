@@ -75,7 +75,7 @@ namespace dnSpy.Text.Editor {
 					if (!GetLineColumn(out lineNumber, out columnNumber))
 						return CommandTargetStatus.Handled;
 				}
-				if ((uint)lineNumber >= textView.TextSnapshot.LineCount)
+				if ((uint)lineNumber >= (uint)textView.TextSnapshot.LineCount)
 					lineNumber = textView.TextSnapshot.LineCount - 1;
 				var line = textView.TextSnapshot.GetLineFromLineNumber(lineNumber);
 				int col;
@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 				}
 				else
 					col = columnNumber.Value;
-				if ((uint)col > line.Length)
+				if ((uint)col > (uint)line.Length)
 					col = line.Length;
 				textView.Selection.Clear();
 				textView.Caret.MoveTo(line.Start + col);
