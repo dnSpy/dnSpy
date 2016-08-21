@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Sets the new data provider
 		/// </summary>
-		/// <param name="structureVisualizerDataProvider">New data provider or null</param>
-		void SetDataProvider(IStructureVisualizerServiceDataProvider structureVisualizerDataProvider);
+		/// <param name="dataProvider">New data provider or null</param>
+		void SetDataProvider(IStructureVisualizerServiceDataProvider dataProvider);
 	}
 }

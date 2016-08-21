@@ -67,11 +67,11 @@ namespace dnSpy.Text.Editor {
 		readonly List<LineColorInfo> lineColorInfos;
 		IAdornmentLayer layer;
 		IEditorFormatMap editorFormatMap;
-		IStructureVisualizerServiceDataProvider structureVisualizerDataProvider;
+		IStructureVisualizerServiceDataProvider structureVisualizerServiceDataProvider;
 		bool enabled;
 
-		sealed class NullStructureVisualizerDataProvider : IStructureVisualizerServiceDataProvider {
-			public static readonly NullStructureVisualizerDataProvider Instance = new NullStructureVisualizerDataProvider();
+		sealed class NullStructureVisualizerServiceDataProvider : IStructureVisualizerServiceDataProvider {
+			public static readonly NullStructureVisualizerServiceDataProvider Instance = new NullStructureVisualizerServiceDataProvider();
 			public void GetData(SnapshotSpan lineExtent, List<StructureVisualizerData> list) { }
 		}
 
@@ -82,7 +82,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			this.wpfTextView = wpfTextView;
 			this.editorFormatMapService = editorFormatMapService;
-			this.structureVisualizerDataProvider = NullStructureVisualizerDataProvider.Instance;
+			this.structureVisualizerServiceDataProvider = NullStructureVisualizerServiceDataProvider.Instance;
 			this.onRemovedDelegate = OnRemoved;
 			this.lineElements = new List<LineElement>();
 			this.xPosCache = new XPosCache(wpfTextView);
@@ -201,10 +201,10 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public void SetDataProvider(IStructureVisualizerServiceDataProvider structureVisualizerDataProvider) {
+		public void SetDataProvider(IStructureVisualizerServiceDataProvider dataProvider) {
 			if (wpfTextView.IsClosed)
 				return;
-			this.structureVisualizerDataProvider = structureVisualizerDataProvider ?? NullStructureVisualizerDataProvider.Instance;
+			this.structureVisualizerServiceDataProvider = dataProvider ?? NullStructureVisualizerServiceDataProvider.Instance;
 			if (enabled)
 				RepaintAllLines();
 		}
@@ -281,7 +281,7 @@ namespace dnSpy.Text.Editor {
 
 					if (prevLineExtent != lineExtent) {
 						list.Clear();
-						structureVisualizerDataProvider.GetData(lineExtent, list);
+						structureVisualizerServiceDataProvider.GetData(lineExtent, list);
 						listArray = list.Count == 0 ? Array.Empty<StructureVisualizerData>() : list.ToArray();
 					}
 
@@ -490,7 +490,7 @@ namespace dnSpy.Text.Editor {
 			UnregisterEvents();
 			RemoveAllLineElements();
 			ClearXPosCache();
-			structureVisualizerDataProvider = NullStructureVisualizerDataProvider.Instance;
+			structureVisualizerServiceDataProvider = NullStructureVisualizerServiceDataProvider.Instance;
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
 		}
