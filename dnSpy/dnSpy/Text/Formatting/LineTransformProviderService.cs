@@ -31,7 +31,7 @@ namespace dnSpy.Text.Formatting {
 	}
 
 	interface ILineTransformProviderService {
-		ILineTransformProvider Create(IWpfTextView textView);
+		ILineTransformProvider Create(IWpfTextView textView, bool removeExtraTextLineVerticalPixels);
 	}
 
 	[Export(typeof(ILineTransformProviderService))]
@@ -46,7 +46,7 @@ namespace dnSpy.Text.Formatting {
 			this.lineTransformSourceProviders = lineTransformSourceProviders.ToArray();
 		}
 
-		public ILineTransformProvider Create(IWpfTextView textView) {
+		public ILineTransformProvider Create(IWpfTextView textView, bool removeExtraTextLineVerticalPixels) {
 			if (providerSelector == null)
 				providerSelector = new ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>(contentTypeRegistryService, lineTransformSourceProviders, a => a.Metadata.ContentTypes);
 			var contentType = textView.TextDataModel.ContentType;
@@ -58,23 +58,32 @@ namespace dnSpy.Text.Formatting {
 				if (source != null)
 					list.Add(source);
 			}
-			return new LineTransformProvider(list.ToArray());
+			return new LineTransformProvider(list.ToArray(), removeExtraTextLineVerticalPixels);
 		}
 
 		sealed class LineTransformProvider : ILineTransformProvider {
 			readonly ILineTransformSource[] lineTransformSources;
+			readonly bool removeExtraTextLineVerticalPixels;
 
-			public LineTransformProvider(ILineTransformSource[] lineTransformSources) {
+			public LineTransformProvider(ILineTransformSource[] lineTransformSources, bool removeExtraTextLineVerticalPixels) {
 				if (lineTransformSources == null)
 					throw new ArgumentNullException(nameof(lineTransformSources));
 				this.lineTransformSources = lineTransformSources;
+				this.removeExtraTextLineVerticalPixels = removeExtraTextLineVerticalPixels;
 			}
 
 			public LineTransform GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement) {
 				var transform = line.DefaultLineTransform;
 				foreach (var source in lineTransformSources)
 					transform = LineTransform.Combine(transform, source.GetLineTransform(line, yPosition, placement));
-				return transform;
+				if (!removeExtraTextLineVerticalPixels)
+					return transform;
+
+				var def = line.DefaultLineTransform;
+				return new LineTransform(
+					def.TopSpace == transform.TopSpace ? 0 : transform.TopSpace,
+					def.BottomSpace == transform.BottomSpace ? 0 : transform.BottomSpace,
+					transform.VerticalScale, transform.Right);
 			}
 		}
 	}

@@ -216,6 +216,7 @@ namespace dnSpy.Text.Editor {
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
 			InitializeZoom();
+			UpdateRemoveExtraTextLineVerticalPixels();
 
 			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
 				RegisteredCommandElement = commandManager.Register(VisualElement, this);
@@ -395,6 +396,17 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (e.OptionId == DefaultDnSpyTextViewOptions.EnableColorizationId.Name)
 				InvalidateFormattedLineSource(true);
+			else if (e.OptionId == DefaultDnSpyTextViewOptions.RemoveExtraTextLineVerticalPixelsId.Name)
+				UpdateRemoveExtraTextLineVerticalPixels();
+		}
+
+		void UpdateRemoveExtraTextLineVerticalPixels() {
+			bool newValue = Options.IsRemoveExtraTextLineVerticalPixelsEnabled();
+			if (newValue == removeExtraTextLineVerticalPixels)
+				return;
+			removeExtraTextLineVerticalPixels = newValue;
+			recreateLineTransformProvider = true;
+			DelayLayoutLines(true);
 		}
 
 		double lastFormattedLineSourceViewportWidth = double.NaN;
@@ -847,7 +859,7 @@ namespace dnSpy.Text.Editor {
 		ILineTransformProvider LineTransformProvider {
 			get {
 				if (recreateLineTransformProvider) {
-					__lineTransformProvider = lineTransformProviderService.Create(this);
+					__lineTransformProvider = lineTransformProviderService.Create(this, removeExtraTextLineVerticalPixels);
 					recreateLineTransformProvider = false;
 				}
 				return __lineTransformProvider;
@@ -855,6 +867,7 @@ namespace dnSpy.Text.Editor {
 		}
 		ILineTransformProvider __lineTransformProvider;
 		bool recreateLineTransformProvider;
+		bool removeExtraTextLineVerticalPixels;
 
 		public ILineTransformSource LineTransformSource => this;
 		LineTransform ILineTransformSource.GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement) =>

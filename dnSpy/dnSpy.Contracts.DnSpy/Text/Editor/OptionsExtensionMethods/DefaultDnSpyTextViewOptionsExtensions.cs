@@ -178,5 +178,16 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDnSpyTextViewOptions.ShowStructureLinesId);
 		}
+
+		/// <summary>
+		/// Returns true if extra vertical pixels should be removed from text lines
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsRemoveExtraTextLineVerticalPixelsEnabled(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDnSpyTextViewOptions.RemoveExtraTextLineVerticalPixelsId);
+		}
 	}
 }
