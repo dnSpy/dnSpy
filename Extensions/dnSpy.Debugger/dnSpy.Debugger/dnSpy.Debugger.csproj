@@ -419,12 +419,8 @@
       <LastGenOutput>dnSpy.Debugger.Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.ru.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.zh-CN.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.zh-CN.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

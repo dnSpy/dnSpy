@@ -94,12 +94,8 @@
       <LastGenOutput>dnSpy.Languages.ILSpy.Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.ru.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.zh-CN.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.zh-CN.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\wpf.styles.templates.xaml">

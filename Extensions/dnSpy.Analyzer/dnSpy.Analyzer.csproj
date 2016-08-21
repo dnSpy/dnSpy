@@ -122,12 +122,8 @@
       <LastGenOutput>dnSpy.Analyzer.Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.ru.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.zh-CN.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.zh-CN.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

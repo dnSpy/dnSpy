@@ -164,12 +164,8 @@
       <LastGenOutput>dnSpy.BamlDecompiler.Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.ru.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.zh-CN.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.zh-CN.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
