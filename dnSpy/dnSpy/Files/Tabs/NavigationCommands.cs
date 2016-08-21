@@ -22,9 +22,9 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
 
 namespace dnSpy.Files.Tabs {

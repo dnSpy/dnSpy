@@ -23,12 +23,12 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Settings;
 using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
-	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins, Order = double.MinValue)]
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions, Order = double.MinValue)]
 	sealed class MessageBoxManagerLoader : IAutoLoaded {
 		[ImportingConstructor]
 		MessageBoxManagerLoader(IMessageBoxManager messageBoxManager) {

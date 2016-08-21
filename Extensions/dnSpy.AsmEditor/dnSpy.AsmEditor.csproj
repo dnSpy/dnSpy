@@ -1,0 +1,886 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{87772B51-FA94-47A5-83F4-4E8E69369A2D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dnSpy.AsmEditor</RootNamespace>
+    <AssemblyName>dnSpy.AsmEditor.x</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <Features>strict</Features>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
+      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
+      <Name>dnSpy.Contracts.DnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dnSpy\dnSpy.Languages\dnSpy.Languages.csproj">
+      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
+      <Name>dnSpy.Languages</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\ClipboardDataHolder.cs" />
+    <Compile Include="Commands\CommandUtils.cs" />
+    <Compile Include="Commands\ContextMenuHandler.cs" />
+    <Compile Include="Commands\EditedMethodBodyUpdater.cs" />
+    <Compile Include="Commands\EventNodeCreator.cs" />
+    <Compile Include="Commands\FieldNodeCreator.cs" />
+    <Compile Include="Commands\IIndexedItem.cs" />
+    <Compile Include="Commands\IndexObservableCollection.cs" />
+    <Compile Include="Commands\InstructionCommands.cs" />
+    <Compile Include="Commands\ListBoxHelperBase.cs" />
+    <Compile Include="Commands\MethodNodeCreator.cs" />
+    <Compile Include="Commands\MyObservableCollection.cs" />
+    <Compile Include="Commands\NamespaceNodeCreator.cs" />
+    <Compile Include="Commands\NestedTypeNodeCreator.cs" />
+    <Compile Include="Commands\PropertyNodeCreator.cs" />
+    <Compile Include="Commands\RootDnSpyFileNodeCreator.cs" />
+    <Compile Include="Commands\TypeNodeCreator.cs" />
+    <Compile Include="Compiler\AddUpdatedNodesHelper.cs" />
+    <Compile Include="Compiler\AssemblyReferenceResolver.cs" />
+    <Compile Include="Compiler\Commands.cs" />
+    <Compile Include="Compiler\CompilerDiagnosticComparer.cs" />
+    <Compile Include="Compiler\CompilerDiagnosticVM.cs" />
+    <Compile Include="Compiler\CompilerMetadataReferenceCreator.cs" />
+    <Compile Include="Compiler\DecompiledCodeResult.cs" />
+    <Compile Include="Compiler\DecompiledDocument.cs" />
+    <Compile Include="Compiler\EditCodeDlg.xaml.cs">
+      <DependentUpon>EditCodeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Compiler\EditCodeVM.cs" />
+    <Compile Include="Compiler\EditCodeVMCreator.cs" />
+    <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
+    <Compile Include="Compiler\ImportedType.cs" />
+    <Compile Include="Compiler\ImportSigComparer.cs" />
+    <Compile Include="Compiler\MetadataFixer.cs" />
+    <Compile Include="Compiler\MetadataReferenceFinder.cs" />
+    <Compile Include="Compiler\ModuleImporter.cs" />
+    <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
+    <Compile Include="Compiler\PlatformHelper.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Hex\AsmEdHexDocument.cs" />
+    <Compile Include="Commands\AsmEditorContext.cs" />
+    <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
+    <Compile Include="Hex\HexBoxFileTabContent.cs" />
+    <Compile Include="Hex\HexBoxUIState.cs" />
+    <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
+    <Compile Include="Hex\HexBoxUndoManager.cs" />
+    <Compile Include="Hex\HexTabSaver.cs" />
+    <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
+    <Compile Include="Hex\IUndoHexDocument.cs" />
+    <Compile Include="Hex\Nodes\HexField.cs" />
+    <Compile Include="Hex\Nodes\HexFileTabContent.cs" />
+    <Compile Include="Hex\Nodes\HexFileTreeNodeDataFinder.cs" />
+    <Compile Include="Hex\Nodes\HexNode.cs" />
+    <Compile Include="Hex\Nodes\HexUtils.cs" />
+    <Compile Include="Hex\Nodes\HexVM.cs" />
+    <Compile Include="Hex\Nodes\ImageCor20HeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageCor20HeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageDosHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageDosHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageFileHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageFileHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader32Node.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader32VM.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader64Node.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader64VM.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageSectionHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageSectionHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableRecordVM.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableVM.cs" />
+    <Compile Include="Hex\Nodes\PENode.cs" />
+    <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
+    <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\StorageHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\StorageSignatureNode.cs" />
+    <Compile Include="Hex\Nodes\StorageSignatureVM.cs" />
+    <Compile Include="Hex\Nodes\StorageStreamNode.cs" />
+    <Compile Include="Hex\Nodes\StorageStreamVM.cs" />
+    <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
+    <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
+    <Compile Include="Hex\Nodes\TokenReferenceFileTabContentProvider.cs" />
+    <Compile Include="Hex\Nodes\VirtualizedList.cs" />
+    <Compile Include="MethodBody\BodyCommandUtils.cs" />
+    <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.AsmEditor.Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SaveModule\DocumentSaver.cs" />
+    <Compile Include="SaveModule\MmapDisabler.cs" />
+    <Compile Include="TheExtension.cs" />
+    <Compile Include="Themes\TextEditorResourceColorInitializer.cs" />
+    <Compile Include="UndoRedo\DnSpyFileUndoableDocumentsProvider.cs" />
+    <Compile Include="UndoRedo\IUndoableDocumentsProvider.cs" />
+    <Compile Include="UndoRedo\UndoCommandManagerEventArgs.cs" />
+    <Compile Include="UndoRedo\UndoRoutedCommands.cs" />
+    <Compile Include="Assembly\AssemblyCommands.cs" />
+    <Compile Include="Assembly\AssemblyOptions.cs" />
+    <Compile Include="Assembly\AssemblyOptionsDlg.xaml.cs">
+      <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="Commands\CodeContextMenuHandler.cs" />
+    <Compile Include="Commands\CodeContextMenuHandlerCommandProxy.cs" />
+    <Compile Include="Converters\CilObjectConverter.cs" />
+    <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
+    <Compile Include="Commands\DeletableNodes.cs" />
+    <Compile Include="DnlibDialogs\CAArgumentVM.cs" />
+    <Compile Include="DnlibDialogs\CANamedArgumentControl.xaml.cs">
+      <DependentUpon>CANamedArgumentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CANamedArgumentsControl.xaml.cs">
+      <DependentUpon>CANamedArgumentsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CANamedArgumentsVM.cs" />
+    <Compile Include="DnlibDialogs\CANamedArgumentVM.cs" />
+    <Compile Include="DnlibDialogs\ConstantControl.xaml.cs">
+      <DependentUpon>ConstantControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ConstantTypeControl.xaml.cs">
+      <DependentUpon>ConstantTypeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ConstantTypeDlg.xaml.cs">
+      <DependentUpon>ConstantTypeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ConstantTypeVM.cs" />
+    <Compile Include="DnlibDialogs\ConstantVM.cs" />
+    <Compile Include="DnlibDialogs\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="DnlibDialogs\Converters\RadioButtonConverter.cs" />
+    <Compile Include="DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
+      <DependentUpon>CreateTypeSigArrayControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CreateTypeSigArrayDlg.xaml.cs">
+      <DependentUpon>CreateTypeSigArrayDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CreateTypeSigArrayVM.cs" />
+    <Compile Include="DnlibDialogs\CustomAttributeControl.xaml.cs">
+      <DependentUpon>CustomAttributeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CustomAttributeDlg.xaml.cs">
+      <DependentUpon>CustomAttributeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CustomAttributeOptions.cs" />
+    <Compile Include="DnlibDialogs\CustomAttributesControl.xaml.cs">
+      <DependentUpon>CustomAttributesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\CustomAttributesVM.cs" />
+    <Compile Include="DnlibDialogs\CustomAttributeVM.cs" />
+    <Compile Include="DnlibDialogs\DeclSecuritiesControl.xaml.cs">
+      <DependentUpon>DeclSecuritiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\DeclSecuritiesVM.cs" />
+    <Compile Include="DnlibDialogs\DeclSecurityControl.xaml.cs">
+      <DependentUpon>DeclSecurityControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\DeclSecurityDlg.xaml.cs">
+      <DependentUpon>DeclSecurityDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\DeclSecurityOptions.cs" />
+    <Compile Include="DnlibDialogs\DeclSecurityVM.cs" />
+    <Compile Include="DnlibDialogs\DlgUtils.cs" />
+    <Compile Include="DnlibDialogs\EnumDataFieldVM.cs" />
+    <Compile Include="DnlibDialogs\GenericParamControl.xaml.cs">
+      <DependentUpon>GenericParamControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\GenericParamDlg.xaml.cs">
+      <DependentUpon>GenericParamDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\GenericParamOptions.cs" />
+    <Compile Include="DnlibDialogs\GenericParamsControl.xaml.cs">
+      <DependentUpon>GenericParamsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\GenericParamsVM.cs" />
+    <Compile Include="DnlibDialogs\GenericParamVM.cs" />
+    <Compile Include="DnlibDialogs\ImplMapControl.xaml.cs">
+      <DependentUpon>ImplMapControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ImplMapVM.cs" />
+    <Compile Include="DnlibDialogs\ListVM.cs" />
+    <Compile Include="DnlibDialogs\ListVMControl.xaml.cs">
+      <DependentUpon>ListVMControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MarshalTypeControl.xaml.cs">
+      <DependentUpon>MarshalTypeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MarshalTypeVM.cs" />
+    <Compile Include="DnlibDialogs\MemberPickerDlg.xaml.cs">
+      <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MemberPickerVM.cs" />
+    <Compile Include="DnlibDialogs\MemberRefControl.xaml.cs">
+      <DependentUpon>MemberRefControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MemberRefDlg.xaml.cs">
+      <DependentUpon>MemberRefDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MemberRefOptions.cs" />
+    <Compile Include="DnlibDialogs\MemberRefVM.cs" />
+    <Compile Include="DnlibDialogs\MethodDefsControl.xaml.cs">
+      <DependentUpon>MethodDefsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MethodDefsVM.cs" />
+    <Compile Include="DnlibDialogs\MethodDefVM.cs" />
+    <Compile Include="DnlibDialogs\MethodOverrideOptions.cs" />
+    <Compile Include="DnlibDialogs\MethodOverridesControl.xaml.cs">
+      <DependentUpon>MethodOverridesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MethodOverridesVM.cs" />
+    <Compile Include="DnlibDialogs\MethodOverrideVM.cs" />
+    <Compile Include="DnlibDialogs\MethodSigCreatorControl.xaml.cs">
+      <DependentUpon>MethodSigCreatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MethodSigCreatorDlg.xaml.cs">
+      <DependentUpon>MethodSigCreatorDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MethodSigCreatorOptions.cs" />
+    <Compile Include="DnlibDialogs\MethodSigCreatorVM.cs" />
+    <Compile Include="DnlibDialogs\MethodSpecControl.xaml.cs">
+      <DependentUpon>MethodSpecControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MethodSpecDlg.xaml.cs">
+      <DependentUpon>MethodSpecDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\MethodSpecOptions.cs" />
+    <Compile Include="DnlibDialogs\MethodSpecVM.cs" />
+    <Compile Include="DnlibDialogs\ModelUtils.cs" />
+    <Compile Include="DnlibDialogs\Null.cs" />
+    <Compile Include="DnlibDialogs\ObjectListDataFieldVM.cs" />
+    <Compile Include="DnlibDialogs\ParamDefControl.xaml.cs">
+      <DependentUpon>ParamDefControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ParamDefDlg.xaml.cs">
+      <DependentUpon>ParamDefDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ParamDefOptions.cs" />
+    <Compile Include="DnlibDialogs\ParamDefsControl.xaml.cs">
+      <DependentUpon>ParamDefsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\ParamDefsVM.cs" />
+    <Compile Include="DnlibDialogs\ParamDefVM.cs" />
+    <Compile Include="DnlibDialogs\SecurityAttributeControl.xaml.cs">
+      <DependentUpon>SecurityAttributeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\SecurityAttributeDlg.xaml.cs">
+      <DependentUpon>SecurityAttributeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\SecurityAttributesControl.xaml.cs">
+      <DependentUpon>SecurityAttributesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\SecurityAttributesVM.cs" />
+    <Compile Include="DnlibDialogs\SecurityAttributeVM.cs" />
+    <Compile Include="DnlibDialogs\TypeDefOrRefAndCAControl.xaml.cs">
+      <DependentUpon>TypeDefOrRefAndCAControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\TypeDefOrRefAndCADlg.xaml.cs">
+      <DependentUpon>TypeDefOrRefAndCADlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\TypeDefOrRefAndCAOptions.cs" />
+    <Compile Include="DnlibDialogs\TypeDefOrRefAndCAsControl.xaml.cs">
+      <DependentUpon>TypeDefOrRefAndCAsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\TypeDefOrRefAndCAsVM.cs" />
+    <Compile Include="DnlibDialogs\TypeDefOrRefAndCAVM.cs" />
+    <Compile Include="DnlibDialogs\TypeSigCreatorControl.xaml.cs">
+      <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\TypeSigCreatorDlg.xaml.cs">
+      <DependentUpon>TypeSigCreatorDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DnlibDialogs\TypeSigCreatorOptions.cs" />
+    <Compile Include="DnlibDialogs\TypeSigCreatorVM.cs" />
+    <Compile Include="DnlibDialogs\TypeSigVM.cs" />
+    <Compile Include="Commands\EditMenuHandler.cs" />
+    <Compile Include="Commands\EditMenuHandlerCommandProxy.cs" />
+    <Compile Include="Event\EventDefCommands.cs" />
+    <Compile Include="Event\EventDefOptions.cs" />
+    <Compile Include="Event\EventOptionsDlg.xaml.cs">
+      <DependentUpon>EventOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Event\EventOptionsVM.cs" />
+    <Compile Include="Field\FieldDefCommands.cs" />
+    <Compile Include="Field\FieldDefOptions.cs" />
+    <Compile Include="Field\FieldOptionsDlg.xaml.cs">
+      <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Field\FieldOptionsVM.cs" />
+    <Compile Include="Commands\FileMenuHandler.cs" />
+    <Compile Include="Commands\FilesContextMenuHandler.cs" />
+    <Compile Include="Hex\HexDocumentManager.cs" />
+    <Compile Include="Hex\Commands.cs" />
+    <Compile Include="Hex\HexBoxUndoCommand.cs" />
+    <Compile Include="Hex\InstructionUtils.cs" />
+    <Compile Include="Hex\MDTableContextMenuCommands.cs" />
+    <Compile Include="Hex\TableSorter.cs" />
+    <Compile Include="Hex\WriteHexUndoCommand.cs" />
+    <Compile Include="UndoRedo\Commands.cs" />
+    <Compile Include="UndoRedo\IUndoCommand.cs" />
+    <Compile Include="UndoRedo\IUndoObject.cs" />
+    <Compile Include="MethodBody\BodyUtils.cs" />
+    <Compile Include="MethodBody\CilBodyOptions.cs" />
+    <Compile Include="MethodBody\CilBodyVM.cs" />
+    <Compile Include="MethodBody\ComboBoxAttachedProps.cs" />
+    <Compile Include="MethodBody\ExceptionHandlerOptions.cs" />
+    <Compile Include="MethodBody\ExceptionHandlersListHelper.cs" />
+    <Compile Include="MethodBody\ExceptionHandlerVM.cs" />
+    <Compile Include="MethodBody\FastClickButton.cs" />
+    <Compile Include="MethodBody\IEditOperand.cs" />
+    <Compile Include="MethodBody\InstructionOperandControl.cs" />
+    <Compile Include="MethodBody\InstructionOperandVM.cs" />
+    <Compile Include="MethodBody\InstructionOptions.cs" />
+    <Compile Include="MethodBody\InstructionsListHelper.cs" />
+    <Compile Include="MethodBody\InstructionVM.cs" />
+    <Compile Include="MethodBody\LocalOptions.cs" />
+    <Compile Include="MethodBody\LocalsListHelper.cs" />
+    <Compile Include="MethodBody\LocalVM.cs" />
+    <Compile Include="MethodBody\MethodBodyCommands.cs" />
+    <Compile Include="MethodBody\MethodBodyControl.xaml.cs">
+      <DependentUpon>MethodBodyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MethodBody\MethodBodyDlg.xaml.cs">
+      <DependentUpon>MethodBodyDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MethodBody\MethodBodyOptions.cs" />
+    <Compile Include="MethodBody\MethodBodyType.cs" />
+    <Compile Include="MethodBody\MethodBodyVM.cs" />
+    <Compile Include="MethodBody\NativeMethodBodyOptions.cs" />
+    <Compile Include="MethodBody\NativeMethodBodyVM.cs" />
+    <Compile Include="MethodBody\SwitchInstructionVM.cs" />
+    <Compile Include="MethodBody\SwitchOperandControl.xaml.cs">
+      <DependentUpon>SwitchOperandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MethodBody\SwitchOperandDlg.xaml.cs">
+      <DependentUpon>SwitchOperandDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MethodBody\SwitchOperandsListHelper.cs" />
+    <Compile Include="MethodBody\SwitchOperandVM.cs" />
+    <Compile Include="Method\MethodDefCommands.cs" />
+    <Compile Include="Method\MethodDefOptions.cs" />
+    <Compile Include="Method\MethodOptionsDlg.xaml.cs">
+      <DependentUpon>MethodOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Method\MethodOptionsVM.cs" />
+    <Compile Include="Module\ClrVersion.cs" />
+    <Compile Include="Module\ClrVersionValues.cs" />
+    <Compile Include="Module\ModuleCommands.cs" />
+    <Compile Include="Module\ModuleOptions.cs" />
+    <Compile Include="Module\ModuleOptionsDlg.xaml.cs">
+      <DependentUpon>ModuleOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Module\ModuleOptionsVM.cs" />
+    <Compile Include="Module\ModuleUtils.cs" />
+    <Compile Include="Module\NetModuleOptions.cs" />
+    <Compile Include="Module\NetModuleOptionsDlg.xaml.cs">
+      <DependentUpon>NetModuleOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Module\NetModuleOptionsVM.cs" />
+    <Compile Include="Namespace\NamespaceCommands.cs" />
+    <Compile Include="Namespace\NamespaceDlg.xaml.cs">
+      <DependentUpon>NamespaceDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Namespace\NamespaceVM.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Property\PropertyDefCommands.cs" />
+    <Compile Include="Property\PropertyDefOptions.cs" />
+    <Compile Include="Property\PropertyOptionsDlg.xaml.cs">
+      <DependentUpon>PropertyOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Property\PropertyOptionsVM.cs" />
+    <Compile Include="Commands\RefFinder.cs" />
+    <Compile Include="Resources\ImageListDlg.xaml.cs">
+      <DependentUpon>ImageListDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ImageListStreamerControl.xaml.cs">
+      <DependentUpon>ImageListStreamerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ImageListStreamerVM.cs" />
+    <Compile Include="Resources\ImageListVM.cs" />
+    <Compile Include="Resources\ImageResourceElementControl.xaml.cs">
+      <DependentUpon>ImageResourceElementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ImageResourceElementDlg.xaml.cs">
+      <DependentUpon>ImageResourceElementDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ImageResourceElementVM.cs" />
+    <Compile Include="Resources\ImageVM.cs" />
+    <Compile Include="Resources\ResourceCommands.cs" />
+    <Compile Include="Resources\ResourceControl.xaml.cs">
+      <DependentUpon>ResourceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ResourceDlg.xaml.cs">
+      <DependentUpon>ResourceDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ResourceElementControl.xaml.cs">
+      <DependentUpon>ResourceElementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ResourceElementDlg.xaml.cs">
+      <DependentUpon>ResourceElementDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ResourceElementOptions.cs" />
+    <Compile Include="Resources\ResourceElementVM.cs" />
+    <Compile Include="Resources\ResourceOptions.cs" />
+    <Compile Include="Resources\ResourceVM.cs" />
+    <Compile Include="Resources\UserTypeVM.cs" />
+    <Compile Include="SaveModule\CharacteristicsHelper.cs" />
+    <Compile Include="SaveModule\ModuleSaver.cs" />
+    <Compile Include="SaveModule\PathUtils.cs" />
+    <Compile Include="SaveModule\SaveHexOptionsDlg.xaml.cs">
+      <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SaveModule\SaveHexOptionsVM.cs" />
+    <Compile Include="SaveModule\SaveModuleCommand.cs" />
+    <Compile Include="SaveModule\SaveModuleOptionsDlg.xaml.cs">
+      <DependentUpon>SaveModuleOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SaveModule\SaveModuleOptionsVM.cs" />
+    <Compile Include="SaveModule\SaveModuleWindow.cs" />
+    <Compile Include="SaveModule\SaveMultiModuleDlg.xaml.cs">
+      <DependentUpon>SaveMultiModuleDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SaveModule\SaveMultiModuleVM.cs" />
+    <Compile Include="SaveModule\SaveOptionsType.cs" />
+    <Compile Include="SaveModule\SaveOptionsVM.cs" />
+    <Compile Include="SaveModule\SaveSingleModuleDlg.xaml.cs">
+      <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UndoRedo\ToolbarCommands.cs" />
+    <Compile Include="Types\TypeDefCommands.cs" />
+    <Compile Include="Types\TypeDefOptions.cs" />
+    <Compile Include="Types\TypeOptionsDlg.xaml.cs">
+      <DependentUpon>TypeOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Types\TypeOptionsVM.cs" />
+    <Compile Include="UndoRedo\UndoCommandManager.cs" />
+    <Compile Include="UndoRedo\UndoObject.cs" />
+    <Compile Include="UndoRedo\UndoRedoIFileListListener.cs" />
+    <Compile Include="UndoRedo\UndoRedoMenuCommands.cs" />
+    <Compile Include="Utilities\UIUtils.cs" />
+    <Compile Include="ViewHelpers\CreateConstantType.cs" />
+    <Compile Include="ViewHelpers\CreateMethodPropertySig.cs" />
+    <Compile Include="ViewHelpers\CreateTypeSigArray.cs" />
+    <Compile Include="ViewHelpers\DnlibTypePicker.cs" />
+    <Compile Include="ViewHelpers\EditCustomAttribute.cs" />
+    <Compile Include="ViewHelpers\EditDeclSecurity.cs" />
+    <Compile Include="ViewHelpers\EditGenericParam.cs" />
+    <Compile Include="ViewHelpers\EditImage.cs" />
+    <Compile Include="ViewHelpers\EditMemberRef.cs" />
+    <Compile Include="ViewHelpers\EditMethodDef.cs" />
+    <Compile Include="ViewHelpers\EditMethodOverride.cs" />
+    <Compile Include="ViewHelpers\EditMethodSpec.cs" />
+    <Compile Include="ViewHelpers\EditParamDef.cs" />
+    <Compile Include="ViewHelpers\EditSecurityAttribute.cs" />
+    <Compile Include="ViewHelpers\EditTypeDefOrRefAndCA.cs" />
+    <Compile Include="ViewHelpers\ICreateConstantType.cs" />
+    <Compile Include="ViewHelpers\ICreateMethodPropertySig.cs" />
+    <Compile Include="ViewHelpers\ICreateTypeSigArray.cs" />
+    <Compile Include="ViewHelpers\IDnlibTypePicker.cs" />
+    <Compile Include="ViewHelpers\IEdit.cs" />
+    <Compile Include="ViewHelpers\IOpenAssembly.cs" />
+    <Compile Include="ViewHelpers\IOpenFile.cs" />
+    <Compile Include="ViewHelpers\IOpenPublicKeyFile.cs" />
+    <Compile Include="ViewHelpers\ISelectItems.cs" />
+    <Compile Include="ViewHelpers\IShowWarningMessage.cs" />
+    <Compile Include="ViewHelpers\ITypeSigCreator.cs" />
+    <Compile Include="ViewHelpers\OpenAssembly.cs" />
+    <Compile Include="ViewHelpers\OpenFile.cs" />
+    <Compile Include="ViewHelpers\OpenPublicKeyFile.cs" />
+    <Compile Include="ViewHelpers\ShowWarningMessage.cs" />
+    <Compile Include="ViewHelpers\TypeSigCreator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Assembly\AssemblyOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Compiler\EditCodeDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DnlibDialogs\CANamedArgumentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\CANamedArgumentsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ConstantControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ConstantTypeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ConstantTypeDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\CreateTypeSigArrayControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\CreateTypeSigArrayDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\CustomAttributeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\CustomAttributeDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\CustomAttributesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\DeclSecuritiesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\DeclSecurityControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\DeclSecurityDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\GenericParamControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\GenericParamDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\GenericParamsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ImplMapControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ListVMControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MarshalTypeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MemberPickerDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MemberRefControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MemberRefDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MethodDefsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MethodOverridesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MethodSigCreatorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MethodSigCreatorDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MethodSpecControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\MethodSpecDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ParamDefControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ParamDefDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\ParamDefsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\SecurityAttributeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\SecurityAttributeDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\SecurityAttributesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\TypeDefOrRefAndCAControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\TypeDefOrRefAndCADlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\TypeDefOrRefAndCAsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\TypeSigCreatorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DnlibDialogs\TypeSigCreatorDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Event\EventOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Field\FieldOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Hex\Nodes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MethodBody\MethodBodyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MethodBody\MethodBodyDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MethodBody\SwitchOperandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MethodBody\SwitchOperandDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Method\MethodOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Module\ModuleOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Module\NetModuleOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Namespace\NamespaceDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Property\PropertyOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ImageListDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ImageListStreamerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ImageResourceElementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ImageResourceElementDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ResourceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ResourceDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ResourceElementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ResourceElementDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SaveModule\SaveHexOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SaveModule\SaveModuleOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SaveModule\SaveMultiModuleDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SaveModule\SaveSingleModuleDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Types\TypeOptionsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AddException.png" />
+    <Resource Include="Images\AddLocal.png" />
+    <Resource Include="Images\AddNewItem.png" />
+    <Resource Include="Images\ArrowDown.png" />
+    <Resource Include="Images\ArrowUp.png" />
+    <Resource Include="Images\AssemblyToModule.png" />
+    <Resource Include="Images\Binary.png" />
+    <Resource Include="Images\BinaryFile.png" />
+    <Resource Include="Images\Branch.png" />
+    <Resource Include="Images\Class.png" />
+    <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\Cut.png" />
+    <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\DeleteHistory.png" />
+    <Resource Include="Images\Field.png" />
+    <Resource Include="Images\Generic.png" />
+    <Resource Include="Images\ILEditor.png" />
+    <Resource Include="Images\Library.png" />
+    <Resource Include="Images\MetaData.png" />
+    <Resource Include="Images\Method.png" />
+    <Resource Include="Images\ModuleFile.png" />
+    <Resource Include="Images\ModuleToAssembly.png" />
+    <Resource Include="Images\NameSpace.png" />
+    <Resource Include="Images\NewAssembly.png" />
+    <Resource Include="Images\NewAssemblyModule.png" />
+    <Resource Include="Images\NewBinary.png" />
+    <Resource Include="Images\NewClass.png" />
+    <Resource Include="Images\NewEvent.png" />
+    <Resource Include="Images\NewField.png" />
+    <Resource Include="Images\NewImage.png" />
+    <Resource Include="Images\NewMethod.png" />
+    <Resource Include="Images\NewProperty.png" />
+    <Resource Include="Images\NewResource.png" />
+    <Resource Include="Images\NewResourcesFile.png" />
+    <Resource Include="Images\NOP.png" />
+    <Resource Include="Images\Open.png" />
+    <Resource Include="Images\Paste.png" />
+    <Resource Include="Images\Redo.png" />
+    <Resource Include="Images\SaveAll.png" />
+    <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\StatusError.png" />
+    <Resource Include="Images\StatusHidden.png" />
+    <Resource Include="Images\StatusInformation.png" />
+    <Resource Include="Images\StatusWarning.png" />
+    <Resource Include="Images\ToUncondBranch.png" />
+    <Resource Include="Images\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.AsmEditor.Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.ru.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.zh-CN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

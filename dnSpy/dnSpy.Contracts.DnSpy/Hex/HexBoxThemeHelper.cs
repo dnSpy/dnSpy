@@ -21,11 +21,11 @@ using System;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.Hex {
-	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 	sealed class HexBoxThemeHelper : IAutoLoaded {
 		[ImportingConstructor]
 		HexBoxThemeHelper(IThemeManager themeManager) {

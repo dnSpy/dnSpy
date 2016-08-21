@@ -27,15 +27,15 @@ using System.Reflection;
 using System.Text;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
+using dnSpy.Extension;
 using dnSpy.Files.Tabs.DocViewer;
-using dnSpy.Plugin;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Utilities;
 
@@ -43,13 +43,13 @@ namespace dnSpy.MainApp {
 	[ExportFileTabContentFactory(Order = double.MaxValue)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		readonly IAppWindow appWindow;
-		readonly IPluginManager pluginManager;
+		readonly IExtensionManager extensionManager;
 		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IAppWindow appWindow, IPluginManager pluginManager, IContentTypeRegistryService contentTypeRegistryService) {
+		DecompileFileTabContentFactory(IAppWindow appWindow, IExtensionManager extensionManager, IContentTypeRegistryService contentTypeRegistryService) {
 			this.appWindow = appWindow;
-			this.pluginManager = pluginManager;
+			this.extensionManager = extensionManager;
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
@@ -59,7 +59,7 @@ namespace dnSpy.MainApp {
 
 		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
-				return new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
+				return new AboutScreenFileTabContent(appWindow, extensionManager, aboutContentType);
 			return null;
 		}
 
@@ -74,20 +74,20 @@ namespace dnSpy.MainApp {
 	sealed class AboutScreenMenuItem : MenuItemBase {
 		readonly IFileTabManager fileTabManager;
 		readonly IAppWindow appWindow;
-		readonly IPluginManager pluginManager;
+		readonly IExtensionManager extensionManager;
 		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow, IPluginManager pluginManager, IContentTypeRegistryService contentTypeRegistryService) {
+		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow, IExtensionManager extensionManager, IContentTypeRegistryService contentTypeRegistryService) {
 			this.fileTabManager = fileTabManager;
 			this.appWindow = appWindow;
-			this.pluginManager = pluginManager;
+			this.extensionManager = extensionManager;
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public override void Execute(IMenuItemContext context) {
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			tab.Show(new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType), null, null);
+			tab.Show(new AboutScreenFileTabContent(appWindow, extensionManager, aboutContentType), null, null);
 			fileTabManager.SetFocus(tab);
 		}
 	}
@@ -103,16 +103,16 @@ namespace dnSpy.MainApp {
 		public object ToolTip => null;
 
 		readonly IAppWindow appWindow;
-		readonly IPluginManager pluginManager;
+		readonly IExtensionManager extensionManager;
 		readonly IContentType aboutContentType;
 
-		public AboutScreenFileTabContent(IAppWindow appWindow, IPluginManager pluginManager, IContentType aboutContentType) {
+		public AboutScreenFileTabContent(IAppWindow appWindow, IExtensionManager extensionManager, IContentType aboutContentType) {
 			this.appWindow = appWindow;
-			this.pluginManager = pluginManager;
+			this.extensionManager = extensionManager;
 			this.aboutContentType = aboutContentType;
 		}
 
-		public IFileTabContent Clone() => new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
+		public IFileTabContent Clone() => new AboutScreenFileTabContent(appWindow, extensionManager, aboutContentType);
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
 		public void OnHide() { }
 		public void OnSelected() { }
@@ -127,7 +127,7 @@ namespace dnSpy.MainApp {
 
 		sealed class Info {
 			public readonly Assembly Assembly;
-			public readonly PluginInfo PluginInfo;
+			public readonly ExtensionInfo ExtensionInfo;
 
 			string VersionString {
 				get {
@@ -146,9 +146,9 @@ namespace dnSpy.MainApp {
 			public string Name {
 				get {
 					var s = Path.GetFileNameWithoutExtension(Assembly.Location);
-					const string PLUGIN = ".Plugin";
-					if (s.EndsWith(PLUGIN, StringComparison.OrdinalIgnoreCase))
-						s = s.Substring(0, s.Length - PLUGIN.Length);
+					const string EXTENSION = ".x";
+					if (s.EndsWith(EXTENSION, StringComparison.OrdinalIgnoreCase))
+						s = s.Substring(0, s.Length - EXTENSION.Length);
 					return s;
 				}
 			}
@@ -166,7 +166,7 @@ namespace dnSpy.MainApp {
 
 			public string Copyright {
 				get {
-					var c = PluginInfo.Copyright;
+					var c = ExtensionInfo.Copyright;
 					if (!string.IsNullOrEmpty(c))
 						return c;
 					var attr = Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
@@ -178,7 +178,7 @@ namespace dnSpy.MainApp {
 
 			public string ShortDescription {
 				get {
-					var s = PluginInfo.ShortDescription;
+					var s = ExtensionInfo.ShortDescription;
 					if (!string.IsNullOrEmpty(s))
 						return s;
 					var attr = Assembly.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
@@ -188,9 +188,9 @@ namespace dnSpy.MainApp {
 				}
 			}
 
-			public Info(Assembly asm, PluginInfo info) {
+			public Info(Assembly asm, ExtensionInfo info) {
 				this.Assembly = asm;
-				this.PluginInfo = info;
+				this.ExtensionInfo = info;
 			}
 		}
 
@@ -238,26 +238,26 @@ namespace dnSpy.MainApp {
 
 			infos.Add(new Info(GetType().Assembly, CreateDnSpyInfo()));
 
-			var toPlugin = new Dictionary<Assembly, IPlugin>();
-			foreach (var plugin in pluginManager.Plugins)
-				toPlugin[plugin.GetType().Assembly] = plugin;
+			var toExtension = new Dictionary<Assembly, IExtension>();
+			foreach (var extension in extensionManager.Extensions)
+				toExtension[extension.GetType().Assembly] = extension;
 
-			// Show the plugins in random order
+			// Show the extensions in random order
 			var random = new Random();
-			foreach (var x in pluginManager.LoadedPlugins.OrderBy(a => random.Next())) {
-				PluginInfo pluginInfo;
-				IPlugin plugin;
-				if (toPlugin.TryGetValue(x.Assembly, out plugin))
-					pluginInfo = plugin.PluginInfo;
+			foreach (var x in extensionManager.LoadedExtensions.OrderBy(a => random.Next())) {
+				ExtensionInfo extensionInfo;
+				IExtension extension;
+				if (toExtension.TryGetValue(x.Assembly, out extension))
+					extensionInfo = extension.ExtensionInfo;
 				else
-					pluginInfo = new PluginInfo();
+					extensionInfo = new ExtensionInfo();
 
-				infos.Add(new Info(x.Assembly, pluginInfo));
+				infos.Add(new Info(x.Assembly, extensionInfo));
 			}
 
 			return infos;
 		}
 
-		static PluginInfo CreateDnSpyInfo() => new PluginInfo();
+		static ExtensionInfo CreateDnSpyInfo() => new ExtensionInfo();
 	}
 }

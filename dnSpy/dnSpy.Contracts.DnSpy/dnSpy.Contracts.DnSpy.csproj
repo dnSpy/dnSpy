@@ -109,6 +109,10 @@
     <Compile Include="Controls\TextBlockColorOutput.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Decompiler\IMethodDebugService.cs" />
+    <Compile Include="Extension\ExtensionEvent.cs" />
+    <Compile Include="Extension\ExtensionInfo.cs" />
+    <Compile Include="Extension\IAutoLoaded.cs" />
+    <Compile Include="Extension\IExtension.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\IDnSpyFileProvider.cs" />
@@ -347,10 +351,6 @@
     <Compile Include="Output\IOutputManager.cs" />
     <Compile Include="Output\IOutputTextPane.cs" />
     <Compile Include="Output\IOutputWriter.cs" />
-    <Compile Include="Plugin\IAutoLoaded.cs" />
-    <Compile Include="Plugin\IPlugin.cs" />
-    <Compile Include="Plugin\PluginEvent.cs" />
-    <Compile Include="Plugin\PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting\Debugger\AttachOptions.cs" />
     <Compile Include="Scripting\Debugger\Box.cs" />

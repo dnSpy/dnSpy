@@ -39,8 +39,8 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
+using dnSpy.Extension;
 using dnSpy.Files.Tabs.Dialogs;
-using dnSpy.Plugin;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
@@ -72,7 +72,7 @@ namespace dnSpy.MainApp {
 		[Import]
 		SettingsManager settingsManager = null;
 		[Import]
-		PluginManager pluginManager = null;
+		ExtensionManager extensionManager = null;
 		[Import]
 		IDnSpyLoaderManager dnSpyLoaderManager = null;
 		[Import]
@@ -81,7 +81,7 @@ namespace dnSpy.MainApp {
 		Lazy<ILanguageManager> languageManager = null;
 		[ImportMany]
 		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
-		readonly List<LoadedPlugin> loadedPlugins = new List<LoadedPlugin>();
+		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		CompositionContainer compositionContainer;
 
 		readonly IAppCommandLineArgs args;
@@ -99,7 +99,7 @@ namespace dnSpy.MainApp {
 
 			InitializeMEF(readSettings);
 			compositionContainer.ComposeParts(this);
-			this.pluginManager.LoadedPlugins = this.loadedPlugins;
+			this.extensionManager.LoadedExtensions = this.loadedExtensions;
 			this.appWindow.CommandLineArgs = this.args;
 
 			this.Exit += App_Exit;
@@ -142,29 +142,29 @@ namespace dnSpy.MainApp {
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly));
 			// Microsoft.VisualStudio.Text.UI.Wpf (needed for the editor option definitions)
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly));
-			AddPluginFiles(aggregateCatalog);
+			AddExtensionFiles(aggregateCatalog);
 			return new CompositionContainer(aggregateCatalog);
 		}
 
-		void AddPluginFiles(AggregateCatalog aggregateCatalog) {
+		void AddExtensionFiles(AggregateCatalog aggregateCatalog) {
 			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
-			var files = GetPluginFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
 			foreach (var file in files) {
 				try {
 					if (!File.Exists(file))
 						continue;
-					if (!CanLoadPlugin(file))
+					if (!CanLoadExtension(file))
 						continue;
 					var asm = Assembly.LoadFrom(file);
-					if (!CanLoadPlugin(asm)) {
-						Debug.WriteLine($"Old plugin detected ({file})");
+					if (!CanLoadExtension(asm)) {
+						Debug.WriteLine($"Old extension detected ({file})");
 						continue;
 					}
 					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
-					loadedPlugins.Add(new LoadedPlugin(asm));
+					loadedExtensions.Add(new LoadedExtension(asm));
 				}
 				catch (Exception ex) {
 					Debug.WriteLine($"Failed to load file '{file}', msg: {ex.Message}");
@@ -172,17 +172,17 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		IEnumerable<string> GetPluginFiles(string baseDir) {
-			const string PLUGIN_SEARCH_PATTERN = "*.Plugin.dll";
-			const string PLUGINS_SUBDIR = "Plugins";
-			foreach (var f in GetFiles(baseDir, PLUGIN_SEARCH_PATTERN))
+		IEnumerable<string> GetExtensionFiles(string baseDir) {
+			const string EXTENSION_SEARCH_PATTERN = "*.x.dll";
+			const string EXTENSIONS_SUBDIR = "Extensions";
+			foreach (var f in GetFiles(baseDir, EXTENSION_SEARCH_PATTERN))
 				yield return f;
-			var pluginsSubDir = Path.Combine(baseDir, PLUGINS_SUBDIR);
-			if (Directory.Exists(pluginsSubDir)) {
-				foreach (var f in GetFiles(pluginsSubDir, PLUGIN_SEARCH_PATTERN))
+			var extensionsSubDir = Path.Combine(baseDir, EXTENSIONS_SUBDIR);
+			if (Directory.Exists(extensionsSubDir)) {
+				foreach (var f in GetFiles(extensionsSubDir, EXTENSION_SEARCH_PATTERN))
 					yield return f;
-				foreach (var d in GetDirectories(pluginsSubDir)) {
-					foreach (var f in GetFiles(d, PLUGIN_SEARCH_PATTERN))
+				foreach (var d in GetDirectories(extensionsSubDir)) {
+					foreach (var f in GetFiles(d, EXTENSION_SEARCH_PATTERN))
 						yield return f;
 				}
 			}
@@ -206,15 +206,15 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		bool CanLoadPlugin(string file) {
+		bool CanLoadExtension(string file) {
 			var xmlFile = file + ".xml";
-			var config = PluginConfigReader.Read(xmlFile);
+			var config = ExtensionConfigReader.Read(xmlFile);
 			return config.IsSupportedOSversion(Environment.OSVersion.Version) &&
 				config.IsSupportedFrameworkVersion(Environment.Version) &&
 				config.IsSupportedAppVersion(GetType().Assembly.GetName().Version);
 		}
 
-		bool CanLoadPlugin(Assembly asm) {
+		bool CanLoadExtension(Assembly asm) {
 			var ourPublicKeyToken = GetType().Assembly.GetName().GetPublicKeyToken();
 			var minimumVersion = new Version(3, 0, 0, 0);
 			foreach (var a in asm.GetReferencedAssemblies()) {
@@ -312,7 +312,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void App_Exit(object sender, ExitEventArgs e) {
-			pluginManager.OnAppExit();
+			extensionManager.OnAppExit();
 			dnSpyLoaderManager.Save();
 			try {
 				new XmlSettingsWriter(settingsManager).Write();
@@ -353,14 +353,14 @@ namespace dnSpy.MainApp {
 			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dnSpyLoaderManager.OnAppLoaded += DnSpyLoaderManager_OnAppLoaded;
 			dnSpyLoaderManager.Initialize(appWindow, win, args);
-			pluginManager.LoadPlugins(this.Resources.MergedDictionaries);
+			extensionManager.LoadExtensions(this.Resources.MergedDictionaries);
 			win.Show();
 		}
 
 		void DnSpyLoaderManager_OnAppLoaded(object sender, EventArgs e) {
 			dnSpyLoaderManager.OnAppLoaded -= DnSpyLoaderManager_OnAppLoaded;
 			appWindow.AppLoaded = true;
-			pluginManager.OnAppLoaded();
+			extensionManager.OnAppLoaded();
 			HandleAppArgs(args);
 		}
 

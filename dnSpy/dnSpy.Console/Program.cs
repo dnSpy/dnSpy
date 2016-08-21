@@ -251,7 +251,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		static IBamlDecompiler TryLoadBamlDecompiler() => TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.Plugin", "dnSpy.BamlDecompiler.BamlDecompiler");
+		static IBamlDecompiler TryLoadBamlDecompiler() => TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.x", "dnSpy.BamlDecompiler.BamlDecompiler");
 
 		static Assembly TryLoad(string asmName) {
 			try {

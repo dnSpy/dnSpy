@@ -2,11 +2,11 @@
 	path = Libraries/dnlib
 	url = https://github.com/0xd4d/dnlib.git
 [submodule "Plugins/ILSpy.Decompiler/NRefactory"]
-	path = Plugins/ILSpy.Decompiler/NRefactory
+	path = Extensions/ILSpy.Decompiler/NRefactory
 	url = https://github.com/0xd4d/nrefactory.git
 [submodule "Libraries/ICSharpCode.TreeView"]
 	path = Libraries/ICSharpCode.TreeView
 	url = git@bitbucket.org:0xd4d/icsharpcode.treeview.git
 [submodule "Plugins/ILSpy.Decompiler/ICSharpCode.Decompiler"]
-	path = Plugins/ILSpy.Decompiler/ICSharpCode.Decompiler
+	path = Extensions/ILSpy.Decompiler/ICSharpCode.Decompiler
 	url = git@bitbucket.org:0xd4d/icsharpcode.decompiler.git

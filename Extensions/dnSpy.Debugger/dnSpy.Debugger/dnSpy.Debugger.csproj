@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{52995BD1-DB91-4654-89B7-1DEB3B0D3155}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dnSpy.Debugger</RootNamespace>
+    <AssemblyName>dnSpy.Debugger.x</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <Features>strict</Features>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AppMenus.cs" />
+    <Compile Include="Breakpoints\Breakpoint.cs" />
+    <Compile Include="Breakpoints\BreakpointColumnConverter.cs" />
+    <Compile Include="Breakpoints\BreakpointContext.cs" />
+    <Compile Include="Breakpoints\BreakpointListSettings.cs" />
+    <Compile Include="Breakpoints\BreakpointManager.cs" />
+    <Compile Include="Breakpoints\BreakpointMarker.cs" />
+    <Compile Include="Breakpoints\BreakpointPrinter.cs" />
+    <Compile Include="Breakpoints\BreakpointsContent.cs" />
+    <Compile Include="Breakpoints\BreakpointsControl.xaml.cs">
+      <DependentUpon>BreakpointsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Breakpoints\BreakpointSettings.cs" />
+    <Compile Include="Breakpoints\BreakpointsToolWindowContent.cs" />
+    <Compile Include="Breakpoints\BreakpointsVM.cs" />
+    <Compile Include="Breakpoints\BreakpointVM.cs" />
+    <Compile Include="Breakpoints\Commands.cs" />
+    <Compile Include="Breakpoints\DebugEventBreakpoint.cs" />
+    <Compile Include="Breakpoints\GlyphTextMarkerHelper.cs" />
+    <Compile Include="Breakpoints\GlyphTextMarkerMouseProcessor.cs" />
+    <Compile Include="Breakpoints\ILCodeBreakpoint.cs" />
+    <Compile Include="Breakpoints\ILCodeBreakpointGlyphTextMarkerHandler.cs" />
+    <Compile Include="CachedOutput.cs" />
+    <Compile Include="CallStack\ActiveStatementService.cs" />
+    <Compile Include="CallStack\CallStackContent.cs" />
+    <Compile Include="CallStack\CallStackControl.xaml.cs">
+      <DependentUpon>CallStackControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CallStack\CallStackFrameColumnConverter.cs" />
+    <Compile Include="CallStack\CallStackFrameVM.cs" />
+    <Compile Include="CallStack\CallStackMarker.cs" />
+    <Compile Include="CallStack\CallStackSettings.cs" />
+    <Compile Include="CallStack\CallStackToolWindowContent.cs" />
+    <Compile Include="CallStack\CallStackVM.cs" />
+    <Compile Include="CallStack\Commands.cs" />
+    <Compile Include="CallStack\FrameUtils.cs" />
+    <Compile Include="CallStack\StackFrameManager.cs" />
+    <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
+    <Compile Include="Converters\ImageConverter.cs" />
+    <Compile Include="DebugCommands.cs" />
+    <Compile Include="DebuggedProcessRunningNotifier.cs" />
+    <Compile Include="DebuggerAppSettingsTab.cs" />
+    <Compile Include="DebuggerModuleIdFactoryProvider.cs" />
+    <Compile Include="DebuggerSettings.cs" />
+    <Compile Include="DebugManager.cs" />
+    <Compile Include="DebugManagerCommands.cs" />
+    <Compile Include="DebugOutputUtils.cs" />
+    <Compile Include="DebugRoutedCommands.cs" />
+    <Compile Include="DebugUtils.cs" />
+    <Compile Include="Dialogs\AttachProcessDlg.xaml.cs">
+      <DependentUpon>AttachProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AttachProcessVM.cs" />
+    <Compile Include="Dialogs\DebugCoreCLRDlg.xaml.cs">
+      <DependentUpon>DebugCoreCLRDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DebugCoreCLRVM.cs" />
+    <Compile Include="Dialogs\DebugProcessDlg.xaml.cs">
+      <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DebugProcessVM.cs" />
+    <Compile Include="Dialogs\ManagedProcessesFinder.cs" />
+    <Compile Include="Dialogs\ProcessColumnConverter.cs" />
+    <Compile Include="Dialogs\ProcessContext.cs" />
+    <Compile Include="Dialogs\ProcessPrinter.cs" />
+    <Compile Include="Dialogs\ProcessVM.cs" />
+    <Compile Include="DnModuleIdExtensions.cs" />
+    <Compile Include="IModuleIdHolder.cs" />
+    <Compile Include="Logger\Commands.cs" />
+    <Compile Include="Logger\ContentTypeDefinitions.cs" />
+    <Compile Include="Logger\OutputLogger.cs" />
+    <Compile Include="Logger\OutputLoggerSettings.cs" />
+    <Compile Include="ModuleIdExtensions.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="OutputWriterConverter.cs" />
+    <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Debugger.Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="EvalUtils.cs" />
+    <Compile Include="Exceptions\ClickFocusAP.cs" />
+    <Compile Include="Exceptions\Commands.cs" />
+    <Compile Include="Exceptions\DefaultExceptionSettings.cs" />
+    <Compile Include="Exceptions\ExceptionColumnConverter.cs" />
+    <Compile Include="Exceptions\ExceptionControl.xaml.cs">
+      <DependentUpon>ExceptionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Exceptions\ExceptionInfo.cs" />
+    <Compile Include="Exceptions\ExceptionInfoKey.cs" />
+    <Compile Include="Exceptions\ExceptionListSettings.cs" />
+    <Compile Include="Exceptions\ExceptionManager.cs" />
+    <Compile Include="Exceptions\ExceptionPrinter.cs" />
+    <Compile Include="Exceptions\ExceptionsContent.cs" />
+    <Compile Include="Exceptions\ExceptionState.cs" />
+    <Compile Include="Exceptions\ExceptionsToolWindowContent.cs" />
+    <Compile Include="Exceptions\ExceptionsVM.cs" />
+    <Compile Include="Exceptions\ExceptionType.cs" />
+    <Compile Include="Exceptions\ExceptionVM.cs" />
+    <Compile Include="Exceptions\IGetNewExceptionName.cs" />
+    <Compile Include="Exceptions\ISelectedItemsProvider.cs" />
+    <Compile Include="ILoadBeforeDebug.cs" />
+    <Compile Include="IMModules\ClassLoader.cs" />
+    <Compile Include="IMModules\Commands.cs" />
+    <Compile Include="IMModules\CorModuleDefFile.cs" />
+    <Compile Include="IMModules\InMemoryModuleManager.cs" />
+    <Compile Include="IMModules\LastValidRids.cs" />
+    <Compile Include="IMModules\LoadEverythingDlg.xaml.cs">
+      <DependentUpon>LoadEverythingDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IMModules\LoadEverythingVM.cs" />
+    <Compile Include="IMModules\MemoryModuleDefFile.cs" />
+    <Compile Include="IMModules\TreeViewUpdater.cs" />
+    <Compile Include="Locals\AskUser.cs" />
+    <Compile Include="Locals\Commands.cs" />
+    <Compile Include="Locals\EditValueControl.xaml.cs">
+      <DependentUpon>EditValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Locals\LocalColumnConverter.cs" />
+    <Compile Include="Locals\LocalsContent.cs" />
+    <Compile Include="Locals\LocalsControl.xaml.cs">
+      <DependentUpon>LocalsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Locals\LocalsSettings.cs" />
+    <Compile Include="Locals\LocalsToolWindowContent.cs" />
+    <Compile Include="Locals\LocalsVM.cs" />
+    <Compile Include="Locals\MethodLocalProvider.cs" />
+    <Compile Include="Locals\ValueContext.cs" />
+    <Compile Include="Locals\ValuePrinter.cs" />
+    <Compile Include="Locals\ValueStringParser.cs" />
+    <Compile Include="Locals\ValueVM.cs" />
+    <Compile Include="Memory\Commands.cs" />
+    <Compile Include="Memory\MemoryContent.cs" />
+    <Compile Include="Memory\MemoryControl.xaml.cs">
+      <DependentUpon>MemoryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Memory\MemoryToolWindowContent.cs" />
+    <Compile Include="Memory\MemoryVM.cs" />
+    <Compile Include="Memory\MemoryWindowManager.cs" />
+    <Compile Include="Memory\MemoryWindowsHelper.cs" />
+    <Compile Include="Memory\ProcessHexStream.cs" />
+    <Compile Include="MenuItemCommandProxy.cs" />
+    <Compile Include="ModuleLoader.cs" />
+    <Compile Include="Modules\Commands.cs" />
+    <Compile Include="Modules\ModuleColumnConverter.cs" />
+    <Compile Include="Modules\ModulePrinter.cs" />
+    <Compile Include="Modules\ModulesContent.cs" />
+    <Compile Include="Modules\ModulesControl.xaml.cs">
+      <DependentUpon>ModulesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\ModulesToolWindowContent.cs" />
+    <Compile Include="Modules\ModulesVM.cs" />
+    <Compile Include="Modules\ModuleVM.cs" />
+    <Compile Include="Modules\PEFilesSaver.cs" />
+    <Compile Include="OutputConverter.cs" />
+    <Compile Include="ProcessMemoryUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripting\AnyEventBreakpoint.cs" />
+    <Compile Include="Scripting\DebugEventContext.cs" />
+    <Compile Include="Scripting\DebuggerAssembly.cs" />
+    <Compile Include="Scripting\Debugger.cs" />
+    <Compile Include="Scripting\DebuggerAppDomain.cs" />
+    <Compile Include="Scripting\DebuggerClass.cs" />
+    <Compile Include="Scripting\DebuggerCode.cs" />
+    <Compile Include="Scripting\DebuggerEvent.cs" />
+    <Compile Include="Scripting\DebuggerField.cs" />
+    <Compile Include="Scripting\DebuggerMethod.cs" />
+    <Compile Include="Scripting\DebuggerModule.cs" />
+    <Compile Include="Scripting\DebuggerProperty.cs" />
+    <Compile Include="Scripting\DebuggerThread.cs" />
+    <Compile Include="Scripting\DebuggerType.cs" />
+    <Compile Include="Scripting\DebuggerValue.cs" />
+    <Compile Include="Scripting\Eval.cs" />
+    <Compile Include="Scripting\EventBreakpoint.cs" />
+    <Compile Include="Scripting\IDnBreakpointHolder.cs" />
+    <Compile Include="Scripting\ILBreakpoint.cs" />
+    <Compile Include="Scripting\NativeBreakpoint.cs" />
+    <Compile Include="Scripting\StackChain.cs" />
+    <Compile Include="Scripting\StackFrame.cs" />
+    <Compile Include="Scripting\TypeComparer.cs" />
+    <Compile Include="Scripting\Utils.cs" />
+    <Compile Include="TheDebugger.cs" />
+    <Compile Include="TheExtension.cs" />
+    <Compile Include="Threads\Commands.cs" />
+    <Compile Include="Threads\ThreadColumnConverter.cs" />
+    <Compile Include="Threads\ThreadPrinter.cs" />
+    <Compile Include="Threads\ThreadsContent.cs" />
+    <Compile Include="Threads\ThreadsControl.xaml.cs">
+      <DependentUpon>ThreadsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Threads\ThreadsToolWindowContent.cs" />
+    <Compile Include="Threads\ThreadsVM.cs" />
+    <Compile Include="Threads\ThreadVM.cs" />
+    <Compile Include="Utilities\UIUtils.cs" />
+    <Compile Include="WpfDebugMessageDispatcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Breakpoints\BreakpointsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CallStack\CallStackControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\AttachProcessDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\DebugCoreCLRDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\DebugProcessDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Exceptions\ExceptionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="IMModules\LoadEverythingDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Locals\EditValueControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Locals\LocalsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Memory\MemoryControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\ModulesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Threads\ThreadsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
+      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
+      <Name>dnSpy.Contracts.DnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dndbg\dndbg.csproj">
+      <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
+      <Name>dndbg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj">
+      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Add.png" />
+    <Resource Include="Images\AssemblyExe.png" />
+    <Resource Include="Images\AssemblyModule.png" />
+    <Resource Include="Images\Break.png" />
+    <Resource Include="Images\Breakpoint.png" />
+    <Resource Include="Images\BreakpointMenu.png" />
+    <Resource Include="Images\BreakpointsWindow.png" />
+    <Resource Include="Images\CallReturn.png" />
+    <Resource Include="Images\CallStackWindow.png" />
+    <Resource Include="Images\ContinueDebugging.png" />
+    <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\CurrentLineToolBar.png" />
+    <Resource Include="Images\CurrentStatement.png" />
+    <Resource Include="Images\Cursor.png" />
+    <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\DeleteAllBreakpoints.png" />
+    <Resource Include="Images\DisableAllBreakpoints.png" />
+    <Resource Include="Images\DisabledBreakpoint.png" />
+    <Resource Include="Images\DisableEnableBreakpoint.png" />
+    <Resource Include="Images\DisassemblyWindow.png" />
+    <Resource Include="Images\DraggedCurrentInstructionPointer.png" />
+    <Resource Include="Images\EnableAllBreakpoints.png" />
+    <Resource Include="Images\EnumValue.png" />
+    <Resource Include="Images\EnumValueCompilerControlled.png" />
+    <Resource Include="Images\EnumValueInternal.png" />
+    <Resource Include="Images\EnumValuePrivate.png" />
+    <Resource Include="Images\EnumValueProtected.png" />
+    <Resource Include="Images\EnumValueProtectedInternal.png" />
+    <Resource Include="Images\Exception.png" />
+    <Resource Include="Images\ExceptionSettings.png" />
+    <Resource Include="Images\Field.png" />
+    <Resource Include="Images\FieldCompilerControlled.png" />
+    <Resource Include="Images\FieldInternal.png" />
+    <Resource Include="Images\FieldPrivate.png" />
+    <Resource Include="Images\FieldProtected.png" />
+    <Resource Include="Images\FieldProtectedInternal.png" />
+    <Resource Include="Images\FieldReadOnly.png" />
+    <Resource Include="Images\FieldReadOnlyCompilerControlled.png" />
+    <Resource Include="Images\FieldReadOnlyInternal.png" />
+    <Resource Include="Images\FieldReadOnlyPrivate.png" />
+    <Resource Include="Images\FieldReadOnlyProtected.png" />
+    <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
+    <Resource Include="Images\Filter.png" />
+    <Resource Include="Images\GenericParameter.png" />
+    <Resource Include="Images\GoToSourceCode.png" />
+    <Resource Include="Images\Literal.png" />
+    <Resource Include="Images\LiteralCompilerControlled.png" />
+    <Resource Include="Images\LiteralInternal.png" />
+    <Resource Include="Images\LiteralPrivate.png" />
+    <Resource Include="Images\LiteralProtected.png" />
+    <Resource Include="Images\LiteralProtectedInternal.png" />
+    <Resource Include="Images\LocalsWindow.png" />
+    <Resource Include="Images\MemoryWindow.png" />
+    <Resource Include="Images\ModulesWindow.png" />
+    <Resource Include="Images\OneLevelUp.png" />
+    <Resource Include="Images\Process.png" />
+    <Resource Include="Images\Property.png" />
+    <Resource Include="Images\PropertyCompilerControlled.png" />
+    <Resource Include="Images\PropertyInternal.png" />
+    <Resource Include="Images\PropertyPrivate.png" />
+    <Resource Include="Images\PropertyProtected.png" />
+    <Resource Include="Images\PropertyProtectedInternal.png" />
+    <Resource Include="Images\QuestionMark.png" />
+    <Resource Include="Images\Refresh.png" />
+    <Resource Include="Images\RemoveCommand.png" />
+    <Resource Include="Images\RestartProcess.png" />
+    <Resource Include="Images\Save.png" />
+    <Resource Include="Images\Select.png" />
+    <Resource Include="Images\SetNextStatement.png" />
+    <Resource Include="Images\StartDebugging.png" />
+    <Resource Include="Images\StartWithoutDebugging.png" />
+    <Resource Include="Images\StaticProperty.png" />
+    <Resource Include="Images\StaticPropertyCompilerControlled.png" />
+    <Resource Include="Images\StaticPropertyInternal.png" />
+    <Resource Include="Images\StaticPropertyPrivate.png" />
+    <Resource Include="Images\StaticPropertyProtected.png" />
+    <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\StatusError.png" />
+    <Resource Include="Images\StepInto.png" />
+    <Resource Include="Images\StepOut.png" />
+    <Resource Include="Images\StepOver.png" />
+    <Resource Include="Images\StopProcess.png" />
+    <Resource Include="Images\SuperTypes.png" />
+    <Resource Include="Images\SuperTypesOpen.png" />
+    <Resource Include="Images\Thread.png" />
+    <Resource Include="Images\UndoCheckBoxList.png" />
+    <Resource Include="Images\VirtualProperty.png" />
+    <Resource Include="Images\VirtualPropertyCompilerControlled.png" />
+    <Resource Include="Images\VirtualPropertyInternal.png" />
+    <Resource Include="Images\VirtualPropertyPrivate.png" />
+    <Resource Include="Images\VirtualPropertyProtected.png" />
+    <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
+    <Resource Include="Images\Watch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Debugger.Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.ru.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.zh-CN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

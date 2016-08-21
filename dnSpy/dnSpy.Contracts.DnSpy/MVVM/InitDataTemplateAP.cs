@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows;
-using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Extension;
 
 namespace dnSpy.Contracts.MVVM {
 	/// <summary>
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <returns></returns>
 		public static bool GetInitialize(FrameworkElement element) => (bool)element.GetValue(InitializeProperty);
 
-		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
+		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 		sealed class MefState : IAutoLoaded {
 			internal static MefState Instance;
 

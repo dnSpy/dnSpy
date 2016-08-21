@@ -27,7 +27,7 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
-	/// Script access to the debugger plugin
+	/// Script access to the debugger extension
 	/// </summary>
 	public interface IDebugger {
 		/// <summary>

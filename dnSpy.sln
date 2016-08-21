@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dnSpy", "dnSpy", "{293F0A13
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{1CE427B9-B8B2-4B92-9FAB-708C51C99098}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{01A442C1-3CE6-45A7-BE1B-9E288ADC33F3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{01A442C1-3CE6-45A7-BE1B-9E288ADC33F3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dnSpy.Debugger", "dnSpy.Debugger", "{29E1907A-9C87-4F6E-961C-1C45273EFAFA}"
 EndProject
@@ -27,35 +27,35 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "Libraries\dnlib\sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.TreeView", "Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj", "{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dndbg", "Plugins\dnSpy.Debugger\dndbg\dndbg.csproj", "{989A5C51-8C4C-4F4D-90A2-042CD1846075}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dndbg", "Extensions\dnSpy.Debugger\dndbg\dndbg.csproj", "{989A5C51-8C4C-4F4D-90A2-042CD1846075}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger", "Plugins\dnSpy.Debugger\dnSpy.Debugger\dnSpy.Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger", "Extensions\dnSpy.Debugger\dnSpy.Debugger\dnSpy.Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example1.Plugin", "Plugins\Examples\Example1.Plugin\Example1.Plugin.csproj", "{B24AAB0F-CA85-4D85-8B46-10D634896E2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example1.Extension", "Extensions\Examples\Example1.Extension\Example1.Extension.csproj", "{B24AAB0F-CA85-4D85-8B46-10D634896E2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example2.Plugin", "Plugins\Examples\Example2.Plugin\Example2.Plugin.csproj", "{4613C8A1-28DC-4586-9F9B-D201864CFE1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example2.Extension", "Extensions\Examples\Example2.Extension\Example2.Extension.csproj", "{4613C8A1-28DC-4586-9F9B-D201864CFE1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy", "Plugins\ILSpy.Decompiler\dnSpy.Languages.ILSpy\dnSpy.Languages.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy", "Extensions\ILSpy.Decompiler\dnSpy.Languages.ILSpy\dnSpy.Languages.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "Plugins\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler.Tests", "Plugins\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\Tests\ICSharpCode.Decompiler.Tests.csproj", "{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler.Tests", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\Tests\ICSharpCode.Decompiler.Tests.csproj", "{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "Plugins\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "Extensions\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "Plugins\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "Extensions\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "Plugins\ILSpy.Decompiler\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Analyzer", "Plugins\dnSpy.Analyzer\dnSpy.Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Analyzer", "Extensions\dnSpy.Analyzer\dnSpy.Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.AsmEditor", "Plugins\dnSpy.AsmEditor\dnSpy.AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.AsmEditor", "Extensions\dnSpy.AsmEditor\dnSpy.AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "Plugins\dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj", "{6D647069-5C94-4388-AC0C-E059D125AC51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "Extensions\dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj", "{6D647069-5C94-4388-AC0C-E059D125AC51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB.Tests", "Plugins\ILSpy.Decompiler\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB.Tests\ICSharpCode.NRefactory.VB.Tests.csproj", "{870115DD-960A-4406-A6B9-600BCDC36A03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB.Tests", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB.Tests\ICSharpCode.NRefactory.VB.Tests.csproj", "{870115DD-960A-4406-A6B9-600BCDC36A03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting.Roslyn", "Plugins\dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting.Roslyn", "Extensions\dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.Shared", "dnSpy\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj", "{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}"
 EndProject
@@ -63,7 +63,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Logic", "dn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.DnSpy", "dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj", "{CB6F6372-9479-41E2-83A8-07854326BCA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy.Core", "Plugins\ILSpy.Decompiler\dnSpy.Languages.ILSpy.Core\dnSpy.Languages.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy.Core", "Extensions\ILSpy.Decompiler\dnSpy.Languages.ILSpy.Core\dnSpy.Languages.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

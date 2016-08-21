@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Text {
 		public const string Baml = "BAML";
 
 		/// <summary>
-		/// Disassembled BAML (dnSpy BAML plugin)
+		/// Disassembled BAML (dnSpy BAML extension)
 		/// </summary>
 		public const string BamlDnSpy = "BAML-dnSpy";
 

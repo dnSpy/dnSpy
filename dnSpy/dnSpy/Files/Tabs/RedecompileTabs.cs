@@ -20,12 +20,12 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
-using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Files.Tabs {
-	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 	sealed class RedecompileTabs : IAutoLoaded {
 		readonly IFileTabManager fileTabManager;
 		readonly IAppWindow appWindow;

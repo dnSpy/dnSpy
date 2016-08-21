@@ -21,14 +21,14 @@ using System;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Windows.Data;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Converters {
 	sealed class ImageConverter : IValueConverter {
 		static IImageManager imageManager;
 
-		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
+		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 		sealed class Loader : IAutoLoaded {
 			[ImportingConstructor]
 			Loader(IImageManager imageManager) {

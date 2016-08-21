@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Metadata {
 		public const double OrderDefault = double.MaxValue;
 
 		/// <summary>
-		/// Order of debugger plugin's <see cref="IModuleIdFactoryProvider"/>
+		/// Order of debugger extension's <see cref="IModuleIdFactoryProvider"/>
 		/// </summary>
 		public const double OrderDebugger = 10000;
 	}

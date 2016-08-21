@@ -101,6 +101,10 @@
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
     <Compile Include="Decompiler\MethodDebugService.cs" />
     <Compile Include="Events\WeakEventList.cs" />
+    <Compile Include="Extension\ExtensionConfig.cs" />
+    <Compile Include="Extension\ExtensionConfigReader.cs" />
+    <Compile Include="Extension\ExtensionManager.cs" />
+    <Compile Include="Extension\LoadedExtension.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\DefaultDnSpyFileLoader.cs" />
     <Compile Include="Files\DefaultDnSpyFileProvider.cs" />
@@ -325,10 +329,6 @@
     <Compile Include="Output\OutputManagerSettings.cs" />
     <Compile Include="Output\OutputTextEditorFormatDefinition.cs" />
     <Compile Include="Output\OutputToolWindowContent.cs" />
-    <Compile Include="Plugin\LoadedPlugin.cs" />
-    <Compile Include="Plugin\PluginConfig.cs" />
-    <Compile Include="Plugin\PluginConfigReader.cs" />
-    <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.Shared.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -954,6 +954,7 @@
       <Link>CREDITS.txt</Link>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(TargetDir)FileLists" 2&gt; NUL
