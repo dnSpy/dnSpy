@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Decompiler {
 			position += nlArray.Length;
 			addIndent = true;
 		}
-		static readonly char[] newLineArray = new char[] { '\r', '\n' };
+		static readonly char[] newLineArray = Environment.NewLine.ToCharArray();
 
 		void AddIndent() {
 			if (!addIndent)
