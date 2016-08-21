@@ -77,21 +77,21 @@ namespace dnSpy.Text.Editor {
 
 		public LineTransform GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement) {
 			if (!compressEmptyOrWhitespaceLines && !compressNonLetterLines)
-				return line.DefaultLineTransform;
+				return new LineTransform(0, 0, 1, 0);
 			if (!line.IsFirstTextViewLineForSnapshotLine && !line.IsLastTextViewLineForSnapshotLine)
-				return line.DefaultLineTransform;
+				return new LineTransform(0, 0, 1, 0);
 
 			switch (GetLineType(line)) {
 			case LineKind.Normal:
-				return line.DefaultLineTransform;
+				return new LineTransform(0, 0, 1, 0);
 			case LineKind.EmptyOrWhitespace:
 				if (compressEmptyOrWhitespaceLines)
 					return new LineTransform(0, 0, SCALE, 0);
-				return line.DefaultLineTransform;
+				return new LineTransform(0, 0, 1, 0);
 			case LineKind.NoLettersDigits:
 				if (compressNonLetterLines)
 					return new LineTransform(0, 0, SCALE, 0);
-				return line.DefaultLineTransform;
+				return new LineTransform(0, 0, 1, 0);
 			default:
 				throw new InvalidOperationException();
 			}

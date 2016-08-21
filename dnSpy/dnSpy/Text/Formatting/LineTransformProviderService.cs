@@ -73,17 +73,12 @@ namespace dnSpy.Text.Formatting {
 			}
 
 			public LineTransform GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement) {
-				var transform = line.DefaultLineTransform;
+				var transform = removeExtraTextLineVerticalPixels ?
+					new LineTransform(0, 0, line.DefaultLineTransform.VerticalScale, line.DefaultLineTransform.Right) :
+					line.DefaultLineTransform;
 				foreach (var source in lineTransformSources)
 					transform = LineTransform.Combine(transform, source.GetLineTransform(line, yPosition, placement));
-				if (!removeExtraTextLineVerticalPixels)
-					return transform;
-
-				var def = line.DefaultLineTransform;
-				return new LineTransform(
-					def.TopSpace == transform.TopSpace ? 0 : transform.TopSpace,
-					def.BottomSpace == transform.BottomSpace ? 0 : transform.BottomSpace,
-					transform.VerticalScale, transform.Right);
+				return transform;
 			}
 		}
 	}
