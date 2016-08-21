@@ -401,16 +401,49 @@ namespace dnSpy.Text.Editor {
 
 			public double GetXPosition(StructureVisualizerData data) {
 				TryUpdateState();
-				var translatedPos = data.Top.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative);
+				var topPoint = data.Top.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative);
 				double x;
-				if (toXPosDict.TryGetValue(translatedPos.Position, out x))
+				if (toXPosDict.TryGetValue(topPoint.Position, out x))
 					return x;
-				var line = wpfTextView.GetTextViewLineContainingBufferPosition(translatedPos);
-				var bounds = line.GetExtendedCharacterBounds(translatedPos);
+
+				var point = GetBlockStartPoint(topPoint, data.Bottom.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative));
+				var line = wpfTextView.GetTextViewLineContainingBufferPosition(point);
+				var bounds = line.GetExtendedCharacterBounds(point);
 				x = Math.Round(bounds.Left + bounds.Width / 2 - PEN_THICKNESS / 2) + 0.5;
-				toXPosDict[translatedPos.Position] = x;
+				toXPosDict[topPoint.Position] = x;
 				return x;
 			}
+
+			SnapshotPoint GetBlockStartPoint(SnapshotPoint top, SnapshotPoint bottom) {
+				int topColumn, bottomColumn;
+				var topPoint = GetPositionOfNonWhitespace(top, out topColumn);
+				var bottomPoint = GetPositionOfNonWhitespace(bottom, out bottomColumn);
+				return topColumn <= bottomColumn ? topPoint : bottomPoint;
+			}
+
+			SnapshotPoint GetPositionOfNonWhitespace(SnapshotPoint point, out int column) {
+				var line = point.GetContainingLine();
+				var snapshot = line.Snapshot;
+				int pos = line.Start.Position;
+				int end = line.End.Position;
+				int colRes = 0;
+				while (pos < end) {
+					int len = end - pos;
+					if (len > readBuffer.Length)
+						len = readBuffer.Length;
+					snapshot.CopyTo(pos, readBuffer, 0, len);
+					for (int i = 0; i < len; i++) {
+						if (!char.IsWhiteSpace(readBuffer[i]))
+							goto done;
+						colRes++;
+					}
+					pos += len;
+				}
+done:
+				column = colRes;
+				return line.Start + colRes;
+			}
+			readonly char[] readBuffer = new char[0x20];
 
 			public bool TryUpdateState() {
 				if (toXPosDictSnapshot != wpfTextView.TextSnapshot || formattedLineSource != wpfTextView.FormattedLineSource) {
