@@ -110,6 +110,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Languages.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Languages.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Languages.Resources.pt-PT.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">

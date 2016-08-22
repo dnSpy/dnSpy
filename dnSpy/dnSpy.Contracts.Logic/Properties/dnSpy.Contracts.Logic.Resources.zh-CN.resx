@@ -117,28 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
-    <value>C# / VB</value>
+  <data name="InvalidBoolean" xml:space="preserve">
+    <value>值必须是一个布尔值 (True 或 False)</value>
   </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+  <data name="InvalidChar" xml:space="preserve">
+    <value>字符必须括在单引号 (')</value>
   </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+  <data name="InvalidDateTime" xml:space="preserve">
+    <value>值必须为DateTime</value>
   </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+  <data name="InvalidDecimal" xml:space="preserve">
+    <value>值必须是一个十进制数</value>
   </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+  <data name="InvalidDouble" xml:space="preserve">
+    <value>值必须是一个 64 位浮点数</value>
   </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+  <data name="InvalidEscapeSequence" xml:space="preserve">
+    <value>未知的字符转义序列: \{0}</value>
   </data>
-  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
-    <value>IL</value>
+  <data name="InvalidEscapeSequence2" xml:space="preserve">
+    <value>未知的字符串转义序列: \{0}</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+  <data name="InvalidHexCharacter" xml:space="preserve">
+    <value>一个十六进制的字符串必须包含唯一十六进制数字: 0-9 和 A-F</value>
+  </data>
+  <data name="InvalidHexStringSize" xml:space="preserve">
+    <value>一个十六进制的字符串必须包含偶数个十六进制数字</value>
+  </data>
+  <data name="InvalidInteger1" xml:space="preserve">
+    <value>值不是一个十六进制或十进制整数</value>
+  </data>
+  <data name="InvalidInteger2" xml:space="preserve">
+    <value>值太小</value>
+  </data>
+  <data name="InvalidInteger3" xml:space="preserve">
+    <value>值太大</value>
+  </data>
+  <data name="InvalidInteger4" xml:space="preserve">
+    <value>值必须介于 {0} 和 {1} (0x{1:X}) 之间</value>
+  </data>
+  <data name="InvalidInteger5" xml:space="preserve">
+    <value>值必须介于 {0} ({2}0x{0:X}) 和 {1} (0x{1:X}) 之间</value>
+  </data>
+  <data name="InvalidListValue" xml:space="preserve">
+    <value>列表中的值不能为空</value>
+  </data>
+  <data name="InvalidListValue2" xml:space="preserve">
+    <value>必须用逗号分隔的列表元素</value>
+  </data>
+  <data name="InvalidSingle" xml:space="preserve">
+    <value>值必须是一个 32 位浮点数</value>
+  </data>
+  <data name="InvalidString1" xml:space="preserve">
+    <value>字符串必须包含 'null' 值，或必须括在双引号 (")</value>
+  </data>
+  <data name="InvalidString2" xml:space="preserve">
+    <value>字符串必须括在双引号 (")</value>
+  </data>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+    <value>值必须是一个 TimeSpan</value>
+  </data>
+  <data name="InvalidUnsignedInteger1" xml:space="preserve">
+    <value>允许只非负整数</value>
+  </data>
+  <data name="InvalidUnsignedInteger2" xml:space="preserve">
+    <value>值不是无符号的十六进制或十进制整数</value>
+  </data>
+  <data name="InvalidUnsignedInteger3" xml:space="preserve">
+    <value>值必须介于 {0} 和 {1} (0x{1:X}) 之间</value>
+  </data>
+  <data name="InvalidUnsignedInteger4" xml:space="preserve">
+    <value>值必须介于 {0} (0x{0:X}) 和 {1} (0x{1:X}) 之间</value>
   </data>
 </root>

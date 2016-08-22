@@ -261,4 +261,49 @@
   <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
     <value>Ctrl+Alt+I</value>
   </data>
+  <data name="CopyCodeCommand" xml:space="preserve">
+    <value>Copy Code</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Show Line Numbers</value>
+  </data>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>_Перенос слов</value>
+  </data>
+  <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
+    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Все файлы</value>
+  </data>
+  <data name="Repl_Save_ToolTip" xml:space="preserve">
+    <value>Save (Ctrl+S)</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Text Files</value>
+  </data>
+  <data name="SaveCodeCommand" xml:space="preserve">
+    <value>Save Code...</value>
+  </data>
+  <data name="SaveCommand" xml:space="preserve">
+    <value>Save...</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
+    <value>Ctrl+Shift+S</value>
+  </data>
+  <data name="CSharpScriptFiles" xml:space="preserve">
+    <value>C# Script Files</value>
+  </data>
+  <data name="VisualBasicScriptFiles" xml:space="preserve">
+    <value>Visual Basic Script Files</value>
+  </data>
 </root>

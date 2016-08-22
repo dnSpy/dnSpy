@@ -142,10 +142,10 @@
     <value>remove</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Кем представлено</value>
+    <value>Представлено в</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Методы расширения</value>
+    <value>Методы-расширения</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
     <value>Перейти по ссылке</value>
@@ -211,7 +211,7 @@
     <value>Подсветка синтаксиса</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Используется</value>
+    <value>Используется в</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
     <value>Использует</value>

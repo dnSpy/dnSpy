@@ -1,0 +1,469 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFiles" xml:space="preserve">
+    <value>所有文件</value>
+  </data>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>发生错误：
+
+{0}</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Button_DefaultSettings" xml:space="preserve">
+    <value>默认设置(_D)</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="BytesPerLineCommand" xml:space="preserve">
+    <value>每行的字节数</value>
+  </data>
+  <data name="ClearByteCommand" xml:space="preserve">
+    <value>清除字节</value>
+  </data>
+  <data name="ClearSelectedBytesCommand" xml:space="preserve">
+    <value>清除选定字节</value>
+  </data>
+  <data name="ClearSelectionKey" xml:space="preserve">
+    <value>Del</value>
+    <comment>the delete key</comment>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="CopyCSharpArrayCommand" xml:space="preserve">
+    <value>复制 C# 数组</value>
+  </data>
+  <data name="CopyCSharpArrayKey" xml:space="preserve">
+    <value>Ctrl+Shift+P</value>
+  </data>
+  <data name="CopyKey" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="CopyOffsetCommand" xml:space="preserve">
+    <value>复制偏移量</value>
+  </data>
+  <data name="CopyOffsetKey" xml:space="preserve">
+    <value>Ctrl+Alt+O</value>
+  </data>
+  <data name="CopyUIContentsCommand" xml:space="preserve">
+    <value>复制 UI 内容</value>
+  </data>
+  <data name="CopyUIContentsKey" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="CopyUnicodeStringCommand" xml:space="preserve">
+    <value>复制 Unicode 字符串</value>
+  </data>
+  <data name="CopyUnicodeStringKey" xml:space="preserve">
+    <value>Ctrl+Shift+U</value>
+  </data>
+  <data name="CopyUTF8StringCommand" xml:space="preserve">
+    <value>复制 UTF-8 字符串</value>
+  </data>
+  <data name="CopyUTF8StringKey" xml:space="preserve">
+    <value>Ctrl+Shift+8</value>
+  </data>
+  <data name="CopyVBArrayCommand" xml:space="preserve">
+    <value>复制 VB 数组</value>
+  </data>
+  <data name="CopyVBArrayKey" xml:space="preserve">
+    <value>Ctrl+Shift+B</value>
+  </data>
+  <data name="CouldNotConvert" xml:space="preserve">
+    <value>无法转换 '{0}'</value>
+  </data>
+  <data name="CouldNotConvertFromString" xml:space="preserve">
+    <value>无法从一个字符串: {0} 转换它</value>
+  </data>
+  <data name="CouldNotDeserializeData" xml:space="preserve">
+    <value>无法反序列化数据: {0}</value>
+  </data>
+  <data name="Files_DotNetExecutables" xml:space="preserve">
+    <value>.NET 可执行文件</value>
+  </data>
+  <data name="Files_DotNetNetModules" xml:space="preserve">
+    <value>.NET 网络模块</value>
+  </data>
+  <data name="Files_Executables" xml:space="preserve">
+    <value>可执行文件</value>
+  </data>
+  <data name="Files_Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="Files_StrongNameKeyFiles" xml:space="preserve">
+    <value>强名称密钥文件</value>
+  </data>
+  <data name="FillSelectionCommand" xml:space="preserve">
+    <value>用字节填充选择...</value>
+  </data>
+  <data name="FillSelection_Label" xml:space="preserve">
+    <value>字节(_B)</value>
+  </data>
+  <data name="FillSelection_Title" xml:space="preserve">
+    <value>输入值</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>字体</value>
+  </data>
+  <data name="GoToAddressCommand" xml:space="preserve">
+    <value>转到地址...</value>
+  </data>
+  <data name="GoToOffsetCommand" xml:space="preserve">
+    <value>转到偏移量......</value>
+  </data>
+  <data name="GoToOffsetKey" xml:space="preserve">
+    <value>Ctrl+G</value>
+  </data>
+  <data name="GoToOffset_Address_Label" xml:space="preserve">
+    <value>地址(_A)</value>
+  </data>
+  <data name="GoToOffset_Offset_Label" xml:space="preserve">
+    <value>偏移(_F)</value>
+  </data>
+  <data name="GoToOffset_Title" xml:space="preserve">
+    <value>转到偏移量</value>
+  </data>
+  <data name="GoToOffset_Title_Address" xml:space="preserve">
+    <value>转到地址</value>
+  </data>
+  <data name="HexEditorAppDlgTitle" xml:space="preserve">
+    <value>HEX 编辑器</value>
+  </data>
+  <data name="HexEditorCharacterEncodingCommand" xml:space="preserve">
+    <value>编码</value>
+  </data>
+  <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
+    <value>保存选中(_L)...</value>
+  </data>
+  <data name="HexEditorSaveSelectionKey" xml:space="preserve">
+    <value>Ctrl+Alt+S</value>
+  </data>
+  <data name="HexEditorSaveSelection_Title" xml:space="preserve">
+    <value>保存选中 0x{0:X}-0x{1:X}</value>
+  </data>
+  <data name="HexEditorSelectCommand" xml:space="preserve">
+    <value>选择...</value>
+  </data>
+  <data name="HexEditorSelectKey" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="HexEditorSelect_End" xml:space="preserve">
+    <value>结束(_E)</value>
+  </data>
+  <data name="HexEditorSelect_Start" xml:space="preserve">
+    <value>开始(_S)</value>
+  </data>
+  <data name="HexEditorSelect_Title" xml:space="preserve">
+    <value>选择</value>
+  </data>
+  <data name="HexEditorSettingsCommand" xml:space="preserve">
+    <value>设置...</value>
+  </data>
+  <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
+    <value>其它选项</value>
+  </data>
+  <data name="HexEditorShowAsciiCommand" xml:space="preserve">
+    <value>显示 ASCII</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
+    <value>16 字节(_1)</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
+    <value>32 字节(_3)</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
+    <value>48 字节(_4)</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
+    <value>64 字节(_6)</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
+    <value>8 字节(_8)</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
+    <value>适合宽度(_F)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ANSI" xml:space="preserve">
+    <value>ANSI(_A)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ANSI_2" xml:space="preserve">
+    <value>ANSI</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ASCII" xml:space="preserve">
+    <value>ASCII(_S)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ASCII_2" xml:space="preserve">
+    <value>ASCII</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE" xml:space="preserve">
+    <value>BE Unicode(_B)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2" xml:space="preserve">
+    <value>BE Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UNICODE" xml:space="preserve">
+    <value>Unicode(_U)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UNICODE_2" xml:space="preserve">
+    <value>Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF32" xml:space="preserve">
+    <value>UTF32(_3)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF32_2" xml:space="preserve">
+    <value>UTF-32</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF7" xml:space="preserve">
+    <value>UTF7(_7)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF7_2" xml:space="preserve">
+    <value>UTF-7</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF8" xml:space="preserve">
+    <value>UTF8(_8)</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF8_2" xml:space="preserve">
+    <value>UTF-8</value>
+  </data>
+  <data name="HexEditor_Default" xml:space="preserve">
+    <value>默认(_D)</value>
+  </data>
+  <data name="HexEditor_Default2" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>GUID 无效</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
+    <value>基础偏移量(_B)</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
+    <value>此值加上起始偏移量决定了显示的第一个字节</value>
+  </data>
+  <data name="LocalHexSettings_ByteGroupSize" xml:space="preserve">
+    <value>字节组大小(_G)</value>
+  </data>
+  <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
+    <value>每行的字节数(_Y)</value>
+  </data>
+  <data name="LocalHexSettings_Encoding" xml:space="preserve">
+    <value>编码(_N)</value>
+  </data>
+  <data name="LocalHexSettings_EndOffset" xml:space="preserve">
+    <value>结束偏移量</value>
+  </data>
+  <data name="LocalHexSettings_LowerCaseHex" xml:space="preserve">
+    <value>十六进制字母小写(_L)</value>
+  </data>
+  <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
+    <value>偏移位大小</value>
+  </data>
+  <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
+    <value>显示ASCII (_W)</value>
+  </data>
+  <data name="LocalHexSettings_StartOffset" xml:space="preserve">
+    <value>起始偏移量(_S)</value>
+  </data>
+  <data name="LocalHexSettings_Title" xml:space="preserve">
+    <value>本地十六进制编辑器设置</value>
+  </data>
+  <data name="LocalHexSettings_UseHexPrefix" xml:space="preserve">
+    <value>偏移量使用十六进制前缀(_U)</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
+    <value>使用相对偏移量(_R)</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
+    <value>所有偏移量显示为从起始偏移量开始的相对值</value>
+  </data>
+  <data name="LowerCaseHexCommand" xml:space="preserve">
+    <value>十六进制字母小写</value>
+  </data>
+  <data name="NewDataNotImageList" xml:space="preserve">
+    <value>新数据非映像列表。</value>
+  </data>
+  <data name="NoTypeConverter" xml:space="preserve">
+    <value>{0} 没有 TypeConverter 且无法从字符串转换。</value>
+  </data>
+  <data name="NumberOfBytes" xml:space="preserve">
+    <value>{0} 字节</value>
+  </data>
+  <data name="NumberOfBytesAndType" xml:space="preserve">
+    <value>{0} 字节，类型 = {1}</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>粘贴(_P)</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
+    <value>粘贴(#Blob 数据) (_P)</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobKey" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="PasteKey" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="PasteUnicodeCommand" xml:space="preserve">
+    <value>粘贴(Unicode) (_P)</value>
+  </data>
+  <data name="PasteUnicodeKey" xml:space="preserve">
+    <value>Ctrl+U</value>
+  </data>
+  <data name="PasteUTF8Command" xml:space="preserve">
+    <value>粘贴(UTF-8) (_P)</value>
+  </data>
+  <data name="PasteUTF8Key" xml:space="preserve">
+    <value>Ctrl+8</value>
+  </data>
+  <data name="ResourceTypeCantBeChanged" xml:space="preserve">
+    <value>无法更改资源类型</value>
+  </data>
+  <data name="SaveResource" xml:space="preserve">
+    <value>保存资源</value>
+  </data>
+  <data name="SaveResources" xml:space="preserve">
+    <value>保存资源</value>
+  </data>
+  <data name="ShowAllBytesCommand" xml:space="preserve">
+    <value>显示所有字节</value>
+  </data>
+  <data name="ShowAllBytesKey" xml:space="preserve">
+    <value>Ctrl + Shift + D</value>
+  </data>
+  <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
+    <value>仅显示选定字节</value>
+  </data>
+  <data name="ShowOnlySelectedBytesKey" xml:space="preserve">
+    <value>Ctrl+D</value>
+  </data>
+  <data name="UseHexPrefixCommand" xml:space="preserve">
+    <value>偏移量使用0x前缀</value>
+  </data>
+  <data name="ValueMustBeType" xml:space="preserve">
+    <value>值必须为类型 {0}。
+错误：{1}</value>
+  </data>
+</root>

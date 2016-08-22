@@ -186,9 +186,6 @@
   <data name="CloseTabGroupCommand" xml:space="preserve">
     <value>关闭标签组</value>
   </data>
-  <data name="CloseTabKey" xml:space="preserve">
-    <value>Ctrl+W</value>
-  </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>复制(_Y)</value>
   </data>
@@ -597,9 +594,6 @@
   <data name="WordWrapHeader" xml:space="preserve">
     <value>自动换行(_W)</value>
   </data>
-  <data name="WordWrapKey" xml:space="preserve">
-    <value>Ctrl+Alt+W</value>
-  </data>
   <data name="CloseTabButtonToolTip" xml:space="preserve">
     <value>关闭</value>
   </data>
@@ -940,5 +934,212 @@
   </data>
   <data name="About_Wiki" xml:space="preserve">
     <value>_Wiki</value>
+  </data>
+  <data name="Window_Output" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="Output_ClearAll_ToolTip" xml:space="preserve">
+    <value>Clear All (Ctrl+L)</value>
+  </data>
+  <data name="Output_ShowOutputFrom" xml:space="preserve">
+    <value>_Show output from:</value>
+  </data>
+  <data name="Output_WordWrap_ToolTip" xml:space="preserve">
+    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+  </data>
+  <data name="ShortCutKeyAlt2" xml:space="preserve">
+    <value>Alt+2</value>
+  </data>
+  <data name="Window_Output2" xml:space="preserve">
+    <value>_Output</value>
+  </data>
+  <data name="Output_Save_ToolTip" xml:space="preserve">
+    <value>Save (Ctrl+S)</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Clear Al_l</value>
+  </data>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Text Files</value>
+  </data>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Show Line Numbers</value>
+  </data>
+  <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShowTimestampsCommand" xml:space="preserve">
+    <value>Show Timestamps</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShortCutKeyCtrlF4" xml:space="preserve">
+    <value>Ctrl+F4</value>
+  </data>
+  <data name="ShortCutKeyShiftEsc" xml:space="preserve">
+    <value>Shift+Esc</value>
+  </data>
+  <data name="Window_Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="Window_Maximize" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+  <data name="Window_Minimize" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+  <data name="Window_Restore" xml:space="preserve">
+    <value>向下还原</value>
+  </data>
+  <data name="BackgroundImageOptDlgTab" xml:space="preserve">
+    <value>Background Image</value>
+  </data>
+  <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
+    <value>Code editor</value>
+  </data>
+  <data name="BgImgDisplayName_Default" xml:space="preserve">
+    <value>Other text windows</value>
+  </data>
+  <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
+    <value>Main text viewer</value>
+  </data>
+  <data name="BgImgDisplayName_Logger" xml:space="preserve">
+    <value>Log window</value>
+  </data>
+  <data name="BgImgDisplayName_REPL" xml:space="preserve">
+    <value>REPL window</value>
+  </data>
+  <data name="BgImgSettings_Direction" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
+    <value>Horizontal Offset</value>
+  </data>
+  <data name="BgImgSettings_Images" xml:space="preserve">
+    <value>Add paths to images and image folders, one path per line:</value>
+  </data>
+  <data name="BgImgSettings_Interval" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="BgImgSettings_MaxHeight" xml:space="preserve">
+    <value>Max Height</value>
+  </data>
+  <data name="BgImgSettings_MaxWidth" xml:space="preserve">
+    <value>Max Width</value>
+  </data>
+  <data name="BgImgSettings_Opacity" xml:space="preserve">
+    <value>Opacity</value>
+  </data>
+  <data name="BgImgSettings_Placement" xml:space="preserve">
+    <value>Placement</value>
+  </data>
+  <data name="BgImgSettings_RandomImage" xml:space="preserve">
+    <value>Random Image</value>
+  </data>
+  <data name="BgImgSettings_Reset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="BgImgSettings_Zoom" xml:space="preserve">
+    <value>Zoom %</value>
+  </data>
+  <data name="BgImgSettings_ShowImages" xml:space="preserve">
+    <value>Show Images</value>
+  </data>
+  <data name="BgImgSettings_Stretch" xml:space="preserve">
+    <value>Stretch</value>
+  </data>
+  <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
+    <value>Vertical Offset</value>
+  </data>
+  <data name="ImagePlacement_Bottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="ImagePlacement_BottomLeft" xml:space="preserve">
+    <value>Bottom Left</value>
+  </data>
+  <data name="ImagePlacement_BottomRight" xml:space="preserve">
+    <value>Bottom Right</value>
+  </data>
+  <data name="ImagePlacement_Center" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="ImagePlacement_Left" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="ImagePlacement_Right" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="ImagePlacement_Top" xml:space="preserve">
+    <value>Top</value>
+  </data>
+  <data name="ImagePlacement_TopLeft" xml:space="preserve">
+    <value>Top Left</value>
+  </data>
+  <data name="ImagePlacement_TopRight" xml:space="preserve">
+    <value>Top Right</value>
+  </data>
+  <data name="StretchDirection_Both" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="StretchDirection_DownOnly" xml:space="preserve">
+    <value>Down Only</value>
+  </data>
+  <data name="StretchDirection_UpOnly" xml:space="preserve">
+    <value>Up Only</value>
+  </data>
+  <data name="Files_Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
+    <value>Bottom Margin %</value>
+  </data>
+  <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
+    <value>Left Margin %</value>
+  </data>
+  <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
+    <value>Right Margin %</value>
+  </data>
+  <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
+    <value>Top Margin %</value>
+  </data>
+  <data name="Search_FindNextToolTip" xml:space="preserve">
+    <value>查找下一个 (F3)</value>
+  </data>
+  <data name="Search_FindPreviousToolTip" xml:space="preserve">
+    <value>查找上一个 (Shift + F3)</value>
+  </data>
+  <data name="Search_MatchCaseToolTip" xml:space="preserve">
+    <value>Match case (Alt+C)</value>
+  </data>
+  <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
+    <value>Match whole word (Alt+W)</value>
+  </data>
+  <data name="Search_ReplaceAllToolTip" xml:space="preserve">
+    <value>Replace all (Alt+A)</value>
+  </data>
+  <data name="Search_ReplaceNextToolTip" xml:space="preserve">
+    <value>Replace next (Alt+R)</value>
+  </data>
+  <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
+    <value>Use Regular Expressions (Alt+E)</value>
+  </data>
+  <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
+    <value>Toggle to switch between find and replace modes</value>
+  </data>
+  <data name="Search_CloseToolTip" xml:space="preserve">
+    <value>Close (Esc)</value>
+  </data>
+  <data name="Search_NothingFound" xml:space="preserve">
+    <value>Nothing found</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Incremental Search</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
   </data>
 </root>

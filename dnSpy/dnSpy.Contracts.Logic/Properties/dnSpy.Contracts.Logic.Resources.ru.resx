@@ -117,28 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
-    <value>C# / VB</value>
+  <data name="InvalidBoolean" xml:space="preserve">
+    <value>Значение должно быть логическое значение (True или False)</value>
   </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+  <data name="InvalidChar" xml:space="preserve">
+    <value>Символ должен быть заключен в одинарные кавычки (')</value>
   </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+  <data name="InvalidDateTime" xml:space="preserve">
+    <value>Значение должно быть DateTime</value>
   </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+  <data name="InvalidDecimal" xml:space="preserve">
+    <value>Значение должно быть Decimal</value>
   </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+  <data name="InvalidDouble" xml:space="preserve">
+    <value>Значение должно быть 64-битным с плавающей точкой</value>
   </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+  <data name="InvalidEscapeSequence" xml:space="preserve">
+    <value>Неизвестный символ escape-последовательность: \{0}</value>
   </data>
-  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
-    <value>IL</value>
+  <data name="InvalidEscapeSequence2" xml:space="preserve">
+    <value>Неизвестная строка escape-последовательность: \{0}</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+  <data name="InvalidHexCharacter" xml:space="preserve">
+    <value>Шестнадцатеричная строка должна содержать только шестнадцатеричные цифры: 0-9 и A-F</value>
+  </data>
+  <data name="InvalidHexStringSize" xml:space="preserve">
+    <value>Шестнадцатеричная строка должна содержать четное число шестнадцатеричных цифр</value>
+  </data>
+  <data name="InvalidInteger1" xml:space="preserve">
+    <value>Значение не является шестнадцатеричным или десятичным целым</value>
+  </data>
+  <data name="InvalidInteger2" xml:space="preserve">
+    <value>Значение слишком маленькое</value>
+  </data>
+  <data name="InvalidInteger3" xml:space="preserve">
+    <value>Значение слишком большое</value>
+  </data>
+  <data name="InvalidInteger4" xml:space="preserve">
+    <value>Значение должно быть между {0} и {1} (0x{1:X}) включительно</value>
+  </data>
+  <data name="InvalidInteger5" xml:space="preserve">
+    <value>Значение должно быть между {0} ({2}0x{0:X}) и {1} (0x{1:X}) включительно</value>
+  </data>
+  <data name="InvalidListValue" xml:space="preserve">
+    <value>Значение в списке не может быть пустым</value>
+  </data>
+  <data name="InvalidListValue2" xml:space="preserve">
+    <value>Элементы списка должны быть разделены запятыми</value>
+  </data>
+  <data name="InvalidSingle" xml:space="preserve">
+    <value>Значение должно быть 32-битным с плавающей точкой</value>
+  </data>
+  <data name="InvalidString1" xml:space="preserve">
+    <value>Строка должна содержать значение «null» или должна быть заключена в двойные кавычки (")</value>
+  </data>
+  <data name="InvalidString2" xml:space="preserve">
+    <value>Строка должна быть заключена в двойные кавычки (")</value>
+  </data>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+    <value>Значением должно быть TimeSpan</value>
+  </data>
+  <data name="InvalidUnsignedInteger1" xml:space="preserve">
+    <value>Разрешены только неотрицательные целые</value>
+  </data>
+  <data name="InvalidUnsignedInteger2" xml:space="preserve">
+    <value>Значение не является беззнаковым шестнадцатеричным или десятичным целым</value>
+  </data>
+  <data name="InvalidUnsignedInteger3" xml:space="preserve">
+    <value>Значение должно быть между {0} и {1} (0x{1:X}) включительно</value>
+  </data>
+  <data name="InvalidUnsignedInteger4" xml:space="preserve">
+    <value>Значение должно быть между {0} (0x{0:X}) и {1} (0x{1:X}) включительно</value>
   </data>
 </root>

@@ -117,193 +117,103 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CompilationAdditionalError" xml:space="preserve">
-    <value>+ 额外的 {0} 个错误</value>
+  <data name="AnalyzeCommand" xml:space="preserve">
+    <value>Analisar</value>
   </data>
-  <data name="CompilationAdditionalErrors" xml:space="preserve">
-    <value>+ 额外的 {0} 个错误</value>
+  <data name="AnalyzerWindowTitle" xml:space="preserve">
+    <value>Analisador</value>
+  </data>
+  <data name="AppliedToTreeNode" xml:space="preserve">
+    <value>Aplicado a</value>
+  </data>
+  <data name="AssignedByTreeNode" xml:space="preserve">
+    <value>Atribuído por</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>复制</value>
+    <value>Copiar</value>
   </data>
-  <data name="CutCommand" xml:space="preserve">
-    <value>剪切</value>
+  <data name="DoubleClick" xml:space="preserve">
+    <value>Duplo Clique</value>
   </data>
-  <data name="HelpAltDown" xml:space="preserve">
-    <value>显示下一命令</value>
+  <data name="EventAdderTreeNodeName" xml:space="preserve">
+    <value>adicionar</value>
   </data>
-  <data name="HelpAltUp" xml:space="preserve">
-    <value>显示前一命令</value>
+  <data name="EventRemoverTreeNodeName" xml:space="preserve">
+    <value>remover</value>
   </data>
-  <data name="HelpCtrlA" xml:space="preserve">
-    <value>选择输入文本。再按则选择全部文件</value>
+  <data name="ExposedByTreeNode" xml:space="preserve">
+    <value>Exposto por</value>
   </data>
-  <data name="HelpCtrlAltDown" xml:space="preserve">
-    <value>显示匹配当前输入文本的下一命令</value>
+  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
+    <value>Métodos de extenção</value>
   </data>
-  <data name="HelpCtrlAltUp" xml:space="preserve">
-    <value>显示匹配当前输入文本的的前一命令</value>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Ir para referência</value>
   </data>
-  <data name="HelpCtrlEnter" xml:space="preserve">
-    <value>执行命令</value>
+  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
+    <value>Mostrar referência em método</value>
   </data>
-  <data name="HelpEnter" xml:space="preserve">
-    <value>执行命令</value>
+  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
+    <value>Mostrar Referência em Método (Novo Guia)</value>
   </data>
-  <data name="HelpEscape" xml:space="preserve">
-    <value>清除当前输入</value>
+  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
+    <value>Ir para Referência (Novo Guia)</value>
   </data>
-  <data name="HelpKeyboardShortcuts" xml:space="preserve">
-    <value>快捷键：</value>
+  <data name="HidesParent" xml:space="preserve">
+    <value>hides</value>
   </data>
-  <data name="HelpReplCommands" xml:space="preserve">
-    <value>REPL 命令：</value>
+  <data name="ImplementedByTreeNode" xml:space="preserve">
+    <value>Implementado Por</value>
   </data>
-  <data name="HelpScriptDirectives" xml:space="preserve">
-    <value>脚本指令：</value>
+  <data name="InstantiatedByTreeNode" xml:space="preserve">
+    <value>Instanciado Por</value>
   </data>
-  <data name="HelpScriptDirective_load" xml:space="preserve">
-    <value>加载并执行脚本，#load "myscript.csx"</value>
-  </data>
-  <data name="HelpScriptDirective_r" xml:space="preserve">
-    <value>添加引用，可以是磁盘上的程序集或是文件路径，也可以是相对于 dnSpy 的路径，或是用户目录，#r "myfile.dll"</value>
-  </data>
-  <data name="HelpShiftEnter" xml:space="preserve">
-    <value>插入新行</value>
-  </data>
-  <data name="HelpString" xml:space="preserve">
-    <value>键入 "#help" 以获取更多信息。</value>
-  </data>
-  <data name="LoadingContextFromFile" xml:space="preserve">
-    <value>从 '{0}' 加载上下文。</value>
-  </data>
-  <data name="PasteCommand" xml:space="preserve">
-    <value>粘贴</value>
+  <data name="OverriddenByTreeNode" xml:space="preserve">
+    <value>Overridden Por</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>脚本</value>
+    <value>Analisa os assemblies</value>
   </data>
-  <data name="ResettingExecutionEngine" xml:space="preserve">
-    <value>重置执行引擎。</value>
+  <data name="PropertyGetterTreeNode" xml:space="preserve">
+    <value>get</value>
   </data>
-  <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>清空屏幕(Ctrl+L)</value>
+  <data name="PropertySetterTreeNode" xml:space="preserve">
+    <value>set</value>
   </data>
-  <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>下一历史（Alt + ↓）</value>
+  <data name="RaisedByTreeNode" xml:space="preserve">
+    <value>Raised Por</value>
   </data>
-  <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>前一历史（Alt + ↑）</value>
+  <data name="ReadByTreeNode" xml:space="preserve">
+    <value>Lido por</value>
   </data>
-  <data name="Script_ToolTip_Reset" xml:space="preserve">
-    <value>重置</value>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>Remover</value>
   </data>
-  <data name="ShortCutKeyAltDown" xml:space="preserve">
-    <value>Alt + ↓</value>
+  <data name="Searching" xml:space="preserve">
+    <value>Procurando...</value>
   </data>
-  <data name="ShortCutKeyAltUp" xml:space="preserve">
-    <value>Alt + ↑</value>
-  </data>
-  <data name="ShortCutKeyCtrlA" xml:space="preserve">
-    <value>Ctrl+A</value>
-  </data>
-  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
-    <value>Ctrl+Alt+↓</value>
-  </data>
-  <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
-    <value>Ctrl+Alt+N</value>
-  </data>
-  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
-    <value>Ctrl+Alt+↑</value>
+  <data name="ShiftDoubleClick" xml:space="preserve">
+    <value>Shift + Duplo Clique</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Ctrl+C</value>
+    <value>CTRL + C</value>
   </data>
-  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
-    <value>Ctrl+Enter</value>
+  <data name="ShortCutKeyCtrlR" xml:space="preserve">
+    <value>CTRL + R</value>
   </data>
-  <data name="ShortCutKeyCtrlV" xml:space="preserve">
-    <value>Ctrl+V</value>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
   </data>
-  <data name="ShortCutKeyCtrlX" xml:space="preserve">
-    <value>Ctrl+X</value>
+  <data name="ShowMetadataTokensCommand" xml:space="preserve">
+    <value>Mostrar Tokens</value>
   </data>
-  <data name="ShortCutKeyEnter" xml:space="preserve">
-    <value>Enter</value>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Realce de sintaxe</value>
   </data>
-  <data name="ShortCutKeyEscape" xml:space="preserve">
-    <value>Esc</value>
+  <data name="UsedByTreeNode" xml:space="preserve">
+    <value>Usado Por</value>
   </data>
-  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
-    <value>Shift+Enter</value>
-  </data>
-  <data name="Window_CSharp" xml:space="preserve">
-    <value>C# 交互</value>
-  </data>
-  <data name="HelpClearDescription" xml:space="preserve">
-    <value>清空脚本编辑器</value>
-  </data>
-  <data name="HelpHelpDescription" xml:space="preserve">
-    <value>显示帮助</value>
-  </data>
-  <data name="HelpResetDescription" xml:space="preserve">
-    <value>重置执行环境</value>
-  </data>
-  <data name="ClearScreenCommand" xml:space="preserve">
-    <value>清空屏幕</value>
-  </data>
-  <data name="ShortCutKeyCtrlL" xml:space="preserve">
-    <value>Ctrl+L</value>
-  </data>
-  <data name="Window_VisualBasic" xml:space="preserve">
-    <value>Visual Basic 交互窗口</value>
-  </data>
-  <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
-    <value>Ctrl+Alt+I</value>
-  </data>
-  <data name="CopyCodeCommand" xml:space="preserve">
-    <value>Copy Code</value>
-  </data>
-  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
-    <value>Ctrl+Shift+C</value>
-  </data>
-  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
-    <value>Ctrl+E, Ctrl+W</value>
-  </data>
-  <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Show Line Numbers</value>
-  </data>
-  <data name="WordWrapHeader" xml:space="preserve">
-    <value>自动换行(_W)</value>
-  </data>
-  <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
-  </data>
-  <data name="AllFiles" xml:space="preserve">
-    <value>所有文件</value>
-  </data>
-  <data name="Repl_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
-  </data>
-  <data name="TextFiles" xml:space="preserve">
-    <value>Text Files</value>
-  </data>
-  <data name="SaveCodeCommand" xml:space="preserve">
-    <value>Save Code...</value>
-  </data>
-  <data name="SaveCommand" xml:space="preserve">
-    <value>Save...</value>
-  </data>
-  <data name="ShortCutKeyCtrlS" xml:space="preserve">
-    <value>Ctrl+S</value>
-  </data>
-  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
-    <value>Ctrl + Shift + S</value>
-  </data>
-  <data name="CSharpScriptFiles" xml:space="preserve">
-    <value>C# Script Files</value>
-  </data>
-  <data name="VisualBasicScriptFiles" xml:space="preserve">
-    <value>Visual Basic Script Files</value>
+  <data name="UsesTreeNode" xml:space="preserve">
+    <value>Utiliza</value>
   </data>
 </root>

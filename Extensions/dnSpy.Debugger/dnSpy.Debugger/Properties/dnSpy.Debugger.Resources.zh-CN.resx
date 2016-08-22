@@ -1224,4 +1224,67 @@ HResult: 0x{3:X8}</value>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
     <value>断点</value>
   </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>_Exception Messages</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>Module _Load Messages</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>Module _Unload Messages</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>_Process Exit Messages</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>Program _Output</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>_Step Filtering Messages</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>_Thread Exit Messages</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>MDA Messages</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>Additional information: {0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>Exception thrown: '{0}' in {1}</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>An unhandled exception of type '{0}' occurred in {1}</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>The program '{0}' has exited with code {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>The thread 0x{0:x} has exited with code {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>'{0}' ({1}: {2}): Loaded '{3}'.</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;no exception message&gt;"</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL offset 0x{0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>line {0} character {1}</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>位置</value>
+  </data>
 </root>

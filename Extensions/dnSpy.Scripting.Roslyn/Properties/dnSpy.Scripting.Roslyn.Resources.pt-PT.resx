@@ -118,154 +118,154 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CompilationAdditionalError" xml:space="preserve">
-    <value>+ 额外的 {0} 个错误</value>
+    <value>+ {0} erro adicional</value>
   </data>
   <data name="CompilationAdditionalErrors" xml:space="preserve">
-    <value>+ 额外的 {0} 个错误</value>
+    <value>+ {0} erros adicionais</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>复制</value>
+    <value>Copiar</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
-    <value>剪切</value>
+    <value>Cortar</value>
   </data>
   <data name="HelpAltDown" xml:space="preserve">
-    <value>显示下一命令</value>
+    <value>Mostrar próximo comando</value>
   </data>
   <data name="HelpAltUp" xml:space="preserve">
-    <value>显示前一命令</value>
+    <value>Mostrar comando anterior</value>
   </data>
   <data name="HelpCtrlA" xml:space="preserve">
-    <value>选择输入文本。再按则选择全部文件</value>
+    <value>Selecione texto de entrada. Pressione novamente para selecionar todo o texto</value>
   </data>
   <data name="HelpCtrlAltDown" xml:space="preserve">
-    <value>显示匹配当前输入文本的下一命令</value>
+    <value>Mostrar próximo comando que corresponde ao texto de entrada atual</value>
   </data>
   <data name="HelpCtrlAltUp" xml:space="preserve">
-    <value>显示匹配当前输入文本的的前一命令</value>
+    <value>Mostrar comando anterior que corresponde ao texto de entrada atual</value>
   </data>
   <data name="HelpCtrlEnter" xml:space="preserve">
-    <value>执行命令</value>
+    <value>Executar o comando</value>
   </data>
   <data name="HelpEnter" xml:space="preserve">
-    <value>执行命令</value>
+    <value>Executar o comando</value>
   </data>
   <data name="HelpEscape" xml:space="preserve">
-    <value>清除当前输入</value>
+    <value>Limpar entrada atual</value>
   </data>
   <data name="HelpKeyboardShortcuts" xml:space="preserve">
-    <value>快捷键：</value>
+    <value>Atalhos de teclado:</value>
   </data>
   <data name="HelpReplCommands" xml:space="preserve">
-    <value>REPL 命令：</value>
+    <value>Comandos REPL:</value>
   </data>
   <data name="HelpScriptDirectives" xml:space="preserve">
-    <value>脚本指令：</value>
+    <value>Directivas do Script:</value>
   </data>
   <data name="HelpScriptDirective_load" xml:space="preserve">
-    <value>加载并执行脚本，#load "myscript.csx"</value>
+    <value>Carregar e executar um script, #load "myscript.csx"</value>
   </data>
   <data name="HelpScriptDirective_r" xml:space="preserve">
-    <value>添加引用，可以是磁盘上的程序集或是文件路径，也可以是相对于 dnSpy 的路径，或是用户目录，#r "myfile.dll"</value>
+    <value>Adicionar uma referência, seja esta um assembly ou um caminho para um ficheiro no disco ou um caminho relativo para o dnSpy ou o diretório de utilizador, #r "MyFile. dll"</value>
   </data>
   <data name="HelpShiftEnter" xml:space="preserve">
-    <value>插入新行</value>
+    <value>Inserir uma nova linha</value>
   </data>
   <data name="HelpString" xml:space="preserve">
-    <value>键入 "#help" 以获取更多信息。</value>
+    <value>Digite "#help" para obter mais informações.</value>
   </data>
   <data name="LoadingContextFromFile" xml:space="preserve">
-    <value>从 '{0}' 加载上下文。</value>
+    <value>Carregando contexto de '{0}'.</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>粘贴</value>
+    <value>Colar</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>脚本</value>
+    <value>Scripting</value>
   </data>
   <data name="ResettingExecutionEngine" xml:space="preserve">
-    <value>重置执行引擎。</value>
+    <value>Redefinindo o motor de execução.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>清空屏幕(Ctrl+L)</value>
+    <value>Limpar ecrã (Ctrl + L)</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>下一历史（Alt + ↓）</value>
+    <value>Histórico seguinte (Alt + seta para baixo)</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>前一历史（Alt + ↑）</value>
+    <value>Histórico anterior (Alt + seta para cima)</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
-    <value>重置</value>
+    <value>Reset</value>
   </data>
   <data name="ShortCutKeyAltDown" xml:space="preserve">
-    <value>Alt + ↓</value>
+    <value>Alt + seta para baixo</value>
   </data>
   <data name="ShortCutKeyAltUp" xml:space="preserve">
-    <value>Alt + ↑</value>
+    <value>Alt + seta para cima</value>
   </data>
   <data name="ShortCutKeyCtrlA" xml:space="preserve">
-    <value>Ctrl+A</value>
+    <value>CTRL + A</value>
   </data>
   <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
-    <value>Ctrl+Alt+↓</value>
+    <value>CTRL + Alt + seta para baixo</value>
   </data>
   <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
-    <value>Ctrl+Alt+N</value>
+    <value>CTRL + Alt + N</value>
   </data>
   <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
-    <value>Ctrl+Alt+↑</value>
+    <value>CTRL + Alt + seta acima</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Ctrl+C</value>
+    <value>CTRL + C</value>
   </data>
   <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
-    <value>Ctrl+Enter</value>
+    <value>CTRL + Enter</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
-    <value>Ctrl+V</value>
+    <value>CTRL + V</value>
   </data>
   <data name="ShortCutKeyCtrlX" xml:space="preserve">
-    <value>Ctrl+X</value>
+    <value>CTRL + X</value>
   </data>
   <data name="ShortCutKeyEnter" xml:space="preserve">
     <value>Enter</value>
   </data>
   <data name="ShortCutKeyEscape" xml:space="preserve">
-    <value>Esc</value>
+    <value>ESC</value>
   </data>
   <data name="ShortCutKeyShiftEnter" xml:space="preserve">
-    <value>Shift+Enter</value>
+    <value>Shift + Enter</value>
   </data>
   <data name="Window_CSharp" xml:space="preserve">
-    <value>C# 交互</value>
+    <value>C# interativo</value>
   </data>
   <data name="HelpClearDescription" xml:space="preserve">
-    <value>清空脚本编辑器</value>
+    <value>Limpar o editor de scripts</value>
   </data>
   <data name="HelpHelpDescription" xml:space="preserve">
-    <value>显示帮助</value>
+    <value>Exibir ajuda</value>
   </data>
   <data name="HelpResetDescription" xml:space="preserve">
-    <value>重置执行环境</value>
+    <value>Redefinir o ambiente de execução</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>清空屏幕</value>
+    <value>Limpar Ecrã</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
-    <value>Ctrl+L</value>
+    <value>CTRL + L</value>
   </data>
   <data name="Window_VisualBasic" xml:space="preserve">
-    <value>Visual Basic 交互窗口</value>
+    <value>Visual Basic interativo</value>
   </data>
   <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
-    <value>Ctrl+Alt+I</value>
+    <value>CTRL + Alt + I</value>
   </data>
   <data name="CopyCodeCommand" xml:space="preserve">
     <value>Copy Code</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
-    <value>Ctrl+Shift+C</value>
+    <value>CTRL + Shift + C</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Ctrl+E, Ctrl+W</value>
@@ -274,13 +274,13 @@
     <value>Show Line Numbers</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
-    <value>自动换行(_W)</value>
+    <value>Word Wrap</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
     <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>所有文件</value>
+    <value>Todos os Ficheiros</value>
   </data>
   <data name="Repl_Save_ToolTip" xml:space="preserve">
     <value>Save (Ctrl+S)</value>
@@ -295,10 +295,10 @@
     <value>Save...</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
-    <value>Ctrl+S</value>
+    <value>CTRL + S</value>
   </data>
   <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
-    <value>Ctrl + Shift + S</value>
+    <value>CTRL + Shift + S</value>
   </data>
   <data name="CSharpScriptFiles" xml:space="preserve">
     <value>C# Script Files</value>

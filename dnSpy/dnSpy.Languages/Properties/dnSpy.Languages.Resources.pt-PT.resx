@@ -117,28 +117,118 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
-    <value>C# / VB</value>
+  <data name="MSBuild_CopyAppConfig" xml:space="preserve">
+    <value>Copiar app.config ({0})</value>
   </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+  <data name="MSBuild_CouldNotCreateDirectory2" xml:space="preserve">
+    <value>Não foi possível criar o diretório {0}, Erro: {1}</value>
   </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+  <data name="MSBuild_CreateApplicationIcon" xml:space="preserve">
+    <value>Criar ícone do aplicação</value>
   </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+  <data name="MSBuild_CreateAppManifest" xml:space="preserve">
+    <value>Criar app.manifest</value>
   </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+  <data name="MSBuild_CreateAppXaml" xml:space="preserve">
+    <value>Criar App.xaml</value>
   </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+  <data name="MSBuild_CreateEmbeddedResource" xml:space="preserve">
+    <value>Criar recurso incorporado {0}</value>
   </data>
-  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
-    <value>IL</value>
+  <data name="MSBuild_DecompileAssemblyInfoAndFileExtension" xml:space="preserve">
+    <value>Descompilar AssemblyInfo{0}</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+  <data name="MSBuild_DecompileBaml" xml:space="preserve">
+    <value>Descompilar BAML</value>
+  </data>
+  <data name="MSBuild_FailedToCreateProjectFile" xml:space="preserve">
+    <value>Falha ao criar ficheiro do projeto {0}, Mensagem de exceção: {1}</value>
+  </data>
+  <data name="MSBuild_FailedToCreateSolutionFile" xml:space="preserve">
+    <value>Falha ao criar ficheiro de solução {0}, Mensagem de exceção: {1}</value>
+  </data>
+  <data name="MSBuild_FileCreationFailed2" xml:space="preserve">
+    <value>Falhou, descrição = {0}, Mensagem de exceção: {1}</value>
+  </data>
+  <data name="MSBuild_FileCreationFailed3" xml:space="preserve">
+    <value>Falha de criação do ficheiro ({0}), descrição = {1}, Mensagem de exceção: {2}</value>
+  </data>
+  <data name="ToolTip_Constant" xml:space="preserve">
+    <value>constante</value>
+  </data>
+  <data name="ToolTip_Field" xml:space="preserve">
+    <value>campo</value>
+  </data>
+  <data name="ToolTip_GenericParameterInTypeOrMethod" xml:space="preserve">
+    <value>em</value>
+  </data>
+  <data name="ToolTip_Local" xml:space="preserve">
+    <value>variável local</value>
+  </data>
+  <data name="ToolTip_NMethodOverloads" xml:space="preserve">
+    <value>sobrecargas de {0}</value>
+  </data>
+  <data name="ToolTip_OneMethodOverload" xml:space="preserve">
+    <value>1 sobrecarga</value>
+  </data>
+  <data name="ToolTip_Parameter" xml:space="preserve">
+    <value>parâmetro</value>
+  </data>
+  <data name="Decompile_Namespace_Types" xml:space="preserve">
+    <value>Tipos:</value>
+  </data>
+  <data name="Decompile_AnyCPU32BitPreferred" xml:space="preserve">
+    <value>AnyCPU (32-bit preferred)</value>
+  </data>
+  <data name="Decompile_AnyCPU64BitPreferred" xml:space="preserve">
+    <value>AnyCPU (64-bit preferred)</value>
+  </data>
+  <data name="Decompile_Architecture" xml:space="preserve">
+    <value>Arquitetura:</value>
+  </data>
+  <data name="Decompile_EntryPoint" xml:space="preserve">
+    <value>Ponto de entrada:</value>
+  </data>
+  <data name="Decompile_GlobalType" xml:space="preserve">
+    <value>Tipo global:</value>
+  </data>
+  <data name="Decompile_NativeEntryPoint" xml:space="preserve">
+    <value>Ponto de Entrada nativo: 0x{0:X8}</value>
+  </data>
+  <data name="Decompile_Runtime" xml:space="preserve">
+    <value>Runtime:</value>
+  </data>
+  <data name="Decompile_ThisAssemblyContainsUnmanagedCode" xml:space="preserve">
+    <value>Este assembly contém o código não gerenciado.</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Timestamp: {0:X8} ({1})</value>
+  </data>
+  <data name="MSBuild_CreateResource" xml:space="preserve">
+    <value>Criar recurso {0}</value>
+  </data>
+  <data name="MSBuild_CreateSplashScreenResource" xml:space="preserve">
+    <value>Criar recurso de splash screen {0}</value>
+  </data>
+  <data name="MSBuild_CreateWinFormsDesignerFile" xml:space="preserve">
+    <value>Criar ficheiro WinForms Designer</value>
+  </data>
+  <data name="MSBuild_CreateWinFormsFile" xml:space="preserve">
+    <value>Criar ficheiro WinForms</value>
+  </data>
+  <data name="MSBuild_DecompileType" xml:space="preserve">
+    <value>Descompilar tipo {0}</value>
+  </data>
+  <data name="MSBuild_CreateSettingsFile" xml:space="preserve">
+    <value>Criar {0}</value>
+  </data>
+  <data name="MSBuild_CreateSettingsDesignerTypeFile" xml:space="preserve">
+    <value>Criar ficheiro de configurações de designer</value>
+  </data>
+  <data name="MSBuild_CreateSettingsTypeFile" xml:space="preserve">
+    <value>Criar ficheiro de configurações</value>
+  </data>
+  <data name="MSBuild_CreateResXFile" xml:space="preserve">
+    <value>Criar ficheiro ResX</value>
   </data>
 </root>

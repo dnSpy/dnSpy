@@ -117,28 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
-    <value>C# / VB</value>
+  <data name="InvalidBoolean" xml:space="preserve">
+    <value>Valor deve ser um valor booleano (True ou False)</value>
   </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+  <data name="InvalidChar" xml:space="preserve">
+    <value>Um caratere deve ser colocado entre aspas simples (')</value>
   </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+  <data name="InvalidDateTime" xml:space="preserve">
+    <value>Valor deve ser um DateTime</value>
   </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+  <data name="InvalidDecimal" xml:space="preserve">
+    <value>Valor deve ser um número Decimal</value>
   </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+  <data name="InvalidDouble" xml:space="preserve">
+    <value>Valor deve ser um número de ponto flutuante de 64 bits</value>
   </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+  <data name="InvalidEscapeSequence" xml:space="preserve">
+    <value>Sequência de escape de caratere desconhecido: \{0}</value>
   </data>
-  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
-    <value>IL</value>
+  <data name="InvalidEscapeSequence2" xml:space="preserve">
+    <value>Sequência de escape de carateres desconhecidos: \{0}</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+  <data name="InvalidHexCharacter" xml:space="preserve">
+    <value>Uma string hexadecimal deve conter somente os dígitos hexadecimais: 0-9 e A-F</value>
+  </data>
+  <data name="InvalidHexStringSize" xml:space="preserve">
+    <value>Uma string hexadecimal deve conter um número par de dígitos hexadecimais</value>
+  </data>
+  <data name="InvalidInteger1" xml:space="preserve">
+    <value>O valor não é um inteiro hexadecimal ou decimal</value>
+  </data>
+  <data name="InvalidInteger2" xml:space="preserve">
+    <value>O valor é muito pequeno</value>
+  </data>
+  <data name="InvalidInteger3" xml:space="preserve">
+    <value>O valor é muito grande</value>
+  </data>
+  <data name="InvalidInteger4" xml:space="preserve">
+    <value>Valor deve estar entre {0} e {1} (0x{1:X}) inclusive</value>
+  </data>
+  <data name="InvalidInteger5" xml:space="preserve">
+    <value>Valor deve estar entre {0} ({2}0x{0:X}) e {1} (0x{1:X}) inclusive</value>
+  </data>
+  <data name="InvalidListValue" xml:space="preserve">
+    <value>Valor na lista não pode ser vazio</value>
+  </data>
+  <data name="InvalidListValue2" xml:space="preserve">
+    <value>Lista de elementos deve ser separadas por vírgulas</value>
+  </data>
+  <data name="InvalidSingle" xml:space="preserve">
+    <value>Valor deve ser um número de ponto flutuante de 32 bits</value>
+  </data>
+  <data name="InvalidString1" xml:space="preserve">
+    <value>Uma string deve conter o valor 'null' ou deve estar entre aspas duplas (')</value>
+  </data>
+  <data name="InvalidString2" xml:space="preserve">
+    <value>Uma string deve estar entre aspas duplas (')</value>
+  </data>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+    <value>Valor deve ser um TimeSpan</value>
+  </data>
+  <data name="InvalidUnsignedInteger1" xml:space="preserve">
+    <value>São permitidos apenas números inteiros não negativos</value>
+  </data>
+  <data name="InvalidUnsignedInteger2" xml:space="preserve">
+    <value>O valor não é um hexadecimal não-assinado ou decimal inteiro</value>
+  </data>
+  <data name="InvalidUnsignedInteger3" xml:space="preserve">
+    <value>Valor deve estar entre {0} e {1} (0x{1:X}) inclusive</value>
+  </data>
+  <data name="InvalidUnsignedInteger4" xml:space="preserve">
+    <value>Valor deve estar entre {0} (0x{0:X}) e {1} inclusive (0x{1:X})</value>
   </data>
 </root>

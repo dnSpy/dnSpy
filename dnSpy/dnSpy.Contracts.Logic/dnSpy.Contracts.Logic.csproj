@@ -129,6 +129,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Contracts.Logic.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.pt-PT.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

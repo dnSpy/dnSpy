@@ -1,0 +1,467 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Todos os Ficheiros</value>
+  </data>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>Ocorreu um erro:{0}</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Button_DefaultSettings" xml:space="preserve">
+    <value>Definições padrão</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="BytesPerLineCommand" xml:space="preserve">
+    <value>Bytes por linha</value>
+  </data>
+  <data name="ClearByteCommand" xml:space="preserve">
+    <value>Limpar Byte</value>
+  </data>
+  <data name="ClearSelectedBytesCommand" xml:space="preserve">
+    <value>Limpar Bytes Selecionados</value>
+  </data>
+  <data name="ClearSelectionKey" xml:space="preserve">
+    <value>Del</value>
+    <comment>the delete key</comment>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="CopyCSharpArrayCommand" xml:space="preserve">
+    <value>Copiar Array c#</value>
+  </data>
+  <data name="CopyCSharpArrayKey" xml:space="preserve">
+    <value>CTRL + Shift + P</value>
+  </data>
+  <data name="CopyKey" xml:space="preserve">
+    <value>CTRL + C</value>
+  </data>
+  <data name="CopyOffsetCommand" xml:space="preserve">
+    <value>Copiar Offset</value>
+  </data>
+  <data name="CopyOffsetKey" xml:space="preserve">
+    <value>CTRL + Alt + O</value>
+  </data>
+  <data name="CopyUIContentsCommand" xml:space="preserve">
+    <value>Copiar conteúdo da UI</value>
+  </data>
+  <data name="CopyUIContentsKey" xml:space="preserve">
+    <value>CTRL + Shift + C</value>
+  </data>
+  <data name="CopyUnicodeStringCommand" xml:space="preserve">
+    <value>Copiar String Unicode</value>
+  </data>
+  <data name="CopyUnicodeStringKey" xml:space="preserve">
+    <value>CTRL + Shift + U</value>
+  </data>
+  <data name="CopyUTF8StringCommand" xml:space="preserve">
+    <value>Copiar String UTF-8</value>
+  </data>
+  <data name="CopyUTF8StringKey" xml:space="preserve">
+    <value>CTRL + Shift + 8</value>
+  </data>
+  <data name="CopyVBArrayCommand" xml:space="preserve">
+    <value>Copiar array VB</value>
+  </data>
+  <data name="CopyVBArrayKey" xml:space="preserve">
+    <value>CTRL + Shift + B</value>
+  </data>
+  <data name="CouldNotConvert" xml:space="preserve">
+    <value>Não foi possível converter '{0}'</value>
+  </data>
+  <data name="CouldNotConvertFromString" xml:space="preserve">
+    <value>Não foi possível convertê-lo de uma string '{0}'</value>
+  </data>
+  <data name="CouldNotDeserializeData" xml:space="preserve">
+    <value>Não foi possível desserializar dados: {0}</value>
+  </data>
+  <data name="Files_DotNetExecutables" xml:space="preserve">
+    <value>Executáveis .NET</value>
+  </data>
+  <data name="Files_DotNetNetModules" xml:space="preserve">
+    <value>NetModules .NET</value>
+  </data>
+  <data name="Files_Executables" xml:space="preserve">
+    <value>Executáveis</value>
+  </data>
+  <data name="Files_Images" xml:space="preserve">
+    <value>Imagens</value>
+  </data>
+  <data name="Files_StrongNameKeyFiles" xml:space="preserve">
+    <value>Ficheiros de Chave de Nome Forte</value>
+  </data>
+  <data name="FillSelectionCommand" xml:space="preserve">
+    <value>Preencher Seleção com Byte...</value>
+  </data>
+  <data name="FillSelection_Label" xml:space="preserve">
+    <value>Byte</value>
+  </data>
+  <data name="FillSelection_Title" xml:space="preserve">
+    <value>Inserir Valor</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Fonte</value>
+  </data>
+  <data name="GoToAddressCommand" xml:space="preserve">
+    <value>Ir para Endereço...</value>
+  </data>
+  <data name="GoToOffsetCommand" xml:space="preserve">
+    <value>Ir para Offset...</value>
+  </data>
+  <data name="GoToOffsetKey" xml:space="preserve">
+    <value>CTRL + G</value>
+  </data>
+  <data name="GoToOffset_Address_Label" xml:space="preserve">
+    <value>Endereço</value>
+  </data>
+  <data name="GoToOffset_Offset_Label" xml:space="preserve">
+    <value>O_ffset</value>
+  </data>
+  <data name="GoToOffset_Title" xml:space="preserve">
+    <value>Ir para Offset</value>
+  </data>
+  <data name="GoToOffset_Title_Address" xml:space="preserve">
+    <value>Ir para endereço</value>
+  </data>
+  <data name="HexEditorAppDlgTitle" xml:space="preserve">
+    <value>Hex Editor</value>
+  </data>
+  <data name="HexEditorCharacterEncodingCommand" xml:space="preserve">
+    <value>Codificação</value>
+  </data>
+  <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
+    <value>Guardar Seleção</value>
+  </data>
+  <data name="HexEditorSaveSelectionKey" xml:space="preserve">
+    <value>CTRL + Alt + S</value>
+  </data>
+  <data name="HexEditorSaveSelection_Title" xml:space="preserve">
+    <value>Guardar seleção 0x{0:X}-0x{1:X}</value>
+  </data>
+  <data name="HexEditorSelectCommand" xml:space="preserve">
+    <value>Selecionar...</value>
+  </data>
+  <data name="HexEditorSelectKey" xml:space="preserve">
+    <value>CTRL + L</value>
+  </data>
+  <data name="HexEditorSelect_End" xml:space="preserve">
+    <value>Fim</value>
+  </data>
+  <data name="HexEditorSelect_Start" xml:space="preserve">
+    <value>Ínicio</value>
+  </data>
+  <data name="HexEditorSelect_Title" xml:space="preserve">
+    <value>Selecionar</value>
+  </data>
+  <data name="HexEditorSettingsCommand" xml:space="preserve">
+    <value>Configurações...</value>
+  </data>
+  <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
+    <value>Outras opções</value>
+  </data>
+  <data name="HexEditorShowAsciiCommand" xml:space="preserve">
+    <value>Mostrar ASCII</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
+    <value>16 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
+    <value>32 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
+    <value>48 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
+    <value>64 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
+    <value>8 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
+    <value>Ajustar à largura</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ANSI" xml:space="preserve">
+    <value>ANSI</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ANSI_2" xml:space="preserve">
+    <value>ANSI</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ASCII" xml:space="preserve">
+    <value>ASCII</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_ASCII_2" xml:space="preserve">
+    <value>ASCII</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE" xml:space="preserve">
+    <value>BE Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2" xml:space="preserve">
+    <value>BE Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UNICODE" xml:space="preserve">
+    <value>Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UNICODE_2" xml:space="preserve">
+    <value>Unicode</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF32" xml:space="preserve">
+    <value>UTF_32</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF32_2" xml:space="preserve">
+    <value>UTF-32</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF7" xml:space="preserve">
+    <value>UTF_7</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF7_2" xml:space="preserve">
+    <value>UTF-7</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF8" xml:space="preserve">
+    <value>UTF_8</value>
+  </data>
+  <data name="HexEditor_CharacterEncoding_UTF8_2" xml:space="preserve">
+    <value>UTF-8</value>
+  </data>
+  <data name="HexEditor_Default" xml:space="preserve">
+    <value>Padrão</value>
+  </data>
+  <data name="HexEditor_Default2" xml:space="preserve">
+    <value>Padrão</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>GUID Inválido</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
+    <value>Offset Base</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
+    <value>Esse valor é adicionado para o offset de início antes dele ser mostrado na tela</value>
+  </data>
+  <data name="LocalHexSettings_ByteGroupSize" xml:space="preserve">
+    <value>Byte _Group Size</value>
+  </data>
+  <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
+    <value>B_ytes por Linha</value>
+  </data>
+  <data name="LocalHexSettings_Encoding" xml:space="preserve">
+    <value>Codificação</value>
+  </data>
+  <data name="LocalHexSettings_EndOffset" xml:space="preserve">
+    <value>Offset Final</value>
+  </data>
+  <data name="LocalHexSettings_LowerCaseHex" xml:space="preserve">
+    <value>Hex em Minúsculas</value>
+  </data>
+  <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
+    <value>Offset Bi_t Size</value>
+  </data>
+  <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
+    <value>Mostrar ASCII</value>
+  </data>
+  <data name="LocalHexSettings_StartOffset" xml:space="preserve">
+    <value>_Offset de Ínicio</value>
+  </data>
+  <data name="LocalHexSettings_Title" xml:space="preserve">
+    <value>Configurações de Hex Editor local</value>
+  </data>
+  <data name="LocalHexSettings_UseHexPrefix" xml:space="preserve">
+    <value>_Usar Prefixo Hex (offset)</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
+    <value>Usar Offsets _Relativos</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
+    <value>Todos os offsets são relativos para o offset de início</value>
+  </data>
+  <data name="LowerCaseHexCommand" xml:space="preserve">
+    <value>Hex em Minúsculas</value>
+  </data>
+  <data name="NewDataNotImageList" xml:space="preserve">
+    <value>Os novos dados não são uma lista de imagem.</value>
+  </data>
+  <data name="NoTypeConverter" xml:space="preserve">
+    <value>{0} não tem um TypeConverter e não pode ser convertido de uma string.</value>
+  </data>
+  <data name="NumberOfBytes" xml:space="preserve">
+    <value>{0} bytes</value>
+  </data>
+  <data name="NumberOfBytesAndType" xml:space="preserve">
+    <value>{0} bytes, Tipo = {1}</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>Colar</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
+    <value>_Colar (#Blob Data)</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobKey" xml:space="preserve">
+    <value>CTRL + B</value>
+  </data>
+  <data name="PasteKey" xml:space="preserve">
+    <value>CTRL + V</value>
+  </data>
+  <data name="PasteUnicodeCommand" xml:space="preserve">
+    <value>_Colar (Unicode)</value>
+  </data>
+  <data name="PasteUnicodeKey" xml:space="preserve">
+    <value>CTRL + U</value>
+  </data>
+  <data name="PasteUTF8Command" xml:space="preserve">
+    <value>_Colar (UTF-8)</value>
+  </data>
+  <data name="PasteUTF8Key" xml:space="preserve">
+    <value>CTRL + 8</value>
+  </data>
+  <data name="ResourceTypeCantBeChanged" xml:space="preserve">
+    <value>Tipo de recurso não pode ser alterado</value>
+  </data>
+  <data name="SaveResource" xml:space="preserve">
+    <value>Guardar Recurso</value>
+  </data>
+  <data name="SaveResources" xml:space="preserve">
+    <value>Guardar Recursos</value>
+  </data>
+  <data name="ShowAllBytesCommand" xml:space="preserve">
+    <value>Mostrar Todos os Bytes</value>
+  </data>
+  <data name="ShowAllBytesKey" xml:space="preserve">
+    <value>CTRL + Shift + D</value>
+  </data>
+  <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
+    <value>Mostrar Apenas Bytes Selecionados</value>
+  </data>
+  <data name="ShowOnlySelectedBytesKey" xml:space="preserve">
+    <value>CTRL + D</value>
+  </data>
+  <data name="UseHexPrefixCommand" xml:space="preserve">
+    <value>Usar prefixo 0x (offset)</value>
+  </data>
+  <data name="ValueMustBeType" xml:space="preserve">
+    <value>Valor deve ser de tipo {0}.
+Erro: {1}</value>
+  </data>
+</root>

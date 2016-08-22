@@ -117,28 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
-    <value>C# / VB</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Todos os Ficheiros</value>
   </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+  <data name="BAMLFile" xml:space="preserve">
+    <value>Ficheiro BAML</value>
   </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+  <data name="BamlOptionDlgTab" xml:space="preserve">
+    <value>BAML</value>
   </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+  <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
+    <value>Desmontar BAML</value>
   </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+  <data name="BamlSettings_DisassembleBAML_ToolTip" xml:space="preserve">
+    <value>Desmonta registos BAML em vez de os descompilar para XAML.</value>
   </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+  <data name="DisassembleBAMLCommand" xml:space="preserve">
+    <value>Desmontar BAML</value>
   </data>
-  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
-    <value>IL</value>
+  <data name="Error_AttachedEvent" xml:space="preserve">
+    <value>Evento Anexado '{0}'.</value>
+  </data>
+  <data name="Error_IComponentConnectorConnetCannotBeParsed" xml:space="preserve">
+    <value>Classe '{0}' tem método IComponentConnector.Connect mas não pode ser analisado.</value>
+  </data>
+  <data name="Error_UnknownConnectionId" xml:space="preserve">
+    <value>ID de Conexão Desconhecido: {0}</value>
+  </data>
+  <data name="Msg_GlobalNamespace" xml:space="preserve">
+    <value>'{0}' é o prefixo do namespace global.</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+    <value>Descompilador BAML</value>
+  </data>
+  <data name="SaveBAML" xml:space="preserve">
+    <value>Guardar BAML...</value>
+  </data>
+  <data name="SaveXAML" xml:space="preserve">
+    <value>Guardar XAML...</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Guardando...</value>
+  </data>
+  <data name="XAMLFile" xml:space="preserve">
+    <value>Ficheiro XAML</value>
   </data>
 </root>

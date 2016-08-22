@@ -117,28 +117,97 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CSharpDecompilerSettingsTabName" xml:space="preserve">
-    <value>C# / VB</value>
+  <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
+    <value>Adicionar usando declarações</value>
   </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
+    <value>Always generate exception variables in catch blocks unless type is Object</value>
   </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
+    <value>Ordem de descompilação</value>
   </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
+    <value>Descompilar métodos/lambdas anônimos</value>
   </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
+    <value>Descompilar métodos assíncronos (async/await)</value>
   </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+  <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
+    <value>Descompilar eventos automáticos</value>
   </data>
-  <data name="ILDecompilerSettingsTabName" xml:space="preserve">
-    <value>IL</value>
+  <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
+    <value>Descompilar propriedades automáticas</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
+    <value>Descompilar enumerators (yield return)</value>
+  </data>
+  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
+    <value>Descompilar árvores de expressão</value>
+  </data>
+  <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
+    <value>Descompilar declarações foreach</value>
+  </data>
+  <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
+    <value>Descompilar instruções lock</value>
+  </data>
+  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
+    <value>Descompilar expressões de consulta</value>
+  </data>
+  <data name="DecompilerSettings_DecompileSwitchOnString" xml:space="preserve">
+    <value>Descompilar switch on string</value>
+  </data>
+  <data name="DecompilerSettings_DecompileUsingStatements" xml:space="preserve">
+    <value>Descompilar instruções using</value>
+  </data>
+  <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
+    <value>Adicionar namespaces para todos os tipos</value>
+  </data>
+  <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
+    <value>Adicionar um namespace para tipos com o mesmo nome</value>
+  </data>
+  <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
+    <value>Usar operadores de incremento e decremento</value>
+  </data>
+  <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
+    <value>Usar expressões de atribuição, tal como em while ((cont = Do())! = 0);</value>
+  </data>
+  <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
+    <value>Número máximo de elementos em array para mostrar</value>
+  </data>
+  <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
+    <value>Descompilar objetos ou inicializadores de coleção</value>
+  </data>
+  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
+    <value>Remover construtores padrão vazios</value>
+  </data>
+  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
+    <value>Mostrar tipos e métodos escondidos gerados pelo compilador</value>
+  </data>
+  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
+    <value>Mostrar comentários IL opcode</value>
+  </data>
+  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
+    <value>Mostrar bytes de instruções IL </value>
+  </data>
+  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
+    <value>Mostrar tokens, RVAs e offsets de ficheiros</value>
+  </data>
+  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
+    <value>Mostrar a documentação XML no código descompilado</value>
+  </data>
+  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
+    <value>Sort custom attributes</value>
+  </data>
+  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
+    <value>Ordenar métodos, campos, propriedades, eventos e tipos</value>
+  </data>
+  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
+    <value>Posicionar diretivas 'Sistema' primeiro ao ordenar usings</value>
+  </data>
+  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
+    <value>Usar nomes de variáveis de símbolos de depuração, se disponível</value>
+  </data>
+  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
+    <value>Order members in source code order</value>
   </data>
 </root>

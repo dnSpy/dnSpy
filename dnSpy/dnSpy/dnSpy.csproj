@@ -642,6 +642,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\dnSpy.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Resources.pt-PT.resx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">

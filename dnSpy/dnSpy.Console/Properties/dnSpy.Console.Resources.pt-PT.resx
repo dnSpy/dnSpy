@@ -118,100 +118,100 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error1" xml:space="preserve">
-    <value>ОШИБКА: {0}</value>
+    <value>ERRO: {0}</value>
   </data>
   <data name="FileOrDirDoesNotExist" xml:space="preserve">
-    <value>Файл/каталог '{0}' не существует</value>
+    <value>Ficheiro/diretório '{0}' não existe</value>
   </data>
   <data name="InvalidOption" xml:space="preserve">
-    <value>Неверная опция: {0}</value>
+    <value>Opção inválida: {0}</value>
   </data>
   <data name="InvalidSolutionName" xml:space="preserve">
-    <value>Имя решения ({0}) должно быть указано относительно каталога проекта</value>
+    <value>nome .sln ({0}) deve ser relativo ao diretório de projeto</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
-    <value>Неверный токен метаданных</value>
+    <value>Token de metadados inválidos</value>
   </data>
   <data name="InvalidVSVersion" xml:space="preserve">
-    <value>Неверная версия Visual Studio: {0}</value>
+    <value>Versão inválida do Visual Studio: {0}</value>
   </data>
   <data name="LanguageDoesNotExist" xml:space="preserve">
-    <value>Язык '{0}' не существует</value>
+    <value>Língua '{0}' não existe</value>
   </data>
   <data name="Languages" xml:space="preserve">
-    <value>Языки:</value>
+    <value>Idiomas:</value>
   </data>
   <data name="LanguageXDoesNotExist" xml:space="preserve">
-    <value>Язык {0} не существует</value>
+    <value>Língua {0} não existe</value>
   </data>
   <data name="MissingAsmSearchPath" xml:space="preserve">
-    <value>Отсутствует путь поиска сборки</value>
+    <value>Caminho de pesquisa de assembly em falta</value>
   </data>
   <data name="MissingDotNetFilename" xml:space="preserve">
-    <value>Отсутствует имя файла .NET</value>
+    <value>Nome do ficheiro .NET em falta</value>
   </data>
   <data name="MissingLanguageName" xml:space="preserve">
-    <value>Отсутствует имя языка</value>
+    <value>Nome da linguagem em falta</value>
   </data>
   <data name="MissingMDToken" xml:space="preserve">
-    <value>Отсутствует токен метаданных</value>
+    <value>Token de metadados em falta</value>
   </data>
   <data name="MissingNumberOfThreads" xml:space="preserve">
-    <value>Отсутствует количество потоков</value>
+    <value>Número de threads em falta</value>
   </data>
   <data name="MissingOptions" xml:space="preserve">
-    <value>Не указана ни одна опция</value>
+    <value>Nenhuma opção especificada</value>
   </data>
   <data name="MissingOutputDir" xml:space="preserve">
-    <value>Отсутствует выходной каталог</value>
+    <value>Diretório de output em falta</value>
   </data>
   <data name="MissingSolutionName" xml:space="preserve">
-    <value>Отсутствует имя файла решения</value>
+    <value>Nome .sln em falta</value>
   </data>
   <data name="MissingVSVersion" xml:space="preserve">
-    <value>Отсутствует версия Visual Studio</value>
+    <value>Versão Visual Studio em falta</value>
   </data>
   <data name="NoLanguagesFound" xml:space="preserve">
-    <value>Языки не найдены. Убедитесь, что файлы dll с языками расположены в каталоге с программой.</value>
+    <value>Nenhuma linguagem foi encontrada. Certifique-se que existem os ficheiros dll de linguagem na mesma pasta como este programa.</value>
   </data>
   <data name="NotDotNetFile" xml:space="preserve">
-    <value>{0} не файла .NET</value>
+    <value>{0} não é um ficheiro .NET</value>
   </data>
   <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
-    <value>С --md может быть декомпилирован только один файл</value>
+    <value>Apenas um ficheiro pode ser compilado ao usar --md</value>
   </data>
   <data name="MissingUserGacPath" xml:space="preserve">
-    <value>Отсутствует путь к пользовательскому GAC</value>
+    <value>Caminho GAC do utilizador em falta</value>
   </data>
   <data name="InvalidMemberToDecompile" xml:space="preserve">
-    <value>Декомпилированы могут быть только типы, методы, поля, события и свойства</value>
+    <value>Somente tipos, métodos, campos, eventos e propriedades podem ser descompilados</value>
   </data>
   <data name="CouldNotFindTypeX" xml:space="preserve">
-    <value>Тип {0} не найден</value>
+    <value>Tipo {0} não pôde ser encontrado</value>
   </data>
   <data name="CouldNotResolveGacFileX" xml:space="preserve">
-    <value>Не могу найти сборку GAC '{0}'</value>
+    <value>Não foi possível resolver o assembly GAC '{0}'</value>
   </data>
   <data name="MissingGacFile" xml:space="preserve">
-    <value>Отсутствует имя сборки GAC</value>
+    <value>Nome de assembly GAC em falta</value>
   </data>
   <data name="MissingTypeName" xml:space="preserve">
-    <value>Отсутствует полное имя типа</value>
+    <value>Nome completo do tipo em falta</value>
   </data>
   <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
-    <value>Язык {0} не поддерживает создание файлов проекта</value>
+    <value>Língua {0} não oferece suporte a criação de ficheiros do projeto</value>
   </data>
   <data name="LanguageOptions" xml:space="preserve">
-    <value>Языковые настройки:</value>
+    <value>Opções de linguagem:</value>
   </data>
   <data name="LanguageOptionsDesc" xml:space="preserve">
-    <value>Все опции могут быть выключены, используя префиксы 'no-' или 'dont-', например --dont-sort-members</value>
+    <value>Todas as opções booleanas podem ser desactivadas por meio de 'no-' ou ' dont-', por exemplo. --dont-sort-members</value>
   </data>
   <data name="MissingOptionArgument" xml:space="preserve">
-    <value>Отсутствует аргумент опции</value>
+    <value>Argumento de opção em falta</value>
   </data>
   <data name="InvalidGuid" xml:space="preserve">
-    <value>Недопустимый GUID</value>
+    <value>GUID Inválido</value>
   </data>
   <data name="CmdLineAssembly" xml:space="preserve">
     <value>assembly</value>

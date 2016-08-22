@@ -121,24 +121,24 @@
     <value>C# / VB</value>
   </data>
   <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>事件</value>
+    <value>Eventos</value>
   </data>
   <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>字段</value>
+    <value>Campos</value>
   </data>
   <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>方法</value>
+    <value>Métodos</value>
   </data>
   <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>嵌套类</value>
+    <value>Tipos aninhados</value>
   </data>
   <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>属性</value>
+    <value>Propriedades</value>
   </data>
   <data name="ILDecompilerSettingsTabName" xml:space="preserve">
     <value>IL</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpy 反编译器</value>
+    <value>Descompilador ILSpy</value>
   </data>
 </root>

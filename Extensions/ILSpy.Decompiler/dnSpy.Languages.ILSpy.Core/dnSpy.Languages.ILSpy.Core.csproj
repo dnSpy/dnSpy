@@ -111,6 +111,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Languages.ILSpy.Core.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Core.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Core.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Core.Resources.pt-PT.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

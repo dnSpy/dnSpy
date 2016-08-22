@@ -621,6 +621,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Contracts.DnSpy.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.pt-PT.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Hex\GoToOffsetDlg.xaml">
@@ -646,11 +649,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Copy.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Fill.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Paste.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
