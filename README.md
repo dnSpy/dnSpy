@@ -187,7 +187,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 
 ![console](images/console.png)
 
-### Scripting with C# REPL, control the debugger and other extensions with C#
+### Scripting with `C#` REPL, control the debugger and other extensions with `C#`
 
 ![scripting](images/scripting.png)
 
