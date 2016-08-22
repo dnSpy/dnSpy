@@ -47,7 +47,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 - Translated to several languages
 - Highly extensible
 	- Write your own extensions and add your own features
-	- All big features are already extensions (assembly editor, debugger, decompiler)
+	- All major features are already extensions (assembly editor, debugger, decompiler)
 - Multiple tabs and tab groups
 	- Your screen is too big? Don't cut it in half, add another vertical tab group and read two classes at once!
 	- The tabs and positions within the text editors are saved when you close dnSpy and restored at startup so you can continue where you left off
