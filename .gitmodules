@@ -6,7 +6,7 @@
 	url = https://github.com/0xd4d/nrefactory.git
 [submodule "Libraries/ICSharpCode.TreeView"]
 	path = Libraries/ICSharpCode.TreeView
-	url = git@bitbucket.org:0xd4d/icsharpcode.treeview.git
+	url = https://github.com/0xd4d/ICSharpCode.TreeView.git
 [submodule "Plugins/ILSpy.Decompiler/ICSharpCode.Decompiler"]
 	path = Extensions/ILSpy.Decompiler/ICSharpCode.Decompiler
-	url = git@bitbucket.org:0xd4d/icsharpcode.decompiler.git
+	url = https://github.com/0xd4d/ILSpy.git
