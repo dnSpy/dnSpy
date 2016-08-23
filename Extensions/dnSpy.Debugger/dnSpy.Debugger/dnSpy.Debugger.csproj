@@ -422,6 +422,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

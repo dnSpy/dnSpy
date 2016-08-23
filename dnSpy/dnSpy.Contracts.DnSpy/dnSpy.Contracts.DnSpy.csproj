@@ -624,6 +624,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Hex\GoToOffsetDlg.xaml">

@@ -73,6 +73,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.ru.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Console.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\dnSpy\App.config">
