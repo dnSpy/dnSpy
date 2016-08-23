@@ -936,43 +936,43 @@
     <value>_Wiki</value>
   </data>
   <data name="Window_Output" xml:space="preserve">
-    <value>Output</value>
+    <value>输出</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All (Ctrl+L)</value>
+    <value>清空所有 (Ctrl+L)</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>_Show output from:</value>
+    <value>显示输出来源(_S):</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>切换自动换行 (Ctrl+E, Ctrl+W)</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>_Output</value>
+    <value>输出(_O)</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>保存 (Ctrl+S)</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Clear Al_l</value>
+    <value>清除所有(_l)</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Ctrl+L</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Text Files</value>
+    <value>文本文件</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Show Line Numbers</value>
+    <value>显示行号</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Show Timestamps</value>
+    <value>显示时间戳</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Ctrl+E, Ctrl+W</value>
@@ -996,115 +996,115 @@
     <value>向下还原</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Background Image</value>
+    <value>背景图片</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Code editor</value>
+    <value>代码编辑器</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
-    <value>Other text windows</value>
+    <value>其他文本窗口</value>
   </data>
   <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
-    <value>Main text viewer</value>
+    <value>主文本查看器</value>
   </data>
   <data name="BgImgDisplayName_Logger" xml:space="preserve">
-    <value>Log window</value>
+    <value>Log窗口</value>
   </data>
   <data name="BgImgDisplayName_REPL" xml:space="preserve">
-    <value>REPL window</value>
+    <value>REPL 窗口</value>
   </data>
   <data name="BgImgSettings_Direction" xml:space="preserve">
-    <value>Direction</value>
+    <value>方向</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Horizontal Offset</value>
+    <value>水平偏移</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Add paths to images and image folders, one path per line:</value>
+    <value>添加图片或图片文件夹路径，每行一个：</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>Interval</value>
+    <value>切换间隔</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Max Height</value>
+    <value>最大高度</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Max Width</value>
+    <value>最大宽度</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
-    <value>Opacity</value>
+    <value>透明度</value>
   </data>
   <data name="BgImgSettings_Placement" xml:space="preserve">
-    <value>Placement</value>
+    <value>位置</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Random Image</value>
+    <value>随机图片</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
     <value>重置</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
-    <value>Zoom %</value>
+    <value>缩放 %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Show Images</value>
+    <value>显示图片</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
-    <value>Stretch</value>
+    <value>拉伸</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Vertical Offset</value>
+    <value>垂直偏移</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
-    <value>Bottom</value>
+    <value>底部</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Bottom Left</value>
+    <value>左下</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Bottom Right</value>
+    <value>右下</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
-    <value>Center</value>
+    <value>居中</value>
   </data>
   <data name="ImagePlacement_Left" xml:space="preserve">
-    <value>Left</value>
+    <value>左部</value>
   </data>
   <data name="ImagePlacement_Right" xml:space="preserve">
-    <value>Right</value>
+    <value>右部</value>
   </data>
   <data name="ImagePlacement_Top" xml:space="preserve">
-    <value>Top</value>
+    <value>顶部</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Top Left</value>
+    <value>左上</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
-    <value>Top Right</value>
+    <value>右上</value>
   </data>
   <data name="StretchDirection_Both" xml:space="preserve">
-    <value>Both</value>
+    <value>两侧</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Down Only</value>
+    <value>仅向下</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Up Only</value>
+    <value>仅向上</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Images</value>
+    <value>图片</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Bottom Margin %</value>
+    <value>下边距 %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Left Margin %</value>
+    <value>左边距 %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Right Margin %</value>
+    <value>右边距 %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Top Margin %</value>
+    <value>上边距 %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>查找下一个 (F3)</value>
@@ -1113,31 +1113,31 @@
     <value>查找上一个 (Shift + F3)</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case (Alt+C)</value>
+    <value>区分大小写 (Alt+C)</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word (Alt+W)</value>
+    <value>全字匹配 (Alt+W)</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all (Alt+A)</value>
+    <value>全部替换 (Alt+A)</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next (Alt+R)</value>
+    <value>替换下一个 (Alt+R)</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions (Alt+E)</value>
+    <value>使用正则表达式 (Alt+E)</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Toggle to switch between find and replace modes</value>
+    <value>切换查找模式/替换模式</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Close (Esc)</value>
+    <value>关闭 (Esc)</value>
   </data>
   <data name="Search_NothingFound" xml:space="preserve">
-    <value>Nothing found</value>
+    <value>未找到内容</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Incremental Search</value>
+    <value>渐进式搜索</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>

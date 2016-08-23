@@ -2450,16 +2450,16 @@
     <value>Warning</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (Ctrl+O)</value>
+    <value>添加程序集引用 (Ctrl+O)</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (GAC) (Ctrl+Shift+O)</value>
+    <value>添加GAC程序集引用 (Ctrl+Shift+O)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Couldn't add the assembly references.</value>
+    <value>无法添加程序集引用。</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
-    <value>Edit Method Code</value>
+    <value>编辑方法体</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
     <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>

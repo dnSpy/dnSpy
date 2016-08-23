@@ -211,7 +211,7 @@
     <value>可执行文件</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Images</value>
+    <value>图片</value>
   </data>
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
     <value>强名称密钥文件</value>

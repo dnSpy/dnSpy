@@ -121,7 +121,7 @@
     <value>添加using声明</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Always generate exception variables in catch blocks unless type is Object</value>
+    <value>在catch块中总是生成异常变量，除非类型为Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>反编译顺序</value>
@@ -196,7 +196,7 @@
     <value>在反编译的代码中显示 XML 文档</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Sort custom attributes</value>
+    <value>排序自定义标签</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>排序方法、 字段、 属性、 事件和类型</value>
@@ -208,6 +208,6 @@
     <value>如果可用，使用debug symbols声明的变量名称</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Order members in source code order</value>
+    <value>按源代码顺序排序成员</value>
   </data>
 </root>
