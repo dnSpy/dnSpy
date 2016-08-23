@@ -12,6 +12,7 @@ using dnSpy.Contracts.Text;
 namespace Example2.Extension {
 	// Holds an instance of our logger text pane
 	static class MyLogger {
+		//TODO: Use your own GUID
 		public static readonly Guid THE_GUID = new Guid("26F2F5B2-9C5A-4F99-A026-4946A068500F");
 
 		public static IOutputTextPane Instance {
