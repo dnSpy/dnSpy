@@ -68,7 +68,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 - [dnlib](https://github.com/0xd4d/dnlib) is used to read and write assemblies so it can handle obfuscated code (eg. malware) without crashing
 - Go to commands:
 	- Entry point
-	- Assembly static initialization method (<Module>..cctor)
+	- Assembly static initialization method (&lt;Module&gt;..cctor)
 	- Any metadata token
 	- Any metadata row
 - Syntax highlighted tooltips with XML doc comments when hovering over a type (class), method, property, event, field
@@ -203,7 +203,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 
 # Want to Contribute?
 
-Check the [issues](https://github.com/0xd4d/dnSpy/issues) for open issues, especially issues with the `up for grabs` tag since they should be easier to start with.
+Check the [issues](https://github.com/0xd4d/dnSpy/issues) for open issues, especially issues with the [up for grabs](https://github.com/0xd4d/dnSpy/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22) tag since they should be easier to start with.
 
 If you send a PR, try to use the same coding style as the current project you're editing. Here's a short list:
 
