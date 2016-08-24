@@ -352,10 +352,6 @@ namespace dnSpy.Text.Editor.Operations {
 			return true;
 		}
 
-		public bool DecreaseLineIndent() {
-			return true;//TODO:
-		}
-
 		public bool DeleteBlankLines() {
 			var caretLeft = Caret.Left;
 			var span = GetSelectionOrCaretIfNoSelection();
@@ -698,7 +694,7 @@ namespace dnSpy.Text.Editor.Operations {
 			if (column != line.Length)
 				return string.Empty;
 
-			int lineLengthNoTabs = ConvertTabsToSpaces(line.GetText()).Length;
+			int lineLengthNoTabs = GetLengthOfLineWithTabsConvertedToSpaces(line.GetText());
 			return GetWhitespaceForVirtualSpace(lineLengthNoTabs, point.VirtualSpaces);
 		}
 
@@ -723,24 +719,20 @@ namespace dnSpy.Text.Editor.Operations {
 			return new string(chars);
 		}
 
-		string ConvertTabsToSpaces(string line) {
-			if (line.IndexOf('\t') < 0)
-				return line;
-
+		int GetLengthOfLineWithTabsConvertedToSpaces(string line) => GetLengthOfLineWithTabsConvertedToSpaces(line, line.Length);
+		int GetLengthOfLineWithTabsConvertedToSpaces(string line, int length) {
 			int tabSize = Options.GetTabSize();
-			var sb = new StringBuilder();
-			for (int i = 0; i < line.Length; i++) {
+			int count = 0;
+			for (int i = 0; i < length; i++) {
 				var c = line[i];
 				if (c != '\t')
-					sb.Append(c);
+					count++;
 				else {
-					int spaces = tabSize - sb.Length % tabSize;
-					for (int j = 0; j < spaces; j++)
-						sb.Append(' ');
-					Debug.Assert(sb.Length % tabSize == 0);
+					count += tabSize - count % tabSize;
+					Debug.Assert(count % tabSize == 0);
 				}
 			}
-			return sb.ToString();
+			return count;
 		}
 
 		public void GotoLine(int lineNumber) {
@@ -756,12 +748,177 @@ namespace dnSpy.Text.Editor.Operations {
 			ViewScroller.EnsureSpanVisible(span);
 		}
 
+		public bool DecreaseLineIndent() {
+			return true;//TODO:
+		}
+
 		public bool IncreaseLineIndent() {
 			return true;//TODO:
 		}
 
-		public bool Indent() {
+		public bool Unindent() {
 			return true;//TODO:
+		}
+
+		public bool Indent() {
+			if (Selection.IsEmpty)
+				return Indent(Caret.Position.VirtualBufferPosition);
+			else if (Selection.Mode == TextSelectionMode.Stream) {
+				var startLine = Selection.Start.Position.GetContainingLine();
+				if (Selection.End.Position <= startLine.End)
+					return Indent(Caret.Position.VirtualBufferPosition);
+				else
+					return IndentMultipleLines();
+			}
+			else
+				return IndentMultipleLines();
+		}
+
+		bool Indent(VirtualSnapshotPoint vpos) {
+			bool isOverwrite = Caret.OverwriteMode;
+			if (!Selection.IsEmpty) {
+				using (var ed = TextBuffer.CreateEdit()) {
+					foreach (var span in Selection.SelectedSpans) {
+						if (!ed.Delete(span))
+							return false;
+					}
+					ed.Apply();
+					if (ed.Canceled)
+						return false;
+				}
+				vpos = vpos.TranslateTo(Snapshot, PointTrackingMode.Positive);
+				Selection.Clear();
+			}
+			using (var ed = TextBuffer.CreateEdit()) {
+				if (!IndentLine(ed, vpos, isOverwrite))
+					return false;
+
+				ed.Apply();
+				if (ed.Canceled)
+					return false;
+			}
+			Caret.MoveTo(vpos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
+			Caret.EnsureVisible();
+			return true;
+		}
+
+		bool IndentLine(ITextEdit ed, VirtualSnapshotPoint vpos, bool isOverwrite) {
+			var line = vpos.Position.GetContainingLine();
+			var lineString = line.Extent.GetText();
+			return IndentLine(ed, line, lineString, vpos, onlyAddIndentSize: false, isOverwrite: isOverwrite);
+		}
+
+		bool IndentLine(ITextEdit ed, ITextSnapshotLine line, string lineString, VirtualSnapshotPoint vpos, bool onlyAddIndentSize, bool isOverwrite) {
+			int virtIndex = vpos.Position - line.Start + vpos.VirtualSpaces;
+			int startIndentIndex = GetFirstWhitespaceIndexForIndentReplace(lineString, virtIndex);
+			int alignedVisualColumn = -1;
+			if (isOverwrite && virtIndex < line.Length) {
+				int visCol = ToVisualColumn(lineString, virtIndex);
+				alignedVisualColumn = GetNextIndentedVisualColumn(visCol);
+				while (ToVisualColumn(lineString, ++virtIndex) < alignedVisualColumn)
+					/* Nothing */;
+			}
+			int endIndentIndex = Math.Min(line.Length, virtIndex);
+			int startIndentVisualColumn = ToVisualColumn(lineString, startIndentIndex);
+			int indentedEndIndentVisualColumn;
+			if (alignedVisualColumn >= 0)
+				indentedEndIndentVisualColumn = alignedVisualColumn;
+			else {
+				int endIndentVisualColumn = ToVisualColumn(lineString, virtIndex);
+				indentedEndIndentVisualColumn = onlyAddIndentSize ? endIndentVisualColumn + Options.GetIndentSize() : GetNextIndentedVisualColumn(endIndentVisualColumn);
+			}
+			var indentString = GetWhitespaceForVirtualSpace(startIndentVisualColumn, indentedEndIndentVisualColumn - startIndentVisualColumn);
+			int b = line.Start.Position;
+			return ed.Replace(Span.FromBounds(b + startIndentIndex, b + endIndentIndex), indentString);
+		}
+
+		bool IndentMultipleLines() {
+			var selStart = Selection.Start;
+			using (var ed = TextBuffer.CreateEdit()) {
+				foreach (var span in Selection.SelectedSpans) {
+					if (!IndentMultipleLines(ed, new VirtualSnapshotSpan(span)))
+						return false;
+				}
+
+				ed.Apply();
+				if (ed.Canceled)
+					return false;
+			}
+			selStart = selStart.TranslateTo(Snapshot, PointTrackingMode.Negative);
+			if (!Selection.IsEmpty) {
+				VirtualSnapshotPoint anchorPoint, activePoint;
+				if (Selection.IsReversed) {
+					anchorPoint = Selection.End;
+					activePoint = selStart;
+				}
+				else {
+					anchorPoint = selStart;
+					activePoint = Selection.End;
+				}
+				//TODO: Call SelectAndMoveCaret() when ViewScrolloer.EnsureSpanVisible() has been implemented
+				//SelectAndMoveCaret(anchorPoint, activePoint);
+				Selection.Select(anchorPoint, activePoint);
+				Caret.EnsureVisible();
+			}
+			else
+				Caret.EnsureVisible();
+			return true;
+		}
+
+		bool IndentMultipleLines(ITextEdit ed, VirtualSnapshotSpan vspan) {
+			var currPos = vspan.Start.Position;
+			while (currPos <= vspan.End.Position) {
+				if (vspan.Length != 0 && currPos == vspan.End.Position)
+					break;
+				var line = currPos.GetContainingLine();
+				var lineString = line.Extent.GetText();
+				int index = TryGetIndexOfFirstNonWhitespace(lineString);
+				if (index >= 0) {
+					var vpos = new VirtualSnapshotPoint(line.Start + index);
+					if (!IndentLine(ed, line, lineString, vpos, onlyAddIndentSize: true, isOverwrite: false))
+						return false;
+				}
+
+				if (line.LineNumber + 1 == line.Snapshot.LineCount)
+					break;
+				line = line.Snapshot.GetLineFromLineNumber(line.LineNumber + 1);
+				currPos = line.Start;
+			}
+			return true;
+		}
+
+		static int TryGetIndexOfFirstNonWhitespace(string s) {
+			for (int i = 0; i < s.Length; i++) {
+				var c = s[i];
+				if (c != '\t' && c != ' ')
+					return i;
+			}
+			return -1;
+		}
+
+		int GetNextIndentedVisualColumn(int visualColumn) {
+			int indentSize = Options.GetIndentSize();
+			return (visualColumn + indentSize) / indentSize * indentSize;
+		}
+
+		int ToVisualColumn(string line, int virtualIndex) {
+			if (virtualIndex > line.Length)
+				return GetLengthOfLineWithTabsConvertedToSpaces(line, line.Length) + virtualIndex - line.Length;
+			return GetLengthOfLineWithTabsConvertedToSpaces(line, virtualIndex);
+		}
+
+		// If tabs aren't converted to spaces, returns the input index or end of string if in virtual space.
+		// Else, it returns the index of the first character that should be replaced with a new
+		// indent string. Eg. the last spaces before the caret can be updated with tabs if needed.
+		// [...]<sp><sp>| can be replaced with [...]<tab>|
+		int GetFirstWhitespaceIndexForIndentReplace(string s, int index) {
+			if (index >= s.Length)
+				index = s.Length;
+			if (Options.IsConvertTabsToSpacesEnabled())
+				return index;
+			while (index > 0 && s[index - 1] == ' ')
+				index--;
+			return index;
 		}
 
 		public bool InsertNewLine() {
@@ -1518,10 +1675,6 @@ namespace dnSpy.Text.Editor.Operations {
 		}
 
 		public bool TransposeWord() {
-			return true;//TODO:
-		}
-
-		public bool Unindent() {
 			return true;//TODO:
 		}
 
