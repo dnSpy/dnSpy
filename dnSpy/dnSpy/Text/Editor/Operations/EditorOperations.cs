@@ -1320,15 +1320,17 @@ namespace dnSpy.Text.Editor.Operations {
 		public void ResetSelection() => Selection.Clear();
 
 		public void ScrollColumnLeft() {
-			var wpfView = TextView as IWpfTextView;
-			if (wpfView != null)
-				wpfView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfView.FormattedLineSource.ColumnWidth);
+			var wpfTextView = TextView as IWpfTextView;
+			Debug.Assert(wpfTextView != null);
+			if (wpfTextView != null)
+				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
 		public void ScrollColumnRight() {
-			var wpfView = TextView as IWpfTextView;
-			if (wpfView != null)
-				wpfView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfView.FormattedLineSource.ColumnWidth);
+			var wpfTextView = TextView as IWpfTextView;
+			Debug.Assert(wpfTextView != null);
+			if (wpfTextView != null)
+				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
 		public void ScrollDownAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(ScrollDirection.Down);
@@ -1530,37 +1532,37 @@ namespace dnSpy.Text.Editor.Operations {
 		IWpfTextView GetZoomableView() {
 			if (!Roles.Contains(PredefinedTextViewRoles.Zoomable))
 				return null;
-			var wpfView = TextView as IWpfTextView;
-			Debug.Assert(wpfView != null);
-			return wpfView;
+			var wpfTextView = TextView as IWpfTextView;
+			Debug.Assert(wpfTextView != null);
+			return wpfTextView;
 		}
 
-		void SetZoom(IWpfTextView wpfView, double newZoom) {
+		void SetZoom(IWpfTextView wpfTextView, double newZoom) {
 			if (newZoom < ZoomConstants.MinZoom || newZoom > ZoomConstants.MaxZoom)
 				return;
 			// VS writes to the global options, instead of the text view's options
-			wpfView.Options.GlobalOptions.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, newZoom);
+			wpfTextView.Options.GlobalOptions.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, newZoom);
 		}
 
 		public void ZoomIn() {
-			var wpfView = GetZoomableView();
-			if (wpfView == null)
+			var wpfTextView = GetZoomableView();
+			if (wpfTextView == null)
 				return;
-			SetZoom(wpfView, wpfView.ZoomLevel * ZoomConstants.ScalingFactor);
+			SetZoom(wpfTextView, wpfTextView.ZoomLevel * ZoomConstants.ScalingFactor);
 		}
 
 		public void ZoomOut() {
-			var wpfView = GetZoomableView();
-			if (wpfView == null)
+			var wpfTextView = GetZoomableView();
+			if (wpfTextView == null)
 				return;
-			SetZoom(wpfView, wpfView.ZoomLevel / ZoomConstants.ScalingFactor);
+			SetZoom(wpfTextView, wpfTextView.ZoomLevel / ZoomConstants.ScalingFactor);
 		}
 
 		public void ZoomTo(double zoomLevel) {
-			var wpfView = GetZoomableView();
-			if (wpfView == null)
+			var wpfTextView = GetZoomableView();
+			if (wpfTextView == null)
 				return;
-			SetZoom(wpfView, zoomLevel);
+			SetZoom(wpfTextView, zoomLevel);
 		}
 	}
 }
