@@ -214,108 +214,108 @@
     <value>Недопустимый GUID</value>
   </data>
   <data name="CmdLineAssembly" xml:space="preserve">
-    <value>assembly</value>
+    <value>сборка</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>assembly search path. Paths can be separated with '{0}' or you can use multiple --asm-path's</value>
+    <value>путь поиска сборок. Пути могут быть разделены с помощью '{0}' или вы можете использовать несколько --asm-path</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
-    <value>decompile an assembly from the GAC. Use full assembly name to use an exact version.</value>
+    <value>декомпилировать сборку из глобального кэша сборок. Используйте полное имя сборки, чтобы использовать точную версию.</value>
   </data>
   <data name="CmdLineDescription_Language" xml:space="preserve">
-    <value>set language, default is C#. Guids can be used.</value>
+    <value>изменить язык, по умолчанию C#. Можно использовать идентификаторы GUID.</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
-    <value>decompile the member with metadata token N to stdout</value>
+    <value>декомпилировать член с токеном N метаданных в stdout</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
-    <value>don't decompile baml to xaml</value>
+    <value>не декомпилировать baml в xaml</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
-    <value>don't use the GAC to look up assemblies. Useful with --no-stdlib</value>
+    <value>не использовать GAC для поиска сборок. Полезно с --no-stdlib</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
-    <value>don't unpack resources</value>
+    <value>не распаковывать ресурсы</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
-    <value>don't create .resx files</value>
+    <value>не создавать .resx файлы</value>
   </data>
   <data name="CmdLineDescription_NoSLN" xml:space="preserve">
-    <value>don't create a .sln file</value>
+    <value>не создавать .sln файл</value>
   </data>
   <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
-    <value>projects don't reference mscorlib</value>
+    <value>проекты не ссылаются на mscorlib</value>
   </data>
   <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
-    <value>number of worker threads. Default is to use one thread per CPU core</value>
+    <value>число рабочих потоков. По умолчанию - использовать один поток на каждое ядро процессора</value>
   </data>
   <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
-    <value>output directory</value>
+    <value>выходной каталог</value>
   </data>
   <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
-    <value>project guid</value>
+    <value>Идентификатор guid проекта</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>recursive search for .NET files to decompile</value>
+    <value>рекурсивный поиск файлов .NET для декомпиляции</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
-    <value>name of the .sln file</value>
+    <value>имя файла решения</value>
   </data>
   <data name="CmdLineDescription_Type1" xml:space="preserve">
-    <value>decompile the type with the specified name to stdout. Either Namespace.Name or Name, case insensitive</value>
+    <value>декомпилировать тип с указанным именем в stdout. Или Namespace.Имя или Имя, без учета регистра</value>
   </data>
   <data name="CmdLineDescription_Type2" xml:space="preserve">
-    <value>same as -t</value>
+    <value>так же, как -t</value>
   </data>
   <data name="CmdLineDescription_UserGAC" xml:space="preserve">
-    <value>user GAC path. Paths can be separated with '{0}' or you can use multiple --user-gac's</value>
+    <value>пользовательский путь GAC. Пути могут быть разделены с '{0}' или вы можете использовать несколько --user-gac</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Visual Studio version, 2005, 2008, ..., {0}</value>
+    <value>Visual Studio версия, 2005, 2008, ..., {0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
-    <value>lang</value>
+    <value>язык</value>
   </data>
   <data name="CmdLineName" xml:space="preserve">
-    <value>name</value>
+    <value>имя</value>
   </data>
   <data name="CmdLineOutputDir" xml:space="preserve">
-    <value>outdir</value>
+    <value>выходная директория</value>
   </data>
   <data name="CmdLinePath" xml:space="preserve">
-    <value>path</value>
+    <value>путь</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
-    <value>Decompiles all .NET files in the above directory and saves files to C:\out\path</value>
+    <value>Декомпилирует все файлы .NET в каталоге выше, и сохраняет файлы в C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
-    <value>Decompiles all .NET files in the above directory and all sub directories</value>
+    <value>Декомпилирует все файлы .NET в каталоге выше и во всех подкаталогах</value>
   </data>
   <data name="ExampleDescription3" xml:space="preserve">
-    <value>Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path</value>
+    <value>Декомпилирует все файлы .NET *.dll в каталоге выше и сохраняет файлы в C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>Decompiles the member with token 0x06000123</value>
+    <value>Декомпилирует член с маркером 0x06000123</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
-    <value>Decompiles System.Int32 from mscorlib</value>
+    <value>Декомпилирует System.Int32 из mscorlib</value>
   </data>
   <data name="ExamplesHeader" xml:space="preserve">
-    <value>Examples:</value>
+    <value>Примеры:</value>
   </data>
   <data name="UsageHeader" xml:space="preserve">
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
   </data>
   <data name="CmdLineDescription_NoColor" xml:space="preserve">
-    <value>don't colorize the text</value>
+    <value>не использовать цветной текст</value>
   </data>
   <data name="CmdLineDescription_Spaces" xml:space="preserve">
-    <value>Size of a tab in spaces or 0 to use one tab</value>
+    <value>Размер табуляции в пробелах или 0 для использования одной табуляции</value>
   </data>
   <data name="InvalidSpacesArgument" xml:space="preserve">
-    <value>Number of spaces must be between {0} and {1}</value>
+    <value>Количество пробелов должно быть между {0} и {1}</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing argument</value>
+    <value>Отсутствует аргумент</value>
   </data>
 </root>

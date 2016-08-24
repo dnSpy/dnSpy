@@ -127,16 +127,16 @@
     <value>В_ыключить оптимизатор JIT-компиляции</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>Enable _JIT Compile Tracking</value>
+    <value>Включить отслеживание компиляции _JIT</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
-    <value>Proc_essor Arch Specified</value>
+    <value>Указана архитектура проц_ессора</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
     <value>Открытый _ключ</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>_Retargetable</value>
+    <value>Перенаправляемый</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
     <value>Тип _содержимого</value>
@@ -518,7 +518,7 @@
     <value>Записать {0}.{1}</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
-    <value>32-Bit Preferred</value>
+    <value>Предпочтительно 32-бит</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitReqd" xml:space="preserve">
     <value>Требуется 32-bit</value>
@@ -536,7 +536,7 @@
     <value>Подписана сильным именем</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_TrackDebugData" xml:space="preserve">
-    <value>Track Debug Data</value>
+    <value>Отслеживать отладочные данные</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
     <value>Заголовок Cor20</value>
@@ -557,7 +557,7 @@
     <value>Реализация</value>
   </data>
   <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>_BestFit</value>
+    <value>_Лучшее Совпадение</value>
   </data>
   <data name="ImplMap_CallingConvention" xml:space="preserve">
     <value>Вызо_в</value>
@@ -605,10 +605,10 @@
     <value>Coo_kie</value>
   </data>
   <data name="MarshalType_Data" xml:space="preserve">
-    <value>_Data</value>
+    <value>_Данные</value>
   </data>
   <data name="MarshalType_ElemType" xml:space="preserve">
-    <value>Elem_Type</value>
+    <value>Тип_элемента</value>
   </data>
   <data name="MarshalType_Enable" xml:space="preserve">
     <value>Прим_енить</value>
@@ -623,25 +623,25 @@
     <value>_ГУИД</value>
   </data>
   <data name="MarshalType_NativeType" xml:space="preserve">
-    <value>_NativeType</value>
+    <value>_НативныйТип</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
-    <value>nothing</value>
+    <value>ничего</value>
   </data>
   <data name="MarshalType_NumElems" xml:space="preserve">
-    <value>_NumElems</value>
+    <value>_КолвоЭлементов</value>
   </data>
   <data name="MarshalType_ParamIndex" xml:space="preserve">
-    <value>ParamIndex</value>
+    <value>ИндексПараметра</value>
   </data>
   <data name="MarshalType_ParamIndex2" xml:space="preserve">
-    <value>_ParamIndex</value>
+    <value>_ИндексПараметра</value>
   </data>
   <data name="MarshalType_ParamNum" xml:space="preserve">
-    <value>_ParamNum</value>
+    <value>_НомерПараметра</value>
   </data>
   <data name="MarshalType_Reserved" xml:space="preserve">
-    <value>_Reserved</value>
+    <value>_Зарезервировано</value>
   </data>
   <data name="MarshalType_Size" xml:space="preserve">
     <value>_Размер</value>
@@ -701,16 +701,16 @@
     <value>Метод не может быть пустым</value>
   </data>
   <data name="MethodInstantiationTypesTab" xml:space="preserve">
-    <value>Method Instantiation Types</value>
+    <value>Типы методов создания экземпляров</value>
   </data>
   <data name="MethodSig_CallingConv" xml:space="preserve">
     <value>Вызов</value>
   </data>
   <data name="MethodSig_ExplicitThis" xml:space="preserve">
-    <value>E_xplicitThis</value>
+    <value>Я_вноеЭто</value>
   </data>
   <data name="MethodSig_HasThis" xml:space="preserve">
-    <value>_HasThis</value>
+    <value>_ЕстьЭто</value>
   </data>
   <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
     <value>Типы параметров метода</value>
@@ -719,7 +719,7 @@
     <value>Типы параметров VarArg метода</value>
   </data>
   <data name="MethodSig_NumGenerics" xml:space="preserve">
-    <value># Generic_s</value>
+    <value># Общая_строка</value>
   </data>
   <data name="MethodSig_ReturnType" xml:space="preserve">
     <value>Возвращаем_ый тип...</value>
@@ -761,7 +761,7 @@
     <value>_In</value>
   </data>
   <data name="ParamDef_Flags_Optional" xml:space="preserve">
-    <value>O_ptional</value>
+    <value>О_пциональный</value>
   </data>
   <data name="ParamDef_Flags_Out" xml:space="preserve">
     <value>O_ut</value>
@@ -770,7 +770,7 @@
     <value>_Имя</value>
   </data>
   <data name="ParamDef_Sequence" xml:space="preserve">
-    <value>_Sequence</value>
+    <value>_Последовательность</value>
   </data>
   <data name="ParamDef_Sequence_ToolTip" xml:space="preserve">
     <value>Последовательность 0 - возвращаемый параметр, последовательность 1 - первый параметр, и т.д.</value>
@@ -779,7 +779,7 @@
     <value>param({0})</value>
   </data>
   <data name="ParameterReturn" xml:space="preserve">
-    <value>param(return)</value>
+    <value>параметр(возврат)</value>
   </data>
   <data name="Parameter_DefaultValueInfo" xml:space="preserve">
     <value>Значение по умолчанию для этого параметра</value>
@@ -812,16 +812,16 @@
     <value>Выберите тип</value>
   </data>
   <data name="RawCustomAttributeBlob" xml:space="preserve">
-    <value>Raw Blob</value>
+    <value>Сырой массив больших двоичных данных</value>
   </data>
   <data name="RawCustomAttributeBlob2" xml:space="preserve">
-    <value>&lt;raw blob&gt;</value>
+    <value>&lt; сырой массив двоичных данных &gt;</value>
   </data>
   <data name="RemoveAssembliesCommand" xml:space="preserve">
     <value>Удалить {0} сборок</value>
   </data>
   <data name="RemoveAssemblyCommand" xml:space="preserve">
-    <value>Remove Assembly</value>
+    <value>Удаленить сборку</value>
   </data>
   <data name="RemoveCharacter" xml:space="preserve">
     <value>R</value>
@@ -911,7 +911,7 @@
     <value>_ByRef</value>
   </data>
   <data name="TypeSigCreator_ByRef_ToolTip" xml:space="preserve">
-    <value>Convert type to a by-reference</value>
+    <value>Преобразовать тип в по-ссылке</value>
   </data>
   <data name="TypeSigCreator_Clear" xml:space="preserve">
     <value>Оч_истить</value>
@@ -974,7 +974,7 @@
     <value>Удалить последний добавленный тип</value>
   </data>
   <data name="TypeSigCreator_SZArray" xml:space="preserve">
-    <value>S_Z Array</value>
+    <value>S_Z массив</value>
   </data>
   <data name="TypeSigCreator_SZArray_ToolTip" xml:space="preserve">
     <value>Преобразовать тип в одномерный массив с нулевой нижней границей</value>
@@ -986,7 +986,7 @@
     <value>Добавить тип</value>
   </data>
   <data name="TypeSigCreator_Var" xml:space="preserve">
-    <value>_Var</value>
+    <value>_Переменная</value>
   </data>
   <data name="TypeSigCreator_Var_ToolTip" xml:space="preserve">
     <value>Добавить переменную универсального типа</value>
@@ -1112,31 +1112,31 @@
     <value>К_опировать все RVA</value>
   </data>
   <data name="CreateAnExceptionCatchType" xml:space="preserve">
-    <value>Create an Exception Catch Type</value>
+    <value>Создайте тип ловли исключений</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>Create Assembly Linked Resource...</value>
+    <value>Создание ресурса, слинкованного со сборкой...</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
-    <value>Create Assembly Linked Resource</value>
+    <value>Создание ресурса, слинкованного со сборкой</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
-    <value>Create System.Data.Bitmap/Icon Resource...</value>
+    <value>Создать ресурс System.Data.Bitmap/Icon...</value>
   </data>
   <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
-    <value>Create System.Data.Bitmap/Icon Resource</value>
+    <value>Создать ресурс System.Data.Bitmap/Icon</value>
   </data>
   <data name="CreateByteArrayResourceCommand" xml:space="preserve">
-    <value>Create Byte Array Resource...</value>
+    <value>Создать ресурс массива байтов...</value>
   </data>
   <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
-    <value>Create Byte Array Resource</value>
+    <value>Создать ресурса массива байтов</value>
   </data>
   <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
-    <value>Create File Linked Resource...</value>
+    <value>Создать ресурс, связанный с файлом...</value>
   </data>
   <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
-    <value>Create File Linked Resource</value>
+    <value>Создать ресурс, связанный с файлом</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
     <value>Создать файл ресурсов...</value>
@@ -1505,16 +1505,16 @@
     <value>Поток таблиц</value>
   </data>
   <data name="HexPasteMethodBodyCommand" xml:space="preserve">
-    <value>Hex Paste Method Body</value>
+    <value>Вставить шестнадцатеричное тело метода</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
-    <value>Hex Write Empty Body</value>
+    <value>Записать шестнадцатеричное пустое тело</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
-    <value>Hex Write 'return false' Body</value>
+    <value>Записать шестнадцатеричное "return false" тело</value>
   </data>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
-    <value>Hex Write 'return true' Body</value>
+    <value>Записать шестнадцатеричное "return true" тело</value>
   </data>
   <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
     <value>Заполнить {0} байтов @ {1:X8}</value>
@@ -1616,7 +1616,7 @@
     <value>Закрепленный</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
-    <value>MD Writer Options</value>
+    <value>Параметры записи MD</value>
   </data>
   <data name="MetadataTab" xml:space="preserve">
     <value>Метаданные</value>
@@ -1643,7 +1643,7 @@
     <value>_Инициализировать локальные переменные</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
-    <value>_Keep Old MaxStack</value>
+    <value>_Оставить старый максимальный стэк</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
     <value>Не пересчитывать значение MaxStack при сохранении файла</value>
@@ -1652,7 +1652,7 @@
     <value>_LocalVarSigTok</value>
   </data>
   <data name="MethodBody_MaxStack" xml:space="preserve">
-    <value>_MaxStack</value>
+    <value>_МаксимальныйСтак</value>
   </data>
   <data name="MethodBody_RVA" xml:space="preserve">
     <value>_RVA</value>
@@ -1730,7 +1730,7 @@
     <value>Оптими_зировать все инструкции</value>
   </data>
   <data name="Padding" xml:space="preserve">
-    <value>pad</value>
+    <value>Дополнить</value>
   </data>
   <data name="PasteRecordsCommand" xml:space="preserve">
     <value>_Вставить {0} записей @ {1:X8}, RID {2}</value>
@@ -1757,10 +1757,10 @@
     <value>Подпись</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
-    <value>Raw Save {0}</value>
+    <value>Сохранить {0} в двоичных данных</value>
   </data>
   <data name="RawSaveResourcesCommand" xml:space="preserve">
-    <value>Raw Save {0} resources</value>
+    <value>Сохранить {0} в двоичных данных</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
     <value>Raw Save {0} resources, use sub dirs</value>
@@ -2482,9 +2482,9 @@ Some obfuscators put data there</value>
     <value>Renaming of virtual events isn't supported: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual methods isn't supported: {0}</value>
+    <value>Переименование виртуальных методов не поддерживается: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual properties isn't supported: {0}</value>
+    <value>Переименование виртуальных свойств не поддерживается: {0}</value>
   </data>
 </root>

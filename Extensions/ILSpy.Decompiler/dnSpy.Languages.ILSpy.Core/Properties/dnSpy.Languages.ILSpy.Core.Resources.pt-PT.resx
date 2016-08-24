@@ -121,7 +121,7 @@
     <value>Adicionar usando declarações</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Always generate exception variables in catch blocks unless type is Object</value>
+    <value>Sempre gerar variáveis de exceção em blocos catch, a menos que o tipo seja Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>Ordem de descompilação</value>
@@ -196,7 +196,7 @@
     <value>Mostrar a documentação XML no código descompilado</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Sort custom attributes</value>
+    <value>Ordenar atributos personalizados</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Ordenar métodos, campos, propriedades, eventos e tipos</value>
@@ -208,6 +208,6 @@
     <value>Usar nomes de variáveis de símbolos de depuração, se disponível</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Order members in source code order</value>
+    <value>Ordenar membros em ordem de código fonte</value>
   </data>
 </root>

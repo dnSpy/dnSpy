@@ -2414,81 +2414,81 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Editor de Assembly</value>
   </data>
   <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
-    <value>Ctrl+Shift+E</value>
+    <value>CTRL + Shift + E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit {0} Code...</value>
+    <value>Edite código {0}...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
-    <value>Edit Code</value>
+    <value>Editar código</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
     <value>A Descompilar...</value>
   </data>
   <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
-    <value>Code</value>
+    <value>Código</value>
   </data>
   <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Descrição</value>
   </data>
   <data name="CompileDiagnostics_Header_File" xml:space="preserve">
     <value>Ficheiro</value>
   </data>
   <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
-    <value>Line</value>
+    <value>Linha</value>
   </data>
   <data name="Button_Compile" xml:space="preserve">
-    <value>Compile</value>
+    <value>Compilar</value>
   </data>
   <data name="StatusError" xml:space="preserve">
-    <value>Error</value>
+    <value>Erro</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
-    <value>Hidden</value>
+    <value>Oculto</value>
   </data>
   <data name="StatusInfo" xml:space="preserve">
     <value>Info</value>
   </data>
   <data name="StatusWarning" xml:space="preserve">
-    <value>Warning</value>
+    <value>Aviso</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (Ctrl+O)</value>
+    <value>Adicionar Referência de Assembly (CTRL + O)</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (GAC) (Ctrl+Shift+O)</value>
+    <value>Adicionar Referência de Assembly (GAC) (CTRL + Shift + O)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Couldn't add the assembly references.</value>
+    <value>Não foi possível adicionar referências de assembly.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
-    <value>Edit Method Code</value>
+    <value>Editar Código do Método</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>
+    <value>Adicionar e remover métodos 'estático' ou 'Shared' editados não é suportado: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>Couldn't find the edited method. Make sure you didn't add or remove 'static' or 'Shared' or changed the parameter types, return type or method name: {0}</value>
+    <value>Não foi possível encontrar o método editado. Certifique-se você não adicionou ou removeu 'static' ou 'Shared' ou mudou os tipos de parâmetros, o tipo de retorno ou o nome do método: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
-    <value>Couldn't find field: {0}</value>
+    <value>Não foi possível encontrar o campo: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
-    <value>Couldn't find method: {0}</value>
+    <value>Não foi possível encontrar o método: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
-    <value>Couldn't find the edited method's type: {0}</value>
+    <value>Não foi possível encontrar o tipo do método editado: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
-    <value>Couldn't find type: {0}</value>
+    <value>Não foi possível encontrar o tipo: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual events isn't supported: {0}</value>
+    <value>Renomeação de eventos virtuais não é suportado: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual methods isn't supported: {0}</value>
+    <value>Renomeação de métodos virtuais não é suportado: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual properties isn't supported: {0}</value>
+    <value>Renomeação de propriedades virtuais não é suportado: {0}</value>
   </data>
 </root>

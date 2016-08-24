@@ -121,7 +121,7 @@
     <value>Добавить определения using</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Always generate exception variables in catch blocks unless type is Object</value>
+    <value>Всегда создавать переменные исключения в блоках catch, если тип не Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>Порядок декомпиляции</value>
@@ -196,7 +196,7 @@
     <value>Показать документацию XML в декомпилированном коде</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Sort custom attributes</value>
+    <value>Сортировать свои атрибуты</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Сортировать методы, поля, свойства, события и типы</value>
@@ -208,6 +208,6 @@
     <value>Использовать имена переменных из отладочных символов, при наличии</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Order members in source code order</value>
+    <value>Сортировать члены, как в исходном коде</value>
   </data>
 </root>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddBreakpointCommand" xml:space="preserve">
-    <value>Доб_авить точку останова</value>
+    <value>_Добавить точку останова</value>
   </data>
   <data name="AddExceptionCommand" xml:space="preserve">
     <value>Добавить _Исключение</value>
@@ -1225,64 +1225,64 @@ HResult: 0x{3:X8}</value>
     <value>Точки останова</value>
   </data>
   <data name="DebugLoggerName" xml:space="preserve">
-    <value>Debug</value>
+    <value>Отладка</value>
   </data>
   <data name="ShowExceptionMessages" xml:space="preserve">
-    <value>_Exception Messages</value>
+    <value>_Сообщения о ошибках</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>Module _Load Messages</value>
+    <value>Сообщения _Загрузки модуля</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>Module _Unload Messages</value>
+    <value>Сообщения _Выгрузки модуля</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
-    <value>_Process Exit Messages</value>
+    <value>Сообщения выхода _процесса</value>
   </data>
   <data name="ShowProgramOutputMessages" xml:space="preserve">
-    <value>Program _Output</value>
+    <value>_Вывод программы</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>_Step Filtering Messages</value>
+    <value>_Шаг фильтрации сообщений</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>_Thread Exit Messages</value>
+    <value>Сообщения о выходе _потока</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
-    <value>MDA Messages</value>
+    <value>Сообщения MDA</value>
   </data>
   <data name="DebugLogAdditionalInformation" xml:space="preserve">
-    <value>Additional information: {0}</value>
+    <value>Дополнительная информация: {0}</value>
   </data>
   <data name="DebugLogExceptionHandled" xml:space="preserve">
-    <value>Exception thrown: '{0}' in {1}</value>
+    <value>Исключение: «{0}» в {1}</value>
   </data>
   <data name="DebugLogExceptionUnhandled" xml:space="preserve">
-    <value>An unhandled exception of type '{0}' occurred in {1}</value>
+    <value>В {1} произошло необработанное исключение типа '{0}'</value>
   </data>
   <data name="DebugLogExitProcess" xml:space="preserve">
-    <value>The program '{0}' has exited with code {1} (0x{1:x}).</value>
+    <value>Программа «{0}» завершилась с кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
-    <value>The thread 0x{0:x} has exited with code {1} (0x{1:x}).</value>
+    <value>Поток {0:x} завершился с кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Loaded '{3}'.</value>
+    <value>«{0}» ({1}: {2}): загружен «{3}».</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
-    <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
+    <value>Помощник управляемой отладки«{0}» обнаружил проблему в «{1}».</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
+    <value>«{0}» ({1}: {2}): выгружен «{3}».</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;no exception message&gt;"</value>
+    <value>«&lt; сообщение без исключения &gt;»</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset 0x{0}</value>
+    <value>Смещение IL 0x{0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>line {0} character {1}</value>
+    <value>линия {0} символ {1}</value>
   </data>
   <data name="GlyphToolTip_Location" xml:space="preserve">
     <value>Размещение</value>

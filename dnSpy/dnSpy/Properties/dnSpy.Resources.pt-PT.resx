@@ -937,49 +937,49 @@
     <value>Output</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All (Ctrl+L)</value>
+    <value>Limpar Tudo (CTRL + L)</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>_Show output from:</value>
+    <value>Mostrar saída de:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>Ativar/desativar Wrapping (CTRL + W, CTRL + E)</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
-    <value>Alt+2</value>
+    <value>Alt + 2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>_Output</value>
+    <value>Output</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>Guardar (CTRL + S)</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Clear Al_l</value>
+    <value>Apagar Tudo</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>CTRL + L</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Text Files</value>
+    <value>Ficheiros de Texto</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Show Line Numbers</value>
+    <value>Mostrar Números de Linha</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
     <value>CTRL +{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Show Timestamps</value>
+    <value>Mostrar Timestamps</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
-    <value>Ctrl+E, Ctrl+W</value>
+    <value>CTRL + E, CTRL + W</value>
   </data>
   <data name="ShortCutKeyCtrlF4" xml:space="preserve">
-    <value>Ctrl+F4</value>
+    <value>CTRL + F4</value>
   </data>
   <data name="ShortCutKeyShiftEsc" xml:space="preserve">
-    <value>Shift+Esc</value>
+    <value>Shift + Esc</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
     <value>Fechar</value>
@@ -994,49 +994,49 @@
     <value>Restaurar para baixo</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Background Image</value>
+    <value>Imagem de Fundo</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Code editor</value>
+    <value>Editor de Código</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
-    <value>Other text windows</value>
+    <value>Outras janelas de texto</value>
   </data>
   <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
-    <value>Main text viewer</value>
+    <value>Visualizador de texto principal</value>
   </data>
   <data name="BgImgDisplayName_Logger" xml:space="preserve">
-    <value>Log window</value>
+    <value>Janela de Log</value>
   </data>
   <data name="BgImgDisplayName_REPL" xml:space="preserve">
-    <value>REPL window</value>
+    <value>Janela REPL</value>
   </data>
   <data name="BgImgSettings_Direction" xml:space="preserve">
-    <value>Direction</value>
+    <value>Direção</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Horizontal Offset</value>
+    <value>Offset Horizontal</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Add paths to images and image folders, one path per line:</value>
+    <value>Adicione caminhos para imagens e pastas de imagem, um caminho por linha:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>Interval</value>
+    <value>Intervalo</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Max Height</value>
+    <value>Altura Máxima</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Max Width</value>
+    <value>Largura Máxima</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
-    <value>Opacity</value>
+    <value>Opacidade</value>
   </data>
   <data name="BgImgSettings_Placement" xml:space="preserve">
-    <value>Placement</value>
+    <value>Posicionamento</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Random Image</value>
+    <value>Imagem Aleatória</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -1045,64 +1045,64 @@
     <value>Zoom %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Show Images</value>
+    <value>Mostrar Imagens</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
-    <value>Stretch</value>
+    <value>Esticar</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Vertical Offset</value>
+    <value>Offset Vertical</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
-    <value>Bottom</value>
+    <value>Baixo</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Bottom Left</value>
+    <value>Inferior Esquerdo</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Bottom Right</value>
+    <value>Inferior Direito</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
-    <value>Center</value>
+    <value>Centro</value>
   </data>
   <data name="ImagePlacement_Left" xml:space="preserve">
-    <value>Left</value>
+    <value>Esquerda</value>
   </data>
   <data name="ImagePlacement_Right" xml:space="preserve">
-    <value>Right</value>
+    <value>Direita</value>
   </data>
   <data name="ImagePlacement_Top" xml:space="preserve">
-    <value>Top</value>
+    <value>Topo</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Top Left</value>
+    <value>Superior Esquerdo</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
-    <value>Top Right</value>
+    <value>Superior Direito</value>
   </data>
   <data name="StretchDirection_Both" xml:space="preserve">
-    <value>Both</value>
+    <value>Ambos</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Down Only</value>
+    <value>Abaixo Apenas</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Up Only</value>
+    <value>Acima Apenas</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
     <value>Imagens</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Bottom Margin %</value>
+    <value>Margem Inferior %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Left Margin %</value>
+    <value>Margem Esquerda %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Right Margin %</value>
+    <value>Margem Direita %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Top Margin %</value>
+    <value>Margem Superior %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>Localizar próxima (F3)</value>
@@ -1111,31 +1111,31 @@
     <value>Localizar anterior (Shift + F3)</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case (Alt+C)</value>
+    <value>Coincidir maiusculas/minúsculas (Alt + C)</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word (Alt+W)</value>
+    <value>Coincidir palavra inteira (Alt + W)</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all (Alt+A)</value>
+    <value>Substituir todos (Alt + A)</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next (Alt+R)</value>
+    <value>Substituir próximo (Alt + R)</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions (Alt+E)</value>
+    <value>Usar Expressões Regulares (Alt + E)</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Toggle to switch between find and replace modes</value>
+    <value>Alternar modos de 'localizar e substituir'</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Close (Esc)</value>
+    <value>Fechar (Esc)</value>
   </data>
   <data name="Search_NothingFound" xml:space="preserve">
-    <value>Nothing found</value>
+    <value>Nada encontrado</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Incremental Search</value>
+    <value>Pesquisa Incremental</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl + I</value>

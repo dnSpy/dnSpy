@@ -31,6 +31,7 @@ Russian:
 
 	Igor Besedin
 	Konctantin
+	Daniil Yarancev
 
 Portuguese:
 

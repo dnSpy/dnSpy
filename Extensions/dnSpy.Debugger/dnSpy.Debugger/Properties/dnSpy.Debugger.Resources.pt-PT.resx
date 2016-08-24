@@ -1221,64 +1221,64 @@ Tem certeza que deseja expandi-la?</value>
     <value>Ponto de interrupção</value>
   </data>
   <data name="DebugLoggerName" xml:space="preserve">
-    <value>Debug</value>
+    <value>Depurar</value>
   </data>
   <data name="ShowExceptionMessages" xml:space="preserve">
-    <value>_Exception Messages</value>
+    <value>Mensagens de Exceção</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>Module _Load Messages</value>
+    <value>Mensagens Carregar Módulo</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>Module _Unload Messages</value>
+    <value>Mensagens Descarregar Módulo</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
-    <value>_Process Exit Messages</value>
+    <value>Mensagens de Saída de Processo</value>
   </data>
   <data name="ShowProgramOutputMessages" xml:space="preserve">
-    <value>Program _Output</value>
+    <value>Output do Programa</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
     <value>_Step Filtering Messages</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>_Thread Exit Messages</value>
+    <value>Mensagens de saída thread</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
-    <value>MDA Messages</value>
+    <value>Mensagens MDA</value>
   </data>
   <data name="DebugLogAdditionalInformation" xml:space="preserve">
-    <value>Additional information: {0}</value>
+    <value>Informação adicional: {0}</value>
   </data>
   <data name="DebugLogExceptionHandled" xml:space="preserve">
-    <value>Exception thrown: '{0}' in {1}</value>
+    <value>Exceção lançada: '{0}' em {1}</value>
   </data>
   <data name="DebugLogExceptionUnhandled" xml:space="preserve">
-    <value>An unhandled exception of type '{0}' occurred in {1}</value>
+    <value>Ocorreu uma exceção sem tratamento do tipo '{0}' em {1}</value>
   </data>
   <data name="DebugLogExitProcess" xml:space="preserve">
-    <value>The program '{0}' has exited with code {1} (0x{1:x}).</value>
+    <value>O programa '{0}' foi encerrado com código {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
-    <value>The thread 0x{0:x} has exited with code {1} (0x{1:x}).</value>
+    <value>O segmento 0x{0:x} foi encerrado com código {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Loaded '{3}'.</value>
+    <value>'{0}' ({1}: {2}): Carregado '{3}'.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
-    <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
+    <value>Assistente de Depuração Gerenciado '{0}' detectou um problema em '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
+    <value>'{0}' ({1}: {2}): Descarregou '{3}'.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;no exception message&gt;"</value>
+    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset 0x{0}</value>
+    <value>Offset IL 0x{0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>line {0} character {1}</value>
+    <value>linha {0} caráter {1}</value>
   </data>
   <data name="GlyphToolTip_Location" xml:space="preserve">
     <value>Localização</value>

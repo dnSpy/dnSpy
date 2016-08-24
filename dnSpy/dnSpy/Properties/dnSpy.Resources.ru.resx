@@ -244,7 +244,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>П_олный экран</value>
+    <value>Полный экран</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
     <value>Shift+Alt+Enter</value>
@@ -936,52 +936,52 @@
     <value>_Wiki</value>
   </data>
   <data name="Window_Output" xml:space="preserve">
-    <value>Output</value>
+    <value>Вывод</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All (Ctrl+L)</value>
+    <value>Очистить все (Ctrl + L)</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>_Show output from:</value>
+    <value>_Показать вывод из:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>Переключить перенос слов (Ctrl + E, Ctrl + W)</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
-    <value>Alt+2</value>
+    <value>Alt + 2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>_Output</value>
+    <value>Вывод(_O)</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>Сохранить (Ctrl + S)</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Clear Al_l</value>
+    <value>Очистить всё</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Ctrl+L</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Text Files</value>
+    <value>Текстовые файлы</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Show Line Numbers</value>
+    <value>Показать номера строк</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Show Timestamps</value>
+    <value>Показать временные метки</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
-    <value>Ctrl+E, Ctrl+W</value>
+    <value>Ctrl + E, Ctrl + W</value>
   </data>
   <data name="ShortCutKeyCtrlF4" xml:space="preserve">
-    <value>Ctrl+F4</value>
+    <value>Ctrl + F4</value>
   </data>
   <data name="ShortCutKeyShiftEsc" xml:space="preserve">
-    <value>Shift+Esc</value>
+    <value>Shift + Esc</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
     <value>Закрыть</value>
@@ -996,115 +996,115 @@
     <value>Восстановить</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Background Image</value>
+    <value>Фоновое изображение</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Code editor</value>
+    <value>Редактор кода</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
-    <value>Other text windows</value>
+    <value>Другие текстовые окна</value>
   </data>
   <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
-    <value>Main text viewer</value>
+    <value>Средство просмотра основного текста</value>
   </data>
   <data name="BgImgDisplayName_Logger" xml:space="preserve">
-    <value>Log window</value>
+    <value>Окно лога</value>
   </data>
   <data name="BgImgDisplayName_REPL" xml:space="preserve">
-    <value>REPL window</value>
+    <value>Окно REPL</value>
   </data>
   <data name="BgImgSettings_Direction" xml:space="preserve">
-    <value>Direction</value>
+    <value>Направление</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Horizontal Offset</value>
+    <value>Горизонтальное смещение</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Add paths to images and image folders, one path per line:</value>
+    <value>Добавить путь к изображениям и папкам изображений, один путь в строке:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>Interval</value>
+    <value>интервал</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Max Height</value>
+    <value>Максимальная высота</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Max Width</value>
+    <value>Максимальная ширина</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
-    <value>Opacity</value>
+    <value>Непрозрачность</value>
   </data>
   <data name="BgImgSettings_Placement" xml:space="preserve">
-    <value>Placement</value>
+    <value>Размещение</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Random Image</value>
+    <value>Случайное изображение</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
     <value>Сброс</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
-    <value>Zoom %</value>
+    <value>Масштаб в %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Show Images</value>
+    <value>Показать изображения</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
-    <value>Stretch</value>
+    <value>Растяжение</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Vertical Offset</value>
+    <value>Вертикальное смещение</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
-    <value>Bottom</value>
+    <value>Снизу</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Bottom Left</value>
+    <value>Внизу слева</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Bottom Right</value>
+    <value>Внизу справа</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
-    <value>Center</value>
+    <value>Центр</value>
   </data>
   <data name="ImagePlacement_Left" xml:space="preserve">
-    <value>Left</value>
+    <value>Слева</value>
   </data>
   <data name="ImagePlacement_Right" xml:space="preserve">
-    <value>Right</value>
+    <value>Право</value>
   </data>
   <data name="ImagePlacement_Top" xml:space="preserve">
-    <value>Top</value>
+    <value>Вверх</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Top Left</value>
+    <value>Верхний левый</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
-    <value>Top Right</value>
+    <value>Верхний правый</value>
   </data>
   <data name="StretchDirection_Both" xml:space="preserve">
-    <value>Both</value>
+    <value>Оба</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Down Only</value>
+    <value>Только вниз</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Up Only</value>
+    <value>Только вверх</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
     <value>Изображения</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Bottom Margin %</value>
+    <value>Отступ снизу в %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Left Margin %</value>
+    <value>Отступ слева в %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Right Margin %</value>
+    <value>Отступ права в %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Top Margin %</value>
+    <value>Отступ сверху в %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>Искать следующее (F3)</value>
@@ -1113,31 +1113,31 @@
     <value>Искать предыдущее (Shift+F3)</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case (Alt+C)</value>
+    <value>С учетом регистра (Alt + C)</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word (Alt+W)</value>
+    <value>Совпадение всего слова (Alt + W)</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all (Alt+A)</value>
+    <value>Заменить все (Alt + A)</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next (Alt+R)</value>
+    <value>Замените следующий (Alt + R)</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions (Alt+E)</value>
+    <value>Испольовать регулярные выражения (Alt + E)</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Toggle to switch between find and replace modes</value>
+    <value>Переключите для переключения между режимами поиска и замены</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Close (Esc)</value>
+    <value>Закрыть (Esc)</value>
   </data>
   <data name="Search_NothingFound" xml:space="preserve">
-    <value>Nothing found</value>
+    <value>Ничего не найдено</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Incremental Search</value>
+    <value>Последовательный поиск</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>

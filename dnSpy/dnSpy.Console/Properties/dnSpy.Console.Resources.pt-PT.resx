@@ -217,105 +217,105 @@
     <value>assembly</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>assembly search path. Paths can be separated with '{0}' or you can use multiple --asm-path's</value>
+    <value>caminho de pesquisa de assembly. Caminhos podem ser separados com '{0}' ou você pode usar múltiplos --asm-caminho</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
-    <value>decompile an assembly from the GAC. Use full assembly name to use an exact version.</value>
+    <value>descompilar um assembly no GAC. Use o nome completo do assembly para usar uma versão exata.</value>
   </data>
   <data name="CmdLineDescription_Language" xml:space="preserve">
-    <value>set language, default is C#. Guids can be used.</value>
+    <value>definir línguagem, padrão é C#. GUIDs podem ser usados.</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
-    <value>decompile the member with metadata token N to stdout</value>
+    <value>descompilar o membro com o token de metadados N para stdout</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
-    <value>don't decompile baml to xaml</value>
+    <value>não descompile baml para xaml</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
-    <value>don't use the GAC to look up assemblies. Useful with --no-stdlib</value>
+    <value>não use o GAC para procurar os assemblies. Útil com --n-stdlib</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
-    <value>don't unpack resources</value>
+    <value>não descompacte recursos</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
-    <value>don't create .resx files</value>
+    <value>não crie ficheiros .resx</value>
   </data>
   <data name="CmdLineDescription_NoSLN" xml:space="preserve">
-    <value>don't create a .sln file</value>
+    <value>não criar um ficheiro .sln</value>
   </data>
   <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
-    <value>projects don't reference mscorlib</value>
+    <value>projetos não referenciam mscorlib</value>
   </data>
   <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
-    <value>number of worker threads. Default is to use one thread per CPU core</value>
+    <value>número de threads de trabalho. O padrão é usar um thread por núcleo de CPU</value>
   </data>
   <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
-    <value>output directory</value>
+    <value>diretório de saída</value>
   </data>
   <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
-    <value>project guid</value>
+    <value>guid do projeto</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>recursive search for .NET files to decompile</value>
+    <value>pesquisa recursiva de ficheiros .NET para descompilar</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
-    <value>name of the .sln file</value>
+    <value>nome do ficheiro .sln</value>
   </data>
   <data name="CmdLineDescription_Type1" xml:space="preserve">
-    <value>decompile the type with the specified name to stdout. Either Namespace.Name or Name, case insensitive</value>
+    <value>descompile o tipo com o nome especificado para stdout. Namespace.Nome ou Nome, diferencia maiusculas de minúsculas</value>
   </data>
   <data name="CmdLineDescription_Type2" xml:space="preserve">
-    <value>same as -t</value>
+    <value>mesmo que -t</value>
   </data>
   <data name="CmdLineDescription_UserGAC" xml:space="preserve">
-    <value>user GAC path. Paths can be separated with '{0}' or you can use multiple --user-gac's</value>
+    <value>caminho GAC do utilizador. Caminhos podem ser separados com '{0}' ou você pode usar múltiplos --user-gac</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Visual Studio version, 2005, 2008, ..., {0}</value>
+    <value>Versão de Visual Studio, 2005, 2008,..., {0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
     <value>lang</value>
   </data>
   <data name="CmdLineName" xml:space="preserve">
-    <value>name</value>
+    <value>nome</value>
   </data>
   <data name="CmdLineOutputDir" xml:space="preserve">
     <value>outdir</value>
   </data>
   <data name="CmdLinePath" xml:space="preserve">
-    <value>path</value>
+    <value>caminho</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
-    <value>Decompiles all .NET files in the above directory and saves files to C:\out\path</value>
+    <value>Descompila todos os ficheiros .NET no diretório acima e guarda os ficheiros em C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
-    <value>Decompiles all .NET files in the above directory and all sub directories</value>
+    <value>Descompila todos os ficheiros .NET no diretório acima e todos os sub-diretórios</value>
   </data>
   <data name="ExampleDescription3" xml:space="preserve">
-    <value>Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path</value>
+    <value>Descompila todos os ficheiros  *.dll .NET no diretório acima e guarda os ficheiros em C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>Decompiles the member with token 0x06000123</value>
+    <value>Decompila o membro com token 0x06000123</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
-    <value>Decompiles System.Int32 from mscorlib</value>
+    <value>Descompila System.Int32 em mscorlib</value>
   </data>
   <data name="ExamplesHeader" xml:space="preserve">
-    <value>Examples:</value>
+    <value>Exemplos:</value>
   </data>
   <data name="UsageHeader" xml:space="preserve">
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
   </data>
   <data name="CmdLineDescription_NoColor" xml:space="preserve">
-    <value>don't colorize the text</value>
+    <value>não colorir o texto</value>
   </data>
   <data name="CmdLineDescription_Spaces" xml:space="preserve">
-    <value>Size of a tab in spaces or 0 to use one tab</value>
+    <value>Tamanho de uma guia em espaços ou 0 para usar uma guia</value>
   </data>
   <data name="InvalidSpacesArgument" xml:space="preserve">
-    <value>Number of spaces must be between {0} and {1}</value>
+    <value>Número de espaços deve ser entre {0} e {1}</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing argument</value>
+    <value>Argumento em falta</value>
   </data>
 </root>
