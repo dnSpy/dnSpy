@@ -195,7 +195,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 
 ![hexeditor](images/hexeditor.png)
 
-### Metadata editor, click on a token or press Ctrl+Alt+D
+### Metadata editor, click on a token or press Ctrl+Shift+D
 
 ![md-ed1](images/md-ed1.png)
 
