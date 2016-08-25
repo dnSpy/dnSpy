@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Icon = "SaveModule", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
 	sealed class SaveModuleCommand : FileMenuHandler {
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
