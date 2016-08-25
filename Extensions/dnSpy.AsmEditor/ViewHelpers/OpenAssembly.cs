@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.MVVM;
@@ -29,18 +32,26 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			this.fileManager = fileManager;
 		}
 
-		public IDnSpyFile Open() {
+		public IDnSpyFile Open() => Open(false).FirstOrDefault();
+		public IDnSpyFile[] OpenMany() => Open(true);
+
+		IDnSpyFile[] Open(bool many) {
 			var dialog = new OpenFileDialog() {
 				Filter = PickFilenameConstants.DotNetAssemblyOrModuleFilter,
 				RestoreDirectory = true,
+				Multiselect = many,
 			};
 			if (dialog.ShowDialog() != DialogResult.OK)
-				return null;
-			if (string.IsNullOrEmpty(dialog.FileName))
-				return null;
+				return Array.Empty<IDnSpyFile>();
 
-			var info = DnSpyFileInfo.CreateFile(dialog.FileName);
-			return fileManager.TryGetOrCreate(info);
+			var list = new List<IDnSpyFile>(dialog.FileNames.Length);
+			foreach (var filename in dialog.FileNames) {
+				var info = DnSpyFileInfo.CreateFile(filename);
+				var file = fileManager.TryGetOrCreate(info);
+				if (file != null)
+					list.Add(file);
+			}
+			return list.ToArray();
 		}
 	}
 }

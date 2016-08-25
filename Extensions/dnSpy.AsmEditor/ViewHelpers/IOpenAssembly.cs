@@ -22,9 +22,15 @@ using dnSpy.Contracts.Files;
 namespace dnSpy.AsmEditor.ViewHelpers {
 	interface IOpenAssembly {
 		/// <summary>
-		/// Asks user to pick a file and returns it or null if user canceled.
+		/// Asks the user to pick a file and returns it or null if the user canceled.
 		/// </summary>
 		/// <returns></returns>
 		IDnSpyFile Open();
+
+		/// <summary>
+		/// Asks the user to pick files and returns them or an empty array if the user canceled.
+		/// </summary>
+		/// <returns></returns>
+		IDnSpyFile[] OpenMany();
 	}
 }

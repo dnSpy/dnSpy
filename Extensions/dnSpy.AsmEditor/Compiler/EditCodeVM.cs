@@ -374,10 +374,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		void AddAssemblyReference() {
 			if (!CanAddAssemblyReference)
 				return;
-			var module = openAssembly.Open()?.ModuleDef;
-			if (module == null)
-				return;
-			AddReferences(new[] { module });
+			var modules = openAssembly.OpenMany().Select(a => a.ModuleDef).Where(a => a != null).ToArray();
+			if (modules.Length != 0)
+				AddReferences(modules);
 		}
 
 		bool CanAddGacReference => CanCompile;
