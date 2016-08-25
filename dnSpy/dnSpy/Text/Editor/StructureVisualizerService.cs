@@ -205,8 +205,10 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextView.IsClosed)
 				return;
 			this.structureVisualizerServiceDataProvider = dataProvider ?? NullStructureVisualizerServiceDataProvider.Instance;
-			if (enabled)
+			if (enabled) {
+				ClearXPosCache();
 				RepaintAllLines();
+			}
 		}
 
 		void RepaintAllLines() {
