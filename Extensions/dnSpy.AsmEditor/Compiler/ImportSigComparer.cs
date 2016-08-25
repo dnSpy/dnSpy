@@ -1445,7 +1445,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			return true;
 		}
 
-		public bool Equals(CallingConventionSig a, CallingConventionSig b) {
+		public bool Equals(CallingConventionSig a, CallingConventionSig b) => Equals(a, b, true);
+
+		bool Equals(CallingConventionSig a, CallingConventionSig b, bool compareHasThisFlag) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -1454,7 +1456,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 			bool result;
 
-			if (a.GetCallingConvention() != b.GetCallingConvention())
+			var mask = compareHasThisFlag ? ~(CallingConvention)0 : ~(CallingConvention)0 & ~CallingConvention.HasThis;
+			if ((a.GetCallingConvention() & mask) != (b.GetCallingConvention() & mask))
 				result = false;
 			else {
 				switch (a.GetCallingConvention() & CallingConvention.Mask) {
@@ -1467,7 +1470,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				case CallingConvention.Property:
 				case CallingConvention.NativeVarArg:
 					MethodBaseSig ma = a as MethodBaseSig, mb = b as MethodBaseSig;
-					result = ma != null && mb != null && Equals(ma, mb);
+					result = ma != null && mb != null && Equals(ma, mb, compareHasThisFlag);
 					break;
 
 				case CallingConvention.Field:
@@ -1541,7 +1544,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MethodBaseSig a, MethodBaseSig b) {
+		public bool Equals(MethodBaseSig a, MethodBaseSig b) => Equals(a, b, true);
+
+		bool Equals(MethodBaseSig a, MethodBaseSig b, bool compareHasThisFlag) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -1549,7 +1554,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!recursionCounter.Increment())
 				return false;
 
-			bool result = a.GetCallingConvention() == b.GetCallingConvention() &&
+			var mask = compareHasThisFlag ? ~(CallingConvention)0 : ~(CallingConvention)0 & ~CallingConvention.HasThis;
+			bool result = (a.GetCallingConvention() & mask) == (b.GetCallingConvention() & mask) &&
 					(DontCompareReturnType || Equals(a.RetType, b.RetType)) &&
 					Equals(a.Params, b.Params) &&
 					(!a.Generic || a.GenParamCount == b.GenParamCount) &&
@@ -2037,7 +2043,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 
 			bool result = Equals_PropertyNames(a.Name, b.Name) &&
-					Equals(a.Type, b.Type) &&
+					// The mcs compiler doesn't set the HasThis flag even if it's an instance property so ignore it
+					// when comparing properties.
+					Equals(a.Type, b.Type, false) &&
 					(!ComparePropertyDeclaringType || Equals(a.DeclaringType, b.DeclaringType));
 
 			recursionCounter.Decrement();

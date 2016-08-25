@@ -63,6 +63,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly Dictionary<object, object> bodyDict;
 		readonly Dictionary<ImportedType, ExtraImportedTypeData> toExtraData;
 		readonly Dictionary<MethodDef, MethodDef> editedMethodsToFix;
+		readonly HashSet<MethodDef> usedMethods;
 		readonly HashSet<object> isStub;
 		ImportSigComparerOptions importSigComparerOptions;
 
@@ -92,6 +93,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.bodyDict = new Dictionary<object, object>();
 			this.toExtraData = new Dictionary<ImportedType, ExtraImportedTypeData>();
 			this.editedMethodsToFix = new Dictionary<MethodDef, MethodDef>();
+			this.usedMethods = new HashSet<MethodDef>();
 			this.isStub = new HashSet<object>();
 		}
 
@@ -466,6 +468,32 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
+		// Adds all methods of existing properties and events of a merged type to make sure
+		// the methods aren't accidentally used twice. Could happen if the compiler (eg. mcs)
+		// doesn't set the PropertyDef.Type's HasThis flag even if it's an instance property.
+		// Roslyn will set this flag, so our comparison would fail to match the two (now different)
+		// properties. This comparison has since been fixed.
+		void AddUsedMethods(ImportedType importedType) {
+			foreach (var p in importedType.TargetType.Properties) {
+				foreach (var m in p.GetMethods)
+					usedMethods.Add(m);
+				foreach (var m in p.SetMethods)
+					usedMethods.Add(m);
+				foreach (var m in p.OtherMethods)
+					usedMethods.Add(m);
+			}
+			foreach (var p in importedType.TargetType.Events) {
+				if (p.AddMethod != null)
+					usedMethods.Add(p.AddMethod);
+				if (p.InvokeMethod != null)
+					usedMethods.Add(p.InvokeMethod);
+				if (p.RemoveMethod != null)
+					usedMethods.Add(p.RemoveMethod);
+				foreach (var m in p.OtherMethods)
+					usedMethods.Add(m);
+			}
+		}
+
 		void InitializeTypes(IEnumerable<MergedImportedType> importedTypes) {
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
 
@@ -479,6 +507,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						importedType.NewFields.Add(Import(field));
 					foreach (var method in compiledType.Methods)
 						importedType.NewMethods.Add(Import(method));
+
+					AddUsedMethods(importedType);
 
 					// Import the properties and events after the methods have been created
 					foreach (var prop in compiledType.Properties)
@@ -516,6 +546,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						else
 							importedType.NewMethods.Add(Import(compiledMethod));
 					}
+
+					AddUsedMethods(importedType);
 
 					// Import the properties and events after the methods have been created
 					foreach (var compiledProp in compiledType.Properties) {
@@ -1093,13 +1125,32 @@ namespace dnSpy.AsmEditor.Compiler {
 			importedPropertyDef.Attributes = propDef.Attributes;
 			importedPropertyDef.Type = Import(propDef.Type);
 			importedPropertyDef.Constant = Import(propDef.Constant);
-			foreach (var m in propDef.GetMethods)
-				importedPropertyDef.GetMethods.Add(oldMethodToNewMethod[m]);
-			foreach (var m in propDef.SetMethods)
-				importedPropertyDef.SetMethods.Add(oldMethodToNewMethod[m]);
-			foreach (var m in propDef.OtherMethods)
-				importedPropertyDef.OtherMethods.Add(oldMethodToNewMethod[m]);
+			foreach (var m in propDef.GetMethods) {
+				var newMethod = TryGetMethod(m);
+				if (newMethod != null)
+					importedPropertyDef.GetMethods.Add(newMethod);
+			}
+			foreach (var m in propDef.SetMethods) {
+				var newMethod = TryGetMethod(m);
+				if (newMethod != null)
+					importedPropertyDef.SetMethods.Add(newMethod);
+			}
+			foreach (var m in propDef.OtherMethods) {
+				var newMethod = TryGetMethod(m);
+				if (newMethod != null)
+					importedPropertyDef.OtherMethods.Add(newMethod);
+			}
 			return importedPropertyDef;
+		}
+
+		MethodDef TryGetMethod(MethodDef method) {
+			if (method == null)
+				return null;
+			var m = oldMethodToNewMethod[method];
+			if (usedMethods.Contains(m))
+				return null;
+			usedMethods.Add(m);
+			return m;
 		}
 
 		EventDef Import(EventDef eventDef) {
@@ -1108,14 +1159,26 @@ namespace dnSpy.AsmEditor.Compiler {
 			var importedEventDef = targetModule.UpdateRowId(new EventDefUser(eventDef.Name, Import(eventDef.EventType), eventDef.Attributes));
 			oldEventToNewEvent[eventDef] = importedEventDef;
 			ImportCustomAttributes(importedEventDef, eventDef);
-			if (eventDef.AddMethod != null)
-				importedEventDef.AddMethod = oldMethodToNewMethod[eventDef.AddMethod];
-			if (eventDef.InvokeMethod != null)
-				importedEventDef.InvokeMethod = oldMethodToNewMethod[eventDef.InvokeMethod];
-			if (eventDef.RemoveMethod != null)
-				importedEventDef.RemoveMethod = oldMethodToNewMethod[eventDef.RemoveMethod];
-			foreach (var m in eventDef.OtherMethods)
-				importedEventDef.OtherMethods.Add(oldMethodToNewMethod[m]);
+			if (eventDef.AddMethod != null) {
+				var newMethod = TryGetMethod(eventDef.AddMethod);
+				if (newMethod != null)
+					importedEventDef.AddMethod = newMethod;
+			}
+			if (eventDef.InvokeMethod != null) {
+				var newMethod = TryGetMethod(eventDef.InvokeMethod);
+				if (newMethod != null)
+					importedEventDef.InvokeMethod = newMethod;
+			}
+			if (eventDef.RemoveMethod != null) {
+				var newMethod = TryGetMethod(eventDef.RemoveMethod);
+				if (newMethod != null)
+					importedEventDef.RemoveMethod = newMethod;
+			}
+			foreach (var m in eventDef.OtherMethods) {
+				var newMethod = TryGetMethod(m);
+				if (newMethod != null)
+					importedEventDef.OtherMethods.Add(newMethod);
+			}
 			return importedEventDef;
 		}
 
