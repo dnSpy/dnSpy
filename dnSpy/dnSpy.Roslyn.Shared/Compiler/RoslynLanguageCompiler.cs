@@ -63,7 +63,10 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 				documents.Add(CreateDocument(projectId, doc.NameNoExtension));
 
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
-				compilationOptions: CompilationOptions.WithOptimizationLevel(OptimizationLevel.Release).WithPlatform(GetPlatform(decompiledCodeResult.Platform)),
+				compilationOptions: CompilationOptions
+						.WithOptimizationLevel(OptimizationLevel.Release)
+						.WithPlatform(GetPlatform(decompiledCodeResult.Platform))
+						.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default),
 				parseOptions: ParseOptions,
 				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,
