@@ -144,6 +144,10 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Control(Key.NumPad0, TextEditorIds.ZoomReset.ToCommandInfo());
 		}
 
-		public CommandInfo? CreateFromTextInput(object target, string text) => TextEditorIds.TYPECHAR.ToCommandInfo(text);
+		public CommandInfo? CreateFromTextInput(object target, string text) {
+			if (text.Length == 0 || (text.Length == 1 && (text[0] == '\u001B' || text[0] == '\b')))
+				return null;
+			return TextEditorIds.TYPECHAR.ToCommandInfo(text);
+		}
 	}
 }
