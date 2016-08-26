@@ -125,41 +125,29 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:FindCommand2", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 10)]
-	sealed class FindInCodeContexMenuEntry : MenuItemCommand {
-		FindInCodeContexMenuEntry()
-			: base(ApplicationCommands.Find) {
+	abstract class DocumentViewerCommandTargetMenuItemBase : CommandTargetMenuItemBase {
+		protected DocumentViewerCommandTargetMenuItemBase(StandardIds cmdId)
+			: base(cmdId) {
 		}
 
-		public override bool IsVisible(IMenuItemContext context) =>
-			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
+		protected override ICommandTarget GetCommandTarget(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
+				return null;
+			return context.Find<IDocumentViewer>()?.TextView.CommandTarget;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:FindCommand2", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 10)]
+	sealed class FindInCodeContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
+		FindInCodeContexMenuEntry()
+			: base(StandardIds.Find) {
+		}
 	}
 
 	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
-	sealed class IncrementalSearchContexMenuEntry : MenuItemBase {
-		IncrementalSearchContexMenuEntry() {
-		}
-
-		public override bool IsVisible(IMenuItemContext context) => GetViewer(context) != null;
-
-		public override bool IsEnabled(IMenuItemContext context) {
-			var docViewer = GetViewer(context);
-			if (docViewer == null)
-				return false;
-			return docViewer.TextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.IncrementalSearch) == CommandTargetStatus.Handled;
-		}
-
-		public override void Execute(IMenuItemContext context) {
-			var docViewer = GetViewer(context);
-			if (docViewer == null)
-				return;
-			docViewer.TextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.IncrementalSearch);
-		}
-
-		IDocumentViewer GetViewer(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
-				return null;
-			return context.Find<IDocumentViewer>();
+	sealed class IncrementalSearchContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
+		IncrementalSearchContexMenuEntry()
+			: base(StandardIds.IncrementalSearch) {
 		}
 	}
 }
