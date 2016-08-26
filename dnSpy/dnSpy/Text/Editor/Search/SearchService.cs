@@ -273,6 +273,14 @@ namespace dnSpy.Text.Editor.Search {
 					CancelIncrementalSearch();
 					return CommandTargetStatus.Handled;
 				}
+				else if (group == CommandConstants.StandardGroup) {
+					switch ((StandardIds)cmdId) {
+					case StandardIds.IncrementalSearch:
+					case StandardIds.IncrementalSearchBackward:
+						// Make sure that our other handler (with less priority) handles these commands
+						return CommandTargetStatus.NotHandled;
+					}
+				}
 				CancelIncrementalSearch();
 			}
 
@@ -625,8 +633,8 @@ namespace dnSpy.Text.Editor.Search {
 				return;
 			}
 
-			UpdateSearchStringFromCaretPosition(false);
-			ShowSearchControl(SearchKind.Find, false);
+			UpdateSearchStringFromCaretPosition(canSearch: false);
+			ShowSearchControl(SearchKind.Find, canOverwriteSearchString: false);
 			FocusSearchStringTextBox();
 		}
 
@@ -637,16 +645,47 @@ namespace dnSpy.Text.Editor.Search {
 				return;
 			}
 
-			UpdateSearchStringFromCaretPosition(false);
-			ShowSearchControl(SearchKind.Replace, false);
+			UpdateSearchStringFromCaretPosition(canSearch: false);
+			ShowSearchControl(SearchKind.Replace, canOverwriteSearchString: false);
 			FocusSearchStringTextBox();
 		}
 
 		public void ShowIncrementalSearch(bool forward) {
+			var searchKind = forward ? SearchKind.IncrementalSearchForward : SearchKind.IncrementalSearchBackward;
+			if (IsSearchControlVisible && inIncrementalSearch && !wpfTextView.Selection.IsEmpty) {
+				var options = GetFindOptions(searchKind, forward);
+				var startingPosition = GetNextSearchPosition(wpfTextView.Selection.StreamSelectionSpan.SnapshotSpan, forward);
+				incrementalStartPosition = startingPosition;
+				ShowSearchControl(searchKind, canOverwriteSearchString: false);
+
+				isIncrementalSearchCaretMove = true;
+				try {
+					FindNextCore(options, startingPosition);
+				}
+				finally {
+					isIncrementalSearchCaretMove = false;
+				}
+				return;
+			}
+
 			SearchString = string.Empty;
 			wpfTextView.VisualElement.Focus();
 			incrementalStartPosition = wpfTextView.Caret.Position.BufferPosition;
-			ShowSearchControl(forward ? SearchKind.IncrementalSearchForward : SearchKind.IncrementalSearchBackward, false);
+			ShowSearchControl(searchKind, canOverwriteSearchString: false);
+		}
+
+		SnapshotPoint GetNextSearchPosition(SnapshotSpan span, bool forward) {
+			var snapshot = span.Snapshot;
+			if (forward) {
+				if (span.Start.Position == snapshot.Length)
+					return new SnapshotPoint(snapshot, 0);
+				return span.Start + 1;
+			}
+			else {
+				if (span.End.Position == 0)
+					return new SnapshotPoint(snapshot, snapshot.Length);
+				return span.End - 1;
+			}
 		}
 
 		public bool CanReplace => IsReplaceMode && !wpfTextView.Options.DoesViewProhibitUserInput();
@@ -957,7 +996,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (newSearchString == null)
 				return;
 
-			ShowSearchControl(SearchKind.Find, false);
+			ShowSearchControl(SearchKind.Find, canOverwriteSearchString: false);
 			// Don't focus the search control. Whoever has focus (most likely text editor)
 			// should keep the focus.
 
