@@ -35,7 +35,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
@@ -130,16 +130,35 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
+		sealed class MyDecompilerOutput : StringBuilderDecompilerOutput {
+			readonly object reference;
+			public Span? ReferenceSpan { get; private set; }
+
+			public MyDecompilerOutput(object reference) {
+				this.reference = reference;
+			}
+
+			public override void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
+				if (reference == this.reference && (flags & DecompilerReferenceFlags.Definition) != 0 && ReferenceSpan == null) {
+					int start = NextPosition;
+					base.Write(text, reference, flags, color);
+					ReferenceSpan = new Span(start, Length - start);
+				}
+				else
+					base.Write(text, reference, flags, color);
+			}
+		}
+
 		sealed class DecompileCodeState : AsyncStateBase {
-			public StringBuilderDecompilerOutput MainOutput { get; }
+			public MyDecompilerOutput MainOutput { get; }
 			public StringBuilderDecompilerOutput HiddenOutput { get; }
 			public DecompilationContext DecompilationContext { get; }
 
-			public DecompileCodeState() {
+			public DecompileCodeState(object referenceToEdit) {
 				DecompilationContext = new DecompilationContext {
 					CancellationToken = CancellationToken,
 				};
-				MainOutput = new StringBuilderDecompilerOutput();
+				MainOutput = new MyDecompilerOutput(referenceToEdit);
 				HiddenOutput = new StringBuilderDecompilerOutput();
 			}
 		}
@@ -153,11 +172,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			bool canCompile = false, canceled = false;
 			var assemblyReferences = Array.Empty<CompilerMetadataReference>();
 			string mainCode, hiddenCode;
+			var refSpan = new Span(0, 0);
 			try {
 				assemblyReferences = await DecompileAndGetRefsAsync(method);
 				mainCode = decompileCodeState.MainOutput.ToString();
 				hiddenCode = decompileCodeState.HiddenOutput.ToString();
 				canCompile = true;
+				if (decompileCodeState.MainOutput.ReferenceSpan != null)
+					refSpan = decompileCodeState.MainOutput.ReferenceSpan.Value;
 			}
 			catch (OperationCanceledException) {
 				canceled = true;
@@ -187,7 +209,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			Documents.AddRange(codeDocs);
 			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
 			foreach (var doc in Documents) {
-				doc.TextView.MoveCaretTo(0, 0);
+				if (doc.NameNoExtension == MAIN_CODE_NAME && refSpan.End <= doc.TextView.TextSnapshot.Length) {
+					doc.TextView.Caret.MoveTo(new SnapshotPoint(doc.TextView.TextSnapshot, refSpan.Start));
+					doc.TextView.Caret.EnsureVisible();
+				}
+				else
+					doc.TextView.Caret.MoveTo(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
 				doc.TextView.Selection.Clear();
 			}
 
@@ -212,7 +239,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Debug.Assert(decompileCodeState == null);
 			if (decompileCodeState != null)
 				throw new InvalidOperationException();
-			var state = new DecompileCodeState();
+			var state = new DecompileCodeState(method);
 			decompileCodeState = state;
 
 			return Task.Run(() => {

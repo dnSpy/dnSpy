@@ -18,11 +18,9 @@
 */
 
 using System;
-using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_EDITCODE)]
