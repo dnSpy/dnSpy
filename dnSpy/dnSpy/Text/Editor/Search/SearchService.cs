@@ -235,7 +235,13 @@ namespace dnSpy.Text.Editor.Search {
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
 
-			bool wasInIncrementalSearch = inIncrementalSearch;
+			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL) {
+				if (inIncrementalSearch)
+					wpfTextView.Selection.Clear();
+				CloseSearchControl();
+				return CommandTargetStatus.Handled;
+			}
+
 			if (inIncrementalSearch) {
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
@@ -251,15 +257,23 @@ namespace dnSpy.Text.Editor.Search {
 						else
 							CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
+
+					case TextEditorIds.TAB:
+						SetIncrementalSearchString(SearchString + "\t");
+						return CommandTargetStatus.Handled;
+
+					case TextEditorIds.RETURN:
+						CancelIncrementalSearch();
+						return CommandTargetStatus.Handled;
 					}
 				}
+				else if (group == CommandConstants.TextReferenceGroup && (cmdId == (int)TextReferenceIds.FollowReference || cmdId == (int)TextReferenceIds.MoveToNextReference)) {
+					// HACK: This search service shouldn't know about these commands but there's no way for
+					// the text ref command handler to know that we're in incremental search mode either.
+					CancelIncrementalSearch();
+					return CommandTargetStatus.Handled;
+				}
 				CancelIncrementalSearch();
-			}
-			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL) {
-				if (wasInIncrementalSearch)
-					wpfTextView.Selection.Clear();
-				CloseSearchControl();
-				return CommandTargetStatus.Handled;
 			}
 
 			if (!searchControl.IsKeyboardFocusWithin)
@@ -405,7 +419,6 @@ namespace dnSpy.Text.Editor.Search {
 		void CancelIncrementalSearch() {
 			if (!inIncrementalSearch)
 				return;
-			CleanUpIncrementalSearch();
 			CloseSearchControl();
 		}
 
