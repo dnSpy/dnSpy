@@ -176,7 +176,7 @@ namespace dnSpy.Languages.ILSpy.VisualBasic {
 			}
 		}
 
-		public override bool ShowMember(IMemberRef member) => showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
+		public override bool ShowMember(IMemberRef member) => CSharpLanguage.ShowMember(member, showAllMembers, langSettings.Settings);
 
 		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
 			var astBuilder = state.AstBuilder;

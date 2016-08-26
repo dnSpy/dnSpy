@@ -423,7 +423,16 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
-		public override bool ShowMember(IMemberRef member) => showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
+		internal static bool ShowMember(IMemberRef member, bool showAllMembers, DecompilerSettings settings) {
+			if (showAllMembers)
+				return true;
+			var md = member as MethodDef;
+			if (md != null && (md.IsGetter || md.IsSetter || md.IsAddOn || md.IsRemoveOn))
+				return true;
+			return !AstBuilder.MemberIsHidden(member, settings);
+		}
+
+		public override bool ShowMember(IMemberRef member) => ShowMember(member, showAllMembers, langSettings.Settings);
 
 		public override bool CanDecompile(DecompilationType decompilationType) {
 			switch (decompilationType) {
