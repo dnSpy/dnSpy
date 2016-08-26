@@ -73,6 +73,7 @@ namespace dnSpy.Text.Editor {
 			TextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId, true);
+			TextViewHost.TextView.InitializeLocalZoomLevel();
 		}
 
 		public void Dispose() {

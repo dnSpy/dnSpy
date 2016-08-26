@@ -100,6 +100,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
+			wpfTextView.InitializeLocalZoomLevel();
 			SetNewDocument();
 		}
 

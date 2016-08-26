@@ -1689,11 +1689,14 @@ namespace dnSpy.Text.Editor.Operations {
 			return wpfTextView;
 		}
 
+		static bool UseGlobalZoomLevelOption(ITextView textView) => !textView.Options.IsOptionDefined(DefaultWpfViewOptions.ZoomLevelId, true);
+
 		void SetZoom(IWpfTextView wpfTextView, double newZoom) {
 			if (newZoom < ZoomConstants.MinZoom || newZoom > ZoomConstants.MaxZoom)
 				return;
 			// VS writes to the global options, instead of the text view's options
-			wpfTextView.Options.GlobalOptions.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, newZoom);
+			var options = UseGlobalZoomLevelOption(wpfTextView) ? wpfTextView.Options.GlobalOptions : wpfTextView.Options;
+			options.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, newZoom);
 		}
 
 		public void ZoomIn() {
