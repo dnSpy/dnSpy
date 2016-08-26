@@ -63,9 +63,9 @@ namespace dnSpy.Contracts.Command {
 		Replace,
 
 		/// <summary>
-		/// Incremental search (eg. Ctrl+I)
+		/// Forward incremental search (eg. Ctrl+I)
 		/// </summary>
-		IncrementalSearch,
+		IncrementalSearchForward,
 
 		/// <summary>
 		/// Backward incremental search (eg. Ctrl+Shift+I)

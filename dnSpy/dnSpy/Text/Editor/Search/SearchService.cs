@@ -275,7 +275,7 @@ namespace dnSpy.Text.Editor.Search {
 				}
 				else if (group == CommandConstants.StandardGroup) {
 					switch ((StandardIds)cmdId) {
-					case StandardIds.IncrementalSearch:
+					case StandardIds.IncrementalSearchForward:
 					case StandardIds.IncrementalSearchBackward:
 						// Make sure that our other handler (with less priority) handles these commands
 						return CommandTargetStatus.NotHandled;

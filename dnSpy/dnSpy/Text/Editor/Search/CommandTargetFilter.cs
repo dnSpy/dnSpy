@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor.Search {
 				switch ((StandardIds)cmdId) {
 				case StandardIds.Find:
 				case StandardIds.Replace:
-				case StandardIds.IncrementalSearch:
+				case StandardIds.IncrementalSearchForward:
 				case StandardIds.IncrementalSearchBackward:
 				case StandardIds.FindNext:
 				case StandardIds.FindPrevious:
@@ -62,7 +62,7 @@ namespace dnSpy.Text.Editor.Search {
 					searchService.ShowReplace();
 					return CommandTargetStatus.Handled;
 
-				case StandardIds.IncrementalSearch:
+				case StandardIds.IncrementalSearchForward:
 					searchService.ShowIncrementalSearch(true);
 					return CommandTargetStatus.Handled;
 

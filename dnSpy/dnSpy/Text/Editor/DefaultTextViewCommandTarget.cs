@@ -70,7 +70,7 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Unknown:
 				case StandardIds.Copy:
 				case StandardIds.Find:
-				case StandardIds.IncrementalSearch:
+				case StandardIds.IncrementalSearchForward:
 				case StandardIds.IncrementalSearchBackward:
 				case StandardIds.FindNext:
 				case StandardIds.FindPrevious:

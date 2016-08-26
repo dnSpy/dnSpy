@@ -145,9 +145,9 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	}
 
 	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]
-	sealed class IncrementalSearchContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
-		IncrementalSearchContexMenuEntry()
-			: base(StandardIds.IncrementalSearch) {
+	sealed class IncrementalSearchForwardContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
+		IncrementalSearchForwardContexMenuEntry()
+			: base(StandardIds.IncrementalSearchForward) {
 		}
 	}
 }

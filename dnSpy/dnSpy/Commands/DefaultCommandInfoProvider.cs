@@ -39,7 +39,7 @@ namespace dnSpy.Commands {
 
 			yield return CommandShortcut.Control(Key.F, StandardIds.Find.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.H, StandardIds.Replace.ToCommandInfo());
-			yield return CommandShortcut.Control(Key.I, StandardIds.IncrementalSearch.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.I, StandardIds.IncrementalSearchForward.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.I, StandardIds.IncrementalSearchBackward.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.F3, StandardIds.FindNext.ToCommandInfo());
 			yield return CommandShortcut.Shift(Key.F3, StandardIds.FindPrevious.ToCommandInfo());

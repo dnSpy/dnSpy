@@ -64,9 +64,9 @@ namespace dnSpy.AsmEditor.Compiler {
 	}
 
 	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 40)]
-	sealed class IncrementalSearchContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
-		IncrementalSearchContexMenuEntry()
-			: base(StandardIds.IncrementalSearch) {
+	sealed class IncrementalSearchForwardContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
+		IncrementalSearchForwardContexMenuEntry()
+			: base(StandardIds.IncrementalSearchForward) {
 		}
 	}
 }
