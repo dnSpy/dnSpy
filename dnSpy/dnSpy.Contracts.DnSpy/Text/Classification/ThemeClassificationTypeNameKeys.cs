@@ -903,9 +903,44 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string StructureVisualizerType = "StructureVisualizerType";
 
 		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerValueType"/>
+		/// </summary>
+		public const string StructureVisualizerValueType = "StructureVisualizerValueType";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerInterface"/>
+		/// </summary>
+		public const string StructureVisualizerInterface = "StructureVisualizerInterface";
+
+		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerMethod"/>
 		/// </summary>
 		public const string StructureVisualizerMethod = "StructureVisualizerMethod";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerAccessor"/>
+		/// </summary>
+		public const string StructureVisualizerAccessor = "StructureVisualizerAccessor";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
+		/// </summary>
+		public const string StructureVisualizerAnonymousMethod = "StructureVisualizerAnonymousMethod";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerConstructor"/>
+		/// </summary>
+		public const string StructureVisualizerConstructor = "StructureVisualizerConstructor";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerDestructor"/>
+		/// </summary>
+		public const string StructureVisualizerDestructor = "StructureVisualizerDestructor";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerOperator"/>
+		/// </summary>
+		public const string StructureVisualizerOperator = "StructureVisualizerOperator";
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerConditional"/>
@@ -951,6 +986,26 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.StructureVisualizerFault"/>
 		/// </summary>
 		public const string StructureVisualizerFault = "StructureVisualizerFault";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerLock"/>
+		/// </summary>
+		public const string StructureVisualizerLock = "StructureVisualizerLock";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerUsing"/>
+		/// </summary>
+		public const string StructureVisualizerUsing = "StructureVisualizerUsing";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerFixed"/>
+		/// </summary>
+		public const string StructureVisualizerFixed = "StructureVisualizerFixed";
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerCase"/>
+		/// </summary>
+		public const string StructureVisualizerCase = "StructureVisualizerCase";
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerOther"/>

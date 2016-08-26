@@ -38,22 +38,40 @@ namespace dnSpy.Contracts.Decompiler {
 		BlockKind_None				= 0,
 		BlockKind_Namespace			= 0x00000100,
 		BlockKind_Type				= 0x00000200,
-		BlockKind_Method			= 0x00000300,
-		BlockKind_Conditional		= 0x00000400,
-		BlockKind_Loop				= 0x00000500,
-		BlockKind_Property			= 0x00000600,
-		BlockKind_Event				= 0x00000700,
-		BlockKind_Try				= 0x00000800,
-		BlockKind_Catch				= 0x00000900,
-		BlockKind_Filter			= 0x00000A00,
-		BlockKind_Finally			= 0x00000B00,
-		BlockKind_Fault				= 0x00000C00,
-		BlockKind_Other				= 0x00000D00,
+		BlockKind_ValueType			= 0x00000300,
+		BlockKind_Interface			= 0x00000400,
+		BlockKind_Method			= 0x00000500,
+		BlockKind_Accessor			= 0x00000600,
+		BlockKind_AnonymousMethod	= 0x00000700,
+		BlockKind_Constructor		= 0x00000800,
+		BlockKind_Destructor		= 0x00000900,
+		BlockKind_Operator			= 0x00000A00,
+		BlockKind_Conditional		= 0x00000B00,
+		BlockKind_Loop				= 0x00000C00,
+		BlockKind_Property			= 0x00000D00,
+		BlockKind_Event				= 0x00000E00,
+		BlockKind_Try				= 0x00000F00,
+		BlockKind_Catch				= 0x00001000,
+		BlockKind_Filter			= 0x00001100,
+		BlockKind_Finally			= 0x00001200,
+		BlockKind_Fault				= 0x00001300,
+		BlockKind_Lock				= 0x00001400,
+		BlockKind_Using				= 0x00001500,
+		BlockKind_Fixed				= 0x00001600,
+		BlockKind_Case				= 0x00001700,
+		BlockKind_Other				= 0x00001800,
 		// Update CodeBracesRangeFlagsHelper.ToBlockKind() if mask changes
 
 		NamespaceBraces				= BraceKind_CurlyBraces | BlockKind_Namespace,
 		TypeBraces					= BraceKind_CurlyBraces | BlockKind_Type,
+		ValueTypeBraces				= BraceKind_CurlyBraces | BlockKind_ValueType,
+		InterfaceBraces				= BraceKind_CurlyBraces | BlockKind_Interface,
 		MethodBraces				= BraceKind_CurlyBraces | BlockKind_Method,
+		AccessorBraces				= BraceKind_CurlyBraces | BlockKind_Accessor,
+		AnonymousMethodBraces		= BraceKind_CurlyBraces | BlockKind_AnonymousMethod,
+		ConstructorBraces			= BraceKind_CurlyBraces | BlockKind_Constructor,
+		DestructorBraces			= BraceKind_CurlyBraces | BlockKind_Destructor,
+		OperatorBraces				= BraceKind_CurlyBraces | BlockKind_Operator,
 		ConditionalBraces			= BraceKind_CurlyBraces | BlockKind_Conditional,
 		LoopBraces					= BraceKind_CurlyBraces | BlockKind_Loop,
 		PropertyBraces				= BraceKind_CurlyBraces | BlockKind_Property,
@@ -63,6 +81,10 @@ namespace dnSpy.Contracts.Decompiler {
 		FilterBraces				= BraceKind_CurlyBraces | BlockKind_Filter,
 		FinallyBraces				= BraceKind_CurlyBraces | BlockKind_Finally,
 		FaultBraces					= BraceKind_CurlyBraces | BlockKind_Fault,
+		LockBraces					= BraceKind_CurlyBraces | BlockKind_Lock,
+		UsingBraces					= BraceKind_CurlyBraces | BlockKind_Using,
+		FixedBraces					= BraceKind_CurlyBraces | BlockKind_Fixed,
+		CaseBraces					= BraceKind_CurlyBraces | BlockKind_Case,
 		OtherBlockBraces			= BraceKind_CurlyBraces | BlockKind_Other,
 
 		SingleQuotes				= BraceKind_SingleQuotes | BlockKind_None,
@@ -79,7 +101,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public static class CodeBracesRangeFlagsHelper {
 		const CodeBracesRangeFlags BraceKindMask = (CodeBracesRangeFlags)0x00000007;
-		const CodeBracesRangeFlags BlockKindMask = (CodeBracesRangeFlags)0x00000F00;
+		const CodeBracesRangeFlags BlockKindMask = (CodeBracesRangeFlags)0x00001F00;
 
 		/// <summary>
 		/// Extracts the brace kind

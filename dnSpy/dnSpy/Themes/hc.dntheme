@@ -32,7 +32,14 @@
 		<color name="findmatchhighlightmarker" bg="#FF008000" />
 		<color name="structurevisualizernamespace" fg="#FFFFFFFF" />
 		<color name="structurevisualizertype" fg="#FFFFFFFF" />
+		<color name="structurevisualizervaluetype" fg="#FFFFFFFF" />
+		<color name="structurevisualizerinterface" fg="#FFFFFFFF" />
 		<color name="structurevisualizermethod" fg="#FFFFFFFF" />
+		<color name="structurevisualizeraccessor" fg="#FFFFFFFF" />
+		<color name="structurevisualizeranonymousmethod" fg="#FFFFFFFF" />
+		<color name="structurevisualizerconstructor" fg="#FFFFFFFF" />
+		<color name="structurevisualizerdestructor" fg="#FFFFFFFF" />
+		<color name="structurevisualizeroperator" fg="#FFFFFFFF" />
 		<color name="structurevisualizerconditional" fg="#FFFFFFFF" />
 		<color name="structurevisualizerloop" fg="#FFFFFFFF" />
 		<color name="structurevisualizerproperty" fg="#FFFFFFFF" />
@@ -42,6 +49,10 @@
 		<color name="structurevisualizerfilter" fg="#FFFFFFFF" />
 		<color name="structurevisualizerfinally" fg="#FFFFFFFF" />
 		<color name="structurevisualizerfault" fg="#FFFFFFFF" />
+		<color name="structurevisualizerlock" fg="#FFFFFFFF" />
+		<color name="structurevisualizerusing" fg="#FFFFFFFF" />
+		<color name="structurevisualizerfixed" fg="#FFFFFFFF" />
+		<color name="structurevisualizercase" fg="#FFFFFFFF" />
 		<color name="structurevisualizerother" fg="#FFFFFFFF" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />

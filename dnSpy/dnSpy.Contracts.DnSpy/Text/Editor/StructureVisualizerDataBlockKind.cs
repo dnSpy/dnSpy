@@ -33,14 +33,49 @@ namespace dnSpy.Contracts.Text.Editor {
 		Namespace,
 
 		/// <summary>
-		/// Type
+		/// Reference Type
 		/// </summary>
 		Type,
+
+		/// <summary>
+		/// Value Type
+		/// </summary>
+		ValueType,
+
+		/// <summary>
+		/// Interface
+		/// </summary>
+		Interface,
 
 		/// <summary>
 		/// Method
 		/// </summary>
 		Method,
+
+		/// <summary>
+		/// Accessor
+		/// </summary>
+		Accessor,
+
+		/// <summary>
+		/// Anonymous Method
+		/// </summary>
+		AnonymousMethod,
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		Constructor,
+
+		/// <summary>
+		/// Destructor
+		/// </summary>
+		Destructor,
+
+		/// <summary>
+		/// Operator
+		/// </summary>
+		Operator,
 
 		/// <summary>
 		/// Conditional
@@ -73,7 +108,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		Catch,
 
 		/// <summary>
-		/// Catch filter
+		/// Catch Filter
 		/// </summary>
 		Filter,
 
@@ -86,6 +121,26 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Fault
 		/// </summary>
 		Fault,
+
+		/// <summary>
+		/// Lock
+		/// </summary>
+		Lock,
+
+		/// <summary>
+		/// Using
+		/// </summary>
+		Using,
+
+		/// <summary>
+		/// Fixed
+		/// </summary>
+		Fixed,
+
+		/// <summary>
+		/// Case
+		/// </summary>
+		Case,
 
 		/// <summary>
 		/// Other block kind

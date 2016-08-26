@@ -89,7 +89,14 @@ namespace dnSpy.Text.Editor {
 			this.lineColorInfos = new List<LineColorInfo> {
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerNamespace),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerType),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerValueType),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerInterface),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerMethod),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerAccessor),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerAnonymousMethod),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerConstructor),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerDestructor),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerOperator),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerConditional),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerLoop),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerProperty),
@@ -99,6 +106,10 @@ namespace dnSpy.Text.Editor {
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFilter),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFinally),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFault),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerLock),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerUsing),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFixed),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerCase),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerOther),
 			};
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -369,7 +380,14 @@ namespace dnSpy.Text.Editor {
 			switch (blockKind) {
 			case StructureVisualizerDataBlockKind.Namespace:	return ThemeClassificationTypeNameKeys.StructureVisualizerNamespace;
 			case StructureVisualizerDataBlockKind.Type:			return ThemeClassificationTypeNameKeys.StructureVisualizerType;
+			case StructureVisualizerDataBlockKind.ValueType:	return ThemeClassificationTypeNameKeys.StructureVisualizerValueType;
+			case StructureVisualizerDataBlockKind.Interface:	return ThemeClassificationTypeNameKeys.StructureVisualizerInterface;
 			case StructureVisualizerDataBlockKind.Method:		return ThemeClassificationTypeNameKeys.StructureVisualizerMethod;
+			case StructureVisualizerDataBlockKind.Accessor:		return ThemeClassificationTypeNameKeys.StructureVisualizerAccessor;
+			case StructureVisualizerDataBlockKind.AnonymousMethod:return ThemeClassificationTypeNameKeys.StructureVisualizerAnonymousMethod;
+			case StructureVisualizerDataBlockKind.Constructor:	return ThemeClassificationTypeNameKeys.StructureVisualizerConstructor;
+			case StructureVisualizerDataBlockKind.Destructor:	return ThemeClassificationTypeNameKeys.StructureVisualizerDestructor;
+			case StructureVisualizerDataBlockKind.Operator:		return ThemeClassificationTypeNameKeys.StructureVisualizerOperator;
 			case StructureVisualizerDataBlockKind.Conditional:	return ThemeClassificationTypeNameKeys.StructureVisualizerConditional;
 			case StructureVisualizerDataBlockKind.Loop:			return ThemeClassificationTypeNameKeys.StructureVisualizerLoop;
 			case StructureVisualizerDataBlockKind.Property:		return ThemeClassificationTypeNameKeys.StructureVisualizerProperty;
@@ -379,6 +397,10 @@ namespace dnSpy.Text.Editor {
 			case StructureVisualizerDataBlockKind.Filter:		return ThemeClassificationTypeNameKeys.StructureVisualizerFilter;
 			case StructureVisualizerDataBlockKind.Finally:		return ThemeClassificationTypeNameKeys.StructureVisualizerFinally;
 			case StructureVisualizerDataBlockKind.Fault:		return ThemeClassificationTypeNameKeys.StructureVisualizerFault;
+			case StructureVisualizerDataBlockKind.Lock:			return ThemeClassificationTypeNameKeys.StructureVisualizerLock;
+			case StructureVisualizerDataBlockKind.Using:		return ThemeClassificationTypeNameKeys.StructureVisualizerUsing;
+			case StructureVisualizerDataBlockKind.Fixed:		return ThemeClassificationTypeNameKeys.StructureVisualizerFixed;
+			case StructureVisualizerDataBlockKind.Case:			return ThemeClassificationTypeNameKeys.StructureVisualizerCase;
 			case StructureVisualizerDataBlockKind.Other:		return ThemeClassificationTypeNameKeys.StructureVisualizerOther;
 			default:
 				Debug.Fail($"Unknown block kind: {blockKind}");

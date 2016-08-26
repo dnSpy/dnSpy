@@ -149,20 +149,30 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		static StructureVisualizerDataBlockKind GetBlockKind(CodeBracesRangeFlags flags) {
 			switch (flags.ToBlockKind()) {
-			case CodeBracesRangeFlags.BlockKind_None:		return StructureVisualizerDataBlockKind.None;
-			case CodeBracesRangeFlags.BlockKind_Namespace:	return StructureVisualizerDataBlockKind.Namespace;
-			case CodeBracesRangeFlags.BlockKind_Type:		return StructureVisualizerDataBlockKind.Type;
-			case CodeBracesRangeFlags.BlockKind_Method:		return StructureVisualizerDataBlockKind.Method;
-			case CodeBracesRangeFlags.BlockKind_Conditional:return StructureVisualizerDataBlockKind.Conditional;
-			case CodeBracesRangeFlags.BlockKind_Loop:		return StructureVisualizerDataBlockKind.Loop;
-			case CodeBracesRangeFlags.BlockKind_Property:	return StructureVisualizerDataBlockKind.Property;
-			case CodeBracesRangeFlags.BlockKind_Event:		return StructureVisualizerDataBlockKind.Event;
-			case CodeBracesRangeFlags.BlockKind_Try:		return StructureVisualizerDataBlockKind.Try;
-			case CodeBracesRangeFlags.BlockKind_Catch:		return StructureVisualizerDataBlockKind.Catch;
-			case CodeBracesRangeFlags.BlockKind_Filter:		return StructureVisualizerDataBlockKind.Filter;
-			case CodeBracesRangeFlags.BlockKind_Finally:	return StructureVisualizerDataBlockKind.Finally;
-			case CodeBracesRangeFlags.BlockKind_Fault:		return StructureVisualizerDataBlockKind.Fault;
-			case CodeBracesRangeFlags.BlockKind_Other:		return StructureVisualizerDataBlockKind.Other;
+			case CodeBracesRangeFlags.BlockKind_Namespace:		return StructureVisualizerDataBlockKind.Namespace;
+			case CodeBracesRangeFlags.BlockKind_Type:			return StructureVisualizerDataBlockKind.Type;
+			case CodeBracesRangeFlags.BlockKind_ValueType:		return StructureVisualizerDataBlockKind.ValueType;
+			case CodeBracesRangeFlags.BlockKind_Interface:		return StructureVisualizerDataBlockKind.Interface;
+			case CodeBracesRangeFlags.BlockKind_Method:			return StructureVisualizerDataBlockKind.Method;
+			case CodeBracesRangeFlags.BlockKind_Accessor:		return StructureVisualizerDataBlockKind.Accessor;
+			case CodeBracesRangeFlags.BlockKind_AnonymousMethod:return StructureVisualizerDataBlockKind.AnonymousMethod;
+			case CodeBracesRangeFlags.BlockKind_Constructor:	return StructureVisualizerDataBlockKind.Constructor;
+			case CodeBracesRangeFlags.BlockKind_Destructor:		return StructureVisualizerDataBlockKind.Destructor;
+			case CodeBracesRangeFlags.BlockKind_Operator:		return StructureVisualizerDataBlockKind.Operator;
+			case CodeBracesRangeFlags.BlockKind_Conditional:	return StructureVisualizerDataBlockKind.Conditional;
+			case CodeBracesRangeFlags.BlockKind_Loop:			return StructureVisualizerDataBlockKind.Loop;
+			case CodeBracesRangeFlags.BlockKind_Property:		return StructureVisualizerDataBlockKind.Property;
+			case CodeBracesRangeFlags.BlockKind_Event:			return StructureVisualizerDataBlockKind.Event;
+			case CodeBracesRangeFlags.BlockKind_Try:			return StructureVisualizerDataBlockKind.Try;
+			case CodeBracesRangeFlags.BlockKind_Catch:			return StructureVisualizerDataBlockKind.Catch;
+			case CodeBracesRangeFlags.BlockKind_Filter:			return StructureVisualizerDataBlockKind.Filter;
+			case CodeBracesRangeFlags.BlockKind_Finally:		return StructureVisualizerDataBlockKind.Finally;
+			case CodeBracesRangeFlags.BlockKind_Fault:			return StructureVisualizerDataBlockKind.Fault;
+			case CodeBracesRangeFlags.BlockKind_Lock:			return StructureVisualizerDataBlockKind.Lock;
+			case CodeBracesRangeFlags.BlockKind_Using:			return StructureVisualizerDataBlockKind.Using;
+			case CodeBracesRangeFlags.BlockKind_Fixed:			return StructureVisualizerDataBlockKind.Fixed;
+			case CodeBracesRangeFlags.BlockKind_Case:			return StructureVisualizerDataBlockKind.Case;
+			case CodeBracesRangeFlags.BlockKind_Other:			return StructureVisualizerDataBlockKind.Other;
 			default:
 				Debug.Fail($"Unknown block kind: {flags.ToBlockKind()}");
 				return StructureVisualizerDataBlockKind.None;

@@ -201,7 +201,14 @@ namespace dnSpy.Contracts.Text {
 		FindMatchHighlightMarker,
 		StructureVisualizerNamespace,
 		StructureVisualizerType,
+		StructureVisualizerValueType,
+		StructureVisualizerInterface,
 		StructureVisualizerMethod,
+		StructureVisualizerAccessor,
+		StructureVisualizerAnonymousMethod,
+		StructureVisualizerConstructor,
+		StructureVisualizerDestructor,
+		StructureVisualizerOperator,
 		StructureVisualizerConditional,
 		StructureVisualizerLoop,
 		StructureVisualizerProperty,
@@ -211,6 +218,10 @@ namespace dnSpy.Contracts.Text {
 		StructureVisualizerFilter,
 		StructureVisualizerFinally,
 		StructureVisualizerFault,
+		StructureVisualizerLock,
+		StructureVisualizerUsing,
+		StructureVisualizerFixed,
+		StructureVisualizerCase,
 		StructureVisualizerOther,
 
 		/// <summary>
@@ -399,7 +410,14 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object FindMatchHighlightMarker = TextColor.FindMatchHighlightMarker;
 		public static readonly object StructureVisualizerNamespace = TextColor.StructureVisualizerNamespace;
 		public static readonly object StructureVisualizerType = TextColor.StructureVisualizerType;
+		public static readonly object StructureVisualizerValueType = TextColor.StructureVisualizerValueType;
+		public static readonly object StructureVisualizerInterface = TextColor.StructureVisualizerInterface;
 		public static readonly object StructureVisualizerMethod = TextColor.StructureVisualizerMethod;
+		public static readonly object StructureVisualizerAccessor = TextColor.StructureVisualizerAccessor;
+		public static readonly object StructureVisualizerAnonymousMethod = TextColor.StructureVisualizerAnonymousMethod;
+		public static readonly object StructureVisualizerConstructor = TextColor.StructureVisualizerConstructor;
+		public static readonly object StructureVisualizerDestructor = TextColor.StructureVisualizerDestructor;
+		public static readonly object StructureVisualizerOperator = TextColor.StructureVisualizerOperator;
 		public static readonly object StructureVisualizerConditional = TextColor.StructureVisualizerConditional;
 		public static readonly object StructureVisualizerLoop = TextColor.StructureVisualizerLoop;
 		public static readonly object StructureVisualizerProperty = TextColor.StructureVisualizerProperty;
@@ -409,6 +427,10 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object StructureVisualizerFilter = TextColor.StructureVisualizerFilter;
 		public static readonly object StructureVisualizerFinally = TextColor.StructureVisualizerFinally;
 		public static readonly object StructureVisualizerFault = TextColor.StructureVisualizerFault;
+		public static readonly object StructureVisualizerLock = TextColor.StructureVisualizerLock;
+		public static readonly object StructureVisualizerUsing = TextColor.StructureVisualizerUsing;
+		public static readonly object StructureVisualizerFixed = TextColor.StructureVisualizerFixed;
+		public static readonly object StructureVisualizerCase = TextColor.StructureVisualizerCase;
 		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
 
 		/// <summary>
@@ -599,7 +621,14 @@ namespace dnSpy.Contracts.Text {
 			FindMatchHighlightMarker,
 			StructureVisualizerNamespace,
 			StructureVisualizerType,
+			StructureVisualizerValueType,
+			StructureVisualizerInterface,
 			StructureVisualizerMethod,
+			StructureVisualizerAccessor,
+			StructureVisualizerAnonymousMethod,
+			StructureVisualizerConstructor,
+			StructureVisualizerDestructor,
+			StructureVisualizerOperator,
 			StructureVisualizerConditional,
 			StructureVisualizerLoop,
 			StructureVisualizerProperty,
@@ -609,6 +638,10 @@ namespace dnSpy.Contracts.Text {
 			StructureVisualizerFilter,
 			StructureVisualizerFinally,
 			StructureVisualizerFault,
+			StructureVisualizerLock,
+			StructureVisualizerUsing,
+			StructureVisualizerFixed,
+			StructureVisualizerCase,
 			StructureVisualizerOther,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
