@@ -2488,4 +2488,16 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
     <value>Renaming of virtual properties isn't supported: {0}</value>
   </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>Schnellsuche</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Incremental Search</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Strg+I</value>
+  </data>
+  <data name="ShortCutKeyCtrlP" xml:space="preserve">
+    <value>Strg+P</value>
+  </data>
 </root>

@@ -133,7 +133,7 @@
     <value>指定处理器架构(_E)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>公匙</value>
+    <value>公钥(_K)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
     <value>可重定向(_R)</value>
@@ -157,7 +157,7 @@
     <value>处理器架构(_S)</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
-    <value>公匙</value>
+    <value>公钥(_P)</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
     <value>版本</value>
@@ -482,7 +482,7 @@
     <value>gparam({0})</value>
   </data>
   <data name="GP_Class" xml:space="preserve">
-    <value>类型(_L)</value>
+    <value>类(_L)</value>
   </data>
   <data name="GP_Constraints" xml:space="preserve">
     <value>约束</value>
@@ -1469,13 +1469,13 @@
     <value>无效的元数据标记 ︰ 0x{0:X8}</value>
   </data>
   <data name="GoToMetaDataTableRow_MetadataToken" xml:space="preserve">
-    <value>元数据Token</value>
+    <value>元数据Token (_M)</value>
   </data>
   <data name="GoToMetaDataTableRow_TokenDoesNotExist" xml:space="preserve">
     <value>Token {0:X8} 不存在元数据中</value>
   </data>
   <data name="GoToRowIdentifierCommand" xml:space="preserve">
-    <value>跳转到RID</value>
+    <value>跳转到RID (_G)...</value>
   </data>
   <data name="GoToRowIdentifier_InvalidRowIdentifier" xml:space="preserve">
     <value>不可用的RID： {0}</value>
@@ -1905,7 +1905,7 @@
     <value>模块类型(_T)</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
-    <value>保留额外的签名数据</value>
+    <value>保留额外的签名数据(_X)</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData_ToolTip" xml:space="preserve">
     <value>保留签名后任何额外的数据。
@@ -1915,13 +1915,13 @@
     <value>保留堆偏移量</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>保留所有MD Token</value>
+    <value>保留所有MD Token (_R)</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
     <value>如果文件仍然被混淆，RID可能需要被保留。</value>
   </data>
   <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
-    <value>共享方法体</value>
+    <value>共享方法体(_B)</value>
   </data>
   <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
     <value>有相同代码的.NET方法将会共享方法体。
@@ -1931,13 +1931,13 @@
     <value>保存模块</value>
   </data>
   <data name="SaveModule_UseMixedMode" xml:space="preserve">
-    <value>混合模块</value>
+    <value>混合模块(_M)</value>
   </data>
   <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
     <value>检查是否它是一个混合模式模块 (例如C+ +/.NET)。单击此复选框时大多数选项将被重新初始化</value>
   </data>
   <data name="SaveModule_WritePdb" xml:space="preserve">
-    <value>保存PDB文件</value>
+    <value>保存_PDB文件</value>
   </data>
   <data name="SaveResourceCommand" xml:space="preserve">
     <value>保存{0}</value>
@@ -2487,5 +2487,17 @@
   </data>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
     <value>Renaming of virtual properties isn't supported: {0}</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>查找</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>渐进式搜索</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="ShortCutKeyCtrlP" xml:space="preserve">
+    <value>Ctrl+P</value>
   </data>
 </root>

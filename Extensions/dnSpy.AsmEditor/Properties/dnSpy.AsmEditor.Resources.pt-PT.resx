@@ -2491,4 +2491,16 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
     <value>Renomeação de propriedades virtuais não é suportado: {0}</value>
   </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>Encontrar</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Pesquisa Incremental</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl + I</value>
+  </data>
+  <data name="ShortCutKeyCtrlP" xml:space="preserve">
+    <value>CTRL + P</value>
+  </data>
 </root>

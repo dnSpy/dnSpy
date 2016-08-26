@@ -2487,4 +2487,16 @@ Some obfuscators put data there</value>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
     <value>Переименование виртуальных свойств не поддерживается: {0}</value>
   </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Последовательный поиск</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="ShortCutKeyCtrlP" xml:space="preserve">
+    <value>Ctrl+P</value>
+  </data>
 </root>
