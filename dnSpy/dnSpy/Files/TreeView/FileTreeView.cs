@@ -144,11 +144,11 @@ namespace dnSpy.Files.TreeView {
 			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 
-			this.WpfCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
+			this.WpfCommands = wpfCommandManager.GetCommands(ControlConstants.GUID_FILE_TREEVIEW);
 
 			if (isGlobal) {
 				menuManager.InitializeContextMenu((FrameworkElement)this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
-				wpfCommandManager.Add(CommandConstants.GUID_FILE_TREEVIEW, (UIElement)TreeView.UIObject);
+				wpfCommandManager.Add(ControlConstants.GUID_FILE_TREEVIEW, (UIElement)TreeView.UIObject);
 			}
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();

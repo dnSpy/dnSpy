@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Controls {
 	/// <summary>
 	/// Constants
 	/// </summary>
-	public static class CommandConstants {
+	public static class ControlConstants {
 		/// <summary>Guid of main window</summary>
 		public static readonly Guid GUID_MAINWINDOW = new Guid("6C6DF6A3-2681-4A17-B81C-7EF8ABAC845C");
 

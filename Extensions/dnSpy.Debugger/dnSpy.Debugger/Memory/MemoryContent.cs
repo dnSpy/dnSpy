@@ -62,8 +62,8 @@ namespace dnSpy.Debugger.Memory {
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
 
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_MEMORY_CONTROL, memoryControl);
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_MEMORY_HEXBOX, memoryControl.DnHexBox);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MEMORY_CONTROL, memoryControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MEMORY_HEXBOX, memoryControl.DnHexBox);
 		}
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {

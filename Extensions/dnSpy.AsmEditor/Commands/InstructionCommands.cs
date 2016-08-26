@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.Commands {
 		CopyILBytesLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
 			this.fileTabManager = fileTabManager;
 			this.methodAnnotations = methodAnnotations;
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			cmds.Add(CopyILBytesCommand, CopyILBytesExecuted, CopyILBytesCanExecute, ModifierKeys.Control, Key.B);
 		}
 

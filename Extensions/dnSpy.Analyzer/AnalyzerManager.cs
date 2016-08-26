@@ -132,8 +132,8 @@ namespace dnSpy.Analyzer {
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
 			menuManager.InitializeContextMenu((FrameworkElement)this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
-			wpfCommandManager.Add(CommandConstants.GUID_ANALYZER_TREEVIEW, (UIElement)this.TreeView.UIObject);
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
+			wpfCommandManager.Add(ControlConstants.GUID_ANALYZER_TREEVIEW, (UIElement)this.TreeView.UIObject);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			var command = new RelayCommand(a => ActivateNode());
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);
 			cmds.Add(command, ModifierKeys.Shift, Key.Enter);

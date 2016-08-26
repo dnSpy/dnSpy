@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Locals {
 	sealed class LocalsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		LocalsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager, CopyLocalsCtxMenuCommand copyCmd, EditValueLocalsCtxMenuCommand editValueCmd, CopyValueLocalsCtxMenuCommand copyValueCmd, ToggleCollapsedLocalsCtxMenuCommand toggleCollapsedCmd, ShowInMemoryLocalsCtxMenuCommand showInMemCmd) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_LOCALS_LISTVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new LocalsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new LocalsCtxMenuCommandProxy(editValueCmd), ModifierKeys.None, Key.F2);
 			cmds.Add(new LocalsCtxMenuCommandProxy(copyValueCmd), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Locals {
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(DebugRoutedCommands.ShowLocals, new RelayCommand(a => mainToolWindowManager.Show(LocalsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowLocals, ModifierKeys.Alt, Key.D4);
 		}

@@ -105,7 +105,7 @@ namespace dnSpy.Analyzer {
 	sealed class BreakpointsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		BreakpointsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IAnalyzerManager> analyzerManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			cmds.Add(ApplicationCommands.Copy,
 				(s, e) => CopyCtxMenuCommand.ExecuteInternal(analyzerManager),
 				(s, e) => e.CanExecute = CopyCtxMenuCommand.CanExecuteInternal(analyzerManager));

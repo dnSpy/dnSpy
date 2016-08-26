@@ -76,7 +76,7 @@ namespace dnSpy.Output {
 
 		[ImportingConstructor]
 		ShowOutputWindowCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowOutputWindowRoutedCommand,
 				(s, e) => mainToolWindowManager.Show(OutputToolWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true);

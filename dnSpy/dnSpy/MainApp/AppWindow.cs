@@ -121,7 +121,7 @@ namespace dnSpy.MainApp {
 			this.mainWindowControl = mainWindowControl;
 			this.wpfCommandManager = wpfCommandManager;
 			this.languageManager = languageManager;
-			this.mainWindowCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			this.mainWindowCommands = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
 		}
@@ -145,7 +145,7 @@ namespace dnSpy.MainApp {
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(themeManager, imageManager, sc.UIObject);
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
-			wpfCommandManager.Add(CommandConstants.GUID_MAINWINDOW, mainWindow);
+			wpfCommandManager.Add(ControlConstants.GUID_MAINWINDOW, mainWindow);
 			new SavedWindowStateRestorer(mainWindow, uiSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;
 			mainWindow.Closed += MainWindow_Closed;

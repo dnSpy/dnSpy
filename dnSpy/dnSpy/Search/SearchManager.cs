@@ -119,15 +119,15 @@ namespace dnSpy.Search {
 			this.searchControl.DataContext = this.vmSearch;
 
 			menuManager.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
-			wpfCommandManager.Add(CommandConstants.GUID_SEARCH_CONTROL, this.searchControl);
-			wpfCommandManager.Add(CommandConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
+			wpfCommandManager.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
+			wpfCommandManager.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
 
 			this.searchControl.SearchListBoxDoubleClick += (s, e) => FollowSelectedReference();
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_SEARCH_LISTBOX);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_SEARCH_LISTBOX);
 			var command = new RelayCommand(a => FollowSelectedReference());
 			cmds.Add(command, ModifierKeys.None, Key.Enter);
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);

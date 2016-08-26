@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointsCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		BreakpointsCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<BreakpointManager> breakpointManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(DebugRoutedCommands.DeleteAllBreakpoints, (s, e) => breakpointManager.Value.ClearAskUser(), (s, e) => e.CanExecute = breakpointManager.Value.CanClear, ModifierKeys.Control | ModifierKeys.Shift, Key.F9);
 			cmds.Add(DebugRoutedCommands.ToggleBreakpoint, (s, e) => breakpointManager.Value.ToggleBreakpoint(), (s, e) => e.CanExecute = breakpointManager.Value.CanToggleBreakpoint, ModifierKeys.None, Key.F9);
 			cmds.Add(DebugRoutedCommands.DisableBreakpoint, (s, e) => breakpointManager.Value.DisableBreakpoint(), (s, e) => e.CanExecute = breakpointManager.Value.CanDisableBreakpoint, ModifierKeys.Control, Key.F9);

@@ -66,7 +66,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 
 		[ImportingConstructor]
 		ShowCSharpInteractiveCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCSharpInteractiveRoutedCommand,
 				(s, e) => mainToolWindowManager.Show(CSharpToolWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true);

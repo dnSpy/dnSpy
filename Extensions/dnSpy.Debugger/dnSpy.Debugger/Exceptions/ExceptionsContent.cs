@@ -60,8 +60,8 @@ namespace dnSpy.Debugger.Exceptions {
 			this.vmExceptions = exceptionsVM;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmExceptions.Value.RefreshThemeFields();

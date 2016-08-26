@@ -89,7 +89,7 @@ namespace dnSpy.MainApp {
 
 		[ImportingConstructor]
 		ShowFileTreeViewCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW).Add(
+			wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW).Add(
 				ShowFileTreeViewRoutedCommand,
 				(s, e) => mainToolWindowManager.Show(FileTreeViewWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true,

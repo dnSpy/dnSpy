@@ -45,7 +45,7 @@ namespace dnSpy.Search {
 			this.mainToolWindowManager = mainToolWindowManager;
 			this.searchManager = searchManager;
 
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(SearchRoutedCommand, Search, CanSearch);
 		}
 

@@ -95,7 +95,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			menuManager.InitializeContextMenu(documentViewerControl.TextView.VisualElement, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsProvider(this), new ContextMenuInitializer(documentViewerControl.TextView));
 			// Prevent the tab control's context menu from popping up when right-clicking in the textview host margin
 			menuManager.InitializeContextMenu(documentViewerControl, Guid.NewGuid());
-			wpfCommandManager.Add(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.TextView.Properties.AddProperty(typeof(DocumentViewer), this);
 			documentViewerControl.TextView.TextBuffer.Properties.AddProperty(DocumentViewerExtensions.DocumentViewerTextBufferKey, this);
 		}
@@ -351,7 +351,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			Removed?.Invoke(this, new DocumentViewerRemovedEventArgs(this));
 			documentViewerServiceImpl.RaiseRemovedEvent(this);
-			wpfCommandManager.Remove(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
+			wpfCommandManager.Remove(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT, documentViewerControl);
 			documentViewerControl.Dispose();
 			outputData.Clear();
 			isDisposed = true;

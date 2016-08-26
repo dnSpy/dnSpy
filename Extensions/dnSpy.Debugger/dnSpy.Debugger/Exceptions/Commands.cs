@@ -40,13 +40,13 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ExceptionsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IExceptionsContent> exceptionsContent, CopyCallExceptionsCtxMenuCommand copyCmd, AddExceptionsCtxMenuCommand addExCmd, RemoveExceptionsCtxMenuCommand removeExCmd, ToggleEnableExceptionsCtxMenuCommand toggleExCmd) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new ExceptionsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new ExceptionsCtxMenuCommandProxy(addExCmd), ModifierKeys.None, Key.Insert);
 			cmds.Add(new ExceptionsCtxMenuCommandProxy(removeExCmd), ModifierKeys.None, Key.Delete);
 			cmds.Add(new ExceptionsCtxMenuCommandProxy(toggleExCmd), ModifierKeys.None, Key.Space);
 
-			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL);
+			cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 
 			cmds.Add(DebugRoutedCommands.ShowExceptions, new RelayCommand(a => mainToolWindowManager.Show(ExceptionsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowExceptions, ModifierKeys.Control | ModifierKeys.Alt, Key.E);

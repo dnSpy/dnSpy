@@ -66,8 +66,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);
 		}
 
 		void CallStackControl_CallStackListViewDoubleClick(object sender, EventArgs e) {

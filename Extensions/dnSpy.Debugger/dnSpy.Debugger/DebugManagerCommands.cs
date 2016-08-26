@@ -28,7 +28,7 @@ namespace dnSpy.Debugger {
 	sealed class DebugManagerCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		DebugManagerCommandLoader(Lazy<DebugManager> debugManager, IWpfCommandManager wpfCommandManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(DebugRoutedCommands.DebugCurrentAssembly, (s, e) => debugManager.Value.DebugCurrentAssembly(e.Parameter), (s, e) => e.CanExecute = debugManager.Value.CanDebugCurrentAssembly(e.Parameter));
 			cmds.Add(DebugRoutedCommands.DebugAssembly, (s, e) => debugManager.Value.DebugAssembly(), (s, e) => e.CanExecute = debugManager.Value.CanDebugAssembly);
 			cmds.Add(DebugRoutedCommands.DebugCoreCLRAssembly, (s, e) => debugManager.Value.DebugCoreCLRAssembly(), (s, e) => e.CanExecute = debugManager.Value.CanDebugCoreCLRAssembly);

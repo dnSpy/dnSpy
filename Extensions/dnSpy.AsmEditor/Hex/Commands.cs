@@ -162,7 +162,7 @@ namespace dnSpy.AsmEditor.Hex {
 	static class OpenHexEditorCommand {
 		static readonly RoutedCommand OpenHexEditor = new RoutedCommand("OpenHexEditor", typeof(OpenHexEditorCommand));
 		internal static void Initialize(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(OpenHexEditor,
 				(s, e) => ExecuteCommand(fileTabManager, methodAnnotations),
 				(s, e) => e.CanExecute = CanExecuteCommand(fileTabManager, methodAnnotations),
@@ -1152,7 +1152,7 @@ namespace dnSpy.AsmEditor.Hex {
 	static class GoToMDTableRowHexEditorCommand {
 		static readonly RoutedCommand GoToMDTableRow = new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowHexEditorCommand));
 		internal static void Initialize(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(GoToMDTableRow,
 				(s, e) => Execute(fileTabManager),
 				(s, e) => e.CanExecute = CanExecute(fileTabManager),
@@ -1269,7 +1269,7 @@ namespace dnSpy.AsmEditor.Hex {
 	static class GoToMDTableRowUIHexEditorCommand {
 		static readonly RoutedCommand GoToMDTableRowUI = new RoutedCommand("GoToMDTableRowUI", typeof(GoToMDTableRowUIHexEditorCommand));
 		internal static void Initialize(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(GoToMDTableRowUI,
 				(s, e) => Execute(fileTabManager),
 				(s, e) => e.CanExecute = CanExecute(fileTabManager),

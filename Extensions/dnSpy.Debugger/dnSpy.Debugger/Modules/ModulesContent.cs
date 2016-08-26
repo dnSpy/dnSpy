@@ -64,8 +64,8 @@ namespace dnSpy.Debugger.Modules {
 			this.modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
 		}
 
 		void ModulesControl_ModulesListViewDoubleClick(object sender, EventArgs e) {

@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Modules {
 	sealed class ModulesContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ModulesContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowManager> memoryWindowManager, CopyCallModulesCtxMenuCommand copyCmd, GoToModuleModulesCtxMenuCommand goToCmd, GoToModuleNewTabModulesCtxMenuCommand goToNewTabCmd, ShowInMemoryModulesCtxMenuCommand showInMemoryCmd) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_MODULES_LISTVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW);
 
 			cmds.Add(ApplicationCommands.Copy, new ModulesCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new ModulesCtxMenuCommandProxy(goToCmd), ModifierKeys.None, Key.Enter);
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Modules {
 	sealed class ModulesCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ModulesCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 
 			cmds.Add(DebugRoutedCommands.ShowModules, new RelayCommand(a => mainToolWindowManager.Show(ModulesToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowModules, ModifierKeys.Control | ModifierKeys.Alt, Key.U);

@@ -67,8 +67,8 @@ namespace dnSpy.Debugger.Threads {
 			this.threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
 		}
 
 		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {

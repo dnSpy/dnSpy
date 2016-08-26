@@ -53,8 +53,8 @@ namespace dnSpy.Debugger.Locals {
 			this.localsControl.DataContext = this.vmLocals;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
-			wpfCommandManager.Add(CommandConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
+			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();

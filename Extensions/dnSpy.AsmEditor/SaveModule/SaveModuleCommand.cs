@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.undoCommandManager = undoCommandManager;
 			this.documentSaver = documentSaver;
 
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(SaveAllCommand, (s, e) => SaveAll_Execute(), (s, e) => e.CanExecute = SaveAll_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.S);
 		}
 

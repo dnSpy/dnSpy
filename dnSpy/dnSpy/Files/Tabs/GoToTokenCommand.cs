@@ -41,12 +41,12 @@ namespace dnSpy.Files.Tabs {
 		[ImportingConstructor]
 		GoToTokenLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			cmds.Add(GoToToken,
 				(s, e) => GoToTokenCommand.ExecuteInternal(fileTabManager),
 				(s, e) => e.CanExecute = GoToTokenCommand.CanExecuteInternal(fileTabManager),
 				ModifierKeys.Control, Key.D);
-			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
+			cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_FILE_TREEVIEW);
 			cmds.Add(GoToToken,
 				(s, e) => GoToTokenCommand.ExecuteInternal(fileTabManager),
 				(s, e) => e.CanExecute = GoToTokenCommand.CanExecuteInternal(fileTabManager),

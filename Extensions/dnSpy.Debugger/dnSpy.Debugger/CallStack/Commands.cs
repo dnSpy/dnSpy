@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		CallStackContentCommandLoader(IWpfCommandManager wpfCommandManager, CopyCallStackCtxMenuCommand copyCmd, RunToCursorCallStackCtxMenuCommand runToCursorCmd, SwitchToFrameCallStackCtxMenuCommand switchToFrameCmd, SwitchToFrameNewTabCallStackCtxMenuCommand switchToFrameNewTabCmd) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new CallStackCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new CallStackCtxMenuCommandProxy(runToCursorCmd), ModifierKeys.Control, Key.F10);
 			cmds.Add(new CallStackCtxMenuCommandProxy(switchToFrameCmd), ModifierKeys.None, Key.Enter);
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 
 			cmds.Add(DebugRoutedCommands.ShowCallStack, new RelayCommand(a => mainToolWindowManager.Show(CallStackToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowCallStack, ModifierKeys.Control | ModifierKeys.Alt, Key.C);

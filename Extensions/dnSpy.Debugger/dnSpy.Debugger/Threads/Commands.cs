@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Threads {
 	sealed class ThreadsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ThreadsContentCommandLoader(IWpfCommandManager wpfCommandManager, CopyCallThreadsCtxMenuCommand copyCmd, SwitchToThreadThreadsCtxMenuCommand switchCmd, SwitchToThreadNewTabThreadsCtxMenuCommand switchNewTabCmd) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_THREADS_LISTVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new ThreadsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new ThreadsCtxMenuCommandProxy(switchCmd), ModifierKeys.None, Key.Enter);
 			cmds.Add(new ThreadsCtxMenuCommandProxy(switchNewTabCmd), ModifierKeys.Control, Key.Enter);
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.Threads {
 	sealed class ThreadsCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ThreadsCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(DebugRoutedCommands.ShowThreads, new RelayCommand(a => mainToolWindowManager.Show(ThreadsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowThreads, ModifierKeys.Control | ModifierKeys.Alt, Key.H);
 		}

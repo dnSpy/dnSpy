@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			this.undoCommandManager = undoCommandManager;
 			this.messageBoxManager = messageBoxManager;
 
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(UndoRoutedCommands.Undo, (s, e) => undoCommandManager.Value.Undo(), (s, e) => e.CanExecute = undoCommandManager.Value.CanUndo);
 			cmds.Add(UndoRoutedCommands.Redo, (s, e) => undoCommandManager.Value.Redo(), (s, e) => e.CanExecute = undoCommandManager.Value.CanRedo);
 

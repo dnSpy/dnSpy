@@ -56,8 +56,8 @@ namespace dnSpy.Output {
 			this.vmOutput = outputVM;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_OUTPUT_CONTROL, outputControl);
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_OUTPUT_CONTROL);
+			wpfCommandManager.Add(ControlConstants.GUID_OUTPUT_CONTROL, outputControl);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_OUTPUT_CONTROL);
 			cmds.Add(ApplicationCommands.Save,
 				(s, e) => OutputManager.SaveText(),
 				(s, e) => e.CanExecute = OutputManager.CanSaveText);

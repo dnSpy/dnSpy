@@ -94,7 +94,7 @@
     <Compile Include="Command\TextReferenceIds.cs" />
     <Compile Include="Command\TextReferenceIdsExtensions.cs" />
     <Compile Include="Controls\ColorizedTextElementProvider.cs" />
-    <Compile Include="Controls\CommandConstants.cs" />
+    <Compile Include="Controls\ControlConstants.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FontUtilities.cs" />
     <Compile Include="Controls\GlyphRunFormatter.cs" />

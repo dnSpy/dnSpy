@@ -50,19 +50,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzerManager = analyzerManager;
 			this.languageManager = languageManager;
 
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			cmds.Add(AnalyzeRoutedCommand, TextEditor_Executed, TextEditor_CanExecute, ModifierKeys.Control, Key.R);
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 
-			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
+			cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_FILE_TREEVIEW);
 			cmds.Add(AnalyzeRoutedCommand, FileTreeView_Executed, FileTreeView_CanExecute, ModifierKeys.Control, Key.R);
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 
-			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
+			cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			cmds.Add(AnalyzeRoutedCommand, AnalyzerTreeView_Executed, AnalyzerTreeView_CanExecute, ModifierKeys.Control, Key.R);
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 
-			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_SEARCH_LISTBOX);
+			cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_SEARCH_LISTBOX);
 			cmds.Add(AnalyzeRoutedCommand, SearchListBox_Executed, SearchListBox_CanExecute, ModifierKeys.Control, Key.R);
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 		}
@@ -289,7 +289,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		[ImportingConstructor]
 		RemoveAnalyzeCommand(IWpfCommandManager wpfCommandManager, Lazy<IAnalyzerManager> analyzerManager) {
 			this.analyzerManager = analyzerManager;
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			cmds.Add(ApplicationCommands.Delete, (s, e) => DeleteNodes(), (s, e) => e.CanExecute = CanDeleteNodes, ModifierKeys.None, Key.Delete);
 		}
 

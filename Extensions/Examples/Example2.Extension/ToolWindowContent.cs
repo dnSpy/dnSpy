@@ -21,7 +21,7 @@ namespace Example2.Extension {
 
 		[ImportingConstructor]
 		ToolWindowLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(OpenToolWindow, new RelayCommand(a => mainToolWindowManager.Show(ToolWindowContent.THE_GUID)));
 			cmds.Add(OpenToolWindow, ModifierKeys.Control | ModifierKeys.Alt, Key.Z);
 		}

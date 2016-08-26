@@ -88,7 +88,7 @@ namespace dnSpy.Files.Tabs {
 		OpenFromGacCommandLoader(IOpenFromGAC openFromGAC, IWpfCommandManager wpfCommandManager) {
 			this.openFromGAC = openFromGAC;
 
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(OpenFromGac, (s, e) => Execute(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.O);
 		}
 
@@ -200,7 +200,7 @@ namespace dnSpy.Files.Tabs {
 
 		[ImportingConstructor]
 		ShowCodeEditorCommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCodeEditorRoutedCommand,
 				(s, e) => fileTabManager.ActiveTab?.TrySetFocus(),
 				(s, e) => e.CanExecute = fileTabManager.ActiveTab != null,
