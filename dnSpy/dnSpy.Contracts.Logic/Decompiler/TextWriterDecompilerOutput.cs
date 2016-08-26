@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Implements <see cref="IDecompilerOutput"/> and writes the text to a <see cref="TextWriter"/>
 	/// </summary>
-	public sealed class TextWriterDecompilerOutput : IDecompilerOutput, IDisposable {
+	public class TextWriterDecompilerOutput : IDecompilerOutput, IDisposable {
 		readonly TextWriter writer;
 		readonly string indentationString;
 		int indentation;
@@ -36,13 +36,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the total length of the written text
 		/// </summary>
-		public int Length => position;
+		public virtual int Length => position;
 
 		/// <summary>
 		/// This equals <see cref="Length"/> plus any indentation that must be written
 		/// before the next text.
 		/// </summary>
-		public int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
+		public virtual int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
 
 		bool IDecompilerOutput.UsesCustomData => false;
 
@@ -65,12 +65,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Increments the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public void IncreaseIndent() => indentation++;
+		public virtual void IncreaseIndent() => indentation++;
 
 		/// <summary>
 		/// Decrements the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public void DecreaseIndent() {
+		public virtual void DecreaseIndent() {
 			Debug.Assert(indentation > 0);
 			if (indentation > 0)
 				indentation--;
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Writes a new line without writing any indentation
 		/// </summary>
-		public void WriteLine() {
+		public virtual void WriteLine() {
 			var nlArray = newLineArray;
 			writer.Write(nlArray);
 			position += nlArray.Length;
@@ -117,14 +117,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Writes text. The text will be indented if needed.
 		/// </summary>
 		/// <param name="text">Text</param>
-		public void Write(string text) => AddText(text, BoxedTextColor.Text);
+		public virtual void Write(string text) => AddText(text, BoxedTextColor.Text);
 
 		/// <summary>
 		/// Writes text and color. The text will be indented if needed.
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public void Write(string text, object color) => AddText(text, color);
+		public virtual void Write(string text, object color) => AddText(text, color);
 
 		/// <summary>
 		/// Writes text and color. The text will be indented if needed.
@@ -133,7 +133,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="index">Index in <paramref name="text"/></param>
 		/// <param name="count">Number of characters to write</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
+		public virtual void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
 
 		/// <summary>
 		/// Writes text, color and a reference. The text will be indented if needed.
@@ -142,7 +142,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
+		public virtual void Write(string text, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
 
 		/// <summary>
 		/// Returns the result from <see cref="TextWriter"/>'s <see cref="object.ToString"/> method
