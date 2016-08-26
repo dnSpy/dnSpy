@@ -2501,4 +2501,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
   </data>
+  <data name="ShortCutKeyCtrlP" xml:space="preserve">
+    <value>Ctrl+P</value>
+  </data>
 </root>

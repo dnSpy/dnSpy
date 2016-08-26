@@ -108,5 +108,15 @@ namespace dnSpy.Contracts.Command {
 		/// Order of output logger text pane <see cref="ICommandTargetFilter"/>
 		/// </summary>
 		public const double CMDTARGETFILTER_ORDER_OUTPUT_TEXTPANE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
+
+		/// <summary>
+		/// Order of edit code <see cref="ICommandInfoProvider"/>
+		/// </summary>
+		public const double CMDINFO_ORDER_EDITCODE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
+
+		/// <summary>
+		/// Order of edit code <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_EDITCODE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
 	}
 }

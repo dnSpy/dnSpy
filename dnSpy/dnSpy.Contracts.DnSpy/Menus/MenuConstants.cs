@@ -480,6 +480,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Output text editor, Group: User Commands</summary>
 		public const string GROUP_CTX_OUTPUT_USER_COMMANDS = "2000,A48F98FE-5BA6-4023-A7E5-0C3D6AFCC10B";
 
+		/// <summary>Group: Context Menu, Type: Code editor, Group: Compile</summary>
+		public const string GROUP_CTX_CODEEDITOR_COMPILE = "0,3920F03E-3345-4557-AEBC-11EF272C6D62";
+
 		/// <summary>Group: Context Menu, Type: Code editor, Group: Copy</summary>
 		public const string GROUP_CTX_CODEEDITOR_COPY = "5000,3B7890A7-AF3C-4FA2-9554-B0FA65B9F767";
 

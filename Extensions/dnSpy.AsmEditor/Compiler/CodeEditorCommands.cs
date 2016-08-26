@@ -23,15 +23,46 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
-	abstract class CodeEditorCommandTargetMenuItemBase : CommandTargetMenuItemBase {
+	sealed class CodeEditorContext {
+		public EditCodeVM VM { get; }
+		public ICodeEditor CodeEditor { get; }
+		public CodeEditorContext(EditCodeVM vm, ICodeEditor codeEditor) {
+			VM = vm;
+			CodeEditor = codeEditor;
+		}
+	}
+
+	abstract class CodeEditorCommandTargetMenuItemBase : CommandTargetMenuItemBase<CodeEditorContext> {
+		protected sealed override object CachedContextKey => ContextKey;
+		static readonly object ContextKey = new object();
+
 		protected CodeEditorCommandTargetMenuItemBase(StandardIds cmdId)
 			: base(cmdId) {
 		}
 
-		protected override ICommandTarget GetCommandTarget(IMenuItemContext context) {
+		protected CodeEditorCommandTargetMenuItemBase(EditCodeIds cmdId)
+			: base(EditCodeCommandConstants.EditCodeGroup, (int)cmdId) {
+		}
+
+		protected override CodeEditorContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID))
 				return null;
-			return context.Find<ICodeEditor>()?.TextView.CommandTarget;
+			var codeEditor = context.Find<ICodeEditor>();
+			if (codeEditor == null)
+				return null;
+			var vm = EditCodeVM.TryGet(codeEditor.TextView);
+			if (vm == null)
+				return null;
+			return new CodeEditorContext(vm, codeEditor);
+		}
+
+		protected override ICommandTarget GetCommandTarget(CodeEditorContext context) => context.CodeEditor.TextView.CommandTarget;
+	}
+
+	[ExportMenuItem(Header = "res:Button_Compile", Icon = "BuildSolution", InputGestureText = "res:ShortCutKeyCtrlP", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COMPILE, Order = 0)]
+	sealed class CompileContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
+		CompileContexMenuEntry()
+			: base(EditCodeIds.Compile) {
 		}
 	}
 

@@ -91,9 +91,14 @@
     <Compile Include="Compiler\CompilerMetadataReferenceCreator.cs" />
     <Compile Include="Compiler\DecompiledCodeResult.cs" />
     <Compile Include="Compiler\DecompiledDocument.cs" />
+    <Compile Include="Compiler\EditCodeCommandConstants.cs" />
+    <Compile Include="Compiler\EditCodeCommandInfoProvider.cs" />
+    <Compile Include="Compiler\EditCodeCommandTargetFilter.cs" />
     <Compile Include="Compiler\EditCodeDlg.xaml.cs">
       <DependentUpon>EditCodeDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Compiler\EditCodeIds.cs" />
+    <Compile Include="Compiler\EditCodeIdsExtensions.cs" />
     <Compile Include="Compiler\EditCodeVM.cs" />
     <Compile Include="Compiler\EditCodeVMCreator.cs" />
     <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
@@ -817,6 +822,7 @@
     <Resource Include="Images\Binary.png" />
     <Resource Include="Images\BinaryFile.png" />
     <Resource Include="Images\Branch.png" />
+    <Resource Include="Images\BuildSolution.png" />
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\Cut.png" />

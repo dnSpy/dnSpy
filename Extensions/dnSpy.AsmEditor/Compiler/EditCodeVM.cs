@@ -36,6 +36,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeVM : ViewModelBase, IDisposable {
@@ -181,6 +182,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;
 
+			foreach (var doc in codeDocs)
+				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
 			Documents.AddRange(codeDocs);
 			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
 			foreach (var doc in Documents) {
@@ -191,6 +194,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			CanCompile = canCompile;
 			HasDecompiled = true;
 			OnPropertyChanged(nameof(HasDecompiled));
+		}
+		static readonly object editCodeTextViewKey = new object();
+
+		static internal EditCodeVM TryGet(ITextView textView) {
+			EditCodeVM vm;
+			textView.Properties.TryGetProperty(editCodeTextViewKey, out vm);
+			return vm;
 		}
 
 		async Task<CompilerMetadataReference[]> DecompileAndGetRefsAsync(MethodDef method) {
@@ -231,8 +241,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}, state.CancellationToken);
 		}
 
-		void CompileCode() {
-			Debug.Assert(CanCompile);
+		public void CompileCode() {
 			if (!CanCompile)
 				return;
 			CanCompile = false;

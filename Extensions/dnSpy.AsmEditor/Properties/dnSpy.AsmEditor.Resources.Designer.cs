@@ -6233,6 +6233,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+P.
+        /// </summary>
+        public static string ShortCutKeyCtrlP {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+R.
         /// </summary>
         public static string ShortCutKeyCtrlR {
