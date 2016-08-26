@@ -484,7 +484,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length == 1;
 	}
 
-	[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DBG_MODULES_SAVE, Order = 0)]
+	[ExportMenuItem(Icon = "SaveModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_SAVE, Order = 0)]
 	sealed class SaveModuleToDiskModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IAppWindow appWindow;
 		readonly IMessageBoxManager messageBoxManager;
