@@ -313,7 +313,7 @@ namespace dnSpy.Debugger.Exceptions {
 			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 		}
 
-		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 1000)]
+		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 1000)]
 		sealed class CodeCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();

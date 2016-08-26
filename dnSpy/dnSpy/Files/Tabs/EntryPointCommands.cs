@@ -35,7 +35,7 @@ namespace dnSpy.Files.Tabs {
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
 
-		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 
@@ -89,7 +89,7 @@ namespace dnSpy.Files.Tabs {
 	}
 
 	static class GoToGlobalTypeCctorCommand {
-		[ExportMenuItem(Header = "res:GoToGlobalCctorCommand", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 10)]
+		[ExportMenuItem(Header = "res:GoToGlobalCctorCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 

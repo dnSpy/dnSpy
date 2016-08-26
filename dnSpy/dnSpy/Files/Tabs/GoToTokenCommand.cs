@@ -112,7 +112,7 @@ namespace dnSpy.Files.Tabs {
 			return string.Empty;
 		});
 
-		[ExportMenuItem(Header = "res:GoToTokenCommand", InputGestureText = "res:GoToTokenKey", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 20)]
+		[ExportMenuItem(Header = "res:GoToTokenCommand", InputGestureText = "res:GoToTokenKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 20)]
 		public sealed class CodeCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 

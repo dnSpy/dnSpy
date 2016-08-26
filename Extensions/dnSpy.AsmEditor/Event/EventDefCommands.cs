@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Event {
 			public override string GetHeader(AsmEditorContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 60)]
+		[Export, ExportMenuItem(Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 60)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -237,7 +237,7 @@ namespace dnSpy.AsmEditor.Event {
 			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 90)]
+		[ExportMenuItem(Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 90)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -355,7 +355,7 @@ namespace dnSpy.AsmEditor.Event {
 			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 70)]
+		[Export, ExportMenuItem(Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 70)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

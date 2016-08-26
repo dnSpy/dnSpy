@@ -37,7 +37,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 50)]
+		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 50)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));

@@ -81,7 +81,7 @@ namespace dnSpy.AsmEditor.Types {
 			public override string GetHeader(AsmEditorContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteTypeCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 20)]
+		[Export, ExportMenuItem(Header = "res:DeleteTypeCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 20)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -326,7 +326,7 @@ namespace dnSpy.AsmEditor.Types {
 			public override void Execute(AsmEditorContext context) => CreateNestedTypeDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateNestedTypeCommand", Icon = "NewClass", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 50)]
+		[ExportMenuItem(Header = "res:CreateNestedTypeCommand", Icon = "NewClass", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 50)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -449,7 +449,7 @@ namespace dnSpy.AsmEditor.Types {
 			public override void Execute(AsmEditorContext context) => TypeDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditTypeCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 20)]
+		[Export, ExportMenuItem(Header = "res:EditTypeCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 20)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 40)]
+		[Export, ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 40)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -214,7 +214,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(AsmEditorContext context) => CreateFieldDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 70)]
+		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 70)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -362,7 +362,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(AsmEditorContext context) => FieldDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 50)]
+		[Export, ExportMenuItem(Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 50)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

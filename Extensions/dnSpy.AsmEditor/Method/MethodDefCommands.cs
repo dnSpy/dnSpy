@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Method {
 			public override string GetHeader(AsmEditorContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteMethodCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 30)]
+		[Export, ExportMenuItem(Header = "res:DeleteMethodCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 30)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -326,7 +326,7 @@ namespace dnSpy.AsmEditor.Method {
 			public override void Execute(AsmEditorContext context) => CreateMethodDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateMethodCommand", Icon = "NewMethod", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 60)]
+		[ExportMenuItem(Header = "res:CreateMethodCommand", Icon = "NewMethod", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 60)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -448,7 +448,7 @@ namespace dnSpy.AsmEditor.Method {
 			public override void Execute(AsmEditorContext context) => MethodDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditMethodCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 30)]
+		[Export, ExportMenuItem(Header = "res:EditMethodCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 30)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

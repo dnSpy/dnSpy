@@ -103,7 +103,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override string GetHeader(AsmEditorContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 80)]
+		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 80)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -241,7 +241,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override string GetHeader(AsmEditorContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 90)]
+		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 90)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -396,7 +396,7 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	static class SaveResourcesCommand {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 0)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SAVE, Order = 0)]
 		sealed class CodeCommand : SaveResourcesCommandBase {
 			public CodeCommand()
 				: base(false, ResourceDataType.Deserialized) {
@@ -424,7 +424,7 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	static class SaveWithPathResourcesCommand {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 10)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SAVE, Order = 10)]
 		sealed class CodeCommand : SaveResourcesCommandBase {
 			public CodeCommand()
 				: base(true, ResourceDataType.Deserialized) {
@@ -451,7 +451,7 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	static class SaveRawResourcesCommand {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 20)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SAVE, Order = 20)]
 		sealed class CodeCommand : SaveResourcesCommandBase {
 			public CodeCommand()
 				: base(false, ResourceDataType.Serialized) {
@@ -479,7 +479,7 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	static class SaveRawWithPathResourcesCommand {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 30)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SAVE, Order = 30)]
 		sealed class CodeCommand : SaveResourcesCommandBase {
 			public CodeCommand()
 				: base(true, ResourceDataType.Serialized) {
@@ -569,7 +569,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 100)]
+		[ExportMenuItem(Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 100)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -740,7 +740,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 110)]
+		[ExportMenuItem(Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 110)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -838,7 +838,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 120)]
+		[ExportMenuItem(Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 120)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -933,7 +933,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 130)]
+		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 130)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1026,7 +1026,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 90)]
+		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 90)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1214,7 +1214,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 140)]
+		[ExportMenuItem(Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 140)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1327,7 +1327,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 150)]
+		[ExportMenuItem(Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 150)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1441,7 +1441,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 170)]
+		[ExportMenuItem(Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 170)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1556,7 +1556,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 180)]
+		[ExportMenuItem(Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 180)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1631,7 +1631,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 190)]
+		[ExportMenuItem(Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 190)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1818,7 +1818,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 100)]
+		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 100)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -1916,7 +1916,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 110)]
+		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 110)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -2005,7 +2005,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 120)]
+		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 120)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -2093,7 +2093,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 130)]
+		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 130)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

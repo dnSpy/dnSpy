@@ -166,7 +166,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
 			readonly ILanguageManager languageManager;

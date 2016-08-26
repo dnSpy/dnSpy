@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs {
 	static class SearchMsdnCtxMenuCommand {
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 
-		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
 			static IMemberRef GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);

@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Property {
 			public override string GetHeader(AsmEditorContext context) => DeletePropertyDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeletePropertyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELETE, Order = 50)]
+		[Export, ExportMenuItem(Header = "res:DeletePropertyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 50)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -232,7 +232,7 @@ namespace dnSpy.AsmEditor.Property {
 			public override void Execute(AsmEditorContext context) => CreatePropertyDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreatePropertyCommand", Icon = "NewProperty", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 80)]
+		[ExportMenuItem(Header = "res:CreatePropertyCommand", Icon = "NewProperty", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 80)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -351,7 +351,7 @@ namespace dnSpy.AsmEditor.Property {
 			public override void Execute(AsmEditorContext context) => PropertyDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditPropertyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 60)]
+		[Export, ExportMenuItem(Header = "res:EditPropertyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 60)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_CODE_DEBUGRT, Order = 0)]
+		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUGRT, Order = 0)]
 		sealed class CodeCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();

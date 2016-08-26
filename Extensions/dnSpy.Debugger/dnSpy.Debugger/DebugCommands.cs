@@ -165,7 +165,7 @@ namespace dnSpy.Debugger {
 		protected virtual bool IsValidElement(GuidObject element) => element.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 	}
 
-	[ExportMenuItem(Header = "res:DebugAssemblyCommand", Icon = "StartDebugging", InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 0)]
+	[ExportMenuItem(Header = "res:DebugAssemblyCommand", Icon = "StartDebugging", InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 0)]
 	sealed class DebugAssemblyDebugCtxMenuCommand : DebugCtxMenuCommand {
 		readonly Lazy<IDebugManager> debugManager;
 
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger {
 			element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 	}
 
-	[ExportMenuItem(Icon = "BreakpointMenu", InputGestureText = "res:ShortCutKeyF9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 10)]
+	[ExportMenuItem(Icon = "BreakpointMenu", InputGestureText = "res:ShortCutKeyF9", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 10)]
 	sealed class ToggleBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
 		readonly Lazy<IBreakpointManager> breakpointManager;
 
@@ -209,7 +209,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlF9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 20)]
+	[ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlF9", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 20)]
 	sealed class EnableDisableBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
 		readonly Lazy<IBreakpointManager> breakpointManager;
 
@@ -243,14 +243,14 @@ namespace dnSpy.Debugger {
 		internal static ImageReference? GetIconInternal() => new ImageReference(typeof(EnableDisableBreakpointDebugCtxMenuCommand).Assembly, "DisableEnableBreakpoint");
 	}
 
-	[ExportMenuItem(Icon = "CurrentLineToolBar", Header = "res:ShowNextStatementCommand", InputGestureText = "res:ShortCutAltAsterisk", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 30)]
+	[ExportMenuItem(Icon = "CurrentLineToolBar", Header = "res:ShowNextStatementCommand", InputGestureText = "res:ShortCutAltAsterisk", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 30)]
 	sealed class ShowNextStatementDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public ShowNextStatementDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.ShowNextStatement) {
 		}
 	}
 
-	[ExportMenuItem(Icon = "SetNextStatement", Header = "res:SetNextStatementCommand", InputGestureText = "res:ShortCutKeyCtrlShiftF10", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 40)]
+	[ExportMenuItem(Icon = "SetNextStatement", Header = "res:SetNextStatementCommand", InputGestureText = "res:ShortCutKeyCtrlShiftF10", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 40)]
 	sealed class SetNextStatementDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public SetNextStatementDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.SetNextStatement) {

@@ -155,7 +155,7 @@ namespace dnSpy.Files.Tabs {
 	}
 
 	static class GoToResourceCommand {
-		[ExportMenuItem(Header = "res:GoToResourceCommand", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 20)]
+		[ExportMenuItem(Header = "res:GoToResourceCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 20)]
 		sealed class TextEditorCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 

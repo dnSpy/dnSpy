@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Commands {
 			CopyILBytesCodeCommand.Execute(fileTabManager.ActiveTab.TryGetDocumentViewer(), methodAnnotations);
 	}
 
-	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
+	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]
 	sealed class CopyILBytesCodeCommand : MenuItemBase {
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 

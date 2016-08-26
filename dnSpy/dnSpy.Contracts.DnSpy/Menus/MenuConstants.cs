@@ -255,47 +255,47 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: Help, Group: About</summary>
 		public const string GROUP_APP_MENU_HELP_ABOUT = "1000000,835F06B5-67FB-4D01-8920-9D9E2FED9238";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Tabs</summary>
-		public const string GROUP_CTX_CODE_TABS = "0,3576E74B-8D4D-47EE-9925-462B1007C879";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Tabs</summary>
+		public const string GROUP_CTX_DOCVIEWER_TABS = "0,3576E74B-8D4D-47EE-9925-462B1007C879";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Debug</summary>
-		public const string GROUP_CTX_CODE_DEBUG = "1000,46C39BDA-35F5-4416-AAE2-A2FE05645F79";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Debug</summary>
+		public const string GROUP_CTX_DOCVIEWER_DEBUG = "1000,46C39BDA-35F5-4416-AAE2-A2FE05645F79";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor Save</summary>
-		public const string GROUP_CTX_CODE_ASMED_SAVE = "2000,57ED92C1-3292-47DD-99CD-FB777DDF1276";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: AsmEditor Save</summary>
+		public const string GROUP_CTX_DOCVIEWER_ASMED_SAVE = "2000,57ED92C1-3292-47DD-99CD-FB777DDF1276";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor Delete</summary>
-		public const string GROUP_CTX_CODE_ASMED_DELETE = "3000,7A3E4F42-37A5-4A85-B403-62E6CD091E1D";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: AsmEditor Delete</summary>
+		public const string GROUP_CTX_DOCVIEWER_ASMED_DELETE = "3000,7A3E4F42-37A5-4A85-B403-62E6CD091E1D";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor New</summary>
-		public const string GROUP_CTX_CODE_ASMED_NEW = "4000,15776B90-55EF-4ABE-9EC8-FB4A1E49A76F";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: AsmEditor New</summary>
+		public const string GROUP_CTX_DOCVIEWER_ASMED_NEW = "4000,15776B90-55EF-4ABE-9EC8-FB4A1E49A76F";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor Settings</summary>
-		public const string GROUP_CTX_CODE_ASMED_SETTINGS = "5000,4E4FF711-D262-452D-BA1A-38A6D9951CE2";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: AsmEditor Settings</summary>
+		public const string GROUP_CTX_DOCVIEWER_ASMED_SETTINGS = "5000,4E4FF711-D262-452D-BA1A-38A6D9951CE2";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor IL ED</summary>
-		public const string GROUP_CTX_CODE_ASMED_ILED = "6000,5DD87F08-FB00-4D00-9503-29590A8079CE";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: AsmEditor IL ED</summary>
+		public const string GROUP_CTX_DOCVIEWER_ASMED_ILED = "6000,5DD87F08-FB00-4D00-9503-29590A8079CE";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Tokens</summary>
-		public const string GROUP_CTX_CODE_TOKENS = "7000,096957CB-B94D-4A47-AC6D-DBF4C63C6955";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Tokens</summary>
+		public const string GROUP_CTX_DOCVIEWER_TOKENS = "7000,096957CB-B94D-4A47-AC6D-DBF4C63C6955";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Hex</summary>
-		public const string GROUP_CTX_CODE_HEX = "9000,81BEEEAD-9498-4AD5-B387-006E93FD4014";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Hex</summary>
+		public const string GROUP_CTX_DOCVIEWER_HEX = "9000,81BEEEAD-9498-4AD5-B387-006E93FD4014";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Hex MD</summary>
-		public const string GROUP_CTX_CODE_HEX_MD = "10000,0BE33A51-E400-4E3D-9B48-FF91E4A78303";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Hex MD</summary>
+		public const string GROUP_CTX_DOCVIEWER_HEX_MD = "10000,0BE33A51-E400-4E3D-9B48-FF91E4A78303";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Hex Copy</summary>
-		public const string GROUP_CTX_CODE_HEX_COPY = "12000,E18271DD-7571-4509-9A7D-37E283BCF7C2";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Hex Copy</summary>
+		public const string GROUP_CTX_DOCVIEWER_HEX_COPY = "12000,E18271DD-7571-4509-9A7D-37E283BCF7C2";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Debug RT</summary>
-		public const string GROUP_CTX_CODE_DEBUGRT = "13000,5A9207C0-C0E5-464D-B7A2-FB29ADA9C090";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Debug RT</summary>
+		public const string GROUP_CTX_DOCVIEWER_DEBUGRT = "13000,5A9207C0-C0E5-464D-B7A2-FB29ADA9C090";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Other</summary>
-		public const string GROUP_CTX_CODE_OTHER = "14000,47308D41-FCAD-4518-9859-AD67C2B912BB";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Other</summary>
+		public const string GROUP_CTX_DOCVIEWER_OTHER = "14000,47308D41-FCAD-4518-9859-AD67C2B912BB";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: Editor</summary>
-		public const string GROUP_CTX_CODE_EDITOR = "15000,FD52ABD1-6DB2-48C3-A5DB-809ECE5EBBB2";
+		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Editor</summary>
+		public const string GROUP_CTX_DOCVIEWER_EDITOR = "15000,FD52ABD1-6DB2-48C3-A5DB-809ECE5EBBB2";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Show commands</summary>
 		public const string GROUP_CTX_HEXBOX_SHOW = "0,D49C0D59-BAC6-476C-B5C7-66E8CE6CBD83";

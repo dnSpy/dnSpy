@@ -320,7 +320,7 @@ namespace dnSpy.Files.Tabs {
 		public override void Execute(IMenuItemContext context) => InstallTabCommands.OpenNewTabInternal(fileTabManager);
 	}
 
-	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_CODE_TABS, Order = 0)]
+	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TABS, Order = 0)]
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			IDocumentViewer documentViewer;

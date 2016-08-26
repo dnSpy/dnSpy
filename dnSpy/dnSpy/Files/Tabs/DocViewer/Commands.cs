@@ -95,7 +95,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public override void Execute(IMenuItemContext context) => editorOptions.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, !editorOptions.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId));
 	}
 
-	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 0)]
+	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 0)]
 	internal sealed class CopyCodeCtxMenuCommand : MenuItemCommand {
 		public CopyCodeCtxMenuCommand()
 			: base(ApplicationCommands.Copy) {
@@ -137,14 +137,14 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:FindCommand2", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 10)]
+	[ExportMenuItem(Header = "res:FindCommand2", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 10)]
 	sealed class FindInCodeContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
 		FindInCodeContexMenuEntry()
 			: base(StandardIds.Find) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
+	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]
 	sealed class IncrementalSearchContexMenuEntry : DocumentViewerCommandTargetMenuItemBase {
 		IncrementalSearchContexMenuEntry()
 			: base(StandardIds.IncrementalSearch) {
