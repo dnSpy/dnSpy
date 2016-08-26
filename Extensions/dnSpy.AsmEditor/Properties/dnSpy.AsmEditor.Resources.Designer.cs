@@ -2762,6 +2762,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Find.
+        /// </summary>
+        public static string FindCommand {
+            get {
+                return ResourceManager.GetString("FindCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flags.
         /// </summary>
         public static string Flags {
@@ -3370,6 +3379,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ImplMapTab {
             get {
                 return ResourceManager.GetString("ImplMapTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incremental Search.
+        /// </summary>
+        public static string IncrementalSearchCommand {
+            get {
+                return ResourceManager.GetString("IncrementalSearchCommand", resourceCulture);
             }
         }
         
@@ -6193,6 +6211,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ShortCutKeyCtrlG {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+I.
+        /// </summary>
+        public static string ShortCutKeyCtrlI {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlI", resourceCulture);
             }
         }
         

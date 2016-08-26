@@ -2492,4 +2492,13 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
     <value>Renaming of virtual properties isn't supported: {0}</value>
   </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Incremental Search</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
 </root>

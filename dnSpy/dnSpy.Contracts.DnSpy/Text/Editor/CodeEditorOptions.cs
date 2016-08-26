@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnSpy.Contracts.Menus;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Text.Editor {
@@ -28,6 +30,13 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
 		/// </summary>
 		public ITextBuffer TextBuffer { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public CodeEditorOptions() {
+			MenuGuid = new Guid(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID);
+		}
 
 		/// <summary>
 		/// Clones this
