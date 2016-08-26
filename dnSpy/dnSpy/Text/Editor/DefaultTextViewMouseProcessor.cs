@@ -41,10 +41,22 @@ namespace dnSpy.Text.Editor {
 
 		MouseLocation GetLocation(MouseEventArgs e) => MouseLocation.Create(wpfTextView, e);
 
+		bool IsInSelection(VirtualSnapshotPoint point) {
+			if (wpfTextView.Selection.IsEmpty)
+				return false;
+			foreach (var span in wpfTextView.Selection.VirtualSelectedSpans) {
+				if (span.Contains(point))
+					return true;
+			}
+			return false;
+		}
+
 		public override void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
-			editorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, false);
+			wpfTextView.Caret.MoveTo(mouseLoc.TextViewLine, mouseLoc.Point.X, true);
+			if (!IsInSelection(mouseLoc.Position))
+				wpfTextView.Selection.Clear();
 			wpfTextView.Caret.EnsureVisible();
 		}
 
