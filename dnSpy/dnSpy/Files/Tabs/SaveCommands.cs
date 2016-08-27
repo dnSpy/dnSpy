@@ -31,15 +31,15 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
-using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Decompiler.MSBuild;
+using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Properties;
 
 namespace dnSpy.Files.Tabs {
@@ -55,44 +55,44 @@ namespace dnSpy.Files.Tabs {
 	sealed class ExportProjectCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
 		readonly IFileTreeView fileTreeView;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly IFileTreeViewSettings fileTreeViewSettings;
 		readonly IExportToProjectSettings exportToProjectSettings;
 		readonly Lazy<IBamlDecompiler> bamlDecompiler;
 
 		[ImportingConstructor]
-		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeViewSettings fileTreeViewSettings, IExportToProjectSettings exportToProjectSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
+		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, IDecompilerManager decompilerManager, IFileTreeViewSettings fileTreeViewSettings, IExportToProjectSettings exportToProjectSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
 			this.appWindow = appWindow;
 			this.fileTreeView = fileTreeView;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.fileTreeViewSettings = fileTreeViewSettings;
 			this.exportToProjectSettings = exportToProjectSettings;
 			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) =>
-			GetModules().Length > 0 && languageManager.AllLanguages.Any(a => a.ProjectFileExtension != null);
+			GetModules().Length > 0 && decompilerManager.AllDecompilers.Any(a => a.ProjectFileExtension != null);
 
 		public override void Execute(IMenuItemContext context) {
 			var modules = GetModules();
 			if (modules.Length == 0)
 				return;
 
-			var lang = languageManager.Language;
-			if (lang.ProjectFileExtension == null) {
-				lang = languageManager.AllLanguages.FirstOrDefault(a => a.ProjectFileExtension != null);
-				Debug.Assert(lang != null);
-				if (lang == null)
+			var decompiler = decompilerManager.Decompiler;
+			if (decompiler.ProjectFileExtension == null) {
+				decompiler = decompilerManager.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension != null);
+				Debug.Assert(decompiler != null);
+				if (decompiler == null)
 					return;
 			}
 
 			var task = new ExportTask(this, modules);
-			var vm = new ExportToProjectVM(new PickDirectory(), languageManager, task, bamlDecompiler != null);
+			var vm = new ExportToProjectVM(new PickDirectory(), decompilerManager, task, bamlDecompiler != null);
 			task.vm = vm;
 			vm.ProjectVersion = exportToProjectSettings.ProjectVersion;
 			vm.CreateResX = fileTreeViewSettings.DeserializeResources;
 			vm.DontReferenceStdLib = modules.Any(a => a.Assembly.IsCorLib());
-			vm.Language = lang;
+			vm.Decompiler = decompiler;
 			vm.SolutionFilename = GetSolutionFilename(modules);
 			vm.FilesToExportMessage = CreateFilesToExportMessage(modules);
 
@@ -168,7 +168,7 @@ namespace dnSpy.Files.Tabs {
 						guidFormat = guidStr.Substring(0, 36 - 8) + "{0:X8}";
 					}
 					foreach (var module in modules.OrderBy(a => a.Location, StringComparer.InvariantCultureIgnoreCase)) {
-						var projOpts = new ProjectModuleOptions(module, vm.Language, decompilationContext) {
+						var projOpts = new ProjectModuleOptions(module, vm.Decompiler, decompilationContext) {
 							DontReferenceStdLib = vm.DontReferenceStdLib,
 							UnpackResources = vm.UnpackResources,
 							CreateResX = vm.CreateResX,
@@ -176,7 +176,7 @@ namespace dnSpy.Files.Tabs {
 							ProjectGuid = hasProjectGuid ? new Guid(string.Format(guidFormat, guidNum++)) : Guid.NewGuid(),
 						};
 						if (bamlDecompiler != null) {
-							var o = BamlDecompilerOptions.Create(vm.Language);
+							var o = BamlDecompilerOptions.Create(vm.Decompiler);
 							projOpts.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d);
 						}
 						options.ProjectModules.Add(projOpts);

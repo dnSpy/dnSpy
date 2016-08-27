@@ -23,7 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Property {
@@ -99,11 +99,11 @@ namespace dnSpy.AsmEditor.Property {
 
 		readonly ModuleDef ownerModule;
 
-		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
+		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -117,10 +117,10 @@ namespace dnSpy.AsmEditor.Property {
 			this.MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.GetMethodsVM = new MethodDefsVM(ownerModule, languageManager);
-			this.SetMethodsVM = new MethodDefsVM(ownerModule, languageManager);
-			this.OtherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.GetMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
+			this.SetMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
+			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
 			this.ConstantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
 			this.ConstantVM.PropertyChanged += constantVM_PropertyChanged;
 

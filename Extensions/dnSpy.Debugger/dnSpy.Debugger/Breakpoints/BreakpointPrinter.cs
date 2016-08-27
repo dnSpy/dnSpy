@@ -20,32 +20,32 @@
 using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {
 		readonly ITextColorWriter output;
 		readonly bool useHex;
-		readonly ILanguage language;
+		readonly IDecompiler decompiler;
 
-		public BreakpointPrinter(ITextColorWriter output, bool useHex, ILanguage language) {
+		public BreakpointPrinter(ITextColorWriter output, bool useHex, IDecompiler decompiler) {
 			this.output = output;
 			this.useHex = useHex;
-			this.language = language;
+			this.decompiler = decompiler;
 		}
 
-		ILanguage MethodLanguage => language;
+		IDecompiler MethodLanguage => decompiler;
 
 		string GetHexFormatUInt16() {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+			if (decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return "&H{0:X4}";
 			else
 				return "0x{0:X4}";
 		}
 
 		string GetHexFormatUInt32() {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+			if (decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return "&H{0:X8}";
 			else
 				return "0x{0:X8}";

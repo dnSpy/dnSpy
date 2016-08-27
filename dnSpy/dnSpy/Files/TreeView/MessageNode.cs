@@ -18,9 +18,9 @@
 */
 
 using System;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -41,7 +41,7 @@ namespace dnSpy.Files.TreeView {
 			this.Message = msg;
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, Message);
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;

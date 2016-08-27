@@ -27,7 +27,7 @@ using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;
 
-namespace dnSpy.Decompiler.ILSpy.CSharp {
+namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class DecompileTypeMethodsTransform : IAstTransform {
 		readonly HashSet<IMemberDef> defsToShow;
 		readonly HashSet<TypeDef> partialTypes;

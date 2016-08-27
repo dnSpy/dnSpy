@@ -24,28 +24,27 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class WinFormsProjectFile : TypeProjectFile {
 		public override string Description => dnSpy_Decompiler_Resources.MSBuild_CreateWinFormsFile;
-		public ILanguage Language => language;
+		public IDecompiler Decompiler => decompiler;
 		public DecompilationContext DecompilationContext => decompilationContext;
 
-		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
-			: base(type, filename, decompilationContext, language, createDecompilerOutput) {
+		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
+			: base(type, filename, decompilationContext, decompiler, createDecompilerOutput) {
 			this.SubType = "Form";
 		}
 
 		protected override void Decompile(DecompileContext ctx, IDecompilerOutput output) {
-			if (!language.CanDecompile(DecompilationType.PartialType))
+			if (!decompiler.CanDecompile(DecompilationType.PartialType))
 				base.Decompile(ctx, output);
 			else {
 				var opts = new DecompilePartialType(output, decompilationContext, Type);
 				foreach (var d in GetDefsToRemove())
 					opts.Definitions.Add(d);
-				language.Decompile(DecompilationType.PartialType, opts);
+				decompiler.Decompile(DecompilationType.PartialType, opts);
 			}
 		}
 
@@ -129,14 +128,14 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
-				if (winFormsFile.Language.CanDecompile(DecompilationType.PartialType)) {
+				if (winFormsFile.Decompiler.CanDecompile(DecompilationType.PartialType)) {
 					var output = createDecompilerOutput(writer);
 					var opts = new DecompilePartialType(output, winFormsFile.DecompilationContext, winFormsFile.Type);
 					foreach (var d in winFormsFile.GetDefsToRemove())
 						opts.Definitions.Add(d);
 					opts.ShowDefinitions = true;
 					opts.UseUsingDeclarations = false;
-					winFormsFile.Language.Decompile(DecompilationType.PartialType, opts);
+					winFormsFile.Decompiler.Decompile(DecompilationType.PartialType, opts);
 				}
 			}
 		}

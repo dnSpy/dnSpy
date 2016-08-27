@@ -26,7 +26,7 @@ using System.Text;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler.MSBuild {
@@ -73,15 +73,15 @@ namespace dnSpy.Decompiler.MSBuild {
 		public override string Filename { get; }
 
 		readonly TypeDef type;
-		readonly ILanguage language;
+		readonly IDecompiler decompiler;
 
-		public AppBamlResourceProjectFile(string filename, TypeDef type, ILanguage language) {
+		public AppBamlResourceProjectFile(string filename, TypeDef type, IDecompiler decompiler) {
 			this.Filename = filename;
 			this.type = type;
 			this.SubType = "Designer";
 			this.Generator = "MSBuild:Compile";
 			this.BuildAction = DotNetUtils.IsStartUpClass(type) ? BuildAction.ApplicationDefinition : BuildAction.Page;
-			this.language = language;
+			this.decompiler = decompiler;
 		}
 
 		CilBody GetInitializeComponentBody() {
@@ -105,7 +105,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.WriteAttributeString("x", "Class", "http://schemas.microsoft.com/winfx/2006/xaml", type.ReflectionFullName);
 
 				if (type.IsNotPublic) {
-					var opts = BamlDecompilerOptions.Create(language);
+					var opts = BamlDecompilerOptions.Create(decompiler);
 					writer.WriteAttributeString("x", "ClassModifier", "http://schemas.microsoft.com/winfx/2006/xaml", opts.InternalClassModifier);
 				}
 

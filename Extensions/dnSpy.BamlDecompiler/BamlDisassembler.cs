@@ -27,7 +27,6 @@ using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 
@@ -85,11 +84,11 @@ namespace dnSpy.BamlDecompiler {
 
 		#endregion
 
-		ILanguage lang;
+		IDecompiler lang;
 		IDecompilerOutput output;
 		CancellationToken token;
 
-		public BamlDisassembler(ILanguage lang, IDecompilerOutput output, CancellationToken token) {
+		public BamlDisassembler(IDecompiler lang, IDecompilerOutput output, CancellationToken token) {
 			this.lang = lang;
 			this.output = output;
 			this.token = token;

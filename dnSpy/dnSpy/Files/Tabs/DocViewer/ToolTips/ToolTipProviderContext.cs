@@ -17,25 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	sealed class ToolTipProviderContext : IToolTipProviderContext {
 		public IDocumentViewer DocumentViewer { get; }
-		public ILanguage Language { get; }
+		public IDecompiler Decompiler { get; }
 
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
 
-		public ToolTipProviderContext(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguage language, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer) {
+		public ToolTipProviderContext(IImageManager imageManager, IDotNetImageManager dotNetImageManager, IDecompiler decompiler, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer) {
 			this.DocumentViewer = documentViewer;
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
-			this.Language = language;
+			this.Decompiler = decompiler;
 			this.codeToolTipSettings = codeToolTipSettings;
 		}
 

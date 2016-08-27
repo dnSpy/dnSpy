@@ -27,9 +27,9 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
@@ -37,17 +37,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IImageManager imageManager;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		public bool CanCreate => TryGetUsedLanguage() != null;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IImageManager imageManager, IOpenFromGAC openFromGAC, IFileTreeView fileTreeView, ILanguageManager languageManager, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+		EditCodeVMCreator(IImageManager imageManager, IOpenFromGAC openFromGAC, IFileTreeView fileTreeView, IDecompilerManager decompilerManager, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.imageManager = imageManager;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = new OpenAssembly(fileTreeView.FileManager);
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
 
@@ -69,20 +69,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, lang.GenericNameUI);
 		}
 
-		bool IsSupportedLanguage(ILanguage language) {
-			if (language == null)
+		bool IsSupportedLanguage(IDecompiler decompiler) {
+			if (decompiler == null)
 				return false;
-			if (!language.CanDecompile(DecompilationType.TypeMethods))
+			if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
 				return false;
-			return languageCompilerProviders.Any(a => a.Language == language.GenericGuid);
+			return languageCompilerProviders.Any(a => a.Language == decompiler.GenericGuid);
 		}
 
-		ILanguage TryGetUsedLanguage() {
-			var defaultLanguage = languageManager.Language;
-			if (IsSupportedLanguage(defaultLanguage))
-				return defaultLanguage;
-			return languageManager.AllLanguages.FirstOrDefault(a => a.GenericGuid == defaultLanguage.GenericGuid && IsSupportedLanguage(a)) ??
-					languageManager.AllLanguages.FirstOrDefault(a => IsSupportedLanguage(a));
+		IDecompiler TryGetUsedLanguage() {
+			var defaultDecompiler = decompilerManager.Decompiler;
+			if (IsSupportedLanguage(defaultDecompiler))
+				return defaultDecompiler;
+			return decompilerManager.AllDecompilers.FirstOrDefault(a => a.GenericGuid == defaultDecompiler.GenericGuid && IsSupportedLanguage(a)) ??
+					decompilerManager.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a));
 		}
 
 		public EditCodeVM Create(MethodDef method) {

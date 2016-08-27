@@ -19,20 +19,20 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CANamedArgumentsVM : ListVM<CANamedArgumentVM, CANamedArgument> {
 		readonly Predicate<CANamedArgumentsVM> canAdd;
 
-		public CANamedArgumentsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
-			: base(null, null, ownerModule, languageManager, ownerType, ownerMethod, true) {
+		public CANamedArgumentsVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
+			: base(null, null, ownerModule, decompilerManager, ownerType, ownerMethod, true) {
 			this.canAdd = canAdd;
 		}
 
-		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, languageManager));
-		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) => new CANamedArgumentVM(OwnerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(OwnerModule, languageManager));
-		protected override CANamedArgumentVM Create() => new CANamedArgumentVM(OwnerModule, new CANamedArgument(false, OwnerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(OwnerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(OwnerModule, languageManager));
+		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, decompilerManager));
+		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) => new CANamedArgumentVM(OwnerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(OwnerModule, decompilerManager));
+		protected override CANamedArgumentVM Create() => new CANamedArgumentVM(OwnerModule, new CANamedArgument(false, OwnerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(OwnerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(OwnerModule, decompilerManager));
 		protected override bool AddItemCanExecute() => canAdd == null || canAdd(this);
 	}
 }

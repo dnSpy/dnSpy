@@ -23,11 +23,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs {
@@ -91,18 +91,18 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		struct Key : IEquatable<Key> {
-			public readonly ILanguage ILanguage;
+			public readonly IDecompiler Decompiler;
 			public readonly IFileTreeNodeData[] Nodes;
 			public readonly DecompilerSettingsBase Settings;
 
-			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilerSettingsBase settings) {
-				this.ILanguage = language;
+			public Key(IDecompiler decompiler, IFileTreeNodeData[] nodes, DecompilerSettingsBase settings) {
+				this.Decompiler = decompiler;
 				this.Nodes = new List<IFileTreeNodeData>(nodes).ToArray();
 				this.Settings = settings.Clone();
 			}
 
 			public bool Equals(Key other) {
-				if (ILanguage != other.ILanguage)
+				if (Decompiler != other.Decompiler)
 					return false;
 
 				if (Nodes.Length != other.Nodes.Length)
@@ -126,7 +126,7 @@ namespace dnSpy.Files.Tabs {
 
 			public override int GetHashCode() {
 				int h = 0;
-				h = ILanguage.UniqueGuid.GetHashCode();
+				h = Decompiler.UniqueGuid.GetHashCode();
 				foreach (var node in Nodes)
 					h ^= node.GetHashCode();
 				h ^= Settings.GetHashCode();
@@ -155,10 +155,10 @@ namespace dnSpy.Files.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public DocumentViewerContent Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType) {
-			var settings = language.Settings;
+		public DocumentViewerContent Lookup(IDecompiler decompiler, IFileTreeNodeData[] nodes, out IContentType contentType) {
+			var settings = decompiler.Settings;
 			lock (lockObj) {
-				var key = new Key(language, nodes, settings);
+				var key = new Key(decompiler, nodes, settings);
 
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
@@ -174,10 +174,10 @@ namespace dnSpy.Files.Tabs {
 			return null;
 		}
 
-		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType) {
-			var settings = language.Settings;
+		public void Cache(IDecompiler decompiler, IFileTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType) {
+			var settings = decompiler.Settings;
 			lock (lockObj) {
-				var key = new Key(language, nodes, settings);
+				var key = new Key(decompiler, nodes, settings);
 				cachedItems[key] = new Item(content, contentType);
 			}
 		}

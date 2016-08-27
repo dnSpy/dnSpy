@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -40,8 +40,8 @@ namespace dnSpy.Files.TreeView {
 			this.PropertyDef = property;
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
-			new NodePrinter().Write(output, language, PropertyDef, Context.ShowToken, null);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+			new NodePrinter().Write(output, decompiler, PropertyDef, Context.ShowToken, null);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var m in PropertyDef.GetMethods)
@@ -58,7 +58,7 @@ namespace dnSpy.Files.TreeView {
 			var res = filter.GetResult(PropertyDef);
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
-			if (Context.Language.ShowMember(PropertyDef))
+			if (Context.Decompiler.ShowMember(PropertyDef))
 				return FilterType.Visible;
 			return FilterType.Hide;
 		}

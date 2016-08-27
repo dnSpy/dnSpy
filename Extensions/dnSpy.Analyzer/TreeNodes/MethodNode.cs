@@ -20,9 +20,9 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -41,16 +41,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override void Initialize() => this.TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedMethod);
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			if (hidesParent) {
 				output.Write(BoxedTextColor.Punctuation, "(");
 				output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.HidesParent);
 				output.Write(BoxedTextColor.Punctuation, ")");
 				output.WriteSpace();
 			}
-			language.WriteType(output, analyzedMethod.DeclaringType, true);
+			decompiler.WriteType(output, analyzedMethod.DeclaringType, true);
 			output.Write(BoxedTextColor.Operator, ".");
-			new NodePrinter().Write(output, language, analyzedMethod, Context.ShowToken);
+			new NodePrinter().Write(output, decompiler, analyzedMethod, Context.ShowToken);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

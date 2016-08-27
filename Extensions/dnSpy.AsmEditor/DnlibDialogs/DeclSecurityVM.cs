@@ -22,7 +22,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -79,21 +79,21 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly DeclSecurityOptions origOptions;
 		readonly ModuleDef ownerModule;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
 			CustomAttributesVM.PropertyChanged += CustomAttributesVM_PropertyChanged;
 			this.DeclSecVerEnumList = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
 			this.SecurityActionEnumList = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
-			this.SecurityAttributesVM = new SecurityAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.SecurityAttributesVM = new SecurityAttributesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
 			this.SecurityAttributesVM.Collection.CollectionChanged += SecurityAttributesVM_CollectionChanged;
 			Reinitialize();
 		}
@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			SecurityActionEnumList.SelectedItem = (SecAc)options.Action;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			SecurityAttributesVM.Collection.Clear();
-			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, ownerModule, languageManager, ownerType, ownerMethod)));
+			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, ownerModule, decompilerManager, ownerType, ownerMethod)));
 			V1XMLString = options.V1XMLString;
 			DeclSecVerEnumList.SelectedItem = options.V1XMLString == null ? DeclSecVer.V2 : DeclSecVer.V1;
 		}

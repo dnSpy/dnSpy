@@ -21,10 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.PE;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler;
@@ -46,10 +46,10 @@ namespace dnSpy.Files.TreeView {
 				yield return Context.FileTreeView.CreateNode(this, file);
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
-			new NodePrinter().Write(output, language, DnSpyFile);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+			new NodePrinter().Write(output, decompiler, DnSpyFile);
 
-		protected override void WriteToolTip(ITextColorWriter output, ILanguage language) {
+		protected override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) {
 			output.Write(BoxedTextColor.EnumField, TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine));
 
 			output.WriteLine();

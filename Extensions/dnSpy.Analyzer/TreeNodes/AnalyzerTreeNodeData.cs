@@ -21,9 +21,9 @@ using System;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -45,7 +45,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (cached != null)
 					return cached;
 
-				Write(gen.Output, Context.Language);
+				Write(gen.Output, Context.Decompiler);
 
 				var text = gen.CreateResultNewFormatter(Context.UseNewRenderer, filterOutNewLines: true);
 				cachedText = new WeakReference(text);
@@ -54,13 +54,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 		WeakReference cachedText;
 
-		protected abstract void Write(ITextColorWriter output, ILanguage language);
+		protected abstract void Write(ITextColorWriter output, IDecompiler decompiler);
 		public sealed override object ToolTip => null;
-		public sealed override string ToString() => ToString(Context.Language);
+		public sealed override string ToString() => ToString(Context.Decompiler);
 
-		public string ToString(ILanguage language) {
+		public string ToString(IDecompiler decompiler) {
 			var output = new StringBuilderTextColorOutput();
-			Write(output, language);
+			Write(output, decompiler);
 			return output.ToString();
 		}
 
@@ -102,9 +102,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			// Emulate the original code. Only the C# override returned something other than the input
-			if (Context.Language.UniqueGuid != LanguageConstants.LANGUAGE_CSHARP_ILSPY)
+			if (Context.Decompiler.UniqueGuid != DecompilerConstants.LANGUAGE_CSHARP_ILSPY)
 				return member;
-			if (!Context.Language.Settings.GetBoolean(DecompilerOptionConstants.AnonymousMethods_GUID))
+			if (!Context.Decompiler.Settings.GetBoolean(DecompilerOptionConstants.AnonymousMethods_GUID))
 				return member;
 			return Helpers.GetOriginalCodeLocation(member);
 		}

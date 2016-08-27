@@ -19,17 +19,17 @@
 
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class GenericParamsVM : ListVM<GenericParamVM, GenericParam> {
-		public GenericParamsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base(dnSpy_AsmEditor_Resources.EditGenericParameter, dnSpy_AsmEditor_Resources.CreateGenericParameter, ownerModule, languageManager, ownerType, ownerMethod) {
+		public GenericParamsVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod)
+			: base(dnSpy_AsmEditor_Resources.EditGenericParameter, dnSpy_AsmEditor_Resources.CreateGenericParameter, ownerModule, decompilerManager, ownerType, ownerMethod) {
 		}
 
-		protected override GenericParamVM Create(GenericParam model) => new GenericParamVM(new GenericParamOptions(model), OwnerModule, languageManager, ownerType, ownerMethod);
-		protected override GenericParamVM Clone(GenericParamVM obj) => new GenericParamVM(obj.CreateGenericParamOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
-		protected override GenericParamVM Create() => new GenericParamVM(new GenericParamOptions(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override GenericParamVM Create(GenericParam model) => new GenericParamVM(new GenericParamOptions(model), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override GenericParamVM Clone(GenericParamVM obj) => new GenericParamVM(obj.CreateGenericParamOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override GenericParamVM Create() => new GenericParamVM(new GenericParamOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
 
 		protected override int GetAddIndex(GenericParamVM obj) {
 			ushort number = obj.Number.Value;

@@ -22,32 +22,31 @@ using System.IO;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class AssemblyInfoProjectFile : ProjectFile {
-		public override string Description => string.Format(dnSpy_Decompiler_Resources.MSBuild_DecompileAssemblyInfoAndFileExtension, language.FileExtension);
+		public override string Description => string.Format(dnSpy_Decompiler_Resources.MSBuild_DecompileAssemblyInfoAndFileExtension, decompiler.FileExtension);
 		public override BuildAction BuildAction => BuildAction.Compile;
 		public override string Filename { get; }
 
 		readonly ModuleDef module;
 		readonly DecompilationContext decompilationContext;
-		readonly ILanguage language;
+		readonly IDecompiler decompiler;
 		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
-		public AssemblyInfoProjectFile(ModuleDef module, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
+		public AssemblyInfoProjectFile(ModuleDef module, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			this.module = module;
 			this.Filename = filename;
 			this.decompilationContext = decompilationContext;
-			this.language = language;
+			this.decompiler = decompiler;
 			this.createDecompilerOutput = createDecompilerOutput;
 		}
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				var output = createDecompilerOutput(writer);
-				language.Decompile(DecompilationType.AssemblyInfo, new DecompileAssemblyInfo(output, decompilationContext, module));
+				decompiler.Decompile(DecompilationType.AssemblyInfo, new DecompileAssemblyInfo(output, decompilationContext, module));
 			}
 		}
 	}

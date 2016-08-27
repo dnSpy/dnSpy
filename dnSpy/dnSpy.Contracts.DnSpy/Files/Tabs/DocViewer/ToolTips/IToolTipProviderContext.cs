@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 		/// <summary>
 		/// Language to use
 		/// </summary>
-		ILanguage Language { get; }
+		IDecompiler Decompiler { get; }
 
 		/// <summary>
 		/// Creates a <see cref="ICodeToolTipProvider"/> instance that can be used to create the

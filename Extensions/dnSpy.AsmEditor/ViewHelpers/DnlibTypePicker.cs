@@ -22,10 +22,10 @@ using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
@@ -34,19 +34,19 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		static IFileTreeView fileTreeView;
 		static IImageManager imageManager;
 		static IFileSearcherProvider fileSearcherProvider;
-		static ILanguageManager languageManager;
+		static IDecompilerManager decompilerManager;
 		static IFileTreeViewProvider fileTreeViewProvider;
 		static IFileTreeViewSettings fileTreeViewSettings;
 
 		[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {
 			[ImportingConstructor]
-			Loader(IAppWindow appWindow, IImageManager imageManager, IFileTreeView fileTreeView, IFileSearcherProvider fileSearcherProvider, ILanguageManager languageManager, IFileTreeViewProvider fileTreeViewProvider, IFileTreeViewSettings fileTreeViewSettings) {
+			Loader(IAppWindow appWindow, IImageManager imageManager, IFileTreeView fileTreeView, IFileSearcherProvider fileSearcherProvider, IDecompilerManager decompilerManager, IFileTreeViewProvider fileTreeViewProvider, IFileTreeViewSettings fileTreeViewSettings) {
 				DnlibTypePicker.appWindow = appWindow;
 				DnlibTypePicker.imageManager = imageManager;
 				DnlibTypePicker.fileTreeView = fileTreeView;
 				DnlibTypePicker.fileSearcherProvider = fileSearcherProvider;
-				DnlibTypePicker.languageManager = languageManager;
+				DnlibTypePicker.decompilerManager = decompilerManager;
 				DnlibTypePicker.fileTreeViewProvider = fileTreeViewProvider;
 				DnlibTypePicker.fileTreeViewSettings = fileTreeViewSettings;
 			}
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		public T GetDnlibType<T>(string title, IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
 			var newFileTreeView = fileTreeViewProvider.Create(filter);
 			try {
-				var data = new MemberPickerVM(fileSearcherProvider, newFileTreeView, languageManager, filter, title, fileTreeView.FileManager.GetFiles());
+				var data = new MemberPickerVM(fileSearcherProvider, newFileTreeView, decompilerManager, filter, title, fileTreeView.FileManager.GetFiles());
 				data.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
 				var win = new MemberPickerDlg(fileTreeView, newFileTreeView, imageManager);
 				win.DataContext = data;

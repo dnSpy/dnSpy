@@ -373,7 +373,7 @@ namespace dnSpy.AsmEditor.Method {
 			if (typeNode.TypeDef.IsInterface)
 				options.Attributes |= MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot;
 
-			var data = new MethodOptionsVM(options, module, appWindow.LanguageManager, typeNode.TypeDef, null);
+			var data = new MethodOptionsVM(options, module, appWindow.DecompilerManager, typeNode.TypeDef, null);
 			var win = new MethodOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateMethodCommand2;
 			win.DataContext = data;
@@ -477,7 +477,7 @@ namespace dnSpy.AsmEditor.Method {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDef), module, appWindow.LanguageManager, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
+			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDef), module, appWindow.DecompilerManager, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
 			var win = new MethodOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

@@ -22,7 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace dnSpy.Decompiler.ILSpy.XmlDoc {
+namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 	struct XmlDocLine : IEnumerable<SubString?>, IEnumerator<SubString?> {
 		readonly string s;
 		readonly int end;

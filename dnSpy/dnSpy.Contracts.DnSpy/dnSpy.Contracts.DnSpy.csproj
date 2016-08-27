@@ -250,7 +250,7 @@
     <Compile Include="Files\Tabs\IFileTabUIContext.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextProvider.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocator.cs" />
-    <Compile Include="Files\Tabs\ILanguageTabContent.cs" />
+    <Compile Include="Files\Tabs\IDecompilerTabContent.cs" />
     <Compile Include="Files\Tabs\IReferenceFileTabContentProvider.cs" />
     <Compile Include="Files\Tabs\ISaveManager.cs" />
     <Compile Include="Files\Tabs\IShowContext.cs" />
@@ -323,9 +323,9 @@
     <Compile Include="Images\IDotNetImageManager.cs" />
     <Compile Include="Images\IImageManager.cs" />
     <Compile Include="Images\ImageReference.cs" />
-    <Compile Include="Languages\IDecompilerSettingsTab.cs" />
-    <Compile Include="Languages\IDecompilerSettingsTabProvider.cs" />
-    <Compile Include="Languages\ILanguageManager.cs" />
+    <Compile Include="Decompiler\IDecompilerSettingsTab.cs" />
+    <Compile Include="Decompiler\IDecompilerSettingsTabProvider.cs" />
+    <Compile Include="Decompiler\IDecompilerManager.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />

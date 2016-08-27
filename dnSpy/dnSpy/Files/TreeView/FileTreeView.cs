@@ -30,11 +30,11 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Themes;
@@ -93,17 +93,17 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeProvider, IDnSpyFileNodeProviderMetadata>> dnSpyFileNodeProviders, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders)
-			: this(true, null, themeManager, treeViewManager, languageManager, fileManager, fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeProviders, mefFinders) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, IDecompilerManager decompilerManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeProvider, IDnSpyFileNodeProviderMetadata>> dnSpyFileNodeProviders, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders)
+			: this(true, null, themeManager, treeViewManager, decompilerManager, fileManager, fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeProviders, mefFinders) {
 		}
 
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly IThemeManager themeManager;
 		readonly IFileTreeViewSettings fileTreeViewSettings;
 		readonly IAppSettings appSettings;
 
-		public FileTreeView(bool isGlobal, IFileTreeNodeFilter filter, IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeProvider, IDnSpyFileNodeProviderMetadata>> dnSpyFileNodeProviders, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
-			this.languageManager = languageManager;
+		public FileTreeView(bool isGlobal, IFileTreeNodeFilter filter, IThemeManager themeManager, ITreeViewManager treeViewManager, IDecompilerManager decompilerManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeProvider, IDnSpyFileNodeProviderMetadata>> dnSpyFileNodeProviders, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+			this.decompilerManager = decompilerManager;
 			this.themeManager = themeManager;
 			this.fileTreeViewSettings = fileTreeViewSettings;
 			this.appSettings = appSettings;
@@ -114,7 +114,7 @@ namespace dnSpy.Files.TreeView {
 				ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion,
 				ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken,
 				ShowToken = fileTreeViewSettings.ShowToken,
-				Language = languageManager.Language,
+				Decompiler = decompilerManager.Decompiler,
 				UseNewRenderer = appSettings.UseNewRenderer_FileTreeView,
 				DeserializeResources = fileTreeViewSettings.DeserializeResources,
 				CanDragAndDrop = isGlobal,
@@ -139,7 +139,7 @@ namespace dnSpy.Files.TreeView {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.FileManager.SetDispatcher(AddAction);
 			fileManager.CollectionChanged += FileManager_CollectionChanged;
-			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
@@ -176,7 +176,7 @@ namespace dnSpy.Files.TreeView {
 		// closing down.
 		void IFileTreeView.Dispose() {
 			FileManager.CollectionChanged -= FileManager_CollectionChanged;
-			languageManager.LanguageChanged -= LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged -= DecompilerManager_DecompilerChanged;
 			themeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 			fileTreeViewSettings.PropertyChanged -= FileTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
@@ -264,19 +264,19 @@ namespace dnSpy.Files.TreeView {
 		public event EventHandler<EventArgs> NodesTextChanged;
 		void NotifyNodesTextRefreshed() => NodesTextChanged?.Invoke(this, EventArgs.Empty);
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshNodes();
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) => UpdateLanguage(((ILanguageManager)sender).Language);
+		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) => UpdateDecompiler(((IDecompilerManager)sender).Decompiler);
 
-		void UpdateLanguage(ILanguage newLanguage) {
-			this.context.Language = newLanguage;
+		void UpdateDecompiler(IDecompiler newDecompiler) {
+			this.context.Decompiler = newDecompiler;
 			RefreshNodes();
 			RefilterNodes();
 			NotifyNodesTextRefreshed();
 		}
 
-		void IFileTreeView.SetLanguage(ILanguage language) {
-			if (language == null)
+		void IFileTreeView.SetDecompiler(IDecompiler decompiler) {
+			if (decompiler == null)
 				return;
-			UpdateLanguage(language);
+			UpdateDecompiler(decompiler);
 		}
 
 		public void RefreshNodes(bool showMember, bool memberOrder) {

@@ -40,27 +40,27 @@
     <Compile Include="CSharp\AssemblyInfoTransform.cs" />
     <Compile Include="CSharp\BuilderCache.cs" />
     <Compile Include="CSharp\BuilderState.cs" />
-    <Compile Include="CSharp\CSharpLanguage.cs" />
+    <Compile Include="CSharp\CSharpDecompiler.cs" />
     <Compile Include="CSharp\DecompilePartialTransform.cs" />
     <Compile Include="CSharp\DecompileTypeMethodsTransform.cs" />
     <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
-    <Compile Include="IL\ILLanguageUtils.cs" />
+    <Compile Include="IL\ILDecompilerUtils.cs" />
     <Compile Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Decompiler.ILSpy.Core.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ILAst\ILAstLanguage.cs" />
-    <Compile Include="IL\ILLanguage.cs" />
+    <Compile Include="ILAst\ILAstDecompiler.cs" />
+    <Compile Include="IL\ILDecompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\ILAstLanguageDecompilerSettings.cs" />
-    <Compile Include="Settings\ILLanguageDecompilerSettings.cs" />
+    <Compile Include="Settings\ILAstDecompilerSettings.cs" />
+    <Compile Include="Settings\ILDecompilerSettings.cs" />
     <Compile Include="Settings\ILSettings.cs" />
-    <Compile Include="Settings\LanguageDecompilerSettings.cs" />
-    <Compile Include="Settings\LanguageSettingsManager.cs" />
+    <Compile Include="Settings\CSharpVBDecompilerSettings.cs" />
+    <Compile Include="Settings\DecompilerSettingsManager.cs" />
     <Compile Include="Text\ContentTypesInternal.cs" />
     <Compile Include="VisualBasic\ILSpyEnvironmentProvider.cs" />
-    <Compile Include="VisualBasic\VBLanguage.cs" />
+    <Compile Include="VisualBasic\VBDecompiler.cs" />
     <Compile Include="VisualBasic\VBTextOutputFormatter.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\StringLineIterator.cs" />

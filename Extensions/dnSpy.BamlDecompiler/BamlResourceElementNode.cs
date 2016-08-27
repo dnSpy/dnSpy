@@ -32,7 +32,6 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -53,13 +52,13 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlSettings = bamlSettings;
 		}
 
-		void Disassemble(ModuleDef module, BamlDocument document, ILanguage lang,
+		void Disassemble(ModuleDef module, BamlDocument document, IDecompiler lang,
 			IDecompilerOutput output, CancellationToken token) {
 			var disassembler = new BamlDisassembler(lang, output, token);
 			disassembler.Disassemble(module, document);
 		}
 
-		void Decompile(ModuleDef module, BamlDocument document, ILanguage lang,
+		void Decompile(ModuleDef module, BamlDocument document, IDecompiler lang,
 			IDecompilerOutput output, CancellationToken token) {
 			var decompiler = new XamlDecompiler();
 			var xaml = decompiler.Decompile(module, document, token, BamlDecompilerOptions.Create(lang), null);
@@ -102,7 +101,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public string Decompile(IDecompilerOutput output, CancellationToken token) {
-			var lang = Context.Language;
+			var lang = Context.Decompiler;
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
 			if (bamlSettings.DisassembleBaml) {
 				Disassemble(module, document, lang, output, token);

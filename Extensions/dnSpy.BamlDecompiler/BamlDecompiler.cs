@@ -24,7 +24,7 @@ using System.Text;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.BamlDecompiler {
 	[Export(typeof(IBamlDecompiler))]

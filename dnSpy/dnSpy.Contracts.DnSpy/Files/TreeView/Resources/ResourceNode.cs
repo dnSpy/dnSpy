@@ -25,7 +25,6 @@ using dnlib.DotNet;
 using dnlib.IO;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Properties;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -42,11 +41,11 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		public string Name => Resource.Name;
 
 		/// <inheritdoc/>
-		protected sealed override void Write(ITextColorWriter output, ILanguage language) =>
+		protected sealed override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.WriteFilename(Resource.Name);
 		/// <inheritdoc/>
-		protected sealed override void WriteToolTip(ITextColorWriter output, ILanguage language) =>
-			base.WriteToolTip(output, language);
+		protected sealed override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) =>
+			base.WriteToolTip(output, decompiler);
 		/// <inheritdoc/>
 		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
 
@@ -143,8 +142,8 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 			SaveResources.Save(new IResourceDataProvider[] { this }, false, ResourceDataType.Deserialized);
 
 		/// <inheritdoc/>
-		public virtual void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
-			language.WriteCommentBegin(output, true);
+		public virtual void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
+			decompiler.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
 			output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Comment);
@@ -162,7 +161,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 				break;
 			}
 			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedTextColor.Comment);
-			language.WriteCommentEnd(output, true);
+			decompiler.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 

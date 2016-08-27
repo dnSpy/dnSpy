@@ -17,14 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Files.TreeView {
 	sealed class FileTreeNodeDataContext : IFileTreeNodeDataContext {
 		public IFileTreeView FileTreeView { get; private set; }
-		public ILanguage Language { get; internal set; }
+		public IDecompiler Decompiler { get; internal set; }
 		public IResourceNodeFactory ResourceNodeFactory { get; private set; }
 		public IFileTreeNodeFilter Filter { get; private set; }
 		public int FilterVersion { get; set; }
@@ -47,7 +47,7 @@ namespace dnSpy.Files.TreeView {
 
 		public void Clear() {
 			this.FileTreeView = null;
-			this.Language = null;
+			this.Decompiler = null;
 			this.ResourceNodeFactory = null;
 			this.Filter = null;
 		}

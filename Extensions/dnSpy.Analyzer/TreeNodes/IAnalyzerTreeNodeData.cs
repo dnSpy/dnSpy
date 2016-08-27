@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -31,9 +31,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// <summary>
 		/// ToString()
 		/// </summary>
-		/// <param name="language">Language</param>
+		/// <param name="decompiler">Decompiler</param>
 		/// <returns></returns>
-		string ToString(ILanguage language);
+		string ToString(IDecompiler decompiler);
 
 		/// <summary>
 		/// Called when files have been added/removed from the files list

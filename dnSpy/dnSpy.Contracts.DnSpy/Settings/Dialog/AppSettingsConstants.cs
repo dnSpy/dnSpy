@@ -19,9 +19,9 @@
 
 using System;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// </summary>
 	public static class AppSettingsConstants {
 		/// <summary>
-		/// Code using <see cref="ILanguage.ShowMember(IMemberRef)"/> must be
+		/// Code using <see cref="IDecompiler.ShowMember(IMemberRef)"/> must be
 		/// refreshed.
 		/// </summary>
 		public static readonly Guid REFRESH_LANGUAGE_SHOWMEMBER = new Guid("64819A35-1DA1-4485-BFF0-C9C702147550");

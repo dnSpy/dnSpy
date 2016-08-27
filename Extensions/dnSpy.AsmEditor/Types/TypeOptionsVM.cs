@@ -24,7 +24,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Types {
@@ -250,9 +250,9 @@ namespace dnSpy.AsmEditor.Types {
 
 		readonly ModuleDef ownerModule;
 
-		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
+		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -263,10 +263,10 @@ namespace dnSpy.AsmEditor.Types {
 			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, null);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, null);
-			this.GenericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, null);
-			this.InterfaceImplsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, languageManager, ownerType, null);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager, ownerType, null);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerManager, ownerType, null);
+			this.GenericParamsVM = new GenericParamsVM(ownerModule, decompilerManager, ownerType, null);
+			this.InterfaceImplsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, decompilerManager, ownerType, null);
 
 			this.origOptions = options;
 			this.IsNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;

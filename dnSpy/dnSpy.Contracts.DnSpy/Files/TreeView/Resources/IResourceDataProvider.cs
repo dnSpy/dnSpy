@@ -20,7 +20,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>
@@ -53,10 +52,10 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// Write a short string (typically one line) to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Output</param>
-		/// <param name="language">Language</param>
+		/// <param name="decompiler">Decompiler</param>
 		/// <param name="showOffset">true to write offset and size of resource in the PE image, if
 		/// that info is available</param>
-		void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset);
+		void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset);
 
 		/// <summary>
 		/// Used by the searcher. Should only return a string if the data is text or compiled text.

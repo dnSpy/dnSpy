@@ -23,7 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Field {
@@ -179,9 +179,9 @@ namespace dnSpy.AsmEditor.Field {
 
 		readonly ModuleDef ownerModule;
 
-		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
+		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -192,12 +192,12 @@ namespace dnSpy.AsmEditor.Field {
 			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
 			this.origOptions = options;
 
 			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType, null);
+			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerManager, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 			this.FieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
 			this.InitialValue = new HexStringVM(a => HasErrorUpdated());

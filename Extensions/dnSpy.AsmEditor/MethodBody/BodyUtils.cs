@@ -26,7 +26,6 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {

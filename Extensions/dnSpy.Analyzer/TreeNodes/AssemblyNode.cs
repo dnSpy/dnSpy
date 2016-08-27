@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -30,7 +30,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedAssembly);
-		protected override void Write(ITextColorWriter output, ILanguage language) => output.Write(analyzedAssembly);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) => output.Write(analyzedAssembly);
 		public override IMemberRef Member => null;
 		public override IMDTokenProvider Reference => analyzedAssembly;
 	}

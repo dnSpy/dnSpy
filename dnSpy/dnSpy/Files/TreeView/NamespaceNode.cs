@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -51,8 +51,8 @@ namespace dnSpy.Files.TreeView {
 		}
 		List<TypeDef> typesToCreate;
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
-			new NodePrinter().WriteNamespace(output, language, Name);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+			new NodePrinter().WriteNamespace(output, decompiler, Name);
 		public ITypeNode Create(TypeDef type) => Context.FileTreeView.Create(type);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {

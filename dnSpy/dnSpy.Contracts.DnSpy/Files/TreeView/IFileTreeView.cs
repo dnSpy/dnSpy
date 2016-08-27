@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Files.TreeView {
@@ -188,10 +188,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		void AddNode(IDnSpyFileNode fileNode, int index);
 
 		/// <summary>
-		/// Sets language
+		/// Sets decompiler
 		/// </summary>
-		/// <param name="language"></param>
-		void SetLanguage(ILanguage language);
+		/// <param name="decompiler">Decompiler</param>
+		void SetDecompiler(IDecompiler decompiler);
 
 		/// <summary>
 		/// Disposes this instance

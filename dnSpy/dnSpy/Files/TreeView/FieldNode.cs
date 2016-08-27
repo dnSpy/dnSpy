@@ -19,9 +19,9 @@
 
 using System;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -39,14 +39,14 @@ namespace dnSpy.Files.TreeView {
 			this.FieldDef = field;
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
-			new NodePrinter().Write(output, language, FieldDef, Context.ShowToken);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+			new NodePrinter().Write(output, decompiler, FieldDef, Context.ShowToken);
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			var res = filter.GetResult(FieldDef);
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
-			if (Context.Language.ShowMember(FieldDef))
+			if (Context.Decompiler.ShowMember(FieldDef))
 				return FilterType.Visible;
 			return FilterType.Hide;
 		}

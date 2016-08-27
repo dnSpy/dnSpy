@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.IO;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 
 // Adds a new IDnSpyFile that can be loaded into the file treeview. It gets its own IDnSpyFileNode.
@@ -118,7 +118,7 @@ namespace Example2.Extension {
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) =>
 			new ImageReference(GetType().Assembly, "TextFile");
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			output.WriteFilename(Path.GetFileName(file.Filename));
 		}
 

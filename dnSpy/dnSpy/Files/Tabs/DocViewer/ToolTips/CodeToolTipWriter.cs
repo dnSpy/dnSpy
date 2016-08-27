@@ -22,8 +22,8 @@ using System.IO;
 using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler.XmlDoc;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
-using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {

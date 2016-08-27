@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.App {
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.App {
 		bool Activate { get; }
 
 		/// <summary>Language, either human readable or a language guid
-		/// (<see cref="ILanguage.GenericGuid"/> or <see cref="ILanguage.UniqueGuid"/>)</summary>
+		/// (<see cref="IDecompiler.GenericGuid"/> or <see cref="IDecompiler.UniqueGuid"/>)</summary>
 		string Language { get; }
 
 		/// <summary>Culture</summary>

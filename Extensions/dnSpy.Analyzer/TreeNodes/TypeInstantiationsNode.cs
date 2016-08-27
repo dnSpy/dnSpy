@@ -23,7 +23,6 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -39,7 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.InstantiatedByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {

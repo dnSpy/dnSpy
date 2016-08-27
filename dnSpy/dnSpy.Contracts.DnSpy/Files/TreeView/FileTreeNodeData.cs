@@ -23,8 +23,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 				if (cached != null)
 					return cached;
 
-				Write(gen.Output, Context.Language);
+				Write(gen.Output, Context.Decompiler);
 
 				var text = gen.CreateResultNewFormatter(Context.UseNewRenderer, filterOutNewLines: true);
 				cachedText = new WeakReference(text);
@@ -70,36 +70,36 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// Writes the contents
 		/// </summary>
 		/// <param name="output">Output</param>
-		/// <param name="language">Language</param>
-		protected abstract void Write(ITextColorWriter output, ILanguage language);
+		/// <param name="decompiler">Decompiler</param>
+		protected abstract void Write(ITextColorWriter output, IDecompiler decompiler);
 
 		/// <summary>
 		/// Writes the tooltip
 		/// </summary>
 		/// <param name="output">Output</param>
-		/// <param name="language">Language</param>
-		protected virtual void WriteToolTip(ITextColorWriter output, ILanguage language) => Write(output, language);
+		/// <param name="decompiler">Decompiler</param>
+		protected virtual void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) => Write(output, decompiler);
 
 		/// <inheritdoc/>
 		public sealed override object ToolTip {
 			get {
 				var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
-				WriteToolTip(gen.Output, Context.Language);
+				WriteToolTip(gen.Output, Context.Decompiler);
 				return gen.CreateResult(filterOutNewLines: false);
 			}
 		}
 
 		/// <inheritdoc/>
-		public sealed override string ToString() => ToString(Context.Language);
+		public sealed override string ToString() => ToString(Context.Decompiler);
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
-		/// <param name="language">Language</param>
+		/// <param name="decompiler">Decompiler</param>
 		/// <returns></returns>
-		public string ToString(ILanguage language) {
+		public string ToString(IDecompiler decompiler) {
 			var output = new StringBuilderTextColorOutput();
-			Write(output, language);
+			Write(output, decompiler);
 			return output.ToString();
 		}
 

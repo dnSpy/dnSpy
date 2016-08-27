@@ -33,7 +33,6 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -105,12 +104,12 @@ namespace dnSpy.Analyzer {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager) {
+		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, IDecompilerManager decompilerManager) {
 			this.fileTabManager = fileTabManager;
 
 			this.context = new AnalyzerTreeNodeDataContext {
 				DotNetImageManager = dotNetImageManager,
-				Language = languageManager.Language,
+				Decompiler = decompilerManager.Decompiler,
 				FileManager = fileTabManager.FileTreeView.FileManager,
 				ShowToken = analyzerSettings.ShowToken,
 				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
@@ -127,7 +126,7 @@ namespace dnSpy.Analyzer {
 
 			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
 			fileTabManager.FileModified += FileTabManager_FileModified;
-			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
@@ -170,8 +169,8 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			this.context.Language = ((ILanguageManager)sender).Language;
+		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+			this.context.Decompiler = ((IDecompilerManager)sender).Decompiler;
 			RefreshNodes();
 		}
 

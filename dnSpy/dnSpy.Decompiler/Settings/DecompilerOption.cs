@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.Settings {
 	public sealed class DecompilerOption<T> : IDecompilerOption {

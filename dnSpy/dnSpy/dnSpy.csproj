@@ -270,9 +270,9 @@
     <Compile Include="Images\DotNetImageManager.cs" />
     <Compile Include="Images\ImageManager.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
-    <Compile Include="Languages\DummyLanguage.cs" />
-    <Compile Include="Languages\LanguageManager.cs" />
-    <Compile Include="Languages\LanguageManagerSettings.cs" />
+    <Compile Include="Decompiler\DummyDecompiler.cs" />
+    <Compile Include="Decompiler\DecompilerManager.cs" />
+    <Compile Include="Decompiler\DecompilerManagerSettings.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
     <Compile Include="MainApp\AboutScreen.cs" />
     <Compile Include="MainApp\App.xaml.cs">

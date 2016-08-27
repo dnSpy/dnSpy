@@ -20,9 +20,9 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
@@ -31,23 +31,23 @@ namespace dnSpy.Files.Tabs {
 		readonly IAppWindow appWindow;
 
 		[ImportingConstructor]
-		RedecompileTabs(IFileTabManager fileTabManager, ILanguageManager languageManager, IAppWindow appWindow) {
+		RedecompileTabs(IFileTabManager fileTabManager, IDecompilerManager decompilerManager, IAppWindow appWindow) {
 			this.fileTabManager = fileTabManager;
 			this.appWindow = appWindow;
-			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
 		}
 
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
+		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
 			if (!appWindow.AppLoaded)
 				return;
 			var tab = fileTabManager.ActiveTab;
-			var langContent = tab?.Content as ILanguageTabContent;
-			if (langContent == null)
+			var decompilerContent = tab?.Content as IDecompilerTabContent;
+			if (decompilerContent == null)
 				return;
-			var languageManager = (ILanguageManager)sender;
-			if (langContent.Language == languageManager.Language)
+			var decompilerManager = (IDecompilerManager)sender;
+			if (decompilerContent.Decompiler == decompilerManager.Decompiler)
 				return;
-			langContent.Language = languageManager.Language;
+			decompilerContent.Decompiler = decompilerManager.Decompiler;
 			fileTabManager.Refresh(new IFileTab[] { tab });
 		}
 	}

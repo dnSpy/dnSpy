@@ -19,7 +19,6 @@
 
 using System;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using Microsoft.VisualStudio.Utilities;
 
@@ -36,7 +35,7 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer {
 		/// <summary>
 		/// Language to use
 		/// </summary>
-		ILanguage Language { get; }
+		IDecompiler Decompiler { get; }
 
 		/// <summary>
 		/// Gets the decompilation context

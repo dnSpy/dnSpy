@@ -23,7 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Assembly {
@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		readonly ModuleDef ownerModule;
 
-		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, ILanguageManager languageManager) {
+		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
@@ -200,8 +200,8 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
 			this.VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
 			this.PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, null, null);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerManager, null, null);
 			Reinitialize();
 		}
 

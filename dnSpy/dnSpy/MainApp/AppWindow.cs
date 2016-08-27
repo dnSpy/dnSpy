@@ -27,10 +27,10 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows.App;
@@ -47,7 +47,7 @@ namespace dnSpy.MainApp {
 
 		public IMainToolWindowManager ToolWindowManager => mainWindowControl;
 
-		public ILanguageManager LanguageManager => languageManager;
+		public IDecompilerManager DecompilerManager => decompilerManager;
 
 		public IAppStatusBar StatusBar => statusBar;
 		readonly AppStatusBar statusBar;
@@ -103,10 +103,10 @@ namespace dnSpy.MainApp {
 		readonly IImageManager imageManager;
 		readonly AppToolBar appToolBar;
 		readonly MainWindowControl mainWindowControl;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, IAppSettings appSettings, ISettingsManager settingsManager, IFileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, ILanguageManager languageManager) {
+		AppWindow(IThemeManager themeManager, IImageManager imageManager, IAppSettings appSettings, ISettingsManager settingsManager, IFileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, IDecompilerManager decompilerManager) {
 			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
 			this.uiSettings = new UISettings(settingsManager);
 			this.uiSettings.Read();
@@ -120,7 +120,7 @@ namespace dnSpy.MainApp {
 			this.appToolBar = appToolBar;
 			this.mainWindowControl = mainWindowControl;
 			this.wpfCommandManager = wpfCommandManager;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.mainWindowCommands = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();

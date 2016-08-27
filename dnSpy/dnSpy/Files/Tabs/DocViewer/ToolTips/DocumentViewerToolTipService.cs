@@ -25,11 +25,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
@@ -118,7 +118,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			a.Span == b.Span;
 
 		bool ShowToolTip(SpanData<ReferenceInfo> info) {
-			var toolTipContent = CreateToolTipContent(GetLanguage(), info.Data.Reference);
+			var toolTipContent = CreateToolTipContent(GetDecompiler(), info.Data.Reference);
 			if (toolTipContent == null)
 				return false;
 			Debug.Assert(toolTip == null);
@@ -160,18 +160,18 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return GetReference(loc.Position.Position.Position);
 		}
 
-		ILanguage GetLanguage() {
-			var content = documentViewer.FileTab.Content as ILanguageTabContent;
-			return content == null ? null : content.Language;
+		IDecompiler GetDecompiler() {
+			var content = documentViewer.FileTab.Content as IDecompilerTabContent;
+			return content == null ? null : content.Decompiler;
 		}
 
-		object CreateToolTipContent(ILanguage language, object @ref) {
-			if (language == null)
+		object CreateToolTipContent(IDecompiler decompiler, object @ref) {
+			if (decompiler == null)
 				return null;
 			if (@ref == null)
 				return null;
 
-			var ctx = new ToolTipProviderContext(imageManager, dotNetImageManager, language, codeToolTipSettings, documentViewer);
+			var ctx = new ToolTipProviderContext(imageManager, dotNetImageManager, decompiler, codeToolTipSettings, documentViewer);
 			foreach (var provider in toolTipProviders) {
 				var toolTipContent = provider.Value.Create(ctx, @ref);
 				if (toolTipContent != null)

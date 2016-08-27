@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	interface IAnalyzerTreeNodeDataContext {
@@ -27,7 +27,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool SingleClickExpandsChildren { get; }
 		bool SyntaxHighlight { get; }
 		bool ShowToken { get; }
-		ILanguage Language { get; }
+		IDecompiler Decompiler { get; }
 		IDotNetImageManager DotNetImageManager { get; }
 		IFileManager FileManager { get; }
 		IAnalyzerManager AnalyzerManager { get; }

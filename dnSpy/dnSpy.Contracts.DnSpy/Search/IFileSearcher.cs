@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.Search {
 	/// <summary>
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Search {
 		/// Used by <see cref="ISearchResult"/>. Language to use.
 		/// <see cref="ISearchResult.RefreshUI()"/> must be called if this gets updated.
 		/// </summary>
-		ILanguage Language { get; set; }
+		IDecompiler Decompiler { get; set; }
 
 		/// <summary>
 		/// Used by <see cref="ISearchResult"/>. Background type for images.

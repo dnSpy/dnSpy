@@ -276,7 +276,7 @@ namespace dnSpy.AsmEditor.Property {
 			bool isInstance = !(typeNode.TypeDef.IsAbstract && typeNode.TypeDef.IsSealed);
 			var options = PropertyDefOptions.Create(module, "MyProperty", isInstance);
 
-			var data = new PropertyOptionsVM(options, module, appWindow.LanguageManager, typeNode.TypeDef);
+			var data = new PropertyOptionsVM(options, module, appWindow.DecompilerManager, typeNode.TypeDef);
 			var win = new PropertyOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreatePropertyCommand2;
 			win.DataContext = data;
@@ -380,7 +380,7 @@ namespace dnSpy.AsmEditor.Property {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new PropertyOptionsVM(new PropertyDefOptions(propNode.PropertyDef), module, appWindow.LanguageManager, propNode.PropertyDef.DeclaringType);
+			var data = new PropertyOptionsVM(new PropertyDefOptions(propNode.PropertyDef), module, appWindow.DecompilerManager, propNode.PropertyDef.DeclaringType);
 			var win = new PropertyOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

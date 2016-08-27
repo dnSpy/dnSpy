@@ -118,7 +118,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new MethodBodyVM(new MethodBodyOptions(methodNode.MethodDef), module, appWindow.LanguageManager, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
+			var data = new MethodBodyVM(new MethodBodyOptions(methodNode.MethodDef), module, appWindow.DecompilerManager, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
 			var win = new MethodBodyDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

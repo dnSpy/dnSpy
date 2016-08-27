@@ -24,7 +24,7 @@ using dnlib.DotNet;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace dnSpy.Decompiler.ILSpy.CSharp {
+namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class DecompilePartialTransform : IAstTransform {
 		readonly TypeDef type;
 		readonly HashSet<IMemberDef> definitions;

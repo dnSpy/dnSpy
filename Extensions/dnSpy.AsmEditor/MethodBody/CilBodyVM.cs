@@ -29,7 +29,6 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
@@ -113,12 +112,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		readonly MethodDef ownerMethod;
 
-		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
+		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
 			this.OwnerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
 
-			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
 				CanAddGenericTypeVar = ownerType.HasGenericParameters,
 				CanAddGenericMethodVar = ownerMethod.MethodSig.GetGenParamCount() > 0,
 				OwnerType = ownerType,

@@ -25,7 +25,6 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.HexEditor;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -71,18 +70,18 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
-		protected override void DecompileFields(ILanguage language, IDecompilerOutput output) {
-			language.WriteCommentLine(output, string.Empty);
-			language.WriteCommentBegin(output, true);
+		protected override void DecompileFields(IDecompiler decompiler, IDecompilerOutput output) {
+			decompiler.WriteCommentLine(output, string.Empty);
+			decompiler.WriteCommentBegin(output, true);
 			WriteHeader(output);
-			language.WriteCommentEnd(output, true);
+			decompiler.WriteCommentEnd(output, true);
 			output.WriteLine();
 
 			for (int i = 0; i < (int)MetaDataTableVM.Rows; i++) {
 				var obj = MetaDataTableVM.Get(i);
-				language.WriteCommentBegin(output, true);
+				decompiler.WriteCommentBegin(output, true);
 				Write(output, obj);
-				language.WriteCommentEnd(output, true);
+				decompiler.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
 		}

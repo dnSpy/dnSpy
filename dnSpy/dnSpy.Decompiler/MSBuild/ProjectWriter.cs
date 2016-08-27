@@ -27,7 +27,6 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Decompiler.MSBuild {
@@ -333,13 +332,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string GetAppDesignerFolder() {
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return null;
 			return project.PropertiesFolder;
 		}
 
 		string GetNoWarnList() {
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return "41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314";
 			return null;
 		}
@@ -360,9 +359,9 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string GetLanguageTargets() {
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP)
+			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_CSHARP)
 				return @"$(MSBuildToolsPath)\Microsoft.CSharp.targets";
-			if (project.Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return @"$(MSBuildToolsPath)\Microsoft.VisualBasic.targets";
 			return @"$(MSBuildToolsPath)\Microsoft.CSharp.targets";
 		}

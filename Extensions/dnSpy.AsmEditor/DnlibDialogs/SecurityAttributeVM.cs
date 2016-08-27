@@ -26,7 +26,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -75,10 +75,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origSa = sa;
 			this.ownerModule = ownerModule;
-			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => {
+			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerManager, ownerType, ownerMethod, a => {
 				// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
 				return a.Collection.Count < ModelUtils.COMPRESSED_UINT32_MAX;
 			});

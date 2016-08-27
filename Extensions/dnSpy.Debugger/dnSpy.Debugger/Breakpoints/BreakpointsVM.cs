@@ -24,8 +24,8 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Themes;
@@ -57,9 +57,9 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly ITheDebugger theDebugger;
 
 		[ImportingConstructor]
-		BreakpointsVM(ILanguageManager languageManager, IImageManager imageManager, IThemeManager themeManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointManager breakpointManager, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleManager inMemoryModuleManager) {
+		BreakpointsVM(IDecompilerManager decompilerManager, IImageManager imageManager, IThemeManager themeManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointManager breakpointManager, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleManager inMemoryModuleManager) {
 			this.breakpointContext = new BreakpointContext(imageManager, moduleLoader) {
-				Language = languageManager.Language,
+				Decompiler = decompilerManager.Decompiler,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				ShowTokens = breakpointSettings.ShowTokens,
@@ -80,15 +80,15 @@ namespace dnSpy.Debugger.Breakpoints {
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			inMemoryModuleManager.DynamicModulesLoaded += InMemoryModuleManager_DynamicModulesLoaded;
 			foreach (var bp in breakpointManager.GetBreakpoints())
 				AddBreakpoint(bp);
 		}
 
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			var languageManager = (ILanguageManager)sender;
-			breakpointContext.Language = languageManager.Language;
+		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+			var decompilerManager = (IDecompilerManager)sender;
+			breakpointContext.Decompiler = decompilerManager.Decompiler;
 			RefreshLanguageFields();
 		}
 

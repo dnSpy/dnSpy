@@ -18,13 +18,13 @@
 */
 
 using System;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointContext {
 		IImageManager ImageManager { get; }
-		ILanguage Language { get; }
+		IDecompiler Decompiler { get; }
 		IModuleLoader ModuleLoader { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	sealed class BreakpointContext : IBreakpointContext {
 		public IImageManager ImageManager { get; }
-		public ILanguage Language { get; set; }
+		public IDecompiler Decompiler { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public bool ShowTokens { get; set; }

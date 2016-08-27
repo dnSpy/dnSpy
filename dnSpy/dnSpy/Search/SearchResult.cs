@@ -118,8 +118,8 @@ namespace dnSpy.Search {
 
 			var td = o as TypeDef;
 			if (td != null) {
-				Debug.Assert(Context.Language != null);
-				Context.Language.WriteType(output, td, includeNamespace);
+				Debug.Assert(Context.Decompiler != null);
+				Context.Decompiler.WriteType(output, td, includeNamespace);
 				return;
 			}
 

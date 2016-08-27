@@ -27,9 +27,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -109,20 +109,20 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 0)]
 	sealed class CopyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly IDebuggerSettings debuggerSettings;
 
 		[ImportingConstructor]
-		CopyBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, ILanguageManager languageManager, IDebuggerSettings debuggerSettings)
+		CopyBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, IDecompilerManager decompilerManager, IDebuggerSettings debuggerSettings)
 			: base(breakpointsContent) {
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.debuggerSettings = debuggerSettings;
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
 			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
-				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, languageManager.Language);
+				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, decompilerManager.Decompiler);
 				printer.WriteName(vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteAssembly(vm);

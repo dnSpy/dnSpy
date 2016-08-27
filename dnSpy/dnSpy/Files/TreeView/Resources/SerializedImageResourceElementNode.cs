@@ -28,7 +28,6 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
 
@@ -68,7 +67,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
-		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
 				documentViewerOutput.AddUIElement(() => {
@@ -78,7 +77,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				});
 			}
 
-			base.WriteShort(output, language, showOffset);
+			base.WriteShort(output, decompiler, showOffset);
 		}
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {

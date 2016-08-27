@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.MSBuild {
 	public sealed class ProjectModuleOptions {
@@ -32,9 +32,9 @@ namespace dnSpy.Decompiler.MSBuild {
 		public ModuleDef Module { get; }
 
 		/// <summary>
-		/// Language to use
+		/// Decompiler to use
 		/// </summary>
-		public ILanguage Language { get; }
+		public IDecompiler Decompiler { get; }
 
 		/// <summary>
 		/// Decompilation context
@@ -78,15 +78,15 @@ namespace dnSpy.Decompiler.MSBuild {
 		/// </summary>
 		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>> DecompileBaml;
 
-		public ProjectModuleOptions(ModuleDef module, ILanguage language, DecompilationContext decompilationContext) {
-			if (language == null)
-				throw new ArgumentNullException(nameof(language));
+		public ProjectModuleOptions(ModuleDef module, IDecompiler decompiler, DecompilationContext decompilationContext) {
+			if (decompiler == null)
+				throw new ArgumentNullException(nameof(decompiler));
 			if (decompilationContext == null)
 				throw new ArgumentNullException(nameof(decompilationContext));
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			this.Module = module;
-			this.Language = language;
+			this.Decompiler = decompiler;
 			this.DecompilationContext = decompilationContext;
 			this.ProjectGuid = Guid.NewGuid();
 			this.UnpackResources = true;

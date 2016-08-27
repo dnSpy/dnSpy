@@ -25,10 +25,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolWindows.App;
@@ -41,14 +41,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly IMainToolWindowManager mainToolWindowManager;
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IAnalyzerManager> analyzerManager;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 
 		[ImportingConstructor]
-		AnalyzeCommandLoader(IMainToolWindowManager mainToolWindowManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IAnalyzerManager> analyzerManager, ILanguageManager languageManager) {
+		AnalyzeCommandLoader(IMainToolWindowManager mainToolWindowManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IAnalyzerManager> analyzerManager, IDecompilerManager decompilerManager) {
 			this.mainToolWindowManager = mainToolWindowManager;
 			this.fileTabManager = fileTabManager;
 			this.analyzerManager = analyzerManager;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 
 			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			cmds.Add(AnalyzeRoutedCommand, TextEditor_Executed, TextEditor_CanExecute, ModifierKeys.Control, Key.R);
@@ -72,15 +72,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 		void ShowAnalyzerExecuted(object sender, ExecutedRoutedEventArgs e) =>
 			mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
 		void TextEditor_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
-			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), languageManager.Language);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), decompilerManager.Decompiler);
 		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) =>
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, TextEditor_GetMemberRef());
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, TextEditor_GetMemberRef());
 		IMemberRef TextEditor_GetMemberRef() =>
 			(fileTabManager.ActiveTab?.UIContext as IDocumentViewer)?.SelectedReference?.Data.Reference as IMemberRef;
 		void FileTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
-			e.CanExecute = AnalyzeCommand.CanAnalyze(FileTreeView_GetMemberRef(), languageManager.Language);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(FileTreeView_GetMemberRef(), decompilerManager.Decompiler);
 		void FileTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, FileTreeView_GetMemberRef());
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, FileTreeView_GetMemberRef());
 
 		IMemberRef FileTreeView_GetMemberRef() {
 			var nodes = fileTabManager.FileTreeView.TreeView.TopLevelSelection;
@@ -89,9 +89,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		void AnalyzerTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
-			e.CanExecute = AnalyzeCommand.CanAnalyze(AnalyzerTreeView_GetMemberRef(), languageManager.Language);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(AnalyzerTreeView_GetMemberRef(), decompilerManager.Decompiler);
 		void AnalyzerTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, AnalyzerTreeView_GetMemberRef());
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, AnalyzerTreeView_GetMemberRef());
 
 		IMemberRef AnalyzerTreeView_GetMemberRef() {
 			var nodes = analyzerManager.Value.TreeView.TopLevelSelection;
@@ -100,9 +100,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		void SearchListBox_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
-			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), languageManager.Language);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), decompilerManager.Decompiler);
 		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) =>
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, SearchListBox_GetMemberRef(e.Source as ListBox));
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, SearchListBox_GetMemberRef(e.Source as ListBox));
 		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) =>
 			(listBox?.SelectedItem as ISearchResult)?.Reference as IMemberRef;
 	}
@@ -111,21 +111,21 @@ namespace dnSpy.Analyzer.TreeNodes {
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 0)]
 		sealed class FilesCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
-			readonly ILanguageManager languageManager;
+			readonly IDecompilerManager decompilerManager;
 			readonly Lazy<IAnalyzerManager> analyzerManager;
 
 			[ImportingConstructor]
-			FilesCommand(IMainToolWindowManager mainToolWindowManager, ILanguageManager languageManager, Lazy<IAnalyzerManager> analyzerManager) {
+			FilesCommand(IMainToolWindowManager mainToolWindowManager, IDecompilerManager decompilerManager, Lazy<IAnalyzerManager> analyzerManager) {
 				this.mainToolWindowManager = mainToolWindowManager;
-				this.languageManager = languageManager;
+				this.decompilerManager = decompilerManager;
 				this.analyzerManager = analyzerManager;
 			}
 
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
 			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
-				GetMemberRefs(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, false, languageManager);
+				GetMemberRefs(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, false, decompilerManager);
 
-			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, ILanguageManager languageManager) {
+			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, IDecompilerManager decompilerManager) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
 				var nodes = context.Find<ITreeNodeData[]>();
@@ -137,45 +137,45 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				foreach (var node in nodes) {
 					var mr = node as IMDTokenNode;
-					if (mr != null && CanAnalyze(mr.Reference as IMemberRef, languageManager.Language))
+					if (mr != null && CanAnalyze(mr.Reference as IMemberRef, decompilerManager.Decompiler))
 						yield return mr.Reference as IMemberRef;
 				}
 			}
 
 			public override void Execute(IMenuItemContext context) =>
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, GetMemberRefs(context));
 		}
 
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
-			readonly ILanguageManager languageManager;
+			readonly IDecompilerManager decompilerManager;
 			readonly Lazy<IAnalyzerManager> analyzerManager;
 
 			[ImportingConstructor]
-			AnalyzerCommand(IMainToolWindowManager mainToolWindowManager, ILanguageManager languageManager, Lazy<IAnalyzerManager> analyzerManager) {
+			AnalyzerCommand(IMainToolWindowManager mainToolWindowManager, IDecompilerManager decompilerManager, Lazy<IAnalyzerManager> analyzerManager) {
 				this.mainToolWindowManager = mainToolWindowManager;
-				this.languageManager = languageManager;
+				this.decompilerManager = decompilerManager;
 				this.analyzerManager = analyzerManager;
 			}
 
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
 			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
-				FilesCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID, true, languageManager);
+				FilesCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID, true, decompilerManager);
 			public override void Execute(IMenuItemContext context) =>
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, GetMemberRefs(context));
 		}
 
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
-			readonly ILanguageManager languageManager;
+			readonly IDecompilerManager decompilerManager;
 			readonly Lazy<IAnalyzerManager> analyzerManager;
 
 			[ImportingConstructor]
-			CodeCommand(IMainToolWindowManager mainToolWindowManager, ILanguageManager languageManager, Lazy<IAnalyzerManager> analyzerManager) {
+			CodeCommand(IMainToolWindowManager mainToolWindowManager, IDecompilerManager decompilerManager, Lazy<IAnalyzerManager> analyzerManager) {
 				this.mainToolWindowManager = mainToolWindowManager;
-				this.languageManager = languageManager;
+				this.decompilerManager = decompilerManager;
 				this.analyzerManager = analyzerManager;
 			}
 
@@ -196,19 +196,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override void Execute(IMenuItemContext context) =>
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, GetMemberRefs(context));
 		}
 
 		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
-			readonly ILanguageManager languageManager;
+			readonly IDecompilerManager decompilerManager;
 			readonly Lazy<IAnalyzerManager> analyzerManager;
 
 			[ImportingConstructor]
-			SearchCommand(IMainToolWindowManager mainToolWindowManager, ILanguageManager languageManager, Lazy<IAnalyzerManager> analyzerManager) {
+			SearchCommand(IMainToolWindowManager mainToolWindowManager, IDecompilerManager decompilerManager, Lazy<IAnalyzerManager> analyzerManager) {
 				this.mainToolWindowManager = mainToolWindowManager;
-				this.languageManager = languageManager;
+				this.decompilerManager = decompilerManager;
 				this.analyzerManager = analyzerManager;
 			}
 
@@ -216,24 +216,24 @@ namespace dnSpy.Analyzer.TreeNodes {
 				CodeCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
 			public override void Execute(IMenuItemContext context) =>
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, decompilerManager.Decompiler, GetMemberRefs(context));
 		}
 
-		public static bool CanAnalyze(IMemberRef member, ILanguage language) {
+		public static bool CanAnalyze(IMemberRef member, IDecompiler decompiler) {
 			member = ResolveReference(member);
 			return member is TypeDef ||
 					member is FieldDef ||
 					member is MethodDef ||
-					PropertyNode.CanShow(member, language) ||
-					EventNode.CanShow(member, language);
+					PropertyNode.CanShow(member, decompiler) ||
+					EventNode.CanShow(member, decompiler);
 		}
 
-		static void Analyze(IMainToolWindowManager mainToolWindowManager, Lazy<IAnalyzerManager> analyzerManager, ILanguage language, IEnumerable<IMemberRef> mrs) {
+		static void Analyze(IMainToolWindowManager mainToolWindowManager, Lazy<IAnalyzerManager> analyzerManager, IDecompiler decompiler, IEnumerable<IMemberRef> mrs) {
 			foreach (var mr in mrs)
-				Analyze(mainToolWindowManager, analyzerManager, language, mr);
+				Analyze(mainToolWindowManager, analyzerManager, decompiler, mr);
 		}
 
-		public static void Analyze(IMainToolWindowManager mainToolWindowManager, Lazy<IAnalyzerManager> analyzerManager, ILanguage language, IMemberRef member) {
+		public static void Analyze(IMainToolWindowManager mainToolWindowManager, Lazy<IAnalyzerManager> analyzerManager, IDecompiler decompiler, IMemberRef member) {
 			var memberDef = ResolveReference(member);
 
 			var type = memberDef as TypeDef;
@@ -254,13 +254,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 				analyzerManager.Value.Add(new MethodNode(method));
 			}
 
-			var propertyAnalyzer = PropertyNode.TryCreateAnalyzer(member, language);
+			var propertyAnalyzer = PropertyNode.TryCreateAnalyzer(member, decompiler);
 			if (propertyAnalyzer != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerManager.Value.Add(propertyAnalyzer);
 			}
 
-			var eventAnalyzer = EventNode.TryCreateAnalyzer(member, language);
+			var eventAnalyzer = EventNode.TryCreateAnalyzer(member, decompiler);
 			if (eventAnalyzer != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerManager.Value.Add(eventAnalyzer);

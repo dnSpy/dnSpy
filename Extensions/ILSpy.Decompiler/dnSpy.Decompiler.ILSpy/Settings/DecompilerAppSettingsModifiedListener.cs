@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
@@ -46,27 +46,27 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 				refreshVB = true;
 
 			if (refreshIL)
-				RefreshCode<IL.ILLanguage>();
+				RefreshCode<Core.IL.ILDecompiler>();
 #if DEBUG
 			if (refreshILAst)
-				RefreshCode<Core.ILAst.ILAstLanguage>();
+				RefreshCode<Core.ILAst.ILAstDecompiler>();
 #endif
 			if (refreshCSharp)
-				RefreshCode<CSharp.CSharpLanguage>();
+				RefreshCode<Core.CSharp.CSharpDecompiler>();
 			if (refreshVB)
-				RefreshCode<VisualBasic.VBLanguage>();
+				RefreshCode<Core.VisualBasic.VBDecompiler>();
 		}
 
-		IEnumerable<Tuple<IFileTab, ILanguage>> LanguageTabs {
+		IEnumerable<Tuple<IFileTab, IDecompiler>> DecompilerTabs {
 			get {
 				foreach (var tab in fileTabManager.VisibleFirstTabs) {
-					var lang = (tab.Content as ILanguageTabContent)?.Language;
-					if (lang != null)
-						yield return Tuple.Create(tab, lang);
+					var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
+					if (decompiler != null)
+						yield return Tuple.Create(tab, decompiler);
 				}
 			}
 		}
 
-		void RefreshCode<T>() => fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
+		void RefreshCode<T>() => fileTabManager.Refresh(DecompilerTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
 	}
 }

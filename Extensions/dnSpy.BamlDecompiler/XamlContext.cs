@@ -26,7 +26,7 @@ using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.BamlDecompiler {
 	internal class XamlContext {

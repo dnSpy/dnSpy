@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler;
@@ -64,10 +64,10 @@ namespace dnSpy.Files.TreeView {
 				yield return new NamespaceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.NamespaceTreeNodeGroupModule), kv.Key, kv.Value);
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
-			new NodePrinter().Write(output, language, DnSpyFile.ModuleDef, false);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+			new NodePrinter().Write(output, decompiler, DnSpyFile.ModuleDef, false);
 
-		protected override void WriteToolTip(ITextColorWriter output, ILanguage language) {
+		protected override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) {
 			output.WriteModule(DnSpyFile.ModuleDef.Name);
 
 			output.WriteLine();

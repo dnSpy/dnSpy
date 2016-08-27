@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Decompiler.ILSpy.Properties;
@@ -35,7 +35,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-		public double Order => LanguageConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
+		public double Order => DecompilerConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
 		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;
 		public DecompilerSettings Settings => decompilerSettings;
 		public object UIObject => this;

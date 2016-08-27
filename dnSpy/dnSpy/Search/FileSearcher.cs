@@ -24,9 +24,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
 using dnSpy.Properties;
@@ -50,12 +50,12 @@ namespace dnSpy.Search {
 			set { filterSearcherOptions.Context.SyntaxHighlight = value; }
 		}
 
-		public ILanguage Language {
-			get { return filterSearcherOptions.Context.Language; }
+		public IDecompiler Decompiler {
+			get { return filterSearcherOptions.Context.Decompiler; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
-				filterSearcherOptions.Context.Language = value;
+				filterSearcherOptions.Context.Decompiler = value;
 			}
 		}
 

@@ -19,11 +19,11 @@
 
 using System;
 using System.Text;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
-namespace dnSpy.Decompiler.ILSpy.CSharp {
+namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	/// <summary>
 	/// State for one decompiler thread. There should be at most one of these per CPU. This class
 	/// is not thread safe and must only be accessed by the owner thread.

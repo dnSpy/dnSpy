@@ -5,7 +5,6 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -38,7 +37,7 @@ namespace Example2.Extension {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "EntryPoint");
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, "Assembly Child");
 
 		// If you don't want the node to be appended to the children, override this
@@ -94,7 +93,7 @@ namespace Example2.Extension {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			output.Write(BoxedTextColor.Text, "Module Child");
 		}
 
@@ -167,9 +166,8 @@ namespace Example2.Extension {
 		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Comment, Message);
-		}
 
 		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
@@ -203,8 +201,8 @@ namespace Example2.Extension {
 			if (msgNode == null)
 				return false;
 
-			context.Language.WriteCommentLine(context.Output, "The secret message has been decrypted.");
-			context.Language.WriteCommentLine(context.Output, string.Format("The message is: {0}", msgNode.Message));
+			context.Decompiler.WriteCommentLine(context.Output, "The secret message has been decrypted.");
+			context.Decompiler.WriteCommentLine(context.Output, string.Format("The message is: {0}", msgNode.Message));
 			context.ContentTypeString = ContentTypes.PlainText;
 			return true;
 		}

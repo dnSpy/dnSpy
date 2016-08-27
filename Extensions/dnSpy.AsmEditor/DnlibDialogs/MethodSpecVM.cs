@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MethodSpecVM(MethodSpecOptions options, TypeSigCreatorOptions typeSigCreatorOptions) {
 			this.origOptions = options;
 			this.typeSigCreatorOptions = typeSigCreatorOptions;
-			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.LanguageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerManager);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;

@@ -30,7 +30,6 @@ using System.Security;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.MSBuild;
@@ -197,7 +196,7 @@ namespace dnSpy_Console {
 		readonly List<string> asmPaths;
 		readonly List<string> userGacPaths;
 		readonly List<string> gacFiles;
-		string language = LanguageConstants.LANGUAGE_CSHARP.ToString();
+		string language = DecompilerConstants.LANGUAGE_CSHARP.ToString();
 		readonly DecompilationContext decompilationContext;
 		readonly ModuleContext moduleContext;
 		readonly AssemblyResolver assemblyResolver;
@@ -222,13 +221,13 @@ namespace dnSpy_Console {
 			this.reservedOptions = GetReservedOptions();
 			this.colorizeOutput = !Console.IsOutputRedirected;
 
-			var langs = new List<ILanguage>();
+			var langs = new List<IDecompiler>();
 			langs.AddRange(GetAllLanguages());
 			langs.Sort((a, b) => a.OrderUI.CompareTo(b.OrderUI));
 			this.allLanguages = langs.ToArray();
 		}
 
-		static IEnumerable<ILanguage> GetAllLanguages() {
+		static IEnumerable<IDecompiler> GetAllLanguages() {
 			var asmNames = new string[] {
 				"dnSpy.Decompiler.ILSpy.Core",
 			};
@@ -238,13 +237,13 @@ namespace dnSpy_Console {
 			}
 		}
 
-		static IEnumerable<ILanguage> GetLanguagesInAssembly(string asmName) {
+		static IEnumerable<IDecompiler> GetLanguagesInAssembly(string asmName) {
 			var asm = TryLoad(asmName);
 			if (asm != null) {
 				foreach (var type in asm.GetTypes()) {
-					if (!type.IsAbstract && !type.IsInterface && typeof(ILanguageProvider).IsAssignableFrom(type)) {
-						var p = (ILanguageProvider)Activator.CreateInstance(type);
-						foreach (var l in p.Languages)
+					if (!type.IsAbstract && !type.IsInterface && typeof(IDecompilerProvider).IsAssignableFrom(type)) {
+						var p = (IDecompilerProvider)Activator.CreateInstance(type);
+						foreach (var l in p.Create())
 							yield return l;
 					}
 				}
@@ -386,13 +385,13 @@ namespace dnSpy_Console {
 
 		static string FixInvalidSwitchChars(string s) => s.Replace(' ', '-');
 
-		List<List<ILanguage>> GetLanguageOptions() {
-			var list = new List<List<ILanguage>>();
-			var dict = new Dictionary<object, List<ILanguage>>();
+		List<List<IDecompiler>> GetLanguageOptions() {
+			var list = new List<List<IDecompiler>>();
+			var dict = new Dictionary<object, List<IDecompiler>>();
 			foreach (var lang in AllLanguages) {
-				List<ILanguage> opts;
+				List<IDecompiler> opts;
 				if (!dict.TryGetValue(lang.Settings, out opts)) {
-					dict.Add(lang.Settings, opts = new List<ILanguage>());
+					dict.Add(lang.Settings, opts = new List<IDecompiler>());
 					list.Add(opts);
 				}
 				opts.Add(lang);
@@ -458,12 +457,12 @@ namespace dnSpy_Console {
 				throw new ErrorException(dnSpy_Console_Resources.MissingOptions);
 
 			bool canParseCommands = true;
-			ILanguage lang = null;
+			IDecompiler lang = null;
 			Dictionary<string, Tuple<IDecompilerOption, Action<string>>> langDict = null;
 			for (int i = 0; i < args.Length; i++) {
 				if (lang == null) {
 					lang = GetLanguage();
-					langDict = CreateLanguageOptionsDictionary(lang);
+					langDict = CreateDecompilerOptionsDictionary(lang);
 				}
 				var arg = args[i];
 				var next = i + 1 < args.Length ? args[i + 1] : null;
@@ -654,13 +653,13 @@ namespace dnSpy_Console {
 
 		static string ParseString(string s) => s;
 
-		Dictionary<string, Tuple<IDecompilerOption, Action<string>>> CreateLanguageOptionsDictionary(ILanguage language) {
+		Dictionary<string, Tuple<IDecompilerOption, Action<string>>> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
 			var dict = new Dictionary<string, Tuple<IDecompilerOption, Action<string>>>();
 
-			if (language == null)
+			if (decompiler == null)
 				return dict;
 
-			foreach (var tmp in language.Settings.Options) {
+			foreach (var tmp in decompiler.Settings.Options) {
 				var opt = tmp;
 				if (opt.Type == typeof(bool)) {
 					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = true));
@@ -967,7 +966,7 @@ namespace dnSpy_Console {
 			return proj;
 		}
 
-		ILanguage GetLanguage() {
+		IDecompiler GetLanguage() {
 			Guid guid;
 			bool hasGuid = Guid.TryParse(language, out guid);
 			return AllLanguages.FirstOrDefault(a => {
@@ -979,8 +978,8 @@ namespace dnSpy_Console {
 			});
 		}
 
-		ILanguage[] AllLanguages => allLanguages;
-		readonly ILanguage[] allLanguages;
+		IDecompiler[] AllLanguages => allLanguages;
+		readonly IDecompiler[] allLanguages;
 
 		public void Error(string message) {
 			errors++;

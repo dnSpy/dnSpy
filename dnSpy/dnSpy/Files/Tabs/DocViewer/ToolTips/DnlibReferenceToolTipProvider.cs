@@ -25,9 +25,9 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Decompiler.XmlDoc;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
-using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.IL;
 
@@ -98,7 +98,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			var provider = context.Create();
 			provider.SetImage(gp);
 
-			context.Language.WriteToolTip(provider.Output, gp, null);
+			context.Decompiler.WriteToolTip(provider.Output, gp, null);
 
 			provider.CreateNewOutput();
 			try {
@@ -125,7 +125,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		object Create(IToolTipProviderContext context, NamespaceReference nsRef) {
 			var provider = context.Create();
 			provider.SetImage(nsRef);
-			context.Language.WriteNamespaceToolTip(provider.Output, nsRef.Namespace);
+			context.Decompiler.WriteNamespaceToolTip(provider.Output, nsRef.Namespace);
 			return provider.Create();
 		}
 
@@ -134,7 +134,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 
 			var resolvedRef = Resolve(@ref) ?? @ref;
 			provider.SetImage(resolvedRef);
-			context.Language.WriteToolTip(provider.Output, @ref, null);
+			context.Decompiler.WriteToolTip(provider.Output, @ref, null);
 			provider.CreateNewOutput();
 			try {
 				if (resolvedRef is IMemberDef) {
@@ -176,7 +176,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				return provider.Create();
 			}
 
-			context.Language.WriteToolTip(provider.Output, v, name);
+			context.Decompiler.WriteToolTip(provider.Output, v, name);
 
 			provider.CreateNewOutput();
 			if (v is Parameter) {

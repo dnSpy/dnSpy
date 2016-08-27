@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;

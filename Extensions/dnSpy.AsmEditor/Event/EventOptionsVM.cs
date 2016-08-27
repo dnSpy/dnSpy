@@ -25,7 +25,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -142,9 +142,9 @@ namespace dnSpy.AsmEditor.Event {
 
 		readonly ModuleDef ownerModule;
 
-		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
+		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -155,8 +155,8 @@ namespace dnSpy.AsmEditor.Event {
 			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.OtherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
+			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
 
 			this.origOptions = options;
 

@@ -25,9 +25,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Data;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
@@ -112,17 +112,17 @@ namespace dnSpy.Search {
 		string searchText;
 		readonly DelayedAction delayedSearch;
 
-		public ILanguage Language {
-			get { return language; }
+		public IDecompiler Decompiler {
+			get { return decompiler; }
 			set {
-				if (language != value) {
-					language = value;
+				if (decompiler != value) {
+					decompiler = value;
 					if (fileSearcher != null)
-						fileSearcher.Language = language;
+						fileSearcher.Decompiler = decompiler;
 				}
 			}
 		}
-		ILanguage language;
+		IDecompiler decompiler;
 
 		public BackgroundType BackgroundType {
 			get { return backgroundType; }
@@ -203,7 +203,7 @@ namespace dnSpy.Search {
 				};
 				fileSearcher = fileSearcherProvider.Create(options);
 				fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;
-				fileSearcher.Language = Language;
+				fileSearcher.Decompiler = Decompiler;
 				fileSearcher.BackgroundType = BackgroundType;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;

@@ -22,12 +22,11 @@ using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class XamlTypeProjectFile : TypeProjectFile {
-		public XamlTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
-			: base(type, filename, decompilationContext, language, createDecompilerOutput) {
+		public XamlTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
+			: base(type, filename, decompilationContext, decompiler, createDecompilerOutput) {
 		}
 
 		protected override void Decompile(DecompileContext ctx, IDecompilerOutput output) {
@@ -36,7 +35,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				opts.Definitions.Add(d);
 			opts.InterfacesToRemove.Add(new TypeRefUser(Type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef()));
 			opts.InterfacesToRemove.Add(new TypeRefUser(Type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("System.Xaml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089").ToAssemblyRef()));
-			language.Decompile(DecompilationType.PartialType, opts);
+			decompiler.Decompile(DecompilationType.PartialType, opts);
 		}
 
 		IEnumerable<IMemberDef> GetDefsToRemove() {

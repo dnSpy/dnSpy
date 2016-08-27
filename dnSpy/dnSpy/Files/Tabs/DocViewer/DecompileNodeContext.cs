@@ -21,13 +21,12 @@ using System;
 using System.Windows.Threading;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Languages;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DecompileNodeContext : IDecompileNodeContext {
 		public DecompilationContext DecompilationContext { get; }
-		public ILanguage Language { get; }
+		public IDecompiler Decompiler { get; }
 		public IDecompilerOutput Output { get; }
 		public string FileExtension { get; set; }
 		public IContentType ContentType { get; set; }
@@ -35,17 +34,17 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		readonly Dispatcher dispatcher;
 
-		public DecompileNodeContext(DecompilationContext decompilationContext, ILanguage language, IDecompilerOutput output, Dispatcher dispatcher) {
+		public DecompileNodeContext(DecompilationContext decompilationContext, IDecompiler decompiler, IDecompilerOutput output, Dispatcher dispatcher) {
 			if (decompilationContext == null)
 				throw new ArgumentNullException(nameof(decompilationContext));
-			if (language == null)
-				throw new ArgumentNullException(nameof(language));
+			if (decompiler == null)
+				throw new ArgumentNullException(nameof(decompiler));
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			this.DecompilationContext = decompilationContext;
-			this.Language = language;
+			this.Decompiler = decompiler;
 			this.Output = output;
 			this.dispatcher = dispatcher;
 		}

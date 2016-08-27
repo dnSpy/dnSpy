@@ -245,7 +245,7 @@ namespace dnSpy.AsmEditor.Types {
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(ns, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, false);
 
-			var data = new TypeOptionsVM(options, module, appWindow.LanguageManager, null);
+			var data = new TypeOptionsVM(options, module, appWindow.DecompilerManager, null);
 			var win = new TypeOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateTypeCommand2;
 			win.DataContext = data;
@@ -369,7 +369,7 @@ namespace dnSpy.AsmEditor.Types {
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(UTF8String.Empty, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, true);
 
-			var data = new TypeOptionsVM(options, module, appWindow.LanguageManager, null);
+			var data = new TypeOptionsVM(options, module, appWindow.DecompilerManager, null);
 			var win = new TypeOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateNestedTypeCommand2;
 			win.DataContext = data;
@@ -478,7 +478,7 @@ namespace dnSpy.AsmEditor.Types {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDef), module, appWindow.LanguageManager, typeNode.TypeDef);
+			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDef), module, appWindow.DecompilerManager, typeNode.TypeDef);
 			var win = new TypeOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

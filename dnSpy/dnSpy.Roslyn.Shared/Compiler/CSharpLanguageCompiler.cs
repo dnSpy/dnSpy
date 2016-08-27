@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text.Editor;
@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	sealed class CSharpLanguageCompilerProvider : ILanguageCompilerProvider {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "CSharpFile");
-		public Guid Language => LanguageConstants.LANGUAGE_CSHARP;
+		public Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
 		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider);
 
 		readonly ICodeEditorProvider codeEditorProvider;

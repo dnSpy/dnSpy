@@ -27,9 +27,8 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
-using dnSpy.Files.Tabs.DocViewer;
 using dnSpy.Decompiler;
+using dnSpy.Files.Tabs.DocViewer;
 using dnSpy.Properties;
 using Microsoft.Win32;
 
@@ -52,7 +51,7 @@ namespace dnSpy.Files.Tabs {
 		readonly IMessageBoxManager messageBoxManager;
 		readonly IFileTab tab;
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
-		readonly ILanguage language;
+		readonly IDecompiler decompiler;
 		readonly IFileTreeNodeData[] nodes;
 		readonly IDocumentViewer documentViewer;
 
@@ -62,21 +61,20 @@ namespace dnSpy.Files.Tabs {
 			var uiContext = tab.UIContext as IDocumentViewer;
 			if (uiContext == null)
 				return null;
-			var langContent = tab.Content as ILanguageTabContent;
-			var lang = langContent == null ? null : langContent.Language;
-			if (lang == null)
+			var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
+			if (decompiler == null)
 				return null;
 			var nodes = tab.Content.Nodes.ToArray();
 			if (nodes.Length == 0)
 				return null;
-			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, lang, uiContext, nodes);
+			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, decompiler, uiContext, nodes);
 		}
 
-		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, IDocumentViewer documentViewer, IFileTreeNodeData[] nodes) {
+		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, IDecompiler decompiler, IDocumentViewer documentViewer, IFileTreeNodeData[] nodes) {
 			this.messageBoxManager = messageBoxManager;
 			this.tab = tab;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
-			this.language = language;
+			this.decompiler = decompiler;
 			this.documentViewer = documentViewer;
 			this.nodes = nodes;
 		}
@@ -97,7 +95,7 @@ namespace dnSpy.Files.Tabs {
 				decompileContext.Writer = new StreamWriter(filename);
 				var output = new TextWriterDecompilerOutput(decompileContext.Writer);
 				var dispatcher = Dispatcher.CurrentDispatcher;
-				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, language, output, dispatcher);
+				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, decompiler, output, dispatcher);
 				return decompileContext;
 			}
 			catch {
@@ -108,9 +106,9 @@ namespace dnSpy.Files.Tabs {
 
 		DecompileContext CreateDecompileContext() {
 			var saveDlg = new SaveFileDialog {
-				FileName = FilenameUtils.CleanName(nodes[0].ToString(language)) + language.FileExtension,
-				DefaultExt = language.FileExtension,
-				Filter = string.Format("{0}|*{1}|{2}|*.*", language.GenericNameUI, language.FileExtension, dnSpy_Resources.AllFiles),
+				FileName = FilenameUtils.CleanName(nodes[0].ToString(decompiler)) + decompiler.FileExtension,
+				DefaultExt = decompiler.FileExtension,
+				Filter = string.Format("{0}|*{1}|{2}|*.*", decompiler.GenericNameUI, decompiler.FileExtension, dnSpy_Resources.AllFiles),
 			};
 			if (saveDlg.ShowDialog() != true)
 				return null;

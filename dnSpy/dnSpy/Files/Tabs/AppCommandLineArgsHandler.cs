@@ -22,9 +22,9 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Decompiler.XmlDoc;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Files.Tabs {

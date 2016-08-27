@@ -33,7 +33,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -44,7 +43,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly ILanguageCompiler languageCompiler;
-		readonly ILanguage language;
+		readonly IDecompiler decompiler;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
 
 		internal Window OwnerWindow { get; set; }
@@ -89,13 +88,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		public EditCodeVM(IImageManager imageManager, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, ILanguage language, MethodDef methodToEdit) {
-			Debug.Assert(language.CanDecompile(DecompilationType.TypeMethods));
+		public EditCodeVM(IImageManager imageManager, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit) {
+			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
 			this.imageManager = imageManager;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
-			this.language = language;
+			this.decompiler = decompiler;
 			this.methodToEdit = methodToEdit;
 			this.assemblyReferenceResolver = new AssemblyReferenceResolver(methodToEdit.Module.Context.AssemblyResolver, methodToEdit.Module, makeEverythingPublic);
 			StartDecompileAsync(methodToEdit).ContinueWith(t => {
@@ -255,7 +254,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				options.Methods.Add(method);
 				options.DecompileHidden = false;
 				options.MakeEverythingPublic = makeEverythingPublic;
-				language.Decompile(DecompilationType.TypeMethods, options);
+				decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 				state.CancellationToken.ThrowIfCancellationRequested();
 
@@ -263,7 +262,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				options.Methods.Add(method);
 				options.DecompileHidden = true;
 				options.MakeEverythingPublic = makeEverythingPublic;
-				language.Decompile(DecompilationType.TypeMethods, options);
+				decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 			}, state.CancellationToken);
 		}

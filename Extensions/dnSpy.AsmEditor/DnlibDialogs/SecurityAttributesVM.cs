@@ -19,16 +19,16 @@
 
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute> {
-		public SecurityAttributesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, languageManager, ownerType, ownerMethod) {
+		public SecurityAttributesVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod)
+			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, decompilerManager, ownerType, ownerMethod) {
 		}
 
-		protected override SecurityAttributeVM Create(SecurityAttribute model) => new SecurityAttributeVM(model, OwnerModule, languageManager, ownerType, ownerMethod);
-		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) => new SecurityAttributeVM(obj.CreateSecurityAttribute(), OwnerModule, languageManager, ownerType, ownerMethod);
-		protected override SecurityAttributeVM Create() => new SecurityAttributeVM(new SecurityAttribute(), OwnerModule, languageManager, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Create(SecurityAttribute model) => new SecurityAttributeVM(model, OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) => new SecurityAttributeVM(obj.CreateSecurityAttribute(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Create() => new SecurityAttributeVM(new SecurityAttribute(), OwnerModule, decompilerManager, ownerType, ownerMethod);
 	}
 }

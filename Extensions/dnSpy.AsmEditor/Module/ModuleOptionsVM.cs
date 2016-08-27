@@ -26,7 +26,7 @@ using dnlib.PE;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -424,7 +424,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		readonly ModuleDef module;
 
-		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, ILanguageManager languageManager) {
+		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, IDecompilerManager decompilerManager) {
 			this.module = module;
 			this.options = new ModuleOptions();
 			this.origOptions = options;
@@ -443,7 +443,7 @@ namespace dnSpy.AsmEditor.Module {
 			Cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			TablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			NativeEntryPointRva = new UInt32VM(a => HasErrorUpdated());
-			CustomAttributesVM = new CustomAttributesVM(module, languageManager);
+			CustomAttributesVM = new CustomAttributesVM(module, decompilerManager);
 			Reinitialize();
 		}
 

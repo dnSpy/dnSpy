@@ -751,7 +751,7 @@ namespace dnSpy.AsmEditor.Module {
 			var asmNode = (IModuleFileNode)nodes[0];
 
 			var module = asmNode.DnSpyFile.ModuleDef;
-			var data = new ModuleOptionsVM(module, new ModuleOptions(module), appWindow.LanguageManager);
+			var data = new ModuleOptionsVM(module, new ModuleOptions(module), appWindow.DecompilerManager);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

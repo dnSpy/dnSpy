@@ -27,7 +27,6 @@ using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
 using dnlib.PE;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler.MSBuild {
@@ -65,24 +64,24 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.createDecompilerOutput = createDecompilerOutput;
 			this.Files = new List<ProjectFile>();
 			this.DefaultNamespace = new DefaultNamespaceFinder(options.Module).Find();
-			this.Filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Language.ProjectFileExtension);
+			this.Filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Decompiler.ProjectFileExtension);
 			this.AssemblyName = options.Module.Assembly == null ? string.Empty : options.Module.Assembly.Name.String;
 			this.ProjectTypeGuids = new HashSet<Guid>();
 			this.PropertiesFolder = CalculatePropertiesFolder();
 			this.ExtraAssemblyReferences = new HashSet<string>();
-			this.LanguageGuid = CalculateLanguageGuid(options.Language);
+			this.LanguageGuid = CalculateLanguageGuid(options.Decompiler);
 		}
 
-		static Guid CalculateLanguageGuid(ILanguage language) {
-			if (language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+		static Guid CalculateLanguageGuid(IDecompiler decompiler) {
+			if (decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return new Guid("F184B08F-C81C-45F6-A57F-5ABD9991F28F");
 
-			Debug.Assert(language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP);
+			Debug.Assert(decompiler.GenericGuid == DecompilerConstants.LANGUAGE_CSHARP);
 			return new Guid("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC");
 		}
 
 		string CalculatePropertiesFolder() {
-			if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+			if (Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return "My Project";
 			return "Properties";
 		}
@@ -93,9 +92,9 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			AllowUnsafeBlocks = DotNetUtils.IsUnsafe(Options.Module);
 			InitializeSplashScreen();
-			if (Options.Language.CanDecompile(DecompilationType.AssemblyInfo)) {
-				var filename = filenameCreator.CreateFromRelativePath(Path.Combine(PropertiesFolder, "AssemblyInfo"), Options.Language.FileExtension);
-				Files.Add(new AssemblyInfoProjectFile(Options.Module, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput));
+			if (Options.Decompiler.CanDecompile(DecompilationType.AssemblyInfo)) {
+				var filename = filenameCreator.CreateFromRelativePath(Path.Combine(PropertiesFolder, "AssemblyInfo"), Options.Decompiler.FileExtension);
+				Files.Add(new AssemblyInfoProjectFile(Options.Module, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput));
 			}
 
 			var ep = Options.Module.EntryPoint;
@@ -199,10 +198,10 @@ namespace dnSpy.Decompiler.MSBuild {
 				var filename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
 				TypeProjectFile newFile;
 				var isAppType = DotNetUtils.IsSystemWindowsApplication(type);
-				if (!Options.Language.CanDecompile(DecompilationType.PartialType))
-					newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+				if (!Options.Decompiler.CanDecompile(DecompilationType.PartialType))
+					newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 				else
-					newFile = new XamlTypeProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+					newFile = new XamlTypeProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 				newFile.DependentUpon = bamlFile;
 				if (isAppType && DotNetUtils.IsStartUpClass(type)) {
 					bamlFile.IsAppDef = true;
@@ -218,7 +217,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (resxFile != null) {
 				if (DotNetUtils.IsWinForm(type)) {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename));
-					var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+					var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 					resxFile.DependentUpon = newFile;
 					var dname = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
 					var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname, createDecompilerOutput);
@@ -228,7 +227,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				}
 				else {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
-					var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+					var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 					newFile.DependentUpon = resxFile;
 					newFile.AutoGen = true;
 					newFile.DesignTime = true;
@@ -243,14 +242,14 @@ namespace dnSpy.Decompiler.MSBuild {
 				var designerFilename = filenameCreator.Create(DESIGNER + GetTypeExtension(type), type.FullName);
 				var settingsFilename = filenameCreator.Create(".settings", type.FullName);
 				ProjectFile designerTypeFile;
-				if (Options.Language.CanDecompile(DecompilationType.PartialType)) {
+				if (Options.Decompiler.CanDecompile(DecompilationType.PartialType)) {
 					var typeFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 					designerTypeFile = new SettingsDesignerTypeProjectFile(settingsTypeFile, designerFilename, createDecompilerOutput);
 					Files.Add(settingsTypeFile);
 				}
 				else
-					designerTypeFile = new TypeProjectFile(type, designerFilename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+					designerTypeFile = new TypeProjectFile(type, designerFilename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 				var settingsFile = new SettingsProjectFile(type, settingsFilename);
 				designerTypeFile.DependentUpon = settingsFile;
 				designerTypeFile.AutoGen = true;
@@ -262,7 +261,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 
 			var newFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-			return new TypeProjectFile(type, newFilename, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+			return new TypeProjectFile(type, newFilename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 		}
 
 		void CreateEmptyAppXamlFile() {
@@ -285,9 +284,9 @@ namespace dnSpy.Decompiler.MSBuild {
 			var name = Path.GetFileNameWithoutExtension(file.Filename);
 			filename = Path.Combine(Path.GetDirectoryName(filename), name + ".xaml");
 
-			var newFile = new XamlTypeProjectFile(file.Type, filename + Options.Language.FileExtension, Options.DecompilationContext, Options.Language, createDecompilerOutput);
+			var newFile = new XamlTypeProjectFile(file.Type, filename + Options.Decompiler.FileExtension, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 			Files.Add(newFile);
-			var bamlFile = new AppBamlResourceProjectFile(filename, file.Type, Options.Language);
+			var bamlFile = new AppBamlResourceProjectFile(filename, file.Type, Options.Decompiler);
 			newFile.DependentUpon = bamlFile;
 			Files.Add(bamlFile);
 		}
@@ -310,9 +309,9 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			if (hasXamlClasses || ReferencesWPFClasses()) {
 				ProjectTypeGuids.Add(new Guid("60DC8134-EBA5-43B8-BCC9-BB4BC16C2548"));
-				if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_VISUALBASIC)
+				if (Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 					ProjectTypeGuids.Add(new Guid("F184B08F-C81C-45F6-A57F-5ABD9991F28F"));
-				else if (Options.Language.GenericGuid == LanguageConstants.LANGUAGE_CSHARP)
+				else if (Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_CSHARP)
 					ProjectTypeGuids.Add(new Guid("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"));
 			}
 		}
@@ -355,8 +354,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetTypeExtension(TypeDef type) {
 			BamlResourceProjectFile bamlFile;
 			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out bamlFile))
-				return ".xaml" + Options.Language.FileExtension;
-			return Options.Language.FileExtension;
+				return ".xaml" + Options.Decompiler.FileExtension;
+			return Options.Decompiler.FileExtension;
 		}
 
 		IEnumerable<ProjectFile> CreateEmbeddedResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) {
@@ -452,7 +451,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		RawEmbeddedResourceProjectFile CreateRawEmbeddedResourceProjectFile(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) => new RawEmbeddedResourceProjectFile(resourceNameCreator.GetResourceFilename(er.Name), er);
 
 		bool DecompileType(TypeDef type) {
-			if (!Options.Language.ShowMember(type))
+			if (!Options.Decompiler.ShowMember(type))
 				return false;
 
 			if (type.IsGlobalModuleType && type.Methods.Count == 0 && type.Fields.Count == 0 &&

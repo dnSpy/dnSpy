@@ -28,7 +28,6 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
 
@@ -79,8 +78,8 @@ namespace dnSpy.Files.TreeView.Resources {
 			}
 		}
 
-		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
-			base.WriteShort(output, language, showOffset);
+		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
+			base.WriteShort(output, decompiler, showOffset);
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
 				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());

@@ -25,11 +25,11 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -125,15 +125,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			context.ContentTypeString = context.Language.ContentTypeString;
+			context.ContentTypeString = context.Decompiler.ContentTypeString;
 			var children = context.UIThread(() => {
 				TreeNode.EnsureChildrenLoaded();
 				return TreeNode.DataChildren.OfType<HexNode>().ToArray();
 			});
-			context.Language.WriteCommentLine(context.Output, dnSpy_AsmEditor_Resources.HexNode_PE);
-			context.Language.WriteCommentLine(context.Output, dnSpy_AsmEditor_Resources.NodesUseHexEditorMsg);
+			context.Decompiler.WriteCommentLine(context.Output, dnSpy_AsmEditor_Resources.HexNode_PE);
+			context.Decompiler.WriteCommentLine(context.Output, dnSpy_AsmEditor_Resources.NodesUseHexEditorMsg);
 			foreach (HexNode node in children) {
-				context.Language.WriteCommentLine(context.Output, string.Empty);
+				context.Decompiler.WriteCommentLine(context.Output, string.Empty);
 				node.Decompile(context);
 			}
 			return true;
@@ -147,7 +147,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return stgStreamNode?.FindTokenNode(token);
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
 		public override Guid Guid => new Guid(FileTVConstants.PE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);

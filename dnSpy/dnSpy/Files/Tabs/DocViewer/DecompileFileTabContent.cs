@@ -25,11 +25,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Properties;
@@ -40,17 +40,17 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		public IFileManager FileManager { get; }
 		public IFileTreeNodeDecompiler FileTreeNodeDecompiler { get; }
-		public ILanguageManager LanguageManager { get; }
+		public IDecompilerManager DecompilerManager { get; }
 		public IDecompilationCache DecompilationCache { get; }
 		public IMethodAnnotations MethodAnnotations { get; }
 		public IContentTypeRegistryService ContentTypeRegistryService { get; }
 		public Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] DocumentViewerCustomDataProviders { get; }
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>> documentViewerCustomDataProviders) {
+		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, IDecompilerManager decompilerManager, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>> documentViewerCustomDataProviders) {
 			this.FileManager = fileManager;
 			this.FileTreeNodeDecompiler = fileTreeNodeDecompiler;
-			this.LanguageManager = languageManager;
+			this.DecompilerManager = decompilerManager;
 			this.DecompilationCache = decompilationCache;
 			this.MethodAnnotations = methodAnnotations;
 			this.ContentTypeRegistryService = contentTypeRegistryService;
@@ -58,10 +58,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) =>
-			new DecompileFileTabContent(this, context.Nodes, LanguageManager.Language);
+			new DecompileFileTabContent(this, context.Nodes, DecompilerManager.Decompiler);
 
 		public IFileTabContent Create(IFileTreeNodeData[] nodes) =>
-			new DecompileFileTabContent(this, nodes, LanguageManager.Language);
+			new DecompileFileTabContent(this, nodes, DecompilerManager.Decompiler);
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
 
@@ -70,7 +70,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (dc == null)
 				return null;
 
-			section.Attribute("Language", dc.Language.UniqueGuid);
+			section.Attribute("Language", dc.Decompiler.UniqueGuid);
 			return GUID_SerializedContent;
 		}
 
@@ -78,26 +78,26 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (guid != GUID_SerializedContent)
 				return null;
 
-			var langGuid = section.Attribute<Guid?>("Language") ?? LanguageConstants.LANGUAGE_CSHARP;
-			var language = LanguageManager.FindOrDefault(langGuid);
+			var langGuid = section.Attribute<Guid?>("Language") ?? DecompilerConstants.LANGUAGE_CSHARP;
+			var language = DecompilerManager.FindOrDefault(langGuid);
 			return new DecompileFileTabContent(this, context.Nodes, language);
 		}
 	}
 
-	sealed class DecompileFileTabContent : IAsyncFileTabContent, ILanguageTabContent {
+	sealed class DecompileFileTabContent : IAsyncFileTabContent, IDecompilerTabContent {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTreeNodeData[] nodes;
 
-		public ILanguage Language { get; set; }
+		public IDecompiler Decompiler { get; set; }
 
-		public DecompileFileTabContent(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTreeNodeData[] nodes, ILanguage language) {
+		public DecompileFileTabContent(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTreeNodeData[] nodes, IDecompiler decompiler) {
 			this.decompileFileTabContentFactory = decompileFileTabContentFactory;
 			this.nodes = nodes;
-			this.Language = language;
+			this.Decompiler = decompiler;
 		}
 
 		public IFileTabContent Clone() =>
-			new DecompileFileTabContent(decompileFileTabContentFactory, nodes, Language);
+			new DecompileFileTabContent(decompileFileTabContentFactory, nodes, Decompiler);
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) =>
 			locator.Get<IDocumentViewer>();
 
@@ -106,12 +106,12 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				if (nodes.Length == 0)
 					return dnSpy_Resources.EmptyTabTitle;
 				if (nodes.Length == 1)
-					return nodes[0].ToString(Language);
+					return nodes[0].ToString(Decompiler);
 				var sb = new StringBuilder();
 				foreach (var node in nodes) {
 					if (sb.Length > 0)
 						sb.Append(", ");
-					sb.Append(node.ToString(Language));
+					sb.Append(node.ToString(Decompiler));
 				}
 				return sb.ToString();
 			}
@@ -155,7 +155,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			decompilationContext.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var output = new DocumentViewerOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
-			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Language, output, dispatcher);
+			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Decompiler, output, dispatcher);
 			if (ctx.IsRefresh) {
 				decompileContext.SavedRefPos = ((IDocumentViewer)ctx.UIContext).SaveReferencePosition();
 				if (decompileContext.SavedRefPos != null) {
@@ -175,7 +175,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 
 		void UpdateLanguage() {
 			if (FileTab.IsActiveTab)
-				decompileFileTabContentFactory.LanguageManager.Language = Language;
+				decompileFileTabContentFactory.DecompilerManager.Decompiler = Decompiler;
 		}
 
 		public void OnSelected() => UpdateLanguage();
@@ -186,7 +186,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
 			IContentType contentType;
-			decompileContext.CachedContent = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out contentType);
+			decompileContext.CachedContent = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Decompiler, nodes, out contentType);
 			decompileContext.DecompileNodeContext.ContentType = contentType;
 			ctx.UserData = decompileContext;
 		}
@@ -206,7 +206,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (contentType == null) {
 				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
 				if (contentTypeString == null)
-					contentTypeString = ContentTypes.TryGetContentTypeStringByExtension(decompileContext.DecompileNodeContext.Language.FileExtension) ?? ContentTypes.PlainText;
+					contentTypeString = ContentTypes.TryGetContentTypeStringByExtension(decompileContext.DecompileNodeContext.Decompiler.FileExtension) ?? ContentTypes.PlainText;
 				contentType = decompileFileTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeString);
 				Debug.Assert(contentType != null);
 			}
@@ -230,7 +230,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 					var docViewerOutput = (DocumentViewerOutput)decompileContext.DecompileNodeContext.Output;
 					content = CreateContent(documentViewer, docViewerOutput);
 					if (docViewerOutput.CanBeCached)
-						decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, content, contentType);
+						decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Decompiler, nodes, content, contentType);
 				}
 			}
 

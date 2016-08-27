@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Decompiler.MSBuild;
 using dnSpy.Properties;
@@ -87,19 +87,19 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public EnumListVM ProjectVersionVM { get; } = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
-		public IEnumerable<ILanguage> AllLanguages => languageManager.AllLanguages.Where(a => a.ProjectFileExtension != null);
-		readonly ILanguageManager languageManager;
+		public IEnumerable<IDecompiler> AllDecompilers => decompilerManager.AllDecompilers.Where(a => a.ProjectFileExtension != null);
+		readonly IDecompilerManager decompilerManager;
 
-		public ILanguage Language {
-			get { return language; }
+		public IDecompiler Decompiler {
+			get { return decompiler; }
 			set {
-				if (language != value) {
-					language = value;
-					OnPropertyChanged(nameof(Language));
+				if (decompiler != value) {
+					decompiler = value;
+					OnPropertyChanged(nameof(Decompiler));
 				}
 			}
 		}
-		ILanguage language;
+		IDecompiler decompiler;
 
 		public NullableGuidVM ProjectGuid { get; }
 
@@ -242,9 +242,9 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		readonly IPickDirectory pickDirectory;
 		readonly IExportTask exportTask;
 
-		public ExportToProjectVM(IPickDirectory pickDirectory, ILanguageManager languageManager, IExportTask exportTask, bool canDecompileBaml) {
+		public ExportToProjectVM(IPickDirectory pickDirectory, IDecompilerManager decompilerManager, IExportTask exportTask, bool canDecompileBaml) {
 			this.pickDirectory = pickDirectory;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.exportTask = exportTask;
 			this.canDecompileBaml = canDecompileBaml;
 			this.unpackResources = true;
@@ -252,7 +252,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.decompileXaml = canDecompileBaml;
 			this.createSolution = true;
 			this.ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			this.language = languageManager.AllLanguages.FirstOrDefault(a => a.ProjectFileExtension != null);
+			this.decompiler = decompilerManager.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension != null);
 			this.isIndeterminate = false;
 			this.ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}

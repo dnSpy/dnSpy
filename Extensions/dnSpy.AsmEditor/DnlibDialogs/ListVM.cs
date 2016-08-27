@@ -25,7 +25,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -61,16 +61,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly string editString;
 		readonly string createString;
-		protected readonly ILanguageManager languageManager;
+		protected readonly IDecompilerManager decompilerManager;
 		protected readonly TypeDef ownerType;
 		protected readonly MethodDef ownerMethod;
 		readonly bool inlineEditing;
 
-		protected ListVM(string editString, string createString, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
+		protected ListVM(string editString, string createString, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
 			this.editString = editString;
 			this.createString = createString;
 			this.OwnerModule = ownerModule;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.inlineEditing = inlineEditing;

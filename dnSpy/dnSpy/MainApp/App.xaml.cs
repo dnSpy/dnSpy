@@ -35,8 +35,8 @@ using System.Windows.Interop;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
 using dnSpy.Extension;
@@ -78,7 +78,7 @@ namespace dnSpy.MainApp {
 		[Import]
 		Lazy<IFileTabManager> fileTabManager = null;
 		[Import]
-		Lazy<ILanguageManager> languageManager = null;
+		Lazy<IDecompilerManager> decompilerManager = null;
 		[ImportMany]
 		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
@@ -368,9 +368,9 @@ namespace dnSpy.MainApp {
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
 				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
 
-			var lang = GetLanguage(appArgs.Language);
-			if (lang != null)
-				languageManager.Value.Language = lang;
+			var decompiler = GetDecompiler(appArgs.Language);
+			if (decompiler != null)
+				decompilerManager.Value.Decompiler = decompiler;
 
 			if (appArgs.FullScreen != null)
 				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
@@ -395,19 +395,19 @@ namespace dnSpy.MainApp {
 				handler.Value.OnNewArgs(appArgs);
 		}
 
-		ILanguage GetLanguage(string language) {
+		IDecompiler GetDecompiler(string language) {
 			if (string.IsNullOrEmpty(language))
 				return null;
 
 			Guid guid;
 			if (Guid.TryParse(language, out guid)) {
-				var lang = languageManager.Value.Find(guid);
+				var lang = decompilerManager.Value.Find(guid);
 				if (lang != null)
 					return lang;
 			}
 
-			return languageManager.Value.AllLanguages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
-				languageManager.Value.AllLanguages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
+			return decompilerManager.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
+				decompilerManager.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
 		}
 	}
 }

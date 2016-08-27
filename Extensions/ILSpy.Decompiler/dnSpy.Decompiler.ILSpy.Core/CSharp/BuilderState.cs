@@ -18,10 +18,10 @@
 */
 
 using System;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
-namespace dnSpy.Decompiler.ILSpy.CSharp {
+namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	/// <summary>
 	/// Gets the <see cref="AstBuilderState"/> from the pool and returns it when <see cref="Dispose"/>
 	/// gets called.

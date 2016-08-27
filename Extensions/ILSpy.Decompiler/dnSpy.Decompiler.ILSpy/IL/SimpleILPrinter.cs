@@ -20,7 +20,6 @@
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.ILSpy.Core.IL;
 using ICSharpCode.Decompiler.Disassembler;
@@ -30,7 +29,7 @@ namespace dnSpy.Decompiler.ILSpy.IL {
 	sealed class SimpleILPrinter : ISimpleILPrinter {
 		double ISimpleILPrinter.Order => -100;
 
-		bool ISimpleILPrinter.Write(IDecompilerOutput output, IMemberRef member) => ILLanguageUtils.Write(output, member);
+		bool ISimpleILPrinter.Write(IDecompilerOutput output, IMemberRef member) => ILDecompilerUtils.Write(output, member);
 		void ISimpleILPrinter.Write(IDecompilerOutput output, MethodSig sig) => output.Write(sig);
 		void ISimpleILPrinter.Write(IDecompilerOutput output, TypeSig type) => type.WriteTo(output);
 	}

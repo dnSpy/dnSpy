@@ -18,10 +18,10 @@
 
 using System.Text;
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages.XmlDoc;
+using dnSpy.Contracts.Decompiler.XmlDoc;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace dnSpy.Decompiler.ILSpy.XmlDoc {
+namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 	/// <summary>
 	/// Adds XML documentation for member definitions.
 	/// </summary>

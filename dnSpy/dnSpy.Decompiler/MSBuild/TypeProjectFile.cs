@@ -22,7 +22,6 @@ using System.IO;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler.MSBuild {
@@ -33,16 +32,16 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly string filename;
 
 		protected readonly DecompilationContext decompilationContext;
-		protected readonly ILanguage language;
+		protected readonly IDecompiler decompiler;
 		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
 		public TypeDef Type { get; }
 
-		public TypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
+		public TypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			this.Type = type;
 			this.filename = filename;
 			this.decompilationContext = decompilationContext;
-			this.language = language;
+			this.decompiler = decompiler;
 			this.createDecompilerOutput = createDecompilerOutput;
 		}
 
@@ -54,6 +53,6 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		protected virtual void Decompile(DecompileContext ctx, IDecompilerOutput output) =>
-			language.Decompile(Type, output, decompilationContext);
+			decompiler.Decompile(Type, output, decompilationContext);
 	}
 }

@@ -23,11 +23,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
@@ -37,7 +37,7 @@ namespace dnSpy.Files.TreeView {
 	sealed class FileTreeViewProvider : IFileTreeViewProvider {
 		readonly IThemeManager themeManager;
 		readonly ITreeViewManager treeViewManager;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly IFileManagerProvider fileManagerProvider;
 		readonly IFileTreeViewSettings fileTreeViewSettings;
 		readonly IMenuManager menuManager;
@@ -49,10 +49,10 @@ namespace dnSpy.Files.TreeView {
 		readonly Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>[] mefFinders;
 
 		[ImportingConstructor]
-		FileTreeViewProvider(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManagerProvider fileManagerProvider, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeProvider, IDnSpyFileNodeProviderMetadata>> dnSpyFileNodeProviders, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+		FileTreeViewProvider(IThemeManager themeManager, ITreeViewManager treeViewManager, IDecompilerManager decompilerManager, IFileManagerProvider fileManagerProvider, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeProvider, IDnSpyFileNodeProviderMetadata>> dnSpyFileNodeProviders, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			this.themeManager = themeManager;
 			this.treeViewManager = treeViewManager;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.fileManagerProvider = fileManagerProvider;
 			this.fileTreeViewSettings = fileTreeViewSettings;
 			this.menuManager = menuManager;
@@ -65,6 +65,6 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public IFileTreeView Create(IFileTreeNodeFilter filter) =>
-			new FileTreeView(false, filter, themeManager, treeViewManager, languageManager, fileManagerProvider.Create(), fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeProviders.ToArray(), mefFinders.ToArray());
+			new FileTreeView(false, filter, themeManager, treeViewManager, decompilerManager, fileManagerProvider.Create(), fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeProviders.ToArray(), mefFinders.ToArray());
 	}
 }

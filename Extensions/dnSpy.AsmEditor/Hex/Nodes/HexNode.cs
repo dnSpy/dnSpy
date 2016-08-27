@@ -22,7 +22,6 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -43,23 +42,23 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 
 		public bool Decompile(IDecompileNodeContext context) {
-			context.ContentTypeString = context.Language.ContentTypeString;
-			context.Language.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
-			DecompileFields(context.Language, context.Output);
+			context.ContentTypeString = context.Decompiler.ContentTypeString;
+			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
+			DecompileFields(context.Decompiler, context.Output);
 			(context.Output as IDocumentViewerOutput)?.DisableCaching();
 			return true;
 		}
 
-		protected virtual void DecompileFields(ILanguage language, IDecompilerOutput output) {
+		protected virtual void DecompileFields(IDecompiler decompiler, IDecompilerOutput output) {
 			foreach (var vm in HexVMs) {
-				language.WriteCommentLine(output, string.Empty);
-				language.WriteCommentLine(output, string.Format("{0}:", vm.Name));
+				decompiler.WriteCommentLine(output, string.Empty);
+				decompiler.WriteCommentLine(output, string.Format("{0}:", vm.Name));
 				foreach (var field in vm.HexFields)
-					language.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.StartOffset, field.EndOffset, field.FormattedValue, field.Name));
+					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.StartOffset, field.EndOffset, field.FormattedValue, field.Name));
 			}
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) => Write(output);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) => Write(output);
 		protected abstract void Write(ITextColorWriter output);
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {

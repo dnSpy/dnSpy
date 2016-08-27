@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -35,7 +35,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ExposedByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedType.IsEnum && type == analyzedType)
 				yield break;
 
-			if (!this.Context.Language.ShowMember(type))
+			if (!this.Context.Decompiler.ShowMember(type))
 				yield break;
 
 			foreach (FieldDef field in type.Fields) {

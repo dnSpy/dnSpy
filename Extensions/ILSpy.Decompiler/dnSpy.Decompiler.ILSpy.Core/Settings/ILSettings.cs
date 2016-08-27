@@ -19,7 +19,7 @@
 
 using dnSpy.Contracts.MVVM;
 
-namespace dnSpy.Decompiler.ILSpy.Settings {
+namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	class ILSettings : ViewModelBase {
 		protected virtual void OnModified() { }
 

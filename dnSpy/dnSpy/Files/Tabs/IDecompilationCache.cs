@@ -18,10 +18,10 @@
 */
 
 using System.Collections.Generic;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs {
@@ -32,20 +32,20 @@ namespace dnSpy.Files.Tabs {
 		/// <summary>
 		/// Looks up cached output
 		/// </summary>
-		/// <param name="language">Language</param>
+		/// <param name="decompiler">Decompiler</param>
 		/// <param name="nodes">Nodes</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		DocumentViewerContent Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IContentType contentType);
+		DocumentViewerContent Lookup(IDecompiler decompiler, IFileTreeNodeData[] nodes, out IContentType contentType);
 
 		/// <summary>
 		/// Cache decompiled output
 		/// </summary>
-		/// <param name="language">Language</param>
+		/// <param name="decompiler">Decompiler</param>
 		/// <param name="nodes">Nodes</param>
 		/// <param name="content">Content</param>
 		/// <param name="contentType">Content type</param>
-		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType);
+		void Cache(IDecompiler decompiler, IFileTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType);
 
 		/// <summary>
 		/// Clear the cache

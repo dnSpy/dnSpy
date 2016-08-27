@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Language);
+			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Decompiler);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Assembly"))

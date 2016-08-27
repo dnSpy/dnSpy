@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace dnSpy.Decompiler.ILSpy.CSharp {
+namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class ThreadSafeObjectPool<T> where T : class {
 		readonly List<T> freeObjs;
 		readonly Func<T> createObject;

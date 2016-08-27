@@ -27,7 +27,7 @@ using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
 
-namespace dnSpy.Decompiler.ILSpy.VisualBasic {
+namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class VBTextOutputFormatter : IOutputFormatter {
 		readonly IDecompilerOutput output;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();

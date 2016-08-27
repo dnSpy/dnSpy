@@ -23,7 +23,6 @@ using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -44,16 +43,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override void Initialize() => this.TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedProperty);
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			if (hidesParent) {
 				output.Write(BoxedTextColor.Punctuation, "(");
 				output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.HidesParent);
 				output.Write(BoxedTextColor.Punctuation, ")");
 				output.WriteSpace();
 			}
-			language.WriteType(output, analyzedProperty.DeclaringType, true);
+			decompiler.WriteType(output, analyzedProperty.DeclaringType, true);
 			output.Write(BoxedTextColor.Operator, ".");
-			new NodePrinter().Write(output, language, analyzedProperty, Context.ShowToken, null);
+			new NodePrinter().Write(output, decompiler, analyzedProperty, Context.ShowToken, null);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
@@ -70,19 +69,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfacePropertyImplementedByNode(analyzedProperty);
 		}
 
-		public static IAnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, ILanguage language) {
-			if (CanShow(member, language))
+		public static IAnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+			if (CanShow(member, decompiler))
 				return new PropertyNode(member as PropertyDef);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, ILanguage language) {
+		public static bool CanShow(IMemberRef member, IDecompiler decompiler) {
 			var property = member as PropertyDef;
 			if (property == null)
 				return false;
 
-			return !language.ShowMember(property.GetMethod ?? property.SetMethod)
+			return !decompiler.ShowMember(property.GetMethod ?? property.SetMethod)
 				|| PropertyOverridesNode.CanShow(property);
 		}
 

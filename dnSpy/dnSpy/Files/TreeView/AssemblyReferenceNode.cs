@@ -21,10 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -49,8 +49,8 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
-			new NodePrinter().Write(output, language, AssemblyRef, Context.ShowToken);
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+			new NodePrinter().Write(output, decompiler, AssemblyRef, Context.ShowToken);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			var file = Context.FileTreeView.FileManager.Resolve(AssemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDnSpyDotNetFile;

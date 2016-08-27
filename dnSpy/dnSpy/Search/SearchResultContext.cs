@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Search {
 	sealed class SearchResultContext {
 		public bool SyntaxHighlight { get; set; }
-		public ILanguage Language { get; set; }
+		public IDecompiler Decompiler { get; set; }
 		public IImageManager ImageManager { get; set; }
 		public BackgroundType BackgroundType { get; set; }
 

@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Search {
 
 		/// <summary>
 		/// Refreshes UI fields. Should be called if the theme,
-		/// <see cref="IFileSearcher.SyntaxHighlight"/> or <see cref="IFileSearcher.Language"/>
+		/// <see cref="IFileSearcher.SyntaxHighlight"/> or <see cref="IFileSearcher.Decompiler"/>
 		/// changes.
 		/// </summary>
 		void RefreshUI();

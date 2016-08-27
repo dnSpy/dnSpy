@@ -280,7 +280,7 @@ namespace dnSpy.AsmEditor.Event {
 				throw new InvalidOperationException();
 			var options = EventDefOptions.Create("MyEvent", module.CorLibTypes.GetTypeRef("System", "EventHandler"));
 
-			var data = new EventOptionsVM(options, module, appWindow.LanguageManager, typeNode.TypeDef);
+			var data = new EventOptionsVM(options, module, appWindow.DecompilerManager, typeNode.TypeDef);
 			var win = new EventOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateEventCommand2;
 			win.DataContext = data;
@@ -384,7 +384,7 @@ namespace dnSpy.AsmEditor.Event {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new EventOptionsVM(new EventDefOptions(eventNode.EventDef), module, appWindow.LanguageManager, eventNode.EventDef.DeclaringType);
+			var data = new EventOptionsVM(new EventDefOptions(eventNode.EventDef), module, appWindow.DecompilerManager, eventNode.EventDef.DeclaringType);
 			var win = new EventOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

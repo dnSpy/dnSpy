@@ -74,8 +74,8 @@
                     <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=versionComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectVersion}" />
                     <ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="versionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProjectVersionVM.Items}" SelectedIndex="{Binding ProjectVersionVM.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 
-                    <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=languageComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_Language}" />
-                    <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 0 0 0" Name="languageComboBox" DisplayMemberPath="UniqueNameUI" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                    <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=decompilerComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_Language}" />
+                    <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 0 0 0" Name="decompilerComboBox" DisplayMemberPath="UniqueNameUI" ItemsSource="{Binding AllDecompilers}" SelectedItem="{Binding Decompiler}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 
                     <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=projectGuidTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectGuid}" />
                     <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="projectGuidTextBox" Text="{Binding ProjectGuid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />

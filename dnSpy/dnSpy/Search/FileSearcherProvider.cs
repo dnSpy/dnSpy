@@ -18,9 +18,9 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 
 namespace dnSpy.Search {
@@ -29,20 +29,20 @@ namespace dnSpy.Search {
 		readonly IFileTreeView fileTreeView;
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 
 		[ImportingConstructor]
-		FileSearcherProvider(IFileTreeView fileTreeView, IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager) {
+		FileSearcherProvider(IFileTreeView fileTreeView, IImageManager imageManager, IDotNetImageManager dotNetImageManager, IDecompilerManager decompilerManager) {
 			this.fileTreeView = fileTreeView;
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 		}
 
 		public IFileSearcher Create(FileSearcherOptions options) {
 			var searchResultContext = new SearchResultContext {
 				SyntaxHighlight = true,
-				Language = languageManager.Language,
+				Decompiler = decompilerManager.Decompiler,
 				ImageManager = imageManager,
 				BackgroundType = BackgroundType.Search,
 			};

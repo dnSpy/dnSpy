@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -65,12 +65,12 @@ namespace dnSpy.Files.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			var td = TryGetTypeDef();
 			if (td == null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
-				new NodePrinter().Write(output, language, td, Context.ShowToken);
+				new NodePrinter().Write(output, decompiler, td, Context.ShowToken);
 		}
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
@@ -78,7 +78,7 @@ namespace dnSpy.Files.TreeView {
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
 			var type = TypeDef;
-			if (type.IsNested && !Context.Language.ShowMember(type))
+			if (type.IsNested && !Context.Decompiler.ShowMember(type))
 				return FilterType.Hide;
 			return FilterType.Visible;
 		}

@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
@@ -51,7 +51,7 @@ namespace dnSpy.Files.TreeView {
 				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 
-		protected override void Write(ITextColorWriter output, ILanguage language) =>
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.BaseTypeFolder);
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;

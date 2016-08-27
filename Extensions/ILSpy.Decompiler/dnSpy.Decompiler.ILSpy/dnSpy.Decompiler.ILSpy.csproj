@@ -45,9 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentTypeDefinitions.cs" />
-    <Compile Include="CSharp\LanguageCreator.cs" />
-    <Compile Include="ILAst\LanguageCreator.cs" />
-    <Compile Include="IL\LanguageCreator.cs" />
+    <Compile Include="CSharp\DecompilerCreator.cs" />
+    <Compile Include="ILAst\DecompilerCreator.cs" />
+    <Compile Include="IL\DecompilerCreator.cs" />
     <Compile Include="IL\SimpleILPrinter.cs" />
     <Compile Include="Properties\dnSpy.Decompiler.ILSpy.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -61,10 +61,10 @@
     <Compile Include="Settings\DecompilerSettingsTabProvider.cs" />
     <Compile Include="Settings\ILDecompilerSettingsTab.cs" />
     <Compile Include="Settings\ILSettingsImpl.cs" />
-    <Compile Include="Settings\LanguageSettingsManager.cs" />
+    <Compile Include="Settings\DecompilerSettingsManagerImpl.cs" />
     <Compile Include="Settings\SettingsConstants.cs" />
     <Compile Include="TheExtension.cs" />
-    <Compile Include="VisualBasic\LanguageCreator.cs" />
+    <Compile Include="VisualBasic\DecompilerCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">

@@ -19,7 +19,7 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeSigCreatorOptions : ICloneable {
@@ -47,22 +47,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ModuleDef module;
 
-		public ILanguage Language {
-			get { return language; }
+		public IDecompiler Decompiler {
+			get { return decompiler; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
-				language = value;
+				decompiler = value;
 			}
 		}
-		ILanguage language;
+		IDecompiler decompiler;
 
-		public ILanguageManager LanguageManager { get; }
+		public IDecompilerManager DecompilerManager { get; }
 
-		public TypeSigCreatorOptions(ModuleDef ownerModule, ILanguageManager languageManager) {
+		public TypeSigCreatorOptions(ModuleDef ownerModule, IDecompilerManager decompilerManager) {
 			this.OwnerModule = ownerModule;
-			this.Language = languageManager.Language;
-			this.LanguageManager = languageManager;
+			this.Decompiler = decompilerManager.Decompiler;
+			this.DecompilerManager = decompilerManager;
 		}
 
 		public TypeSigCreatorOptions Clone() => (TypeSigCreatorOptions)MemberwiseClone();

@@ -27,7 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
 
@@ -53,7 +53,7 @@ namespace dnSpy.MainApp {
 	sealed class LanguageComboBoxToolbarCommand : ToolBarObjectBase, INotifyPropertyChanged {
 		readonly ComboBox comboBox;
 		readonly List<LanguageInfo> infos;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -62,7 +62,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					languageManager.Language = ((LanguageInfo)value).Language;
+					decompilerManager.Decompiler = ((LanguageInfo)value).Decompiler;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedItem)));
 				}
 			}
@@ -70,15 +70,15 @@ namespace dnSpy.MainApp {
 		object selectedItem;
 
 		sealed class LanguageInfo {
-			public ILanguage Language;
-			public string Name => Language.UniqueNameUI;
+			public IDecompiler Decompiler;
+			public string Name => Decompiler.UniqueNameUI;
 			public override string ToString() => Name;
 		}
 
 		[ImportingConstructor]
-		LanguageComboBoxToolbarCommand(ILanguageManager languageManager) {
-			this.languageManager = languageManager;
-			this.infos = languageManager.AllLanguages.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Language = a }).ToList();
+		LanguageComboBoxToolbarCommand(IDecompilerManager decompilerManager) {
+			this.decompilerManager = decompilerManager;
+			this.infos = decompilerManager.AllDecompilers.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Decompiler = a }).ToList();
 			UpdateSelectedItem();
 			this.comboBox = new ComboBox {
 				DisplayMemberPath = "Name",
@@ -88,11 +88,11 @@ namespace dnSpy.MainApp {
 			this.comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectedItem)) {
 				Source = this,
 			});
-			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
 		}
 
-		void UpdateSelectedItem() => SelectedItem = infos.First(a => a.Language == languageManager.Language);
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) => UpdateSelectedItem();
+		void UpdateSelectedItem() => SelectedItem = infos.First(a => a.Decompiler == decompilerManager.Decompiler);
+		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) => UpdateSelectedItem();
 		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
 	}
 

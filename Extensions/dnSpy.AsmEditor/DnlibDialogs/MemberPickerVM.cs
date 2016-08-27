@@ -28,10 +28,10 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
@@ -196,20 +196,20 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ISearchResult searchResult;
 
-		public IEnumerable<ILanguage> AllLanguages => languageManager.AllLanguages;
+		public IEnumerable<IDecompiler> AllLanguages => decompilerManager.AllDecompilers;
 
-		public ILanguage Language {
-			get { return language; }
+		public IDecompiler Language {
+			get { return decompiler; }
 			set {
-				if (language != value) {
-					language = value;
+				if (decompiler != value) {
+					decompiler = value;
 					OnPropertyChanged(nameof(Language));
 					RefreshTreeView();
 				}
 			}
 		}
-		ILanguage language;
-		readonly ILanguageManager languageManager;
+		IDecompiler decompiler;
+		readonly IDecompilerManager decompilerManager;
 		readonly IFileTreeView fileTreeView;
 		readonly IFileTreeNodeFilter filter;
 		readonly IFileSearcherProvider fileSearcherProvider;
@@ -220,12 +220,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool MatchWholeWords { get; }
 		bool MatchAnySearchTerm { get; }
 
-		public MemberPickerVM(IFileSearcherProvider fileSearcherProvider, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
+		public MemberPickerVM(IFileSearcherProvider fileSearcherProvider, IFileTreeView fileTreeView, IDecompilerManager decompilerManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
 			this.Title = title;
 			this.fileSearcherProvider = fileSearcherProvider;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.fileTreeView = fileTreeView;
-			this.language = languageManager.Language;
+			this.decompiler = decompilerManager.Decompiler;
 			this.filter = filter;
 			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			this.SearchResults = new ObservableCollection<ISearchResult>();
@@ -255,7 +255,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void RefreshTreeView() {
-			fileTreeView.SetLanguage(Language);
+			fileTreeView.SetDecompiler(Language);
 			Restart();
 		}
 
@@ -284,7 +284,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				};
 				fileSearcher = fileSearcherProvider.Create(options);
 				fileSearcher.SyntaxHighlight = SyntaxHighlight;
-				fileSearcher.Language = Language;
+				fileSearcher.Decompiler = Language;
 				fileSearcher.BackgroundType = BackgroundType.Search;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;

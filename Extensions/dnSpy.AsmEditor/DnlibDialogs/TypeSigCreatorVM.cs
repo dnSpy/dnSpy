@@ -23,7 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
@@ -142,13 +142,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand AddCModReqdSigCommand => new RelayCommand(a => AddCModReqdSig(), a => AddCModReqdSigCanExecute());
 		public ICommand AddCModOptSigCommand => new RelayCommand(a => AddCModOptSig(), a => AddCModOptSigCanExecute());
 		public ICommand AddPinnedSigCommand => new RelayCommand(a => AddPinnedSig(), a => AddPinnedSigCanExecute());
-		public IEnumerable<ILanguage> AllLanguages => options.LanguageManager.AllLanguages;
+		public IEnumerable<IDecompiler> AllLanguages => options.DecompilerManager.AllDecompilers;
 
-		public ILanguage Language {
-			get { return options.Language; }
+		public IDecompiler Language {
+			get { return options.Decompiler; }
 			set {
-				if (options.Language != value) {
-					options.Language = value;
+				if (options.Decompiler != value) {
+					options.Decompiler = value;
 					OnPropertyChanged(nameof(Language));
 					OnPropertyChanged(nameof(TypeSigLanguageFullName));
 				}

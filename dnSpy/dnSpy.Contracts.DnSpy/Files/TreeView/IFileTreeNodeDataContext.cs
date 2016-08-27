@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView.Resources;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>
 		/// Default language
 		/// </summary>
-		ILanguage Language { get; }
+		IDecompiler Decompiler { get; }
 
 		/// <summary>
 		/// Gets the <see cref="IResourceNodeFactory"/> instance

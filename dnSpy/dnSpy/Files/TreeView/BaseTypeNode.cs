@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -67,12 +67,12 @@ namespace dnSpy.Files.TreeView {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
-		protected override void Write(ITextColorWriter output, ILanguage language) {
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			var tdr = TryGetTypeDefOrRef();
 			if (tdr == null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
-				new NodePrinter().Write(output, language, tdr, Context.ShowToken);
+				new NodePrinter().Write(output, decompiler, tdr, Context.ShowToken);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

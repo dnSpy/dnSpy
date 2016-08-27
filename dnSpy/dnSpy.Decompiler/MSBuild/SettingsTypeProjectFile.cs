@@ -24,19 +24,18 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class SettingsTypeProjectFile : TypeProjectFile {
 		public override string Description => dnSpy_Decompiler_Resources.MSBuild_CreateSettingsTypeFile;
-		public ILanguage Language => language;
+		public IDecompiler Decompiler => decompiler;
 		public DecompilationContext DecompilationContext => decompilationContext;
 		public override BuildAction BuildAction => isEmpty ? BuildAction.DontIncludeInProjectFile : base.BuildAction;
 		bool isEmpty;
 
-		public SettingsTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
-			: base(type, filename, decompilationContext, language, createDecompilerOutput) {
+		public SettingsTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
+			: base(type, filename, decompilationContext, decompiler, createDecompilerOutput) {
 		}
 
 		public override void Create(DecompileContext ctx) {
@@ -49,7 +48,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var opts = new DecompilePartialType(output, decompilationContext, Type);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);
-			language.Decompile(DecompilationType.PartialType, opts);
+			decompiler.Decompile(DecompilationType.PartialType, opts);
 		}
 
 		void InitializeIsEmpty() {
@@ -137,13 +136,13 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
-				if (typeFile.Language.CanDecompile(DecompilationType.PartialType)) {
+				if (typeFile.Decompiler.CanDecompile(DecompilationType.PartialType)) {
 					var output = createDecompilerOutput(writer);
 					var opts = new DecompilePartialType(output, typeFile.DecompilationContext, typeFile.Type);
 					foreach (var d in typeFile.GetDefsToRemove())
 						opts.Definitions.Add(d);
 					opts.ShowDefinitions = true;
-					typeFile.Language.Decompile(DecompilationType.PartialType, opts);
+					typeFile.Decompiler.Decompile(DecompilationType.PartialType, opts);
 				}
 			}
 		}

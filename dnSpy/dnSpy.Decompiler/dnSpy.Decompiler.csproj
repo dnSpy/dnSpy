@@ -48,7 +48,7 @@
     <Compile Include="IL\InstructionUtils.cs" />
     <Compile Include="IL\ModifiedInstructionBytesReader.cs" />
     <Compile Include="IL\OriginalInstructionBytesReader.cs" />
-    <Compile Include="Language.cs" />
+    <Compile Include="DecompilerBase.cs" />
     <Compile Include="MSBuild\AppConfigProjectFile.cs" />
     <Compile Include="MSBuild\ApplicationIcon.cs" />
     <Compile Include="MSBuild\ApplicationManifest.cs" />

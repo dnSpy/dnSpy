@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Files.TreeView {
@@ -39,9 +39,9 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>
 		/// ToString()
 		/// </summary>
-		/// <param name="language">Language</param>
+		/// <param name="decompiler">Decompiler</param>
 		/// <returns></returns>
-		string ToString(ILanguage language);
+		string ToString(IDecompiler decompiler);
 
 		/// <summary>
 		/// Called when <see cref="IFileTreeNodeDataContext.Filter"/> has changed

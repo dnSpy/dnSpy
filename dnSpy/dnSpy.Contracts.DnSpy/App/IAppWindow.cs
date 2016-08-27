@@ -22,9 +22,9 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Contracts.App {
@@ -78,9 +78,9 @@ namespace dnSpy.Contracts.App {
 		IMainToolWindowManager ToolWindowManager { get; }
 
 		/// <summary>
-		/// Gets the <see cref="ILanguageManager"/> instance
+		/// Gets the <see cref="IDecompilerManager"/> instance
 		/// </summary>
-		ILanguageManager LanguageManager { get; }
+		IDecompilerManager DecompilerManager { get; }
 
 		/// <summary>
 		/// true if the app has been loaded

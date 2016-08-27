@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
+using dnSpy.Decompiler.ILSpy.Core.Settings;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
 	[Export]

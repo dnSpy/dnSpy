@@ -33,7 +33,6 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
@@ -109,11 +108,11 @@ namespace dnSpy.Search {
 		}
 
 		[ImportingConstructor]
-		SearchManager(IImageManager imageManager, ILanguageManager languageManager, IThemeManager themeManager, ISearchSettings searchSettings, IFileSearcherProvider fileSearcherProvider, IMenuManager menuManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+		SearchManager(IImageManager imageManager, IDecompilerManager decompilerManager, IThemeManager themeManager, ISearchSettings searchSettings, IFileSearcherProvider fileSearcherProvider, IMenuManager menuManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
 			this.searchControl = new SearchControl();
 			this.vmSearch = new SearchControlVM(imageManager, fileSearcherProvider, fileTabManager.FileTreeView, searchSettings) {
-				Language = languageManager.Language,
+				Decompiler = decompilerManager.Decompiler,
 				BackgroundType = BackgroundType.Search,
 			};
 			this.searchControl.DataContext = this.vmSearch;
@@ -121,7 +120,7 @@ namespace dnSpy.Search {
 			menuManager.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
 			wpfCommandManager.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
 			wpfCommandManager.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
-			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
@@ -197,9 +196,9 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			var languageManager = (ILanguageManager)sender;
-			vmSearch.Language = languageManager.Language;
+		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+			var decompilerManager = (IDecompilerManager)sender;
+			vmSearch.Decompiler = decompilerManager.Decompiler;
 			RefreshSearchResults();
 		}
 

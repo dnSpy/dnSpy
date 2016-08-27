@@ -26,7 +26,7 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Visitors;
 
-namespace dnSpy.Decompiler.ILSpy.VisualBasic {
+namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class ILSpyEnvironmentProvider : IEnvironmentProvider {
 		public string RootNamespace => "";
 

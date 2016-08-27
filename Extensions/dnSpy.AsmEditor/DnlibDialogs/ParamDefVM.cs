@@ -23,7 +23,7 @@ using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -124,14 +124,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
 			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
+			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerManager, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

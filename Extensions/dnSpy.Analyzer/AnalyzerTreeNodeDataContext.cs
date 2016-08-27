@@ -18,14 +18,14 @@
 */
 
 using dnSpy.Analyzer.TreeNodes;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Analyzer {
 	sealed class AnalyzerTreeNodeDataContext : IAnalyzerTreeNodeDataContext {
 		public IDotNetImageManager DotNetImageManager { get; set; }
-		public ILanguage Language { get; set; }
+		public IDecompiler Decompiler { get; set; }
 		public IFileManager FileManager { get; set; }
 		public IAnalyzerManager AnalyzerManager { get; set; }
 		public bool ShowToken { get; set; }

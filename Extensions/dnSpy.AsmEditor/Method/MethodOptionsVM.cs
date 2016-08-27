@@ -23,7 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Method {
@@ -285,9 +285,9 @@ namespace dnSpy.AsmEditor.Method {
 
 		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
@@ -305,11 +305,11 @@ namespace dnSpy.AsmEditor.Method {
 			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.ParamDefsVM = new ParamDefsVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.GenericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, ownerMethod);
-			this.MethodOverridesVM = new MethodOverridesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
+			this.ParamDefsVM = new ParamDefsVM(ownerModule, decompilerManager, ownerType, ownerMethod);
+			this.GenericParamsVM = new GenericParamsVM(ownerModule, decompilerManager, ownerType, ownerMethod);
+			this.MethodOverridesVM = new MethodOverridesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
 
 			this.origOptions = options;
 

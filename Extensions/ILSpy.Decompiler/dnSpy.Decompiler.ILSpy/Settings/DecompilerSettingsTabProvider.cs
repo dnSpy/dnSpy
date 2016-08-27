@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {

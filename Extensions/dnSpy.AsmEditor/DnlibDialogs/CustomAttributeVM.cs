@@ -27,7 +27,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -128,19 +128,19 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CANamedArgumentsVM CANamedArgumentsVM { get; }
 
 		readonly ModuleDef ownerModule;
-		readonly ILanguageManager languageManager;
+		readonly IDecompilerManager decompilerManager;
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 			this.ownerModule = ownerModule;
-			this.languageManager = languageManager;
+			this.decompilerManager = decompilerManager;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 
 			this.RawData = new HexStringVM(a => HasErrorUpdated());
-			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
+			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerManager, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
 			ConstructorArguments.CollectionChanged += Args_CollectionChanged;
 			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ConstructorArguments.RemoveAt(ConstructorArguments.Count - 1);
 			while (ConstructorArguments.Count < count) {
 				var type = Constructor.MethodSig.Params[ConstructorArguments.Count];
-				ConstructorArguments.Add(new CAArgumentVM(ownerModule, CreateCAArgument(type), new TypeSigCreatorOptions(ownerModule, languageManager), type));
+				ConstructorArguments.Add(new CAArgumentVM(ownerModule, CreateCAArgument(type), new TypeSigCreatorOptions(ownerModule, decompilerManager), type));
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSig type = null;
 				if (sig != null && i < sig.Params.Count)
 					type = sig.Params[i];
-				ConstructorArguments.Add(new CAArgumentVM(ownerModule, options.ConstructorArguments[i], new TypeSigCreatorOptions(ownerModule, languageManager), type));
+				ConstructorArguments.Add(new CAArgumentVM(ownerModule, options.ConstructorArguments[i], new TypeSigCreatorOptions(ownerModule, decompilerManager), type));
 			}
 			CANamedArgumentsVM.InitializeFrom(options.NamedArguments);
 			CreateArguments();

@@ -29,7 +29,6 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
@@ -133,7 +132,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
 		}
 
-		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
 				documentViewerOutput.AddUIElement(() => {
@@ -143,7 +142,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				});
 			}
 
-			base.WriteShort(output, language, showOffset);
+			base.WriteShort(output, decompiler, showOffset);
 			if (documentViewerOutput != null) {
 				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
 				documentViewerOutput.WriteLine();
@@ -174,10 +173,10 @@ namespace dnSpy.Files.TreeView.Resources {
 			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
 		}
 
-		public override void WriteShort(IDecompilerOutput output, ILanguage language, bool showOffset) {
+		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
-				language.WriteCommentBegin(output, true);
+				decompiler.WriteCommentBegin(output, true);
 				output.WriteOffsetComment(this, showOffset);
 				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
@@ -187,12 +186,12 @@ namespace dnSpy.Files.TreeView.Resources {
 				output.Write(" = ", BoxedTextColor.Comment);
 				const string LTR = "\u200E";
 				output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Comment);
-				language.WriteCommentEnd(output, true);
+				decompiler.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;
 			}
 
-			base.WriteShort(output, language, showOffset);
+			base.WriteShort(output, decompiler, showOffset);
 		}
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
