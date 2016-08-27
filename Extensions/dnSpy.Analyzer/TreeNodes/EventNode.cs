@@ -82,13 +82,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, IDecompiler decompiler) {
-			var eventDef = member as EventDef;
-			if (eventDef == null)
-				return false;
-
-			return !decompiler.ShowMember(eventDef.AddMethod ?? eventDef.RemoveMethod)
-				|| EventOverridesNode.CanShow(eventDef);
-		}
+		public static bool CanShow(IMemberRef member, IDecompiler decompiler) => member is EventDef;
 	}
 }

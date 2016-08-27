@@ -76,15 +76,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, IDecompiler decompiler) {
-			var property = member as PropertyDef;
-			if (property == null)
-				return false;
-
-			return !decompiler.ShowMember(property.GetMethod ?? property.SetMethod)
-				|| PropertyOverridesNode.CanShow(property);
-		}
-
+		public static bool CanShow(IMemberRef member, IDecompiler decompiler) => member is PropertyDef;
 		public override IMemberRef Member => analyzedProperty;
 		public override IMDTokenProvider Reference => analyzedProperty;
 	}
