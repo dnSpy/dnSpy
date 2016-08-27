@@ -662,9 +662,9 @@
       <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
       <Name>dnSpy.Roslyn.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Languages\dnSpy.Languages.csproj">
+    <ProjectReference Include="..\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>dnSpy.Languages</Name>
+      <Name>dnSpy.Decompiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj">
       <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>

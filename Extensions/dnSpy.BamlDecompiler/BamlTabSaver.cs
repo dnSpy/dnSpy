@@ -27,7 +27,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Languages;
+using dnSpy.Decompiler;
 using Microsoft.Win32;
 
 namespace dnSpy.BamlDecompiler {

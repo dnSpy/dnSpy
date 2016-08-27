@@ -24,7 +24,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Languages {
+namespace dnSpy.Decompiler {
 	interface ILanguageManagerSettings : INotifyPropertyChanged {
 		Guid LanguageGuid { get; }
 	}

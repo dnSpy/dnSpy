@@ -59,9 +59,9 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dnSpy\dnSpy.Languages\dnSpy.Languages.csproj">
+    <ProjectReference Include="..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>dnSpy.Languages</Name>
+      <Name>dnSpy.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

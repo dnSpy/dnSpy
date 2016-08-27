@@ -144,9 +144,9 @@
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dnSpy\dnSpy.Languages\dnSpy.Languages.csproj">
+    <ProjectReference Include="..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>dnSpy.Languages</Name>
+      <Name>dnSpy.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

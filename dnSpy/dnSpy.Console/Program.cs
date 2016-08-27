@@ -33,7 +33,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Languages.MSBuild;
+using dnSpy.Decompiler.MSBuild;
 using dnSpy_Console.Properties;
 
 namespace dnSpy_Console {
@@ -230,7 +230,7 @@ namespace dnSpy_Console {
 
 		static IEnumerable<ILanguage> GetAllLanguages() {
 			var asmNames = new string[] {
-				"dnSpy.Languages.ILSpy.Core",
+				"dnSpy.Decompiler.ILSpy.Core",
 			};
 			foreach (var asmName in asmNames) {
 				foreach (var l in GetLanguagesInAssembly(asmName))

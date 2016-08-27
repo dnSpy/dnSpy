@@ -39,7 +39,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Files.Tabs.Dialogs;
-using dnSpy.Languages.MSBuild;
+using dnSpy.Decompiler.MSBuild;
 using dnSpy.Properties;
 
 namespace dnSpy.Files.Tabs {

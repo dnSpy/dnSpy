@@ -28,7 +28,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Languages;
+using dnSpy.Decompiler;
 
 namespace dnSpy.Files.TreeView {
 	sealed class ModuleFileNode : DnSpyFileNode, IModuleFileNode {

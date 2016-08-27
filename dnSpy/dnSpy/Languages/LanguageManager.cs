@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Languages;
 using dnSpy.Events;
 
-namespace dnSpy.Languages {
+namespace dnSpy.Decompiler {
 	[Export(typeof(ILanguageManager))]
 	sealed class LanguageManager : ILanguageManager {
 		readonly LanguageManagerSettingsImpl languageManagerSettings;

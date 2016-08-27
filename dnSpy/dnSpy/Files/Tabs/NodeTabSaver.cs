@@ -29,7 +29,7 @@ using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Files.Tabs.DocViewer;
-using dnSpy.Languages;
+using dnSpy.Decompiler;
 using dnSpy.Properties;
 using Microsoft.Win32;
 

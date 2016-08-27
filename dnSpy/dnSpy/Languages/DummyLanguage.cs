@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Languages {
+namespace dnSpy.Decompiler {
 	sealed class DummyLanguage : Language {
 		public override string FileExtension => ".---";
 		public override Guid GenericGuid => new Guid("CAE0EC7B-4311-4C48-AF7C-36E5EA71249A");

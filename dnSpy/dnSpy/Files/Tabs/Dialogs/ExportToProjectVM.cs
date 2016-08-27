@@ -25,7 +25,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Languages.MSBuild;
+using dnSpy.Decompiler.MSBuild;
 using dnSpy.Properties;
 
 namespace dnSpy.Files.Tabs.Dialogs {

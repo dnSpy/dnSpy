@@ -36,7 +36,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
-using dnSpy.Languages.IL;
+using dnSpy.Decompiler.IL;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]

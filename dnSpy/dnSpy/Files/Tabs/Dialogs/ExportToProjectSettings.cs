@@ -22,7 +22,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Languages.MSBuild;
+using dnSpy.Decompiler.MSBuild;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	interface IExportToProjectSettings : INotifyPropertyChanged {

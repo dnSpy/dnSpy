@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 14.0.23107.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dnSpy", "dnSpy", "{293F0A13-6653-4580-9116-1D255F4C4E69}"
 EndProject
@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy", "dnSpy\dnSpy\dnSpy.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Console", "dnSpy\dnSpy.Console\dnSpy.Console.csproj", "{DA111693-97C8-413B-9102-4DCBEE8885B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages", "dnSpy\dnSpy.Languages\dnSpy.Languages.csproj", "{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler", "dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj", "{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "Libraries\dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
 EndProject
@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example1.Extension", "Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example2.Extension", "Extensions\Examples\Example2.Extension\Example2.Extension.csproj", "{4613C8A1-28DC-4586-9F9B-D201864CFE1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy", "Extensions\ILSpy.Decompiler\dnSpy.Languages.ILSpy\dnSpy.Languages.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler.ILSpy", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy\dnSpy.Decompiler.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
 EndProject
@@ -63,7 +63,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Logic", "dn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.DnSpy", "dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj", "{CB6F6372-9479-41E2-83A8-07854326BCA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy.Core", "Extensions\ILSpy.Decompiler\dnSpy.Languages.ILSpy.Core\dnSpy.Languages.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler.ILSpy.Core", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy.Core\dnSpy.Decompiler.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

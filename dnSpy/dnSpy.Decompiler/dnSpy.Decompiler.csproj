@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dnSpy.Decompiler</RootNamespace>
+    <AssemblyName>dnSpy.Decompiler</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <Features>strict</Features>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CSharp\SimpleCSharpPrinter.cs" />
+    <Compile Include="FilenameUtils.cs" />
+    <Compile Include="IL\ILLanguageHelper.cs" />
+    <Compile Include="IL\InstructionBytesReader.cs" />
+    <Compile Include="IL\InstructionUtils.cs" />
+    <Compile Include="IL\ModifiedInstructionBytesReader.cs" />
+    <Compile Include="IL\OriginalInstructionBytesReader.cs" />
+    <Compile Include="Language.cs" />
+    <Compile Include="MSBuild\AppConfigProjectFile.cs" />
+    <Compile Include="MSBuild\ApplicationIcon.cs" />
+    <Compile Include="MSBuild\ApplicationManifest.cs" />
+    <Compile Include="MSBuild\AssemblyInfoProjectFile.cs" />
+    <Compile Include="MSBuild\BamlResourceProjectFile.cs" />
+    <Compile Include="MSBuild\BuildAction.cs" />
+    <Compile Include="MSBuild\DecompileContext.cs" />
+    <Compile Include="MSBuild\DefaultNamespaceFinder.cs" />
+    <Compile Include="MSBuild\DotNetUtils.cs" />
+    <Compile Include="MSBuild\FilenameCreator.cs" />
+    <Compile Include="MSBuild\FileUtils.cs" />
+    <Compile Include="MSBuild\IJob.cs" />
+    <Compile Include="MSBuild\IMSBuildProgressListener.cs" />
+    <Compile Include="MSBuild\IMSBuildProjectWriterLogger.cs" />
+    <Compile Include="MSBuild\MSBuildProjectCreator.cs" />
+    <Compile Include="MSBuild\NoMSBuildProjectWriterLogger.cs" />
+    <Compile Include="MSBuild\Project.cs" />
+    <Compile Include="MSBuild\ProjectCreatorOptions.cs" />
+    <Compile Include="MSBuild\ProjectFile.cs" />
+    <Compile Include="MSBuild\ProjectModuleOptions.cs" />
+    <Compile Include="MSBuild\ProjectVersion.cs" />
+    <Compile Include="MSBuild\ProjectWriter.cs" />
+    <Compile Include="MSBuild\RawEmbeddedResourceProjectFile.cs" />
+    <Compile Include="MSBuild\ResourceNameCreator.cs" />
+    <Compile Include="MSBuild\ResourceProjectFile.cs" />
+    <Compile Include="MSBuild\ResXProjectFile.cs" />
+    <Compile Include="MSBuild\SatelliteAssemblyFinder.cs" />
+    <Compile Include="MSBuild\SettingsProjectFile.cs" />
+    <Compile Include="MSBuild\SettingsTypeProjectFile.cs" />
+    <Compile Include="MSBuild\SolutionWriter.cs" />
+    <Compile Include="MSBuild\SplashScreenProjectFile.cs" />
+    <Compile Include="MSBuild\TypeProjectFile.cs" />
+    <Compile Include="MSBuild\WinFormsProjectFile.cs" />
+    <Compile Include="MSBuild\XamlTypeProjectFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\dnSpy.Decompiler.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Decompiler.Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\DecompilerOption.cs" />
+    <Compile Include="TargetFrameworkInfo.cs" />
+    <Compile Include="TargetFrameworkUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
+      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
+      <Name>dnSpy.Contracts.Logic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Decompiler.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.de.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

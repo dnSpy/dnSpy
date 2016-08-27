@@ -29,7 +29,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Languages.XmlDoc;
 using dnSpy.Contracts.Text;
-using dnSpy.Languages.IL;
+using dnSpy.Decompiler.IL;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	[ExportToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
