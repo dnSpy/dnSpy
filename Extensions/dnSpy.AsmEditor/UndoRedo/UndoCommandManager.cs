@@ -26,7 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	interface IUndoCommandManager {
+	public interface IUndoCommandManager {
 		/// <summary>
 		/// true if we can undo a command group
 		/// </summary>

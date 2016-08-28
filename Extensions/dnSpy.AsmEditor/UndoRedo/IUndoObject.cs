@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	interface IUndoObject {
+	public interface IUndoObject {
 		bool IsDirty { get; set; }
 		int SavedCommand { get; set; }
 	}

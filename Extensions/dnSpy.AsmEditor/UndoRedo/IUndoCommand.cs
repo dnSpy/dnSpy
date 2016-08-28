@@ -23,7 +23,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	/// <summary>
 	/// An assembly editor command that can be undone. Dispose() is called when the history is cleared.
 	/// </summary>
-	interface IUndoCommand {
+	public interface IUndoCommand {
 		/// <summary>
 		/// Gets a description of the command
 		/// </summary>
