@@ -27,8 +27,7 @@ using dnSpy.Properties;
 
 namespace dnSpy.Themes {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Guid = MenuConstants.APP_MENU_THEMES_GUID, Order = MenuConstants.ORDER_APP_MENU_THEMES, Header = "res:Menu_Themes", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS)]
-	sealed class ThemesMenuItem : MenuItemBase
-	{
+	sealed class ThemesMenuItem : MenuItemBase{
 		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
 	}
 
