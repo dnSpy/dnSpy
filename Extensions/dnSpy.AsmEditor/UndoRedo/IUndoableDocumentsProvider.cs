@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	interface IUndoableDocumentsProvider {
+	public interface IUndoableDocumentsProvider {
 		IEnumerable<IUndoObject> GetObjects();
 		IUndoObject GetUndoObject(object obj);
 		bool OnExecutedOneCommand(IUndoObject obj);

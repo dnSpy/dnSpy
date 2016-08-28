@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	enum UndoCommandManagerEventType {
+	public enum UndoCommandManagerEventType {
 		Add,
 		Undo,
 		Redo,
@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		Dirty,
 	}
 
-	sealed class UndoCommandManagerEventArgs : EventArgs {
+	public sealed class UndoCommandManagerEventArgs : EventArgs {
 		public readonly UndoCommandManagerEventType Type;
 		public readonly IUndoObject UndoObject;
 
