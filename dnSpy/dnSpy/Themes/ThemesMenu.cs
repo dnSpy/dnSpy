@@ -20,11 +20,18 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Properties;
 
 namespace dnSpy.Themes {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Guid = MenuConstants.APP_MENU_THEMES_GUID, Order = MenuConstants.ORDER_APP_MENU_THEMES, Header = "res:Menu_Themes", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS)]
+	sealed class ThemesMenuItem : MenuItemBase
+	{
+		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
+	}
+
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_THEMES_GUID, Group = MenuConstants.GROUP_APP_MENU_THEMES_THEMES, Order = 0)]
 	sealed class ThemesMenu : MenuItemBase, IMenuItemProvider {
 		readonly ThemeManager themeManager;

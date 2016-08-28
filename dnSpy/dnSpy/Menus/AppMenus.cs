@@ -29,9 +29,6 @@ namespace dnSpy.Menus {
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_VIEW_GUID, Order = MenuConstants.ORDER_APP_MENU_VIEW, Header = "res:Menu_View")]
 	sealed class ViewMenu : IMenu { }
 
-	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_THEMES_GUID, Order = MenuConstants.ORDER_APP_MENU_THEMES, Header = "res:Menu_Themes")]
-	sealed class ThemesMenu : IMenu { }
-
 	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_WINDOW_GUID, Order = MenuConstants.ORDER_APP_MENU_WINDOW, Header = "res:Menu_Windows")]
 	sealed class WindowMenu : IMenu { }
 
