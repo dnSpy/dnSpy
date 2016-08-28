@@ -48,9 +48,6 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Guid of app menu: View</summary>
 		public const string APP_MENU_VIEW_GUID = "235BDFD8-A065-4E89-B041-C40A90526AF9";
 
-		/// <summary>Guid of app menu: Themes</summary>
-		public const string APP_MENU_THEMES_GUID = "D34C16A1-1940-4EAD-A4CD-3E00148E5FB3";
-
 		/// <summary>Guid of app menu: Debug</summary>
 		public const string APP_MENU_DEBUG_GUID = "62B311D0-D77E-4718-86C3-14BA031C47DF";
 
@@ -72,11 +69,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>App menu order: View</summary>
 		public const double ORDER_APP_MENU_VIEW = 2000;
 
-		/// <summary>App menu order: Themes</summary>
-		public const double ORDER_APP_MENU_THEMES = 3000;
-
 		/// <summary>App menu order: Debug</summary>
-		public const double ORDER_APP_MENU_DEBUG = 4000;
+		public const double ORDER_APP_MENU_DEBUG = 10000;
 
 		/// <summary>App menu order: Window</summary>
 		public const double ORDER_APP_MENU_WINDOW = 1000000;
