@@ -111,7 +111,7 @@ namespace dnSpy.Text.Editor {
 				break;
 			}
 			wpfTextView.Caret.EnsureVisible();
-			mouseLeftDownInfo = new MouseLeftDownInfo(GetSelectionOrCaretIfNoSelection(), mouseLoc.Point, e.ClickCount);
+			mouseLeftDownInfo = new MouseLeftDownInfo(GetSelectionOrCaretIfNoSelection(), mouseLoc.Point, e.ClickCount, wpfTextView.TextSnapshot.Version);
 		}
 		MouseLeftDownInfo? mouseLeftDownInfo;
 
@@ -119,21 +119,45 @@ namespace dnSpy.Text.Editor {
 			public VirtualSnapshotSpan Span { get; }
 			public Point Point { get; }
 			public int Clicks { get; }
-			public MouseLeftDownInfo(VirtualSnapshotSpan span, Point point, int clicks) {
+			ITextVersion Version { get; set; }
+			public MouseLeftDownInfo(VirtualSnapshotSpan span, Point point, int clicks, ITextVersion version) {
 				Span = span;
 				Point = point;
 				Clicks = clicks;
+				Version = version;
+			}
+
+			public bool TryAdvanceVersion(ITextVersion newVersion) {
+				var v = Version;
+				while (v != newVersion) {
+					var changes = v.Changes;
+					if (changes == null)
+						break;
+					if (changes.Count == 1 && changes[0].OldPosition == 0 && changes[0].OldLength == v.Length)
+						return false;
+					v = v.Next;
+				}
+				Version = newVersion;
+				return true;
 			}
 		}
 
 		public override void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+			bool oldMouseCaptured = mouseCaptured;
+			CancelMouseLeftButtonSelection();
+			if (oldMouseCaptured) {
+				// We're always called, so don't mark it as handled
+				// e.Handled = true;
+				return;
+			}
+		}
+
+		void CancelMouseLeftButtonSelection() {
 			mouseLeftDownInfo = null;
 			if (mouseCaptured) {
 				StopScrolling();
 				wpfTextView.VisualElement.ReleaseMouseCapture();
 				mouseCaptured = false;
-				// We're always called, so don't mark it as handled
-				// e.Handled = true;
 				return;
 			}
 		}
@@ -157,6 +181,10 @@ namespace dnSpy.Text.Editor {
 
 		public override void OnMouseMove(object sender, MouseEventArgs e) {
 			if (e.LeftButton == MouseButtonState.Pressed) {
+				if (mouseLeftDownInfo != null && !mouseLeftDownInfo.Value.TryAdvanceVersion(wpfTextView.TextSnapshot.Version)) {
+					CancelMouseLeftButtonSelection();
+					return;
+				}
 				if (!mouseCaptured && mouseLeftDownInfo != null) {
 					var mouseLoc = GetLocation(e);
 					var dist = mouseLeftDownInfo.Value.Point - mouseLoc.Point;
