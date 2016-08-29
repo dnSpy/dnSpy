@@ -16,7 +16,6 @@
 # Add extra stuff
 /r:dnSpy.Contracts.Logic.dll
 /r:dnSpy.Contracts.DnSpy.dll
-/r:dnSpy.Shared.dll
 /r:dnlib.dll
 /u:dnSpy.Contracts.Scripting
 /u:dnSpy.Contracts.Scripting.Roslyn
