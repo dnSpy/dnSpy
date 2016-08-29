@@ -32,6 +32,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -122,7 +123,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, IFileTreeNodeData[] nodes) =>
 			editCodeVMCreator.CanCreate && nodes.Length == 1 && nodes[0] is IMethodNode;
 
-		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes, uint[] offsets = null) {
+		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes, IList<MethodSourceStatement> statements = null) {
 			if (!CanExecute(editCodeVMCreator, nodes))
 				return;
 
@@ -136,7 +137,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var vm = editCodeVMCreator.Create(methodNode.MethodDef);
+			var vm = editCodeVMCreator.Create(methodNode.MethodDef, statements ?? Array.Empty<MethodSourceStatement>());
 			var win = new EditCodeDlg();
 			win.DataContext = vm;
 			win.Owner = appWindow.MainWindow;
@@ -205,7 +206,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 			}
 
-			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, new IFileTreeNodeData[] { methodNode }, BodyCommandUtils.GetInstructionOffsets(method, list));
+			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, new IFileTreeNodeData[] { methodNode }, list);
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {

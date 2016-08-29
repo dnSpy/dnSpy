@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					decompilerManager.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a));
 		}
 
-		public EditCodeVM Create(MethodDef method) {
+		public EditCodeVM Create(MethodDef method, IList<MethodSourceStatement> statements) {
 			Debug.Assert(CanCreate);
 			if (!CanCreate)
 				throw new InvalidOperationException();
@@ -100,7 +100,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (serviceCreator == null)
 				throw new InvalidOperationException();
 
-			return new EditCodeVM(imageManager, openFromGAC, openAssembly, serviceCreator.Create(), language, method);
+			return new EditCodeVM(imageManager, openFromGAC, openAssembly, serviceCreator.Create(), language, method, statements);
 		}
 	}
 }
