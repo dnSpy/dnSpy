@@ -66,8 +66,8 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Shift(Key.Home, TextEditorIds.BOL_EXT.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.FIRSTNONWHITENEXT.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.FIRSTNONWHITEPREV.ToCommandInfo());
-			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.GOTOBRACE.ToCommandInfo());
-			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.GOTOBRACE_EXT.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.OemCloseBrackets, TextEditorIds.GOTOBRACE.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.OemCloseBrackets, TextEditorIds.GOTOBRACE_EXT.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.G, TextEditorIds.GOTOLINE.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.Home, TextEditorIds.HOME.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.Home, TextEditorIds.HOME_EXT.ToCommandInfo());

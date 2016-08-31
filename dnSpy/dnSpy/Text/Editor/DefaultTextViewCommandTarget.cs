@@ -248,8 +248,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.FIRSTCHAR_EXT:
 				case TextEditorIds.FIRSTNONWHITENEXT:
 				case TextEditorIds.FIRSTNONWHITEPREV:
-				case TextEditorIds.GOTOBRACE:
-				case TextEditorIds.GOTOBRACE_EXT:
 				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.HOME:
 				case TextEditorIds.HOME_EXT:
@@ -497,12 +495,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.FIRSTNONWHITEPREV:
 					EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(false);
 					return CommandTargetStatus.Handled;
-
-				case TextEditorIds.GOTOBRACE:
-					return CommandTargetStatus.Handled;//TODO:
-
-				case TextEditorIds.GOTOBRACE_EXT:
-					return CommandTargetStatus.Handled;//TODO:
 
 				case TextEditorIds.GOTOLINE:
 					if (args is int)

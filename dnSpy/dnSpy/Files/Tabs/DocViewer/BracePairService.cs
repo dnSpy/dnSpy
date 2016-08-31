@@ -112,10 +112,10 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (TryGetInstance() == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextReferenceGroup) {
-				switch ((TextReferenceIds)cmdId) {
-				case TextReferenceIds.MoveToMatchingBrace:
-				case TextReferenceIds.MoveToMatchingBraceSelect:
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.GOTOBRACE:
+				case TextEditorIds.GOTOBRACE_EXT:
 					return CommandTargetStatus.Handled;
 				default:
 					return CommandTargetStatus.NotHandled;
@@ -134,13 +134,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			if (documentViewer == null)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextReferenceGroup) {
-				switch ((TextReferenceIds)cmdId) {
-				case TextReferenceIds.MoveToMatchingBrace:
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.GOTOBRACE:
 					MoveToMatchingBrace(documentViewer, false);
 					return CommandTargetStatus.Handled;
 
-				case TextReferenceIds.MoveToMatchingBraceSelect:
+				case TextEditorIds.GOTOBRACE_EXT:
 					MoveToMatchingBrace(documentViewer, true);
 					return CommandTargetStatus.Handled;
 

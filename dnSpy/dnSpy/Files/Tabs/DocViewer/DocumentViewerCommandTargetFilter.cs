@@ -54,10 +54,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				case TextReferenceIds.FollowReferenceNewTab:
 					return CommandTargetStatus.Handled;
 
-				case TextReferenceIds.MoveToMatchingBrace:
-				case TextReferenceIds.MoveToMatchingBraceSelect:
-					return CommandTargetStatus.NotHandled;
-
 				default:
 					Debug.Fail($"Unknown {nameof(TextReferenceIds)} id: {(TextReferenceIds)cmdId}");
 					return CommandTargetStatus.NotHandled;
@@ -109,10 +105,6 @@ namespace dnSpy.Files.Tabs.DocViewer {
 				case TextReferenceIds.FollowReferenceNewTab:
 					documentViewer.FollowReferenceNewTab();
 					return CommandTargetStatus.Handled;
-
-				case TextReferenceIds.MoveToMatchingBrace:
-				case TextReferenceIds.MoveToMatchingBraceSelect:
-					return CommandTargetStatus.NotHandled;
 
 				default:
 					Debug.Fail($"Unknown {nameof(TextReferenceIds)} id: {(TextReferenceIds)cmdId}");

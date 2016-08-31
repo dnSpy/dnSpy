@@ -51,15 +51,5 @@ namespace dnSpy.Contracts.Command {
 		/// Move the caret to the definition the reference references, use a new tab
 		/// </summary>
 		FollowReferenceNewTab,
-
-		/// <summary>
-		/// Moves the caret to the matching brace
-		/// </summary>
-		MoveToMatchingBrace,
-
-		/// <summary>
-		/// Moves the caret to the matching brace, select span
-		/// </summary>
-		MoveToMatchingBraceSelect,
 	}
 }
