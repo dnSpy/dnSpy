@@ -178,5 +178,10 @@ namespace dnSpy.Contracts.Decompiler {
 		public static readonly Guid UseSourceCodeOrder_GUID = new Guid("11B1D294-1D85-4A5B-B9E9-B2A8AB889F51");
 		/// <summary />
 		public static readonly string UseSourceCodeOrder_NAME = "src-order";
+
+		/// <summary />
+		public static readonly Guid AllowFieldInitializers_GUID = new Guid("148CE5B9-95EC-441A-BDC8-1EAFFC02B097");
+		/// <summary />
+		public static readonly string AllowFieldInitializers_NAME = "field-initializers";
 	}
 }

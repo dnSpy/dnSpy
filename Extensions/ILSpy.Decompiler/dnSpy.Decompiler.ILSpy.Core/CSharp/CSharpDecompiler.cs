@@ -494,6 +494,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			var s = CreateDecompilerSettings(settings, useUsingDeclarations);
 			// Make sure the ctor is shown if the user tries to edit an empty ctor/cctor
 			s.RemoveEmptyDefaultConstructors = false;
+			// Inline all field initialization code
+			s.AllowFieldInitializers = false;
 			return s;
 		}
 

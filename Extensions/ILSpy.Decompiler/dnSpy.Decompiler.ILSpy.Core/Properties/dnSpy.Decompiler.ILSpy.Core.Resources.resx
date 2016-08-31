@@ -120,6 +120,9 @@
   <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
     <value>Add using declarations</value>
   </data>
+  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
+    <value>Allow field initializers</value>
+  </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
     <value>Always generate exception variables in catch blocks unless type is Object</value>
   </data>
