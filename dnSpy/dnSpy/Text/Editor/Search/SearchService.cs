@@ -216,6 +216,17 @@ namespace dnSpy.Text.Editor.Search {
 					switch ((TextEditorIds)cmdId) {
 					case TextEditorIds.BACKSPACE:
 					case TextEditorIds.TYPECHAR:
+					case TextEditorIds.TAB:
+					case TextEditorIds.RETURN:
+					case TextEditorIds.SCROLLUP:
+					case TextEditorIds.SCROLLDN:
+					case TextEditorIds.SCROLLPAGEUP:
+					case TextEditorIds.SCROLLPAGEDN:
+					case TextEditorIds.SCROLLLEFT:
+					case TextEditorIds.SCROLLRIGHT:
+					case TextEditorIds.SCROLLBOTTOM:
+					case TextEditorIds.SCROLLCENTER:
+					case TextEditorIds.SCROLLTOP:
 						return CommandTargetStatus.Handled;
 					}
 				}
@@ -265,6 +276,18 @@ namespace dnSpy.Text.Editor.Search {
 					case TextEditorIds.RETURN:
 						CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
+
+					case TextEditorIds.SCROLLUP:
+					case TextEditorIds.SCROLLDN:
+					case TextEditorIds.SCROLLPAGEUP:
+					case TextEditorIds.SCROLLPAGEDN:
+					case TextEditorIds.SCROLLLEFT:
+					case TextEditorIds.SCROLLRIGHT:
+					case TextEditorIds.SCROLLBOTTOM:
+					case TextEditorIds.SCROLLCENTER:
+					case TextEditorIds.SCROLLTOP:
+						// Allow scrolling by pressing eg. Ctrl+Up
+						return CommandTargetStatus.NotHandled;
 					}
 				}
 				else if (group == CommandConstants.TextReferenceGroup && (cmdId == (int)TextReferenceIds.FollowReference || cmdId == (int)TextReferenceIds.MoveToNextReference)) {
