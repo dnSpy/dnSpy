@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="textPosition">Text position</param>
 		/// <param name="sameMethod">true to only return statements within the method that contains <paramref name="textPosition"/></param>
 		/// <returns></returns>
-		IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod);
+		IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod = false);
 
 		/// <summary>
 		/// Gets a code <see cref="MethodSourceStatement"/>
