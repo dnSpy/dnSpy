@@ -163,15 +163,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						if (defsToShow.Contains(def))
 							en.Remove();
 						else if (en is CustomEventDeclaration) {
-							// Convert this hidden event to an automatic event
+							// Convert this hidden event to an event without accessor bodies.
+							// AstBuilder doesn't write empty bodies to it if it's a hidden event because
+							// then it can't be optimized to an auto event. We want real auto events to
+							// become auto events and custom events to stay custom, but without bodies.
 
-							var ev = (CustomEventDeclaration)en;
-							var ed = new EventDeclaration();
-							ed.ReturnType = ev.ReturnType.Detach();
-							ed.Modifiers = ev.Modifiers;
-							ed.Variables.Add(new VariableInitializer(TextColorHelper.GetColor(ev.Annotation<EventDef>()), ev.Name));
-							ed.CopyAnnotationsFrom(ev);
-							ev.ReplaceWith(ed);
+							var ced = (CustomEventDeclaration)en;
+							if (!ced.AddAccessor.IsNull)
+								ced.AddAccessor.Body = new BlockStatement();
+							if (!ced.RemoveAccessor.IsNull)
+								ced.RemoveAccessor.Body = new BlockStatement();
 						}
 					}
 				}
