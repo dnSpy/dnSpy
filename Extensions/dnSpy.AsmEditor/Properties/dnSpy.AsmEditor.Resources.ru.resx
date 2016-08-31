@@ -136,7 +136,7 @@
     <value>Открытый _ключ</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>Перенаправляемый</value>
+    <value>_Retargetable</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
     <value>Тип _содержимого</value>
@@ -310,7 +310,7 @@
     <value>Остался один TypeSig</value>
   </data>
   <data name="CustomAttributesTab" xml:space="preserve">
-    <value>Польз. аттр.</value>
+    <value>Пользовательские атрибуты</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
     <value>Выреза_ть</value>
@@ -557,7 +557,7 @@
     <value>Реализация</value>
   </data>
   <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>_Лучшее Совпадение</value>
+    <value>_BestFit</value>
   </data>
   <data name="ImplMap_CallingConvention" xml:space="preserve">
     <value>Вызо_в</value>
@@ -605,10 +605,10 @@
     <value>Coo_kie</value>
   </data>
   <data name="MarshalType_Data" xml:space="preserve">
-    <value>_Данные</value>
+    <value>_Data</value>
   </data>
   <data name="MarshalType_ElemType" xml:space="preserve">
-    <value>Тип_элемента</value>
+    <value>Elem_Type</value>
   </data>
   <data name="MarshalType_Enable" xml:space="preserve">
     <value>Прим_енить</value>
@@ -623,25 +623,25 @@
     <value>_ГУИД</value>
   </data>
   <data name="MarshalType_NativeType" xml:space="preserve">
-    <value>_НативныйТип</value>
+    <value>_NativeType</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
     <value>ничего</value>
   </data>
   <data name="MarshalType_NumElems" xml:space="preserve">
-    <value>_КолвоЭлементов</value>
+    <value>_NumElems</value>
   </data>
   <data name="MarshalType_ParamIndex" xml:space="preserve">
-    <value>ИндексПараметра</value>
+    <value>ParamIndex</value>
   </data>
   <data name="MarshalType_ParamIndex2" xml:space="preserve">
-    <value>_ИндексПараметра</value>
+    <value>_ParamIndex</value>
   </data>
   <data name="MarshalType_ParamNum" xml:space="preserve">
-    <value>_НомерПараметра</value>
+    <value>_ParamNum</value>
   </data>
   <data name="MarshalType_Reserved" xml:space="preserve">
-    <value>_Зарезервировано</value>
+    <value>_Reserved</value>
   </data>
   <data name="MarshalType_Size" xml:space="preserve">
     <value>_Размер</value>
@@ -707,7 +707,7 @@
     <value>Вызов</value>
   </data>
   <data name="MethodSig_ExplicitThis" xml:space="preserve">
-    <value>Я_вноеЭто</value>
+    <value>E_xplicitThis</value>
   </data>
   <data name="MethodSig_HasThis" xml:space="preserve">
     <value>_ЕстьЭто</value>
@@ -719,7 +719,7 @@
     <value>Типы параметров VarArg метода</value>
   </data>
   <data name="MethodSig_NumGenerics" xml:space="preserve">
-    <value># Общая_строка</value>
+    <value># Generic_s</value>
   </data>
   <data name="MethodSig_ReturnType" xml:space="preserve">
     <value>Возвращаем_ый тип...</value>
@@ -812,16 +812,16 @@
     <value>Выберите тип</value>
   </data>
   <data name="RawCustomAttributeBlob" xml:space="preserve">
-    <value>Сырой массив больших двоичных данных</value>
+    <value>Сырые двоичные данные</value>
   </data>
   <data name="RawCustomAttributeBlob2" xml:space="preserve">
-    <value>&lt; сырой массив двоичных данных &gt;</value>
+    <value>&lt;сырые двоичные данные&gt;</value>
   </data>
   <data name="RemoveAssembliesCommand" xml:space="preserve">
     <value>Удалить {0} сборок</value>
   </data>
   <data name="RemoveAssemblyCommand" xml:space="preserve">
-    <value>Удаленить сборку</value>
+    <value>Удалить сборку</value>
   </data>
   <data name="RemoveCharacter" xml:space="preserve">
     <value>R</value>
@@ -911,7 +911,7 @@
     <value>_ByRef</value>
   </data>
   <data name="TypeSigCreator_ByRef_ToolTip" xml:space="preserve">
-    <value>Преобразовать тип в по-ссылке</value>
+    <value>Преобразовать тип в ссылочный</value>
   </data>
   <data name="TypeSigCreator_Clear" xml:space="preserve">
     <value>Оч_истить</value>
@@ -935,7 +935,7 @@
     <value>_FnPtr</value>
   </data>
   <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
-    <value>Добавить в указатель на функцию</value>
+    <value>Добавить указатель на функцию</value>
   </data>
   <data name="TypeSigCreator_GenericInst" xml:space="preserve">
     <value>_GenericInst</value>
@@ -1112,13 +1112,13 @@
     <value>К_опировать все RVA</value>
   </data>
   <data name="CreateAnExceptionCatchType" xml:space="preserve">
-    <value>Создайте тип ловли исключений</value>
+    <value>Создать тип для захвата исключения</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>Создание ресурса, слинкованного со сборкой...</value>
+    <value>Создать ресурс, слинкованный со сборкой...</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
-    <value>Создание ресурса, слинкованного со сборкой</value>
+    <value>Создать ресурс, слинкованный со сборкой</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
     <value>Создать ресурс System.Data.Bitmap/Icon...</value>
@@ -1511,10 +1511,10 @@
     <value>Записать шестнадцатеричное пустое тело</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
-    <value>Записать шестнадцатеричное "return false" тело</value>
+    <value>Записать шестнадцатеричное 'return false' тело</value>
   </data>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
-    <value>Записать шестнадцатеричное "return true" тело</value>
+    <value>Записать шестнадцатеричное 'return true' тело</value>
   </data>
   <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
     <value>Заполнить {0} байтов @ {1:X8}</value>
@@ -1643,7 +1643,7 @@
     <value>_Инициализировать локальные переменные</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
-    <value>_Оставить старый максимальный стэк</value>
+    <value>_Оставить старый MaxStack</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
     <value>Не пересчитывать значение MaxStack при сохранении файла</value>
@@ -1652,7 +1652,7 @@
     <value>_LocalVarSigTok</value>
   </data>
   <data name="MethodBody_MaxStack" xml:space="preserve">
-    <value>_МаксимальныйСтак</value>
+    <value>_MaxStack</value>
   </data>
   <data name="MethodBody_RVA" xml:space="preserve">
     <value>_RVA</value>
@@ -1781,7 +1781,7 @@
     <value>Переименовать пространство имен...</value>
   </data>
   <data name="Resource_ColorDepth" xml:space="preserve">
-    <value>Color _Depth</value>
+    <value>_Глубина цвета</value>
   </data>
   <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
     <value>16-бит</value>
@@ -1829,7 +1829,7 @@
     <value>Сохранить все (Ctrl+Shift+S)</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
-    <value>Сохранить _Модуль...</value>
+    <value>Сохранить _модуль...</value>
   </data>
   <data name="SaveModuleCommand2" xml:space="preserve">
     <value>Сохранить модуль</value>
@@ -1926,7 +1926,7 @@ Some obfuscators put data there</value>
     <value>Методы .NET, которые имеют идентичный код, будут его разделять между собой. Выходной файл будет немного меньше</value>
   </data>
   <data name="SaveModule_Title" xml:space="preserve">
-    <value>Сохранить модуль</value>
+    <value>Сохранение модуля</value>
   </data>
   <data name="SaveModule_UseMixedMode" xml:space="preserve">
     <value>_Mixed-Mode Module</value>
@@ -2242,7 +2242,7 @@ Some obfuscators put data there</value>
     <value>Подписана _сильным именем</value>
   </data>
   <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>_Track Debug Data</value>
+    <value>О_тслеживать отладочные данные</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
     <value>Версия _заголовка</value>
@@ -2293,7 +2293,7 @@ Some obfuscators put data there</value>
     <value>Подписана _сильным именем</value>
   </data>
   <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>_Track Debug Data</value>
+    <value>О_тслеживать отладочные данные</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
     <value>_Major RT Ver</value>
@@ -2374,7 +2374,7 @@ Some obfuscators put data there</value>
     <value>_RTSpecialName</value>
   </data>
   <data name="Type_Flags_Sealed" xml:space="preserve">
-    <value>Запечатанн_ый</value>
+    <value>Seale_d</value>
   </data>
   <data name="Type_Flags_Semantics" xml:space="preserve">
     <value>_Семантика</value>
@@ -2413,73 +2413,73 @@ Some obfuscators put data there</value>
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit {0} Code...</value>
+    <value>Изменить код {0}...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
-    <value>Edit Code</value>
+    <value>Изменение кода</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
     <value>Декомпиляция...</value>
   </data>
   <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
-    <value>Code</value>
+    <value>Код</value>
   </data>
   <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Описание</value>
   </data>
   <data name="CompileDiagnostics_Header_File" xml:space="preserve">
     <value>Файл</value>
   </data>
   <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
-    <value>Line</value>
+    <value>Строка</value>
   </data>
   <data name="Button_Compile" xml:space="preserve">
-    <value>Compile</value>
+    <value>Компилировать</value>
   </data>
   <data name="StatusError" xml:space="preserve">
-    <value>Error</value>
+    <value>Ошибка</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
-    <value>Hidden</value>
+    <value>Скрытый</value>
   </data>
   <data name="StatusInfo" xml:space="preserve">
     <value>Информация</value>
   </data>
   <data name="StatusWarning" xml:space="preserve">
-    <value>Warning</value>
+    <value>Предупреждение</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (Ctrl+O)</value>
+    <value>Добавить ссылку на сборку (Ctrl+O)</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (GAC) (Ctrl+Shift+O)</value>
+    <value>Добавить ссылку на сборку (GAC) (Ctrl+Shift+O)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Couldn't add the assembly references.</value>
+    <value>Не могу добавить ссылки на сборку.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
-    <value>Edit Method Code</value>
+    <value>Изменить код метода</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>
+    <value>Не поддерживается добавление или удаление 'static' или 'Shared' для редактируемых методов: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>Couldn't find the edited method. Make sure you didn't add or remove 'static' or 'Shared' or changed the parameter types, return type or method name: {0}</value>
+    <value>Не могу найти редактируемый метод. Убедитесь, что не добавили или удалили 'static' или 'Shared' или изменили типы параметров, тип возвращаемого значения или имя метода: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
-    <value>Couldn't find field: {0}</value>
+    <value>Не могу найти поле: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
-    <value>Couldn't find method: {0}</value>
+    <value>Не могу найти метод: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
-    <value>Couldn't find the edited method's type: {0}</value>
+    <value>Не могу найти тип редактируемого метода: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
-    <value>Couldn't find type: {0}</value>
+    <value>Не могу найти тип: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual events isn't supported: {0}</value>
+    <value>Переименование виртуальных событий не поддерживается: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
     <value>Переименование виртуальных методов не поддерживается: {0}</value>

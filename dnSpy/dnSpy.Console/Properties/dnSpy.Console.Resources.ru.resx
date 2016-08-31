@@ -217,13 +217,13 @@
     <value>сборка</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>путь поиска сборок. Пути могут быть разделены с помощью '{0}' или вы можете использовать несколько --asm-path</value>
+    <value>путь поиска сборок. Пути могут быть разделены '{0}' или вы можете использовать несколько --asm-path</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
-    <value>декомпилировать сборку из глобального кэша сборок. Используйте полное имя сборки, чтобы использовать точную версию.</value>
+    <value>декомпилировать сборку из GAC. Используйте полное имя сборки, чтобы использовать точную версию.</value>
   </data>
   <data name="CmdLineDescription_Language" xml:space="preserve">
-    <value>изменить язык, по умолчанию C#. Можно использовать идентификаторы GUID.</value>
+    <value>изменить язык, по умолчанию C#. Можно использовать GUID.</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
     <value>декомпилировать член с токеном N метаданных в stdout</value>
@@ -238,10 +238,10 @@
     <value>не распаковывать ресурсы</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
-    <value>не создавать .resx файлы</value>
+    <value>не создавать файлы .resx</value>
   </data>
   <data name="CmdLineDescription_NoSLN" xml:space="preserve">
-    <value>не создавать .sln файл</value>
+    <value>не создавать файл .sln</value>
   </data>
   <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
     <value>проекты не ссылаются на mscorlib</value>
@@ -253,25 +253,25 @@
     <value>выходной каталог</value>
   </data>
   <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
-    <value>Идентификатор guid проекта</value>
+    <value>GUID проекта</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
     <value>рекурсивный поиск файлов .NET для декомпиляции</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
-    <value>имя файла решения</value>
+    <value>имя файла .sln</value>
   </data>
   <data name="CmdLineDescription_Type1" xml:space="preserve">
-    <value>декомпилировать тип с указанным именем в stdout. Или Namespace.Имя или Имя, без учета регистра</value>
+    <value>декомпилировать тип с указанным именем в stdout. Или Namespace.Name или Name, без учета регистра</value>
   </data>
   <data name="CmdLineDescription_Type2" xml:space="preserve">
-    <value>так же, как -t</value>
+    <value>то же, что и -t</value>
   </data>
   <data name="CmdLineDescription_UserGAC" xml:space="preserve">
-    <value>пользовательский путь GAC. Пути могут быть разделены с '{0}' или вы можете использовать несколько --user-gac</value>
+    <value>пользовательский путь GAC. Пути могут быть разделены '{0}' или вы можете использовать несколько --user-gac</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Visual Studio версия, 2005, 2008, ..., {0}</value>
+    <value>Версия Visual Studio, 2005, 2008, ..., {0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
     <value>язык</value>
@@ -280,13 +280,13 @@
     <value>имя</value>
   </data>
   <data name="CmdLineOutputDir" xml:space="preserve">
-    <value>выходная директория</value>
+    <value>выходной каталог</value>
   </data>
   <data name="CmdLinePath" xml:space="preserve">
     <value>путь</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
-    <value>Декомпилирует все файлы .NET в каталоге выше, и сохраняет файлы в C:\out\path</value>
+    <value>Декомпилирует все файлы .NET в каталоге выше и сохраняет файлы в C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
     <value>Декомпилирует все файлы .NET в каталоге выше и во всех подкаталогах</value>
@@ -295,7 +295,7 @@
     <value>Декомпилирует все файлы .NET *.dll в каталоге выше и сохраняет файлы в C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>Декомпилирует член с маркером 0x06000123</value>
+    <value>Декомпилирует член с токеном 0x06000123</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
     <value>Декомпилирует System.Int32 из mscorlib</value>

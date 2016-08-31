@@ -244,7 +244,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>Полный экран</value>
+    <value>П_олный экран</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
     <value>Shift+Alt+Enter</value>
@@ -634,7 +634,7 @@
     <value>_Параметры...</value>
   </data>
   <data name="SearchWindow_AllAbove" xml:space="preserve">
-    <value>Все возможное</value>
+    <value>Всё возможное</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
     <value>Ctrl+B</value>
@@ -643,22 +643,22 @@
     <value>Сборки</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
-    <value>Ссылки на сборки</value>
+    <value>Ссылка на сборку</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
     <value>Регистрозависимый поиск</value>
   </data>
   <data name="SearchWindow_Class" xml:space="preserve">
-    <value>Классы</value>
+    <value>Класс</value>
   </data>
   <data name="SearchWindow_DecompileResources" xml:space="preserve">
     <value>Декомпилировать ресурсы (пр. XAML)</value>
   </data>
   <data name="SearchWindow_Delegate" xml:space="preserve">
-    <value>Делегаты</value>
+    <value>Делегат</value>
   </data>
   <data name="SearchWindow_Enum" xml:space="preserve">
-    <value>Перечисления</value>
+    <value>Перечисление</value>
   </data>
   <data name="SearchWindow_Event" xml:space="preserve">
     <value>События</value>
@@ -673,13 +673,13 @@
     <value>Ctrl+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>Обобщенные типы</value>
+    <value>Обобщенный тип</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
-    <value>Интерфейсы</value>
+    <value>Интерфейс</value>
   </data>
   <data name="SearchWindow_Literal" xml:space="preserve">
-    <value>Числа/строки</value>
+    <value>Число/строка</value>
   </data>
   <data name="SearchWindow_Literal_Key" xml:space="preserve">
     <value>Ctrl+L</value>
@@ -712,19 +712,19 @@
     <value>Модуль</value>
   </data>
   <data name="SearchWindow_ModuleRef" xml:space="preserve">
-    <value>Ссылки на модуль</value>
+    <value>Ссылка на модуль</value>
   </data>
   <data name="SearchWindow_Namespace" xml:space="preserve">
     <value>Пространства имен</value>
   </data>
   <data name="SearchWindow_NonGeneric" xml:space="preserve">
-    <value>Необобщенные типы</value>
+    <value>Необобщенный тип</value>
   </data>
   <data name="SearchWindow_Parameter" xml:space="preserve">
     <value>Параметры</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Параметры/Локальные переменные</value>
+    <value>Параметр/Локальная переменная</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
     <value>Ctrl+N</value>
@@ -811,7 +811,7 @@
     <value>Вы хотите загрузить сохраненные настройки?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>Экспорт в Про_ект...</value>
+    <value>Экспорт в про_ект...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
     <value>Экспорт в проект</value>
@@ -939,22 +939,22 @@
     <value>Вывод</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Очистить все (Ctrl + L)</value>
+    <value>Очистить всё (Ctrl+L)</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>_Показать вывод из:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Переключить перенос слов (Ctrl + E, Ctrl + W)</value>
+    <value>Переключить перенос слов (Ctrl+E, Ctrl+W)</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
-    <value>Alt + 2</value>
+    <value>Alt+2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>Вывод(_O)</value>
+    <value>Выв_од</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Сохранить (Ctrl + S)</value>
+    <value>Сохранить (Ctrl+S)</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
     <value>Очистить всё</value>
@@ -975,13 +975,13 @@
     <value>Показать временные метки</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
-    <value>Ctrl + E, Ctrl + W</value>
+    <value>Ctrl+E, Ctrl+W</value>
   </data>
   <data name="ShortCutKeyCtrlF4" xml:space="preserve">
-    <value>Ctrl + F4</value>
+    <value>Ctrl+F4</value>
   </data>
   <data name="ShortCutKeyShiftEsc" xml:space="preserve">
-    <value>Shift + Esc</value>
+    <value>Shift+Esc</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
     <value>Закрыть</value>
@@ -1020,7 +1020,7 @@
     <value>Горизонтальное смещение</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Добавить путь к изображениям и папкам изображений, один путь в строке:</value>
+    <value>Добавить пути к изображениям и папкам изображений, один путь в строке:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
     <value>интервал</value>
@@ -1044,7 +1044,7 @@
     <value>Сброс</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
-    <value>Масштаб в %</value>
+    <value>Масштаб %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
     <value>Показать изображения</value>
@@ -1095,16 +1095,16 @@
     <value>Изображения</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Отступ снизу в %</value>
+    <value>Нижний отступ %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Отступ слева в %</value>
+    <value>Левый отступ %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Отступ права в %</value>
+    <value>Правый отступ %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Отступ сверху в %</value>
+    <value>Верхний отступ %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>Искать следующее (F3)</value>
@@ -1113,19 +1113,19 @@
     <value>Искать предыдущее (Shift+F3)</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>С учетом регистра (Alt + C)</value>
+    <value>С учетом регистра (Alt+C)</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Совпадение всего слова (Alt + W)</value>
+    <value>Совпадение всего слова (Alt+W)</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Заменить все (Alt + A)</value>
+    <value>Заменить все (Alt+A)</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Замените следующий (Alt + R)</value>
+    <value>Замените следующий (Alt+R)</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Испольовать регулярные выражения (Alt + E)</value>
+    <value>Использовать регулярные выражения (Alt+E)</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Переключите для переключения между режимами поиска и замены</value>

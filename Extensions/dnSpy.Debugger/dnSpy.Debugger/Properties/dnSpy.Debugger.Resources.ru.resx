@@ -1012,7 +1012,7 @@ HResult: 0x{3:X8}</value>
     <value>Показать токены</value>
   </data>
   <data name="ShowTypeKeywordsCommand" xml:space="preserve">
-    <value>Показывать псевдонимы типов</value>
+    <value>Показать псевдонимы типов</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
     <value>Старт б_ез отладки</value>
@@ -1228,13 +1228,13 @@ HResult: 0x{3:X8}</value>
     <value>Отладка</value>
   </data>
   <data name="ShowExceptionMessages" xml:space="preserve">
-    <value>_Сообщения о ошибках</value>
+    <value>_Сообщения об исключениях</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>Сообщения _Загрузки модуля</value>
+    <value>Сообщения _загрузки модуля</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>Сообщения _Выгрузки модуля</value>
+    <value>Сообщения _выгрузки модуля</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
     <value>Сообщения выхода _процесса</value>
@@ -1243,7 +1243,7 @@ HResult: 0x{3:X8}</value>
     <value>_Вывод программы</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>_Шаг фильтрации сообщений</value>
+    <value>Сообщения фильтрации _шагов</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
     <value>Сообщения о выходе _потока</value>
@@ -1255,7 +1255,7 @@ HResult: 0x{3:X8}</value>
     <value>Дополнительная информация: {0}</value>
   </data>
   <data name="DebugLogExceptionHandled" xml:space="preserve">
-    <value>Исключение: «{0}» в {1}</value>
+    <value>Исключение: '{0}' в {1}</value>
   </data>
   <data name="DebugLogExceptionUnhandled" xml:space="preserve">
     <value>В {1} произошло необработанное исключение типа '{0}'</value>
@@ -1264,19 +1264,19 @@ HResult: 0x{3:X8}</value>
     <value>Программа «{0}» завершилась с кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
-    <value>Поток {0:x} завершился с кодом {1} (0x{1:x}).</value>
+    <value>Поток 0x{0:x} завершился с кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>«{0}» ({1}: {2}): загружен «{3}».</value>
+    <value>'{0}' ({1}: {2}): загружен '{3}'.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
-    <value>Помощник управляемой отладки«{0}» обнаружил проблему в «{1}».</value>
+    <value>Помощник управляемой отладки '{0}' обнаружил проблему в '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>«{0}» ({1}: {2}): выгружен «{3}».</value>
+    <value>'{0}' ({1}: {2}): выгружен '{3}'.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>«&lt; сообщение без исключения &gt;»</value>
+    <value>«&lt;сообщение без исключения&gt;»</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>Смещение IL 0x{0}</value>

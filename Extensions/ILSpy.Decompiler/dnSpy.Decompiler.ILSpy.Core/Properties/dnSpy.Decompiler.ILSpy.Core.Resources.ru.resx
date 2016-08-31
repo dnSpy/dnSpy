@@ -196,7 +196,7 @@
     <value>Показать документацию XML в декомпилированном коде</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Сортировать свои атрибуты</value>
+    <value>Сортировать пользовательские атрибуты</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Сортировать методы, поля, свойства, события и типы</value>
@@ -208,6 +208,6 @@
     <value>Использовать имена переменных из отладочных символов, при наличии</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Сортировать члены, как в исходном коде</value>
+    <value>Сортировать члены как в исходном коде</value>
   </data>
 </root>
