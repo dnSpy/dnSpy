@@ -373,7 +373,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		List<ILCodeBreakpoint> GetILCodeBreakpoints(IDocumentViewer documentViewer, int textPosition) =>
-			GetILCodeBreakpoints(documentViewer, documentViewer.GetMethodDebugService().FindByTextPosition(textPosition));
+			GetILCodeBreakpoints(documentViewer, documentViewer.GetMethodDebugService().FindByTextPosition(textPosition, true));
 
 		//TODO: This method (and all callers) should take an ITextView instead of an IDocumentViewer as a parameter
 		List<ILCodeBreakpoint> GetILCodeBreakpoints(IDocumentViewer documentViewer, IList<MethodSourceStatement> methodStatements) {
@@ -401,7 +401,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public void Toggle(IDocumentViewer documentViewer, int textPosition) {
-			var statements = documentViewer.GetMethodDebugService().FindByTextPosition(textPosition);
+			var statements = documentViewer.GetMethodDebugService().FindByTextPosition(textPosition, true);
 			var ilbps = GetILCodeBreakpoints(documentViewer, statements);
 			if (ilbps.Count > 0) {
 				if (IsEnabled(ilbps)) {

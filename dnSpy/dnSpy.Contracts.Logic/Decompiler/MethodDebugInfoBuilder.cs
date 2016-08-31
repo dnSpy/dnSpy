@@ -31,6 +31,16 @@ namespace dnSpy.Contracts.Decompiler {
 		readonly SourceLocal[] locals;
 
 		/// <summary>
+		/// Start of method (eg. position of the first character of the modifier or return type)
+		/// </summary>
+		public int? StartPosition { get; set; }
+
+		/// <summary>
+		/// End of method (eg. after the last brace)
+		/// </summary>
+		public int? EndPosition { get; set; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="method">Method</param>
@@ -53,6 +63,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Creates a <see cref="MethodDebugInfo"/>
 		/// </summary>
 		/// <returns></returns>
-		public MethodDebugInfo Create() => new MethodDebugInfo(method, statements.ToArray(), locals);
+		public MethodDebugInfo Create() {
+			TextSpan? methodSpan;
+			if (StartPosition != null && EndPosition != null && StartPosition.Value <= EndPosition.Value)
+				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
+			else
+				methodSpan = null;
+			return new MethodDebugInfo(method, statements.ToArray(), locals, methodSpan);
+		}
 	}
 }

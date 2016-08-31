@@ -47,25 +47,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (documentViewer == null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
-			var methodStatements = methodDebugService.FindByTextPosition(textPosition);
-			if (methodStatements.Count == 0)
-				return null;
-
-			var span = methodStatements[0].Statement.TextSpan;
-			var snapshot = documentViewer.TextView.TextSnapshot;
-			Debug.Assert(span.End <= snapshot.Length);
-			Debug.Assert(textPosition <= snapshot.Length);
-			if (span.End > snapshot.Length)
-				return null;
-			if (textPosition > snapshot.Length)
-				return null;
-			var line1 = snapshot.GetLineFromPosition(span.Start);
-			var line2 = snapshot.GetLineFromPosition(span.End);
-			var textLine = snapshot.GetLineFromPosition(textPosition);
-			if (!(line1.LineNumber <= textLine.LineNumber && textLine.LineNumber <= line2.LineNumber))
-				return null;
-
-			return methodStatements;
+			var methodStatements = methodDebugService.FindByTextPosition(textPosition, true);
+			return methodStatements.Count == 0 ? null : methodStatements;
 		}
 
 		public static uint[] GetInstructionOffsets(MethodDef method, IList<MethodSourceStatement> list) {

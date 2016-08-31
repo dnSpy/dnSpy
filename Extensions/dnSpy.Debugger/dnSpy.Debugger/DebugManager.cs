@@ -1294,7 +1294,7 @@ namespace dnSpy.Debugger {
 			}
 			Debug.Assert(currentLocation != null);
 
-			var methodStatements = methodDebugService.FindByTextPosition(documentViewer.Caret.Position.BufferPosition.Position);
+			var methodStatements = methodDebugService.FindByTextPosition(documentViewer.Caret.Position.BufferPosition.Position, true);
 			if (methodStatements.Count == 0) {
 				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementHere;
 				return false;

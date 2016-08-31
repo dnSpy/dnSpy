@@ -43,7 +43,15 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public SourceLocal[] Locals { get; }
 
-		int minTextOffset, maxTextOffset;
+		/// <summary>
+		/// Method span or the default value (position 0, length 0) if it's not known
+		/// </summary>
+		public TextSpan Span { get; }
+
+		/// <summary>
+		/// true if <see cref="Span"/> is a valid method span
+		/// </summary>
+		public bool HasSpan => Span.Start != 0 && Span.End != 0;
 
 		/// <summary>
 		/// Constructor
@@ -51,7 +59,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="method">Method</param>
 		/// <param name="statements">Statements</param>
 		/// <param name="locals">Locals</param>
-		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, SourceLocal[] locals) {
+		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
+		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, SourceLocal[] locals, TextSpan? methodSpan) {
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
 			if (statements == null)
@@ -63,7 +72,19 @@ namespace dnSpy.Contracts.Decompiler {
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
 			Statements = statements;
 			Locals = locals;
-			minTextOffset = -1;
+			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);
+		}
+
+		static TextSpan? CalculateMethodSpan(SourceStatement[] statements) {
+			int min = int.MaxValue;
+			int max = int.MinValue;
+			foreach (var statement in statements) {
+				if (min > statement.TextSpan.Start)
+					min = statement.TextSpan.Start;
+				if (max < statement.TextSpan.End)
+					max = statement.TextSpan.End;
+			}
+			return min <= max ? TextSpan.FromBounds(min, max) : (TextSpan?)null;
 		}
 
 		/// <summary>
@@ -145,20 +166,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="textPosition">Position in text document</param>
 		/// <returns></returns>
 		public SourceStatement? GetSourceStatementByTextOffset(int lineStart, int lineEnd, int textPosition) {
-			if (Statements.Length == 0)
-				return null;
-			if (minTextOffset == -1) {
-				int tmpLo = int.MaxValue, tmpHi = 0;
-				foreach (var s in Statements) {
-					if (tmpLo > s.TextSpan.Start)
-						tmpLo = s.TextSpan.Start;
-					if (tmpHi < s.TextSpan.End)
-						tmpHi = s.TextSpan.End;
-				}
-				maxTextOffset = tmpHi;
-				minTextOffset = tmpLo;
-			}
-			if (lineStart > maxTextOffset || lineEnd < minTextOffset)
+			if (lineStart >= Span.End || lineEnd < Span.Start)
 				return null;
 
 			SourceStatement? intersection = null;

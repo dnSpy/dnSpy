@@ -411,7 +411,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		ReferencePosition GetReferencePosition(IMethodDebugService methodDebugService) {
 			int caretPos = wpfTextViewHost.TextView.Caret.Position.BufferPosition.Position;
 			var line = wpfTextViewHost.TextView.TextSnapshot.GetLineFromPosition(caretPos);
-			var statements = methodDebugService.FindByTextPosition(caretPos).ToList();
+			var statements = methodDebugService.FindByTextPosition(caretPos, false).ToList();
 			statements.Sort(sortDelegate);
 
 			var spanData = currentContent.Content.ReferenceCollection.FindFrom(line.Start.Position).FirstOrDefault(r => r.Data.Reference is IMemberDef && r.Data.IsDefinition && !r.Data.IsLocal);

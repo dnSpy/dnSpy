@@ -92,7 +92,7 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		public IList<MethodSourceStatement> FindByTextPosition(int textPosition) {
+		public IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod) {
 			if (textPosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(textPosition));
 			if (dict.Count == 0)
@@ -107,9 +107,22 @@ namespace dnSpy.Decompiler {
 			if (methodStatements == null)
 				methodStatements = GetClosest(line.Start.Position, line.End.Position);
 
-			if (methodStatements != null)
-				return methodStatements;
+			if (methodStatements != null) {
+				if (!sameMethod || IsSameMethod(methodStatements, textPosition))
+					return methodStatements;
+			}
 			return Array.Empty<MethodSourceStatement>();
+		}
+
+		bool IsSameMethod(List<MethodSourceStatement> methodStatements, int textPosition) {
+			if (methodStatements.Count == 0)
+				return false;
+			var methodInfo = TryGetMethodDebugInfo(methodStatements[0].Method);
+			Debug.Assert(methodInfo != null);
+			if (methodInfo == null)
+				return false;
+			var methodSpan = methodInfo.Span;
+			return textPosition >= methodSpan.Start && textPosition < methodSpan.End;
 		}
 
 		List<MethodSourceStatement> FindByLineAndTextOffset(int lineStart, int lineEnd, int textPosition) {
