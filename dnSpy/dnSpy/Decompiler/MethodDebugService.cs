@@ -122,7 +122,18 @@ namespace dnSpy.Decompiler {
 			if (methodInfo == null)
 				return false;
 			var methodSpan = methodInfo.Span;
-			return textPosition >= methodSpan.Start && textPosition < methodSpan.End;
+			if (textPosition >= methodSpan.Start && textPosition < methodSpan.End)
+				return true;
+
+			// If it's a field initializer the statement isn't within the method
+			if (methodInfo.Method.IsConstructor) {
+				foreach (var statement in methodInfo.Statements) {
+					// Allow end position too since it's probably at the end of the line
+					if (textPosition >= statement.TextSpan.Start && textPosition <= statement.TextSpan.End)
+						return true;
+				}
+			}
+			return false;
 		}
 
 		List<MethodSourceStatement> FindByLineAndTextOffset(int lineStart, int lineEnd, int textPosition) {
