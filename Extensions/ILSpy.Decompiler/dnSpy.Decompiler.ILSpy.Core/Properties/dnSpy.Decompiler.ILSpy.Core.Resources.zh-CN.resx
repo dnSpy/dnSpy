@@ -120,6 +120,9 @@
   <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
     <value>添加using声明</value>
   </data>
+  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
+    <value>Allow field initializers</value>
+  </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
     <value>在catch块中总是生成异常变量，除非类型为Object</value>
   </data>
