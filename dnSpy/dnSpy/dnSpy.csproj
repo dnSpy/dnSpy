@@ -795,6 +795,7 @@
     <Resource Include="Images\ConstructorProtectedInternal.png" />
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\CSharpFile.png" />
+    <Resource Include="Images\CSProjectNode.png" />
     <Resource Include="Images\DefaultWatermarkDark.png" />
     <Resource Include="Images\DefaultWatermarkLight.png" />
     <Resource Include="Images\Delegate.png" />
@@ -860,11 +861,13 @@
     <Resource Include="Images\GenericProtectedInternal.png" />
     <Resource Include="Images\HorizontalTabGroup.png" />
     <Resource Include="Images\ImageFile.png" />
+    <Resource Include="Images\IntellisenseKeyword.png" />
     <Resource Include="Images\Interface.png" />
     <Resource Include="Images\InterfaceInternal.png" />
     <Resource Include="Images\InterfacePrivate.png" />
     <Resource Include="Images\InterfaceProtected.png" />
     <Resource Include="Images\InterfaceProtectedInternal.png" />
+    <Resource Include="Images\Label.png" />
     <Resource Include="Images\Library.png" />
     <Resource Include="Images\Literal.png" />
     <Resource Include="Images\LiteralCompilerControlled.png" />
@@ -880,6 +883,9 @@
     <Resource Include="Images\MethodPrivate.png" />
     <Resource Include="Images\MethodProtected.png" />
     <Resource Include="Images\MethodProtectedInternal.png" />
+    <Resource Include="Images\ModuleInternal.png" />
+    <Resource Include="Images\ModulePrivate.png" />
+    <Resource Include="Images\ModuleProtected.png" />
     <Resource Include="Images\ModuleReference.png" />
     <Resource Include="Images\Namespace.png" />
     <Resource Include="Images\NewWindow.png" />
@@ -911,6 +917,7 @@
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\Snippet.png" />
     <Resource Include="Images\Solution.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
@@ -931,6 +938,9 @@
     <Resource Include="Images\StaticPropertyPrivate.png" />
     <Resource Include="Images\StaticPropertyProtected.png" />
     <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\StatusError.png" />
+    <Resource Include="Images\StatusInformation.png" />
+    <Resource Include="Images\StatusWarning.png" />
     <Resource Include="Images\Strings.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\StructInternal.png" />
@@ -943,7 +953,9 @@
     <Resource Include="Images\toolstrippanelleft.png" />
     <Resource Include="Images\toolstrippanelright.png" />
     <Resource Include="Images\toolstrippaneltop.png" />
+    <Resource Include="Images\Type.png" />
     <Resource Include="Images\UserDefinedDataType.png" />
+    <Resource Include="Images\VBProjectNode.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\VirtualEvent.png" />
     <Resource Include="Images\VirtualEventCompilerControlled.png" />

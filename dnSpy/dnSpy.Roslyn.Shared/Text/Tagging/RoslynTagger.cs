@@ -53,7 +53,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, roslynClassificationTypes, defaultClassificationType, state.CancellationToken);
 			state.UserAsyncState.TagsList.Clear();
 			foreach (var span in spans) {
-				foreach (var info in classifier.GetClassificationColors(span.Span.ToTextSpan()))
+				foreach (var info in classifier.GetClassifications(span.Span.ToTextSpan()))
 					state.UserAsyncState.TagsList.Add(new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag(info.Type)));
 				if (state.UserAsyncState.TagsList.Count != 0) {
 					state.AddResult(new TagsResult(span, state.UserAsyncState.TagsList.ToArray()));

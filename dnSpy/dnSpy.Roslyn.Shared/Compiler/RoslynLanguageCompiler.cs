@@ -29,12 +29,12 @@ using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {
+		protected abstract string TextViewRole { get; }
 		protected abstract string ContentType { get; }
 		protected abstract string LanguageName { get; }
 		protected abstract CompilationOptions CompilationOptions { get; }
@@ -55,7 +55,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
 			Debug.Assert(workspace == null);
 
-			workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices);
+			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
 			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
@@ -96,6 +96,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension) {
 			var options = new CodeEditorOptions();
 			options.ContentTypeString = ContentType;
+			options.Roles.Add(PredefinedDnSpyTextViewRoles.RoslynCodeEditor);
+			options.Roles.Add(TextViewRole);
 			var codeEditor = codeEditorProvider.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);

@@ -23,7 +23,11 @@ using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
+	/// <summary>
+	/// Classification types used by <see cref="RoslynClassifier"/>
+	/// </summary>
 	public sealed class RoslynClassificationTypes {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public readonly IClassificationType Comment;
 		public readonly IClassificationType Delegate;
 		public readonly IClassificationType Enum;
@@ -81,6 +85,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		public readonly IClassificationType XmlLiteralName;
 		public readonly IClassificationType XmlLiteralProcessingInstruction;
 		public readonly IClassificationType XmlLiteralText;
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the cached instance that contains <see cref="IClassificationType"/> values

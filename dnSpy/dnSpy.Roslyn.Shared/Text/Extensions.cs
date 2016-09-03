@@ -28,30 +28,67 @@ namespace dnSpy.Roslyn.Shared.Text {
 	/// Extension methods
 	/// </summary>
 	public static class Extensions {
+		/// <summary>
+		/// Converts <paramref name="textSnapshot"/> to a <see cref="SourceText"/>
+		/// </summary>
+		/// <param name="textSnapshot">Snapshot</param>
+		/// <returns></returns>
+		public static SourceText AsText(this ITextSnapshot textSnapshot) => snapshotToSourceText.GetValue(textSnapshot, createSourceText);
 		// Pass in UTF8 (or any other valid encoding) so we can compile and get a PDB file
 		static readonly ConditionalWeakTable<ITextSnapshot, SourceText>.CreateValueCallback createSourceText = a => new TextSnapshotSourceText(a, Encoding.UTF8);
 		static readonly ConditionalWeakTable<ITextSnapshot, SourceText> snapshotToSourceText = new ConditionalWeakTable<ITextSnapshot, SourceText>();
-		public static SourceText AsText(this ITextSnapshot textSnapshot) => snapshotToSourceText.GetValue(textSnapshot, createSourceText);
 
+		/// <summary>
+		/// Converts <paramref name="textBuffer"/> to a <see cref="SourceTextContainer"/>
+		/// </summary>
+		/// <param name="textBuffer">Text buffer</param>
+		/// <returns></returns>
+		public static SourceTextContainer AsTextContainer(this ITextBuffer textBuffer) => textBufferToContainer.GetValue(textBuffer, createSourceTextContainer);
 		static readonly ConditionalWeakTable<ITextBuffer, SourceTextContainer>.CreateValueCallback createSourceTextContainer = a => new TextBufferSourceTextContainer(a);
 		static readonly ConditionalWeakTable<ITextBuffer, SourceTextContainer> textBufferToContainer = new ConditionalWeakTable<ITextBuffer, SourceTextContainer>();
-		public static SourceTextContainer AsTextContainer(this ITextBuffer textBuffer) => textBufferToContainer.GetValue(textBuffer, createSourceTextContainer);
 
+		/// <summary>
+		/// Returns a <see cref="ITextBuffer"/> or null
+		/// </summary>
+		/// <param name="textContainer">Text container</param>
+		/// <returns></returns>
 		public static ITextBuffer TryGetTextBuffer(this SourceTextContainer textContainer) =>
 			(textContainer as TextBufferSourceTextContainer)?.TextBuffer;
 
+		/// <summary>
+		/// Returns the workspace or null
+		/// </summary>
+		/// <param name="buffer">Text buffer</param>
+		/// <returns></returns>
 		public static Workspace TryGetWorkspace(this ITextBuffer buffer) {
 			Workspace ws;
 			Workspace.TryGetWorkspace(buffer.AsTextContainer(), out ws);
 			return ws;
 		}
 
+		/// <summary>
+		/// Gets the snapshot or null
+		/// </summary>
+		/// <param name="sourceText">Source text</param>
+		/// <returns></returns>
 		public static ITextSnapshot TryGetTextSnapshot(this SourceText sourceText) =>
 			(sourceText as TextSnapshotSourceText)?.TextSnapshot;
 
 		internal static TextChangeEventArgs ToTextChangeEventArgs(this TextContentChangedEventArgs e) =>
 			new TextChangeEventArgs(e.Before.AsText(), e.After.AsText(), e.Changes.ToTextChangeRange());
+
+		/// <summary>
+		/// Converts <paramref name="span"/> to a <see cref="TextSpan"/>
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
 		public static TextSpan ToTextSpan(this Span span) => new TextSpan(span.Start, span.Length);
+
+		/// <summary>
+		/// Converts <paramref name="textSpan"/> to a <see cref="Span"/>
+		/// </summary>
+		/// <param name="textSpan"></param>
+		/// <returns></returns>
 		public static Span ToSpan(this TextSpan textSpan) => new Span(textSpan.Start, textSpan.Length);
 		internal static TextChangeRange ToTextChangeRange(this ITextChange textChange) =>
 			new TextChangeRange(textChange.OldSpan.ToTextSpan(), textChange.NewLength);
@@ -63,11 +100,21 @@ namespace dnSpy.Roslyn.Shared.Text {
 			return res;
 		}
 
-		public static Document GetOpenDocumentInCurrentContextWithChanges(this ITextSnapshot text) =>
-			text.AsText().GetOpenDocumentInCurrentContextWithChanges();
+		/// <summary>
+		/// Gets the document or null
+		/// </summary>
+		/// <param name="snapshot">Snapshot</param>
+		/// <returns></returns>
+		public static Document GetOpenDocumentInCurrentContextWithChanges(this ITextSnapshot snapshot) =>
+			snapshot.AsText().GetOpenDocumentInCurrentContextWithChanges();
 
-		// This internal Roslyn method was copied from roslyn/src/Workspaces/Core/Portable/Workspace/TextExtensions.cs
+		/// <summary>
+		/// Gets the document or null
+		/// </summary>
+		/// <param name="text">Source text</param>
+		/// <returns></returns>
 		public static Document GetOpenDocumentInCurrentContextWithChanges(this SourceText text) {
+			// This internal Roslyn method was copied from roslyn/src/Workspaces/Core/Portable/Workspace/TextExtensions.cs
 			Workspace workspace;
 			if (Workspace.TryGetWorkspace(text.Container, out workspace)) {
 				var id = workspace.GetDocumentIdInCurrentContext(text.Container);

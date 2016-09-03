@@ -67,6 +67,21 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const string CodeEditor = "dnSpy-ICodeEditor";
 
 		/// <summary>
+		/// Roslyn code editor (any supported language, eg. C# and Visual Basic)
+		/// </summary>
+		public const string RoslynCodeEditor = "dnSpy-RoslynCodeEditor";
+
+		/// <summary>
+		/// Roslyn code editor (C#)
+		/// </summary>
+		public const string RoslynCSharpCodeEditor = "dnSpy-RoslynCSharpCodeEditor";
+
+		/// <summary>
+		/// Roslyn code editor (Visual Basic)
+		/// </summary>
+		public const string RoslynVisualBasicCodeEditor = "dnSpy-RoslynVisualBasicCodeEditor";
+
+		/// <summary>
 		/// Enables the custom line number margin, see <see cref="Editor.CustomLineNumberMargin"/>
 		/// documentation for more info.
 		/// </summary>

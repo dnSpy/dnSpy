@@ -28,16 +28,34 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
+	/// <summary>
+	/// Classifier result
+	/// </summary>
 	public struct ClassifierResult {
+		/// <summary>
+		/// Span
+		/// </summary>
 		public readonly Span Span;
+
+		/// <summary>
+		/// Classification type
+		/// </summary>
 		public readonly IClassificationType Type;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <param name="type">Classification type</param>
 		public ClassifierResult(Span span, IClassificationType type) {
 			this.Span = span;
 			this.Type = type;
 		}
 	}
 
+	/// <summary>
+	/// Roslyn classifier
+	/// </summary>
 	public struct RoslynClassifier {
 		readonly SyntaxNode syntaxRoot;
 		readonly SemanticModel semanticModel;
@@ -46,6 +64,15 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		readonly IClassificationType defaultClassificationType;
 		/*readonly*/ CancellationToken cancellationToken;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="syntaxRoot">Syntax root</param>
+		/// <param name="semanticModel">Semantic model</param>
+		/// <param name="workspace">Workspace</param>
+		/// <param name="roslynClassificationTypes">Classification types</param>
+		/// <param name="defaultClassificationType">Default classification type if a token can't be classified or null to not use anything</param>
+		/// <param name="cancellationToken">Cancellation token</param>
 		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes roslynClassificationTypes, IClassificationType defaultClassificationType, CancellationToken cancellationToken) {
 			this.syntaxRoot = syntaxRoot;
 			this.semanticModel = semanticModel;
@@ -55,7 +82,12 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 			this.cancellationToken = cancellationToken;
 		}
 
-		public IEnumerable<ClassifierResult> GetClassificationColors(TextSpan textSpan) {
+		/// <summary>
+		/// Returns all classifications
+		/// </summary>
+		/// <param name="textSpan">Span to classify</param>
+		/// <returns></returns>
+		public IEnumerable<ClassifierResult> GetClassifications(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
 				var color = GetClassificationType(cspan) ?? defaultClassificationType;
 				if (color != null)

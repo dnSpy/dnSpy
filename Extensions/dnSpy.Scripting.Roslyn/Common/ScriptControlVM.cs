@@ -35,10 +35,10 @@ using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
@@ -343,9 +343,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (cancellationToken.IsCancellationRequested)
 				return Task.CompletedTask;
 
-			using (var workspace = new AdhocWorkspace(DesktopMefHostServices.DefaultServices)) {
+			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var classifier = new RoslynClassifier(sem.SyntaxTree.GetRoot(), sem, workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
-				foreach (var info in classifier.GetClassificationColors(new TextSpan(0, command.Input.Length)))
+				foreach (var info in classifier.GetClassifications(new TextSpan(0, command.Input.Length)))
 					command.AddClassification(info.Span.Start, info.Span.Length, info.Type);
 			}
 

@@ -46,6 +46,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	}
 
 	sealed class CSharpLanguageCompiler : RoslynLanguageCompiler {
+		protected override string TextViewRole => PredefinedDnSpyTextViewRoles.RoslynCSharpCodeEditor;
 		protected override string ContentType => ContentTypes.CSharpRoslyn;
 		protected override string LanguageName => LanguageNames.CSharp;
 		protected override CompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
