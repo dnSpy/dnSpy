@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Command;
 using Microsoft.VisualStudio.Text.Editor;
@@ -24,10 +25,10 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor.Search {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_SEARCH)]
 	sealed class CommandTargetFilterProvider : ICommandTargetFilterProvider {
-		readonly ISearchServiceProvider searchServiceProvider;
+		readonly Lazy<ISearchServiceProvider> searchServiceProvider;
 
 		[ImportingConstructor]
-		CommandTargetFilterProvider(ISearchServiceProvider searchServiceProvider) {
+		CommandTargetFilterProvider(Lazy<ISearchServiceProvider> searchServiceProvider) {
 			this.searchServiceProvider = searchServiceProvider;
 		}
 
@@ -36,16 +37,16 @@ namespace dnSpy.Text.Editor.Search {
 			if (textView?.Roles.Contains(PredefinedTextViewRoles.Interactive) != true)
 				return null;
 
-			return new CommandTargetFilter(searchServiceProvider, textView);
+			return new CommandTargetFilter(searchServiceProvider.Value, textView);
 		}
 	}
 
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_SEARCH_FOCUS)]
 	sealed class CommandTargetFilterProviderFocus : ICommandTargetFilterProvider {
-		readonly ISearchServiceProvider searchServiceProvider;
+		readonly Lazy<ISearchServiceProvider> searchServiceProvider;
 
 		[ImportingConstructor]
-		CommandTargetFilterProviderFocus(ISearchServiceProvider searchServiceProvider) {
+		CommandTargetFilterProviderFocus(Lazy<ISearchServiceProvider> searchServiceProvider) {
 			this.searchServiceProvider = searchServiceProvider;
 		}
 
@@ -54,7 +55,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (textView?.Roles.Contains(PredefinedTextViewRoles.Interactive) != true)
 				return null;
 
-			return new CommandTargetFilterFocus(searchServiceProvider, textView);
+			return new CommandTargetFilterFocus(searchServiceProvider.Value, textView);
 		}
 	}
 }

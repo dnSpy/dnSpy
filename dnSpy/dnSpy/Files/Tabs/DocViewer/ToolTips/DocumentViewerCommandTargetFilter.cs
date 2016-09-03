@@ -27,10 +27,10 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 1)]
 	sealed class DocumentViewerCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
+		readonly Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerCommandTargetFilterProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
+		DocumentViewerCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) {
 			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 		}
 
@@ -39,7 +39,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.DocumentViewer) != true)
 				return null;
 
-			return new DocumentViewerCommandTargetFilter(documentViewerToolTipServiceProvider, textView);
+			return new DocumentViewerCommandTargetFilter(documentViewerToolTipServiceProvider.Value, textView);
 		}
 	}
 

@@ -29,17 +29,17 @@ using Microsoft.VisualStudio.Text.Operations;
 namespace dnSpy.Text.Editor {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(IEditorOperationsFactoryService editorOperationsFactoryService) {
+		DefaultTextViewCommandTargetFilterProvider(Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService) {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
 			if (textView != null)
-				return new DefaultTextViewCommandTarget(textView, editorOperationsFactoryService);
+				return new DefaultTextViewCommandTarget(textView, editorOperationsFactoryService.Value);
 			return null;
 		}
 	}
