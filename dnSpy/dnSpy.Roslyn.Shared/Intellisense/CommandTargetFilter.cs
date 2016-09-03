@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		bool ShouldSwallowEnterKey(EnterKeyRule enterKeyRule) {
+		bool ShouldPassThroughEnterKey(EnterKeyRule enterKeyRule) {
 			if (enterKeyRule == EnterKeyRule.Default)
 				enterKeyRule = TryGetRoslynCompletionService()?.GetRules().DefaultEnterKeyRule ?? enterKeyRule;
 
@@ -155,9 +155,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 						if (!completionSession.SelectedCompletionCollection.CurrentCompletion.IsSelected)
 							break;
 						// Cache it because it could read from text buffer which gets modified by Commit()
-						bool swallowEnterKey = ShouldSwallowEnterKey(TryGetEnterKeyRule() ?? EnterKeyRule.Default);
+						bool passThrough = ShouldPassThroughEnterKey(TryGetEnterKeyRule() ?? EnterKeyRule.Default);
 						completionSession.Commit();
-						if (!swallowEnterKey)
+						if (!passThrough)
 							return CommandTargetStatus.Handled;
 						break;
 
