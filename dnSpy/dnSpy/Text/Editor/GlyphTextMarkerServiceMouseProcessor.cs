@@ -470,7 +470,7 @@ namespace dnSpy.Text.Editor {
 					toolTipMarker = marker;
 					toolTip = new ToolTip();
 					toolTip.SetResourceReference(FrameworkElement.StyleProperty, "GlyphTextMarkerToolTipStyle");
-					ToolTipHelper.SetScaleTransform(wpfTextViewHost.TextView, toolTip);
+					PopupHelper.SetScaleTransform(wpfTextViewHost.TextView, toolTip);
 					toolTip.Content = new TextBlock {
 						Text = toolTipContent,
 						TextWrapping = TextWrapping.Wrap,
@@ -513,7 +513,7 @@ namespace dnSpy.Text.Editor {
 				popupContentHeight = 0;
 			popup.VerticalOffset = line.TextTop - wpfTextViewHost.TextView.ViewportTop + 1 - popupContentHeight;
 			popup.Visibility = Visibility.Visible;
-			ToolTipHelper.SetScaleTransform(wpfTextViewHost.TextView, popup);
+			PopupHelper.SetScaleTransform(wpfTextViewHost.TextView, popup);
 			popup.IsOpen = true;
 		}
 

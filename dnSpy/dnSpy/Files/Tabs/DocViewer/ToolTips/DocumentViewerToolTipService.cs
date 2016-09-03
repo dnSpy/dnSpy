@@ -142,7 +142,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			// instead of Ideal; don't change the default settings if it's 100% zoom.
 			if (documentViewer.TextView.ZoomLevel == 100)
 				return;
-			ToolTipHelper.SetScaleTransform(documentViewer.TextView, toolTip);
+			PopupHelper.SetScaleTransform(documentViewer.TextView, toolTip);
 		}
 
 		void VisualElement_MouseMove(object sender, MouseEventArgs e) {

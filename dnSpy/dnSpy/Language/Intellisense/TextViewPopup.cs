@@ -110,7 +110,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 
 			if (updateZoom)
-				ToolTipHelper.SetScaleTransform(wpfTextView, popup);
+				PopupHelper.SetScaleTransform(wpfTextView, popup);
 
 			popup.IsOpen = true;
 		}

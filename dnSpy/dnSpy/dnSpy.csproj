@@ -521,6 +521,7 @@
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilter.cs" />
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilterProvider.cs" />
     <Compile Include="Text\Editor\OutputTextPaneUtils.cs" />
+    <Compile Include="Text\Editor\PopupHelper.cs" />
     <Compile Include="Text\Editor\ReplBufferKind.cs" />
     <Compile Include="Text\Editor\ReplCommandInfoProvider.cs" />
     <Compile Include="Text\Editor\ReplCommands.cs" />
@@ -566,7 +567,6 @@
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewMouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
-    <Compile Include="Text\Editor\ToolTipHelper.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarContainerMargin.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\ViewScroller.cs" />

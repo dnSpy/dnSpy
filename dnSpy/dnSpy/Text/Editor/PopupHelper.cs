@@ -24,9 +24,9 @@ using dnSpy.Controls;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	static class ToolTipHelper {
-		const double maxToolTipHeightMultiplier = 0.8;
-		const double maxToolTipWidthMultiplier = 0.8;
+	static class PopupHelper {
+		const double maxHeightMultiplier = 0.8;
+		const double maxWidthMultiplier = 0.8;
 
 		public static void SetScaleTransform(IWpfTextView wpfTextView, FrameworkElement popupElement) {
 			var metroWindow = Window.GetWindow(wpfTextView.VisualElement) as MetroWindow;
@@ -40,8 +40,8 @@ namespace dnSpy.Text.Editor {
 				var source = PresentationSource.FromVisual(wpfTextView.VisualElement);
 				var transformFromDevice = source?.CompositionTarget.TransformFromDevice ?? Matrix.Identity;
 				var wpfRect = transformFromDevice.Transform(new Point(screen.DisplayRect.Width, screen.DisplayRect.Height));
-				popupElement.MaxWidth = wpfRect.X * zoomMultiplier * maxToolTipWidthMultiplier;
-				popupElement.MaxHeight = wpfRect.Y * zoomMultiplier * maxToolTipHeightMultiplier;
+				popupElement.MaxWidth = wpfRect.X * zoomMultiplier * maxWidthMultiplier;
+				popupElement.MaxHeight = wpfRect.Y * zoomMultiplier * maxHeightMultiplier;
 			}
 		}
 	}
