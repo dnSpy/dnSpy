@@ -119,6 +119,15 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.S), TextEditorIds.TOGGLEVISSPACE.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Create(Key.W), TextEditorIds.TOGGLEWORDWRAP.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.W), TextEditorIds.TOGGLEWORDWRAP.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Right, TextEditorIds.COMPLETEWORD.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.Space, TextEditorIds.COMPLETEWORD.ToCommandInfo());
+			//yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.W), TextEditorIds.COMPLETEWORD.ToCommandInfo());
+			//yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.W), TextEditorIds.COMPLETEWORD.ToCommandInfo());
+			yield return CommandShortcut.CtrlAlt(Key.T, TextEditorIds.SHOWMEMBERLIST.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.J, TextEditorIds.SHOWMEMBERLIST.ToCommandInfo());
+			//yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.L), TextEditorIds.SHOWMEMBERLIST.ToCommandInfo());
+			//yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.L), TextEditorIds.SHOWMEMBERLIST.ToCommandInfo());
+			yield return CommandShortcut.CtrlAlt(Key.Space, TextEditorIds.ToggleConsumeFirstCompletionMode.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.PageUp, TextEditorIds.TOPLINE.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.PageUp, TextEditorIds.TOPLINE_EXT.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.T, TextEditorIds.TRANSPOSECHAR.ToCommandInfo());
@@ -142,6 +151,8 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.Control(Key.Subtract, TextEditorIds.ZoomOut.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.D0, TextEditorIds.ZoomReset.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.NumPad0, TextEditorIds.ZoomReset.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.OemComma, TextEditorIds.DECREASEFILTER.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.OemPeriod, TextEditorIds.INCREASEFILTER.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {

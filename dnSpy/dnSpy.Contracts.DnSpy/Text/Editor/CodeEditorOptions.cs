@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnSpy.Contracts.Menus;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
@@ -32,9 +34,28 @@ namespace dnSpy.Contracts.Text.Editor {
 		public ITextBuffer TextBuffer { get; set; }
 
 		/// <summary>
+		/// All <see cref="ITextView"/> roles
+		/// </summary>
+		public HashSet<string> Roles { get; }
+
+		static readonly string[] defaultRoles = new string[] {
+			PredefinedTextViewRoles.Analyzable,
+			PredefinedTextViewRoles.Debuggable,
+			PredefinedTextViewRoles.Document,
+			PredefinedTextViewRoles.Editable,
+			PredefinedTextViewRoles.Interactive,
+			PredefinedTextViewRoles.PrimaryDocument,
+			PredefinedTextViewRoles.Structured,
+			PredefinedTextViewRoles.Zoomable,
+			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
+			PredefinedDnSpyTextViewRoles.CodeEditor,
+		};
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		public CodeEditorOptions() {
+			Roles = new HashSet<string>(defaultRoles, StringComparer.InvariantCultureIgnoreCase);
 			MenuGuid = new Guid(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID);
 		}
 
@@ -47,6 +68,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		CodeEditorOptions CopyTo(CodeEditorOptions other) {
 			base.CopyTo(other);
 			other.TextBuffer = TextBuffer;
+			other.Roles.Clear();
+			foreach (var r in Roles)
+				other.Roles.Add(r);
 			return other;
 		}
 	}

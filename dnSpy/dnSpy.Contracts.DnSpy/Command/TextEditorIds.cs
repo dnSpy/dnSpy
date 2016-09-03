@@ -331,6 +331,14 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		TOGGLEVISSPACE,
 		/// <summary>
+		/// Complete Word; Display Word Completion based on the current language.
+		/// </summary>
+		COMPLETEWORD,
+		/// <summary>
+		/// Show Member List; Display an object Member List based on the current language.
+		/// </summary>
+		SHOWMEMBERLIST,
+		/// <summary>
 		/// Line Start After Indentation Next; Move the caret to the first non-white-space character on the previous line.
 		/// </summary>
 		FIRSTNONWHITEPREV,
@@ -391,6 +399,10 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		EditorLineFirstColumnExtend,
 		/// <summary>
+		/// Toggle consume first completion mode
+		/// </summary>
+		ToggleConsumeFirstCompletionMode,
+		/// <summary>
 		/// Zoom in
 		/// </summary>
 		ZoomIn,
@@ -414,5 +426,13 @@ namespace dnSpy.Contracts.Command {
 		/// Smart Break Line
 		/// </summary>
 		SmartBreakLine,
+		/// <summary>
+		/// Decrease filter
+		/// </summary>
+		DECREASEFILTER,
+		/// <summary>
+		/// Increase filter
+		/// </summary>
+		INCREASEFILTER,
 	}
 }

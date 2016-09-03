@@ -48,19 +48,6 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		static readonly string[] defaultRoles = new string[] {
-			PredefinedTextViewRoles.Analyzable,
-			PredefinedTextViewRoles.Debuggable,
-			PredefinedTextViewRoles.Document,
-			PredefinedTextViewRoles.Editable,
-			PredefinedTextViewRoles.Interactive,
-			PredefinedTextViewRoles.PrimaryDocument,
-			PredefinedTextViewRoles.Structured,
-			PredefinedTextViewRoles.Zoomable,
-			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
-			PredefinedDnSpyTextViewRoles.CodeEditor,
-		};
-
 		public CodeEditor(CodeEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			options = options?.Clone() ?? new CodeEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
@@ -68,7 +55,7 @@ namespace dnSpy.Text.Editor {
 			var textBuffer = options.TextBuffer;
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
-			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(defaultRoles);
+			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
 			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
 			TextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);

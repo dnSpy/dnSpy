@@ -185,7 +185,6 @@ namespace dnSpy.Commands {
 
 			object result = null;
 			var res = CommandTarget.Execute(cmd.Group, cmd.ID, cmd.Arguments, ref result);
-			Debug.Assert(res == CommandTargetStatus.Handled);
 			if (res == CommandTargetStatus.Handled)
 				e.Handled = true;
 		}

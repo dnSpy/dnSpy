@@ -118,5 +118,15 @@ namespace dnSpy.Contracts.Command {
 		/// Order of edit code <see cref="ICommandTargetFilter"/>
 		/// </summary>
 		public const double CMDTARGETFILTER_ORDER_EDITCODE = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 3000;
+
+		/// <summary>
+		/// Order of default statement completion <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_DEFAULT_STATEMENTCOMPLETION = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 4000;
+
+		/// <summary>
+		/// Order of Roslyn statement completion <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_ROSLYN_STATEMENTCOMPLETION = CMDTARGETFILTER_ORDER_DEFAULT_STATEMENTCOMPLETION - 1000;
 	}
 }

@@ -38,6 +38,7 @@ namespace dnSpy.Contracts.Images {
 		AppMenuMenuItem,
 		ContextMenuItem,
 		GridViewItem,
+		ListBoxItem,
 		CodeToolTip,
 		TitleAreaActive,
 		TitleAreaInactive,

@@ -87,6 +87,7 @@ namespace dnSpy.Text.Editor {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.BACKSPACE:
 				case TextEditorIds.BACKTAB:
+				case TextEditorIds.COMPLETEWORD:
 				case TextEditorIds.CUTLINE:
 				case TextEditorIds.DELETE:
 				case TextEditorIds.DELETEBLANKLINES:
@@ -110,6 +111,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.SELTOGGLECASE:
 				case TextEditorIds.SELUNTABIFY:
 				case TextEditorIds.SELUPCASE:
+				case TextEditorIds.SHOWMEMBERLIST:
 				case TextEditorIds.SmartBreakLine:
 				case TextEditorIds.TAB:
 				case TextEditorIds.TRANSPOSECHAR:
@@ -125,6 +127,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.BOTTOMLINE:
 				case TextEditorIds.BOTTOMLINE_EXT:
 				case TextEditorIds.CANCEL:
+				case TextEditorIds.DECREASEFILTER:
 				case TextEditorIds.DOWN:
 				case TextEditorIds.DOWN_EXT:
 				case TextEditorIds.DOWN_EXT_COL:
@@ -144,6 +147,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.HOME:
 				case TextEditorIds.HOME_EXT:
+				case TextEditorIds.INCREASEFILTER:
 				case TextEditorIds.LASTCHAR:
 				case TextEditorIds.LASTCHAR_EXT:
 				case TextEditorIds.LEFT:
@@ -169,6 +173,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.SELECTCURRENTWORD:
 				case TextEditorIds.SELSWAPANCHOR:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
+				case TextEditorIds.ToggleConsumeFirstCompletionMode:
 				case TextEditorIds.TOGGLEVISSPACE:
 				case TextEditorIds.TOGGLEWORDWRAP:
 				case TextEditorIds.TOPLINE:
@@ -316,6 +321,13 @@ namespace dnSpy.Text.Editor {
 					// Seems to match VS behavior. If we handle ESC when there's no selection, we can't press
 					// ESC in the log editor and move back to the document tab.
 					return textView.Selection.IsEmpty ? CommandTargetStatus.NotHandled : CommandTargetStatus.Handled;
+				case TextEditorIds.COMPLETEWORD:
+				case TextEditorIds.DECREASEFILTER:
+				case TextEditorIds.GOTOBRACE:
+				case TextEditorIds.GOTOBRACE_EXT:
+				case TextEditorIds.INCREASEFILTER:
+				case TextEditorIds.SHOWMEMBERLIST:
+				case TextEditorIds.ToggleConsumeFirstCompletionMode:
 				default:
 					return CommandTargetStatus.NotHandled;
 				}

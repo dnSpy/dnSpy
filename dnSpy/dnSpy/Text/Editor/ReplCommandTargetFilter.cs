@@ -87,7 +87,6 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.DOWN:
 				case TextEditorIds.DOWN_EXT:
 				case TextEditorIds.DOWN_EXT_COL:
-				case TextEditorIds.TOGGLEWORDWRAP:
 				case TextEditorIds.ECMD_CONVERTSPACESTOTABS:
 				case TextEditorIds.ECMD_CONVERTTABSTOSPACES:
 				case TextEditorIds.EditorLineFirstColumn:
@@ -143,6 +142,7 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.SELUPCASE:
 				case TextEditorIds.SmartBreakLine:
 				case TextEditorIds.TAB:
+				case TextEditorIds.TOGGLEWORDWRAP:
 				case TextEditorIds.TOPLINE:
 				case TextEditorIds.TOPLINE_EXT:
 				case TextEditorIds.TRANSPOSECHAR:
@@ -164,8 +164,13 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.ZoomReset:
 					return CommandTargetStatus.Handled;
 
+				case TextEditorIds.COMPLETEWORD:
+				case TextEditorIds.DECREASEFILTER:
 				case TextEditorIds.GOTOLINE:
+				case TextEditorIds.INCREASEFILTER:
+				case TextEditorIds.SHOWMEMBERLIST:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
+				case TextEditorIds.ToggleConsumeFirstCompletionMode:
 				case TextEditorIds.TOGGLEVISSPACE:
 					return CommandTargetStatus.NotHandled;
 
@@ -544,8 +549,13 @@ namespace dnSpy.Text.Editor {
 					replEditor.ReplEditorOperations.Indent();
 					return CommandTargetStatus.Handled;
 
+				case TextEditorIds.COMPLETEWORD:
+				case TextEditorIds.DECREASEFILTER:
 				case TextEditorIds.GOTOLINE:
+				case TextEditorIds.INCREASEFILTER:
+				case TextEditorIds.SHOWMEMBERLIST:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
+				case TextEditorIds.ToggleConsumeFirstCompletionMode:
 				case TextEditorIds.TOGGLEVISSPACE:
 					return CommandTargetStatus.NotHandled;
 
