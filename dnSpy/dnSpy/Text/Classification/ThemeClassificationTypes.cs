@@ -236,11 +236,9 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		const TextColor DEFAULT_COLOR = TextColor.Text;
-
 		public IClassificationType GetClassificationType(TextColor color) {
 			if (!(0 <= color && color < TextColor.Last))
-				color = DEFAULT_COLOR;
+				color = TextColor.Text;
 			return classificationTypes[(int)color];
 		}
 	}
