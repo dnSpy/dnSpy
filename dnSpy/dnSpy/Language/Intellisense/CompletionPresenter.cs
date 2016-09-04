@@ -71,8 +71,15 @@ namespace dnSpy.Language.Intellisense {
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
+			control.SizeChanged += Control_SizeChanged;
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
+		}
+
+		void Control_SizeChanged(object sender, SizeChangedEventArgs e) {
+			// Prevent the control from getting thinner when pressing PageUp/Down
+			if (control.MinWidth != e.NewSize.Width)
+				control.MinWidth = e.NewSize.Width;
 		}
 
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) {
