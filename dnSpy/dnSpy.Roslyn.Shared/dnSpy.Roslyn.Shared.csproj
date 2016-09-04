@@ -43,9 +43,12 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Intellisense\Classification\CompletionClassifier.cs" />
+    <Compile Include="Intellisense\Classification\CompletionKindTextColorHelper.cs" />
     <Compile Include="Intellisense\CommandTargetFilter.cs" />
     <Compile Include="Intellisense\CompletionImageHelper.cs" />
     <Compile Include="Intellisense\CompletionInfo.cs" />
+    <Compile Include="Intellisense\CompletionKind.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
     <Compile Include="Intellisense\RoslynCompletion.cs" />
     <Compile Include="Intellisense\RoslynCompletionCollection.cs" />

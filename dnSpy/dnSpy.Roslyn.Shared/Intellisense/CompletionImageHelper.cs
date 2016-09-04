@@ -20,8 +20,6 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using dnSpy.Contracts.Images;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Completion;
 
 namespace dnSpy.Roslyn.Shared.Intellisense {
 	static class CompletionImageHelper {
@@ -29,213 +27,87 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 
 		public static ImageReference? GetImageReference(ImmutableArray<string> tags) {
 			var name = GetImageName(tags);
-			return name == null ? (ImageReference?)null : new ImageReference(imageAssembly, name);
+			if (name == null)
+				return null;
+			return new ImageReference(imageAssembly, name);
 		}
 
 		static string GetImageName(ImmutableArray<string> tags) {
-			foreach (var tag in tags) {
-				switch (tag) {
-				case CompletionTags.Class:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "ClassProtected";
-					case Access.Internal:	return "ClassInternal";
-					case Access.Private:	return "ClassPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Class";
-					}
-				case CompletionTags.Constant:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "LiteralProtected";
-					case Access.Internal:	return "LiteralInternal";
-					case Access.Private:	return "LiteralPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Literal";
-					}
-				case CompletionTags.Delegate:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "DelegateProtected";
-					case Access.Internal:	return "DelegateInternal";
-					case Access.Private:	return "DelegatePrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Delegate";
-					}
-				case CompletionTags.Enum:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "EnumProtected";
-					case Access.Internal:	return "EnumInternal";
-					case Access.Private:	return "EnumPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Enum";
-					}
-				case CompletionTags.Event:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "EventProtected";
-					case Access.Internal:	return "EventInternal";
-					case Access.Private:	return "EventPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Event";
-					}
-				case CompletionTags.ExtensionMethod:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "ExtensionMethodProtected";
-					case Access.Internal:	return "ExtensionMethodInternal";
-					case Access.Private:	return "ExtensionMethodPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "ExtensionMethod";
-					}
-				case CompletionTags.Field:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "FieldProtected";
-					case Access.Internal:	return "FieldInternal";
-					case Access.Private:	return "FieldPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Field";
-					}
-				case CompletionTags.Interface:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "InterfaceProtected";
-					case Access.Internal:	return "InterfaceInternal";
-					case Access.Private:	return "InterfacePrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Interface";
-					}
-				case CompletionTags.Method:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "MethodProtected";
-					case Access.Internal:	return "MethodInternal";
-					case Access.Private:	return "MethodPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Method";
-					}
-				case CompletionTags.Module:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "ModuleProtected";
-					case Access.Internal:	return "ModuleInternal";
-					case Access.Private:	return "ModulePrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "AssemblyModule";
-					}
-				case CompletionTags.Operator:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "OperatorProtected";
-					case Access.Internal:	return "OperatorInternal";
-					case Access.Private:	return "OperatorPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Operator";
-					}
-				case CompletionTags.Property:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "PropertyProtected";
-					case Access.Internal:	return "PropertyInternal";
-					case Access.Private:	return "PropertyPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Property";
-					}
-				case CompletionTags.Structure:
-					switch (GetAccess(tags)) {
-					case Access.Protected:	return "StructProtected";
-					case Access.Internal:	return "StructInternal";
-					case Access.Private:	return "StructPrivate";
-					case Access.Public:
-					case Access.None:
-					default:
-						return "Struct";
-					}
-
-				case CompletionTags.File:
-					switch (GetLanguage(tags)) {
-					case Language.CSharp:		return "CSharpFile";
-					case Language.VisualBasic:	return "VisualBasicFile";
-					case Language.None:
-					default:
-						return null;
-					}
-
-				case CompletionTags.Project:
-					switch (GetLanguage(tags)) {
-					case Language.CSharp:		return "CSProjectNode";
-					case Language.VisualBasic:	return "VBProjectNode";
-					case Language.None:
-					default:
-						return null;
-					}
-
-				case CompletionTags.Assembly:	return "Assembly";
-				case CompletionTags.Parameter:	return "Local";// Same as local
-				case CompletionTags.RangeVariable:return "Local";
-				case CompletionTags.Intrinsic:	return "Type";
-				case CompletionTags.Keyword:	return "IntellisenseKeyword";
-				case CompletionTags.Label:		return "Label";
-				case CompletionTags.Local:		return "Local";
-				case CompletionTags.Namespace:	return "Namespace";
-				case CompletionTags.Folder:		return "FolderClosed";
-				case CompletionTags.Reference:	return "AssemblyReference";
-				case CompletionTags.TypeParameter:return "GenericParameter";
-				case CompletionTags.Snippet:	return "Snippet";
-				case CompletionTags.Error:		return "StatusError";
-				case CompletionTags.Warning:	return "StatusWarning";
-				case "StatusInformation":		return "StatusInformation";
-				}
+			switch (tags.ToCompletionKind()) {
+			case CompletionKind.Unknown:				return null;
+			case CompletionKind.ClassProtected:			return "ClassProtected";
+			case CompletionKind.ClassInternal:			return "ClassInternal";
+			case CompletionKind.ClassPrivate:			return "ClassPrivate";
+			case CompletionKind.Class:					return "Class";
+			case CompletionKind.ConstantProtected:		return "LiteralProtected";
+			case CompletionKind.ConstantInternal:		return "LiteralInternal";
+			case CompletionKind.ConstantPrivate:		return "LiteralPrivate";
+			case CompletionKind.Constant:				return "Literal";
+			case CompletionKind.DelegateProtected:		return "DelegateProtected";
+			case CompletionKind.DelegateInternal:		return "DelegateInternal";
+			case CompletionKind.DelegatePrivate:		return "DelegatePrivate";
+			case CompletionKind.Delegate:				return "Delegate";
+			case CompletionKind.EnumProtected:			return "EnumProtected";
+			case CompletionKind.EnumInternal:			return "EnumInternal";
+			case CompletionKind.EnumPrivate:			return "EnumPrivate";
+			case CompletionKind.Enum:					return "Enum";
+			case CompletionKind.EventProtected:			return "EventProtected";
+			case CompletionKind.EventInternal:			return "EventInternal";
+			case CompletionKind.EventPrivate:			return "EventPrivate";
+			case CompletionKind.Event:					return "Event";
+			case CompletionKind.ExtensionMethodProtected:return "ExtensionMethodProtected";
+			case CompletionKind.ExtensionMethodInternal:return "ExtensionMethodInternal";
+			case CompletionKind.ExtensionMethodPrivate: return "ExtensionMethodPrivate";
+			case CompletionKind.ExtensionMethod:		return "ExtensionMethod";
+			case CompletionKind.FieldProtected:			return "FieldProtected";
+			case CompletionKind.FieldInternal:			return "FieldInternal";
+			case CompletionKind.FieldPrivate:			return "FieldPrivate";
+			case CompletionKind.Field:					return "Field";
+			case CompletionKind.InterfaceProtected:		return "InterfaceProtected";
+			case CompletionKind.InterfaceInternal:		return "InterfaceInternal";
+			case CompletionKind.InterfacePrivate:		return "InterfacePrivate";
+			case CompletionKind.Interface:				return "Interface";
+			case CompletionKind.MethodProtected:		return "MethodProtected";
+			case CompletionKind.MethodInternal:			return "MethodInternal";
+			case CompletionKind.MethodPrivate:			return "MethodPrivate";
+			case CompletionKind.Method:					return "Method";
+			case CompletionKind.ModuleProtected:		return "ModuleProtected";
+			case CompletionKind.ModuleInternal:			return "ModuleInternal";
+			case CompletionKind.ModulePrivate:			return "ModulePrivate";
+			case CompletionKind.Module:					return "AssemblyModule";
+			case CompletionKind.OperatorProtected:		return "OperatorProtected";
+			case CompletionKind.OperatorInternal:		return "OperatorInternal";
+			case CompletionKind.OperatorPrivate:		return "OperatorPrivate";
+			case CompletionKind.Operator:				return "Operator";
+			case CompletionKind.PropertyProtected:		return "PropertyProtected";
+			case CompletionKind.PropertyInternal:		return "PropertyInternal";
+			case CompletionKind.PropertyPrivate:		return "PropertyPrivate";
+			case CompletionKind.Property:				return "Property";
+			case CompletionKind.StructureProtected:		return "StructProtected";
+			case CompletionKind.StructureInternal:		return "StructInternal";
+			case CompletionKind.StructurePrivate:		return "StructPrivate";
+			case CompletionKind.Structure:				return "Struct";
+			case CompletionKind.FileCSharp:				return "CSharpFile";
+			case CompletionKind.FileVisualBasic:		return "VisualBasicFile";
+			case CompletionKind.ProjectCSharp:			return "CSProjectNode";
+			case CompletionKind.ProjectVisualBasic:		return "VBProjectNode";
+			case CompletionKind.Assembly:				return "Assembly";
+			case CompletionKind.RangeVariable:			return "Local";
+			case CompletionKind.Local:					return "Local";
+			case CompletionKind.Parameter:				return "Local";// Same image as Local, just like what VS does
+			case CompletionKind.Intrinsic:				return "Type";
+			case CompletionKind.Keyword:				return "IntellisenseKeyword";
+			case CompletionKind.Label:					return "Label";
+			case CompletionKind.Namespace:				return "Namespace";
+			case CompletionKind.Folder:					return "FolderClosed";
+			case CompletionKind.Reference:				return "AssemblyReference";
+			case CompletionKind.TypeParameter:			return "GenericParameter";
+			case CompletionKind.Snippet:				return "Snippet";
+			case CompletionKind.StatusError:			return "StatusError";
+			case CompletionKind.StatusWarning:			return "StatusWarning";
+			case CompletionKind.StatusInformation:		return "StatusInformation";
+			default: return null;
 			}
-			return null;
-		}
-
-		static Access GetAccess(ImmutableArray<string> tags) {
-			if (tags.Contains(CompletionTags.Public))
-				return Access.Public;
-			if (tags.Contains(CompletionTags.Protected))
-				return Access.Protected;
-			if (tags.Contains(CompletionTags.Internal))
-				return Access.Internal;
-			if (tags.Contains(CompletionTags.Private))
-				return Access.Private;
-			return Access.None;
-		}
-
-		static Language GetLanguage(ImmutableArray<string> tags) {
-			if (tags.Contains(LanguageNames.CSharp))
-				return Language.CSharp;
-			if (tags.Contains(LanguageNames.VisualBasic))
-				return Language.VisualBasic;
-			return Language.None;
-		}
-
-		enum Access {
-			None,
-			Public,
-			Protected,
-			Internal,
-			Private,
-		}
-
-		enum Language {
-			None,
-			CSharp,
-			VisualBasic,
 		}
 	}
 }
