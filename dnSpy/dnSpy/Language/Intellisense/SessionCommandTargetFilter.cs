@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -59,6 +60,13 @@ namespace dnSpy.Language.Intellisense {
 				var span = completionSession.SelectedCompletionCollection.ApplicableTo.GetSpan(pos.Snapshot);
 				if (pos < minimumCaretPosition || pos < span.Start || pos > span.End)
 					completionSession.Dismiss();
+				else if (pos == span.Start.Position) {
+					// This matches what VS does. It prevents you from accidentally committing
+					// something when you select the current input text by pressing Shift+Home
+					// and then pressing eg. " or some other commit-character.
+					var curr = completionSession.SelectedCompletionCollection.CurrentCompletion;
+					completionSession.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(curr.Completion, false, curr.IsUnique);
+				}
 			}
 		}
 

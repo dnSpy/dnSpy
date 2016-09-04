@@ -196,20 +196,21 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void MoveUpDown(bool up) => MoveUpDown(up ? -1 : 1);
+		void MoveUpDown(bool up) => MoveUpDown(up ? -1 : 1, true);
 
 		void PageUpDown(bool up) {
 			const int defaultValue = 9;
 			var items = WpfUtils.GetItemsPerPage(control.completionsListBox, defaultValue);
-			MoveUpDown(up ? -items : items);
+			MoveUpDown(up ? -items : items, false);
 		}
 
-		void MoveUpDown(int count) {
+		void MoveUpDown(int count, bool mustBeSelected) {
 			var coll = session.SelectedCompletionCollection.FilteredCollection;
 			int index = coll.IndexOf(session.SelectedCompletionCollection.CurrentCompletion.Completion);
 			if (index < 0)
 				index = 0;
-			index = index + count;
+			if (!mustBeSelected || session.SelectedCompletionCollection.CurrentCompletion.IsSelected)
+				index = index + count;
 			if (index < 0)
 				index = 0;
 			else if (index >= coll.Count)
@@ -280,6 +281,8 @@ namespace dnSpy.Language.Intellisense {
 			else {
 				control.completionsListBox.SelectedItem = currentCompletionCollection.CurrentCompletion.Completion;
 				ScrollSelectedItemIntoView(true);
+				if (!currentCompletionCollection.CurrentCompletion.IsSelected)
+					control.completionsListBox.SelectedItem = null;
 			}
 		}
 

@@ -145,7 +145,8 @@ namespace dnSpy.Language.Intellisense {
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
-			SelectedCompletionCollection.Commit();
+			if (SelectedCompletionCollection.CurrentCompletion.IsSelected)
+				SelectedCompletionCollection.Commit();
 			Dismiss();
 		}
 

@@ -152,11 +152,14 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
 					case TextEditorIds.RETURN:
-						if (!completionSession.SelectedCompletionCollection.CurrentCompletion.IsSelected)
-							break;
 						// Cache it because it could read from text buffer which gets modified by Commit()
 						bool passThrough = ShouldPassThroughEnterKey(TryGetEnterKeyRule() ?? EnterKeyRule.Default);
-						completionSession.Commit();
+						if (!completionSession.SelectedCompletionCollection.CurrentCompletion.IsSelected) {
+							passThrough = true;
+							completionSession.Dismiss();
+						}
+						else
+							completionSession.Commit();
 						if (!passThrough)
 							return CommandTargetStatus.Handled;
 						break;
