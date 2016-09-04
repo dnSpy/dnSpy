@@ -577,8 +577,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(line));
 			if (glyphTag == null)
 				throw new ArgumentNullException(nameof(glyphTag));
-			Debug.Assert(glyphTag.ImageReference.Assembly != null && glyphTag.ImageReference.Name != null);
-			if (glyphTag.ImageReference.Assembly == null || glyphTag.ImageReference.Name == null)
+			Debug.Assert(!glyphTag.ImageReference.IsDefault);
+			if (glyphTag.ImageReference.IsDefault)
 				return null;
 
 			var source = glyphTextMarkerServiceImpl.ImageManager.GetImage(glyphTag.ImageReference, BackgroundType.GlyphMargin);

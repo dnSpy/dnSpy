@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="isChecked">true if it's checked</param>
 		/// <param name="isEnabled">true if it's enabled</param>
 		public IntellisenseFilter(ImageReference image, string toolTip, string accessKey, bool isChecked = false, bool isEnabled = true) {
-			if (image.Assembly == null)
+			if (image.IsDefault)
 				throw new ArgumentException();
 			if (toolTip == null)
 				throw new ArgumentNullException(nameof(toolTip));

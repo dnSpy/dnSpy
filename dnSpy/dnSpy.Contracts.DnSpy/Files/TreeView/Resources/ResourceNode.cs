@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// <inheritdoc/>
 		protected sealed override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
 			var imgRef = GetIcon();
-			if (imgRef.Assembly != null)
+			if (!imgRef.IsDefault)
 				return imgRef;
 			var asm = dnImgMgr.GetType().Assembly;
 			return ResourceUtilities.TryGetImageReference(asm, Resource.Name) ?? new ImageReference(asm, "Resource");

@@ -308,7 +308,7 @@ namespace dnSpy.Language.Intellisense {
 		ImageSource GetImageSource(ImageReference imageReference) {
 			if (session.IsDismissed)
 				return null;
-			if (imageReference.Assembly == null)
+			if (imageReference.IsDefault)
 				return null;
 			return imageManager.GetImage(imageReference, BackgroundType.ListBoxItem);
 		}

@@ -48,9 +48,8 @@ namespace dnSpy.TreeView {
 		public override bool ShowExpander => treeNodeImpl.Data.ShowExpander(base.ShowExpander);
 
 		object GetIcon(ImageReference imgRef) {
-			bool b = imgRef.Assembly != null && imgRef.Name != null;
-			Debug.Assert(b);
-			if (!b)
+			Debug.Assert(!imgRef.IsDefault);
+			if (imgRef.IsDefault)
 				return null;
 			return treeNodeImpl.TreeView.GetIcon(imgRef);
 		}

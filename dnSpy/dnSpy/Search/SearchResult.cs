@@ -67,7 +67,7 @@ namespace dnSpy.Search {
 		}
 
 		ImageSource GetImage(ImageReference imgRef) {
-			if (imgRef.Assembly == null)
+			if (imgRef.IsDefault)
 				return null;
 			return Context.ImageManager.GetImage(imgRef, Context.BackgroundType);
 		}

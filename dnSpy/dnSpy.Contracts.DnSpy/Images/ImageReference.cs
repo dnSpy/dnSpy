@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Reflection;
 
 namespace dnSpy.Contracts.Images {
@@ -25,22 +26,31 @@ namespace dnSpy.Contracts.Images {
 	/// </summary>
 	public struct ImageReference {
 		/// <summary>
+		/// true if it's the default instance
+		/// </summary>
+		public bool IsDefault => Assembly == null;
+
+		/// <summary>
 		/// Assembly of image
 		/// </summary>
-		public readonly Assembly Assembly;
+		public Assembly Assembly { get; }
 
 		/// <summary>
 		/// Name of image
 		/// </summary>
-		public readonly string Name;
+		public string Name { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="asm">Assembly of image</param>
+		/// <param name="assembly">Assembly of image</param>
 		/// <param name="name">Name of image</param>
-		public ImageReference(Assembly asm, string name) {
-			this.Assembly = asm;
+		public ImageReference(Assembly assembly, string name) {
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			this.Assembly = assembly;
 			this.Name = name;
 		}
 	}
