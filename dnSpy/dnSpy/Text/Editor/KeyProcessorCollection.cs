@@ -147,7 +147,7 @@ namespace dnSpy.Text.Editor {
 			foreach (var provider in keyProcessorProviders) {
 				if (!wpfTextView.Roles.ContainsAny(provider.Metadata.TextViewRoles))
 					continue;
-				if (!wpfTextView.TextDataModel.ContentType.ContainsAny(provider.Metadata.ContentTypes))
+				if (!wpfTextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var keyProcessor = provider.Value.GetAssociatedProcessor(wpfTextView);
 				if (keyProcessor != null)

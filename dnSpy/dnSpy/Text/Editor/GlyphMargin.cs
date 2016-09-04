@@ -178,7 +178,7 @@ namespace dnSpy.Text.Editor {
 			var list = new List<IMouseProcessor>();
 			var contentType = wpfTextViewHost.TextView.TextDataModel.ContentType;
 			foreach (var lazy in lazyGlyphMouseProcessorProviders) {
-				if (!contentType.ContainsAny(lazy.Metadata.ContentTypes))
+				if (!contentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
 				if (lazy.Metadata.GlyphMargins == null || !lazy.Metadata.GlyphMargins.Any()) {
 					// Nothing
@@ -198,7 +198,7 @@ namespace dnSpy.Text.Editor {
 			var contentType = wpfTextViewHost.TextView.TextDataModel.ContentType;
 			int order = 0;
 			foreach (var lazy in lazyGlyphFactoryProviders) {
-				if (!contentType.ContainsAny(lazy.Metadata.ContentTypes))
+				if (!contentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
 				IGlyphFactory glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {

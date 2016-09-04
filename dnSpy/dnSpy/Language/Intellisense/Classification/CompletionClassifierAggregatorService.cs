@@ -45,7 +45,7 @@ namespace dnSpy.Language.Intellisense.Classification {
 			var contentType = collection.ApplicableTo.TextBuffer.ContentType;
 			var classifiers = new List<ICompletionClassifier>();
 			foreach (var lz in completionClassifierProviders) {
-				if (!contentType.ContainsAny(lz.Metadata.ContentTypes))
+				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				var classifier = lz.Value.Create(collection);
 				if (classifier != null)

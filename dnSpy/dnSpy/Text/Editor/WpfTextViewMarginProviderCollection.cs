@@ -121,7 +121,7 @@ namespace dnSpy.Text.Editor {
 			return true;
 		}
 
-		bool CanUse(IWpfTextViewMarginMetadata md) => wpfTextViewHost.TextView.TextDataModel.ContentType.ContainsAny(md.ContentTypes);
+		bool CanUse(IWpfTextViewMarginMetadata md) => wpfTextViewHost.TextView.TextDataModel.ContentType.IsOfAnyType(md.ContentTypes);
 		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) => UpdateMargins();
 		void WpfTextViewHost_Closed(object sender, EventArgs e) => Dispose();
 

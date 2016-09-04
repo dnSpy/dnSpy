@@ -22,7 +22,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	static class ContentTypeExtensions {
-		public static bool ContainsAny(this IContentType contentType, IEnumerable<string> contentTypes) {
+		public static bool IsOfAnyType(this IContentType contentType, IEnumerable<string> contentTypes) {
 			foreach (var ct in contentTypes) {
 				if (contentType.IsOfType(ct))
 					return true;

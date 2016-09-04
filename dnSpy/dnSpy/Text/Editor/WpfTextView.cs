@@ -228,9 +228,9 @@ namespace dnSpy.Text.Editor {
 
 		void NotifyTextViewCreated(IContentType newContentType, IContentType oldContentType) {
 			foreach (var lazy in wpfTextViewCreationListeners) {
-				if (oldContentType != null && oldContentType.ContainsAny(lazy.Metadata.ContentTypes))
+				if (oldContentType != null && oldContentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
-				if (!TextDataModel.ContentType.ContainsAny(lazy.Metadata.ContentTypes))
+				if (!TextDataModel.ContentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
 				lazy.Value.TextViewCreated(this);
 			}
