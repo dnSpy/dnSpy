@@ -132,7 +132,7 @@
             </Button>
 
             <Button Grid.Column="4" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Compile}" IsDefault="True" Command="{Binding CompileCommand}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" />
-            <Button Grid.Column="5" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" />
+            <Button Grid.Column="5" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel2}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

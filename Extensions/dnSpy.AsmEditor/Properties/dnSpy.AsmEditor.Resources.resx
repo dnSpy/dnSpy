@@ -2504,4 +2504,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ShortCutKeyCtrlP" xml:space="preserve">
     <value>Ctrl+P</value>
   </data>
+  <data name="Button_Cancel2" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

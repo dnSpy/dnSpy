@@ -440,6 +440,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Button_Cancel2 {
+            get {
+                return ResourceManager.GetString("Button_Cancel2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compile.
         /// </summary>
         public static string Button_Compile {
