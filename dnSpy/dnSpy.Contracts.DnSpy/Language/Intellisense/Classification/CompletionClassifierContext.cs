@@ -17,34 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
+using System;
+
+namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
-	/// Appearance category constants
+	/// <see cref="ICompletionClassifier"/> context
 	/// </summary>
-	public static class AppearanceCategoryConstants {
+	public sealed class CompletionClassifierContext {
 		/// <summary>
-		/// Default text editor
+		/// Gets the completion to classify
 		/// </summary>
-		public const string TextEditor = "9B004FFE-AF67-4053-8A90-3A2CA7EB8D8B";
+		public Completion Completion { get; }
 
 		/// <summary>
-		/// Decompiled code and other content shown in the main tabs
+		/// Gets the current user input text
 		/// </summary>
-		public const string Viewer = "EF6F0833-7610-40C7-BF26-B98C2654A48A";
+		public string InputText { get; }
 
 		/// <summary>
-		/// REPL
+		/// Constructor
 		/// </summary>
-		public const string REPL = "0D3401FA-14B7-43DF-A629-711D098622BD";
-
-		/// <summary>
-		/// Code editor
-		/// </summary>
-		public const string CodeEditor = "9ABDCD21-CBE6-494F-8D70-8C238EC4BA87";
-
-		/// <summary>
-		/// Code completion
-		/// </summary>
-		public const string CodeCompletion = "dnSpy-CodeCompletion";
+		/// <param name="completion">Completion to classify</param>
+		/// <param name="inputText">Current user input text</param>
+		public CompletionClassifierContext(Completion completion, string inputText) {
+			if (completion == null)
+				throw new ArgumentNullException(nameof(completion));
+			if (inputText == null)
+				throw new ArgumentNullException(nameof(inputText));
+			Completion = completion;
+			InputText = inputText;
+		}
 	}
 }

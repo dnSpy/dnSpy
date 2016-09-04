@@ -32,17 +32,21 @@ namespace dnSpy.Language.Intellisense {
 
 		readonly IImageManager imageManager;
 		readonly ICompletionSession session;
+		readonly ICompletionTextElementProvider completionTextElementProvider;
 		readonly CompletionPresenterControl control;
 
 		const double defaultMaxHeight = 200;
 
-		public CompletionPresenter(IImageManager imageManager, ICompletionSession session) {
+		public CompletionPresenter(IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider) {
 			if (imageManager == null)
 				throw new ArgumentNullException(nameof(imageManager));
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
+			if (completionTextElementProvider == null)
+				throw new ArgumentNullException(nameof(completionTextElementProvider));
 			this.imageManager = imageManager;
 			this.session = session;
+			this.completionTextElementProvider = completionTextElementProvider;
 			this.control = new CompletionPresenterControl { DataContext = this };
 			this.control.completionsListBox.MaxHeight = defaultMaxHeight;
 			session.SelectedCompletionCollectionChanged += CompletionSession_SelectedCompletionCollectionChanged;
@@ -188,19 +192,24 @@ namespace dnSpy.Language.Intellisense {
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
+			completionTextElementProvider.Dispose();
 		}
 
 		public ImageSource GetImageSource(Completion completion) {
+			if (session.IsDismissed)
+				return null;
 			var image = completion.Image;
 			if (image.Assembly == null)
 				return null;
 			return imageManager.GetImage(image, BackgroundType.ListBoxItem);
 		}
 
-		public object GetDisplayText(Completion completion) {
-			return new TextBlock {
-				Text = completion.DisplayText,
-			};
+		public FrameworkElement GetDisplayText(Completion completion) {
+			if (session.IsDismissed)
+				return null;
+			var collection = session.SelectedCompletionCollection;
+			Debug.Assert(collection.FilteredCollection.Contains(completion));
+			return completionTextElementProvider.Create(collection, completion);
 		}
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Images;
 using Microsoft.VisualStudio.Text;

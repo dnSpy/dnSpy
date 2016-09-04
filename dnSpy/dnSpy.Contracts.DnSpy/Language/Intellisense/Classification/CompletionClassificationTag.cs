@@ -17,34 +17,32 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+
+namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
-	/// Appearance category constants
+	/// <see cref="Completion"/> classification tag
 	/// </summary>
-	public static class AppearanceCategoryConstants {
+	public sealed class CompletionClassificationTag {
 		/// <summary>
-		/// Default text editor
+		/// Gets the span
 		/// </summary>
-		public const string TextEditor = "9B004FFE-AF67-4053-8A90-3A2CA7EB8D8B";
+		public Span Span { get; }
 
 		/// <summary>
-		/// Decompiled code and other content shown in the main tabs
+		/// Gets the classification type
 		/// </summary>
-		public const string Viewer = "EF6F0833-7610-40C7-BF26-B98C2654A48A";
+		public IClassificationType ClassificationType { get; }
 
 		/// <summary>
-		/// REPL
+		/// Constructor
 		/// </summary>
-		public const string REPL = "0D3401FA-14B7-43DF-A629-711D098622BD";
-
-		/// <summary>
-		/// Code editor
-		/// </summary>
-		public const string CodeEditor = "9ABDCD21-CBE6-494F-8D70-8C238EC4BA87";
-
-		/// <summary>
-		/// Code completion
-		/// </summary>
-		public const string CodeCompletion = "dnSpy-CodeCompletion";
+		/// <param name="span">Span</param>
+		/// <param name="classificationType">Classification type</param>
+		public CompletionClassificationTag(Span span, IClassificationType classificationType) {
+			Span = span;
+			ClassificationType = classificationType;
+		}
 	}
 }

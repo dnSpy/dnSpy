@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="searchText">Search text</param>
 		/// <returns></returns>
-		protected virtual ICompletionFilter CreateCompletionFilter(string searchText) => new CompletionFilter(searchText);
+		public virtual ICompletionFilter CreateCompletionFilter(string searchText) => new CompletionFilter(searchText);
 
 		/// <summary>
 		/// Filters the list. <see cref="SelectBestMatch"/> should be called after this method

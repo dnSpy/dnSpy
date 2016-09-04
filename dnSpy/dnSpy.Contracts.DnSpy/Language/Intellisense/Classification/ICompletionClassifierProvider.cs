@@ -17,34 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Classification {
+using Microsoft.VisualStudio.Utilities;
+
+namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
-	/// Appearance category constants
+	/// Creates <see cref="ICompletionClassifier"/>s. Export the instance with
+	/// a <see cref="ContentTypeAttribute"/>.
 	/// </summary>
-	public static class AppearanceCategoryConstants {
+	public interface ICompletionClassifierProvider {
 		/// <summary>
-		/// Default text editor
+		/// Creates a <see cref="ICompletionClassifier"/> or returns null
 		/// </summary>
-		public const string TextEditor = "9B004FFE-AF67-4053-8A90-3A2CA7EB8D8B";
-
-		/// <summary>
-		/// Decompiled code and other content shown in the main tabs
-		/// </summary>
-		public const string Viewer = "EF6F0833-7610-40C7-BF26-B98C2654A48A";
-
-		/// <summary>
-		/// REPL
-		/// </summary>
-		public const string REPL = "0D3401FA-14B7-43DF-A629-711D098622BD";
-
-		/// <summary>
-		/// Code editor
-		/// </summary>
-		public const string CodeEditor = "9ABDCD21-CBE6-494F-8D70-8C238EC4BA87";
-
-		/// <summary>
-		/// Code completion
-		/// </summary>
-		public const string CodeCompletion = "dnSpy-CodeCompletion";
+		/// <param name="collection">Collection</param>
+		/// <returns></returns>
+		ICompletionClassifier Create(CompletionCollection collection);
 	}
 }

@@ -198,6 +198,11 @@
     <Compile Include="BackgroundImage\DefaultImageSettings.cs" />
     <Compile Include="BackgroundImage\ImagePlacement.cs" />
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
+    <Compile Include="Language\Intellisense\Classification\CompletionClassificationTag.cs" />
+    <Compile Include="Language\Intellisense\Classification\CompletionClassifierContext.cs" />
+    <Compile Include="Language\Intellisense\Classification\ICompletionClassifier.cs" />
+    <Compile Include="Language\Intellisense\Classification\ICompletionClassifierAggregatorService.cs" />
+    <Compile Include="Language\Intellisense\Classification\ICompletionClassifierProvider.cs" />
     <Compile Include="Language\Intellisense\Completion.cs" />
     <Compile Include="Language\Intellisense\CompletionCollection.cs" />
     <Compile Include="Language\Intellisense\CompletionConstants.cs" />

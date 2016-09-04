@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 				index = -1;
 
 			if (index >= 0) {
-				yield return new Span(index, completionText.Length);
+				yield return new Span(index, searchText.Length);
 				yield break;
 			}
 

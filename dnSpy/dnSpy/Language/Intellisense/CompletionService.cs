@@ -32,11 +32,13 @@ namespace dnSpy.Language.Intellisense {
 	[Export(typeof(ICompletionService))]
 	sealed class CompletionService : ICompletionService, ICompletionPresenterService {
 		readonly IImageManager imageManager;
+		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 
 		[ImportingConstructor]
-		CompletionService(IImageManager imageManager, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
+		CompletionService(IImageManager imageManager, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
 			this.imageManager = imageManager;
+			this.completionTextElementProviderService = completionTextElementProviderService;
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
 		}
 
@@ -68,7 +70,7 @@ namespace dnSpy.Language.Intellisense {
 		ICompletionPresenter ICompletionPresenterService.Create(ICompletionSession completionSession) {
 			if (completionSession == null)
 				throw new ArgumentNullException(nameof(completionSession));
-			return new CompletionPresenter(imageManager, completionSession);
+			return new CompletionPresenter(imageManager, completionSession, completionTextElementProviderService.Value.Create());
 		}
 	}
 }
