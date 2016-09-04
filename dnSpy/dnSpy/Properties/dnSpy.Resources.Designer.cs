@@ -2718,6 +2718,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt+{0}.
+        /// </summary>
+        public static string ShortCutKeyAltPlusAnyKey {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltPlusAnyKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+{0}.
         /// </summary>
         public static string ShortCutKeyCtrlDIGIT {

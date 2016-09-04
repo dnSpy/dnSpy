@@ -287,6 +287,9 @@
     <Compile Include="Language\Intellisense\CompletionSession.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
+    <Compile Include="Language\Intellisense\FilterImageReferenceConverter.cs" />
+    <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
+    <Compile Include="Language\Intellisense\FilterVM.cs" />
     <Compile Include="Language\Intellisense\ICompletionPresenter.cs" />
     <Compile Include="Language\Intellisense\ICompletionPresenterService.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />

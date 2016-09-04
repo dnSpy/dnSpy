@@ -18,22 +18,34 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Properties;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionPresenter : ICompletionPresenter {
+	sealed class CompletionPresenter : ICompletionPresenter, INotifyPropertyChanged {
 		UIElement IPopupContent.UIElement => control;
 
 		readonly IImageManager imageManager;
 		readonly ICompletionSession session;
 		readonly ICompletionTextElementProvider completionTextElementProvider;
 		readonly CompletionPresenterControl control;
+		readonly List<FilterVM> filters;
+		readonly IWpfTextView wpfTextView;
+
+		public object Filters => filters;
+		public bool HasFilters => filters.Count > 0;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		const double defaultMaxHeight = 200;
 
@@ -48,16 +60,73 @@ namespace dnSpy.Language.Intellisense {
 			this.session = session;
 			this.completionTextElementProvider = completionTextElementProvider;
 			this.control = new CompletionPresenterControl { DataContext = this };
+			this.filters = new List<FilterVM>();
 			this.control.completionsListBox.MaxHeight = defaultMaxHeight;
 			session.SelectedCompletionCollectionChanged += CompletionSession_SelectedCompletionCollectionChanged;
 			session.Dismissed += CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus += TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
+			this.wpfTextView = session.TextView as IWpfTextView;
+			Debug.Assert(wpfTextView != null);
+			if (wpfTextView != null)
+				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
 			UpdateSelectedCompletion();
+			UpdateFilterCollection();
 		}
 
-		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
+		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) {
+			if (e.Handled)
+				return;
+			if (e.KeyboardDevice.Modifiers != ModifierKeys.Alt)
+				return;
+			var accessKey = GetAccessKey(e.SystemKey);
+			if (accessKey == null)
+				return;
+			foreach (var filter in filters) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(filter.AccessKey, accessKey)) {
+					filter.IsChecked = !filter.IsChecked;
+					e.Handled = true;
+					return;
+				}
+			}
+		}
+
+		static string GetAccessKey(Key key) {
+			switch (key) {
+			case Key.A: return "A";
+			case Key.B: return "B";
+			case Key.C: return "C";
+			case Key.D: return "D";
+			case Key.E: return "E";
+			case Key.F: return "F";
+			case Key.G: return "G";
+			case Key.H: return "H";
+			case Key.I: return "I";
+			case Key.J: return "J";
+			case Key.K: return "K";
+			case Key.L: return "L";
+			case Key.M: return "M";
+			case Key.N: return "N";
+			case Key.O: return "O";
+			case Key.P: return "P";
+			case Key.Q: return "Q";
+			case Key.R: return "R";
+			case Key.S: return "S";
+			case Key.T: return "T";
+			case Key.U: return "U";
+			case Key.V: return "V";
+			case Key.W: return "W";
+			case Key.X: return "X";
+			case Key.Y: return "Y";
+			case Key.Z: return "Z";
+			default: return null;
+			}
+		}
+
+		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) => Refilter();
+
+		void Refilter() {
 			if (!session.IsDismissed) {
 				session.Filter();
 				session.Match();
@@ -146,8 +215,37 @@ namespace dnSpy.Language.Intellisense {
 
 		void ScrollSelectedItemIntoView() => WpfUtils.ScrollSelectedItemIntoView(control.completionsListBox);
 		void TextView_LostAggregateFocus(object sender, EventArgs e) => session.Dismiss();
-		void CompletionSession_SelectedCompletionCollectionChanged(object sender, SelectedCompletionCollectionEventArgs e) =>
+		void CompletionSession_SelectedCompletionCollectionChanged(object sender, SelectedCompletionCollectionEventArgs e) {
 			UpdateSelectedCompletion();
+			UpdateFilterCollection();
+		}
+
+		void UpdateFilterCollection() {
+			var coll = session.SelectedCompletionCollection;
+			DisposeFilters();
+			if (coll != null) {
+				foreach (var filter in coll.Filters)
+					filters.Add(new FilterVM(filter, this));
+			}
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Filters)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasFilters)));
+		}
+
+		void DisposeFilters() {
+			foreach (var filter in filters)
+				filter.Dispose();
+			filters.Clear();
+		}
+
+		internal void OnIsCheckedChanged(FilterVM filterVM) {
+			// Prevent the control from shrinking in size. That will make clicking with
+			// the mouse much more difficult.
+			if (filters.Any(a => a.IsChecked))
+				control.MinHeight = control.ActualHeight;
+			else
+				control.MinHeight = 0;
+			Refilter();
+		}
 
 		void UpdateSelectedCompletion() {
 			var coll = session.SelectedCompletionCollection;
@@ -187,21 +285,25 @@ namespace dnSpy.Language.Intellisense {
 
 		void CompletionSession_Dismissed(object sender, EventArgs e) {
 			UnregisterCompletionCollectionEvents();
+			DisposeFilters();
 			session.SelectedCompletionCollectionChanged -= CompletionSession_SelectedCompletionCollectionChanged;
 			session.Dismissed -= CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
+			if (wpfTextView != null)
+				wpfTextView.VisualElement.PreviewKeyDown -= VisualElement_PreviewKeyDown;
 			completionTextElementProvider.Dispose();
 		}
 
-		public ImageSource GetImageSource(Completion completion) {
+		public ImageSource GetImageSource(Completion completion) => GetImageSource(completion.Image);
+		public ImageSource GetImageSource(FilterVM filterVM) => GetImageSource(filterVM.Image);
+		ImageSource GetImageSource(ImageReference imageReference) {
 			if (session.IsDismissed)
 				return null;
-			var image = completion.Image;
-			if (image.Assembly == null)
+			if (imageReference.Assembly == null)
 				return null;
-			return imageManager.GetImage(image, BackgroundType.ListBoxItem);
+			return imageManager.GetImage(imageReference, BackgroundType.ListBoxItem);
 		}
 
 		public FrameworkElement GetDisplayText(Completion completion) {
@@ -210,6 +312,18 @@ namespace dnSpy.Language.Intellisense {
 			var collection = session.SelectedCompletionCollection;
 			Debug.Assert(collection.FilteredCollection.Contains(completion));
 			return completionTextElementProvider.Create(collection, completion);
+		}
+
+		public string GetToolTip(FilterVM filterVM) {
+			if (session.IsDismissed)
+				return null;
+			var toolTip = filterVM.ToolTip;
+			var accessKey = filterVM.AccessKey;
+			if (string.IsNullOrEmpty(toolTip))
+				return null;
+			if (!string.IsNullOrEmpty(accessKey))
+				return string.Format("{0} ({1})", toolTip, string.Format(dnSpy_Resources.ShortCutKeyAltPlusAnyKey, accessKey.ToUpper()));
+			return toolTip;
 		}
 	}
 }

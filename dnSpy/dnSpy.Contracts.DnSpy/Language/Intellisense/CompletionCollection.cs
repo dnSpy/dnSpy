@@ -32,6 +32,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		readonly FilteredCompletionCollection filteredCompletions;
 
 		/// <summary>
+		/// Gets the filters
+		/// </summary>
+		public virtual IReadOnlyList<IIntellisenseFilter> Filters { get; }
+
+		/// <summary>
 		/// Gets the filtered collection
 		/// </summary>
 		public IFilteredCompletionCollection FilteredCollection => filteredCompletions;
@@ -68,7 +73,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Constructor
 		/// </summary>
 		protected CompletionCollection()
-			: this(null, Array.Empty<Completion>()) {
+			: this(null, Array.Empty<Completion>(), null) {
 		}
 
 		/// <summary>
@@ -76,13 +81,15 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="applicableTo">Span that will be modified when a <see cref="Completion"/> gets committed</param>
 		/// <param name="completions">Completion items</param>
-		public CompletionCollection(ITrackingSpan applicableTo, IEnumerable<Completion> completions) {
+		/// <param name="filters">Filters or null</param>
+		public CompletionCollection(ITrackingSpan applicableTo, IEnumerable<Completion> completions, IReadOnlyList<IIntellisenseFilter> filters = null) {
 			if (completions == null)
 				throw new ArgumentNullException(nameof(completions));
 			currentCompletion = CurrentCompletion.Empty;
 			allCompletions = completions.ToArray();
 			filteredCompletions = new FilteredCompletionCollection(allCompletions);
 			ApplicableTo = applicableTo;
+			Filters = filters ?? Array.Empty<IIntellisenseFilter>();
 		}
 
 		/// <summary>
@@ -93,29 +100,38 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public virtual ICompletionFilter CreateCompletionFilter(string searchText) => new CompletionFilter(searchText);
 
 		/// <summary>
+		/// Uses <see cref="Filters"/> to filter <paramref name="completions"/>
+		/// </summary>
+		/// <param name="filteredResult">Result</param>
+		/// <param name="completions">Completion items to filter</param>
+		protected virtual void Filter(List<Completion> filteredResult, IList<Completion> completions) => filteredResult.AddRange(completions);
+
+		/// <summary>
 		/// Filters the list. <see cref="SelectBestMatch"/> should be called after this method
 		/// </summary>
 		public virtual void Filter() {
 			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = ApplicableTo.GetText(ApplicableTo.TextBuffer.CurrentSnapshot);
-			IList<Completion> newList;
+			var filteredList = new List<Completion>(allCompletions.Length);
+			Filter(filteredList, allCompletions);
+			IList<Completion> finalList;
 			if (inputText.Length < CompletionConstants.MimimumSearchLengthForFilter)
-				newList = allCompletions;
+				finalList = filteredList;
 			else {
-				var list = new List<Completion>();
-				newList = list;
+				var list = new List<Completion>(filteredList.Count);
+				finalList = list;
 				var completionFilter = CreateCompletionFilter(inputText);
-				foreach (var c in allCompletions) {
+				foreach (var c in filteredList) {
 					if (completionFilter.IsMatch(c))
 						list.Add(c);
 				}
 			}
-			if (newList.Count != 0)
-				filteredCompletions.SetNewFilteredCollection(newList);
+			if (finalList.Count != 0)
+				filteredCompletions.SetNewFilteredCollection(finalList);
 		}
 
 		/// <summary>
-		/// Selects the best match and should be called after <see cref="Filter"/>
+		/// Selects the best match and should be called after <see cref="Filter()"/>
 		/// </summary>
 		public void SelectBestMatch() =>
 			CurrentCompletion = GetBestMatch() ?? CurrentCompletion.Empty;

@@ -215,7 +215,9 @@
     <Compile Include="Language\Intellisense\ICompletionSource.cs" />
     <Compile Include="Language\Intellisense\ICompletionSourceProvider.cs" />
     <Compile Include="Language\Intellisense\IFilteredCompletionCollection.cs" />
+    <Compile Include="Language\Intellisense\IIntellisenseFilter.cs" />
     <Compile Include="Language\Intellisense\IIntellisenseSession.cs" />
+    <Compile Include="Language\Intellisense\IntellisenseFilter.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpyCompletionSourceProviders.cs" />
     <Compile Include="Language\Intellisense\SelectedCompletionCollectionEventArgs.cs" />
     <Compile Include="Menus\CommandTargetMenuItemBase.cs" />

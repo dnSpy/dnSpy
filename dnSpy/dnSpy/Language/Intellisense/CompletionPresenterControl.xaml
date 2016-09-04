@@ -29,6 +29,9 @@
     <UserControl.Resources>
         <local:CompletionImageReferenceConverter x:Key="CompletionImageReferenceConverter" />
         <local:CompletionDisplayTextConverter x:Key="CompletionDisplayTextConverter" />
+        <local:FilterImageReferenceConverter x:Key="FilterImageReferenceConverter" />
+        <local:FilterToolTipConverter x:Key="FilterToolTipConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -75,5 +78,33 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Filters}" Visibility="{Binding HasFilters, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{DynamicResource ListBoxBackground}" BorderBrush="{DynamicResource ListBoxBorder}" BorderThickness="1 0 1 1" VerticalContentAlignment="Center" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Margin="0 0 0 0" Width="24" Height="24" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding IsChecked}" IsEnabled="{Binding IsEnabled}">
+                        <Image Height="16" Width="16" Margin="0 0 0 0">
+                            <Image.Source>
+                                <MultiBinding Converter="{StaticResource FilterImageReferenceConverter}">
+                                    <Binding Mode="OneWay"/>
+                                    <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
+                                </MultiBinding>
+                            </Image.Source>
+                        </Image>
+                        <CheckBox.ToolTip>
+                            <MultiBinding Converter="{StaticResource FilterToolTipConverter}">
+                                <Binding Mode="OneWay"/>
+                                <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
+                            </MultiBinding>
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>
