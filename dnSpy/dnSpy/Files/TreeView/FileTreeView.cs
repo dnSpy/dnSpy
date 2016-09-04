@@ -760,7 +760,7 @@ namespace dnSpy.Files.TreeView {
 
 			var origFilenames = filenames;
 			var existingFiles = new HashSet<string>(FileManager.GetFiles().Select(a => a.Filename ?? string.Empty), StringComparer.OrdinalIgnoreCase);
-			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
 			ITreeNodeData newSelectedNode = null;
 			for (int i = 0, j = 0; i < filenames.Length; i++) {
 				var file = FileManager.TryCreateOnly(DnSpyFileInfo.CreateFile(filenames[i]));
