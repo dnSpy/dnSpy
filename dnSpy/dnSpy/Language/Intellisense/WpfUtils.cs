@@ -24,7 +24,7 @@ using System.Windows.Media;
 
 namespace dnSpy.Language.Intellisense {
 	static class WpfUtils {
-		public static void ScrollSelectedItemIntoView(ListBox lb) {
+		public static void ScrollSelectedItemIntoView(ListBox lb, bool center) {
 			var item = lb.SelectedItem;
 			if (item == null)
 				return;
@@ -33,6 +33,15 @@ namespace dnSpy.Language.Intellisense {
 			if (lbItem == null)
 				return;
 			lbItem.Focus();
+
+			if (!center)
+				return;
+			var scrollViewer = FindVisualChild<ScrollViewer>(lb);
+			if (scrollViewer != null) {
+				int index = lb.Items.IndexOf(item);
+				int itemsPerPage = (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
+				scrollViewer.ScrollToVerticalOffset(Math.Max(0, index - itemsPerPage / 2));
+			}
 		}
 
 		static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject {

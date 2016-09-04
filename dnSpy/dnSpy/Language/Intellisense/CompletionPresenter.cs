@@ -215,12 +215,25 @@ namespace dnSpy.Language.Intellisense {
 			else if (index >= coll.Count)
 				index = coll.Count - 1;
 			var newItem = (uint)index >= (uint)coll.Count ? null : coll[index];
-			control.completionsListBox.SelectedItem = newItem;
+
+			ignoreScrollIntoView = true;
+			try {
+				control.completionsListBox.SelectedItem = newItem;
+			}
+			finally {
+				ignoreScrollIntoView = false;
+			}
+
 			session.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(newItem, true, true);
-			ScrollSelectedItemIntoView();
+			ScrollSelectedItemIntoView(false);
 		}
 
-		void ScrollSelectedItemIntoView() => WpfUtils.ScrollSelectedItemIntoView(control.completionsListBox);
+		bool ignoreScrollIntoView;
+		void ScrollSelectedItemIntoView(bool center) {
+			if (!ignoreScrollIntoView)
+				WpfUtils.ScrollSelectedItemIntoView(control.completionsListBox, center);
+		}
+
 		void TextView_LostAggregateFocus(object sender, EventArgs e) => session.Dismiss();
 		void CompletionSession_SelectedCompletionCollectionChanged(object sender, SelectedCompletionCollectionEventArgs e) {
 			UpdateSelectedCompletion();
@@ -266,7 +279,7 @@ namespace dnSpy.Language.Intellisense {
 				control.completionsListBox.SelectedItem = null;
 			else {
 				control.completionsListBox.SelectedItem = currentCompletionCollection.CurrentCompletion.Completion;
-				ScrollSelectedItemIntoView();
+				ScrollSelectedItemIntoView(true);
 			}
 		}
 
