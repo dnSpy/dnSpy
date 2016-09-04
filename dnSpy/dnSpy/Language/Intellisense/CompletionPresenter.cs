@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionPresenter : ICompletionPresenter {
@@ -47,8 +48,21 @@ namespace dnSpy.Language.Intellisense {
 			session.SelectedCompletionCollectionChanged += CompletionSession_SelectedCompletionCollectionChanged;
 			session.Dismissed += CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus += TextView_LostAggregateFocus;
+			session.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
 			UpdateSelectedCompletion();
+		}
+
+		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
+			if (!session.IsDismissed) {
+				session.Filter();
+				session.Match();
+				// Filter() could've scrolled the selected item out of view (less items are shown but
+				// it keeps the old viewport Y offset), and Match() could've selected the same item again
+				// (i.e., no CurrentCompletionChanged event) which could result in the item being out of
+				// view. Fix that by always making sure it's visible after Filter() + Match().
+				UpdateSelectedItem();
+			}
 		}
 
 		void CompletionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -172,6 +186,7 @@ namespace dnSpy.Language.Intellisense {
 			session.SelectedCompletionCollectionChanged -= CompletionSession_SelectedCompletionCollectionChanged;
 			session.Dismissed -= CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
+			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
 		}
 

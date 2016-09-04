@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Windows;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
@@ -42,20 +41,12 @@ namespace dnSpy.Language.Intellisense {
 
 			dnSpyWpfTextView?.CommandTarget.AddFilter(this, CommandConstants.CMDTARGETFILTER_ORDER_DEFAULT_STATEMENTCOMPLETION);
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
-			completionSession.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			if (window != null)
 				window.LocationChanged += Window_LocationChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
 			var span = completionSession.SelectedCompletionCollection.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
 			minimumCaretPosition = span.Start.Position;
-		}
-
-		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
-			if (!completionSession.IsDismissed) {
-				completionSession.Filter();
-				completionSession.Match();
-			}
 		}
 
 		void Window_LocationChanged(object sender, EventArgs e) => completionSession.Dismiss();
@@ -74,7 +65,6 @@ namespace dnSpy.Language.Intellisense {
 		public void Close() {
 			dnSpyWpfTextView?.CommandTarget.RemoveFilter(this);
 			completionSession.TextView.Caret.PositionChanged -= Caret_PositionChanged;
-			completionSession.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			if (window != null)
 				window.LocationChanged -= Window_LocationChanged;
 		}
