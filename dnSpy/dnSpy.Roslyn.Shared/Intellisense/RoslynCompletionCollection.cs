@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis.Completion;
@@ -32,18 +33,22 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 	sealed class RoslynCompletionCollection : CompletionCollection {
 		readonly CompletionService completionService;
 		readonly ITextView textView;
+		readonly RoslynIntellisenseFilter[] filters;
 		readonly ITextSnapshot originalSnapshot;
 
-		RoslynCompletionCollection(CompletionService completionService, ITextView textView, ITrackingSpan applicableTo, List<Completion> completions)
-			: base(applicableTo, completions) {
+		RoslynCompletionCollection(CompletionService completionService, ITextView textView, ITrackingSpan applicableTo, List<Completion> completions, RoslynIntellisenseFilter[] filters)
+			: base(applicableTo, completions, filters) {
 			if (completionService == null)
 				throw new ArgumentNullException(nameof(completionService));
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (applicableTo == null)
 				throw new ArgumentNullException(nameof(applicableTo));
+			if (filters == null)
+				throw new ArgumentNullException(nameof(filters));
 			this.completionService = completionService;
 			this.textView = textView;
+			this.filters = filters;
 			this.originalSnapshot = applicableTo.TextBuffer.CurrentSnapshot;
 		}
 
@@ -57,12 +62,54 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 			if (applicableTo == null)
 				throw new ArgumentNullException(nameof(applicableTo));
 			var completions = new List<Completion>(completionList.Items.Length);
+			var remainingFilters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(RoslynIntellisenseFilters.CreateFilters().Select((a, index) => new KeyValuePair<RoslynIntellisenseFilter, int>(a, index)));
+			var filters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(remainingFilters.Count);
 			foreach (var item in completionList.Items) {
 				if (string.IsNullOrEmpty(item.DisplayText))
 					continue;
+				for (int i = remainingFilters.Count - 1; i >= 0; i--) {
+					var kv = remainingFilters[i];
+					foreach (var tag in kv.Key.Tags) {
+						if (item.Tags.Contains(tag)) {
+							remainingFilters.RemoveAt(i);
+							filters.Add(kv);
+							break;
+						}
+					}
+				}
 				completions.Add(new RoslynCompletion(item));
 			}
-			return new RoslynCompletionCollection(completionService, textView, applicableTo, completions);
+			filters.Sort((a, b) => a.Value - b.Value);
+			return new RoslynCompletionCollection(completionService, textView, applicableTo, completions, filters.Select(a => a.Key).ToArray());
+		}
+
+		protected override void Filter(List<Completion> filteredResult, IList<Completion> completions) {
+			List<string> filteredTags = null;
+
+			foreach (var filter in filters) {
+				if (filter.IsChecked) {
+					if (filteredTags == null)
+						filteredTags = new List<string>();
+					filteredTags.AddRange(filter.Tags);
+				}
+			}
+
+			if (filteredTags == null)
+				base.Filter(filteredResult, completions);
+			else {
+				foreach (var completion in completions) {
+					var roslynCompletion = completion as RoslynCompletion;
+					if (roslynCompletion != null) {
+						foreach (var tag in roslynCompletion.CompletionItem.Tags) {
+							if (filteredTags.Contains(tag))
+								goto matched;
+						}
+						continue;
+					}
+matched:
+					filteredResult.Add(completion);
+				}
+			}
 		}
 
 		public override void Commit() {

@@ -43,6 +43,12 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Intellisense\RoslynIntellisenseFilters.cs" />
+    <Compile Include="Properties\dnSpy.Roslyn.Shared.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Roslyn.Shared.Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Intellisense\Classification\CompletionClassifier.cs" />
     <Compile Include="Intellisense\Classification\CompletionKindTextColorHelper.cs" />
     <Compile Include="Intellisense\CommandTargetFilter.cs" />
@@ -91,8 +97,28 @@
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Class.png" />
     <Resource Include="Images\CSharpFile.png" />
+    <Resource Include="Images\Delegate.png" />
+    <Resource Include="Images\Enum.png" />
+    <Resource Include="Images\Event.png" />
+    <Resource Include="Images\ExtensionMethod.png" />
+    <Resource Include="Images\Field.png" />
+    <Resource Include="Images\Interface.png" />
+    <Resource Include="Images\Literal.png" />
+    <Resource Include="Images\Local.png" />
+    <Resource Include="Images\Method.png" />
+    <Resource Include="Images\Module.png" />
+    <Resource Include="Images\Namespace.png" />
+    <Resource Include="Images\Property.png" />
+    <Resource Include="Images\Struct.png" />
     <Resource Include="Images\VisualBasicFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Roslyn.Shared.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
