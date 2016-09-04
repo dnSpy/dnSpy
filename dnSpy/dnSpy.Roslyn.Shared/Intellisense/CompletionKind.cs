@@ -80,6 +80,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 		FileVisualBasic,
 		ProjectCSharp,
 		ProjectVisualBasic,
+		EnumMember,
 		Assembly,
 		RangeVariable,
 		Local,
@@ -262,6 +263,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 						return CompletionKind.Unknown;
 					}
 
+				case CompletionTags.EnumMember:	return CompletionKind.EnumMember;
 				case CompletionTags.Assembly:	return CompletionKind.Assembly;
 				case CompletionTags.Parameter:	return CompletionKind.Parameter;
 				case CompletionTags.RangeVariable:return CompletionKind.RangeVariable;

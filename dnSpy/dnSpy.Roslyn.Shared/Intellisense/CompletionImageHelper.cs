@@ -91,6 +91,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 			case CompletionKind.FileVisualBasic:		return "VisualBasicFile";
 			case CompletionKind.ProjectCSharp:			return "CSProjectNode";
 			case CompletionKind.ProjectVisualBasic:		return "VBProjectNode";
+			case CompletionKind.EnumMember:				return "EnumValue";
 			case CompletionKind.Assembly:				return "Assembly";
 			case CompletionKind.RangeVariable:			return "Local";
 			case CompletionKind.Local:					return "Local";
