@@ -314,6 +314,7 @@ namespace dnSpy.Language.Intellisense {
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
+			control.SizeChanged -= Control_SizeChanged;
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown -= VisualElement_PreviewKeyDown;
 			completionTextElementProvider.Dispose();
