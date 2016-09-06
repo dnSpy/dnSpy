@@ -39,33 +39,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			if (searchText == null)
 				throw new ArgumentNullException(nameof(searchText));
 			this.searchText = searchText;
-
-			bool acronymSearch = true;
-			foreach (var c in searchText) {
-				if (!char.IsUpper(c)) {
-					acronymSearch = false;
-					break;
-				}
-			}
-			if (acronymSearch && searchText.Length > 0)
-				acronymMatchIndexes = new int[searchText.Length];
+			this.acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);
 		}
 
-		bool TryUpdateAcronymIndexes(string completionText) {
-			Debug.Assert(acronymMatchIndexes != null);
-			if (acronymMatchIndexes == null)
-				return false;
-			var searchTextLocal = searchText;
-			var acronymMatchIndexesLocal = acronymMatchIndexes;
-			for (int acronymIndex = 0, textIndex = 0; acronymIndex < searchTextLocal.Length; acronymIndex++) {
-				textIndex = completionText.IndexOf(searchTextLocal[acronymIndex], textIndex);
-				if (textIndex < 0)
-					return false;
-				acronymMatchIndexesLocal[acronymIndex] = textIndex;
-				textIndex++;
-			}
-			return true;
-		}
+		bool TryUpdateAcronymIndexes(string completionText) =>
+			AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, completionText);
 
 		public bool IsMatch(Completion completion) {
 			var completionText = completion.FilterText;

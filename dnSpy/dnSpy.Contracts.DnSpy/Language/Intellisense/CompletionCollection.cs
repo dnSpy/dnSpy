@@ -136,48 +136,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public void SelectBestMatch() =>
 			CurrentCompletion = GetBestMatch() ?? CurrentCompletion.Empty;
 
-		enum MatchPriority {
-			/// <summary>
-			/// Full match, case sensitive
-			/// </summary>
-			Full,
-
-			/// <summary>
-			/// Full match, case insensitive
-			/// </summary>
-			FullIgnoringCase,
-
-			/// <summary>
-			/// Matches start of filter, case sensitive
-			/// </summary>
-			Start,
-
-			/// <summary>
-			/// Matches start of filter, case insensitive
-			/// </summary>
-			StartIgnoringCase,
-
-			/// <summary>
-			/// Matches any location, case sensitive
-			/// </summary>
-			AnyLocation,
-
-			/// <summary>
-			/// Matches any location, case insensitive
-			/// </summary>
-			AnyLocationIgnoringCase,
-
-			/// <summary>
-			/// Other match, eg. an acronym match
-			/// </summary>
-			Other,
-
-			/// <summary>
-			/// Not a match
-			/// </summary>
-			Nothing = int.MaxValue,
-		}
-
 		/// <summary>
 		/// Gets the best match in <see cref="FilteredCollection"/>
 		/// </summary>
@@ -187,34 +145,17 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			var inputText = ApplicableTo.GetText(ApplicableTo.TextBuffer.CurrentSnapshot);
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
-			Completion bestCompletion = null;
-			var matchPriority = MatchPriority.Nothing;
+			var selector = new BestMatchSelector(inputText);
 			if (inputText.Length > 0) {
 				foreach (var completion in filteredCompletions) {
-					int index;
 					if (!completionFilter.IsMatch(completion))
 						continue;
 					matches++;
-
-					MatchPriority newMatchPriority;
-					if (completion.FilterText.Equals(inputText, StringComparison.CurrentCulture))
-						newMatchPriority = MatchPriority.Full;
-					else if (completion.FilterText.Equals(inputText, StringComparison.CurrentCultureIgnoreCase))
-						newMatchPriority = MatchPriority.FullIgnoringCase;
-					else if ((index = completion.FilterText.IndexOf(inputText, StringComparison.CurrentCulture)) >= 0)
-						newMatchPriority = index == 0 ? MatchPriority.Start : MatchPriority.AnyLocation;
-					else if ((index = completion.FilterText.IndexOf(inputText, StringComparison.CurrentCultureIgnoreCase)) >= 0)
-						newMatchPriority = index == 0 ? MatchPriority.StartIgnoringCase : MatchPriority.AnyLocationIgnoringCase;
-					else
-						newMatchPriority = MatchPriority.Other;
-					if (newMatchPriority < matchPriority) {
-						bestCompletion = completion;
-						matchPriority = newMatchPriority;
-					}
+					selector.Select(completion);
 				}
 			}
-			bool isSelected = bestCompletion != null;
-			return new CurrentCompletion(bestCompletion, isSelected, matches == 1);
+			bool isSelected = selector.Result != null;
+			return new CurrentCompletion(selector.Result, isSelected, matches == 1);
 		}
 
 		/// <summary>
