@@ -2500,4 +2500,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="ShortCutKeyCtrlP" xml:space="preserve">
     <value>Strg+P</value>
   </data>
+  <data name="Button_Cancel2" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
 </root>

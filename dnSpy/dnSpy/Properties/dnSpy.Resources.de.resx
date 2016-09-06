@@ -1142,4 +1142,7 @@
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Strg+I</value>
   </data>
+  <data name="ShortCutKeyAltPlusAnyKey" xml:space="preserve">
+    <value>Alt+{0}</value>
+  </data>
 </root>

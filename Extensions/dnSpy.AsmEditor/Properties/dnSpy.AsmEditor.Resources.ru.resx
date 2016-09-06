@@ -2499,4 +2499,7 @@ Some obfuscators put data there</value>
   <data name="ShortCutKeyCtrlP" xml:space="preserve">
     <value>Ctrl+P</value>
   </data>
+  <data name="Button_Cancel2" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
 </root>

@@ -2500,4 +2500,7 @@
   <data name="ShortCutKeyCtrlP" xml:space="preserve">
     <value>Ctrl+P</value>
   </data>
+  <data name="Button_Cancel2" xml:space="preserve">
+    <value>取消</value>
+  </data>
 </root>
