@@ -75,8 +75,20 @@ namespace dnSpy.Language.Intellisense {
 				textBlock.Inlines.Add(CreateRun(text.Substring(textOffset), null));
 
 			var defProps = classificationFormatMap.DefaultTextProperties;
+			if (!defProps.BackgroundBrushEmpty)
+				textBlock.Background = defProps.BackgroundBrush;
 			if (!defProps.ForegroundBrushEmpty)
-				textBlock.Foreground = classificationFormatMap.DefaultTextProperties.ForegroundBrush;
+				textBlock.Foreground = defProps.ForegroundBrush;
+			if (!defProps.BoldEmpty)
+				textBlock.FontWeight = defProps.Bold ? FontWeights.Bold : FontWeights.Normal;
+			if (!defProps.ItalicEmpty)
+				textBlock.FontStyle = defProps.Italic ? FontStyles.Italic : FontStyles.Normal;
+			if (!defProps.FontRenderingEmSizeEmpty)
+				textBlock.FontSize = defProps.FontRenderingEmSize;
+			if (!defProps.TextDecorationsEmpty)
+				textBlock.TextDecorations = defProps.TextDecorations;
+			if (!defProps.TextEffectsEmpty)
+				textBlock.TextEffects = defProps.TextEffects;
 
 			return textBlock;
 		}
