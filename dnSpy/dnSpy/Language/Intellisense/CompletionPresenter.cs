@@ -44,7 +44,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly IWpfTextView wpfTextView;
 
 		public object Filters => filters;
-		public bool HasFilters => filters.Count > 0;
+		public bool HasFilters => filters.Count > 1;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		const double defaultMaxHeight = 200;
