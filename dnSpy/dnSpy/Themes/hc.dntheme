@@ -54,6 +54,7 @@
 		<color name="structurevisualizerfixed" fg="#FFFFFFFF" />
 		<color name="structurevisualizercase" fg="#FFFFFFFF" />
 		<color name="structurevisualizerother" fg="#FFFFFFFF" />
+		<color name="completionmatchhighlight" bold="true" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

@@ -223,6 +223,7 @@ namespace dnSpy.Contracts.Text {
 		StructureVisualizerFixed,
 		StructureVisualizerCase,
 		StructureVisualizerOther,
+		CompletionMatchHighlight,
 
 		/// <summary>
 		/// Must be last
@@ -432,6 +433,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object StructureVisualizerFixed = TextColor.StructureVisualizerFixed;
 		public static readonly object StructureVisualizerCase = TextColor.StructureVisualizerCase;
 		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
+		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -643,6 +645,7 @@ namespace dnSpy.Contracts.Text {
 			StructureVisualizerFixed,
 			StructureVisualizerCase,
 			StructureVisualizerOther,
+			CompletionMatchHighlight,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

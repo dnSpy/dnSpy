@@ -1011,5 +1011,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.StructureVisualizerOther"/>
 		/// </summary>
 		public const string StructureVisualizerOther = "Theme-StructureVisualizerOther";
+
+		/// <summary>
+		/// <see cref="TextColor.CompletionMatchHighlight"/>
+		/// </summary>
+		public const string CompletionMatchHighlight = "Theme-CompletionMatchHighlight";
 	}
 }

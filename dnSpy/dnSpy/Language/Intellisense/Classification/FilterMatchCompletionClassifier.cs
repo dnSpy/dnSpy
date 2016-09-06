@@ -43,21 +43,21 @@ namespace dnSpy.Language.Intellisense.Classification {
 
 	sealed class FilterMatchCompletionClassifier : ICompletionClassifier {
 		readonly CompletionCollection completionCollection;
-		readonly IClassificationType findMatchHighlightMarkerClassificationType;
+		readonly IClassificationType completionMatchHighlightClassificationType;
 
 		public FilterMatchCompletionClassifier(IThemeClassificationTypes themeClassificationTypes, CompletionCollection completionCollection) {
 			if (themeClassificationTypes == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypes));
 			if (completionCollection == null)
 				throw new ArgumentNullException(nameof(completionCollection));
-			this.findMatchHighlightMarkerClassificationType = themeClassificationTypes.GetClassificationType(TextColor.FindMatchHighlightMarker);
+			this.completionMatchHighlightClassificationType = themeClassificationTypes.GetClassificationType(TextColor.CompletionMatchHighlight);
 			this.completionCollection = completionCollection;
 		}
 
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
 			var filter = completionCollection.CreateCompletionFilter(context.InputText);
 			foreach (var span in filter.GetMatchSpans(context.Completion, context.DisplayText))
-				yield return new CompletionClassificationTag(span, findMatchHighlightMarkerClassificationType);
+				yield return new CompletionClassificationTag(span, completionMatchHighlightClassificationType);
 		}
 	}
 }

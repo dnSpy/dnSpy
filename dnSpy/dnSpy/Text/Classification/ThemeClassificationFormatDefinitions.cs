@@ -1034,6 +1034,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.StructureVisualizerOther)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StructureVisualizerOtherClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.CompletionMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition CompletionMatchHighlightClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2808,6 +2813,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class StructureVisualizerOther : ThemeMarkerFormatDefinition {
 			StructureVisualizerOther() : base(TextColor.StructureVisualizerOther) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CompletionMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.CompletionMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class CompletionMatchHighlight : ThemeClassificationFormatDefinition {
+			CompletionMatchHighlight() : base(TextColor.CompletionMatchHighlight) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

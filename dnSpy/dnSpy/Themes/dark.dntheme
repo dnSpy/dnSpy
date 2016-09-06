@@ -184,6 +184,7 @@
 		<color name="structurevisualizerfixed" fg="#FF4C4C4C" />
 		<color name="structurevisualizercase" fg="#FF163F1B" />
 		<color name="structurevisualizerother" fg="#FF4C4C4C" />
+		<color name="completionmatchhighlight" bg="#FF773800" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

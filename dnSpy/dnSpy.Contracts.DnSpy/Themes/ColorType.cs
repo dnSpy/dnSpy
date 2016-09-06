@@ -221,6 +221,7 @@ namespace dnSpy.Contracts.Themes {
 		StructureVisualizerFixed,
 		StructureVisualizerCase,
 		StructureVisualizerOther,
+		CompletionMatchHighlight,
 
 		// Must be last in this group
 		LastNR,

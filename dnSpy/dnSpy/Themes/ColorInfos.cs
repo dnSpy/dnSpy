@@ -1867,6 +1867,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.StructureVisualizerFixed, "Structure Visualizer Fixed"),
 			new BrushColorInfo(ColorType.StructureVisualizerCase, "Structure Visualizer Case"),
 			new BrushColorInfo(ColorType.StructureVisualizerOther, "Structure Visualizer Other"),
+			new BrushColorInfo(ColorType.CompletionMatchHighlight, "Completion Match Highlight"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
 				DefaultBackground = "White",

@@ -228,6 +228,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerFixed),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerCase),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerOther),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CompletionMatchHighlight),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);
