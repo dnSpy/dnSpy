@@ -184,7 +184,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = "AssemblyModule", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = "Module", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
 	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
@@ -255,7 +255,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => GoToModuleModulesCtxMenuCommand.CanGoToModule(context);
 	}
 
-	[ExportMenuItem(Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
+	[ExportMenuItem(Icon = "Module", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class LoadModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
@@ -288,7 +288,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
+	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = "Module", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 		readonly IFileTabManager fileTabManager;

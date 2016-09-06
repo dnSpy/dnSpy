@@ -321,7 +321,6 @@
   <ItemGroup>
     <Resource Include="Images\Add.png" />
     <Resource Include="Images\AssemblyExe.png" />
-    <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\Break.png" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\BreakpointMenu.png" />
@@ -372,6 +371,7 @@
     <Resource Include="Images\LiteralProtectedInternal.png" />
     <Resource Include="Images\LocalsWindow.png" />
     <Resource Include="Images\MemoryWindow.png" />
+    <Resource Include="Images\Module.png" />
     <Resource Include="Images\ModulesWindow.png" />
     <Resource Include="Images\OneLevelUp.png" />
     <Resource Include="Images\Process.png" />

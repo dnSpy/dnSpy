@@ -155,7 +155,7 @@ namespace dnSpy.Search {
 			this.SearchLocationVM.SelectedItem = SearchLocation.AllFiles;
 
 			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, "Assembly", null, VisibleMembersFlags.AssemblyDef);
-			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, "AssemblyModule", null, VisibleMembersFlags.ModuleDef);
+			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, "Module", null, VisibleMembersFlags.ModuleDef);
 			Add(SearchType.Namespace, dnSpy_Resources.SearchWindow_Namespace, "Namespace", null, VisibleMembersFlags.Namespace);
 			Add(SearchType.TypeDef, dnSpy_Resources.SearchWindow_Type, "Class", dnSpy_Resources.SearchWindow_Type_Key, VisibleMembersFlags.TypeDef);
 			Add(SearchType.FieldDef, dnSpy_Resources.SearchWindow_Field, "Field", dnSpy_Resources.SearchWindow_Field_Key, VisibleMembersFlags.FieldDef);

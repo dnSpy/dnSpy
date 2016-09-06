@@ -32,7 +32,7 @@ namespace dnSpy.Images {
 		public ImageReference GetNamespaceImageReference() =>
 			new ImageReference(GetType().Assembly, "Namespace");
 		public ImageReference GetImageReference(ModuleDef mod) =>
-			new ImageReference(GetType().Assembly, "AssemblyModule");
+			new ImageReference(GetType().Assembly, "Module");
 		public ImageReference GetImageReference(TypeDef type) =>
 			new ImageReference(GetType().Assembly, GetImageName(type));
 

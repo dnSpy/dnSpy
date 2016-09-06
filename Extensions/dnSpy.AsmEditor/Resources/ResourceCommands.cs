@@ -898,7 +898,7 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand {
-		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 130)]
+		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 130)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -915,7 +915,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 130)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 130)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -933,7 +933,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 130)]
+		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 130)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;

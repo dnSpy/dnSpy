@@ -788,7 +788,6 @@
   <ItemGroup>
     <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\AssemblyExe.png" />
-    <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\AssemblyReference.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\Backward.png" />
@@ -895,6 +894,7 @@
     <Resource Include="Images\MethodPrivate.png" />
     <Resource Include="Images\MethodProtected.png" />
     <Resource Include="Images\MethodProtectedInternal.png" />
+    <Resource Include="Images\Module.png" />
     <Resource Include="Images\ModuleInternal.png" />
     <Resource Include="Images\ModulePrivate.png" />
     <Resource Include="Images\ModuleProtected.png" />

@@ -74,7 +74,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 			case CompletionKind.ModuleProtected:		return "ModuleProtected";
 			case CompletionKind.ModuleInternal:			return "ModuleInternal";
 			case CompletionKind.ModulePrivate:			return "ModulePrivate";
-			case CompletionKind.Module:					return "AssemblyModule";
+			case CompletionKind.Module:					return "Module";
 			case CompletionKind.OperatorProtected:		return "OperatorProtected";
 			case CompletionKind.OperatorInternal:		return "OperatorInternal";
 			case CompletionKind.OperatorPrivate:		return "OperatorPrivate";

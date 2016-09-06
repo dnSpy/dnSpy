@@ -839,13 +839,13 @@
     <Resource Include="Images\ModuleToAssembly.png" />
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\NewAssembly.png" />
-    <Resource Include="Images\NewAssemblyModule.png" />
     <Resource Include="Images\NewBinary.png" />
     <Resource Include="Images\NewClass.png" />
     <Resource Include="Images\NewEvent.png" />
     <Resource Include="Images\NewField.png" />
     <Resource Include="Images\NewImage.png" />
     <Resource Include="Images\NewMethod.png" />
+    <Resource Include="Images\NewModule.png" />
     <Resource Include="Images\NewProperty.png" />
     <Resource Include="Images\NewResource.png" />
     <Resource Include="Images\NewResourcesFile.png" />
