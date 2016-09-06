@@ -26,7 +26,8 @@ namespace dnSpy.Text.Classification {
 	/// </summary>
 	interface ITextClassifierAggregatorService {
 		/// <summary>
-		/// Creates a <see cref="ITextClassifier"/> aggregator
+		/// Creates a <see cref="ITextClassifier"/> aggregator. The returned <see cref="ITextClassifier"/>
+		/// implements <see cref="System.IDisposable"/> and must be <see cref="System.IDisposable.Dispose"/>'d.
 		/// </summary>
 		/// <param name="textClassifiers">Classifiers to use</param>
 		/// <returns></returns>

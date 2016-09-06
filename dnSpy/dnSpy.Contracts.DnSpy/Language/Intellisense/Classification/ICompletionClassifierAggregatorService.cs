@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// Creates a <see cref="ICompletionClassifier"/> that aggregates and normalizes
@@ -24,7 +26,8 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// </summary>
 	public interface ICompletionClassifierAggregatorService {
 		/// <summary>
-		/// Creates a new <see cref="ICompletionClassifier"/>
+		/// Creates a new <see cref="ICompletionClassifier"/>. The returned <see cref="ICompletionClassifier"/>
+		/// implements <see cref="IDisposable"/> and must be <see cref="IDisposable.Dispose"/>'d.
 		/// </summary>
 		/// <param name="collection">Collection</param>
 		/// <returns></returns>
