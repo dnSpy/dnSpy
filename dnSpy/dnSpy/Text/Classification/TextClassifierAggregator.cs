@@ -53,11 +53,8 @@ namespace dnSpy.Text.Classification {
 			foreach (var classifier in textClassifiers) {
 				foreach (var tagTmp in classifier.GetTags(context)) {
 					var tag = tagTmp;
-					if (tag.Span.End > textLength) {
-						if (tag.Span.Start > textLength)
-							continue;
+					if (tag.Span.End > textLength)
 						tag = new TextClassificationTag(Span.FromBounds(Math.Min(textLength, tag.Span.Start), Math.Min(textLength, tag.Span.End)), tag.ClassificationType);
-					}
 					if (tag.Span.Length == 0)
 						continue;
 					list.Add(tag);
