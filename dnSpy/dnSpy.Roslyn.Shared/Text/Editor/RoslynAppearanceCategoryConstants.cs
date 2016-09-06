@@ -19,7 +19,7 @@
 
 namespace dnSpy.Roslyn.Shared.Text.Editor {
 	static class RoslynAppearanceCategoryConstants {
-		public const string CodeEditor_CSharp = "CABA687A-AA2C-4BD9-BB7C-D80CA12A79B8";
-		public const string CodeEditor_VisualBasic = "A0A570CE-F594-4A6C-A13A-EC7025AB558E";
+		public const string CodeEditor_CSharp = "dnSpy-CodeEditor-C#";
+		public const string CodeEditor_VisualBasic = "dnSpy-CodeEditor-Visual Basic";
 	}
 }

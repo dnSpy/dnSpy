@@ -25,22 +25,22 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// Default text editor
 		/// </summary>
-		public const string TextEditor = "9B004FFE-AF67-4053-8A90-3A2CA7EB8D8B";
+		public const string TextEditor = "dnSpy-TextEditor";
 
 		/// <summary>
 		/// Decompiled code and other content shown in the main tabs
 		/// </summary>
-		public const string Viewer = "EF6F0833-7610-40C7-BF26-B98C2654A48A";
+		public const string Viewer = "dnSpy-Viewer";
 
 		/// <summary>
 		/// REPL
 		/// </summary>
-		public const string REPL = "0D3401FA-14B7-43DF-A629-711D098622BD";
+		public const string REPL = "dnSpy-REPL";
 
 		/// <summary>
 		/// Code editor
 		/// </summary>
-		public const string CodeEditor = "9ABDCD21-CBE6-494F-8D70-8C238EC4BA87";
+		public const string CodeEditor = "dnSpy-CodeEditor";
 
 		/// <summary>
 		/// Code completion
