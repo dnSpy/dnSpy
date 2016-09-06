@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.Namespace"/>
 		/// </summary>
-		public const string Namespace = "Theme-Namespace";
+		public const string Namespace = "Theme-" + nameof(Namespace);
 
 		/// <summary>
 		/// <see cref="TextColor.Type"/>
@@ -90,12 +90,12 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.SealedType"/>
 		/// </summary>
-		public const string SealedType = "Theme-SealedType";
+		public const string SealedType = "Theme-" + nameof(SealedType);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticType"/>
 		/// </summary>
-		public const string StaticType = "Theme-StaticType";
+		public const string StaticType = "Theme-" + nameof(StaticType);
 
 		/// <summary>
 		/// <see cref="TextColor.Delegate"/>
@@ -125,72 +125,72 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.MethodGenericParameter"/>
 		/// </summary>
-		public const string MethodGenericParameter = "Theme-MethodGenericParameter";
+		public const string MethodGenericParameter = "Theme-" + nameof(MethodGenericParameter);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceMethod"/>
 		/// </summary>
-		public const string InstanceMethod = "Theme-InstanceMethod";
+		public const string InstanceMethod = "Theme-" + nameof(InstanceMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticMethod"/>
 		/// </summary>
-		public const string StaticMethod = "Theme-StaticMethod";
+		public const string StaticMethod = "Theme-" + nameof(StaticMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.ExtensionMethod"/>
 		/// </summary>
-		public const string ExtensionMethod = "Theme-ExtensionMethod";
+		public const string ExtensionMethod = "Theme-" + nameof(ExtensionMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceField"/>
 		/// </summary>
-		public const string InstanceField = "Theme-InstanceField";
+		public const string InstanceField = "Theme-" + nameof(InstanceField);
 
 		/// <summary>
 		/// <see cref="TextColor.EnumField"/>
 		/// </summary>
-		public const string EnumField = "Theme-EnumField";
+		public const string EnumField = "Theme-" + nameof(EnumField);
 
 		/// <summary>
 		/// <see cref="TextColor.LiteralField"/>
 		/// </summary>
-		public const string LiteralField = "Theme-LiteralField";
+		public const string LiteralField = "Theme-" + nameof(LiteralField);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticField"/>
 		/// </summary>
-		public const string StaticField = "Theme-StaticField";
+		public const string StaticField = "Theme-" + nameof(StaticField);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceEvent"/>
 		/// </summary>
-		public const string InstanceEvent = "Theme-InstanceEvent";
+		public const string InstanceEvent = "Theme-" + nameof(InstanceEvent);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticEvent"/>
 		/// </summary>
-		public const string StaticEvent = "Theme-StaticEvent";
+		public const string StaticEvent = "Theme-" + nameof(StaticEvent);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceProperty"/>
 		/// </summary>
-		public const string InstanceProperty = "Theme-InstanceProperty";
+		public const string InstanceProperty = "Theme-" + nameof(InstanceProperty);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticProperty"/>
 		/// </summary>
-		public const string StaticProperty = "Theme-StaticProperty";
+		public const string StaticProperty = "Theme-" + nameof(StaticProperty);
 
 		/// <summary>
 		/// <see cref="TextColor.Local"/>
 		/// </summary>
-		public const string Local = "Theme-Local";
+		public const string Local = "Theme-" + nameof(Local);
 
 		/// <summary>
 		/// <see cref="TextColor.Parameter"/>
 		/// </summary>
-		public const string Parameter = "Theme-Parameter";
+		public const string Parameter = "Theme-" + nameof(Parameter);
 
 		/// <summary>
 		/// <see cref="TextColor.PreprocessorKeyword"/>
@@ -205,22 +205,22 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.Label"/>
 		/// </summary>
-		public const string Label = "Theme-Label";
+		public const string Label = "Theme-" + nameof(Label);
 
 		/// <summary>
 		/// <see cref="TextColor.OpCode"/>
 		/// </summary>
-		public const string OpCode = "Theme-OpCode";
+		public const string OpCode = "Theme-" + nameof(OpCode);
 
 		/// <summary>
 		/// <see cref="TextColor.ILDirective"/>
 		/// </summary>
-		public const string ILDirective = "Theme-ILDirective";
+		public const string ILDirective = "Theme-" + nameof(ILDirective);
 
 		/// <summary>
 		/// <see cref="TextColor.ILModule"/>
 		/// </summary>
-		public const string ILModule = "Theme-ILModule";
+		public const string ILModule = "Theme-" + nameof(ILModule);
 
 		/// <summary>
 		/// <see cref="TextColor.ExcludedCode"/>
@@ -335,132 +335,132 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeName"/>
 		/// </summary>
-		public const string XmlAttributeName = "Theme-XmlAttributeName";
+		public const string XmlAttributeName = "Theme-" + nameof(XmlAttributeName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeQuotes"/>
 		/// </summary>
-		public const string XmlAttributeQuotes = "Theme-XmlAttributeQuotes";
+		public const string XmlAttributeQuotes = "Theme-" + nameof(XmlAttributeQuotes);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeValue"/>
 		/// </summary>
-		public const string XmlAttributeValue = "Theme-XmlAttributeValue";
+		public const string XmlAttributeValue = "Theme-" + nameof(XmlAttributeValue);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlCDataSection"/>
 		/// </summary>
-		public const string XmlCDataSection = "Theme-XmlCDataSection";
+		public const string XmlCDataSection = "Theme-" + nameof(XmlCDataSection);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlComment"/>
 		/// </summary>
-		public const string XmlComment = "Theme-XmlComment";
+		public const string XmlComment = "Theme-" + nameof(XmlComment);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDelimiter"/>
 		/// </summary>
-		public const string XmlDelimiter = "Theme-XmlDelimiter";
+		public const string XmlDelimiter = "Theme-" + nameof(XmlDelimiter);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlKeyword"/>
 		/// </summary>
-		public const string XmlKeyword = "Theme-XmlKeyword";
+		public const string XmlKeyword = "Theme-" + nameof(XmlKeyword);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlName"/>
 		/// </summary>
-		public const string XmlName = "Theme-XmlName";
+		public const string XmlName = "Theme-" + nameof(XmlName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlProcessingInstruction"/>
 		/// </summary>
-		public const string XmlProcessingInstruction = "Theme-XmlProcessingInstruction";
+		public const string XmlProcessingInstruction = "Theme-" + nameof(XmlProcessingInstruction);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlText"/>
 		/// </summary>
-		public const string XmlText = "Theme-XmlText";
+		public const string XmlText = "Theme-" + nameof(XmlText);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipColon"/>
 		/// </summary>
-		public const string XmlDocToolTipColon = "Theme-XmlDocToolTipColon";
+		public const string XmlDocToolTipColon = "Theme-" + nameof(XmlDocToolTipColon);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipExample"/>
 		/// </summary>
-		public const string XmlDocToolTipExample = "Theme-XmlDocToolTipExample";
+		public const string XmlDocToolTipExample = "Theme-" + nameof(XmlDocToolTipExample);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipExceptionCref"/>
 		/// </summary>
-		public const string XmlDocToolTipExceptionCref = "Theme-XmlDocToolTipExceptionCref";
+		public const string XmlDocToolTipExceptionCref = "Theme-" + nameof(XmlDocToolTipExceptionCref);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipReturns"/>
 		/// </summary>
-		public const string XmlDocToolTipReturns = "Theme-XmlDocToolTipReturns";
+		public const string XmlDocToolTipReturns = "Theme-" + nameof(XmlDocToolTipReturns);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeCref"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeCref = "Theme-XmlDocToolTipSeeCref";
+		public const string XmlDocToolTipSeeCref = "Theme-" + nameof(XmlDocToolTipSeeCref);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeLangword"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeLangword = "Theme-XmlDocToolTipSeeLangword";
+		public const string XmlDocToolTipSeeLangword = "Theme-" + nameof(XmlDocToolTipSeeLangword);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeAlso"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeAlso = "Theme-XmlDocToolTipSeeAlso";
+		public const string XmlDocToolTipSeeAlso = "Theme-" + nameof(XmlDocToolTipSeeAlso);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeAlsoCref"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeAlsoCref = "Theme-XmlDocToolTipSeeAlsoCref";
+		public const string XmlDocToolTipSeeAlsoCref = "Theme-" + nameof(XmlDocToolTipSeeAlsoCref);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipParamRefName"/>
 		/// </summary>
-		public const string XmlDocToolTipParamRefName = "Theme-XmlDocToolTipParamRefName";
+		public const string XmlDocToolTipParamRefName = "Theme-" + nameof(XmlDocToolTipParamRefName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipParamName"/>
 		/// </summary>
-		public const string XmlDocToolTipParamName = "Theme-XmlDocToolTipParamName";
+		public const string XmlDocToolTipParamName = "Theme-" + nameof(XmlDocToolTipParamName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipTypeParamName"/>
 		/// </summary>
-		public const string XmlDocToolTipTypeParamName = "Theme-XmlDocToolTipTypeParamName";
+		public const string XmlDocToolTipTypeParamName = "Theme-" + nameof(XmlDocToolTipTypeParamName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipValue"/>
 		/// </summary>
-		public const string XmlDocToolTipValue = "Theme-XmlDocToolTipValue";
+		public const string XmlDocToolTipValue = "Theme-" + nameof(XmlDocToolTipValue);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSummary"/>
 		/// </summary>
-		public const string XmlDocToolTipSummary = "Theme-XmlDocToolTipSummary";
+		public const string XmlDocToolTipSummary = "Theme-" + nameof(XmlDocToolTipSummary);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipText"/>
 		/// </summary>
-		public const string XmlDocToolTipText = "Theme-XmlDocToolTipText";
+		public const string XmlDocToolTipText = "Theme-" + nameof(XmlDocToolTipText);
 
 		/// <summary>
 		/// <see cref="TextColor.Assembly"/>
 		/// </summary>
-		public const string Assembly = "Theme-Assembly";
+		public const string Assembly = "Theme-" + nameof(Assembly);
 
 		/// <summary>
 		/// <see cref="TextColor.AssemblyExe"/>
 		/// </summary>
-		public const string AssemblyExe = "Theme-AssemblyExe";
+		public const string AssemblyExe = "Theme-" + nameof(AssemblyExe);
 
 		/// <summary>
 		/// <see cref="TextColor.Module"/>
@@ -470,257 +470,257 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.DirectoryPart"/>
 		/// </summary>
-		public const string DirectoryPart = "Theme-DirectoryPart";
+		public const string DirectoryPart = "Theme-" + nameof(DirectoryPart);
 
 		/// <summary>
 		/// <see cref="TextColor.FileNameNoExtension"/>
 		/// </summary>
-		public const string FileNameNoExtension = "Theme-FileNameNoExtension";
+		public const string FileNameNoExtension = "Theme-" + nameof(FileNameNoExtension);
 
 		/// <summary>
 		/// <see cref="TextColor.FileExtension"/>
 		/// </summary>
-		public const string FileExtension = "Theme-FileExtension";
+		public const string FileExtension = "Theme-" + nameof(FileExtension);
 
 		/// <summary>
 		/// <see cref="TextColor.Error"/>
 		/// </summary>
-		public const string Error = "Theme-Error";
+		public const string Error = "Theme-" + nameof(Error);
 
 		/// <summary>
 		/// <see cref="TextColor.ToStringEval"/>
 		/// </summary>
-		public const string ToStringEval = "Theme-ToStringEval";
+		public const string ToStringEval = "Theme-" + nameof(ToStringEval);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplPrompt1"/>
 		/// </summary>
-		public const string ReplPrompt1 = "Theme-ReplPrompt1";
+		public const string ReplPrompt1 = "Theme-" + nameof(ReplPrompt1);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplPrompt2"/>
 		/// </summary>
-		public const string ReplPrompt2 = "Theme-ReplPrompt2";
+		public const string ReplPrompt2 = "Theme-" + nameof(ReplPrompt2);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplOutputText"/>
 		/// </summary>
-		public const string ReplOutputText = "Theme-ReplOutputText";
+		public const string ReplOutputText = "Theme-" + nameof(ReplOutputText);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplScriptOutputText"/>
 		/// </summary>
-		public const string ReplScriptOutputText = "Theme-ReplScriptOutputText";
+		public const string ReplScriptOutputText = "Theme-" + nameof(ReplScriptOutputText);
 
 		/// <summary>
 		/// <see cref="TextColor.Black"/>
 		/// </summary>
-		public const string Black = "Theme-Black";
+		public const string Black = "Theme-" + nameof(Black);
 
 		/// <summary>
 		/// <see cref="TextColor.Blue"/>
 		/// </summary>
-		public const string Blue = "Theme-Blue";
+		public const string Blue = "Theme-" + nameof(Blue);
 
 		/// <summary>
 		/// <see cref="TextColor.Cyan"/>
 		/// </summary>
-		public const string Cyan = "Theme-Cyan";
+		public const string Cyan = "Theme-" + nameof(Cyan);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkBlue"/>
 		/// </summary>
-		public const string DarkBlue = "Theme-DarkBlue";
+		public const string DarkBlue = "Theme-" + nameof(DarkBlue);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkCyan"/>
 		/// </summary>
-		public const string DarkCyan = "Theme-DarkCyan";
+		public const string DarkCyan = "Theme-" + nameof(DarkCyan);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkGray"/>
 		/// </summary>
-		public const string DarkGray = "Theme-DarkGray";
+		public const string DarkGray = "Theme-" + nameof(DarkGray);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkGreen"/>
 		/// </summary>
-		public const string DarkGreen = "Theme-DarkGreen";
+		public const string DarkGreen = "Theme-" + nameof(DarkGreen);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkMagenta"/>
 		/// </summary>
-		public const string DarkMagenta = "Theme-DarkMagenta";
+		public const string DarkMagenta = "Theme-" + nameof(DarkMagenta);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkRed"/>
 		/// </summary>
-		public const string DarkRed = "Theme-DarkRed";
+		public const string DarkRed = "Theme-" + nameof(DarkRed);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkYellow"/>
 		/// </summary>
-		public const string DarkYellow = "Theme-DarkYellow";
+		public const string DarkYellow = "Theme-" + nameof(DarkYellow);
 
 		/// <summary>
 		/// <see cref="TextColor.Gray"/>
 		/// </summary>
-		public const string Gray = "Theme-Gray";
+		public const string Gray = "Theme-" + nameof(Gray);
 
 		/// <summary>
 		/// <see cref="TextColor.Green"/>
 		/// </summary>
-		public const string Green = "Theme-Green";
+		public const string Green = "Theme-" + nameof(Green);
 
 		/// <summary>
 		/// <see cref="TextColor.Magenta"/>
 		/// </summary>
-		public const string Magenta = "Theme-Magenta";
+		public const string Magenta = "Theme-" + nameof(Magenta);
 
 		/// <summary>
 		/// <see cref="TextColor.Red"/>
 		/// </summary>
-		public const string Red = "Theme-Red";
+		public const string Red = "Theme-" + nameof(Red);
 
 		/// <summary>
 		/// <see cref="TextColor.White"/>
 		/// </summary>
-		public const string White = "Theme-White";
+		public const string White = "Theme-" + nameof(White);
 
 		/// <summary>
 		/// <see cref="TextColor.Yellow"/>
 		/// </summary>
-		public const string Yellow = "Theme-Yellow";
+		public const string Yellow = "Theme-" + nameof(Yellow);
 
 		/// <summary>
 		/// <see cref="TextColor.InvBlack"/>
 		/// </summary>
-		public const string InvBlack = "Theme-InvBlack";
+		public const string InvBlack = "Theme-" + nameof(InvBlack);
 
 		/// <summary>
 		/// <see cref="TextColor.InvBlue"/>
 		/// </summary>
-		public const string InvBlue = "Theme-InvBlue";
+		public const string InvBlue = "Theme-" + nameof(InvBlue);
 
 		/// <summary>
 		/// <see cref="TextColor.InvCyan"/>
 		/// </summary>
-		public const string InvCyan = "Theme-InvCyan";
+		public const string InvCyan = "Theme-" + nameof(InvCyan);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkBlue"/>
 		/// </summary>
-		public const string InvDarkBlue = "Theme-InvDarkBlue";
+		public const string InvDarkBlue = "Theme-" + nameof(InvDarkBlue);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkCyan"/>
 		/// </summary>
-		public const string InvDarkCyan = "Theme-InvDarkCyan";
+		public const string InvDarkCyan = "Theme-" + nameof(InvDarkCyan);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkGray"/>
 		/// </summary>
-		public const string InvDarkGray = "Theme-InvDarkGray";
+		public const string InvDarkGray = "Theme-" + nameof(InvDarkGray);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkGreen"/>
 		/// </summary>
-		public const string InvDarkGreen = "Theme-InvDarkGreen";
+		public const string InvDarkGreen = "Theme-" + nameof(InvDarkGreen);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkMagenta"/>
 		/// </summary>
-		public const string InvDarkMagenta = "Theme-InvDarkMagenta";
+		public const string InvDarkMagenta = "Theme-" + nameof(InvDarkMagenta);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkRed"/>
 		/// </summary>
-		public const string InvDarkRed = "Theme-InvDarkRed";
+		public const string InvDarkRed = "Theme-" + nameof(InvDarkRed);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkYellow"/>
 		/// </summary>
-		public const string InvDarkYellow = "Theme-InvDarkYellow";
+		public const string InvDarkYellow = "Theme-" + nameof(InvDarkYellow);
 
 		/// <summary>
 		/// <see cref="TextColor.InvGray"/>
 		/// </summary>
-		public const string InvGray = "Theme-InvGray";
+		public const string InvGray = "Theme-" + nameof(InvGray);
 
 		/// <summary>
 		/// <see cref="TextColor.InvGreen"/>
 		/// </summary>
-		public const string InvGreen = "Theme-InvGreen";
+		public const string InvGreen = "Theme-" + nameof(InvGreen);
 
 		/// <summary>
 		/// <see cref="TextColor.InvMagenta"/>
 		/// </summary>
-		public const string InvMagenta = "Theme-InvMagenta";
+		public const string InvMagenta = "Theme-" + nameof(InvMagenta);
 
 		/// <summary>
 		/// <see cref="TextColor.InvRed"/>
 		/// </summary>
-		public const string InvRed = "Theme-InvRed";
+		public const string InvRed = "Theme-" + nameof(InvRed);
 
 		/// <summary>
 		/// <see cref="TextColor.InvWhite"/>
 		/// </summary>
-		public const string InvWhite = "Theme-InvWhite";
+		public const string InvWhite = "Theme-" + nameof(InvWhite);
 
 		/// <summary>
 		/// <see cref="TextColor.InvYellow"/>
 		/// </summary>
-		public const string InvYellow = "Theme-InvYellow";
+		public const string InvYellow = "Theme-" + nameof(InvYellow);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExceptionHandled"/>
 		/// </summary>
-		public const string DebugLogExceptionHandled = "Theme-DebugLogExceptionHandled";
+		public const string DebugLogExceptionHandled = "Theme-" + nameof(DebugLogExceptionHandled);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExceptionUnhandled"/>
 		/// </summary>
-		public const string DebugLogExceptionUnhandled = "Theme-DebugLogExceptionUnhandled";
+		public const string DebugLogExceptionUnhandled = "Theme-" + nameof(DebugLogExceptionUnhandled);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogStepFiltering"/>
 		/// </summary>
-		public const string DebugLogStepFiltering = "Theme-DebugLogStepFiltering";
+		public const string DebugLogStepFiltering = "Theme-" + nameof(DebugLogStepFiltering);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogLoadModule"/>
 		/// </summary>
-		public const string DebugLogLoadModule = "Theme-DebugLogLoadModule";
+		public const string DebugLogLoadModule = "Theme-" + nameof(DebugLogLoadModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogUnloadModule"/>
 		/// </summary>
-		public const string DebugLogUnloadModule = "Theme-DebugLogUnloadModule";
+		public const string DebugLogUnloadModule = "Theme-" + nameof(DebugLogUnloadModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExitProcess"/>
 		/// </summary>
-		public const string DebugLogExitProcess = "Theme-DebugLogExitProcess";
+		public const string DebugLogExitProcess = "Theme-" + nameof(DebugLogExitProcess);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExitThread"/>
 		/// </summary>
-		public const string DebugLogExitThread = "Theme-DebugLogExitThread";
+		public const string DebugLogExitThread = "Theme-" + nameof(DebugLogExitThread);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogProgramOutput"/>
 		/// </summary>
-		public const string DebugLogProgramOutput = "Theme-DebugLogProgramOutput";
+		public const string DebugLogProgramOutput = "Theme-" + nameof(DebugLogProgramOutput);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogMDA"/>
 		/// </summary>
-		public const string DebugLogMDA = "Theme-DebugLogMDA";
+		public const string DebugLogMDA = "Theme-" + nameof(DebugLogMDA);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogTimestamp"/>
 		/// </summary>
-		public const string DebugLogTimestamp = "Theme-DebugLogTimestamp";
+		public const string DebugLogTimestamp = "Theme-" + nameof(DebugLogTimestamp);
 
 		/// <summary>
 		/// <see cref="TextColor.LineNumber"/>
@@ -730,152 +730,152 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.ReplLineNumberInput1"/>
 		/// </summary>
-		public const string ReplLineNumberInput1 = "Theme-ReplLineNumberInput1";
+		public const string ReplLineNumberInput1 = "Theme-" + nameof(ReplLineNumberInput1);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplLineNumberInput2"/>
 		/// </summary>
-		public const string ReplLineNumberInput2 = "Theme-ReplLineNumberInput2";
+		public const string ReplLineNumberInput2 = "Theme-" + nameof(ReplLineNumberInput2);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplLineNumberOutput"/>
 		/// </summary>
-		public const string ReplLineNumberOutput = "Theme-ReplLineNumberOutput";
+		public const string ReplLineNumberOutput = "Theme-" + nameof(ReplLineNumberOutput);
 
 		/// <summary>
 		/// <see cref="TextColor.Link"/>
 		/// </summary>
-		public const string Link = "Theme-Link";
+		public const string Link = "Theme-" + nameof(Link);
 
 		/// <summary>
 		/// <see cref="TextColor.VisibleWhitespace"/>
 		/// </summary>
-		public const string VisibleWhitespace = "Theme-VisibleWhitespace";
+		public const string VisibleWhitespace = "Theme-" + nameof(VisibleWhitespace);
 
 		/// <summary>
 		/// <see cref="TextColor.SelectedText"/>
 		/// </summary>
-		public const string SelectedText = "Theme-SelectedText";
+		public const string SelectedText = "Theme-" + nameof(SelectedText);
 
 		/// <summary>
 		/// <see cref="TextColor.InactiveSelectedText"/>
 		/// </summary>
-		public const string InactiveSelectedText = "Theme-InactiveSelectedText";
+		public const string InactiveSelectedText = "Theme-" + nameof(InactiveSelectedText);
 
 		/// <summary>
 		/// <see cref="TextColor.HighlightedReference"/>
 		/// </summary>
-		public const string HighlightedReference = "Theme-HighlightedReference";
+		public const string HighlightedReference = "Theme-" + nameof(HighlightedReference);
 
 		/// <summary>
 		/// <see cref="TextColor.HighlightedWrittenReference"/>
 		/// </summary>
-		public const string HighlightedWrittenReference = "Theme-HighlightedWrittenReference";
+		public const string HighlightedWrittenReference = "Theme-" + nameof(HighlightedWrittenReference);
 
 		/// <summary>
 		/// <see cref="TextColor.HighlightedDefinition"/>
 		/// </summary>
-		public const string HighlightedDefinition = "Theme-HighlightedDefinition";
+		public const string HighlightedDefinition = "Theme-" + nameof(HighlightedDefinition);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentStatement"/>
 		/// </summary>
-		public const string CurrentStatement = "Theme-CurrentStatement";
+		public const string CurrentStatement = "Theme-" + nameof(CurrentStatement);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentStatementMarker"/>
 		/// </summary>
-		public const string CurrentStatementMarker = "Theme-CurrentStatementMarker";
+		public const string CurrentStatementMarker = "Theme-" + nameof(CurrentStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.CallReturn"/>
 		/// </summary>
-		public const string CallReturn = "Theme-CallReturn";
+		public const string CallReturn = "Theme-" + nameof(CallReturn);
 
 		/// <summary>
 		/// <see cref="TextColor.CallReturnMarker"/>
 		/// </summary>
-		public const string CallReturnMarker = "Theme-CallReturnMarker";
+		public const string CallReturnMarker = "Theme-" + nameof(CallReturnMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.ActiveStatementMarker"/>
 		/// </summary>
-		public const string ActiveStatementMarker = "Theme-ActiveStatementMarker";
+		public const string ActiveStatementMarker = "Theme-" + nameof(ActiveStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.BreakpointStatement"/>
 		/// </summary>
-		public const string BreakpointStatement = "Theme-BreakpointStatement";
+		public const string BreakpointStatement = "Theme-" + nameof(BreakpointStatement);
 
 		/// <summary>
 		/// <see cref="TextColor.BreakpointStatementMarker"/>
 		/// </summary>
-		public const string BreakpointStatementMarker = "Theme-BreakpointStatementMarker";
+		public const string BreakpointStatementMarker = "Theme-" + nameof(BreakpointStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.DisabledBreakpointStatementMarker"/>
 		/// </summary>
-		public const string DisabledBreakpointStatementMarker = "Theme-DisabledBreakpointStatementMarker";
+		public const string DisabledBreakpointStatementMarker = "Theme-" + nameof(DisabledBreakpointStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentLine"/>
 		/// </summary>
-		public const string CurrentLine = "Theme-CurrentLine";
+		public const string CurrentLine = "Theme-" + nameof(CurrentLine);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentLineNoFocus"/>
 		/// </summary>
-		public const string CurrentLineNoFocus = "Theme-CurrentLineNoFocus";
+		public const string CurrentLineNoFocus = "Theme-" + nameof(CurrentLineNoFocus);
 
 		/// <summary>
 		/// <see cref="TextColor.HexText"/>
 		/// </summary>
-		public const string HexText = "Theme-HexText";
+		public const string HexText = "Theme-" + nameof(HexText);
 
 		/// <summary>
 		/// <see cref="TextColor.HexOffset"/>
 		/// </summary>
-		public const string HexOffset = "Theme-HexOffset";
+		public const string HexOffset = "Theme-" + nameof(HexOffset);
 
 		/// <summary>
 		/// <see cref="TextColor.HexByte0"/>
 		/// </summary>
-		public const string HexByte0 = "Theme-HexByte0";
+		public const string HexByte0 = "Theme-" + nameof(HexByte0);
 
 		/// <summary>
 		/// <see cref="TextColor.HexByte1"/>
 		/// </summary>
-		public const string HexByte1 = "Theme-HexByte1";
+		public const string HexByte1 = "Theme-" + nameof(HexByte1);
 
 		/// <summary>
 		/// <see cref="TextColor.HexByteError"/>
 		/// </summary>
-		public const string HexByteError = "Theme-HexByteError";
+		public const string HexByteError = "Theme-" + nameof(HexByteError);
 
 		/// <summary>
 		/// <see cref="TextColor.HexAscii"/>
 		/// </summary>
-		public const string HexAscii = "Theme-HexAscii";
+		public const string HexAscii = "Theme-" + nameof(HexAscii);
 
 		/// <summary>
 		/// <see cref="TextColor.HexCaret"/>
 		/// </summary>
-		public const string HexCaret = "Theme-HexCaret";
+		public const string HexCaret = "Theme-" + nameof(HexCaret);
 
 		/// <summary>
 		/// <see cref="TextColor.HexInactiveCaret"/>
 		/// </summary>
-		public const string HexInactiveCaret = "Theme-HexInactiveCaret";
+		public const string HexInactiveCaret = "Theme-" + nameof(HexInactiveCaret);
 
 		/// <summary>
 		/// <see cref="TextColor.HexSelection"/>
 		/// </summary>
-		public const string HexSelection = "Theme-HexSelection";
+		public const string HexSelection = "Theme-" + nameof(HexSelection);
 
 		/// <summary>
 		/// <see cref="TextColor.GlyphMargin"/>
 		/// </summary>
-		public const string GlyphMargin = "Theme-GlyphMargin";
+		public const string GlyphMargin = "Theme-" + nameof(GlyphMargin);
 
 		/// <summary>
 		/// <see cref="TextColor.BraceMatching"/>
@@ -885,136 +885,136 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.LineSeparator"/>
 		/// </summary>
-		public const string LineSeparator = "Theme-LineSeparator";
+		public const string LineSeparator = "Theme-" + nameof(LineSeparator);
 
 		/// <summary>
 		/// <see cref="TextColor.FindMatchHighlightMarker"/>
 		/// </summary>
-		public const string FindMatchHighlightMarker = "Theme-FindMatchHighlightMarker";
+		public const string FindMatchHighlightMarker = "Theme-" + nameof(FindMatchHighlightMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerNamespace"/>
 		/// </summary>
-		public const string StructureVisualizerNamespace = "Theme-StructureVisualizerNamespace";
+		public const string StructureVisualizerNamespace = "Theme-" + nameof(StructureVisualizerNamespace);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerType"/>
 		/// </summary>
-		public const string StructureVisualizerType = "Theme-StructureVisualizerType";
+		public const string StructureVisualizerType = "Theme-" + nameof(StructureVisualizerType);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerValueType"/>
 		/// </summary>
-		public const string StructureVisualizerValueType = "Theme-StructureVisualizerValueType";
+		public const string StructureVisualizerValueType = "Theme-" + nameof(StructureVisualizerValueType);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerInterface"/>
 		/// </summary>
-		public const string StructureVisualizerInterface = "Theme-StructureVisualizerInterface";
+		public const string StructureVisualizerInterface = "Theme-" + nameof(StructureVisualizerInterface);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerMethod"/>
 		/// </summary>
-		public const string StructureVisualizerMethod = "Theme-StructureVisualizerMethod";
+		public const string StructureVisualizerMethod = "Theme-" + nameof(StructureVisualizerMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerAccessor"/>
 		/// </summary>
-		public const string StructureVisualizerAccessor = "Theme-StructureVisualizerAccessor";
+		public const string StructureVisualizerAccessor = "Theme-" + nameof(StructureVisualizerAccessor);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
 		/// </summary>
-		public const string StructureVisualizerAnonymousMethod = "Theme-StructureVisualizerAnonymousMethod";
+		public const string StructureVisualizerAnonymousMethod = "Theme-" + nameof(StructureVisualizerAnonymousMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerConstructor"/>
 		/// </summary>
-		public const string StructureVisualizerConstructor = "Theme-StructureVisualizerConstructor";
+		public const string StructureVisualizerConstructor = "Theme-" + nameof(StructureVisualizerConstructor);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerDestructor"/>
 		/// </summary>
-		public const string StructureVisualizerDestructor = "Theme-StructureVisualizerDestructor";
+		public const string StructureVisualizerDestructor = "Theme-" + nameof(StructureVisualizerDestructor);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerOperator"/>
 		/// </summary>
-		public const string StructureVisualizerOperator = "Theme-StructureVisualizerOperator";
+		public const string StructureVisualizerOperator = "Theme-" + nameof(StructureVisualizerOperator);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerConditional"/>
 		/// </summary>
-		public const string StructureVisualizerConditional = "Theme-StructureVisualizerConditional";
+		public const string StructureVisualizerConditional = "Theme-" + nameof(StructureVisualizerConditional);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerLoop"/>
 		/// </summary>
-		public const string StructureVisualizerLoop = "Theme-StructureVisualizerLoop";
+		public const string StructureVisualizerLoop = "Theme-" + nameof(StructureVisualizerLoop);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerProperty"/>
 		/// </summary>
-		public const string StructureVisualizerProperty = "Theme-StructureVisualizerProperty";
+		public const string StructureVisualizerProperty = "Theme-" + nameof(StructureVisualizerProperty);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerEvent"/>
 		/// </summary>
-		public const string StructureVisualizerEvent = "Theme-StructureVisualizerEvent";
+		public const string StructureVisualizerEvent = "Theme-" + nameof(StructureVisualizerEvent);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerTry"/>
 		/// </summary>
-		public const string StructureVisualizerTry = "Theme-StructureVisualizerTry";
+		public const string StructureVisualizerTry = "Theme-" + nameof(StructureVisualizerTry);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerCatch"/>
 		/// </summary>
-		public const string StructureVisualizerCatch = "Theme-StructureVisualizerCatch";
+		public const string StructureVisualizerCatch = "Theme-" + nameof(StructureVisualizerCatch);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFilter"/>
 		/// </summary>
-		public const string StructureVisualizerFilter = "Theme-StructureVisualizerFilter";
+		public const string StructureVisualizerFilter = "Theme-" + nameof(StructureVisualizerFilter);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFinally"/>
 		/// </summary>
-		public const string StructureVisualizerFinally = "Theme-StructureVisualizerFinally";
+		public const string StructureVisualizerFinally = "Theme-" + nameof(StructureVisualizerFinally);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFault"/>
 		/// </summary>
-		public const string StructureVisualizerFault = "Theme-StructureVisualizerFault";
+		public const string StructureVisualizerFault = "Theme-" + nameof(StructureVisualizerFault);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerLock"/>
 		/// </summary>
-		public const string StructureVisualizerLock = "Theme-StructureVisualizerLock";
+		public const string StructureVisualizerLock = "Theme-" + nameof(StructureVisualizerLock);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerUsing"/>
 		/// </summary>
-		public const string StructureVisualizerUsing = "Theme-StructureVisualizerUsing";
+		public const string StructureVisualizerUsing = "Theme-" + nameof(StructureVisualizerUsing);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFixed"/>
 		/// </summary>
-		public const string StructureVisualizerFixed = "Theme-StructureVisualizerFixed";
+		public const string StructureVisualizerFixed = "Theme-" + nameof(StructureVisualizerFixed);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerCase"/>
 		/// </summary>
-		public const string StructureVisualizerCase = "Theme-StructureVisualizerCase";
+		public const string StructureVisualizerCase = "Theme-" + nameof(StructureVisualizerCase);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerOther"/>
 		/// </summary>
-		public const string StructureVisualizerOther = "Theme-StructureVisualizerOther";
+		public const string StructureVisualizerOther = "Theme-" + nameof(StructureVisualizerOther);
 
 		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
 		/// </summary>
-		public const string CompletionMatchHighlight = "Theme-CompletionMatchHighlight";
+		public const string CompletionMatchHighlight = "Theme-" + nameof(CompletionMatchHighlight);
 	}
 }

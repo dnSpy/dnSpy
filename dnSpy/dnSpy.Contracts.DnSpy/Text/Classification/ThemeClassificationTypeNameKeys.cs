@@ -25,12 +25,12 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// Identifier
 		/// </summary>
-		public const string Identifier = "Identifier";
+		public const string Identifier = nameof(Identifier);
 
 		/// <summary>
 		/// Literal
 		/// </summary>
-		public const string Literal = "Literal";
+		public const string Literal = nameof(Literal);
 
 		/// <summary>
 		/// <see cref="TextColor.Text"/>
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.Operator"/>
 		/// </summary>
-		public const string Operator = "Operator";
+		public const string Operator = nameof(Operator);
 
 		/// <summary>
 		/// <see cref="TextColor.Punctuation"/>
@@ -50,22 +50,22 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.Number"/>
 		/// </summary>
-		public const string Number = "Number";
+		public const string Number = nameof(Number);
 
 		/// <summary>
 		/// <see cref="TextColor.Comment"/>
 		/// </summary>
-		public const string Comment = "Comment";
+		public const string Comment = nameof(Comment);
 
 		/// <summary>
 		/// <see cref="TextColor.Keyword"/>
 		/// </summary>
-		public const string Keyword = "Keyword";
+		public const string Keyword = nameof(Keyword);
 
 		/// <summary>
 		/// <see cref="TextColor.String"/>
 		/// </summary>
-		public const string String = "String";
+		public const string String = nameof(String);
 
 		/// <summary>
 		/// <see cref="TextColor.VerbatimString"/>
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.Namespace"/>
 		/// </summary>
-		public const string Namespace = "Namespace";
+		public const string Namespace = nameof(Namespace);
 
 		/// <summary>
 		/// <see cref="TextColor.Type"/>
@@ -90,12 +90,12 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.SealedType"/>
 		/// </summary>
-		public const string SealedType = "SealedType";
+		public const string SealedType = nameof(SealedType);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticType"/>
 		/// </summary>
-		public const string StaticType = "StaticType";
+		public const string StaticType = nameof(StaticType);
 
 		/// <summary>
 		/// <see cref="TextColor.Delegate"/>
@@ -125,72 +125,72 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.MethodGenericParameter"/>
 		/// </summary>
-		public const string MethodGenericParameter = "MethodGenericParameter";
+		public const string MethodGenericParameter = nameof(MethodGenericParameter);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceMethod"/>
 		/// </summary>
-		public const string InstanceMethod = "InstanceMethod";
+		public const string InstanceMethod = nameof(InstanceMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticMethod"/>
 		/// </summary>
-		public const string StaticMethod = "StaticMethod";
+		public const string StaticMethod = nameof(StaticMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.ExtensionMethod"/>
 		/// </summary>
-		public const string ExtensionMethod = "ExtensionMethod";
+		public const string ExtensionMethod = nameof(ExtensionMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceField"/>
 		/// </summary>
-		public const string InstanceField = "InstanceField";
+		public const string InstanceField = nameof(InstanceField);
 
 		/// <summary>
 		/// <see cref="TextColor.EnumField"/>
 		/// </summary>
-		public const string EnumField = "EnumField";
+		public const string EnumField = nameof(EnumField);
 
 		/// <summary>
 		/// <see cref="TextColor.LiteralField"/>
 		/// </summary>
-		public const string LiteralField = "LiteralField";
+		public const string LiteralField = nameof(LiteralField);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticField"/>
 		/// </summary>
-		public const string StaticField = "StaticField";
+		public const string StaticField = nameof(StaticField);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceEvent"/>
 		/// </summary>
-		public const string InstanceEvent = "InstanceEvent";
+		public const string InstanceEvent = nameof(InstanceEvent);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticEvent"/>
 		/// </summary>
-		public const string StaticEvent = "StaticEvent";
+		public const string StaticEvent = nameof(StaticEvent);
 
 		/// <summary>
 		/// <see cref="TextColor.InstanceProperty"/>
 		/// </summary>
-		public const string InstanceProperty = "InstanceProperty";
+		public const string InstanceProperty = nameof(InstanceProperty);
 
 		/// <summary>
 		/// <see cref="TextColor.StaticProperty"/>
 		/// </summary>
-		public const string StaticProperty = "StaticProperty";
+		public const string StaticProperty = nameof(StaticProperty);
 
 		/// <summary>
 		/// <see cref="TextColor.Local"/>
 		/// </summary>
-		public const string Local = "Local";
+		public const string Local = nameof(Local);
 
 		/// <summary>
 		/// <see cref="TextColor.Parameter"/>
 		/// </summary>
-		public const string Parameter = "Parameter";
+		public const string Parameter = nameof(Parameter);
 
 		/// <summary>
 		/// <see cref="TextColor.PreprocessorKeyword"/>
@@ -205,22 +205,22 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.Label"/>
 		/// </summary>
-		public const string Label = "Label";
+		public const string Label = nameof(Label);
 
 		/// <summary>
 		/// <see cref="TextColor.OpCode"/>
 		/// </summary>
-		public const string OpCode = "OpCode";
+		public const string OpCode = nameof(OpCode);
 
 		/// <summary>
 		/// <see cref="TextColor.ILDirective"/>
 		/// </summary>
-		public const string ILDirective = "ILDirective";
+		public const string ILDirective = nameof(ILDirective);
 
 		/// <summary>
 		/// <see cref="TextColor.ILModule"/>
 		/// </summary>
-		public const string ILModule = "ILModule";
+		public const string ILModule = nameof(ILModule);
 
 		/// <summary>
 		/// <see cref="TextColor.ExcludedCode"/>
@@ -335,132 +335,132 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeName"/>
 		/// </summary>
-		public const string XmlAttributeName = "XmlAttributeName";
+		public const string XmlAttributeName = nameof(XmlAttributeName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeQuotes"/>
 		/// </summary>
-		public const string XmlAttributeQuotes = "XmlAttributeQuotes";
+		public const string XmlAttributeQuotes = nameof(XmlAttributeQuotes);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeValue"/>
 		/// </summary>
-		public const string XmlAttributeValue = "XmlAttributeValue";
+		public const string XmlAttributeValue = nameof(XmlAttributeValue);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlCDataSection"/>
 		/// </summary>
-		public const string XmlCDataSection = "XmlCDataSection";
+		public const string XmlCDataSection = nameof(XmlCDataSection);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlComment"/>
 		/// </summary>
-		public const string XmlComment = "XmlComment";
+		public const string XmlComment = nameof(XmlComment);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDelimiter"/>
 		/// </summary>
-		public const string XmlDelimiter = "XmlDelimiter";
+		public const string XmlDelimiter = nameof(XmlDelimiter);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlKeyword"/>
 		/// </summary>
-		public const string XmlKeyword = "XmlKeyword";
+		public const string XmlKeyword = nameof(XmlKeyword);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlName"/>
 		/// </summary>
-		public const string XmlName = "XmlName";
+		public const string XmlName = nameof(XmlName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlProcessingInstruction"/>
 		/// </summary>
-		public const string XmlProcessingInstruction = "XmlProcessingInstruction";
+		public const string XmlProcessingInstruction = nameof(XmlProcessingInstruction);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlText"/>
 		/// </summary>
-		public const string XmlText = "XmlText";
+		public const string XmlText = nameof(XmlText);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipColon"/>
 		/// </summary>
-		public const string XmlDocToolTipColon = "XmlDocToolTipColon";
+		public const string XmlDocToolTipColon = nameof(XmlDocToolTipColon);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipExample"/>
 		/// </summary>
-		public const string XmlDocToolTipExample = "XmlDocToolTipExample";
+		public const string XmlDocToolTipExample = nameof(XmlDocToolTipExample);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipExceptionCref"/>
 		/// </summary>
-		public const string XmlDocToolTipExceptionCref = "XmlDocToolTipExceptionCref";
+		public const string XmlDocToolTipExceptionCref = nameof(XmlDocToolTipExceptionCref);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipReturns"/>
 		/// </summary>
-		public const string XmlDocToolTipReturns = "XmlDocToolTipReturns";
+		public const string XmlDocToolTipReturns = nameof(XmlDocToolTipReturns);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeCref"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeCref = "XmlDocToolTipSeeCref";
+		public const string XmlDocToolTipSeeCref = nameof(XmlDocToolTipSeeCref);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeLangword"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeLangword = "XmlDocToolTipSeeLangword";
+		public const string XmlDocToolTipSeeLangword = nameof(XmlDocToolTipSeeLangword);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeAlso"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeAlso = "XmlDocToolTipSeeAlso";
+		public const string XmlDocToolTipSeeAlso = nameof(XmlDocToolTipSeeAlso);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSeeAlsoCref"/>
 		/// </summary>
-		public const string XmlDocToolTipSeeAlsoCref = "XmlDocToolTipSeeAlsoCref";
+		public const string XmlDocToolTipSeeAlsoCref = nameof(XmlDocToolTipSeeAlsoCref);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipParamRefName"/>
 		/// </summary>
-		public const string XmlDocToolTipParamRefName = "XmlDocToolTipParamRefName";
+		public const string XmlDocToolTipParamRefName = nameof(XmlDocToolTipParamRefName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipParamName"/>
 		/// </summary>
-		public const string XmlDocToolTipParamName = "XmlDocToolTipParamName";
+		public const string XmlDocToolTipParamName = nameof(XmlDocToolTipParamName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipTypeParamName"/>
 		/// </summary>
-		public const string XmlDocToolTipTypeParamName = "XmlDocToolTipTypeParamName";
+		public const string XmlDocToolTipTypeParamName = nameof(XmlDocToolTipTypeParamName);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipValue"/>
 		/// </summary>
-		public const string XmlDocToolTipValue = "XmlDocToolTipValue";
+		public const string XmlDocToolTipValue = nameof(XmlDocToolTipValue);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipSummary"/>
 		/// </summary>
-		public const string XmlDocToolTipSummary = "XmlDocToolTipSummary";
+		public const string XmlDocToolTipSummary = nameof(XmlDocToolTipSummary);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipText"/>
 		/// </summary>
-		public const string XmlDocToolTipText = "XmlDocToolTipText";
+		public const string XmlDocToolTipText = nameof(XmlDocToolTipText);
 
 		/// <summary>
 		/// <see cref="TextColor.Assembly"/>
 		/// </summary>
-		public const string Assembly = "Assembly";
+		public const string Assembly = nameof(Assembly);
 
 		/// <summary>
 		/// <see cref="TextColor.AssemblyExe"/>
 		/// </summary>
-		public const string AssemblyExe = "AssemblyExe";
+		public const string AssemblyExe = nameof(AssemblyExe);
 
 		/// <summary>
 		/// <see cref="TextColor.Module"/>
@@ -470,257 +470,257 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.DirectoryPart"/>
 		/// </summary>
-		public const string DirectoryPart = "DirectoryPart";
+		public const string DirectoryPart = nameof(DirectoryPart);
 
 		/// <summary>
 		/// <see cref="TextColor.FileNameNoExtension"/>
 		/// </summary>
-		public const string FileNameNoExtension = "FileNameNoExtension";
+		public const string FileNameNoExtension = nameof(FileNameNoExtension);
 
 		/// <summary>
 		/// <see cref="TextColor.FileExtension"/>
 		/// </summary>
-		public const string FileExtension = "FileExtension";
+		public const string FileExtension = nameof(FileExtension);
 
 		/// <summary>
 		/// <see cref="TextColor.Error"/>
 		/// </summary>
-		public const string Error = "Error";
+		public const string Error = nameof(Error);
 
 		/// <summary>
 		/// <see cref="TextColor.ToStringEval"/>
 		/// </summary>
-		public const string ToStringEval = "ToStringEval";
+		public const string ToStringEval = nameof(ToStringEval);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplPrompt1"/>
 		/// </summary>
-		public const string ReplPrompt1 = "ReplPrompt1";
+		public const string ReplPrompt1 = nameof(ReplPrompt1);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplPrompt2"/>
 		/// </summary>
-		public const string ReplPrompt2 = "ReplPrompt2";
+		public const string ReplPrompt2 = nameof(ReplPrompt2);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplOutputText"/>
 		/// </summary>
-		public const string ReplOutputText = "ReplOutputText";
+		public const string ReplOutputText = nameof(ReplOutputText);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplScriptOutputText"/>
 		/// </summary>
-		public const string ReplScriptOutputText = "ReplScriptOutputText";
+		public const string ReplScriptOutputText = nameof(ReplScriptOutputText);
 
 		/// <summary>
 		/// <see cref="TextColor.Black"/>
 		/// </summary>
-		public const string Black = "Black";
+		public const string Black = nameof(Black);
 
 		/// <summary>
 		/// <see cref="TextColor.Blue"/>
 		/// </summary>
-		public const string Blue = "Blue";
+		public const string Blue = nameof(Blue);
 
 		/// <summary>
 		/// <see cref="TextColor.Cyan"/>
 		/// </summary>
-		public const string Cyan = "Cyan";
+		public const string Cyan = nameof(Cyan);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkBlue"/>
 		/// </summary>
-		public const string DarkBlue = "DarkBlue";
+		public const string DarkBlue = nameof(DarkBlue);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkCyan"/>
 		/// </summary>
-		public const string DarkCyan = "DarkCyan";
+		public const string DarkCyan = nameof(DarkCyan);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkGray"/>
 		/// </summary>
-		public const string DarkGray = "DarkGray";
+		public const string DarkGray = nameof(DarkGray);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkGreen"/>
 		/// </summary>
-		public const string DarkGreen = "DarkGreen";
+		public const string DarkGreen = nameof(DarkGreen);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkMagenta"/>
 		/// </summary>
-		public const string DarkMagenta = "DarkMagenta";
+		public const string DarkMagenta = nameof(DarkMagenta);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkRed"/>
 		/// </summary>
-		public const string DarkRed = "DarkRed";
+		public const string DarkRed = nameof(DarkRed);
 
 		/// <summary>
 		/// <see cref="TextColor.DarkYellow"/>
 		/// </summary>
-		public const string DarkYellow = "DarkYellow";
+		public const string DarkYellow = nameof(DarkYellow);
 
 		/// <summary>
 		/// <see cref="TextColor.Gray"/>
 		/// </summary>
-		public const string Gray = "Gray";
+		public const string Gray = nameof(Gray);
 
 		/// <summary>
 		/// <see cref="TextColor.Green"/>
 		/// </summary>
-		public const string Green = "Green";
+		public const string Green = nameof(Green);
 
 		/// <summary>
 		/// <see cref="TextColor.Magenta"/>
 		/// </summary>
-		public const string Magenta = "Magenta";
+		public const string Magenta = nameof(Magenta);
 
 		/// <summary>
 		/// <see cref="TextColor.Red"/>
 		/// </summary>
-		public const string Red = "Red";
+		public const string Red = nameof(Red);
 
 		/// <summary>
 		/// <see cref="TextColor.White"/>
 		/// </summary>
-		public const string White = "White";
+		public const string White = nameof(White);
 
 		/// <summary>
 		/// <see cref="TextColor.Yellow"/>
 		/// </summary>
-		public const string Yellow = "Yellow";
+		public const string Yellow = nameof(Yellow);
 
 		/// <summary>
 		/// <see cref="TextColor.InvBlack"/>
 		/// </summary>
-		public const string InvBlack = "InvBlack";
+		public const string InvBlack = nameof(InvBlack);
 
 		/// <summary>
 		/// <see cref="TextColor.InvBlue"/>
 		/// </summary>
-		public const string InvBlue = "InvBlue";
+		public const string InvBlue = nameof(InvBlue);
 
 		/// <summary>
 		/// <see cref="TextColor.InvCyan"/>
 		/// </summary>
-		public const string InvCyan = "InvCyan";
+		public const string InvCyan = nameof(InvCyan);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkBlue"/>
 		/// </summary>
-		public const string InvDarkBlue = "InvDarkBlue";
+		public const string InvDarkBlue = nameof(InvDarkBlue);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkCyan"/>
 		/// </summary>
-		public const string InvDarkCyan = "InvDarkCyan";
+		public const string InvDarkCyan = nameof(InvDarkCyan);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkGray"/>
 		/// </summary>
-		public const string InvDarkGray = "InvDarkGray";
+		public const string InvDarkGray = nameof(InvDarkGray);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkGreen"/>
 		/// </summary>
-		public const string InvDarkGreen = "InvDarkGreen";
+		public const string InvDarkGreen = nameof(InvDarkGreen);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkMagenta"/>
 		/// </summary>
-		public const string InvDarkMagenta = "InvDarkMagenta";
+		public const string InvDarkMagenta = nameof(InvDarkMagenta);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkRed"/>
 		/// </summary>
-		public const string InvDarkRed = "InvDarkRed";
+		public const string InvDarkRed = nameof(InvDarkRed);
 
 		/// <summary>
 		/// <see cref="TextColor.InvDarkYellow"/>
 		/// </summary>
-		public const string InvDarkYellow = "InvDarkYellow";
+		public const string InvDarkYellow = nameof(InvDarkYellow);
 
 		/// <summary>
 		/// <see cref="TextColor.InvGray"/>
 		/// </summary>
-		public const string InvGray = "InvGray";
+		public const string InvGray = nameof(InvGray);
 
 		/// <summary>
 		/// <see cref="TextColor.InvGreen"/>
 		/// </summary>
-		public const string InvGreen = "InvGreen";
+		public const string InvGreen = nameof(InvGreen);
 
 		/// <summary>
 		/// <see cref="TextColor.InvMagenta"/>
 		/// </summary>
-		public const string InvMagenta = "InvMagenta";
+		public const string InvMagenta = nameof(InvMagenta);
 
 		/// <summary>
 		/// <see cref="TextColor.InvRed"/>
 		/// </summary>
-		public const string InvRed = "InvRed";
+		public const string InvRed = nameof(InvRed);
 
 		/// <summary>
 		/// <see cref="TextColor.InvWhite"/>
 		/// </summary>
-		public const string InvWhite = "InvWhite";
+		public const string InvWhite = nameof(InvWhite);
 
 		/// <summary>
 		/// <see cref="TextColor.InvYellow"/>
 		/// </summary>
-		public const string InvYellow = "InvYellow";
+		public const string InvYellow = nameof(InvYellow);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExceptionHandled"/>
 		/// </summary>
-		public const string DebugLogExceptionHandled = "DebugLogExceptionHandled";
+		public const string DebugLogExceptionHandled = nameof(DebugLogExceptionHandled);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExceptionUnhandled"/>
 		/// </summary>
-		public const string DebugLogExceptionUnhandled = "DebugLogExceptionUnhandled";
+		public const string DebugLogExceptionUnhandled = nameof(DebugLogExceptionUnhandled);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogStepFiltering"/>
 		/// </summary>
-		public const string DebugLogStepFiltering = "DebugLogStepFiltering";
+		public const string DebugLogStepFiltering = nameof(DebugLogStepFiltering);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogLoadModule"/>
 		/// </summary>
-		public const string DebugLogLoadModule = "DebugLogLoadModule";
+		public const string DebugLogLoadModule = nameof(DebugLogLoadModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogUnloadModule"/>
 		/// </summary>
-		public const string DebugLogUnloadModule = "DebugLogUnloadModule";
+		public const string DebugLogUnloadModule = nameof(DebugLogUnloadModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExitProcess"/>
 		/// </summary>
-		public const string DebugLogExitProcess = "DebugLogExitProcess";
+		public const string DebugLogExitProcess = nameof(DebugLogExitProcess);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogExitThread"/>
 		/// </summary>
-		public const string DebugLogExitThread = "DebugLogExitThread";
+		public const string DebugLogExitThread = nameof(DebugLogExitThread);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogProgramOutput"/>
 		/// </summary>
-		public const string DebugLogProgramOutput = "DebugLogProgramOutput";
+		public const string DebugLogProgramOutput = nameof(DebugLogProgramOutput);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogMDA"/>
 		/// </summary>
-		public const string DebugLogMDA = "DebugLogMDA";
+		public const string DebugLogMDA = nameof(DebugLogMDA);
 
 		/// <summary>
 		/// <see cref="TextColor.DebugLogTimestamp"/>
 		/// </summary>
-		public const string DebugLogTimestamp = "DebugLogTimestamp";
+		public const string DebugLogTimestamp = nameof(DebugLogTimestamp);
 
 		/// <summary>
 		/// <see cref="TextColor.LineNumber"/>
@@ -730,27 +730,27 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.ReplLineNumberInput1"/>
 		/// </summary>
-		public const string ReplLineNumberInput1 = "ReplLineNumberInput1";
+		public const string ReplLineNumberInput1 = nameof(ReplLineNumberInput1);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplLineNumberInput2"/>
 		/// </summary>
-		public const string ReplLineNumberInput2 = "ReplLineNumberInput2";
+		public const string ReplLineNumberInput2 = nameof(ReplLineNumberInput2);
 
 		/// <summary>
 		/// <see cref="TextColor.ReplLineNumberOutput"/>
 		/// </summary>
-		public const string ReplLineNumberOutput = "ReplLineNumberOutput";
+		public const string ReplLineNumberOutput = nameof(ReplLineNumberOutput);
 
 		/// <summary>
 		/// <see cref="TextColor.Link"/>
 		/// </summary>
-		public const string Link = "Link";
+		public const string Link = nameof(Link);
 
 		/// <summary>
 		/// <see cref="TextColor.VisibleWhitespace"/>
 		/// </summary>
-		public const string VisibleWhitespace = "VisibleWhitespace";
+		public const string VisibleWhitespace = nameof(VisibleWhitespace);
 
 		/// <summary>
 		/// <see cref="TextColor.SelectedText"/>
@@ -780,97 +780,97 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.CurrentStatement"/>
 		/// </summary>
-		public const string CurrentStatement = "CurrentStatement";
+		public const string CurrentStatement = nameof(CurrentStatement);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentStatementMarker"/>
 		/// </summary>
-		public const string CurrentStatementMarker = "CurrentStatementMarker";
+		public const string CurrentStatementMarker = nameof(CurrentStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.CallReturn"/>
 		/// </summary>
-		public const string CallReturn = "CallReturn";
+		public const string CallReturn = nameof(CallReturn);
 
 		/// <summary>
 		/// <see cref="TextColor.CallReturnMarker"/>
 		/// </summary>
-		public const string CallReturnMarker = "CallReturnMarker";
+		public const string CallReturnMarker = nameof(CallReturnMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.ActiveStatementMarker"/>
 		/// </summary>
-		public const string ActiveStatementMarker = "ActiveStatementMarker";
+		public const string ActiveStatementMarker = nameof(ActiveStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.BreakpointStatement"/>
 		/// </summary>
-		public const string BreakpointStatement = "BreakpointStatement";
+		public const string BreakpointStatement = nameof(BreakpointStatement);
 
 		/// <summary>
 		/// <see cref="TextColor.BreakpointStatementMarker"/>
 		/// </summary>
-		public const string BreakpointStatementMarker = "BreakpointStatementMarker";
+		public const string BreakpointStatementMarker = nameof(BreakpointStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.DisabledBreakpointStatementMarker"/>
 		/// </summary>
-		public const string DisabledBreakpointStatementMarker = "DisabledBreakpointStatementMarker";
+		public const string DisabledBreakpointStatementMarker = nameof(DisabledBreakpointStatementMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentLine"/>
 		/// </summary>
-		public const string CurrentLine = "CurrentLineActiveFormat";
+		public const string CurrentLine = nameof(CurrentLine);
 
 		/// <summary>
 		/// <see cref="TextColor.CurrentLineNoFocus"/>
 		/// </summary>
-		public const string CurrentLineNoFocus = "CurrentLineInactiveFormat";
+		public const string CurrentLineNoFocus = nameof(CurrentLineNoFocus);
 
 		/// <summary>
 		/// <see cref="TextColor.HexText"/>
 		/// </summary>
-		public const string HexText = "HexText";
+		public const string HexText = nameof(HexText);
 
 		/// <summary>
 		/// <see cref="TextColor.HexOffset"/>
 		/// </summary>
-		public const string HexOffset = "HexOffset";
+		public const string HexOffset = nameof(HexOffset);
 
 		/// <summary>
 		/// <see cref="TextColor.HexByte0"/>
 		/// </summary>
-		public const string HexByte0 = "HexByte0";
+		public const string HexByte0 = nameof(HexByte0);
 
 		/// <summary>
 		/// <see cref="TextColor.HexByte1"/>
 		/// </summary>
-		public const string HexByte1 = "HexByte1";
+		public const string HexByte1 = nameof(HexByte1);
 
 		/// <summary>
 		/// <see cref="TextColor.HexByteError"/>
 		/// </summary>
-		public const string HexByteError = "HexByteError";
+		public const string HexByteError = nameof(HexByteError);
 
 		/// <summary>
 		/// <see cref="TextColor.HexAscii"/>
 		/// </summary>
-		public const string HexAscii = "HexAscii";
+		public const string HexAscii = nameof(HexAscii);
 
 		/// <summary>
 		/// <see cref="TextColor.HexCaret"/>
 		/// </summary>
-		public const string HexCaret = "HexCaret";
+		public const string HexCaret = nameof(HexCaret);
 
 		/// <summary>
 		/// <see cref="TextColor.HexInactiveCaret"/>
 		/// </summary>
-		public const string HexInactiveCaret = "HexInactiveCaret";
+		public const string HexInactiveCaret = nameof(HexInactiveCaret);
 
 		/// <summary>
 		/// <see cref="TextColor.HexSelection"/>
 		/// </summary>
-		public const string HexSelection = "HexSelection";
+		public const string HexSelection = nameof(HexSelection);
 
 		/// <summary>
 		/// <see cref="TextColor.GlyphMargin"/>
@@ -885,136 +885,136 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// <see cref="TextColor.LineSeparator"/>
 		/// </summary>
-		public const string LineSeparator = "LineSeparator";
+		public const string LineSeparator = nameof(LineSeparator);
 
 		/// <summary>
 		/// <see cref="TextColor.FindMatchHighlightMarker"/>
 		/// </summary>
-		public const string FindMatchHighlightMarker = "FindMatchHighlightMarker";
+		public const string FindMatchHighlightMarker = nameof(FindMatchHighlightMarker);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerNamespace"/>
 		/// </summary>
-		public const string StructureVisualizerNamespace = "StructureVisualizerNamespace";
+		public const string StructureVisualizerNamespace = nameof(StructureVisualizerNamespace);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerType"/>
 		/// </summary>
-		public const string StructureVisualizerType = "StructureVisualizerType";
+		public const string StructureVisualizerType = nameof(StructureVisualizerType);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerValueType"/>
 		/// </summary>
-		public const string StructureVisualizerValueType = "StructureVisualizerValueType";
+		public const string StructureVisualizerValueType = nameof(StructureVisualizerValueType);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerInterface"/>
 		/// </summary>
-		public const string StructureVisualizerInterface = "StructureVisualizerInterface";
+		public const string StructureVisualizerInterface = nameof(StructureVisualizerInterface);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerMethod"/>
 		/// </summary>
-		public const string StructureVisualizerMethod = "StructureVisualizerMethod";
+		public const string StructureVisualizerMethod = nameof(StructureVisualizerMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerAccessor"/>
 		/// </summary>
-		public const string StructureVisualizerAccessor = "StructureVisualizerAccessor";
+		public const string StructureVisualizerAccessor = nameof(StructureVisualizerAccessor);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
 		/// </summary>
-		public const string StructureVisualizerAnonymousMethod = "StructureVisualizerAnonymousMethod";
+		public const string StructureVisualizerAnonymousMethod = nameof(StructureVisualizerAnonymousMethod);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerConstructor"/>
 		/// </summary>
-		public const string StructureVisualizerConstructor = "StructureVisualizerConstructor";
+		public const string StructureVisualizerConstructor = nameof(StructureVisualizerConstructor);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerDestructor"/>
 		/// </summary>
-		public const string StructureVisualizerDestructor = "StructureVisualizerDestructor";
+		public const string StructureVisualizerDestructor = nameof(StructureVisualizerDestructor);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerOperator"/>
 		/// </summary>
-		public const string StructureVisualizerOperator = "StructureVisualizerOperator";
+		public const string StructureVisualizerOperator = nameof(StructureVisualizerOperator);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerConditional"/>
 		/// </summary>
-		public const string StructureVisualizerConditional = "StructureVisualizerConditional";
+		public const string StructureVisualizerConditional = nameof(StructureVisualizerConditional);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerLoop"/>
 		/// </summary>
-		public const string StructureVisualizerLoop = "StructureVisualizerLoop";
+		public const string StructureVisualizerLoop = nameof(StructureVisualizerLoop);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerProperty"/>
 		/// </summary>
-		public const string StructureVisualizerProperty = "StructureVisualizerProperty";
+		public const string StructureVisualizerProperty = nameof(StructureVisualizerProperty);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerEvent"/>
 		/// </summary>
-		public const string StructureVisualizerEvent = "StructureVisualizerEvent";
+		public const string StructureVisualizerEvent = nameof(StructureVisualizerEvent);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerTry"/>
 		/// </summary>
-		public const string StructureVisualizerTry = "StructureVisualizerTry";
+		public const string StructureVisualizerTry = nameof(StructureVisualizerTry);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerCatch"/>
 		/// </summary>
-		public const string StructureVisualizerCatch = "StructureVisualizerCatch";
+		public const string StructureVisualizerCatch = nameof(StructureVisualizerCatch);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFilter"/>
 		/// </summary>
-		public const string StructureVisualizerFilter = "StructureVisualizerFilter";
+		public const string StructureVisualizerFilter = nameof(StructureVisualizerFilter);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFinally"/>
 		/// </summary>
-		public const string StructureVisualizerFinally = "StructureVisualizerFinally";
+		public const string StructureVisualizerFinally = nameof(StructureVisualizerFinally);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFault"/>
 		/// </summary>
-		public const string StructureVisualizerFault = "StructureVisualizerFault";
+		public const string StructureVisualizerFault = nameof(StructureVisualizerFault);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerLock"/>
 		/// </summary>
-		public const string StructureVisualizerLock = "StructureVisualizerLock";
+		public const string StructureVisualizerLock = nameof(StructureVisualizerLock);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerUsing"/>
 		/// </summary>
-		public const string StructureVisualizerUsing = "StructureVisualizerUsing";
+		public const string StructureVisualizerUsing = nameof(StructureVisualizerUsing);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerFixed"/>
 		/// </summary>
-		public const string StructureVisualizerFixed = "StructureVisualizerFixed";
+		public const string StructureVisualizerFixed = nameof(StructureVisualizerFixed);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerCase"/>
 		/// </summary>
-		public const string StructureVisualizerCase = "StructureVisualizerCase";
+		public const string StructureVisualizerCase = nameof(StructureVisualizerCase);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerOther"/>
 		/// </summary>
-		public const string StructureVisualizerOther = "StructureVisualizerOther";
+		public const string StructureVisualizerOther = nameof(StructureVisualizerOther);
 
 		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
 		/// </summary>
-		public const string CompletionMatchHighlight = "CompletionMatchHighlight";
+		public const string CompletionMatchHighlight = nameof(CompletionMatchHighlight);
 	}
 }
