@@ -55,9 +55,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense {
 			case CompletionKind.EventInternal:			return "EventInternal";
 			case CompletionKind.EventPrivate:			return "EventPrivate";
 			case CompletionKind.Event:					return "Event";
-			case CompletionKind.ExtensionMethodProtected:return "ExtensionMethodProtected";
-			case CompletionKind.ExtensionMethodInternal:return "ExtensionMethodInternal";
-			case CompletionKind.ExtensionMethodPrivate: return "ExtensionMethodPrivate";
+			case CompletionKind.ExtensionMethodProtected:return "ExtensionMethod";
+			case CompletionKind.ExtensionMethodInternal:return "ExtensionMethod";
+			case CompletionKind.ExtensionMethodPrivate: return "ExtensionMethod";
 			case CompletionKind.ExtensionMethod:		return "ExtensionMethod";
 			case CompletionKind.FieldProtected:			return "FieldProtected";
 			case CompletionKind.FieldInternal:			return "FieldInternal";

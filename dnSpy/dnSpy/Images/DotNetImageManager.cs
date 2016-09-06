@@ -297,24 +297,8 @@ namespace dnSpy.Images {
 				}
 			}
 
-			if (method.IsStatic && method.CustomAttributes.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute")) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "ExtensionMethod";
-				case MethodAttributes.Private:
-					return "ExtensionMethodPrivate";
-				case MethodAttributes.Family:
-					return "ExtensionMethodProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "ExtensionMethodInternal";
-				case MethodAttributes.CompilerControlled:
-					return "ExtensionMethodCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "ExtensionMethodProtectedInternal";
-				}
-			}
+			if (method.IsStatic && method.CustomAttributes.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute"))
+				return "ExtensionMethod";
 
 			if (method.IsConstructor) {
 				switch (method.Access) {

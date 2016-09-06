@@ -848,11 +848,6 @@
     <Resource Include="Images\ExceptionProtected.png" />
     <Resource Include="Images\ExceptionProtectedInternal.png" />
     <Resource Include="Images\ExtensionMethod.png" />
-    <Resource Include="Images\ExtensionMethodCompilerControlled.png" />
-    <Resource Include="Images\ExtensionMethodInternal.png" />
-    <Resource Include="Images\ExtensionMethodPrivate.png" />
-    <Resource Include="Images\ExtensionMethodProtected.png" />
-    <Resource Include="Images\ExtensionMethodProtectedInternal.png" />
     <Resource Include="Images\Field.png" />
     <Resource Include="Images\FieldCompilerControlled.png" />
     <Resource Include="Images\FieldInternal.png" />
