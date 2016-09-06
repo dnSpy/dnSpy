@@ -25,12 +25,12 @@ using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
-	[Export(typeof(IThemeClassificationTypes))]
-	sealed class ThemeClassificationTypes : IThemeClassificationTypes {
+	[Export(typeof(IThemeClassificationTypeService))]
+	sealed class ThemeClassificationTypeService : IThemeClassificationTypeService {
 		readonly IClassificationType[] classificationTypes;
 
 		[ImportingConstructor]
-		ThemeClassificationTypes(IClassificationTypeRegistryService classificationTypeRegistryService) {
+		ThemeClassificationTypeService(IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.classificationTypes = new IClassificationType[(int)TextColor.Last] {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Text),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Operator),

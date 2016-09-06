@@ -450,7 +450,7 @@
     <Compile Include="Text\Classification\TextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
-    <Compile Include="Text\Classification\ThemeClassificationTypes.cs" />
+    <Compile Include="Text\Classification\ThemeClassificationTypeService.cs" />
     <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregatorService.cs" />

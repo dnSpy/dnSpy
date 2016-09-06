@@ -29,14 +29,14 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	[TagType(typeof(IClassificationTag))]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class RoslynTaggerProvider : ITaggerProvider {
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		RoslynTaggerProvider(IThemeClassificationTypes themeClassificationTypes) {
-			this.themeClassificationTypes = themeClassificationTypes;
+		RoslynTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
-			new RoslynTagger(themeClassificationTypes) as ITagger<T>;
+			new RoslynTagger(themeClassificationTypeService) as ITagger<T>;
 	}
 }

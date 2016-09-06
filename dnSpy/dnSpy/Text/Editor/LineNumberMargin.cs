@@ -37,20 +37,20 @@ namespace dnSpy.Text.Editor {
 	[Order(Before = PredefinedMarginNames.Spacer)]
 	sealed class LineNumberMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly ITextFormatterProvider textFormatterProvider;
 
 		[ImportingConstructor]
-		LineNumberMarginProvider(IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypes themeClassificationTypes, ITextFormatterProvider textFormatterProvider) {
+		LineNumberMarginProvider(IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, ITextFormatterProvider textFormatterProvider) {
 			this.classificationFormatMapService = classificationFormatMapService;
-			this.themeClassificationTypes = themeClassificationTypes;
+			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
 			if (wpfTextViewHost.TextView.Roles.Contains(PredefinedDnSpyTextViewRoles.CustomLineNumberMargin))
 				return null;
-			return new LineNumberMargin(wpfTextViewHost, classificationFormatMapService, themeClassificationTypes, textFormatterProvider);
+			return new LineNumberMargin(wpfTextViewHost, classificationFormatMapService, themeClassificationTypeService, textFormatterProvider);
 		}
 	}
 
@@ -58,9 +58,9 @@ namespace dnSpy.Text.Editor {
 		readonly IClassificationType lineNumberClassificationType;
 		TextFormattingRunProperties lineNumberTextFormattingRunProperties;
 
-		public LineNumberMargin(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypes themeClassificationTypes, ITextFormatterProvider textFormatterProvider)
+		public LineNumberMargin(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, ITextFormatterProvider textFormatterProvider)
 			: base(PredefinedMarginNames.LineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
-			this.lineNumberClassificationType = themeClassificationTypes.GetClassificationType(TextColor.LineNumber);
+			this.lineNumberClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.LineNumber);
 		}
 
 		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state) {

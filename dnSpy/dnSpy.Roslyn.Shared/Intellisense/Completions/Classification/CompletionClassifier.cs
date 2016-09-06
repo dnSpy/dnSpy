@@ -32,25 +32,25 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 	[Export(typeof(ICompletionClassifierProvider))]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionClassifierProvider : ICompletionClassifierProvider {
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		CompletionClassifierProvider(IThemeClassificationTypes themeClassificationTypes) {
-			this.themeClassificationTypes = themeClassificationTypes;
+		CompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionCollection collection) => new CompletionClassifier(themeClassificationTypes);
+		public ICompletionClassifier Create(CompletionCollection collection) => new CompletionClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionClassifier : ICompletionClassifier {
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly IClassificationType punctuationClassificationType;
 
-		public CompletionClassifier(IThemeClassificationTypes themeClassificationTypes) {
-			if (themeClassificationTypes == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypes));
-			this.themeClassificationTypes = themeClassificationTypes;
-			this.punctuationClassificationType = themeClassificationTypes.GetClassificationType(TextColor.Punctuation);
+		public CompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
+			if (themeClassificationTypeService == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.punctuationClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
 		}
 
 		const string VBOf = "Of …";
@@ -71,12 +71,12 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 						if (seenSpecial) {
 							var s = text.Substring(textOffset, len);
 							if (s == VBOf) {
-								yield return new CompletionClassificationTag(new Span(textOffset, 2), themeClassificationTypes.GetClassificationType(TextColor.Keyword));
+								yield return new CompletionClassificationTag(new Span(textOffset, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
 								wasSpecialCaseString = true;
 							}
 						}
 						if (!wasSpecialCaseString)
-							yield return new CompletionClassificationTag(new Span(textOffset, len), themeClassificationTypes.GetClassificationType(color));
+							yield return new CompletionClassificationTag(new Span(textOffset, len), themeClassificationTypeService.GetClassificationType(color));
 						textOffset += len;
 					}
 

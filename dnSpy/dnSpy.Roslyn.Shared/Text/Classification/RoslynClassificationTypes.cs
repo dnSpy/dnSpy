@@ -91,71 +91,71 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// Gets the cached instance that contains <see cref="IClassificationType"/> values
 		/// </summary>
 		/// <returns></returns>
-		public static RoslynClassificationTypes GetClassificationTypeInstance(IThemeClassificationTypes themeClassificationTypes) {
+		public static RoslynClassificationTypes GetClassificationTypeInstance(IThemeClassificationTypeService themeClassificationTypeService) {
 			if (classificationTypeInstance == null)
-				Interlocked.CompareExchange(ref classificationTypeInstance, new RoslynClassificationTypes(themeClassificationTypes), null);
+				Interlocked.CompareExchange(ref classificationTypeInstance, new RoslynClassificationTypes(themeClassificationTypeService), null);
 			return classificationTypeInstance;
 		}
 		static RoslynClassificationTypes classificationTypeInstance;
 
-		RoslynClassificationTypes(IThemeClassificationTypes themeClassificationTypes) {
-			Comment = themeClassificationTypes.GetClassificationType(TextColor.Comment);
-			Delegate = themeClassificationTypes.GetClassificationType(TextColor.Delegate);
-			Enum = themeClassificationTypes.GetClassificationType(TextColor.Enum);
-			EnumField = themeClassificationTypes.GetClassificationType(TextColor.EnumField);
-			ExcludedCode = themeClassificationTypes.GetClassificationType(TextColor.ExcludedCode);
-			ExtensionMethod = themeClassificationTypes.GetClassificationType(TextColor.ExtensionMethod);
-			InstanceEvent = themeClassificationTypes.GetClassificationType(TextColor.InstanceEvent);
-			InstanceField = themeClassificationTypes.GetClassificationType(TextColor.InstanceField);
-			InstanceMethod = themeClassificationTypes.GetClassificationType(TextColor.InstanceMethod);
-			InstanceProperty = themeClassificationTypes.GetClassificationType(TextColor.InstanceProperty);
-			Interface = themeClassificationTypes.GetClassificationType(TextColor.Interface);
-			Keyword = themeClassificationTypes.GetClassificationType(TextColor.Keyword);
-			Label = themeClassificationTypes.GetClassificationType(TextColor.Label);
-			LiteralField = themeClassificationTypes.GetClassificationType(TextColor.LiteralField);
-			Local = themeClassificationTypes.GetClassificationType(TextColor.Local);
-			MethodGenericParameter = themeClassificationTypes.GetClassificationType(TextColor.MethodGenericParameter);
-			Module = themeClassificationTypes.GetClassificationType(TextColor.Module);
-			Namespace = themeClassificationTypes.GetClassificationType(TextColor.Namespace);
-			Number = themeClassificationTypes.GetClassificationType(TextColor.Number);
-			Operator = themeClassificationTypes.GetClassificationType(TextColor.Operator);
-			Parameter = themeClassificationTypes.GetClassificationType(TextColor.Parameter);
-			PreprocessorKeyword = themeClassificationTypes.GetClassificationType(TextColor.PreprocessorKeyword);
-			PreprocessorText = themeClassificationTypes.GetClassificationType(TextColor.PreprocessorText);
-			Punctuation = themeClassificationTypes.GetClassificationType(TextColor.Punctuation);
-			SealedType = themeClassificationTypes.GetClassificationType(TextColor.SealedType);
-			StaticEvent = themeClassificationTypes.GetClassificationType(TextColor.StaticEvent);
-			StaticField = themeClassificationTypes.GetClassificationType(TextColor.StaticField);
-			StaticMethod = themeClassificationTypes.GetClassificationType(TextColor.StaticMethod);
-			StaticProperty = themeClassificationTypes.GetClassificationType(TextColor.StaticProperty);
-			StaticType = themeClassificationTypes.GetClassificationType(TextColor.StaticType);
-			String = themeClassificationTypes.GetClassificationType(TextColor.String);
-			Text = themeClassificationTypes.GetClassificationType(TextColor.Text);
-			Type = themeClassificationTypes.GetClassificationType(TextColor.Type);
-			TypeGenericParameter = themeClassificationTypes.GetClassificationType(TextColor.TypeGenericParameter);
-			ValueType = themeClassificationTypes.GetClassificationType(TextColor.ValueType);
-			VerbatimString = themeClassificationTypes.GetClassificationType(TextColor.VerbatimString);
-			XmlDocCommentAttributeName = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentAttributeName);
-			XmlDocCommentAttributeQuotes = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentAttributeQuotes);
-			XmlDocCommentAttributeValue = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentAttributeValue);
-			XmlDocCommentCDataSection = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentCDataSection);
-			XmlDocCommentComment = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentComment);
-			XmlDocCommentDelimiter = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentDelimiter);
-			XmlDocCommentEntityReference = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentEntityReference);
-			XmlDocCommentName = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentName);
-			XmlDocCommentProcessingInstruction = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentProcessingInstruction);
-			XmlDocCommentText = themeClassificationTypes.GetClassificationType(TextColor.XmlDocCommentText);
-			XmlLiteralAttributeName = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralAttributeName);
-			XmlLiteralAttributeQuotes = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralAttributeQuotes);
-			XmlLiteralAttributeValue = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralAttributeValue);
-			XmlLiteralCDataSection = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralCDataSection);
-			XmlLiteralComment = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralComment);
-			XmlLiteralDelimiter = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralDelimiter);
-			XmlLiteralEmbeddedExpression = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralEmbeddedExpression);
-			XmlLiteralEntityReference = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralEntityReference);
-			XmlLiteralName = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralName);
-			XmlLiteralProcessingInstruction = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralProcessingInstruction);
-			XmlLiteralText = themeClassificationTypes.GetClassificationType(TextColor.XmlLiteralText);
+		RoslynClassificationTypes(IThemeClassificationTypeService themeClassificationTypeService) {
+			Comment = themeClassificationTypeService.GetClassificationType(TextColor.Comment);
+			Delegate = themeClassificationTypeService.GetClassificationType(TextColor.Delegate);
+			Enum = themeClassificationTypeService.GetClassificationType(TextColor.Enum);
+			EnumField = themeClassificationTypeService.GetClassificationType(TextColor.EnumField);
+			ExcludedCode = themeClassificationTypeService.GetClassificationType(TextColor.ExcludedCode);
+			ExtensionMethod = themeClassificationTypeService.GetClassificationType(TextColor.ExtensionMethod);
+			InstanceEvent = themeClassificationTypeService.GetClassificationType(TextColor.InstanceEvent);
+			InstanceField = themeClassificationTypeService.GetClassificationType(TextColor.InstanceField);
+			InstanceMethod = themeClassificationTypeService.GetClassificationType(TextColor.InstanceMethod);
+			InstanceProperty = themeClassificationTypeService.GetClassificationType(TextColor.InstanceProperty);
+			Interface = themeClassificationTypeService.GetClassificationType(TextColor.Interface);
+			Keyword = themeClassificationTypeService.GetClassificationType(TextColor.Keyword);
+			Label = themeClassificationTypeService.GetClassificationType(TextColor.Label);
+			LiteralField = themeClassificationTypeService.GetClassificationType(TextColor.LiteralField);
+			Local = themeClassificationTypeService.GetClassificationType(TextColor.Local);
+			MethodGenericParameter = themeClassificationTypeService.GetClassificationType(TextColor.MethodGenericParameter);
+			Module = themeClassificationTypeService.GetClassificationType(TextColor.Module);
+			Namespace = themeClassificationTypeService.GetClassificationType(TextColor.Namespace);
+			Number = themeClassificationTypeService.GetClassificationType(TextColor.Number);
+			Operator = themeClassificationTypeService.GetClassificationType(TextColor.Operator);
+			Parameter = themeClassificationTypeService.GetClassificationType(TextColor.Parameter);
+			PreprocessorKeyword = themeClassificationTypeService.GetClassificationType(TextColor.PreprocessorKeyword);
+			PreprocessorText = themeClassificationTypeService.GetClassificationType(TextColor.PreprocessorText);
+			Punctuation = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
+			SealedType = themeClassificationTypeService.GetClassificationType(TextColor.SealedType);
+			StaticEvent = themeClassificationTypeService.GetClassificationType(TextColor.StaticEvent);
+			StaticField = themeClassificationTypeService.GetClassificationType(TextColor.StaticField);
+			StaticMethod = themeClassificationTypeService.GetClassificationType(TextColor.StaticMethod);
+			StaticProperty = themeClassificationTypeService.GetClassificationType(TextColor.StaticProperty);
+			StaticType = themeClassificationTypeService.GetClassificationType(TextColor.StaticType);
+			String = themeClassificationTypeService.GetClassificationType(TextColor.String);
+			Text = themeClassificationTypeService.GetClassificationType(TextColor.Text);
+			Type = themeClassificationTypeService.GetClassificationType(TextColor.Type);
+			TypeGenericParameter = themeClassificationTypeService.GetClassificationType(TextColor.TypeGenericParameter);
+			ValueType = themeClassificationTypeService.GetClassificationType(TextColor.ValueType);
+			VerbatimString = themeClassificationTypeService.GetClassificationType(TextColor.VerbatimString);
+			XmlDocCommentAttributeName = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentAttributeName);
+			XmlDocCommentAttributeQuotes = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentAttributeQuotes);
+			XmlDocCommentAttributeValue = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentAttributeValue);
+			XmlDocCommentCDataSection = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentCDataSection);
+			XmlDocCommentComment = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentComment);
+			XmlDocCommentDelimiter = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentDelimiter);
+			XmlDocCommentEntityReference = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentEntityReference);
+			XmlDocCommentName = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentName);
+			XmlDocCommentProcessingInstruction = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentProcessingInstruction);
+			XmlDocCommentText = themeClassificationTypeService.GetClassificationType(TextColor.XmlDocCommentText);
+			XmlLiteralAttributeName = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralAttributeName);
+			XmlLiteralAttributeQuotes = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralAttributeQuotes);
+			XmlLiteralAttributeValue = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralAttributeValue);
+			XmlLiteralCDataSection = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralCDataSection);
+			XmlLiteralComment = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralComment);
+			XmlLiteralDelimiter = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralDelimiter);
+			XmlLiteralEmbeddedExpression = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralEmbeddedExpression);
+			XmlLiteralEntityReference = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralEntityReference);
+			XmlLiteralName = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralName);
+			XmlLiteralProcessingInstruction = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralProcessingInstruction);
+			XmlLiteralText = themeClassificationTypeService.GetClassificationType(TextColor.XmlLiteralText);
 		}
 	}
 }

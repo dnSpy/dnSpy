@@ -39,13 +39,13 @@ namespace dnSpy.Text.Editor {
 	[Order(After = PredefinedDnSpyMarginNames.CustomLineNumber)]
 	sealed class SpacerMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly ITextFormatterProvider textFormatterProvider;
 
 		[ImportingConstructor]
-		SpacerMarginProvider(IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypes themeClassificationTypes, ITextFormatterProvider textFormatterProvider) {
+		SpacerMarginProvider(IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, ITextFormatterProvider textFormatterProvider) {
 			this.classificationFormatMapService = classificationFormatMapService;
-			this.themeClassificationTypes = themeClassificationTypes;
+			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.textFormatterProvider = textFormatterProvider;
 		}
 

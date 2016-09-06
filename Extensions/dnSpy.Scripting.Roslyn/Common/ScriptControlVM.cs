@@ -164,9 +164,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 			ReplEditor.TextView.Options.OptionChanged += Options_OptionChanged;
 
-			var themeClassificationTypes = serviceLocator.Resolve<IThemeClassificationTypes>();
-			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypes);
-			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(TextColor.Error);
+			var themeClassificationTypeService = serviceLocator.Resolve<IThemeClassificationTypeService>();
+			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
+			this.defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 
 			this.toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);
 			foreach (var sc in CreateScriptCommands()) {

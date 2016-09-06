@@ -33,17 +33,17 @@ namespace dnSpy.Text {
 	[TagType(typeof(IClassificationTag))]
 	[ContentType(ContentTypes.Any)]
 	sealed class CachedColorsListTaggerProvider : ITaggerProvider {
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		CachedColorsListTaggerProvider(IThemeClassificationTypes themeClassificationTypes) {
-			this.themeClassificationTypes = themeClassificationTypes;
+		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			CachedColorsListTagger colorizer;
 			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out colorizer)) {
-				colorizer.ThemeClassificationTypes = themeClassificationTypes;
+				colorizer.ThemeClassificationTypeService = themeClassificationTypeService;
 				return colorizer as ITagger<T>;
 			}
 			return null;
@@ -61,7 +61,7 @@ namespace dnSpy.Text {
 	sealed class CachedColorsListTagger : ITagger<IClassificationTag> {
 		readonly CachedColorsList cachedColorsList;
 
-		public IThemeClassificationTypes ThemeClassificationTypes { get; internal set; }
+		public IThemeClassificationTypeService ThemeClassificationTypeService { get; internal set; }
 
 		CachedColorsListTagger(CachedColorsList cachedColorsList) {
 			this.cachedColorsList = cachedColorsList;
@@ -76,8 +76,8 @@ namespace dnSpy.Text {
 			new CachedColorsListTagger(cachedColorsList);
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			Debug.Assert(ThemeClassificationTypes != null);
-			if (ThemeClassificationTypes == null)
+			Debug.Assert(ThemeClassificationTypeService != null);
+			if (ThemeClassificationTypeService == null)
 				yield break;
 
 			var snapshot = spans[0].Snapshot;
@@ -94,7 +94,7 @@ namespace dnSpy.Text {
 
 					if (tokenLength != 0) {
 						if (offs + defaultTextLength + tokenLength <= snapshot.Length) {
-							var ct = color as IClassificationType ?? ThemeClassificationTypes.GetClassificationType(color as TextColor? ?? TextColor.Text);
+							var ct = color as IClassificationType ?? ThemeClassificationTypeService.GetClassificationType(color as TextColor? ?? TextColor.Text);
 							yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ct));
 						}
 					}

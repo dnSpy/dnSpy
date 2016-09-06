@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Returns theme <see cref="IClassificationType"/>s
 	/// </summary>
-	public interface IThemeClassificationTypes {
+	public interface IThemeClassificationTypeService {
 		/// <summary>
 		/// Gets a classification type or a default classification type if <paramref name="color"/> is invalid
 		/// </summary>

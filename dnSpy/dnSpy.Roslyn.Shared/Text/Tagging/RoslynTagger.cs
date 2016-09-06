@@ -33,11 +33,11 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 		readonly IClassificationType defaultClassificationType;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
 
-		public RoslynTagger(IThemeClassificationTypes themeClassificationTypes) {
-			if (themeClassificationTypes == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypes));
-			this.defaultClassificationType = themeClassificationTypes.GetClassificationType(TextColor.Error);
-			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypes);
+		public RoslynTagger(IThemeClassificationTypeService themeClassificationTypeService) {
+			if (themeClassificationTypeService == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
+			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
 		}
 
 		protected override async Task GetTagsAsync(GetTagsState state, NormalizedSnapshotSpanCollection spans) {

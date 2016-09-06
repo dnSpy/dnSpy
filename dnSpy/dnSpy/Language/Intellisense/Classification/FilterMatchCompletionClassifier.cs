@@ -31,26 +31,26 @@ namespace dnSpy.Language.Intellisense.Classification {
 	[Export(typeof(ICompletionClassifierProvider))]
 	[ContentType(ContentTypes.Any)]
 	sealed class FilterMatchCompletionClassifierProvider : ICompletionClassifierProvider {
-		readonly IThemeClassificationTypes themeClassificationTypes;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		FilterMatchCompletionClassifierProvider(IThemeClassificationTypes themeClassificationTypes) {
-			this.themeClassificationTypes = themeClassificationTypes;
+		FilterMatchCompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionCollection collection) => new FilterMatchCompletionClassifier(themeClassificationTypes, collection);
+		public ICompletionClassifier Create(CompletionCollection collection) => new FilterMatchCompletionClassifier(themeClassificationTypeService, collection);
 	}
 
 	sealed class FilterMatchCompletionClassifier : ICompletionClassifier {
 		readonly CompletionCollection completionCollection;
 		readonly IClassificationType completionMatchHighlightClassificationType;
 
-		public FilterMatchCompletionClassifier(IThemeClassificationTypes themeClassificationTypes, CompletionCollection completionCollection) {
-			if (themeClassificationTypes == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypes));
+		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService, CompletionCollection completionCollection) {
+			if (themeClassificationTypeService == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			if (completionCollection == null)
 				throw new ArgumentNullException(nameof(completionCollection));
-			this.completionMatchHighlightClassificationType = themeClassificationTypes.GetClassificationType(TextColor.CompletionMatchHighlight);
+			this.completionMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionMatchHighlight);
 			this.completionCollection = completionCollection;
 		}
 

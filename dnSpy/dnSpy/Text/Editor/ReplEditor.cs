@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypes themeClassificationTypes, IPickSaveFilename pickSaveFilename) {
+		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
@@ -120,7 +120,7 @@ namespace dnSpy.Text.Editor {
 			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView, editorOperationsFactoryService);
 			wpfTextView.VisualElement.Loaded += WpfTextView_Loaded;
 			UpdateRefreshScreenOnChange();
-			CustomLineNumberMargin.SetOwner(wpfTextView, new ReplCustomLineNumberMarginOwner(this, themeClassificationTypes));
+			CustomLineNumberMargin.SetOwner(wpfTextView, new ReplCustomLineNumberMarginOwner(this, themeClassificationTypeService));
 		}
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
@@ -991,15 +991,15 @@ namespace dnSpy.Text.Editor {
 		TextFormattingRunProperties replLineNumberOutputTextFormattingRunProperties;
 		readonly IReplEditor2 replEditor;
 
-		public ReplCustomLineNumberMarginOwner(IReplEditor2 replEditor, IThemeClassificationTypes themeClassificationTypes) {
+		public ReplCustomLineNumberMarginOwner(IReplEditor2 replEditor, IThemeClassificationTypeService themeClassificationTypeService) {
 			if (replEditor == null)
 				throw new ArgumentNullException(nameof(replEditor));
-			if (themeClassificationTypes == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypes));
+			if (themeClassificationTypeService == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.replEditor = replEditor;
-			this.replLineNumberInput1ClassificationType = themeClassificationTypes.GetClassificationType(TextColor.ReplLineNumberInput1);
-			this.replLineNumberInput2ClassificationType = themeClassificationTypes.GetClassificationType(TextColor.ReplLineNumberInput2);
-			this.replLineNumberOutputClassificationType = themeClassificationTypes.GetClassificationType(TextColor.ReplLineNumberOutput);
+			this.replLineNumberInput1ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput1);
+			this.replLineNumberInput2ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput2);
+			this.replLineNumberOutputClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberOutput);
 		}
 
 		sealed class ReplState {

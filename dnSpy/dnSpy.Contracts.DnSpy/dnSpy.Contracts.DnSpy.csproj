@@ -481,7 +481,7 @@
     <Compile Include="Text\CachedTextColorsCollection.cs" />
     <Compile Include="Text\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Classification\EditorFormatMapConstants.cs" />
-    <Compile Include="Text\Classification\IThemeClassificationTypes.cs" />
+    <Compile Include="Text\Classification\IThemeClassificationTypeService.cs" />
     <Compile Include="Text\Classification\IThemeFormatDefinition.cs" />
     <Compile Include="Text\Classification\LanguagePriority.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationTypeNames.cs" />
