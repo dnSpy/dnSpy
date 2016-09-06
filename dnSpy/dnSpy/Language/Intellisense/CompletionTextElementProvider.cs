@@ -61,8 +61,8 @@ namespace dnSpy.Language.Intellisense {
 
 			var classifier = GetCompletionClassifier(collection);
 			var inputText = collection.ApplicableTo.GetText(collection.ApplicableTo.TextBuffer.CurrentSnapshot);
-			var context = new CompletionClassifierContext(completion, inputText);
-			var text = completion.DisplayText;
+			var context = new CompletionClassifierContext(completion, completion.DisplayText, inputText);
+			var text = context.DisplayText;
 			var textBlock = new TextBlock();
 			int textOffset = 0;
 			foreach (var tag in classifier.GetTags(context)) {

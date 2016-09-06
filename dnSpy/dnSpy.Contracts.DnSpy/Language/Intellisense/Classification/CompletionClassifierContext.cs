@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		public Completion Completion { get; }
 
 		/// <summary>
+		/// Gets the text shown in the UI
+		/// </summary>
+		public string DisplayText { get; }
+
+		/// <summary>
 		/// Gets the current user input text
 		/// </summary>
 		public string InputText { get; }
@@ -38,13 +43,17 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// Constructor
 		/// </summary>
 		/// <param name="completion">Completion to classify</param>
+		/// <param name="displayText">Text shown in the UI</param>
 		/// <param name="inputText">Current user input text</param>
-		public CompletionClassifierContext(Completion completion, string inputText) {
+		public CompletionClassifierContext(Completion completion, string displayText, string inputText) {
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
+			if (displayText == null)
+				throw new ArgumentNullException(nameof(displayText));
 			if (inputText == null)
 				throw new ArgumentNullException(nameof(inputText));
 			Completion = completion;
+			DisplayText = displayText;
 			InputText = inputText;
 		}
 	}

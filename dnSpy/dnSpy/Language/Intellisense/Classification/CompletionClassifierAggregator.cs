@@ -54,7 +54,7 @@ namespace dnSpy.Language.Intellisense.Classification {
 		}
 
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
-			var textClassifierContext = new MyTextClassifierContext(context.Completion.DisplayText ?? string.Empty, context);
+			var textClassifierContext = new MyTextClassifierContext(context.DisplayText, context);
 			foreach (var tag in textClassifierAggregator.GetTags(textClassifierContext))
 				yield return new CompletionClassificationTag(tag.Span, tag.ClassificationType);
 		}

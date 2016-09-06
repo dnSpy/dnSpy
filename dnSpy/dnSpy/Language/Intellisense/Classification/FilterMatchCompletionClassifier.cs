@@ -56,7 +56,7 @@ namespace dnSpy.Language.Intellisense.Classification {
 
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
 			var filter = completionCollection.CreateCompletionFilter(context.InputText);
-			foreach (var span in filter.GetMatchSpans(context.Completion, context.Completion.DisplayText))
+			foreach (var span in filter.GetMatchSpans(context.Completion, context.DisplayText))
 				yield return new CompletionClassificationTag(span, findMatchHighlightMarkerClassificationType);
 		}
 	}

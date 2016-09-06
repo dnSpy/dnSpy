@@ -61,11 +61,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Classification {
 				yield break;
 			var color = completion.CompletionItem.Tags.ToCompletionKind().ToTextColor();
 			if (color != TextColor.Text) {
-				var text = completion.DisplayText;
+				var text = context.DisplayText;
 				bool seenSpecial = false;
 				for (int textOffset = 0; textOffset < text.Length;) {
 					int specialIndex = text.IndexOfAny(punctuationChars, textOffset);
-
 					int len = specialIndex < 0 ? text.Length - textOffset : specialIndex - textOffset;
 					if (len > 0) {
 						bool wasSpecialCaseString = false;
