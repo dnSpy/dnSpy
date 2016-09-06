@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Classification {
 			case CompletionKind.ProjectVisualBasic:		return TextColor.Text;
 			case CompletionKind.EnumMember:				return TextColor.EnumField;
 			case CompletionKind.Assembly:				return TextColor.Assembly;
-			case CompletionKind.RangeVariable:			return TextColor.Local;
+			case CompletionKind.RangeVariable:			return TextColor.Parameter;
 			case CompletionKind.Local:					return TextColor.Local;
 			case CompletionKind.Parameter:				return TextColor.Parameter;
 			case CompletionKind.Intrinsic:				return TextColor.Keyword;
