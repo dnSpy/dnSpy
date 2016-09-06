@@ -27,7 +27,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 	/// <summary>
 	/// Extension methods
 	/// </summary>
-	public static class Extensions {
+	static class Extensions {
 		/// <summary>
 		/// Converts <paramref name="textSnapshot"/> to a <see cref="SourceText"/>
 		/// </summary>
