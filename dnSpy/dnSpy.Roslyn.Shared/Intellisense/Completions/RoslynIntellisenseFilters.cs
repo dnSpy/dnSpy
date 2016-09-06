@@ -24,7 +24,7 @@ using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Shared.Properties;
 using Microsoft.CodeAnalysis.Completion;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	static class RoslynIntellisenseFilters {
 		public static RoslynIntellisenseFilter[] CreateFilters() => new RoslynIntellisenseFilter[] {
 			new RoslynIntellisenseFilter("Local", dnSpy_Roslyn_Shared_Resources.LocalsAndParametersToolTip, "L", CompletionTags.Local, CompletionTags.Parameter),

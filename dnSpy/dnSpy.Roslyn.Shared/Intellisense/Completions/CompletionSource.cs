@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[Export(typeof(ICompletionSourceProvider))]
 	[Name(PredefinedDnSpyCompletionSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]

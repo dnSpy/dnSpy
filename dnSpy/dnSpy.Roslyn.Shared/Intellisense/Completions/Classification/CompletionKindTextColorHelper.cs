@@ -19,7 +19,7 @@
 
 using dnSpy.Contracts.Text;
 
-namespace dnSpy.Roslyn.Shared.Intellisense.Classification {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 	static class CompletionKindTextColorHelper {
 		public static TextColor ToTextColor(this CompletionKind kind) {
 			switch (kind) {

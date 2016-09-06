@@ -29,7 +29,7 @@ using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	sealed class RoslynCompletionCollection : CompletionCollection {
 		readonly CompletionService completionService;
 		readonly ITextView textView;

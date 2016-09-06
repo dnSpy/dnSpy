@@ -21,7 +21,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using dnSpy.Contracts.Images;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	static class CompletionImageHelper {
 		static readonly Assembly imageAssembly = Assembly.Load("dnSpy");
 

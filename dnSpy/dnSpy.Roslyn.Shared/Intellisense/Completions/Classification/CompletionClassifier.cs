@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Roslyn.Shared.Intellisense.Classification {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 	[Export(typeof(ICompletionClassifierProvider))]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionClassifierProvider : ICompletionClassifierProvider {

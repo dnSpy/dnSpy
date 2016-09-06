@@ -28,7 +28,7 @@ using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_ROSLYN_STATEMENTCOMPLETION)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<ICompletionService> completionService;

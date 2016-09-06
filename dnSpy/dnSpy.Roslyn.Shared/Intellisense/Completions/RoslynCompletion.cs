@@ -21,7 +21,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.CodeAnalysis.Completion;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	sealed class RoslynCompletion : Completion {
 		public CompletionItem CompletionItem { get; }
 

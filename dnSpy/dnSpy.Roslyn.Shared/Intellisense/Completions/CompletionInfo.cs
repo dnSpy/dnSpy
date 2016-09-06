@@ -24,7 +24,7 @@ using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Roslyn.Shared.Intellisense {
+namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	struct CompletionInfo {
 		public CompletionService CompletionService { get; }
 		public Document Document { get; }
