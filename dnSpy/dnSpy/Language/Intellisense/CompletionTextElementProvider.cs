@@ -126,7 +126,7 @@ namespace dnSpy.Language.Intellisense {
 				return false;
 			if (a.Typeface == b.Typeface)
 				return true;
-			return a.GetFontName() == a.GetFontName();
+			return a.GetFontName() == b.GetFontName();
 		}
 
 		public void Dispose() {
