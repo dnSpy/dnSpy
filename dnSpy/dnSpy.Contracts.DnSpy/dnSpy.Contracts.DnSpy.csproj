@@ -542,6 +542,7 @@
     <Compile Include="Text\Editor\PredefinedDnSpyMarginNames.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyMouseProcessorProviders.cs" />
     <Compile Include="Text\Editor\PredefinedDnSpyTextViewRoles.cs" />
+    <Compile Include="Text\Editor\PredefinedSpaceReservationManagerNames.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />
     <Compile Include="Text\Editor\StructureVisualizerData.cs" />

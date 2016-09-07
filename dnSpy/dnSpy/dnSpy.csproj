@@ -406,6 +406,8 @@
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabManagerProvider.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
+    <Compile Include="Text\Adornments\ToolTipProvider.cs" />
+    <Compile Include="Text\Adornments\ToolTipProviderFactory.cs" />
     <Compile Include="Text\AvalonEdit\CharRope.cs" />
     <Compile Include="Text\AvalonEdit\DocumentLine.cs" />
     <Compile Include="Text\AvalonEdit\DocumentLineTree.cs" />
