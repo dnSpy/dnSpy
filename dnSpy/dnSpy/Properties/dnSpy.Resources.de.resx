@@ -975,13 +975,13 @@
     <value>Show Timestamps</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
-    <value>Ctrl+E, Ctrl+W</value>
+    <value>Strg+E, Strg+W</value>
   </data>
   <data name="ShortCutKeyCtrlF4" xml:space="preserve">
-    <value>Ctrl+F4</value>
+    <value>Strg+F4</value>
   </data>
   <data name="ShortCutKeyShiftEsc" xml:space="preserve">
-    <value>Shift+Esc</value>
+    <value>Umschalt+Esc</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
     <value>Schließen</value>
@@ -996,7 +996,7 @@
     <value>Wiederherstellen</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Background Image</value>
+    <value>Hintergrundbild</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
     <value>Code editor</value>

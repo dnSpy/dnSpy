@@ -121,10 +121,10 @@
     <value>Using Deklarationen hinzufügen</value>
   </data>
   <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
-    <value>Allow field initializers</value>
+    <value>Felder initialisieren</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Always generate exception variables in catch blocks unless type is Object</value>
+    <value>Immer Variable für Ausnahme im catch-Block generieren außer der Typ ist Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>Dekompilierungsreihenfolge</value>
@@ -199,7 +199,7 @@
     <value>XML-Dokumentation in dekompiliertem Code anzeigen</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Sort custom attributes</value>
+    <value>Benutzerdefinierte Attribute sortieren</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Methoden, Felder, Eigenschaften, Ereignisse und Typen sortieren</value>
@@ -211,6 +211,6 @@
     <value>Verwenden von Variablennamen von Debugsymbolen, falls vorhanden</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Order members in source code order</value>
+    <value>Member wie im Quellcode anordnen</value>
   </data>
 </root>

@@ -118,22 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClassesToolTip" xml:space="preserve">
-    <value>Classes</value>
+    <value>Klassen</value>
   </data>
   <data name="ConstantsToolTip" xml:space="preserve">
-    <value>Constants</value>
+    <value>Konstanten</value>
   </data>
   <data name="DelegatesToolTip" xml:space="preserve">
-    <value>Delegates</value>
+    <value>Delegaten</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
-    <value>Enums</value>
+    <value>Enumerationen</value>
   </data>
   <data name="EventsToolTip" xml:space="preserve">
     <value>Ereignisse</value>
   </data>
   <data name="ExtensionMethodsToolTip" xml:space="preserve">
-    <value>Extension methods</value>
+    <value>Erweiterungsmethoden</value>
   </data>
   <data name="FieldsToolTip" xml:space="preserve">
     <value>Felder</value>
@@ -142,7 +142,7 @@
     <value>Interfaces</value>
   </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
-    <value>Locals and parameters</value>
+    <value>Felder und Parameter</value>
   </data>
   <data name="MethodsToolTip" xml:space="preserve">
     <value>Methoden</value>
@@ -151,12 +151,12 @@
     <value>Module</value>
   </data>
   <data name="NamespacesToolTip" xml:space="preserve">
-    <value>Namespaces</value>
+    <value>Namensräume</value>
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>Eigenschaften</value>
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
-    <value>Structures</value>
+    <value>Strukturen</value>
   </data>
 </root>

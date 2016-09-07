@@ -1581,7 +1581,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Name</value>
   </data>
   <data name="LocalsTab" xml:space="preserve">
-    <value>Lokale</value>
+    <value>Locals</value>
   </data>
   <data name="LocalType" xml:space="preserve">
     <value>Typ</value>
@@ -1599,10 +1599,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_Entferne Local</value>
   </data>
   <data name="Local_Command5" xml:space="preserve">
-    <value>_Entferne Locals</value>
+    <value>_Entferne Felder</value>
   </data>
   <data name="Local_Command6" xml:space="preserve">
-    <value>Remo_ve alle Lokale</value>
+    <value>Alle Felder _entfernen</value>
   </data>
   <data name="Local_CompilerGenerated_Character" xml:space="preserve">
     <value>C</value>
@@ -1641,7 +1641,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Kopf _RVA</value>
   </data>
   <data name="MethodBody_InitLocals" xml:space="preserve">
-    <value>_Init Lokale</value>
+    <value>Felder _initialisieren</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
     <value>_Keep alten MaxStack</value>
@@ -2411,13 +2411,13 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Assembly Editor</value>
   </data>
   <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
-    <value>Ctrl+Shift+E</value>
+    <value>Strg+Umschalt+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
     <value>Edit {0} Code...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
-    <value>Edit Code</value>
+    <value>Code bearbeiten</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
     <value>Dekompiliere...</value>
@@ -2426,19 +2426,19 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Code</value>
   </data>
   <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Beschreibung</value>
   </data>
   <data name="CompileDiagnostics_Header_File" xml:space="preserve">
     <value>Datei</value>
   </data>
   <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
-    <value>Line</value>
+    <value>Zeile</value>
   </data>
   <data name="Button_Compile" xml:space="preserve">
-    <value>Compile</value>
+    <value>Kompilieren</value>
   </data>
   <data name="StatusError" xml:space="preserve">
-    <value>Error</value>
+    <value>Fehler</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
     <value>Hidden</value>
@@ -2447,7 +2447,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Info</value>
   </data>
   <data name="StatusWarning" xml:space="preserve">
-    <value>Warning</value>
+    <value>Warnung</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
     <value>Add Assembly Reference (Ctrl+O)</value>

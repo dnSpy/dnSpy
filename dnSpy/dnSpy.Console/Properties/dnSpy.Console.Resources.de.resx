@@ -301,7 +301,7 @@
     <value>Decompiles System.Int32 from mscorlib</value>
   </data>
   <data name="ExamplesHeader" xml:space="preserve">
-    <value>Examples:</value>
+    <value>Beispiele:</value>
   </data>
   <data name="UsageHeader" xml:space="preserve">
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>

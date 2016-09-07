@@ -373,7 +373,7 @@
     <value>Ausnahm_en</value>
   </data>
   <data name="DbgSettings_SyntaxHighlightLocals" xml:space="preserve">
-    <value>_Lokal</value>
+    <value>Fe_lder</value>
   </data>
   <data name="DbgSettings_SyntaxHighlightModules" xml:space="preserve">
     <value>_Module</value>
@@ -702,7 +702,7 @@ Wenn es einen Behandler für die Ausnahme gibt, könnte das Programm sicher fort
     <value>_Elternteil zuklappen</value>
   </data>
   <data name="LocalsCommand" xml:space="preserve">
-    <value>_Lokal</value>
+    <value>Fe_lder</value>
   </data>
   <data name="LocalsCopyValueCommand" xml:space="preserve">
     <value>Wert _kopieren</value>
@@ -1225,64 +1225,64 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Haltepunkt</value>
   </data>
   <data name="DebugLoggerName" xml:space="preserve">
-    <value>Debug</value>
+    <value>Debuggen</value>
   </data>
   <data name="ShowExceptionMessages" xml:space="preserve">
-    <value>_Exception Messages</value>
+    <value>Ausnahm_emeldungen</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>Module _Load Messages</value>
+    <value>_Lademeldungen für Module</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>Module _Unload Messages</value>
+    <value>_Entlademeldungen für Module</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
-    <value>_Process Exit Messages</value>
+    <value>Beendigungsmeldungen für _Prozess</value>
   </data>
   <data name="ShowProgramOutputMessages" xml:space="preserve">
-    <value>Program _Output</value>
+    <value>Programm_ausgabe</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>_Step Filtering Messages</value>
+    <value>_Schrittfilterungsmeldungen</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>_Thread Exit Messages</value>
+    <value>Beendigungsmeldungen für _Thread</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
-    <value>MDA Messages</value>
+    <value>MDA Meldungen</value>
   </data>
   <data name="DebugLogAdditionalInformation" xml:space="preserve">
-    <value>Additional information: {0}</value>
+    <value>Zustatzinformation: {0}</value>
   </data>
   <data name="DebugLogExceptionHandled" xml:space="preserve">
-    <value>Exception thrown: '{0}' in {1}</value>
+    <value>Ausnahme ausgelöst: "{0}" in {1}</value>
   </data>
   <data name="DebugLogExceptionUnhandled" xml:space="preserve">
-    <value>An unhandled exception of type '{0}' occurred in {1}</value>
+    <value>Eine unbehandelte Ausnahme vom Typ '{0}' ist in {1} aufgetreten</value>
   </data>
   <data name="DebugLogExitProcess" xml:space="preserve">
-    <value>The program '{0}' has exited with code {1} (0x{1:x}).</value>
+    <value>Das Programm '{0}' wurde mit Code {1} (0x{1:x}) beendet.</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
-    <value>The thread 0x{0:x} has exited with code {1} (0x{1:x}).</value>
+    <value>Der Thread 0x{0:x} hat mit Code {1} (0x{1:x}) geendet.</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Loaded '{3}'.</value>
+    <value>'{0}' ({1}: {2}): '{3}' geladen.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
-    <value>Managed Debugging Assistant '{0}' has detected a problem in '{1}'.</value>
+    <value>Managed Debugging Assistant '{0}' hat ein Problem in '{1}' festgestellt.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>'{0}' ({1}: {2}): Unloaded '{3}'.</value>
+    <value>'{0}' ({1}: {2}): '{3}' entladen.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;no exception message&gt;"</value>
+    <value>"&lt;keine Ausnahmemeldung&gt;"</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset 0x{0}</value>
+    <value>IL Versatz 0x{0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>line {0} character {1}</value>
+    <value>Zeile {0} Zeichen {1}</value>
   </data>
   <data name="GlyphToolTip_Location" xml:space="preserve">
     <value>Position</value>
