@@ -35,14 +35,41 @@ namespace dnSpy.Text.Editor {
 			metroWindow.SetScaleTransform(popupElement, wpfTextView.ZoomLevel / 100);
 
 			var screen = new Screen(wpfTextView.VisualElement);
-			if (screen.IsValid) {
-				var zoomMultiplier = wpfTextView.ZoomLevel == 0 ? 1 : 100 / wpfTextView.ZoomLevel;
-				var source = PresentationSource.FromVisual(wpfTextView.VisualElement);
-				var transformFromDevice = source?.CompositionTarget.TransformFromDevice ?? Matrix.Identity;
-				var wpfRect = transformFromDevice.Transform(new Point(screen.DisplayRect.Width, screen.DisplayRect.Height));
-				popupElement.MaxWidth = wpfRect.X * zoomMultiplier * maxWidthMultiplier;
-				popupElement.MaxHeight = wpfRect.Y * zoomMultiplier * maxHeightMultiplier;
-			}
+			var screenRect = screen.IsValid ? screen.DisplayRect : SystemParameters.WorkArea;
+			var size = TransformFromDevice(wpfTextView, screenRect.Size);
+			popupElement.MaxWidth = size.Width * maxWidthMultiplier;
+			popupElement.MaxHeight = size.Height * maxHeightMultiplier;
+		}
+
+		public static Size TransformFromDevice(IWpfTextView wpfTextView, Size size) {
+			var zoomMultiplier = wpfTextView.ZoomLevel == 0 ? 1 : 100 / wpfTextView.ZoomLevel;
+			var source = PresentationSource.FromVisual(wpfTextView.VisualElement);
+			var transformFromDevice = source?.CompositionTarget.TransformFromDevice ?? Matrix.Identity;
+			var wpfRect = transformFromDevice.Transform(new Point(size.Width, size.Height));
+			var width = wpfRect.X * zoomMultiplier;
+			var height = wpfRect.Y * zoomMultiplier;
+			return new Size(width, height);
+		}
+
+		public static Size TransformToDevice(IWpfTextView wpfTextView, Size size) {
+			var zoomMultiplier = wpfTextView.ZoomLevel == 0 ? 1 : wpfTextView.ZoomLevel / 100;
+			var source = PresentationSource.FromVisual(wpfTextView.VisualElement);
+			var transformToDevice = source?.CompositionTarget.TransformToDevice ?? Matrix.Identity;
+			var wpfRect = transformToDevice.Transform(new Point(size.Width, size.Height));
+			var width = wpfRect.X * zoomMultiplier;
+			var height = wpfRect.Y * zoomMultiplier;
+			return new Size(width, height);
+		}
+
+		public static Rect TransformFromDevice(IWpfTextView wpfTextView, Rect rect) {
+			var zoomMultiplier = wpfTextView.ZoomLevel == 0 ? 1 : 100 / wpfTextView.ZoomLevel;
+			var source = PresentationSource.FromVisual(wpfTextView.VisualElement);
+			var transformFromDevice = source?.CompositionTarget.TransformFromDevice ?? Matrix.Identity;
+			var viewPoint = wpfTextView.VisualElement.PointToScreen(new Point(0, 0));
+			var fixedRect = new Rect((rect.Left - viewPoint.X) * zoomMultiplier, (rect.Top - viewPoint.Y) * zoomMultiplier, rect.Width * zoomMultiplier, rect.Height * zoomMultiplier);
+			var topLeft = transformFromDevice.Transform(fixedRect.TopLeft);
+			var bottomRight = transformFromDevice.Transform(fixedRect.BottomRight);
+			return new Rect(topLeft, bottomRight);
 		}
 	}
 }

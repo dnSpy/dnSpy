@@ -297,6 +297,7 @@
     <Compile Include="Language\Intellisense\IPopupContent.cs" />
     <Compile Include="Language\Intellisense\PresenterCommandTargetCommand.cs" />
     <Compile Include="Language\Intellisense\SessionCommandTargetFilter.cs" />
+    <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Language\Intellisense\TextViewPopup.cs" />
     <Compile Include="Language\Intellisense\WpfUtils.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
@@ -505,6 +506,8 @@
     <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearchFactoryService.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />
+    <Compile Include="Text\Editor\ISpaceReservationStack.cs" />
+    <Compile Include="Text\Editor\ISpaceReservationStackProvider.cs" />
     <Compile Include="Text\Editor\KeyboardWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
     <Compile Include="Text\Editor\LeftSelectionMargin.cs" />
@@ -539,6 +542,7 @@
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilterProvider.cs" />
     <Compile Include="Text\Editor\OutputTextPaneUtils.cs" />
     <Compile Include="Text\Editor\PopupHelper.cs" />
+    <Compile Include="Text\Editor\PopupSpaceReservationAgent.cs" />
     <Compile Include="Text\Editor\ReplBufferKind.cs" />
     <Compile Include="Text\Editor\ReplCommandInfoProvider.cs" />
     <Compile Include="Text\Editor\ReplCommands.cs" />
@@ -564,6 +568,9 @@
     <Compile Include="Text\Editor\Search\WpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\SelectionUtilities.cs" />
     <Compile Include="Text\Editor\SmartIndentationService.cs" />
+    <Compile Include="Text\Editor\SpaceReservationManager.cs" />
+    <Compile Include="Text\Editor\SpaceReservationStack.cs" />
+    <Compile Include="Text\Editor\SpaceReservationStackProvider.cs" />
     <Compile Include="Text\Editor\SpacerMargin.cs" />
     <Compile Include="Text\Editor\StructureVisualizerService.cs" />
     <Compile Include="Text\Editor\SystemTextCaret.cs" />

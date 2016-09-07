@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
-
 namespace dnSpy.Contracts.Language.Intellisense {
 	static class AcronymSearchHelpers {
 		public static int[] TryCreateMatchIndexes(string searchText) {

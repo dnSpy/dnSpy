@@ -60,8 +60,8 @@ namespace dnSpy.Text.Editor {
 		ITextSelection ITextView.Selection => Selection;
 		TextSelection Selection { get; }
 		public IViewScroller ViewScroller { get; }
-		public bool HasAggregateFocus => this.IsKeyboardFocusWithin;
-		public bool IsMouseOverViewOrAdornments => this.IsMouseOver;
+		public bool HasAggregateFocus => IsKeyboardFocusWithin || spaceReservationStack.HasAggregateFocus;
+		public bool IsMouseOverViewOrAdornments => IsMouseOver || spaceReservationStack.IsMouseOver;
 		public ITextBuffer TextBuffer => TextViewModel.EditBuffer;
 		public ITextSnapshot TextSnapshot => TextBuffer.CurrentSnapshot;
 		public ITextSnapshot VisualSnapshot => TextViewModel.VisualBuffer.CurrentSnapshot;
@@ -108,6 +108,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IEditorFormatMap editorFormatMap;
+		readonly ISpaceReservationStack spaceReservationStack;
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformProviderService lineTransformProviderService;
 		readonly Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners;
@@ -138,7 +139,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
 			if (textViewModel == null)
 				throw new ArgumentNullException(nameof(textViewModel));
 			if (roles == null)
@@ -165,6 +166,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			if (lineTransformProviderService == null)
 				throw new ArgumentNullException(nameof(lineTransformProviderService));
+			if (spaceReservationStackProvider == null)
+				throw new ArgumentNullException(nameof(spaceReservationStackProvider));
 			if (wpfTextViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
 			this.mouseHoverHelper = new MouseHoverHelper(this);
@@ -180,6 +183,7 @@ namespace dnSpy.Text.Editor {
 			this.normalAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Normal);
 			this.overlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Overlay);
 			this.underlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Underlay);
+			IsVisibleChanged += WpfTextView_IsVisibleChanged;
 			Properties = new PropertyCollection();
 			TextViewModel = textViewModel;
 			Roles = roles;
@@ -192,6 +196,7 @@ namespace dnSpy.Text.Editor {
 			this.textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
 			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(this);
 			this.editorFormatMap = editorFormatMapService.GetEditorFormatMap(this);
+			this.spaceReservationStack = spaceReservationStackProvider.Create(this);
 
 			this.textLayer = new TextLayer(GetAdornmentLayer(PredefinedAdornmentLayers.Text));
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection), editorFormatMap);
@@ -212,6 +217,8 @@ namespace dnSpy.Text.Editor {
 			textAndAdornmentSequencer.SequenceChanged += TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
+			spaceReservationStack.GotAggregateFocus += SpaceReservationStack_GotAggregateFocus;
+			spaceReservationStack.LostAggregateFocus += SpaceReservationStack_LostAggregateFocus;
 
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
@@ -448,11 +455,14 @@ namespace dnSpy.Text.Editor {
 			base.OnIsKeyboardFocusWithinChanged(e);
 		}
 
+		void SpaceReservationStack_GotAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
+		void SpaceReservationStack_LostAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
+
 		bool hasKeyboardFocus;
 		void UpdateKeyboardFocus() {
 			if (IsClosed)
 				return;
-			bool newValue = this.IsKeyboardFocusWithin;
+			bool newValue = HasAggregateFocus;
 			if (hasKeyboardFocus != newValue) {
 				hasKeyboardFocus = newValue;
 				if (hasKeyboardFocus)
@@ -552,6 +562,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(raisingLayoutChanged);
 			raisingLayoutChanged = false;
 			mouseHoverHelper.OnLayoutChanged();
+			QueueSpaceReservationStackRefresh();
 		}
 		ViewState oldViewState;
 		bool raisingLayoutChanged;
@@ -584,6 +595,8 @@ namespace dnSpy.Text.Editor {
 			textAndAdornmentSequencer.SequenceChanged -= TextAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
+			spaceReservationStack.GotAggregateFocus -= SpaceReservationStack_GotAggregateFocus;
+			spaceReservationStack.LostAggregateFocus -= SpaceReservationStack_LostAggregateFocus;
 			if (metroWindow != null)
 				metroWindow.WindowDPIChanged -= MetroWindow_WindowDPIChanged;
 		}
@@ -880,12 +893,28 @@ namespace dnSpy.Text.Editor {
 		readonly MouseHoverHelper mouseHoverHelper;
 
 		public ISpaceReservationManager GetSpaceReservationManager(string name) {
-			throw new NotImplementedException();//TODO:
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			return spaceReservationStack.GetSpaceReservationManager(name);
 		}
 
 		public void QueueSpaceReservationStackRefresh() {
-			//TODO:
+			if (IsClosed)
+				return;
+			if (queueSpaceReservationStackRefreshInProgress)
+				return;
+			queueSpaceReservationStackRefreshInProgress = true;
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				if (IsClosed)
+					return;
+				queueSpaceReservationStackRefreshInProgress = false;
+				spaceReservationStack.Refresh();
+			}));
 		}
+		bool queueSpaceReservationStackRefreshInProgress;
+
+		void WpfTextView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
+			QueueSpaceReservationStackRefresh();
 
 		public bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 	}
