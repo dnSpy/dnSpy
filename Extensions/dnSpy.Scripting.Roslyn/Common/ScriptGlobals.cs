@@ -46,8 +46,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.printOptionsImpl = new PrintOptionsImpl();
 		}
 
-		public event EventHandler ScriptReset;
-		public void RaiseScriptReset() => ScriptReset?.Invoke(this, EventArgs.Empty);
+		public event EventHandler ScriptResetting;
+		public void RaiseScriptResetting() => ScriptResetting?.Invoke(this, EventArgs.Empty);
 		public IScriptGlobals Instance => this;
 		public CancellationToken Token => token;
 		public IPrintOptions PrintOptions => printOptionsImpl;

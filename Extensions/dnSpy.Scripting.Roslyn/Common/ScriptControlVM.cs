@@ -88,7 +88,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (execState != null) {
 				execState.CancellationTokenSource.Cancel();
 				try {
-					execState.Globals.RaiseScriptReset();
+					execState.Globals.RaiseScriptResetting();
 				}
 				catch {
 					// Ignore buggy script exceptions

@@ -35,10 +35,10 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		IScriptGlobals Instance { get; }
 
 		/// <summary>
-		/// Raised when the script gets reset. Can be used to unregister from events to prevent
+		/// Raised before the script gets reset. Can be used to unregister from events to prevent
 		/// memory leaks. Raised on the UI thread.
 		/// </summary>
-		event EventHandler ScriptReset;
+		event EventHandler ScriptResetting;
 
 		/// <summary>
 		/// Cancellation token that gets signalled when the script gets reset
