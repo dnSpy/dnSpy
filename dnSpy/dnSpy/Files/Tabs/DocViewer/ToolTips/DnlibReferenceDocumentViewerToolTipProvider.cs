@@ -32,9 +32,9 @@ using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.IL;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
-	[ExportToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
-	sealed class DnlibReferenceToolTipProvider : IToolTipProvider {
-		public object Create(IToolTipProviderContext context, object @ref) {
+	[ExportDocumentViewerToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
+	sealed class DnlibReferenceDocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
+		public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
 			if (@ref is GenericParam)
 				return Create(context, (GenericParam)@ref);
 			if (@ref is IMemberRef)
@@ -94,7 +94,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return null;
 		}
 
-		object Create(IToolTipProviderContext context, GenericParam gp) {
+		object Create(IDocumentViewerToolTipProviderContext context, GenericParam gp) {
 			var provider = context.Create();
 			provider.SetImage(gp);
 
@@ -122,14 +122,14 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return provider.Create();
 		}
 
-		object Create(IToolTipProviderContext context, NamespaceReference nsRef) {
+		object Create(IDocumentViewerToolTipProviderContext context, NamespaceReference nsRef) {
 			var provider = context.Create();
 			provider.SetImage(nsRef);
 			context.Decompiler.WriteNamespaceToolTip(provider.Output, nsRef.Namespace);
 			return provider.Create();
 		}
 
-		object Create(IToolTipProviderContext context, IMemberRef @ref) {
+		object Create(IDocumentViewerToolTipProviderContext context, IMemberRef @ref) {
 			var provider = context.Create();
 
 			var resolvedRef = Resolve(@ref) ?? @ref;
@@ -149,7 +149,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return provider.Create();
 		}
 
-		object Create(IToolTipProviderContext context, Local local) {
+		object Create(IDocumentViewerToolTipProviderContext context, Local local) {
 			var name = GetDecompilerLocalName(context.DocumentViewer.Content.MethodDebugInfos, local) ?? local.Name;
 			return Create(context, local, name);
 		}
@@ -164,8 +164,8 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return null;
 		}
 
-		object Create(IToolTipProviderContext context, Parameter p) => Create(context, p, null);
-		object Create(IToolTipProviderContext context, IVariable v, string name) {
+		object Create(IDocumentViewerToolTipProviderContext context, Parameter p) => Create(context, p, null);
+		object Create(IDocumentViewerToolTipProviderContext context, IVariable v, string name) {
 			var provider = context.Create();
 			provider.SetImage(v);
 
@@ -201,7 +201,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			return provider.Create();
 		}
 
-		object Create(IToolTipProviderContext context, OpCode opCode) {
+		object Create(IDocumentViewerToolTipProviderContext context, OpCode opCode) {
 			var provider = context.Create();
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);

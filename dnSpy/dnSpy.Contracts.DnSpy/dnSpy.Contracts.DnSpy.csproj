@@ -131,8 +131,8 @@
     <Compile Include="Files\Tabs\DocViewer\ReferenceAndId.cs" />
     <Compile Include="Files\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Files\Tabs\DocViewer\TextReference.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\IToolTipProviderContext.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\IDocumentViewerToolTipProvider.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\IDocumentViewerToolTipProviderContext.cs" />
     <Compile Include="Files\Tabs\IDefaultFileTabContentProvider.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\IFileTreeNodeProvider.cs" />

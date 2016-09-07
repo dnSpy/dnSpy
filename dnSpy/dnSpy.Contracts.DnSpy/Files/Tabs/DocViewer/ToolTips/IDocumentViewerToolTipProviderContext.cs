@@ -21,9 +21,9 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
-	/// <see cref="IToolTipProvider"/> context
+	/// <see cref="IDocumentViewerToolTipProvider"/> context
 	/// </summary>
-	public interface IToolTipProviderContext {
+	public interface IDocumentViewerToolTipProviderContext {
 		/// <summary>
 		/// Document viewer
 		/// </summary>

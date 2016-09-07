@@ -22,39 +22,39 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
-	/// Creates tooltips. Use <see cref="ExportToolTipProviderAttribute"/> to export an
+	/// Creates tooltips. Use <see cref="ExportDocumentViewerToolTipProviderAttribute"/> to export an
 	/// instance.
 	/// </summary>
-	public interface IToolTipProvider {
+	public interface IDocumentViewerToolTipProvider {
 		/// <summary>
 		/// Creates a tooltip or returns null
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		object Create(IToolTipProviderContext context, object @ref);
+		object Create(IDocumentViewerToolTipProviderContext context, object @ref);
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IToolTipProviderMetadata {
-		/// <summary>See <see cref="ExportToolTipProviderAttribute.Order"/></summary>
+	public interface IDocumentViewerToolTipProviderMetadata {
+		/// <summary>See <see cref="ExportDocumentViewerToolTipProviderAttribute.Order"/></summary>
 		double Order { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="IToolTipProvider"/> instance
+	/// Exports a <see cref="IDocumentViewerToolTipProvider"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportToolTipProviderAttribute : ExportAttribute, IToolTipProviderMetadata {
+	public sealed class ExportDocumentViewerToolTipProviderAttribute : ExportAttribute, IDocumentViewerToolTipProviderMetadata {
 		/// <summary>Constructor</summary>
-		public ExportToolTipProviderAttribute()
+		public ExportDocumentViewerToolTipProviderAttribute()
 			: this(double.MaxValue) {
 		}
 
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance</param>
-		public ExportToolTipProviderAttribute(double order)
-			: base(typeof(IToolTipProvider)) {
+		public ExportDocumentViewerToolTipProviderAttribute(double order)
+			: base(typeof(IDocumentViewerToolTipProvider)) {
 		}
 
 		/// <summary>

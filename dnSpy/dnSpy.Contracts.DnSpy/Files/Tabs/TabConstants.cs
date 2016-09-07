@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		public const double ORDER_DOCUMENTVIEWERPROVIDER = double.MaxValue;
 
 		/// <summary>
-		/// Order of dnlib reference <see cref="IToolTipProvider"/> instance
+		/// Order of dnlib reference <see cref="IDocumentViewerToolTipProvider"/> instance
 		/// </summary>
 		public const double ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER = double.MaxValue;
 

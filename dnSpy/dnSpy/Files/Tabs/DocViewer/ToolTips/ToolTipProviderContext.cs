@@ -23,7 +23,7 @@ using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
-	sealed class ToolTipProviderContext : IToolTipProviderContext {
+	sealed class ToolTipProviderContext : IDocumentViewerToolTipProviderContext {
 		public IDocumentViewer DocumentViewer { get; }
 		public IDecompiler Decompiler { get; }
 

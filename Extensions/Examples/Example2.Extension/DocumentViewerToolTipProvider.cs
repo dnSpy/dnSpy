@@ -12,9 +12,9 @@ namespace Example2.Extension {
 	}
 
 	// Called by dnSpy to create a tooltip when hovering over a reference in the text editor
-	[ExportToolTipProvider]
-	sealed class ToolTipProvider : IToolTipProvider {
-		public object Create(IToolTipProviderContext context, object @ref) {
+	[ExportDocumentViewerToolTipProvider]
+	sealed class DocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
+		public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
 			// This reference is added to the "decompiled" code by ModuleChildNode.Decompile()
 			var sref = @ref as StringInfoReference;
 			if (sref != null) {

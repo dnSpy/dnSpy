@@ -223,7 +223,7 @@
     <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\DnlibReferenceToolTipProvider.cs" />
+    <Compile Include="Files\Tabs\DocViewer\ToolTips\DnlibReferenceDocumentViewerToolTipProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\ToolTipProviderContext.cs" />
     <Compile Include="Files\Tabs\DocViewer\WaitAdorner.xaml.cs">
       <DependentUpon>WaitAdorner.xaml</DependentUpon>

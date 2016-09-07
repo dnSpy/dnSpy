@@ -55,44 +55,44 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
-		readonly Lazy<IToolTipProvider, IToolTipProviderMetadata>[] toolTipProviders;
+		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceProvider(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, [ImportMany] IEnumerable<Lazy<IToolTipProvider, IToolTipProviderMetadata>> toolTipProviders) {
+		DocumentViewerToolTipServiceProvider(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
 			this.codeToolTipSettings = codeToolTipSettings;
-			this.toolTipProviders = toolTipProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.documentViewerToolTipProviders = documentViewerToolTipProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public DocumentViewerToolTipService GetService(IDocumentViewer documentViewer) =>
-			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(imageManager, dotNetImageManager, codeToolTipSettings, toolTipProviders, documentViewer));
+			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(imageManager, dotNetImageManager, codeToolTipSettings, documentViewerToolTipProviders, documentViewer));
 	}
 
 	sealed class DocumentViewerToolTipService {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
-		readonly Lazy<IToolTipProvider, IToolTipProviderMetadata>[] toolTipProviders;
+		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 		readonly IDocumentViewer documentViewer;
 		ToolTip toolTip;
 		SpanData<ReferenceInfo>? currentReference;
 
-		public DocumentViewerToolTipService(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, Lazy<IToolTipProvider, IToolTipProviderMetadata>[] toolTipProviders, IDocumentViewer documentViewer) {
+		public DocumentViewerToolTipService(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer) {
 			if (imageManager == null)
 				throw new ArgumentNullException(nameof(imageManager));
 			if (dotNetImageManager == null)
 				throw new ArgumentNullException(nameof(dotNetImageManager));
 			if (codeToolTipSettings == null)
 				throw new ArgumentNullException(nameof(codeToolTipSettings));
-			if (toolTipProviders == null)
-				throw new ArgumentNullException(nameof(toolTipProviders));
+			if (documentViewerToolTipProviders == null)
+				throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
 			if (documentViewer == null)
 				throw new ArgumentNullException(nameof(documentViewer));
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
 			this.codeToolTipSettings = codeToolTipSettings;
-			this.toolTipProviders = toolTipProviders;
+			this.documentViewerToolTipProviders = documentViewerToolTipProviders;
 			this.documentViewer = documentViewer;
 			documentViewer.TextView.Closed += TextView_Closed;
 			documentViewer.TextView.MouseHover += TextView_MouseHover;
@@ -172,7 +172,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				return null;
 
 			var ctx = new ToolTipProviderContext(imageManager, dotNetImageManager, decompiler, codeToolTipSettings, documentViewer);
-			foreach (var provider in toolTipProviders) {
+			foreach (var provider in documentViewerToolTipProviders) {
 				var toolTipContent = provider.Value.Create(ctx, @ref);
 				if (toolTipContent != null)
 					return toolTipContent;
