@@ -23,6 +23,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -35,6 +37,9 @@ namespace dnSpy.Language.Intellisense {
 		readonly ObservableCollection<IIntellisenseSession> sessions;
 		readonly CommandTargetFilter commandTargetFilter;
 		readonly List<SessionState> sessionStates;
+		readonly DispatcherTimer clearOpacityTimer;
+
+		const double clearOpacityIntervalMilliSecs = 250;
 
 		sealed class SessionState {
 			public IIntellisenseSession Session { get; }
@@ -60,9 +65,63 @@ namespace dnSpy.Language.Intellisense {
 			this.sessions = new ObservableCollection<IIntellisenseSession>();
 			this.commandTargetFilter = new CommandTargetFilter(this);
 			this.sessionStates = new List<SessionState>();
+			this.clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfTextView.VisualElement.Dispatcher);
+			clearOpacityTimer.Interval = TimeSpan.FromMilliseconds(clearOpacityIntervalMilliSecs);
+			clearOpacityTimer.Tick += ClearOpacityTimer_Tick;
 			Sessions = new ReadOnlyObservableCollection<IIntellisenseSession>(sessions);
 			wpfTextView.Closed += WpfTextView_Closed;
+			wpfTextView.VisualElement.KeyDown += VisualElement_KeyDown;
+			wpfTextView.VisualElement.KeyUp += VisualElement_KeyUp;
 		}
+
+		void ClearOpacityTimer_Tick(object sender, EventArgs e) {
+			clearOpacityTimer.Stop();
+			if (wpfTextView.IsClosed)
+				return;
+			SetOpacity(0.3);
+		}
+
+		void VisualElement_KeyUp(object sender, KeyEventArgs e) {
+			if (wpfTextView.IsClosed)
+				return;
+			if (clearOpacityTimer.IsEnabled)
+				StopClearOpacityTimer();
+			else
+				SetOpacity(1);
+		}
+
+		void VisualElement_KeyDown(object sender, KeyEventArgs e) {
+			if (wpfTextView.IsClosed)
+				return;
+			var key = e.Key == Key.System ? e.SystemKey : e.Key;
+			bool isCtrl = key == Key.LeftCtrl || key == Key.RightCtrl;
+			if (isCtrl && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
+				if (!clearOpacityTimer.IsEnabled)
+					clearOpacityTimer.Start();
+			}
+			else
+				StopClearOpacityTimer();
+		}
+
+		void StopClearOpacityTimer() {
+			if (!clearOpacityTimer.IsEnabled)
+				return;
+			clearOpacityTimer.Stop();
+			SetOpacity(1);
+		}
+
+		void SetOpacity(double opacity) {
+			bool newIsInClearOpacityMode = opacity != 1;
+			if (isInClearOpacityMode == newIsInClearOpacityMode)
+				return;
+			isInClearOpacityMode = newIsInClearOpacityMode;
+			foreach (var session in sessions.ToArray()) {
+				var popupPresenter = session.Presenter as IPopupIntellisensePresenter;
+				if (popupPresenter != null)
+					popupPresenter.Opacity = opacity;
+			}
+		}
+		bool isInClearOpacityMode;
 
 		bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
 			foreach (var session in sessions) {
@@ -258,11 +317,14 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
+			clearOpacityTimer.Stop();
 			CollapseAllSessionsCore();
 			while (sessions.Count > 0)
 				RemoveSessionAt(sessions.Count - 1);
 			commandTargetFilter.Destroy();
 			wpfTextView.Closed -= WpfTextView_Closed;
+			wpfTextView.VisualElement.KeyDown -= VisualElement_KeyDown;
+			wpfTextView.VisualElement.KeyUp -= VisualElement_KeyUp;
 		}
 	}
 }
