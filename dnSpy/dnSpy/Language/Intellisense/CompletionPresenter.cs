@@ -275,10 +275,16 @@ namespace dnSpy.Language.Intellisense {
 				session.Commit();
 				return true;
 
+			case IntellisenseKeyboardCommand.TopLine:
+				WpfUtils.ScrollToTop(control.completionsListBox);
+				return true;
+
+			case IntellisenseKeyboardCommand.BottomLine:
+				WpfUtils.ScrollToBottom(control.completionsListBox);
+				return true;
+
 			case IntellisenseKeyboardCommand.Home:
 			case IntellisenseKeyboardCommand.End:
-			case IntellisenseKeyboardCommand.TopLine:
-			case IntellisenseKeyboardCommand.BottomLine:
 			case IntellisenseKeyboardCommand.IncreaseFilterLevel:
 			case IntellisenseKeyboardCommand.DecreaseFilterLevel:
 			default:

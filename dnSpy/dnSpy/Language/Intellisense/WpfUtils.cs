@@ -82,5 +82,23 @@ namespace dnSpy.Language.Intellisense {
 					scrollViewer.LineDown();
 			}
 		}
+
+		public static void ScrollToTop(ListBox lb) {
+			var scrollViewer = TryGetScrollViewer(lb);
+			if (scrollViewer == null)
+				return;
+			scrollViewer.ScrollToTop();
+			if (lb.Items.Count != 0)
+				lb.SelectedItem = lb.Items[0];
+		}
+
+		public static void ScrollToBottom(ListBox lb) {
+			var scrollViewer = TryGetScrollViewer(lb);
+			if (scrollViewer == null)
+				return;
+			scrollViewer.ScrollToBottom();
+			if (lb.Items.Count != 0)
+				lb.SelectedItem = lb.Items[lb.Items.Count - 1];
+		}
 	}
 }
