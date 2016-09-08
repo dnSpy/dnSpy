@@ -103,144 +103,144 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			foreach (var tag in tags) {
 				switch (tag) {
 				case CompletionTags.Class:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.ClassProtected;
-					case Accessability.Internal:	return CompletionKind.ClassInternal;
-					case Accessability.Private:		return CompletionKind.ClassPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.ClassProtected;
+					case Accessibility.Internal:	return CompletionKind.ClassInternal;
+					case Accessibility.Private:		return CompletionKind.ClassPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Class;
 					}
 
 				case CompletionTags.Constant:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.ConstantProtected;
-					case Accessability.Internal:	return CompletionKind.ConstantInternal;
-					case Accessability.Private:		return CompletionKind.ConstantPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.ConstantProtected;
+					case Accessibility.Internal:	return CompletionKind.ConstantInternal;
+					case Accessibility.Private:		return CompletionKind.ConstantPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Constant;
 					}
 
 				case CompletionTags.Delegate:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.DelegateProtected;
-					case Accessability.Internal:	return CompletionKind.DelegateInternal;
-					case Accessability.Private:		return CompletionKind.DelegatePrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.DelegateProtected;
+					case Accessibility.Internal:	return CompletionKind.DelegateInternal;
+					case Accessibility.Private:		return CompletionKind.DelegatePrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Delegate;
 					}
 
 				case CompletionTags.Enum:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.EnumProtected;
-					case Accessability.Internal:	return CompletionKind.EnumInternal;
-					case Accessability.Private:		return CompletionKind.EnumPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.EnumProtected;
+					case Accessibility.Internal:	return CompletionKind.EnumInternal;
+					case Accessibility.Private:		return CompletionKind.EnumPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Enum;
 					}
 
 				case CompletionTags.Event:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.EventProtected;
-					case Accessability.Internal:	return CompletionKind.EventInternal;
-					case Accessability.Private:		return CompletionKind.EventPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.EventProtected;
+					case Accessibility.Internal:	return CompletionKind.EventInternal;
+					case Accessibility.Private:		return CompletionKind.EventPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Event;
 					}
 
 				case CompletionTags.ExtensionMethod:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.ExtensionMethodProtected;
-					case Accessability.Internal:	return CompletionKind.ExtensionMethodInternal;
-					case Accessability.Private:		return CompletionKind.ExtensionMethodPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.ExtensionMethodProtected;
+					case Accessibility.Internal:	return CompletionKind.ExtensionMethodInternal;
+					case Accessibility.Private:		return CompletionKind.ExtensionMethodPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.ExtensionMethod;
 					}
 
 				case CompletionTags.Field:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.FieldProtected;
-					case Accessability.Internal:	return CompletionKind.FieldInternal;
-					case Accessability.Private:		return CompletionKind.FieldPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.FieldProtected;
+					case Accessibility.Internal:	return CompletionKind.FieldInternal;
+					case Accessibility.Private:		return CompletionKind.FieldPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Field;
 					}
 
 				case CompletionTags.Interface:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.InterfaceProtected;
-					case Accessability.Internal:	return CompletionKind.InterfaceInternal;
-					case Accessability.Private:		return CompletionKind.InterfacePrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.InterfaceProtected;
+					case Accessibility.Internal:	return CompletionKind.InterfaceInternal;
+					case Accessibility.Private:		return CompletionKind.InterfacePrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Interface;
 					}
 
 				case CompletionTags.Method:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.MethodProtected;
-					case Accessability.Internal:	return CompletionKind.MethodInternal;
-					case Accessability.Private:		return CompletionKind.MethodPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.MethodProtected;
+					case Accessibility.Internal:	return CompletionKind.MethodInternal;
+					case Accessibility.Private:		return CompletionKind.MethodPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Method;
 					}
 
 				case CompletionTags.Module:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.ModuleProtected;
-					case Accessability.Internal:	return CompletionKind.ModuleInternal;
-					case Accessability.Private:		return CompletionKind.ModulePrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.ModuleProtected;
+					case Accessibility.Internal:	return CompletionKind.ModuleInternal;
+					case Accessibility.Private:		return CompletionKind.ModulePrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Module;
 					}
 
 				case CompletionTags.Operator:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.OperatorProtected;
-					case Accessability.Internal:	return CompletionKind.OperatorInternal;
-					case Accessability.Private:		return CompletionKind.OperatorPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.OperatorProtected;
+					case Accessibility.Internal:	return CompletionKind.OperatorInternal;
+					case Accessibility.Private:		return CompletionKind.OperatorPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Operator;
 					}
 
 				case CompletionTags.Property:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.PropertyProtected;
-					case Accessability.Internal:	return CompletionKind.PropertyInternal;
-					case Accessability.Private:		return CompletionKind.PropertyPrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.PropertyProtected;
+					case Accessibility.Internal:	return CompletionKind.PropertyInternal;
+					case Accessibility.Private:		return CompletionKind.PropertyPrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Property;
 					}
 
 				case CompletionTags.Structure:
-					switch (GetAccessability(tags)) {
-					case Accessability.Protected:	return CompletionKind.StructureProtected;
-					case Accessability.Internal:	return CompletionKind.StructureInternal;
-					case Accessability.Private:		return CompletionKind.StructurePrivate;
-					case Accessability.Public:
-					case Accessability.None:
+					switch (GetAccessibility(tags)) {
+					case Accessibility.Protected:	return CompletionKind.StructureProtected;
+					case Accessibility.Internal:	return CompletionKind.StructureInternal;
+					case Accessibility.Private:		return CompletionKind.StructurePrivate;
+					case Accessibility.Public:
+					case Accessibility.None:
 					default:
 						return CompletionKind.Structure;
 					}
@@ -284,16 +284,16 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			return CompletionKind.Unknown;
 		}
 
-		static Accessability GetAccessability(ImmutableArray<string> tags) {
+		static Accessibility GetAccessibility(ImmutableArray<string> tags) {
 			if (tags.Contains(CompletionTags.Public))
-				return Accessability.Public;
+				return Accessibility.Public;
 			if (tags.Contains(CompletionTags.Protected))
-				return Accessability.Protected;
+				return Accessibility.Protected;
 			if (tags.Contains(CompletionTags.Internal))
-				return Accessability.Internal;
+				return Accessibility.Internal;
 			if (tags.Contains(CompletionTags.Private))
-				return Accessability.Private;
-			return Accessability.None;
+				return Accessibility.Private;
+			return Accessibility.None;
 		}
 
 		static Language GetLanguage(ImmutableArray<string> tags) {
@@ -304,7 +304,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			return Language.None;
 		}
 
-		enum Accessability {
+		enum Accessibility {
 			None,
 			Public,
 			Protected,
