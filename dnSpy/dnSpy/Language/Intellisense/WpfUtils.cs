@@ -66,5 +66,19 @@ namespace dnSpy.Language.Intellisense {
 				return defaultValue;
 			return (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
 		}
+
+		public static void Scroll(ListBox lb, int lines) {
+			var scrollViewer = FindVisualChild<ScrollViewer>(lb);
+			if (scrollViewer == null)
+				return;
+			if (lines > 0) {
+				while (lines-- > 0)
+					scrollViewer.LineUp();
+			}
+			else {
+				while (lines++ < 0)
+					scrollViewer.LineDown();
+			}
+		}
 	}
 }

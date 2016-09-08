@@ -145,7 +145,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e) {
-			if (!IsClosed) {
+			if (!IsClosed && !e.Handled) {
 				e.Handled = true;
 				if (e.Delta == 0)
 					return;

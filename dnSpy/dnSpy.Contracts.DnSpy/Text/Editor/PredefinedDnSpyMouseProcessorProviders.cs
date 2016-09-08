@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
@@ -28,6 +29,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// <see cref="IDocumentViewer"/> <see cref="IMouseProcessorProvider"/>
 		/// </summary>
-		public const string DocumentViewer = "DocumentViewer";
+		public const string DocumentViewer = nameof(DocumentViewer);
+
+		/// <summary>
+		/// <see cref="IIntellisensePresenter"/> <see cref="IMouseProcessorProvider"/>
+		/// </summary>
+		public const string IntellisensePresenter = nameof(IntellisensePresenter);
 	}
 }

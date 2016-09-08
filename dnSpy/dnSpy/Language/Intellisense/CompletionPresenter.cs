@@ -36,7 +36,7 @@ using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionPresenter : IPopupIntellisensePresenter {
+	sealed class CompletionPresenter : IPopupIntellisensePresenter, IMouseProcessor {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
 		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.Completion;
@@ -396,5 +396,58 @@ namespace dnSpy.Language.Intellisense {
 				return string.Format("{0} ({1})", toolTip, string.Format(dnSpy_Resources.ShortCutKeyAltPlusAnyKey, accessKey.ToUpper()));
 			return toolTip;
 		}
+
+		static int GetScrollWheelLines() {
+			if (!SystemParameters.IsMouseWheelPresent)
+				return 1;
+			return SystemParameters.WheelScrollLines;
+		}
+
+		void IMouseProcessor.PostprocessMouseWheel(MouseWheelEventArgs e) {
+			if (e.Handled)
+				return;
+			if (Keyboard.Modifiers != ModifierKeys.None)
+				return;
+			if (e.Delta == 0)
+				return;
+
+			int lines = GetScrollWheelLines();
+			if (e.Delta < 0)
+				lines = -lines;
+			WpfUtils.Scroll(control.completionsListBox, lines);
+			e.Handled = true;
+		}
+
+		void IMouseProcessor.PreprocessMouseLeftButtonDown(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseRightButtonDown(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseRightButtonDown(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseLeftButtonUp(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseLeftButtonUp(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseRightButtonUp(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseRightButtonUp(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseUp(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseUp(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseDown(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseDown(MouseButtonEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseMove(MouseEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseMove(MouseEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseWheel(MouseWheelEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseEnter(MouseEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseEnter(MouseEventArgs e) { }
+		void IMouseProcessor.PreprocessMouseLeave(MouseEventArgs e) { }
+		void IMouseProcessor.PostprocessMouseLeave(MouseEventArgs e) { }
+		void IMouseProcessor.PreprocessDragLeave(DragEventArgs e) { }
+		void IMouseProcessor.PostprocessDragLeave(DragEventArgs e) { }
+		void IMouseProcessor.PreprocessDragOver(DragEventArgs e) { }
+		void IMouseProcessor.PostprocessDragOver(DragEventArgs e) { }
+		void IMouseProcessor.PreprocessDragEnter(DragEventArgs e) { }
+		void IMouseProcessor.PostprocessDragEnter(DragEventArgs e) { }
+		void IMouseProcessor.PreprocessDrop(DragEventArgs e) { }
+		void IMouseProcessor.PostprocessDrop(DragEventArgs e) { }
+		void IMouseProcessor.PreprocessQueryContinueDrag(QueryContinueDragEventArgs e) { }
+		void IMouseProcessor.PostprocessQueryContinueDrag(QueryContinueDragEventArgs e) { }
+		void IMouseProcessor.PreprocessGiveFeedback(GiveFeedbackEventArgs e) { }
+		void IMouseProcessor.PostprocessGiveFeedback(GiveFeedbackEventArgs e) { }
 	}
 }

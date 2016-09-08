@@ -298,6 +298,7 @@
     <Compile Include="Language\Intellisense\IntellisenseSessionStack.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStackMapService.cs" />
     <Compile Include="Language\Intellisense\PresenterCommandTargetCommand.cs" />
+    <Compile Include="Language\Intellisense\PresenterMouseProcessor.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Language\Intellisense\WpfUtils.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
