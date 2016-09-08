@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -70,6 +71,7 @@ namespace dnSpy.Language.Intellisense {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		const double defaultMaxHeight = 200;
+		const double defaultMinWidth = 150;
 
 		public CompletionPresenter(IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider) {
 			if (imageManager == null)
@@ -83,6 +85,7 @@ namespace dnSpy.Language.Intellisense {
 			this.completionTextElementProvider = completionTextElementProvider;
 			this.control = new CompletionPresenterControl { DataContext = this };
 			this.filters = new List<FilterVM>();
+			this.control.MinWidth = defaultMinWidth;
 			this.control.completionsListBox.MaxHeight = defaultMaxHeight;
 			session.SelectedCompletionCollectionChanged += CompletionSession_SelectedCompletionCollectionChanged;
 			session.Dismissed += CompletionSession_Dismissed;
@@ -93,10 +96,52 @@ namespace dnSpy.Language.Intellisense {
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
+			control.completionsListBox.Loaded += CompletionsListBox_Loaded;
 			control.SizeChanged += Control_SizeChanged;
 			control.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(Control_GotKeyboardFocus), true);
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
+		}
+
+		void CompletionsListBox_Loaded(object sender, RoutedEventArgs e) {
+			control.completionsListBox.Loaded -= CompletionsListBox_Loaded;
+			if (control.completionsListBox.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+				InitializeLoaded();
+			else
+				control.completionsListBox.ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
+		}
+
+		void ItemContainerGenerator_StatusChanged(object sender, EventArgs e) {
+			if (control.completionsListBox.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated) {
+				control.completionsListBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
+				InitializeLoaded();
+			}
+		}
+
+		void InitializeLoaded() {
+			UpdateSelectedItem();
+			var item = control.completionsListBox.SelectedItem;
+			var scrollViewer = WpfUtils.TryGetScrollViewer(control.completionsListBox);
+			if (item != null && scrollViewer != null) {
+				var lbItem = control.completionsListBox.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
+				lbItem.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+				var itemHeight = lbItem.DesiredSize.Height;
+				double maxHeight = itemHeight * 9;
+				var borderThickness = control.completionsListBox.BorderThickness;
+				maxHeight += borderThickness.Top + borderThickness.Bottom;
+				if (maxHeight > 50)
+					control.completionsListBox.MaxHeight = maxHeight;
+			}
+
+			if (scrollViewer != null) {
+				if (scrollViewer.ViewportHeight != 0)
+					UpdateSelectedItem();
+				else {
+					control.completionsListBox.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
+						UpdateSelectedItem(true);
+					}));
+				}
+			}
 		}
 
 		// Make sure the text view gets focus again whenever the listbox gets focus
@@ -320,13 +365,13 @@ namespace dnSpy.Language.Intellisense {
 			UpdateSelectedItem();
 		}
 
-		void UpdateSelectedItem() {
+		void UpdateSelectedItem(bool? forceCenter = null) {
 			PresentationSpan = currentCompletionCollection?.ApplicableTo;
 			if (currentCompletionCollection == null)
 				control.completionsListBox.SelectedItem = null;
 			else {
 				control.completionsListBox.SelectedItem = currentCompletionCollection.CurrentCompletion.Completion;
-				ScrollSelectedItemIntoView(!control.IsKeyboardFocusWithin);
+				ScrollSelectedItemIntoView(forceCenter ?? !control.IsKeyboardFocusWithin);
 				if (!currentCompletionCollection.CurrentCompletion.IsSelected)
 					control.completionsListBox.SelectedItem = null;
 			}
@@ -360,6 +405,8 @@ namespace dnSpy.Language.Intellisense {
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
+			control.completionsListBox.Loaded -= CompletionsListBox_Loaded;
+			control.completionsListBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
 			control.SizeChanged -= Control_SizeChanged;
 			control.GotKeyboardFocus -= Control_GotKeyboardFocus;
 			if (wpfTextView != null)

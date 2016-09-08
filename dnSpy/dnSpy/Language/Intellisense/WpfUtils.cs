@@ -36,7 +36,7 @@ namespace dnSpy.Language.Intellisense {
 
 			if (!center)
 				return;
-			var scrollViewer = FindVisualChild<ScrollViewer>(lb);
+			var scrollViewer = TryGetScrollViewer(lb);
 			if (scrollViewer != null) {
 				int index = lb.Items.IndexOf(item);
 				int itemsPerPage = (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
@@ -60,15 +60,17 @@ namespace dnSpy.Language.Intellisense {
 			return null;
 		}
 
+		public static ScrollViewer TryGetScrollViewer(ListBox lb)=> FindVisualChild<ScrollViewer>(lb);
+
 		public static int GetItemsPerPage(ListBox lb, int defaultValue) {
-			var scrollViewer = FindVisualChild<ScrollViewer>(lb);
+			var scrollViewer = TryGetScrollViewer(lb);
 			if (scrollViewer == null)
 				return defaultValue;
 			return (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
 		}
 
 		public static void Scroll(ListBox lb, int lines) {
-			var scrollViewer = FindVisualChild<ScrollViewer>(lb);
+			var scrollViewer = TryGetScrollViewer(lb);
 			if (scrollViewer == null)
 				return;
 			if (lines > 0) {
