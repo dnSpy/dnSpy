@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
@@ -93,9 +94,14 @@ namespace dnSpy.Language.Intellisense {
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
 			control.SizeChanged += Control_SizeChanged;
+			control.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(Control_GotKeyboardFocus), true);
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
 		}
+
+		// Make sure the text view gets focus again whenever the listbox gets focus
+		void Control_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+			control.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => (session.TextView as IWpfTextView)?.VisualElement.Focus()));
 
 		static bool IsSameTrackingSpan(ITrackingSpan a, ITrackingSpan b) {
 			if (a == b)
@@ -320,7 +326,7 @@ namespace dnSpy.Language.Intellisense {
 				control.completionsListBox.SelectedItem = null;
 			else {
 				control.completionsListBox.SelectedItem = currentCompletionCollection.CurrentCompletion.Completion;
-				ScrollSelectedItemIntoView(true);
+				ScrollSelectedItemIntoView(!control.IsKeyboardFocusWithin);
 				if (!currentCompletionCollection.CurrentCompletion.IsSelected)
 					control.completionsListBox.SelectedItem = null;
 			}
@@ -355,6 +361,7 @@ namespace dnSpy.Language.Intellisense {
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
 			control.SizeChanged -= Control_SizeChanged;
+			control.GotKeyboardFocus -= Control_GotKeyboardFocus;
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown -= VisualElement_PreviewKeyDown;
 			completionTextElementProvider.Dispose();

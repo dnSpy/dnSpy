@@ -72,11 +72,6 @@
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <ListBox.ItemContainerStyle>
-                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Focusable" Value="False" />
-                </Style>
-            </ListBox.ItemContainerStyle>
         </ListBox>
 
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Filters}" Visibility="{Binding HasFilters, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{DynamicResource ListBoxBackground}" BorderBrush="{DynamicResource ListBoxBorder}" BorderThickness="1 0 1 1" VerticalContentAlignment="Center" >

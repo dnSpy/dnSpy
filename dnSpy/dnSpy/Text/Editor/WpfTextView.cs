@@ -459,17 +459,29 @@ namespace dnSpy.Text.Editor {
 		void SpaceReservationStack_LostAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
 
 		bool hasKeyboardFocus;
+		bool updateKeyboardFocusInProgress;
 		void UpdateKeyboardFocus() {
 			if (IsClosed)
 				return;
-			bool newValue = HasAggregateFocus;
-			if (hasKeyboardFocus != newValue) {
-				hasKeyboardFocus = newValue;
-				if (hasKeyboardFocus)
-					GotAggregateFocus?.Invoke(this, EventArgs.Empty);
-				else
-					LostAggregateFocus?.Invoke(this, EventArgs.Empty);
-			}
+			if (updateKeyboardFocusInProgress)
+				return;
+			updateKeyboardFocusInProgress = true;
+			// Needs to be delayed or HasAggregateFocus could become false when one of the
+			// space reservation agents gets the focus. Eg. we lose focus, then the agent
+			// gets focus.
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				if (IsClosed)
+					return;
+				updateKeyboardFocusInProgress = false;
+				bool newValue = HasAggregateFocus;
+				if (hasKeyboardFocus != newValue) {
+					hasKeyboardFocus = newValue;
+					if (hasKeyboardFocus)
+						GotAggregateFocus?.Invoke(this, EventArgs.Empty);
+					else
+						LostAggregateFocus?.Invoke(this, EventArgs.Empty);
+				}
+			}));
 		}
 
 		public new Brush Background {
