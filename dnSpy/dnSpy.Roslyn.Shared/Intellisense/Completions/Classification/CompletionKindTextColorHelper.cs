@@ -28,10 +28,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			case CompletionKind.ClassInternal:			return TextColor.Type;
 			case CompletionKind.ClassPrivate:			return TextColor.Type;
 			case CompletionKind.Class:					return TextColor.Type;
-			case CompletionKind.ConstantProtected:		return TextColor.Text;
-			case CompletionKind.ConstantInternal:		return TextColor.Text;
-			case CompletionKind.ConstantPrivate:		return TextColor.Text;
-			case CompletionKind.Constant:				return TextColor.Text;
+			case CompletionKind.ConstantProtected:		return TextColor.LiteralField;
+			case CompletionKind.ConstantInternal:		return TextColor.LiteralField;
+			case CompletionKind.ConstantPrivate:		return TextColor.LiteralField;
+			case CompletionKind.Constant:				return TextColor.LiteralField;
 			case CompletionKind.DelegateProtected:		return TextColor.Delegate;
 			case CompletionKind.DelegateInternal:		return TextColor.Delegate;
 			case CompletionKind.DelegatePrivate:		return TextColor.Delegate;
