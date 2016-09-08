@@ -97,11 +97,22 @@ namespace dnSpy.Language.Intellisense {
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
 			control.completionsListBox.Loaded += CompletionsListBox_Loaded;
+			control.completionsListBox.PreviewMouseDown += CompletionsListBox_PreviewMouseDown;
+			control.completionsListBox.PreviewMouseUp += CompletionsListBox_PreviewMouseUp;
+			control.completionsListBox.MouseLeave += CompletionsListBox_MouseLeave;
 			control.SizeChanged += Control_SizeChanged;
 			control.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(Control_GotKeyboardFocus), true);
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
 		}
+
+		// Hack needed so we can give back keyboard focus to the text view as fast as possible. We delay
+		// this if the user uses the mouse, else we do it immediately. If we don't do it immediately,
+		// we'll miss typed characters if the user types fast (the listbox gets the typed chars).
+		bool isMouseSelection;
+		void CompletionsListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e) => isMouseSelection = true;
+		void CompletionsListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e) => isMouseSelection = false;
+		void CompletionsListBox_MouseLeave(object sender, MouseEventArgs e) => isMouseSelection = false;
 
 		void CompletionsListBox_Loaded(object sender, RoutedEventArgs e) {
 			control.completionsListBox.Loaded -= CompletionsListBox_Loaded;
@@ -145,8 +156,12 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		// Make sure the text view gets focus again whenever the listbox gets focus
-		void Control_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
-			control.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => (session.TextView as IWpfTextView)?.VisualElement.Focus()));
+		void Control_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			if (!isMouseSelection)
+				(session.TextView as IWpfTextView)?.VisualElement.Focus();
+			else
+				control.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => (session.TextView as IWpfTextView)?.VisualElement.Focus()));
+		}
 
 		static bool IsSameTrackingSpan(ITrackingSpan a, ITrackingSpan b) {
 			if (a == b)
@@ -412,6 +427,9 @@ namespace dnSpy.Language.Intellisense {
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			control.completionsListBox.SelectionChanged -= CompletionsListBox_SelectionChanged;
 			control.completionsListBox.Loaded -= CompletionsListBox_Loaded;
+			control.completionsListBox.PreviewMouseDown -= CompletionsListBox_PreviewMouseDown;
+			control.completionsListBox.PreviewMouseUp -= CompletionsListBox_PreviewMouseUp;
+			control.completionsListBox.MouseLeave -= CompletionsListBox_MouseLeave;
 			control.completionsListBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
 			control.SizeChanged -= Control_SizeChanged;
 			control.GotKeyboardFocus -= Control_GotKeyboardFocus;
