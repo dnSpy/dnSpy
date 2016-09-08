@@ -551,7 +551,8 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(!raisingLayoutChanged);
 			raisingLayoutChanged = true;
 			var newViewState = new ViewState(this, effectiveViewportWidth, effectiveViewportHeight);
-			LayoutChanged?.Invoke(this, new TextViewLayoutChangedEventArgs(oldViewState, newViewState, newOrReformattedLines, translatedLines));
+			var layoutChangedEventArgs = new TextViewLayoutChangedEventArgs(oldViewState, newViewState, newOrReformattedLines, translatedLines);
+			LayoutChanged?.Invoke(this, layoutChangedEventArgs);
 			oldViewState = newViewState;
 			foreach (var p in visiblePhysicalLines) {
 				foreach (var l in p.Lines) {
@@ -562,10 +563,26 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(raisingLayoutChanged);
 			raisingLayoutChanged = false;
 			mouseHoverHelper.OnLayoutChanged();
-			QueueSpaceReservationStackRefresh();
+			if (ShouldQueueSpaceReservationStackRefresh(layoutChangedEventArgs))
+				QueueSpaceReservationStackRefresh();
 		}
 		ViewState oldViewState;
 		bool raisingLayoutChanged;
+
+		bool ShouldQueueSpaceReservationStackRefresh(TextViewLayoutChangedEventArgs e) {
+			// These checks are necessary or the completion listbox will flicker. Try pressing
+			// eg. F followed by backspace quickly and you'll be able to see the code in the
+			// background (because the completion listbox gets hidden and then shown).
+			if (e.OldViewState.ViewportLeft != e.NewViewState.ViewportLeft)
+				return true;
+			if (e.OldViewState.ViewportTop != e.NewViewState.ViewportTop)
+				return true;
+			if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
+				return true;
+			if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
+				return true;
+			return false;
+		}
 
 		public void Close() {
 			if (IsClosed)

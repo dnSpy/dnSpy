@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Images;
@@ -29,15 +30,17 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
-	[Export(typeof(ICompletionService))]
-	sealed class CompletionService : ICompletionService, ICompletionPresenterService {
+	[Export(typeof(ICompletionBroker))]
+	sealed class CompletionBroker : ICompletionBroker, ICompletionPresenterService {
 		readonly IImageManager imageManager;
+		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
 		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 
 		[ImportingConstructor]
-		CompletionService(IImageManager imageManager, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
+		CompletionBroker(IImageManager imageManager, Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
 			this.imageManager = imageManager;
+			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 			this.completionTextElementProviderService = completionTextElementProviderService;
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
 		}
@@ -64,10 +67,33 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			return new CompletionSession(textView, triggerPoint, trackCaret, this, completionSourceProviders);
+			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
+			var session = new CompletionSession(textView, triggerPoint, trackCaret, this, completionSourceProviders);
+			stack.PushSession(session);
+			return session;
 		}
 
-		ICompletionPresenter ICompletionPresenterService.Create(ICompletionSession completionSession) {
+		public void DismissAllSessions(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			foreach (var session in GetSessions(textView))
+				session.Dismiss();
+		}
+
+		public bool IsCompletionActive(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return GetSessions(textView).Count != 0;
+		}
+
+		public ReadOnlyCollection<ICompletionSession> GetSessions(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
+			return new ReadOnlyCollection<ICompletionSession>(stack.Sessions.OfType<ICompletionSession>().ToArray());
+		}
+
+		IIntellisensePresenter ICompletionPresenterService.Create(ICompletionSession completionSession) {
 			if (completionSession == null)
 				throw new ArgumentNullException(nameof(completionSession));
 			return new CompletionPresenter(imageManager, completionSession, completionTextElementProviderService.Value.Create());

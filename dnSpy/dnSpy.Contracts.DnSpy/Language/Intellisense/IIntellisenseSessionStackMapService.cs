@@ -17,8 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Language.Intellisense {
-	interface ICompletionPresenter : IPopupContent {
-		bool HandleCommand(PresenterCommandTargetCommand command);
+using Microsoft.VisualStudio.Text.Editor;
+
+namespace dnSpy.Contracts.Language.Intellisense {
+	/// <summary>
+	/// Provides <see cref="IIntellisenseSessionStack"/>s
+	/// </summary>
+	public interface IIntellisenseSessionStackMapService {
+		/// <summary>
+		/// Gets the <see cref="IIntellisenseSessionStack"/> instance
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		/// <returns></returns>
+		IIntellisenseSessionStack GetStackForTextView(ITextView textView);
 	}
 }

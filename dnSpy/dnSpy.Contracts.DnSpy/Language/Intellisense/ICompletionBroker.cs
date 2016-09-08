@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -24,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Completion service
 	/// </summary>
-	public interface ICompletionService {
+	public interface ICompletionBroker {
 		/// <summary>
 		/// Triggers a completion at the current caret position
 		/// </summary>
@@ -49,5 +50,25 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="trackCaret">true to track caret</param>
 		/// <returns></returns>
 		ICompletionSession CreateCompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret);
+
+		/// <summary>
+		/// Dismisses all sessions
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		void DismissAllSessions(ITextView textView);
+
+		/// <summary>
+		/// Returns true if completion is active
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		/// <returns></returns>
+		bool IsCompletionActive(ITextView textView);
+
+		/// <summary>
+		/// Gets all completion sessions
+		/// </summary>
+		/// <param name="textView">Text view</param>
+		/// <returns></returns>
+		ReadOnlyCollection<ICompletionSession> GetSessions(ITextView textView);
 	}
 }

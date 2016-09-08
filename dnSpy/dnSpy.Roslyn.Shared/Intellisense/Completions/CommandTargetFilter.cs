@@ -31,17 +31,17 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_ROSLYN_STATEMENTCOMPLETION)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		readonly Lazy<ICompletionService> completionService;
+		readonly Lazy<ICompletionBroker> completionBroker;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(Lazy<ICompletionService> completionService) {
-			this.completionService = completionService;
+		DefaultTextViewCommandTargetFilterProvider(Lazy<ICompletionBroker> completionBroker) {
+			this.completionBroker = completionBroker;
 		}
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
 			if (textView != null && textView.Roles.ContainsAll(roles))
-				return new CommandTargetFilter(textView, completionService);
+				return new CommandTargetFilter(textView, completionBroker);
 			return null;
 		}
 		static readonly string[] roles = new string[] {
@@ -52,16 +52,16 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 
 	sealed class CommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
-		readonly Lazy<ICompletionService> completionService;
+		readonly Lazy<ICompletionBroker> completionBroker;
 		ICompletionSession completionSession;
 
-		public CommandTargetFilter(ITextView textView, Lazy<ICompletionService> completionService) {
+		public CommandTargetFilter(ITextView textView, Lazy<ICompletionBroker> completionBroker) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			if (completionService == null)
-				throw new ArgumentNullException(nameof(completionService));
+			if (completionBroker == null)
+				throw new ArgumentNullException(nameof(completionBroker));
 			this.textView = textView;
-			this.completionService = completionService;
+			this.completionBroker = completionBroker;
 		}
 
 		CompletionService TryGetRoslynCompletionService() => CompletionInfo.Create(textView.TextSnapshot)?.CompletionService;
@@ -234,7 +234,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (HasSession)
 				return;
 			var triggerPoint = textView.TextSnapshot.CreateTrackingPoint(textView.Caret.Position.BufferPosition.Position, PointTrackingMode.Negative, TrackingFidelityMode.Forward);
-			completionSession = completionService.Value.CreateCompletionSession(textView, triggerPoint, trackCaret: true);
+			completionSession = completionBroker.Value.CreateCompletionSession(textView, triggerPoint, trackCaret: true);
 			if (completionTrigger != null)
 				completionSession.Properties.AddProperty(typeof(CompletionTrigger), completionTrigger);
 			completionSession.Dismissed += CompletionSession_Dismissed;

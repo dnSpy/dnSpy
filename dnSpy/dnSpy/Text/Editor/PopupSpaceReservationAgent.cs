@@ -136,6 +136,7 @@ namespace dnSpy.Text.Editor {
 		Size ToScreenSize(Size size) => PopupHelper.TransformToDevice(wpfTextView, size);
 
 		Rect WpfTextViewRectToScreenRect(Rect wpfTextViewRect) {
+			wpfTextViewRect.X -= wpfTextView.ViewportLeft;
 			wpfTextViewRect.Y -= wpfTextView.ViewportTop;
 			return ToScreenRect(wpfTextViewRect);
 		}
@@ -287,6 +288,7 @@ namespace dnSpy.Text.Editor {
 			if (rect == null)
 				return false;
 			var point = e.MouseDevice.GetPosition(wpfTextView.VisualElement);
+			point.X += wpfTextView.ViewportLeft;
 			point.Y += wpfTextView.ViewportTop;
 			return rect.Value.Contains(point);
 		}

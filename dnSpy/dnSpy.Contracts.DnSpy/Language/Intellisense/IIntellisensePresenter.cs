@@ -17,13 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
-namespace dnSpy.Language.Intellisense {
-	interface IPopupContent {
+namespace dnSpy.Contracts.Language.Intellisense {
+	/// <summary>
+	/// Intellisense presenter
+	/// </summary>
+	public interface IIntellisensePresenter {
 		/// <summary>
-		/// Gets the UI element
+		/// Gets the session
 		/// </summary>
-		UIElement UIElement { get; }
+		IIntellisenseSession Session { get; }
+
+		/// <summary>
+		/// Executes the keyboard command or returns false if some other presenter should handle it
+		/// </summary>
+		/// <param name="command">Command to execute</param>
+		/// <returns></returns>
+		bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command);
 	}
 }

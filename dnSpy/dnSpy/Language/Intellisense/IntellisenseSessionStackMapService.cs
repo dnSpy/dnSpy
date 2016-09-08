@@ -17,15 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
-	interface ICompletionPresenterService {
-		/// <summary>
-		/// Creates a completion presenter
-		/// </summary>
-		/// <param name="completionSession">Completion session</param>
-		/// <returns></returns>
-		IIntellisensePresenter Create(ICompletionSession completionSession);
+	[Export(typeof(IIntellisenseSessionStackMapService))]
+	sealed class IntellisenseSessionStackMapService : IIntellisenseSessionStackMapService {
+		public IIntellisenseSessionStack GetStackForTextView(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			var wpfTextView = textView as IWpfTextView;
+			if (wpfTextView == null)
+				throw new InvalidOperationException();
+			return textView.Properties.GetOrCreateSingletonProperty(typeof(IntellisenseSessionStack), () => new IntellisenseSessionStack(wpfTextView));
+		}
 	}
 }

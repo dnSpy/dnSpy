@@ -17,15 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Language.Intellisense;
-
-namespace dnSpy.Language.Intellisense {
-	interface ICompletionPresenterService {
+namespace dnSpy.Contracts.Language.Intellisense {
+	/// <summary>
+	/// Custom <see cref="IIntellisensePresenter"/>
+	/// </summary>
+	public interface ICustomIntellisensePresenter {
 		/// <summary>
-		/// Creates a completion presenter
+		/// Shows the UI
 		/// </summary>
-		/// <param name="completionSession">Completion session</param>
-		/// <returns></returns>
-		IIntellisensePresenter Create(ICompletionSession completionSession);
+		void Render();
 	}
 }

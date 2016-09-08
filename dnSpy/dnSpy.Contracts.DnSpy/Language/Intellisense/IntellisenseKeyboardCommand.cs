@@ -17,67 +17,71 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
+using dnSpy.Contracts.Command;
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
-	/// Intellisense session
+	/// Keyboard commands passed to an <see cref="IIntellisensePresenter"/>
 	/// </summary>
-	public interface IIntellisenseSession : IPropertyOwner {
+	public enum IntellisenseKeyboardCommand {
 		/// <summary>
-		/// Gets the trigger point
+		/// Up (<see cref="TextEditorIds.UP"/>)
 		/// </summary>
-		/// <param name="textSnapshot">Snapshot</param>
-		/// <returns></returns>
-		SnapshotPoint? GetTriggerPoint(ITextSnapshot textSnapshot);
+		Up,
 
 		/// <summary>
-		/// Gets the text view
+		/// Down (<see cref="TextEditorIds.DOWN"/>)
 		/// </summary>
-		ITextView TextView { get; }
+		Down,
 
 		/// <summary>
-		/// Gets the presenter or null if none
+		/// Page Up (<see cref="TextEditorIds.PAGEUP"/>)
 		/// </summary>
-		IIntellisensePresenter Presenter { get; }
+		PageUp,
 
 		/// <summary>
-		/// Raised when the presenter has changed
+		/// Page Down (<see cref="TextEditorIds.PAGEDN"/>)
 		/// </summary>
-		event EventHandler PresenterChanged;
+		PageDown,
 
 		/// <summary>
-		/// Starts the session
+		/// Home (<see cref="TextEditorIds.BOL"/>)
 		/// </summary>
-		void Start();
+		Home,
 
 		/// <summary>
-		/// Dismisses the session
+		/// End (<see cref="TextEditorIds.EOL"/>)
 		/// </summary>
-		void Dismiss();
+		End,
 
 		/// <summary>
-		/// Raised when it's been dismissed
+		/// Top Line (<see cref="TextEditorIds.TOPLINE"/>)
 		/// </summary>
-		event EventHandler Dismissed;
+		TopLine,
 
 		/// <summary>
-		/// true if it's been dismissed
+		/// Bottom Line (<see cref="TextEditorIds.BOTTOMLINE"/>)
 		/// </summary>
-		bool IsDismissed { get; }
+		BottomLine,
 
 		/// <summary>
-		/// Finds the best match and selects it. Returns false if no match was found.
+		/// Escape (<see cref="TextEditorIds.CANCEL"/>)
 		/// </summary>
-		/// <returns></returns>
-		bool Match();
+		Escape,
 
 		/// <summary>
-		/// Collapses the session or dismisses it if it can't be collapsed
+		/// Enter (<see cref="TextEditorIds.RETURN"/>)
 		/// </summary>
-		void Collapse();
+		Enter,
+
+		/// <summary>
+		/// Increase filter level (<see cref="TextEditorIds.INCREASEFILTER"/>)
+		/// </summary>
+		IncreaseFilterLevel,
+
+		/// <summary>
+		/// Decrease filter level (<see cref="TextEditorIds.DECREASEFILTER"/>)
+		/// </summary>
+		DecreaseFilterLevel,
 	}
 }

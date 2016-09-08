@@ -29,11 +29,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
-	interface ICompletionSessionImpl : ICompletionSession {
-		ICompletionPresenter Presenter { get; }
-	}
-
-	sealed class CompletionSession : ICompletionSessionImpl {
+	sealed class CompletionSession : ICompletionSession {
 		public PropertyCollection Properties { get; }
 		public ITextView TextView { get; }
 		public ReadOnlyObservableCollection<CompletionCollection> CompletionCollections { get; }
@@ -41,7 +37,8 @@ namespace dnSpy.Language.Intellisense {
 		public bool IsDismissed { get; private set; }
 		public event EventHandler Dismissed;
 		public bool IsStarted { get; private set; }
-		ICompletionPresenter ICompletionSessionImpl.Presenter => completionPresenter;
+		public IIntellisensePresenter Presenter => completionPresenter;
+		public event EventHandler PresenterChanged;
 
 		public CompletionCollection SelectedCompletionCollection {
 			get { return selectedCompletionCollection; }
@@ -65,10 +62,9 @@ namespace dnSpy.Language.Intellisense {
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 		readonly ITrackingPoint triggerPoint;
 		readonly ICompletionPresenterService completionPresenterService;
-		SessionCommandTargetFilter sessionCommandTargetFilter;
-		ICompletionPresenter completionPresenter;
+		CompletionSessionCommandTargetFilter completionSessionCommandTargetFilter;
+		IIntellisensePresenter completionPresenter;
 		ICompletionSource[] completionSources;
-		TextViewPopup textViewPopup;
 
 		public CompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, ICompletionPresenterService completionPresenterService, Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders) {
 			if (textView == null)
@@ -127,9 +123,8 @@ namespace dnSpy.Language.Intellisense {
 				SelectedCompletionCollection = completionCollections[0];
 				completionPresenter = completionPresenterService.Create(this);
 				Debug.Assert(completionPresenter != null);
-				sessionCommandTargetFilter = new SessionCommandTargetFilter(this);
-				textViewPopup = new TextViewPopup(TextView, GetTrackingPoint(SelectedCompletionCollection), completionPresenter);
-				textViewPopup.Show();
+				PresenterChanged?.Invoke(this, EventArgs.Empty);
+				completionSessionCommandTargetFilter = new CompletionSessionCommandTargetFilter(this);
 			}
 		}
 
@@ -155,10 +150,8 @@ namespace dnSpy.Language.Intellisense {
 				return;
 			IsDismissed = true;
 			TextView.Closed -= TextView_Closed;
-			textViewPopup?.Dispose();
-			textViewPopup = null;
-			sessionCommandTargetFilter?.Close();
-			sessionCommandTargetFilter = null;
+			completionSessionCommandTargetFilter?.Close();
+			completionSessionCommandTargetFilter = null;
 			Dismissed?.Invoke(this, EventArgs.Empty);
 			if (completionSources != null) {
 				foreach (var source in completionSources)
@@ -166,6 +159,8 @@ namespace dnSpy.Language.Intellisense {
 				completionSources = null;
 			}
 		}
+
+		public void Collapse() => Dismiss();
 
 		public void Filter() {
 			if (!IsStarted)

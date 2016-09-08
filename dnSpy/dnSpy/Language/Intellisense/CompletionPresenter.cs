@@ -28,13 +28,34 @@ using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionPresenter : ICompletionPresenter, INotifyPropertyChanged {
-		UIElement IPopupContent.UIElement => control;
+	sealed class CompletionPresenter : IPopupIntellisensePresenter {
+		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
+		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
+		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.Completion;
+		IIntellisenseSession IIntellisensePresenter.Session => session;
+
+		public ITrackingSpan PresentationSpan {
+			get { return presentationSpan; }
+			private set {
+				if (!IsSameTrackingSpan(presentationSpan, value)) {
+					presentationSpan = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PresentationSpan)));
+				}
+			}
+		}
+		ITrackingSpan presentationSpan;
+
+		double IPopupIntellisensePresenter.Opacity {
+			get { return control.Opacity; }
+			set { control.Opacity = value; }
+		}
 
 		readonly IImageManager imageManager;
 		readonly ICompletionSession session;
@@ -74,6 +95,18 @@ namespace dnSpy.Language.Intellisense {
 			control.SizeChanged += Control_SizeChanged;
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
+		}
+
+		static bool IsSameTrackingSpan(ITrackingSpan a, ITrackingSpan b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.TextBuffer != b.TextBuffer)
+				return false;
+			var sa = a.GetSpan(a.TextBuffer.CurrentSnapshot);
+			var sb = b.GetSpan(b.TextBuffer.CurrentSnapshot);
+			return sa == sb;
 		}
 
 		void Control_SizeChanged(object sender, SizeChangedEventArgs e) {
@@ -165,32 +198,38 @@ namespace dnSpy.Language.Intellisense {
 			coll.CurrentCompletion = new CurrentCompletion(newCompletion, true, true);
 		}
 
-		bool ICompletionPresenter.HandleCommand(PresenterCommandTargetCommand command) {
+		public bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
 			switch (command) {
-			case PresenterCommandTargetCommand.Up:
+			case IntellisenseKeyboardCommand.Up:
 				MoveUpDown(true);
 				return true;
 
-			case PresenterCommandTargetCommand.Down:
+			case IntellisenseKeyboardCommand.Down:
 				MoveUpDown(false);
 				return true;
 
-			case PresenterCommandTargetCommand.PageUp:
+			case IntellisenseKeyboardCommand.PageUp:
 				PageUpDown(true);
 				return true;
 
-			case PresenterCommandTargetCommand.PageDown:
+			case IntellisenseKeyboardCommand.PageDown:
 				PageUpDown(false);
 				return true;
 
-			case PresenterCommandTargetCommand.Home:
-			case PresenterCommandTargetCommand.End:
-			case PresenterCommandTargetCommand.TopLine:
-			case PresenterCommandTargetCommand.BottomLine:
-			case PresenterCommandTargetCommand.Escape:
-			case PresenterCommandTargetCommand.Enter:
-			case PresenterCommandTargetCommand.IncreaseFilterLevel:
-			case PresenterCommandTargetCommand.DecreaseFilterLevel:
+			case IntellisenseKeyboardCommand.Escape:
+				session.Dismiss();
+				return true;
+
+			case IntellisenseKeyboardCommand.Enter:
+				session.Commit();
+				return true;
+
+			case IntellisenseKeyboardCommand.Home:
+			case IntellisenseKeyboardCommand.End:
+			case IntellisenseKeyboardCommand.TopLine:
+			case IntellisenseKeyboardCommand.BottomLine:
+			case IntellisenseKeyboardCommand.IncreaseFilterLevel:
+			case IntellisenseKeyboardCommand.DecreaseFilterLevel:
 			default:
 				return false;
 			}
@@ -276,6 +315,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void UpdateSelectedItem() {
+			PresentationSpan = currentCompletionCollection?.ApplicableTo;
 			if (currentCompletionCollection == null)
 				control.completionsListBox.SelectedItem = null;
 			else {

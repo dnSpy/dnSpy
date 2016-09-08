@@ -283,22 +283,22 @@
     <Compile Include="Language\Intellisense\CompletionPresenterControl.xaml.cs">
       <DependentUpon>CompletionPresenterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Language\Intellisense\CompletionService.cs" />
+    <Compile Include="Language\Intellisense\CompletionBroker.cs" />
     <Compile Include="Language\Intellisense\CompletionSession.cs" />
+    <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
     <Compile Include="Language\Intellisense\FilterImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
     <Compile Include="Language\Intellisense\FilterVM.cs" />
-    <Compile Include="Language\Intellisense\ICompletionPresenter.cs" />
     <Compile Include="Language\Intellisense\ICompletionPresenterService.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProviderService.cs" />
-    <Compile Include="Language\Intellisense\IPopupContent.cs" />
+    <Compile Include="Language\Intellisense\IntellisenseSessionStack.CommandTargetFilter.cs" />
+    <Compile Include="Language\Intellisense\IntellisenseSessionStack.cs" />
+    <Compile Include="Language\Intellisense\IntellisenseSessionStackMapService.cs" />
     <Compile Include="Language\Intellisense\PresenterCommandTargetCommand.cs" />
-    <Compile Include="Language\Intellisense\SessionCommandTargetFilter.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
-    <Compile Include="Language\Intellisense\TextViewPopup.cs" />
     <Compile Include="Language\Intellisense\WpfUtils.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
     <Compile Include="MainApp\AboutScreen.cs" />
