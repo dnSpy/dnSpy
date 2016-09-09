@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			set {
 				if ((object)value == null)
 					throw new ArgumentNullException(nameof(value));
-				if (value.Equals(currentCompletion))
+				if (value == currentCompletion)
 					return;
 				if (value.Completion != null && !filteredCompletions.Contains(value.Completion))
 					throw new ArgumentException();

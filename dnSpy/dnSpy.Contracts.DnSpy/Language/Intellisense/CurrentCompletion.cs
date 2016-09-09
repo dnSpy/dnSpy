@@ -17,13 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Current <see cref="Intellisense.Completion"/>
 	/// </summary>
-	public sealed class CurrentCompletion : IEquatable<CurrentCompletion> {
+	public sealed class CurrentCompletion {
 		/// <summary>
 		/// An instance with no <see cref="Completion"/>
 		/// </summary>
@@ -78,12 +76,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			return left.Equals(right);
 		}
 
-		/// <summary>
-		/// Equals()
-		/// </summary>
-		/// <param name="other">Other instance</param>
-		/// <returns></returns>
-		public bool Equals(CurrentCompletion other) => (object)other != null && other.IsSelected == IsSelected && other.IsUnique == IsUnique && Equals(other.Completion, Completion);
+		bool Equals(CurrentCompletion other) => (object)other != null && other.IsSelected == IsSelected && other.IsUnique == IsUnique && Equals(other.Completion, Completion);
 
 		/// <summary>
 		/// Equals()
