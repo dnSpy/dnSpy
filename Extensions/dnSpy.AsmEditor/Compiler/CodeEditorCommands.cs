@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected override ICommandTarget GetCommandTarget(CodeEditorContext context) => context.CodeEditor.TextView.CommandTarget;
 	}
 
-	[ExportMenuItem(Header = "res:Button_Compile", Icon = "BuildSolution", InputGestureText = "res:ShortCutKeyCtrlP", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COMPILE, Order = 0)]
+	[ExportMenuItem(Header = "res:Button_Compile", Icon = "BuildSolution", InputGestureText = "res:ShortCutKeyF6", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COMPILE, Order = 0)]
 	sealed class CompileContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		CompileContexMenuEntry()
 			: base(EditCodeIds.Compile) {
