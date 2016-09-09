@@ -311,6 +311,8 @@ namespace dnSpy.Language.Intellisense {
 			// Prevent the control from getting thinner when pressing PageUp/Down
 			if (control.MinWidth != e.NewSize.Width)
 				control.MinWidth = e.NewSize.Width;
+
+			HideToolTip();
 		}
 
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) {
