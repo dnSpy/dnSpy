@@ -17,20 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Language.Intellisense {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(AppearanceCategoryConstants.CodeCompletion)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class CodeCompletionTextEditorFormatDefinition : TextEditorFormatDefinition {
-	}
-
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(AppearanceCategoryConstants.CodeCompletionToolTip)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class CodeCompletionToolTipTextEditorFormatDefinition : TextEditorFormatDefinition {
+namespace dnSpy.Roslyn.Shared.Text.Classification {
+	interface ITaggedTextElementProviderService {
+		/// <summary>
+		/// Creates a <see cref="ITaggedTextElementProvider"/>
+		/// </summary>
+		/// <param name="classifiers">Classifiers to use. The context passed to them will be a <see cref="TaggedTextClassifierContext"/></param>
+		/// <param name="category">Category, eg. <see cref="AppearanceCategoryConstants.CodeCompletionToolTip"/></param>
+		/// <returns></returns>
+		ITaggedTextElementProvider Create(ITextClassifier[] classifiers, string category);
 	}
 }

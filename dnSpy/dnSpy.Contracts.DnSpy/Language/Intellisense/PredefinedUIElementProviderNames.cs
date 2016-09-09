@@ -17,20 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
-
-namespace dnSpy.Language.Intellisense {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(AppearanceCategoryConstants.CodeCompletion)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class CodeCompletionTextEditorFormatDefinition : TextEditorFormatDefinition {
-	}
-
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(AppearanceCategoryConstants.CodeCompletionToolTip)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class CodeCompletionToolTipTextEditorFormatDefinition : TextEditorFormatDefinition {
+namespace dnSpy.Contracts.Language.Intellisense {
+	/// <summary>
+	/// Names of <see cref="IUIElementProvider{TItem, TContext}"/> exports
+	/// </summary>
+	public static class PredefinedUIElementProviderNames {
+		/// <summary>
+		/// Roslyn <see cref="Completion"/> tooltip provider
+		/// </summary>
+		public const string RoslynCompletionToolTipProvider = "RoslynCompletionToolTipProvider";
 	}
 }

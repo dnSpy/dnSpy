@@ -17,20 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
+using System;
+using System.Collections.Immutable;
+using System.Windows.Controls;
+using Microsoft.CodeAnalysis;
 
-namespace dnSpy.Language.Intellisense {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(AppearanceCategoryConstants.CodeCompletion)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class CodeCompletionTextEditorFormatDefinition : TextEditorFormatDefinition {
-	}
-
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(AppearanceCategoryConstants.CodeCompletionToolTip)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class CodeCompletionToolTipTextEditorFormatDefinition : TextEditorFormatDefinition {
+namespace dnSpy.Roslyn.Shared.Text.Classification {
+	/// <summary>
+	/// Creates a <see cref="TextBlock"/>. Call its <see cref="IDisposable.Dispose"/> method
+	/// to clean up its resources.
+	/// </summary>
+	interface ITaggedTextElementProvider : IDisposable {
+		/// <summary>
+		/// Creates a <see cref="TextBlock"/>
+		/// </summary>
+		/// <param name="taggedParts">Tagged parts to classify</param>
+		/// <returns></returns>
+		TextBlock Create(ImmutableArray<TaggedText> taggedParts);
 	}
 }

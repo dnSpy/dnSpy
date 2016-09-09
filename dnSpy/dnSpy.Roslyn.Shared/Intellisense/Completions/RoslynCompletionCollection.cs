@@ -23,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis.Completion;
@@ -146,6 +148,23 @@ matched:
 					textView.Caret.EnsureVisible();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the description or null if none
+		/// </summary>
+		/// <param name="completion">Completion</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public Task<CompletionDescription> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken) {
+			if (completion == null)
+				throw new ArgumentNullException(nameof(completion));
+
+			var info = CompletionInfo.Create(textView.TextSnapshot);
+			if (info == null)
+				return Task.FromResult<CompletionDescription>(null);
+
+			return completionService.GetDescriptionAsync(info.Value.Document, completion.CompletionItem, cancellationToken);
 		}
 	}
 }

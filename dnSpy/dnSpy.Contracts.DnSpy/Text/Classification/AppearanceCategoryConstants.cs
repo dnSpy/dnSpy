@@ -46,5 +46,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Code completion
 		/// </summary>
 		public const string CodeCompletion = "dnSpy-CodeCompletion";
+
+		/// <summary>
+		/// Code completion tooltip
+		/// </summary>
+		public const string CodeCompletionToolTip = "dnSpy-CodeCompletionToolTip";
 	}
 }

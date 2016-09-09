@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -25,7 +24,6 @@ using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {

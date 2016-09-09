@@ -43,6 +43,13 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Text\Classification\ITaggedTextElementProvider.cs" />
+    <Compile Include="Text\Classification\ITaggedTextElementProviderService.cs" />
+    <Compile Include="Text\Classification\TaggedTextClassifier.cs" />
+    <Compile Include="Text\Classification\TaggedTextClassifierContext.cs" />
+    <Compile Include="Text\Classification\TaggedTextElementProvider.cs" />
+    <Compile Include="Text\Classification\TaggedTextElementProviderService.cs" />
+    <Compile Include="Text\Classification\TextTagsHelper.cs" />
     <Compile Include="Intellisense\Completions\Classification\CompletionClassifier.cs" />
     <Compile Include="Intellisense\Completions\Classification\CompletionKindTextColorHelper.cs" />
     <Compile Include="Intellisense\Completions\CommandTargetFilter.cs" />
@@ -50,6 +57,7 @@
     <Compile Include="Intellisense\Completions\CompletionInfo.cs" />
     <Compile Include="Intellisense\Completions\CompletionKind.cs" />
     <Compile Include="Intellisense\Completions\CompletionSource.cs" />
+    <Compile Include="Intellisense\Completions\CompletionToolTipProvider.cs" />
     <Compile Include="Intellisense\Completions\RoslynCompletion.cs" />
     <Compile Include="Intellisense\Completions\RoslynCompletionCollection.cs" />
     <Compile Include="Intellisense\Completions\RoslynIntellisenseFilters.cs" />
@@ -95,6 +103,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Class.png" />
