@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Language.Intellisense {
@@ -29,8 +29,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Creates a <see cref="ICompletionSource"/> or returns null
 		/// </summary>
-		/// <param name="textView">Text view</param>
+		/// <param name="textBuffer">Text buffer</param>
 		/// <returns></returns>
-		ICompletionSource Create(ITextView textView);
+		ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer);
 	}
 }

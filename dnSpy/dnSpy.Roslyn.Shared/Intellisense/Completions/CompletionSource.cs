@@ -33,18 +33,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[Name(PredefinedDnSpyCompletionSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionSourceProvider : ICompletionSourceProvider {
-		public ICompletionSource Create(ITextView textView) => new CompletionSource(textView);
+		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource();
 	}
 
 	sealed class CompletionSource : ICompletionSource {
-		readonly ITextView textView;
-
-		public CompletionSource(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
-		}
-
 		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionCollections) {
 			var snapshot = session.TextView.TextSnapshot;
 			var triggerPoint = session.GetTriggerPoint(snapshot);

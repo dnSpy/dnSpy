@@ -93,10 +93,11 @@ namespace dnSpy.Language.Intellisense {
 
 		ICompletionSource[] CreateCompletionSources() {
 			var list = new List<ICompletionSource>();
+			var textBuffer = TextView.TextBuffer;
 			foreach (var provider in completionSourceProviders) {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
-				var source = provider.Value.Create(TextView);
+				var source = provider.Value.TryCreateCompletionSource(textBuffer);
 				if (source != null)
 					list.Add(source);
 			}
