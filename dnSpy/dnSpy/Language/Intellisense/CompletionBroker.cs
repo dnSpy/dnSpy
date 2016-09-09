@@ -36,13 +36,15 @@ namespace dnSpy.Language.Intellisense {
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
 		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
+		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
 
 		[ImportingConstructor]
-		CompletionBroker(IImageManager imageManager, Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
+		CompletionBroker(IImageManager imageManager, Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
 			this.imageManager = imageManager;
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 			this.completionTextElementProviderService = completionTextElementProviderService;
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
+			this.completionUIElementProviders = Orderer.Order(completionUIElementProviders).ToArray();
 		}
 
 		public ICompletionSession TriggerCompletion(ITextView textView) {
@@ -96,7 +98,7 @@ namespace dnSpy.Language.Intellisense {
 		IIntellisensePresenter ICompletionPresenterService.Create(ICompletionSession completionSession) {
 			if (completionSession == null)
 				throw new ArgumentNullException(nameof(completionSession));
-			return new CompletionPresenter(imageManager, completionSession, completionTextElementProviderService.Value.Create());
+			return new CompletionPresenter(imageManager, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
 		}
 	}
 }

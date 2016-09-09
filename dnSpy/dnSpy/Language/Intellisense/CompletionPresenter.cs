@@ -31,7 +31,11 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Controls;
 using dnSpy.Properties;
+using dnSpy.Text;
+using dnSpy.Text.Editor;
+using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
@@ -56,15 +60,24 @@ namespace dnSpy.Language.Intellisense {
 
 		double IPopupIntellisensePresenter.Opacity {
 			get { return control.Opacity; }
-			set { control.Opacity = value; }
+			set {
+				control.Opacity = value;
+				if (value != 1)
+					HideToolTip();
+			}
 		}
 
 		readonly IImageManager imageManager;
 		readonly ICompletionSession session;
 		readonly ICompletionTextElementProvider completionTextElementProvider;
+		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
 		readonly CompletionPresenterControl control;
 		readonly List<FilterVM> filters;
 		readonly IWpfTextView wpfTextView;
+		readonly DispatcherTimer toolTipTimer;
+		ToolTip toolTip;
+		Completion toolTipCompletion;
+		double oldZoomLevel = double.NaN;
 
 		public object Filters => filters;
 		public bool HasFilters => filters.Count > 1;
@@ -72,17 +85,21 @@ namespace dnSpy.Language.Intellisense {
 
 		const double defaultMaxHeight = 200;
 		const double defaultMinWidth = 150;
+		const double toolTipDelayMilliSeconds = 250;
 
-		public CompletionPresenter(IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider) {
+		public CompletionPresenter(IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
 			if (imageManager == null)
 				throw new ArgumentNullException(nameof(imageManager));
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			if (completionTextElementProvider == null)
 				throw new ArgumentNullException(nameof(completionTextElementProvider));
+			if (completionUIElementProviders == null)
+				throw new ArgumentNullException(nameof(completionUIElementProviders));
 			this.imageManager = imageManager;
 			this.session = session;
 			this.completionTextElementProvider = completionTextElementProvider;
+			this.completionUIElementProviders = completionUIElementProviders;
 			this.control = new CompletionPresenterControl { DataContext = this };
 			this.filters = new List<FilterVM>();
 			this.control.MinWidth = defaultMinWidth;
@@ -95,6 +112,7 @@ namespace dnSpy.Language.Intellisense {
 			Debug.Assert(wpfTextView != null);
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
+			session.TextView.LayoutChanged += TextView_LayoutChanged;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
 			control.completionsListBox.Loaded += CompletionsListBox_Loaded;
 			control.completionsListBox.PreviewMouseDown += CompletionsListBox_PreviewMouseDown;
@@ -102,8 +120,120 @@ namespace dnSpy.Language.Intellisense {
 			control.completionsListBox.MouseLeave += CompletionsListBox_MouseLeave;
 			control.SizeChanged += Control_SizeChanged;
 			control.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(Control_GotKeyboardFocus), true);
+
+			toolTipTimer = new DispatcherTimer(DispatcherPriority.Background, control.Dispatcher);
+			toolTipTimer.Tick += ToolTipTimer_Tick;
+			toolTipTimer.Interval = TimeSpan.FromMilliseconds(toolTipDelayMilliSeconds);
+
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
+		}
+
+		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (wpfTextView != null && oldZoomLevel != wpfTextView.ZoomLevel) {
+				oldZoomLevel = wpfTextView.ZoomLevel;
+				HideToolTip();
+			}
+			if (e.HorizontalTranslation || e.VerticalTranslation)
+				HideToolTip();
+		}
+
+		void ToolTipTimer_Tick(object sender, EventArgs e) {
+			toolTipTimer.Stop();
+			if (session.IsDismissed)
+				return;
+			ShowToolTip();
+		}
+
+		void DelayShowToolTip() {
+			toolTipTimer.Stop();
+			HideToolTip();
+			if (session.IsDismissed)
+				return;
+			toolTipTimer.Start();
+		}
+
+		void ShowToolTip() {
+			if (session.IsDismissed)
+				return;
+			var completion = control.completionsListBox.SelectedItem as Completion;
+			if (completion == toolTipCompletion)
+				return;
+			HideToolTip();
+			if (completion == null)
+				return;
+			var container = control.completionsListBox.ItemContainerGenerator.ContainerFromItem(completion) as ListBoxItem;
+			if (container == null || !container.IsVisible)
+				return;
+			var toolTipElem = TryGetToolTipUIElement(completion);
+			if (toolTipElem == null)
+				return;
+
+			// When the tooltip was reused, it was empty every other time, so always create a new one.
+			toolTip = new ToolTip {
+				Placement = PlacementMode.Right,
+				Visibility = Visibility.Collapsed,
+				IsOpen = false,
+			};
+			toolTip.SetResourceReference(FrameworkElement.StyleProperty, "CompletionToolTipStyle");
+
+			// There's a scrollbar; place the tooltip to the right of the main control and not the ListBoxItem
+			var pointRelativeToControl = container.TranslatePoint(new Point(0, 0), control);
+			toolTip.VerticalOffset = pointRelativeToControl.Y;
+			toolTip.PlacementTarget = control;
+			toolTip.Content = toolTipElem;
+			toolTip.Visibility = Visibility.Visible;
+			Debug.Assert(!toolTip.IsOpen, "Can't set the tool tip's LayoutTransform if it's open");
+			PopupHelper.SetScaleTransform(wpfTextView, toolTip);
+			toolTipCompletion = completion;
+			toolTip.IsOpen = true;
+		}
+
+		UIElement TryGetToolTipUIElement(Completion completion) {
+			if (completion == null)
+				return null;
+
+			var contentType = wpfTextView.TextDataModel.ContentType;
+			foreach (var provider in completionUIElementProviders) {
+				if (!contentType.IsOfAnyType(provider.Metadata.ContentTypes))
+					continue;
+				var elem = provider.Value.GetUIElement(completion, session, UIElementType.Tooltip);
+				if (elem != null)
+					return elem;
+			}
+
+			var description = completion.Description;
+			if (!string.IsNullOrEmpty(description))
+				return CreateDefaultToolTipUIElement(description);
+
+			return null;
+		}
+
+		UIElement CreateDefaultToolTipUIElement(string description) {
+			Debug.Assert(!string.IsNullOrEmpty(description));
+			if (string.IsNullOrEmpty(description))
+				return null;
+
+			var screen = new Screen(wpfTextView.VisualElement);
+			var screenWidth = screen.IsValid ? screen.DisplayRect.Width : SystemParameters.WorkArea.Width;
+			var maxWidth = screenWidth * 0.4;
+
+			return new TextBlock {
+				Text = description,
+				MaxWidth = maxWidth,
+				TextWrapping = TextWrapping.Wrap,
+			};
+		}
+
+		void HideToolTip() {
+			if (toolTip == null)
+				return;
+			toolTip.IsOpen = false;
+			toolTip.Visibility = Visibility.Collapsed;
+			toolTip.Content = null;
+			toolTip.PlacementTarget = null;
+			toolTip = null;
+			toolTipCompletion = null;
 		}
 
 		// Hack needed so we can give back keyboard focus to the text view as fast as possible. We delay
@@ -396,6 +526,7 @@ namespace dnSpy.Language.Intellisense {
 				if (!currentCompletionCollection.CurrentCompletion.IsSelected)
 					control.completionsListBox.SelectedItem = null;
 			}
+			DelayShowToolTip();
 		}
 
 		void CompletionCollection_CurrentCompletionChanged(object sender, EventArgs e) {
@@ -421,6 +552,9 @@ namespace dnSpy.Language.Intellisense {
 		void CompletionSession_Dismissed(object sender, EventArgs e) {
 			UnregisterCompletionCollectionEvents();
 			DisposeFilters();
+			toolTipTimer.Stop();
+			toolTipTimer.Tick -= ToolTipTimer_Tick;
+			HideToolTip();
 			session.SelectedCompletionCollectionChanged -= CompletionSession_SelectedCompletionCollectionChanged;
 			session.Dismissed -= CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
@@ -435,6 +569,7 @@ namespace dnSpy.Language.Intellisense {
 			control.GotKeyboardFocus -= Control_GotKeyboardFocus;
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown -= VisualElement_PreviewKeyDown;
+			session.TextView.LayoutChanged -= TextView_LayoutChanged;
 			completionTextElementProvider.Dispose();
 		}
 

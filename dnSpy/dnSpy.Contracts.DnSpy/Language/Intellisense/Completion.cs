@@ -53,7 +53,13 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Gets the text that gets inserted in the text buffer or null if none
 		/// </summary>
-		protected string InsertionText { get; }
+		public string InsertionText { get; }
+
+		/// <summary>
+		/// Gets the description or null; if null or empty, export an <c>IUIElementProvider&lt;Completion, ICompletionSession></c>
+		/// to create tooltip content.
+		/// </summary>
+		public string Description { get; protected set; }
 
 		/// <summary>
 		/// Gets the image or the default value if there's no image

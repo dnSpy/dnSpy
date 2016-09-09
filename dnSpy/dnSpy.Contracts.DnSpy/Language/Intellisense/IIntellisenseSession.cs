@@ -28,6 +28,13 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	public interface IIntellisenseSession : IPropertyOwner {
 		/// <summary>
+		/// Gets the trigger point or null
+		/// </summary>
+		/// <param name="textBuffer">Text buffer</param>
+		/// <returns></returns>
+		ITrackingPoint GetTriggerPoint(ITextBuffer textBuffer);
+
+		/// <summary>
 		/// Gets the trigger point
 		/// </summary>
 		/// <param name="textSnapshot">Snapshot</param>

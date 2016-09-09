@@ -80,10 +80,10 @@ namespace dnSpy.Language.Intellisense {
 			Properties = new PropertyCollection();
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
-			//TODO: Use trackCaret
 			this.completionPresenterService = completionPresenterService;
-			TextView.Closed += TextView_Closed;
 			this.completionSourceProviders = completionSourceProviders;
+			//TODO: Use trackCaret
+			TextView.Closed += TextView_Closed;
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
@@ -182,11 +182,19 @@ namespace dnSpy.Language.Intellisense {
 			return selectedCompletionCollection.CurrentCompletion.Completion != null;
 		}
 
+		public ITrackingPoint GetTriggerPoint(ITextBuffer textBuffer) {
+			if (triggerPoint.TextBuffer == textBuffer)
+				return triggerPoint;
+			return null;
+		}
+
 		public SnapshotPoint? GetTriggerPoint(ITextSnapshot textSnapshot) {
 			if (!IsStarted)
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
+			if (textSnapshot.TextBuffer != triggerPoint.TextBuffer)
+				return null;
 			return triggerPoint.GetPoint(textSnapshot);
 		}
 	}

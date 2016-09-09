@@ -5807,8 +5807,6 @@
                 Value="{DynamicResource CodeToolTipForeground}"/>
         <Setter Property="Padding"
                 Value="10,10,10,10"/>
-        <Setter Property="HasDropShadow"
-                Value="False"/>
     </Style>
 
     <Style x:Key="GlyphTextMarkerToolTipStyle"
@@ -5822,10 +5820,19 @@
                 Value="{DynamicResource ScreenTipText}"/>
         <Setter Property="Padding"
                 Value="1,1,1,1"/>
-        <Setter Property="BorderThickness"
-                Value="1,1,1,1"/>
-        <Setter Property="HasDropShadow"
-                Value="False"/>
+    </Style>
+
+    <Style x:Key="CompletionToolTipStyle"
+           BasedOn="{StaticResource {x:Type ToolTip}}"
+           TargetType="{x:Type ToolTip}">
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CompletionToolTipBorder}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CompletionToolTipBackground}"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CompletionToolTipForeground}"/>
+        <Setter Property="Padding"
+                Value="3,3,3,3"/>
     </Style>
 
     <DataTemplate DataType="{x:Type tabssettings:DisplayAppSettingsVM}">

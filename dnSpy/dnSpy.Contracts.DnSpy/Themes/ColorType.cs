@@ -483,6 +483,8 @@ namespace dnSpy.Contracts.Themes {
 		CodeToolTipBorder,
 		ScreenTip,
 		ScreenTipBorder,
+		CompletionToolTip,
+		CompletionToolTipBorder,
 		CilButton,
 		CilButtonBorder,
 		CilButtonBorderFocused,
