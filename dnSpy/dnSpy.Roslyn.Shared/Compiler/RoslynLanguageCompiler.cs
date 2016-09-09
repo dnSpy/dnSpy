@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Roslyn.Shared.Documentation;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
@@ -45,10 +46,16 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
+		readonly IRoslynDocumentationProviderFactory docFactory;
 		AdhocWorkspace workspace;
 
-		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider) {
+		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory) {
+			if (codeEditorProvider == null)
+				throw new ArgumentNullException(nameof(codeEditorProvider));
+			if (docFactory == null)
+				throw new ArgumentNullException(nameof(docFactory));
 			this.codeEditorProvider = codeEditorProvider;
+			this.docFactory = docFactory;
 			this.documents = new List<RoslynCodeDocument>();
 		}
 
@@ -56,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			Debug.Assert(workspace == null);
 
 			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
-			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference()).ToArray();
+			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
 			foreach (var doc in decompiledCodeResult.Documents)
@@ -128,7 +135,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			Debug.Assert(workspace != null);
 			if (workspace == null)
 				throw new InvalidOperationException();
-			var newProj = workspace.CurrentSolution.Projects.First().AddMetadataReferences(metadataReferences.Select(a => a.CreateMetadataReference()));
+			var newProj = workspace.CurrentSolution.Projects.First().AddMetadataReferences(metadataReferences.Select(a => a.CreateMetadataReference(docFactory)));
 			return workspace.TryApplyChanges(newProj.Solution);
 		}
 

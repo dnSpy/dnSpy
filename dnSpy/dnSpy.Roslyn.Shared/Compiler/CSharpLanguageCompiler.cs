@@ -25,6 +25,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Roslyn.Shared.Documentation;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -35,13 +36,15 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "CSharpFile");
 		public Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
-		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider);
+		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory);
 
 		readonly ICodeEditorProvider codeEditorProvider;
+		readonly IRoslynDocumentationProviderFactory docFactory;
 
 		[ImportingConstructor]
-		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider) {
+		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory) {
 			this.codeEditorProvider = codeEditorProvider;
+			this.docFactory = docFactory;
 		}
 	}
 
@@ -55,8 +58,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_CSharp;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
-		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider)
-			: base(codeEditorProvider) {
+		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory)
+			: base(codeEditorProvider, docFactory) {
 		}
 	}
 }

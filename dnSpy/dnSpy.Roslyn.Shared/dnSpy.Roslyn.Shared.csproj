@@ -43,6 +43,9 @@
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
+    <Compile Include="Documentation\RoslynDocumentationProvider.cs" />
+    <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
     <Compile Include="Text\Classification\ITaggedTextElementProvider.cs" />
     <Compile Include="Text\Classification\ITaggedTextElementProviderService.cs" />
     <Compile Include="Text\Classification\TaggedTextClassifier.cs" />

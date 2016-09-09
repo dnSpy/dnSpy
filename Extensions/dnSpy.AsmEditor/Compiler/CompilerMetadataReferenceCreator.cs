@@ -35,8 +35,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			var asmRef = module.Assembly.ToAssemblyRef();
 			if (module.IsManifestModule)
-				return CompilerMetadataReference.CreateAssemblyReference(moduleData, asmRef);
-			return CompilerMetadataReference.CreateModuleReference(moduleData, asmRef);
+				return CompilerMetadataReference.CreateAssemblyReference(moduleData, asmRef, module.Location);
+			return CompilerMetadataReference.CreateModuleReference(moduleData, asmRef, module.Location);
 		}
 
 		static byte[] GetRawModuleBytes(ModuleDef module) {

@@ -36,15 +36,21 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public IAssembly Assembly { get; }
 
 		/// <summary>
+		/// Gets the filename or null if it doesn't exist on disk
+		/// </summary>
+		public string Filename { get; }
+
+		/// <summary>
 		/// true if it's an assembly reference, false if it's a module reference
 		/// </summary>
 		public bool IsAssemblyReference { get; }
 
-		CompilerMetadataReference(byte[] data, IAssembly assembly, bool isAssemblyReference) {
+		CompilerMetadataReference(byte[] data, IAssembly assembly, string filename, bool isAssemblyReference) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
 			Data = data;
 			Assembly = assembly;
+			Filename = filename;
 			IsAssemblyReference = isAssemblyReference;
 		}
 
@@ -53,15 +59,17 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="data">File data</param>
 		/// <param name="assembly">Assembly owner or null</param>
+		/// <param name="filename">Filename or null if it doesn't exist on disk</param>
 		/// <returns></returns>
-		public static CompilerMetadataReference CreateAssemblyReference(byte[] data, IAssembly assembly) => new CompilerMetadataReference(data, assembly, true);
+		public static CompilerMetadataReference CreateAssemblyReference(byte[] data, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, assembly, filename, true);
 
 		/// <summary>
 		/// Creates a module metadata reference
 		/// </summary>
 		/// <param name="data">File data</param>
 		/// <param name="assembly">Assembly owner or null</param>
+		/// <param name="filename">Filename or null if it doesn't exist on disk</param>
 		/// <returns></returns>
-		public static CompilerMetadataReference CreateModuleReference(byte[] data, IAssembly assembly) => new CompilerMetadataReference(data, assembly, false);
+		public static CompilerMetadataReference CreateModuleReference(byte[] data, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, assembly, filename, false);
 	}
 }

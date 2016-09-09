@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 	/// </summary>
 	public static class XmlDocLoader {
 		static readonly Lazy<XmlDocumentationProvider> mscorlibDocumentation = new Lazy<XmlDocumentationProvider>(LoadMscorlibDocumentation);
-		static readonly ConditionalWeakTable<ModuleDef, XmlDocumentationProvider> cache = new ConditionalWeakTable<ModuleDef, XmlDocumentationProvider>();
+		static readonly ConditionalWeakTable<object, XmlDocumentationProvider> cache = new ConditionalWeakTable<object, XmlDocumentationProvider>();
 		static readonly string[] refAsmPathsV4;
 
 		static XmlDocumentationProvider LoadMscorlibDocumentation() {
@@ -55,15 +55,30 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		public static XmlDocumentationProvider LoadDocumentation(ModuleDef module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
+			return LoadDocumentation(module, module.Location, module.RuntimeVersion);
+		}
+
+		/// <summary>
+		/// Loads XML documentation
+		/// </summary>
+		/// <param name="key">Key used to lookup cached documentation, eg. the <see cref="ModuleDef"/> instance</param>
+		/// <param name="assemblyFilename">Filename of the assembly or module</param>
+		/// <param name="runtimeVersion">Optional runtime version, eg. <see cref="ModuleDef.RuntimeVersion"/></param>
+		/// <returns></returns>
+		public static XmlDocumentationProvider LoadDocumentation(object key, string assemblyFilename, string runtimeVersion = null) {
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			if (assemblyFilename == null)
+				throw new ArgumentNullException(nameof(assemblyFilename));
 			lock (cache) {
 				XmlDocumentationProvider xmlDoc;
-				if (!cache.TryGetValue(module, out xmlDoc)) {
-					string xmlDocFile = LookupLocalizedXmlDoc(module.Location);
+				if (!cache.TryGetValue(key, out xmlDoc)) {
+					string xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
 					if (xmlDocFile == null) {
-						xmlDocFile = FindXmlDocumentation(Path.GetFileName(module.Location), module.RuntimeVersion);
+						xmlDocFile = FindXmlDocumentation(Path.GetFileName(assemblyFilename), runtimeVersion);
 					}
 					xmlDoc = xmlDocFile == null ? null : XmlDocumentationProvider.Create(xmlDocFile);
-					cache.Add(module, xmlDoc);
+					cache.Add(key, xmlDoc);
 				}
 				return xmlDoc;
 			}
@@ -112,6 +127,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static string FindXmlDocumentation(string assemblyFileName, string runtime) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
+			if (runtime == null)
+				runtime = MDHeaderRuntimeVersion.MS_CLR_40;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX_X86RETAIL) ||
 				runtime == MDHeaderRuntimeVersion.MS_CLR_10_RETAIL ||
 				runtime == MDHeaderRuntimeVersion.MS_CLR_10_COMPLUS)
