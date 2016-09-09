@@ -262,6 +262,8 @@ namespace dnSpy.Language.Intellisense {
 		void InitializeLoaded() {
 			UpdateSelectedItem();
 			var item = control.completionsListBox.SelectedItem;
+			if (item == null && control.completionsListBox.Items.Count > 0)
+				item = control.completionsListBox.Items[0];
 			var scrollViewer = WpfUtils.TryGetScrollViewer(control.completionsListBox);
 			if (item != null && scrollViewer != null) {
 				var lbItem = control.completionsListBox.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
