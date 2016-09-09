@@ -495,6 +495,7 @@
     <Compile Include="Text\Classification\LanguagePriority.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationTypeNames.cs" />
     <Compile Include="Text\Classification\RoslynClassificationTypeNames.cs" />
+    <Compile Include="Text\Classification\TextBlockFactory.cs" />
     <Compile Include="Text\Classification\TextClassificationTag.cs" />
     <Compile Include="Text\Classification\TextClassifierContext.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinition.cs" />

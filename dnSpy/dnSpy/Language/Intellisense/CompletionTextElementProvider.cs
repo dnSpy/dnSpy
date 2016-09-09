@@ -20,14 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
-using dnSpy.Text.Formatting;
+using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionTextElementProvider : ICompletionTextElementProvider {
@@ -62,71 +60,8 @@ namespace dnSpy.Language.Intellisense {
 			var classifier = GetCompletionClassifier(collection);
 			var inputText = collection.ApplicableTo.GetText(collection.ApplicableTo.TextBuffer.CurrentSnapshot);
 			var context = new CompletionClassifierContext(completion, completion.DisplayText, inputText);
-			var text = context.DisplayText;
-			var textBlock = new TextBlock();
-			int textOffset = 0;
-			foreach (var tag in classifier.GetTags(context)) {
-				if (textOffset < tag.Span.Start)
-					textBlock.Inlines.Add(CreateRun(text.Substring(textOffset, tag.Span.Start - textOffset), null));
-				textBlock.Inlines.Add(CreateRun(text.Substring(tag.Span.Start, tag.Span.Length), tag.ClassificationType));
-				textOffset = tag.Span.End;
-			}
-			if (textOffset < text.Length)
-				textBlock.Inlines.Add(CreateRun(text.Substring(textOffset), null));
-
-			var defProps = classificationFormatMap.DefaultTextProperties;
-			if (!defProps.BackgroundBrushEmpty)
-				textBlock.Background = defProps.BackgroundBrush;
-			if (!defProps.ForegroundBrushEmpty)
-				textBlock.Foreground = defProps.ForegroundBrush;
-			if (!defProps.BoldEmpty)
-				textBlock.FontWeight = defProps.Bold ? FontWeights.Bold : FontWeights.Normal;
-			if (!defProps.ItalicEmpty)
-				textBlock.FontStyle = defProps.Italic ? FontStyles.Italic : FontStyles.Normal;
-			if (!defProps.FontRenderingEmSizeEmpty)
-				textBlock.FontSize = defProps.FontRenderingEmSize;
-			if (!defProps.TextDecorationsEmpty)
-				textBlock.TextDecorations = defProps.TextDecorations;
-			if (!defProps.TextEffectsEmpty)
-				textBlock.TextEffects = defProps.TextEffects;
-
-			return textBlock;
-		}
-
-		Run CreateRun(string text, IClassificationType classificationType) {
-			var run = new Run(text);
-
-			if (classificationType == null)
-				return run;
-
-			var properties = classificationFormatMap.GetTextProperties(classificationType);
-
-			if (!properties.BackgroundBrushEmpty)
-				run.Background = properties.BackgroundBrush;
-			if (!properties.ForegroundBrushEmpty)
-				run.Foreground = properties.ForegroundBrush;
-			if (!properties.BoldEmpty)
-				run.FontWeight = properties.Bold ? FontWeights.Bold : FontWeights.Normal;
-			if (!properties.ItalicEmpty)
-				run.FontStyle = properties.Italic ? FontStyles.Italic : FontStyles.Normal;
-			if (!properties.FontRenderingEmSizeEmpty)
-				run.FontSize = properties.FontRenderingEmSize;
-			if (!properties.TextDecorationsEmpty)
-				run.TextDecorations = properties.TextDecorations;
-			if (!properties.TextEffectsEmpty)
-				run.TextEffects = properties.TextEffects;
-			if (!properties.TypefaceEmpty && !IsSameTypeFace(classificationFormatMap.DefaultTextProperties, properties))
-				run.FontFamily = properties.Typeface.FontFamily;
-
-			return run;
-		}
-
-		static bool IsSameTypeFace(TextFormattingRunProperties a, TextFormattingRunProperties b) {
-			if (a.TypefaceEmpty != b.TypefaceEmpty)
-				return false;
-			if (a.Typeface == b.Typeface)
-				return true;
-			return a.GetFontName() == b.GetFontName();
+			return TextBlockFactory.Create(context.DisplayText, classificationFormatMap.DefaultTextProperties,
+				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
 		}
 
 		public void Dispose() {
