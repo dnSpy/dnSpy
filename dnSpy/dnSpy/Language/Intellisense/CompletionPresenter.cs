@@ -118,6 +118,7 @@ namespace dnSpy.Language.Intellisense {
 			control.completionsListBox.PreviewMouseDown += CompletionsListBox_PreviewMouseDown;
 			control.completionsListBox.PreviewMouseUp += CompletionsListBox_PreviewMouseUp;
 			control.completionsListBox.MouseLeave += CompletionsListBox_MouseLeave;
+			control.completionsListBox.MouseDoubleClick += CompletionsListBox_MouseDoubleClick;
 			control.SizeChanged += Control_SizeChanged;
 			control.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(Control_GotKeyboardFocus), true);
 
@@ -127,6 +128,20 @@ namespace dnSpy.Language.Intellisense {
 
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
+		}
+
+		void CompletionsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			var item = control.completionsListBox.SelectedItem;
+			if (item == null)
+				return;
+			var listboxItem = control.completionsListBox.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
+			if (listboxItem == null || !listboxItem.IsVisible)
+				return;
+			if (!listboxItem.IsMouseOver)
+				return;
+			if (item != session.SelectedCompletionCollection?.CurrentCompletion.Completion)
+				return;
+			session.Commit();
 		}
 
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
@@ -568,6 +583,7 @@ namespace dnSpy.Language.Intellisense {
 			control.completionsListBox.PreviewMouseDown -= CompletionsListBox_PreviewMouseDown;
 			control.completionsListBox.PreviewMouseUp -= CompletionsListBox_PreviewMouseUp;
 			control.completionsListBox.MouseLeave -= CompletionsListBox_MouseLeave;
+			control.completionsListBox.MouseDoubleClick -= CompletionsListBox_MouseDoubleClick;
 			control.completionsListBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
 			control.SizeChanged -= Control_SizeChanged;
 			control.GotKeyboardFocus -= Control_GotKeyboardFocus;
