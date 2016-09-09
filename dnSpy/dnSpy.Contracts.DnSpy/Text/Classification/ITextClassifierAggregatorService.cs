@@ -19,16 +19,18 @@
 
 using System.Collections.Generic;
 
-namespace dnSpy.Text.Classification {
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Classifies text
+	/// Creates a <see cref="ITextClassifier"/> that aggregates and normalizes
+	/// all <see cref="ITextClassifier"/> contributions.
 	/// </summary>
-	interface ITextClassifier {
+	public interface ITextClassifierAggregatorService {
 		/// <summary>
-		/// Classifies text
+		/// Creates a <see cref="ITextClassifier"/> aggregator. The returned <see cref="ITextClassifier"/>
+		/// implements <see cref="System.IDisposable"/> and must be <see cref="System.IDisposable.Dispose"/>'d.
 		/// </summary>
-		/// <param name="context">Context</param>
+		/// <param name="textClassifiers">Classifiers to use</param>
 		/// <returns></returns>
-		IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context);
+		ITextClassifier Create(IEnumerable<ITextClassifier> textClassifiers);
 	}
 }

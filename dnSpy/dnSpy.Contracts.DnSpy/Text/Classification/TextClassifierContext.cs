@@ -17,20 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
 
-namespace dnSpy.Text.Classification {
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Creates a <see cref="ITextClassifier"/> that aggregates and normalizes
-	/// all <see cref="ITextClassifier"/> contributions.
+	/// <see cref="ITextClassifier"/> context
 	/// </summary>
-	interface ITextClassifierAggregatorService {
+	public class TextClassifierContext {
 		/// <summary>
-		/// Creates a <see cref="ITextClassifier"/> aggregator. The returned <see cref="ITextClassifier"/>
-		/// implements <see cref="System.IDisposable"/> and must be <see cref="System.IDisposable.Dispose"/>'d.
+		/// Gets the text to classify
 		/// </summary>
-		/// <param name="textClassifiers">Classifiers to use</param>
-		/// <returns></returns>
-		ITextClassifier Create(IEnumerable<ITextClassifier> textClassifiers);
+		public string Text { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="text">Text to classify</param>
+		public TextClassifierContext(string text) {
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			Text = text;
+		}
 	}
 }

@@ -18,25 +18,34 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 
-namespace dnSpy.Text.Classification {
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// <see cref="ITextClassifier"/> context
+	/// Text classification tag
 	/// </summary>
-	class TextClassifierContext {
+	public sealed class TextClassificationTag {
 		/// <summary>
-		/// Gets the text to classify
+		/// Gets the span
 		/// </summary>
-		public string Text { get; }
+		public Span Span { get; }
+
+		/// <summary>
+		/// Gets the classification type
+		/// </summary>
+		public IClassificationType ClassificationType { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="text">Text to classify</param>
-		public TextClassifierContext(string text) {
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			Text = text;
+		/// <param name="span">Span</param>
+		/// <param name="classificationType">Classification type</param>
+		public TextClassificationTag(Span span, IClassificationType classificationType) {
+			if (classificationType == null)
+				throw new ArgumentNullException(nameof(classificationType));
+			Span = span;
+			ClassificationType = classificationType;
 		}
 	}
 }

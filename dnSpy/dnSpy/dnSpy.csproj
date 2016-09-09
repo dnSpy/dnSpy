@@ -440,15 +440,11 @@
     <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
     <Compile Include="Text\Classification\EditorFormatMapService.cs" />
-    <Compile Include="Text\Classification\ITextClassifier.cs" />
-    <Compile Include="Text\Classification\ITextClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettings.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />
-    <Compile Include="Text\Classification\TextClassificationTag.cs" />
     <Compile Include="Text\Classification\TextClassifierAggregator.cs" />
     <Compile Include="Text\Classification\TextClassifierAggregatorService.cs" />
-    <Compile Include="Text\Classification\TextClassifierContext.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettings.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettingsDictionaryProvider.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettingsService.cs" />

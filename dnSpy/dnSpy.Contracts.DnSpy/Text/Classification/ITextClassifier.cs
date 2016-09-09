@@ -17,35 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using System.Collections.Generic;
 
-namespace dnSpy.Text.Classification {
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Text classification tag
+	/// Classifies text
 	/// </summary>
-	sealed class TextClassificationTag {
+	public interface ITextClassifier {
 		/// <summary>
-		/// Gets the span
+		/// Classifies text
 		/// </summary>
-		public Span Span { get; }
-
-		/// <summary>
-		/// Gets the classification type
-		/// </summary>
-		public IClassificationType ClassificationType { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="classificationType">Classification type</param>
-		public TextClassificationTag(Span span, IClassificationType classificationType) {
-			if (classificationType == null)
-				throw new ArgumentNullException(nameof(classificationType));
-			Span = span;
-			ClassificationType = classificationType;
-		}
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context);
 	}
 }

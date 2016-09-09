@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Language.Intellisense.Classification;
-using dnSpy.Text.Classification;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Language.Intellisense.Classification {
 	sealed class CompletionClassifierAggregator : ICompletionClassifier, IDisposable {

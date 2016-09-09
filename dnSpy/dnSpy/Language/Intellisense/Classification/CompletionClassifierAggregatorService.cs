@@ -23,8 +23,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Text;
-using dnSpy.Text.Classification;
 using dnSpy.Text.MEF;
 
 namespace dnSpy.Language.Intellisense.Classification {
