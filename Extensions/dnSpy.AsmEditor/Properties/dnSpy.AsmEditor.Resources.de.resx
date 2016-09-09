@@ -2414,7 +2414,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Strg+Umschalt+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit {0} Code...</value>
+    <value>Bearbeite {0} Code...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Code bearbeiten</value>
@@ -2456,10 +2456,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Add Assembly Reference (GAC) (Ctrl+Shift+O)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Couldn't add the assembly references.</value>
+    <value>Konnte die Referenz auf die Asssembly nicht hinzufügen.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
-    <value>Edit Method Code</value>
+    <value>Bearbeite Methodencode</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
     <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>
@@ -2468,16 +2468,16 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Couldn't find the edited method. Make sure you didn't add or remove 'static' or 'Shared' or changed the parameter types, return type or method name: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
-    <value>Couldn't find field: {0}</value>
+    <value>Konnte das Feld nicht finden: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
-    <value>Couldn't find method: {0}</value>
+    <value>Konnte die Methode nicht finden: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
     <value>Couldn't find the edited method's type: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
-    <value>Couldn't find type: {0}</value>
+    <value>Konnte den Typ nicht finden: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
     <value>Renaming of virtual events isn't supported: {0}</value>
@@ -2497,8 +2497,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Strg+I</value>
   </data>
-  <data name="ShortCutKeyCtrlP" xml:space="preserve">
-    <value>Strg+P</value>
+  <data name="ShortCutKeyF6" xml:space="preserve">
+    <value>F6</value>
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>Abbrechen</value>

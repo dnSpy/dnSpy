@@ -2500,8 +2500,8 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl + I</value>
   </data>
-  <data name="ShortCutKeyCtrlP" xml:space="preserve">
-    <value>CTRL + P</value>
+  <data name="ShortCutKeyF6" xml:space="preserve">
+    <value>F6</value>
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>Cancelar</value>
