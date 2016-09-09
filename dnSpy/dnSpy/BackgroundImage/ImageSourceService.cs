@@ -327,7 +327,7 @@ namespace dnSpy.BackgroundImage {
 
 			List<string> GetAllFilenames() {
 				var list = cachedAllFilenamesListWeakRef?.Target as List<string>;
-				if (list != null && (DateTimeOffset.Now - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
+				if (list != null && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
 					return list;
 
 				var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
@@ -337,7 +337,7 @@ namespace dnSpy.BackgroundImage {
 					foreach (var filename in iter.Filenames)
 						hash.Add(filename);
 				}
-				cachedTime = DateTimeOffset.Now;
+				cachedTime = DateTimeOffset.UtcNow;
 				cachedAllFilenamesListWeakRef = new WeakReference(list = hash.ToList());
 				return list;
 			}
