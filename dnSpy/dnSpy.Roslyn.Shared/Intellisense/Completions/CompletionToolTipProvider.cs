@@ -101,7 +101,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			}
 
 			ITextClassifier[] GetClassifiers() =>
-				new ITextClassifier[] { new TaggedTextClassifier(themeClassificationTypeService) };
+				new ITextClassifier[] {
+					new TaggedTextClassifier(themeClassificationTypeService),
+					new HackTaggedTextClassifier(themeClassificationTypeService),
+				};
 
 			object CreateContent(CompletionDescription description) {
 				using (var elemProvider = taggedTextElementProviderService.Create(GetClassifiers(), AppearanceCategoryConstants.CodeCompletionToolTip))
