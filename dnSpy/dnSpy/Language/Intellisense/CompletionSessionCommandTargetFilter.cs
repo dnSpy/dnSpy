@@ -58,7 +58,7 @@ namespace dnSpy.Language.Intellisense {
 					// something when you select the current input text by pressing Shift+Home
 					// and then pressing eg. " or some other commit-character.
 					var curr = completionSession.SelectedCompletionCollection.CurrentCompletion;
-					completionSession.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(curr.Completion, false, curr.IsUnique);
+					completionSession.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(curr.Completion, isSelected: false, isUnique: curr.IsUnique);
 				}
 			}
 		}

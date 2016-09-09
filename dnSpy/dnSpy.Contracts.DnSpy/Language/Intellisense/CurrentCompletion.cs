@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// An instance with no <see cref="Completion"/>
 		/// </summary>
-		public static readonly CurrentCompletion Empty = new CurrentCompletion(null, false, false);
+		public static readonly CurrentCompletion Empty = new CurrentCompletion(null, isSelected: false, isUnique: false);
 
 		/// <summary>
 		/// Gets the completion or null if none

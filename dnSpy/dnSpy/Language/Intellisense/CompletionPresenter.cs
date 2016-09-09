@@ -261,7 +261,7 @@ namespace dnSpy.Language.Intellisense {
 			Debug.Assert(validItem);
 			if (!validItem)
 				return;
-			coll.CurrentCompletion = new CurrentCompletion(newCompletion, true, true);
+			coll.CurrentCompletion = new CurrentCompletion(newCompletion, isSelected: true, isUnique: true);
 		}
 
 		public bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
@@ -336,7 +336,7 @@ namespace dnSpy.Language.Intellisense {
 				ignoreScrollIntoView = false;
 			}
 
-			session.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(newItem, true, true);
+			session.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(newItem, isSelected: true, isUnique: true);
 			ScrollSelectedItemIntoView(false);
 		}
 

@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 				}
 			}
 			bool isSelected = selector.Result != null;
-			return new CurrentCompletion(selector.Result, isSelected, matches == 1);
+			return new CurrentCompletion(selector.Result, isSelected: isSelected, isUnique: matches == 1);
 		}
 
 		/// <summary>
