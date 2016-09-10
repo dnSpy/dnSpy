@@ -64,6 +64,8 @@ namespace dnSpy.Language.Intellisense {
 				control.Opacity = value;
 				if (value != 1)
 					HideToolTip();
+				else if (!toolTipTimer.IsEnabled)
+					DelayShowToolTip();
 			}
 		}
 
