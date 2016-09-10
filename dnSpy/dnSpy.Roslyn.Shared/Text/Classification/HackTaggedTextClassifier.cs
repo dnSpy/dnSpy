@@ -61,8 +61,23 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 				if (endOfLineIndex < 0)
 					endOfLineIndex = partText.Length;
 				foreach (var s in keywordSuffixes) {
-					if (partText.IndexOf(s, 0, endOfLineIndex, StringComparison.Ordinal) == endOfLineIndex - s.Length) {
-						yield return new TextClassificationTag(new Span(0, endOfLineIndex - s.Length), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
+					int endOfKeywordPart = endOfLineIndex - s.Length;
+					if (partText.IndexOf(s, 0, endOfLineIndex, StringComparison.Ordinal) == endOfKeywordPart) {
+						var keywords = part.Text.Substring(0, endOfKeywordPart);
+						int keywordOffset = 0;
+						while (keywordOffset < keywords.Length) {
+							if (keywords[keywordOffset] == ' ') {
+								keywordOffset++;
+								continue;
+							}
+							int end = keywords.IndexOf(' ', keywordOffset);
+							if (end < 0)
+								end = keywords.Length;
+							int keywordLen = end - keywordOffset;
+							if (keywordLen > 0)
+								yield return new TextClassificationTag(new Span(keywordOffset, keywordLen), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
+							keywordOffset += keywordLen;
+						}
 						break;
 					}
 				}
