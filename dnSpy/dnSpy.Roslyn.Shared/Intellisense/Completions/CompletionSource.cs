@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Utilities;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -43,6 +44,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			var info = CompletionInfo.Create(snapshot);
 			if (info == null)
 				return;
+
+			// This helps a little to speed up the code
+			ProfileOptimizationHelper.StartProfile("roslyn-completion-" + info.Value.CompletionService.Language);
 
 			CompletionTrigger completionTrigger;
 			session.Properties.TryGetProperty(typeof(CompletionTrigger), out completionTrigger);

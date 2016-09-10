@@ -34,6 +34,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Utilities;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -219,6 +220,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			const string MAIN_CODE_NAME = "main";
 			var codeDocs = Array.Empty<ICodeDocument>();
 			if (!canceled) {
+				// This helps a little to speed up the code
+				ProfileOptimizationHelper.StartProfile("add-decompiled-code-" + decompiler.UniqueGuid.ToString());
 				var docs = new List<IDecompiledDocument>();
 				docs.Add(new DecompiledDocument(mainCode, MAIN_CODE_NAME));
 				if (hiddenCode != string.Empty)
@@ -300,6 +303,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 			CanCompile = false;
 
+			ProfileOptimizationHelper.StartProfile("compile-" + decompiler.UniqueGuid.ToString());
 			StartCompileAsync().ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
