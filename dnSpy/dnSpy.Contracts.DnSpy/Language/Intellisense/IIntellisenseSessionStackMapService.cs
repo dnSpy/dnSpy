@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Provides <see cref="IIntellisenseSessionStack"/>s
 	/// </summary>
-	public interface IIntellisenseSessionStackMapService {
+	interface IIntellisenseSessionStackMapService {
 		/// <summary>
 		/// Gets the <see cref="IIntellisenseSessionStack"/> instance
 		/// </summary>

@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Intellisense presenter
 	/// </summary>
-	public interface IIntellisensePresenter {
+	interface IIntellisensePresenter {
 		/// <summary>
 		/// Gets the session
 		/// </summary>

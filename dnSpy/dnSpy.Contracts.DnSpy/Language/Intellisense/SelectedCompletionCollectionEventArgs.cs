@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Selected <see cref="CompletionCollection"/> changed event args
 	/// </summary>
-	public sealed class SelectedCompletionCollectionEventArgs : EventArgs {
+	sealed class SelectedCompletionCollectionEventArgs : EventArgs {
 		/// <summary>
 		/// Old collection
 		/// </summary>

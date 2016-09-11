@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Completion session
 	/// </summary>
-	public interface ICompletionSession : IIntellisenseSession {
+	interface ICompletionSession : IIntellisenseSession {
 		/// <summary>
 		/// Adds the selected <see cref="Completion"/> to the text buffer
 		/// </summary>

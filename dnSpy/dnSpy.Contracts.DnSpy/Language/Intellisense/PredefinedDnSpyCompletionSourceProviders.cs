@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Predefined <see cref="ICompletionSourceProvider"/>s
 	/// </summary>
-	public static class PredefinedDnSpyCompletionSourceProviders {
+	static class PredefinedDnSpyCompletionSourceProviders {
 		/// <summary>
 		/// Roslyn languages (C# or Visual Basic)
 		/// </summary>

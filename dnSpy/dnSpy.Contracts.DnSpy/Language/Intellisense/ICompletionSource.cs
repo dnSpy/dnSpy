@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Provides <see cref="Completion"/> items
 	/// </summary>
-	public interface ICompletionSource : IDisposable {
+	interface ICompletionSource : IDisposable {
 		/// <summary>
 		/// Adds <see cref="CompletionCollection"/>s to <paramref name="completionCollections"/>
 		/// </summary>

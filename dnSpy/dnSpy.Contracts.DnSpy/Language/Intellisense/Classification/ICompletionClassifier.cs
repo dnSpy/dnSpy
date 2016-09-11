@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// Classifies <see cref="Completion"/>s. Implement <see cref="IDisposable"/> if
 	/// your instance must be disposed.
 	/// </summary>
-	public interface ICompletionClassifier {
+	interface ICompletionClassifier {
 		/// <summary>
 		/// Classifies a <see cref="Completion"/>
 		/// </summary>

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// <see cref="Completion"/> collection
 	/// </summary>
-	public class CompletionCollection {
+	class CompletionCollection {
 		readonly Completion[] allCompletions;
 		readonly FilteredCompletionCollection filteredCompletions;
 

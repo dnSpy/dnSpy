@@ -21,7 +21,7 @@
 // to run, eg. Roslyn MEF code, jitting methods, etc.
 // The code editor benefits from this optimization since a lot of Roslyn code
 // gets called and initialized the first time its window is shown.
-// About 20-25MB extra memory usage in my litle test but code editor starts a lot quicker.
+// About 20-25MB extra memory usage in my little test but code editor starts a lot quicker.
 //
 // The following gets initialized:
 //	- RoslynMefHostServices.DefaultServices

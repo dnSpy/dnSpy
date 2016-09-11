@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Filters <see cref="Completion"/>s
 	/// </summary>
-	public interface ICompletionFilter {
+	interface ICompletionFilter {
 		/// <summary>
 		/// Returns true if the search text matches this <see cref="Completion"/>
 		/// </summary>

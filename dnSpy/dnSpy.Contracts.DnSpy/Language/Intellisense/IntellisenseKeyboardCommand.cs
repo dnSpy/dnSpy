@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Keyboard commands passed to an <see cref="IIntellisensePresenter"/>
 	/// </summary>
-	public enum IntellisenseKeyboardCommand {
+	enum IntellisenseKeyboardCommand {
 		/// <summary>
 		/// Up (<see cref="TextEditorIds.UP"/>)
 		/// </summary>

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// A completion item
 	/// </summary>
-	public class Completion : IPropertyOwner {
+	class Completion : IPropertyOwner {
 		/// <summary>
 		/// Gets the properties
 		/// </summary>

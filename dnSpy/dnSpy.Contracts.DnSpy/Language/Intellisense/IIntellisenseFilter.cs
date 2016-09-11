@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// A completion filter (eg. those buttons at the bottom of the completion listbox
 	/// that filters methods, fields, etc)
 	/// </summary>
-	public interface IIntellisenseFilter : INotifyPropertyChanged {
+	interface IIntellisenseFilter : INotifyPropertyChanged {
 		/// <summary>
 		/// Gets the image
 		/// </summary>

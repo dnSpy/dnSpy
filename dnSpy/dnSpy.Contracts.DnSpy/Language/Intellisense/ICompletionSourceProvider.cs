@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// Creates <see cref="ICompletionSource"/>s. You must export your class and
 	/// add a <see cref="ContentTypeAttribute"/> and a <see cref="NameAttribute"/>.
 	/// </summary>
-	public interface ICompletionSourceProvider {
+	interface ICompletionSourceProvider {
 		/// <summary>
 		/// Creates a <see cref="ICompletionSource"/> or returns null
 		/// </summary>

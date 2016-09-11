@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// <see cref="Completion"/> classification tag
 	/// </summary>
-	public sealed class CompletionClassificationTag {
+	sealed class CompletionClassificationTag {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

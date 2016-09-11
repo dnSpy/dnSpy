@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Names of <see cref="IUIElementProvider{TItem, TContext}"/> exports
 	/// </summary>
-	public static class PredefinedUIElementProviderNames {
+	static class PredefinedUIElementProviderNames {
 		/// <summary>
 		/// Roslyn <see cref="Completion"/> tooltip provider
 		/// </summary>

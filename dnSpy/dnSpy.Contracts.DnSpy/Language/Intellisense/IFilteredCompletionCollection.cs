@@ -25,6 +25,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// A read-only filtered <see cref="ObservableCollection{T}"/>. Its content changes when the list gets filtered.
 	/// </summary>
-	public interface IFilteredCompletionCollection : IList<Completion>, INotifyCollectionChanged {
+	interface IFilteredCompletionCollection : IList<Completion>, INotifyCollectionChanged {
 	}
 }

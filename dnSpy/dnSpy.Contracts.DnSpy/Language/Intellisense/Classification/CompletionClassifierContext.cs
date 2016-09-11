@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// <see cref="ICompletionClassifier"/> context
 	/// </summary>
-	public sealed class CompletionClassifierContext {
+	sealed class CompletionClassifierContext {
 		/// <summary>
 		/// Gets the completion to classify
 		/// </summary>

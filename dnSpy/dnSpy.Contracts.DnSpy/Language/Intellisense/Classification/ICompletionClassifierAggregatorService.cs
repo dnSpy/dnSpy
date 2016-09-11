@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// Creates a <see cref="ICompletionClassifier"/> that aggregates and normalizes
 	/// all <see cref="ICompletionClassifier"/> contributions.
 	/// </summary>
-	public interface ICompletionClassifierAggregatorService {
+	interface ICompletionClassifierAggregatorService {
 		/// <summary>
 		/// Creates a new <see cref="ICompletionClassifier"/>. The returned <see cref="ICompletionClassifier"/>
 		/// implements <see cref="IDisposable"/> and must be <see cref="IDisposable.Dispose"/>'d.

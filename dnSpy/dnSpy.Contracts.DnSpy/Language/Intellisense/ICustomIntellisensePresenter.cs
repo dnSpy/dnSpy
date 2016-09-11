@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Custom <see cref="IIntellisensePresenter"/>
 	/// </summary>
-	public interface ICustomIntellisensePresenter {
+	interface ICustomIntellisensePresenter {
 		/// <summary>
 		/// Shows the UI
 		/// </summary>

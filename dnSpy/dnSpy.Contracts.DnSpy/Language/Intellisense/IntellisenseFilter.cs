@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Completion filter base class
 	/// </summary>
-	public class IntellisenseFilter : IIntellisenseFilter {
+	class IntellisenseFilter : IIntellisenseFilter {
 		/// <summary>
 		/// Raised when a property value changes
 		/// </summary>

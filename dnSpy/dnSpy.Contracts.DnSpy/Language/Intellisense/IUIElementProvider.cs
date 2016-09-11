@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	/// <typeparam name="TItem">Source item, eg. <see cref="Completion"/></typeparam>
 	/// <typeparam name="TContext">Context, eg. <see cref="ICompletionSession"/></typeparam>
-	public interface IUIElementProvider<TItem, TContext> {
+	interface IUIElementProvider<TItem, TContext> {
 		/// <summary>
 		/// Creates a <see cref="UIElement"/> or returns null
 		/// </summary>
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// <see cref="UIElement"/> type
 	/// </summary>
-	public enum UIElementType {
+	enum UIElementType {
 		/// <summary>
 		/// Small element, eg. a <see cref="ListBoxItem"/>
 		/// </summary>

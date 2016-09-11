@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Intellisense stack
 	/// </summary>
-	public interface IIntellisenseSessionStack {
+	interface IIntellisenseSessionStack {
 		/// <summary>
 		/// Adds a new session to the top of the stack
 		/// </summary>

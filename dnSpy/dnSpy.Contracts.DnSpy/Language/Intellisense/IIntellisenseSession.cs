@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Intellisense session
 	/// </summary>
-	public interface IIntellisenseSession : IPropertyOwner {
+	interface IIntellisenseSession : IPropertyOwner {
 		/// <summary>
 		/// Gets the trigger point or null
 		/// </summary>

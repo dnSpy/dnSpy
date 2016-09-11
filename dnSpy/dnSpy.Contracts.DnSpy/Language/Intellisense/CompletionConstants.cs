@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Completion constants
 	/// </summary>
-	public static class CompletionConstants {
+	static class CompletionConstants {
 		/// <summary>
 		/// Minimum length of search string before the collection gets filtered
 		/// </summary>

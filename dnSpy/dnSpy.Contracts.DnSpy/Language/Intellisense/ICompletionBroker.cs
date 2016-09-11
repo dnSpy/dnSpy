@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Completion service
 	/// </summary>
-	public interface ICompletionBroker {
+	interface ICompletionBroker {
 		/// <summary>
 		/// Triggers a completion at the current caret position
 		/// </summary>

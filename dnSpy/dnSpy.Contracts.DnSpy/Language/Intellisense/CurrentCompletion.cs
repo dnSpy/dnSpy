@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Current <see cref="Intellisense.Completion"/>
 	/// </summary>
-	public sealed class CurrentCompletion {
+	sealed class CurrentCompletion {
 		/// <summary>
 		/// An instance with no <see cref="Completion"/>
 		/// </summary>

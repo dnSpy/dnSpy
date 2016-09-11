@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// Creates <see cref="ICompletionClassifier"/>s. Export the instance with
 	/// a <see cref="ContentTypeAttribute"/>.
 	/// </summary>
-	public interface ICompletionClassifierProvider {
+	interface ICompletionClassifierProvider {
 		/// <summary>
 		/// Creates a <see cref="ICompletionClassifier"/> or returns null
 		/// </summary>

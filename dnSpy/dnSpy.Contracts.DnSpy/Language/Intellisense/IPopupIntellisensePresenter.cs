@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// An <see cref="IIntellisensePresenter"/> shown in a popup
 	/// </summary>
-	public interface IPopupIntellisensePresenter : IIntellisensePresenter, INotifyPropertyChanged {
+	interface IPopupIntellisensePresenter : IIntellisensePresenter, INotifyPropertyChanged {
 		/// <summary>
 		/// Gets the popup element. Raise <see cref="INotifyPropertyChanged.PropertyChanged"/> when this
 		/// property changes.
