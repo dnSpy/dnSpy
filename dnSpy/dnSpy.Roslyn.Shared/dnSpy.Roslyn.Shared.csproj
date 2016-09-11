@@ -85,6 +85,7 @@
     <Compile Include="Text\TextBufferSourceTextContainer.cs" />
     <Compile Include="Text\TextSnapshotSourceText.cs" />
     <Compile Include="Text\TextSnapshotTextLineCollection.cs" />
+    <Compile Include="Utilities\ImmutableArrayUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

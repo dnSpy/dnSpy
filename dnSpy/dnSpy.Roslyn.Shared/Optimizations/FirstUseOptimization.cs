@@ -41,6 +41,7 @@ using dnSpy.Contracts.Utilities;
 using dnSpy.Roslyn.Shared.Intellisense.Completions;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Tagging;
+using dnSpy.Roslyn.Shared.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
@@ -53,6 +54,10 @@ namespace dnSpy.Roslyn.Shared.Optimizations {
 	sealed class FirstUseOptimizationLoader : IAutoLoaded {
 		[ImportingConstructor]
 		FirstUseOptimizationLoader(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService) {
+			// This method is currently only called when compiling the code so add an early test
+			// that it's still working in case ImmutableArray<T> gets updated.
+			ImmutableArrayUtilities.ToImmutableByteArray(Array.Empty<byte>());
+
 			new FirstUseOptimization(themeClassificationTypeService, textBufferFactoryService);
 		}
 	}

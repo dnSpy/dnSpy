@@ -20,6 +20,7 @@
 using System.Diagnostics;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Roslyn.Shared.Documentation;
+using dnSpy.Roslyn.Shared.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
 
@@ -42,8 +43,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef, IRoslynDocumentationProviderFactory docFactory) {
 			var docProvider = docFactory.TryCreate(mdRef.Filename);
 			if (mdRef.IsAssemblyReference)
-				return MetadataReference.CreateFromImage(mdRef.Data, MetadataReferenceProperties.Assembly, docProvider, mdRef.Filename);
-			var moduleMetadata = ModuleMetadata.CreateFromImage(mdRef.Data);
+				return MetadataReference.CreateFromImage(ImmutableArrayUtilities.ToImmutableByteArray(mdRef.Data), MetadataReferenceProperties.Assembly, docProvider, mdRef.Filename);
+			var moduleMetadata = ModuleMetadata.CreateFromImage(ImmutableArrayUtilities.ToImmutableByteArray(mdRef.Data));
 			return moduleMetadata.GetReference(docProvider, mdRef.Filename);
 		}
 
