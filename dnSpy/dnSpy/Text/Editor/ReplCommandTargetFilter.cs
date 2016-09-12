@@ -168,6 +168,8 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.DECREASEFILTER:
 				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.INCREASEFILTER:
+				case TextEditorIds.PARAMINFO:
+				case TextEditorIds.QUICKINFO:
 				case TextEditorIds.SHOWMEMBERLIST:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
 				case TextEditorIds.ToggleConsumeFirstCompletionMode:
@@ -553,6 +555,8 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.DECREASEFILTER:
 				case TextEditorIds.GOTOLINE:
 				case TextEditorIds.INCREASEFILTER:
+				case TextEditorIds.PARAMINFO:
+				case TextEditorIds.QUICKINFO:
 				case TextEditorIds.SHOWMEMBERLIST:
 				case TextEditorIds.TOGGLE_OVERTYPE_MODE:
 				case TextEditorIds.ToggleConsumeFirstCompletionMode:

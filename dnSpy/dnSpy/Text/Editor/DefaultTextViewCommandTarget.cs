@@ -157,6 +157,8 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.PAGEDN_EXT:
 				case TextEditorIds.PAGEUP:
 				case TextEditorIds.PAGEUP_EXT:
+				case TextEditorIds.PARAMINFO:
+				case TextEditorIds.QUICKINFO:
 				case TextEditorIds.RIGHT:
 				case TextEditorIds.RIGHT_EXT:
 				case TextEditorIds.RIGHT_EXT_COL:
@@ -326,6 +328,8 @@ namespace dnSpy.Text.Editor {
 				case TextEditorIds.GOTOBRACE:
 				case TextEditorIds.GOTOBRACE_EXT:
 				case TextEditorIds.INCREASEFILTER:
+				case TextEditorIds.PARAMINFO:
+				case TextEditorIds.QUICKINFO:
 				case TextEditorIds.SHOWMEMBERLIST:
 				case TextEditorIds.ToggleConsumeFirstCompletionMode:
 				default:

@@ -434,5 +434,13 @@ namespace dnSpy.Contracts.Command {
 		/// Increase filter
 		/// </summary>
 		INCREASEFILTER,
+		/// <summary>
+		/// Quick Info; Display Quick Info based on the current language.
+		/// </summary>
+		QUICKINFO,
+		/// <summary>
+		/// Parameter Info; Display Parameter Info based on the current language.
+		/// </summary>
+		PARAMINFO,
 	}
 }
