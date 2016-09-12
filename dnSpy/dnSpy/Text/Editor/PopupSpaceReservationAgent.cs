@@ -221,9 +221,9 @@ namespace dnSpy.Text.Editor {
 			switch (reservedSpace.FillContainsWithDetail(new RectangleGeometry(rect))) {
 			case IntersectionDetail.FullyInside:
 			case IntersectionDetail.FullyContains:
+			case IntersectionDetail.Intersects:
 				return true;
 			case IntersectionDetail.Empty:
-			case IntersectionDetail.Intersects:
 			default:
 				return false;
 			}
