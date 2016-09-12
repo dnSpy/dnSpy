@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 		public ITrackingSpan PresentationSpan {
 			get { return presentationSpan; }
 			private set {
-				if (!IsSameTrackingSpan(presentationSpan, value)) {
+				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PresentationSpan)));
 				}
@@ -310,18 +310,6 @@ namespace dnSpy.Language.Intellisense {
 				(session.TextView as IWpfTextView)?.VisualElement.Focus();
 			else
 				control.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => (session.TextView as IWpfTextView)?.VisualElement.Focus()));
-		}
-
-		static bool IsSameTrackingSpan(ITrackingSpan a, ITrackingSpan b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
-				return false;
-			if (a.TextBuffer != b.TextBuffer)
-				return false;
-			var sa = a.GetSpan(a.TextBuffer.CurrentSnapshot);
-			var sb = b.GetSpan(b.TextBuffer.CurrentSnapshot);
-			return sa == sb;
 		}
 
 		void Control_SizeChanged(object sender, SizeChangedEventArgs e) {

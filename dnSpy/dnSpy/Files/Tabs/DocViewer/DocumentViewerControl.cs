@@ -57,6 +57,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 			PredefinedTextViewRoles.Zoomable,
 			PredefinedDnSpyTextViewRoles.DocumentViewer,
 			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
+			PredefinedDnSpyTextViewRoles.CanHaveIntellisenseControllers,
 		};
 
 		public DocumentViewerControl(ITextBufferFactoryService textBufferFactoryService, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IDocumentViewerHelper textEditorHelper) {

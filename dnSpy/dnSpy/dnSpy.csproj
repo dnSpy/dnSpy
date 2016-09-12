@@ -183,7 +183,6 @@
     <Compile Include="Files\Tabs\DocViewer\StructureVisualizerDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Files\Tabs\DocViewer\StructureVisualizerDocumentViewerListener.cs" />
     <Compile Include="Files\Tabs\DocViewer\StructureVisualizerServiceDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\DocumentViewerCommandTargetFilter.cs" />
     <Compile Include="Files\Tabs\DocViewer\ToolTips\DocumentViewerToolTipService.cs" />
     <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
@@ -291,15 +290,27 @@
     <Compile Include="Language\Intellisense\FilterImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
     <Compile Include="Language\Intellisense\FilterVM.cs" />
-    <Compile Include="Language\Intellisense\ICompletionPresenterService.cs" />
+    <Compile Include="Language\Intellisense\ICompletionPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProviderService.cs" />
+    <Compile Include="Language\Intellisense\IntellisenseControllerService.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStack.CommandTargetFilter.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStack.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStackMapService.cs" />
-    <Compile Include="Language\Intellisense\PresenterCommandTargetCommand.cs" />
+    <Compile Include="Language\Intellisense\IQuickInfoPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\PresenterMouseProcessor.cs" />
+    <Compile Include="Language\Intellisense\QuickInfoBroker.cs" />
+    <Compile Include="Language\Intellisense\QuickInfoController.cs" />
+    <Compile Include="Language\Intellisense\QuickInfoControllerProvider.cs" />
+    <Compile Include="Language\Intellisense\QuickInfoPresenter.cs" />
+    <Compile Include="Language\Intellisense\QuickInfoPresenterBase.cs" />
+    <Compile Include="Language\Intellisense\QuickInfoPresenterControl.xaml.cs">
+      <DependentUpon>QuickInfoPresenterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Language\Intellisense\QuickInfoSession.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
+    <Compile Include="Language\Intellisense\SpaceReservationQuickInfoPresenter.cs" />
+    <Compile Include="Language\Intellisense\TrackingSpanHelpers.cs" />
     <Compile Include="Language\Intellisense\WpfUtils.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
     <Compile Include="MainApp\AboutScreen.cs" />
@@ -507,6 +518,7 @@
     <Compile Include="Text\Editor\IReplEditor2.cs" />
     <Compile Include="Text\Editor\ISpaceReservationStack.cs" />
     <Compile Include="Text\Editor\ISpaceReservationStackProvider.cs" />
+    <Compile Include="Text\Editor\IWpfTextViewConnectionListenerServiceProvider.cs" />
     <Compile Include="Text\Editor\KeyboardWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
     <Compile Include="Text\Editor\LeftSelectionMargin.cs" />
@@ -596,6 +608,8 @@
     <Compile Include="Text\Editor\WpfTextView.cs" />
     <Compile Include="Text\Editor\WpfTextView.LayoutHelper.cs" />
     <Compile Include="Text\Editor\WpfTextView.MouseHoverHelper.cs" />
+    <Compile Include="Text\Editor\WpfTextViewConnectionListenerService.cs" />
+    <Compile Include="Text\Editor\WpfTextViewConnectionListenerServiceProvider.cs" />
     <Compile Include="Text\Editor\WpfTextViewConstants.cs" />
     <Compile Include="Text\Editor\WpfTextViewContainerMargin.cs" />
     <Compile Include="Text\Editor\WpfTextViewExtensions.cs" />
@@ -732,6 +746,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Language\Intellisense\QuickInfoPresenterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5796,19 +5796,6 @@
 		</DataTemplate.Triggers>
 	</DataTemplate>
 
-    <Style x:Key="CodeToolTipStyle"
-           BasedOn="{StaticResource {x:Type ToolTip}}"
-           TargetType="{x:Type ToolTip}">
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource CodeToolTipBorder}"/>
-        <Setter Property="Background"
-                Value="{DynamicResource CodeToolTipBackground}"/>
-        <Setter Property="Foreground"
-                Value="{DynamicResource CodeToolTipForeground}"/>
-        <Setter Property="Padding"
-                Value="10,10,10,10"/>
-    </Style>
-
     <Style x:Key="GlyphTextMarkerToolTipStyle"
            BasedOn="{StaticResource {x:Type ToolTip}}"
            TargetType="{x:Type ToolTip}">

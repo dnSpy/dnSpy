@@ -54,6 +54,7 @@ namespace dnSpy.Text.Editor {
 		readonly IMenuManager menuManager;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly ISpaceReservationStackProvider spaceReservationStackProvider;
+		readonly IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -109,7 +110,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISpaceReservationStackProvider spaceReservationStackProvider) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuManager menuManager, IEditorOperationsFactoryService editorOperationsFactoryService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandManager = commandManager;
@@ -126,6 +127,7 @@ namespace dnSpy.Text.Editor {
 			this.menuManager = menuManager;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.spaceReservationStackProvider = spaceReservationStackProvider;
+			this.wpfTextViewConnectionListenerServiceProvider = wpfTextViewConnectionListenerServiceProvider;
 		}
 
 		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions)null);
@@ -187,7 +189,7 @@ namespace dnSpy.Text.Editor {
 
 		IDnSpyWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsProvider> createGuidObjectsProvider = null) {
 			var guidObjectsProvider = new GuidObjectsProvider(options?.CreateGuidObjects, createGuidObjectsProvider?.Invoke());
-			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfTextViewCreationListeners);
+			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandManager, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfTextViewConnectionListenerServiceProvider, wpfTextViewCreationListeners);
 			guidObjectsProvider.WpfTextView = wpfTextView;
 
 			if (options?.MenuGuid != null)

@@ -62,7 +62,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				var img = new Image {
 					Width = 16,
 					Height = 16,
-					Source = imageManager.GetImage(Image.Value, BackgroundType.CodeToolTip),
+					Source = imageManager.GetImage(Image.Value, BackgroundType.QuickInfo),
 					Margin = new Thickness(0, 0, 4, 0),
 					VerticalAlignment = VerticalAlignment.Top,
 					HorizontalAlignment = HorizontalAlignment.Left,

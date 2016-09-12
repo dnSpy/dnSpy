@@ -139,7 +139,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
 			if (textViewModel == null)
 				throw new ArgumentNullException(nameof(textViewModel));
 			if (roles == null)
@@ -170,6 +170,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(spaceReservationStackProvider));
 			if (wpfTextViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
+			if (wpfTextViewConnectionListenerServiceProvider == null)
+				throw new ArgumentNullException(nameof(wpfTextViewConnectionListenerServiceProvider));
 			this.mouseHoverHelper = new MouseHoverHelper(this);
 			this.physicalLineCache = new PhysicalLineCache(32);
 			this.visiblePhysicalLines = new List<PhysicalLine>();
@@ -230,6 +232,7 @@ namespace dnSpy.Text.Editor {
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
+			wpfTextViewConnectionListenerServiceProvider.Create(this);
 			NotifyTextViewCreated(TextViewModel.DataModel.ContentType, null);
 		}
 

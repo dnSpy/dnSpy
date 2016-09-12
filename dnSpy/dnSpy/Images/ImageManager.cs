@@ -58,7 +58,7 @@ namespace dnSpy.Images {
 			case BackgroundType.ContextMenuItem:	return GetColorBackground(ColorType.ContextMenuRectangleFill);
 			case BackgroundType.GridViewItem:		return GetColorBackground(ColorType.GridViewBackground);
 			case BackgroundType.ListBoxItem:		return GetColorBackground(ColorType.ListBoxBackground);
-			case BackgroundType.CodeToolTip:		return GetColorBackground(ColorType.CodeToolTip);
+			case BackgroundType.QuickInfo:			return GetColorBackground(ColorType.QuickInfo);
 			case BackgroundType.TitleAreaActive:	return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
 			case BackgroundType.TitleAreaInactive:	return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
 			case BackgroundType.CommandBar:			return GetColorBackground(ColorType.EnvironmentCommandBarIcon);

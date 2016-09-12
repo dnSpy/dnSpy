@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Language.Intellisense;
+using System.Windows.Controls;
 
 namespace dnSpy.Language.Intellisense {
-	interface ICompletionPresenterService {
-		/// <summary>
-		/// Creates a completion presenter
-		/// </summary>
-		/// <param name="completionSession">Completion session</param>
-		/// <returns></returns>
-		IIntellisensePresenter Create(ICompletionSession completionSession);
+	sealed partial class QuickInfoPresenterControl : UserControl {
+		public QuickInfoPresenterControl() {
+			InitializeComponent();
+		}
 	}
 }

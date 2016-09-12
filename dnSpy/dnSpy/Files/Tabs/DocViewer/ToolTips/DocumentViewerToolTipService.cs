@@ -22,34 +22,17 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
-using dnSpy.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
-	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_TOOLTIPSERVICE)]
-	sealed class DocumentViewerToolTipServiceListener : IDocumentViewerListener {
-		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
-
-		[ImportingConstructor]
-		DocumentViewerToolTipServiceListener(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-		}
-
-		public void OnEvent(DocumentViewerEventArgs e) {
-			if (e.EventType == DocumentViewerEvent.Added)
-				documentViewerToolTipServiceProvider.GetService(e.DocumentViewer);
-		}
-	}
-
 	[Export(typeof(DocumentViewerToolTipServiceProvider))]
 	sealed class DocumentViewerToolTipServiceProvider {
 		readonly IImageManager imageManager;
@@ -69,14 +52,46 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(imageManager, dotNetImageManager, codeToolTipSettings, documentViewerToolTipProviders, documentViewer));
 	}
 
+	[Export(typeof(IQuickInfoSourceProvider))]
+	[Name(PredefinedDnSpyQuickInfoSourceProviders.DocumentViewer)]
+	[ContentType(ContentTypes.Any)]
+	sealed class DocumentViewerToolTipServiceQuickInfoSourceProvider : IQuickInfoSourceProvider {
+		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
+
+		[ImportingConstructor]
+		DocumentViewerToolTipServiceQuickInfoSourceProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
+			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
+		}
+
+		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
+			var docViewer = textBuffer.TryGetDocumentViewer();
+			if (docViewer == null)
+				return null;
+			return new DocumentViewerToolTipServiceQuickInfoSource(documentViewerToolTipServiceProvider.GetService(docViewer));
+		}
+	}
+
+	sealed class DocumentViewerToolTipServiceQuickInfoSource : IQuickInfoSource {
+		readonly DocumentViewerToolTipService documentViewerToolTipService;
+
+		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) {
+			if (documentViewerToolTipService == null)
+				throw new ArgumentNullException(nameof(documentViewerToolTipService));
+			this.documentViewerToolTipService = documentViewerToolTipService;
+		}
+
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) =>
+			documentViewerToolTipService.AugmentQuickInfoSession(session, quickInfoContent, out applicableToSpan);
+
+		public void Dispose() { }
+	}
+
 	sealed class DocumentViewerToolTipService {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 		readonly IDocumentViewer documentViewer;
-		ToolTip toolTip;
-		SpanData<ReferenceInfo>? currentReference;
 
 		public DocumentViewerToolTipService(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer) {
 			if (imageManager == null)
@@ -94,71 +109,34 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			this.codeToolTipSettings = codeToolTipSettings;
 			this.documentViewerToolTipProviders = documentViewerToolTipProviders;
 			this.documentViewer = documentViewer;
-			documentViewer.TextView.Closed += TextView_Closed;
-			documentViewer.TextView.MouseHover += TextView_MouseHover;
 		}
 
-		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => CloseToolTip();
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => CloseToolTip();
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => CloseToolTip();
-
-		SpanData<ReferenceInfo>? GetReference(int position) => documentViewer.Content.ReferenceCollection.Find(position, false);
-
-		void TextView_MouseHover(object sender, MouseHoverEventArgs e) {
-			var spanData = GetReference(e.Position);
-			if (spanData != null && currentReference != null && SameReferences(currentReference.Value, spanData.Value))
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {
+			applicableToSpan = null;
+			Debug.Assert(session.TextView == documentViewer.TextView);
+			if (session.TextView != documentViewer.TextView)
+				return;
+			var snapshot = session.TextView.TextSnapshot;
+			var point = session.GetTriggerPoint(snapshot);
+			if (point == null)
+				return;
+			var spanData = GetReference(point.Value.Position);
+			if (spanData == null)
+				return;
+			var info = spanData.Value;
+			Debug.Assert(info.Span.End <= snapshot.Length);
+			if (info.Span.End > snapshot.Length)
 				return;
 
-			CloseToolTip();
-			if (spanData != null)
-				ShowToolTip(spanData.Value);
-		}
-
-		static bool SameReferences(SpanData<ReferenceInfo> a, SpanData<ReferenceInfo> b) =>
-			a.Span == b.Span;
-
-		bool ShowToolTip(SpanData<ReferenceInfo> info) {
 			var toolTipContent = CreateToolTipContent(GetDecompiler(), info.Data.Reference);
 			if (toolTipContent == null)
-				return false;
-			Debug.Assert(toolTip == null);
-			CloseToolTip();
-			currentReference = info;
-			toolTip = new ToolTip();
-			toolTip.SetResourceReference(FrameworkElement.StyleProperty, "CodeToolTipStyle");
-			SetScaleTransform(toolTip);
-			toolTip.Content = toolTipContent;
-			toolTip.IsOpen = true;
-
-			documentViewer.TextView.VisualElement.MouseLeave += VisualElement_MouseLeave;
-			documentViewer.TextView.VisualElement.MouseMove += VisualElement_MouseMove;
-			documentViewer.TextView.Caret.PositionChanged += Caret_PositionChanged;
-			documentViewer.TextView.LayoutChanged += TextView_LayoutChanged;
-			return true;
-		}
-
-		void SetScaleTransform(ToolTip toolTip) {
-			// Part of the text (eg. bottom of g and j) are sometimes clipped if we use Display
-			// instead of Ideal; don't change the default settings if it's 100% zoom.
-			if (documentViewer.TextView.ZoomLevel == 100)
 				return;
-			PopupHelper.SetScaleTransform(documentViewer.TextView, toolTip);
+
+			quickInfoContent.Add(toolTipContent);
+			applicableToSpan = snapshot.CreateTrackingSpan(info.Span, SpanTrackingMode.EdgeInclusive);
 		}
 
-		void VisualElement_MouseMove(object sender, MouseEventArgs e) {
-			var info = GetReference(e);
-			if (info == null || currentReference == null || !SameReferences(currentReference.Value, info.Value))
-				CloseToolTip();
-		}
-
-		SpanData<ReferenceInfo>? GetReference(MouseEventArgs e) {
-			var loc = MouseLocation.TryCreateTextOnly(documentViewer.TextView, e);
-			if (loc == null)
-				return null;
-			if (loc.Position.IsInVirtualSpace)
-				return null;
-			return GetReference(loc.Position.Position.Position);
-		}
+		SpanData<ReferenceInfo>? GetReference(int position) => documentViewer.Content.ReferenceCollection.Find(position, false);
 
 		IDecompiler GetDecompiler() {
 			var content = documentViewer.FileTab.Content as IDecompilerTabContent;
@@ -179,26 +157,6 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			}
 
 			return null;
-		}
-
-		public bool IsToolTipOpen => toolTip != null;
-
-		public void CloseToolTip() {
-			if (toolTip != null) {
-				toolTip.IsOpen = false;
-				toolTip = null;
-				documentViewer.TextView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
-				documentViewer.TextView.VisualElement.MouseMove -= VisualElement_MouseMove;
-				documentViewer.TextView.Caret.PositionChanged -= Caret_PositionChanged;
-				documentViewer.TextView.LayoutChanged -= TextView_LayoutChanged;
-			}
-			currentReference = null;
-		}
-
-		void TextView_Closed(object sender, EventArgs e) {
-			CloseToolTip();
-			documentViewer.TextView.Closed -= TextView_Closed;
-			documentViewer.TextView.MouseHover -= TextView_MouseHover;
 		}
 	}
 }

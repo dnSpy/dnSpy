@@ -120,5 +120,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Allows line compressor
 		/// </summary>
 		public const string CanHaveLineCompressor = "dnSpy-CanHaveLineCompressor";
+
+		/// <summary>
+		/// Allows intellisense controllers
+		/// </summary>
+		public const string CanHaveIntellisenseControllers = "dnSpy-CanHaveIntellisenseControllers";
 	}
 }

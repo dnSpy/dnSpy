@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(ICompletionBroker))]
-	sealed class CompletionBroker : ICompletionBroker, ICompletionPresenterService {
+	sealed class CompletionBroker : ICompletionBroker, ICompletionPresenterProvider {
 		readonly IImageManager imageManager;
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
 		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var session = CreateCompletionSession(textView, triggerPoint, trackCaret);
 			session.Start();
-			return session;
+			return session.IsDismissed ? null : session;
 		}
 
 		public ICompletionSession CreateCompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
@@ -95,7 +95,7 @@ namespace dnSpy.Language.Intellisense {
 			return new ReadOnlyCollection<ICompletionSession>(stack.Sessions.OfType<ICompletionSession>().ToArray());
 		}
 
-		IIntellisensePresenter ICompletionPresenterService.Create(ICompletionSession completionSession) {
+		IIntellisensePresenter ICompletionPresenterProvider.Create(ICompletionSession completionSession) {
 			if (completionSession == null)
 				throw new ArgumentNullException(nameof(completionSession));
 			return new CompletionPresenter(imageManager, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);

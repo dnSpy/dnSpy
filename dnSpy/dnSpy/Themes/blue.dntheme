@@ -427,12 +427,12 @@
 		<color name="tooltipbackground" fg="White" bg="White" />
 		<color name="tooltipborderbrush" bg="#767676" />
 		<color name="tooltipforeground" fg="Black" />
-		<color name="codetooltip" fg="#FF1E1E1E" bg="#FFE7E8EC" />
-		<color name="codetooltipborder" bg="#FFCCCEDB" />
 		<color name="screentip" fg="#FF000000" bg="#FFFFFFE1" />
 		<color name="screentipborder" bg="#FF000000" />
 		<color name="completiontooltip" fg="#FF1E1E1E" bg="#FFE7E8EC" />
 		<color name="completiontooltipborder" bg="#FFCCCEDB" />
+		<color name="quickinfo" fg="#FF1E1E1E" bg="#FFE7E8EC" />
+		<color name="quickinfoborder" bg="#FFCCCEDB" />
 		<color name="cilbutton" fg="#FF1E1E1E" bg="Transparent" />
 		<color name="cilbuttonborder" bg="Transparent" />
 		<color name="cilbuttonborderfocused" bg="#FFE5C365" />

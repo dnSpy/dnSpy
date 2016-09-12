@@ -297,12 +297,12 @@
 		<color name="tooltipbackground" fg="#FF000000" bg="#FF000000" />
 		<color name="tooltipborderbrush" bg="#FFFFFFFF" />
 		<color name="tooltipforeground" fg="#FFFFFFFF" />
-		<color name="codetooltip" fg="#FFFFFFFF" bg="#FF000000" />
-		<color name="codetooltipborder" bg="#FFFFFFFF" />
 		<color name="screentip" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="screentipborder" bg="#FFFFFFFF" />
 		<color name="completiontooltip" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="completiontooltipborder" bg="#FFFFFFFF" />
+		<color name="quickinfo" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="quickinfoborder" bg="#FFFFFFFF" />
 		<color name="cilbutton" fg="#FFFFFFFF" bg="Transparent" />
 		<color name="cilbuttonborder" bg="Transparent" />
 		<color name="cilbuttonborderfocused" bg="#FFFFFFFF" />

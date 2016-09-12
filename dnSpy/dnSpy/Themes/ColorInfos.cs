@@ -1056,11 +1056,31 @@ namespace dnSpy.Themes {
 				DefaultForeground = "Black",
 				ForegroundResourceKey = "ToolTipForeground",
 			},
-			new BrushColorInfo(ColorType.CodeToolTip, "Code ToolTip") {
+			new BrushColorInfo(ColorType.ScreenTip, "Glyph Margin ToolTip") {
+				DefaultForeground = "#FF1E1E1E",// Environment.ScreenTipText
+				ForegroundResourceKey = "ScreenTipText",
+				DefaultBackground = "#FFFDFBAC",// Environment.ScreenTipBackground
+				BackgroundResourceKey = "ScreenTipBackground",
+			},
+			new BrushColorInfo(ColorType.ScreenTipBorder, "Glyph Margin ToolTip border") {
+				DefaultBackground = "#FFFDFBAC",// Environment.ScreenTipBorder
+				BackgroundResourceKey = "ScreenTipBorder",
+			},
+			new BrushColorInfo(ColorType.CompletionToolTip, "Completion ToolTip") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CompletionToolTipText",
+				DefaultBackground = "#FFF6F6F6",
+				BackgroundResourceKey = "CompletionToolTipBackground",
+			},
+			new BrushColorInfo(ColorType.CompletionToolTipBorder, "Completion ToolTip border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CompletionToolTipBorder",
+			},
+			new BrushColorInfo(ColorType.QuickInfo, "QuickInfo") {
 				DefaultForeground = "#FF1E1E1E",// Environment.ToolTip (fg)
-				ForegroundResourceKey = "CodeToolTipForeground",
+				ForegroundResourceKey = "QuickInfoForeground",
 				DefaultBackground = "#FFF6F6F6",// Environment.ToolTip (bg)
-				BackgroundResourceKey = "CodeToolTipBackground",
+				BackgroundResourceKey = "QuickInfoBackground",
 				Children = new ColorInfo[] {
 					new BrushColorInfo(ColorType.XmlDocToolTipDescriptionText, "XML doc tooltip: base class of most XML doc tooltip classes") {
 						Children = new ColorInfo[] {
@@ -1082,29 +1102,9 @@ namespace dnSpy.Themes {
 					new BrushColorInfo(ColorType.XmlDocToolTipText, "XML doc tooltip: XML doc text"),
 				}
 			},
-			new BrushColorInfo(ColorType.CodeToolTipBorder, "Code ToolTip border") {
+			new BrushColorInfo(ColorType.QuickInfoBorder, "QuickInfo border") {
 				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
-				BackgroundResourceKey = "CodeToolTipBorder",
-			},
-			new BrushColorInfo(ColorType.ScreenTip, "Glyph Margin ToolTip") {
-				DefaultForeground = "#FF1E1E1E",// Environment.ScreenTipText
-				ForegroundResourceKey = "ScreenTipText",
-				DefaultBackground = "#FFFDFBAC",// Environment.ScreenTipBackground
-				BackgroundResourceKey = "ScreenTipBackground",
-			},
-			new BrushColorInfo(ColorType.ScreenTipBorder, "Glyph Margin ToolTip border") {
-				DefaultBackground = "#FFFDFBAC",// Environment.ScreenTipBorder
-				BackgroundResourceKey = "ScreenTipBorder",
-			},
-			new BrushColorInfo(ColorType.CompletionToolTip, "Completion ToolTip") {
-				DefaultForeground = "#FF1E1E1E",
-				ForegroundResourceKey = "CompletionToolTipText",
-				DefaultBackground = "#FFF6F6F6",
-				BackgroundResourceKey = "CompletionToolTipBackground",
-			},
-			new BrushColorInfo(ColorType.CompletionToolTipBorder, "Completion ToolTip border") {
-				DefaultBackground = "#FFCCCEDB",
-				BackgroundResourceKey = "CompletionToolTipBorder",
+				BackgroundResourceKey = "QuickInfoBorder",
 			},
 			new BrushColorInfo(ColorType.CilButton, "CIL Button") {
 				DefaultForeground = "#FF1E1E1E",

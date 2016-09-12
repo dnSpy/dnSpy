@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Images {
 		ContextMenuItem,
 		GridViewItem,
 		ListBoxItem,
-		CodeToolTip,
+		QuickInfo,
 		TitleAreaActive,
 		TitleAreaInactive,
 		CommandBar,
