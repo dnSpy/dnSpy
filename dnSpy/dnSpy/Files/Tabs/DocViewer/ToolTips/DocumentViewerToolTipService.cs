@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.DocViewer;
@@ -29,27 +30,111 @@ using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
+	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 1)]
+	sealed class DocumentViewerToolTipServiceCommandTargetFilterProvider : ICommandTargetFilterProvider {
+		readonly Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider;
+
+		[ImportingConstructor]
+		DocumentViewerToolTipServiceCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) {
+			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
+		}
+
+		public ICommandTargetFilter Create(object target) {
+			var textView = target as ITextView;
+			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.DocumentViewer) != true)
+				return null;
+
+			return new DocumentViewerToolTipServiceCommandTargetFilter(documentViewerToolTipServiceProvider.Value, textView);
+		}
+	}
+
+	sealed class DocumentViewerToolTipServiceCommandTargetFilter : ICommandTargetFilter {
+		readonly ITextView textView;
+		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
+
+		public DocumentViewerToolTipServiceCommandTargetFilter(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider, ITextView textView) {
+			if (documentViewerToolTipServiceProvider == null)
+				throw new ArgumentNullException(nameof(documentViewerToolTipServiceProvider));
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
+			this.textView = textView;
+		}
+
+		DocumentViewerToolTipService TryGetInstance() {
+			if (__documentViewerToolTipService == null) {
+				var docViewer = textView.TextBuffer.TryGetDocumentViewer();
+				if (docViewer != null)
+					__documentViewerToolTipService = documentViewerToolTipServiceProvider.GetService(docViewer);
+			}
+			return __documentViewerToolTipService;
+		}
+		DocumentViewerToolTipService __documentViewerToolTipService;
+
+		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
+			var service = TryGetInstance();
+			if (service == null)
+				return CommandTargetStatus.NotHandled;
+
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.QUICKINFO:
+					return CommandTargetStatus.Handled;
+				}
+			}
+			return CommandTargetStatus.NotHandled;
+		}
+
+		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
+			object result = null;
+			return Execute(group, cmdId, args, ref result);
+		}
+
+		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			var service = TryGetInstance();
+			if (service == null)
+				return CommandTargetStatus.NotHandled;
+
+			if (group == CommandConstants.TextEditorGroup) {
+				switch ((TextEditorIds)cmdId) {
+				case TextEditorIds.QUICKINFO:
+					if (service.TryTriggerQuickInfo())
+						return CommandTargetStatus.Handled;
+					break;
+				}
+			}
+			return CommandTargetStatus.NotHandled;
+		}
+
+		public void SetNextCommandTarget(ICommandTarget commandTarget) { }
+		public void Dispose() { }
+	}
+
 	[Export(typeof(DocumentViewerToolTipServiceProvider))]
 	sealed class DocumentViewerToolTipServiceProvider {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
 		readonly ICodeToolTipSettings codeToolTipSettings;
+		readonly IQuickInfoBroker quickInfoBroker;
 		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceProvider(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
+		DocumentViewerToolTipServiceProvider(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, IQuickInfoBroker quickInfoBroker, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
 			this.codeToolTipSettings = codeToolTipSettings;
+			this.quickInfoBroker = quickInfoBroker;
 			this.documentViewerToolTipProviders = documentViewerToolTipProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public DocumentViewerToolTipService GetService(IDocumentViewer documentViewer) =>
-			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(imageManager, dotNetImageManager, codeToolTipSettings, documentViewerToolTipProviders, documentViewer));
+			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(imageManager, dotNetImageManager, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker));
 	}
 
 	[Export(typeof(IQuickInfoSourceProvider))]
@@ -92,8 +177,9 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 		readonly IDocumentViewer documentViewer;
+		readonly IQuickInfoBroker quickInfoBroker;
 
-		public DocumentViewerToolTipService(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer) {
+		public DocumentViewerToolTipService(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker) {
 			if (imageManager == null)
 				throw new ArgumentNullException(nameof(imageManager));
 			if (dotNetImageManager == null)
@@ -104,11 +190,14 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 				throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
 			if (documentViewer == null)
 				throw new ArgumentNullException(nameof(documentViewer));
+			if (quickInfoBroker == null)
+				throw new ArgumentNullException(nameof(quickInfoBroker));
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
 			this.codeToolTipSettings = codeToolTipSettings;
 			this.documentViewerToolTipProviders = documentViewerToolTipProviders;
 			this.documentViewer = documentViewer;
+			this.quickInfoBroker = quickInfoBroker;
 		}
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {
@@ -120,7 +209,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			var point = session.GetTriggerPoint(snapshot);
 			if (point == null)
 				return;
-			var spanData = GetReference(point.Value.Position);
+			var spanData = GetReference(point.Value.Position, false);
 			if (spanData == null)
 				return;
 			var info = spanData.Value;
@@ -136,7 +225,26 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 			applicableToSpan = snapshot.CreateTrackingSpan(info.Span, SpanTrackingMode.EdgeInclusive);
 		}
 
-		SpanData<ReferenceInfo>? GetReference(int position) => documentViewer.Content.ReferenceCollection.Find(position, false);
+		public bool TryTriggerQuickInfo() {
+			if (documentViewer.TextView.IsClosed)
+				return false;
+			var caretPos = documentViewer.TextView.Caret.Position;
+			if (caretPos.VirtualSpaces > 0)
+				return false;
+			var pos = caretPos.BufferPosition;
+			var spanData = GetReference(pos.Position, true);
+			if (spanData == null)
+				return false;
+			var info = spanData.Value;
+			var snapshot = pos.Snapshot;
+			if (info.Span.End > snapshot.Length)
+				return false;
+			var triggerPoint = snapshot.CreateTrackingPoint(info.Span.Start, PointTrackingMode.Negative);
+			var session = quickInfoBroker.TriggerQuickInfo(documentViewer.TextView, triggerPoint, trackMouse: false);
+			return session?.IsDismissed == false;
+		}
+
+		SpanData<ReferenceInfo>? GetReference(int position, bool allowIntersection) => documentViewer.Content.ReferenceCollection.Find(position, allowIntersection);
 
 		IDecompiler GetDecompiler() {
 			var content = documentViewer.FileTab.Content as IDecompilerTabContent;
