@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Creates REPL (Read, Eval, Print, Loop) text editors
 	/// </summary>
-	public interface IReplEditorProvider {
+	interface IReplEditorProvider {
 		/// <summary>
 		/// Creates a new <see cref="IReplEditor"/> instance
 		/// </summary>

@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Gets notified by a <see cref="IReplEditor"/> instance
 	/// </summary>
-	public interface IReplCommandHandler {
+	interface IReplCommandHandler {
 		/// <summary>
 		/// Called by <see cref="IReplEditor"/> after enter has been pressed. Returns true if
 		/// <paramref name="input"/> is a command. If false is returned, the user can enter more

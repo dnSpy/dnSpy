@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// <see cref="IReplEditor"/> utils
 	/// </summary>
-	public static class ReplEditorUtils {
+	static class ReplEditorUtils {
 		static readonly object Key = typeof(ReplEditorUtils);
 
 		/// <summary>
