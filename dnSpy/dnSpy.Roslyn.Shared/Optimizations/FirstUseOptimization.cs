@@ -56,7 +56,7 @@ namespace dnSpy.Roslyn.Shared.Optimizations {
 		FirstUseOptimizationLoader(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService) {
 			// This method is currently only called when compiling the code so add an early test
 			// that it's still working in case ImmutableArray<T> gets updated.
-			ImmutableArrayUtilities.ToImmutableByteArray(Array.Empty<byte>());
+			ImmutableArrayUtilities<byte>.ToImmutableArray(Array.Empty<byte>());
 
 			new FirstUseOptimization(themeClassificationTypeService, textBufferFactoryService);
 		}

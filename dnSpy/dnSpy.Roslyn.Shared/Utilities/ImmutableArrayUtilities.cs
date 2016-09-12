@@ -32,17 +32,17 @@ namespace dnSpy.Roslyn.Shared.Utilities {
 	/// in the LOH (Large Object Heap). This class creates new <see cref="ImmutableArray{T}"/>s
 	/// and overwrites the internal array field with our data to save memory.
 	/// </summary>
-	static class ImmutableArrayUtilities {
-		static readonly Func<byte[], ImmutableArray<byte>> delegateToImmutableByteArray;
+	static class ImmutableArrayUtilities<T> {
+		static readonly Func<T[], ImmutableArray<T>> delegateToImmutableArray;
 
 		static ImmutableArrayUtilities() {
-			delegateToImmutableByteArray = CreateImmutableArrayDelegate<byte>();
+			delegateToImmutableArray = CreateImmutableArrayDelegate();
 		}
 
-		static Func<byte[], ImmutableArray<T>> CreateImmutableArrayDelegate<T>() {
+		static Func<T[], ImmutableArray<T>> CreateImmutableArrayDelegate() {
 			var immutableArrayType = typeof(ImmutableArray<T>);
 			var immutableArrayFieldInfo = immutableArrayType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(a => a.FieldType == typeof(T[])).First();
-			var dm = new DynamicMethod($"ImmutableArray<{typeof(T).Name}>", immutableArrayType, new Type[] { typeof(byte[]) }, restrictedSkipVisibility: true);
+			var dm = new DynamicMethod($"ImmutableArray<{typeof(T).Name}>", immutableArrayType, new Type[] { typeof(T[]) }, restrictedSkipVisibility: true);
 			var ilg = dm.GetILGenerator();
 			var local = ilg.DeclareLocal(immutableArrayType);
 			ilg.Emit(OpCodes.Ldloca_S, local);
@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Shared.Utilities {
 			ilg.Emit(OpCodes.Stfld, immutableArrayFieldInfo);
 			ilg.Emit(OpCodes.Ldloc_0);
 			ilg.Emit(OpCodes.Ret);
-			return (Func<byte[], ImmutableArray<T>>)dm.CreateDelegate(typeof(Func<byte[], ImmutableArray<T>>));
+			return (Func<T[], ImmutableArray<T>>)dm.CreateDelegate(typeof(Func<T[], ImmutableArray<T>>));
 		}
 
 		/// <summary>
@@ -62,6 +62,6 @@ namespace dnSpy.Roslyn.Shared.Utilities {
 		/// </summary>
 		/// <param name="data">Data to use</param>
 		/// <returns></returns>
-		public static ImmutableArray<byte> ToImmutableByteArray(byte[] data) => delegateToImmutableByteArray(data);
+		public static ImmutableArray<T> ToImmutableArray(T[] data) => delegateToImmutableArray(data);
 	}
 }
