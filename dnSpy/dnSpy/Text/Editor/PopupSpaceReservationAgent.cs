@@ -193,16 +193,16 @@ namespace dnSpy.Text.Editor {
 		Rect GetClosest(Rect spanBounds, Rect? rect, Rect candidate, PopupStyles style) {
 			if (rect == null)
 				return candidate;
+			double rectDist, candidateDist;
 			if ((style & PopupStyles.PositionLeftOrRight) != 0) {
-				var rectDist = GetHorizontalDistance(spanBounds, rect.Value);
-				var candidateDist = GetHorizontalDistance(spanBounds, candidate);
-				return rectDist < candidateDist ? rect.Value : candidate;
+				rectDist = GetHorizontalDistance(spanBounds, rect.Value);
+				candidateDist = GetHorizontalDistance(spanBounds, candidate);
 			}
 			else {
-				var rectDist = GetVerticalDistance(spanBounds, rect.Value);
-				var candidateDist = GetVerticalDistance(spanBounds, candidate);
-				return rectDist < candidateDist ? rect.Value : candidate;
+				rectDist = GetVerticalDistance(spanBounds, rect.Value);
+				candidateDist = GetVerticalDistance(spanBounds, candidate);
 			}
+			return rectDist <= candidateDist ? rect.Value : candidate;
 		}
 
 		double GetHorizontalDistance(Rect spanBounds, Rect rect) {
