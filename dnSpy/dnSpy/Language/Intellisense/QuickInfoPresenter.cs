@@ -57,10 +57,6 @@ namespace dnSpy.Language.Intellisense {
 				session.Dismiss();
 		}
 
-		// Part of the text (eg. bottom of g and j) are sometimes clipped if we use Display
-		// instead of Ideal; don't change the default settings if it's 100% zoom.
-		bool CanSetScaleTransform => wpfTextView != null && wpfTextView.ZoomLevel != 100;
-
 		bool RenderCore() {
 			if (session.IsDismissed || session.TextView.IsClosed)
 				return false;
@@ -81,14 +77,7 @@ namespace dnSpy.Language.Intellisense {
 			popup.HorizontalOffset = bounds.Left - wpfTextView.ViewportLeft;
 			popup.VerticalOffset = bounds.TextBottom - session.TextView.ViewportTop;
 
-			if (CanSetScaleTransform)
-				PopupHelper.SetScaleTransform(wpfTextView, popup);
-			else {
-				// Needed or the text looks bad and it doesn't look like the old tooltip code
-				// which used Ideal when zoom level was 100.
-				TextOptions.SetTextFormattingMode(popup, TextFormattingMode.Ideal);
-				popup.LayoutTransform = Transform.Identity;
-			}
+			PopupHelper.SetScaleTransform(wpfTextView, popup);
 			popup.Child = control;
 			popup.Visibility = Visibility.Visible;
 			popup.IsOpen = true;
