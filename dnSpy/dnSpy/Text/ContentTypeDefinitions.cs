@@ -59,6 +59,16 @@ namespace dnSpy.Text {
 		static readonly ContentTypeDefinition BamlContentTypeDefinition;
 
 		[Export]
+		[Name(ContentTypes.Intellisense)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition IntellisenseContentTypeDefinition;
+
+		[Export]
+		[Name(ContentTypes.SignatureHelp)]
+		[BaseDefinition(ContentTypes.Intellisense)]
+		static readonly ContentTypeDefinition SignatureHelpContentTypeDefinition;
+
+		[Export]
 		[Name(ContentTypes.Code)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition CodeContentTypeDefinition;

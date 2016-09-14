@@ -40,6 +40,7 @@ namespace dnSpy.Contracts.Images {
 		GridViewItem,
 		ListBoxItem,
 		QuickInfo,
+		SignatureHelp,
 		TitleAreaActive,
 		TitleAreaInactive,
 		CommandBar,

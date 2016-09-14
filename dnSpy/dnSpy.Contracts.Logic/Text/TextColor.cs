@@ -224,6 +224,10 @@ namespace dnSpy.Contracts.Text {
 		StructureVisualizerCase,
 		StructureVisualizerOther,
 		CompletionMatchHighlight,
+		SignatureHelpDocumentation,
+		SignatureHelpCurrentParameter,
+		SignatureHelpParameter,
+		SignatureHelpParameterDocumentation,
 
 		/// <summary>
 		/// Must be last
@@ -434,6 +438,10 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object StructureVisualizerCase = TextColor.StructureVisualizerCase;
 		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
 		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
+		public static readonly object SignatureHelpDocumentation = TextColor.SignatureHelpDocumentation;
+		public static readonly object SignatureHelpCurrentParameter = TextColor.SignatureHelpCurrentParameter;
+		public static readonly object SignatureHelpParameter = TextColor.SignatureHelpParameter;
+		public static readonly object SignatureHelpParameterDocumentation = TextColor.SignatureHelpParameterDocumentation;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -646,6 +654,10 @@ namespace dnSpy.Contracts.Text {
 			StructureVisualizerCase,
 			StructureVisualizerOther,
 			CompletionMatchHighlight,
+			SignatureHelpDocumentation,
+			SignatureHelpCurrentParameter,
+			SignatureHelpParameter,
+			SignatureHelpParameterDocumentation,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

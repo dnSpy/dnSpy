@@ -1039,6 +1039,26 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.CompletionMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CompletionMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SignatureHelpDocumentation)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SignatureHelpDocumentationClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SignatureHelpCurrentParameter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SignatureHelpCurrentParameterClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SignatureHelpParameter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SignatureHelpParameterClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SignatureHelpParameterDocumentationClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2822,6 +2842,42 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class CompletionMatchHighlight : ThemeClassificationFormatDefinition {
 			CompletionMatchHighlight() : base(TextColor.CompletionMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpDocumentation)]
+		[Name(ThemeClassificationTypeNameKeys.SignatureHelpDocumentation)]
+		[UserVisible(true)]
+		[Order(Before = Priority.High, After = Priority.Default)]
+		sealed class SignatureHelpDocumentation : ThemeClassificationFormatDefinition {
+			SignatureHelpDocumentation() : base(TextColor.SignatureHelpDocumentation) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpCurrentParameter)]
+		[Name(ThemeClassificationTypeNameKeys.SignatureHelpCurrentParameter)]
+		[UserVisible(true)]
+		[Order(Before = Priority.High, After = Priority.Default)]
+		sealed class SignatureHelpCurrentParameter : ThemeClassificationFormatDefinition {
+			SignatureHelpCurrentParameter() : base(TextColor.SignatureHelpCurrentParameter) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpParameter)]
+		[Name(ThemeClassificationTypeNameKeys.SignatureHelpParameter)]
+		[UserVisible(true)]
+		[Order(Before = Priority.High, After = Priority.Default)]
+		sealed class SignatureHelpParameter : ThemeClassificationFormatDefinition {
+			SignatureHelpParameter() : base(TextColor.SignatureHelpParameter) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpParameterDocumentation)]
+		[Name(ThemeClassificationTypeNameKeys.SignatureHelpParameterDocumentation)]
+		[UserVisible(true)]
+		[Order(Before = Priority.High, After = Priority.Default)]
+		sealed class SignatureHelpParameterDocumentation : ThemeClassificationFormatDefinition {
+			SignatureHelpParameterDocumentation() : base(TextColor.SignatureHelpParameterDocumentation) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

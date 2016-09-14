@@ -185,6 +185,10 @@
 		<color name="structurevisualizercase" fg="#FF7CCC87" />
 		<color name="structurevisualizerother" fg="#FFB6B6B6" />
 		<color name="completionmatchhighlight" bg="#FFF4A721" />
+		<color name="signaturehelpdocumentation" bold="true" />
+		<color name="signaturehelpcurrentparameter" bold="true" bg="#FFF4A721" />
+		<color name="signaturehelpparameter" bold="true" italic="true" />
+		<color name="signaturehelpparameterdocumentation" italic="true" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />
@@ -433,6 +437,8 @@
 		<color name="completiontooltipborder" bg="#FFCCCEDB" />
 		<color name="quickinfo" fg="#FF1E1E1E" bg="#FFE7E8EC" />
 		<color name="quickinfoborder" bg="#FFCCCEDB" />
+		<color name="signaturehelp" fg="#FF1E1E1E" bg="#FFE7E8EC" />
+		<color name="signaturehelpborder" bg="#FFCCCEDB" />
 		<color name="cilbutton" fg="#FF1E1E1E" bg="Transparent" />
 		<color name="cilbuttonborder" bg="Transparent" />
 		<color name="cilbuttonborderfocused" bg="#FFE5C365" />

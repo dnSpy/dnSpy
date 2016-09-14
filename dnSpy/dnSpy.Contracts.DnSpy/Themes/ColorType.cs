@@ -222,6 +222,10 @@ namespace dnSpy.Contracts.Themes {
 		StructureVisualizerCase,
 		StructureVisualizerOther,
 		CompletionMatchHighlight,
+		SignatureHelpDocumentation,
+		SignatureHelpCurrentParameter,
+		SignatureHelpParameter,
+		SignatureHelpParameterDocumentation,
 
 		// Must be last in this group
 		LastNR,
@@ -485,6 +489,8 @@ namespace dnSpy.Contracts.Themes {
 		CompletionToolTipBorder,
 		QuickInfo,
 		QuickInfoBorder,
+		SignatureHelp,
+		SignatureHelpBorder,
 		CilButton,
 		CilButtonBorder,
 		CilButtonBorderFocused,

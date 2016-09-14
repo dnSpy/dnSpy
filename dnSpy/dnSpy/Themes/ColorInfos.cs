@@ -1082,6 +1082,20 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FFF6F6F6",// Environment.ToolTip (bg)
 				BackgroundResourceKey = "QuickInfoBackground",
 			},
+			new BrushColorInfo(ColorType.QuickInfoBorder, "QuickInfo border") {
+				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
+				BackgroundResourceKey = "QuickInfoBorder",
+			},
+			new BrushColorInfo(ColorType.SignatureHelp, "SignatureHelp") {
+				DefaultForeground = "#FF1E1E1E",// Environment.ToolTip (fg)
+				ForegroundResourceKey = "SignatureHelpForeground",
+				DefaultBackground = "#FFF6F6F6",// Environment.ToolTip (bg)
+				BackgroundResourceKey = "SignatureHelpBackground",
+			},
+			new BrushColorInfo(ColorType.SignatureHelpBorder, "SignatureHelp border") {
+				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
+				BackgroundResourceKey = "SignatureHelpBorder",
+			},
 			new BrushColorInfo(ColorType.XmlDocToolTipDescriptionText, "XML doc tooltip: base class of most XML doc tooltip classes") {
 				Children = new ColorInfo[] {
 					new BrushColorInfo(ColorType.XmlDocToolTipColon, "XML doc tooltip: colon"),
@@ -1100,10 +1114,6 @@ namespace dnSpy.Themes {
 			},
 			new BrushColorInfo(ColorType.XmlDocToolTipSummary, "XML doc tooltip: summary text"),
 			new BrushColorInfo(ColorType.XmlDocToolTipText, "XML doc tooltip: XML doc text"),
-			new BrushColorInfo(ColorType.QuickInfoBorder, "QuickInfo border") {
-				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
-				BackgroundResourceKey = "QuickInfoBorder",
-			},
 			new BrushColorInfo(ColorType.CilButton, "CIL Button") {
 				DefaultForeground = "#FF1E1E1E",
 				ForegroundResourceKey = "CilButtonText",
@@ -1876,6 +1886,10 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.StructureVisualizerCase, "Structure Visualizer Case"),
 			new BrushColorInfo(ColorType.StructureVisualizerOther, "Structure Visualizer Other"),
 			new BrushColorInfo(ColorType.CompletionMatchHighlight, "Completion Match Highlight"),
+			new BrushColorInfo(ColorType.SignatureHelpDocumentation, "Signature Help Documentation"),
+			new BrushColorInfo(ColorType.SignatureHelpCurrentParameter, "Signature Help Current Parameter"),
+			new BrushColorInfo(ColorType.SignatureHelpParameter, "Signature Help Parameter"),
+			new BrushColorInfo(ColorType.SignatureHelpParameterDocumentation, "Signature Help Parameter Documentation"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
 				DefaultBackground = "White",

@@ -152,7 +152,6 @@ namespace dnSpy.Text {
 			ContentType contentType;
 			lock (lockObj)
 				contentTypes.TryGetValue(typeName, out contentType);
-			Debug.Assert(contentType != null);
 			return contentType;
 		}
 

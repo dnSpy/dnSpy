@@ -2835,6 +2835,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} of {1}.
+        /// </summary>
+        public static string SignatureHelp_Signature_N_of_TotalCount {
+            get {
+                return ResourceManager.GetString("SignatureHelp_Signature_N_of_TotalCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sor_t Assemblies.
         /// </summary>
         public static string SortAsmsCommand {

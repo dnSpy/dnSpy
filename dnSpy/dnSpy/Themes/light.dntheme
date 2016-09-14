@@ -185,5 +185,9 @@
 		<color name="structurevisualizercase" fg="#FF7CCC87" />
 		<color name="structurevisualizerother" fg="#FFB6B6B6" />
 		<color name="completionmatchhighlight" bg="#FFF4A721" />
+		<color name="signaturehelpdocumentation" bold="true" />
+		<color name="signaturehelpcurrentparameter" bold="true" bg="#FFF4A721" />
+		<color name="signaturehelpparameter" bold="true" italic="true" />
+		<color name="signaturehelpparameterdocumentation" italic="true" />
 	</colors>
 </theme>

@@ -65,6 +65,16 @@ namespace dnSpy.Contracts.Text {
 		public const string BamlDnSpy = "BAML-dnSpy";
 
 		/// <summary>
+		/// Intellisense
+		/// </summary>
+		public const string Intellisense = "intellisense";
+
+		/// <summary>
+		/// Signature help
+		/// </summary>
+		public const string SignatureHelp = "sighelp";
+
+		/// <summary>
 		/// Code
 		/// </summary>
 		public const string Code = "code";

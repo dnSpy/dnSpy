@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;

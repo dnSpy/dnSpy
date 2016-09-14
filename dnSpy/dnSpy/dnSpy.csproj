@@ -298,6 +298,7 @@
     <Compile Include="Language\Intellisense\IntellisenseSessionStack.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStackMapService.cs" />
     <Compile Include="Language\Intellisense\IQuickInfoPresenterProvider.cs" />
+    <Compile Include="Language\Intellisense\ISignatureHelpPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\PresenterMouseProcessor.cs" />
     <Compile Include="Language\Intellisense\QuickInfoBroker.cs" />
     <Compile Include="Language\Intellisense\QuickInfoController.cs" />
@@ -308,6 +309,13 @@
       <DependentUpon>QuickInfoPresenterControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Language\Intellisense\QuickInfoSession.cs" />
+    <Compile Include="Language\Intellisense\SignatureHelpBroker.cs" />
+    <Compile Include="Language\Intellisense\SignatureHelpCurrentParameterTagger.cs" />
+    <Compile Include="Language\Intellisense\SignatureHelpPresenter.cs" />
+    <Compile Include="Language\Intellisense\SignatureHelpPresenterControl.xaml.cs">
+      <DependentUpon>SignatureHelpPresenterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Language\Intellisense\SignatureHelpSession.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationQuickInfoPresenter.cs" />
     <Compile Include="Language\Intellisense\TrackingSpanHelpers.cs" />
@@ -750,6 +758,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Language\Intellisense\QuickInfoPresenterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Language\Intellisense\SignatureHelpPresenterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

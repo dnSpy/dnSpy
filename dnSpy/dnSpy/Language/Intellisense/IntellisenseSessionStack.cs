@@ -279,6 +279,7 @@ namespace dnSpy.Language.Intellisense {
 				return;
 			var sessionState = TryGetSessionState(e.OldAgent);
 			if (sessionState != null) {
+				sessionState.SpaceReservationAgent = null;
 				// Its popup was hidden, so dismiss the session
 				sessionState.Session.Dismiss();
 			}

@@ -1016,5 +1016,25 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
 		/// </summary>
 		public const string CompletionMatchHighlight = nameof(CompletionMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.SignatureHelpDocumentation"/>
+		/// </summary>
+		public const string SignatureHelpDocumentation = "SigHelpDocumentationFormat";
+
+		/// <summary>
+		/// <see cref="TextColor.SignatureHelpCurrentParameter"/>
+		/// </summary>
+		public const string SignatureHelpCurrentParameter = "CurrentParameterFormat";
+
+		/// <summary>
+		/// <see cref="TextColor.SignatureHelpParameter"/>
+		/// </summary>
+		public const string SignatureHelpParameter = nameof(SignatureHelpParameter);
+
+		/// <summary>
+		/// <see cref="TextColor.SignatureHelpParameterDocumentation"/>
+		/// </summary>
+		public const string SignatureHelpParameterDocumentation = nameof(SignatureHelpParameterDocumentation);
 	}
 }

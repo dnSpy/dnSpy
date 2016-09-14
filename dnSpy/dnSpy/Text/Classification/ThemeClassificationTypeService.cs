@@ -229,6 +229,10 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerCase),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerOther),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CompletionMatchHighlight),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpDocumentation),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpCurrentParameter),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameter),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

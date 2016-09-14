@@ -51,5 +51,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Code completion tooltip
 		/// </summary>
 		public const string CodeCompletionToolTip = "dnSpy-CodeCompletionToolTip";
+
+		/// <summary>
+		/// Signature help tooltip
+		/// </summary>
+		public const string SignatureHelpToolTip = "dnSpy-SignatureHelpToolTip";
 	}
 }
