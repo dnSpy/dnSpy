@@ -62,5 +62,13 @@
                 </Setter>
             </Style>
         </ListBox.Resources>
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}"
+                   BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <!-- Prevent the quick info control from getting focus. Ctrl+K, Ctrl+I then click on it and
+                     the ListBoxItem gets focus. We don't want that. -->
+                <Setter Property="Focusable" Value="False" />
+            </Style>
+        </ListBox.ItemContainerStyle>
     </ListBox>
 </UserControl>
