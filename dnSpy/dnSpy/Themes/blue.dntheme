@@ -9,7 +9,7 @@
 		<color name="string" fg="#A31515" />
 		<color name="verbatimstring" fg="#A31515" />
 		<color name="char" fg="#A31515" />
-		<color name="namespace" fg="#216F85" />
+		<color name="namespace" fg="#AD8D00" />
 		<color name="type" fg="#2B91AF" />
 		<color name="sealedtype" fg="#2B91AF" />
 		<color name="statictype" fg="#1B5D70" />
