@@ -337,7 +337,7 @@
     <value>Modul .cctor oder Einstiegspunkt</value>
   </data>
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
-    <value>Zeige das Lokal-Fenster beim Start des Debuggers</value>
+    <value>Lokal-Fenster beim Start des Debuggers anzeigen</value>
   </data>
   <data name="DbgSettings_BreakAt" xml:space="preserve">
     <value>Unter_breche bei</value>
@@ -382,10 +382,10 @@
     <value>_Threads</value>
   </data>
   <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
-    <value>Debugge die vom Prozess in den Speicher geladenen Dateien (für Dateien von Festplatte abwählen)</value>
+    <value>Vom Prozess in den Speicher geladene Dateien debuggen (für Dateien von Festplatte abwählen)</value>
   </data>
   <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
-    <value>Rufe String-Umwandlungsmethode für Objekte im Variablenfenster</value>
+    <value>String-Umwandlungsmethode für Objekte im Variablenfenster aufrufen</value>
   </data>
   <data name="DebugAssemblyCommand" xml:space="preserve">
     <value>_Debugge Assembly</value>

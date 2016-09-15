@@ -1145,4 +1145,7 @@
   <data name="ShortCutKeyAltPlusAnyKey" xml:space="preserve">
     <value>Alt+{0}</value>
   </data>
+  <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
 </root>

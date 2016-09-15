@@ -2441,7 +2441,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Fehler</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
-    <value>Hidden</value>
+    <value>Versteckt</value>
   </data>
   <data name="StatusInfo" xml:space="preserve">
     <value>Info</value>
@@ -2450,22 +2450,22 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Warnung</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (Ctrl+O)</value>
+    <value>Verweis hinzufügen (Strg+O)</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference (GAC) (Ctrl+Shift+O)</value>
+    <value>Verweis hinzufügen (GAC) (Strg+Umschalt+O)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Konnte die Referenz auf die Asssembly nicht hinzufügen.</value>
+    <value>Konnte den Verweis auf die Asssembly nicht hinzufügen.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
     <value>Bearbeite Methodencode</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>
+    <value>Hinzufügen und Entfernen von 'static' oder 'Shared' von bearbeiteten Methoden wird nicht unterstützt: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>Couldn't find the edited method. Make sure you didn't add or remove 'static' or 'Shared' or changed the parameter types, return type or method name: {0}</value>
+    <value>Konnte die zu bearbeitende Methode nicht finden. Stellen Sie sicher, dass Sie weder 'static' oder 'Shared' hinzugefügt oder entfernt, noch die Parametertypen, den Rückgabetyp oder Methodenname geändert haben: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
     <value>Konnte das Feld nicht finden: {0}</value>
@@ -2474,25 +2474,25 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Konnte die Methode nicht finden: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
-    <value>Couldn't find the edited method's type: {0}</value>
+    <value>Konnte den Typ der zu bearbeitenden Methode nicht finden: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
     <value>Konnte den Typ nicht finden: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual events isn't supported: {0}</value>
+    <value>Umbenennung der virtuellen Ereignisse wird nicht unterstützt: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual methods isn't supported: {0}</value>
+    <value>Umbenennung der virtuellen Methoden wird nicht unterstützt: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
-    <value>Renaming of virtual properties isn't supported: {0}</value>
+    <value>Umbenennung der virtuellen Eigenschaften wird nicht unterstützt: {0}</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
     <value>Schnellsuche</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Incremental Search</value>
+    <value>Inkrementelle Suche</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Strg+I</value>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClassesToolTip" xml:space="preserve">
-    <value>Classes</value>
+    <value>类</value>
   </data>
   <data name="ConstantsToolTip" xml:space="preserve">
     <value>Constants</value>
@@ -133,7 +133,7 @@
     <value>事件</value>
   </data>
   <data name="ExtensionMethodsToolTip" xml:space="preserve">
-    <value>Extension methods</value>
+    <value>扩展方法</value>
   </data>
   <data name="FieldsToolTip" xml:space="preserve">
     <value>字段</value>

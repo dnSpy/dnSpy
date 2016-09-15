@@ -214,76 +214,76 @@
     <value>GUID 无效</value>
   </data>
   <data name="CmdLineAssembly" xml:space="preserve">
-    <value>assembly</value>
+    <value>程序集</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>assembly search path. Paths can be separated with '{0}' or you can use multiple --asm-path's</value>
+    <value>程序集搜索路径。路径可以用 '{0}' 分隔。或您可以使用多个 asm 路径</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
-    <value>decompile an assembly from the GAC. Use full assembly name to use an exact version.</value>
+    <value>反编译 gac 中的程序集。使用完整的程序集名称来使用准确的版本。</value>
   </data>
   <data name="CmdLineDescription_Language" xml:space="preserve">
-    <value>set language, default is C#. Guids can be used.</value>
+    <value>设置语言，默认是 C#。可以使用 Guid。</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
     <value>decompile the member with metadata token N to stdout</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
-    <value>don't decompile baml to xaml</value>
+    <value>不反编译 xaml 到 baml</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
     <value>don't use the GAC to look up assemblies. Useful with --no-stdlib</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
-    <value>don't unpack resources</value>
+    <value>不要解包资源文件</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
-    <value>don't create .resx files</value>
+    <value>不要创建.resx 文件</value>
   </data>
   <data name="CmdLineDescription_NoSLN" xml:space="preserve">
-    <value>don't create a .sln file</value>
+    <value>不要创建.sln 文件</value>
   </data>
   <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
-    <value>projects don't reference mscorlib</value>
+    <value>不要让项目引用 mscorlib库</value>
   </data>
   <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
-    <value>number of worker threads. Default is to use one thread per CPU core</value>
+    <value>工作线程的数目。默认使用一个线程。</value>
   </data>
   <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
-    <value>output directory</value>
+    <value>输出目录：</value>
   </data>
   <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
-    <value>project guid</value>
+    <value>项目 guid</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>recursive search for .NET files to decompile</value>
+    <value>递归搜索.NET 文件来反编译</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
-    <value>name of the .sln file</value>
+    <value>.sln 解决方案文件的名称</value>
   </data>
   <data name="CmdLineDescription_Type1" xml:space="preserve">
-    <value>decompile the type with the specified name to stdout. Either Namespace.Name or Name, case insensitive</value>
+    <value>反编译的类型与指定的名称到 stdout。命名空间.名称 或名称，不区分大小写</value>
   </data>
   <data name="CmdLineDescription_Type2" xml:space="preserve">
-    <value>same as -t</value>
+    <value>与 -t 相同</value>
   </data>
   <data name="CmdLineDescription_UserGAC" xml:space="preserve">
-    <value>user GAC path. Paths can be separated with '{0}' or you can use multiple --user-gac's</value>
+    <value>用户 GAC 路径。路径可以用 '{0}' 分隔或你可以使用 --user-gac's 选择</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Visual Studio version, 2005, 2008, ..., {0}</value>
+    <value>Visual Studio 版本。如VS2005 ，2008 ，...，{0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
-    <value>lang</value>
+    <value>语言</value>
   </data>
   <data name="CmdLineName" xml:space="preserve">
-    <value>name</value>
+    <value>名称</value>
   </data>
   <data name="CmdLineOutputDir" xml:space="preserve">
     <value>outdir</value>
   </data>
   <data name="CmdLinePath" xml:space="preserve">
-    <value>path</value>
+    <value>路径</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
     <value>Decompiles all .NET files in the above directory and saves files to C:\out\path</value>
@@ -292,7 +292,7 @@
     <value>Decompiles all .NET files in the above directory and all sub directories</value>
   </data>
   <data name="ExampleDescription3" xml:space="preserve">
-    <value>Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path</value>
+    <value>反编译目录中所有.NET的dll文件并保存到C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
     <value>Decompiles the member with token 0x06000123</value>
@@ -307,7 +307,7 @@
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
   </data>
   <data name="CmdLineDescription_NoColor" xml:space="preserve">
-    <value>don't colorize the text</value>
+    <value>不要高亮文本</value>
   </data>
   <data name="CmdLineDescription_Spaces" xml:space="preserve">
     <value>Size of a tab in spaces or 0 to use one tab</value>
@@ -316,6 +316,6 @@
     <value>Number of spaces must be between {0} and {1}</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing argument</value>
+    <value>缺失的参数</value>
   </data>
 </root>

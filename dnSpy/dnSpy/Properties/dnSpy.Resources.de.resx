@@ -505,7 +505,7 @@
     <value>Kann für jedes Modul über Rechtsklick deaktiviert werden.</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
-    <value>Referenzen</value>
+    <value>Verweise</value>
   </data>
   <data name="ReloadAsmsCommand" xml:space="preserve">
     <value>Alle Assemblies neu _laden</value>
@@ -598,25 +598,25 @@
     <value>Schließen</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Dekompiliere den kompletten Typ statt einzelne Member</value>
+    <value>Kompletten Typ statt einzelne Member dekompilieren</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
-    <value>Referenzen hervorheben</value>
+    <value>Übereinstimmungen hervorheben</value>
   </data>
   <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
-    <value>Stelle Registerkarten beim Start wieder her</value>
+    <value>Registerkarten beim Start wiederherstellen</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Zeige Assembly Public Key Token</value>
+    <value>Assembly Public Key Token anzeigen</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
-    <value>Zeige Assembly Version</value>
+    <value>Assembly Version anzeigen</value>
   </data>
   <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
-    <value>Zeige Zeilennummern</value>
+    <value>Zeilennummern anzeigen</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
-    <value>Zeige Metadaten Tokens</value>
+    <value>Metadaten Tokens anzeigen</value>
   </data>
   <data name="DisplaySettings_SingleClickExpandNodes" xml:space="preserve">
     <value>Knoten im Baum mit Einfach-Klick erweitern</value>
@@ -835,7 +835,7 @@
     <value>_Verzeichnis</value>
   </data>
   <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>_Nicht auf mscorlib.dll referenzieren</value>
+    <value>_Nicht auf mscorlib.dll verweisen</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
     <value>Eine Datei wird dekompiliert. Wählen Sie mehr als eine Assembly, um mehr als eine Datei zu dekompilieren.</value>
@@ -936,43 +936,43 @@
     <value>_Wiki</value>
   </data>
   <data name="Window_Output" xml:space="preserve">
-    <value>Output</value>
+    <value>Ausgabe</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All (Ctrl+L)</value>
+    <value>Alle löschen (Strg+L)</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>_Show output from:</value>
+    <value>Ausgabe anzeigen von:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>Zeilenumbruch umschalten (Strg+E, Strg+W)</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>_Output</value>
+    <value>Ausga_be</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>Speichern (Strg+S)</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Clear Al_l</value>
+    <value>A_lle löschen</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Strg+L</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Text Files</value>
+    <value>Text-Dateien</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Show Line Numbers</value>
+    <value>Zeilennummern anzeigen</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
     <value>Strg+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Show Timestamps</value>
+    <value>Zeitstempel anzeigen</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Strg+E, Strg+W</value>
@@ -999,46 +999,46 @@
     <value>Hintergrundbild</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Code editor</value>
+    <value>Code Editor</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
-    <value>Other text windows</value>
+    <value>Andere Textfenster</value>
   </data>
   <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
-    <value>Main text viewer</value>
+    <value>Haupttextfenster</value>
   </data>
   <data name="BgImgDisplayName_Logger" xml:space="preserve">
-    <value>Log window</value>
+    <value>Protokollfenster</value>
   </data>
   <data name="BgImgDisplayName_REPL" xml:space="preserve">
-    <value>REPL window</value>
+    <value>REPL Fenster</value>
   </data>
   <data name="BgImgSettings_Direction" xml:space="preserve">
-    <value>Direction</value>
+    <value>Richtung</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Horizontal Offset</value>
+    <value>Horizontaler Versatz</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Add paths to images and image folders, one path per line:</value>
+    <value>Pfad zu Bildern oder Bildverzeichnissen, ein Pfad pro Zeile:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
     <value>Interval</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Max Height</value>
+    <value>Maximale Höhe</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Max Width</value>
+    <value>Maximale Breite</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
-    <value>Opacity</value>
+    <value>Deckkraft</value>
   </data>
   <data name="BgImgSettings_Placement" xml:space="preserve">
-    <value>Placement</value>
+    <value>Platzierung</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Random Image</value>
+    <value>Zufallsbild</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
     <value>Zurücksetzen</value>
@@ -1047,64 +1047,64 @@
     <value>Zoom %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Show Images</value>
+    <value>Bilder anzeigen</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
-    <value>Stretch</value>
+    <value>Strecken</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Vertical Offset</value>
+    <value>Vertikaler Versatz</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
-    <value>Bottom</value>
+    <value>Unten</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Bottom Left</value>
+    <value>Unten links</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Bottom Right</value>
+    <value>Unten rechts</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
-    <value>Center</value>
+    <value>Zentriert</value>
   </data>
   <data name="ImagePlacement_Left" xml:space="preserve">
-    <value>Left</value>
+    <value>Links</value>
   </data>
   <data name="ImagePlacement_Right" xml:space="preserve">
-    <value>Right</value>
+    <value>Rechts</value>
   </data>
   <data name="ImagePlacement_Top" xml:space="preserve">
-    <value>Top</value>
+    <value>Oben</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Top Left</value>
+    <value>Oben links</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
-    <value>Top Right</value>
+    <value>Oben rechts</value>
   </data>
   <data name="StretchDirection_Both" xml:space="preserve">
-    <value>Both</value>
+    <value>Beide</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Down Only</value>
+    <value>Nur nach unten</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Up Only</value>
+    <value>Nur nach oben</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
     <value>Bilder</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Bottom Margin %</value>
+    <value>Unterer Abstand %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Left Margin %</value>
+    <value>Linker Abstand %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Right Margin %</value>
+    <value>Rechter Abstand %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Top Margin %</value>
+    <value>Oberer Abstand %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>Weitersuchen (F3)</value>
@@ -1113,36 +1113,39 @@
     <value>Vorheriges suchen (Umschalt+F3)</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case (Alt+C)</value>
+    <value>Groß-/Kleinschreibung beachten (Alt+C)</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word (Alt+W)</value>
+    <value>Nur ganzes Wort suchen (Alt+W)</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all (Alt+A)</value>
+    <value>Alle ersetzen (Alt+A)</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next (Alt+R)</value>
+    <value>Nächstes ersetzen (Alt+R)</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions (Alt+E)</value>
+    <value>Reguläre Ausdrücke verwenden (Alt+E)</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Toggle to switch between find and replace modes</value>
+    <value>Umschalter zwischen den Modi "Suchen" und "Ersetzen"</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Close (Esc)</value>
+    <value>Schließen (Esc)</value>
   </data>
   <data name="Search_NothingFound" xml:space="preserve">
-    <value>Nothing found</value>
+    <value>Nichts gefunden</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Incremental Search</value>
+    <value>Inkrementelle Suche</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Strg+I</value>
   </data>
   <data name="ShortCutKeyAltPlusAnyKey" xml:space="preserve">
     <value>Alt+{0}</value>
+  </data>
+  <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
+    <value>{0} of {1}</value>
   </data>
 </root>

@@ -262,7 +262,7 @@
     <value>Strg+Alt+I</value>
   </data>
   <data name="CopyCodeCommand" xml:space="preserve">
-    <value>Copy Code</value>
+    <value>Code kopieren</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
     <value>Strg+Umschalt+C</value>
@@ -271,25 +271,25 @@
     <value>Strg+E, Strg+W</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Show Line Numbers</value>
+    <value>Zeilennummern anzeigen</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
     <value>_Zeilenumbruch</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>Zeilenumbruch umschalten (Strg+E, Strg+W)</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Alle Dateien</value>
   </data>
   <data name="Repl_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>Speichern (Strg+S)</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Text Files</value>
+    <value>Text-Dateien</value>
   </data>
   <data name="SaveCodeCommand" xml:space="preserve">
-    <value>Save Code...</value>
+    <value>Code speichern...</value>
   </data>
   <data name="SaveCommand" xml:space="preserve">
     <value>Speichern...</value>
@@ -301,9 +301,9 @@
     <value>Strg+Umschalt+S</value>
   </data>
   <data name="CSharpScriptFiles" xml:space="preserve">
-    <value>C# Script Files</value>
+    <value>C# Script Dateien</value>
   </data>
   <data name="VisualBasicScriptFiles" xml:space="preserve">
-    <value>Visual Basic Script Files</value>
+    <value>Visual Basic Script Dateien</value>
   </data>
 </root>

@@ -217,46 +217,46 @@
     <value>Assembly</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>assembly search path. Paths can be separated with '{0}' or you can use multiple --asm-path's</value>
+    <value>Assembly Suchpfad. Pfade können mit '{0}' getrennt werden oder --asm-path mehrfach verwenden</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
-    <value>decompile an assembly from the GAC. Use full assembly name to use an exact version.</value>
+    <value>dekompiliert eine Assembly vom GAC. Vollen Assembly Name angeben um eine exakte Version zu verwenden.</value>
   </data>
   <data name="CmdLineDescription_Language" xml:space="preserve">
     <value>setzt die Ausgabesprache, Standard ist C#. GUIDs können verwendet werden.</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
-    <value>decompile the member with metadata token N to stdout</value>
+    <value>dekompiliert den Member mit dem Metadatentoken N to stdout</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
     <value>dekompiliert baml nicht zu xaml</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
-    <value>don't use the GAC to look up assemblies. Useful with --no-stdlib</value>
+    <value>nutzt nicht den GAC um nach Assemblies zu suchen. Nützlich für --no-stdlib</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
-    <value>don't unpack resources</value>
+    <value>entpackt keine Ressourcen</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
-    <value>don't create .resx files</value>
+    <value>erstellt keine .resx Dateien</value>
   </data>
   <data name="CmdLineDescription_NoSLN" xml:space="preserve">
-    <value>don't create a .sln file</value>
+    <value>erstellt keine .sln Datei</value>
   </data>
   <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
-    <value>projects don't reference mscorlib</value>
+    <value>Projekte verweisen nicht auf mscorlib</value>
   </data>
   <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
-    <value>number of worker threads. Default is to use one thread per CPU core</value>
+    <value>Anzahl der Arbeitsthreads. Standard ist ein Thread pro Kern</value>
   </data>
   <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
-    <value>output directory</value>
+    <value>Ausgabeverzeichnis</value>
   </data>
   <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
-    <value>project guid</value>
+    <value>Projekt GUID</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>recursive search for .NET files to decompile</value>
+    <value>Sucht rekursiv die zu dekompilierenden .NET Dateien</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
     <value>Name der .sln Datei</value>
@@ -268,10 +268,10 @@
     <value>gleiche wie -t</value>
   </data>
   <data name="CmdLineDescription_UserGAC" xml:space="preserve">
-    <value>user GAC path. Paths can be separated with '{0}' or you can use multiple --user-gac's</value>
+    <value>benutzerdefinierter GAC Pfad. Pfade können mit '{0}' getrennt werden oder --user-gac mehrfach verwenden</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Visual Studio version, 2005, 2008, ..., {0}</value>
+    <value>Visual Studio Version, 2005, 2008, ..., {0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
     <value>Sprache</value>
@@ -310,12 +310,12 @@
     <value>färbt den Text nicht</value>
   </data>
   <data name="CmdLineDescription_Spaces" xml:space="preserve">
-    <value>Size of a tab in spaces or 0 to use one tab</value>
+    <value>Tabstoppgröße in Leerzeichen oder 0 um Tab zu verwenden</value>
   </data>
   <data name="InvalidSpacesArgument" xml:space="preserve">
-    <value>Number of spaces must be between {0} and {1}</value>
+    <value>Anzahl der Leerzeichen muss zwischen {0} und {1} sein</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Missing argument</value>
+    <value>Argument fehlt</value>
   </data>
 </root>
