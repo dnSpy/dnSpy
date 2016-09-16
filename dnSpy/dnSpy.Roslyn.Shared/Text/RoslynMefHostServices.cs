@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using dnSpy.Roslyn.Internal.SignatureHelp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host.Mef;
 
@@ -53,8 +54,8 @@ namespace dnSpy.Roslyn.Shared.Text {
 					Debug.Fail($"Couldn't load Roslyn MEF assembly: {asmName}");
 				}
 			}
-			// dnSpy.Roslyn.Internal exports some stuff too, so add it (note that its assembly is called RoslynETAHost so it gets internal access to Roslyn)
-			asms.Add(Assembly.Load("RoslynETAHost, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fc793a00266884fb"));
+			// dnSpy.Roslyn.Internal exports some stuff too
+			asms.Add(typeof(SignatureHelpService).Assembly);
 			return MefHostServices.Create(asms);
 		}
 		static readonly string[] otherAssemblies = new string[] {
