@@ -178,6 +178,7 @@ namespace dnSpy.Text.Editor {
 				// Must set IsOpen to false when setting a new scale transform
 				popup.IsOpen = false;
 				PopupHelper.SetScaleTransform(wpfTextView, popup);
+				popupZoomLevel = wpfTextView.ZoomLevel;
 			}
 			if (!isOpen) {
 				popup.Child = content;
@@ -252,9 +253,26 @@ namespace dnSpy.Text.Editor {
 				yield return rect1;
 
 			var unionBounds = Rect.Union(reservedSpace.Bounds, spanBounds);
-			var rect2 = GetPosition(screenRect, desiredSize, spanBounds, unionBounds, style);
-			if (!OverlapsReservedSpace(reservedSpace, rect2))
-				yield return rect2;
+			if ((style & PopupStyles.PositionLeftOrRight) != 0) {
+				bool preferLeft = (style & PopupStyles.PreferLeftOrTopPosition) != 0;
+				var rect2 = preferLeft ?
+						new Rect(unionBounds.Left - desiredSize.Width, spanBounds.Y, desiredSize.Width, desiredSize.Height) :
+						new Rect(unionBounds.Right, spanBounds.Y, desiredSize.Width, desiredSize.Height);
+				if (!OverlapsReservedSpace(reservedSpace, rect2))
+					yield return rect2;
+			}
+			else {
+				bool preferTop = (style & PopupStyles.PreferLeftOrTopPosition) != 0;
+				var rect2 = preferTop ?
+						new Rect(spanBounds.X, unionBounds.Top - desiredSize.Height, desiredSize.Width, desiredSize.Height) :
+						new Rect(spanBounds.X, unionBounds.Bottom, desiredSize.Width, desiredSize.Height);
+				if (!OverlapsReservedSpace(reservedSpace, rect2))
+					yield return rect2;
+			}
+
+			var rect3 = GetPosition(screenRect, desiredSize, spanBounds, unionBounds, style);
+			if (!OverlapsReservedSpace(reservedSpace, rect3))
+				yield return rect3;
 		}
 
 		Rect GetPosition(Rect screenRect, Size desiredSize, Rect spanBounds, Rect reservedBounds, PopupStyles style) {
