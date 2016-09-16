@@ -39,17 +39,15 @@ namespace dnSpy.Language.Intellisense {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly IClassifierAggregatorService classifierAggregatorService;
 		readonly IClassificationFormatMapService classificationFormatMapService;
-		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		SignatureHelpBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, [ImportMany] IEnumerable<Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>> signatureHelpSourceProviders, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMapService classificationFormatMapService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		SignatureHelpBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, [ImportMany] IEnumerable<Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>> signatureHelpSourceProviders, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMapService classificationFormatMapService) {
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 			this.signatureHelpSourceProviders = Orderer.Order(signatureHelpSourceProviders).ToArray();
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.classifierAggregatorService = classifierAggregatorService;
 			this.classificationFormatMapService = classificationFormatMapService;
-			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
 		public ISignatureHelpSession TriggerSignatureHelp(ITextView textView) {
@@ -103,7 +101,7 @@ namespace dnSpy.Language.Intellisense {
 		IIntellisensePresenter ISignatureHelpPresenterProvider.Create(ISignatureHelpSession signatureHelpSession) {
 			if (signatureHelpSession == null)
 				throw new ArgumentNullException(nameof(signatureHelpSession));
-			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.SignatureHelpToolTip), classificationTypeRegistryService);
+			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.SignatureHelpToolTip));
 		}
 	}
 }

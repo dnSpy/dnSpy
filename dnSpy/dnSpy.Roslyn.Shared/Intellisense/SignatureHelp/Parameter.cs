@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Language.Intellisense;
@@ -33,10 +34,19 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		public Span Locus { get; }
 		public Span PrettyPrintedLocus { get; }
 
+		public TaggedText[] DocumentationTaggedText {
+			get {
+				if (documentationTaggedText == null)
+					InitializeDocumentation();
+				return documentationTaggedText;
+			}
+		}
+		TaggedText[] documentationTaggedText;
+
 		public string Documentation {
 			get {
 				if (documentation == null)
-					documentation = ToString(parameter.DocumentationFactory(CancellationToken.None));
+					InitializeDocumentation();
 				return documentation;
 			}
 		}
@@ -55,7 +65,12 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 			this.parameter = parameter;
 		}
 
-		string ToString(IEnumerable<TaggedText> parts) {
+		void InitializeDocumentation() {
+			documentationTaggedText = parameter.DocumentationFactory(CancellationToken.None).ToArray();
+			documentation = ToString(documentationTaggedText);
+		}
+
+		string ToString(TaggedText[] parts) {
 			var sb = new StringBuilder();
 			foreach (var taggedText in parts)
 				sb.Append(taggedText.Text);

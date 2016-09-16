@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -91,17 +92,27 @@ namespace dnSpy.Language.Intellisense {
 
 		readonly SignatureHelpPresenterControl control;
 		readonly ISignatureHelpSession session;
-		readonly ITextBuffer textBuffer;
+		// Used to classify the signature text
+		readonly ITextBuffer signatureTextBuffer;
+		// Used to classify all the other text (param, param doc, signature doc)
+		readonly ITextBuffer otherTextBuffer;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly IClassifierAggregatorService classifierAggregatorService;
 		readonly IClassificationFormatMap classificationFormatMap;
-		readonly IClassificationType classificationTypeSignatureHelpDocumentation;
-		readonly IClassificationType classificationTypeSignatureHelpParameter;
-		readonly IClassificationType classificationTypeSignatureHelpParameterDocumentation;
+		readonly IContentType defaultExtendedContentType;
 		ISignature currentSignature;
 		IClassifier signatureClassifier;
+		IClassifier otherClassifier;
 
-		public SignatureHelpPresenter(ISignatureHelpSession session, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMap classificationFormatMap, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		const string DefaultExtendedContentTypeName = " default " + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix;
+#pragma warning disable 0169
+		[Export]
+		[Name(DefaultExtendedContentTypeName)]
+		[BaseDefinition(ContentTypes.SignatureHelp)]
+		static readonly ContentTypeDefinition defaultContentTypeDefinition;
+#pragma warning restore 0169
+
+		public SignatureHelpPresenter(ISignatureHelpSession session, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			if (textBufferFactoryService == null)
@@ -112,18 +123,17 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(classifierAggregatorService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (classificationTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.session = session;
 			this.control = new SignatureHelpPresenterControl { DataContext = this };
-			this.textBuffer = textBufferFactoryService.CreateTextBuffer();
-			textBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
+			this.signatureTextBuffer = textBufferFactoryService.CreateTextBuffer();
+			this.otherTextBuffer = textBufferFactoryService.CreateTextBuffer();
+			signatureTextBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
+			otherTextBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.classifierAggregatorService = classifierAggregatorService;
 			this.classificationFormatMap = classificationFormatMap;
-			this.classificationTypeSignatureHelpDocumentation = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpDocumentation);
-			this.classificationTypeSignatureHelpParameter = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameter);
-			this.classificationTypeSignatureHelpParameterDocumentation = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation);
+			this.defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
+			Debug.Assert(defaultExtendedContentType != null);
 			session.Dismissed += Session_Dismissed;
 			session.SelectedSignatureChanged += Session_SelectedSignatureChanged;
 			control.MouseDown += Control_MouseDown;
@@ -218,14 +228,12 @@ namespace dnSpy.Language.Intellisense {
 			if (session.IsDismissed)
 				return null;
 
-			var doc = currentSignature?.Documentation;
+			var signature = currentSignature;
+			var doc = signature?.Documentation;
 			if (string.IsNullOrEmpty(doc))
 				return null;
 
-			var propsSpans = new TextRunPropertiesAndSpan[] {
-				new TextRunPropertiesAndSpan(new Span(0, doc.Length), classificationFormatMap.GetTextProperties(classificationTypeSignatureHelpDocumentation)),
-			};
-			return TextBlockFactory.Create(doc, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			return CreateUIObject(doc, GetExtendedClassifierContentType(), new SignatureDocumentationSignatureHelpClassifierContext(session, signature));
 		}
 
 		object CreateSignatureObject() {
@@ -244,22 +252,22 @@ namespace dnSpy.Language.Intellisense {
 			}
 			if (text == null)
 				return null;
-			textBuffer.Properties[SignatureHelpConstants.UsePrettyPrintedContentBufferKey] = prettyPrintedContent;
-			textBuffer.Replace(new Span(0, textBuffer.CurrentSnapshot.Length), text);
-			var oldContentType = textBuffer.ContentType;
+			signatureTextBuffer.Properties[SignatureHelpConstants.UsePrettyPrintedContentBufferKey] = prettyPrintedContent;
+			signatureTextBuffer.Replace(new Span(0, signatureTextBuffer.CurrentSnapshot.Length), text);
+			var oldContentType = signatureTextBuffer.ContentType;
 			var atSpan = signature.ApplicableToSpan;
 			Debug.Assert(atSpan != null);
 			if (atSpan != null) {
 				var span = atSpan.GetStartPoint(atSpan.TextBuffer.CurrentSnapshot);
-				textBuffer.ChangeContentType(GetSigHelpContentType(span.Snapshot.ContentType), null);
+				signatureTextBuffer.ChangeContentType(GetSigHelpContentType(span.Snapshot.ContentType), null);
 			}
-			if (signatureClassifier == null || oldContentType != textBuffer.ContentType) {
+			if (signatureClassifier == null || oldContentType != signatureTextBuffer.ContentType) {
 				UnregisterSignatureClassifierEvents();
-				signatureClassifier = classifierAggregatorService.GetClassifier(textBuffer);
+				signatureClassifier = classifierAggregatorService.GetClassifier(signatureTextBuffer);
 				RegisterSignatureClassifierEvents();
 			}
 
-			var classificationSpans = signatureClassifier.GetClassificationSpans(new SnapshotSpan(textBuffer.CurrentSnapshot, 0, textBuffer.CurrentSnapshot.Length));
+			var classificationSpans = signatureClassifier.GetClassificationSpans(new SnapshotSpan(signatureTextBuffer.CurrentSnapshot, 0, signatureTextBuffer.CurrentSnapshot.Length));
 			var propsSpans = classificationSpans.Select(a => new TextRunPropertiesAndSpan(a.Span.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
 			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
 		}
@@ -303,6 +311,36 @@ namespace dnSpy.Language.Intellisense {
 			return sigHelpContentType;
 		}
 
+		object CreateUIObject(string text, IContentType contentType, SignatureHelpClassifierContext context) {
+			otherTextBuffer.Properties[SignatureHelpConstants.SignatureHelpClassifierContextBufferKey] = context;
+			otherTextBuffer.Replace(new Span(0, otherTextBuffer.CurrentSnapshot.Length), text);
+
+			var oldContentType = otherTextBuffer.ContentType;
+			otherTextBuffer.ChangeContentType(contentType, null);
+			if (otherClassifier == null || oldContentType != contentType) {
+				(otherClassifier as IDisposable)?.Dispose();
+				otherClassifier = classifierAggregatorService.GetClassifier(otherTextBuffer);
+			}
+
+			var classificationSpans = otherClassifier.GetClassificationSpans(new SnapshotSpan(otherTextBuffer.CurrentSnapshot, 0, otherTextBuffer.CurrentSnapshot.Length));
+			var propsSpans = classificationSpans.Select(a => new TextRunPropertiesAndSpan(a.Span.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
+			var result = TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SignatureHelpClassifierContextBufferKey);
+			return result;
+		}
+
+		IContentType GetExtendedClassifierContentType() => TryGetExtendedClassifierContentTypeCore() ?? defaultExtendedContentType;
+		IContentType TryGetExtendedClassifierContentTypeCore() {
+			var signature = session.SelectedSignature;
+			if (signature == null)
+				return null;
+			var atSpan = signature.ApplicableToSpan;
+			if (atSpan == null)
+				return null;
+			var bufferContentType = atSpan.TextBuffer.CurrentSnapshot.ContentType;
+			return contentTypeRegistryService.GetContentType(bufferContentType.TypeName + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix);
+		}
+
 		object CreateParameterNameObject() {
 			if (session.IsDismissed)
 				return null;
@@ -310,15 +348,13 @@ namespace dnSpy.Language.Intellisense {
 			var parameter = session.SelectedSignature?.CurrentParameter;
 			if (parameter == null)
 				return null;
-			var text = parameter.Name;
-			if (string.IsNullOrEmpty(text))
+			var name = parameter.Name;
+			if (string.IsNullOrEmpty(name))
 				return null;
-			text = text + ":";
 
-			var propsSpans = new TextRunPropertiesAndSpan[] {
-				new TextRunPropertiesAndSpan(new Span(0, text.Length), classificationFormatMap.GetTextProperties(classificationTypeSignatureHelpParameter)),
-			};
-			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			int nameOffset = 0;
+			name = name + ":";
+			return CreateUIObject(name, GetExtendedClassifierContentType(), new ParameterNameSignatureHelpClassifierContext(session, parameter, nameOffset));
 		}
 
 		object CreateParameterDocumentationObject() {
@@ -332,10 +368,7 @@ namespace dnSpy.Language.Intellisense {
 			if (string.IsNullOrEmpty(text))
 				return null;
 
-			var propsSpans = new TextRunPropertiesAndSpan[] {
-				new TextRunPropertiesAndSpan(new Span(0, text.Length), classificationFormatMap.GetTextProperties(classificationTypeSignatureHelpParameterDocumentation)),
-			};
-			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			return CreateUIObject(text, GetExtendedClassifierContentType(), new ParameterDocumentationSignatureHelpClassifierContext(session, parameter));
 		}
 
 		public bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
@@ -391,11 +424,14 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void Session_Dismissed(object sender, EventArgs e) {
-			textBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
+			signatureTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
+			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
+			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SignatureHelpClassifierContextBufferKey);
 			session.Dismissed -= Session_Dismissed;
 			session.SelectedSignatureChanged -= Session_SelectedSignatureChanged;
 			control.MouseDown -= Control_MouseDown;
 			((INotifyCollectionChanged)session.Signatures).CollectionChanged -= Signatures_CollectionChanged;
+			(otherClassifier as IDisposable)?.Dispose();
 			UnregisterCurrentSignature();
 			UnregisterSignatureClassifierEvents();
 		}

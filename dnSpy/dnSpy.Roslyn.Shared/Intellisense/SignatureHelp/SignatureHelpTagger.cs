@@ -100,13 +100,13 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 				yield break;
 
 			int pos = 0;
-			var textTags = usePrettyPrintedContent ? signature.PrettyPrintedContentTaggedText : signature.ContentTaggedText;
-			foreach (var textTag in textTags) {
-				var span = new Span(pos, textTag.Text.Length);
+			var taggedTextColl = usePrettyPrintedContent ? signature.PrettyPrintedContentTaggedText : signature.ContentTaggedText;
+			foreach (var taggedText in taggedTextColl) {
+				var span = new Span(pos, taggedText.Text.Length);
 				Debug.Assert(span.End <= snapshotLength);
 				if (span.End > snapshotLength)
 					yield break;
-				var color = TextTagsHelper.ToTextColor(textTag.Tag);
+				var color = TextTagsHelper.ToTextColor(taggedText.Tag);
 				var tag = new ClassificationTag(themeClassificationTypeService.GetClassificationType(color));
 				yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, span), tag);
 				pos = span.End;

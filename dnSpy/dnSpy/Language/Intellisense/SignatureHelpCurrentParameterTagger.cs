@@ -34,18 +34,26 @@ namespace dnSpy.Language.Intellisense {
 	[TagType(typeof(IClassificationTag))]
 	[ContentType(ContentTypes.SignatureHelp)]
 	sealed class SignatureHelpCurrentParameterTaggerProvider : ITaggerProvider {
-		readonly ClassificationTag currentParameterClassificationTag;
+		readonly ClassificationTag signatureHelpDocumentationClassificationTag;
+		readonly ClassificationTag signatureHelpCurrentParameterClassificationTag;
+		readonly ClassificationTag signatureHelpParameterClassificationTag;
+		readonly ClassificationTag signatureHelpParameterDocumentationClassificationTag;
 
 		[ImportingConstructor]
 		SignatureHelpCurrentParameterTaggerProvider(IClassificationTypeRegistryService classificationTypeRegistryService) {
-			currentParameterClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpCurrentParameter));
+			signatureHelpDocumentationClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpDocumentation));
+			signatureHelpCurrentParameterClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpCurrentParameter));
+			signatureHelpParameterClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameter));
+			signatureHelpParameterDocumentationClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation));
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			var session = buffer.TryGetSignatureHelpSession();
 			if (session == null)
 				return null;
-			return new SignatureHelpCurrentParameterTagger(session, buffer, currentParameterClassificationTag) as ITagger<T>;
+			if (buffer.ContentType.TypeName.EndsWith(SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix))
+				return new SignatureHelpCurrentParameterTaggerEx(buffer, signatureHelpDocumentationClassificationTag, signatureHelpParameterClassificationTag, signatureHelpParameterDocumentationClassificationTag) as ITagger<T>;
+			return new SignatureHelpCurrentParameterTagger(session, buffer, signatureHelpCurrentParameterClassificationTag) as ITagger<T>;
 		}
 	}
 
@@ -54,18 +62,18 @@ namespace dnSpy.Language.Intellisense {
 
 		readonly ITextBuffer buffer;
 		readonly ISignatureHelpSession session;
-		readonly ClassificationTag currentParameterClassificationTag;
+		readonly ClassificationTag signatureHelpCurrentParameterClassificationTag;
 
-		public SignatureHelpCurrentParameterTagger(ISignatureHelpSession session, ITextBuffer buffer, ClassificationTag currentParameterClassificationTag) {
+		public SignatureHelpCurrentParameterTagger(ISignatureHelpSession session, ITextBuffer buffer, ClassificationTag signatureHelpCurrentParameterClassificationTag) {
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (currentParameterClassificationTag == null)
-				throw new ArgumentNullException(nameof(currentParameterClassificationTag));
+			if (signatureHelpCurrentParameterClassificationTag == null)
+				throw new ArgumentNullException(nameof(signatureHelpCurrentParameterClassificationTag));
 			this.session = session;
 			this.buffer = buffer;
-			this.currentParameterClassificationTag = currentParameterClassificationTag;
+			this.signatureHelpCurrentParameterClassificationTag = signatureHelpCurrentParameterClassificationTag;
 		}
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
@@ -81,7 +89,50 @@ namespace dnSpy.Language.Intellisense {
 			if (locus.End > snapshot.Length)
 				yield break;
 
-			yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, locus), currentParameterClassificationTag);
+			yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, locus), signatureHelpCurrentParameterClassificationTag);
+		}
+	}
+
+	sealed class SignatureHelpCurrentParameterTaggerEx : ITagger<IClassificationTag> {
+		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+
+		readonly ITextBuffer buffer;
+		readonly ClassificationTag signatureHelpDocumentationClassificationTag;
+		readonly ClassificationTag signatureHelpParameterClassificationTag;
+		readonly ClassificationTag signatureHelpParameterDocumentationClassificationTag;
+
+		public SignatureHelpCurrentParameterTaggerEx(ITextBuffer buffer, ClassificationTag signatureHelpDocumentationClassificationTag, ClassificationTag signatureHelpParameterClassificationTag, ClassificationTag signatureHelpParameterDocumentationClassificationTag) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			if (signatureHelpDocumentationClassificationTag == null)
+				throw new ArgumentNullException(nameof(signatureHelpDocumentationClassificationTag));
+			if (signatureHelpParameterClassificationTag == null)
+				throw new ArgumentNullException(nameof(signatureHelpParameterClassificationTag));
+			if (signatureHelpParameterDocumentationClassificationTag == null)
+				throw new ArgumentNullException(nameof(signatureHelpParameterDocumentationClassificationTag));
+			this.buffer = buffer;
+			this.signatureHelpDocumentationClassificationTag = signatureHelpDocumentationClassificationTag;
+			this.signatureHelpParameterClassificationTag = signatureHelpParameterClassificationTag;
+			this.signatureHelpParameterDocumentationClassificationTag = signatureHelpParameterDocumentationClassificationTag;
+		}
+
+		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+			var context = buffer.TryGetSignatureHelpClassifierContext();
+			Debug.Assert(context != null);
+			if (context == null || context.Session.IsDismissed)
+				yield break;
+			ClassificationTag tag;
+			if (context.Type == SignatureHelpClassifierContextTypes.SignatureDocumentation)
+				tag = signatureHelpDocumentationClassificationTag;
+			else if (context.Type == SignatureHelpClassifierContextTypes.ParameterName)
+				tag = signatureHelpParameterClassificationTag;
+			else if (context.Type == SignatureHelpClassifierContextTypes.ParameterDocumentation)
+				tag = signatureHelpParameterDocumentationClassificationTag;
+			else {
+				Debug.Fail($"Unknown sig help ctx type: {context.Type}");
+				yield break;
+			}
+			yield return new TagSpan<IClassificationTag>(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length), tag);
 		}
 	}
 }

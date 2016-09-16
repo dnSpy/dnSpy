@@ -1065,7 +1065,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Text)]
 		[Name(ThemeClassificationTypeNameKeys.Text)]
 		[UserVisible(true)]
-		[Order(After = Priority.Low)]
+		[Order(Before = Priority.Low)]
 		sealed class Text : ThemeClassificationFormatDefinition {
 			Text() : base(TextColor.Text) { }
 		}
@@ -2848,7 +2848,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpDocumentation)]
 		[Name(ThemeClassificationTypeNameKeys.SignatureHelpDocumentation)]
 		[UserVisible(true)]
-		[Order(Before = Priority.High, After = Priority.Default)]
+		[Order(Before = Priority.Default, After = Priority.Low)]
 		sealed class SignatureHelpDocumentation : ThemeClassificationFormatDefinition {
 			SignatureHelpDocumentation() : base(TextColor.SignatureHelpDocumentation) { }
 		}
@@ -2857,7 +2857,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpCurrentParameter)]
 		[Name(ThemeClassificationTypeNameKeys.SignatureHelpCurrentParameter)]
 		[UserVisible(true)]
-		[Order(Before = Priority.High, After = Priority.Default)]
+		[Order(Before = Priority.Default, After = Priority.Low)]
 		sealed class SignatureHelpCurrentParameter : ThemeClassificationFormatDefinition {
 			SignatureHelpCurrentParameter() : base(TextColor.SignatureHelpCurrentParameter) { }
 		}
@@ -2866,7 +2866,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpParameter)]
 		[Name(ThemeClassificationTypeNameKeys.SignatureHelpParameter)]
 		[UserVisible(true)]
-		[Order(Before = Priority.High, After = Priority.Default)]
+		[Order(Before = Priority.Default, After = Priority.Low)]
 		sealed class SignatureHelpParameter : ThemeClassificationFormatDefinition {
 			SignatureHelpParameter() : base(TextColor.SignatureHelpParameter) { }
 		}
@@ -2875,7 +2875,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SignatureHelpParameterDocumentation)]
 		[Name(ThemeClassificationTypeNameKeys.SignatureHelpParameterDocumentation)]
 		[UserVisible(true)]
-		[Order(Before = Priority.High, After = Priority.Default)]
+		[Order(Before = Priority.Default, After = Priority.Low)]
 		sealed class SignatureHelpParameterDocumentation : ThemeClassificationFormatDefinition {
 			SignatureHelpParameterDocumentation() : base(TextColor.SignatureHelpParameterDocumentation) { }
 		}

@@ -53,6 +53,7 @@
     <Compile Include="Intellisense\SignatureHelp\SignatureHelpSession.cs" />
     <Compile Include="Intellisense\SignatureHelp\SignatureHelpSource.cs" />
     <Compile Include="Intellisense\SignatureHelp\SignatureHelpTagger.cs" />
+    <Compile Include="Intellisense\SignatureHelp\SignatureHelpTaggerEx.cs" />
     <Compile Include="Optimizations\FirstUseOptimization.cs" />
     <Compile Include="Text\Classification\HackTaggedTextClassifier.cs" />
     <Compile Include="Text\Classification\ITaggedTextElementProvider.cs" />
