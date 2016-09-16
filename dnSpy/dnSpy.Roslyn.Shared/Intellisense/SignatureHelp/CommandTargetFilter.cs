@@ -19,11 +19,13 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Internal.SignatureHelp;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
@@ -87,6 +89,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 			if (!IsSupportedContentType)
 				return CommandTargetStatus.NotHandled;
 
+			var oldSnapshot = textView.TextSnapshot;
+
 			// Make sure that changes to the text buffer have been applied before we try
 			// to get the sig helps from Roslyn.
 			nextCommandTarget.Execute(group, cmdId, args, ref result);
@@ -102,18 +106,21 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 							TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand, s[0]));
 						else if (session.IsTriggerCharacter(s[0]))
 							TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.TypeCharCommand, s[0]));
-						else
-							TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand));
 					}
 					else
 						TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.TypeCharCommand, s[0]));
-					break;
+					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.PARAMINFO:
 					TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand));
 					return CommandTargetStatus.Handled;
 				}
 			}
+
+			// Need to retrigger it if user backspaced and deleted a comma. We need to check for it
+			// here because Caret-pos-changed handler doesn't retrigger it for perf reasons.
+			if (session != null && oldSnapshot != textView.TextSnapshot)
+				TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand));
 
 			return CommandTargetStatus.Handled;
 		}
@@ -140,7 +147,37 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
 			if (session == null)
 				return;
-			TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand));
+			// PERF: retriggering is very slow
+			if (ShouldRetrigger(e))
+				TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand));
+		}
+
+		bool ShouldRetrigger(CaretPositionChangedEventArgs e) {
+			// This case is handled by the command handler
+			if (e.OldPosition.BufferPosition.Snapshot != e.NewPosition.BufferPosition.Snapshot)
+				return false;
+
+			if (IsRetriggerCharacter(e.OldPosition) || IsRetriggerCharacter(e.NewPosition))
+				return true;
+
+			if (e.OldPosition.VirtualBufferPosition.IsInVirtualSpace != e.NewPosition.VirtualBufferPosition.IsInVirtualSpace)
+				return true;
+			if (e.OldPosition.VirtualSpaces > 0)
+				return false;
+			var newPos = e.NewPosition.BufferPosition;
+			var oldPos = e.OldPosition.BufferPosition;
+			int diff = Math.Abs(oldPos.Position - newPos.Position);
+			return diff > 1;
+		}
+
+		bool IsRetriggerCharacter(CaretPosition caretPos) {
+			Debug.Assert(session != null);
+			if (session == null)
+				return false;
+			if (caretPos.VirtualSpaces > 0)
+				return false;
+			char c = caretPos.BufferPosition.GetChar();
+			return session.IsTriggerCharacter(c) || session.IsRetriggerCharacter(c);
 		}
 
 		void CancelSession() {
