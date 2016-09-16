@@ -46,6 +46,13 @@
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
     <Compile Include="Documentation\RoslynDocumentationProvider.cs" />
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
+    <Compile Include="Intellisense\SignatureHelp\CommandTargetFilter.cs" />
+    <Compile Include="Intellisense\SignatureHelp\Parameter.cs" />
+    <Compile Include="Intellisense\SignatureHelp\Signature.cs" />
+    <Compile Include="Intellisense\SignatureHelp\SignatureHelpInfo.cs" />
+    <Compile Include="Intellisense\SignatureHelp\SignatureHelpSession.cs" />
+    <Compile Include="Intellisense\SignatureHelp\SignatureHelpSource.cs" />
+    <Compile Include="Intellisense\SignatureHelp\SignatureHelpTagger.cs" />
     <Compile Include="Optimizations\FirstUseOptimization.cs" />
     <Compile Include="Text\Classification\HackTaggedTextClassifier.cs" />
     <Compile Include="Text\Classification\ITaggedTextElementProvider.cs" />
@@ -103,6 +110,10 @@
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
       <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
+      <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
+      <Name>dnSpy.Roslyn.Internal</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

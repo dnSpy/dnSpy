@@ -65,6 +65,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.DnSpy", "dn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler.ILSpy.Core", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy.Core\dnSpy.Decompiler.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.Internal", "dnSpy\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj", "{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,10 @@ Global
 		{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -204,5 +210,6 @@ Global
 		{BB748E78-376F-429A-8D83-9A8946EC179F} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{CB6F6372-9479-41E2-83A8-07854326BCA8} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31} = {6C439ABB-7252-4F00-9A21-121C11E98895}
+		{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 	EndGlobalSection
 EndGlobal

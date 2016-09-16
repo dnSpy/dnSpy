@@ -244,6 +244,7 @@
     <Compile Include="Language\Intellisense\IUIElementProvider.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpyCompletionSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpyQuickInfoSourceProviders.cs" />
+    <Compile Include="Language\Intellisense\PredefinedDnSpySignatureHelpSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedUIElementProviderNames.cs" />
     <Compile Include="Language\Intellisense\SelectedCompletionCollectionEventArgs.cs" />
     <Compile Include="Language\Intellisense\SelectedSignatureChangedEventArgs.cs" />

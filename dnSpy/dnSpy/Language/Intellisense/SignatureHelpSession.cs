@@ -40,6 +40,7 @@ namespace dnSpy.Language.Intellisense {
 		public bool IsStarted { get; private set; }
 		public IIntellisensePresenter Presenter => signatureHelpPresenter;
 		public event EventHandler PresenterChanged;
+		public event EventHandler Recalculated;
 
 		public ISignature SelectedSignature {
 			get { return selectedSignature; }
@@ -139,19 +140,23 @@ namespace dnSpy.Language.Intellisense {
 			return list.ToArray();
 		}
 
-		public void Start() {
-			if (IsStarted)
-				throw new InvalidOperationException();
+		public void Start() => Recalculate();
+
+		public void Recalculate() {
 			if (IsDismissed)
 				throw new InvalidOperationException();
+			bool firstTime = !IsStarted;
 			IsStarted = true;
-			if (trackCaret)
+			if (firstTime && trackCaret)
 				TextView.Caret.PositionChanged += Caret_PositionChanged;
-			this.signatureHelpSources = CreateSignatureHelpSources();
+
+			DisposeSignatureHelpSources();
+			signatureHelpSources = CreateSignatureHelpSources();
 
 			var list = new List<ISignature>();
 			foreach (var source in signatureHelpSources)
 				source.AugmentSignatureHelpSession(this, list);
+			signatures.Clear();
 			foreach (var sig in list)
 				signatures.Add(sig);
 
@@ -159,10 +164,22 @@ namespace dnSpy.Language.Intellisense {
 				Dismiss();
 			else {
 				SelectedSignature = signatures[0];
-				signatureHelpPresenter = signatureHelpPresenterProvider.Create(this);
-				Debug.Assert(signatureHelpPresenter != null);
-				PresenterChanged?.Invoke(this, EventArgs.Empty);
+				if (signatureHelpPresenter == null) {
+					signatureHelpPresenter = signatureHelpPresenterProvider.Create(this);
+					Debug.Assert(signatureHelpPresenter != null);
+					PresenterChanged?.Invoke(this, EventArgs.Empty);
+				}
 			}
+			Recalculated?.Invoke(this, EventArgs.Empty);
+		}
+
+		void DisposeSignatureHelpSources() {
+			if (signatureHelpSources != null) {
+				foreach (var source in signatureHelpSources)
+					source.Dispose();
+				signatureHelpSources = null;
+			}
+			selectedSignature = null;
 		}
 
 		public void Dismiss() {
@@ -172,12 +189,7 @@ namespace dnSpy.Language.Intellisense {
 			TextView.Caret.PositionChanged -= Caret_PositionChanged;
 			TextView.Closed -= TextView_Closed;
 			Dismissed?.Invoke(this, EventArgs.Empty);
-			if (signatureHelpSources != null) {
-				foreach (var source in signatureHelpSources)
-					source.Dispose();
-				signatureHelpSources = null;
-			}
-			selectedSignature = null;
+			DisposeSignatureHelpSources();
 		}
 
 		public void Collapse() => Dismiss();

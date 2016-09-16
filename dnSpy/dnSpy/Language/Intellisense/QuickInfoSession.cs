@@ -37,6 +37,7 @@ namespace dnSpy.Language.Intellisense {
 		public ITextView TextView { get; }
 		public IIntellisensePresenter Presenter => quickInfoPresenter;
 		public event EventHandler PresenterChanged;
+		public event EventHandler Recalculated;
 		public event EventHandler Dismissed;
 		public bool IsDismissed { get; private set; }
 		public bool HasInteractiveContent { get; set; }
@@ -96,14 +97,31 @@ namespace dnSpy.Language.Intellisense {
 			return list.ToArray();
 		}
 
+		void DisposeQuickInfoSources() {
+			if (quickInfoSources != null) {
+				foreach (var source in quickInfoSources)
+					source.Dispose();
+				quickInfoSources = null;
+			}
+		}
+
 		public void Start() {
 			if (IsStarted)
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
-			IsStarted = true;
-			this.quickInfoSources = CreateQuickInfoSources();
+			Recalculate();
+		}
 
+		public void Recalculate() {
+			if (IsDismissed)
+				throw new InvalidOperationException();
+			IsStarted = true;
+
+			DisposeQuickInfoSources();
+			quickInfoSources = CreateQuickInfoSources();
+
+			QuickInfoContent.Clear();
 			ITrackingSpan applicableToSpan = null;
 			foreach (var source in quickInfoSources) {
 				ITrackingSpan applicableToSpanTmp;
@@ -117,10 +135,14 @@ namespace dnSpy.Language.Intellisense {
 			else {
 				HasInteractiveContent = CalculateHasInteractiveContent();
 				ApplicableToSpan = applicableToSpan;
-				quickInfoPresenter = quickInfoPresenterProvider.Create(this);
-				Debug.Assert(quickInfoPresenter != null);
-				PresenterChanged?.Invoke(this, EventArgs.Empty);
+				if (quickInfoPresenter == null) {
+					quickInfoPresenter = quickInfoPresenterProvider.Create(this);
+					Debug.Assert(quickInfoPresenter != null);
+					PresenterChanged?.Invoke(this, EventArgs.Empty);
+				}
 			}
+
+			Recalculated?.Invoke(this, EventArgs.Empty);
 		}
 
 		bool CalculateHasInteractiveContent() {
@@ -137,11 +159,7 @@ namespace dnSpy.Language.Intellisense {
 			IsDismissed = true;
 			TextView.Closed -= TextView_Closed;
 			Dismissed?.Invoke(this, EventArgs.Empty);
-			if (quickInfoSources != null) {
-				foreach (var source in quickInfoSources)
-					source.Dispose();
-				quickInfoSources = null;
-			}
+			DisposeQuickInfoSources();
 		}
 
 		public bool Match() {

@@ -93,6 +93,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		/// <summary>
+		/// Recalculates the items
+		/// </summary>
+		public virtual void Recalculate() {
+		}
+
+		/// <summary>
 		/// Creates a <see cref="ICompletionFilter"/>
 		/// </summary>
 		/// <param name="searchText">Search text</param>

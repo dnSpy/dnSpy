@@ -171,12 +171,23 @@ namespace dnSpy.Language.Intellisense {
 		void Signature_CurrentParameterChanged(object sender, CurrentParameterChangedEventArgs e) => UpdateCurrentParameter();
 		void Session_SelectedSignatureChanged(object sender, SelectedSignatureChangedEventArgs e) => UpdateSelectedSignature();
 
+		bool inCollectionChangedUpdate;
 		void Signatures_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (session.IsDismissed)
 				return;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasMoreThanOneSignature)));
-			UpdateSelectedSignature();
-			UpdatePresentationSpan();
+			if (inCollectionChangedUpdate)
+				return;
+			inCollectionChangedUpdate = true;
+			// Wait a little so the session has time to update its collection with new items or
+			// it will be closed when PresentationSpan is set to null (because of an empty collection)
+			control.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				if (session.IsDismissed)
+					return;
+				inCollectionChangedUpdate = false;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasMoreThanOneSignature)));
+				UpdateSelectedSignature();
+				UpdatePresentationSpan();
+			}));
 		}
 
 		void UpdatePresentationSpan() => PresentationSpan = CalculatePresentationSpan();

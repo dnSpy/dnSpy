@@ -53,6 +53,8 @@ namespace dnSpy.Roslyn.Shared.Text {
 					Debug.Fail($"Couldn't load Roslyn MEF assembly: {asmName}");
 				}
 			}
+			// dnSpy.Roslyn.Internal exports some stuff too, so add it (note that its assembly is called RoslynETAHost so it gets internal access to Roslyn)
+			asms.Add(Assembly.Load("RoslynETAHost, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fc793a00266884fb"));
 			return MefHostServices.Create(asms);
 		}
 		static readonly string[] otherAssemblies = new string[] {

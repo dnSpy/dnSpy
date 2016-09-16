@@ -28,6 +28,7 @@
 //	- Workspaces code needed by RoslynLanguageCompiler
 //	- Classification code, used indirectly by RoslynLanguageCompiler
 //	- Completion code
+//	- Signature help code
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,9 @@ using System.Threading.Tasks;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Roslyn.Internal.SignatureHelp;
 using dnSpy.Roslyn.Shared.Intellisense.Completions;
+using dnSpy.Roslyn.Shared.Intellisense.SignatureHelp;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Tagging;
 using dnSpy.Roslyn.Shared.Utilities;
@@ -66,6 +69,7 @@ namespace dnSpy.Roslyn.Shared.Optimizations {
 		static readonly string csharpCode = @"
 sealed class C {
 	int Method() {
+		""hello"".Equals(""sighelp"");
 		return 42;
 	}
 }
@@ -73,6 +77,8 @@ sealed class C {
 		static readonly string visualBasicCode = @"
 Module Module1
 	Sub Method()
+		Dim s As String = ""hello""
+		s.Equals(""sighelp"")
 		Dim local As Integer = 42
 	End Sub
 End Module
@@ -95,6 +101,8 @@ End Module
 			};
 			await InitializeAsync(buffer, csharpCode, refs, LanguageNames.CSharp, tagger, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true), new CSharpParseOptions());
 			await InitializeAsync(buffer, visualBasicCode, refs, LanguageNames.VisualBasic, tagger, new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary), new VisualBasicParseOptions());
+			// The tagger is async, give it a few secs before disposing it
+			await Task.Delay(2000);
 			(tagger as IDisposable)?.Dispose();
 		}
 
@@ -119,16 +127,32 @@ End Module
 
 				buffer.Replace(new Span(0, buffer.CurrentSnapshot.Length), code);
 
-				// Initialize classification code paths
-				var spans = new NormalizedSnapshotSpanCollection(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length));
-				foreach (var tagSpan in tagger.GetTags(spans)) { }
+				{
+					// Initialize classification code paths
+					var spans = new NormalizedSnapshotSpanCollection(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length));
+					foreach (var tagSpan in tagger.GetTags(spans)) { }
+				}
 
-				// Initialize completion code paths
-				var info = CompletionInfo.Create(buffer.CurrentSnapshot);
-				Debug.Assert(info != null);
-				if (info != null) {
-					var completionTrigger = CompletionTrigger.Default;
-					var completionList = await info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, 0, completionTrigger);
+				{
+					// Initialize completion code paths
+					var info = CompletionInfo.Create(buffer.CurrentSnapshot);
+					Debug.Assert(info != null);
+					if (info != null) {
+						var completionTrigger = CompletionTrigger.Default;
+						var completionList = await info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, 0, completionTrigger);
+					}
+				}
+
+				{
+					// Initialize signature help code paths
+					var info = SignatureHelpInfo.Create(buffer.CurrentSnapshot);
+					Debug.Assert(info != null);
+					if (info != null) {
+						int sigHelpIndex = code.IndexOf("sighelp");
+						Debug.Assert(sigHelpIndex >= 0);
+						var triggerInfo = new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand);
+						var items = await info.Value.SignatureHelpService.GetItemsAsync(info.Value.Document, sigHelpIndex, triggerInfo);
+					}
 				}
 			}
 		}

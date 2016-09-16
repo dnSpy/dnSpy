@@ -39,6 +39,7 @@ namespace dnSpy.Language.Intellisense {
 		public bool IsStarted { get; private set; }
 		public IIntellisensePresenter Presenter => completionPresenter;
 		public event EventHandler PresenterChanged;
+		public event EventHandler Recalculated;
 
 		public CompletionCollection SelectedCompletionCollection {
 			get { return selectedCompletionCollection; }
@@ -127,6 +128,18 @@ namespace dnSpy.Language.Intellisense {
 				PresenterChanged?.Invoke(this, EventArgs.Empty);
 				completionSessionCommandTargetFilter = new CompletionSessionCommandTargetFilter(this);
 			}
+		}
+
+		public void Recalculate() {
+			if (!IsStarted)
+				throw new InvalidOperationException();
+			if (IsDismissed)
+				throw new InvalidOperationException();
+
+			foreach (var collection in completionCollections)
+				collection.Recalculate();
+			Match();
+			Recalculated?.Invoke(this, EventArgs.Empty);
 		}
 
 		ITrackingPoint GetTrackingPoint(CompletionCollection coll) {

@@ -1,0 +1,12 @@
+{
+	"dependencies": {
+		"Microsoft.CodeAnalysis.CSharp.Features": "1.3.2",
+		"Microsoft.CodeAnalysis.VisualBasic.Features": "1.3.2"
+	},
+	"frameworks": {
+		"net46": { }
+	},
+	"runtimes": {
+		"win": { }
+	}
+}

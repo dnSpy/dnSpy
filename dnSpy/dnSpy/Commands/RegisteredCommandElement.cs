@@ -296,7 +296,7 @@ namespace dnSpy.Commands {
 			}
 			weakSourceElement = new WeakReference(null);
 			weakTarget = new WeakReference(null);
-			foreach (var c in commandTargetInfos)
+			foreach (var c in commandTargetInfos.ToArray())
 				c.Filter.Dispose();
 			commandTargetInfos.Clear();
 		}

@@ -77,6 +77,16 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		bool IsDismissed { get; }
 
 		/// <summary>
+		/// Recalculate the items
+		/// </summary>
+		void Recalculate();
+
+		/// <summary>
+		/// Raised when items have been recalculated
+		/// </summary>
+		event EventHandler Recalculated;
+
+		/// <summary>
 		/// Finds the best match and selects it. Returns false if no match was found.
 		/// </summary>
 		/// <returns></returns>
