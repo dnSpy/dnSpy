@@ -87,14 +87,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:FindCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlF", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 30)]
+	[ExportMenuItem(Header = "res:FindCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlF", Group = MenuConstants.GROUP_CTX_CODEEDITOR_FIND, Order = 0)]
 	sealed class FindInCodeContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		FindInCodeContexMenuEntry()
 			: base(StandardIds.Find) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 40)]
+	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODEEDITOR_FIND, Order = 10)]
 	sealed class IncrementalSearchForwardContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		IncrementalSearchForwardContexMenuEntry()
 			: base(StandardIds.IncrementalSearchForward) {

@@ -480,6 +480,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Code editor, Group: Copy</summary>
 		public const string GROUP_CTX_CODEEDITOR_COPY = "5000,3B7890A7-AF3C-4FA2-9554-B0FA65B9F767";
 
+		/// <summary>Group: Context Menu, Type: Code editor, Group: Find</summary>
+		public const string GROUP_CTX_CODEEDITOR_FIND= "6000,CDE742E8-31DA-4D96-A641-73A36CCF0DC0";
+
 		/// <summary>Group: Glyph margin, Type: Debugger, Group: Breakpoints</summary>
 		public const string GROUP_GLYPHMARGIN_DEBUG_BPS = "10000,423F4513-1EAF-43FD-BD46-FDCFB6DFAA04";
 	}
