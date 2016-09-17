@@ -128,8 +128,9 @@ namespace dnSpy.Text.Editor {
 
 		Size PopupSize {
 			get {
-				content.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-				return content.DesiredSize;
+				var maxSize = PopupHelper.GetMaxSize(wpfTextView);
+				content.Measure(maxSize);
+				return new Size(Math.Min(content.DesiredSize.Width, maxSize.Width), Math.Min(content.DesiredSize.Height, maxSize.Height));
 			}
 		}
 

@@ -28,17 +28,22 @@ namespace dnSpy.Text.Editor {
 		const double maxHeightMultiplier = 0.8;
 		const double maxWidthMultiplier = 0.8;
 
+		public static Size GetMaxSize(IWpfTextView wpfTextView) {
+			var screen = new Screen(wpfTextView.VisualElement);
+			var screenRect = screen.IsValid ? screen.DisplayRect : SystemParameters.WorkArea;
+			var size = TransformFromDevice(wpfTextView, screenRect.Size);
+			return new Size(size.Width * maxWidthMultiplier, size.Height * maxHeightMultiplier);
+		}
+
 		public static void SetScaleTransform(IWpfTextView wpfTextView, FrameworkElement popupElement) {
 			var metroWindow = Window.GetWindow(wpfTextView.VisualElement) as MetroWindow;
 			if (metroWindow == null)
 				return;
 			metroWindow.SetScaleTransform(popupElement, wpfTextView.ZoomLevel / 100);
 
-			var screen = new Screen(wpfTextView.VisualElement);
-			var screenRect = screen.IsValid ? screen.DisplayRect : SystemParameters.WorkArea;
-			var size = TransformFromDevice(wpfTextView, screenRect.Size);
-			popupElement.MaxWidth = size.Width * maxWidthMultiplier;
-			popupElement.MaxHeight = size.Height * maxHeightMultiplier;
+			var maxSize = GetMaxSize(wpfTextView);
+			popupElement.MaxWidth = maxSize.Width;
+			popupElement.MaxHeight = maxSize.Height;
 		}
 
 		public static Size TransformFromDevice(IWpfTextView wpfTextView, Size size) {
