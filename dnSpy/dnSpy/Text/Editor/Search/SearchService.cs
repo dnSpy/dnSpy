@@ -815,6 +815,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!CanReplaceAll)
 				return;
 
+			var oldSnapshot = wpfTextView.TextSnapshot;
 			try {
 				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
 					foreach (var res in GetAllResultsForReplaceAll()) {
@@ -832,7 +833,8 @@ namespace dnSpy.Text.Editor.Search {
 				messageBoxManager.Show("Out of memory");
 				return;
 			}
-			wpfTextView.Selection.Clear();
+			if (oldSnapshot != wpfTextView.TextSnapshot)
+				wpfTextView.Selection.Clear();
 			wpfTextView.Caret.EnsureVisible();
 		}
 
