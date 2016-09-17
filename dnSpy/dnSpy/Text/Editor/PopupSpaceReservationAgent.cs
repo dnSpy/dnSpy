@@ -219,15 +219,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool OverlapsReservedSpace(Geometry reservedSpace, Rect rect) {
-			switch (reservedSpace.FillContainsWithDetail(new RectangleGeometry(rect))) {
-			case IntersectionDetail.FullyInside:
-			case IntersectionDetail.FullyContains:
-			case IntersectionDetail.Intersects:
-				return true;
-			case IntersectionDetail.Empty:
-			default:
-				return false;
-			}
+			var rs = reservedSpace.Bounds;
+			return rs.Left < rect.Right && rs.Right > rect.Left && rs.Top < rect.Bottom && rs.Bottom > rect.Top;
 		}
 
 		IEnumerable<Rect> GetValidPositions(Rect screenRect, Geometry reservedSpace, Size desiredSize, Rect spanBounds, PopupStyles style) {
