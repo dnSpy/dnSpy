@@ -134,6 +134,7 @@ namespace dnSpy.Language.Intellisense {
 			this.classificationFormatMap = classificationFormatMap;
 			this.defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
 			Debug.Assert(defaultExtendedContentType != null);
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			session.Dismissed += Session_Dismissed;
 			session.SelectedSignatureChanged += Session_SelectedSignatureChanged;
 			control.MouseDown += Control_MouseDown;
@@ -141,6 +142,13 @@ namespace dnSpy.Language.Intellisense {
 			((INotifyCollectionChanged)session.Signatures).CollectionChanged += Signatures_CollectionChanged;
 			UpdateSelectedSignature();
 			UpdatePresentationSpan();
+		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureDocumentationObject)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureObject)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ParameterNameObject)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ParameterDocumentationObject)));
 		}
 
 		void UnregisterCurrentSignature() {
@@ -427,6 +435,7 @@ namespace dnSpy.Language.Intellisense {
 			signatureTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
 			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
 			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SignatureHelpClassifierContextBufferKey);
+			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 			session.Dismissed -= Session_Dismissed;
 			session.SelectedSignatureChanged -= Session_SelectedSignatureChanged;
 			control.MouseDown -= Control_MouseDown;
