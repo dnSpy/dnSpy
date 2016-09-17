@@ -34,6 +34,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -73,8 +74,42 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 		bool canCompile;
 
-		public ObservableCollection<ICodeDocument> Documents { get; } = new ObservableCollection<ICodeDocument>();
-		public ICodeDocument SelectedDocument {
+		public sealed class CodeDocument {
+			public string Name => codeDocument.Name;
+			public string NameNoExtension => codeDocument.NameNoExtension;
+			public IDnSpyWpfTextView TextView => codeDocument.TextView;
+			public IDnSpyWpfTextViewHost TextViewHost => codeDocument.TextViewHost;
+
+			readonly ICodeDocument codeDocument;
+			SnapshotPoint initialPosition;
+
+			public CodeDocument(ICodeDocument codeDocument) {
+				this.codeDocument = codeDocument;
+				codeDocument.TextView.VisualElement.SizeChanged += VisualElement_SizeChanged;
+			}
+
+			void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) {
+				if (e.NewSize.Height == 0)
+					return;
+				codeDocument.TextView.VisualElement.SizeChanged -= VisualElement_SizeChanged;
+
+				Debug.Assert(initialPosition.Snapshot != null);
+				if (initialPosition.Snapshot == null)
+					return;
+				codeDocument.TextView.Caret.MoveTo(initialPosition.TranslateTo(codeDocument.TextView.TextSnapshot, PointTrackingMode.Negative));
+				codeDocument.TextView.Caret.EnsureVisible();
+			}
+
+			public void Initialize(SnapshotPoint initialPosition) {
+				this.initialPosition = initialPosition;
+				codeDocument.TextView.Selection.Clear();
+			}
+
+			public void Dispose() => codeDocument.TextView.VisualElement.SizeChanged -= VisualElement_SizeChanged;
+		}
+
+		public ObservableCollection<CodeDocument> Documents { get; } = new ObservableCollection<CodeDocument>();
+		public CodeDocument SelectedDocument {
 			get { return selectedDocument; }
 			set {
 				if (selectedDocument != value) {
@@ -83,7 +118,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 		}
-		ICodeDocument selectedDocument;
+		CodeDocument selectedDocument;
 
 		readonly MethodDef methodToEdit;
 
@@ -234,16 +269,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			foreach (var doc in codeDocs)
 				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
-			Documents.AddRange(codeDocs);
+			Documents.AddRange(codeDocs.Select(a => new CodeDocument(a)));
 			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
 			foreach (var doc in Documents) {
-				if (doc.NameNoExtension == MAIN_CODE_NAME && refSpan.End <= doc.TextView.TextSnapshot.Length) {
-					doc.TextView.Caret.MoveTo(new SnapshotPoint(doc.TextView.TextSnapshot, refSpan.Start));
-					doc.TextView.Caret.EnsureVisible();
-				}
+				if (doc.NameNoExtension == MAIN_CODE_NAME && refSpan.End <= doc.TextView.TextSnapshot.Length)
+					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, refSpan.Start));
 				else
-					doc.TextView.Caret.MoveTo(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
-				doc.TextView.Selection.Clear();
+					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
 			}
 
 			CanCompile = canCompile;
@@ -479,6 +511,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Dispose() {
+			foreach (var doc in Documents)
+				doc.Dispose();
 			decompileCodeState?.CancelAndDispose();
 			compileCodeState?.CancelAndDispose();
 			languageCompiler.Dispose();
