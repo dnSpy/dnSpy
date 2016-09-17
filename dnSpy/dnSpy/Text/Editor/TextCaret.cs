@@ -74,7 +74,7 @@ namespace dnSpy.Text.Editor {
 			this.__preferredYCoordinate = 0;
 			Affinity = PositionAffinity.Successor;
 			var bufferPos = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
-			this.currentPosition = new CaretPosition(bufferPos, new MappingPoint(bufferPos.Position, PointTrackingMode.Negative), Affinity);
+			this.currentPosition = new CaretPosition(bufferPos, new MappingPoint(bufferPos.Position, PointTrackingMode.Positive), Affinity);
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged += Options_OptionChanged;
@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
 			if (e.OldSnapshot != e.NewSnapshot)
-				OnCaretPositionChanged();
+				OnImplicitCaretPositionChanged();
 			if (imeState.CompositionStarted)
 				MoveImeCompositionWindow();
 		}
@@ -302,12 +302,12 @@ namespace dnSpy.Text.Editor {
 
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
-			OnCaretPositionChanged();
+			OnImplicitCaretPositionChanged();
 		}
 
 		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
-			OnCaretPositionChanged();
+			OnImplicitCaretPositionChanged();
 			if (textView.Options.IsAutoScrollEnabled()) {
 				// Delay this so we don't cause extra events to be raised inside the Changed event
 				textView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(AutoScrollCaret));
@@ -327,23 +327,21 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void OnCaretPositionChanged() => SetPosition(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot, GetPointTrackingMode(Affinity)));
-		void SetPosition(VirtualSnapshotPoint bufferPosition) {
+		void OnImplicitCaretPositionChanged() => SetPositionCore(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot));
+
+		void SetPositionCore(VirtualSnapshotPoint bufferPosition) =>
+			currentPosition = new CaretPosition(bufferPosition, new MappingPoint(bufferPosition.Position, PointTrackingMode.Positive), Affinity);
+
+		void SetExplicitPosition(VirtualSnapshotPoint bufferPosition) {
 			var oldPos = currentPosition;
 			var bufPos = bufferPosition;
-			currentPosition = new CaretPosition(bufPos, new MappingPoint(bufPos.Position, PointTrackingMode.Negative), Affinity);
-			if (!CaretEquals(oldPos, currentPosition)) {
+			SetPositionCore(bufPos);
+			if (oldPos != currentPosition) {
 				if (imeState.CompositionStarted)
 					MoveImeCompositionWindow();
 				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
 			}
 		}
-
-		// Compares two caret positions, ignoring the snapshot
-		static bool CaretEquals(CaretPosition a, CaretPosition b) =>
-			a.Affinity == b.Affinity &&
-			a.VirtualSpaces == b.VirtualSpaces &&
-			a.BufferPosition.Position == b.BufferPosition.Position;
 
 		public void EnsureVisible() {
 			var line = this.ContainingTextViewLine;
@@ -425,7 +423,7 @@ namespace dnSpy.Text.Editor {
 			Affinity = textLine.IsLastTextViewLineForSnapshotLine || bufferPosition.Position != textLine.End ? PositionAffinity.Successor : PositionAffinity.Predecessor;
 			if (filterPos)
 				bufferPosition = FilterColumn(bufferPosition);
-			SetPosition(bufferPosition);
+			SetExplicitPosition(bufferPosition);
 			if (captureHorizontalPosition)
 				preferredXCoordinate = Left;
 			if (captureVerticalPosition)
@@ -451,7 +449,7 @@ namespace dnSpy.Text.Editor {
 			Affinity = caretAffinity;
 			// Don't call FilterColumn() or pressing END on an empty line won't indent it to a virtual column
 			//bufferPosition = FilterColumn(bufferPosition);
-			SetPosition(bufferPosition);
+			SetExplicitPosition(bufferPosition);
 			if (captureHorizontalPosition)
 				preferredXCoordinate = Left;
 			SavePreferredYCoordinate();
