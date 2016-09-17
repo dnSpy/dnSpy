@@ -244,11 +244,11 @@ namespace dnSpy.Language.Intellisense {
 			if (signature == null)
 				return null;
 
-			bool prettyPrintedContent = true;
-			var text = signature.PrettyPrintedContent;
+			bool prettyPrintedContent = false;
+			var text = signature.Content;
 			if (text == null) {
-				prettyPrintedContent = false;
-				text = signature.Content;
+				prettyPrintedContent = true;
+				text = signature.PrettyPrintedContent;
 			}
 			if (text == null)
 				return null;
