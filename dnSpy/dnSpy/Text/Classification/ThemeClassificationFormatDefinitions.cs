@@ -406,74 +406,9 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition XmlTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipColon)]
+		[Name(ThemeClassificationTypeNames.XmlDocToolTipHeader)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipColonClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipExample)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipExampleClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipExceptionCref)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipExceptionCrefClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipReturns)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipReturnsClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeCref)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipSeeCrefClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeLangword)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipSeeLangwordClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeAlso)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipSeeAlsoClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipSeeAlsoCref)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipSeeAlsoCrefClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipParamRefName)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipParamRefNameClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipParamName)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipParamNameClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipTypeParamName)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipTypeParamNameClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipValue)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipValueClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipSummary)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipSummaryClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlDocToolTipText)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition XmlDocToolTipHeaderClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Assembly)]
@@ -1692,129 +1627,12 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipColon)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipColon)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipHeader)]
+		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipHeader)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipColon : ThemeClassificationFormatDefinition {
-			XmlDocToolTipColon() : base(TextColor.XmlDocToolTipColon) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipExample)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipExample)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipExample : ThemeClassificationFormatDefinition {
-			XmlDocToolTipExample() : base(TextColor.XmlDocToolTipExample) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipExceptionCref)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipExceptionCref)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipExceptionCref : ThemeClassificationFormatDefinition {
-			XmlDocToolTipExceptionCref() : base(TextColor.XmlDocToolTipExceptionCref) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipReturns)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipReturns)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipReturns : ThemeClassificationFormatDefinition {
-			XmlDocToolTipReturns() : base(TextColor.XmlDocToolTipReturns) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeCref)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeCref)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipSeeCref : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeCref() : base(TextColor.XmlDocToolTipSeeCref) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeLangword)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeLangword)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipSeeLangword : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeLangword() : base(TextColor.XmlDocToolTipSeeLangword) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeAlso)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeAlso)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipSeeAlso : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeAlso() : base(TextColor.XmlDocToolTipSeeAlso) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSeeAlsoCref)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSeeAlsoCref)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipSeeAlsoCref : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSeeAlsoCref() : base(TextColor.XmlDocToolTipSeeAlsoCref) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipParamRefName)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipParamRefName)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipParamRefName : ThemeClassificationFormatDefinition {
-			XmlDocToolTipParamRefName() : base(TextColor.XmlDocToolTipParamRefName) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipParamName)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipParamName)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipParamName : ThemeClassificationFormatDefinition {
-			XmlDocToolTipParamName() : base(TextColor.XmlDocToolTipParamName) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipTypeParamName)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipTypeParamName)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipTypeParamName : ThemeClassificationFormatDefinition {
-			XmlDocToolTipTypeParamName() : base(TextColor.XmlDocToolTipTypeParamName) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipValue)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipValue)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipValue : ThemeClassificationFormatDefinition {
-			XmlDocToolTipValue() : base(TextColor.XmlDocToolTipValue) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipSummary)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipSummary)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipSummary : ThemeClassificationFormatDefinition {
-			XmlDocToolTipSummary() : base(TextColor.XmlDocToolTipSummary) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlDocToolTipText)]
-		[Name(ThemeClassificationTypeNameKeys.XmlDocToolTipText)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class XmlDocToolTipText : ThemeClassificationFormatDefinition {
-			XmlDocToolTipText() : base(TextColor.XmlDocToolTipText) { }
+		sealed class XmlDocToolTipHeader : ThemeClassificationFormatDefinition {
+			XmlDocToolTipHeader() : base(TextColor.XmlDocToolTipHeader) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 	/// <summary>
@@ -46,5 +47,12 @@ namespace dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips {
 		/// <param name="gpName">Name of generic parameter</param>
 		/// <returns></returns>
 		bool WriteXmlDocGeneric(string xmlDoc, string gpName);
+
+		/// <summary>
+		/// Writes text
+		/// </summary>
+		/// <param name="classificationType">Classification type</param>
+		/// <param name="text">Text</param>
+		void Write(IClassificationType classificationType, string text);
 	}
 }

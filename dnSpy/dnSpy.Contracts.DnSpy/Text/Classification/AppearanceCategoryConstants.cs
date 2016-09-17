@@ -43,6 +43,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string CodeEditor = "dnSpy-CodeEditor";
 
 		/// <summary>
+		/// Quick info tooltip
+		/// </summary>
+		public const string QuickInfoToolTip = "dnSpy-QuickInfoToolTip";
+
+		/// <summary>
 		/// Code completion
 		/// </summary>
 		public const string CodeCompletion = "dnSpy-CodeCompletion";

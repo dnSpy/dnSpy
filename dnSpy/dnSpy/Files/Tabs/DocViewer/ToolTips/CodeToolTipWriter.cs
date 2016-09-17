@@ -18,47 +18,93 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Xml.Linq;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler.XmlDoc;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	sealed class CodeToolTipWriter : ICodeToolTipWriter, IXmlDocOutput {
-		readonly ColorizedTextElementProvider provider;
+		readonly List<ColorAndText> result;
+		readonly StringBuilder sb;
+		readonly IClassificationFormatMap classificationFormatMap;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly bool syntaxHighlight;
 
-		public bool IsEmpty => provider.IsEmpty;
+		public bool IsEmpty => sb.Length == 0;
 
-		public CodeToolTipWriter(bool syntaxHighlight) {
-			this.provider = ColorizedTextElementProvider.Create(syntaxHighlight);
+		public CodeToolTipWriter(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+			if (classificationFormatMap == null)
+				throw new ArgumentNullException(nameof(classificationFormatMap));
+			if (themeClassificationTypeService == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.classificationFormatMap = classificationFormatMap;
+			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.syntaxHighlight = syntaxHighlight;
+			this.result = new List<ColorAndText>();
+			this.sb = new StringBuilder();
 		}
 
-		public UIElement Create() => provider.CreateResult(false, false, TextWrapping.Wrap);
-		public void Write(object color, string text) => provider.Output.Write(color, text);
-		public void Write(TextColor color, string text) => provider.Output.Write(color.Box(), text);
+		public UIElement Create() {
+			var text = sb.ToString();
+			var propsSpans = CreateTextRunPropertiesAndSpans();
+			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+		}
+
+		IEnumerable<TextRunPropertiesAndSpan> CreateTextRunPropertiesAndSpans() {
+			int pos = 0;
+			foreach (var res in result) {
+				var props = GetTextFormattingRunProperties(res.Color);
+				yield return new TextRunPropertiesAndSpan(new Span(pos, res.Text.Length), props);
+				pos += res.Text.Length;
+			}
+		}
+
+		TextFormattingRunProperties GetTextFormattingRunProperties(object color) {
+			if (!syntaxHighlight)
+				color = BoxedTextColor.Text;
+			var classificationType = color as IClassificationType;
+			if (classificationType == null) {
+				var textColor = color as TextColor? ?? TextColor.Text;
+				classificationType = themeClassificationTypeService.GetClassificationType(textColor);
+			}
+			return classificationFormatMap.GetTextProperties(classificationType);
+		}
+
+		void Add(object color, string text) {
+			result.Add(new ColorAndText(color, text));
+			sb.Append(text);
+		}
+
+		public void Write(IClassificationType classificationType, string text) => Add(classificationType, text);
+		public void Write(object color, string text) => Add(color, text);
+		public void Write(TextColor color, string text) => Add(color.Box(), text);
 
 		bool needsNewLine = false;
 
 		void IXmlDocOutput.Write(string s, object data) {
 			if (needsNewLine)
 				((IXmlDocOutput)this).WriteNewLine();
-			provider.Output.Write(data, s);
+			Add(data, s);
 		}
 
 		void IXmlDocOutput.WriteNewLine() {
-			provider.Output.WriteLine();
+			Add(BoxedTextColor.Text, Environment.NewLine);
 			needsNewLine = false;
 		}
 
 		void IXmlDocOutput.WriteSpace() => ((IXmlDocOutput)this).Write(" ", BoxedTextColor.Text);
 
-		void InitializeNeedsNewLine() {
-			var text = provider.Text;
-			needsNewLine = text.Length > 0 && !text.EndsWith(Environment.NewLine);
-		}
+		void InitializeNeedsNewLine() =>
+			needsNewLine = sb.Length == 1 || (sb.Length >= 2 && (sb[sb.Length - 2] != '\r' || sb[sb.Length - 1] != '\n'));
 
 		public bool WriteXmlDoc(string xmlDoc) {
 			InitializeNeedsNewLine();
@@ -101,22 +147,22 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextColor.XmlDocToolTipSummary);
+					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextColor.Text);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
 						if (cref != null)
-							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.XmlDocToolTipSeeCref);
+							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.Text);
 						var langword = xelem.Attribute("langword");
 						if (langword != null)
-							output.Write(((string)langword).Trim(), BoxedTextColor.XmlDocToolTipSeeLangword);
+							output.Write(((string)langword).Trim(), BoxedTextColor.Keyword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
 						if (nameAttr != null)
-							output.Write(((string)nameAttr).Trim(), BoxedTextColor.XmlDocToolTipParamRefName);
+							output.Write(((string)nameAttr).Trim(), BoxedTextColor.Parameter);
 						break;
 					case "BR":
 					case "PARA":
@@ -127,7 +173,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 					}
 				}
 				else
-					output.Write(elem.ToString(), BoxedTextColor.XmlDocToolTipSummary);
+					output.Write(elem.ToString(), BoxedTextColor.Text);
 			}
 		}
 	}

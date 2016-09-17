@@ -1096,24 +1096,6 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
 				BackgroundResourceKey = "SignatureHelpBorder",
 			},
-			new BrushColorInfo(ColorType.XmlDocToolTipDescriptionText, "XML doc tooltip: base class of most XML doc tooltip classes") {
-				Children = new ColorInfo[] {
-					new BrushColorInfo(ColorType.XmlDocToolTipColon, "XML doc tooltip: colon"),
-					new BrushColorInfo(ColorType.XmlDocToolTipExample, "XML doc tooltip: \"Example\" string"),
-					new BrushColorInfo(ColorType.XmlDocToolTipExceptionCref, "XML doc tooltip: cref attribute in an exception tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipReturns, "XML doc tooltip: \"Returns\" string"),
-					new BrushColorInfo(ColorType.XmlDocToolTipSeeCref, "XML doc tooltip: cref attribute in a see tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipSeeLangword, "XML doc tooltip: langword attribute in a see tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipSeeAlso, "XML doc tooltip: \"See also\" string"),
-					new BrushColorInfo(ColorType.XmlDocToolTipSeeAlsoCref, "XML doc tooltip: cref attribute in a seealso tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipParamRefName, "XML doc tooltip: name attribute in a paramref tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipParamName, "XML doc tooltip: name attribute in a param tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipTypeParamName, "XML doc tooltip: name attribute in a typeparam tag"),
-					new BrushColorInfo(ColorType.XmlDocToolTipValue, "XML doc tooltip: \"Value\" string"),
-				}
-			},
-			new BrushColorInfo(ColorType.XmlDocToolTipSummary, "XML doc tooltip: summary text"),
-			new BrushColorInfo(ColorType.XmlDocToolTipText, "XML doc tooltip: XML doc text"),
 			new BrushColorInfo(ColorType.CilButton, "CIL Button") {
 				DefaultForeground = "#FF1E1E1E",
 				ForegroundResourceKey = "CilButtonText",
@@ -1890,6 +1872,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.SignatureHelpCurrentParameter, "Signature Help Current Parameter"),
 			new BrushColorInfo(ColorType.SignatureHelpParameter, "Signature Help Parameter"),
 			new BrushColorInfo(ColorType.SignatureHelpParameterDocumentation, "Signature Help Parameter Documentation"),
+			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
 				DefaultBackground = "White",

@@ -23,6 +23,12 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(AppearanceCategoryConstants.QuickInfoToolTip)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
+	sealed class QuickInfoToolTipTextEditorFormatDefinition : TextEditorFormatDefinition {
+	}
+
+	[Export(typeof(TextEditorFormatDefinition))]
 	[Name(AppearanceCategoryConstants.CodeCompletion)]
 	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
 	sealed class CodeCompletionTextEditorFormatDefinition : TextEditorFormatDefinition {
@@ -32,5 +38,11 @@ namespace dnSpy.Language.Intellisense {
 	[Name(AppearanceCategoryConstants.CodeCompletionToolTip)]
 	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
 	sealed class CodeCompletionToolTipTextEditorFormatDefinition : TextEditorFormatDefinition {
+	}
+
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(AppearanceCategoryConstants.SignatureHelpToolTip)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
+	sealed class SignatureHelpToolTipTextEditorFormatDefinition : TextEditorFormatDefinition {
 	}
 }

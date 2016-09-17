@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +26,8 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 	sealed class CodeToolTipProvider : ICodeToolTipProvider {
@@ -35,11 +38,23 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
+		readonly IClassificationFormatMap classificationFormatMap;
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly bool syntaxHighlight;
 
-		public CodeToolTipProvider(IImageManager imageManager, IDotNetImageManager dotNetImageManager, bool syntaxHighlight) {
+		public CodeToolTipProvider(IImageManager imageManager, IDotNetImageManager dotNetImageManager, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+			if (imageManager == null)
+				throw new ArgumentNullException(nameof(imageManager));
+			if (dotNetImageManager == null)
+				throw new ArgumentNullException(nameof(dotNetImageManager));
+			if (classificationFormatMap == null)
+				throw new ArgumentNullException(nameof(classificationFormatMap));
+			if (themeClassificationTypeService == null)
+				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
+			this.classificationFormatMap = classificationFormatMap;
+			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.syntaxHighlight = syntaxHighlight;
 			this.writers = new List<CodeToolTipWriter>();
 			CreateNewOutput();
@@ -77,7 +92,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		}
 
 		public ICodeToolTipWriter CreateNewOutput() {
-			writers.Add(new CodeToolTipWriter(syntaxHighlight));
+			writers.Add(new CodeToolTipWriter(classificationFormatMap, themeClassificationTypeService, syntaxHighlight));
 			return writers[writers.Count - 1];
 		}
 

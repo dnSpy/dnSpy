@@ -275,7 +275,6 @@
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregator.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregatorService.cs" />
     <Compile Include="Language\Intellisense\Classification\FilterMatchCompletionClassifier.cs" />
-    <Compile Include="Language\Intellisense\CodeCompletionTextEditorFormatDefinition.cs" />
     <Compile Include="Language\Intellisense\CompletionDisplayTextConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenter.cs" />
@@ -318,6 +317,7 @@
     <Compile Include="Language\Intellisense\SignatureHelpSession.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationQuickInfoPresenter.cs" />
+    <Compile Include="Language\Intellisense\TextEditorFormatDefinitions.cs" />
     <Compile Include="Language\Intellisense\TrackingSpanHelpers.cs" />
     <Compile Include="Language\Intellisense\WpfUtils.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />

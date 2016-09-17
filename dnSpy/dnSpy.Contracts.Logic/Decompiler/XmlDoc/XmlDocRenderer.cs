@@ -93,13 +93,10 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static readonly Regex whitespace = new Regex(@"\s+");
 
 		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml) {
-			string lastElemName = string.Empty;
 			bool isNewLine = true;
 			while (xml.Read()) {
 				if (xml.NodeType == XmlNodeType.Element) {
 					string elname = xml.Name.ToLowerInvariant();
-					if (!xml.IsEmptyElement)
-						lastElemName = elname;
 					switch (elname) {
 					case "filterpriority":
 					case "remarks":
@@ -107,60 +104,60 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						break;
 					case "example":
 						output.WriteNewLine();
-						output.Write("Example", BoxedTextColor.XmlDocToolTipExample);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write("Example", BoxedTextColor.XmlDocToolTipHeader);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteNewLine();
 						isNewLine = true;
 						break;
 					case "exception":
 						output.WriteNewLine();
-						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipExceptionCref);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipHeader);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "returns":
 						output.WriteNewLine();
-						output.Write("Returns", BoxedTextColor.XmlDocToolTipReturns);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write("Returns", BoxedTextColor.XmlDocToolTipHeader);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "see":
-						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipSeeCref);
-						output.Write((xml["langword"] ?? string.Empty).Trim(), BoxedTextColor.XmlDocToolTipSeeLangword);
+						output.Write(GetCref(xml["cref"]), BoxedTextColor.Text);
+						output.Write((xml["langword"] ?? string.Empty).Trim(), BoxedTextColor.Keyword);
 						isNewLine = false;
 						break;
 					case "seealso":
 						output.WriteNewLine();
-						output.Write("See also", BoxedTextColor.XmlDocToolTipSeeAlso);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write("See also", BoxedTextColor.XmlDocToolTipHeader);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteSpace();
-						output.Write(GetCref(xml["cref"]), BoxedTextColor.XmlDocToolTipSeeAlsoCref);
+						output.Write(GetCref(xml["cref"]), BoxedTextColor.Text);
 						isNewLine = false;
 						break;
 					case "paramref":
-						output.Write((xml["name"] ?? string.Empty).Trim(), BoxedTextColor.XmlDocToolTipParamRefName);
+						output.Write((xml["name"] ?? string.Empty).Trim(), BoxedTextColor.Parameter);
 						isNewLine = false;
 						break;
 					case "param":
 						output.WriteNewLine();
-						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedTextColor.XmlDocToolTipParamName);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedTextColor.Parameter);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "typeparam":
 						output.WriteNewLine();
-						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedTextColor.XmlDocToolTipTypeParamName);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), BoxedTextColor.TypeGenericParameter);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "value":
 						output.WriteNewLine();
-						output.Write("Value", BoxedTextColor.XmlDocToolTipValue);
-						output.Write(":", BoxedTextColor.XmlDocToolTipColon);
+						output.Write("Value", BoxedTextColor.Keyword);
+						output.Write(":", BoxedTextColor.Text);
 						output.WriteNewLine();
 						isNewLine = true;
 						break;
@@ -177,7 +174,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					var s = whitespace.Replace(xml.Value, " ");
 					if (isNewLine)
 						s = s.TrimStart();
-					output.Write(s, lastElemName == "summary" ? BoxedTextColor.XmlDocToolTipSummary : BoxedTextColor.XmlDocToolTipText);
+					output.Write(s, BoxedTextColor.Text);
 					isNewLine = false;
 				}
 			}

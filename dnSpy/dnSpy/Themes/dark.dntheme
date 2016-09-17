@@ -70,8 +70,7 @@
 		<color name="xmlname" fg="#FF569CD6" />
 		<color name="xmlprocessinginstruction" fg="#FFC8C8C8" />
 		<color name="xmltext" fg="#FFC8C8C8" />
-		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
-		<color name="xmldoctooltiptext" italics="true" bold="false" />
+		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="assembly" fg="#C4C4C4" />
 		<color name="assemblyexe" fg="#F0CA93" />
 		<color name="module" fg="#B17FD7" />

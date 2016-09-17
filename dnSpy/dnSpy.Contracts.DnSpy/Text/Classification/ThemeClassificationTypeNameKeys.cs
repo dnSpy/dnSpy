@@ -383,74 +383,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string XmlText = nameof(XmlText);
 
 		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipColon"/>
+		/// <see cref="TextColor.XmlDocToolTipHeader"/>
 		/// </summary>
-		public const string XmlDocToolTipColon = nameof(XmlDocToolTipColon);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipExample"/>
-		/// </summary>
-		public const string XmlDocToolTipExample = nameof(XmlDocToolTipExample);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipExceptionCref"/>
-		/// </summary>
-		public const string XmlDocToolTipExceptionCref = nameof(XmlDocToolTipExceptionCref);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipReturns"/>
-		/// </summary>
-		public const string XmlDocToolTipReturns = nameof(XmlDocToolTipReturns);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipSeeCref"/>
-		/// </summary>
-		public const string XmlDocToolTipSeeCref = nameof(XmlDocToolTipSeeCref);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipSeeLangword"/>
-		/// </summary>
-		public const string XmlDocToolTipSeeLangword = nameof(XmlDocToolTipSeeLangword);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipSeeAlso"/>
-		/// </summary>
-		public const string XmlDocToolTipSeeAlso = nameof(XmlDocToolTipSeeAlso);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipSeeAlsoCref"/>
-		/// </summary>
-		public const string XmlDocToolTipSeeAlsoCref = nameof(XmlDocToolTipSeeAlsoCref);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipParamRefName"/>
-		/// </summary>
-		public const string XmlDocToolTipParamRefName = nameof(XmlDocToolTipParamRefName);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipParamName"/>
-		/// </summary>
-		public const string XmlDocToolTipParamName = nameof(XmlDocToolTipParamName);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipTypeParamName"/>
-		/// </summary>
-		public const string XmlDocToolTipTypeParamName = nameof(XmlDocToolTipTypeParamName);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipValue"/>
-		/// </summary>
-		public const string XmlDocToolTipValue = nameof(XmlDocToolTipValue);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipSummary"/>
-		/// </summary>
-		public const string XmlDocToolTipSummary = nameof(XmlDocToolTipSummary);
-
-		/// <summary>
-		/// <see cref="TextColor.XmlDocToolTipText"/>
-		/// </summary>
-		public const string XmlDocToolTipText = nameof(XmlDocToolTipText);
+		public const string XmlDocToolTipHeader = nameof(XmlDocToolTipHeader);
 
 		/// <summary>
 		/// <see cref="TextColor.Assembly"/>

@@ -97,20 +97,7 @@ namespace dnSpy.Contracts.Text {
 		XmlName,
 		XmlProcessingInstruction,
 		XmlText,
-		XmlDocToolTipColon,
-		XmlDocToolTipExample,
-		XmlDocToolTipExceptionCref,
-		XmlDocToolTipReturns,
-		XmlDocToolTipSeeCref,
-		XmlDocToolTipSeeLangword,
-		XmlDocToolTipSeeAlso,
-		XmlDocToolTipSeeAlsoCref,
-		XmlDocToolTipParamRefName,
-		XmlDocToolTipParamName,
-		XmlDocToolTipTypeParamName,
-		XmlDocToolTipValue,
-		XmlDocToolTipSummary,
-		XmlDocToolTipText,
+		XmlDocToolTipHeader,
 		Assembly,
 		AssemblyExe,
 		Module,
@@ -311,20 +298,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object XmlName = TextColor.XmlName;
 		public static readonly object XmlProcessingInstruction = TextColor.XmlProcessingInstruction;
 		public static readonly object XmlText = TextColor.XmlText;
-		public static readonly object XmlDocToolTipColon = TextColor.XmlDocToolTipColon;
-		public static readonly object XmlDocToolTipExample = TextColor.XmlDocToolTipExample;
-		public static readonly object XmlDocToolTipExceptionCref = TextColor.XmlDocToolTipExceptionCref;
-		public static readonly object XmlDocToolTipReturns = TextColor.XmlDocToolTipReturns;
-		public static readonly object XmlDocToolTipSeeCref = TextColor.XmlDocToolTipSeeCref;
-		public static readonly object XmlDocToolTipSeeLangword = TextColor.XmlDocToolTipSeeLangword;
-		public static readonly object XmlDocToolTipSeeAlso = TextColor.XmlDocToolTipSeeAlso;
-		public static readonly object XmlDocToolTipSeeAlsoCref = TextColor.XmlDocToolTipSeeAlsoCref;
-		public static readonly object XmlDocToolTipParamRefName = TextColor.XmlDocToolTipParamRefName;
-		public static readonly object XmlDocToolTipParamName = TextColor.XmlDocToolTipParamName;
-		public static readonly object XmlDocToolTipTypeParamName = TextColor.XmlDocToolTipTypeParamName;
-		public static readonly object XmlDocToolTipValue = TextColor.XmlDocToolTipValue;
-		public static readonly object XmlDocToolTipSummary = TextColor.XmlDocToolTipSummary;
-		public static readonly object XmlDocToolTipText = TextColor.XmlDocToolTipText;
+		public static readonly object XmlDocToolTipHeader = TextColor.XmlDocToolTipHeader;
 		public static readonly object Assembly = TextColor.Assembly;
 		public static readonly object AssemblyExe = TextColor.AssemblyExe;
 		public static readonly object Module = TextColor.Module;
@@ -527,20 +501,7 @@ namespace dnSpy.Contracts.Text {
 			XmlName,
 			XmlProcessingInstruction,
 			XmlText,
-			XmlDocToolTipColon,
-			XmlDocToolTipExample,
-			XmlDocToolTipExceptionCref,
-			XmlDocToolTipReturns,
-			XmlDocToolTipSeeCref,
-			XmlDocToolTipSeeLangword,
-			XmlDocToolTipSeeAlso,
-			XmlDocToolTipSeeAlsoCref,
-			XmlDocToolTipParamRefName,
-			XmlDocToolTipParamName,
-			XmlDocToolTipTypeParamName,
-			XmlDocToolTipValue,
-			XmlDocToolTipSummary,
-			XmlDocToolTipText,
+			XmlDocToolTipHeader,
 			Assembly,
 			AssemblyExe,
 			Module,

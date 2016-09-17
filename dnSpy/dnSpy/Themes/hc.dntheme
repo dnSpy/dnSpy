@@ -13,8 +13,7 @@
 		<color name="breakpointstatement" fg="#FFFFFFFF" />
 		<color name="breakpointstatementmarker" bg="#FF963A46" />
 		<color name="disabledbreakpointstatementmarker" fg="#FF963A46" />
-		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
-		<color name="xmldoctooltiptext" italics="true" bold="false" />
+		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="repllinenumberinput1" fg="#FFFFFFFF" />
 		<color name="repllinenumberinput2" fg="#497F49" />
