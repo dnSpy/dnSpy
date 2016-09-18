@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		public TextBlock Create(ImmutableArray<TaggedText> taggedParts) {
 			var context = TaggedTextClassifierContext.Create(taggedParts);
 			return TextBlockFactory.Create(context.Text, classificationFormatMap.DefaultTextProperties,
-				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
 		public void Dispose() => (classifier as IDisposable)?.Dispose();

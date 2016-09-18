@@ -76,7 +76,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 				return null;
 			var text = ToString(sb, taggedParts);
 			var propsSpans = CreateTextRunPropertiesAndSpans(taggedParts, classificationFormatMap, themeClassificationTypeService);
-			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
 		IEnumerable<TextRunPropertiesAndSpan> CreateTextRunPropertiesAndSpans(ImmutableArray<TaggedText> taggedParts, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {

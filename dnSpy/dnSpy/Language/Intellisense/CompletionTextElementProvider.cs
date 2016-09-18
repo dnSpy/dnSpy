@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 			var inputText = collection.ApplicableTo.GetText(collection.ApplicableTo.TextBuffer.CurrentSnapshot);
 			var context = new CompletionClassifierContext(completion, completion.DisplayText, inputText);
 			return TextBlockFactory.Create(context.DisplayText, classificationFormatMap.DefaultTextProperties,
-				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
 		public void Dispose() {

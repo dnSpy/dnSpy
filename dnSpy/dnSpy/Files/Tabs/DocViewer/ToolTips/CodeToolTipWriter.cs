@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs.DocViewer.ToolTips {
 		public UIElement Create() {
 			var text = sb.ToString();
 			var propsSpans = CreateTextRunPropertiesAndSpans();
-			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
 		IEnumerable<TextRunPropertiesAndSpan> CreateTextRunPropertiesAndSpans() {

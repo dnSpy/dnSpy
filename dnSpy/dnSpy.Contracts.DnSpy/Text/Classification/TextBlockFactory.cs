@@ -50,6 +50,11 @@ namespace dnSpy.Contracts.Text.Classification {
 			/// If set, the text won't word wrap
 			/// </summary>
 			DisableWordWrap							= 2,
+
+			/// <summary>
+			/// If set, don't set font size
+			/// </summary>
+			DisableFontSize							= 4,
 		}
 
 		/// <summary>
@@ -72,12 +77,12 @@ namespace dnSpy.Contracts.Text.Classification {
 			int textOffset = 0;
 			foreach (var tag in orderedPropsAndSpans) {
 				if (textOffset < tag.Span.Start)
-					textBlock.Inlines.Add(CreateRun(text.Substring(textOffset, tag.Span.Start - textOffset), defaultProperties, null));
-				textBlock.Inlines.Add(CreateRun(text.Substring(tag.Span.Start, tag.Span.Length), defaultProperties, tag.Properties));
+					textBlock.Inlines.Add(CreateRun(text.Substring(textOffset, tag.Span.Start - textOffset), defaultProperties, null, flags));
+				textBlock.Inlines.Add(CreateRun(text.Substring(tag.Span.Start, tag.Span.Length), defaultProperties, tag.Properties, flags));
 				textOffset = tag.Span.End;
 			}
 			if (textOffset < text.Length)
-				textBlock.Inlines.Add(CreateRun(text.Substring(textOffset), defaultProperties, null));
+				textBlock.Inlines.Add(CreateRun(text.Substring(textOffset), defaultProperties, null, flags));
 
 			if (!defaultProperties.BackgroundBrushEmpty)
 				textBlock.Background = defaultProperties.BackgroundBrush;
@@ -87,7 +92,7 @@ namespace dnSpy.Contracts.Text.Classification {
 				textBlock.FontWeight = defaultProperties.Bold ? FontWeights.Bold : FontWeights.Normal;
 			if (!defaultProperties.ItalicEmpty)
 				textBlock.FontStyle = defaultProperties.Italic ? FontStyles.Italic : FontStyles.Normal;
-			if (!defaultProperties.FontRenderingEmSizeEmpty)
+			if (!defaultProperties.FontRenderingEmSizeEmpty && (flags & Flags.DisableFontSize) == 0)
 				textBlock.FontSize = defaultProperties.FontRenderingEmSize;
 			if (!defaultProperties.TextDecorationsEmpty)
 				textBlock.TextDecorations = defaultProperties.TextDecorations;
@@ -102,7 +107,7 @@ namespace dnSpy.Contracts.Text.Classification {
 			return textBlock;
 		}
 
-		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties) {
+		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties, Flags flags) {
 			var run = new DOC.Run(text);
 
 			if (properties == null)
@@ -116,7 +121,7 @@ namespace dnSpy.Contracts.Text.Classification {
 				run.FontWeight = properties.Bold ? FontWeights.Bold : FontWeights.Normal;
 			if (!properties.ItalicEmpty)
 				run.FontStyle = properties.Italic ? FontStyles.Italic : FontStyles.Normal;
-			if (!properties.FontRenderingEmSizeEmpty)
+			if (!properties.FontRenderingEmSizeEmpty && (flags & Flags.DisableFontSize) == 0)
 				run.FontSize = properties.FontRenderingEmSize;
 			if (!properties.TextDecorationsEmpty)
 				run.TextDecorations = properties.TextDecorations;

@@ -232,7 +232,7 @@ namespace dnSpy.Language.Intellisense {
 			var text = string.Format(dnSpy_Resources.SignatureHelp_Signature_N_of_TotalCount, sigIndex + 1, session.Signatures.Count);
 
 			var propsSpans = Array.Empty<TextRunPropertiesAndSpan>();
-			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
 		object CreateSignatureDocumentationObject() {
@@ -280,7 +280,7 @@ namespace dnSpy.Language.Intellisense {
 
 			var classificationSpans = signatureClassifier.GetClassificationSpans(new SnapshotSpan(signatureTextBuffer.CurrentSnapshot, 0, signatureTextBuffer.CurrentSnapshot.Length));
 			var propsSpans = classificationSpans.Select(a => new TextRunPropertiesAndSpan(a.Span.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
-			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
 		void RegisterSignatureClassifierEvents() {
@@ -335,7 +335,7 @@ namespace dnSpy.Language.Intellisense {
 
 			var classificationSpans = otherClassifier.GetClassificationSpans(new SnapshotSpan(otherTextBuffer.CurrentSnapshot, 0, otherTextBuffer.CurrentSnapshot.Length));
 			var propsSpans = classificationSpans.Select(a => new TextRunPropertiesAndSpan(a.Span.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
-			var result = TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+			var result = TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SignatureHelpClassifierContextBufferKey);
 			return result;
 		}
