@@ -29,24 +29,26 @@
 //	- Classification code, used indirectly by RoslynLanguageCompiler
 //	- Completion code
 //	- Signature help code
+//	- Quick info code
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Roslyn.Internal.SignatureHelp;
-using dnSpy.Roslyn.Shared.Intellisense.Completions;
+using dnSpy.Roslyn.Shared.Documentation;
+using dnSpy.Roslyn.Shared.Intellisense.QuickInfo;
 using dnSpy.Roslyn.Shared.Intellisense.SignatureHelp;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Tagging;
 using dnSpy.Roslyn.Shared.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.VisualStudio.Text;
@@ -56,12 +58,12 @@ namespace dnSpy.Roslyn.Shared.Optimizations {
 	[ExportAutoLoaded]
 	sealed class FirstUseOptimizationLoader : IAutoLoaded {
 		[ImportingConstructor]
-		FirstUseOptimizationLoader(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService) {
+		FirstUseOptimizationLoader(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService, IRoslynDocumentationProviderFactory docFactory) {
 			// This method is currently only called when compiling the code so add an early test
 			// that it's still working in case ImmutableArray<T> gets updated.
 			ImmutableArrayUtilities<byte>.ToImmutableArray(Array.Empty<byte>());
 
-			new FirstUseOptimization(themeClassificationTypeService, textBufferFactoryService);
+			new FirstUseOptimization(themeClassificationTypeService, textBufferFactoryService, docFactory);
 		}
 	}
 
@@ -84,20 +86,23 @@ Module Module1
 End Module
 ";
 
-		public FirstUseOptimization(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService) {
+		public FirstUseOptimization(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService, IRoslynDocumentationProviderFactory docFactory) {
 			var buffer = textBufferFactoryService.CreateTextBuffer();
 			var tagger = new RoslynTagger(themeClassificationTypeService);
-			Task.Run(() => InitializeAsync(buffer, tagger))
+			Task.Run(() => InitializeAsync(buffer, tagger, docFactory))
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		async Task InitializeAsync(ITextBuffer buffer, ITagger<IClassificationTag> tagger) {
+		static MetadataReference CreateMetadataReference(Assembly assembly, IRoslynDocumentationProviderFactory docFactory) =>
+			MetadataReference.CreateFromFile(assembly.Location, documentation: docFactory.TryCreate(assembly.Location));
+
+		async Task InitializeAsync(ITextBuffer buffer, ITagger<IClassificationTag> tagger, IRoslynDocumentationProviderFactory docFactory) {
 			ProfileOptimizationHelper.StartProfile("startup-roslyn");
 			var refs = new MetadataReference[] {
-				MetadataReference.CreateFromFile(typeof(int).Assembly.Location),
+				CreateMetadataReference(typeof(int).Assembly, docFactory),
 			};
 			await InitializeAsync(buffer, csharpCode, refs, LanguageNames.CSharp, tagger, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true), new CSharpParseOptions());
 			await InitializeAsync(buffer, visualBasicCode, refs, LanguageNames.VisualBasic, tagger, new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary), new VisualBasicParseOptions());
@@ -134,16 +139,6 @@ End Module
 				}
 
 				{
-					// Initialize completion code paths
-					var info = CompletionInfo.Create(buffer.CurrentSnapshot);
-					Debug.Assert(info != null);
-					if (info != null) {
-						var completionTrigger = CompletionTrigger.Default;
-						var completionList = await info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, 0, completionTrigger);
-					}
-				}
-
-				{
 					// Initialize signature help code paths
 					var info = SignatureHelpInfo.Create(buffer.CurrentSnapshot);
 					Debug.Assert(info != null);
@@ -152,6 +147,17 @@ End Module
 						Debug.Assert(sigHelpIndex >= 0);
 						var triggerInfo = new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand);
 						var items = await info.Value.SignatureHelpService.GetItemsAsync(info.Value.Document, sigHelpIndex, triggerInfo);
+					}
+				}
+
+				{
+					// Initialize quick info code paths
+					var info = QuickInfoState.Create(buffer.CurrentSnapshot);
+					Debug.Assert(info != null);
+					if (info != null) {
+						int quickInfoIndex = code.IndexOf("Equals");
+						Debug.Assert(quickInfoIndex >= 0);
+						var item = await info.Value.QuickInfoService.GetItemAsync(info.Value.Document, quickInfoIndex);
 					}
 				}
 			}

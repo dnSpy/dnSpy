@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			case CompletionKind.Keyword:				return "IntellisenseKeyword";
 			case CompletionKind.Label:					return "Label";
 			case CompletionKind.Namespace:				return "Namespace";
-			case CompletionKind.Folder:					return "FolderClosed";
+			case CompletionKind.Folder:					return "FolderOpened";
 			case CompletionKind.Reference:				return "AssemblyReference";
 			case CompletionKind.TypeParameter:			return "GenericParameter";
 			case CompletionKind.Snippet:				return "Snippet";

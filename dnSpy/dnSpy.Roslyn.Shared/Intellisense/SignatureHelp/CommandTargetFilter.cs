@@ -25,7 +25,6 @@ using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Internal.SignatureHelp;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {

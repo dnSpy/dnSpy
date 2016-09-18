@@ -17,21 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using System.Windows.Controls;
 
-namespace dnSpy.Contracts.Language.Intellisense {
-	/// <summary>
-	/// Predefined <see cref="IQuickInfoSourceProvider"/> names
-	/// </summary>
-	static class PredefinedDnSpyQuickInfoSourceProviders {
-		/// <summary>
-		/// <see cref="IDocumentViewer"/>
-		/// </summary>
-		public const string DocumentViewer = "dnSpy-" + nameof(DocumentViewer);
-
-		/// <summary>
-		/// Roslyn languages (C# or Visual Basic)
-		/// </summary>
-		public const string Roslyn = "dnSpy-Roslyn";
+namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
+	sealed partial class InformationQuickInfoContentControl : UserControl {
+		public InformationQuickInfoContentControl() {
+			InitializeComponent();
+		}
 	}
 }

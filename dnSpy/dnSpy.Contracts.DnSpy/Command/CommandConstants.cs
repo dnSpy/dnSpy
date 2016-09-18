@@ -138,5 +138,10 @@ namespace dnSpy.Contracts.Command {
 		/// Order of Roslyn signature help <see cref="ICommandTargetFilter"/>
 		/// </summary>
 		public const double CMDTARGETFILTER_ORDER_ROSLYN_SIGNATUREHELP = CMDTARGETFILTER_ORDER_ROSLYN_STATEMENTCOMPLETION - 1000;
+
+		/// <summary>
+		/// Order of Roslyn quick info <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_ROSLYN_QUICKINFO = CMDTARGETFILTER_ORDER_ROSLYN_SIGNATUREHELP - 1000;
 	}
 }

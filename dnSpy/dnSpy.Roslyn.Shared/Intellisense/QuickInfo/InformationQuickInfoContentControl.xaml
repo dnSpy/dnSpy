@@ -1,0 +1,56 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl x:Class="dnSpy.Roslyn.Shared.Intellisense.QuickInfo.InformationQuickInfoContentControl"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dnSpy.Roslyn.Shared.Intellisense.QuickInfo"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Width="16" Height="16" Source="{Binding SymbolImageSource}" Margin="1 1 3 1" VerticalAlignment="Top" Visibility="{Binding HasSymbolImageSource, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <ContentPresenter Grid.Column="1" Content="{Binding MainDescriptionObject}" VerticalAlignment="Center" />
+            <Image Grid.Column="1" Width="16" Height="16" Source="{Binding WarningImageSource}" Margin="1 1 3 1" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasWarningImageSource, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </Grid>
+        <ContentPresenter Grid.Row="1" Content="{Binding DocumentationObject}" Visibility="{Binding HasDocumentationObject, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ContentPresenter Grid.Row="2" Content="{Binding UsageObject}" Visibility="{Binding HasUsageObject, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ContentPresenter Grid.Row="3" Content="{Binding TypeParameterMapObject}" Visibility="{Binding HasTypeParameterMapObject, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ContentPresenter Grid.Row="4" Content="{Binding AnonymousTypesObject}" Visibility="{Binding HasAnonymousTypesObject, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ContentPresenter Grid.Row="5" Content="{Binding ExceptionObject}" Visibility="{Binding HasExceptionObject, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </Grid>
+</UserControl>

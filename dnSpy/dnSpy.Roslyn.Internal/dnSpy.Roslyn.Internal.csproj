@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.Roslyn.Internal</RootNamespace>
-    <AssemblyName>RoslynETAHost</AssemblyName>
+    <AssemblyName>Roslyn.Services.Editor.CSharp.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\dnSpy\bin\Debug\RoslynETAHost.xml</DocumentationFile>
+    <DocumentationFile>..\dnSpy\bin\Debug\Roslyn.Services.Editor.CSharp.UnitTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -33,24 +33,40 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\dnSpy\bin\Release\RoslynETAHost.xml</DocumentationFile>
+    <DocumentationFile>..\dnSpy\bin\Release\Roslyn.Services.Editor.CSharp.UnitTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DocumentExtensions.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="GlyphExtensions.cs" />
     <Compile Include="Helpers\SymbolDisplayPartExtensions.cs" />
+    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuickInfo\CSharp\SemanticQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\CSharp\SyntacticQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\ExportQuickInfoProviderAttribute.cs" />
+    <Compile Include="QuickInfo\IQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\PredefinedQuickInfoProviderNames.cs" />
+    <Compile Include="QuickInfo\Providers\AbstractQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\Providers\AbstractSemanticQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\Providers\AbstractSemanticQuickInfoProvider.ErrorVisitor.cs" />
+    <Compile Include="QuickInfo\Providers\AbstractSemanticQuickInfoProvider.SymbolComparer.cs" />
+    <Compile Include="QuickInfo\QuickInfoContent.cs" />
+    <Compile Include="QuickInfo\QuickInfoItem.cs" />
+    <Compile Include="QuickInfo\QuickInfoService.cs" />
+    <Compile Include="RoslynGlyph.cs" />
     <Compile Include="SignatureHelp\SignatureHelpItem.cs" />
     <Compile Include="SignatureHelp\SignatureHelpItems.cs" />
     <Compile Include="SignatureHelp\SignatureHelpParameter.cs" />
     <Compile Include="SignatureHelp\SignatureHelpService.cs" />
     <Compile Include="SignatureHelp\SignatureHelpService.Roslyn.cs" />
+    <Compile Include="SymbolDisplayPartExtensions.cs" />
+    <Compile Include="TaggedTextExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
     <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

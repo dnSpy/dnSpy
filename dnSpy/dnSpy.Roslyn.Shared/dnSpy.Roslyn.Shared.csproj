@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\dnSpy\bin\Debug\dnSpy.Roslyn.Shared.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\dnSpy\bin\Release\dnSpy.Roslyn.Shared.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Compiler\CSharpLanguageCompiler.cs" />
@@ -46,6 +48,18 @@
     <Compile Include="Documentation\IRoslynDocumentationProviderFactory.cs" />
     <Compile Include="Documentation\RoslynDocumentationProvider.cs" />
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
+    <Compile Include="Glyphs\GlyphHelper.cs" />
+    <Compile Include="Glyphs\RoslynGlyphService.cs" />
+    <Compile Include="Intellisense\QuickInfo\CommandTargetFilter.cs" />
+    <Compile Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml.cs">
+      <DependentUpon>InformationQuickInfoContentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Intellisense\QuickInfo\InformationQuickInfoContentVM.cs" />
+    <Compile Include="Intellisense\QuickInfo\QuickInfoContentCreator.cs" />
+    <Compile Include="Intellisense\QuickInfo\QuickInfoSession.cs" />
+    <Compile Include="Intellisense\QuickInfo\QuickInfoSource.cs" />
+    <Compile Include="Intellisense\QuickInfo\QuickInfoState.cs" />
+    <Compile Include="Intellisense\QuickInfo\QuickInfoTriggerService.cs" />
     <Compile Include="Intellisense\SignatureHelp\CommandTargetFilter.cs" />
     <Compile Include="Intellisense\SignatureHelp\Parameter.cs" />
     <Compile Include="Intellisense\SignatureHelp\Signature.cs" />
@@ -104,6 +118,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
       <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
       <Name>dnSpy.Contracts.DnSpy</Name>
@@ -116,11 +134,16 @@
       <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
       <Name>dnSpy.Roslyn.Internal</Name>
     </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj">
+      <Project>{8b774e77-c956-4abc-bbfe-8756cb4111c8}</Project>
+      <Name>dnSpy.Roslyn.VisualBasic.Internal</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +173,12 @@
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.zh-CN.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.de.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
