@@ -95,7 +95,7 @@
                                   SnapsToDevicePixels="True" />
                         </Button.Content>
                     </Button>
-                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="2 0" Text="{Binding SignatureCountText}" TextWrapping="Wrap" />
+                    <ContentPresenter Grid.Column="1" VerticalAlignment="Center" Margin="2 0" Content="{Binding SignatureCountObject}" />
                     <Button Grid.Column="2" Style="{StaticResource UpDownButtonStyle}" Command="{Binding SelectNextSignatureCommand}">
                         <Button.Content>
                             <Path Fill="{DynamicResource SignatureHelpForeground}"

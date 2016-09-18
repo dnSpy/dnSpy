@@ -47,6 +47,8 @@ namespace dnSpy.Language.Intellisense {
 
 		public ICommand SelectPreviousSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(-1));
 		public ICommand SelectNextSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(1));
+		public bool HasMoreThanOneSignature => session.Signatures.Count > 1;
+		public object SignatureCountObject => CreateSignatureCountObject();
 		public bool HasSignatureDocumentationObject => !string.IsNullOrEmpty(currentSignature?.Documentation);
 		public object SignatureDocumentationObject => CreateSignatureDocumentationObject();
 		public object SignatureObject => CreateSignatureObject();
@@ -61,18 +63,6 @@ namespace dnSpy.Language.Intellisense {
 					!string.IsNullOrEmpty(parameter.Name);
 			}
 		}
-
-		public bool HasMoreThanOneSignature => session.Signatures.Count > 1;
-		public string SignatureCountText {
-			get { return signatureCountText; }
-			set {
-				if (signatureCountText != value) {
-					signatureCountText = value;
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureCountText)));
-				}
-			}
-		}
-		string signatureCountText;
 
 		public ITrackingSpan PresentationSpan {
 			get { return presentationSpan; }
@@ -164,13 +154,12 @@ namespace dnSpy.Language.Intellisense {
 			var signature = session.SelectedSignature;
 			if (signature == null)
 				return;
-			int sigIndex = session.Signatures.IndexOf(signature);
 			// Can happen if the session removes a sig
-			if (sigIndex < 0)
+			if (!session.Signatures.Contains(signature))
 				return;
 			currentSignature = signature;
 			signature.CurrentParameterChanged += Signature_CurrentParameterChanged;
-			SignatureCountText = string.Format(dnSpy_Resources.SignatureHelp_Signature_N_of_TotalCount, sigIndex + 1, session.Signatures.Count);
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureCountObject)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSignatureDocumentationObject)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureDocumentationObject)));
 			UpdateCurrentParameter();
@@ -231,6 +220,20 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void Control_MouseDown(object sender, MouseButtonEventArgs e) => IncrementSelectedSignature(1);
+
+		object CreateSignatureCountObject() {
+			if (session.IsDismissed)
+				return null;
+
+			int sigIndex = session.Signatures.IndexOf(currentSignature);
+			// Can happen if the session removes a sig
+			if (sigIndex < 0)
+				return null;
+			var text = string.Format(dnSpy_Resources.SignatureHelp_Signature_N_of_TotalCount, sigIndex + 1, session.Signatures.Count);
+
+			var propsSpans = Array.Empty<TextRunPropertiesAndSpan>();
+			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily);
+		}
 
 		object CreateSignatureDocumentationObject() {
 			if (session.IsDismissed)
