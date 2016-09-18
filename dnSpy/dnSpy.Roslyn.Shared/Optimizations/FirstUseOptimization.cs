@@ -43,12 +43,14 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Roslyn.Internal.SignatureHelp;
 using dnSpy.Roslyn.Shared.Documentation;
+using dnSpy.Roslyn.Shared.Intellisense.Completions;
 using dnSpy.Roslyn.Shared.Intellisense.QuickInfo;
 using dnSpy.Roslyn.Shared.Intellisense.SignatureHelp;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Tagging;
 using dnSpy.Roslyn.Shared.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.VisualStudio.Text;
@@ -136,6 +138,16 @@ End Module
 					// Initialize classification code paths
 					var spans = new NormalizedSnapshotSpanCollection(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length));
 					foreach (var tagSpan in tagger.GetTags(spans)) { }
+				}
+
+				{
+					// Initialize completion code paths
+					var info = CompletionInfo.Create(buffer.CurrentSnapshot);
+					Debug.Assert(info != null);
+					if (info != null) {
+						var completionTrigger = CompletionTrigger.Default;
+						var completionList = await info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, 0, completionTrigger);
+					}
 				}
 
 				{
