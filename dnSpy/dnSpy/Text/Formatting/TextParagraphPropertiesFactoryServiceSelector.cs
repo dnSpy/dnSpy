@@ -40,7 +40,7 @@ namespace dnSpy.Text.Formatting {
 
 		public ITextParagraphPropertiesFactoryService Select(IContentType contentType) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices);
 			return providerSelector.GetProviders(contentType).FirstOrDefault()?.Value;
 		}
 	}

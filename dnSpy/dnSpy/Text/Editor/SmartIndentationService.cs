@@ -52,7 +52,7 @@ namespace dnSpy.Text.Editor {
 
 		ISmartIndent CreateSmartIndent(ITextView textView) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>(contentTypeRegistryService, smartIndentProviders, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>(contentTypeRegistryService, smartIndentProviders);
 			var contentType = textView.TextDataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var smartIndent = p.Value.CreateSmartIndent(textView);

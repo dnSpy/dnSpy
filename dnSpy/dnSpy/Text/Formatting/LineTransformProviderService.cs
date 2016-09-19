@@ -48,7 +48,7 @@ namespace dnSpy.Text.Formatting {
 
 		public ILineTransformProvider Create(IWpfTextView textView, bool removeExtraTextLineVerticalPixels) {
 			if (providerSelector == null)
-				providerSelector = new ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>(contentTypeRegistryService, lineTransformSourceProviders, a => a.Metadata.ContentTypes);
+				providerSelector = new ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>(contentTypeRegistryService, lineTransformSourceProviders);
 			var contentType = textView.TextDataModel.ContentType;
 			var list = new List<ILineTransformSource>();
 			foreach (var p in providerSelector.GetProviders(contentType)) {

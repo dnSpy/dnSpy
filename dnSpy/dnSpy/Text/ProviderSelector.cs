@@ -21,96 +21,71 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
-	sealed class ProviderSelector<TProvider, TProviderMetadata> {
+	sealed class ProviderSelector<TProvider, TProviderMetadata> where TProviderMetadata : IContentTypeMetadata {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>> dict;
+		readonly Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]> dict;
+		readonly Lazy<TProvider, TProviderMetadata>[] providers;
 
-		public ProviderSelector(IContentTypeRegistryService contentTypeRegistryService, IEnumerable<Lazy<TProvider, TProviderMetadata>> providers, Func<Lazy<TProvider, TProviderMetadata>, IEnumerable<string>> getContentTypes) {
+		public ProviderSelector(IContentTypeRegistryService contentTypeRegistryService, IEnumerable<Lazy<TProvider, TProviderMetadata>> providers) {
 			if (contentTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(contentTypeRegistryService));
-			if (getContentTypes == null)
-				throw new ArgumentNullException(nameof(getContentTypes));
 			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.dict = CreateDictionary(providers, getContentTypes);
+			this.dict = new Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]>();
+			this.providers = providers.ToArray();
 		}
 
 		public IEnumerable<Lazy<TProvider, TProviderMetadata>> GetProviders(IContentType contentType) {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 
-			var ctDict = GetContentTypes(contentType);
-			foreach (var c in ctDict.OrderBy(a => a.Value)) {
-				List<Lazy<TProvider, TProviderMetadata>> list;
-				if (dict.TryGetValue(c.Key, out list))
-					return list;
-			}
-			return Array.Empty<Lazy<TProvider, TProviderMetadata>>();
+			Lazy<TProvider, TProviderMetadata>[] result;
+			if (!dict.TryGetValue(contentType, out result))
+				dict[contentType] = result = CreateProviderList(contentType);
+			return result;
 		}
 
-		static Dictionary<IContentType, int> GetContentTypes(IContentType contentType) {
-			var dict = new Dictionary<IContentType, int>();
-			GetContentTypes(dict, contentType, 0);
-			return dict;
-		}
+		Lazy<TProvider, TProviderMetadata>[] CreateProviderList(IContentType contentType) {
+			List<KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>> list = null;
 
-		static void GetContentTypes(Dictionary<IContentType, int> dict, IContentType contentType, int depth) {
-			if (dict.ContainsKey(contentType))
-				return;
-			dict.Add(contentType, depth);
-			foreach (var c in contentType.BaseTypes)
-				GetContentTypes(dict, c, depth + 1);
-		}
+			// We only allow a provider to match if its supported content type equals the
+			// requested content type or if it's a child of the requested content type.
+			// Eg. "CSharp" only matches "CSharp" (since nothing derives from it), so the
+			// Roslyn text structure navigator provider won't match "text" content types.
 
-		Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>> CreateDictionary(IEnumerable<Lazy<TProvider, TProviderMetadata>> providers, Func<Lazy<TProvider, TProviderMetadata>, IEnumerable<string>> getContentTypes) {
-			var dict = new Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>>();
-			var hash = new HashSet<IContentType>();
-			var stack = new Stack<IContentType>();
-			foreach (var p in providers) {
-				foreach (var cs in getContentTypes(p)) {
-					var c = contentTypeRegistryService.GetContentType(cs);
-					Debug.Assert(c != null);
-					if (c == null)
-						break;
-					Add(dict, p, c, true);
-					foreach (var bc in GetAllBaseTypes(c, hash, stack)) {
-						Debug.Assert(bc != c);
-						if (bc == c)
-							continue;
-						Add(dict, p, bc, false);
-					}
+			foreach (var provider in providers) {
+				foreach (var ctString in provider.Metadata.ContentTypes) {
+					var ct = contentTypeRegistryService.GetContentType(ctString);
+					Debug.Assert(ct != null);
+					if (ct == null)
+						continue;
+					int dist = GetDistance(ct, contentType);
+					if (dist < 0)
+						continue;
+					if (list == null)
+						list = new List<KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>>();
+					list.Add(new KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>(provider, dist));
 				}
 			}
-			return dict;
+
+			if (list == null)
+				return Array.Empty<Lazy<TProvider, TProviderMetadata>>();
+			list.Sort((a, b) => a.Value - b.Value);
+			return list.Select(a => a.Key).ToArray();
 		}
 
-		static IEnumerable<IContentType> GetAllBaseTypes(IContentType contentType, HashSet<IContentType> hash, Stack<IContentType> stack) {
-			hash.Clear();
-			stack.Clear();
-			hash.Add(contentType);
-			foreach (var c in contentType.BaseTypes)
-				stack.Push(c);
-			while (stack.Count > 0) {
-				contentType = stack.Pop();
-				if (hash.Contains(contentType))
-					continue;
-				yield return contentType;
-				hash.Add(contentType);
-				foreach (var c in contentType.BaseTypes)
-					stack.Push(c);
+		int GetDistance(IContentType baseType, IContentType other) {
+			if (baseType == other)
+				return 0;
+			foreach (var bt in other.BaseTypes) {
+				int dist = GetDistance(baseType, bt);
+				if (dist >= 0)
+					return dist + 1;
 			}
-		}
-
-		static void Add(Dictionary<IContentType, List<Lazy<TProvider, TProviderMetadata>>> dict, Lazy<TProvider, TProviderMetadata> provider, IContentType contentType, bool isDef) {
-			List<Lazy<TProvider, TProviderMetadata>> list;
-			if (!dict.TryGetValue(contentType, out list))
-				dict.Add(contentType, list = new List<Lazy<TProvider, TProviderMetadata>>());
-			if (isDef)
-				list.Insert(0, provider);
-			else
-				list.Add(provider);
+			return -1;
 		}
 	}
 }
