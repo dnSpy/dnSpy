@@ -15,7 +15,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 - Open Source (GPLv3) and Free Forever (:TM:)
 - Assembly Editor
 	- Use C# or Visual Basic to edit any method, property and event
-	- Code editor has IntelliSense (code completion and signature help)
+	- Code editor has IntelliSense (code completion, signature help, quick info)
 	- Whole classes can be added to assemblies by adding C# and Visual Basic code
 	- Edit all metadata of types (classes), methods, properties, events, fields
 	- Add, remove, rename any type (class), method, property, event, field
