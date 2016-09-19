@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
-namespace dnSpy.Roslyn.Internal
+namespace Microsoft.CodeAnalysis
 {
     internal static class TaggedTextExtensions
     {

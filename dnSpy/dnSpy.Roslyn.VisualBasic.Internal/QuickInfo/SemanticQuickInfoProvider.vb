@@ -2,14 +2,16 @@
 
 Imports System.Composition
 Imports System.Threading
-Imports dnSpy.Roslyn.Internal
+Imports dnSpy.Roslyn.Internal.Extensions
 Imports dnSpy.Roslyn.Internal.Helpers
+Imports dnSpy.Roslyn.Internal.QuickInfo
 Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Shared.Extensions
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeAnalysis.VisualBasic.Utilities.IntrinsicOperators
 
-Namespace Global.dnSpy.Roslyn.Internal.QuickInfo.VisualBasic
+Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 
 	<ExportQuickInfoProviderAttribute(PredefinedQuickInfoProviderNames.Semantic, LanguageNames.VisualBasic)>
 	Friend Class SemanticQuickInfoProvider

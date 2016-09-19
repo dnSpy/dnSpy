@@ -4,6 +4,7 @@ Imports System.Composition
 Imports System.Threading
 Imports dnSpy.Roslyn.Internal
 Imports dnSpy.Roslyn.Internal.SmartIndent
+Imports dnSpy.Roslyn.Internal.VBHelpers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Formatting.Rules
 Imports Microsoft.CodeAnalysis.Host.Mef

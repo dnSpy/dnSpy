@@ -14,6 +14,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Extensions
 Imports Microsoft.CodeAnalysis.VisualBasic.Formatting
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports dnSpy.Roslyn.Internal.VBHelpers
 
 Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 	Partial Friend Class VisualBasicIndentationService
