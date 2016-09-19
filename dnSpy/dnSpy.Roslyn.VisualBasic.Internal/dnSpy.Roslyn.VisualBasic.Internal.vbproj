@@ -63,6 +63,9 @@
   <ItemGroup>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="QuickInfo\SemanticQuickInfoProvider.vb" />
+    <Compile Include="SmartIndent\SpecialFormattingRule.vb" />
+    <Compile Include="SmartIndent\VisualBasicIndentationService.Indenter.vb" />
+    <Compile Include="SmartIndent\VisualBasicIndentationService.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">

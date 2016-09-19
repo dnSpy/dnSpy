@@ -4,12 +4,13 @@ Imports System.ComponentModel.Composition
 Imports dnSpy.Roslyn.EditorFeatures.Editor
 Imports dnSpy.Roslyn.EditorFeatures.Host
 Imports dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
+Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.VisualStudio.Text
 Imports Microsoft.VisualStudio.Text.Operations
 Imports Microsoft.VisualStudio.Utilities
 
-Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.TextStructureNavigation
+Namespace Global.dnSpy.Roslyn.VisualBasic.EditorFeatures.TextStructureNavigation
 
 	<Export(GetType(ITextStructureNavigatorProvider))>
 	<ContentType(ContentTypeNames.VisualBasicContentType)>

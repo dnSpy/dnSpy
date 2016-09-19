@@ -43,18 +43,28 @@
     <Compile Include="Extensions\Extensions2.cs" />
     <Compile Include="Extensions\DocumentHelpers.cs" />
     <Compile Include="Extensions\ISourceTextHelper.cs" />
+    <Compile Include="Extensions\ITextSnapshotLineExtensions.cs" />
     <Compile Include="Extensions\TextSpanExtensions.cs" />
     <Compile Include="Host\IWaitContext.cs" />
     <Compile Include="Host\IWaitIndicator.cs" />
     <Compile Include="Host\ProgressTracker.cs" />
     <Compile Include="Host\WaitIndicator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SmartIndent\SmartIndent.cs" />
+    <Compile Include="SmartIndent\SmartIndentExtensions.cs" />
+    <Compile Include="SmartIndent\SmartIndentProvider.cs" />
     <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.cs" />
     <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.TextStructureNavigator.cs" />
     <Compile Include="TextStructureNavigation\CSharp\TextStructureNavigatorProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
+      <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
+      <Name>dnSpy.Roslyn.Internal</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

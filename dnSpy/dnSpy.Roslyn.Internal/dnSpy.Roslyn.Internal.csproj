@@ -37,10 +37,13 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CaseInsensitiveComparison.cs" />
     <Compile Include="DocumentExtensions.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="GlyphExtensions.cs" />
     <Compile Include="Helpers\SymbolDisplayPartExtensions.cs" />
+    <Compile Include="ISyntaxFactsServiceExtensions.cs" />
+    <Compile Include="LinkedListExtensions.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickInfo\CSharp\SemanticQuickInfoProvider.cs" />
@@ -61,8 +64,21 @@
     <Compile Include="SignatureHelp\SignatureHelpParameter.cs" />
     <Compile Include="SignatureHelp\SignatureHelpService.cs" />
     <Compile Include="SignatureHelp\SignatureHelpService.Roslyn.cs" />
+    <Compile Include="SmartIndent\AbstractIndentationService.AbstractIndenter.cs" />
+    <Compile Include="SmartIndent\AbstractIndentationService.cs" />
+    <Compile Include="SmartIndent\CSharp\CSharpIndentationService.cs" />
+    <Compile Include="SmartIndent\CSharp\CSharpIndentationService.Indenter.cs" />
+    <Compile Include="SmartIndent\Helpers.cs" />
+    <Compile Include="SmartIndent\IIndentationService.cs" />
+    <Compile Include="SourceTextExtensions.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="SymbolDisplayPartExtensions.cs" />
+    <Compile Include="SyntaxNodeExtensions.cs" />
+    <Compile Include="SyntaxNodeOrTokenExtensions.cs" />
+    <Compile Include="SyntaxTokenExtensions.cs" />
+    <Compile Include="SyntaxTreeExtensions.cs" />
     <Compile Include="TaggedTextExtensions.cs" />
+    <Compile Include="TextLineExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
