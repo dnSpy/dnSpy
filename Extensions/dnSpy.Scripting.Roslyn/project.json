@@ -1,6 +1,13 @@
 {
 	"dependencies": {
-		"Microsoft.CodeAnalysis.CSharp.Scripting": "1.3.2",
+		// Disable nuget downgrade warnings due to beta version of Roslyn. Remove once Roslyn gets updated
+		"System.Collections.Immutable": "1.2.0",
+		"System.IO.FileSystem.Primitives": "4.0.1",
+		"System.Security.Cryptography.Algorithms": "4.2.0",
+		"System.Security.Cryptography.Encoding": "4.0.0",
+
+
+		"Microsoft.CodeAnalysis.CSharp.Scripting": "2.0.0-beta3",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "14.3.25407"
 	},
 	"frameworks": {
