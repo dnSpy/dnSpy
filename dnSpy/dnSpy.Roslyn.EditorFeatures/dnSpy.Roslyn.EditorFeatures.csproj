@@ -38,7 +38,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Dummy.cs" />
+    <Compile Include="EditorFeaturesResources.cs" />
+    <Compile Include="Editor\ContentTypeNames.cs" />
+    <Compile Include="Extensions\Extensions2.cs" />
+    <Compile Include="Extensions\DocumentHelpers.cs" />
+    <Compile Include="Extensions\ISourceTextHelper.cs" />
+    <Compile Include="Extensions\TextSpanExtensions.cs" />
+    <Compile Include="Host\IWaitContext.cs" />
+    <Compile Include="Host\IWaitIndicator.cs" />
+    <Compile Include="Host\ProgressTracker.cs" />
+    <Compile Include="Host\WaitIndicator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.cs" />
+    <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.TextStructureNavigator.cs" />
+    <Compile Include="TextStructureNavigation\CSharp\TextStructureNavigatorProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

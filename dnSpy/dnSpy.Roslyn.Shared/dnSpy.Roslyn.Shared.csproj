@@ -100,6 +100,7 @@
     <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
     <Compile Include="Text\RoslynMefHostServices.cs" />
+    <Compile Include="Text\SourceTextHelper.cs" />
     <Compile Include="Text\Tagging\AsyncTagger.cs" />
     <Compile Include="Text\Tagging\RoslynTagger.cs" />
     <Compile Include="Text\Tagging\RoslynTaggerAsyncState.cs" />
@@ -129,6 +130,10 @@
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
       <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
+      <Project>{f10a60da-4716-45f6-ab2e-4690440c0c7c}</Project>
+      <Name>dnSpy.Roslyn.EditorFeatures</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
       <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>

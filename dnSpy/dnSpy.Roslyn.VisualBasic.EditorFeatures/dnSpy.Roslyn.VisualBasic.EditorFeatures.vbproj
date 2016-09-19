@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Dummy.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="TextStructureNavigation\TextStructureNavigatorProvider.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
