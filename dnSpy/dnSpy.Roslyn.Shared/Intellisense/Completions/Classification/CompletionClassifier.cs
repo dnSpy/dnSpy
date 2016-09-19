@@ -20,10 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Text;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Roslyn.Shared.Text.Classification;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -45,6 +49,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 	sealed class CompletionClassifier : ICompletionClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly IClassificationType punctuationClassificationType;
+		StringBuilder stringBuilder;
 
 		public CompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
 			if (themeClassificationTypeService == null)
@@ -53,44 +58,98 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			this.punctuationClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
 		}
 
-		const string VBOf = "Of …";
-
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
 			var completion = context.Completion as RoslynCompletion;
 			if (completion == null)
 				yield break;
-			var color = completion.CompletionItem.Tags.ToCompletionKind().ToTextColor();
-			if (color != TextColor.Text) {
-				var text = context.DisplayText;
-				bool seenSpecial = false;
-				for (int textOffset = 0; textOffset < text.Length;) {
-					int specialIndex = text.IndexOfAny(punctuationChars, textOffset);
-					int len = specialIndex < 0 ? text.Length - textOffset : specialIndex - textOffset;
-					if (len > 0) {
-						bool wasSpecialCaseString = false;
-						if (seenSpecial) {
-							var s = text.Substring(textOffset, len);
-							if (s == VBOf) {
-								yield return new CompletionClassificationTag(new Span(textOffset, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
-								wasSpecialCaseString = true;
-							}
-						}
-						if (!wasSpecialCaseString)
-							yield return new CompletionClassificationTag(new Span(textOffset, len), themeClassificationTypeService.GetClassificationType(color));
-						textOffset += len;
-					}
 
-					if (specialIndex >= 0) {
-						seenSpecial = true;
-						yield return new CompletionClassificationTag(new Span(textOffset, 1), punctuationClassificationType);
-						textOffset++;
-					}
-				}
+			var collection = context.Collection as RoslynCompletionCollection;
+			if (collection == null)
+				yield break;
+
+			// The completion API doesn't create tagged text so try to extract that information
+			// from the string so we get nice colorized text.
+
+			var color = completion.CompletionItem.Tags.ToCompletionKind().ToTextColor();
+			var text = context.DisplayText;
+
+			// The common case is just an identifier, and in that case, the tag is correct
+			int punctIndex = text.IndexOfAny(punctuationChars, 0);
+			if (punctIndex < 0) {
+				yield return new CompletionClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
+				yield break;
 			}
+
+			// Check for CLASS<> or METHOD()
+			if (punctIndex + 2 == text.Length && text.IndexOfAny(punctuationChars, punctIndex + 1) == punctIndex + 1) {
+				yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
+				yield return new CompletionClassificationTag(new Span(punctIndex, 2), punctuationClassificationType);
+				yield break;
+			}
+
+			// Check for Visual Basic generics special case
+			const string VBOf = "(Of …)";
+			if (text.Length - VBOf.Length == punctIndex && text.EndsWith(VBOf)) {
+				yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
+				yield return new CompletionClassificationTag(new Span(punctIndex, 1), punctuationClassificationType);
+				yield return new CompletionClassificationTag(new Span(punctIndex + 1, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
+				yield return new CompletionClassificationTag(new Span(punctIndex + VBOf.Length - 1, 1), punctuationClassificationType);
+				yield break;
+			}
+
+			// The text is usually identical to the description and it's classified
+			var description = collection.GetDescriptionAsync(completion).GetAwaiter().GetResult();
+			var indexes = GetMatchIndexes(completion, description);
+			if (indexes != null) {
+				int pos = 0;
+				var parts = description.TaggedParts;
+				int endIndex = indexes.Value.Value;
+				for (int i = indexes.Value.Key; i <= endIndex; i++) {
+					var part = parts[i];
+					if (part.Tag == TextTags.LineBreak)
+						break;
+					color = TextTagsHelper.ToTextColor(part.Tag);
+					yield return new CompletionClassificationTag(new Span(pos, part.Text.Length), themeClassificationTypeService.GetClassificationType(color));
+					pos += part.Text.Length;
+				}
+				yield break;
+			}
+
+			// Give up, use the same color for all the text
+			yield return new CompletionClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
 		}
 		static readonly char[] punctuationChars = new char[] {
 			'<', '>',
 			'(', ')',
 		};
+
+		KeyValuePair<int, int>? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
+			if (stringBuilder == null)
+				stringBuilder = new StringBuilder();
+			else
+				stringBuilder.Clear();
+			var displayText = completion.DisplayText;
+			int matchIndex = -1;
+			int index = -1;
+			foreach (var part in description.TaggedParts) {
+				index++;
+				if (part.Tag == TextTags.LineBreak)
+					break;
+				if (matchIndex < 0) {
+					if (!displayText.StartsWith(part.Text))
+						continue;
+					matchIndex = index;
+				}
+				stringBuilder.Append(part.Text);
+				if (stringBuilder.Length == displayText.Length) {
+					if (stringBuilder.ToString() == completion.DisplayText)
+						return new KeyValuePair<int, int>(matchIndex, index);
+					break;
+				}
+				else if (stringBuilder.Length > displayText.Length)
+					break;
+			}
+			return null;
+		}
 	}
 }

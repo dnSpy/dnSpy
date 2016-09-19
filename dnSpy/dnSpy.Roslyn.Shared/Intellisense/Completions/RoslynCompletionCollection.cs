@@ -156,7 +156,7 @@ matched:
 		/// <param name="completion">Completion</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<CompletionDescription> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken) {
+		public Task<CompletionDescription> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken = default(CancellationToken)) {
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
 

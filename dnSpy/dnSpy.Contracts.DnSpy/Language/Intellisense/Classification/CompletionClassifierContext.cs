@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// </summary>
 	sealed class CompletionClassifierContext {
 		/// <summary>
+		/// Gets the collection
+		/// </summary>
+		public CompletionCollection Collection { get; }
+
+		/// <summary>
 		/// Gets the completion to classify
 		/// </summary>
 		public Completion Completion { get; }
@@ -42,16 +47,20 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="collection">Collection</param>
 		/// <param name="completion">Completion to classify</param>
 		/// <param name="displayText">Text shown in the UI</param>
 		/// <param name="inputText">Current user input text</param>
-		public CompletionClassifierContext(Completion completion, string displayText, string inputText) {
+		public CompletionClassifierContext(CompletionCollection collection, Completion completion, string displayText, string inputText) {
+			if (collection == null)
+				throw new ArgumentNullException(nameof(collection));
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
 			if (displayText == null)
 				throw new ArgumentNullException(nameof(displayText));
 			if (inputText == null)
 				throw new ArgumentNullException(nameof(inputText));
+			Collection = collection;
 			Completion = completion;
 			DisplayText = displayText;
 			InputText = inputText;
