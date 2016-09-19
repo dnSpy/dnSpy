@@ -1,0 +1,12 @@
+﻿{
+	"dependencies": {
+		"Microsoft.CodeAnalysis.VisualBasic.Features": "1.3.2",
+		"Microsoft.VisualStudio.Text.UI.Wpf": "14.3.25407"
+	},
+	"frameworks": {
+		"net46": { }
+	},
+	"runtimes": {
+		"win": { }
+	}
+}

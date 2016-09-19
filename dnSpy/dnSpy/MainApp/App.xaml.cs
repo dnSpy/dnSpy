@@ -142,6 +142,10 @@ namespace dnSpy.MainApp {
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly));
 			// Microsoft.VisualStudio.Text.UI.Wpf (needed for the editor option definitions)
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly));
+			// dnSpy.Roslyn.EditorFeatures
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.EditorFeatures.Dummy).Assembly));
+			// dnSpy.Roslyn.VisualBasic.EditorFeatures
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly));
 			AddExtensionFiles(aggregateCatalog);
 			return new CompositionContainer(aggregateCatalog);
 		}

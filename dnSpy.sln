@@ -69,6 +69,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.Internal", "dn
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "dnSpy.Roslyn.VisualBasic.Internal", "dnSpy\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj", "{8B774E77-C956-4ABC-BBFE-8756CB4111C8}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "dnSpy.Roslyn.VisualBasic.EditorFeatures", "dnSpy\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj", "{30057546-DED0-450E-89C3-0354B4FF9CCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.EditorFeatures", "dnSpy\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj", "{F10A60DA-4716-45F6-AB2E-4690440C0C7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,6 +187,14 @@ Global
 		{8B774E77-C956-4ABC-BBFE-8756CB4111C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B774E77-C956-4ABC-BBFE-8756CB4111C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B774E77-C956-4ABC-BBFE-8756CB4111C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30057546-DED0-450E-89C3-0354B4FF9CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30057546-DED0-450E-89C3-0354B4FF9CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30057546-DED0-450E-89C3-0354B4FF9CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30057546-DED0-450E-89C3-0354B4FF9CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,5 +230,7 @@ Global
 		{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31} = {6C439ABB-7252-4F00-9A21-121C11E98895}
 		{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{8B774E77-C956-4ABC-BBFE-8756CB4111C8} = {293F0A13-6653-4580-9116-1D255F4C4E69}
+		{30057546-DED0-450E-89C3-0354B4FF9CCD} = {293F0A13-6653-4580-9116-1D255F4C4E69}
+		{F10A60DA-4716-45F6-AB2E-4690440C0C7C} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 	EndGlobalSection
 EndGlobal

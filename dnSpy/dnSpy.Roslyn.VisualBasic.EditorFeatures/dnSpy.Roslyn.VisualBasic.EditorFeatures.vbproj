@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8B774E77-C956-4ABC-BBFE-8756CB4111C8}</ProjectGuid>
+    <ProjectGuid>{30057546-DED0-450E-89C3-0354B4FF9CCD}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Roslyn.VisualBasic.Internal</RootNamespace>
-    <AssemblyName>Roslyn.Services.Editor.VisualBasic.UnitTests</AssemblyName>
+    <RootNamespace>dnSpy.Roslyn.VisualBasic.EditorFeatures</RootNamespace>
+    <AssemblyName>Roslyn.VisualStudio.Services.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
@@ -21,7 +21,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
-    <DocumentationFile>..\dnSpy\bin\Debug\Roslyn.Services.Editor.VisualBasic.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\dnSpy\bin\Debug\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,7 +30,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>..\dnSpy\bin\Release\</OutputPath>
-    <DocumentationFile>..\dnSpy\bin\Release\Roslyn.Services.Editor.VisualBasic.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\dnSpy\bin\Release\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -61,17 +61,17 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dummy.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="QuickInfo\SemanticQuickInfoProvider.vb" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
-      <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
-      <Name>dnSpy.Roslyn.Internal</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
+      <Project>{f10a60da-4716-45f6-ab2e-4690440c0c7c}</Project>
+      <Name>dnSpy.Roslyn.EditorFeatures</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
