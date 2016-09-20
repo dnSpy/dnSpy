@@ -176,6 +176,9 @@ namespace dnSpy.Debugger.IMModules {
 						if (newFile != null) {
 							UpdateResolver(newFile.ModuleDef);
 							mmdf.Children.Add(newFile);
+							// It could be a netmodule that contains an AssemblyDef row, if so remove it from the assembly
+							if (newFile.ModuleDef.Assembly != null)
+								newFile.ModuleDef.Assembly.Modules.Remove(newFile.ModuleDef);
 							asmNode.DnSpyFile.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
 							asmNode.TreeNode.Children.Add(fileTreeView.TreeView.Create(fileTreeView.CreateNode(asmNode, newFile)));
 						}
