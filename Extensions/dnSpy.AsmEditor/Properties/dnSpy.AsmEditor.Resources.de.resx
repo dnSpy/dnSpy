@@ -1077,7 +1077,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Assembly</value>
   </data>
   <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
-    <value>Setzt den Verlaus zurück</value>
+    <value>Setzt den Verlauf zurück</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
     <value>Konvertiere Assembly zu NetModule</value>
