@@ -50,6 +50,7 @@
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
     <Compile Include="Glyphs\GlyphHelper.cs" />
     <Compile Include="Glyphs\RoslynGlyphService.cs" />
+    <Compile Include="Intellisense\Completions\MruCompletionService.cs" />
     <Compile Include="Intellisense\QuickInfo\CommandTargetFilter.cs" />
     <Compile Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml.cs">
       <DependentUpon>InformationQuickInfoContentControl.xaml</DependentUpon>

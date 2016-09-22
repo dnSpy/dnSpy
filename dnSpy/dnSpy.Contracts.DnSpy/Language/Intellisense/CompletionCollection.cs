@@ -174,6 +174,15 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public void SelectBestMatch() =>
 			SelectionStatus = GetBestMatch() ?? CompletionSelectionStatus.Empty;
 
+		struct MruSelection {
+			public Completion Completion { get; }
+			public int Index { get; }
+			public MruSelection(Completion completion, int index) {
+				Completion = completion;
+				Index = index;
+			}
+		}
+
 		/// <summary>
 		/// Gets the best match in <see cref="Completions"/>
 		/// </summary>
@@ -184,17 +193,46 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
 			var selector = new BestMatchSelector(inputText);
+			var mruSelectionCase = default(MruSelection);
+			var mruSelection = default(MruSelection);
 			if (inputText.Length > 0) {
 				foreach (var completion in filteredCompletions) {
 					if (!completionFilter.IsMatch(completion))
 						continue;
 					matches++;
 					selector.Select(completion);
+
+					if (completion.DisplayText.StartsWith(searchText, StringComparison.Ordinal)) {
+						int currentMruIndex = GetMruIndex(completion);
+						if (mruSelectionCase.Completion == null || currentMruIndex < mruSelectionCase.Index)
+							mruSelectionCase = new MruSelection(completion, currentMruIndex);
+					}
+					else if (completion.DisplayText.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) {
+						int currentMruIndex = GetMruIndex(completion);
+						if (mruSelection.Completion == null || currentMruIndex < mruSelection.Index)
+							mruSelection = new MruSelection(completion, currentMruIndex);
+					}
 				}
 			}
-			bool isSelected = selector.Result != null;
-			return new CompletionSelectionStatus(selector.Result, isSelected: isSelected, isUnique: matches == 1);
+
+			// If it was an exact match, don't use the MRU-selected completion. Eg.
+			// local 'i' exists, and we previously typed 'int', and we've just typed 'i',
+			// then select 'i' and not 'int'
+			var selectedCompletion = mruSelectionCase.Completion ?? mruSelection.Completion ?? selector.Result;
+			if (selector.Result != null && selector.Result.FilterText.Equals(inputText, StringComparison.OrdinalIgnoreCase))
+				selectedCompletion = selector.Result;
+
+			bool isSelected = selectedCompletion != null;
+			bool isUnique = matches == 1;
+			return new CompletionSelectionStatus(selectedCompletion, isSelected, isUnique);
 		}
+
+		/// <summary>
+		/// Gets the MRU index of <paramref name="completion"/>
+		/// </summary>
+		/// <param name="completion">Completion item</param>
+		/// <returns></returns>
+		protected virtual int GetMruIndex(Completion completion) => int.MaxValue;
 
 		/// <summary>
 		/// Commits the currently selected <see cref="Completion"/>

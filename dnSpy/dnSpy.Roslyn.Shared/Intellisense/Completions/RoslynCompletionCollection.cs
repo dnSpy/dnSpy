@@ -33,13 +33,16 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	sealed class RoslynCompletionCollection : CompletionCollection {
+		readonly IMruCompletionService mruCompletionService;
 		readonly CompletionService completionService;
 		readonly ITextView textView;
 		readonly RoslynIntellisenseFilter[] filters;
 		readonly ITextSnapshot originalSnapshot;
 
-		RoslynCompletionCollection(CompletionService completionService, ITextView textView, ITrackingSpan applicableTo, List<Completion> completions, RoslynIntellisenseFilter[] filters)
+		RoslynCompletionCollection(IMruCompletionService mruCompletionService, CompletionService completionService, ITextView textView, ITrackingSpan applicableTo, List<Completion> completions, RoslynIntellisenseFilter[] filters)
 			: base(applicableTo, completions, filters) {
+			if (mruCompletionService == null)
+				throw new ArgumentNullException(nameof(mruCompletionService));
 			if (completionService == null)
 				throw new ArgumentNullException(nameof(completionService));
 			if (textView == null)
@@ -48,13 +51,16 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				throw new ArgumentNullException(nameof(applicableTo));
 			if (filters == null)
 				throw new ArgumentNullException(nameof(filters));
+			this.mruCompletionService = mruCompletionService;
 			this.completionService = completionService;
 			this.textView = textView;
 			this.filters = filters;
 			this.originalSnapshot = applicableTo.TextBuffer.CurrentSnapshot;
 		}
 
-		public static RoslynCompletionCollection Create(CompletionList completionList, CompletionService completionService, ITextView textView, ITrackingSpan applicableTo) {
+		public static RoslynCompletionCollection Create(IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, ITrackingSpan applicableTo) {
+			if (mruCompletionService == null)
+				throw new ArgumentNullException(nameof(mruCompletionService));
 			if (completionList == null)
 				throw new ArgumentNullException(nameof(completionList));
 			if (completionService == null)
@@ -82,8 +88,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				completions.Add(new RoslynCompletion(item));
 			}
 			filters.Sort((a, b) => a.Value - b.Value);
-			return new RoslynCompletionCollection(completionService, textView, applicableTo, completions, filters.Select(a => a.Key).ToArray());
+			return new RoslynCompletionCollection(mruCompletionService, completionService, textView, applicableTo, completions, filters.Select(a => a.Key).ToArray());
 		}
+
+		protected override int GetMruIndex(Completion completion) => mruCompletionService.GetMruIndex(completion.DisplayText);
 
 		protected override void Filter(List<Completion> filteredResult, IList<Completion> completions) {
 			List<string> filteredTags = null;
@@ -120,6 +128,8 @@ matched:
 				base.Commit();
 				return;
 			}
+
+			mruCompletionService.AddText(completion.DisplayText);
 
 			var info = CompletionInfo.Create(ApplicableTo.TextBuffer.CurrentSnapshot);
 			Debug.Assert(info != null);

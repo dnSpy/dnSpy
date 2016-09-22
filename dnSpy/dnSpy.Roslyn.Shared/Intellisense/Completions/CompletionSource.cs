@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -32,10 +33,25 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[Name(PredefinedDnSpyCompletionSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionSourceProvider : ICompletionSourceProvider {
-		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource();
+		readonly IMruCompletionService mruCompletionService;
+
+		[ImportingConstructor]
+		CompletionSourceProvider(IMruCompletionService mruCompletionService) {
+			this.mruCompletionService = mruCompletionService;
+		}
+
+		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource(mruCompletionService);
 	}
 
 	sealed class CompletionSource : ICompletionSource {
+		readonly IMruCompletionService mruCompletionService;
+
+		public CompletionSource(IMruCompletionService mruCompletionService) {
+			if (mruCompletionService == null)
+				throw new ArgumentNullException(nameof(mruCompletionService));
+			this.mruCompletionService = mruCompletionService;
+		}
+
 		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionSets) {
 			var snapshot = session.TextView.TextSnapshot;
 			var triggerPoint = session.GetTriggerPoint(snapshot);
@@ -58,7 +74,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (completionList.DefaultSpan.End > snapshot.Length)
 				return;
 			var trackingSpan = snapshot.CreateTrackingSpan(completionList.DefaultSpan.Start, completionList.DefaultSpan.Length, SpanTrackingMode.EdgeInclusive, TrackingFidelityMode.Forward);
-			var completionSet = RoslynCompletionCollection.Create(completionList, info.Value.CompletionService, session.TextView, trackingSpan);
+			var completionSet = RoslynCompletionCollection.Create(mruCompletionService, completionList, info.Value.CompletionService, session.TextView, trackingSpan);
 			completionSets.Add(completionSet);
 		}
 
