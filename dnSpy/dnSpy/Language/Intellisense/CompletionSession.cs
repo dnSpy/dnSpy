@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Text;
 using dnSpy.Text.MEF;
@@ -63,18 +62,18 @@ namespace dnSpy.Language.Intellisense {
 		readonly ObservableCollection<CompletionCollection> completionSets;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 		readonly ITrackingPoint triggerPoint;
-		readonly ICompletionPresenterProvider completionPresenterProvider;
+		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
 		CompletionSessionCommandTargetFilter completionSessionCommandTargetFilter;
 		IIntellisensePresenter completionPresenter;
 		ICompletionSource[] completionSources;
 
-		public CompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, ICompletionPresenterProvider completionPresenterProvider, Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders) {
+		public CompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			if (completionPresenterProvider == null)
-				throw new ArgumentNullException(nameof(completionPresenterProvider));
+			if (intellisensePresenterFactoryService == null)
+				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
 			if (completionSourceProviders == null)
 				throw new ArgumentNullException(nameof(completionSourceProviders));
 			this.completionSets = new ObservableCollection<CompletionCollection>();
@@ -82,7 +81,7 @@ namespace dnSpy.Language.Intellisense {
 			Properties = new PropertyCollection();
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
-			this.completionPresenterProvider = completionPresenterProvider;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.completionSourceProviders = completionSourceProviders;
 			//TODO: Use trackCaret
 			TextView.Closed += TextView_Closed;
@@ -124,8 +123,11 @@ namespace dnSpy.Language.Intellisense {
 				Dismiss();
 			else {
 				SelectedCompletionSet = completionSets[0];
-				completionPresenter = completionPresenterProvider.Create(this);
-				Debug.Assert(completionPresenter != null);
+				completionPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
+				if (completionPresenter == null) {
+					Dismiss();
+					return;
+				}
 				PresenterChanged?.Invoke(this, EventArgs.Empty);
 				completionSessionCommandTargetFilter = new CompletionSessionCommandTargetFilter(this);
 			}

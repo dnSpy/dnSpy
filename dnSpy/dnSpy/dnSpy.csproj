@@ -282,6 +282,7 @@
       <DependentUpon>CompletionPresenterControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Language\Intellisense\CompletionBroker.cs" />
+    <Compile Include="Language\Intellisense\CompletionPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionSession.cs" />
     <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
@@ -289,15 +290,13 @@
     <Compile Include="Language\Intellisense\FilterImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
     <Compile Include="Language\Intellisense\FilterVM.cs" />
-    <Compile Include="Language\Intellisense\ICompletionPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProviderService.cs" />
     <Compile Include="Language\Intellisense\IntellisenseControllerService.cs" />
+    <Compile Include="Language\Intellisense\IntellisensePresenterFactoryService.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStack.CommandTargetFilter.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStack.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionStackMapService.cs" />
-    <Compile Include="Language\Intellisense\IQuickInfoPresenterProvider.cs" />
-    <Compile Include="Language\Intellisense\ISignatureHelpPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\PresenterMouseProcessor.cs" />
     <Compile Include="Language\Intellisense\QuickInfoBroker.cs" />
     <Compile Include="Language\Intellisense\QuickInfoController.cs" />
@@ -307,6 +306,7 @@
     <Compile Include="Language\Intellisense\QuickInfoPresenterControl.xaml.cs">
       <DependentUpon>QuickInfoPresenterControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Language\Intellisense\QuickInfoPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\QuickInfoSession.cs" />
     <Compile Include="Language\Intellisense\SignatureHelpBroker.cs" />
     <Compile Include="Language\Intellisense\SignatureHelpCurrentParameterTagger.cs" />
@@ -314,6 +314,7 @@
     <Compile Include="Language\Intellisense\SignatureHelpPresenterControl.xaml.cs">
       <DependentUpon>SignatureHelpPresenterControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Language\Intellisense\SignatureHelpPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\SignatureHelpSession.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationQuickInfoPresenter.cs" />

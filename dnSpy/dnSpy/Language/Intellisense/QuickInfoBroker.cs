@@ -30,13 +30,15 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(IQuickInfoBroker))]
-	sealed class QuickInfoBroker : IQuickInfoBroker, IQuickInfoPresenterProvider {
+	sealed class QuickInfoBroker : IQuickInfoBroker {
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
+		readonly Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService;
 		readonly Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders;
 
 		[ImportingConstructor]
-		QuickInfoBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, [ImportMany] IEnumerable<Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>> quickInfoSourceProviders) {
+		QuickInfoBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, [ImportMany] IEnumerable<Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>> quickInfoSourceProviders) {
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.quickInfoSourceProviders = Orderer.Order(quickInfoSourceProviders).ToArray();
 		}
 
@@ -64,7 +66,7 @@ namespace dnSpy.Language.Intellisense {
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
-			var session = new QuickInfoSession(textView, triggerPoint, trackMouse, this, quickInfoSourceProviders);
+			var session = new QuickInfoSession(textView, triggerPoint, trackMouse, intellisensePresenterFactoryService.Value, quickInfoSourceProviders);
 			stack.PushSession(session);
 			return session;
 		}
@@ -80,14 +82,6 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(textView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			return new ReadOnlyCollection<IQuickInfoSession>(stack.Sessions.OfType<IQuickInfoSession>().ToArray());
-		}
-
-		IIntellisensePresenter IQuickInfoPresenterProvider.Create(IQuickInfoSession quickInfoSession) {
-			if (quickInfoSession == null)
-				throw new ArgumentNullException(nameof(quickInfoSession));
-			if (quickInfoSession.TrackMouse)
-				return new QuickInfoPresenter(quickInfoSession);
-			return new SpaceReservationQuickInfoPresenter(quickInfoSession);
 		}
 	}
 }

@@ -23,31 +23,23 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Language.Intellisense;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(ISignatureHelpBroker))]
-	sealed class SignatureHelpBroker : ISignatureHelpBroker, ISignatureHelpPresenterProvider {
+	sealed class SignatureHelpBroker : ISignatureHelpBroker {
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
+		readonly Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService;
 		readonly Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders;
-		readonly ITextBufferFactoryService textBufferFactoryService;
-		readonly IContentTypeRegistryService contentTypeRegistryService;
-		readonly IClassifierAggregatorService classifierAggregatorService;
-		readonly IClassificationFormatMapService classificationFormatMapService;
 
 		[ImportingConstructor]
-		SignatureHelpBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, [ImportMany] IEnumerable<Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>> signatureHelpSourceProviders, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMapService classificationFormatMapService) {
+		SignatureHelpBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, [ImportMany] IEnumerable<Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>> signatureHelpSourceProviders) {
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.signatureHelpSourceProviders = Orderer.Order(signatureHelpSourceProviders).ToArray();
-			this.textBufferFactoryService = textBufferFactoryService;
-			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.classifierAggregatorService = classifierAggregatorService;
-			this.classificationFormatMapService = classificationFormatMapService;
 		}
 
 		public ISignatureHelpSession TriggerSignatureHelp(ITextView textView) {
@@ -73,7 +65,7 @@ namespace dnSpy.Language.Intellisense {
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
-			var session = new SignatureHelpSession(textView, triggerPoint, trackCaret, this, signatureHelpSourceProviders);
+			var session = new SignatureHelpSession(textView, triggerPoint, trackCaret, intellisensePresenterFactoryService.Value, signatureHelpSourceProviders);
 			stack.PushSession(session);
 			return session;
 		}
@@ -96,12 +88,6 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(textView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			return new ReadOnlyCollection<ISignatureHelpSession>(stack.Sessions.OfType<ISignatureHelpSession>().ToArray());
-		}
-
-		IIntellisensePresenter ISignatureHelpPresenterProvider.Create(ISignatureHelpSession signatureHelpSession) {
-			if (signatureHelpSession == null)
-				throw new ArgumentNullException(nameof(signatureHelpSession));
-			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.SignatureHelpToolTip));
 		}
 	}
 }

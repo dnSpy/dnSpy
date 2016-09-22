@@ -17,15 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
-	interface ISignatureHelpPresenterProvider {
-		/// <summary>
-		/// Creates a signature help presenter
-		/// </summary>
-		/// <param name="signatureHelpSession">Signature help session</param>
-		/// <returns></returns>
-		IIntellisensePresenter Create(ISignatureHelpSession signatureHelpSession);
+	[Export(typeof(IIntellisensePresenterProvider))]
+	[Name(PredefinedIntellisensePresenterProviders.DefaultQuickInfoPresenter)]
+	[ContentType(ContentTypes.Any)]
+	sealed class QuickInfoPresenterProvider : IIntellisensePresenterProvider {
+		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+			var quickInfoSession = session as IQuickInfoSession;
+			if (quickInfoSession == null)
+				return null;
+			if (quickInfoSession.TrackMouse)
+				return new QuickInfoPresenter(quickInfoSession);
+			return new SpaceReservationQuickInfoPresenter(quickInfoSession);
+		}
 	}
 }

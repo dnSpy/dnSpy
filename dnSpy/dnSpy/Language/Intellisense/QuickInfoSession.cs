@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Text;
 using dnSpy.Text.MEF;
@@ -56,17 +55,17 @@ namespace dnSpy.Language.Intellisense {
 
 		readonly Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders;
 		readonly ITrackingPoint triggerPoint;
-		readonly IQuickInfoPresenterProvider quickInfoPresenterProvider;
+		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
 		IQuickInfoSource[] quickInfoSources;
 		IIntellisensePresenter quickInfoPresenter;
 
-		public QuickInfoSession(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse, IQuickInfoPresenterProvider quickInfoPresenterProvider, Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders) {
+		public QuickInfoSession(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			if (quickInfoPresenterProvider == null)
-				throw new ArgumentNullException(nameof(quickInfoPresenterProvider));
+			if (intellisensePresenterFactoryService == null)
+				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
 			if (quickInfoSourceProviders == null)
 				throw new ArgumentNullException(nameof(quickInfoSourceProviders));
 			Properties = new PropertyCollection();
@@ -74,7 +73,7 @@ namespace dnSpy.Language.Intellisense {
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
 			TrackMouse = trackMouse;
-			this.quickInfoPresenterProvider = quickInfoPresenterProvider;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.quickInfoSourceProviders = quickInfoSourceProviders;
 			TextView.Closed += TextView_Closed;
 		}
@@ -136,12 +135,14 @@ namespace dnSpy.Language.Intellisense {
 				HasInteractiveContent = CalculateHasInteractiveContent();
 				ApplicableToSpan = applicableToSpan;
 				if (quickInfoPresenter == null) {
-					quickInfoPresenter = quickInfoPresenterProvider.Create(this);
-					Debug.Assert(quickInfoPresenter != null);
+					quickInfoPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
+					if (quickInfoPresenter == null) {
+						Dismiss();
+						return;
+					}
 					PresenterChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
-
 			Recalculated?.Invoke(this, EventArgs.Empty);
 		}
 

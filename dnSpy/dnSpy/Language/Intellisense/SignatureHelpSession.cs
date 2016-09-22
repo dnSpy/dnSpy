@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Text;
@@ -59,27 +58,27 @@ namespace dnSpy.Language.Intellisense {
 		ISignature selectedSignature;
 
 		readonly ITrackingPoint triggerPoint;
-		readonly ISignatureHelpPresenterProvider signatureHelpPresenterProvider;
+		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
 		readonly Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders;
 		readonly ObservableCollection<ISignature> signatures;
 		readonly bool trackCaret;
 		IIntellisensePresenter signatureHelpPresenter;
 		ISignatureHelpSource[] signatureHelpSources;
 
-		public SignatureHelpSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, ISignatureHelpPresenterProvider signatureHelpPresenterProvider, Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders) {
+		public SignatureHelpSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			if (signatureHelpPresenterProvider == null)
-				throw new ArgumentNullException(nameof(signatureHelpPresenterProvider));
+			if (intellisensePresenterFactoryService == null)
+				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
 			if (signatureHelpSourceProviders == null)
 				throw new ArgumentNullException(nameof(signatureHelpSourceProviders));
 			Properties = new PropertyCollection();
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
 			this.trackCaret = trackCaret;
-			this.signatureHelpPresenterProvider = signatureHelpPresenterProvider;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.signatureHelpSourceProviders = signatureHelpSourceProviders;
 			this.signatures = new ObservableCollection<ISignature>();
 			Signatures = new ReadOnlyObservableCollection<ISignature>(this.signatures);
@@ -165,8 +164,11 @@ namespace dnSpy.Language.Intellisense {
 			else {
 				SelectedSignature = signatures[0];
 				if (signatureHelpPresenter == null) {
-					signatureHelpPresenter = signatureHelpPresenterProvider.Create(this);
-					Debug.Assert(signatureHelpPresenter != null);
+					signatureHelpPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
+					if (signatureHelpPresenter == null) {
+						Dismiss();
+						return;
+					}
 					PresenterChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}

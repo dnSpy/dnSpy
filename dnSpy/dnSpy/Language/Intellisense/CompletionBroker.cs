@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
@@ -31,20 +30,16 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(ICompletionBroker))]
-	sealed class CompletionBroker : ICompletionBroker, ICompletionPresenterProvider {
-		readonly IImageManager imageManager;
+	sealed class CompletionBroker : ICompletionBroker {
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
-		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
+		readonly Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
-		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
 
 		[ImportingConstructor]
-		CompletionBroker(IImageManager imageManager, Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
-			this.imageManager = imageManager;
+		CompletionBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
-			this.completionTextElementProviderService = completionTextElementProviderService;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
-			this.completionUIElementProviders = Orderer.Order(completionUIElementProviders).ToArray();
 		}
 
 		public ICompletionSession TriggerCompletion(ITextView textView) {
@@ -70,7 +65,7 @@ namespace dnSpy.Language.Intellisense {
 			if (triggerPoint == null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
-			var session = new CompletionSession(textView, triggerPoint, trackCaret, this, completionSourceProviders);
+			var session = new CompletionSession(textView, triggerPoint, trackCaret, intellisensePresenterFactoryService.Value, completionSourceProviders);
 			stack.PushSession(session);
 			return session;
 		}
@@ -93,12 +88,6 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(textView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			return new ReadOnlyCollection<ICompletionSession>(stack.Sessions.OfType<ICompletionSession>().ToArray());
-		}
-
-		IIntellisensePresenter ICompletionPresenterProvider.Create(ICompletionSession completionSession) {
-			if (completionSession == null)
-				throw new ArgumentNullException(nameof(completionSession));
-			return new CompletionPresenter(imageManager, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
 		}
 	}
 }

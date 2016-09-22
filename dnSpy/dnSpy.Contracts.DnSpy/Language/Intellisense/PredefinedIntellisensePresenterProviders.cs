@@ -17,15 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Language.Intellisense;
-
-namespace dnSpy.Language.Intellisense {
-	interface IQuickInfoPresenterProvider {
+namespace dnSpy.Contracts.Language.Intellisense {
+	/// <summary>
+	/// Names of <see cref="IIntellisensePresenterProvider"/>s
+	/// </summary>
+	static class PredefinedIntellisensePresenterProviders {
 		/// <summary>
-		/// Creates a <see cref="IIntellisensePresenter"/>
+		/// Name of default signature help presenter provider
 		/// </summary>
-		/// <param name="quickInfoSession">Session</param>
-		/// <returns></returns>
-		IIntellisensePresenter Create(IQuickInfoSession quickInfoSession);
+		public const string DefaultSignatureHelpPresenter = "Default Signature Help Presenter";
+
+		/// <summary>
+		/// Name of default quick info presenter provider
+		/// </summary>
+		public const string DefaultQuickInfoPresenter = "Default Quick Info Presenter";
+
+		/// <summary>
+		/// Name of default completion presenter provider
+		/// </summary>
+		public const string DefaultCompletionPresenter = "Default Completion Presenter";
 	}
 }

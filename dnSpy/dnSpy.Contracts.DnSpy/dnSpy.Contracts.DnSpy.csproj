@@ -223,6 +223,7 @@
     <Compile Include="Language\Intellisense\IIntellisenseControllerProvider.cs" />
     <Compile Include="Language\Intellisense\IIntellisenseFilter.cs" />
     <Compile Include="Language\Intellisense\IIntellisensePresenter.cs" />
+    <Compile Include="Language\Intellisense\IIntellisensePresenterProvider.cs" />
     <Compile Include="Language\Intellisense\IIntellisenseSession.cs" />
     <Compile Include="Language\Intellisense\IIntellisenseSessionStack.cs" />
     <Compile Include="Language\Intellisense\IIntellisenseSessionStackMapService.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Language\Intellisense\PredefinedDnSpyCompletionSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpyQuickInfoSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpySignatureHelpSourceProviders.cs" />
+    <Compile Include="Language\Intellisense\PredefinedIntellisensePresenterProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedUIElementProviderNames.cs" />
     <Compile Include="Language\Intellisense\SelectedSignatureChangedEventArgs.cs" />
     <Compile Include="Language\Intellisense\SignatureHelpClassifierContext.cs" />

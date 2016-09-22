@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Language.Intellisense {
