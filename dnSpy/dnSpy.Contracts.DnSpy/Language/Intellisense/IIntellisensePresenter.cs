@@ -26,7 +26,9 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Gets the session
 		/// </summary>
 		IIntellisenseSession Session { get; }
+	}
 
+	interface IIntellisenseCommandTarget {
 		/// <summary>
 		/// Executes the keyboard command or returns false if some other presenter should handle it
 		/// </summary>

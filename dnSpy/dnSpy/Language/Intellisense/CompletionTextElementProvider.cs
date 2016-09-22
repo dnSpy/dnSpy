@@ -55,7 +55,7 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(collection));
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
-			Debug.Assert(collection.FilteredCollection.Contains(completion));
+			Debug.Assert(collection.Completions.Contains(completion));
 
 			var classifier = GetCompletionClassifier(collection);
 			var inputText = collection.ApplicableTo.GetText(collection.ApplicableTo.TextBuffer.CurrentSnapshot);

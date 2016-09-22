@@ -21,11 +21,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Current <see cref="Intellisense.Completion"/>
 	/// </summary>
-	sealed class CurrentCompletion {
+	sealed class CompletionSelectionStatus {
 		/// <summary>
 		/// An instance with no <see cref="Completion"/>
 		/// </summary>
-		public static readonly CurrentCompletion Empty = new CurrentCompletion(null, isSelected: false, isUnique: false);
+		public static readonly CompletionSelectionStatus Empty = new CompletionSelectionStatus(null, isSelected: false, isUnique: false);
 
 		/// <summary>
 		/// Gets the completion or null if none
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="completion">Completion or null</param>
 		/// <param name="isSelected">true if it's selected</param>
 		/// <param name="isUnique">true if it's a unique match</param>
-		public CurrentCompletion(Completion completion, bool isSelected, bool isUnique) {
+		public CompletionSelectionStatus(Completion completion, bool isSelected, bool isUnique) {
 			Completion = completion;
 			IsSelected = isSelected;
 			IsUnique = isUnique;
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(CurrentCompletion left, CurrentCompletion right) => !(left == right);
+		public static bool operator !=(CompletionSelectionStatus left, CompletionSelectionStatus right) => !(left == right);
 
 		/// <summary>
 		/// operator ==()
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(CurrentCompletion left, CurrentCompletion right) {
+		public static bool operator ==(CompletionSelectionStatus left, CompletionSelectionStatus right) {
 			if ((object)left == right)
 				return true;
 			if ((object)left == null)
@@ -76,25 +76,19 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			return left.Equals(right);
 		}
 
-		bool Equals(CurrentCompletion other) => (object)other != null && other.IsSelected == IsSelected && other.IsUnique == IsUnique && Equals(other.Completion, Completion);
+		bool Equals(CompletionSelectionStatus other) => (object)other != null && other.IsSelected == IsSelected && other.IsUnique == IsUnique && Equals(other.Completion, Completion);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as CurrentCompletion);
+		public override bool Equals(object obj) => Equals(obj as CompletionSelectionStatus);
 
 		/// <summary>
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => (Completion?.GetHashCode() ?? 0) ^ (IsSelected ? int.MinValue : 0) ^ (IsUnique ? 0x40000000 : 0);
-
-		/// <summary>
-		/// ToString()
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString() => $"Selected={IsSelected} Unique={IsUnique} {Completion?.DisplayText ?? "<null>"}";
+		public override int GetHashCode() => base.GetHashCode();// Match VS behavior
 	}
 }

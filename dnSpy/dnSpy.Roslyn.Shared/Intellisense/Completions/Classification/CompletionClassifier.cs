@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionCollection collection) => new CompletionClassifier(themeClassificationTypeService);
+		public ICompletionClassifier Create(CompletionCollection completionSet) => new CompletionClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionClassifier : ICompletionClassifier {

@@ -41,7 +41,7 @@ namespace dnSpy.Language.Intellisense {
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
-			var span = completionSession.SelectedCompletionCollection.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
+			var span = completionSession.SelectedCompletionSet.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
 			minimumCaretPosition = span.Start.Position;
 		}
 
@@ -50,15 +50,15 @@ namespace dnSpy.Language.Intellisense {
 				completionSession.Dismiss();
 			else {
 				var pos = e.NewPosition.BufferPosition;
-				var span = completionSession.SelectedCompletionCollection.ApplicableTo.GetSpan(pos.Snapshot);
+				var span = completionSession.SelectedCompletionSet.ApplicableTo.GetSpan(pos.Snapshot);
 				if (pos < minimumCaretPosition || pos < span.Start || pos > span.End)
 					completionSession.Dismiss();
 				else if (pos == span.Start.Position) {
 					// This matches what VS does. It prevents you from accidentally committing
 					// something when you select the current input text by pressing Shift+Home
 					// and then pressing eg. " or some other commit-character.
-					var curr = completionSession.SelectedCompletionCollection.CurrentCompletion;
-					completionSession.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(curr.Completion, isSelected: false, isUnique: curr.IsUnique);
+					var curr = completionSession.SelectedCompletionSet.SelectionStatus;
+					completionSession.SelectedCompletionSet.SelectionStatus = new CompletionSelectionStatus(curr.Completion, isSelected: false, isUnique: curr.IsUnique);
 				}
 			}
 		}
@@ -94,7 +94,7 @@ namespace dnSpy.Language.Intellisense {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.TAB:
-					if (completionSession.SelectedCompletionCollection.CurrentCompletion.IsSelected) {
+					if (completionSession.SelectedCompletionSet.SelectionStatus.IsSelected) {
 						completionSession.Commit();
 						// Don't include the tab character
 						return CommandTargetStatus.Handled;

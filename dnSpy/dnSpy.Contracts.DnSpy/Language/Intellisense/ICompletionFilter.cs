@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Language.Intellisense {
@@ -35,9 +34,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Returns spans matching the search text
 		/// </summary>
-		/// <param name="completion">Completion</param>
 		/// <param name="completionText">Source text to match, eg. <see cref="Completion.DisplayText"/></param>
 		/// <returns></returns>
-		IEnumerable<Span> GetMatchSpans(Completion completion, string completionText);
+		Span[] GetMatchSpans(string completionText);
 	}
 }

@@ -115,7 +115,7 @@ matched:
 		}
 
 		public override void Commit() {
-			var completion = CurrentCompletion.Completion as RoslynCompletion;
+			var completion = SelectionStatus.Completion as RoslynCompletion;
 			if (completion == null) {
 				base.Commit();
 				return;

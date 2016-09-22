@@ -38,25 +38,27 @@ namespace dnSpy.Language.Intellisense.Classification {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionCollection collection) => new FilterMatchCompletionClassifier(themeClassificationTypeService, collection);
+		public ICompletionClassifier Create(CompletionCollection completionSet) => new FilterMatchCompletionClassifier(themeClassificationTypeService, completionSet);
 	}
 
 	sealed class FilterMatchCompletionClassifier : ICompletionClassifier {
-		readonly CompletionCollection completionCollection;
+		readonly CompletionCollection completionSet;
 		readonly IClassificationType completionMatchHighlightClassificationType;
 
-		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService, CompletionCollection completionCollection) {
+		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService, CompletionCollection completionSet) {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			if (completionCollection == null)
-				throw new ArgumentNullException(nameof(completionCollection));
+			if (completionSet == null)
+				throw new ArgumentNullException(nameof(completionSet));
 			this.completionMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionMatchHighlight);
-			this.completionCollection = completionCollection;
+			this.completionSet = completionSet;
 		}
 
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
-			var filter = completionCollection.CreateCompletionFilter(context.InputText);
-			foreach (var span in filter.GetMatchSpans(context.Completion, context.DisplayText))
+			var spans = completionSet.GetHighlightedSpansInDisplayText(context.DisplayText);
+			if (spans == null)
+				yield break;
+			foreach (var span in spans)
 				yield return new CompletionClassificationTag(span, completionMatchHighlightClassificationType);
 		}
 	}

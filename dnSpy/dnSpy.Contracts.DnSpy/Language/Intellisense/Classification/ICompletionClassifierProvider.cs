@@ -28,8 +28,8 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <summary>
 		/// Creates a <see cref="ICompletionClassifier"/> or returns null
 		/// </summary>
-		/// <param name="collection">Collection</param>
+		/// <param name="completionSet">Completion set</param>
 		/// <returns></returns>
-		ICompletionClassifier Create(CompletionCollection collection);
+		ICompletionClassifier Create(CompletionCollection completionSet);
 	}
 }

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.Text;
@@ -39,35 +40,43 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Gets the filtered collection
 		/// </summary>
-		public IFilteredCompletionCollection FilteredCollection => filteredCompletions;
+		public IFilteredCompletionCollection Completions => filteredCompletions;
 
 		/// <summary>
 		/// Current <see cref="Completion"/>
 		/// </summary>
-		public CurrentCompletion CurrentCompletion {
-			get { return currentCompletion; }
+		public CompletionSelectionStatus SelectionStatus {
+			get { return selectionStatus; }
 			set {
 				if ((object)value == null)
 					throw new ArgumentNullException(nameof(value));
-				if (value == currentCompletion)
+				if (value == selectionStatus)
 					return;
 				if (value.Completion != null && !filteredCompletions.Contains(value.Completion))
 					throw new ArgumentException();
-				currentCompletion = value;
-				CurrentCompletionChanged?.Invoke(this, EventArgs.Empty);
+				var oldValue = selectionStatus;
+				selectionStatus = value;
+				SelectionStatusChanged?.Invoke(this, new ValueChangedEventArgs<CompletionSelectionStatus>(oldValue, selectionStatus));
 			}
 		}
-		CurrentCompletion currentCompletion;
+		CompletionSelectionStatus selectionStatus;
 
 		/// <summary>
-		/// Raised when <see cref="CurrentCompletion"/> has changed
+		/// Raised when <see cref="SelectionStatus"/> has changed
 		/// </summary>
-		public event EventHandler CurrentCompletionChanged;
+		public event EventHandler<ValueChangedEventArgs<CompletionSelectionStatus>> SelectionStatusChanged;
 
 		/// <summary>
 		/// Span that will be modified when a <see cref="Completion"/> gets committed
 		/// </summary>
-		public ITrackingSpan ApplicableTo { get; protected set; }
+		public ITrackingSpan ApplicableTo {
+			get { return applicableTo; }
+			protected set {
+				searchText = null;
+				applicableTo = value;
+			}
+		}
+		ITrackingSpan applicableTo;
 
 		/// <summary>
 		/// Constructor
@@ -85,7 +94,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public CompletionCollection(ITrackingSpan applicableTo, IEnumerable<Completion> completions, IReadOnlyList<IIntellisenseFilter> filters = null) {
 			if (completions == null)
 				throw new ArgumentNullException(nameof(completions));
-			currentCompletion = CurrentCompletion.Empty;
+			selectionStatus = CompletionSelectionStatus.Empty;
 			allCompletions = completions.ToArray();
 			filteredCompletions = new FilteredCompletionCollection(allCompletions);
 			ApplicableTo = applicableTo;
@@ -97,6 +106,29 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		public virtual void Recalculate() {
 		}
+
+		string SearchText {
+			get {
+				var atSpan = ApplicableTo;
+				if (atSpan == null)
+					return string.Empty;
+				if (searchText == null || atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber != searchTextVersion) {
+					searchTextVersion = atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber;
+					searchText = atSpan.GetText(atSpan.TextBuffer.CurrentSnapshot);
+				}
+				return searchText;
+			}
+		}
+		string searchText;
+		int searchTextVersion = -1;
+
+		/// <summary>
+		/// Gets highlighted text spans or null
+		/// </summary>
+		/// <param name="displayText">Text shown in the UI</param>
+		/// <returns></returns>
+		public virtual IReadOnlyList<Span> GetHighlightedSpansInDisplayText(string displayText) =>
+			new ReadOnlyCollection<Span>(CreateCompletionFilter(SearchText).GetMatchSpans(displayText));
 
 		/// <summary>
 		/// Creates a <see cref="ICompletionFilter"/>
@@ -117,7 +149,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		public virtual void Filter() {
 			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
-			var inputText = ApplicableTo.GetText(ApplicableTo.TextBuffer.CurrentSnapshot);
+			var inputText = SearchText;
 			var filteredList = new List<Completion>(allCompletions.Length);
 			Filter(filteredList, allCompletions);
 			IList<Completion> finalList;
@@ -140,15 +172,15 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Selects the best match and should be called after <see cref="Filter()"/>
 		/// </summary>
 		public void SelectBestMatch() =>
-			CurrentCompletion = GetBestMatch() ?? CurrentCompletion.Empty;
+			SelectionStatus = GetBestMatch() ?? CompletionSelectionStatus.Empty;
 
 		/// <summary>
-		/// Gets the best match in <see cref="FilteredCollection"/>
+		/// Gets the best match in <see cref="Completions"/>
 		/// </summary>
 		/// <returns></returns>
-		protected virtual CurrentCompletion GetBestMatch() {
+		protected virtual CompletionSelectionStatus GetBestMatch() {
 			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
-			var inputText = ApplicableTo.GetText(ApplicableTo.TextBuffer.CurrentSnapshot);
+			var inputText = SearchText;
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
 			var selector = new BestMatchSelector(inputText);
@@ -161,12 +193,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 				}
 			}
 			bool isSelected = selector.Result != null;
-			return new CurrentCompletion(selector.Result, isSelected: isSelected, isUnique: matches == 1);
+			return new CompletionSelectionStatus(selector.Result, isSelected: isSelected, isUnique: matches == 1);
 		}
 
 		/// <summary>
 		/// Commits the currently selected <see cref="Completion"/>
 		/// </summary>
-		public virtual void Commit() => CurrentCompletion.Completion?.Commit(ApplicableTo);
+		public virtual void Commit() => SelectionStatus.Completion?.Commit(ApplicableTo);
 	}
 }

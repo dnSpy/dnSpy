@@ -27,11 +27,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	class IntellisenseFilter : IIntellisenseFilter {
 		/// <summary>
-		/// Raised when a property value changes
-		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		/// <summary>
 		/// Gets the image
 		/// </summary>
 		public ImageReference Image { get; }
@@ -49,30 +44,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Gets/sets the checked state
 		/// </summary>
-		public virtual bool IsChecked {
-			get { return isChecked; }
-			set {
-				if (isChecked != value) {
-					isChecked = value;
-					RaisePropertyChanged(nameof(IsChecked));
-				}
-			}
-		}
-		bool isChecked;
+		public virtual bool IsChecked { get; set; }
 
 		/// <summary>
 		/// Gets/sets the enabled state
 		/// </summary>
-		public virtual bool IsEnabled {
-			get { return isEnabled; }
-			set {
-				if (isEnabled != value) {
-					isEnabled = value;
-					RaisePropertyChanged(nameof(IsEnabled));
-				}
-			}
-		}
-		bool isEnabled;
+		public virtual bool IsEnabled { get; set; }
 
 		/// <summary>
 		/// Constructor
@@ -92,14 +69,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			Image = image;
 			ToolTip = toolTip;
 			AccessKey = accessKey;
-			this.isChecked = isChecked;
-			this.isEnabled = isEnabled;
+			IsChecked = isChecked;
+			IsEnabled = isEnabled;
 		}
-
-		/// <summary>
-		/// Raises <see cref="PropertyChanged"/>
-		/// </summary>
-		/// <param name="propertyName">Name of property that changed</param>
-		protected void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 }

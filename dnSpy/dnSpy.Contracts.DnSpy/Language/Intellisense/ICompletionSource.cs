@@ -26,10 +26,10 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	interface ICompletionSource : IDisposable {
 		/// <summary>
-		/// Adds <see cref="CompletionCollection"/>s to <paramref name="completionCollections"/>
+		/// Adds <see cref="CompletionCollection"/>s to <paramref name="completionSets"/>
 		/// </summary>
 		/// <param name="session">Completion session</param>
-		/// <param name="completionCollections">Completion collections list</param>
-		void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionCollections);
+		/// <param name="completionSets">Completion collections list</param>
+		void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionSets);
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Windows;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
@@ -30,7 +29,9 @@ namespace dnSpy.Language.Intellisense {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.PositionClosest;
 		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.QuickInfo;
-		public event PropertyChangedEventHandler PropertyChanged;
+		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
+		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
+		public event EventHandler PresentationSpanChanged;
 
 		public double Opacity {
 			get { return control.Opacity; }
@@ -42,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PresentationSpan)));
+					PresentationSpanChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}

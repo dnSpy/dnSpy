@@ -209,7 +209,7 @@
     <Compile Include="Language\Intellisense\CompletionCollection.cs" />
     <Compile Include="Language\Intellisense\CompletionConstants.cs" />
     <Compile Include="Language\Intellisense\CompletionFilter.cs" />
-    <Compile Include="Language\Intellisense\CurrentCompletion.cs" />
+    <Compile Include="Language\Intellisense\CompletionSelectionStatus.cs" />
     <Compile Include="Language\Intellisense\CurrentParameterChangedEventArgs.cs" />
     <Compile Include="Language\Intellisense\FilteredCompletionCollection.cs" />
     <Compile Include="Language\Intellisense\ICompletionFilter.cs" />
@@ -246,10 +246,10 @@
     <Compile Include="Language\Intellisense\PredefinedDnSpyQuickInfoSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpySignatureHelpSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedUIElementProviderNames.cs" />
-    <Compile Include="Language\Intellisense\SelectedCompletionCollectionEventArgs.cs" />
     <Compile Include="Language\Intellisense\SelectedSignatureChangedEventArgs.cs" />
     <Compile Include="Language\Intellisense\SignatureHelpClassifierContext.cs" />
     <Compile Include="Language\Intellisense\SignatureHelpConstants.cs" />
+    <Compile Include="Language\Intellisense\ValueChangedEventArgs.cs" />
     <Compile Include="Menus\CommandTargetMenuItemBase.cs" />
     <Compile Include="Menus\IContextMenuProvider.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />

@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			var roslynCompletion = itemToRender as RoslynCompletion;
 			if (roslynCompletion == null)
 				return null;
-			var roslynCollection = context.SelectedCompletionCollection as RoslynCompletionCollection;
+			var roslynCollection = context.SelectedCompletionSet as RoslynCompletionCollection;
 			Debug.Assert(roslynCollection != null);
 			if (roslynCollection == null)
 				return null;

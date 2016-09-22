@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	abstract class QuickInfoPresenterBase : IIntellisensePresenter {
+	abstract class QuickInfoPresenterBase : IIntellisensePresenter, IIntellisenseCommandTarget {
 		public IIntellisenseSession Session => session;
 		public IList<object> QuickInfoContent => session.QuickInfoContent;
 
@@ -37,7 +37,7 @@ namespace dnSpy.Language.Intellisense {
 			session.Dismissed += Session_Dismissed;
 		}
 
-		public bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
+		bool IIntellisenseCommandTarget.ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
 			switch (command) {
 			case IntellisenseKeyboardCommand.Escape:
 				session.Dismiss();

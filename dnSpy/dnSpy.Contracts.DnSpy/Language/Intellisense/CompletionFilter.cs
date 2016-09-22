@@ -56,22 +56,24 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			return false;
 		}
 
-		public IEnumerable<Span> GetMatchSpans(Completion completion, string completionText) {
+		public Span[] GetMatchSpans(string completionText) {
 			Debug.Assert(acronymMatchIndexes == null || acronymMatchIndexes.Length > 0);
 
 			// Acronyms have higher priority, eg. TA should match |T|ask|A|waiter
 			// and not |Ta|skAwaiter.
 			if (acronymMatchIndexes != null && TryUpdateAcronymIndexes(completionText)) {
-				foreach (var i in acronymMatchIndexes)
-					yield return new Span(i, 1);
-				yield break;
+				var localIndexes = acronymMatchIndexes;
+				var res = new Span[localIndexes.Length];
+				for (int i = 0; i < localIndexes.Length; i++)
+					res[i] = new Span(localIndexes[i], 1);
+				return res;
 			}
 
 			int index = completionText.IndexOf(searchText, stringComparison);
-			if (index >= 0) {
-				yield return new Span(index, searchText.Length);
-				yield break;
-			}
+			if (index >= 0)
+				return new[] { new Span(index, searchText.Length) };
+
+			return Array.Empty<Span>();
 		}
 	}
 }

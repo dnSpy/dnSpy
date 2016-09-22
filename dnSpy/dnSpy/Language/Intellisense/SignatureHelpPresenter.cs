@@ -38,11 +38,14 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class SignatureHelpPresenter : IPopupIntellisensePresenter, INotifyPropertyChanged {
+	sealed class SignatureHelpPresenter : IPopupIntellisensePresenter, IIntellisenseCommandTarget, INotifyPropertyChanged {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
 		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.SignatureHelp;
 		IIntellisenseSession IIntellisensePresenter.Session => session;
+		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
+		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
+		public event EventHandler PresentationSpanChanged;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public ICommand SelectPreviousSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(-1));
@@ -69,7 +72,7 @@ namespace dnSpy.Language.Intellisense {
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PresentationSpan)));
+					PresentationSpanChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -382,7 +385,7 @@ namespace dnSpy.Language.Intellisense {
 			return CreateUIObject(text, GetExtendedClassifierContentType(), new ParameterDocumentationSignatureHelpClassifierContext(session, parameter));
 		}
 
-		public bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
+		bool IIntellisenseCommandTarget.ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
 			switch (command) {
 			case IntellisenseKeyboardCommand.Escape:
 				session.Dismiss();

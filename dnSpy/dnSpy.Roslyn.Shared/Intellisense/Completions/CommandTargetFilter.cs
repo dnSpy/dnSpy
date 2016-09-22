@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (!HasSession)
 				return null;
 
-			var completion = completionSession.SelectedCompletionCollection.CurrentCompletion.Completion as RoslynCompletion;
+			var completion = completionSession.SelectedCompletionSet.SelectionStatus.Completion as RoslynCompletion;
 			if (completion != null)
 				return completion.CompletionItem.Rules.EnterKeyRule;
 
@@ -114,10 +114,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			case EnterKeyRule.AfterFullyTypedWord:
 				if (!HasSession)
 					return false;
-				var completion = completionSession.SelectedCompletionCollection.CurrentCompletion.Completion;
+				var completion = completionSession.SelectedCompletionSet.SelectionStatus.Completion;
 				if (completion == null)
 					return false;
-				var span = completionSession.SelectedCompletionCollection.ApplicableTo;
+				var span = completionSession.SelectedCompletionSet.ApplicableTo;
 				var text = span.GetText(span.TextBuffer.CurrentSnapshot);
 				return text.Equals(completion.FilterText, StringComparison.CurrentCultureIgnoreCase);
 
@@ -154,7 +154,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 					case TextEditorIds.RETURN:
 						// Cache it because it could read from text buffer which gets modified by Commit()
 						bool passThrough = ShouldPassThroughEnterKey(TryGetEnterKeyRule() ?? EnterKeyRule.Default);
-						if (!completionSession.SelectedCompletionCollection.CurrentCompletion.IsSelected) {
+						if (!completionSession.SelectedCompletionSet.SelectionStatus.IsSelected) {
 							passThrough = true;
 							completionSession.Dismiss();
 						}
@@ -199,7 +199,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				case TextEditorIds.COMPLETEWORD:
 					StartSession();
 					if (HasSession) {
-						if (completionSession.SelectedCompletionCollection.CurrentCompletion.IsUnique)
+						if (completionSession.SelectedCompletionSet.SelectionStatus.IsUnique)
 							completionSession.Commit();
 					}
 					return CommandTargetStatus.Handled;

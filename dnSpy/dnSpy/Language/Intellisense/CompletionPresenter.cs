@@ -41,18 +41,21 @@ using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionPresenter : IPopupIntellisensePresenter, IMouseProcessor {
+	sealed class CompletionPresenter : IPopupIntellisensePresenter, IIntellisenseCommandTarget, IMouseProcessor, INotifyPropertyChanged {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
 		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.Completion;
 		IIntellisenseSession IIntellisensePresenter.Session => session;
+		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
+		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
+		public event EventHandler PresentationSpanChanged;
 
 		public ITrackingSpan PresentationSpan {
 			get { return presentationSpan; }
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PresentationSpan)));
+					PresentationSpanChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -106,7 +109,7 @@ namespace dnSpy.Language.Intellisense {
 			this.filters = new List<FilterVM>();
 			this.control.MinWidth = defaultMinWidth;
 			this.control.completionsListBox.MaxHeight = defaultMaxHeight;
-			session.SelectedCompletionCollectionChanged += CompletionSession_SelectedCompletionCollectionChanged;
+			session.SelectedCompletionSetChanged += CompletionSession_SelectedCompletionSetChanged;
 			session.Dismissed += CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus += TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
@@ -141,7 +144,7 @@ namespace dnSpy.Language.Intellisense {
 				return;
 			if (!listboxItem.IsMouseOver)
 				return;
-			if (item != session.SelectedCompletionCollection?.CurrentCompletion.Completion)
+			if (item != session.SelectedCompletionSet?.SelectionStatus.Completion)
 				return;
 			session.Commit();
 		}
@@ -387,23 +390,23 @@ namespace dnSpy.Language.Intellisense {
 			if (e.AddedItems == null || e.AddedItems.Count < 1)
 				return;
 			Debug.Assert(e.AddedItems.Count == 1);
-			var coll = session.SelectedCompletionCollection;
+			var coll = session.SelectedCompletionSet;
 			if (coll == null)
 				return;
 			var newCompletion = e.AddedItems[0] as Completion;
 			Debug.Assert(newCompletion != null);
 			if (newCompletion == null)
 				return;
-			if (coll.CurrentCompletion.Completion == e.AddedItems[0])
+			if (coll.SelectionStatus.Completion == e.AddedItems[0])
 				return;
-			bool validItem = coll.FilteredCollection.Contains(newCompletion);
+			bool validItem = coll.Completions.Contains(newCompletion);
 			Debug.Assert(validItem);
 			if (!validItem)
 				return;
-			coll.CurrentCompletion = new CurrentCompletion(newCompletion, isSelected: true, isUnique: true);
+			coll.SelectionStatus = new CompletionSelectionStatus(newCompletion, isSelected: true, isUnique: true);
 		}
 
-		public bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
+		bool IIntellisenseCommandTarget.ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
 			switch (command) {
 			case IntellisenseKeyboardCommand.Up:
 				MoveUpDown(true);
@@ -455,11 +458,11 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void MoveUpDown(int count, bool mustBeSelected) {
-			var coll = session.SelectedCompletionCollection.FilteredCollection;
-			int index = coll.IndexOf(session.SelectedCompletionCollection.CurrentCompletion.Completion);
+			var coll = session.SelectedCompletionSet.Completions;
+			int index = coll.IndexOf(session.SelectedCompletionSet.SelectionStatus.Completion);
 			if (index < 0)
 				index = 0;
-			if (!mustBeSelected || session.SelectedCompletionCollection.CurrentCompletion.IsSelected)
+			if (!mustBeSelected || session.SelectedCompletionSet.SelectionStatus.IsSelected)
 				index = index + count;
 			if (index < 0)
 				index = 0;
@@ -475,7 +478,7 @@ namespace dnSpy.Language.Intellisense {
 				ignoreScrollIntoView = false;
 			}
 
-			session.SelectedCompletionCollection.CurrentCompletion = new CurrentCompletion(newItem, isSelected: true, isUnique: true);
+			session.SelectedCompletionSet.SelectionStatus = new CompletionSelectionStatus(newItem, isSelected: true, isUnique: true);
 			ScrollSelectedItemIntoView(false);
 		}
 
@@ -486,13 +489,13 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void TextView_LostAggregateFocus(object sender, EventArgs e) => session.Dismiss();
-		void CompletionSession_SelectedCompletionCollectionChanged(object sender, SelectedCompletionCollectionEventArgs e) {
+		void CompletionSession_SelectedCompletionSetChanged(object sender, ValueChangedEventArgs<CompletionCollection> e) {
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
 		}
 
 		void UpdateFilterCollection() {
-			var coll = session.SelectedCompletionCollection;
+			var coll = session.SelectedCompletionSet;
 			DisposeFilters();
 			if (coll != null) {
 				foreach (var filter in coll.Filters)
@@ -519,9 +522,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void UpdateSelectedCompletion() {
-			var coll = session.SelectedCompletionCollection;
+			var coll = session.SelectedCompletionSet;
 			RegisterCompletionCollectionEvents(coll);
-			control.completionsListBox.ItemsSource = coll?.FilteredCollection;
+			control.completionsListBox.ItemsSource = coll?.Completions;
 			UpdateSelectedItem();
 		}
 
@@ -530,15 +533,15 @@ namespace dnSpy.Language.Intellisense {
 			if (currentCompletionCollection == null)
 				control.completionsListBox.SelectedItem = null;
 			else {
-				control.completionsListBox.SelectedItem = currentCompletionCollection.CurrentCompletion.Completion;
+				control.completionsListBox.SelectedItem = currentCompletionCollection.SelectionStatus.Completion;
 				ScrollSelectedItemIntoView(forceCenter ?? !control.IsKeyboardFocusWithin);
-				if (!currentCompletionCollection.CurrentCompletion.IsSelected)
+				if (!currentCompletionCollection.SelectionStatus.IsSelected)
 					control.completionsListBox.SelectedItem = null;
 			}
 			DelayShowToolTip();
 		}
 
-		void CompletionCollection_CurrentCompletionChanged(object sender, EventArgs e) {
+		void CompletionCollection_SelectionStatusChanged(object sender, ValueChangedEventArgs<CompletionSelectionStatus> e) {
 			Debug.Assert(currentCompletionCollection == sender);
 			UpdateSelectedItem();
 		}
@@ -548,12 +551,12 @@ namespace dnSpy.Language.Intellisense {
 			UnregisterCompletionCollectionEvents();
 			Debug.Assert(currentCompletionCollection == null);
 			currentCompletionCollection = collection;
-			collection.CurrentCompletionChanged += CompletionCollection_CurrentCompletionChanged;
+			collection.SelectionStatusChanged += CompletionCollection_SelectionStatusChanged;
 		}
 
 		void UnregisterCompletionCollectionEvents() {
 			if (currentCompletionCollection != null) {
-				currentCompletionCollection.CurrentCompletionChanged -= CompletionCollection_CurrentCompletionChanged;
+				currentCompletionCollection.SelectionStatusChanged -= CompletionCollection_SelectionStatusChanged;
 				currentCompletionCollection = null;
 			}
 		}
@@ -564,7 +567,7 @@ namespace dnSpy.Language.Intellisense {
 			toolTipTimer.Stop();
 			toolTipTimer.Tick -= ToolTipTimer_Tick;
 			HideToolTip();
-			session.SelectedCompletionCollectionChanged -= CompletionSession_SelectedCompletionCollectionChanged;
+			session.SelectedCompletionSetChanged -= CompletionSession_SelectedCompletionSetChanged;
 			session.Dismissed -= CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus -= TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
@@ -596,8 +599,8 @@ namespace dnSpy.Language.Intellisense {
 		public FrameworkElement GetDisplayText(Completion completion) {
 			if (session.IsDismissed)
 				return null;
-			var collection = session.SelectedCompletionCollection;
-			Debug.Assert(collection.FilteredCollection.Contains(completion));
+			var collection = session.SelectedCompletionSet;
+			Debug.Assert(collection.Completions.Contains(completion));
 			return completionTextElementProvider.Create(collection, completion);
 		}
 

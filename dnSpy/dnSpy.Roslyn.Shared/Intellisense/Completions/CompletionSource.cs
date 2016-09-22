@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	}
 
 	sealed class CompletionSource : ICompletionSource {
-		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionCollections) {
+		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionSets) {
 			var snapshot = session.TextView.TextSnapshot;
 			var triggerPoint = session.GetTriggerPoint(snapshot);
 			if (triggerPoint == null)
@@ -58,8 +58,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (completionList.DefaultSpan.End > snapshot.Length)
 				return;
 			var trackingSpan = snapshot.CreateTrackingSpan(completionList.DefaultSpan.Start, completionList.DefaultSpan.Length, SpanTrackingMode.EdgeInclusive, TrackingFidelityMode.Forward);
-			var completionCollection = RoslynCompletionCollection.Create(completionList, info.Value.CompletionService, session.TextView, trackingSpan);
-			completionCollections.Add(completionCollection);
+			var completionSet = RoslynCompletionCollection.Create(completionList, info.Value.CompletionService, session.TextView, trackingSpan);
+			completionSets.Add(completionSet);
 		}
 
 		public void Dispose() { }

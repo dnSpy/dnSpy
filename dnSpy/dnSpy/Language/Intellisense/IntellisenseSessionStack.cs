@@ -26,6 +26,7 @@ using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
@@ -125,7 +126,7 @@ namespace dnSpy.Language.Intellisense {
 
 		bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
 			foreach (var session in sessions) {
-				if (session.Presenter?.ExecuteKeyboardCommand(command) == true)
+				if ((session.Presenter as IIntellisenseCommandTarget)?.ExecuteKeyboardCommand(command) == true)
 					return true;
 			}
 			return false;
@@ -234,10 +235,9 @@ namespace dnSpy.Language.Intellisense {
 					sessionState.SetSpaceReservationManager(wpfTextView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
 				}
-				if (sessionState.PopupIntellisensePresenter != null)
-					sessionState.PopupIntellisensePresenter.PropertyChanged -= PopupIntellisensePresenter_PropertyChanged;
+				UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
 				sessionState.PopupIntellisensePresenter = popupPresenter;
-				sessionState.PopupIntellisensePresenter.PropertyChanged += PopupIntellisensePresenter_PropertyChanged;
+				RegisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
 
 				var presentationSpan = popupPresenter.PresentationSpan;
 				var surfaceElement = popupPresenter.SurfaceElement;
@@ -255,22 +255,48 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void PopupIntellisensePresenter_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (wpfTextView.IsClosed)
+		void RegisterPopupIntellisensePresenterEvents(IPopupIntellisensePresenter popupPresenter) {
+			if (popupPresenter != null) {
+				popupPresenter.PopupStylesChanged += PopupIntellisensePresenter_PopupStylesChanged;
+				popupPresenter.PresentationSpanChanged += PopupIntellisensePresenter_PresentationSpanChanged;
+				popupPresenter.SurfaceElementChanged += PopupIntellisensePresenter_SurfaceElementChanged;
+			}
+		}
+
+		void UnregisterPopupIntellisensePresenterEvents(IPopupIntellisensePresenter popupPresenter) {
+			if (popupPresenter != null) {
+				popupPresenter.PopupStylesChanged -= PopupIntellisensePresenter_PopupStylesChanged;
+				popupPresenter.PresentationSpanChanged -= PopupIntellisensePresenter_PresentationSpanChanged;
+				popupPresenter.SurfaceElementChanged -= PopupIntellisensePresenter_SurfaceElementChanged;
+			}
+		}
+
+		void PopupIntellisensePresenter_SurfaceElementChanged(object sender, EventArgs e) =>
+			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender, nameof(IPopupIntellisensePresenter.SurfaceElement));
+
+		void PopupIntellisensePresenter_PresentationSpanChanged(object sender, EventArgs e) =>
+			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender, nameof(IPopupIntellisensePresenter.PresentationSpan));
+
+		void PopupIntellisensePresenter_PopupStylesChanged(object sender, ValueChangedEventArgs<PopupStyles> e) =>
+			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender, nameof(IPopupIntellisensePresenter.PopupStyles));
+
+		void PopupIntellisensePresenter_PropertyChanged(IPopupIntellisensePresenter popupPresenter, string propertyName) {
+			if (wpfTextView.IsClosed) {
+				UnregisterPopupIntellisensePresenterEvents(popupPresenter);
 				return;
-			var popupPresenter = (IPopupIntellisensePresenter)sender;
+			}
 			var sessionState = TryGetSessionState(popupPresenter);
 			Debug.Assert(sessionState != null);
 			if (sessionState == null)
 				return;
-			if (e.PropertyName == nameof(popupPresenter.PresentationSpan) || e.PropertyName == nameof(popupPresenter.PopupStyles)) {
+			if (propertyName == nameof(popupPresenter.PresentationSpan) || propertyName == nameof(popupPresenter.PopupStyles)) {
 				var presentationSpan = popupPresenter.PresentationSpan;
 				if (presentationSpan == null || sessionState.SpaceReservationAgent == null)
 					PresenterUpdated(popupPresenter.Session);
 				else
 					sessionState.SpaceReservationManager.UpdatePopupAgent(sessionState.SpaceReservationAgent, presentationSpan, popupPresenter.PopupStyles);
 			}
-			else if (e.PropertyName == nameof(popupPresenter.SurfaceElement))
+			else if (propertyName == nameof(popupPresenter.SurfaceElement))
 				PresenterUpdated(popupPresenter.Session);
 		}
 
@@ -308,8 +334,7 @@ namespace dnSpy.Language.Intellisense {
 				sessionState.SpaceReservationManager.RemoveAgent(sessionState.SpaceReservationAgent);
 			if (sessionState.SpaceReservationManager != null)
 				sessionState.SpaceReservationManager.AgentChanged -= SpaceReservationManager_AgentChanged;
-			if (sessionState.PopupIntellisensePresenter != null)
-				sessionState.PopupIntellisensePresenter.PropertyChanged -= PopupIntellisensePresenter_PropertyChanged;
+			UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
 			sessionStates.Remove(sessionState);
 			if (sessions.Count == 0) {
 				Debug.Assert(sessionStates.Count == 0);

@@ -20,28 +20,13 @@
 using System;
 
 namespace dnSpy.Contracts.Language.Intellisense {
-	/// <summary>
-	/// Selected <see cref="CompletionCollection"/> changed event args
-	/// </summary>
-	sealed class SelectedCompletionCollectionEventArgs : EventArgs {
-		/// <summary>
-		/// Old collection
-		/// </summary>
-		public CompletionCollection OldCollection { get; }
+	class ValueChangedEventArgs<TValue> : EventArgs {
+		public TValue OldValue { get; }
+		public TValue NewValue { get; }
 
-		/// <summary>
-		/// New collection
-		/// </summary>
-		public CompletionCollection NewCollection { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="oldCollection">Old collection</param>
-		/// <param name="newCollection">New collection</param>
-		public SelectedCompletionCollectionEventArgs(CompletionCollection oldCollection, CompletionCollection newCollection) {
-			OldCollection = oldCollection;
-			NewCollection = newCollection;
+		public ValueChangedEventArgs(TValue oldValue, TValue newValue) {
+			OldValue = oldValue;
+			NewValue = newValue;
 		}
 	}
 }

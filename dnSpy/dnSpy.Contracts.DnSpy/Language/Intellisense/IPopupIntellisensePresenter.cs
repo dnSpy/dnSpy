@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
+using System;
 using System.Windows;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
@@ -28,24 +28,36 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// An <see cref="IIntellisensePresenter"/> shown in a popup
 	/// </summary>
-	interface IPopupIntellisensePresenter : IIntellisensePresenter, INotifyPropertyChanged {
+	interface IPopupIntellisensePresenter : IIntellisensePresenter {
 		/// <summary>
-		/// Gets the popup element. Raise <see cref="INotifyPropertyChanged.PropertyChanged"/> when this
-		/// property changes.
+		/// Gets the popup element
 		/// </summary>
 		UIElement SurfaceElement { get; }
 
 		/// <summary>
-		/// Gets the span. Raise <see cref="INotifyPropertyChanged.PropertyChanged"/> when this
-		/// property changes.
+		/// Raised when <see cref="SurfaceElement"/> is changed
+		/// </summary>
+		event EventHandler SurfaceElementChanged;
+
+		/// <summary>
+		/// Gets the span
 		/// </summary>
 		ITrackingSpan PresentationSpan { get; }
 
 		/// <summary>
-		/// Gets the popup styles. Raise <see cref="INotifyPropertyChanged.PropertyChanged"/> when this
-		/// property changes.
+		/// Raised when <see cref="PresentationSpan"/> is changed
+		/// </summary>
+		event EventHandler PresentationSpanChanged;
+
+		/// <summary>
+		/// Gets the popup styles
 		/// </summary>
 		PopupStyles PopupStyles { get; }
+
+		/// <summary>
+		/// Raised when <see cref="PopupStyles"/> is changed
+		/// </summary>
+		event EventHandler<ValueChangedEventArgs<PopupStyles>> PopupStylesChanged;
 
 		/// <summary>
 		/// Gets the name of the <see cref="ISpaceReservationManager"/>, eg. <see cref="PredefinedSpaceReservationManagerNames.Completion"/>

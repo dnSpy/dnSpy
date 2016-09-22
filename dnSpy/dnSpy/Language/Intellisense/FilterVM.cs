@@ -28,12 +28,23 @@ namespace dnSpy.Language.Intellisense {
 
 		public bool IsChecked {
 			get { return filter.IsChecked; }
-			set { filter.IsChecked = value; }
+			set {
+				if (filter.IsChecked != value) {
+					filter.IsChecked = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
+					owner.OnIsCheckedChanged(this);
+				}
+			}
 		}
 
 		public bool IsEnabled {
 			get { return filter.IsEnabled; }
-			set { filter.IsEnabled = value; }
+			set {
+				if (filter.IsEnabled != value) {
+					filter.IsEnabled = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsEnabled)));
+				}
+			}
 		}
 
 		public ImageReference Image => filter.Image;
@@ -50,18 +61,8 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(owner));
 			this.filter = filter;
 			this.owner = owner;
-			filter.PropertyChanged += Filter_PropertyChanged;
 		}
 
-		void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(filter.IsChecked)) {
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
-				owner.OnIsCheckedChanged(this);
-			}
-			else if (e.PropertyName == nameof(filter.IsEnabled))
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsEnabled)));
-		}
-
-		public void Dispose() => filter.PropertyChanged -= Filter_PropertyChanged;
+		public void Dispose() { }
 	}
 }

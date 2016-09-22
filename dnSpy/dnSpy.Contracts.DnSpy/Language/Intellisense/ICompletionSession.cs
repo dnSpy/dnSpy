@@ -31,6 +31,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		void Commit();
 
 		/// <summary>
+		/// Raised when it's been committed
+		/// </summary>
+		event EventHandler Committed;
+
+		/// <summary>
 		/// true if <see cref="IIntellisenseSession.Start"/> has been called
 		/// </summary>
 		bool IsStarted { get; }
@@ -43,16 +48,16 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Gets the completion collections
 		/// </summary>
-		ReadOnlyObservableCollection<CompletionCollection> CompletionCollections { get; }
+		ReadOnlyObservableCollection<CompletionCollection> CompletionSets { get; }
 
 		/// <summary>
 		/// Gets/sets the selected <see cref="CompletionCollection"/>
 		/// </summary>
-		CompletionCollection SelectedCompletionCollection { get; set; }
+		CompletionCollection SelectedCompletionSet { get; set; }
 
 		/// <summary>
-		/// Raised when <see cref="SelectedCompletionCollection"/> is changed
+		/// Raised when <see cref="SelectedCompletionSet"/> is changed
 		/// </summary>
-		event EventHandler<SelectedCompletionCollectionEventArgs> SelectedCompletionCollectionChanged;
+		event EventHandler<ValueChangedEventArgs<CompletionCollection>> SelectedCompletionSetChanged;
 	}
 }
