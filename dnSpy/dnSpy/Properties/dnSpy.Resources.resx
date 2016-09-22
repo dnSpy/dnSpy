@@ -1133,9 +1133,6 @@
   <data name="Search_CloseToolTip" xml:space="preserve">
     <value>Close (Esc)</value>
   </data>
-  <data name="Search_NothingFound" xml:space="preserve">
-    <value>Nothing found</value>
-  </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
     <value>Incremental Search</value>
   </data>

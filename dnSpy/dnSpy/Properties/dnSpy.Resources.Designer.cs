@@ -2178,15 +2178,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nothing found.
-        /// </summary>
-        public static string Search_NothingFound {
-            get {
-                return ResourceManager.GetString("Search_NothingFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Replace all (Alt+A).
         /// </summary>
         public static string Search_ReplaceAllToolTip {

@@ -32,7 +32,6 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Properties;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -81,6 +80,8 @@ namespace dnSpy.Text.Editor.Search {
 
 			Default = TopRight,
 		}
+
+		public bool FoundMatch => foundSomething;
 
 		public string SearchString {
 			get { return searchString; }
@@ -377,7 +378,6 @@ namespace dnSpy.Text.Editor.Search {
 				searchControl.AddHandler(UIElement.MouseDownEvent, new MouseButtonEventHandler(SearchControl_MouseDown), true);
 				SelectAllWhenFocused(searchControl.searchStringTextBox);
 				SelectAllWhenFocused(searchControl.replaceStringTextBox);
-				searchControl.searchStringTextBox.IsVisibleChanged += SearchStringTextBox_IsVisibleChanged;
 				searchControl.SizeChanged += SearchControl_SizeChanged;
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			}
@@ -393,16 +393,6 @@ namespace dnSpy.Text.Editor.Search {
 
 			if (!wasShown)
 				UpdateTextMarkerSearch();
-		}
-
-		void SearchStringTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-			// HACK to make sure the red error border is shown whenever the UI is shown
-			if (foundSomething)
-				return;
-			foundSomething = true;
-			OnPropertyChanged(nameof(SearchString));
-			foundSomething = false;
-			OnPropertyChanged(nameof(SearchString));
 		}
 
 		static void SelectAllWhenFocused(TextBox textBox) =>
@@ -1001,19 +991,10 @@ namespace dnSpy.Text.Editor.Search {
 			if (foundSomething == found)
 				return;
 			foundSomething = found;
-			HasErrorUpdated();
+			OnPropertyChanged(nameof(FoundMatch));
 			OnPropertyChanged(nameof(SearchString));
 		}
 		bool foundSomething;
-
-		protected override string Verify(string columnName) {
-			if (columnName == nameof(SearchString))
-				return foundSomething ? null : dnSpy_Resources.Search_NothingFound;
-			return null;
-		}
-
-		public override bool HasError => !string.IsNullOrEmpty(Verify(nameof(SearchString)));
-
 		public void FindNextSelected(bool forward) => FindNextSelectedCore(forward, false);
 
 		void FindNextSelectedCore(bool forward, bool restart) {

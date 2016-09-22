@@ -100,6 +100,66 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="SearchTextBoxStyle"
+               TargetType="{x:Type TextBoxBase}"
+               BasedOn="{x:Null}">
+            <Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorder}" />
+            <Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxText}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true" />
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="TextBox.TextWrapping" Value="NoWrap" />
+            <Setter Property="CaretBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Foreground}" />
+            <Setter Property="SelectionBrush" Value="{DynamicResource CommonControlsTextBoxSelection}" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                        <Border
+                            Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                            <ScrollViewer
+                                Name="PART_ContentHost"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackgroundDisabled}" />
+                                <Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxTextDisabled}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorderDisabled}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxMouseOverBorder}" Property="BorderBrush" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackgroundFocused}" />
+                                <Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxTextFocused}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorderFocused}" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Path=FoundMatch}" Value="False">
+                                <Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxErrorBackground}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxErrorForeground}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxErrorBackground}" />
+                                <Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxBorderError}" Property="BorderBrush" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid Background="{DynamicResource EnvironmentCommandBar}">
         <Grid.RowDefinitions>
@@ -114,7 +174,7 @@
         </Grid.ColumnDefinitions>
         <ToggleButton Grid.Row="0" Grid.Column="0" Margin="4 4 0 0" Width="21" Height="21" Command="{Binding ToggleFindReplaceCommand}" IsChecked="{Binding IsReplaceMode, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="Transparent" ToolTip="{x:Static p:dnSpy_Resources.Search_ToggleReplaceModeToolTip}" Focusable="True" FocusVisualStyle="{x:Null}" Style="{StaticResource ToggleReplaceStyle}" />
         <StackPanel Grid.Row="0" Grid.Column="1" Margin="4 4 0 0" Orientation="Horizontal">
-            <TextBox Width="200" Margin="0 0 4 0" Name="searchStringTextBox" Text="{Binding SearchString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" />
+            <TextBox Width="200" Margin="0 0 4 0" Name="searchStringTextBox" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SearchTextBoxStyle}" />
             <Button Margin="0 0 4 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding FindPreviousCommand}" ToolTip="{x:Static p:dnSpy_Resources.Search_FindPreviousToolTip}">
                 <Image Width="17" Height="17" Stretch="None">
                     <Image.Source>
