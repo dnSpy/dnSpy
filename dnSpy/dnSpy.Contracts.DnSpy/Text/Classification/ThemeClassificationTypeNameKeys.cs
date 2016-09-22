@@ -333,9 +333,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string XmlLiteralText = RoslynClassificationTypeNames.XmlLiteralText;
 
 		/// <summary>
-		/// <see cref="TextColor.XmlAttributeName"/>
+		/// <see cref="TextColor.XmlAttribute"/>
 		/// </summary>
-		public const string XmlAttributeName = nameof(XmlAttributeName);
+		public const string XmlAttribute = nameof(XmlAttribute);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlAttributeQuotes"/>
@@ -381,6 +381,71 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.XmlText"/>
 		/// </summary>
 		public const string XmlText = nameof(XmlText);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlAttribute"/>
+		/// </summary>
+		public const string XamlAttribute = nameof(XamlAttribute);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlAttributeQuotes"/>
+		/// </summary>
+		public const string XamlAttributeQuotes = nameof(XamlAttributeQuotes);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlAttributeValue"/>
+		/// </summary>
+		public const string XamlAttributeValue = nameof(XamlAttributeValue);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlCDataSection"/>
+		/// </summary>
+		public const string XamlCDataSection = nameof(XamlCDataSection);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlComment"/>
+		/// </summary>
+		public const string XamlComment = nameof(XamlComment);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlDelimiter"/>
+		/// </summary>
+		public const string XamlDelimiter = nameof(XamlDelimiter);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlKeyword"/>
+		/// </summary>
+		public const string XamlKeyword = nameof(XamlKeyword);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlMarkupExtensionClass"/>
+		/// </summary>
+		public const string XamlMarkupExtensionClass = nameof(XamlMarkupExtensionClass);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlMarkupExtensionParameterName"/>
+		/// </summary>
+		public const string XamlMarkupExtensionParameterName = nameof(XamlMarkupExtensionParameterName);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlMarkupExtensionParameterValue"/>
+		/// </summary>
+		public const string XamlMarkupExtensionParameterValue = nameof(XamlMarkupExtensionParameterValue);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlName"/>
+		/// </summary>
+		public const string XamlName = nameof(XamlName);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlProcessingInstruction"/>
+		/// </summary>
+		public const string XamlProcessingInstruction = nameof(XamlProcessingInstruction);
+
+		/// <summary>
+		/// <see cref="TextColor.XamlText"/>
+		/// </summary>
+		public const string XamlText = nameof(XamlText);
 
 		/// <summary>
 		/// <see cref="TextColor.XmlDocToolTipHeader"/>

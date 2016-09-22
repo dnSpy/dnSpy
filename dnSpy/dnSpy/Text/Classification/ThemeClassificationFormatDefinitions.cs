@@ -356,9 +356,9 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition XmlLiteralTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.XmlAttributeName)]
+		[Name(ThemeClassificationTypeNames.XmlAttribute)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlAttributeNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition XmlAttributeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlAttributeQuotes)]
@@ -404,6 +404,71 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.XmlText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition XmlTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlAttribute)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlAttributeClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlAttributeQuotes)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlAttributeQuotesClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlAttributeValue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlAttributeValueClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlCDataSection)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlCDataSectionClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlComment)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlCommentClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlDelimiter)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlDelimiterClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlKeyword)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlKeywordClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlMarkupExtensionClass)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlMarkupExtensionClassClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlMarkupExtensionParameterName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlMarkupExtensionParameterNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlMarkupExtensionParameterValue)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlMarkupExtensionParameterValueClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlProcessingInstruction)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlProcessingInstructionClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.XamlText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition XamlTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocToolTipHeader)]
@@ -1547,12 +1612,12 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlAttributeName)]
-		[Name(ThemeClassificationTypeNameKeys.XmlAttributeName)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XmlAttribute)]
+		[Name(ThemeClassificationTypeNameKeys.XmlAttribute)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class XmlAttributeName : ThemeClassificationFormatDefinition {
-			XmlAttributeName() : base(TextColor.XmlAttributeName) { }
+		sealed class XmlAttribute : ThemeClassificationFormatDefinition {
+			XmlAttribute() : base(TextColor.XmlAttribute) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1634,6 +1699,123 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class XmlText : ThemeClassificationFormatDefinition {
 			XmlText() : base(TextColor.XmlText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlAttribute)]
+		[Name(ThemeClassificationTypeNameKeys.XamlAttribute)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlAttribute : ThemeClassificationFormatDefinition {
+			XamlAttribute() : base(TextColor.XamlAttribute) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlAttributeQuotes)]
+		[Name(ThemeClassificationTypeNameKeys.XamlAttributeQuotes)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlAttributeQuotes : ThemeClassificationFormatDefinition {
+			XamlAttributeQuotes() : base(TextColor.XamlAttributeQuotes) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlAttributeValue)]
+		[Name(ThemeClassificationTypeNameKeys.XamlAttributeValue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlAttributeValue : ThemeClassificationFormatDefinition {
+			XamlAttributeValue() : base(TextColor.XamlAttributeValue) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlCDataSection)]
+		[Name(ThemeClassificationTypeNameKeys.XamlCDataSection)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlCDataSection : ThemeClassificationFormatDefinition {
+			XamlCDataSection() : base(TextColor.XamlCDataSection) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlComment)]
+		[Name(ThemeClassificationTypeNameKeys.XamlComment)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlComment : ThemeClassificationFormatDefinition {
+			XamlComment() : base(TextColor.XamlComment) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlDelimiter)]
+		[Name(ThemeClassificationTypeNameKeys.XamlDelimiter)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlDelimiter : ThemeClassificationFormatDefinition {
+			XamlDelimiter() : base(TextColor.XamlDelimiter) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlKeyword)]
+		[Name(ThemeClassificationTypeNameKeys.XamlKeyword)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlKeyword : ThemeClassificationFormatDefinition {
+			XamlKeyword() : base(TextColor.XamlKeyword) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlMarkupExtensionClass)]
+		[Name(ThemeClassificationTypeNameKeys.XamlMarkupExtensionClass)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlMarkupExtensionClass : ThemeClassificationFormatDefinition {
+			XamlMarkupExtensionClass() : base(TextColor.XamlMarkupExtensionClass) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlMarkupExtensionParameterName)]
+		[Name(ThemeClassificationTypeNameKeys.XamlMarkupExtensionParameterName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlMarkupExtensionParameterName : ThemeClassificationFormatDefinition {
+			XamlMarkupExtensionParameterName() : base(TextColor.XamlMarkupExtensionParameterName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlMarkupExtensionParameterValue)]
+		[Name(ThemeClassificationTypeNameKeys.XamlMarkupExtensionParameterValue)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlMarkupExtensionParameterValue : ThemeClassificationFormatDefinition {
+			XamlMarkupExtensionParameterValue() : base(TextColor.XamlMarkupExtensionParameterValue) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlName)]
+		[Name(ThemeClassificationTypeNameKeys.XamlName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlName : ThemeClassificationFormatDefinition {
+			XamlName() : base(TextColor.XamlName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlProcessingInstruction)]
+		[Name(ThemeClassificationTypeNameKeys.XamlProcessingInstruction)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlProcessingInstruction : ThemeClassificationFormatDefinition {
+			XamlProcessingInstruction() : base(TextColor.XamlProcessingInstruction) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.XamlText)]
+		[Name(ThemeClassificationTypeNameKeys.XamlText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class XamlText : ThemeClassificationFormatDefinition {
+			XamlText() : base(TextColor.XamlText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

@@ -671,6 +671,13 @@
     <Compile Include="Text\Tagging\TextBufferTagAggregator.cs" />
     <Compile Include="Text\Tagging\TextViewTagAggregator.cs" />
     <Compile Include="Text\Tagging\ViewTagAggregatorFactoryService.cs" />
+    <Compile Include="Text\Tagging\Xml\TaggerClassificationTypes.cs" />
+    <Compile Include="Text\Tagging\Xml\XamlTagger.cs" />
+    <Compile Include="Text\Tagging\Xml\XamlTaggerClassificationTypes.cs" />
+    <Compile Include="Text\Tagging\Xml\XmlClassifier.cs" />
+    <Compile Include="Text\Tagging\Xml\XmlTagger.cs" />
+    <Compile Include="Text\Tagging\Xml\XmlTaggerBase.cs" />
+    <Compile Include="Text\Tagging\Xml\XmlTaggerClassificationTypes.cs" />
     <Compile Include="Text\TextBuffer.cs" />
     <Compile Include="Text\TextBufferFactoryService.cs" />
     <Compile Include="Text\TextChange.cs" />

@@ -60,7 +60,7 @@
 		<color name="xmlliteralname" fg="#FF844646" />
 		<color name="xmlliteralprocessinginstruction" fg="#FFC0C0C0" />
 		<color name="xmlliteraltext" fg="#FF555555" />
-		<color name="xmlattributename" fg="#FFFF0000" />
+		<color name="xmlattribute" fg="#FFFF0000" />
 		<color name="xmlattributequotes" fg="#FF000000" />
 		<color name="xmlattributevalue" fg="#FF0000FF" />
 		<color name="xmlcdatasection" fg="#FF808080" />
@@ -70,6 +70,19 @@
 		<color name="xmlname" fg="#FFA31515" />
 		<color name="xmlprocessinginstruction" fg="#FF808080" />
 		<color name="xmltext" fg="#FF000000" />
+		<color name="xamlattribute" fg="#FFFF0000" />
+		<color name="xamlattributequotes" fg="#FF000000" />
+		<color name="xamlattributevalue" fg="#FF0000FF" />
+		<color name="xamlcdatasection" fg="#FF808080" />
+		<color name="xamlcomment" fg="#FF008000" />
+		<color name="xamldelimiter" fg="#FF0000FF" />
+		<color name="xamlkeyword" fg="#FF0000FF" />
+		<color name="xamlmarkupextensionclass" fg="#FFA31515" />
+		<color name="xamlmarkupextensionparametername" fg="#FF0000FF" />
+		<color name="xamlmarkupextensionparametervalue" fg="#FF0000FF" />
+		<color name="xamlname" fg="#FFA31515" />
+		<color name="xamlprocessinginstruction" fg="#FF808080" />
+		<color name="xamltext" fg="#FF000000" />
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="assembly" fg="#414141" />
 		<color name="assemblyexe" fg="#C17B19" />

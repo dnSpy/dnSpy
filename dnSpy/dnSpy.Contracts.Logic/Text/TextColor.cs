@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Text {
 		XmlLiteralName,
 		XmlLiteralProcessingInstruction,
 		XmlLiteralText,
-		XmlAttributeName,
+		XmlAttribute,
 		XmlAttributeQuotes,
 		XmlAttributeValue,
 		XmlCDataSection,
@@ -97,6 +97,19 @@ namespace dnSpy.Contracts.Text {
 		XmlName,
 		XmlProcessingInstruction,
 		XmlText,
+		XamlAttribute,
+		XamlAttributeQuotes,
+		XamlAttributeValue,
+		XamlCDataSection,
+		XamlComment,
+		XamlDelimiter,
+		XamlKeyword,
+		XamlMarkupExtensionClass,
+		XamlMarkupExtensionParameterName,
+		XamlMarkupExtensionParameterValue,
+		XamlName,
+		XamlProcessingInstruction,
+		XamlText,
 		XmlDocToolTipHeader,
 		Assembly,
 		AssemblyExe,
@@ -290,7 +303,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object XmlLiteralName = TextColor.XmlLiteralName;
 		public static readonly object XmlLiteralProcessingInstruction = TextColor.XmlLiteralProcessingInstruction;
 		public static readonly object XmlLiteralText = TextColor.XmlLiteralText;
-		public static readonly object XmlAttributeName = TextColor.XmlAttributeName;
+		public static readonly object XmlAttribute = TextColor.XmlAttribute;
 		public static readonly object XmlAttributeQuotes = TextColor.XmlAttributeQuotes;
 		public static readonly object XmlAttributeValue = TextColor.XmlAttributeValue;
 		public static readonly object XmlCDataSection = TextColor.XmlCDataSection;
@@ -300,6 +313,19 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object XmlName = TextColor.XmlName;
 		public static readonly object XmlProcessingInstruction = TextColor.XmlProcessingInstruction;
 		public static readonly object XmlText = TextColor.XmlText;
+		public static readonly object XamlAttribute = TextColor.XamlAttribute;
+		public static readonly object XamlAttributeQuotes = TextColor.XamlAttributeQuotes;
+		public static readonly object XamlAttributeValue = TextColor.XamlAttributeValue;
+		public static readonly object XamlCDataSection = TextColor.XamlCDataSection;
+		public static readonly object XamlComment = TextColor.XamlComment;
+		public static readonly object XamlDelimiter = TextColor.XamlDelimiter;
+		public static readonly object XamlKeyword = TextColor.XamlKeyword;
+		public static readonly object XamlMarkupExtensionClass = TextColor.XamlMarkupExtensionClass;
+		public static readonly object XamlMarkupExtensionParameterName = TextColor.XamlMarkupExtensionParameterName;
+		public static readonly object XamlMarkupExtensionParameterValue = TextColor.XamlMarkupExtensionParameterValue;
+		public static readonly object XamlName = TextColor.XamlName;
+		public static readonly object XamlProcessingInstruction = TextColor.XamlProcessingInstruction;
+		public static readonly object XamlText = TextColor.XamlText;
 		public static readonly object XmlDocToolTipHeader = TextColor.XmlDocToolTipHeader;
 		public static readonly object Assembly = TextColor.Assembly;
 		public static readonly object AssemblyExe = TextColor.AssemblyExe;
@@ -495,7 +521,7 @@ namespace dnSpy.Contracts.Text {
 			XmlLiteralName,
 			XmlLiteralProcessingInstruction,
 			XmlLiteralText,
-			XmlAttributeName,
+			XmlAttribute,
 			XmlAttributeQuotes,
 			XmlAttributeValue,
 			XmlCDataSection,
@@ -505,6 +531,19 @@ namespace dnSpy.Contracts.Text {
 			XmlName,
 			XmlProcessingInstruction,
 			XmlText,
+			XamlAttribute,
+			XamlAttributeQuotes,
+			XamlAttributeValue,
+			XamlCDataSection,
+			XamlComment,
+			XamlDelimiter,
+			XamlKeyword,
+			XamlMarkupExtensionClass,
+			XamlMarkupExtensionParameterName,
+			XamlMarkupExtensionParameterValue,
+			XamlName,
+			XamlProcessingInstruction,
+			XamlText,
 			XmlDocToolTipHeader,
 			Assembly,
 			AssemblyExe,
