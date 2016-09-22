@@ -51,8 +51,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public event EventHandler<CaretPositionChangedEventArgs> PositionChanged;
-		public CaretPosition Position => currentPosition;
-		CaretPosition currentPosition;
+		public CaretPosition Position => new CaretPosition(currentPosition, textView.BufferGraph.CreateMappingPoint(currentPosition.Position, PointTrackingMode.Positive), Affinity);
+		VirtualSnapshotPoint currentPosition;
 
 		readonly IWpfTextView textView;
 		readonly ISmartIndentationService smartIndentationService;
@@ -73,8 +73,7 @@ namespace dnSpy.Text.Editor {
 			this.preferredXCoordinate = 0;
 			this.__preferredYCoordinate = 0;
 			Affinity = PositionAffinity.Successor;
-			var bufferPos = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
-			this.currentPosition = new CaretPosition(bufferPos, new MappingPoint(bufferPos.Position, PointTrackingMode.Positive), Affinity);
+			this.currentPosition = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged += Options_OptionChanged;
@@ -327,19 +326,17 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void OnImplicitCaretPositionChanged() => SetPositionCore(currentPosition.VirtualBufferPosition.TranslateTo(textView.TextSnapshot));
-
-		void SetPositionCore(VirtualSnapshotPoint bufferPosition) =>
-			currentPosition = new CaretPosition(bufferPosition, new MappingPoint(bufferPosition.Position, PointTrackingMode.Positive), Affinity);
+		void OnImplicitCaretPositionChanged() => SetPositionCore(currentPosition.TranslateTo(textView.TextSnapshot));
+		void SetPositionCore(VirtualSnapshotPoint bufferPosition) => currentPosition = bufferPosition;
 
 		void SetExplicitPosition(VirtualSnapshotPoint bufferPosition) {
-			var oldPos = currentPosition;
-			var bufPos = bufferPosition;
-			SetPositionCore(bufPos);
-			if (oldPos != currentPosition) {
+			var oldPos = Position;
+			SetPositionCore(bufferPosition);
+			var newPos = Position;
+			if (oldPos != newPos) {
 				if (imeState.CompositionStarted)
 					MoveImeCompositionWindow();
-				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, Position));
+				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, newPos));
 			}
 		}
 

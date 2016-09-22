@@ -24,19 +24,17 @@ using Microsoft.VisualStudio.Text.Projection;
 namespace dnSpy.Text {
 	sealed class MappingPoint : IMappingPoint {
 		public ITextBuffer AnchorBuffer => snapshotPoint.Snapshot.TextBuffer;
-
-		public IBufferGraph BufferGraph {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+		public IBufferGraph BufferGraph { get; }
 
 		/*readonly*/ SnapshotPoint snapshotPoint;
 		readonly PointTrackingMode trackingMode;
 
-		public MappingPoint(SnapshotPoint snapshotPoint, PointTrackingMode trackingMode) {
+		public MappingPoint(IBufferGraph bufferGraph, SnapshotPoint snapshotPoint, PointTrackingMode trackingMode) {
+			if (bufferGraph == null)
+				throw new ArgumentNullException(nameof(bufferGraph));
 			if (snapshotPoint.Snapshot == null)
 				throw new ArgumentException();
+			BufferGraph = bufferGraph;
 			this.snapshotPoint = snapshotPoint;
 			this.trackingMode = trackingMode;
 		}

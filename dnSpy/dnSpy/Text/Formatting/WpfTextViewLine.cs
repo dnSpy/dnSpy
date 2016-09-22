@@ -26,10 +26,12 @@ using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
+using Microsoft.VisualStudio.Text.Projection;
 using TF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class WpfTextViewLine : IFormattedLine {
+		readonly IBufferGraph bufferGraph;
 		readonly int endColumn;
 		double top;
 		readonly double width;
@@ -266,7 +268,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (Snapshot != visualSnapshot)
 					throw new NotSupportedException();
-				return new MappingSpan(Extent, SpanTrackingMode.EdgeInclusive);
+				return bufferGraph.CreateMappingSpan(Extent, SpanTrackingMode.EdgeInclusive);
 			}
 		}
 
@@ -282,7 +284,7 @@ namespace dnSpy.Text.Formatting {
 			get {
 				if (Snapshot != visualSnapshot)
 					throw new NotSupportedException();
-				return new MappingSpan(ExtentIncludingLineBreak, SpanTrackingMode.EdgeInclusive);
+				return bufferGraph.CreateMappingSpan(ExtentIncludingLineBreak, SpanTrackingMode.EdgeInclusive);
 			}
 		}
 
@@ -327,7 +329,9 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		public WpfTextViewLine(LinePartsCollection linePartsCollection, int startColumn, int endColumn, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
+		public WpfTextViewLine(IBufferGraph bufferGraph, LinePartsCollection linePartsCollection, int startColumn, int endColumn, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
+			if (bufferGraph == null)
+				throw new ArgumentNullException(nameof(bufferGraph));
 			if (linePartsCollection == null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			if (bufferLine == null)
@@ -340,6 +344,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentNullException(nameof(textLine));
 
 			this.IsValid = true;
+			this.bufferGraph = bufferGraph;
 			this.linePartsCollection = linePartsCollection;
 			this.endColumn = endColumn;
 			this.visualSnapshot = visualSnapshot;

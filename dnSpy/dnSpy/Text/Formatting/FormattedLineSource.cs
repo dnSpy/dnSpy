@@ -45,7 +45,6 @@ namespace dnSpy.Text.Formatting {
 
 		readonly ITextParagraphPropertiesFactoryService textParagraphPropertiesFactoryService;
 		readonly IClassifier aggregateClassifier;
-		readonly ITextAndAdornmentSequencer textAndAdornmentSequencer;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly FormattedTextCache formattedTextCache;
 		readonly TextFormatter textFormatter;
@@ -88,9 +87,8 @@ namespace dnSpy.Text.Formatting {
 			LineHeight = WpfTextViewLine.DEFAULT_TOP_SPACE + WpfTextViewLine.DEFAULT_BOTTOM_SPACE + formattedTextCache.GetLineHeight(classificationFormatMap.DefaultTextProperties);
 			TextHeightAboveBaseline = formattedTextCache.GetTextHeightAboveBaseline(classificationFormatMap.DefaultTextProperties);
 			TextHeightBelowBaseline = formattedTextCache.GetTextHeightBelowBaseline(classificationFormatMap.DefaultTextProperties);
-			TextAndAdornmentSequencer = textAndAdornmentSequencer;
+			TextAndAdornmentSequencer = sequencer;
 			this.aggregateClassifier = aggregateClassifier;
-			this.textAndAdornmentSequencer = sequencer;
 			this.classificationFormatMap = classificationFormatMap;
 			this.defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}
@@ -104,7 +102,7 @@ namespace dnSpy.Text.Formatting {
 			if (visualLine.Snapshot != TopTextSnapshot)
 				throw new ArgumentException();
 
-			var seqColl = textAndAdornmentSequencer.CreateTextAndAdornmentCollection(visualLine, visualLine.Snapshot);
+			var seqColl = TextAndAdornmentSequencer.CreateTextAndAdornmentCollection(visualLine, visualLine.Snapshot);
 			var bufferLine = GetBufferLine(seqColl);
 			var linePartsCollection = CreateLinePartsCollection(seqColl, bufferLine.ExtentIncludingLineBreak);
 			var textSource = new LinePartsTextSource(linePartsCollection);
@@ -116,8 +114,8 @@ namespace dnSpy.Text.Formatting {
 			for (int lineSegment = 0; ; lineSegment++) {
 				var paragraphProperties = textParagraphPropertiesFactoryService?.Create(this,
 					classificationFormatMap.DefaultTextProperties,
-					new MappingSpan(bufferLine.Extent, SpanTrackingMode.EdgeNegative),
-					new MappingPoint(textSource.ConvertColumnToBufferPosition(column), PointTrackingMode.Negative), lineSegment)
+					TextAndAdornmentSequencer.BufferGraph.CreateMappingSpan(bufferLine.Extent, SpanTrackingMode.EdgeNegative),
+					TextAndAdornmentSequencer.BufferGraph.CreateMappingPoint(textSource.ConvertColumnToBufferPosition(column), PointTrackingMode.Negative), lineSegment)
 					?? defaultTextParagraphProperties;
 
 				double paragraphWidth = WordWrapWidth == 0 ? 0 : Math.Max(1, WordWrapWidth - autoIndent - wrapGlyphWidth);
@@ -135,7 +133,7 @@ namespace dnSpy.Text.Formatting {
 					endPos = bufferLine.ExtentIncludingLineBreak.End;
 
 				var lineSpan = new SnapshotSpan(startPos, endPos);
-				var wpfLine = new WpfTextViewLine(linePartsCollection, startColumn, column, bufferLine, lineSpan, visualLine.Snapshot, textLine, autoIndent, ColumnWidth);
+				var wpfLine = new WpfTextViewLine(TextAndAdornmentSequencer.BufferGraph, linePartsCollection, startColumn, column, bufferLine, lineSpan, visualLine.Snapshot, textLine, autoIndent, ColumnWidth);
 				lines.Add(wpfLine);
 
 				if (column >= textSource.Length) {

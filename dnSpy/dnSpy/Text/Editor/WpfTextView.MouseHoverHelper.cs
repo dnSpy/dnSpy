@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(timerStart != null);
 				var list = GetHandlersToNotify();
 				if (list != null) {
-					var mhe = new MouseHoverEventArgs(owner, position.Value, new MappingPoint(new SnapshotPoint(owner.TextSnapshot, position.Value), PointTrackingMode.Positive));
+					var mhe = new MouseHoverEventArgs(owner, position.Value, owner.BufferGraph.CreateMappingPoint(new SnapshotPoint(owner.TextSnapshot, position.Value), PointTrackingMode.Positive));
 					foreach (var h in list) {
 						h.Raised = true;
 						h.Handler(owner, mhe);

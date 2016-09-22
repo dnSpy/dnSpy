@@ -171,9 +171,12 @@ namespace dnSpy.Language.Intellisense {
 		public void Collapse() => Dismiss();
 
 		public ITrackingPoint GetTriggerPoint(ITextBuffer textBuffer) {
-			if (triggerPoint.TextBuffer == textBuffer)
-				return triggerPoint;
-			return null;
+			if (!IsStarted)
+				throw new InvalidOperationException();
+			if (IsDismissed)
+				throw new InvalidOperationException();
+
+			return IntellisenseSessionHelper.GetTriggerPoint(TextView, triggerPoint, textBuffer);
 		}
 
 		public SnapshotPoint? GetTriggerPoint(ITextSnapshot textSnapshot) {
@@ -181,9 +184,8 @@ namespace dnSpy.Language.Intellisense {
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
-			if (textSnapshot.TextBuffer != triggerPoint.TextBuffer)
-				return null;
-			return triggerPoint.GetPoint(textSnapshot);
+
+			return IntellisenseSessionHelper.GetTriggerPoint(TextView, triggerPoint, textSnapshot);
 		}
 	}
 }

@@ -49,6 +49,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed partial class WpfTextView : Canvas, IDnSpyWpfTextView, ILineTransformSource, IDnSpyWpfTextViewImpl {
+		public IBufferGraph BufferGraph { get; }
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => this;
 		public ITextViewRoleSet Roles { get; }
@@ -82,12 +83,6 @@ namespace dnSpy.Text.Editor {
 		public bool InLayout { get; private set; }
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
 		IWpfTextViewLineCollection IWpfTextView.TextViewLines => TextViewLines;
-
-		public IBufferGraph BufferGraph {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
 
 		public double MaxTextRightCoordinate {
 			get {
@@ -139,7 +134,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
 			if (textViewModel == null)
 				throw new ArgumentNullException(nameof(textViewModel));
 			if (roles == null)
@@ -172,6 +167,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
 			if (wpfTextViewConnectionListenerServiceProvider == null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListenerServiceProvider));
+			if (bufferGraphFactoryService == null)
+				throw new ArgumentNullException(nameof(bufferGraphFactoryService));
 			this.mouseHoverHelper = new MouseHoverHelper(this);
 			this.physicalLineCache = new PhysicalLineCache(32);
 			this.visiblePhysicalLines = new List<PhysicalLine>();
@@ -188,6 +185,7 @@ namespace dnSpy.Text.Editor {
 			IsVisibleChanged += WpfTextView_IsVisibleChanged;
 			Properties = new PropertyCollection();
 			TextViewModel = textViewModel;
+			BufferGraph = bufferGraphFactoryService.CreateBufferGraph(TextViewModel.VisualBuffer);
 			Roles = roles;
 			Options = editorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;

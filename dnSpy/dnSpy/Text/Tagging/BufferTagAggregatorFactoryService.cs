@@ -20,23 +20,26 @@
 using System;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
 	[Export(typeof(IBufferTagAggregatorFactoryService))]
 	sealed class BufferTagAggregatorFactoryService : IBufferTagAggregatorFactoryService {
 		readonly ITaggerFactory taggerFactory;
+		readonly IBufferGraphFactoryService bufferGraphFactoryService;
 
 		[ImportingConstructor]
-		BufferTagAggregatorFactoryService(ITaggerFactory taggerFactory) {
+		BufferTagAggregatorFactoryService(ITaggerFactory taggerFactory, IBufferGraphFactoryService bufferGraphFactoryService) {
 			this.taggerFactory = taggerFactory;
+			this.bufferGraphFactoryService = bufferGraphFactoryService;
 		}
 
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer) where T : ITag => CreateTagAggregator<T>(textBuffer, TagAggregatorOptions.None);
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer, TagAggregatorOptions options) where T : ITag {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			return new TextBufferTagAggregator<T>(taggerFactory, textBuffer, options);
+			return new TextBufferTagAggregator<T>(taggerFactory, bufferGraphFactoryService.CreateBufferGraph(textBuffer), textBuffer, options);
 		}
 	}
 }

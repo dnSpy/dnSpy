@@ -43,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
-			var contentTypes = GetContentTypes(session);
+			var contentTypes = session.TextView.BufferGraph.GetTextBuffers(a => session.GetTriggerPoint(a) != null).Select(a => a.ContentType).ToArray();
 			foreach (var lz in intellisensePresenterProviders) {
 				foreach (var contentType in contentTypes) {
 					if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
@@ -55,8 +55,5 @@ namespace dnSpy.Language.Intellisense {
 			}
 			return null;
 		}
-
-		IContentType[] GetContentTypes(IIntellisenseSession session) =>
-			new[] { session.TextView.TextBuffer.ContentType };
 	}
 }

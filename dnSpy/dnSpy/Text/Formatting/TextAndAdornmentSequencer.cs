@@ -38,9 +38,9 @@ namespace dnSpy.Text.Formatting {
 
 		public TextAndAdornmentSequencer(ITextView textView, ITagAggregator<SpaceNegotiatingAdornmentTag> tagAggregator) {
 			if (textView == null)
-				throw new System.ArgumentNullException(nameof(textView));
+				throw new ArgumentNullException(nameof(textView));
 			if (tagAggregator == null)
-				throw new System.ArgumentNullException(nameof(tagAggregator));
+				throw new ArgumentNullException(nameof(tagAggregator));
 			this.textView = textView;
 			this.tagAggregator = tagAggregator;
 			textView.Closed += TextView_Closed;
@@ -84,7 +84,7 @@ namespace dnSpy.Text.Formatting {
 			var spaceTags = tagAggregator.GetTags(topSpan).ToArray();
 			if (spaceTags.Length != 0)
 				throw new NotImplementedException();//TODO: Use SpaceNegotiatingAdornmentTag, IAdornmentElement
-			list.Add(new TextSequenceElement(new MappingSpan(topSpan, SpanTrackingMode.EdgeExclusive)));
+			list.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(topSpan, SpanTrackingMode.EdgeExclusive)));
 			Debug.Assert(list.Count == 1);// If it fails, make sure list is normalized
 			return new TextAndAdornmentCollection(this, list);
 		}

@@ -28,7 +28,7 @@ namespace dnSpy.Text.Tagging {
 		readonly ITextView textView;
 
 		public TextViewTagAggregator(ITaggerFactory taggerFactory, ITextView textView, TagAggregatorOptions options)
-			: base(textView.TextBuffer, options) {
+			: base(textView.BufferGraph, textView.TextBuffer, options) {
 			this.taggerFactory = taggerFactory;
 			this.textView = textView;
 			textView.Closed += TextView_Closed;

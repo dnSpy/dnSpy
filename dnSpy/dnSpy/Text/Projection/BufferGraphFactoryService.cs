@@ -17,21 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
+using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Projection;
-using Microsoft.VisualStudio.Text.Tagging;
 
-namespace dnSpy.Text.Tagging {
-	sealed class TextBufferTagAggregator<T> : TagAggregatorBase<T> where T : ITag {
-		readonly ITaggerFactory taggerFactory;
-
-		public TextBufferTagAggregator(ITaggerFactory taggerFactory, IBufferGraph bufferGraph, ITextBuffer textBuffer, TagAggregatorOptions options)
-			: base(bufferGraph, textBuffer, options) {
-			this.taggerFactory = taggerFactory;
-			Initialize();
+namespace dnSpy.Text.Projection {
+	[Export(typeof(IBufferGraphFactoryService))]
+	sealed class BufferGraphFactoryService : IBufferGraphFactoryService {
+		public IBufferGraph CreateBufferGraph(ITextBuffer textBuffer) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			return textBuffer.Properties.GetOrCreateSingletonProperty(typeof(BufferGraph), () => new BufferGraph(textBuffer));
 		}
-
-		protected override IEnumerable<ITagger<T>> CreateTaggers() => taggerFactory.Create<T>(TextBuffer, TextBuffer.ContentType);
 	}
 }

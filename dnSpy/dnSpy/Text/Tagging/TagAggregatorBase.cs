@@ -30,21 +30,20 @@ namespace dnSpy.Text.Tagging {
 		readonly Dispatcher dispatcher;
 		readonly List<IMappingSpan> batchedTagsChangedList;
 		readonly object lockObj;
-		protected ITextBuffer TextBuffer { get; }
 		ITagger<T>[] taggers;
 
-		public IBufferGraph BufferGraph {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+		public IBufferGraph BufferGraph { get; }
+		protected ITextBuffer TextBuffer { get; }
 
-		protected TagAggregatorBase(ITextBuffer textBuffer, TagAggregatorOptions options) {
+		protected TagAggregatorBase(IBufferGraph bufferGraph, ITextBuffer textBuffer, TagAggregatorOptions options) {
+			if (bufferGraph == null)
+				throw new ArgumentNullException(nameof(bufferGraph));
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.batchedTagsChangedList = new List<IMappingSpan>();
 			this.lockObj = new object();
+			BufferGraph = bufferGraph;
 			TextBuffer = textBuffer;
 			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			this.taggers = Array.Empty<ITagger<T>>();
@@ -65,7 +64,7 @@ namespace dnSpy.Text.Tagging {
 				foreach (var tagSpan in tagger.GetTags(snapshotSpans)) {
 					var newSpan = tagSpan.Span.TranslateTo(snapshotSpansSnapshot, SpanTrackingMode.EdgeExclusive);
 					if (snapshotSpans.IntersectsWith(newSpan))
-						yield return new MappingTagSpan<T>(new MappingSpan(tagSpan.Span, SpanTrackingMode.EdgeExclusive), tagSpan.Tag);
+						yield return new MappingTagSpan<T>(BufferGraph.CreateMappingSpan(tagSpan.Span, SpanTrackingMode.EdgeExclusive), tagSpan.Tag);
 				}
 			}
 		}
@@ -114,10 +113,10 @@ namespace dnSpy.Text.Tagging {
 			if (IsDisposed)
 				return;
 			IMappingSpan mappingSpan = null;
-			TagsChanged?.Invoke(sender ?? this, new TagsChangedEventArgs(mappingSpan = new MappingSpan(span, SpanTrackingMode.EdgeExclusive)));
+			TagsChanged?.Invoke(sender ?? this, new TagsChangedEventArgs(mappingSpan = BufferGraph.CreateMappingSpan(span, SpanTrackingMode.EdgeExclusive)));
 			if (BatchedTagsChanged != null) {
 				lock (lockObj) {
-					batchedTagsChangedList.Add(mappingSpan ?? new MappingSpan(span, SpanTrackingMode.EdgeExclusive));
+					batchedTagsChangedList.Add(mappingSpan ?? BufferGraph.CreateMappingSpan(span, SpanTrackingMode.EdgeExclusive));
 					if (batchedTagsChangedList.Count == 1)
 						dispatcher.BeginInvoke(new Action(RaiseOnUIThread), DispatcherPriority.Normal);
 				}
