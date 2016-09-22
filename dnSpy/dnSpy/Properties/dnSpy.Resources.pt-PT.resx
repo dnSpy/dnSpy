@@ -1131,9 +1131,6 @@
   <data name="Search_CloseToolTip" xml:space="preserve">
     <value>Fechar (Esc)</value>
   </data>
-  <data name="Search_NothingFound" xml:space="preserve">
-    <value>Nada encontrado</value>
-  </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
     <value>Pesquisa Incremental</value>
   </data>
@@ -1144,6 +1141,9 @@
     <value>Alt+{0}</value>
   </data>
   <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
-    <value>{0} of {1}</value>
+    <value>{0} de {1}</value>
+  </data>
+  <data name="UriFollowLinkMessage" xml:space="preserve">
+    <value>CTRL + click to follow link</value>
   </data>
 </root>
