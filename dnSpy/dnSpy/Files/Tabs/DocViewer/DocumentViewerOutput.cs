@@ -149,8 +149,11 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
-			Debug.Assert(reference != null);
-			Debug.Assert(!(reference?.GetType().FullName ?? string.Empty).Contains("ICSharpCode"), "Internal decompiler data shouldn't be passed to Write()-ref");
+			if (reference == null) {
+				AddText(text, color);
+				return;
+			}
+			Debug.Assert(!(reference.GetType().FullName ?? string.Empty).Contains("ICSharpCode"), "Internal decompiler data shouldn't be passed to Write()-ref");
 			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(reference, flags));
 			AddText(text, color);
 		}
