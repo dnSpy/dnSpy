@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void UpdateMarker(ILCodeBreakpoint ilbp) {
 			RemoveMarker(ilbp);
 			var info = GetBreakpointMarkerInfo(ilbp);
-			var marker = glyphTextMarkerService.AddMarker(ilbp.MethodToken, ilbp.ILOffset, info.ImageReference, info.MarkerTypeName, info.ClassificationType, info.ZIndex, GlyphTextMarkerHelper.GetTag(ilbp), ilCodeBreakpointGlyphTextMarkerHandler, textViewFilter);
+			var marker = glyphTextMarkerService.AddMarker(ilbp.MethodToken, ilbp.ILOffset, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, GlyphTextMarkerHelper.GetTag(ilbp), ilCodeBreakpointGlyphTextMarkerHandler, textViewFilter);
 			toMethodMarkers.Add(ilbp, marker);
 		}
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
@@ -103,11 +103,13 @@ namespace dnSpy.Debugger.Breakpoints {
 		struct BreakpointMarkerInfo {
 			public ImageReference? ImageReference { get; }
 			public string MarkerTypeName { get; }
+			public string SelectedMarkerTypeName { get; }
 			public IClassificationType ClassificationType { get; }
 			public int ZIndex { get; }
-			public BreakpointMarkerInfo(ImageReference? imageReference, string markerTypeName, IClassificationType classificationType, int zIndex) {
+			public BreakpointMarkerInfo(ImageReference? imageReference, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex) {
 				ImageReference = imageReference;
 				MarkerTypeName = markerTypeName;
+				SelectedMarkerTypeName = selectedMarkerTypeName;
 				ClassificationType = classificationType;
 				ZIndex = zIndex;
 			}
@@ -115,22 +117,24 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		BreakpointMarkerInfo GetBreakpointMarkerInfo(ILCodeBreakpoint ilbp) {
 			ImageReference imgRef;
-			string markerTypeName;
+			string markerTypeName, selectedMarkerTypeName;
 			IClassificationType classificationType;
 			int zIndex;
 			if (ilbp.IsEnabled) {
 				imgRef = new ImageReference(GetType().Assembly, "Breakpoint");
 				markerTypeName = ThemeClassificationTypeNameKeys.BreakpointStatementMarker;
+				selectedMarkerTypeName = ThemeClassificationTypeNameKeys.SelectedBreakpointStatementMarker;
 				classificationType = classificationTypeEnabledBreakpoint;
 				zIndex = GlyphTextMarkerServiceZIndexes.EnabledBreakpoint;
 			}
 			else {
 				imgRef = new ImageReference(GetType().Assembly, "DisabledBreakpoint");
 				markerTypeName = ThemeClassificationTypeNameKeys.DisabledBreakpointStatementMarker;
+				selectedMarkerTypeName = null;
 				classificationType = null;
 				zIndex = GlyphTextMarkerServiceZIndexes.DisabledBreakpoint;
 			}
-			return new BreakpointMarkerInfo(imgRef, markerTypeName, classificationType, zIndex);
+			return new BreakpointMarkerInfo(imgRef, markerTypeName, selectedMarkerTypeName, classificationType, zIndex);
 		}
 	}
 }

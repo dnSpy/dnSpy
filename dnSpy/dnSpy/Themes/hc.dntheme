@@ -12,6 +12,7 @@
 		<color name="activestatementmarker" bg="#FFB4E4B4" />
 		<color name="breakpointstatement" fg="#FFFFFFFF" />
 		<color name="breakpointstatementmarker" bg="#FF963A46" />
+		<color name="selectedbreakpointstatementmarker" bg="#FF963A46" fg="#FFFFFFFF" />
 		<color name="disabledbreakpointstatementmarker" fg="#FF963A46" />
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="linenumber" fg="#2B91AF" />

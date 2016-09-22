@@ -170,6 +170,7 @@ namespace dnSpy.Contracts.Text {
 		ActiveStatementMarker,
 		BreakpointStatement,
 		BreakpointStatementMarker,
+		SelectedBreakpointStatementMarker,
 		DisabledBreakpointStatementMarker,
 		CurrentLine,
 		CurrentLineNoFocus,
@@ -372,6 +373,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object ActiveStatementMarker = TextColor.ActiveStatementMarker;
 		public static readonly object BreakpointStatement = TextColor.BreakpointStatement;
 		public static readonly object BreakpointStatementMarker = TextColor.BreakpointStatementMarker;
+		public static readonly object SelectedBreakpointStatementMarker = TextColor.SelectedBreakpointStatementMarker;
 		public static readonly object DisabledBreakpointStatementMarker = TextColor.DisabledBreakpointStatementMarker;
 		public static readonly object CurrentLine = TextColor.CurrentLine;
 		public static readonly object CurrentLineNoFocus = TextColor.CurrentLineNoFocus;
@@ -576,6 +578,7 @@ namespace dnSpy.Contracts.Text {
 			ActiveStatementMarker,
 			BreakpointStatement,
 			BreakpointStatementMarker,
+			SelectedBreakpointStatementMarker,
 			DisabledBreakpointStatementMarker,
 			CurrentLine,
 			CurrentLineNoFocus,

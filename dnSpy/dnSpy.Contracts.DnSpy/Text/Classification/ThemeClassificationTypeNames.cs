@@ -748,6 +748,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string BreakpointStatementMarker = "Theme-" + nameof(BreakpointStatementMarker);
 
 		/// <summary>
+		/// <see cref="TextColor.SelectedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedBreakpointStatementMarker = "Theme-" + nameof(SelectedBreakpointStatementMarker);
+
+		/// <summary>
 		/// <see cref="TextColor.DisabledBreakpointStatementMarker"/>
 		/// </summary>
 		public const string DisabledBreakpointStatementMarker = "Theme-" + nameof(DisabledBreakpointStatementMarker);

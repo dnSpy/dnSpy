@@ -175,6 +175,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ActiveStatementMarker),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatementMarker),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SelectedBreakpointStatementMarker),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DisabledBreakpointStatementMarker),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentLine),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentLineNoFocus),

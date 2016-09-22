@@ -771,6 +771,11 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition BreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DisabledBreakpointStatementMarkerClassificationTypeDefinition;
@@ -2294,6 +2299,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class BreakpointStatementMarker : ThemeMarkerFormatDefinition {
 			BreakpointStatementMarker() : base(TextColor.BreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedBreakpointStatementMarker() : base(TextColor.SelectedBreakpointStatementMarker) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

@@ -168,6 +168,7 @@ namespace dnSpy.Contracts.Themes {
 		ActiveStatementMarker,
 		BreakpointStatement,
 		BreakpointStatementMarker,
+		SelectedBreakpointStatementMarker,
 		DisabledBreakpointStatementMarker,
 		CurrentLine,
 		CurrentLineNoFocus,

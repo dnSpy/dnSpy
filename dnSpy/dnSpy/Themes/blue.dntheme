@@ -97,6 +97,7 @@
 		<color name="activestatementmarker" bg="#FFC0C0C0" />
 		<color name="breakpointstatement" fg="#FFFFFFFF" />
 		<color name="breakpointstatementmarker" bg="#FF963A46" />
+		<color name="selectedbreakpointstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
 		<color name="disabledbreakpointstatementmarker" fg="#FF800000" />
 		<color name="currentline" fg="#EAEAF2" />
 		<color name="currentlinenofocus" fg="#EEEEEE" />

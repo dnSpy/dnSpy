@@ -81,14 +81,14 @@ namespace dnSpy.Text.Editor {
 			this.GlyphTextMarkerMouseProcessorProviders = Orderer.Order(glyphTextMarkerMouseProcessorProviders).ToArray();
 		}
 
-		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
-			return AddMarker(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
+			return AddMarker(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken), ilOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 		}
 
-		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
-			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
+		public IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+			var marker = new GlyphTextMethodMarker(tokenId, ilOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 			glyphTextMarkers.Add(marker);
 			MarkerAdded?.Invoke(this, new GlyphTextMarkerAddedEventArgs(marker));
 			return marker;
@@ -97,6 +97,7 @@ namespace dnSpy.Text.Editor {
 		sealed class GlyphTextMethodMarker : IGlyphTextMethodMarkerImpl {
 			public ImageReference? GlyphImageReference { get; }
 			public string MarkerTypeName { get; }
+			public string SelectedMarkerTypeName { get; }
 			public IClassificationType ClassificationType { get; }
 			public int ZIndex { get; }
 			public object Tag { get; }
@@ -105,11 +106,12 @@ namespace dnSpy.Text.Editor {
 			public ModuleTokenId Method { get; }
 			public uint ILOffset { get; }
 
-			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+			public GlyphTextMethodMarker(ModuleTokenId method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 				Method = method;
 				ILOffset = ilOffset;
-				GlyphImageReference = glyphImage;
+				GlyphImageReference = glyphImage == null || glyphImage.Value.IsDefault ? null : glyphImage;
 				MarkerTypeName = markerTypeName;
+				SelectedMarkerTypeName = selectedMarkerTypeName;
 				ClassificationType = classificationType;
 				ZIndex = zIndex;
 				Tag = tag;

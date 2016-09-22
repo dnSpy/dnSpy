@@ -1839,6 +1839,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.ActiveStatementMarker, "Active statement (marker)"),
 			new BrushColorInfo(ColorType.BreakpointStatement, "Breakpoint statement"),
 			new BrushColorInfo(ColorType.BreakpointStatementMarker, "Breakpoint statement (marker)"),
+			new BrushColorInfo(ColorType.SelectedBreakpointStatementMarker, "Selected breakpoint statement (marker)"),
 			new BrushColorInfo(ColorType.DisabledBreakpointStatementMarker, "Disabled breakpoint statement (marker)"),
 			new BrushColorInfo(ColorType.BraceMatching, "Brace matching"),
 			new BrushColorInfo(ColorType.LineSeparator, "Line separator"),
