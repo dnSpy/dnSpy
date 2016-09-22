@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="context">Context</param>
 		/// <param name="marker">Marker</param>
 		/// <returns></returns>
-		string GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
 
 		/// <summary>
 		/// Gets the popup content or null if the next handler should be checked. The popup content is
@@ -59,6 +59,41 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="marker">Marker</param>
 		/// <returns></returns>
 		FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+	}
+
+	/// <summary>
+	/// Contains the tooltip content and style that is shown when hovering over the glyph in the glyph margin
+	/// </summary>
+	public sealed class GlyphTextMarkerToolTip {
+		/// <summary>
+		/// Tooltip content, a <see cref="string"/> or a UI element
+		/// </summary>
+		public object Content { get; }
+
+		/// <summary>
+		/// Tooltip style or null. Can be the key of a style in the resources (eg. a <see cref="string"/>) or a <see cref="System.Windows.Style"/> instance
+		/// </summary>
+		public object Style { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="content">Text content to show in the tooltip</param>
+		/// <param name="style">Tooltip style or null. Can be the key of a style in the resources (eg. a <see cref="string"/>) or a <see cref="System.Windows.Style"/> instance</param>
+		public GlyphTextMarkerToolTip(string content, object style = null) {
+			Content = content;
+			Style = style;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="content">Content to show in the tooltip</param>
+		/// <param name="style">Tooltip style or null. Can be the key of a style in the resources (eg. a <see cref="string"/>) or a <see cref="System.Windows.Style"/> instance</param>
+		public GlyphTextMarkerToolTip(object content, object style) {
+			Content = content;
+			Style = style;
+		}
 	}
 
 	/// <summary>

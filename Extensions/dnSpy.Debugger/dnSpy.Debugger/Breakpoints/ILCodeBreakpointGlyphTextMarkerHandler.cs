@@ -49,9 +49,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			return null;//TODO: Return debugger settings toolbar
 		}
 
-		string IGlyphTextMarkerHandler.GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
+		GlyphTextMarkerToolTip IGlyphTextMarkerHandler.GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
 			var ilbp = GlyphTextMarkerHelper.ToILCodeBreakpoint(marker);
-			return GetToolTipContent(ilbp, context.TextView);
+			return new GlyphTextMarkerToolTip(GetToolTipContent(ilbp, context.TextView));
 		}
 
 		string GetToolTipContent(ILCodeBreakpoint ilbp, ITextView textView) {

@@ -464,17 +464,29 @@ namespace dnSpy.Text.Editor {
 			foreach (var marker in glyphTextViewMarkerService.GetSortedGlyphTextMarkers(line)) {
 				if (glyphTextMarkerHandlerContext == null)
 					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line);
-				var toolTipContent = marker.Handler.GetToolTipContent(glyphTextMarkerHandlerContext, marker);
-				if (toolTipContent != null) {
+				var toolTipInfo = marker.Handler.GetToolTipContent(glyphTextMarkerHandlerContext, marker);
+				if (toolTipInfo != null) {
 					Debug.Assert(toolTip == null);
 					toolTipMarker = marker;
 					toolTip = new ToolTip();
-					toolTip.SetResourceReference(FrameworkElement.StyleProperty, "GlyphTextMarkerToolTipStyle");
 					PopupHelper.SetScaleTransform(wpfTextViewHost.TextView, toolTip);
-					toolTip.Content = new TextBlock {
-						Text = toolTipContent,
-						TextWrapping = TextWrapping.Wrap,
-					};
+
+					var toolTipContentString = toolTipInfo.Content as string;
+					if (toolTipContentString != null) {
+						toolTip.Content = new TextBlock {
+							Text = toolTipContentString,
+							TextWrapping = TextWrapping.Wrap,
+						};
+					}
+					else
+						toolTip.Content = toolTipInfo.Content;
+
+					var toolTipStyle = toolTipInfo.Style as Style;
+					if (toolTipStyle != null)
+						toolTip.Style = toolTipStyle;
+					else
+						toolTip.SetResourceReference(FrameworkElement.StyleProperty, toolTipInfo.Style ?? "GlyphTextMarkerToolTipStyle");
+
 					toolTip.Placement = PlacementMode.Relative;
 					toolTip.PlacementTarget = margin.VisualElement;
 					toolTip.HorizontalOffset = 0;

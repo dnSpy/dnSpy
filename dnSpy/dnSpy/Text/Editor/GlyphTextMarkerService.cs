@@ -124,7 +124,7 @@ namespace dnSpy.Text.Editor {
 				public static readonly NullGlyphTextMarkerHandler Instance = new NullGlyphTextMarkerHandler();
 				IGlyphTextMarkerHandlerMouseProcessor IGlyphTextMarkerHandler.MouseProcessor => null;
 				FrameworkElement IGlyphTextMarkerHandler.GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
-				string IGlyphTextMarkerHandler.GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
+				GlyphTextMarkerToolTip IGlyphTextMarkerHandler.GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
 				IEnumerable<GuidObject> IGlyphTextMarkerHandler.GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint) { yield break; }
 			}
 		}
