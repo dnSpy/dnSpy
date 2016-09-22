@@ -47,15 +47,19 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
 		readonly IRoslynDocumentationProviderFactory docFactory;
+		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 		AdhocWorkspace workspace;
 
-		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory) {
+		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
 			if (codeEditorProvider == null)
 				throw new ArgumentNullException(nameof(codeEditorProvider));
 			if (docFactory == null)
 				throw new ArgumentNullException(nameof(docFactory));
+			if (roslynDocumentChangedService == null)
+				throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
+			this.roslynDocumentChangedService = roslynDocumentChangedService;
 			this.documents = new List<RoslynCodeDocument>();
 		}
 
@@ -63,13 +67,14 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			Debug.Assert(workspace == null);
 
 			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
+			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
 			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
 			var projectId = ProjectId.CreateNewId();
 
 			foreach (var doc in decompiledCodeResult.Documents)
-				documents.Add(CreateDocument(projectId, doc.NameNoExtension));
+				documents.Add(CreateDocument(projectId, doc));
 
-			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
+			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
 				compilationOptions: CompilationOptions
 						.WithOptimizationLevel(OptimizationLevel.Release)
 						.WithPlatform(GetPlatform(decompiledCodeResult.Platform))
@@ -82,16 +87,23 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			foreach (var doc in documents)
 				workspace.OpenDocument(doc.Info.Id);
 
-			// Initialize the code after Roslyn has initialized so colorization works. The caret
-			// will force creation of lines and they won't be colorized if Roslyn hasn't init'd yet.
-			for (int i = 0; i < documents.Count; i++) {
-				var doc = decompiledCodeResult.Documents[i];
-				var textBuffer = documents[i].TextView.TextBuffer;
-				textBuffer.Replace(new Span(0, textBuffer.CurrentSnapshot.Length), doc.Code);
-			}
-
 			return documents.ToArray();
 		}
+
+		void Workspace_WorkspaceChanged(object sender, WorkspaceChangeEventArgs e) {
+			if (isDisposed)
+				return;
+			if (e.Kind != WorkspaceChangeKind.DocumentChanged)
+				return;
+			docChangedEventCount++;
+			if (docChangedEventCount != documents.Count)
+				return;
+
+			workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
+			foreach (var doc in documents)
+				roslynDocumentChangedService.RaiseDocumentChanged(doc.TextView.TextSnapshot);
+		}
+		int docChangedEventCount;
 
 		static Platform GetPlatform(TargetPlatform platform) {
 			// AnyCpu32BitPreferred can only be used when creating executables (we create a dll)
@@ -100,7 +112,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			return platform.ToPlatform();
 		}
 
-		RoslynCodeDocument CreateDocument(ProjectId projectId, string nameNoExtension) {
+		RoslynCodeDocument CreateDocument(ProjectId projectId, IDecompiledDocument doc) {
 			var options = new CodeEditorOptions();
 			options.ContentTypeString = ContentType;
 			options.Roles.Add(PredefinedDnSpyTextViewRoles.RoslynCodeEditor);
@@ -109,8 +121,11 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);
 			codeEditor.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 
-			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), nameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Default));
-			return new RoslynCodeDocument(codeEditor, documentInfo, nameNoExtension);
+			var textBuffer = codeEditor.TextView.TextBuffer;
+			textBuffer.Replace(new Span(0, textBuffer.CurrentSnapshot.Length), doc.Code);
+
+			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), doc.NameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Create()));
+			return new RoslynCodeDocument(codeEditor, documentInfo, doc.NameNoExtension);
 		}
 
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {
@@ -140,11 +155,18 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		}
 
 		public void Dispose() {
-			// This also closes all documents
-			workspace?.Dispose();
+			if (isDisposed)
+				return;
+			isDisposed = true;
+			if (workspace != null) {
+				workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
+				// This also closes all documents
+				workspace.Dispose();
+			}
 			foreach (var doc in documents)
 				doc.Dispose();
 			documents.Clear();
 		}
+		bool isDisposed;
 	}
 }

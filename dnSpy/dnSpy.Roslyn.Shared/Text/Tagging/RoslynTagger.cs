@@ -30,14 +30,29 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState> {
+		readonly ITextBuffer textBuffer;
 		readonly IClassificationType defaultClassificationType;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
+		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
-		public RoslynTagger(IThemeClassificationTypeService themeClassificationTypeService) {
+		public RoslynTagger(ITextBuffer textBuffer, IThemeClassificationTypeService themeClassificationTypeService, IRoslynDocumentChangedService roslynDocumentChangedService) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			if (roslynDocumentChangedService == null)
+				throw new ArgumentNullException(nameof(roslynDocumentChangedService));
+			this.textBuffer = textBuffer;
 			this.defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
+			this.roslynDocumentChangedService = roslynDocumentChangedService;
+			roslynDocumentChangedService.DocumentChanged += RoslynDocumentChangedService_DocumentChanged;
+		}
+
+		void RoslynDocumentChangedService_DocumentChanged(object sender, RoslynDocumentChangedEventArgs e) {
+			var snapshot = e.Snapshot;
+			if (textBuffer == snapshot.TextBuffer)
+				RefreshAllTags(snapshot);
 		}
 
 		protected override async Task GetTagsAsync(GetTagsState state, NormalizedSnapshotSpanCollection spans) {
@@ -72,5 +87,8 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			Debug.Assert(!state.IsInitialized);
 			state.Initialize(syntaxRoot, semanticModel, workspace);
 		}
+
+		protected override void DisposeInternal() =>
+			roslynDocumentChangedService.DocumentChanged -= RoslynDocumentChangedService_DocumentChanged;
 	}
 }

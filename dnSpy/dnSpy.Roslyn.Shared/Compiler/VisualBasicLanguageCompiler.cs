@@ -26,6 +26,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Documentation;
+using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;
@@ -36,15 +37,17 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "VisualBasicFile");
 		public Guid Language => DecompilerConstants.LANGUAGE_VISUALBASIC;
-		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorProvider, docFactory);
+		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService);
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
+		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		[ImportingConstructor]
-		VisualBasicLanguageCompilerCreator(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory) {
+		VisualBasicLanguageCompilerCreator(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
+			this.roslynDocumentChangedService = roslynDocumentChangedService;
 		}
 	}
 
@@ -61,8 +64,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 		};
 
-		public VisualBasicLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory)
-			: base(codeEditorProvider, docFactory) {
+		public VisualBasicLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService)
+			: base(codeEditorProvider, docFactory, roslynDocumentChangedService) {
 		}
 	}
 }

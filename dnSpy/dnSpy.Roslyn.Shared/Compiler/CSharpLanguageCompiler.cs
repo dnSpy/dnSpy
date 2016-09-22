@@ -26,6 +26,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Roslyn.Shared.Documentation;
+using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -36,15 +37,17 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public double Order => 0;
 		public ImageReference? Icon => new ImageReference(GetType().Assembly, "CSharpFile");
 		public Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
-		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory);
+		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService);
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
+		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		[ImportingConstructor]
-		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory) {
+		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
+			this.roslynDocumentChangedService = roslynDocumentChangedService;
 		}
 	}
 
@@ -58,8 +61,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_CSharp;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
-		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory)
-			: base(codeEditorProvider, docFactory) {
+		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService)
+			: base(codeEditorProvider, docFactory, roslynDocumentChangedService) {
 		}
 	}
 }

@@ -194,6 +194,19 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			this.lockObj = new object();
 		}
 
+		protected void RefreshAllTags(ITextSnapshot snapshot) {
+			Debug.Assert(snapshot != null);
+			if (snapshot == null)
+				return;
+			lock (lockObj) {
+				lastSnapshotState?.Cancel();
+				lastSnapshotState?.FreeRef();
+				lastSnapshotState = null;
+				cachedTags.Clear();
+			}
+			TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, 0, snapshot.Length)));
+		}
+
 		public IEnumerable<ITagSpan<TTagType>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return Enumerable.Empty<ITagSpan<TTagType>>();

@@ -60,12 +60,12 @@ namespace dnSpy.Roslyn.Shared.Optimizations {
 	[ExportAutoLoaded]
 	sealed class FirstUseOptimizationLoader : IAutoLoaded {
 		[ImportingConstructor]
-		FirstUseOptimizationLoader(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService, IRoslynDocumentationProviderFactory docFactory) {
+		FirstUseOptimizationLoader(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
 			// This method is currently only called when compiling the code so add an early test
 			// that it's still working in case ImmutableArray<T> gets updated.
 			ImmutableArrayUtilities<byte>.ToImmutableArray(Array.Empty<byte>());
 
-			new FirstUseOptimization(themeClassificationTypeService, textBufferFactoryService, docFactory);
+			new FirstUseOptimization(themeClassificationTypeService, textBufferFactoryService, docFactory, roslynDocumentChangedService);
 		}
 	}
 
@@ -88,9 +88,9 @@ Module Module1
 End Module
 ";
 
-		public FirstUseOptimization(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService, IRoslynDocumentationProviderFactory docFactory) {
+		public FirstUseOptimization(IThemeClassificationTypeService themeClassificationTypeService, ITextBufferFactoryService textBufferFactoryService, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
 			var buffer = textBufferFactoryService.CreateTextBuffer();
-			var tagger = new RoslynTagger(themeClassificationTypeService);
+			var tagger = new RoslynTagger(buffer, themeClassificationTypeService, roslynDocumentChangedService);
 			Task.Run(() => InitializeAsync(buffer, tagger, docFactory))
 			.ContinueWith(t => {
 				var ex = t.Exception;
@@ -117,9 +117,9 @@ End Module
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var documents = new List<DocumentInfo>();
 				var projectId = ProjectId.CreateNewId();
-				documents.Add(DocumentInfo.Create(DocumentId.CreateNewId(projectId), "main.cs", null, SourceCodeKind.Regular, TextLoader.From(buffer.AsTextContainer(), VersionStamp.Default)));
+				documents.Add(DocumentInfo.Create(DocumentId.CreateNewId(projectId), "main.cs", null, SourceCodeKind.Regular, TextLoader.From(buffer.AsTextContainer(), VersionStamp.Create())));
 
-				var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "compilecodeproj", Guid.NewGuid().ToString(), languageName,
+				var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", Guid.NewGuid().ToString(), languageName,
 					compilationOptions: compilationOptions
 							.WithOptimizationLevel(OptimizationLevel.Release)
 							.WithPlatform(Platform.AnyCpu)

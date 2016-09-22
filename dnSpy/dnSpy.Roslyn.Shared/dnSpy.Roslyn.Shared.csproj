@@ -100,6 +100,7 @@
     <Compile Include="Text\Editor\RoslynAppearanceCategoryConstants.cs" />
     <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
+    <Compile Include="Text\RoslynDocumentChangedService.cs" />
     <Compile Include="Text\RoslynMefHostServices.cs" />
     <Compile Include="Text\Tagging\AsyncTagger.cs" />
     <Compile Include="Text\Tagging\RoslynTagger.cs" />

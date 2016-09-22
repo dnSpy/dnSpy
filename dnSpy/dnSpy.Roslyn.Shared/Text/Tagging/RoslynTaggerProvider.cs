@@ -30,13 +30,15 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class RoslynTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		[ImportingConstructor]
-		RoslynTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+		RoslynTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService, IRoslynDocumentChangedService roslynDocumentChangedService) {
 			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.roslynDocumentChangedService = roslynDocumentChangedService;
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
-			new RoslynTagger(themeClassificationTypeService) as ITagger<T>;
+			new RoslynTagger(buffer, themeClassificationTypeService, roslynDocumentChangedService) as ITagger<T>;
 	}
 }
