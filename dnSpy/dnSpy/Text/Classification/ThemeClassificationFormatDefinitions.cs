@@ -994,6 +994,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition SignatureHelpParameterDocumentationClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Url)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition UrlClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2696,6 +2701,17 @@ namespace dnSpy.Text.Classification {
 		[Order(Before = Priority.Default, After = Priority.Low)]
 		sealed class SignatureHelpParameterDocumentation : ThemeClassificationFormatDefinition {
 			SignatureHelpParameterDocumentation() : base(TextColor.SignatureHelpParameterDocumentation) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Url)]
+		[Name(ThemeClassificationTypeNameKeys.Url)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class Url : ThemeClassificationFormatDefinition {
+			Url() : base(TextColor.Url) {
+				TextDecorations = System.Windows.TextDecorations.Underline;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

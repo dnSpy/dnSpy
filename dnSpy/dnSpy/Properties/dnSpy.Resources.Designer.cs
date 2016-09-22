@@ -3006,6 +3006,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CTRL + click to follow link.
+        /// </summary>
+        public static string UriFollowLinkMessage {
+            get {
+                return ResourceManager.GetString("UriFollowLinkMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use Horizontal Tab Groups.
         /// </summary>
         public static string UseHorizontalTabGroupsCommand {

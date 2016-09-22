@@ -35,5 +35,10 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <see cref="IIntellisensePresenter"/> <see cref="IMouseProcessorProvider"/>
 		/// </summary>
 		public const string IntellisensePresenter = nameof(IntellisensePresenter);
+
+		/// <summary>
+		/// URI <see cref="IMouseProcessorProvider"/>
+		/// </summary>
+		public const string Uri = nameof(Uri);
 	}
 }

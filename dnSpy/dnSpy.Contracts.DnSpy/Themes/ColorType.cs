@@ -213,6 +213,7 @@ namespace dnSpy.Contracts.Themes {
 		SignatureHelpCurrentParameter,
 		SignatureHelpParameter,
 		SignatureHelpParameterDocumentation,
+		Url,
 
 		// Must be last in this group
 		LastNR,

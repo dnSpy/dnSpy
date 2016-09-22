@@ -139,8 +139,11 @@ namespace dnSpy.Language.Intellisense {
 			if (IsDismissed)
 				throw new InvalidOperationException();
 
-			foreach (var completionSet in completionSets)
+			foreach (var completionSet in completionSets) {
 				completionSet.Recalculate();
+				if (IsDismissed)
+					return;
+			}
 			Match();
 			Recalculated?.Invoke(this, EventArgs.Empty);
 		}

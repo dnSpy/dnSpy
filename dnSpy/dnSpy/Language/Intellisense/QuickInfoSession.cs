@@ -125,6 +125,8 @@ namespace dnSpy.Language.Intellisense {
 			foreach (var source in quickInfoSources) {
 				ITrackingSpan applicableToSpanTmp;
 				source.AugmentQuickInfoSession(this, QuickInfoContent, out applicableToSpanTmp);
+				if (IsDismissed)
+					return;
 				if (applicableToSpan == null)
 					applicableToSpan = applicableToSpanTmp;
 			}

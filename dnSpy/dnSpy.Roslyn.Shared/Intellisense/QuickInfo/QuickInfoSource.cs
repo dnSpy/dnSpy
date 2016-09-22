@@ -81,6 +81,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			}
 
 			// The item has been fetched async, now show it to the user
+			// It's possible for another quick info session to already be active, eg. when
+			// hovering over a url in a string, so close it.
+			quickInfoTriggerServiceProvider.CloseOtherSessions(session);
 
 			var item = qiSession.Item;
 			Debug.Assert(item != null);

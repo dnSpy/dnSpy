@@ -220,6 +220,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpCurrentParameter),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameter),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Url),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

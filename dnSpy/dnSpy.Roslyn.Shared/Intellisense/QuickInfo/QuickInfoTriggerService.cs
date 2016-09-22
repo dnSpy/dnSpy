@@ -26,6 +26,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	interface IQuickInfoTriggerServiceProvider {
 		IQuickInfoTriggerService Create(ITextView textView);
+		void CloseOtherSessions(IQuickInfoSession session);
 	}
 
 	interface IQuickInfoTriggerService {
@@ -45,6 +46,13 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(QuickInfoTriggerService), () => new QuickInfoTriggerService(quickInfoBroker, textView));
+		}
+
+		public void CloseOtherSessions(IQuickInfoSession session) {
+			foreach (var s in quickInfoBroker.GetSessions(session.TextView)) {
+				if (s != session)
+					s.Dismiss();
+			}
 		}
 	}
 

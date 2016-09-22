@@ -215,6 +215,7 @@ namespace dnSpy.Contracts.Text {
 		SignatureHelpCurrentParameter,
 		SignatureHelpParameter,
 		SignatureHelpParameterDocumentation,
+		Url,
 
 		/// <summary>
 		/// Must be last
@@ -416,6 +417,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object SignatureHelpCurrentParameter = TextColor.SignatureHelpCurrentParameter;
 		public static readonly object SignatureHelpParameter = TextColor.SignatureHelpParameter;
 		public static readonly object SignatureHelpParameterDocumentation = TextColor.SignatureHelpParameterDocumentation;
+		public static readonly object Url = TextColor.Url;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -619,6 +621,7 @@ namespace dnSpy.Contracts.Text {
 			SignatureHelpCurrentParameter,
 			SignatureHelpParameter,
 			SignatureHelpParameterDocumentation,
+			Url,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

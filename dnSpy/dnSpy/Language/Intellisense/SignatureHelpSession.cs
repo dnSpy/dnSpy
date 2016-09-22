@@ -153,8 +153,11 @@ namespace dnSpy.Language.Intellisense {
 			signatureHelpSources = CreateSignatureHelpSources();
 
 			var list = new List<ISignature>();
-			foreach (var source in signatureHelpSources)
+			foreach (var source in signatureHelpSources) {
 				source.AugmentSignatureHelpSession(this, list);
+				if (IsDismissed)
+					return;
+			}
 			signatures.Clear();
 			foreach (var sig in list)
 				signatures.Add(sig);

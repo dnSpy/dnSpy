@@ -188,6 +188,7 @@
 		<color name="signaturehelpcurrentparameter" bold="true" bg="#FFF4A721" />
 		<color name="signaturehelpparameter" bold="true" italic="true" />
 		<color name="signaturehelpparameterdocumentation" italic="true" />
+		<color name="url" fg="blue" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

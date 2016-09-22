@@ -1872,6 +1872,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.SignatureHelpCurrentParameter, "Signature Help Current Parameter"),
 			new BrushColorInfo(ColorType.SignatureHelpParameter, "Signature Help Parameter"),
 			new BrushColorInfo(ColorType.SignatureHelpParameterDocumentation, "Signature Help Parameter Documentation"),
+			new BrushColorInfo(ColorType.Url, "URL"),
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

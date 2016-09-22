@@ -612,6 +612,14 @@
     <Compile Include="Text\Editor\TextViewModel.cs" />
     <Compile Include="Text\Editor\TextViewMouseProcessorCollection.cs" />
     <Compile Include="Text\Editor\TextViewRoleSet.cs" />
+    <Compile Include="Text\Editor\UriClassificationTagger.cs" />
+    <Compile Include="Text\Editor\UriFinder.cs" />
+    <Compile Include="Text\Editor\UriHelper.cs" />
+    <Compile Include="Text\Editor\UriMouseProcessor.cs" />
+    <Compile Include="Text\Editor\UriQuickInfoSourceProvider.cs" />
+    <Compile Include="Text\Editor\UriTag.cs" />
+    <Compile Include="Text\Editor\UriTagger.cs" />
+    <Compile Include="Text\Editor\UriWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarContainerMargin.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\ViewScroller.cs" />

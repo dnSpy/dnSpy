@@ -17,26 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using Microsoft.VisualStudio.Text.Tagging;
 
-namespace dnSpy.Contracts.Language.Intellisense {
-	/// <summary>
-	/// Predefined <see cref="IQuickInfoSourceProvider"/> names
-	/// </summary>
-	static class PredefinedDnSpyQuickInfoSourceProviders {
-		/// <summary>
-		/// <see cref="IDocumentViewer"/>
-		/// </summary>
-		public const string DocumentViewer = "dnSpy-" + nameof(DocumentViewer);
+namespace dnSpy.Text.Editor {
+	interface IUriTag : ITag {
+		// Empty, we only highlight it
+	}
 
-		/// <summary>
-		/// Roslyn languages (C# or Visual Basic)
-		/// </summary>
-		public const string Roslyn = "dnSpy-Roslyn";
-
-		/// <summary>
-		/// URI
-		/// </summary>
-		public const string Uri = "dnSpy-Uri";
+	sealed class UriTag : IUriTag {
+		public static readonly UriTag Instance = new UriTag();
+		UriTag() { }
 	}
 }

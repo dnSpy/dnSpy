@@ -971,5 +971,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.SignatureHelpParameterDocumentation"/>
 		/// </summary>
 		public const string SignatureHelpParameterDocumentation = nameof(SignatureHelpParameterDocumentation);
+
+		/// <summary>
+		/// <see cref="TextColor.Url"/>
+		/// </summary>
+		public const string Url = "urlformat";
 	}
 }
