@@ -15,7 +15,7 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
     {
         public static SourceTextContainer AsTextContainer(this ITextBuffer buffer)
         {
-            return SourceTextHelper.Instance.AsTextContainer(buffer);
+            return Shared.Text.Extensions.AsTextContainer(buffer);
         }
 
         public static ITextBuffer GetTextBuffer(this SourceTextContainer textContainer)
@@ -31,7 +31,7 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
 
         public static ITextBuffer TryGetTextBuffer(this SourceTextContainer textContainer)
         {
-            return SourceTextHelper.Instance.TryGetTextBuffer(textContainer);
+            return Shared.Text.Extensions.TryGetTextBuffer(textContainer);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// <returns>The underlying ITextSnapshot.</returns>
         public static ITextSnapshot FindCorrespondingEditorTextSnapshot(this SourceText text)
         {
-            return SourceTextHelper.Instance.FindCorrespondingEditorTextSnapshot(text);
+            return Shared.Text.Extensions.TryGetTextSnapshot(text);
         }
 
         internal static TextLine AsTextLine(this ITextSnapshotLine line)
@@ -53,7 +53,7 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
 
         public static SourceText AsText(this ITextSnapshot textSnapshot)
         {
-            return SourceTextHelper.Instance.AsText(textSnapshot);
+            return Shared.Text.Extensions.AsText(textSnapshot);
         }
 
         //internal static SourceText AsRoslynText(this ITextSnapshot textSnapshot, Encoding encoding)
