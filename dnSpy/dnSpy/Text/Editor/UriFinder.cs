@@ -59,8 +59,10 @@ namespace dnSpy.Text.Editor {
 				// Allow URIs inside brackets without including the closing bracket
 				//	Example: "If not, see <http://www.gnu.org/licenses/>."
 				if (index > 0 && length > 1) {
-					if (IsClosingBracket(line[index - 1], line[index + length - 1]))
-						length--;
+					char c = GetClosingBracket(line[index - 1]);
+					int closingIndex = GetIndexOf(c, index, length);
+					if (closingIndex > index)
+						length = closingIndex - index;
 				}
 
 				if (length == 0) {
@@ -74,14 +76,25 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		bool IsClosingBracket(char c, char other) {
+		int GetIndexOf(char c, int index, int length) {
+			if (c == 0)
+				return -1;
+			var line = this.line;
+			for (int i = index + length - 1; i >= index; i--) {
+				if (line[i] == c)
+					return i;
+			}
+			return -1;
+		}
+
+		char GetClosingBracket(char c) {
 			switch (c) {
-			case '(': return other == ')';
-			case '<': return other == '>';
-			case '{': return other == '}';
-			case '[': return other == ']';
-			case '"': return other == '"';
-			default: return false;
+			case '(': return ')';
+			case '<': return '>';
+			case '{': return '}';
+			case '[': return ']';
+			case '"': return '"';
+			default: return (char)0;
 			}
 		}
 
@@ -106,7 +119,7 @@ namespace dnSpy.Text.Editor {
 			// port number
 			"(?::\\d{2,5})?" +
 			// resource path
-			"(?:[/?#]\\S*)?"
+			"(?:[/?#][^\\s}>\\]\"]*)?"
 		, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 	}
 }
