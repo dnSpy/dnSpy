@@ -166,7 +166,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly IWpfTextView wpfTextView;
 		readonly ITextSearchService2 textSearchService2;
 		readonly ISearchSettings searchSettings;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly ITextStructureNavigator textStructureNavigator;
 		readonly Lazy<IReplaceListenerProvider>[] replaceListenerProviders;
 		readonly List<ITextMarkerListener> listeners;
@@ -176,15 +176,15 @@ namespace dnSpy.Text.Editor.Search {
 		NormalizedSnapshotSpanCollection findResultCollection;
 		IReplaceListener[] replaceListeners;
 
-		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxManager messageBoxManager, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders) {
+		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxService messageBoxService, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (textSearchService2 == null)
 				throw new ArgumentNullException(nameof(textSearchService2));
 			if (searchSettings == null)
 				throw new ArgumentNullException(nameof(searchSettings));
-			if (messageBoxManager == null)
-				throw new ArgumentNullException(nameof(messageBoxManager));
+			if (messageBoxService == null)
+				throw new ArgumentNullException(nameof(messageBoxService));
 			if (textStructureNavigator == null)
 				throw new ArgumentNullException(nameof(textStructureNavigator));
 			if (replaceListenerProviders == null)
@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor.Search {
 			this.wpfTextView = wpfTextView;
 			this.textSearchService2 = textSearchService2;
 			this.searchSettings = searchSettings;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			this.textStructureNavigator = textStructureNavigator;
 			this.replaceListenerProviders = replaceListenerProviders;
 			this.listeners = new List<ITextMarkerListener>();
@@ -820,7 +820,7 @@ namespace dnSpy.Text.Editor.Search {
 				}
 			}
 			catch (OutOfMemoryException) {
-				messageBoxManager.Show("Out of memory");
+				messageBoxService.Show("Out of memory");
 				return;
 			}
 			if (oldSnapshot != wpfTextView.TextSnapshot)

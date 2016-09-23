@@ -100,7 +100,7 @@ namespace dnSpy.Debugger {
 	sealed class DebugManager : IDebugManager {
 		readonly IAppWindow appWindow;
 		readonly IFileTabManager fileTabManager;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly ITheDebugger theDebugger;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
@@ -111,10 +111,10 @@ namespace dnSpy.Debugger {
 		public IDebuggerSettings DebuggerSettings { get; }
 
 		[ImportingConstructor]
-		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdProvider moduleIdProvider) {
+		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxService messageBoxService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdProvider moduleIdProvider) {
 			this.appWindow = appWindow;
 			this.fileTabManager = fileTabManager;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			this.DebuggerSettings = debuggerSettings;
 			this.theDebugger = theDebugger;
 			this.StackFrameManager = stackFrameManager;
@@ -420,7 +420,7 @@ namespace dnSpy.Debugger {
 
 		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
 			if (IsDebugging) {
-				var result = messageBoxManager.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), dnSpy_Debugger_Resources.AskAppWindowClosingStopDebugging, MsgBoxButton.Yes | MsgBoxButton.No);
+				var result = messageBoxService.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), dnSpy_Debugger_Resources.AskAppWindowClosingStopDebugging, MsgBoxButton.Yes | MsgBoxButton.No);
 				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
 					e.Cancel = true;
 			}
@@ -457,7 +457,7 @@ namespace dnSpy.Debugger {
 				else
 					errMsg = string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options.Filename, ex.Message);
 				if (isInteractive)
-					messageBoxManager.Show(errMsg);
+					messageBoxService.Show(errMsg);
 				return false;
 			}
 			TheDebugger.Initialize(newDebugger);
@@ -481,7 +481,7 @@ namespace dnSpy.Debugger {
 			var name = exType?.ToString(TypePrinterFlags.ShowNamespaces) ?? "???";
 			var msg = string.Format(dnSpy_Debugger_Resources.ExceptionThrownMessage, name, Path.GetFileName(thread.Process.Filename));
 			BringMainWindowToFrontAndActivate();
-			messageBoxManager.Show(msg);
+			messageBoxService.Show(msg);
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
@@ -525,7 +525,7 @@ namespace dnSpy.Debugger {
 				CorProcess cp;
 				var processName = process != null ? Path.GetFileName(process.Filename) : string.Format("pid {0}", (cp = thread.Process) == null ? 0 : cp.ProcessId);
 				BringMainWindowToFrontAndActivate();
-				var res = messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_UnhandledExceptionOccurred, processName, sb), MsgBoxButton.OK | MsgBoxButton.Cancel);
+				var res = messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.Error_UnhandledExceptionOccurred, processName, sb), MsgBoxButton.OK | MsgBoxButton.Cancel);
 				if (res != MsgBoxButton.Cancel)
 					e.AddPauseReason(DebuggerPauseReason.UnhandledException);
 			}
@@ -543,7 +543,7 @@ namespace dnSpy.Debugger {
 			else
 				msg = string.Format(dnSpy_Debugger_Resources.Error_CLRDebuggerErrorOccurred, e.HError, e.ErrorCode);
 			BringMainWindowToFrontAndActivate();
-			messageBoxManager.Show(msg);
+			messageBoxService.Show(msg);
 		}
 
 		static void AddExceptionInfo(StringBuilder sb, CorValue exValue, string msg) {
@@ -629,7 +629,7 @@ namespace dnSpy.Debugger {
 				Process.Start(asm.Filename);
 			}
 			catch (Exception ex) {
-				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, asm.Filename, ex.Message));
+				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, asm.Filename, ex.Message));
 			}
 		}
 
@@ -787,7 +787,7 @@ namespace dnSpy.Debugger {
 			string errMsg;
 			if (!Attach(options, out errMsg)) {
 				if (!string.IsNullOrEmpty(errMsg))
-					messageBoxManager.Show(errMsg);
+					messageBoxService.Show(errMsg);
 				return false;
 			}
 			return true;
@@ -828,7 +828,7 @@ namespace dnSpy.Debugger {
 
 			int hr = TheDebugger.Debugger.TryBreakProcesses();
 			if (hr < 0)
-				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotBreakProcess, hr));
+				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotBreakProcess, hr));
 		}
 
 		public bool CanStop => IsDebugging;
@@ -846,7 +846,7 @@ namespace dnSpy.Debugger {
 				return;
 			int hr = TheDebugger.Debugger.TryDetach();
 			if (hr < 0)
-				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotDetachProcess, hr));
+				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotDetachProcess, hr));
 		}
 
 		public bool CanContinue => ProcessState == DebuggerProcessState.Paused;
@@ -1202,7 +1202,7 @@ namespace dnSpy.Debugger {
 			if (!DebugSetNextStatement(parameter, out errMsg)) {
 				if (string.IsNullOrEmpty(errMsg))
 					errMsg = dnSpy_Debugger_Resources.Error_CouldNotSetNextStatement_UnknownReason;
-				messageBoxManager.Show(errMsg);
+				messageBoxService.Show(errMsg);
 				return false;
 			}
 

@@ -37,34 +37,34 @@ namespace dnSpy.Text.Editor {
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class UriMouseProcessorProvider : IMouseProcessorProvider {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		UriMouseProcessorProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IMessageBoxManager messageBoxManager) {
+		UriMouseProcessorProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IMessageBoxService messageBoxService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public IMouseProcessor GetAssociatedProcessor(IWpfTextView wpfTextView) =>
-			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(UriMouseProcessor), () => new UriMouseProcessor(wpfTextView, viewTagAggregatorFactoryService, messageBoxManager));
+			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(UriMouseProcessor), () => new UriMouseProcessor(wpfTextView, viewTagAggregatorFactoryService, messageBoxService));
 	}
 
 	sealed class UriMouseProcessor : MouseProcessorBase {
 		readonly IWpfTextView wpfTextView;
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly Cursor origCursor;
 		bool hasWrittenCursor;
 
-		public UriMouseProcessor(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IMessageBoxManager messageBoxManager) {
+		public UriMouseProcessor(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IMessageBoxService messageBoxService) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (viewTagAggregatorFactoryService == null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (messageBoxManager == null)
-				throw new ArgumentNullException(nameof(messageBoxManager));
+			if (messageBoxService == null)
+				throw new ArgumentNullException(nameof(messageBoxService));
 			this.wpfTextView = wpfTextView;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.origCursor = wpfTextView.VisualElement.Cursor;
 			wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
@@ -130,7 +130,7 @@ namespace dnSpy.Text.Editor {
 				Process.Start(url);
 			}
 			catch {
-				messageBoxManager.Show(dnSpy_Resources.CouldNotStartBrowser);
+				messageBoxService.Show(dnSpy_Resources.CouldNotStartBrowser);
 			}
 		}
 

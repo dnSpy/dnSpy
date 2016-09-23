@@ -29,12 +29,12 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportAutoLoaded]
 	sealed class UndoRedoCommmandLoader : IAutoLoaded {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		UndoRedoCommmandLoader(IWpfCommandManager wpfCommandManager, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IMessageBoxManager messageBoxManager) {
+		UndoRedoCommmandLoader(IWpfCommandManager wpfCommandManager, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IMessageBoxService messageBoxService) {
 			this.undoCommandManager = undoCommandManager;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 
 			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(UndoRoutedCommands.Undo, (s, e) => undoCommandManager.Value.Undo(), (s, e) => e.CanExecute = undoCommandManager.Value.CanUndo);
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 			var msg = count == 1 ? dnSpy_AsmEditor_Resources.AskExitUnsavedFile :
 					string.Format(dnSpy_AsmEditor_Resources.AskExitUnsavedFiles, count);
-			var res = messageBoxManager.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxService.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res == MsgBoxButton.No || res == MsgBoxButton.None)
 				e.Cancel = true;
 		}

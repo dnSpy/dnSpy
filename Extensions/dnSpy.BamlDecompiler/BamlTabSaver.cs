@@ -33,21 +33,21 @@ using Microsoft.Win32;
 namespace dnSpy.BamlDecompiler {
 	[ExportTabSaverProvider(Order = TabConstants.ORDER_BAMLTABSAVERPROVIDER)]
 	sealed class BamlTabSaverProvider : ITabSaverProvider {
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		BamlTabSaverProvider(IMessageBoxManager messageBoxManager) {
-			this.messageBoxManager = messageBoxManager;
+		BamlTabSaverProvider(IMessageBoxService messageBoxService) {
+			this.messageBoxService = messageBoxService;
 		}
 
-		public ITabSaver Create(IFileTab tab) => BamlTabSaver.TryCreate(tab, messageBoxManager);
+		public ITabSaver Create(IFileTab tab) => BamlTabSaver.TryCreate(tab, messageBoxService);
 	}
 
 	sealed class BamlTabSaver : ITabSaver {
 		public bool CanSave => true;
 		public string MenuHeader => bamlNode.DisassembleBaml ? dnSpy_BamlDecompiler_Resources.SaveBAML : dnSpy_BamlDecompiler_Resources.SaveXAML;
 
-		public static BamlTabSaver TryCreate(IFileTab tab, IMessageBoxManager messageBoxManager) {
+		public static BamlTabSaver TryCreate(IFileTab tab, IMessageBoxService messageBoxService) {
 			var uiContext = tab.UIContext as IDocumentViewer;
 			if (uiContext == null)
 				return null;
@@ -58,19 +58,19 @@ namespace dnSpy.BamlDecompiler {
 			if (bamlNode == null)
 				return null;
 
-			return new BamlTabSaver(tab, bamlNode, uiContext, messageBoxManager);
+			return new BamlTabSaver(tab, bamlNode, uiContext, messageBoxService);
 		}
 
 		readonly IFileTab tab;
 		readonly BamlResourceElementNode bamlNode;
 		readonly IDocumentViewer documentViewer;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
-		BamlTabSaver(IFileTab tab, BamlResourceElementNode bamlNode, IDocumentViewer documentViewer, IMessageBoxManager messageBoxManager) {
+		BamlTabSaver(IFileTab tab, BamlResourceElementNode bamlNode, IDocumentViewer documentViewer, IMessageBoxService messageBoxService) {
 			this.tab = tab;
 			this.bamlNode = bamlNode;
 			this.documentViewer = documentViewer;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
 		sealed class DecompileContext : IDisposable {
@@ -141,7 +141,7 @@ namespace dnSpy.BamlDecompiler {
 				ctx.Dispose();
 				documentViewer.HideCancelButton();
 				if (result.Exception != null)
-					messageBoxManager.Show(result.Exception);
+					messageBoxService.Show(result.Exception);
 			});
 		}
 	}

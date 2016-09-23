@@ -347,7 +347,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\MainWindowControl.cs" />
-    <Compile Include="MainApp\MessageBoxManager.cs" />
+    <Compile Include="MainApp\MessageBoxService.cs" />
     <Compile Include="MainApp\MiscOptions.cs" />
     <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
       <DependentUpon>MsgBoxDlg.xaml</DependentUpon>

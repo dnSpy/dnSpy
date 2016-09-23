@@ -36,15 +36,15 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ITextSearchService2 textSearchService2;
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
 		readonly ISearchSettings searchSettings;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<IReplaceListenerProvider>[] replaceListenerProviders;
 
 		[ImportingConstructor]
-		SearchServiceProvider(ITextSearchService2 textSearchService2, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISearchSettings searchSettings, IMessageBoxManager messageBoxManager, [ImportMany] IEnumerable<Lazy<IReplaceListenerProvider>> replaceListenerProviders) {
+		SearchServiceProvider(ITextSearchService2 textSearchService2, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISearchSettings searchSettings, IMessageBoxService messageBoxService, [ImportMany] IEnumerable<Lazy<IReplaceListenerProvider>> replaceListenerProviders) {
 			this.textSearchService2 = textSearchService2;
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
 			this.searchSettings = searchSettings;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			this.replaceListenerProviders = replaceListenerProviders.ToArray();
 		}
 
@@ -52,7 +52,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(SearchService),
-				() => new SearchService(wpfTextView, textSearchService2, searchSettings, messageBoxManager,
+				() => new SearchService(wpfTextView, textSearchService2, searchSettings, messageBoxService,
 					textStructureNavigatorSelectorService.GetTextStructureNavigator(wpfTextView.TextBuffer),
 					replaceListenerProviders));
 		}

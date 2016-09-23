@@ -487,13 +487,13 @@ namespace dnSpy.Debugger.Modules {
 	[ExportMenuItem(Icon = "Save", Group = MenuConstants.GROUP_CTX_DBG_MODULES_SAVE, Order = 0)]
 	sealed class SaveModuleToDiskModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IAppWindow appWindow;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		SaveModuleToDiskModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IAppWindow appWindow, IMessageBoxManager messageBoxManager)
+		SaveModuleToDiskModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IAppWindow appWindow, IMessageBoxService messageBoxService)
 			: base(theDebugger, modulesContent) {
 			this.appWindow = appWindow;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) => Save(GetSavableFiles(context.SelectedItems));
@@ -546,7 +546,7 @@ namespace dnSpy.Debugger.Modules {
 				return;
 			if (!data.WasError)
 				return;
-			messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.ErrorOccurredX, data.ErrorMessage));
+			messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.ErrorOccurredX, data.ErrorMessage));
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) => GetSavableFiles(context.SelectedItems).Length > 0;

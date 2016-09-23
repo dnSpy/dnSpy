@@ -29,16 +29,16 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	sealed class UndoRedoIFileListListener : IFileListListener {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
 		readonly Lazy<IHexDocumentManager> hexDocumentManager;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		public bool CanLoad => true;
 		public bool CanReload => true;
 
 		[ImportingConstructor]
-		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IMessageBoxManager messageBoxManager) {
+		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IMessageBoxService messageBoxService) {
 			this.undoCommandManager = undoCommandManager;
 			this.hexDocumentManager = hexDocumentManager;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public void BeforeLoad(bool isReload) {
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 						dnSpy_AsmEditor_Resources.AskLoadAssembliesLoseChanges;
 
 			var msg = count == 1 ? dnSpy_AsmEditor_Resources.UnsavedFile : string.Format(dnSpy_AsmEditor_Resources.UnsavedFiles, count);
-			var res = messageBoxManager.Show(string.Format("{0} {1}", msg, question), MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxService.Show(string.Format("{0} {1}", msg, question), MsgBoxButton.Yes | MsgBoxButton.No);
 			return res == MsgBoxButton.Yes;
 		}
 	}

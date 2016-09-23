@@ -32,12 +32,12 @@ using Microsoft.Win32;
 namespace dnSpy.MainApp {
 	[ExportSimpleAppOptionProvider(Guid = AppSettingsConstants.GUID_DYNTAB_MISC)]
 	sealed class AppMiscOptionProvider : ISimpleAppOptionProvider {
-		readonly MessageBoxManager messageBoxManager;
+		readonly MessageBoxService messageBoxService;
 		readonly AppSettingsImpl appSettings;
 
 		[ImportingConstructor]
-		AppMiscOptionProvider(MessageBoxManager messageBoxManager, AppSettingsImpl appSettings) {
-			this.messageBoxManager = messageBoxManager;
+		AppMiscOptionProvider(MessageBoxService messageBoxService, AppSettingsImpl appSettings) {
+			this.messageBoxService = messageBoxService;
 			this.appSettings = appSettings;
 		}
 
@@ -55,7 +55,7 @@ namespace dnSpy.MainApp {
 			yield return new SimpleAppOptionButton() {
 				Order = AppSettingsConstants.ORDER_MISC_ENABLEALLWARNINGS,
 				Text = dnSpy_Resources.Options_Misc_Button_EnableAllWarnings,
-				Command = new RelayCommand(a => messageBoxManager.EnableAllWarnings(), a => messageBoxManager.CanEnableAllWarnings),
+				Command = new RelayCommand(a => messageBoxService.EnableAllWarnings(), a => messageBoxService.CanEnableAllWarnings),
 			};
 
 			yield return new SimpleAppOptionUserContent<UseNewRendererVM>(new UseNewRendererVM(appSettings), (saveSettings, appRefreshSettings, vm) => {
@@ -101,7 +101,7 @@ namespace dnSpy.MainApp {
 
 				var path = System.Reflection.Assembly.GetEntryAssembly().Location;
 				if (!File.Exists(path)) {
-					messageBoxManager.Show("Cannot locate dnSpy!");
+					messageBoxService.Show("Cannot locate dnSpy!");
 					return;
 				}
 				path = string.Format("\"{0}\" -- \"%1\"", path);
@@ -131,13 +131,13 @@ namespace dnSpy.MainApp {
 					}
 				}
 				catch (UnauthorizedAccessException) {
-					messageBoxManager.Show("Cannot obtain access to registry!");
+					messageBoxService.Show("Cannot obtain access to registry!");
 				}
 				catch (SecurityException) {
-					messageBoxManager.Show("Cannot obtain access to registry!");
+					messageBoxService.Show("Cannot obtain access to registry!");
 				}
 				catch (Exception ex) {
-					messageBoxManager.Show("Cannot add context menu item!" + Environment.NewLine + ex.ToString());
+					messageBoxService.Show("Cannot add context menu item!" + Environment.NewLine + ex.ToString());
 				}
 			}
 		}

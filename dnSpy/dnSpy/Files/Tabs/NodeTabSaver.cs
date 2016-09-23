@@ -36,26 +36,26 @@ namespace dnSpy.Files.Tabs {
 	[ExportTabSaverProvider(Order = TabConstants.ORDER_DEFAULTTABSAVERPROVIDER)]
 	sealed class NodeTabSaverProvider : ITabSaverProvider {
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		NodeTabSaverProvider(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IMessageBoxManager messageBoxManager) {
+		NodeTabSaverProvider(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IMessageBoxService messageBoxService) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
-		public ITabSaver Create(IFileTab tab) => NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, messageBoxManager);
+		public ITabSaver Create(IFileTab tab) => NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, messageBoxService);
 	}
 
 	sealed class NodeTabSaver : ITabSaver {
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly IFileTab tab;
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 		readonly IDecompiler decompiler;
 		readonly IFileTreeNodeData[] nodes;
 		readonly IDocumentViewer documentViewer;
 
-		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, IMessageBoxManager messageBoxManager) {
+		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, IMessageBoxService messageBoxService) {
 			if (tab.IsAsyncExecInProgress)
 				return null;
 			var uiContext = tab.UIContext as IDocumentViewer;
@@ -67,11 +67,11 @@ namespace dnSpy.Files.Tabs {
 			var nodes = tab.Content.Nodes.ToArray();
 			if (nodes.Length == 0)
 				return null;
-			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, decompiler, uiContext, nodes);
+			return new NodeTabSaver(messageBoxService, tab, fileTreeNodeDecompiler, decompiler, uiContext, nodes);
 		}
 
-		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, IDecompiler decompiler, IDocumentViewer documentViewer, IFileTreeNodeData[] nodes) {
-			this.messageBoxManager = messageBoxManager;
+		NodeTabSaver(IMessageBoxService messageBoxService, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, IDecompiler decompiler, IDocumentViewer documentViewer, IFileTreeNodeData[] nodes) {
+			this.messageBoxService = messageBoxService;
 			this.tab = tab;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.decompiler = decompiler;
@@ -132,7 +132,7 @@ namespace dnSpy.Files.Tabs {
 				ctx.Dispose();
 				documentViewer.HideCancelButton();
 				if (result.Exception != null)
-					messageBoxManager.Show(result.Exception);
+					messageBoxService.Show(result.Exception);
 			});
 		}
 	}

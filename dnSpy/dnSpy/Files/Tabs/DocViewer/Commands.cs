@@ -35,13 +35,13 @@ namespace dnSpy.Files.Tabs.DocViewer {
 	sealed class WordWrapInit : IAutoLoaded {
 		readonly IEditorOptions editorOptions;
 		readonly IAppSettings appSettings;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		WordWrapInit(IAppWindow appWindow, IEditorOptionsFactoryService editorOptionsFactoryService, IAppSettings appSettings, IMessageBoxManager messageBoxManager) {
+		WordWrapInit(IAppWindow appWindow, IEditorOptionsFactoryService editorOptionsFactoryService, IAppSettings appSettings, IMessageBoxService messageBoxService) {
 			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
 			this.appSettings = appSettings;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			appWindow.MainWindow.KeyDown += MainWindow_KeyDown;
 		}
 
@@ -65,7 +65,7 @@ namespace dnSpy.Files.Tabs.DocViewer {
 		void ToggleWordWrap() {
 			editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap);
 			if ((editorOptions.WordWrapStyle() & WordWrapStyles.WordWrap) != 0 && appSettings.UseNewRenderer_TextEditor)
-				messageBoxManager.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
+				messageBoxService.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
 		}
 	}
 

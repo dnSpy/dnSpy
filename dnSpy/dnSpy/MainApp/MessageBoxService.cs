@@ -29,15 +29,15 @@ using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions, Order = double.MinValue)]
-	sealed class MessageBoxManagerLoader : IAutoLoaded {
+	sealed class MessageBoxServiceLoader : IAutoLoaded {
 		[ImportingConstructor]
-		MessageBoxManagerLoader(IMessageBoxManager messageBoxManager) {
-			MsgBox.Instance = messageBoxManager;
+		MessageBoxServiceLoader(IMessageBoxService messageBoxService) {
+			MsgBox.Instance = messageBoxService;
 		}
 	}
 
-	[Export, Export(typeof(IMessageBoxManager))]
-	sealed class MessageBoxManager : IMessageBoxManager {
+	[Export, Export(typeof(IMessageBoxService))]
+	sealed class MessageBoxService : IMessageBoxService {
 		static readonly Guid SETTINGS_GUID = new Guid("686C5CFB-FF63-4AA5-8C92-E08607AE5146");
 		const string IGNORED_SECTION = "Ignored";
 		const string IGNORED_ATTR = "id";
@@ -49,7 +49,7 @@ namespace dnSpy.MainApp {
 		readonly HashSet<Guid> ignoredMessages;
 
 		[ImportingConstructor]
-		MessageBoxManager(IAppWindow appWindow, ISettingsManager settingsManager) {
+		MessageBoxService(IAppWindow appWindow, ISettingsManager settingsManager) {
 			this.appWindow = appWindow;
 			this.settingsManager = settingsManager;
 			this.ignoredMessages = new HashSet<Guid>();

@@ -107,15 +107,15 @@ namespace dnSpy.Files.Tabs {
 		readonly IAppWindow appWindow;
 		readonly IFileListLoader fileListLoader;
 		readonly FileListManager fileListManager;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly IFileManager fileManager;
 
 		[ImportingConstructor]
-		OpenListCommand(IAppWindow appWindow, IFileListLoader fileListLoader, FileListManager fileListManager, IMessageBoxManager messageBoxManager, IFileManager fileManager) {
+		OpenListCommand(IAppWindow appWindow, IFileListLoader fileListLoader, FileListManager fileListManager, IMessageBoxService messageBoxService, IFileManager fileManager) {
 			this.appWindow = appWindow;
 			this.fileListLoader = fileListLoader;
 			this.fileListManager = fileListManager;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			this.fileManager = fileManager;
 		}
 
@@ -129,7 +129,7 @@ namespace dnSpy.Files.Tabs {
 
 			var win = new OpenFileListDlg();
 			const bool syntaxHighlight = true;
-			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? dnSpy_Resources.OpenList_MissingName : string.Empty));
+			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxService.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? dnSpy_Resources.OpenList_MissingName : string.Empty));
 			win.DataContext = vm;
 			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)

@@ -280,11 +280,11 @@ namespace dnSpy.Contracts.Hex {
 
 	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = "Fill", Group = MenuConstants.GROUP_CTX_HEXBOX_EDIT, Order = 10)]
 	sealed class WriteToSelectionSelectionHexBoxCtxMenuCommand : HexBoxCommand {
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		WriteToSelectionSelectionHexBoxCtxMenuCommand(IMessageBoxManager messageBoxManager) {
-			this.messageBoxManager = messageBoxManager;
+		WriteToSelectionSelectionHexBoxCtxMenuCommand(IMessageBoxService messageBoxService) {
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override void Execute(DnHexBox dnHexBox) {
@@ -292,7 +292,7 @@ namespace dnSpy.Contracts.Hex {
 			if (sel == null)
 				return;
 
-			var res = messageBoxManager.Ask<byte?>(dnSpy_Contracts_DnSpy_Resources.FillSelection_Label, "0xFF", dnSpy_Contracts_DnSpy_Resources.FillSelection_Title, s => {
+			var res = messageBoxService.Ask<byte?>(dnSpy_Contracts_DnSpy_Resources.FillSelection_Label, "0xFF", dnSpy_Contracts_DnSpy_Resources.FillSelection_Title, s => {
 				string error;
 				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
 				return string.IsNullOrEmpty(error) ? b : (byte?)null;

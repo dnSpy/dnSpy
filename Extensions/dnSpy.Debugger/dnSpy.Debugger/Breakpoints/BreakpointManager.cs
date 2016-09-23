@@ -94,16 +94,16 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		readonly IFileTabManager fileTabManager;
 		readonly ITheDebugger theDebugger;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 		readonly IModuleIdProvider moduleIdProvider;
 		readonly Lazy<IBreakpointListener>[] breakpointListeners;
 		bool breakpointListenersInitialized;
 
 		[ImportingConstructor]
-		BreakpointManager(IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, IModuleIdProvider moduleIdProvider, [ImportMany] IEnumerable<Lazy<IBreakpointListener>> breakpointListeners) {
+		BreakpointManager(IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxService messageBoxService, IModuleIdProvider moduleIdProvider, [ImportMany] IEnumerable<Lazy<IBreakpointListener>> breakpointListeners) {
 			this.fileTabManager = fileTabManager;
 			this.theDebugger = theDebugger;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 			this.moduleIdProvider = moduleIdProvider;
 			this.breakpointListeners = breakpointListeners.ToArray();
 
@@ -276,7 +276,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public bool CanClear => ilCodeBreakpoints.Count != 0 || eventBreakpoints.Count != 0;
 
 		public bool ClearAskUser() {
-			var res = messageBoxManager.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxService.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res != null && res != MsgBoxButton.Yes)
 				return false;
 			Clear();

@@ -285,12 +285,12 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "res:LocalsSaveCommand", Icon = "Save", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 30)]
 	sealed class SaveDataLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		SaveDataLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMessageBoxManager messageBoxManager)
+		SaveDataLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMessageBoxService messageBoxService)
 			: base(theDebugger, localsContent) {
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) {
@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.Locals {
 					ulong addr = value.Address;
 					ulong totalSize = elemSize * value.ArrayCount;
 					if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue) {
-						messageBoxManager.Show(dnSpy_Debugger_Resources.LocalsSave_Error_CouldNotGetArrayData);
+						messageBoxService.Show(dnSpy_Debugger_Resources.LocalsSave_Error_CouldNotGetArrayData);
 						return;
 					}
 					data = value.ReadGenericValue();
@@ -329,7 +329,7 @@ namespace dnSpy.Debugger.Locals {
 			else
 				data = value.ReadGenericValue();
 			if (data == null) {
-				messageBoxManager.Show(dnSpy_Debugger_Resources.LocalsSave_Error_CouldNotReadAnyData);
+				messageBoxService.Show(dnSpy_Debugger_Resources.LocalsSave_Error_CouldNotReadAnyData);
 				return;
 			}
 
@@ -342,7 +342,7 @@ namespace dnSpy.Debugger.Locals {
 					file.Write(data, dataIndex.Value, dataSize.Value);
 			}
 			catch (Exception ex) {
-				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.LocalsSave_Error_CouldNotSaveDataToFilename, filename, ex.Message));
+				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.LocalsSave_Error_CouldNotSaveDataToFilename, filename, ex.Message));
 				return;
 			}
 		}

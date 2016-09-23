@@ -30,11 +30,11 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1)]
 	sealed class GoToCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		GoToCommandTargetFilterProvider(IMessageBoxManager messageBoxManager) {
-			this.messageBoxManager = messageBoxManager;
+		GoToCommandTargetFilterProvider(IMessageBoxService messageBoxService) {
+			this.messageBoxService = messageBoxService;
 		}
 
 		public ICommandTargetFilter Create(object target) {
@@ -42,17 +42,17 @@ namespace dnSpy.Text.Editor {
 			if (textView == null)
 				return null;
 
-			return new GoToCommandTargetFilter(textView, messageBoxManager);
+			return new GoToCommandTargetFilter(textView, messageBoxService);
 		}
 	}
 
 	sealed class GoToCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
-		public GoToCommandTargetFilter(ITextView textView, IMessageBoxManager messageBoxManager) {
+		public GoToCommandTargetFilter(ITextView textView, IMessageBoxService messageBoxService) {
 			this.textView = textView;
-			this.messageBoxManager = messageBoxManager;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) =>
@@ -107,7 +107,7 @@ namespace dnSpy.Text.Editor {
 			var ownerWindow = wpfTextView == null ? null : Window.GetWindow(wpfTextView.VisualElement);
 			int maxLines = snapshotLine.Snapshot.LineCount;
 
-			var res = messageBoxManager.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
+			var res = messageBoxService.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				int? line, column;
 				TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out line, out column);
 				return Tuple.Create<int, int?>(line.Value, column);

@@ -21,22 +21,22 @@ using System;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>
-	/// Contains an <see cref="IMessageBoxManager"/> instance
+	/// Contains an <see cref="IMessageBoxService"/> instance
 	/// </summary>
 	public static class MsgBox {	// "MessageBox" is used by WPF
 		/// <summary>
-		/// Gets the <see cref="IMessageBoxManager"/> instance
+		/// Gets the <see cref="IMessageBoxService"/> instance
 		/// </summary>
-		public static IMessageBoxManager Instance {
-			get { return messageBoxManager; }
+		public static IMessageBoxService Instance {
+			get { return messageBoxService; }
 			internal set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
-				if (messageBoxManager != null)
+				if (messageBoxService != null)
 					throw new InvalidOperationException();
-				messageBoxManager = value;
+				messageBoxService = value;
 			}
 		}
-		static IMessageBoxManager messageBoxManager;
+		static IMessageBoxService messageBoxService;
 	}
 }

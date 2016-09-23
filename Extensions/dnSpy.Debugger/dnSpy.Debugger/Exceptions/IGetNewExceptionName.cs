@@ -28,15 +28,15 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[Export(typeof(IGetNewExceptionName))]
 	sealed class GetNewExceptionName : IGetNewExceptionName {
-		readonly IMessageBoxManager messageBoxManager;
+		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		GetNewExceptionName(IMessageBoxManager messageBoxManager) {
-			this.messageBoxManager = messageBoxManager;
+		GetNewExceptionName(IMessageBoxService messageBoxService) {
+			this.messageBoxService = messageBoxService;
 		}
 
 		public string GetName() {
-			var res = messageBoxManager.Ask(dnSpy_Debugger_Resources.Exceptions_Add_Label, null,
+			var res = messageBoxService.Ask(dnSpy_Debugger_Resources.Exceptions_Add_Label, null,
 				dnSpy_Debugger_Resources.Exceptions_Add_Title,
 				s => s.Trim(),
 				s => !string.IsNullOrWhiteSpace(s) ? null : dnSpy_Debugger_Resources.Exceptions_Add_Error_Name);

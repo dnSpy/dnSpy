@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.App {
 	/// <summary>
 	/// Shows message boxes
 	/// </summary>
-	public interface IMessageBoxManager {
+	public interface IMessageBoxService {
 		/// <summary>
 		/// Shows a message box unless the user has disabled showing this particular message. null
 		/// is returned if the message was ignored and no message box was shown. Otherwise, the
