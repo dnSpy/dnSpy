@@ -124,6 +124,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 		};
 
 		KeyValuePair<int, int>? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
+			if (completion == null)
+				return null;
 			if (stringBuilder == null)
 				stringBuilder = new StringBuilder();
 			else
