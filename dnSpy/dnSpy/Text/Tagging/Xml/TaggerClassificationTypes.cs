@@ -24,6 +24,8 @@ namespace dnSpy.Text.Tagging.Xml {
 		public ClassificationTag Attribute { get; protected set; }
 		public ClassificationTag AttributeQuotes { get; protected set; }
 		public ClassificationTag AttributeValue { get; protected set; }
+		// Optimization so the XAML tagger doesn't have to check every string for markup extension strings (attribute value strings beginning with '{')
+		public ClassificationTag AttributeValueXaml { get; protected set; }
 		public ClassificationTag CDataSection { get; protected set; }
 		public ClassificationTag Comment { get; protected set; }
 		public ClassificationTag Delimiter { get; protected set; }

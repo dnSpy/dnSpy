@@ -51,7 +51,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		protected override IEnumerable<ITagSpan<IClassificationTag>> GetTags(SnapshotSpan span, ClassificationTag tag) {
-			if (tag != xamlTaggerClassificationTypes.AttributeValue)
+			if (tag != xamlTaggerClassificationTypes.AttributeValueXaml)
 				return base.GetTags(span, tag);
 			if (!xamlAttributeValueClassifier.Initialize(span))
 				return base.GetTags(span, tag);

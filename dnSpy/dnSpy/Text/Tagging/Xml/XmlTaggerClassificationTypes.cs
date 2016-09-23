@@ -30,6 +30,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			Attribute = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlAttribute));
 			AttributeQuotes = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlAttributeQuotes));
 			AttributeValue = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlAttributeValue));
+			AttributeValueXaml = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlAttributeValue));
 			CDataSection = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlCDataSection));
 			Comment = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlComment));
 			Delimiter = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.XmlDelimiter));

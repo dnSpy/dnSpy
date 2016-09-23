@@ -38,6 +38,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			Debug.Assert(taggerClassificationTypes.Attribute?.ClassificationType != null);
 			Debug.Assert(taggerClassificationTypes.AttributeQuotes?.ClassificationType != null);
 			Debug.Assert(taggerClassificationTypes.AttributeValue?.ClassificationType != null);
+			Debug.Assert(taggerClassificationTypes.AttributeValueXaml?.ClassificationType != null);
 			Debug.Assert(taggerClassificationTypes.CDataSection?.ClassificationType != null);
 			Debug.Assert(taggerClassificationTypes.Comment?.ClassificationType != null);
 			Debug.Assert(taggerClassificationTypes.Delimiter?.ClassificationType != null);
@@ -128,6 +129,9 @@ namespace dnSpy.Text.Tagging.Xml {
 
 			case XmlKind.AttributeValue:
 				return taggerClassificationTypes.AttributeValue;
+
+			case XmlKind.AttributeValueXaml:
+				return taggerClassificationTypes.AttributeValueXaml;
 
 			default:
 				Debug.Fail($"Unknown kind: {kind}");

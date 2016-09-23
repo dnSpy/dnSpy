@@ -74,6 +74,11 @@ namespace dnSpy.Text.Tagging.Xml {
 		/// Attribute value (inside quotes)
 		/// </summary>
 		AttributeValue,
+
+		/// <summary>
+		/// Attribute value (inside quotes). The first character of the value is {
+		/// </summary>
+		AttributeValueXaml,
 	}
 
 	struct XmlSpanKind {
@@ -293,9 +298,9 @@ namespace dnSpy.Text.Tagging.Xml {
 					state = State.AttributeQuoteEnd;
 					goto case State.AttributeQuoteEnd;
 				}
-				ReadString(isDoubleQuote);
+				var firstChar = ReadString(isDoubleQuote);
 				state = State.AttributeQuoteEnd;
-				return XmlKind.AttributeValue;
+				return firstChar == '{' ? XmlKind.AttributeValueXaml : XmlKind.AttributeValue;
 
 			case State.AttributeQuoteEnd:
 				c = NextChar();
@@ -311,14 +316,21 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 		bool isDoubleQuote;
 
-		void ReadString(bool isDoubleQuote) {
+		char ReadString(bool isDoubleQuote) {
 			var quoteChar = isDoubleQuote ? '"' : '\'';
+			char firstChar = (char)0;
+			bool firstCharInitd = false;
 			for (;;) {
 				int c = PeekChar();
 				if (c < 0 || c == quoteChar)
 					break;
 				SkipChar();
+				if (!firstCharInitd) {
+					firstCharInitd = true;
+					firstChar = (char)c;
+				}
 			}
+			return firstChar;
 		}
 
 		void ReadName() {
