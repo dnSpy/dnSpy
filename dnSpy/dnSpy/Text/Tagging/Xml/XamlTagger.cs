@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//TODO: Classify markup extensions inside of attribute values
-
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -41,8 +41,50 @@ namespace dnSpy.Text.Tagging.Xml {
 	}
 
 	sealed class XamlTagger : XmlTaggerBase {
+		readonly XamlTaggerClassificationTypes xamlTaggerClassificationTypes;
+		readonly XamlAttributeValueClassifier xamlAttributeValueClassifier;
+
 		public XamlTagger(XamlTaggerClassificationTypes xamlTaggerClassificationTypes)
 			: base(xamlTaggerClassificationTypes) {
+			this.xamlTaggerClassificationTypes = xamlTaggerClassificationTypes;
+			this.xamlAttributeValueClassifier = new XamlAttributeValueClassifier();
+		}
+
+		protected override IEnumerable<ITagSpan<IClassificationTag>> GetTags(SnapshotSpan span, ClassificationTag tag) {
+			if (tag != xamlTaggerClassificationTypes.AttributeValue)
+				return base.GetTags(span, tag);
+			if (!xamlAttributeValueClassifier.Initialize(span))
+				return base.GetTags(span, tag);
+			return GetXamlAttributeValueTags();
+		}
+
+		IEnumerable<ITagSpan<IClassificationTag>> GetXamlAttributeValueTags() {
+			foreach (var info in xamlAttributeValueClassifier.GetTags()) {
+				var tag = GetClassificationTag(info.Kind);
+				if (tag == null)
+					continue;
+				yield return new TagSpan<IClassificationTag>(info.Span, tag);
+			}
+		}
+
+		ClassificationTag GetClassificationTag(XamlKind kind) {
+			switch (kind) {
+			case XamlKind.Delimiter:
+				return xamlTaggerClassificationTypes.Delimiter;
+
+			case XamlKind.Class:
+				return xamlTaggerClassificationTypes.MarkupExtensionClass;
+
+			case XamlKind.ParameterName:
+				return xamlTaggerClassificationTypes.MarkupExtensionParameterName;
+
+			case XamlKind.ParameterValue:
+				return xamlTaggerClassificationTypes.MarkupExtensionParameterValue;
+
+			default:
+				Debug.Fail($"Unknown kind: {kind}");
+				return null;
+			}
 		}
 	}
 }

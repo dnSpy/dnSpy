@@ -672,6 +672,7 @@
     <Compile Include="Text\Tagging\TextViewTagAggregator.cs" />
     <Compile Include="Text\Tagging\ViewTagAggregatorFactoryService.cs" />
     <Compile Include="Text\Tagging\Xml\TaggerClassificationTypes.cs" />
+    <Compile Include="Text\Tagging\Xml\XamlAttributeValueClassifier.cs" />
     <Compile Include="Text\Tagging\Xml\XamlTagger.cs" />
     <Compile Include="Text\Tagging\Xml\XamlTaggerClassificationTypes.cs" />
     <Compile Include="Text\Tagging\Xml\XmlClassifier.cs" />

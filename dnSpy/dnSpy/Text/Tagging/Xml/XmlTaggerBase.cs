@@ -70,9 +70,14 @@ namespace dnSpy.Text.Tagging.Xml {
 					Debug.Assert(spanData.Span.End <= snapshot.Length);
 					if (spanData.Span.End > snapshot.Length)
 						break;
-					yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, spanData.Span), spanData.Data);
+					foreach (var t in GetTags(new SnapshotSpan(snapshot, spanData.Span), spanData.Data))
+						yield return t;
 				}
 			}
+		}
+
+		protected virtual IEnumerable<ITagSpan<IClassificationTag>> GetTags(SnapshotSpan span, ClassificationTag tag) {
+			yield return new TagSpan<IClassificationTag>(span, tag);
 		}
 
 		SpanDataCollection<ClassificationTag> CreateClassifications(ITextSnapshot snapshot) {

@@ -78,7 +78,7 @@
 		<color name="xamldelimiter" fg="#FF0000FF" />
 		<color name="xamlkeyword" fg="#FF0000FF" />
 		<color name="xamlmarkupextensionclass" fg="#FFA31515" />
-		<color name="xamlmarkupextensionparametername" fg="#FF0000FF" />
+		<color name="xamlmarkupextensionparametername" fg="#FFFF0000" />
 		<color name="xamlmarkupextensionparametervalue" fg="#FF0000FF" />
 		<color name="xamlname" fg="#FFA31515" />
 		<color name="xamlprocessinginstruction" fg="#FF808080" />

@@ -20,7 +20,6 @@
 //TODO: CDataSection, Keyword, ProcessingInstruction
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 
@@ -318,7 +317,7 @@ namespace dnSpy.Text.Tagging.Xml {
 				int c = PeekChar();
 				if (c < 0 || c == quoteChar)
 					break;
-				NextChar();
+				SkipChar();
 			}
 		}
 
@@ -329,7 +328,7 @@ namespace dnSpy.Text.Tagging.Xml {
 					break;
 				if (!IsNameChar((char)c))
 					break;
-				NextChar();
+				SkipChar();
 			}
 		}
 
@@ -343,7 +342,7 @@ namespace dnSpy.Text.Tagging.Xml {
 					break;
 				if (!char.IsWhiteSpace((char)c))
 					break;
-				NextChar();
+				SkipChar();
 			}
 		}
 
