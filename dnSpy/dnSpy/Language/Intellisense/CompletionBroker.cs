@@ -33,12 +33,14 @@ namespace dnSpy.Language.Intellisense {
 	sealed class CompletionBroker : ICompletionBroker {
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
 		readonly Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService;
+		readonly Lazy<ICurrentLineSpaceReservationService> currentLineSpaceReservationService;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 
 		[ImportingConstructor]
-		CompletionBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
+		CompletionBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, Lazy<ICurrentLineSpaceReservationService> currentLineSpaceReservationService, [ImportMany] IEnumerable<Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>> completionSourceProviders) {
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
+			this.currentLineSpaceReservationService = currentLineSpaceReservationService;
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
 		}
 
@@ -66,6 +68,7 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			var session = new CompletionSession(textView, triggerPoint, trackCaret, intellisensePresenterFactoryService.Value, completionSourceProviders);
+			currentLineSpaceReservationService.Value.SessionCreated(session);
 			stack.PushSession(session);
 			return session;
 		}

@@ -33,12 +33,14 @@ namespace dnSpy.Language.Intellisense {
 	sealed class SignatureHelpBroker : ISignatureHelpBroker {
 		readonly Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService;
 		readonly Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService;
+		readonly Lazy<ICurrentLineSpaceReservationService> currentLineSpaceReservationService;
 		readonly Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders;
 
 		[ImportingConstructor]
-		SignatureHelpBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, [ImportMany] IEnumerable<Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>> signatureHelpSourceProviders) {
+		SignatureHelpBroker(Lazy<IIntellisenseSessionStackMapService> intellisenseSessionStackMapService, Lazy<IIntellisensePresenterFactoryService> intellisensePresenterFactoryService, Lazy<ICurrentLineSpaceReservationService> currentLineSpaceReservationService, [ImportMany] IEnumerable<Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>> signatureHelpSourceProviders) {
 			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
+			this.currentLineSpaceReservationService = currentLineSpaceReservationService;
 			this.signatureHelpSourceProviders = Orderer.Order(signatureHelpSourceProviders).ToArray();
 		}
 
@@ -66,6 +68,7 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			var session = new SignatureHelpSession(textView, triggerPoint, trackCaret, intellisensePresenterFactoryService.Value, signatureHelpSourceProviders);
+			currentLineSpaceReservationService.Value.SessionCreated(session);
 			stack.PushSession(session);
 			return session;
 		}

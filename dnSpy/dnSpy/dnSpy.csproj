@@ -287,6 +287,7 @@
     <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
+    <Compile Include="Language\Intellisense\CurrentLineSpaceReservationService.cs" />
     <Compile Include="Language\Intellisense\FilterImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
     <Compile Include="Language\Intellisense\FilterVM.cs" />
