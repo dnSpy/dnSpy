@@ -388,7 +388,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddFieldDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var field = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), opvm.Other as IField, cilBodyVM.OwnerModule);
+			object op = opvm.Other as IField ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
+			var field = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), op, cilBodyVM.OwnerModule) as IField;
 			if (field != null)
 				opvm.Other = field;
 		}
@@ -405,7 +406,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddMethodDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var method = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), opvm.Other as IMethod, cilBodyVM.OwnerModule);
+			object op = opvm.Other as IMethod ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
+			var method = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), op, cilBodyVM.OwnerModule) as IMethod;
 			if (method != null)
 				opvm.Other = method;
 		}
@@ -451,7 +453,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddType(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var type = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), opvm.Other as ITypeDefOrRef, cilBodyVM.OwnerModule);
+			object op = opvm.Other as ITypeDefOrRef ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
+			var type = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), op, cilBodyVM.OwnerModule) as ITypeDefOrRef;
 			if (type != null)
 				opvm.Other = type;
 		}
