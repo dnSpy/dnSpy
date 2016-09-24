@@ -18,12 +18,13 @@
 */
 
 using dnSpy.Contracts.Files.Tabs.DocViewer;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Predefined <see cref="IQuickInfoSourceProvider"/> names
 	/// </summary>
-	static class PredefinedDnSpyQuickInfoSourceProviders {
+	public static class PredefinedDnSpyQuickInfoSourceProviders {
 		/// <summary>
 		/// <see cref="IDocumentViewer"/>
 		/// </summary>

@@ -70,6 +70,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        internal static string CompletionSet_All {
+            get {
+                return ResourceManager.GetString("CompletionSet_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Constants.
         /// </summary>
         internal static string ConstantsToolTip {

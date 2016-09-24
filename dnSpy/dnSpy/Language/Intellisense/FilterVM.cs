@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterVM : INotifyPropertyChanged {
@@ -47,7 +47,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		public ImageReference Image => filter.Image;
+		public ImageMoniker Moniker => filter.Moniker;
 		public string ToolTip => filter.ToolTip;
 		public string AccessKey => filter.AccessKey;
 

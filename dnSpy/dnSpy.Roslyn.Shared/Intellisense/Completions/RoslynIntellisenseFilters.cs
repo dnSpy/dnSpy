@@ -23,24 +23,25 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Shared.Properties;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	static class RoslynIntellisenseFilters {
-		public static RoslynIntellisenseFilter[] CreateFilters() => new RoslynIntellisenseFilter[] {
-			new RoslynIntellisenseFilter("Local", dnSpy_Roslyn_Shared_Resources.LocalsAndParametersToolTip, "L", CompletionTags.Local, CompletionTags.Parameter),
-			new RoslynIntellisenseFilter("Literal", dnSpy_Roslyn_Shared_Resources.ConstantsToolTip, "O", CompletionTags.Constant),
-			new RoslynIntellisenseFilter("Property", dnSpy_Roslyn_Shared_Resources.PropertiesToolTip, "P", CompletionTags.Property),
-			new RoslynIntellisenseFilter("Event", dnSpy_Roslyn_Shared_Resources.EventsToolTip, "V", CompletionTags.Event),
-			new RoslynIntellisenseFilter("Field", dnSpy_Roslyn_Shared_Resources.FieldsToolTip, "F", CompletionTags.Field),
-			new RoslynIntellisenseFilter("Method", dnSpy_Roslyn_Shared_Resources.MethodsToolTip, "M", CompletionTags.Method),
-			new RoslynIntellisenseFilter("ExtensionMethod", dnSpy_Roslyn_Shared_Resources.ExtensionMethodsToolTip, "X", CompletionTags.ExtensionMethod),
-			new RoslynIntellisenseFilter("Interface", dnSpy_Roslyn_Shared_Resources.InterfacesToolTip, "I", CompletionTags.Interface),
-			new RoslynIntellisenseFilter("Class", dnSpy_Roslyn_Shared_Resources.ClassesToolTip, "C", CompletionTags.Class),
-			new RoslynIntellisenseFilter("Module", dnSpy_Roslyn_Shared_Resources.ModulesToolTip, "U", CompletionTags.Module),
-			new RoslynIntellisenseFilter("Struct", dnSpy_Roslyn_Shared_Resources.StructuresToolTip, "S", CompletionTags.Structure),
-			new RoslynIntellisenseFilter("Enum", dnSpy_Roslyn_Shared_Resources.EnumsToolTip, "E", CompletionTags.Enum),
-			new RoslynIntellisenseFilter("Delegate", dnSpy_Roslyn_Shared_Resources.DelegatesToolTip, "D", CompletionTags.Delegate),
-			new RoslynIntellisenseFilter("Namespace", dnSpy_Roslyn_Shared_Resources.NamespacesToolTip, "N", CompletionTags.Namespace),
+		public static RoslynIntellisenseFilter[] CreateFilters(IImageMonikerService imageMonikerService) => new RoslynIntellisenseFilter[] {
+			new RoslynIntellisenseFilter(imageMonikerService, "Local", dnSpy_Roslyn_Shared_Resources.LocalsAndParametersToolTip, "L", CompletionTags.Local, CompletionTags.Parameter),
+			new RoslynIntellisenseFilter(imageMonikerService, "Literal", dnSpy_Roslyn_Shared_Resources.ConstantsToolTip, "O", CompletionTags.Constant),
+			new RoslynIntellisenseFilter(imageMonikerService, "Property", dnSpy_Roslyn_Shared_Resources.PropertiesToolTip, "P", CompletionTags.Property),
+			new RoslynIntellisenseFilter(imageMonikerService, "Event", dnSpy_Roslyn_Shared_Resources.EventsToolTip, "V", CompletionTags.Event),
+			new RoslynIntellisenseFilter(imageMonikerService, "Field", dnSpy_Roslyn_Shared_Resources.FieldsToolTip, "F", CompletionTags.Field),
+			new RoslynIntellisenseFilter(imageMonikerService, "Method", dnSpy_Roslyn_Shared_Resources.MethodsToolTip, "M", CompletionTags.Method),
+			new RoslynIntellisenseFilter(imageMonikerService, "ExtensionMethod", dnSpy_Roslyn_Shared_Resources.ExtensionMethodsToolTip, "X", CompletionTags.ExtensionMethod),
+			new RoslynIntellisenseFilter(imageMonikerService, "Interface", dnSpy_Roslyn_Shared_Resources.InterfacesToolTip, "I", CompletionTags.Interface),
+			new RoslynIntellisenseFilter(imageMonikerService, "Class", dnSpy_Roslyn_Shared_Resources.ClassesToolTip, "C", CompletionTags.Class),
+			new RoslynIntellisenseFilter(imageMonikerService, "Module", dnSpy_Roslyn_Shared_Resources.ModulesToolTip, "U", CompletionTags.Module),
+			new RoslynIntellisenseFilter(imageMonikerService, "Struct", dnSpy_Roslyn_Shared_Resources.StructuresToolTip, "S", CompletionTags.Structure),
+			new RoslynIntellisenseFilter(imageMonikerService, "Enum", dnSpy_Roslyn_Shared_Resources.EnumsToolTip, "E", CompletionTags.Enum),
+			new RoslynIntellisenseFilter(imageMonikerService, "Delegate", dnSpy_Roslyn_Shared_Resources.DelegatesToolTip, "D", CompletionTags.Delegate),
+			new RoslynIntellisenseFilter(imageMonikerService, "Namespace", dnSpy_Roslyn_Shared_Resources.NamespacesToolTip, "N", CompletionTags.Namespace),
 		};
 	}
 
@@ -49,8 +50,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 
 		public string[] Tags { get; }
 
-		public RoslynIntellisenseFilter(string imageName, string toolTip, string accessKey, params string[] tags)
-			: base(new ImageReference(imageAssembly, imageName), toolTip, accessKey) {
+		public RoslynIntellisenseFilter(IImageMonikerService imageMonikerService, string imageName, string toolTip, string accessKey, params string[] tags)
+			: base(imageMonikerService.ToImageMoniker(new ImageReference(imageAssembly, imageName)), toolTip, accessKey, automationText: null, initialIsChecked: false, initialIsEnabled: true) {
 			if (tags == null)
 				throw new ArgumentNullException(nameof(tags));
 			if (tags.Length == 0)

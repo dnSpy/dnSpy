@@ -9,7 +9,7 @@
 
 		"Microsoft.CodeAnalysis.CSharp.Features": "2.0.0-beta3",
 		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.0.0-beta3",
-		"Microsoft.VisualStudio.Text.UI.Wpf": "14.3.25407"
+		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.25604-Preview4"
 	},
 	"frameworks": {
 		"net46": { }

@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
+
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Predefined <see cref="ICompletionSourceProvider"/>s
 	/// </summary>
-	static class PredefinedDnSpyCompletionSourceProviders {
+	public static class PredefinedDnSpyCompletionSourceProviders {
 		/// <summary>
 		/// Roslyn languages (C# or Visual Basic)
 		/// </summary>

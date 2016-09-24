@@ -31,26 +31,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const string CurrentLine = "currentline";
 
 		/// <summary>
-		/// Completion space reservation manager name
-		/// </summary>
-		public const string Completion = "completion";
-
-		/// <summary>
-		/// Signature help space reservation manager name
-		/// </summary>
-		public const string SignatureHelp = "signaturehelp";
-
-		/// <summary>
-		/// Quick info space reservation manager name
-		/// </summary>
-		public const string QuickInfo = "quickinfo";
-
-		/// <summary>
-		/// Smart tag space reservation manager name
-		/// </summary>
-		public const string SmartTag = "smarttag";
-
-		/// <summary>
 		/// <see cref="IToolTipProvider"/>
 		/// </summary>
 		public const string ToolTip = "ToolTip";

@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
+
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Names of <see cref="IIntellisensePresenterProvider"/>s
 	/// </summary>
-	static class PredefinedIntellisensePresenterProviders {
+	public static class PredefinedIntellisensePresenterProviders {
 		/// <summary>
 		/// Name of default signature help presenter provider
 		/// </summary>

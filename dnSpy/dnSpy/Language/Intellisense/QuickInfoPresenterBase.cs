@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	abstract class QuickInfoPresenterBase : IIntellisensePresenter, IIntellisenseCommandTarget {

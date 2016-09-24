@@ -18,16 +18,17 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// <see cref="ICompletionClassifier"/> context
 	/// </summary>
-	sealed class CompletionClassifierContext {
+	public sealed class CompletionClassifierContext {
 		/// <summary>
 		/// Gets the collection
 		/// </summary>
-		public CompletionCollection Collection { get; }
+		public CompletionSet CompletionSet { get; }
 
 		/// <summary>
 		/// Gets the completion to classify
@@ -47,20 +48,20 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="collection">Collection</param>
+		/// <param name="completionSet">Collection</param>
 		/// <param name="completion">Completion to classify</param>
 		/// <param name="displayText">Text shown in the UI</param>
 		/// <param name="inputText">Current user input text</param>
-		public CompletionClassifierContext(CompletionCollection collection, Completion completion, string displayText, string inputText) {
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
+		public CompletionClassifierContext(CompletionSet completionSet, Completion completion, string displayText, string inputText) {
+			if (completionSet == null)
+				throw new ArgumentNullException(nameof(completionSet));
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
 			if (displayText == null)
 				throw new ArgumentNullException(nameof(displayText));
 			if (inputText == null)
 				throw new ArgumentNullException(nameof(inputText));
-			Collection = collection;
+			CompletionSet = completionSet;
 			Completion = completion;
 			DisplayText = displayText;
 			InputText = inputText;

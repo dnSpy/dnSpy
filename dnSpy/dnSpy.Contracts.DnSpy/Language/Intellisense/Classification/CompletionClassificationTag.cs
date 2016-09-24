@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -24,7 +25,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// <see cref="Completion"/> classification tag
 	/// </summary>
-	sealed class CompletionClassificationTag {
+	public sealed class CompletionClassificationTag {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

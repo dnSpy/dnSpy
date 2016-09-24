@@ -20,13 +20,15 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionImageReferenceConverter : IMultiValueConverter {
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var completion = (Completion)values[0];
 			var presenter = (CompletionPresenter)values[1];
+			if (completion == null || presenter == null)
+				return null;
 			return presenter.GetImageSource(completion);
 		}
 

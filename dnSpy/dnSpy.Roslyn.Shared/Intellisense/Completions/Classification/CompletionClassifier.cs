@@ -21,13 +21,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Text;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionCollection completionSet) => new CompletionClassifier(themeClassificationTypeService);
+		public ICompletionClassifier Create(CompletionSet completionSet) => new CompletionClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionClassifier : ICompletionClassifier {
@@ -63,8 +63,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			if (completion == null)
 				yield break;
 
-			var collection = context.Collection as RoslynCompletionCollection;
-			if (collection == null)
+			var completionSet = context.CompletionSet as RoslynCompletionSet;
+			if (completionSet == null)
 				yield break;
 
 			// The completion API doesn't create tagged text so try to extract that information
@@ -98,7 +98,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			}
 
 			// The text is usually identical to the description and it's classified
-			var description = collection.GetDescriptionAsync(completion).GetAwaiter().GetResult();
+			var description = completionSet.GetDescriptionAsync(completion).GetAwaiter().GetResult();
 			var indexes = GetMatchIndexes(completion, description);
 			if (indexes != null) {
 				int pos = 0;
@@ -124,7 +124,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 		};
 
 		KeyValuePair<int, int>? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
-			if (completion == null)
+			if (completion == null || description == null)
 				return null;
 			if (stringBuilder == null)
 				stringBuilder = new StringBuilder();

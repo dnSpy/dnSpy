@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	struct BestMatchSelector {
@@ -116,7 +118,10 @@ namespace dnSpy.Contracts.Language.Intellisense {
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		MatchPriority GetMatchPriority(Completion completion) {
-			var filterText = completion.FilterText;
+			var filterText = completion.TryGetFilterText();
+			Debug.Assert(filterText != null);
+			if (filterText == null)
+				return MatchPriority.Other;
 
 			if (filterText.Equals(searchText, StringComparison.CurrentCulture))
 				return MatchPriority.Full;

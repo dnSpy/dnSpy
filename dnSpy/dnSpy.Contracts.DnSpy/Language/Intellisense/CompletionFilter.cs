@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Language.Intellisense {
@@ -45,7 +46,9 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, completionText);
 
 		public bool IsMatch(Completion completion) {
-			var completionText = completion.FilterText;
+			var completionText = completion.TryGetFilterText();
+			if (completionText == null)
+				return false;
 
 			if (completionText.IndexOf(searchText, stringComparison) >= 0)
 				return true;

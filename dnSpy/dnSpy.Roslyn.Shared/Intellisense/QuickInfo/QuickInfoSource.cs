@@ -24,6 +24,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Roslyn.Shared.Text;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 

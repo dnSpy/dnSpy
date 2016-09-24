@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
@@ -24,12 +25,12 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// Creates <see cref="ICompletionClassifier"/>s. Export the instance with
 	/// a <see cref="ContentTypeAttribute"/>.
 	/// </summary>
-	interface ICompletionClassifierProvider {
+	public interface ICompletionClassifierProvider {
 		/// <summary>
 		/// Creates a <see cref="ICompletionClassifier"/> or returns null
 		/// </summary>
 		/// <param name="completionSet">Completion set</param>
 		/// <returns></returns>
-		ICompletionClassifier Create(CompletionCollection completionSet);
+		ICompletionClassifier Create(CompletionSet completionSet);
 	}
 }

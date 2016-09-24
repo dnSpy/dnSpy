@@ -17,13 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Filters <see cref="Completion"/>s
 	/// </summary>
-	interface ICompletionFilter {
+	public interface ICompletionFilter {
 		/// <summary>
 		/// Returns true if the search text matches this <see cref="Completion"/>
 		/// </summary>

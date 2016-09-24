@@ -18,6 +18,7 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Language.Intellisense {
@@ -25,7 +26,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// Signature help classifier context. Use <see cref="SignatureHelpConstants.TryGetSignatureHelpClassifierContext(ITextBuffer)"/>
 	/// to get the instance.
 	/// </summary>
-	class SignatureHelpClassifierContext {
+	public class SignatureHelpClassifierContext {
 		/// <summary>
 		/// Gets the type, eg. <see cref="SignatureHelpClassifierContextTypes.ParameterDocumentation"/>
 		/// </summary>
@@ -54,7 +55,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Signature documentation signature help classifier context
 	/// </summary>
-	sealed class SignatureDocumentationSignatureHelpClassifierContext : SignatureHelpClassifierContext {
+	public sealed class SignatureDocumentationSignatureHelpClassifierContext : SignatureHelpClassifierContext {
 		/// <summary>
 		/// Gets the signature to classify
 		/// </summary>
@@ -76,7 +77,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Parameter name signature help classifier context
 	/// </summary>
-	sealed class ParameterNameSignatureHelpClassifierContext : SignatureHelpClassifierContext {
+	public sealed class ParameterNameSignatureHelpClassifierContext : SignatureHelpClassifierContext {
 		/// <summary>
 		/// Gets the parameter to classify
 		/// </summary>
@@ -107,7 +108,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Parameter documentation signature help classifier context
 	/// </summary>
-	sealed class ParameterDocumentationSignatureHelpClassifierContext : SignatureHelpClassifierContext {
+	public sealed class ParameterDocumentationSignatureHelpClassifierContext : SignatureHelpClassifierContext {
 		/// <summary>
 		/// Gets the parameter to classify
 		/// </summary>
@@ -129,7 +130,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Signature help context types (see <see cref="SignatureHelpClassifierContext.Type"/>)
 	/// </summary>
-	static class SignatureHelpClassifierContextTypes {
+	public static class SignatureHelpClassifierContextTypes {
 		/// <summary>
 		/// Signature documentation
 		/// </summary>

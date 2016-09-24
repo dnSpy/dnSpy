@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {

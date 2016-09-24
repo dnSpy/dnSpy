@@ -24,7 +24,9 @@ using System.Diagnostics;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Roslyn.Shared.Properties;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
@@ -33,26 +35,33 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[Name(PredefinedDnSpyCompletionSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionSourceProvider : ICompletionSourceProvider {
+		readonly IImageMonikerService imageMonikerService;
 		readonly IMruCompletionService mruCompletionService;
 
 		[ImportingConstructor]
-		CompletionSourceProvider(IMruCompletionService mruCompletionService) {
+		CompletionSourceProvider(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService) {
+			this.imageMonikerService = imageMonikerService;
 			this.mruCompletionService = mruCompletionService;
 		}
 
-		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource(mruCompletionService);
+		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource(imageMonikerService, mruCompletionService);
 	}
 
 	sealed class CompletionSource : ICompletionSource {
+		const string DefaultCompletionSetMoniker = "All";
+		readonly IImageMonikerService imageMonikerService;
 		readonly IMruCompletionService mruCompletionService;
 
-		public CompletionSource(IMruCompletionService mruCompletionService) {
+		public CompletionSource(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService) {
+			if (imageMonikerService == null)
+				throw new ArgumentNullException(nameof(imageMonikerService));
 			if (mruCompletionService == null)
 				throw new ArgumentNullException(nameof(mruCompletionService));
+			this.imageMonikerService = imageMonikerService;
 			this.mruCompletionService = mruCompletionService;
 		}
 
-		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionCollection> completionSets) {
+		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets) {
 			var snapshot = session.TextView.TextSnapshot;
 			var triggerPoint = session.GetTriggerPoint(snapshot);
 			if (triggerPoint == null)
@@ -74,7 +83,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (completionList.DefaultSpan.End > snapshot.Length)
 				return;
 			var trackingSpan = snapshot.CreateTrackingSpan(completionList.DefaultSpan.Start, completionList.DefaultSpan.Length, SpanTrackingMode.EdgeInclusive, TrackingFidelityMode.Forward);
-			var completionSet = RoslynCompletionCollection.Create(mruCompletionService, completionList, info.Value.CompletionService, session.TextView, trackingSpan);
+			var completionSet = RoslynCompletionSet.Create(imageMonikerService, mruCompletionService, completionList, info.Value.CompletionService, session.TextView, DefaultCompletionSetMoniker, dnSpy_Roslyn_Shared_Resources.CompletionSet_All, trackingSpan);
 			completionSets.Add(completionSet);
 		}
 

@@ -293,6 +293,7 @@
     <Compile Include="Language\Intellisense\FilterVM.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProviderService.cs" />
+    <Compile Include="Language\Intellisense\ImageMonikerService.cs" />
     <Compile Include="Language\Intellisense\IntellisenseControllerService.cs" />
     <Compile Include="Language\Intellisense\IntellisensePresenterFactoryService.cs" />
     <Compile Include="Language\Intellisense\IntellisenseSessionHelper.cs" />

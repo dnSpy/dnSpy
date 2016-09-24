@@ -21,8 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Internal.QuickInfo;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 

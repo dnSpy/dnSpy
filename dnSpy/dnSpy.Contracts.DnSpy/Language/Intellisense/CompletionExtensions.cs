@@ -17,23 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
+
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
-	/// Intellisense presenter
+	/// <see cref="Completion"/> extensions
 	/// </summary>
-	interface IIntellisensePresenter {
+	static class CompletionExtensions {
 		/// <summary>
-		/// Gets the session
+		/// Gets the filter text or null. This is <see cref="IDnSpyCompletion.FilterText"/> or <see cref="Completion.DisplayText"/>
+		/// if <paramref name="completion"/> is not a <see cref="IDnSpyCompletion"/>
 		/// </summary>
-		IIntellisenseSession Session { get; }
-	}
-
-	interface IIntellisenseCommandTarget {
-		/// <summary>
-		/// Executes the keyboard command or returns false if some other presenter should handle it
-		/// </summary>
-		/// <param name="command">Command to execute</param>
+		/// <param name="completion">Completion</param>
 		/// <returns></returns>
-		bool ExecuteKeyboardCommand(IntellisenseKeyboardCommand command);
+		public static string TryGetFilterText(this Completion completion) => (completion as IDnSpyCompletion)?.FilterText ?? completion.DisplayText;
 	}
 }

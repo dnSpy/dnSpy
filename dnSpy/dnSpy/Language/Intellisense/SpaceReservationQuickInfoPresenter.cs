@@ -19,8 +19,7 @@
 
 using System;
 using System.Windows;
-using dnSpy.Contracts.Language.Intellisense;
-using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 
@@ -28,7 +27,7 @@ namespace dnSpy.Language.Intellisense {
 	sealed class SpaceReservationQuickInfoPresenter : QuickInfoPresenterBase, IPopupIntellisensePresenter {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.PositionClosest;
-		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.QuickInfo;
+		string IPopupIntellisensePresenter.SpaceReservationManagerName => IntellisenseSpaceReservationManagerNames.QuickInfoSpaceReservationManagerName;
 		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
 		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
 		public event EventHandler PresentationSpanChanged;

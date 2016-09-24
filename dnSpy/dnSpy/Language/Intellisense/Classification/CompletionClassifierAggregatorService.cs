@@ -21,11 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Text;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense.Classification {
 	[Export(typeof(ICompletionClassifierAggregatorService))]
@@ -39,15 +39,15 @@ namespace dnSpy.Language.Intellisense.Classification {
 			this.completionClassifierProviders = completionClassifierProviders.ToArray();
 		}
 
-		public ICompletionClassifier Create(CompletionCollection collection) {
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
-			var contentType = collection.ApplicableTo.TextBuffer.ContentType;
+		public ICompletionClassifier Create(CompletionSet completionSet) {
+			if (completionSet == null)
+				throw new ArgumentNullException(nameof(completionSet));
+			var contentType = completionSet.ApplicableTo.TextBuffer.ContentType;
 			var classifiers = new List<ICompletionClassifier>();
 			foreach (var lz in completionClassifierProviders) {
 				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
-				var classifier = lz.Value.Create(collection);
+				var classifier = lz.Value.Create(completionSet);
 				if (classifier != null)
 					classifiers.Add(classifier);
 			}

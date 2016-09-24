@@ -29,6 +29,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
@@ -59,7 +60,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			var roslynCompletion = itemToRender as RoslynCompletion;
 			if (roslynCompletion == null)
 				return null;
-			var roslynCollection = context.SelectedCompletionSet as RoslynCompletionCollection;
+			var roslynCollection = context.SelectedCompletionSet as RoslynCompletionSet;
 			Debug.Assert(roslynCollection != null);
 			if (roslynCollection == null)
 				return null;
@@ -77,7 +78,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			readonly ITaggedTextElementProviderService taggedTextElementProviderService;
 			readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionCollection collection, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService, IThemeClassificationTypeService themeClassificationTypeService) {
+			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionSet completionSet, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService, IThemeClassificationTypeService themeClassificationTypeService) {
 				this.owner = owner;
 				this.Session = session;
 				this.cancellationTokenSource = new CancellationTokenSource();
@@ -85,15 +86,15 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				this.themeClassificationTypeService = themeClassificationTypeService;
 				this.Session.Dismissed += Session_Dismissed;
 				Unloaded += AsyncToolTipContent_Unloaded;
-				GetDescriptionAsync(collection, completion, cancellationTokenSource.Token)
+				GetDescriptionAsync(completionSet, completion, cancellationTokenSource.Token)
 				.ContinueWith(t => {
 					var ex = t.Exception;
 					Dispose();
 				}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 			}
 
-			async Task GetDescriptionAsync(RoslynCompletionCollection collection, RoslynCompletion completion, CancellationToken cancellationToken) {
-				var description = await collection.GetDescriptionAsync(completion, cancellationToken);
+			async Task GetDescriptionAsync(RoslynCompletionSet completionSet, RoslynCompletion completion, CancellationToken cancellationToken) {
+				var description = await completionSet.GetDescriptionAsync(completion, cancellationToken);
 				if (description == null || description.TaggedParts.IsDefault || description.TaggedParts.Length == 0)
 					InitializeDefaultDocumentation();
 				else

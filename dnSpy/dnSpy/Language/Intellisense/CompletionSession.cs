@@ -20,9 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using dnSpy.Contracts.Language.Intellisense;
+using System.Diagnostics;
 using dnSpy.Text;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -31,8 +32,8 @@ namespace dnSpy.Language.Intellisense {
 	sealed class CompletionSession : ICompletionSession {
 		public PropertyCollection Properties { get; }
 		public ITextView TextView { get; }
-		public ReadOnlyObservableCollection<CompletionCollection> CompletionSets { get; }
-		public event EventHandler<ValueChangedEventArgs<CompletionCollection>> SelectedCompletionSetChanged;
+		public ReadOnlyObservableCollection<CompletionSet> CompletionSets { get; }
+		public event EventHandler<ValueChangedEventArgs<CompletionSet>> SelectedCompletionSetChanged;
 		public bool IsDismissed { get; private set; }
 		public event EventHandler Dismissed;
 		public bool IsStarted { get; private set; }
@@ -41,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler Recalculated;
 		public event EventHandler Committed;
 
-		public CompletionCollection SelectedCompletionSet {
+		public CompletionSet SelectedCompletionSet {
 			get { return selectedCompletionSet; }
 			set {
 				if (value == null)
@@ -52,14 +53,14 @@ namespace dnSpy.Language.Intellisense {
 					return;
 				var oldValue = selectedCompletionSet;
 				selectedCompletionSet = value;
-				SelectedCompletionSetChanged?.Invoke(this, new ValueChangedEventArgs<CompletionCollection>(oldValue, selectedCompletionSet));
+				SelectedCompletionSetChanged?.Invoke(this, new ValueChangedEventArgs<CompletionSet>(oldValue, selectedCompletionSet));
 				Filter();
 				Match();
 			}
 		}
-		CompletionCollection selectedCompletionSet;
+		CompletionSet selectedCompletionSet;
 
-		readonly ObservableCollection<CompletionCollection> completionSets;
+		readonly ObservableCollection<CompletionSet> completionSets;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 		readonly ITrackingPoint triggerPoint;
 		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
@@ -76,8 +77,8 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
 			if (completionSourceProviders == null)
 				throw new ArgumentNullException(nameof(completionSourceProviders));
-			this.completionSets = new ObservableCollection<CompletionCollection>();
-			CompletionSets = new ReadOnlyObservableCollection<CompletionCollection>(this.completionSets);
+			this.completionSets = new ObservableCollection<CompletionSet>();
+			CompletionSets = new ReadOnlyObservableCollection<CompletionSet>(this.completionSets);
 			Properties = new PropertyCollection();
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
@@ -113,7 +114,7 @@ namespace dnSpy.Language.Intellisense {
 			IsStarted = true;
 			this.completionSources = CreateCompletionSources();
 
-			var list = new List<CompletionCollection>();
+			var list = new List<CompletionSet>();
 			foreach (var source in completionSources)
 				source.AugmentCompletionSession(this, list);
 			foreach (var cc in list)
@@ -148,7 +149,7 @@ namespace dnSpy.Language.Intellisense {
 			Recalculated?.Invoke(this, EventArgs.Empty);
 		}
 
-		ITrackingPoint GetTrackingPoint(CompletionCollection coll) {
+		ITrackingPoint GetTrackingPoint(CompletionSet coll) {
 			var trackingSpan = coll.ApplicableTo;
 			var snapshot = trackingSpan.TextBuffer.CurrentSnapshot;
 			var point = trackingSpan.GetStartPoint(snapshot);
@@ -160,8 +161,23 @@ namespace dnSpy.Language.Intellisense {
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
-			if (SelectedCompletionSet.SelectionStatus.IsSelected)
-				SelectedCompletionSet.Commit();
+			var completionSet = SelectedCompletionSet;
+			var completion = completionSet?.SelectionStatus.Completion;
+			if (completion != null) {
+				Debug.Assert(completionSet.SelectionStatus.IsSelected);
+				var customCommit = completion as ICustomCommit ?? completionSet as ICustomCommit;
+				if (customCommit != null)
+					customCommit.Commit();
+				else {
+					var insertionText = completion.InsertionText;
+					if (insertionText != null) {
+						var replaceSpan = completionSet.ApplicableTo;
+						var buffer = replaceSpan.TextBuffer;
+						var span = replaceSpan.GetSpan(buffer.CurrentSnapshot);
+						buffer.Replace(span.Span, insertionText);
+					}
+				}
+			}
 			Committed?.Invoke(this, EventArgs.Empty);
 			Dismiss();
 		}

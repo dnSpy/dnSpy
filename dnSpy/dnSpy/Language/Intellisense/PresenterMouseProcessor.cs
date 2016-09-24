@@ -21,9 +21,9 @@ using System;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 

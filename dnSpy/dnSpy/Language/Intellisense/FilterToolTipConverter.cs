@@ -26,6 +26,8 @@ namespace dnSpy.Language.Intellisense {
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var filterVM = (FilterVM)values[0];
 			var presenter = (CompletionPresenter)values[1];
+			if (filterVM == null || presenter == null)
+				return null;
 			return presenter.GetToolTip(filterVM);
 		}
 

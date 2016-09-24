@@ -20,16 +20,25 @@
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Imaging.Interop;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	sealed class RoslynCompletion : Completion {
+	sealed class RoslynCompletion : DnSpyCompletion {
 		public CompletionItem CompletionItem { get; }
+		readonly IImageMonikerService imageMonikerService;
 
-		public RoslynCompletion(CompletionItem completionItem)
-			: base(completionItem.DisplayText, completionItem.FilterText, null, null) {
+		public override string Description {
+			// Need to return a non-empty string or no tooltip is shown
+			get { return "."; }
+			set { }
+		}
+
+		public RoslynCompletion(IImageMonikerService imageMonikerService, CompletionItem completionItem)
+			: base(completionItem.DisplayText, completionItem.FilterText) {
+			this.imageMonikerService = imageMonikerService;
 			this.CompletionItem = completionItem;
 		}
 
-		protected override ImageReference GetImageReference() => CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? base.GetImageReference();
+		protected override ImageMoniker GetIconMoniker() => imageMonikerService.ToImageMoniker(CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? default(ImageReference));
 	}
 }

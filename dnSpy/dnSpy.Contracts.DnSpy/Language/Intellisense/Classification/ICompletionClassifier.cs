@@ -19,13 +19,14 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// Classifies <see cref="Completion"/>s. Implement <see cref="IDisposable"/> if
 	/// your instance must be disposed.
 	/// </summary>
-	interface ICompletionClassifier {
+	public interface ICompletionClassifier {
 		/// <summary>
 		/// Classifies a <see cref="Completion"/>
 		/// </summary>

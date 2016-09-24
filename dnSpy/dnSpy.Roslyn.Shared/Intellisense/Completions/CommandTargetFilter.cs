@@ -25,6 +25,7 @@ using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -70,7 +71,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (!HasSession)
 				return null;
 
-			var completion = completionSession.SelectedCompletionSet.SelectionStatus.Completion as RoslynCompletion;
+			var completion = completionSession.SelectedCompletionSet?.SelectionStatus.Completion as RoslynCompletion;
 			if (completion != null)
 				return completion.CompletionItem.Rules.EnterKeyRule;
 
@@ -114,12 +115,12 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			case EnterKeyRule.AfterFullyTypedWord:
 				if (!HasSession)
 					return false;
-				var completion = completionSession.SelectedCompletionSet.SelectionStatus.Completion;
+				var completion = completionSession.SelectedCompletionSet?.SelectionStatus.Completion;
 				if (completion == null)
 					return false;
 				var span = completionSession.SelectedCompletionSet.ApplicableTo;
 				var text = span.GetText(span.TextBuffer.CurrentSnapshot);
-				return text.Equals(completion.FilterText, StringComparison.CurrentCultureIgnoreCase);
+				return text.Equals(completion.TryGetFilterText(), StringComparison.CurrentCultureIgnoreCase);
 
 			case EnterKeyRule.Default:
 				return false;
@@ -154,7 +155,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 					case TextEditorIds.RETURN:
 						// Cache it because it could read from text buffer which gets modified by Commit()
 						bool passThrough = ShouldPassThroughEnterKey(TryGetEnterKeyRule() ?? EnterKeyRule.Default);
-						if (!completionSession.SelectedCompletionSet.SelectionStatus.IsSelected) {
+						if (completionSession.SelectedCompletionSet?.SelectionStatus.IsSelected != true) {
 							passThrough = true;
 							completionSession.Dismiss();
 						}
@@ -165,7 +166,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 						break;
 
 					case TextEditorIds.TYPECHAR:
-						if (HasSession) {
+						if (HasSession && completionSession.SelectedCompletionSet?.SelectionStatus.IsSelected == true) {
 							var s = args as string;
 							if (s == null || s.Length != 1)
 								break;
@@ -199,7 +200,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				case TextEditorIds.COMPLETEWORD:
 					StartSession();
 					if (HasSession) {
-						if (completionSession.SelectedCompletionSet.SelectionStatus.IsUnique)
+						if (completionSession.SelectedCompletionSet?.SelectionStatus.IsUnique == true)
 							completionSession.Commit();
 					}
 					return CommandTargetStatus.Handled;

@@ -30,8 +30,8 @@ using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Classification;
@@ -41,7 +41,7 @@ namespace dnSpy.Language.Intellisense {
 	sealed class SignatureHelpPresenter : IPopupIntellisensePresenter, IIntellisenseCommandTarget, INotifyPropertyChanged {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
-		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.SignatureHelp;
+		string IPopupIntellisensePresenter.SpaceReservationManagerName => IntellisenseSpaceReservationManagerNames.SignatureHelpSpaceReservationManagerName;
 		IIntellisenseSession IIntellisensePresenter.Session => session;
 		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
 		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }

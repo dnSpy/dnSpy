@@ -23,12 +23,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// A read-only filtered <see cref="ObservableCollection{T}"/>. Its content changes when the list gets filtered.
 	/// </summary>
-	sealed class FilteredCompletionCollection : IFilteredCompletionCollection
+	sealed class FilteredCompletionCollection : IList<Completion>, INotifyCollectionChanged
 		// NOTE: IList is required for WPF ItemsControl since it ignores IList<T> ifaces
 		, IList {
 

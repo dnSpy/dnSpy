@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -27,27 +28,27 @@ namespace dnSpy.Language.Intellisense {
 #pragma warning disable 0169
 		[Export(typeof(SpaceReservationManagerDefinition))]
 		[Name(PredefinedSpaceReservationManagerNames.CurrentLine)]
-		[Order(Before = PredefinedSpaceReservationManagerNames.SmartTag)]
+		[Order(Before = IntellisenseSpaceReservationManagerNames.SmartTagSpaceReservationManagerName)]
 		static readonly SpaceReservationManagerDefinition currentLineSpaceReservationManagerDefinition;
 
 		[Export(typeof(SpaceReservationManagerDefinition))]
-		[Name(PredefinedSpaceReservationManagerNames.SmartTag)]
-		[Order(Before = PredefinedSpaceReservationManagerNames.QuickInfo, After = PredefinedSpaceReservationManagerNames.CurrentLine)]
+		[Name(IntellisenseSpaceReservationManagerNames.SmartTagSpaceReservationManagerName)]
+		[Order(Before = IntellisenseSpaceReservationManagerNames.QuickInfoSpaceReservationManagerName, After = PredefinedSpaceReservationManagerNames.CurrentLine)]
 		static readonly SpaceReservationManagerDefinition smartTagSpaceReservationManagerDefinition;
 
 		[Export(typeof(SpaceReservationManagerDefinition))]
-		[Name(PredefinedSpaceReservationManagerNames.QuickInfo)]
-		[Order(Before = PredefinedSpaceReservationManagerNames.SignatureHelp, After = PredefinedSpaceReservationManagerNames.SmartTag)]
+		[Name(IntellisenseSpaceReservationManagerNames.QuickInfoSpaceReservationManagerName)]
+		[Order(Before = IntellisenseSpaceReservationManagerNames.SignatureHelpSpaceReservationManagerName, After = IntellisenseSpaceReservationManagerNames.SmartTagSpaceReservationManagerName)]
 		static readonly SpaceReservationManagerDefinition quickInfoSpaceReservationManagerDefinition;
 
 		[Export(typeof(SpaceReservationManagerDefinition))]
-		[Name(PredefinedSpaceReservationManagerNames.SignatureHelp)]
-		[Order(Before = PredefinedSpaceReservationManagerNames.Completion, After = PredefinedSpaceReservationManagerNames.QuickInfo)]
+		[Name(IntellisenseSpaceReservationManagerNames.SignatureHelpSpaceReservationManagerName)]
+		[Order(Before = IntellisenseSpaceReservationManagerNames.CompletionSpaceReservationManagerName, After = IntellisenseSpaceReservationManagerNames.QuickInfoSpaceReservationManagerName)]
 		static readonly SpaceReservationManagerDefinition signatureHelpSpaceReservationManagerDefinition;
 
 		[Export(typeof(SpaceReservationManagerDefinition))]
-		[Name(PredefinedSpaceReservationManagerNames.Completion)]
-		[Order(After = PredefinedSpaceReservationManagerNames.SignatureHelp)]
+		[Name(IntellisenseSpaceReservationManagerNames.CompletionSpaceReservationManagerName)]
+		[Order(After = IntellisenseSpaceReservationManagerNames.SignatureHelpSpaceReservationManagerName)]
 		static readonly SpaceReservationManagerDefinition completionSpaceReservationManagerDefinition;
 #pragma warning restore 0169
 	}

@@ -20,10 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
@@ -38,14 +38,14 @@ namespace dnSpy.Language.Intellisense.Classification {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionCollection completionSet) => new FilterMatchCompletionClassifier(themeClassificationTypeService, completionSet);
+		public ICompletionClassifier Create(CompletionSet completionSet) => new FilterMatchCompletionClassifier(themeClassificationTypeService, completionSet);
 	}
 
 	sealed class FilterMatchCompletionClassifier : ICompletionClassifier {
-		readonly CompletionCollection completionSet;
+		readonly CompletionSet completionSet;
 		readonly IClassificationType completionMatchHighlightClassificationType;
 
-		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService, CompletionCollection completionSet) {
+		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService, CompletionSet completionSet) {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			if (completionSet == null)

@@ -28,37 +28,28 @@ using System.Threading.Tasks;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	sealed class RoslynCompletionCollection : CompletionCollection {
+	sealed class RoslynCompletionSet : DnSpyCompletionSet {
 		readonly IMruCompletionService mruCompletionService;
 		readonly CompletionService completionService;
 		readonly ITextView textView;
-		readonly RoslynIntellisenseFilter[] filters;
 		readonly ITextSnapshot originalSnapshot;
 
-		RoslynCompletionCollection(IMruCompletionService mruCompletionService, CompletionService completionService, ITextView textView, ITrackingSpan applicableTo, List<Completion> completions, RoslynIntellisenseFilter[] filters)
-			: base(applicableTo, completions, filters) {
-			if (mruCompletionService == null)
-				throw new ArgumentNullException(nameof(mruCompletionService));
-			if (completionService == null)
-				throw new ArgumentNullException(nameof(completionService));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (applicableTo == null)
-				throw new ArgumentNullException(nameof(applicableTo));
-			if (filters == null)
-				throw new ArgumentNullException(nameof(filters));
+		RoslynCompletionSet(IMruCompletionService mruCompletionService, CompletionService completionService, ITextView textView, string moniker, string displayName, ITrackingSpan applicableTo, List<Completion> completions, List<Completion> completionBuilders, RoslynIntellisenseFilter[] filters)
+			: base(moniker, displayName, applicableTo, completions, completionBuilders, filters) {
 			this.mruCompletionService = mruCompletionService;
 			this.completionService = completionService;
 			this.textView = textView;
-			this.filters = filters;
 			this.originalSnapshot = applicableTo.TextBuffer.CurrentSnapshot;
 		}
 
-		public static RoslynCompletionCollection Create(IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, ITrackingSpan applicableTo) {
+		public static RoslynCompletionSet Create(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, string moniker, string displayName, ITrackingSpan applicableTo) {
+			if (imageMonikerService == null)
+				throw new ArgumentNullException(nameof(imageMonikerService));
 			if (mruCompletionService == null)
 				throw new ArgumentNullException(nameof(mruCompletionService));
 			if (completionList == null)
@@ -67,10 +58,14 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				throw new ArgumentNullException(nameof(completionService));
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
+			if (moniker == null)
+				throw new ArgumentNullException(nameof(moniker));
+			if (displayName == null)
+				throw new ArgumentNullException(nameof(displayName));
 			if (applicableTo == null)
 				throw new ArgumentNullException(nameof(applicableTo));
 			var completions = new List<Completion>(completionList.Items.Length);
-			var remainingFilters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(RoslynIntellisenseFilters.CreateFilters().Select((a, index) => new KeyValuePair<RoslynIntellisenseFilter, int>(a, index)));
+			var remainingFilters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(RoslynIntellisenseFilters.CreateFilters(imageMonikerService).Select((a, index) => new KeyValuePair<RoslynIntellisenseFilter, int>(a, index)));
 			var filters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(remainingFilters.Count);
 			foreach (var item in completionList.Items) {
 				if (string.IsNullOrEmpty(item.DisplayText))
@@ -85,10 +80,11 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 						}
 					}
 				}
-				completions.Add(new RoslynCompletion(item));
+				completions.Add(new RoslynCompletion(imageMonikerService, item));
 			}
 			filters.Sort((a, b) => a.Value - b.Value);
-			return new RoslynCompletionCollection(mruCompletionService, completionService, textView, applicableTo, completions, filters.Select(a => a.Key).ToArray());
+			var completionBuilders = new List<Completion>();
+			return new RoslynCompletionSet(mruCompletionService, completionService, textView, moniker, displayName, applicableTo, completions, completionBuilders, filters.Select(a => a.Key).ToArray());
 		}
 
 		protected override int GetMruIndex(Completion completion) => mruCompletionService.GetMruIndex(completion.DisplayText);
@@ -96,11 +92,17 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		protected override void Filter(List<Completion> filteredResult, IList<Completion> completions) {
 			List<string> filteredTags = null;
 
-			foreach (var filter in filters) {
-				if (filter.IsChecked) {
-					if (filteredTags == null)
-						filteredTags = new List<string>();
-					filteredTags.AddRange(filter.Tags);
+			var filters = Filters;
+			Debug.Assert(filters != null);
+			if (filters != null) {
+				foreach (var tmpFilter in filters) {
+					var filter = tmpFilter as RoslynIntellisenseFilter;
+					Debug.Assert(filter != null);
+					if (filter != null && filter.IsChecked) {
+						if (filteredTags == null)
+							filteredTags = new List<string>();
+						filteredTags.AddRange(filter.Tags);
+					}
 				}
 			}
 

@@ -22,16 +22,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionTextElementProvider : ICompletionTextElementProvider {
 		readonly ICompletionClassifierAggregatorService completionClassifierAggregatorService;
 		readonly IClassificationFormatMap classificationFormatMap;
-		readonly Dictionary<CompletionCollection, ICompletionClassifier> toClassifier;
+		readonly Dictionary<CompletionSet, ICompletionClassifier> toClassifier;
 
 		public CompletionTextElementProvider(ICompletionClassifierAggregatorService completionClassifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
 			if (completionClassifierAggregatorService == null)
@@ -40,26 +40,26 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.completionClassifierAggregatorService = completionClassifierAggregatorService;
 			this.classificationFormatMap = classificationFormatMap;
-			this.toClassifier = new Dictionary<CompletionCollection, ICompletionClassifier>();
+			this.toClassifier = new Dictionary<CompletionSet, ICompletionClassifier>();
 		}
 
-		ICompletionClassifier GetCompletionClassifier(CompletionCollection collection) {
+		ICompletionClassifier GetCompletionClassifier(CompletionSet completionSet) {
 			ICompletionClassifier completionClassifier;
-			if (!toClassifier.TryGetValue(collection, out completionClassifier))
-				toClassifier.Add(collection, completionClassifier = completionClassifierAggregatorService.Create(collection));
+			if (!toClassifier.TryGetValue(completionSet, out completionClassifier))
+				toClassifier.Add(completionSet, completionClassifier = completionClassifierAggregatorService.Create(completionSet));
 			return completionClassifier;
 		}
 
-		public FrameworkElement Create(CompletionCollection collection, Completion completion) {
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
+		public FrameworkElement Create(CompletionSet completionSet, Completion completion) {
+			if (completionSet == null)
+				throw new ArgumentNullException(nameof(completionSet));
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
-			Debug.Assert(collection.Completions.Contains(completion));
+			Debug.Assert(completionSet.Completions.Contains(completion));
 
-			var classifier = GetCompletionClassifier(collection);
-			var inputText = collection.ApplicableTo.GetText(collection.ApplicableTo.TextBuffer.CurrentSnapshot);
-			var context = new CompletionClassifierContext(collection, completion, completion.DisplayText, inputText);
+			var classifier = GetCompletionClassifier(completionSet);
+			var inputText = completionSet.ApplicableTo.GetText(completionSet.ApplicableTo.TextBuffer.CurrentSnapshot);
+			var context = new CompletionClassifierContext(completionSet, completion, completion.DisplayText, inputText);
 			return TextBlockFactory.Create(context.DisplayText, classificationFormatMap.DefaultTextProperties,
 				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}

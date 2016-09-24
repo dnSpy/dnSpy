@@ -51,6 +51,7 @@
     <Compile Include="Glyphs\GlyphHelper.cs" />
     <Compile Include="Glyphs\RoslynGlyphService.cs" />
     <Compile Include="Intellisense\Completions\MruCompletionService.cs" />
+    <Compile Include="Intellisense\Completions\RoslynCompletionSet.cs" />
     <Compile Include="Intellisense\QuickInfo\CommandTargetFilter.cs" />
     <Compile Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml.cs">
       <DependentUpon>InformationQuickInfoContentControl.xaml</DependentUpon>
@@ -87,7 +88,6 @@
     <Compile Include="Intellisense\Completions\CompletionSource.cs" />
     <Compile Include="Intellisense\Completions\CompletionToolTipProvider.cs" />
     <Compile Include="Intellisense\Completions\RoslynCompletion.cs" />
-    <Compile Include="Intellisense\Completions\RoslynCompletionCollection.cs" />
     <Compile Include="Intellisense\Completions\RoslynIntellisenseFilters.cs" />
     <Compile Include="Properties\dnSpy.Roslyn.Shared.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

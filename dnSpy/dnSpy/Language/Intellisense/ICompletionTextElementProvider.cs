@@ -19,7 +19,7 @@
 
 using System;
 using System.Windows;
-using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	/// <summary>
@@ -30,9 +30,9 @@ namespace dnSpy.Language.Intellisense {
 		/// Creates a UI element of the text part (<see cref="Completion.DisplayText"/>) that is shown
 		/// in the completion listbox.
 		/// </summary>
-		/// <param name="collection">Owner collection</param>
+		/// <param name="completionSet">Owner collection</param>
 		/// <param name="completion">Completion</param>
 		/// <returns></returns>
-		FrameworkElement Create(CompletionCollection collection, Completion completion);
+		FrameworkElement Create(CompletionSet completionSet, Completion completion);
 	}
 }

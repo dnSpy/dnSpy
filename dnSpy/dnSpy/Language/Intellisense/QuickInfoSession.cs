@@ -19,10 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Text;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -30,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Language.Intellisense {
 	sealed class QuickInfoSession : IQuickInfoSession2 {
 		public PropertyCollection Properties { get; }
-		public ObservableCollection<object> QuickInfoContent { get; }
+		public BulkObservableCollection<object> QuickInfoContent { get; }
 		public event EventHandler ApplicableToSpanChanged;
 		public bool TrackMouse { get; }
 		public ITextView TextView { get; }
@@ -69,7 +68,7 @@ namespace dnSpy.Language.Intellisense {
 			if (quickInfoSourceProviders == null)
 				throw new ArgumentNullException(nameof(quickInfoSourceProviders));
 			Properties = new PropertyCollection();
-			QuickInfoContent = new ObservableCollection<object>();
+			QuickInfoContent = new BulkObservableCollection<object>();
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
 			TrackMouse = trackMouse;
@@ -120,20 +119,25 @@ namespace dnSpy.Language.Intellisense {
 			DisposeQuickInfoSources();
 			quickInfoSources = CreateQuickInfoSources();
 
-			QuickInfoContent.Clear();
+			var newContent = new List<object>();
 			ITrackingSpan applicableToSpan = null;
 			foreach (var source in quickInfoSources) {
 				ITrackingSpan applicableToSpanTmp;
-				source.AugmentQuickInfoSession(this, QuickInfoContent, out applicableToSpanTmp);
+				source.AugmentQuickInfoSession(this, newContent, out applicableToSpanTmp);
 				if (IsDismissed)
 					return;
 				if (applicableToSpan == null)
 					applicableToSpan = applicableToSpanTmp;
 			}
 
-			if (QuickInfoContent.Count == 0 || applicableToSpan == null)
+			if (newContent.Count == 0 || applicableToSpan == null)
 				Dismiss();
 			else {
+				QuickInfoContent.BeginBulkOperation();
+				QuickInfoContent.Clear();
+				QuickInfoContent.AddRange(newContent);
+				QuickInfoContent.EndBulkOperation();
+
 				HasInteractiveContent = CalculateHasInteractiveContent();
 				ApplicableToSpan = applicableToSpan;
 				if (quickInfoPresenter == null) {

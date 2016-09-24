@@ -17,16 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using dnSpy.Contracts.Images;
+using Microsoft.VisualStudio.Imaging.Interop;
 
 namespace dnSpy.Contracts.Language.Intellisense {
-	class CurrentParameterChangedEventArgs : EventArgs {
-		public IParameter PreviousCurrentParameter { get; }
-		public IParameter NewCurrentParameter { get; }
+	/// <summary>
+	/// Converts <see cref="ImageMoniker"/>s to and from <see cref="ImageReference"/>s
+	/// </summary>
+	public interface IImageMonikerService {
+		/// <summary>
+		/// Converts <paramref name="imageReference"/> to a <see cref="ImageMoniker"/>
+		/// </summary>
+		/// <param name="imageReference">Image reference</param>
+		/// <returns></returns>
+		ImageMoniker ToImageMoniker(ImageReference imageReference);
 
-		public CurrentParameterChangedEventArgs(IParameter previousCurrentParameter, IParameter newCurrentParameter) {
-			PreviousCurrentParameter = previousCurrentParameter;
-			NewCurrentParameter = newCurrentParameter;
-		}
+		/// <summary>
+		/// Converts <paramref name="imageMoniker"/> to a <see cref="ImageReference"/>
+		/// </summary>
+		/// <param name="imageMoniker">Image moniker</param>
+		/// <returns></returns>
+		ImageReference ToImageReference(ImageMoniker imageMoniker);
 	}
 }

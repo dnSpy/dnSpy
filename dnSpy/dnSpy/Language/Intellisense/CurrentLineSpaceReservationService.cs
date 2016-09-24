@@ -24,9 +24,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {

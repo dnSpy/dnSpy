@@ -54,7 +54,7 @@ namespace dnSpy.Text.Editor {
 		/// <summary>
 		/// Creates a new or returns an existing <see cref="ISpaceReservationManager"/> instance
 		/// </summary>
-		/// <param name="name">Name of the <see cref="ISpaceReservationManager"/>, eg. <see cref="Contracts.Text.Editor.PredefinedSpaceReservationManagerNames.Completion"/></param>
+		/// <param name="name">Name of the <see cref="ISpaceReservationManager"/>, eg. <see cref="Microsoft.VisualStudio.Language.Intellisense.IntellisenseSpaceReservationManagerNames.CompletionSpaceReservationManagerName"/></param>
 		/// <returns></returns>
 		ISpaceReservationManager GetSpaceReservationManager(string name);
 	}

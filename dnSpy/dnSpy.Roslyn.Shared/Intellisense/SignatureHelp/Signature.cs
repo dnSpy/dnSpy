@@ -23,9 +23,9 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Internal.SignatureHelp;
 using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {

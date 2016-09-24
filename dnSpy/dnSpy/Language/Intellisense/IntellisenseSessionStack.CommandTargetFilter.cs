@@ -20,8 +20,8 @@
 using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed partial class IntellisenseSessionStack {

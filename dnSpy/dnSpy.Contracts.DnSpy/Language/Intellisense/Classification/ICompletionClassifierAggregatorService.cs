@@ -18,19 +18,20 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
 	/// Creates a <see cref="ICompletionClassifier"/> that aggregates and normalizes
 	/// all <see cref="ICompletionClassifier"/> contributions.
 	/// </summary>
-	interface ICompletionClassifierAggregatorService {
+	public interface ICompletionClassifierAggregatorService {
 		/// <summary>
 		/// Creates a new <see cref="ICompletionClassifier"/>. The returned <see cref="ICompletionClassifier"/>
 		/// implements <see cref="IDisposable"/> and must be <see cref="IDisposable.Dispose"/>'d.
 		/// </summary>
-		/// <param name="collection">Collection</param>
+		/// <param name="completionSet">Completion set</param>
 		/// <returns></returns>
-		ICompletionClassifier Create(CompletionCollection collection);
+		ICompletionClassifier Create(CompletionSet completionSet);
 	}
 }

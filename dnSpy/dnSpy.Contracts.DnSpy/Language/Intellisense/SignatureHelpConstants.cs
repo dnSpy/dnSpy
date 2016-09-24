@@ -18,6 +18,7 @@
 */
 
 using System.Diagnostics;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
@@ -25,7 +26,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Signature help constants
 	/// </summary>
-	static class SignatureHelpConstants {
+	public static class SignatureHelpConstants {
 		/// <summary>
 		/// Suffix added to the current signature's content type name (<see cref="IContentType.TypeName"/>)
 		/// to get the name of the content type for the signature help text.

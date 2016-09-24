@@ -17,37 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Images;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
-	/// A completion filter (eg. those buttons at the bottom of the completion listbox
-	/// that filters methods, fields, etc)
+	/// dnSpy Completion interface
 	/// </summary>
-	interface IIntellisenseFilter {
+	public interface IDnSpyCompletion {
 		/// <summary>
-		/// Gets the image
+		/// Gets the text that is used to filter this item
 		/// </summary>
-		ImageReference Image { get; }
+		string FilterText { get; }
 
 		/// <summary>
-		/// Gets the tooltip
+		/// Adds the new text to the text buffer
 		/// </summary>
-		string ToolTip { get; }
-
-		/// <summary>
-		/// Gets the access key
-		/// </summary>
-		string AccessKey { get; }
-
-		/// <summary>
-		/// Gets/sets the checked state
-		/// </summary>
-		bool IsChecked { get; set; }
-
-		/// <summary>
-		/// Gets/sets the enabled state
-		/// </summary>
-		bool IsEnabled { get; set; }
+		/// <param name="replaceSpan">Span to replace with new content</param>
+		void Commit(ITrackingSpan replaceSpan);
 	}
 }

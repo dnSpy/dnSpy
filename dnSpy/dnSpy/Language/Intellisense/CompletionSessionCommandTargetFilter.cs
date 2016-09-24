@@ -20,8 +20,8 @@
 using System;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
@@ -41,8 +41,8 @@ namespace dnSpy.Language.Intellisense {
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
-			var span = completionSession.SelectedCompletionSet.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
-			minimumCaretPosition = span.Start.Position;
+			var span = completionSession.SelectedCompletionSet?.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
+			minimumCaretPosition = span == null ? 0 : span.Value.Start.Position;
 		}
 
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
@@ -50,10 +50,10 @@ namespace dnSpy.Language.Intellisense {
 				completionSession.Dismiss();
 			else {
 				var pos = e.NewPosition.BufferPosition;
-				var span = completionSession.SelectedCompletionSet.ApplicableTo.GetSpan(pos.Snapshot);
-				if (pos < minimumCaretPosition || pos < span.Start || pos > span.End)
+				var span = completionSession.SelectedCompletionSet?.ApplicableTo.GetSpan(pos.Snapshot);
+				if (span == null || pos < minimumCaretPosition || pos < span.Value.Start || pos > span.Value.End)
 					completionSession.Dismiss();
-				else if (pos == span.Start.Position) {
+				else if (pos == span.Value.Start.Position) {
 					// This matches what VS does. It prevents you from accidentally committing
 					// something when you select the current input text by pressing Shift+Home
 					// and then pressing eg. " or some other commit-character.
@@ -94,7 +94,7 @@ namespace dnSpy.Language.Intellisense {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.TAB:
-					if (completionSession.SelectedCompletionSet.SelectionStatus.IsSelected) {
+					if (completionSession.SelectedCompletionSet?.SelectionStatus.IsSelected == true) {
 						completionSession.Commit();
 						// Don't include the tab character
 						return CommandTargetStatus.Handled;

@@ -30,12 +30,12 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Controls;
 using dnSpy.Properties;
 using dnSpy.Text;
 using dnSpy.Text.Editor;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Editor;
@@ -44,7 +44,7 @@ namespace dnSpy.Language.Intellisense {
 	sealed class CompletionPresenter : IPopupIntellisensePresenter, IIntellisenseCommandTarget, IMouseProcessor, INotifyPropertyChanged {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
-		string IPopupIntellisensePresenter.SpaceReservationManagerName => PredefinedSpaceReservationManagerNames.Completion;
+		string IPopupIntellisensePresenter.SpaceReservationManagerName => IntellisenseSpaceReservationManagerNames.CompletionSpaceReservationManagerName;
 		IIntellisenseSession IIntellisensePresenter.Session => session;
 		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
 		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
@@ -72,6 +72,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
+		readonly IImageMonikerService imageMonikerService;
 		readonly IImageManager imageManager;
 		readonly ICompletionSession session;
 		readonly ICompletionTextElementProvider completionTextElementProvider;
@@ -92,7 +93,9 @@ namespace dnSpy.Language.Intellisense {
 		const double defaultMinWidth = 150;
 		const double toolTipDelayMilliSeconds = 250;
 
-		public CompletionPresenter(IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
+		public CompletionPresenter(IImageMonikerService imageMonikerService, IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
+			if (imageMonikerService == null)
+				throw new ArgumentNullException(nameof(imageMonikerService));
 			if (imageManager == null)
 				throw new ArgumentNullException(nameof(imageManager));
 			if (session == null)
@@ -101,6 +104,7 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(completionTextElementProvider));
 			if (completionUIElementProviders == null)
 				throw new ArgumentNullException(nameof(completionUIElementProviders));
+			this.imageMonikerService = imageMonikerService;
 			this.imageManager = imageManager;
 			this.session = session;
 			this.completionTextElementProvider = completionTextElementProvider;
@@ -213,6 +217,10 @@ namespace dnSpy.Language.Intellisense {
 			if (completion == null)
 				return null;
 
+			var description = completion.Description;
+			if (string.IsNullOrEmpty(description))
+				return null;
+
 			var contentType = wpfTextView.TextDataModel.ContentType;
 			foreach (var provider in completionUIElementProviders) {
 				if (!contentType.IsOfAnyType(provider.Metadata.ContentTypes))
@@ -222,11 +230,7 @@ namespace dnSpy.Language.Intellisense {
 					return elem;
 			}
 
-			var description = completion.Description;
-			if (!string.IsNullOrEmpty(description))
-				return CreateDefaultToolTipUIElement(description);
-
-			return null;
+			return CreateDefaultToolTipUIElement(description);
 		}
 
 		UIElement CreateDefaultToolTipUIElement(string description) {
@@ -390,20 +394,20 @@ namespace dnSpy.Language.Intellisense {
 			if (e.AddedItems == null || e.AddedItems.Count < 1)
 				return;
 			Debug.Assert(e.AddedItems.Count == 1);
-			var coll = session.SelectedCompletionSet;
-			if (coll == null)
+			var completionSet = session.SelectedCompletionSet;
+			if (completionSet == null)
 				return;
 			var newCompletion = e.AddedItems[0] as Completion;
 			Debug.Assert(newCompletion != null);
 			if (newCompletion == null)
 				return;
-			if (coll.SelectionStatus.Completion == e.AddedItems[0])
+			if (completionSet.SelectionStatus.Completion == e.AddedItems[0])
 				return;
-			bool validItem = coll.Completions.Contains(newCompletion);
+			bool validItem = completionSet.Completions.Contains(newCompletion);
 			Debug.Assert(validItem);
 			if (!validItem)
 				return;
-			coll.SelectionStatus = new CompletionSelectionStatus(newCompletion, isSelected: true, isUnique: true);
+			completionSet.SelectionStatus = new CompletionSelectionStatus(newCompletion, isSelected: true, isUnique: true);
 		}
 
 		bool IIntellisenseCommandTarget.ExecuteKeyboardCommand(IntellisenseKeyboardCommand command) {
@@ -429,8 +433,11 @@ namespace dnSpy.Language.Intellisense {
 				return true;
 
 			case IntellisenseKeyboardCommand.Enter:
-				session.Commit();
-				return true;
+				if (session.SelectedCompletionSet?.SelectionStatus.IsSelected == true) {
+					session.Commit();
+					return true;
+				}
+				return false;
 
 			case IntellisenseKeyboardCommand.TopLine:
 				WpfUtils.ScrollToTop(control.completionsListBox);
@@ -458,7 +465,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void MoveUpDown(int count, bool mustBeSelected) {
-			var coll = session.SelectedCompletionSet.Completions;
+			var coll = session.SelectedCompletionSet?.Completions;
+			if (coll == null)
+				return;
 			int index = coll.IndexOf(session.SelectedCompletionSet.SelectionStatus.Completion);
 			if (index < 0)
 				index = 0;
@@ -489,17 +498,20 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void TextView_LostAggregateFocus(object sender, EventArgs e) => session.Dismiss();
-		void CompletionSession_SelectedCompletionSetChanged(object sender, ValueChangedEventArgs<CompletionCollection> e) {
+		void CompletionSession_SelectedCompletionSetChanged(object sender, ValueChangedEventArgs<CompletionSet> e) {
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
 		}
 
 		void UpdateFilterCollection() {
-			var coll = session.SelectedCompletionSet;
+			var filterCompletionSet = session.SelectedCompletionSet as CompletionSet2;
 			DisposeFilters();
-			if (coll != null) {
-				foreach (var filter in coll.Filters)
-					filters.Add(new FilterVM(filter, this));
+			if (filterCompletionSet != null) {
+				var completionSetFilters = filterCompletionSet.Filters;
+				if (completionSetFilters != null) {
+					foreach (var filter in completionSetFilters)
+						filters.Add(new FilterVM(filter, this));
+				}
 			}
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Filters)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasFilters)));
@@ -522,47 +534,48 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void UpdateSelectedCompletion() {
-			var coll = session.SelectedCompletionSet;
-			RegisterCompletionCollectionEvents(coll);
-			control.completionsListBox.ItemsSource = coll?.Completions;
+			var completionSet = session.SelectedCompletionSet;
+			RegisterCompletionSetEvents(completionSet);
+			control.completionsListBox.ItemsSource = completionSet?.Completions;
 			UpdateSelectedItem();
 		}
 
 		void UpdateSelectedItem(bool? forceCenter = null) {
-			PresentationSpan = currentCompletionCollection?.ApplicableTo;
-			if (currentCompletionCollection == null)
+			PresentationSpan = currentCompletionSet?.ApplicableTo;
+			if (currentCompletionSet == null)
 				control.completionsListBox.SelectedItem = null;
 			else {
-				control.completionsListBox.SelectedItem = currentCompletionCollection.SelectionStatus.Completion;
+				control.completionsListBox.SelectedItem = currentCompletionSet.SelectionStatus.Completion;
 				ScrollSelectedItemIntoView(forceCenter ?? !control.IsKeyboardFocusWithin);
-				if (!currentCompletionCollection.SelectionStatus.IsSelected)
+				if (!currentCompletionSet.SelectionStatus.IsSelected)
 					control.completionsListBox.SelectedItem = null;
 			}
 			DelayShowToolTip();
 		}
 
-		void CompletionCollection_SelectionStatusChanged(object sender, ValueChangedEventArgs<CompletionSelectionStatus> e) {
-			Debug.Assert(currentCompletionCollection == sender);
+		void CompletionSet_SelectionStatusChanged(object sender, ValueChangedEventArgs<CompletionSelectionStatus> e) {
+			Debug.Assert(currentCompletionSet == sender);
 			UpdateSelectedItem();
 		}
 
-		CompletionCollection currentCompletionCollection;
-		void RegisterCompletionCollectionEvents(CompletionCollection collection) {
-			UnregisterCompletionCollectionEvents();
-			Debug.Assert(currentCompletionCollection == null);
-			currentCompletionCollection = collection;
-			collection.SelectionStatusChanged += CompletionCollection_SelectionStatusChanged;
+		CompletionSet currentCompletionSet;
+		void RegisterCompletionSetEvents(CompletionSet completionSet) {
+			UnregisterCompletionSetEvents();
+			Debug.Assert(currentCompletionSet == null);
+			currentCompletionSet = completionSet;
+			if (completionSet != null)
+				completionSet.SelectionStatusChanged += CompletionSet_SelectionStatusChanged;
 		}
 
-		void UnregisterCompletionCollectionEvents() {
-			if (currentCompletionCollection != null) {
-				currentCompletionCollection.SelectionStatusChanged -= CompletionCollection_SelectionStatusChanged;
-				currentCompletionCollection = null;
+		void UnregisterCompletionSetEvents() {
+			if (currentCompletionSet != null) {
+				currentCompletionSet.SelectionStatusChanged -= CompletionSet_SelectionStatusChanged;
+				currentCompletionSet = null;
 			}
 		}
 
 		void CompletionSession_Dismissed(object sender, EventArgs e) {
-			UnregisterCompletionCollectionEvents();
+			UnregisterCompletionSetEvents();
 			DisposeFilters();
 			toolTipTimer.Stop();
 			toolTipTimer.Tick -= ToolTipTimer_Tick;
@@ -586,8 +599,17 @@ namespace dnSpy.Language.Intellisense {
 			completionTextElementProvider.Dispose();
 		}
 
-		public ImageSource GetImageSource(Completion completion) => GetImageSource(completion.Image);
-		public ImageSource GetImageSource(FilterVM filterVM) => GetImageSource(filterVM.Image);
+		public ImageSource GetImageSource(Completion completion) {
+			if (completion == null)
+				throw new ArgumentNullException(nameof(completion));
+			var c3 = completion as Completion3;
+			if (c3 == null)
+				return completion.IconSource;
+			return GetImageSource(imageMonikerService.ToImageReference(c3.IconMoniker));
+		}
+
+		public ImageSource GetImageSource(FilterVM filterVM) => GetImageSource(imageMonikerService.ToImageReference(filterVM.Moniker));
+
 		ImageSource GetImageSource(ImageReference imageReference) {
 			if (session.IsDismissed)
 				return null;
@@ -597,14 +619,20 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public FrameworkElement GetDisplayText(Completion completion) {
+			if (completion == null)
+				throw new ArgumentNullException(nameof(completion));
 			if (session.IsDismissed)
 				return null;
-			var collection = session.SelectedCompletionSet;
-			Debug.Assert(collection.Completions.Contains(completion));
-			return completionTextElementProvider.Create(collection, completion);
+			var completionSet = session.SelectedCompletionSet;
+			if (completionSet == null)
+				return null;
+			Debug.Assert(completionSet.Completions.Contains(completion));
+			return completionTextElementProvider.Create(completionSet, completion);
 		}
 
 		public string GetToolTip(FilterVM filterVM) {
+			if (filterVM == null)
+				throw new ArgumentNullException(nameof(filterVM));
 			if (session.IsDismissed)
 				return null;
 			var toolTip = filterVM.ToolTip;

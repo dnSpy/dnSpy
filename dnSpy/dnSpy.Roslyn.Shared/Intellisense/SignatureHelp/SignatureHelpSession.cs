@@ -23,10 +23,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Roslyn.Internal.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 

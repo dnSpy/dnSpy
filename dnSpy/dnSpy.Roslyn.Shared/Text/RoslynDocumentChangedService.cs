@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Shared.Text {

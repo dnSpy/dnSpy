@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Language.Intellisense;
+
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Names of <see cref="IUIElementProvider{TItem, TContext}"/> exports
 	/// </summary>
-	static class PredefinedUIElementProviderNames {
+	public static class PredefinedUIElementProviderNames {
 		/// <summary>
 		/// Roslyn <see cref="Completion"/> tooltip provider
 		/// </summary>
