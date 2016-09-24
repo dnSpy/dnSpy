@@ -52,20 +52,21 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			else
 				sb.Append(typeName);
 
+			bool comma = false;
 			if (Initializer != null && Initializer.Length > 0) {
 				sb.Append(' ');
 				for (int i = 0; i < Initializer.Length; i++) {
-					if (i != 0)
+					if (comma)
 						sb.Append(", ");
 					WriteObject(sb, ctx, ctxElement, Initializer[i]);
+					comma = true;
 				}
 			}
 
 			if (NamedArguments.Count > 0) {
-				bool comma = Initializer != null;
 				foreach (var kvp in NamedArguments) {
 					if (comma)
-						sb.Append(',');
+						sb.Append(", ");
 					else {
 						sb.Append(' ');
 						comma = true;
