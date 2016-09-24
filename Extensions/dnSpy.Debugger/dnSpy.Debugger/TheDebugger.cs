@@ -151,6 +151,12 @@ namespace dnSpy.Debugger {
 
 			debugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
 			debugger = null;
+
+			// HACK: Something still holds a reference to the debugged file perhaps
+			// one of the debugger COM instances.
+			// This thing will clean up if we just let the GC collect it.
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		void AddDebugger(DnDebugger newDebugger) {
