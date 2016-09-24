@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 			return completionClassifier;
 		}
 
-		public FrameworkElement Create(CompletionSet completionSet, Completion completion) {
+		public FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind) {
 			if (completionSet == null)
 				throw new ArgumentNullException(nameof(completionSet));
 			if (completion == null)
@@ -58,9 +58,24 @@ namespace dnSpy.Language.Intellisense {
 			Debug.Assert(completionSet.Completions.Contains(completion));
 
 			var classifier = GetCompletionClassifier(completionSet);
-			var inputText = completionSet.ApplicableTo.GetText(completionSet.ApplicableTo.TextBuffer.CurrentSnapshot);
-			var context = new CompletionClassifierContext(completionSet, completion, completion.DisplayText, inputText);
-			return TextBlockFactory.Create(context.DisplayText, classificationFormatMap.DefaultTextProperties,
+
+			CompletionClassifierContext context;
+			switch (kind) {
+			case CompletionClassifierKind.DisplayText:
+				var inputText = completionSet.ApplicableTo.GetText(completionSet.ApplicableTo.TextBuffer.CurrentSnapshot);
+				context = new CompletionDisplayTextClassifierContext(completionSet, completion, completion.DisplayText, inputText);
+				break;
+
+			case CompletionClassifierKind.Suffix:
+				var suffix = (completion as Completion4)?.Suffix ?? string.Empty;
+				context = new CompletionSuffixClassifierContext(completionSet, completion, suffix);
+				break;
+
+			default:
+				throw new ArgumentOutOfRangeException(nameof(kind));
+			}
+
+			return TextBlockFactory.Create(context.Text, classificationFormatMap.DefaultTextProperties,
 				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 

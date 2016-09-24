@@ -17,23 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Globalization;
-using System.Windows.Data;
 using Microsoft.VisualStudio.Language.Intellisense;
 
-namespace dnSpy.Language.Intellisense {
-	sealed class CompletionDisplayTextConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-			var completion = (Completion)values[0];
-			var presenter = (CompletionPresenter)values[1];
-			if (completion == null || presenter == null)
-				return null;
-			return presenter.GetDisplayText(completion);
-		}
+namespace dnSpy.Contracts.Language.Intellisense.Classification {
+	/// <summary>
+	/// Completion classifier kind
+	/// </summary>
+	public enum CompletionClassifierKind {
+		/// <summary>
+		/// Classify <see cref="Completion.DisplayText"/>, the context is a <see cref="CompletionDisplayTextClassifierContext"/>
+		/// </summary>
+		DisplayText,
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-			throw new NotSupportedException();
-		}
+		/// <summary>
+		/// Classify <see cref="Completion4.Suffix"/>, the context is a <see cref="CompletionSuffixClassifierContext"/>
+		/// </summary>
+		Suffix,
 	}
 }

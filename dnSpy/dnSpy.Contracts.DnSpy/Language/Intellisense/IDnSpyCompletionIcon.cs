@@ -17,24 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Windows;
-using dnSpy.Contracts.Language.Intellisense.Classification;
 using Microsoft.VisualStudio.Language.Intellisense;
 
-namespace dnSpy.Language.Intellisense {
+namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
-	/// Creates <see cref="Completion"/> text UI elements
+	/// <see cref="CompletionIcon2"/>s can implement this to override whether the image
+	/// should be fixed to match the background. Default is to not modify the image.
 	/// </summary>
-	interface ICompletionTextElementProvider : IDisposable {
+	public interface IDnSpyCompletionIcon {
 		/// <summary>
-		/// Creates a UI element of the text part (<see cref="Completion.DisplayText"/>) that is shown
-		/// in the completion listbox.
+		/// true to fix the image. Default value is false.
 		/// </summary>
-		/// <param name="completionSet">Owner collection</param>
-		/// <param name="completion">Completion</param>
-		/// <param name="kind">Which part of <paramref name="completion"/> that should be used to create the <see cref="FrameworkElement"/></param>
-		/// <returns></returns>
-		FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind);
+		bool FixImage { get; }
 	}
 }

@@ -17,10 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	sealed class RoslynCompletion : DnSpyCompletion {
@@ -40,5 +42,16 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		}
 
 		protected override ImageMoniker GetIconMoniker() => imageMonikerService.ToImageMoniker(CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? default(ImageReference));
+
+		public override IEnumerable<CompletionIcon> AttributeIcons {
+			get { return GetAttributeIcons(); }
+			set { }
+		}
+
+		IEnumerable<CompletionIcon> GetAttributeIcons() {
+			if (CompletionItem.Tags.Contains(CompletionTags.Warning))
+				return new[] { new CompletionIcon2(imageMonikerService.ToImageMoniker(CompletionImageHelper.GetWarningImageReference()), null, null) };
+			return null;
+		}
 	}
 }

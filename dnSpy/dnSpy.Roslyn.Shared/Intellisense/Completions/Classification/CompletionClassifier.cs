@@ -59,6 +59,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 		}
 
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
+			if (context.Kind != CompletionClassifierKind.DisplayText)
+				yield break;
+
 			var completion = context.Completion as RoslynCompletion;
 			if (completion == null)
 				yield break;
@@ -71,7 +74,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			// from the string so we get nice colorized text.
 
 			var color = completion.CompletionItem.Tags.ToCompletionKind().ToTextColor();
-			var text = context.DisplayText;
+			var text = context.Text;
 
 			// The common case is just an identifier, and in that case, the tag is correct
 			int punctIndex = text.IndexOfAny(punctuationChars, 0);

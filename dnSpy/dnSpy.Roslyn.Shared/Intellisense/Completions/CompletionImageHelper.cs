@@ -25,6 +25,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	static class CompletionImageHelper {
 		static readonly Assembly imageAssembly = Assembly.Load("dnSpy");
 
+		public static ImageReference GetWarningImageReference() => new ImageReference(imageAssembly, "StatusWarning");
+
 		public static ImageReference? GetImageReference(ImmutableArray<string> tags) {
 			var name = GetImageName(tags);
 			if (name == null)

@@ -272,10 +272,11 @@
     <Compile Include="Decompiler\DummyDecompiler.cs" />
     <Compile Include="Decompiler\DecompilerManager.cs" />
     <Compile Include="Decompiler\DecompilerManagerSettings.cs" />
+    <Compile Include="Language\Intellisense\AttributeImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregator.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregatorService.cs" />
     <Compile Include="Language\Intellisense\Classification\FilterMatchCompletionClassifier.cs" />
-    <Compile Include="Language\Intellisense\CompletionDisplayTextConverter.cs" />
+    <Compile Include="Language\Intellisense\CollectionBooleanToVisibilityConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenterControl.xaml.cs">
@@ -285,6 +286,7 @@
     <Compile Include="Language\Intellisense\CompletionPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionSession.cs" />
     <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
+    <Compile Include="Language\Intellisense\CompletionTextConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
     <Compile Include="Language\Intellisense\CurrentLineSpaceReservationService.cs" />

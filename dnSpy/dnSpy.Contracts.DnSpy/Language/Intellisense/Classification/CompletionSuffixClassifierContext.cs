@@ -17,50 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
-	/// <see cref="ICompletionClassifier"/> context
+	/// Context needed to classify <see cref="Completion.DisplayText"/>
 	/// </summary>
-	public abstract class CompletionClassifierContext {
+	public sealed class CompletionSuffixClassifierContext : CompletionClassifierContext {
 		/// <summary>
-		/// Context kind
+		/// Returns <see cref="CompletionClassifierKind.Suffix"/>
 		/// </summary>
-		public abstract CompletionClassifierKind Kind { get; }
-
-		/// <summary>
-		/// Gets the collection
-		/// </summary>
-		public CompletionSet CompletionSet { get; }
-
-		/// <summary>
-		/// Gets the completion to classify
-		/// </summary>
-		public Completion Completion { get; }
-
-		/// <summary>
-		/// Gets all text to classify
-		/// </summary>
-		public string Text { get; }
+		public override CompletionClassifierKind Kind => CompletionClassifierKind.Suffix;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="completionSet">Completion set</param>
 		/// <param name="completion">Completion to classify</param>
-		/// <param name="text">Text to classify</param>
-		protected CompletionClassifierContext(CompletionSet completionSet, Completion completion, string text) {
-			if (completionSet == null)
-				throw new ArgumentNullException(nameof(completionSet));
-			if (completion == null)
-				throw new ArgumentNullException(nameof(completion));
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			CompletionSet = completionSet;
-			Completion = completion;
-			Text = text;
+		/// <param name="suffix">Text to classify</param>
+		public CompletionSuffixClassifierContext(CompletionSet completionSet, Completion completion, string suffix)
+			: base(completionSet, completion, suffix) {
 		}
 	}
 }

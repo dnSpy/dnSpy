@@ -5817,7 +5817,7 @@
         <Setter Property="Background"
                 Value="{DynamicResource CompletionToolTipBackground}"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource CompletionToolTipForeground}"/>
+                Value="{DynamicResource CompletionToolTipText}"/>
         <Setter Property="Padding"
                 Value="3,3,3,3"/>
     </Style>

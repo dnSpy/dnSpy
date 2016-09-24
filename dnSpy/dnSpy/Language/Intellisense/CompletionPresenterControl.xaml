@@ -28,7 +28,9 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <local:CompletionImageReferenceConverter x:Key="CompletionImageReferenceConverter" />
-        <local:CompletionDisplayTextConverter x:Key="CompletionDisplayTextConverter" />
+        <local:AttributeImageReferenceConverter x:Key="AttributeImageReferenceConverter" />
+        <local:CollectionBooleanToVisibilityConverter x:Key="CollectionBooleanToVisibilityConverter" />
+        <local:CompletionTextConverter x:Key="CompletionTextConverter" />
         <local:FilterImageReferenceConverter x:Key="FilterImageReferenceConverter" />
         <local:FilterToolTipConverter x:Key="FilterToolTipConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -52,8 +54,10 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Height="16" Width="16" Margin="0 0 4 0">
+                        <Image Grid.Column="0" Height="16" Width="16" Margin="1 1 3 1">
                             <Image.Source>
                                 <MultiBinding Converter="{StaticResource CompletionImageReferenceConverter}">
                                     <Binding Mode="OneWay"/>
@@ -61,14 +65,41 @@
                                 </MultiBinding>
                             </Image.Source>
                         </Image>
-                        <ContentPresenter Grid.Column="1">
+                        <ContentPresenter Grid.Column="1" Margin="2 0 2 0">
                             <ContentPresenter.Content>
-                                <MultiBinding Converter="{StaticResource CompletionDisplayTextConverter}">
+                                <MultiBinding Converter="{StaticResource CompletionTextConverter}" ConverterParameter="DisplayText">
                                     <Binding Mode="OneWay"/>
                                     <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
                                 </MultiBinding>
                             </ContentPresenter.Content>
                         </ContentPresenter>
+                        <ContentPresenter Grid.Column="2">
+                            <ContentPresenter.Content>
+                                <MultiBinding Converter="{StaticResource CompletionTextConverter}" ConverterParameter="Suffix">
+                                    <Binding Mode="OneWay"/>
+                                    <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
+                                </MultiBinding>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                        <ItemsControl Grid.Column="3" Margin="3 1 1 1" ItemsSource="{Binding AttributeIcons}" Visibility="{Binding AttributeIcons, Converter={StaticResource CollectionBooleanToVisibilityConverter}}" Background="{DynamicResource ListBoxBackground}" VerticalContentAlignment="Center">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Image Height="16" Width="16">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource AttributeImageReferenceConverter}">
+                                                <Binding Mode="OneWay"/>
+                                                <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

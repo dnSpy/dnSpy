@@ -30,6 +30,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Controls;
 using dnSpy.Properties;
 using dnSpy.Text;
@@ -599,26 +600,50 @@ namespace dnSpy.Language.Intellisense {
 			completionTextElementProvider.Dispose();
 		}
 
+		public ImageSource GetImageSource(CompletionIcon completionIcon) {
+			if (session.IsDismissed)
+				return null;
+			if (completionIcon == null)
+				throw new ArgumentNullException(nameof(completionIcon));
+			var c2 = completionIcon as CompletionIcon2;
+			if (c2 == null)
+				return completionIcon.IconSource;
+			bool fixImage = (completionIcon as IDnSpyCompletionIcon)?.FixImage ?? false;
+			return GetImageSource(imageMonikerService.ToImageReference(c2.IconMoniker), fixImage);
+		}
+
 		public ImageSource GetImageSource(Completion completion) {
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
 			var c3 = completion as Completion3;
 			if (c3 == null)
 				return completion.IconSource;
-			return GetImageSource(imageMonikerService.ToImageReference(c3.IconMoniker));
+			return GetImageSource(imageMonikerService.ToImageReference(c3.IconMoniker), true);
 		}
 
-		public ImageSource GetImageSource(FilterVM filterVM) => GetImageSource(imageMonikerService.ToImageReference(filterVM.Moniker));
+		public ImageSource GetImageSource(FilterVM filterVM) => GetImageSource(imageMonikerService.ToImageReference(filterVM.Moniker), true);
 
-		ImageSource GetImageSource(ImageReference imageReference) {
+		ImageSource GetImageSource(ImageReference imageReference, bool fixImage) {
 			if (session.IsDismissed)
 				return null;
 			if (imageReference.IsDefault)
 				return null;
-			return imageManager.GetImage(imageReference, BackgroundType.ListBoxItem);
+			if (fixImage)
+				return imageManager.GetImage(imageReference, BackgroundType.ListBoxItem);
+			return imageManager.GetImage(imageReference, null);
 		}
 
-		public FrameworkElement GetDisplayText(Completion completion) {
+		public FrameworkElement GetDisplayText(Completion completion) => CreateFrameworkElement(completion, CompletionClassifierKind.DisplayText);
+
+		public FrameworkElement GetSuffix(Completion completion) {
+			if (string.IsNullOrEmpty((completion as Completion4)?.Suffix))
+				return null;
+			var elem = CreateFrameworkElement(completion, CompletionClassifierKind.Suffix);
+			elem.Margin = new Thickness(5, 0, 2, 0);
+			return elem;
+		}
+
+		FrameworkElement CreateFrameworkElement(Completion completion, CompletionClassifierKind kind) {
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
 			if (session.IsDismissed)
@@ -627,7 +652,7 @@ namespace dnSpy.Language.Intellisense {
 			if (completionSet == null)
 				return null;
 			Debug.Assert(completionSet.Completions.Contains(completion));
-			return completionTextElementProvider.Create(completionSet, completion);
+			return completionTextElementProvider.Create(completionSet, completion, kind);
 		}
 
 		public string GetToolTip(FilterVM filterVM) {

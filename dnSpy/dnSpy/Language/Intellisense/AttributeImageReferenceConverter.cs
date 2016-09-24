@@ -18,23 +18,22 @@
 */
 
 using System;
-using System.Windows;
-using dnSpy.Contracts.Language.Intellisense.Classification;
+using System.Globalization;
+using System.Windows.Data;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	/// <summary>
-	/// Creates <see cref="Completion"/> text UI elements
-	/// </summary>
-	interface ICompletionTextElementProvider : IDisposable {
-		/// <summary>
-		/// Creates a UI element of the text part (<see cref="Completion.DisplayText"/>) that is shown
-		/// in the completion listbox.
-		/// </summary>
-		/// <param name="completionSet">Owner collection</param>
-		/// <param name="completion">Completion</param>
-		/// <param name="kind">Which part of <paramref name="completion"/> that should be used to create the <see cref="FrameworkElement"/></param>
-		/// <returns></returns>
-		FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind);
+	sealed class AttributeImageReferenceConverter : IMultiValueConverter {
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+			var completionIcon = (CompletionIcon)values[0];
+			var presenter = (CompletionPresenter)values[1];
+			if (completionIcon == null || presenter == null)
+				return null;
+			return presenter.GetImageSource(completionIcon);
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
+			throw new NotSupportedException();
+		}
 	}
 }

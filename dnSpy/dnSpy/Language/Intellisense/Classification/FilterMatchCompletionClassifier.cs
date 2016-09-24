@@ -55,7 +55,9 @@ namespace dnSpy.Language.Intellisense.Classification {
 		}
 
 		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
-			var spans = completionSet.GetHighlightedSpansInDisplayText(context.DisplayText);
+			if (context.Kind != CompletionClassifierKind.DisplayText)
+				yield break;
+			var spans = completionSet.GetHighlightedSpansInDisplayText(context.Text);
 			if (spans == null)
 				yield break;
 			foreach (var span in spans)

@@ -202,6 +202,9 @@
     <Compile Include="Language\Intellisense\BestMatchSelector.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassificationTag.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierContext.cs" />
+    <Compile Include="Language\Intellisense\Classification\CompletionClassifierKind.cs" />
+    <Compile Include="Language\Intellisense\Classification\CompletionDisplayTextClassifierContext.cs" />
+    <Compile Include="Language\Intellisense\Classification\CompletionSuffixClassifierContext.cs" />
     <Compile Include="Language\Intellisense\Classification\ICompletionClassifier.cs" />
     <Compile Include="Language\Intellisense\Classification\ICompletionClassifierAggregatorService.cs" />
     <Compile Include="Language\Intellisense\Classification\ICompletionClassifierProvider.cs" />
@@ -213,6 +216,7 @@
     <Compile Include="Language\Intellisense\FilteredCompletionCollection.cs" />
     <Compile Include="Language\Intellisense\ICompletionFilter.cs" />
     <Compile Include="Language\Intellisense\IDnSpyCompletion.cs" />
+    <Compile Include="Language\Intellisense\IDnSpyCompletionIcon.cs" />
     <Compile Include="Language\Intellisense\IImageMonikerService.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpyCompletionSourceProviders.cs" />
     <Compile Include="Language\Intellisense\PredefinedDnSpyQuickInfoSourceProviders.cs" />
