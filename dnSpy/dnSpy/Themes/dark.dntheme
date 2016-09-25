@@ -72,17 +72,17 @@
 		<color name="xmltext" fg="#FFC8C8C8" />
 		<color name="xamlattribute" fg="#FF92CAF4" />
 		<color name="xamlattributequotes" fg="#FF808080" />
-		<color name="xamlattributevalue" fg="#FFC8C8C8" />
-		<color name="xamlcdatasection" fg="#FFE9D585" />
+		<color name="xamlattributevalue" fg="#FF569CD6" />
+		<color name="xamlcdatasection" fg="#FFC0D088" />
 		<color name="xamlcomment" fg="#FF57A64A" />
 		<color name="xamldelimiter" fg="#FF808080" />
 		<color name="xamlkeyword" fg="#FF569CD6" />
 		<color name="xamlmarkupextensionclass" fg="#FFBBA08C" />
 		<color name="xamlmarkupextensionparametername" fg="#FFD7BA7D" />
 		<color name="xamlmarkupextensionparametervalue" fg="#FFB1B1B1" />
-		<color name="xamlname" fg="#FF569CD6" />
-		<color name="xamlprocessinginstruction" fg="#FFC8C8C8" />
-		<color name="xamltext" fg="#FFC8C8C8" />
+		<color name="xamlname" fg="#FFE6E6E6" />
+		<color name="xamlprocessinginstruction" fg="#FFBBA08C" />
+		<color name="xamltext" fg="#FFABABAB" />
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="assembly" fg="#C4C4C4" />
 		<color name="assemblyexe" fg="#F0CA93" />
