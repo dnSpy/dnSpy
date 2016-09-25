@@ -290,7 +290,9 @@ namespace dnSpy.Debugger.Logger {
 
 					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED:
 						exValue = ex2Args.CorThread?.CurrentException;
-						module = ex2Args.CorFrame?.Function?.Module;
+						// CorFrame could be null so try to find another one, eg. top frame
+						var frame = ex2Args.CorFrame ?? ex2Args.CorThread?.ActiveFrame ?? ex2Args.CorThread?.AllFrames.FirstOrDefault();
+						module = frame?.Function?.Module;
 						exModule = dbg.Modules.FirstOrDefault(a => a.CorModule == module);
 						textPane.WriteLine(BoxedTextColor.DebugLogExceptionUnhandled,
 							string.Format(dnSpy_Debugger_Resources.DebugLogExceptionUnhandled,
