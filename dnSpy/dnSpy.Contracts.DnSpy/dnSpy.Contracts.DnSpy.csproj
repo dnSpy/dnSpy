@@ -545,6 +545,7 @@
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDsWpfViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultReplEditorOptionsExtensions.cs" />
     <Compile Include="Text\Editor\PredefinedDsAdornmentLayers.cs" />
+    <Compile Include="Text\Editor\PredefinedDsGlyphFactoryProviderNames.cs" />
     <Compile Include="Text\Editor\PredefinedDsGlyphMouseProcessorProviders.cs" />
     <Compile Include="Text\Editor\PredefinedDsGlyphTextMarkerMouseProcessorProviderNames.cs" />
     <Compile Include="Text\Editor\PredefinedDsMarginNames.cs" />

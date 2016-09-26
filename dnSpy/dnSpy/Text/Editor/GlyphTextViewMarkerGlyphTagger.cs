@@ -83,10 +83,9 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(IGlyphFactoryProvider))]
-	[Name("dnSpy-GlyphTextViewMarkerGlyphFactoryProvider")]
+	[Name(PredefinedDsGlyphFactoryProviderNames.GlyphTextViewMarker)]
 	[TagType(typeof(GlyphTextMarkerGlyphTag))]
 	[ContentType(ContentTypes.Text)]
-	[Order(After = Priority.Default)]
 	sealed class GlyphTextViewMarkerGlyphFactoryProvider : IGlyphFactoryProvider {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
