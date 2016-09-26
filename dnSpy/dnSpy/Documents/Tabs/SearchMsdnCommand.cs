@@ -28,7 +28,9 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Documents.Tabs {
 	static class SearchMsdnCtxMenuCommand {
-		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
+		// URL is from "Pro Power Tools" PeekF1: https://github.com/Microsoft/VS-PPT
+		// More args: ";k(TargetFrameworkMoniker-{0})", ";k(DevLang-{0})"
+		const string msdnAddress = "https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k({0})&rd=true#content";
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
@@ -219,7 +221,6 @@ namespace dnSpy.Documents.Tabs {
 				return string.Empty;
 
 			//TODO: This code doesn't work with:
-			//	- generic types, eg. IEnumerable<T>
 			//	- constructors
 			if (member is MethodDef && ((MethodDef)member).IsConstructor)
 				member = member.DeclaringType;  //TODO: Use declaring type until we can search for constructors
@@ -258,7 +259,6 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static void SearchMsdn(string address) {
-			address = address.ToLower();
 			if (!string.IsNullOrEmpty(address))
 				Process.Start(address);
 		}
